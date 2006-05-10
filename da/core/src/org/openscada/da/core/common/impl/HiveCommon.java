@@ -89,10 +89,11 @@ public class HiveCommon implements Hive, ItemListener {
 		}
 	}
 	
-	public void registerForItem(Session session, String itemName) throws InvalidSessionException, InvalidItemException
+	public void registerForItem(Session session, String itemName, boolean initial) throws InvalidSessionException, InvalidItemException
 	{
 		validateSession ( session );
 		
+		// lookup the item first
 		DataItem item = lookupItem ( itemName );
 		
 		if ( item == null )
@@ -100,7 +101,23 @@ public class HiveCommon implements Hive, ItemListener {
 		
 		SessionCommon sessionCommon = (SessionCommon)session;
 		sessionCommon.getData().addItem(item);
-		_items.get(item).addSession(sessionCommon);
+        DataItemInfo info = _items.get(item); 
+		info.addSession ( sessionCommon );
+        
+        // process initial transmission
+        if ( initial && (sessionCommon.getListener() != null) )
+        {
+            try
+            {
+                ItemChangeListener listener = sessionCommon.getListener();
+                listener.valueChanged ( itemName, info.getCachedValue(), true );
+                listener.attributesChanged ( itemName, info.getCachedAttributes(), true );
+            }
+            catch ( Exception e )
+            {
+                closeSession ( session );
+            }
+        }
 	}
 	
 	public void unregisterForItem(Session session, String itemName) throws InvalidSessionException, InvalidItemException
@@ -195,7 +212,7 @@ public class HiveCommon implements Hive, ItemListener {
 			
 			try
 			{
-				listener.valueChanged ( item.getName(), variant );
+				listener.valueChanged ( item.getName(), variant, false );
 			}
 			catch ( Exception e )
 			{
@@ -229,7 +246,7 @@ public class HiveCommon implements Hive, ItemListener {
 			
 			try
 			{
-				listener.attributesChanged(item.getName(), attributes);
+				listener.attributesChanged(item.getName(), attributes, false);
 			}
 			catch ( Exception e )
 			{
