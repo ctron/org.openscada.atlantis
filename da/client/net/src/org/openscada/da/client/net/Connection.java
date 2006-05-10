@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.MessageListener;
@@ -25,13 +26,16 @@ import org.openscada.utils.timing.Scheduler;
 
 public class Connection
 {
+    
+    private static Logger _log = Logger.getLogger ( Connection.class );
+    
     private ConnectionInfo _connectionInfo = null;
     private IOProcessor _processor = null;
     
     private ClientConnection _client = null;
     
     private List<ConnectionStateListener> _connectionStateListeners = new ArrayList<ConnectionStateListener>();
-    private Map<String,List<ItemUpdateListener>> _itemListeners = new HashMap<String,List<ItemUpdateListener>>();
+    private Map<String,ItemSyncController> _itemListeners = new HashMap<String,ItemSyncController>();
     
     private boolean _connected = false;
     
@@ -194,19 +198,17 @@ public class Connection
         syncAllItems();
     }
     
-    public void addItemUpdateListener ( String itemName, ItemUpdateListener listener ) 
+    public void addItemUpdateListener ( String itemName, boolean initial, ItemUpdateListener listener ) 
     {
         synchronized ( _itemListeners )
         {
             if (!_itemListeners.containsKey(itemName))
             {
-                _itemListeners.put( itemName, new ArrayList<ItemUpdateListener> () );
+                _itemListeners.put( itemName, new ItemSyncController(_client, itemName) );
             }
             
-            int before = _itemListeners.get ( itemName ).size();
-            _itemListeners.get ( itemName ).add ( listener );
-            if ( before != _itemListeners.get ( itemName ).size () )
-                syncRegItem ( itemName, _itemListeners.get ( itemName ).size () );
+            ItemSyncController controller = _itemListeners.get(itemName);
+            controller.add ( listener, initial );
         }
     }
     
@@ -216,38 +218,12 @@ public class Connection
         {
             if (!_itemListeners.containsKey(itemName))
             {
-                _itemListeners.put( itemName, new ArrayList<ItemUpdateListener> () );
+                return;
             }
             
-            int before = _itemListeners.get ( itemName ).size();
-            _itemListeners.get ( itemName).remove ( listener );
-            if ( before != _itemListeners.get ( itemName ).size () )
-                syncRegItem ( itemName, _itemListeners.get ( itemName ).size () );
+            ItemSyncController controller = _itemListeners.get(itemName);
+            controller.remove(listener);
         }
-    }
-    
-    /**
-     * Sync register one item. Check if subscription is needed or not
-     * @param itemName name of the item
-     * @param subscribers number of current subscribers
-     */
-    private void syncRegItem ( String itemName, int subscribers )
-    {
-        // don't sync if we don't have a connection
-        if ( _client == null )
-            return;
-        
-        Message message;
-        if ( subscribers > 0 )
-        {
-            message = Messages.subscribeItem ( itemName );
-        }
-        else
-        {
-            message = Messages.unsubscribeItem ( itemName );
-        }
-        
-        _client.getConnection().sendMessage ( message );
     }
     
     /**
@@ -258,39 +234,32 @@ public class Connection
     {
         synchronized ( _itemListeners )
         {
-            for ( Map.Entry<String,List<ItemUpdateListener>> entry : _itemListeners.entrySet() )
+            for ( Map.Entry<String,ItemSyncController> entry : _itemListeners.entrySet() )
             {
-                syncRegItem ( entry.getKey(), entry.getValue().size() );
+                entry.getValue().sync();
             }
         }
     }
     
-   
     
-    private void fireValueChange ( String itemName, Variant value )
+    private void fireValueChange ( String itemName, Variant value, boolean initial )
     {
         synchronized ( _itemListeners )
         {
             if ( _itemListeners.containsKey(itemName) )
             {
-                for ( Iterator<ItemUpdateListener> i = _itemListeners.get(itemName).iterator(); i.hasNext() ; )
-                {
-                    i.next().notifyValueChange ( value );
-                }
+                _itemListeners.get(itemName).fireValueChange(value,initial);
             }
         }
     }
     
-    private void fireAttributesChange ( String itemName, Map<String,Variant> attributes )
+    private void fireAttributesChange ( String itemName, Map<String,Variant> attributes, boolean initial )
     {
         synchronized ( _itemListeners )
         {
             if ( _itemListeners.containsKey(itemName) )
             {
-                for ( Iterator<ItemUpdateListener> i = _itemListeners.get(itemName).iterator(); i.hasNext() ; )
-                {
-                    i.next().notifyAttributeChange ( attributes );
-                }
+                _itemListeners.get(itemName).fireAttributesChange(attributes,initial);
             }
         }
     }
@@ -299,13 +268,17 @@ public class Connection
     {
         Variant value = new Variant ();
         
+        // extract initial bit
+        boolean initial = message.getValues().containsKey("initial");
+
+        
         if ( message.getValues().containsKey("value") )
         {
             value = valueToVariant ( message.getValues().get("value") );
         }
         
         String itemName = message.getValues().get("item-name").toString();
-        fireValueChange(itemName, value);
+        fireValueChange(itemName, value, initial);
     }
     
     private Variant valueToVariant ( Value fromValue )
@@ -323,6 +296,9 @@ public class Connection
     {
         
         Map<String,Variant> attributes = new HashMap<String,Variant>();
+        
+        // extract initial bit
+        boolean initial = message.getValues().containsKey("initial");
         
         for ( Map.Entry<String,Value> entry : message.getValues().entrySet() )
         {
@@ -348,7 +324,7 @@ public class Connection
         
         
         String itemName = message.getValues().get("item-name").toString();
-        fireAttributesChange(itemName, attributes);
+        fireAttributesChange(itemName, attributes, initial);
     }
 
     public boolean isConnected ()

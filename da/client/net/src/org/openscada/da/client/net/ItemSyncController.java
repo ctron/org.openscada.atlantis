@@ -1,0 +1,185 @@
+package org.openscada.da.client.net;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.openscada.da.core.data.Variant;
+import org.openscada.net.base.ClientConnection;
+import org.openscada.net.base.data.Message;
+import org.openscada.net.da.handler.Messages;
+
+import sun.security.action.GetLongAction;
+
+public class ItemSyncController
+{
+    
+    private static Logger _log = Logger.getLogger ( ItemSyncController.class );
+    
+    private ClientConnection _connection;
+    private String _itemName;
+    
+    /**
+     * Holds some additional listner information 
+     * @author jens
+     *
+     */
+    private class ListenerInfo
+    {
+        private ItemUpdateListener _listener;
+        private boolean _initial;
+        
+        public ListenerInfo ( ItemUpdateListener listener, boolean initial )
+        {
+            _listener = listener;
+            _initial = initial;
+        }
+
+        public boolean isInitial ()
+        {
+            return _initial;
+        }
+
+        public ItemUpdateListener getListener ()
+        {
+            return _listener;
+        }
+        
+        @Override
+        public boolean equals ( Object obj )
+        {
+           if ( obj == null )
+               return false;
+           if ( obj == this )
+               return true;
+           
+           if ( obj instanceof ItemUpdateListener )
+           {
+               return obj == _listener;
+           }
+           else if ( obj instanceof ListenerInfo )
+           {
+               return ((ListenerInfo)obj)._listener == _listener;
+           }
+           else
+           {
+               return false;
+           }
+        }
+        
+        @Override
+        public int hashCode ()
+        {
+            return _listener.hashCode();
+        }
+    }
+
+    private Map<ItemUpdateListener,ListenerInfo> _listeners = new HashMap<ItemUpdateListener,ListenerInfo>();
+    private long _initialListeners = 0;
+    
+    public ItemSyncController ( ClientConnection connection, String itemName )
+    {
+        _connection = connection;
+        _itemName = itemName;
+    }
+
+    public String getItemName ()
+    {
+        return _itemName;
+    }
+    
+    public int getNumberOfListeners ()
+    {
+        synchronized ( _listeners )
+        {
+            return _listeners.size();
+        }
+    }
+    
+    public long getNumerOfListenersInitial ()
+    {
+        synchronized ( _listeners )
+        {
+            return _initialListeners;
+        }
+    }
+    
+    public void add ( ItemUpdateListener listener, boolean initial )
+    {
+        synchronized ( _listeners )
+        {
+            if ( !_listeners.containsKey(listener) )
+            {
+                _listeners.put(listener, new ListenerInfo(listener, initial));
+                if ( initial )
+                    _initialListeners++;
+            }
+        }
+        sync();
+    }
+    
+    public void remove ( ItemUpdateListener listener )
+    {
+        synchronized ( _listeners )
+        {
+            if ( !_listeners.containsKey(listener) )
+            {
+                ListenerInfo info = _listeners.get(listener);
+                if ( info.isInitial() )
+                    _initialListeners--;
+                
+                _listeners.remove(listener);
+            }
+        }
+        sync();
+    }
+    
+    public void sync ()
+    {
+        synchronized ( _listeners )
+        {
+            Message message;
+            
+            boolean initial = getNumerOfListenersInitial() > 0;
+            
+            if ( getNumberOfListeners() > 0 )
+            {
+                message = Messages.subscribeItem ( _itemName, initial );
+            }
+            else
+            {
+                message = Messages.unsubscribeItem ( _itemName );
+            }
+            
+            _connection.getConnection().sendMessage ( message );
+        }
+    }
+    
+    public void fireValueChange ( Variant value, boolean initial )
+    {
+        synchronized ( _listeners )
+        {
+            for ( ListenerInfo listenerInfo : _listeners.values() )
+            {
+                if ( !initial || listenerInfo.isInitial() )
+                    listenerInfo.getListener().notifyValueChange ( value, initial );
+            }
+        }
+    }
+
+    public void fireAttributesChange ( Map<String, Variant> attributes, boolean initial )
+    {
+        synchronized ( _listeners )
+        {
+            for ( ListenerInfo listenerInfo : _listeners.values() )
+            {                
+                if ( !initial || listenerInfo.isInitial() )
+                    listenerInfo.getListener().notifyAttributeChange ( attributes, initial );
+            }
+        }
+    }
+}

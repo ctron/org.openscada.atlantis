@@ -45,9 +45,9 @@ public class Application
                 
             }});
         
-        connection.addItemUpdateListener("time", new ItemUpdateListener(){
+        connection.addItemUpdateListener("time", true, new ItemUpdateListener(){
 
-            public void notifyValueChange ( Variant value )
+            public void notifyValueChange ( Variant value, boolean initial )
             {
                 try
                 {
@@ -60,7 +60,7 @@ public class Application
                 
             }
 
-            public void notifyAttributeChange ( Map<String, Variant> attributes )
+            public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
             {
                 // TODO Auto-generated method stub
                 
