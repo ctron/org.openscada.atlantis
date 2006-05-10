@@ -201,18 +201,20 @@ public class SocketConnection extends IOChannel implements IOChannelListener {
             _outputBuffers.clear();
         }
 		
-		try {
+		try
+        {
 			if ( _channel.isOpen() )
 			{
 				_log.debug ( "Closing connection" );
 				_channel.close();
 				
-				updateOps();
-				
 				if ( _listener != null )
 					_listener.closed();
 			}
-		} catch (IOException e) {
+            updateOps();
+		}
+        catch (IOException e)
+        {
 			e.printStackTrace();
 		}
 		
