@@ -20,7 +20,8 @@ public class DataItemInfo {
 		_item = item;
 	}
 	
-	public Set<SessionCommon> getSessions() {
+	public Set<SessionCommon> getSessions()
+    {
 		return _sessions;
 	}
 	
@@ -58,17 +59,52 @@ public class DataItemInfo {
 
     public Variant getCachedValue ()
     {
-        return _cachedValue;
+        synchronized ( _cachedValue )
+        {
+            return _cachedValue;
+        }
     }
 
     public void setCachedValue ( Variant cachedValue )
     {
-        _cachedValue = new Variant(cachedValue);
+        synchronized ( _cachedValue )
+        {
+            _cachedValue = new Variant(cachedValue);
+        }
     }
 
     public Map<String, Variant> getCachedAttributes ()
     {
-        return _cachedAttributes;
+        synchronized ( _cachedAttributes )
+        {
+            return _cachedAttributes;
+        }
+    }
+
+    /**
+     * merge in the attribute change set into the cached attributes
+     * @param attributes the changed attributes
+     */
+    public void mergeAttributes ( Map<String, Variant> attributes )
+    {
+        synchronized ( _cachedAttributes )
+        {
+            for ( Map.Entry<String,Variant> entry : attributes.entrySet() )
+            {
+                if ( entry.getValue() == null )
+                {
+                    _cachedAttributes.remove(entry.getKey());
+                }
+                else if ( entry.getValue().isNull() )
+                {
+                    _cachedAttributes.remove(entry.getKey());
+                }
+                else
+                {
+                    _cachedAttributes.put(entry.getKey(),new Variant(entry.getValue()));
+                }
+            }
+        }
     }
 	
 }

@@ -198,6 +198,9 @@ public class HiveCommon implements Hive, ItemListener {
 		DataItemInfo info = getItemInfo ( item );
 		if ( info == null )
 			return; // ignore
+        
+        // store the new value in the cache
+        info.setCachedValue(variant);
 		
 		Set<SessionCommon> sessionsToClose = new HashSet<SessionCommon>();
 		
@@ -233,6 +236,8 @@ public class HiveCommon implements Hive, ItemListener {
 		if ( info == null )
 			return; // ignore
 		
+		info.mergeAttributes ( attributes );
+        
 		Set<SessionCommon> sessionsToClose = new HashSet<SessionCommon>();
 		
 		Set<SessionCommon> sessions = new HashSet<SessionCommon>(info.getSessions());
