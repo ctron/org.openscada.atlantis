@@ -41,10 +41,14 @@ public class Messages
         return new Message ( CC_CLOSE_SESSION );
     }
     
-    public static Message subscribeItem ( String itemName )
+    public static Message subscribeItem ( String itemName, boolean initial )
     {
         Message msg = new Message ( CC_SUBSCRIBE_ITEM );
         msg.getValues().put ( "item-name", new StringValue(itemName) );
+        
+        if ( initial )
+            msg.getValues().put ( "initial", new StringValue("") );
+        
         return msg;
     }
     
