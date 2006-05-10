@@ -13,14 +13,12 @@ import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.da.handler.Messages;
 
-import sun.security.action.GetLongAction;
-
 public class ItemSyncController
 {
     
     private static Logger _log = Logger.getLogger ( ItemSyncController.class );
     
-    private ClientConnection _connection;
+    private Connection _connection;
     private String _itemName;
     
     /**
@@ -81,7 +79,7 @@ public class ItemSyncController
     private Map<ItemUpdateListener,ListenerInfo> _listeners = new HashMap<ItemUpdateListener,ListenerInfo>();
     private long _initialListeners = 0;
     
-    public ItemSyncController ( ClientConnection connection, String itemName )
+    public ItemSyncController ( Connection connection, String itemName )
     {
         _connection = connection;
         _itemName = itemName;
@@ -155,7 +153,9 @@ public class ItemSyncController
                 message = Messages.unsubscribeItem ( _itemName );
             }
             
-            _connection.getConnection().sendMessage ( message );
+            ClientConnection client = _connection.getClient();
+            if ( client != null )
+                client.getConnection().sendMessage ( message );
         }
     }
     

@@ -204,7 +204,7 @@ public class Connection
         {
             if (!_itemListeners.containsKey(itemName))
             {
-                _itemListeners.put( itemName, new ItemSyncController(_client, itemName) );
+                _itemListeners.put( itemName, new ItemSyncController(this, itemName) );
             }
             
             ItemSyncController controller = _itemListeners.get(itemName);
@@ -330,5 +330,14 @@ public class Connection
     public boolean isConnected ()
     {
         return _connected;
+    }
+
+    /**
+     * Get the network client
+     * @return the client instance of <em>null</em> if the client has not been started
+     */
+    public ClientConnection getClient ()
+    {
+        return _client;
     }
 }
