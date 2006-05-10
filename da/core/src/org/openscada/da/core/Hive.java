@@ -9,7 +9,7 @@ public interface Hive {
 	public Session createSession ( Properties props );
 	public void closeSession ( Session session ) throws InvalidSessionException;
 	
-	public void registerForItem ( Session session, String item ) throws InvalidSessionException, InvalidItemException;
+	public void registerForItem ( Session session, String item, boolean initial ) throws InvalidSessionException, InvalidItemException;
 	public void unregisterForItem ( Session session, String item ) throws InvalidSessionException, InvalidItemException;
 	
 	public void registerForAll ( Session session ) throws InvalidSessionException;
