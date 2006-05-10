@@ -154,12 +154,12 @@ public class SocketConnection extends IOChannel implements IOChannelListener {
 	public void triggerRead ()
 	{
 		_reading = true;
-		updateOps();
+		updateOps ();
 	}
 	public void stopRead ()
 	{
 		_reading = false;
-		updateOps();
+		updateOps ();
 	}
 
 	public void handleConnect()
