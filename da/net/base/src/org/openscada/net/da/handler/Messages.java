@@ -87,7 +87,7 @@ public class Messages
         
         // flag if initial bit is set
         if ( initial )
-            msg.getValues().put ( "initial", new LongValue(1) );
+            msg.getValues().put ( "initial", new StringValue("") );
         
         Value messageValue = variantToValue ( value );
         if ( messageValue != null )
@@ -104,7 +104,7 @@ public class Messages
         
         // flag if initial bit is set
         if ( initial )
-            msg.getValues().put ( "initial", new LongValue(1) );
+            msg.getValues().put ( "initial", new StringValue("") );
         
         for ( Map.Entry<String,Variant> entry : attributes.entrySet() )
         {
