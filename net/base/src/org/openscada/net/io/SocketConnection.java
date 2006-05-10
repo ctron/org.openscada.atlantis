@@ -71,35 +71,14 @@ public class SocketConnection extends IOChannel implements IOChannelListener {
 	{
 		try {
 			_log.debug("Initiating contact");
-            final SocketConnection _this = this;
-            _processor.getScheduler().executeJob(new Runnable(){
-
-                public void run ()
-                {
-                    try
-                    {
-                        _processor.registerConnection ( _this, SelectionKey.OP_CONNECT );
-                    }
-                    catch ( ClosedChannelException e )
-                    {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-                
-            });
-			
 			_channel.connect ( remote );
+            updateOps();
 			_log.debug("Contact request on its way");
 		}
         catch (IOException e)
         {
 			e.printStackTrace();
 		}
-        catch ( InterruptedException e )
-        {
-            e.printStackTrace();
-        }
 	}
 	
 	public void scheduleWrite ( ByteBuffer buffer )
@@ -137,18 +116,18 @@ public class SocketConnection extends IOChannel implements IOChannelListener {
 				ops += SelectionKey.OP_READ;
 			if ( _outputBuffers.size() > 0 )
 				ops += SelectionKey.OP_WRITE;
-			
-			if ( ops > 0 )
-			{
-			    _log.debug ( "Setting ops = " + ops );
-			    register ( _processor, ops );
-			}
-			else
-			{
-				_log.debug ( "Unregistering socket" );
-                unregister ( _processor );
-			}
 		}
+        
+        if ( ops > 0 )
+        {
+            _log.debug ( "Setting ops = " + ops );
+            register ( _processor, ops );
+        }
+        else
+        {
+            _log.debug ( "Unregistering socket" );
+            unregister ( _processor );
+        }
 	}
 	
 	public void triggerRead ()
@@ -190,6 +169,9 @@ public class SocketConnection extends IOChannel implements IOChannelListener {
 				close ();
 			}
 		}
+        else
+            _log.debug("Handle connect called although socket is not connecting");
+        
 		updateOps();
 	}
 
