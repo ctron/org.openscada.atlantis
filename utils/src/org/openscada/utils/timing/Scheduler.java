@@ -170,9 +170,10 @@ public class Scheduler implements Runnable
      * If the scheduler is not bound it will wait until the binding is established.
      * 
      * @param runnable The runnable to execute
+     * @param wait if <em>true</em> then the method will block until the job has been processed
      * @throws InterruptedException if the wait fails
      */
-    public void executeJob ( Runnable runnable ) throws InterruptedException
+    public void executeJob ( Runnable runnable, boolean wait ) throws InterruptedException
     {
         if ( Thread.currentThread().equals(_thread) )
         {
@@ -188,9 +189,46 @@ public class Scheduler implements Runnable
                 _jobs.add ( job );
             }
             
-            job.wait ();
+            if ( wait )
+                job.wait ();
         }            
         
+    }
+    
+    /**
+     * Schedules a job to be executed as soon as possible on the scheduler thread
+     * 
+     * If the scheduler is bound to the current thread the job will be executed directly.
+     * 
+     * If the scheduler is not bound it will wait until the binding is established.
+     * 
+     * @param runnable The runnable to execute
+     * @throws InterruptedException if the wait fails
+     */
+    public void executeJob ( Runnable runnable ) throws InterruptedException
+    {
+        executeJob ( runnable, true );
+    }
+    
+    /**
+     * Schedules a job to be executed as soon as possible on the scheduler thread
+     * 
+     * If the scheduler is bound to the current thread the job will be executed directly.
+     * 
+     * If the scheduler is not bound it will <em>not</em> wait until the binding is established.
+     * 
+     * @param runnable The runnable to execute
+     */
+    public void executeJobAsync ( Runnable runnable )
+    {
+        try
+        {
+            executeJob ( runnable, false );
+        }
+        catch ( InterruptedException e )
+        {
+            // may not be thrown since wait is not called
+        }
     }
 	
 	public void removeJob ( Runnable job )
