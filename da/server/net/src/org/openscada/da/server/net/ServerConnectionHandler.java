@@ -109,10 +109,11 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         }
         
         String itemName = message.getValues().get("item-name").toString();
+        boolean initial = message.getValues().containsKey("initial");
         
         try
         {
-            _hive.registerForItem(_session, itemName);
+            _hive.registerForItem(_session, itemName, initial );
         }
         catch ( InvalidSessionException e )
         {
@@ -161,14 +162,14 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 		super.closed();
 	}
 
-    public void valueChanged ( String name, Variant value )
+    public void valueChanged ( String name, Variant value, boolean initial )
     {
-        getConnection().sendMessage(Messages.notifyValue(name, value));
+        getConnection().sendMessage(Messages.notifyValue(name, value, initial));
     }
 
-    public void attributesChanged ( String name, Map<String, Variant> attributes )
+    public void attributesChanged ( String name, Map<String, Variant> attributes, boolean initial )
     {
-        getConnection().sendMessage(Messages.notifyAttributes(name, attributes));
+        getConnection().sendMessage(Messages.notifyAttributes(name, attributes, initial));
     }
 	
 }
