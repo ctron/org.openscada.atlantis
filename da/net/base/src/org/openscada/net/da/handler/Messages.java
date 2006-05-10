@@ -21,6 +21,9 @@ public class Messages
     public final static int CC_NOTIFY_VALUE =      0x00010020;
     public final static int CC_NOTIFY_ATTRIBUTES = 0x00010021;
     
+    public final static int CC_ENUM_SUBSCRIBE =    0x00010101;
+    public final static int CC_ENUM_EVENT =        0x00010102;
+    
     public static Message createSession ( Properties props )
     {
         Message msg = new Message ( CC_CREATE_SESSION );
@@ -76,11 +79,15 @@ public class Messages
         return null;
     }
     
-    public static Message notifyValue ( String itemName, Variant value )
+    public static Message notifyValue ( String itemName, Variant value, boolean initial )
     {
         Message msg = new Message ( CC_NOTIFY_VALUE );
         
         msg.getValues().put ( "item-name", new StringValue(itemName) );
+        
+        // flag if initial bit is set
+        if ( initial )
+            msg.getValues().put ( "initial", new LongValue(1) );
         
         Value messageValue = variantToValue ( value );
         if ( messageValue != null )
@@ -89,11 +96,15 @@ public class Messages
         return msg;
     }
     
-    public static Message notifyAttributes ( String itemName, Map<String,Variant> attributes )
+    public static Message notifyAttributes ( String itemName, Map<String,Variant> attributes, boolean initial )
     {
         Message msg = new Message ( CC_NOTIFY_ATTRIBUTES );
         
         msg.getValues().put ( "item-name", new StringValue(itemName) );
+        
+        // flag if initial bit is set
+        if ( initial )
+            msg.getValues().put ( "initial", new LongValue(1) );
         
         for ( Map.Entry<String,Variant> entry : attributes.entrySet() )
         {
