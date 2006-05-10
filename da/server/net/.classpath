@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/log4j"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_sysinfo"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openscada_net_base"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_net_base"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
