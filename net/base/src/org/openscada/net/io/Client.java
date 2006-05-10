@@ -1,0 +1,110 @@
+package org.openscada.net.io;
+
+import java.io.IOException;
+import java.net.SocketAddress;
+
+import org.apache.log4j.Logger;
+import org.openscada.net.base.MessageListener;
+import org.openscada.net.base.data.Message;
+import org.openscada.utils.timing.Scheduler;
+
+public class Client implements ConnectionStateListener {
+	
+	private static Logger _log = Logger.getLogger(Client.class);
+	
+	private IOProcessor _processor = null;
+	private MessageListener _listener;
+	private SocketAddress _remote;
+	private ClientConnection _connection = null;
+	private ConnectionStateListener _stateListener = null;
+    
+    private boolean _connected = false;
+
+	public Client ( IOProcessor processor, MessageListener listener, ConnectionStateListener stateListener, SocketAddress remote )
+	{
+		_processor = processor;
+		_listener = listener;
+		_stateListener = stateListener;
+		_remote = remote;
+	}
+	
+	public void sendMessage ( Message message )
+	{
+		if ( _connection != null )
+		{
+			_connection.sendMessage(message);
+		}
+	}
+	
+	public void connect ()
+	{
+        _log.debug("connecting...");
+        
+        closeCurrent();
+        
+		try {
+			SocketConnection channel = new SocketConnection ( _processor );
+			_connection = new ClientConnection ( _listener, this, channel );
+			channel.connect(_remote);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		 
+	}
+
+    private void closeCurrent ()
+    {
+        if ( _connection != null )
+        {
+            _connected = false;
+            _connection.close();
+            _connection = null;
+        }
+    }
+    
+	public void closed()
+	{
+		_log.debug ( "Connection closed" );
+		
+        // only send out events if we had been connected
+        if ( _connected )
+            if ( _stateListener != null )
+                _stateListener.closed();
+        
+        _connected = false;
+        
+        scheduleConnectJob();
+	}
+
+	public void opened()
+	{
+        _connected = true;
+        
+		_log.debug ( "Connection open" );
+		
+		if ( _stateListener != null )
+			_stateListener.opened();
+	}
+
+	public ClientConnection getConnection()
+    {
+		return _connection;
+	}
+
+    public boolean isConnected ()
+    {
+        return _connected;
+    }
+    
+    private void scheduleConnectJob ()
+    {
+        _log.debug("adding connect job");
+        
+        _processor.getScheduler().scheduleJob(new Runnable(){
+            
+            public void run() {
+                connect();
+            }}, Integer.getInteger("openscada.net.reconnect_period",1000));
+    }
+}

@@ -1,0 +1,131 @@
+package org.openscada.net.base;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.openscada.net.base.data.Message;
+import org.openscada.net.base.handlers.PingHandler;
+import org.openscada.net.base.handlers.PongHandler;
+import org.openscada.net.io.Connection;
+import org.openscada.net.io.ConnectionStateListener;
+import org.openscada.net.utils.MessageCreator;
+import org.openscada.utils.timing.Scheduler;
+
+public class ConnectionHandlerBase  implements ConnectionHandler, ConnectionAware {
+	
+	private static Logger _log = Logger.getLogger(ConnectionHandlerBase.class);
+
+	private MessageProcessor _messageProcessor = null;
+	private Scheduler.Job _pingJob = null;
+	protected Scheduler _scheduler = null;
+	private Connection _connection = null;
+	
+	private List<ConnectionStateListener> _csListeners = new ArrayList<ConnectionStateListener>();
+	
+	public ConnectionHandlerBase ()
+	{
+		_scheduler = new Scheduler();
+		_messageProcessor = new MessageProcessor();
+		
+		_messageProcessor.setHandler ( Message.CC_PING, new PingHandler() );
+		_messageProcessor.setHandler ( Message.CC_PONG, new PongHandler() );
+		
+	}
+	
+	private void doPing ()
+	{
+		if ( _connection != null )
+		{
+			_log.debug ( "Sending ping" );
+			_connection.sendMessage(MessageCreator.createPing());
+		}
+	}
+	
+	public void messageReceived(Connection connection, Message message)
+    {
+		_messageProcessor.messageReceived(connection, message);
+	}
+
+	public void addStateListener ( ConnectionStateListener listener )
+	{
+		_csListeners.add ( listener );
+	}
+	
+	public void removeStateListener ( ConnectionStateListener listener )
+	{
+		_csListeners.remove ( listener );
+	}
+	
+	private void removePingJob ()
+	{
+        _log.debug("removing ping job");
+        
+	    if ( _pingJob != null )
+	    {
+	        _scheduler.removeJob(_pingJob);
+	        _pingJob = null;
+	    }
+	}
+	
+	private void addPingJob ()
+	{
+	    removePingJob ();
+        
+        _log.debug("adding ping job");
+	    
+	    _pingJob = _scheduler.addJob(new Runnable(){
+	        
+	        public void run() {
+	            doPing();
+	        }}, Integer.getInteger("openscada.net.ping_period",10*1000));
+	}
+	
+	
+	public void closed() 
+	{
+        removePingJob();
+        
+		for ( ConnectionStateListener csl : _csListeners )
+		{
+			try
+			{
+				csl.closed();
+			}
+			catch ( Exception e )
+			{
+			}
+		}
+	}
+	
+   
+    
+	public void opened()
+	{
+	    addPingJob();
+
+		for ( ConnectionStateListener csl : _csListeners )
+		{
+			try
+			{
+				csl.opened();
+			}
+			catch ( Exception e )
+			{
+			}
+		}
+	}
+
+	public MessageProcessor getMessageProcessor() {
+		return _messageProcessor;
+	}
+
+	public Connection getConnection() {
+		return _connection;
+	}
+
+	public void setConnection(Connection connection) {
+		_connection = connection;
+	}
+	
+}
