@@ -115,9 +115,11 @@ public class ItemSyncController
                 _listeners.put(listener, new ListenerInfo(listener, initial));
                 if ( initial )
                     _initialListeners++;
+                
+                sync();
             }
         }
-        sync();
+        
     }
     
     public void remove ( ItemUpdateListener listener )
@@ -131,9 +133,10 @@ public class ItemSyncController
                     _initialListeners--;
                 
                 _listeners.remove(listener);
+                
+                sync();
             }
         }
-        sync();
     }
     
     public void sync ()
@@ -146,16 +149,20 @@ public class ItemSyncController
             
             if ( getNumberOfListeners() > 0 )
             {
+                _log.debug("Syncing listen state: active " + initial );
                 message = Messages.subscribeItem ( _itemName, initial );
             }
             else
             {
+                _log.debug("Syncing listen state: inactive " );
                 message = Messages.unsubscribeItem ( _itemName );
             }
             
             ClientConnection client = _connection.getClient();
             if ( client != null )
                 client.getConnection().sendMessage ( message );
+            else
+                _log.debug("No connection. Skipping sync message!");
         }
     }
     

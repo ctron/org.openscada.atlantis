@@ -94,6 +94,8 @@ public class Connection
             
             public void opened ()
             {
+                _log.debug("opened");
+                
                 if ( !isConnected() )
                     fireConnected();
             }});
@@ -111,6 +113,8 @@ public class Connection
             {
                 notifyAttributesChange(message);
             }});
+        
+        _client.start();
     }
     
     public void addConnectionStateListener ( ConnectionStateListener connectionStateListener )
@@ -131,6 +135,8 @@ public class Connection
     
     private void fireConnected ()
     {
+        _log.debug("connected");
+        
         _connected = true;
         
         List<ConnectionStateListener> connectionStateListeners;
@@ -154,6 +160,8 @@ public class Connection
     
     private void fireDisconnected ()
     {
+        _log.debug("dis-connected");
+        
         _connected = false;
         
         List<ConnectionStateListener> connectionStateListeners;
@@ -189,11 +197,14 @@ public class Connection
             public void messageTimedOut ()
             {
                 // TODO: so something
+                _log.info("Request session timed out");
             }} );
     }
     
     private void gotSession ()
     {
+        _log.debug("Got session!");
+        
         // sync again all items to maintain subscribtions
         syncAllItems();
     }
@@ -232,6 +243,8 @@ public class Connection
      */
     private void syncAllItems ()
     {
+        _log.debug("Syncing all items");
+        
         synchronized ( _itemListeners )
         {
             for ( Map.Entry<String,ItemSyncController> entry : _itemListeners.entrySet() )
