@@ -5,7 +5,10 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.client.net.Connection;
@@ -30,7 +33,7 @@ public class Application
                 Integer.getInteger ( "openscada.da.net.server.port", 1202 )
                 ));
         
-        Connection connection = new Connection ( info );
+        final Connection connection = new Connection ( info );
         
         connection.addConnectionStateListener(new ConnectionStateListener(){
 
@@ -43,6 +46,19 @@ public class Application
             {
                 _log.debug ( "Connection lost" );
                 
+            }});
+        
+        connection.getItemList().addObserver(new Observer(){
+
+            public void update ( Observable o, Object arg )
+            {
+                Collection<String> items = connection.getItemList().getItemList();
+                _log.debug("START - Item list");
+                for ( String item : items )
+                {
+                    _log.debug(" - " + item);
+                }
+                _log.debug("END - Item list");
             }});
         
         connection.addItemUpdateListener("time", true, new ItemUpdateListener(){
