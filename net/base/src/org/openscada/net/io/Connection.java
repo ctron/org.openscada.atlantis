@@ -100,13 +100,13 @@ public class Connection implements ConnectionListener, MessageListener {
         }
     }
     
-	public void sendMessage ( Message message )
+	synchronized public void sendMessage ( Message message )
 	{
 		message.setSequence(_sequence++);
 		_connection.scheduleWrite(_codec.code(message));
 	}
     
-    public void sendMessage ( Message message, MessageStateListener listener )
+    synchronized public void sendMessage ( Message message, MessageStateListener listener )
     {
         MessageTag tag = new MessageTag();
         
@@ -115,7 +115,10 @@ public class Connection implements ConnectionListener, MessageListener {
         
         message.setSequence(_sequence++);
         
-        _tagList.put ( message.getSequence(), tag );
+        synchronized ( _tagList )
+        {
+            _tagList.put ( message.getSequence(), tag );
+        }
         
         _connection.scheduleWrite ( _codec.code(message) );
     }
@@ -129,7 +132,10 @@ public class Connection implements ConnectionListener, MessageListener {
 		// no op
 	}
 
-	public void connected() {
+	public void connected()
+    {
+       _connection.triggerRead();
+       
 		if ( _connectionStateListener != null )
 			_connectionStateListener.opened ();
 	}
@@ -139,9 +145,19 @@ public class Connection implements ConnectionListener, MessageListener {
 			_connectionStateListener.closed ();
 	}
 
-	public void closed() {
+	public void closed()
+    {
         
         removeTimeOutJob();
+        
+        synchronized ( _tagList )
+        {
+            for ( Map.Entry<Long,MessageTag> tag : _tagList.entrySet() )
+            {
+                tag.getValue().getListener().messageTimedOut();
+            }
+            _tagList.clear();
+        }
         
 		if ( _connectionStateListener != null )
 			_connectionStateListener.closed ();
@@ -169,6 +185,7 @@ public class Connection implements ConnectionListener, MessageListener {
                 catch ( Exception e )
                 {
                 }
+                _tagList.remove(seq);
             }
         }
     }

@@ -148,6 +148,9 @@ public class Codec {
 	{
 		int type = buffer.getInt();
 		int len = buffer.getInt();
+        
+        if ( _log.isDebugEnabled() )
+            _log.debug("Additional data: " + type + " len: " + len);
 		
 		Value value = null;
 		
@@ -173,6 +176,8 @@ public class Codec {
 		
 		// now read the item name
 		int nameLen = buffer.getInt();
+        _log.debug("Reading " + nameLen + " name bytes");
+        
 		byte[] data = new byte[nameLen];
 		buffer.get(data);
 		String name = new String ( data );
@@ -220,7 +225,9 @@ public class Codec {
 			}
 			
 			_log.debug ( "Message time diff: " + (ts - st) );
+            _log.debug ( "Bytes remaining: " + _parseBuffer.remaining() );
 			_listener.messageReceived ( _connection, message );
+            _log.debug ( "Returned from processing message" );
 			
 		}
 		

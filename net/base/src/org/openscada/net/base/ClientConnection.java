@@ -11,13 +11,25 @@ public class ClientConnection extends ConnectionHandlerBase
 	private static Logger _log = Logger.getLogger(ClientConnection.class);
 	
 	private Client _client = null;
+    private IOProcessor _processor = null;
+    private SocketAddress _remote = null;
     
 	public ClientConnection ( IOProcessor processor, SocketAddress remote )
 	{
-	    _client = new Client ( processor, getMessageProcessor(), this, remote );
-	    setConnection ( _client.getConnection() );
-	    _client.connect ();
+        _processor = processor;
+	    _remote = remote;   
 	}
+    
+    /**
+     * start connecting to the server
+     *
+     */
+    public void start ()
+    {
+        _client = new Client ( _processor, getMessageProcessor(), this, _remote );
+        setConnection ( _client.getConnection() );
+        _client.connect ();
+    }
 	
 	@Override
 	public void opened ()

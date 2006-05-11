@@ -67,32 +67,53 @@ public class SocketConnection extends IOChannel implements IOChannelListener {
 		return _channel;
 	}
 	
-	public void connect (SocketAddress remote)
+	public void connect (final SocketAddress remote)
 	{
-		try {
-			_log.debug("Initiating contact");
-			_channel.connect ( remote );
-            updateOps();
-			_log.debug("Contact request on its way");
-		}
-        catch (IOException e)
+        try
         {
-			e.printStackTrace();
-		}
+            _processor.getScheduler().executeJob(new Runnable(){
+
+                public void run ()
+                {
+                    try {
+                        _log.debug("Initiating contact");
+                        register(_processor,SelectionKey.OP_CONNECT);
+                        _channel.connect ( remote );
+                        _log.debug("Contact request on its way");
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }});
+        }
+        catch ( InterruptedException e )
+        {
+        }
 	}
 	
-	public void scheduleWrite ( ByteBuffer buffer )
+	public void scheduleWrite ( final ByteBuffer buffer )
 	{
-		if ( _channel.isOpen() )
-		{
-			buffer.rewind();
-			synchronized ( _outputBuffers )
-			{
-				_outputBuffers.add ( buffer );
-			}
-			updateOps();
-		}
+        _processor.getScheduler().executeJobAsync(new Runnable(){
+            public void run ()
+            {
+                appendWriteData ( buffer );
+            }
+        });
 	}
+    
+    private void appendWriteData ( ByteBuffer buffer )
+    {
+        if ( _channel.isOpen() )
+        {
+            buffer.rewind();
+            synchronized ( _outputBuffers )
+            {
+                _outputBuffers.add ( buffer );
+            }
+            updateOps();
+        }
+    }
 	    
 	private void updateOps ()
 	{

@@ -11,12 +11,6 @@ public class ClientConnection extends Connection {
 		_connection = connection;
 		
 		_connection.setListener ( this );
-		_connection.triggerRead();
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-	}
-	
 }
