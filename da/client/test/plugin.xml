@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.openscada.da.client.test.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="OpenSCADA DA Test"
+            class="org.openscada.da.client.test.Perspective"
+            id="org.openscada.da.client.test.perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="Message"
+            allowMultiple="true"
+            icon="icons/sample2.gif"
+            class="org.openscada.da.client.test.View"
+            id="org.openscada.da.client.test.view">
+      </view>
+      <view
+            name="Mailboxes"
+            allowMultiple="true"
+            icon="icons/sample3.gif"
+            class="org.openscada.da.client.test.NavigationView"
+            id="org.openscada.da.client.test.navigationView">
+      </view>
+      <category
+            id="org.openscada.da.client.test"
+            name="OpenSCADA DA"/>
+      <view
+            category="org.openscada.da.client.test"
+            class="org.openscada.da.client.test.views.HiveView"
+            icon="icons/sample.gif"
+            id="org.openscada.da.client.test.views.HiveView"
+            name="Hive View"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="Mail"
+            id="org.openscada.da.client.test.category">
+      </category>
+      <command
+            categoryId="openscada_da_client_test.category"
+            description="Opens a mailbox"
+            id="org.openscada.da.client.test.open"
+            name="Open Mailbox">
+      </command>
+      <command
+            categoryId="openscada_da_client_test.category"
+            description="Open a message dialog"
+            id="org.openscada.da.client.test.openMessage"
+            name="Open Message Dialog">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.openscada.da.client.test.open"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+2">
+      </key>
+      <key
+            commandId="org.openscada.da.client.test.openMessage"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+3">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.exit"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+X">
+      </key>
+   </extension>
+   <extension
+         id="product"
+         name="OpenSCADA DA Test Client"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.openscada.da.client.test.application"
+            name="OpenSCADA DA Test Client">
+         <property
+               name="aboutText"
+               value="%aboutText">
+         </property>
+         <property
+               name="windowImages"
+               value="icons/sample2.gif">
+         </property>
+         <property
+               name="aboutImage"
+               value="product_lg.gif">
+         </property>
+      </product>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="org.openscada.da.client.test.views.HiveView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList"/>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+   </extension>
+
+</plugin>
