@@ -33,7 +33,8 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
-import org.openscada.da.client.test.config.HiveRepository;
+import org.openscada.da.client.test.impl.HiveConnection;
+import org.openscada.da.client.test.impl.HiveRepository;
 
 
 /**
@@ -57,7 +58,9 @@ import org.openscada.da.client.test.config.HiveRepository;
 public class HiveView extends ViewPart {
 	private TreeViewer viewer;
 	private DrillDownAdapter drillDownAdapter;
-	private Action action1;
+    
+	private Action connectAction;
+    
 	private Action action2;
 	private Action doubleClickAction;
     
@@ -86,7 +89,7 @@ public class HiveView extends ViewPart {
 			return getChildren(parent);
 		}
 		public Object getParent(Object child) {
-			if (child instanceof HiveConnectionInformation) {
+			if (child instanceof HiveConnection) {
 				return _repository;
 			}
 			return null;
@@ -95,7 +98,7 @@ public class HiveView extends ViewPart {
         {
             if ( parent instanceof HiveRepository )
             {
-                return((HiveRepository)parent).getConnections().toArray(new HiveConnectionInformation[0]);
+                return((HiveRepository)parent).getConnections().toArray(new HiveConnection[0]);
             }
 			return new Object[0];
 		}
@@ -110,10 +113,16 @@ public class HiveView extends ViewPart {
 	class ViewLabelProvider extends LabelProvider {
 
 		public String getText(Object obj) {
-            if ( obj instanceof HiveConnectionInformation )
+            if ( obj instanceof HiveConnection )
             {
-                HiveConnectionInformation connection = (HiveConnectionInformation)obj;
-                return connection.getHost() + ":" + connection.getPort();
+                HiveConnection connection = (HiveConnection)obj;
+                String text = "";
+                
+                if ( connection.isConnected() )
+                    text += ">";
+                
+                text += connection.getConnectionInformation().getHost() + ":" + connection.getConnectionInformation().getPort();
+                return text;
             }
 			return obj.toString();
 		}
@@ -121,7 +130,7 @@ public class HiveView extends ViewPart {
         {
 			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
             
-            if ( obj instanceof HiveConnectionInformation )
+            if ( obj instanceof HiveConnection )
             {
                 imageKey = ISharedImages.IMG_OBJ_FOLDER;
             }
@@ -147,7 +156,7 @@ public class HiveView extends ViewPart {
             HiveConnectionInformation connection = new HiveConnectionInformation();
             connection.setHost("localhost");
             connection.setPort((short)1202);
-            _repository.getConnections().add(connection);
+            _repository.getConnections().add(new HiveConnection(connection));
             _repository.save(hives);
         }
 	}
@@ -188,14 +197,15 @@ public class HiveView extends ViewPart {
 		fillLocalToolBar(bars.getToolBarManager());
 	}
 
-	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(action1);
+	private void fillLocalPullDown(IMenuManager manager)
+    {
+		manager.add(connectAction);
 		manager.add(new Separator());
 		manager.add(action2);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		manager.add(action1);
+		manager.add(connectAction);
 		manager.add(action2);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
@@ -204,23 +214,33 @@ public class HiveView extends ViewPart {
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(action1);
+		manager.add(connectAction);
 		manager.add(action2);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 	}
 
-	private void makeActions() {
-		action1 = new Action() {
+	private void makeActions()
+    {
+        // Connect Action
+        connectAction = new Action() {
 			public void run() {
-				showMessage("Action 1 executed");
+				ISelection selection = viewer.getSelection();
+                Object obj = ((IStructuredSelection)selection).getFirstElement();
+                if ( obj instanceof HiveConnection )
+                {
+                    HiveConnection connection = (HiveConnection)obj;
+                    connection.connect();
+                }
 			}
 		};
-		action1.setText("Action 1");
-		action1.setToolTipText("Action 1 tooltip");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+        connectAction.setText("Connect");
+        connectAction.setToolTipText("Establish connection to hive");
+        connectAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		
+        // Action 2
+        
 		action2 = new Action() {
 			public void run() {
 				showMessage("Action 2 executed");

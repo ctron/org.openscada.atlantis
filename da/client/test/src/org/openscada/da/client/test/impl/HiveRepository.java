@@ -1,4 +1,4 @@
-package org.openscada.da.client.test.config;
+package org.openscada.da.client.test.impl;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -10,10 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
+import org.openscada.da.client.test.config.HiveConnectionInformation;
 
 public class HiveRepository
 {
-    private List<HiveConnectionInformation> _connections = new ArrayList<HiveConnectionInformation>();
+    private List<HiveConnection> _connections = new ArrayList<HiveConnection>();
     
     public HiveRepository ()
     {
@@ -35,7 +36,7 @@ public class HiveRepository
                     Object o = decoder.readObject();
                     if ( !(o instanceof HiveConnectionInformation) )
                         continue;
-                    _connections.add( (HiveConnectionInformation)o );
+                    _connections.add( new HiveConnection((HiveConnectionInformation)o) );
                 }
                 catch ( ArrayIndexOutOfBoundsException e )
                 {
@@ -63,9 +64,9 @@ public class HiveRepository
         try
         {
             encoder = new XMLEncoder(new FileOutputStream(file));
-            for ( HiveConnectionInformation connection : _connections )
+            for ( HiveConnection connection : _connections )
             {
-                encoder.writeObject(connection);
+                encoder.writeObject(connection.getConnectionInformation());
             }
         }
         catch ( FileNotFoundException e )
@@ -80,7 +81,7 @@ public class HiveRepository
         }
     }
 
-    public List<HiveConnectionInformation> getConnections ()
+    public List<HiveConnection> getConnections ()
     {
         return _connections;
     }

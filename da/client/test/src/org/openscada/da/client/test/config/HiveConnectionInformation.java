@@ -10,7 +10,7 @@ public class HiveConnectionInformation implements Serializable
     private static final long serialVersionUID = 4226848319802862860L;
     
     private String _host;
-    private short _port;
+    private int _port;
     
     public HiveConnectionInformation ()
     {
@@ -26,11 +26,11 @@ public class HiveConnectionInformation implements Serializable
     {
         _host = host;
     }
-    public short getPort ()
+    public int getPort ()
     {
         return _port;
     }
-    public void setPort ( short port )
+    public void setPort ( int port )
     {
         _port = port;
     }

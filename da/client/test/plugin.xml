@@ -91,16 +91,13 @@
             name="OpenSCADA DA Test Client">
          <property
                name="aboutText"
-               value="%aboutText">
-         </property>
+               value="%aboutText"/>
          <property
                name="windowImages"
-               value="icons/sample2.gif">
-         </property>
+               value="icons/sample2.gif"/>
          <property
                name="aboutImage"
-               value="product_lg.gif">
-         </property>
+               value="product_lg.gif"/>
       </product>
    </extension>
    <extension

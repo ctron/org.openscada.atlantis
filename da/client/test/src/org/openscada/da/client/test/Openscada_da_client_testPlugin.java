@@ -1,6 +1,8 @@
 package org.openscada.da.client.test;
 
 import org.eclipse.ui.plugin.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.osgi.framework.BundleContext;
 
@@ -51,4 +53,14 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin("org.openscada.da.client.test", path);
 	}
+    
+    public static String getId()
+    {
+        return getDefault().getBundle().getSymbolicName();
+    }
+    
+    public static void logError ( int code, String msg, Throwable ex )
+    {
+        getDefault().getLog().log(new Status(IStatus.ERROR, getId(), code, msg, ex));
+    }
 }
