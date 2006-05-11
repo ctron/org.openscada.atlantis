@@ -20,6 +20,7 @@ import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
+import org.openscada.net.da.handler.EnumEvent;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.io.IOProcessor;
 import org.openscada.utils.timing.Scheduler;
@@ -41,6 +42,8 @@ public class Connection
     
     private static Object _defaultProcessorLock = new Object();
     private static IOProcessor _defaultProcessor = null;
+    
+    private ItemList _itemList = new ItemList ();
     
     private static IOProcessor getDefaultProcessor ()
     {
@@ -112,6 +115,13 @@ public class Connection
             public void messageReceived ( org.openscada.net.io.Connection connection, Message message )
             {
                 notifyAttributesChange(message);
+            }});
+        
+        _client.getMessageProcessor().setHandler(Messages.CC_ENUM_EVENT, new MessageListener(){
+
+            public void messageReceived ( org.openscada.net.io.Connection connection, Message message )
+            {
+                performEnumEvent ( message );
             }});
         
         _client.start();
@@ -206,7 +216,19 @@ public class Connection
         _log.debug("Got session!");
         
         // sync again all items to maintain subscribtions
-        syncAllItems();
+        syncAllItems ();
+        
+        // subscribe enum service
+        subscribeEnum ();
+    }
+    
+    private void subscribeEnum ()
+    {
+        if ( _client == null )
+            return;
+        
+        _client.getConnection().sendMessage(Messages.subscribeEnum());
+        
     }
     
     public void addItemUpdateListener ( String itemName, boolean initial, ItemUpdateListener listener ) 
@@ -339,6 +361,20 @@ public class Connection
         String itemName = message.getValues().get("item-name").toString();
         fireAttributesChange(itemName, attributes, initial);
     }
+    
+    private void performEnumEvent ( Message message )
+    {
+        synchronized ( _itemList )
+        {
+            List<String> added = new ArrayList<String>();
+            List<String> removed = new ArrayList<String>();
+            Boolean initial = new Boolean(false);
+            
+            EnumEvent.parse(message, added, removed, initial);
+            
+            _itemList.change(added, removed, initial.booleanValue());
+        }
+    }
 
     public boolean isConnected ()
     {
@@ -352,5 +388,18 @@ public class Connection
     public ClientConnection getClient ()
     {
         return _client;
+    }
+    
+    /**
+     * Get the item list. This list is maintained by the connection and will be
+     * feeded with events.
+     * @return the dynamic item list
+     */
+    public ItemList getItemList ()
+    {
+        synchronized ( _itemList )
+        {
+            return _itemList;
+        }
     }
 }
