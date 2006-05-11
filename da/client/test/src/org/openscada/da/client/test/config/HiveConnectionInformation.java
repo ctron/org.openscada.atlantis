@@ -2,7 +2,7 @@ package org.openscada.da.client.test.config;
 
 import java.io.Serializable;
 
-public class HiveConnection implements Serializable
+public class HiveConnectionInformation implements Serializable
 {
     /**
      * Serializeable ID 
@@ -12,7 +12,7 @@ public class HiveConnection implements Serializable
     private String _host;
     private short _port;
     
-    public HiveConnection ()
+    public HiveConnectionInformation ()
     {
         _host = "";
         _port = 0;

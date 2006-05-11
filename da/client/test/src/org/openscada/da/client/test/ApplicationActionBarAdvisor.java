@@ -54,6 +54,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(window);
         register(newWindowAction);
         
+        register(ActionFactory.SHOW_VIEW_MENU.create(window));
+        
         openViewAction = new OpenViewAction(window, "Open Another Message View", View.ID);
         register(openViewAction);
         
@@ -63,6 +65,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     
     protected void fillMenuBar(IMenuManager menuBar) {
         MenuManager fileMenu = new MenuManager("&File", IWorkbenchActionConstants.M_FILE);
+        MenuManager windowMenu = new MenuManager ( "&Window", IWorkbenchActionConstants.M_WINDOW );
         MenuManager helpMenu = new MenuManager("&Help", IWorkbenchActionConstants.M_HELP);
         
         menuBar.add(fileMenu);
@@ -77,6 +80,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         fileMenu.add(openViewAction);
         fileMenu.add(new Separator());
         fileMenu.add(exitAction);
+        
+        // Window
         
         // Help
         helpMenu.add(aboutAction);

@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.IPath;
 
 public class HiveRepository
 {
-    private List<HiveConnection> _connections = new ArrayList<HiveConnection>();
+    private List<HiveConnectionInformation> _connections = new ArrayList<HiveConnectionInformation>();
     
     public HiveRepository ()
     {
@@ -33,9 +33,9 @@ public class HiveRepository
                 try
                 {
                     Object o = decoder.readObject();
-                    if ( !(o instanceof HiveConnection) )
+                    if ( !(o instanceof HiveConnectionInformation) )
                         continue;
-                    _connections.add( (HiveConnection)o );
+                    _connections.add( (HiveConnectionInformation)o );
                 }
                 catch ( ArrayIndexOutOfBoundsException e )
                 {
@@ -63,7 +63,7 @@ public class HiveRepository
         try
         {
             encoder = new XMLEncoder(new FileOutputStream(file));
-            for ( HiveConnection connection : _connections )
+            for ( HiveConnectionInformation connection : _connections )
             {
                 encoder.writeObject(connection);
             }
@@ -78,5 +78,10 @@ public class HiveRepository
             if ( encoder != null )
                 encoder.close();
         }
+    }
+
+    public List<HiveConnectionInformation> getConnections ()
+    {
+        return _connections;
     }
 }
