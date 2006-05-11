@@ -15,6 +15,9 @@ public interface Hive {
 	public void registerForAll ( Session session ) throws InvalidSessionException;
 	public void unregisterForAll ( Session session ) throws InvalidSessionException;
 	
+    public void registerItemList ( Session session ) throws InvalidSessionException;
+    public void unregisterItemList ( Session session ) throws InvalidSessionException;
+    
 	// enumerate
-	Collection<String> listItems ( Session session ) throws InvalidSessionException;
+	public Collection<String> listItems ( Session session ) throws InvalidSessionException;
 }

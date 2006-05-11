@@ -5,7 +5,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.text.DefaultStyledDocument.AttributeUndoableEdit;
+
 import org.openscada.da.core.common.DataItem;
+import org.openscada.da.core.data.AttributesHelper;
 import org.openscada.da.core.data.Variant;
 
 public class DataItemInfo {
@@ -89,21 +92,7 @@ public class DataItemInfo {
     {
         synchronized ( _cachedAttributes )
         {
-            for ( Map.Entry<String,Variant> entry : attributes.entrySet() )
-            {
-                if ( entry.getValue() == null )
-                {
-                    _cachedAttributes.remove(entry.getKey());
-                }
-                else if ( entry.getValue().isNull() )
-                {
-                    _cachedAttributes.remove(entry.getKey());
-                }
-                else
-                {
-                    _cachedAttributes.put(entry.getKey(),new Variant(entry.getValue()));
-                }
-            }
+           AttributesHelper.mergeAttributes ( _cachedAttributes, attributes );
         }
     }
 	

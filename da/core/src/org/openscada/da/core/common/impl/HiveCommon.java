@@ -1,5 +1,6 @@
 package org.openscada.da.core.common.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import org.openscada.da.core.Hive;
 import org.openscada.da.core.InvalidItemException;
 import org.openscada.da.core.InvalidSessionException;
 import org.openscada.da.core.ItemChangeListener;
+import org.openscada.da.core.ItemListListener;
 import org.openscada.da.core.Session;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.ItemListener;
@@ -137,7 +139,10 @@ public class HiveCommon implements Hive, ItemListener {
 	public Collection<String> listItems(Session session) throws InvalidSessionException {
 		validateSession ( session );
 		
-		return _itemMap.keySet();
+        synchronized ( _items )
+        {
+            return _itemMap.keySet();
+        }
 	}
 	
 	// data item
@@ -150,6 +155,8 @@ public class HiveCommon implements Hive, ItemListener {
 				item.setListener(this);
 				_items.put ( item, new DataItemInfo(item) );
 				_itemMap.put( item.getName(), item );
+                
+                fireAddItem(item.getName());
 			}
 		}
 	}
@@ -167,6 +174,8 @@ public class HiveCommon implements Hive, ItemListener {
 				
 				_items.remove(item);	
 				_itemMap.remove(item.getName());
+                
+                fireRemoveItem(item.getName());
 			}
 		}
 	}
@@ -189,7 +198,10 @@ public class HiveCommon implements Hive, ItemListener {
 	
 	private DataItem lookupItem ( String name )
 	{
-		return _itemMap.get(name);
+        synchronized ( _items )
+        {
+            return _itemMap.get(name);
+        }
 	}
 	
 	// ItemListener Interface
@@ -275,5 +287,70 @@ public class HiveCommon implements Hive, ItemListener {
 		// TODO Auto-generated method stub
 		
 	}
+
+    public void registerItemList ( Session session ) throws InvalidSessionException
+    {
+        validateSession ( session );
+        
+        synchronized ( session )
+        {
+            SessionCommon sessionCommon = (SessionCommon)session;
+            if ( sessionCommon.isItemListSubscriber() )
+                return;
+            
+            // send initial content
+            synchronized(_items)
+            {
+                Collection<String> items = _itemMap.keySet();
+                sessionCommon.setItemListSubscriber(true);
+                if ( sessionCommon.getItemListListener() != null )
+                {
+                    sessionCommon.getItemListListener().changed(items,new ArrayList<String>(), true);
+                }
+            }
+        }
+    }
+
+    public void unregisterItemList ( Session session ) throws InvalidSessionException
+    {
+        validateSession ( session );
+        
+        synchronized ( session )
+        {
+            SessionCommon sessionCommon = (SessionCommon)session;
+            if ( !sessionCommon.isItemListSubscriber() )
+                return;
+            
+            sessionCommon.setItemListSubscriber(false);
+        }
+    }
+    
+    private void fireAddItem ( String name )
+    {
+        Collection<String> added = new ArrayList<String>();
+        added.add(name);
+        fireItemListChange(added, new ArrayList<String>());
+    }
+    
+    private void fireRemoveItem ( String name )
+    {
+        Collection<String> removed = new ArrayList<String>();
+        removed.add(name);
+        fireItemListChange(new ArrayList<String>(), removed);
+    }
+    
+    private void fireItemListChange ( Collection<String> added, Collection<String> removed )
+    {
+        synchronized ( _sessions )
+        {
+            for ( SessionCommon session : _sessions )
+            {
+                if ( session.isItemListSubscriber() && session.getItemListListener() != null )
+                {
+                    session.getItemListListener().changed ( added, removed, false );
+                }
+            }
+        }
+    }
 	
 }
