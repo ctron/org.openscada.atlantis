@@ -1,5 +1,7 @@
 package org.openscada.net.da.handler;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -22,7 +24,8 @@ public class Messages
     public final static int CC_NOTIFY_ATTRIBUTES = 0x00010021;
     
     public final static int CC_ENUM_SUBSCRIBE =    0x00010101;
-    public final static int CC_ENUM_EVENT =        0x00010102;
+    public final static int CC_ENUM_UNSUBSCRIBE =  0x00010102;
+    public final static int CC_ENUM_EVENT =        0x00010103;
     
     public static Message createSession ( Properties props )
     {
@@ -133,4 +136,18 @@ public class Messages
         
         return msg;
     }
+    
+    
+    public static Message subscribeEnum ()
+    {
+        Message msg = new Message ( CC_ENUM_SUBSCRIBE );
+        return msg;
+    }
+    
+    public static Message unsubscribeEnum ( )
+    {
+        Message msg = new Message ( CC_ENUM_UNSUBSCRIBE );
+        return msg;
+    }
+  
 }
