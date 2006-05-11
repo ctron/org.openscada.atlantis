@@ -9,9 +9,12 @@ import org.openscada.net.base.data.StringValue;
 public class EnumEvent
 {
     
-    public static Message create ( Collection<String> added, Collection<String> removed )
+    public static Message create ( Collection<String> added, Collection<String> removed, boolean initial )
     {
         Message msg = new Message ( Messages.CC_ENUM_EVENT );
+        
+        if ( initial )
+            msg.getValues().put("initial", new StringValue(""));
         
         int i;
         
@@ -31,7 +34,7 @@ public class EnumEvent
         return msg;
     }
     
-    public static void parse ( Message message, List<String> added, List<String> removed )
+    public static void parse ( Message message, List<String> added, List<String> removed, Boolean initial )
     {
         if ( message == null )
             return;
@@ -39,6 +42,10 @@ public class EnumEvent
             return;
         if ( removed == null )
             return;
+        if ( initial == null )
+            return;
+        
+        initial = message.getValues().containsKey("initial");
         
         added.clear();
         removed.clear();
