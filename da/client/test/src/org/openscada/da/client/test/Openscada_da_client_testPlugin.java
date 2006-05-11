@@ -1,9 +1,13 @@
 package org.openscada.da.client.test;
 
 import org.eclipse.ui.plugin.*;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.openscada.da.client.test.config.HiveConnectionInformation;
+import org.openscada.da.client.test.impl.HiveConnection;
+import org.openscada.da.client.test.impl.HiveRepository;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -62,5 +66,29 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin {
     public static void logError ( int code, String msg, Throwable ex )
     {
         getDefault().getLog().log(new Status(IStatus.ERROR, getId(), code, msg, ex));
+    }
+    
+    private static HiveRepository _repository = null;
+    public static HiveRepository getRepository ()
+    {
+        if ( _repository == null )
+        {
+            _repository = new HiveRepository();
+            
+            IPath hives = Openscada_da_client_testPlugin.getDefault().getStateLocation().append("hives.xml");
+            if ( hives.toFile().canRead() )
+                _repository.load(hives);
+            else
+            {
+                HiveConnectionInformation connection = new HiveConnectionInformation();
+                connection.setHost("localhost");
+                connection.setPort((short)1202);
+                _repository.getConnections().add(new HiveConnection(connection));
+                _repository.save(hives);
+            }
+            
+            
+        }
+        return _repository;
     }
 }

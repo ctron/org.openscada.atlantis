@@ -171,21 +171,15 @@ public class HiveView extends ViewPart
      */
     public HiveView()
     {
-        _repository = new HiveRepository();
-        
-        IPath hives = Openscada_da_client_testPlugin.getDefault().getStateLocation().append("hives.xml");
-        if ( hives.toFile().canRead() )
-            _repository.load(hives);
-        else
-        {
-            HiveConnectionInformation connection = new HiveConnectionInformation();
-            connection.setHost("localhost");
-            connection.setPort((short)1202);
-            _repository.getConnections().add(new HiveConnection(connection));
-            _repository.save(hives);
-        }
-        
+        _repository = Openscada_da_client_testPlugin.getRepository();
         registerAllConnections();
+    }
+    
+    @Override
+    public void dispose ()
+    {
+        unregisterAllConnections();
+        super.dispose ();
     }
     
     /**
@@ -247,18 +241,23 @@ public class HiveView extends ViewPart
         drillDownAdapter.addNavigationActions(manager);
     }
     
+    private void performConnect ()
+    {
+        ISelection selection = viewer.getSelection();
+        Object obj = ((IStructuredSelection)selection).getFirstElement();
+        if ( obj instanceof HiveConnection )
+        {
+            HiveConnection connection = (HiveConnection)obj;
+            connection.connect();
+        }
+    }
+    
     private void makeActions()
     {
         // Connect Action
         connectAction = new Action() {
             public void run() {
-                ISelection selection = viewer.getSelection();
-                Object obj = ((IStructuredSelection)selection).getFirstElement();
-                if ( obj instanceof HiveConnection )
-                {
-                    HiveConnection connection = (HiveConnection)obj;
-                    connection.connect();
-                }
+                performConnect();
             }
         };
         connectAction.setText("Connect");
@@ -289,7 +288,7 @@ public class HiveView extends ViewPart
     private void hookDoubleClickAction() {
         viewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {
-                doubleClickAction.run();
+                connectAction.run();
             }
         });
     }
@@ -325,7 +324,7 @@ public class HiveView extends ViewPart
         }
     }
     
-    synchronized private void registerAllConnections ()
+    synchronized private void unregisterAllConnections ()
     {
         // first unregister
         for ( Map.Entry<HiveConnection,Observer> entry : _obversers.entrySet() )
@@ -333,6 +332,11 @@ public class HiveView extends ViewPart
             entry.getKey().deleteObserver(entry.getValue());
         }
         _obversers.clear();
+    }
+    
+    synchronized private void registerAllConnections ()
+    {
+        unregisterAllConnections();
         
         for ( HiveConnection connection : _repository.getConnections() )
         {
