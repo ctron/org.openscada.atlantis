@@ -1,24 +1,30 @@
 package org.openscada.da.server.net;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.openscada.da.core.Hive;
 import org.openscada.da.core.InvalidItemException;
 import org.openscada.da.core.InvalidSessionException;
 import org.openscada.da.core.ItemChangeListener;
+import org.openscada.da.core.ItemListListener;
 import org.openscada.da.core.Session;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
+import org.openscada.net.da.handler.EnumEvent;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.io.Connection;
 import org.openscada.net.utils.MessageCreator;
 
-public class ServerConnectionHandler extends ConnectionHandlerBase implements ItemChangeListener {
+public class ServerConnectionHandler extends ConnectionHandlerBase implements ItemChangeListener, ItemListListener {
 
+    private static Logger _log = Logger.getLogger ( ServerConnectionHandler.class );
+    
 	private Hive _hive = null;
 	private Session _session = null;
 	
@@ -51,6 +57,20 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
             public void messageReceived(Connection connection, Message message) {
                 unsubscribe ( message );
             }});
+        
+        getMessageProcessor().setHandler(Messages.CC_ENUM_SUBSCRIBE, new MessageListener(){
+
+            public void messageReceived ( Connection connection, Message message )
+            {
+                enumSubscribe ( message );
+            }});
+        
+        getMessageProcessor().setHandler(Messages.CC_ENUM_UNSUBSCRIBE, new MessageListener(){
+
+            public void messageReceived ( Connection connection, Message message )
+            {
+                enumUnsubscribe ( message );
+            }});
 		
 	}
 	
@@ -70,7 +90,8 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 		}
 		
 		_session = _hive.createSession(props);
-        _session.setListener(this);
+        _session.setListener((ItemListListener)this);
+        _session.setListener((ItemChangeListener)this);
 		
 		if ( _session == null )
 		{
@@ -111,9 +132,11 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         String itemName = message.getValues().get("item-name").toString();
         boolean initial = message.getValues().containsKey("initial");
         
+        _log.debug("Subscribe to " + itemName + " initial " + initial );
+        
         try
         {
-            _hive.registerForItem(_session, itemName, initial );
+            _hive.registerForItem (_session, itemName, initial );
         }
         catch ( InvalidSessionException e )
         {
@@ -149,6 +172,44 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
             getConnection().sendMessage(MessageCreator.createFailedMessage(message,"Invalid item"));
         }
     }
+    
+    private void enumSubscribe ( Message message )
+    {
+        if ( _session == null )
+        {
+            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"No session"));
+            return;
+        }
+        
+        try
+        {
+            _hive.registerItemList(_session);
+        }
+        catch ( InvalidSessionException e )
+        {
+            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"Invalid session"));
+        }
+        
+    }
+    
+    private void enumUnsubscribe ( Message message )
+    {
+        if ( _session == null )
+        {
+            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"No session"));
+            return;
+        }
+        
+        try
+        {
+            _hive.unregisterItemList(_session);
+        }
+        catch ( InvalidSessionException e )
+        {
+            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"Invalid session"));
+        }
+        
+    }
 	
 	private void cleanUp ()
 	{
@@ -170,6 +231,11 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
     public void attributesChanged ( String name, Map<String, Variant> attributes, boolean initial )
     {
         getConnection().sendMessage(Messages.notifyAttributes(name, attributes, initial));
+    }
+
+    public void changed ( Collection<String> added, Collection<String> removed, boolean initial )
+    {
+        getConnection().sendMessage(EnumEvent.create(added, removed, initial));
     }
 	
 }
