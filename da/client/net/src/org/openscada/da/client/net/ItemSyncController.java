@@ -17,6 +17,9 @@ public class ItemSyncController
     private Connection _connection;
     private String _itemName;
     
+    private boolean _subscribedInitial = false;
+    private boolean _subscribed = false;
+    
     /**
      * Holds some additional listner information 
      * @author jens
@@ -135,15 +138,24 @@ public class ItemSyncController
         }
     }
     
-    public void sync ()
+    public void sync ( )
+    {
+        sync ( false );
+    }
+    
+    public void sync ( boolean force )
     {
         synchronized ( _listeners )
         {
             Message message;
             
             boolean initial = getNumerOfListenersInitial() > 0;
+            boolean subscribe = getNumberOfListeners() > 0; 
             
-            if ( getNumberOfListeners() > 0 )
+            if ( (_subscribedInitial == initial) && (_subscribed == subscribe) && !force )
+                return; // nothing to do
+            
+            if ( subscribe )
             {
                 _log.debug("Syncing listen state: active " + initial );
                 message = Messages.subscribeItem ( _itemName, initial );

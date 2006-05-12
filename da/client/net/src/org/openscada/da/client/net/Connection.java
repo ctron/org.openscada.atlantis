@@ -247,7 +247,7 @@ public class Connection
         _log.debug("Got session!");
         
         // sync again all items to maintain subscribtions
-        syncAllItems ();
+        resyncAllItems ();
         
         // subscribe enum service
         subscribeEnum ();
@@ -294,7 +294,7 @@ public class Connection
      * Synchronized all items that are currently known
      *
      */
-    private void syncAllItems ()
+    private void resyncAllItems ()
     {
         _log.debug("Syncing all items");
         
@@ -302,7 +302,7 @@ public class Connection
         {
             for ( Map.Entry<String,ItemSyncController> entry : _itemListeners.entrySet() )
             {
-                entry.getValue().sync();
+                entry.getValue().sync(true);
             }
         }
     }
