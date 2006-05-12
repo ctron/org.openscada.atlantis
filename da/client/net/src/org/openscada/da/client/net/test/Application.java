@@ -3,8 +3,6 @@ package org.openscada.da.client.net.test;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Observable;
@@ -17,7 +15,6 @@ import org.openscada.da.client.net.ConnectionStateListener;
 import org.openscada.da.client.net.ItemUpdateListener;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
-import org.openscada.net.io.IOProcessor;
 
 public class Application
 {

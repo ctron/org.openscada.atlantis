@@ -1,11 +1,9 @@
 package org.openscada.da.client.net;
 
 import java.io.IOException;
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -23,7 +21,6 @@ import org.openscada.net.base.data.Value;
 import org.openscada.net.da.handler.EnumEvent;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.io.IOProcessor;
-import org.openscada.utils.timing.Scheduler;
 
 public class Connection
 {
@@ -44,6 +41,7 @@ public class Connection
     private static IOProcessor _defaultProcessor = null;
     
     private ItemList _itemList = new ItemList ();
+    private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener>();
     
     private static IOProcessor getDefaultProcessor ()
     {
@@ -74,6 +72,8 @@ public class Connection
         _processor = processor;
         _connectionInfo = connectionInfo;
         
+        // register our own list
+        addItemListListener(_itemList);
     }
     
     public Connection ( ConnectionInfo connectionInfo )
@@ -125,6 +125,22 @@ public class Connection
             }});
         
         _client.start();
+    }
+    
+    public void addItemListListener ( ItemListListener listener )
+    {
+        synchronized ( _itemListListeners )
+        {
+            _itemListListeners.add ( listener );
+        }
+    }
+    
+    public void removeItemListListener ( ItemListListener listener )
+    {
+        synchronized ( _itemListListeners )
+        {
+            _itemListListeners.remove ( listener );
+        }
     }
     
     public void addConnectionStateListener ( ConnectionStateListener connectionStateListener )
@@ -190,6 +206,21 @@ public class Connection
             }
         }
         
+    }
+    
+    private void fireItemListChange ( Collection<String> added, Collection<String> removed, boolean initial )
+    {
+        synchronized ( _itemListListeners )
+        {
+            for ( ItemListListener listener : _itemListListeners )
+            {
+                try {
+                    listener.changed ( added, removed, initial );
+                }
+                catch ( Exception e )
+                {}
+            }
+        }
     }
     
     private void requestSession ()
@@ -372,8 +403,9 @@ public class Connection
             
             EnumEvent.parse(message, added, removed, initial);
             
-            _itemList.change(added, removed, initial.booleanValue());
+            fireItemListChange ( added, removed, initial.booleanValue() );
         }
+        
     }
 
     public boolean isConnected ()

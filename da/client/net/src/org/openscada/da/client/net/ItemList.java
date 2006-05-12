@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Set;
 
-public class ItemList extends Observable
+public class ItemList extends Observable implements ItemListListener
 {
     private Set<String> _items = new HashSet<String>();
     
@@ -13,7 +13,7 @@ public class ItemList extends Observable
     {
     }
     
-    public void change ( Collection<String> added, Collection<String> removed, boolean initial )
+    public void changed ( Collection<String> added, Collection<String> removed, boolean initial )
     {
         int changes = 0;
         
