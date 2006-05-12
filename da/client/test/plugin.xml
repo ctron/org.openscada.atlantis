@@ -21,20 +21,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
-      <view
-            name="Message"
-            allowMultiple="true"
-            icon="icons/sample2.gif"
-            class="org.openscada.da.client.test.View"
-            id="org.openscada.da.client.test.view">
-      </view>
-      <view
-            name="Mailboxes"
-            allowMultiple="true"
-            icon="icons/sample3.gif"
-            class="org.openscada.da.client.test.NavigationView"
-            id="org.openscada.da.client.test.navigationView">
-      </view>
       <category
             id="org.openscada.da.client.test"
             name="OpenSCADA DA"/>
@@ -54,35 +40,9 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
-      <category
-            name="Mail"
-            id="org.openscada.da.client.test.category">
-      </category>
-      <command
-            categoryId="openscada_da_client_test.category"
-            description="Opens a mailbox"
-            id="org.openscada.da.client.test.open"
-            name="Open Mailbox">
-      </command>
-      <command
-            categoryId="openscada_da_client_test.category"
-            description="Open a message dialog"
-            id="org.openscada.da.client.test.openMessage"
-            name="Open Message Dialog">
-      </command>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
-      <key
-            commandId="org.openscada.da.client.test.open"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="CTRL+2">
-      </key>
-      <key
-            commandId="org.openscada.da.client.test.openMessage"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="CTRL+3">
-      </key>
       <key
             commandId="org.eclipse.ui.file.exit"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -125,7 +85,7 @@
             targetID="org.openscada.da.client.test.views.HiveView">
          <action
                class="org.openscada.da.client.test.actions.WatchItemAction"
-               id="org.openscada.da.client.test.WatchItemAction"
+               id="org.openscada.da.client.test.actions.WatchItemAction"
                label="Watch"
                menubarPath="additions"
                style="push"
@@ -135,23 +95,44 @@
                <objectClass name="org.openscada.da.client.test.impl.HiveItem"/>
             </enablement>
          </action>
+         <action
+               class="org.openscada.da.client.test.actions.ConnectHiveAction"
+               id="org.openscada.da.client.test.actions.ConnectHiveAction"
+               label="Connect"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions"
+               tooltip="Connect to Hive">
+            <enablement>
+               <and>
+                  <objectClass name="org.openscada.da.client.test.impl.HiveConnection"/>
+               </and>
+            </enablement>
+         </action>
       </viewContribution>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
-      <viewerContribution
+      <objectContribution
+            adaptable="false"
+            id="org.openscada.da.client.test.actions.ConnectHiveAction"
+            objectClass="org.openscada.da.client.test.impl.HiveConnection">
+         <action
+               class="org.openscada.da.client.test.actions.ConnectHiveAction"
+               id="org.openscada.da.client.test.actions.ConnectHiveAction"
+               label="Connect"
+               menubarPath="additions"/>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
             id="org.openscada.da.client.test.popupMenus.WatchAction"
-            targetID="org.openscada.da.client.test.views.HiveView">
+            objectClass="org.openscada.da.client.test.impl.HiveItem">
          <action
                class="org.openscada.da.client.test.actions.WatchItemAction"
-               id="org.openscada.da.client.test.WatchItemAction"
+               id="org.openscada.da.client.test.actions.WatchItemAction"
                label="Watch"
-               menubarPath="additions">
-            <enablement>
-               <objectClass name="org.openscada.da.client.test.impl.HiveItem"/>
-            </enablement>
-         </action>
-      </viewerContribution>
+               menubarPath="additions"/>
+      </objectContribution>
    </extension>
 
 </plugin>

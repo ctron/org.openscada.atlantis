@@ -8,6 +8,7 @@ import java.util.Observer;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -30,11 +31,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
+import org.openscada.da.client.test.actions.ConnectHiveAction;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveItem;
@@ -66,7 +69,7 @@ public class HiveView extends ViewPart
     private TreeViewer viewer;
     private DrillDownAdapter drillDownAdapter;
     
-    private Action connectAction;
+    private IViewActionDelegate connectAction;
     
     private HiveRepository _repository;
     
@@ -230,38 +233,29 @@ public class HiveView extends ViewPart
     
     private void fillLocalPullDown(IMenuManager manager)
     {
-        manager.add(connectAction);
-        manager.add(new Separator());
+        //manager.add(connectAction);
+        //manager.add(new Separator());
     }
     
     private void fillContextMenu(IMenuManager manager) {
-        manager.add(connectAction);
-        manager.add(new Separator());
+        //manager.add(connectAction);
+        //manager.add(new Separator());
         //drillDownAdapter.addNavigationActions(manager);
         // Other plug-ins can contribute there actions here
         manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
     }
     
     private void fillLocalToolBar(IToolBarManager manager) {
-        manager.add(connectAction);
-        manager.add(new Separator());
+        //manager.add(connectAction);
+        //manager.add(new Separator());
         //drillDownAdapter.addNavigationActions(manager);
-    }
-    
-    private void performConnect ()
-    {
-        ISelection selection = viewer.getSelection();
-        Object obj = ((IStructuredSelection)selection).getFirstElement();
-        if ( obj instanceof HiveConnection )
-        {
-            HiveConnection connection = (HiveConnection)obj;
-            connection.connect();
-        }
     }
     
     private void makeActions()
     {
         // Connect Action
+
+        /*
         connectAction = new Action() {
             public void run() {
                 performConnect();
@@ -271,24 +265,18 @@ public class HiveView extends ViewPart
         connectAction.setToolTipText("Establish connection to hive");
         connectAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
                 getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-        
-               
+        */
+        connectAction = new ConnectHiveAction();
     }
     
     private void hookDoubleClickAction() {
         viewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {
-                connectAction.run();
+                connectAction.run(null);
             }
         });
     }
-    private void showMessage(String message) {
-        MessageDialog.openInformation(
-                viewer.getControl().getShell(),
-                "Hive View",
-                message);
-    }
-    
+   
     /**
      * Passing the focus request to the viewer's control.
      */

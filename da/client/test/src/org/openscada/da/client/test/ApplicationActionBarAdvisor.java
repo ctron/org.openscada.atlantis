@@ -1,6 +1,5 @@
 package org.openscada.da.client.test;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
@@ -30,8 +29,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private IWorkbenchAction exitAction;
     private IWorkbenchAction aboutAction;
     private IWorkbenchAction newWindowAction;
-    private OpenViewAction openViewAction;
-    private Action messagePopupAction;
     
 
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
@@ -55,17 +52,11 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         register(newWindowAction);
         
         register(ActionFactory.SHOW_VIEW_MENU.create(window));
-        
-        openViewAction = new OpenViewAction(window, "Open Another Message View", View.ID);
-        register(openViewAction);
-        
-        messagePopupAction = new MessagePopupAction("Open Message", window);
-        register(messagePopupAction);
+ 
     }
     
     protected void fillMenuBar(IMenuManager menuBar) {
         MenuManager fileMenu = new MenuManager("&File", IWorkbenchActionConstants.M_FILE);
-        MenuManager windowMenu = new MenuManager ( "&Window", IWorkbenchActionConstants.M_WINDOW );
         MenuManager helpMenu = new MenuManager("&Help", IWorkbenchActionConstants.M_HELP);
         
         menuBar.add(fileMenu);
@@ -76,8 +67,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         // File
         fileMenu.add(newWindowAction);
         fileMenu.add(new Separator());
-        fileMenu.add(messagePopupAction);
-        fileMenu.add(openViewAction);
         fileMenu.add(new Separator());
         fileMenu.add(exitAction);
         
@@ -90,7 +79,5 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     protected void fillCoolBar(ICoolBarManager coolBar) {
         IToolBarManager toolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
         coolBar.add(new ToolBarContributionItem(toolbar, "main"));   
-        toolbar.add(openViewAction);
-        toolbar.add(messagePopupAction);
     }
 }

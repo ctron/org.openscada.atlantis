@@ -396,10 +396,14 @@ public class DataItemView extends ViewPart implements ItemUpdateListener
         {
             _hiveItem.getConnection().getConnection().removeItemUpdateListener(_hiveItem.getItemName(),this);
             appendConsoleMessage("Unsubscribe from item: " + _hiveItem.getItemName() );
+            
+            setPartName("Data Item Viewer");
         }
         
         if ( item != null )
         {
+            setPartName("Data Item Viewer: " + item.getItemName());
+            
             _log.info ( "Set data item: " + item.getItemName() );
             
             _hiveItem = item;

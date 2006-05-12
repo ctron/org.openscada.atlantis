@@ -66,6 +66,7 @@ public class HiveConnection extends Observable
         {
             Openscada_da_client_testPlugin.logError(1,"Unable to connect", e);
         }
+        _log.debug("Connection fired up...");
     }
     
     synchronized public boolean isConnected ()
