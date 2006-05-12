@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.core.data.AttributesHelper;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.data.Message;
@@ -19,6 +20,9 @@ public class ItemSyncController
     
     private boolean _subscribedInitial = false;
     private boolean _subscribed = false;
+    
+    private Variant _cachedValue = new Variant();
+    private Map<String,Variant> _cachedAttributes = new HashMap<String,Variant>();
     
     /**
      * Holds some additional listner information 
@@ -113,7 +117,11 @@ public class ItemSyncController
             {
                 _listeners.put(listener, new ListenerInfo(listener, initial));
                 if ( initial )
+                {
                     _initialListeners++;
+                    listener.notifyValueChange(_cachedValue, true);
+                    listener.notifyAttributeChange(_cachedAttributes, true);
+                }
                 
                 sync();
             }
@@ -155,6 +163,9 @@ public class ItemSyncController
             if ( (_subscribedInitial == initial) && (_subscribed == subscribe) && !force )
                 return; // nothing to do
             
+            _subscribed = subscribe;
+            _subscribedInitial = initial;
+            
             if ( subscribe )
             {
                 _log.debug("Syncing listen state: active " + initial );
@@ -167,7 +178,7 @@ public class ItemSyncController
             }
             
             ClientConnection client = _connection.getClient();
-            if ( client != null )
+            if ( (client != null) && (client.getConnection()!=null) )
                 client.getConnection().sendMessage ( message );
             else
                 _log.debug("No connection. Skipping sync message!");
@@ -178,6 +189,8 @@ public class ItemSyncController
     {
         synchronized ( _listeners )
         {
+            _cachedValue = new Variant(value);
+            
             for ( ListenerInfo listenerInfo : _listeners.values() )
             {
                 if ( !initial || listenerInfo.isInitial() )
@@ -190,6 +203,8 @@ public class ItemSyncController
     {
         synchronized ( _listeners )
         {
+            AttributesHelper.mergeAttributes(_cachedAttributes, attributes, initial);
+            
             for ( ListenerInfo listenerInfo : _listeners.values() )
             {                
                 if ( !initial || listenerInfo.isInitial() )

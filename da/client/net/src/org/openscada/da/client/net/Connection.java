@@ -74,6 +74,8 @@ public class Connection
         
         // register our own list
         addItemListListener(_itemList);
+        
+        init ();
     }
     
     public Connection ( ConnectionInfo connectionInfo )
@@ -81,7 +83,7 @@ public class Connection
         this ( getDefaultProcessor(), connectionInfo );
     }
     
-    public void start ()
+    private void init ()
     {
         if ( _client != null )
             return;
@@ -121,9 +123,14 @@ public class Connection
 
             public void messageReceived ( org.openscada.net.io.Connection connection, Message message )
             {
+                _log.debug("Enum message from server");
                 performEnumEvent ( message );
             }});
         
+    }
+    
+    public void start ()
+    {
         _client.start();
     }
     
@@ -212,6 +219,8 @@ public class Connection
     {
         synchronized ( _itemListListeners )
         {
+            _log.debug("Sending out enum events");
+            
             for ( ItemListListener listener : _itemListListeners )
             {
                 try {
@@ -258,8 +267,10 @@ public class Connection
         if ( _client == null )
             return;
         
-        _client.getConnection().sendMessage(Messages.subscribeEnum());
+        _log.debug("Subscribing to enum");
         
+        _client.getConnection().sendMessage(Messages.subscribeEnum());
+        _log.debug("Subscribing to enum...complete");
     }
     
     public void addItemUpdateListener ( String itemName, boolean initial, ItemUpdateListener listener ) 
@@ -305,6 +316,7 @@ public class Connection
                 entry.getValue().sync(true);
             }
         }
+        _log.debug("re-sync complete");
     }
     
     
@@ -397,6 +409,7 @@ public class Connection
     {
         synchronized ( _itemList )
         {
+            
             List<String> added = new ArrayList<String>();
             List<String> removed = new ArrayList<String>();
             Boolean initial = new Boolean(false);
