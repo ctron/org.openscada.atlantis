@@ -5,6 +5,8 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -21,6 +23,8 @@ public class HiveConnection extends Observable
     
     private HiveConnectionInformation _connectionInfo;
     private Connection _connection = null;
+    
+    private Map<String,HiveItem> _itemMap = new HashMap<String,HiveItem>();
     
     public HiveConnection ( HiveConnectionInformation connectionInfo )
     {
@@ -90,17 +94,37 @@ public class HiveConnection extends Observable
         notifyObservers();
     }
     
-    private void performItemListUpdate ()
+    synchronized private void performItemListUpdate ()
     {
+        Map<String,HiveItem> items = new HashMap<String,HiveItem>();
+        
+        Collection<String> list = _connection.getItemList().getItemList();
+        for ( String item : list )
+        {
+            if ( _itemMap.containsKey(item) )
+                items.put ( item, _itemMap.get ( item ) );
+            else
+            {
+                items.put ( item, new HiveItem(this, item) );
+            }
+        }
+        
+        _itemMap = items;
+        
         setChanged();
         notifyObservers();
     }
     
-    synchronized public Collection<String> getItemList ()
+    synchronized public Collection<HiveItem> getItemList ()
     {
         if ( !isConnected () )
-            return new ArrayList<String>();
+            return new ArrayList<HiveItem>();
         
-        return _connection.getItemList().getItemList();
+        return _itemMap.values();
+    }
+
+    public Connection getConnection ()
+    {
+        return _connection;
     }
 }

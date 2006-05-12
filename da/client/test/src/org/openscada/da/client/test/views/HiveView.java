@@ -37,6 +37,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 import org.openscada.da.client.test.impl.HiveConnection;
+import org.openscada.da.client.test.impl.HiveItem;
 import org.openscada.da.client.test.impl.HiveRepository;
 
 
@@ -66,8 +67,6 @@ public class HiveView extends ViewPart
     private DrillDownAdapter drillDownAdapter;
     
     private Action connectAction;
-    
-    private Action watchAction;
     
     private HiveRepository _repository;
     
@@ -99,9 +98,15 @@ public class HiveView extends ViewPart
             }
             return getChildren(parent);
         }
-        public Object getParent(Object child) {
-            if (child instanceof HiveConnection) {
+        public Object getParent(Object child)
+        {
+            if (child instanceof HiveConnection)
+            {
                 return _repository;
+            }
+            else if ( child instanceof HiveItem )
+            {
+                return ((HiveItem)child).getConnection();
             }
             return null;
         }
@@ -113,7 +118,7 @@ public class HiveView extends ViewPart
             }
             else if ( parent instanceof HiveConnection )
             {
-                return ((HiveConnection)parent).getItemList().toArray(new String[0]);
+                return ((HiveConnection)parent).getItemList().toArray(new HiveItem[0]);
             }
             return new Object[0];
         }
@@ -145,6 +150,10 @@ public class HiveView extends ViewPart
                 
                 text += connection.getConnectionInformation().getHost() + ":" + connection.getConnectionInformation().getPort();
                 return text;
+            }
+            else if ( obj instanceof HiveItem )
+            {
+                return ((HiveItem)obj).getItemName();
             }
             return obj.toString();
         }
@@ -194,6 +203,8 @@ public class HiveView extends ViewPart
         hookContextMenu();
         hookDoubleClickAction();
         contributeToActionBars();
+        
+        getSite().setSelectionProvider(viewer);
     }
     
     
@@ -221,23 +232,20 @@ public class HiveView extends ViewPart
     {
         manager.add(connectAction);
         manager.add(new Separator());
-        manager.add(watchAction);
     }
     
     private void fillContextMenu(IMenuManager manager) {
         manager.add(connectAction);
-        manager.add(watchAction);
         manager.add(new Separator());
-        drillDownAdapter.addNavigationActions(manager);
+        //drillDownAdapter.addNavigationActions(manager);
         // Other plug-ins can contribute there actions here
         manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
     }
     
     private void fillLocalToolBar(IToolBarManager manager) {
         manager.add(connectAction);
-        manager.add(watchAction);
         manager.add(new Separator());
-        drillDownAdapter.addNavigationActions(manager);
+        //drillDownAdapter.addNavigationActions(manager);
     }
     
     private void performConnect ()
@@ -264,21 +272,7 @@ public class HiveView extends ViewPart
         connectAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
                 getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
         
-        // Watch Action
-        
-        watchAction = new Action() {
-            public void run() {
-                ISelection selection = viewer.getSelection();
-                Object obj = ((IStructuredSelection)selection).getFirstElement();
-                showMessage("Watch requested on "+obj.toString());
-                
-                
-            }
-        };
-        watchAction.setText("Watch");
-        watchAction.setToolTipText("Action 2 tooltip");
-        watchAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-                getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));        
+               
     }
     
     private void hookDoubleClickAction() {

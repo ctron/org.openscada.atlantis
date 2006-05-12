@@ -45,6 +45,7 @@
             id="org.openscada.da.client.test.views.HiveView"
             name="Hive View"/>
       <view
+            allowMultiple="true"
             category="org.openscada.da.client.test"
             class="org.openscada.da.client.test.views.DataItemView"
             icon="icons/sample.gif"
@@ -108,26 +109,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
-         <view
-               id="org.openscada.da.client.test.views.HiveView"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList"/>
-      </perspectiveExtension>
       <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
-         <view
-               id="org.openscada.da.client.test.views.HiveView"
-               ratio="0.25"
-               relationship="left"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"/>
-         <view
-               id="org.openscada.da.client.test.views.DataItemView"
-               ratio="0.25"
-               relationship="bottom"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"/>
       </perspectiveExtension>
    </extension>
    <extension
@@ -135,6 +117,41 @@
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="org.openscada.da.client.test.TestViewAction"
+            targetID="org.openscada.da.client.test.views.HiveView">
+         <action
+               class="org.openscada.da.client.test.actions.WatchItemAction"
+               id="org.openscada.da.client.test.WatchItemAction"
+               label="Watch"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions"
+               tooltip="Watch selected item">
+            <enablement>
+               <objectClass name="org.openscada.da.client.test.impl.HiveItem"/>
+            </enablement>
+         </action>
+      </viewContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.openscada.da.client.test.popupMenus.WatchAction"
+            targetID="org.openscada.da.client.test.views.HiveView">
+         <action
+               class="org.openscada.da.client.test.actions.WatchItemAction"
+               id="org.openscada.da.client.test.WatchItemAction"
+               label="Watch"
+               menubarPath="additions">
+            <enablement>
+               <objectClass name="org.openscada.da.client.test.impl.HiveItem"/>
+            </enablement>
+         </action>
+      </viewerContribution>
    </extension>
 
 </plugin>
