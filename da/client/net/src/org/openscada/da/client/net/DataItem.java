@@ -2,11 +2,12 @@ package org.openscada.da.client.net;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 
 import org.openscada.da.core.data.AttributesHelper;
 import org.openscada.da.core.data.Variant;
 
-public class DataItem
+public class DataItem extends Observable
 {
     private String _itemName;
     private Connection _connection = null;
@@ -58,6 +59,8 @@ public class DataItem
     private void performNotifyValueChange ( Variant value, boolean initial )
     {
         _value = value;
+        setChanged();
+        notifyObservers();
     }
 
     private void performNotifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
@@ -66,6 +69,9 @@ public class DataItem
             _attributes = new HashMap<String,Variant> ( attributes );
         else
             AttributesHelper.mergeAttributes ( _attributes, attributes );
+        
+        setChanged();
+        notifyObservers();
     }
     
     /**
