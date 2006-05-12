@@ -67,8 +67,7 @@ public class HiveView extends ViewPart
     
     private Action connectAction;
     
-    private Action action2;
-    private Action doubleClickAction;
+    private Action watchAction;
     
     private HiveRepository _repository;
     
@@ -86,7 +85,6 @@ public class HiveView extends ViewPart
             _repository = repository;
         }
         
-        
         public void inputChanged(Viewer v, Object oldInput, Object newInput)
         {
         }
@@ -94,7 +92,6 @@ public class HiveView extends ViewPart
         public void dispose()
         {
         }
-        
         
         public Object[] getElements(Object parent) {
             if (parent.equals(getViewSite())) {
@@ -199,6 +196,8 @@ public class HiveView extends ViewPart
         contributeToActionBars();
     }
     
+    
+    
     private void hookContextMenu() {
         MenuManager menuMgr = new MenuManager("#PopupMenu");
         menuMgr.setRemoveAllWhenShown(true);
@@ -222,12 +221,12 @@ public class HiveView extends ViewPart
     {
         manager.add(connectAction);
         manager.add(new Separator());
-        manager.add(action2);
+        manager.add(watchAction);
     }
     
     private void fillContextMenu(IMenuManager manager) {
         manager.add(connectAction);
-        manager.add(action2);
+        manager.add(watchAction);
         manager.add(new Separator());
         drillDownAdapter.addNavigationActions(manager);
         // Other plug-ins can contribute there actions here
@@ -236,7 +235,7 @@ public class HiveView extends ViewPart
     
     private void fillLocalToolBar(IToolBarManager manager) {
         manager.add(connectAction);
-        manager.add(action2);
+        manager.add(watchAction);
         manager.add(new Separator());
         drillDownAdapter.addNavigationActions(manager);
     }
@@ -265,24 +264,21 @@ public class HiveView extends ViewPart
         connectAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
                 getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
         
-        // Action 2
+        // Watch Action
         
-        action2 = new Action() {
-            public void run() {
-                showMessage("Action 2 executed");
-            }
-        };
-        action2.setText("Action 2");
-        action2.setToolTipText("Action 2 tooltip");
-        action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-                getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-        doubleClickAction = new Action() {
+        watchAction = new Action() {
             public void run() {
                 ISelection selection = viewer.getSelection();
                 Object obj = ((IStructuredSelection)selection).getFirstElement();
-                showMessage("Double-click detected on "+obj.toString());
+                showMessage("Watch requested on "+obj.toString());
+                
+                
             }
         };
+        watchAction.setText("Watch");
+        watchAction.setToolTipText("Action 2 tooltip");
+        watchAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+                getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));        
     }
     
     private void hookDoubleClickAction() {

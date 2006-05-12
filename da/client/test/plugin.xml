@@ -44,6 +44,12 @@
             icon="icons/sample.gif"
             id="org.openscada.da.client.test.views.HiveView"
             name="Hive View"/>
+      <view
+            category="org.openscada.da.client.test"
+            class="org.openscada.da.client.test.views.DataItemView"
+            icon="icons/sample.gif"
+            id="org.openscada.da.client.test.views.DataItemView"
+            name="Data Item View"/>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -109,6 +115,23 @@
                relationship="right"
                relative="org.eclipse.ui.views.TaskList"/>
       </perspectiveExtension>
+      <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
+         <view
+               id="org.openscada.da.client.test.views.HiveView"
+               ratio="0.25"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"/>
+         <view
+               id="org.openscada.da.client.test.views.DataItemView"
+               ratio="0.25"
+               relationship="bottom"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"/>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
