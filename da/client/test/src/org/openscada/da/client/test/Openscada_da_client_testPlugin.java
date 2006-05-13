@@ -75,7 +75,7 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin {
         {
             _repository = new HiveRepository();
             
-            IPath hives = Openscada_da_client_testPlugin.getDefault().getStateLocation().append("hives.xml");
+            IPath hives = getRepostoryFile();
             if ( hives.toFile().canRead() )
                 _repository.load(hives);
             else
@@ -90,5 +90,9 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin {
             
         }
         return _repository;
+    }
+    public static IPath getRepostoryFile ()
+    {
+        return getDefault().getStateLocation().append("hives.xml");
     }
 }

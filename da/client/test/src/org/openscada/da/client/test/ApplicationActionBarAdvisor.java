@@ -52,7 +52,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         register(newWindowAction);
         
         register(ActionFactory.SHOW_VIEW_MENU.create(window));
- 
+        register(ActionFactory.NEW_WIZARD_DROP_DOWN.create(window));
     }
     
     protected void fillMenuBar(IMenuManager menuBar) {
@@ -70,14 +70,13 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         fileMenu.add(new Separator());
         fileMenu.add(exitAction);
         
-        // Window
-        
         // Help
         helpMenu.add(aboutAction);
     }
     
     protected void fillCoolBar(ICoolBarManager coolBar) {
         IToolBarManager toolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-        coolBar.add(new ToolBarContributionItem(toolbar, "main"));   
+        coolBar.add(new ToolBarContributionItem(toolbar, "main"));
+        toolbar.add(getAction(ActionFactory.NEW_WIZARD_DROP_DOWN.getId()));
     }
 }

@@ -134,5 +134,18 @@
                menubarPath="additions"/>
       </objectContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="org.openscada.da.client.test"
+            class="org.openscada.da.client.test.wizards.NewHiveWizard"
+            id="org.openscada.da.client.test.newWizards.NewHive"
+            name="New Hive"
+            project="false"/>
+      <category
+            id="org.openscada.da.client.test"
+            name="OpenSCADA DA"
+            />
+   </extension>
 
 </plugin>

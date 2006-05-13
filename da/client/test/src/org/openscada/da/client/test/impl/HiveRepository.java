@@ -8,11 +8,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 import org.eclipse.core.runtime.IPath;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 
-public class HiveRepository
+public class HiveRepository extends Observable
 {
     private List<HiveConnection> _connections = new ArrayList<HiveConnection>();
     
@@ -81,6 +82,14 @@ public class HiveRepository
         }
     }
 
+    public void addConnection ( HiveConnection connection )
+    {
+        _connections.add ( connection );
+        
+        setChanged();
+        notifyObservers();
+    }
+    
     public List<HiveConnection> getConnections ()
     {
         return _connections;

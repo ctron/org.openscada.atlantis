@@ -21,6 +21,7 @@ public class HiveConnection extends Observable
 {
     private static Logger _log = Logger.getLogger ( HiveConnection.class );
     
+    private boolean _connectionRequested = false;
     private HiveConnectionInformation _connectionInfo;
     private Connection _connection = null;
     
@@ -33,6 +34,10 @@ public class HiveConnection extends Observable
     
     synchronized public void connect ()
     {
+        _connectionRequested = true;
+        setChanged();
+        notifyObservers();
+        
         if ( _connection != null )
             return;
         
@@ -127,5 +132,10 @@ public class HiveConnection extends Observable
     public Connection getConnection ()
     {
         return _connection;
+    }
+
+    public boolean isConnectionRequested ()
+    {
+        return _connectionRequested;
     }
 }

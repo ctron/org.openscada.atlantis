@@ -62,11 +62,11 @@ import org.openscada.da.client.test.impl.HiveRepository;
  * <p>
  */
 
-public class HiveView extends ViewPart 
+public class HiveView extends ViewPart implements Observer
 {
     private static Logger _log = Logger.getLogger ( HiveView.class );
     
-    private TreeViewer viewer;
+    private TreeViewer _viewer;
     private DrillDownAdapter drillDownAdapter;
     
     private IViewActionDelegate connectAction;
@@ -74,12 +74,10 @@ public class HiveView extends ViewPart
     private HiveRepository _repository;
     
     private Map<HiveConnection,Observer> _obversers = new HashMap<HiveConnection,Observer>();
-    
-    
-    class ViewContentProvider implements IStructuredContentProvider, 
-    ITreeContentProvider{
-        
-        
+   
+    class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider
+    {
+       
         private HiveRepository _repository;
         
         public ViewContentProvider ( HiveRepository repository )
@@ -141,15 +139,17 @@ public class HiveView extends ViewPart
     }
     class ViewLabelProvider extends LabelProvider {
         
-        public String getText(Object obj) {
+        public String getText(Object obj)
+        {
             if ( obj instanceof HiveConnection )
             {
-                _log.debug("Checking connection label");
                 HiveConnection connection = (HiveConnection)obj;
                 String text = "";
                 
+                if ( connection.isConnectionRequested() )
+                    text = "*";
                 if ( connection.isConnected() )
-                    text += ">";
+                    text = ">";
                 
                 text += connection.getConnectionInformation().getHost() + ":" + connection.getConnectionInformation().getPort();
                 return text;
@@ -181,6 +181,7 @@ public class HiveView extends ViewPart
     public HiveView()
     {
         _repository = Openscada_da_client_testPlugin.getRepository();
+        _repository.addObserver(this);
         registerAllConnections();
     }
     
@@ -188,26 +189,58 @@ public class HiveView extends ViewPart
     public void dispose ()
     {
         unregisterAllConnections();
+        _repository.deleteObserver(this);
         super.dispose ();
+    }
+    
+    public void update ( Observable o, Object arg )
+    {
+        if ( o == _repository )
+        {
+            
+            triggerUpdateRepository();
+        }
+    }
+    
+    public void triggerUpdateRepository ()
+    {
+        if ( !_viewer.getControl().isDisposed() )
+        {
+            _viewer.getControl().getDisplay().asyncExec(new Runnable(){
+
+                public void run ()
+                {
+                    if ( !_viewer.getControl().isDisposed() )
+                        performUpdateRepository();
+                }});
+        }
+    }
+    
+    private void performUpdateRepository ()
+    {
+        unregisterAllConnections ();
+        _viewer.refresh ( true );
+        registerAllConnections ();
     }
     
     /**
      * This is a callback that will allow us
      * to create the viewer and initialize it.
      */
-    public void createPartControl(Composite parent) {
-        viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
-        drillDownAdapter = new DrillDownAdapter(viewer);
-        viewer.setContentProvider(new ViewContentProvider(_repository));
-        viewer.setLabelProvider(new ViewLabelProvider());
-        viewer.setSorter(new NameSorter());
-        viewer.setInput(getViewSite());
+    public void createPartControl(Composite parent)
+    {
+        _viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+        drillDownAdapter = new DrillDownAdapter(_viewer);
+        _viewer.setContentProvider(new ViewContentProvider(_repository));
+        _viewer.setLabelProvider(new ViewLabelProvider());
+        _viewer.setSorter(new NameSorter());
+        _viewer.setInput(getViewSite());
         makeActions();
         hookContextMenu();
         hookDoubleClickAction();
         contributeToActionBars();
         
-        getSite().setSelectionProvider(viewer);
+        getSite().setSelectionProvider(_viewer);
     }
     
     
@@ -220,9 +253,9 @@ public class HiveView extends ViewPart
                 HiveView.this.fillContextMenu(manager);
             }
         });
-        Menu menu = menuMgr.createContextMenu(viewer.getControl());
-        viewer.getControl().setMenu(menu);
-        getSite().registerContextMenu(menuMgr, viewer);
+        Menu menu = menuMgr.createContextMenu(_viewer.getControl());
+        _viewer.getControl().setMenu(menu);
+        getSite().registerContextMenu(menuMgr, _viewer);
     }
     
     private void contributeToActionBars() {
@@ -270,7 +303,7 @@ public class HiveView extends ViewPart
     }
     
     private void hookDoubleClickAction() {
-        viewer.addDoubleClickListener(new IDoubleClickListener() {
+        _viewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {
                 connectAction.run(null);
             }
@@ -280,23 +313,24 @@ public class HiveView extends ViewPart
     /**
      * Passing the focus request to the viewer's control.
      */
-    public void setFocus() {
-        viewer.getControl().setFocus();
+    public void setFocus()
+    {
+        _viewer.getControl().setFocus();
     }
     
     private void refreshItem ( final Object o )
     {
         _log.debug("Request refresh");
         
-        if ( !viewer.getControl().isDisposed() )
+        if ( !_viewer.getControl().isDisposed() )
         {
-            viewer.getControl().getDisplay().asyncExec(new Runnable(){
+            _viewer.getControl().getDisplay().asyncExec(new Runnable(){
 
                 public void run ()
                 {
-                    if ( !viewer.getControl().isDisposed() )
+                    if ( !_viewer.getControl().isDisposed() )
                     {
-                        viewer.refresh(o, true);
+                        _viewer.refresh(o, true);
                     }
                 }});
         }
