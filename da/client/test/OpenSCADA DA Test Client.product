@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.1"?>
+
+<product name="OpenSCADA DA Test Client" id="org.openscada.da.client.test.product" application="org.openscada.da.client.test.application" useFeatures="true">
+
+   <aboutInfo>
+      <image path="about.png"/>
+      <text>
+         %aboutText
+      </text>
+   </aboutInfo>
+
+   <configIni use="default"/>
+
+   <launcherArgs>
+   </launcherArgs>
+
+   <windowImages small="icons/stock_channel.png" large="icons/32x32/stock_channel.png"/>
+
+
+   <launcher>
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <plugins>
+      <plugin id="log4j_plugin"/>
+      <plugin id="org.eclipse.core.commands"/>
+      <plugin id="org.eclipse.core.expressions"/>
+      <plugin id="org.eclipse.core.runtime"/>
+      <plugin id="org.eclipse.help"/>
+      <plugin id="org.eclipse.jface"/>
+      <plugin id="org.eclipse.osgi"/>
+      <plugin id="org.eclipse.swt"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86"/>
+      <plugin id="org.eclipse.ui"/>
+      <plugin id="org.eclipse.ui.workbench"/>
+      <plugin id="org.openscada.da.client.test"/>
+   </plugins>
+
+   <features>
+      <feature id="openscada_da_client_test_feature" version="1.0.0"/>
+      <feature id="org.eclipse.rcp" version="3.1.2"/>
+   </features>
+
+</product>

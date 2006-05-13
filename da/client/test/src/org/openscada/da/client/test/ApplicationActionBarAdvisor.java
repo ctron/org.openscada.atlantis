@@ -53,6 +53,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         
         register(ActionFactory.SHOW_VIEW_MENU.create(window));
         register(ActionFactory.NEW_WIZARD_DROP_DOWN.create(window));
+        register(ActionFactory.NEW.create(window));
     }
     
     protected void fillMenuBar(IMenuManager menuBar) {
@@ -64,9 +65,12 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         menuBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
         menuBar.add(helpMenu);
         
+       
+               
         // File
         fileMenu.add(newWindowAction);
         fileMenu.add(new Separator());
+        fileMenu.add(getAction(ActionFactory.NEW.getId()));
         fileMenu.add(new Separator());
         fileMenu.add(exitAction);
         

@@ -84,6 +84,7 @@ public class NewHiveWizard extends Wizard implements INewWizard
     public void init ( IWorkbench workbench, IStructuredSelection selection )
     {
         setNeedsProgressMonitor ( true );
+        setDefaultPageImageDescriptor(Openscada_da_client_testPlugin.getImageDescriptor("icons/48x48/stock_channel.png"));
     }
     
     @Override

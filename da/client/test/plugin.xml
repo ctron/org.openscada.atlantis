@@ -14,9 +14,10 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="OpenSCADA DA Test"
             class="org.openscada.da.client.test.Perspective"
-            id="org.openscada.da.client.test.perspective">
+            icon="icons/stock_channel.png"
+            id="org.openscada.da.client.test.perspective"
+            name="OpenSCADA DA Test">
       </perspective>
    </extension>
    <extension
@@ -27,14 +28,14 @@
       <view
             category="org.openscada.da.client.test"
             class="org.openscada.da.client.test.views.HiveView"
-            icon="icons/sample.gif"
+            icon="icons/stock_channel.png"
             id="org.openscada.da.client.test.views.HiveView"
             name="Hive View"/>
       <view
             allowMultiple="true"
             category="org.openscada.da.client.test"
             class="org.openscada.da.client.test.views.DataItemView"
-            icon="icons/sample.gif"
+            icon="icons/stock_watch.png"
             id="org.openscada.da.client.test.views.DataItemView"
             name="Data Item View"/>
    </extension>
@@ -61,15 +62,19 @@
                value="%aboutText"/>
          <property
                name="windowImages"
-               value="icons/sample2.gif"/>
+               value="icons/stock_channel.png"/>
          <property
                name="aboutImage"
-               value="product_lg.gif"/>
+               value="about.png"/>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini"/>
       </product>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
+         <newWizardShortcut id="org.openscada.da.client.test.newWizards.NewHive"/>
       </perspectiveExtension>
    </extension>
    <extension
@@ -85,6 +90,7 @@
             targetID="org.openscada.da.client.test.views.HiveView">
          <action
                class="org.openscada.da.client.test.actions.WatchItemAction"
+               icon="icons/stock_watch.png"
                id="org.openscada.da.client.test.actions.WatchItemAction"
                label="Watch"
                menubarPath="additions"
@@ -97,6 +103,7 @@
          </action>
          <action
                class="org.openscada.da.client.test.actions.ConnectHiveAction"
+               icon="icons/stock_connect.png"
                id="org.openscada.da.client.test.actions.ConnectHiveAction"
                label="Connect"
                menubarPath="additions"
@@ -119,6 +126,7 @@
             objectClass="org.openscada.da.client.test.impl.HiveConnection">
          <action
                class="org.openscada.da.client.test.actions.ConnectHiveAction"
+               icon="icons/stock_connect.png"
                id="org.openscada.da.client.test.actions.ConnectHiveAction"
                label="Connect"
                menubarPath="additions"/>
@@ -129,6 +137,7 @@
             objectClass="org.openscada.da.client.test.impl.HiveItem">
          <action
                class="org.openscada.da.client.test.actions.WatchItemAction"
+               icon="icons/stock_watch.png"
                id="org.openscada.da.client.test.actions.WatchItemAction"
                label="Watch"
                menubarPath="additions"/>
@@ -139,9 +148,13 @@
       <wizard
             category="org.openscada.da.client.test"
             class="org.openscada.da.client.test.wizards.NewHiveWizard"
+            descriptionImage="icons/32x32/stock_channel.png"
+            hasPages="true"
+            icon="icons/stock_channel.png"
             id="org.openscada.da.client.test.newWizards.NewHive"
             name="New Hive"
-            project="false"/>
+            project="false">
+      </wizard>
       <category
             id="org.openscada.da.client.test"
             name="OpenSCADA DA"

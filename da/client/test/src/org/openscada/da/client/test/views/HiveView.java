@@ -30,12 +30,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.openscada.da.client.test.ISharedImages;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.actions.ConnectHiveAction;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
@@ -144,15 +144,7 @@ public class HiveView extends ViewPart implements Observer
             if ( obj instanceof HiveConnection )
             {
                 HiveConnection connection = (HiveConnection)obj;
-                String text = "";
-                
-                if ( connection.isConnectionRequested() )
-                    text = "*";
-                if ( connection.isConnected() )
-                    text = ">";
-                
-                text += connection.getConnectionInformation().getHost() + ":" + connection.getConnectionInformation().getPort();
-                return text;
+                return connection.getConnectionInformation().getHost() + ":" + connection.getConnectionInformation().getPort();
             }
             else if ( obj instanceof HiveItem )
             {
@@ -162,14 +154,27 @@ public class HiveView extends ViewPart implements Observer
         }
         public Image getImage(Object obj)
         {
-            String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
+            String imageKey;
             
             if ( obj instanceof HiveConnection )
             {
-                imageKey = ISharedImages.IMG_OBJ_FOLDER;
+                HiveConnection connection = (HiveConnection)obj;
+                if ( connection.isConnectionRequested() )
+                    if ( connection.isConnected() )
+                        imageKey = ISharedImages.IMG_HIVE_CONNECTED;
+                    else
+                        imageKey = ISharedImages.IMG_HIVE_DISCONNECTED;
+                else
+                    imageKey = ISharedImages.IMG_HIVE_CONNECTION;
             }
+            else if ( obj instanceof HiveItem )
+            {
+                imageKey = ISharedImages.IMG_HIVE_ITEM;
+            }
+            else
+                return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_ELEMENT);
             
-            return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
+            return Openscada_da_client_testPlugin.getDefault().getImageRegistry().get ( imageKey );
         }
     }
     class NameSorter extends ViewerSorter {

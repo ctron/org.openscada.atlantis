@@ -1,10 +1,12 @@
 package org.openscada.da.client.test;
 
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveRepository;
@@ -17,13 +19,25 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin {
 
 	//The shared instance.
 	private static Openscada_da_client_testPlugin plugin;
-	
+    
 	/**
 	 * The constructor.
 	 */
 	public Openscada_da_client_testPlugin() {
 		plugin = this;
 	}
+    
+    @Override
+    protected void initializeImageRegistry ( ImageRegistry reg )
+    {
+        super.initializeImageRegistry ( reg );
+        
+        getImageRegistry().put ( ISharedImages.IMG_HIVE_CONNECTION, getImageDescriptor ( "icons/stock_channel.png" ) );
+        getImageRegistry().put ( ISharedImages.IMG_HIVE_CONNECTED, getImageDescriptor ( "icons/stock_connect.png" ) );
+        getImageRegistry().put ( ISharedImages.IMG_HIVE_DISCONNECTED, getImageDescriptor ( "icons/stock_disconnect.png" ) );
+        
+        getImageRegistry().put ( ISharedImages.IMG_HIVE_ITEM, getImageDescriptor ( "icons/stock_dataitem.png" ) );
+    }
 
 	/**
 	 * This method is called upon plug-in activation
