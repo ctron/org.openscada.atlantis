@@ -183,6 +183,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         
         try
         {
+            _log.debug("Got request to enum subscription");
             _hive.registerItemList(_session);
         }
         catch ( InvalidSessionException e )
@@ -235,6 +236,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 
     public void changed ( Collection<String> added, Collection<String> removed, boolean initial )
     {
+        _log.debug("Got enum change event from hive");
         getConnection().sendMessage(EnumEvent.create(added, removed, initial));
     }
 	
