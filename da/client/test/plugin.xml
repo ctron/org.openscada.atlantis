@@ -62,7 +62,7 @@
                value="%aboutText"/>
          <property
                name="windowImages"
-               value="icons/stock_channel.png"/>
+               value="icons/stock_channel.png,icons/32x32/stock_channel.png"/>
          <property
                name="aboutImage"
                value="about.png"/>

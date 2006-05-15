@@ -18,7 +18,7 @@
    <windowImages small="icons/stock_channel.png" large="icons/32x32/stock_channel.png"/>
 
 
-   <launcher>
+   <launcher name="ostc">
       <solaris/>
       <win useIco="false">
          <bmp/>
