@@ -27,12 +27,12 @@ public class SyncOperationTests extends TestCase
         super.setUp ();
     }
     
-    public void testSync1 () throws Exception
+    public void testSync () throws Exception
     {
         assertEquals ( _opSyncSuccess.execute("Alice"), "Hello to: Alice" );
     }
     
-    public void testSync2 () throws Exception
+    public void testAsync () throws Exception
     {
         OperationResult<String> or = _opSyncSuccess.startExecute("Bob");
         System.out.println("Started execution");
@@ -43,7 +43,7 @@ public class SyncOperationTests extends TestCase
         assertTrue ( or.isSuccess() );
     }
     
-    public void testSync3 () throws Exception
+    public void testAsyncHandler () throws Exception
     {
         TestOperationHandler<String> handler = new TestOperationHandler<String>();
         

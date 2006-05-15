@@ -1,5 +1,6 @@
 package org.openscada.utils.exec.test;
 
+import org.openscada.utils.exec.AsyncBasedOperation;
 import org.openscada.utils.exec.Operation;
 import org.openscada.utils.exec.OperationResult;
 import org.openscada.utils.exec.SyncBasedOperation;
@@ -9,33 +10,49 @@ import junit.framework.TestCase;
 public class AsyncOperationTests extends TestCase
 {
     
-    Operation<String,String> _opSyncSuccess = null;
+    Operation<String,String> _opAsyncSuccess = null;
     
     @Override
     protected void setUp () throws Exception
     {
-        _opSyncSuccess = new SyncBasedOperation<String,String>(){
+        _opAsyncSuccess = new AsyncBasedOperation<String,String>(){
 
-            public String execute ( String arg0 ) throws Exception
+            @Override
+            protected void startExecute ( final OperationResult<String> or, final String arg0 )
             {
-               Thread.sleep(1000);
-               System.out.println ( "Say hello: " + arg0 );
-               Thread.sleep(1000);
-               return "Hello to: " + arg0;
+               new Thread( new Runnable () {
+
+                public void run ()
+                {
+                    try
+                    {
+                        Thread.sleep(1000);
+                        System.out.println ( "Say hello: " + arg0 );
+                        Thread.sleep(1000);
+                        
+                        or.notifySuccess ( "Hello to: " + arg0 );
+                    }
+                    catch ( Exception e )
+                    {
+                        or.notifyFailure(e);
+                    }
+                }} ).start();
             }
+
+           
         };
         
         super.setUp ();
     }
     
-    public void testSync1 () throws Exception
+    public void testSync () throws Exception
     {
-        assertEquals ( _opSyncSuccess.execute("Alice"), "Hello to: Alice" );
+        assertEquals ( _opAsyncSuccess.execute("Alice"), "Hello to: Alice" );
     }
     
-    public void testSync2 () throws Exception
+    public void testAsync () throws Exception
     {
-        OperationResult<String> or = _opSyncSuccess.startExecute("Bob");
+        OperationResult<String> or = _opAsyncSuccess.startExecute("Bob");
         System.out.println("Started execution");
         
         or.complete();
@@ -44,11 +61,11 @@ public class AsyncOperationTests extends TestCase
         assertTrue ( or.isSuccess() );
     }
     
-    public void testSync3 () throws Exception
+    public void testAsyncHandler () throws Exception
     {
         TestOperationHandler<String> handler = new TestOperationHandler<String>();
         
-        OperationResult<String> or = _opSyncSuccess.startExecute(handler, "Bob");
+        OperationResult<String> or = _opAsyncSuccess.startExecute(handler, "Bob");
         System.out.println("Started execution");
         
         or.complete();
