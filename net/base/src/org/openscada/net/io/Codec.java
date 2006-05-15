@@ -194,11 +194,12 @@ public class Codec {
 		_parseBuffer.rewind();
 		while  ( _parseBuffer.remaining() >= HEADER_SIZE )
 		{
-			int bodySize = _parseBuffer.getInt(4 + 8 + 8 + 8 + 4);
+			int bodySize = _parseBuffer.getInt( _parseBuffer.position() + 4 + 8 + 8 + 8 + 4);
 			_log.debug("Body length: " + bodySize );
 			
 			if ( _parseBuffer.remaining() < HEADER_SIZE + bodySize )
 			{
+                _log.debug("Remaining: " + _parseBuffer.remaining() + " Header: " + HEADER_SIZE + " Body: " + bodySize );
 				// message is not complete so skip for next try
 				return;
 			}
