@@ -45,6 +45,10 @@ public class MessageProcessor implements MessageListener {
 		case Message.CC_UNKNOWN_COMMAND_CODE:
 			_log.warn("Reply to unknown message: " + message.getSequence() + "/" + message.getReplySequence() );
 			return;
+            
+        case Message.CC_ACK:
+            // no op
+            break;
 			
 		default:
 			processCustomMessage(connection, message);
@@ -60,6 +64,7 @@ public class MessageProcessor implements MessageListener {
 		
 		if ( !_listeners.containsKey(cc) )
 		{
+            _log.warn ( "Received message which cannot be processed! cc = " + message.getCommandCode() );
 			connection.sendMessage(MessageCreator.createUnknownMessage(message));
 			return;			
 		}
