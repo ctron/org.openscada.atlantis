@@ -1,4 +1,8 @@
-package org.openscada.utils.exec;
+package org.openscada.utils.exec.test;
+
+import org.openscada.utils.exec.Operation;
+import org.openscada.utils.exec.OperationResult;
+import org.openscada.utils.exec.OperationResultHandler;
 
 public abstract class AsyncBasedOperation<R, T> implements Operation<R, T>
 {
