@@ -1,7 +1,5 @@
 package org.openscada.net.da.handler;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -18,10 +16,14 @@ public class Messages
 {
 	public final static int CC_CREATE_SESSION =    0x00010001;
 	public final static int CC_CLOSE_SESSION =     0x00010002;
+    
     public final static int CC_SUBSCRIBE_ITEM =    0x00010010;
     public final static int CC_UNSUBSCRIBE_ITEM =  0x00010011;
     public final static int CC_NOTIFY_VALUE =      0x00010020;
     public final static int CC_NOTIFY_ATTRIBUTES = 0x00010021;
+    
+    public final static int CC_WRITE_OPERATION =   0x00010030;
+    public final static int CC_READ_OPERATION =    0x00010031;
     
     public final static int CC_ENUM_SUBSCRIBE =    0x00010101;
     public final static int CC_ENUM_UNSUBSCRIBE =  0x00010102;
@@ -62,7 +64,22 @@ public class Messages
         return msg;
     }
     
-    private static Value variantToValue ( Variant value )
+    public static Variant valueToVariant ( Value value, Variant defaultValue )
+    {
+        if ( value == null )
+            return defaultValue;
+        
+        if ( value instanceof StringValue )
+            return new Variant ( ((StringValue)value).getValue() );
+        else if ( value instanceof DoubleValue )
+            return new Variant ( ((DoubleValue)value).getValue() );
+        else if ( value instanceof LongValue )
+            return new Variant ( ((LongValue)value).getValue() );
+        
+        return defaultValue;
+    }
+    
+    public static Value variantToValue ( Variant value )
     {
         if ( value == null )
             return null;
