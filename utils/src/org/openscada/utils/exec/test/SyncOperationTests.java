@@ -1,60 +1,13 @@
 package org.openscada.utils.exec.test;
 
+import junit.framework.TestCase;
+
 import org.openscada.utils.exec.Operation;
 import org.openscada.utils.exec.OperationResult;
-import org.openscada.utils.exec.OperationResultHandler;
 import org.openscada.utils.exec.SyncBasedOperation;
-
-import junit.framework.TestCase;
 
 public class SyncOperationTests extends TestCase
 {
-    
-    private class TestOperationHandler<R> implements OperationResultHandler<R> 
-    {
-        private R _result = null;
-        private Exception _exception = null;
-        private boolean _failure = false;
-        private boolean _success = false;
-        
-        public void failure ( Exception e )
-        {
-            _result = null;
-            _exception = e;
-            _success = false;
-            _failure = true;
-        }
-
-        public void success ( R result )
-        {
-            _result = result;
-            _exception = null;
-            _success = true;
-            _failure = false;
-        }
-
-        public Exception getException ()
-        {
-            return _exception;
-        }
-
-        public boolean isFailure ()
-        {
-            return _failure;
-        }
-
-        public R getResult ()
-        {
-            return _result;
-        }
-
-        public boolean isSuccess ()
-        {
-            return _success;
-        }
-        
-    }
-    
     Operation<String,String> _opSyncSuccess = null;
     
     @Override
