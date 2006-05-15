@@ -7,7 +7,7 @@ import org.openscada.utils.exec.SyncBasedOperation;
 
 import junit.framework.TestCase;
 
-public class SyncOperationTests extends TestCase
+public class AsyncOperationTests extends TestCase
 {
     
     private class TestOperationHandler<R> implements OperationResultHandler<R> 
