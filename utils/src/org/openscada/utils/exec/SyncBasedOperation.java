@@ -3,6 +3,14 @@ package org.openscada.utils.exec;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+/**
+ * Implements an operation that is based on a synchronous operation
+ * 
+ * @author jens
+ *
+ * @param <R> The result type
+ * @param <T> The argument type
+ */
 public abstract class SyncBasedOperation < R, T > implements Operation < R, T >
 {
 

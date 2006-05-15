@@ -1,5 +1,12 @@
 package org.openscada.utils.exec;
 
+/**
+ * Implements an operation that is based on a asynchronous operation
+ * @author jens
+ *
+ * @param <R> The result type
+ * @param <T> The argument type
+ */
 
 public abstract class AsyncBasedOperation<R, T> implements Operation<R, T>
 {

@@ -2,6 +2,12 @@ package org.openscada.utils.exec;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A class that can be used to track the progress of an asynchronous execution
+ * @author jens
+ *
+ * @param <R>
+ */
 public class OperationResult < R >
 {
     private OperationResultHandler<R> _handler = null;
