@@ -45,7 +45,7 @@ public class OperationResult < R >
         return getResult();
     }
     
-    protected synchronized void notifySuccess ( R result )
+    public synchronized void notifySuccess ( R result )
     {
         if ( _complete )
             return;
@@ -60,7 +60,7 @@ public class OperationResult < R >
             _handler.success(result);
     }
     
-    protected synchronized void notifyFailure ( Exception e )
+    public synchronized void notifyFailure ( Exception e )
     {
         if ( _complete )
             return;
