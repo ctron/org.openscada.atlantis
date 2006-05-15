@@ -10,6 +10,16 @@ public class OperationResult < R >
     
     private boolean _complete = false;
     
+    public OperationResult ()
+    {
+        this(null);
+    }
+    
+    public OperationResult ( OperationResultHandler<R> handler )
+    {
+        _handler = handler;
+    }
+    
     public synchronized boolean isComplete ()
     {
         return _complete;

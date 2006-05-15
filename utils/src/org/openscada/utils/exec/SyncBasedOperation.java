@@ -22,28 +22,41 @@ public abstract class SyncBasedOperation < R, T > implements Operation < R, T >
         }
     }
     
-    private SyncBasedOperation ( )
+    public SyncBasedOperation ( )
     {
         this ( _defaultExecutor );
     }
     
-    private SyncBasedOperation ( Executor executor )
+    public SyncBasedOperation ( Executor executor )
     {
         _executor = executor;
     }
     
-    public OperationResult<R> startExecute ( final T arg0 )
+    private void startExecute ( final OperationResult<R> or, final T arg0 )
     {
-        final OperationResult<R> or = new OperationResult<R>();
-        
         _executor.execute(new Runnable(){
 
             public void run ()
             {
                 performJob( or, arg0 );
             }});
+    }
+    
+    public OperationResult<R> startExecute ( final T arg0 )
+    {
+        final OperationResult<R> or = new OperationResult<R> ();
+        
+        startExecute ( or, arg0 );
         
         return or;
     }
     
+    public OperationResult<R> startExecute ( OperationResultHandler<R> handler, T arg0 )
+    {
+        final OperationResult<R> or = new OperationResult<R> ( handler );
+        
+        startExecute ( or, arg0 );
+        
+        return or;
+    }
 }
