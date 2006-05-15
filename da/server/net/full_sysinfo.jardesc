@@ -2,7 +2,7 @@
 <jardesc>
 <jar path="/home/jens/deploy/openscada_net_server_sysinfo.jar"/>
 <options buildIfNeeded="true" compress="true" descriptionLocation="/openscada_da_server_net/full_sysinfo.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" useSourceFolders="false"/>
-<manifest generateManifest="false" mainClassHandleIdentifier="=openscada_da_server_net/src&lt;org.openscada.da.server.net{Application.java[Application" manifestLocation="/oxygen_snmp_driver/MANIFEST.MF" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
+<manifest generateManifest="false" mainClassHandleIdentifier="=openscada_da_server_net/src&lt;org.openscada.da.server.net{Application.java[Application" manifestLocation="/openscada_da_server_net/MANIFEST.MF" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
 <sealing sealJar="false">
 <packagesToSeal/>
 <packagesToUnSeal/>
