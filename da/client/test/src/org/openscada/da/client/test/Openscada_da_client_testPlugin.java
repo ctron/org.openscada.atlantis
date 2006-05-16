@@ -18,7 +18,7 @@ import org.osgi.framework.BundleContext;
 public class Openscada_da_client_testPlugin extends AbstractUIPlugin {
 
 	//The shared instance.
-	private static Openscada_da_client_testPlugin plugin;
+	private static Openscada_da_client_testPlugin plugin = null;
     
 	/**
 	 * The constructor.
@@ -95,8 +95,8 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin {
             else
             {
                 HiveConnectionInformation connection = new HiveConnectionInformation();
-                connection.setHost("localhost");
-                connection.setPort((short)1202);
+                connection.setHost ( "localhost" );
+                connection.setPort ( 1202 );
                 _repository.getConnections().add(new HiveConnection(connection));
                 _repository.save(hives);
             }

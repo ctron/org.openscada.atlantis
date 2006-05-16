@@ -1,29 +1,43 @@
 package org.openscada.da.client.test.views;
 
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import org.apache.log4j.Logger;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Sash;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.part.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.ViewPart;
 import org.openscada.da.client.net.DataItem;
 import org.openscada.da.client.net.ItemUpdateListener;
 import org.openscada.da.client.test.impl.HiveItem;
@@ -48,9 +62,9 @@ import org.openscada.da.core.data.Variant;
  * <p>
  */
 
-public class DataItemView extends ViewPart implements ItemUpdateListener
+public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 {
-    private static Logger _log = Logger.getLogger ( DataItemView.class );
+    private static Logger _log = Logger.getLogger ( DataItemWatchView.class );
     
     private HiveItem _hiveItem = null;
     
@@ -190,7 +204,7 @@ public class DataItemView extends ViewPart implements ItemUpdateListener
 	/**
 	 * The constructor.
 	 */
-	public DataItemView()
+	public DataItemWatchView()
     {
         
 	}
@@ -301,7 +315,7 @@ public class DataItemView extends ViewPart implements ItemUpdateListener
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				DataItemView.this.fillContextMenu(manager);
+				DataItemWatchView.this.fillContextMenu(manager);
 			}
 		});
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());

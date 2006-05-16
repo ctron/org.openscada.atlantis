@@ -12,7 +12,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.openscada.da.client.test.impl.HiveItem;
-import org.openscada.da.client.test.views.DataItemView;
+import org.openscada.da.client.test.views.DataItemWatchView;
 
 public class WatchItemAction implements IViewActionDelegate, IObjectActionDelegate
 {
@@ -35,10 +35,10 @@ public class WatchItemAction implements IViewActionDelegate, IObjectActionDelega
        
         try
         {
-            IViewPart viewer = _site.getPage().showView("org.openscada.da.client.test.views.DataItemView",_item.getItemName(),IWorkbenchPage.VIEW_CREATE);
-            if ( viewer instanceof DataItemView )
+            IViewPart viewer = _site.getPage().showView("org.openscada.da.client.test.views.DataItemWatchView",_item.getItemName(),IWorkbenchPage.VIEW_CREATE);
+            if ( viewer instanceof DataItemWatchView )
             {
-                ((DataItemView)viewer).setDataItem ( _item );
+                ((DataItemWatchView)viewer).setDataItem ( _item );
             }
         }
         catch ( PartInitException e )

@@ -34,9 +34,9 @@
       <view
             allowMultiple="true"
             category="org.openscada.da.client.test"
-            class="org.openscada.da.client.test.views.DataItemView"
+            class="org.openscada.da.client.test.views.DataItemWatchView"
             icon="icons/stock_watch.png"
-            id="org.openscada.da.client.test.views.DataItemView"
+            id="org.openscada.da.client.test.views.DataItemWatchView"
             name="Data Item View"/>
    </extension>
    <extension

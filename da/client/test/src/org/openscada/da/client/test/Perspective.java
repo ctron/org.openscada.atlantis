@@ -18,10 +18,10 @@ public class Perspective implements IPerspectiveFactory {
 		
 		layout.addStandaloneView("org.openscada.da.client.test.views.HiveView",  true, IPageLayout.LEFT, 0.25f, editorArea);
         //layout.addView("org.openscada.da.client.test.views.HiveView", IPageLayout.LEFT, 0.25f, editorArea);
-        //layout.addView("org.openscada.da.client.test.views.DataItemView", IPageLayout.BOTTOM, 0.50f, editorArea);
+        //layout.addView("org.openscada.da.client.test.views.DataItemWatchView", IPageLayout.BOTTOM, 0.50f, editorArea);
         
         IFolderLayout folder = layout.createFolder("items", IPageLayout.TOP, 0.5f, editorArea);
-		folder.addPlaceholder("org.openscada.da.client.test.views.DataItemView" + ":*");
+		folder.addPlaceholder("org.openscada.da.client.test.views.DataItemWatchView" + ":*");
         
 		layout.getViewLayout("org.openscada.da.client.test.views.HiveView").setCloseable(false);
 	}

@@ -13,7 +13,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveItem;
-import org.openscada.da.client.test.views.DataItemView;
+import org.openscada.da.client.test.views.DataItemWatchView;
 
 public class ConnectHiveAction implements IObjectActionDelegate, IViewActionDelegate
 {
