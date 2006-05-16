@@ -15,6 +15,7 @@ import org.openscada.da.client.net.ConnectionStateListener;
 import org.openscada.da.client.net.ItemUpdateListener;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
+import org.openscada.utils.timing.Scheduler;
 
 public class Application
 {
@@ -78,6 +79,46 @@ public class Application
                 // TODO Auto-generated method stub
                 
             }});
+        
+        connection.addItemUpdateListener("memory", true, new ItemUpdateListener(){
+
+            public void notifyValueChange ( Variant value, boolean initial )
+            {
+                try
+                {
+                    _log.debug("Value changed: " + value.asString() );
+                }
+                catch ( NullValueException e )
+                {
+                   _log.debug("Value changed to null!");
+                }
+                
+            }
+
+            public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
+            {
+                // TODO Auto-generated method stub
+                
+            }});
+        
+        // add a job for writing
+        Scheduler scheduler = new Scheduler();
+        scheduler.addJob ( new Runnable(){
+
+            public void run ()
+            {
+                try
+                {
+                    _log.debug ( "Writing..." );
+                    connection.write ( "memory", new Variant("Test: " + System.currentTimeMillis()) );
+                    connection.write ( "command", new Variant(System.currentTimeMillis()) );
+                    _log.debug ( "Writing...complete!" );
+                }
+                catch ( Exception e )
+                {
+                    e.printStackTrace();
+                }
+            }}, 10*1000, true );
         
         connection.start();
         

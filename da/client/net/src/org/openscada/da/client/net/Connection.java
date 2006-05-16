@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.client.net.operations.WriteOperation;
+import org.openscada.da.client.net.operations.WriteOperationArguments;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.MessageListener;
@@ -21,6 +23,8 @@ import org.openscada.net.base.data.Value;
 import org.openscada.net.da.handler.EnumEvent;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.io.IOProcessor;
+import org.openscada.utils.exec.OperationResult;
+import org.openscada.utils.exec.OperationResultHandler;
 
 public class Connection
 {
@@ -42,6 +46,8 @@ public class Connection
     
     private ItemList _itemList = new ItemList ();
     private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener>();
+    
+    private WriteOperation _writeOperation;
     
     private static IOProcessor getDefaultProcessor ()
     {
@@ -76,6 +82,8 @@ public class Connection
         addItemListListener(_itemList);
         
         init ();
+        
+        _writeOperation = new WriteOperation ( this );
     }
     
     public Connection ( ConnectionInfo connectionInfo )
@@ -239,7 +247,7 @@ public class Connection
         
         _client.getConnection().sendMessage ( Messages.createSession(new Properties()), new MessageStateListener(){
 
-            public void messageComplete ( Message message )
+            public void messageReply ( Message message )
             {
                 gotSession ();
             }
@@ -352,23 +360,14 @@ public class Connection
         
         if ( message.getValues().containsKey("value") )
         {
-            value = valueToVariant ( message.getValues().get("value") );
+            value = Messages.valueToVariant ( message.getValues().get("value"), null );
         }
         
         String itemName = message.getValues().get("item-name").toString();
         fireValueChange(itemName, value, initial);
     }
     
-    private Variant valueToVariant ( Value fromValue )
-    {
-        if ( fromValue instanceof StringValue )
-            return new Variant ( ((StringValue)fromValue).getValue() );
-        else if ( fromValue instanceof DoubleValue )
-            return new Variant ( ((DoubleValue)fromValue).getValue() );
-        else if ( fromValue instanceof LongValue )
-            return new Variant ( ((LongValue)fromValue).getValue() );
-        return null;
-    }
+    
     
     private void notifyAttributesChange ( Message message )
     {
@@ -383,9 +382,9 @@ public class Connection
             String name = entry.getKey();
             if ( name.startsWith("set-") )
             {
-                Variant value = valueToVariant ( entry.getValue() );
-                name = name.substring("set-".length());
-                attributes.put(name,value);
+                Variant value = Messages.valueToVariant ( entry.getValue(), null );
+                name = name.substring ( "set-".length() );
+                attributes.put ( name, value );
             }
             else if ( name.startsWith("null-"))
             {
@@ -399,7 +398,6 @@ public class Connection
             }
             
         }
-        
         
         String itemName = message.getValues().get("item-name").toString();
         fireAttributesChange(itemName, attributes, initial);
@@ -446,5 +444,20 @@ public class Connection
         {
             return _itemList;
         }
+    }
+    
+    public void write ( String itemName, Variant value ) throws Exception
+    {
+        _writeOperation.execute ( new WriteOperationArguments ( itemName, value ) );
+    }
+    
+    public OperationResult<Object> startWrite ( String itemName, Variant value )
+    {
+        return _writeOperation.startExecute ( new WriteOperationArguments ( itemName, value ) );
+    }
+    
+    public OperationResult<Object> startWrite ( String itemName, Variant value, OperationResultHandler<Object> handler )
+    {
+        return _writeOperation.startExecute ( handler, new WriteOperationArguments ( itemName, value ) );
     }
 }
