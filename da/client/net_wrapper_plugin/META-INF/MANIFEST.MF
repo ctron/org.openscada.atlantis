@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenSCADA DA Client Library Wrapper
+Bundle-SymbolicName: openscada_da_client_net_plugin_wrapper
+Bundle-Version: 1.0.0
+Bundle-ClassPath: openscada_da_net_client_lib.jar
+Bundle-Vendor: OpenSCADA
+Bundle-Localization: plugin
+Export-Package: org.openscada.da.browser,
+ org.openscada.da.browser.common.impl,
+ org.openscada.da.client.net,
+ org.openscada.da.client.net.test,
+ org.openscada.da.core,
+ org.openscada.da.core.common,
+ org.openscada.da.core.common.impl,
+ org.openscada.da.core.data,
+ org.openscada.da.core.data.test,
+ org.openscada.net.base,
+ org.openscada.net.base.data,
+ org.openscada.net.base.handlers,
+ org.openscada.net.da.handler,
+ org.openscada.net.io,
+ org.openscada.net.test,
+ org.openscada.net.utils,
+ org.openscada.utils.timing
+Require-Bundle: log4j_wrapper_plugin
