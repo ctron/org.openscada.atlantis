@@ -17,18 +17,24 @@ public class Hive extends HiveCommon {
 	{
 		super();
 		
-		registerItem(new MemoryDataItem("test") );
+		registerItem(new MemoryDataItem("memory") );
 		
 		DataItemCommand cmd;
-		
 		cmd = new DataItemCommand("hello");
 		cmd.addListener(new DataItemCommand.Listener(){
 
 			public void command(Variant value) {
 				System.out.println ( "Hello World!" );
 			}});
-		
 		registerItem ( cmd );
+        
+        cmd = new DataItemCommand("command");
+        cmd.addListener(new DataItemCommand.Listener(){
+
+            public void command(Variant value) {
+                System.out.println ( "Command is: " + value.asString("<null>") );
+            }});
+        registerItem ( cmd );
 		
 		registerItem ( new TimeDataItem("time", _scheduler) );
 		registerItem ( new PlainFileDataItem("hostname",new File("/proc/sys/kernel/hostname"), _scheduler, 1000 * 10 ) );
