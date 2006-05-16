@@ -1,11 +1,12 @@
 package org.openscada.da.core;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Properties;
 
+import org.openscada.da.core.data.Variant;
 
-public interface Hive {
+public interface Hive
+{
 	public Session createSession ( Properties props );
 	public void closeSession ( Session session ) throws InvalidSessionException;
 	
@@ -20,4 +21,8 @@ public interface Hive {
     
 	// enumerate
 	public Collection<String> listItems ( Session session ) throws InvalidSessionException;
+    
+    // async DA operations
+    public void startWrite ( Session session, String itemName, Variant value, WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException;
+    //public void startRead ( Session session, String item, Variant value, ReadOperationListener listener ); 
 }

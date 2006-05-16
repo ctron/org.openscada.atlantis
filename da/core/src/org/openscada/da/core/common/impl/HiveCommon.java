@@ -8,16 +8,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.openscada.da.core.Hive;
 import org.openscada.da.core.InvalidItemException;
 import org.openscada.da.core.InvalidSessionException;
 import org.openscada.da.core.ItemChangeListener;
 import org.openscada.da.core.ItemListListener;
+import org.openscada.da.core.ReadOperationListener;
 import org.openscada.da.core.Session;
+import org.openscada.da.core.WriteOperationListener;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.ItemListener;
 import org.openscada.da.core.data.Variant;
+import org.openscada.utils.exec.OperationResultHandler;
 
 public class HiveCommon implements Hive, ItemListener {
 	
@@ -25,6 +30,8 @@ public class HiveCommon implements Hive, ItemListener {
 	private Set<SessionCommon> _sessions = new HashSet<SessionCommon>();
 	
 	private Map<String,DataItem> _itemMap = new HashMap<String,DataItem>();
+    
+    private Executor _executor = Executors.newCachedThreadPool();
 	
 	public void validateSession ( Session session ) throws InvalidSessionException
 	{
@@ -352,5 +359,31 @@ public class HiveCommon implements Hive, ItemListener {
             }
         }
     }
+
+    public void startWrite ( Session session, String itemName, Variant value, final WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException
+    {
+        validateSession(session);
+        
+        DataItem item = lookupItem(itemName);
+        
+        if ( item == null )
+            throw new InvalidItemException(itemName);
+        
+        if ( listener == null )
+            return; // FIXME: report as error
+        
+        new WriteOperation().startExecute(new OperationResultHandler<Object>(){
+
+            public void failure ( Exception e )
+            {
+               listener.failure ( e.getMessage() );
+            }
+
+            public void success ( Object result )
+            {
+                listener.success();
+            }}, new WriteOperationArguments(item,value));
+    }
+
 	
 }
