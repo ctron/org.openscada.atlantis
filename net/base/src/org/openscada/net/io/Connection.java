@@ -180,7 +180,7 @@ public class Connection implements ConnectionListener, MessageListener {
             {
                 try
                 {
-                    _tagList.get(seq).getListener().messageComplete ( message );
+                    _tagList.get(seq).getListener().messageReply ( message );
                 }
                 catch ( Exception e )
                 {

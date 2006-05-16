@@ -5,11 +5,11 @@ import java.util.Map;
 
 
 public class Message {
-	public final static int CC_UNKNOWN_COMMAND_CODE = 0x00000001;
-	public final static int CC_FAILED = 0x00000002;
-	public final static int CC_ACK = 0x00000003;
-	public final static int CC_PING = 0x00000010;
-	public final static int CC_PONG = 0x00000011;
+	public final static int CC_UNKNOWN_COMMAND_CODE =  0x00000001;
+	public final static int CC_FAILED =                0x00000002;
+	public final static int CC_ACK =                   0x00000003;
+	public final static int CC_PING =                  0x00000010;
+	public final static int CC_PONG =                  0x00000011;
 	
 	private int _commandCode = 0;
 	private long _sequence = 0;
