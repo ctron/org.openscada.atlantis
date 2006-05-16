@@ -15,7 +15,7 @@
    <launcherArgs>
    </launcherArgs>
 
-   <windowImages small="icons/stock_channel.png" large="icons/32x32/stock_channel.png"/>
+   <windowImages/>
 
 
    <launcher name="ostc">
@@ -24,6 +24,7 @@
          <bmp/>
       </win>
    </launcher>
+
 
    <plugins>
       <plugin id="log4j_plugin"/>
@@ -34,7 +35,7 @@
       <plugin id="org.eclipse.jface"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.swt"/>
-      <plugin id="org.eclipse.swt.gtk.linux.x86"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86" fragment="true"/>
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.openscada.da.client.test"/>
@@ -42,7 +43,7 @@
 
    <features>
       <feature id="openscada_da_client_test_feature" version="1.0.0"/>
-      <feature id="org.eclipse.rcp" version="3.1.2"/>
+      <feature id="org.eclipse.rcp" version="3.2.0.v20060511-2000-VDNgUi843pOsLRQ"/>
    </features>
 
 </product>
