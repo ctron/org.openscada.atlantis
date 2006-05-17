@@ -49,7 +49,7 @@ public class Scheduler implements Runnable
 		}
 		
 		@Override
-		public boolean equals(Object obj)
+		public boolean equals (Object obj)
         {
             if ( obj == null )
                 return false;
@@ -63,6 +63,12 @@ public class Scheduler implements Runnable
 			Job job = (Job)obj;
 			
 			return _runnable.equals(job._runnable);
+		}
+		
+		@Override
+		public int hashCode ()
+		{
+			return _runnable.hashCode ();
 		}
 
 		public int getPeriod() {
