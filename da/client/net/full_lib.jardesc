@@ -10,17 +10,11 @@
 <packagesToUnSeal/>
 </sealing>
 </manifest>
-<selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-<javaElement handleIdentifier="=openscada_da_client_net/src&lt;org.openscada.da.client.net"/>
-<javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.test"/>
+<selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
 <javaElement handleIdentifier="=openscada_da_net_base/src"/>
 <javaElement handleIdentifier="=openscada_utils/src"/>
-<javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.utils"/>
-<javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.io"/>
-<javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.base.handlers"/>
+<javaElement handleIdentifier="=openscada_net_base/src"/>
 <javaElement handleIdentifier="=openscada_da_core/src"/>
-<javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.base"/>
-<javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.base.data"/>
-<javaElement handleIdentifier="=openscada_da_client_net/src&lt;org.openscada.da.client.net.test"/>
+<javaElement handleIdentifier="=openscada_da_client_net/src"/>
 </selectedElements>
 </jardesc>
