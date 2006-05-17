@@ -40,8 +40,18 @@ public abstract class DataItemBase implements DataItem {
 		}
 	}
 	
+    /**
+     * Notify internal listeners ( most commonly the hive ) about
+     * changes in the attribute set.
+     * <p>
+     * If the change set is empty the event will not be forwarded
+     * @param attributes the list of changes made to the attributes
+     */
 	public void notifyAttributes ( Map<String, Variant> attributes )
 	{
+        if ( attributes.size () <= 0 )
+            return;
+        
 		synchronized ( this )
 		{
 			if ( _listener != null )

@@ -6,29 +6,57 @@ public class AttributesHelper
 {
     /**
      * merges the difference attributes into the target
+     * <p>
+     * returns the real changes performed on <code>target</code> in <code>diff</code>
      * @param target the attributes to merge the difference in
-     * @param diff the difference attributes
+     * @param change the attributes to change
+     * @param diff output of real changes that were made
      */
-    public static void mergeAttributes ( Map<String,Variant> target, Map<String,Variant> diff )
+    public static void mergeAttributes ( Map<String,Variant> target, Map<String,Variant> change, Map<String,Variant> diff )
     {
-        for ( Map.Entry<String,Variant> entry : diff.entrySet() )
+        for ( Map.Entry<String,Variant> entry : change.entrySet() )
         {
             if ( entry.getKey() == null )
                 continue;
             
             if ( entry.getValue() == null )
             {
-                target.remove(entry.getKey());
+                if ( target.containsKey ( entry.getKey() ))
+                {
+                    target.remove ( entry.getKey() );
+                    if ( diff != null )
+                        diff.put ( entry.getKey(), null );
+                }
             }
             else if ( entry.getValue().isNull() )
             {
-                target.remove(entry.getKey());
+                if ( target.containsKey ( entry.getKey() ) )
+                {
+                    target.remove(entry.getKey());
+                    if ( diff != null )
+                        diff.put ( entry.getKey(), null );
+                }
             }
             else
             {
-                target.put(new String(entry.getKey()), new Variant(entry.getValue()));
+                if ( (diff!=null) && !target.containsKey ( entry.getKey() ) )
+                    diff.put ( entry.getKey (), entry.getValue () );
+                else if ( (diff!=null) && !target.get ( entry.getKey()  ).equals ( entry.getValue() ))
+                    diff.put ( entry.getKey (), entry.getValue () );
+                
+                target.put ( new String(entry.getKey()), new Variant(entry.getValue()) );
             }
         }
+    }
+    
+    /**
+     * merges the difference attributes into the target
+     * @param target the attributes to merge the difference in
+     * @param change the attributes to change
+     */
+    public static void mergeAttributes ( Map<String,Variant> target, Map<String,Variant> change )
+    {
+        mergeAttributes ( target, change, null );
     }
     
     /**
@@ -48,4 +76,5 @@ public class AttributesHelper
         
         mergeAttributes ( target, diff );
     }
+   
 }
