@@ -33,7 +33,7 @@ public abstract class DataItemBase implements DataItem {
 		{
 			if ( _listener != null )
 			{
-				_listener.valueChanged(this, value);
+				_listener.valueChanged ( this, value );
 			}
 		}
 	}
@@ -44,7 +44,7 @@ public abstract class DataItemBase implements DataItem {
 		{
 			if ( _listener != null )
 			{
-				_listener.attributesChanged(this, attributes);
+				_listener.attributesChanged ( this, attributes );
 			}
 		}
 		
