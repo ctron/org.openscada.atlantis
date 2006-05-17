@@ -203,7 +203,7 @@ public class ItemSyncController
     {
         synchronized ( _listeners )
         {
-            AttributesHelper.mergeAttributes(_cachedAttributes, attributes, initial);
+            AttributesHelper.mergeAttributes ( _cachedAttributes, attributes, initial );
             
             for ( ListenerInfo listenerInfo : _listeners.values() )
             {                
