@@ -23,6 +23,7 @@ public class ItemList extends Observable implements ItemListListener
             {
                 _items.clear ();
                 _items = new HashSet<String> ( added );
+                changes = _items.size ();
             }
             else
             {
