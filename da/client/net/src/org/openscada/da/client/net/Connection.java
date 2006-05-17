@@ -25,6 +25,7 @@ import org.openscada.net.da.handler.Messages;
 import org.openscada.net.io.IOProcessor;
 import org.openscada.utils.exec.OperationResult;
 import org.openscada.utils.exec.OperationResultHandler;
+import org.openscada.utils.lang.Holder;
 
 public class Connection
 {
@@ -65,7 +66,7 @@ public class Connection
         }
         catch ( IOException e )
         {    
-            e.printStackTrace();
+            _log.error ( "unable to created io processor", e );
         }
         // operation failed;
         return null;
@@ -290,7 +291,7 @@ public class Connection
                 _itemListeners.put( itemName, new ItemSyncController(this, itemName) );
             }
             
-            ItemSyncController controller = _itemListeners.get(itemName);
+            ItemSyncController controller = _itemListeners.get ( itemName );
             controller.add ( listener, initial );
         }
     }
@@ -343,9 +344,9 @@ public class Connection
     {
         synchronized ( _itemListeners )
         {
-            if ( _itemListeners.containsKey(itemName) )
+            if ( _itemListeners.containsKey ( itemName ) )
             {
-                _itemListeners.get(itemName).fireAttributesChange(attributes,initial);
+                _itemListeners.get ( itemName ).fireAttributesChange(attributes,initial);
             }
         }
     }
@@ -400,7 +401,7 @@ public class Connection
         }
         
         String itemName = message.getValues().get("item-name").toString();
-        fireAttributesChange(itemName, attributes, initial);
+        fireAttributesChange ( itemName, attributes, initial );
     }
     
     private void performEnumEvent ( Message message )
@@ -408,13 +409,13 @@ public class Connection
         synchronized ( _itemList )
         {
             
-            List<String> added = new ArrayList<String>();
-            List<String> removed = new ArrayList<String>();
-            Boolean initial = new Boolean(false);
+            List<String> added = new ArrayList<String> ();
+            List<String> removed = new ArrayList<String> ();
+            Holder<Boolean> initial = new Holder<Boolean> ();
             
             EnumEvent.parse(message, added, removed, initial);
             
-            fireItemListChange ( added, removed, initial.booleanValue() );
+            fireItemListChange ( added, removed, initial.value.booleanValue() );
         }
         
     }
