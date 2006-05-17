@@ -9,7 +9,8 @@ public abstract class DataItemBase implements DataItem {
 	
 	protected ItemListener _listener;
 	
-	String _name;
+	private String _name;
+    
 	public DataItemBase ( String name )
 	{
 		_name = name;
@@ -20,7 +21,8 @@ public abstract class DataItemBase implements DataItem {
 		return _name;
 	}
 	
-	public void setListener(ItemListener listener) {
+	public void setListener(ItemListener listener)
+    {
 		synchronized ( this )
 		{
 			_listener = listener;
