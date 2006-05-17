@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
+import org.openscada.utils.lang.Holder;
 
 public class EnumEvent
 {
@@ -34,7 +35,7 @@ public class EnumEvent
         return msg;
     }
     
-    public static void parse ( Message message, List<String> added, List<String> removed, Boolean initial )
+    public static void parse ( Message message, List<String> added, List<String> removed, Holder<Boolean> initial )
     {
         if ( message == null )
             return;
@@ -45,7 +46,7 @@ public class EnumEvent
         if ( initial == null )
             return;
         
-        initial = message.getValues().containsKey("initial");
+        initial.value = message.getValues().containsKey("initial");
         
         added.clear();
         removed.clear();
@@ -62,7 +63,7 @@ public class EnumEvent
         i = 0;
         while ( message.getValues().containsKey("removed-" + i) )
         {
-            added.add ( message.getValues().get("removed-" + i ).toString() );
+            removed.add ( message.getValues().get("removed-" + i ).toString() );
             i++;
         }
     }
