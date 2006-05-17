@@ -6,20 +6,10 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -31,11 +21,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.da.client.net.DataItem;
@@ -69,9 +56,6 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
     private HiveItem _hiveItem = null;
     
 	private TableViewer viewer;
-	private Action action1;
-	private Action action2;
-	private Action doubleClickAction;
     
     private Label _valueLabel;
     private StyledText _console;
@@ -103,7 +87,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         private Viewer _viewer = null;
         private DataItem _item = null;
         
-		public void inputChanged(Viewer v, Object oldInput, Object newInput)
+		public void inputChanged ( Viewer v, Object oldInput, Object newInput )
         {
             _viewer = viewer;
             
@@ -111,14 +95,11 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
             
             if ( newInput instanceof HiveItem )
             {
-                if ( newInput != null ) 
-                {
-                    HiveItem hiveItem = (HiveItem)newInput;
-                    
-                    _item = new DataItem ( hiveItem.getItemName() );
-                    _item.addObserver ( this );
-                    _item.register ( hiveItem.getConnection().getConnection() );
-                }
+                HiveItem hiveItem = (HiveItem)newInput;
+
+                _item = new DataItem ( hiveItem.getItemName() );
+                _item.addObserver ( this );
+                _item.register ( hiveItem.getConnection().getConnection() );
             }
         }
         
@@ -155,21 +136,34 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 
         public void update ( Observable o, Object arg )
         {
+            _log.debug ( "Object update" );
+            
             if ( !_viewer.getControl().isDisposed() )
             {
-                _viewer.getControl().getDisplay().asyncExec(new Runnable(){
+                _viewer.getControl().getDisplay().asyncExec ( new Runnable(){
                     
                     public void run ()
                     {
-                        if ( !_viewer.getControl().isDisposed() )
+                        try
                         {
-                            _viewer.refresh();
+                            if ( !_viewer.getControl().isDisposed() )
+                            {
+                                if ( _viewer instanceof StructuredViewer )
+                                    ((StructuredViewer)_viewer).refresh ( true );
+                                else                                
+                                    _viewer.refresh ();
+                            }
+                        }
+                        catch ( Exception e )
+                        {
+                            e.printStackTrace ();
                         }
                     }});
             }
         }
     }
-	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
+	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider
+    {
 		public String getColumnText(Object obj, int index)
         {
             if ( !(obj instanceof Entry) )
@@ -308,7 +302,8 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
-	public void setFocus() {
+	public void setFocus()
+    {
 		viewer.getControl().setFocus();
 	}
 

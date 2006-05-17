@@ -62,9 +62,9 @@ import org.openscada.da.core.data.Variant;
  * <p>
  */
 
-public class DataItemWatchView extends ViewPart implements ItemUpdateListener
+public class DataItemOperationView extends ViewPart implements ItemUpdateListener
 {
-    private static Logger _log = Logger.getLogger ( DataItemWatchView.class );
+    private static Logger _log = Logger.getLogger ( DataItemOperationView.class );
     
     private HiveItem _hiveItem = null;
     
@@ -204,7 +204,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 	/**
 	 * The constructor.
 	 */
-	public DataItemWatchView()
+	public DataItemOperationView()
     {
         
 	}
@@ -315,7 +315,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				DataItemWatchView.this.fillContextMenu(manager);
+                fillContextMenu(manager);
 			}
 		});
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());

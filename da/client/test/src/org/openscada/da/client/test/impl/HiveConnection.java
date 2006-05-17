@@ -1,8 +1,6 @@
 package org.openscada.da.client.test.impl;
 
-import java.net.Inet4Address;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,7 +45,7 @@ public class HiveConnection extends Observable
         {
             InetSocketAddress remote = new InetSocketAddress(_connectionInfo.getHost(),_connectionInfo.getPort());
             
-            _connection = new Connection(new ConnectionInfo(remote));
+            _connection = new Connection ( new ConnectionInfo ( remote ) );
             _connection.addConnectionStateListener(new ConnectionStateListener(){
 
                 public void connected ( Connection arg0 )
@@ -69,6 +67,7 @@ public class HiveConnection extends Observable
         }
         catch ( Exception e )
         {
+            _log.error ( "Failed to start connection", e );
             Openscada_da_client_testPlugin.logError(1,"Unable to connect", e);
         }
         _log.debug("Connection fired up...");
@@ -137,5 +136,10 @@ public class HiveConnection extends Observable
     public boolean isConnectionRequested ()
     {
         return _connectionRequested;
+    }
+    
+    synchronized public HiveItem lookupItem ( String itemName )
+    {
+        return _itemMap.get ( itemName );
     }
 }

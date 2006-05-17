@@ -113,6 +113,17 @@
                </and>
             </enablement>
          </action>
+         <action
+               class="org.openscada.da.client.test.actions.WriteOperationAction"
+               id="org.openscada.da.client.test.actions.WriteOperationAction"
+               label="Write"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions">
+            <enablement>
+               <objectClass name="org.openscada.da.client.test.impl.HiveItem"/>
+            </enablement>
+         </action>
       </viewContribution>
    </extension>
    <extension
@@ -130,13 +141,18 @@
       </objectContribution>
       <objectContribution
             adaptable="false"
-            id="org.openscada.da.client.test.popupMenus.WatchAction"
+            id="org.openscada.da.client.test.popupMenus.oc1"
             objectClass="org.openscada.da.client.test.impl.HiveItem">
          <action
                class="org.openscada.da.client.test.actions.WatchItemAction"
                icon="icons/stock_watch.png"
                id="org.openscada.da.client.test.actions.WatchItemAction"
                label="Watch"
+               menubarPath="additions"/>
+         <action
+               class="org.openscada.da.client.test.actions.WriteOperationAction"
+               id="org.openscada.da.client.test.actions.WriteOperationAction"
+               label="Write Operation"
                menubarPath="additions"/>
       </objectContribution>
    </extension>
