@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description url="http://openscada.org/ostc">
+      The OpenSCADA Test Client Update Site
+   </description>
+   <feature url="features/org.openscada.da.test_client_0.1.0.jar" id="org.openscada.da.test_client" version="0.1.0">
+      <category name="openscada_ostc_da"/>
+   </feature>
+   <category-def name="openscada_ostc_da" label="OpenSCADA DA">
+      <description>
+         The OpenSCADA DA (DataAccess) Features
+      </description>
+   </category-def>
+</site>
