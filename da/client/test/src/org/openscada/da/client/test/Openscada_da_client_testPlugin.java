@@ -1,12 +1,11 @@
 package org.openscada.da.client.test;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.plugin.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveRepository;
