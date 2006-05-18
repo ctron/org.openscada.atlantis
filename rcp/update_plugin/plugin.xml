@@ -9,6 +9,7 @@
             visible="true">
          <action
                class="org.openscada.rcp.update.actions.UpdateAction"
+               icon="icons/stock_refresh.png"
                id="org.openscada.da.client.test.update.UpdateAction"
                label="&amp;Update"
                menubarPath="help/update"
