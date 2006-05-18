@@ -17,6 +17,10 @@
       [Enter License Description here.]
    </license>
 
+   <url>
+      <update label="OpenSCADA DA Test Client" url="http://openscada.org/ostc"/>
+   </url>
+
    <requires>
       <import plugin="org.eclipse.rcp"/>
       <import plugin="org.eclipse.ui"/>
