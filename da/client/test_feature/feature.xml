@@ -2,7 +2,7 @@
 <feature
       id="openscada_da_client_test_feature"
       label="OpenSCADA DA Test Client Feature"
-      version="1.0.0"
+      version="0.1.0"
       provider-name="OpenSCADA">
 
    <description url="http://www.example.com/description">
