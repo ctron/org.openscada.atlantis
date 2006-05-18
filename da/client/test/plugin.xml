@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
+<?eclipse version="3.2"?>
 <plugin>
 
    <extension
@@ -73,12 +73,6 @@
       <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
          <newWizardShortcut id="org.openscada.da.client.test.newWizards.NewHive"/>
       </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.adapters">
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.adapters">
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

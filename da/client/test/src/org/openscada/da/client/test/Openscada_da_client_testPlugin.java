@@ -16,6 +16,8 @@ import org.osgi.framework.BundleContext;
  */
 public class Openscada_da_client_testPlugin extends AbstractUIPlugin {
 
+    public static final String PLUGIN_ID = "org.openscada.da.client.test";
+    
 	//The shared instance.
 	private static Openscada_da_client_testPlugin plugin = null;
     
