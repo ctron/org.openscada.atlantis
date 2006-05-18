@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="openscada_da_client_test_feature"
+      id="org.openscada.da.test_client"
       label="OpenSCADA DA Test Client Feature"
       version="0.1.0"
       provider-name="OpenSCADA">
@@ -49,13 +49,6 @@
 
    <plugin
          id="org.openscada.rcp.update"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.update.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
