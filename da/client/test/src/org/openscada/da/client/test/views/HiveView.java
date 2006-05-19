@@ -202,7 +202,6 @@ public class HiveView extends ViewPart implements Observer
     {
         if ( o == _repository )
         {
-            
             triggerUpdateRepository();
         }
     }
@@ -250,7 +249,8 @@ public class HiveView extends ViewPart implements Observer
     
     
     
-    private void hookContextMenu() {
+    private void hookContextMenu()
+    {
         MenuManager menuMgr = new MenuManager("#PopupMenu");
         menuMgr.setRemoveAllWhenShown(true);
         menuMgr.addMenuListener(new IMenuListener() {
@@ -263,7 +263,8 @@ public class HiveView extends ViewPart implements Observer
         getSite().registerContextMenu(menuMgr, _viewer);
     }
     
-    private void contributeToActionBars() {
+    private void contributeToActionBars()
+    {
         IActionBars bars = getViewSite().getActionBars();
         fillLocalPullDown(bars.getMenuManager());
         fillLocalToolBar(bars.getToolBarManager());
@@ -275,18 +276,20 @@ public class HiveView extends ViewPart implements Observer
         //manager.add(new Separator());
     }
     
-    private void fillContextMenu(IMenuManager manager) {
+    private void fillContextMenu(IMenuManager manager)
+    {
         //manager.add(connectAction);
         //manager.add(new Separator());
-        //drillDownAdapter.addNavigationActions(manager);
+        //drillDownAdapter.addNavigationActions ( manager );
         // Other plug-ins can contribute there actions here
-        manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+        manager.add ( new Separator ( IWorkbenchActionConstants.MB_ADDITIONS ) );
     }
     
-    private void fillLocalToolBar(IToolBarManager manager) {
+    private void fillLocalToolBar(IToolBarManager manager)
+    {
         //manager.add(connectAction);
         //manager.add(new Separator());
-        //drillDownAdapter.addNavigationActions(manager);
+        //drillDownAdapter.addNavigationActions ( manager );
     }
     
     private void makeActions()
@@ -307,10 +310,14 @@ public class HiveView extends ViewPart implements Observer
         connectAction = new ConnectHiveAction();
     }
     
-    private void hookDoubleClickAction() {
-        _viewer.addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event) {
-                connectAction.run(null);
+    private void hookDoubleClickAction()
+    {
+        _viewer.addDoubleClickListener ( new IDoubleClickListener()
+        {
+            public void doubleClick ( DoubleClickEvent event )
+            {
+                connectAction.selectionChanged ( null, event.getSelection () );
+                connectAction.run ( null );
             }
         });
     }
