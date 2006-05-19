@@ -35,6 +35,7 @@ import org.openscada.da.client.test.actions.ConnectHiveAction;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveItem;
 import org.openscada.da.client.test.impl.HiveRepository;
+import org.openscada.da.client.net.Connection;
 
 
 /**
@@ -137,7 +138,7 @@ public class HiveView extends ViewPart implements Observer
             if ( obj instanceof HiveConnection )
             {
                 HiveConnection connection = (HiveConnection)obj;
-                return connection.getConnectionInformation().getHost() + ":" + connection.getConnectionInformation().getPort();
+                return connection.getConnectionInformation().getHost() + ":" + connection.getConnectionInformation().getPort() + " (" + connection.getConnection ().getState ().toString () + ")";
             }
             else if ( obj instanceof HiveItem )
             {
@@ -153,10 +154,23 @@ public class HiveView extends ViewPart implements Observer
             {
                 HiveConnection connection = (HiveConnection)obj;
                 if ( connection.isConnectionRequested() )
-                    if ( connection.isConnected() )
-                        imageKey = ISharedImages.IMG_HIVE_CONNECTED;
-                    else
+                {
+                    switch ( connection.getConnection ().getState () )
+                    {
+                    case CLOSED:
                         imageKey = ISharedImages.IMG_HIVE_DISCONNECTED;
+                        break;
+                    case CONNECTED:
+                        imageKey = ISharedImages.IMG_HIVE_CONNECTION;
+                        break;
+                    case BOUND:
+                        imageKey = ISharedImages.IMG_HIVE_CONNECTED;
+                        break;
+                    default:
+                        imageKey = ISharedImages.IMG_HIVE_DISCONNECTED;
+                        break;
+                    }
+                }
                 else
                     imageKey = ISharedImages.IMG_HIVE_CONNECTION;
             }
@@ -170,7 +184,9 @@ public class HiveView extends ViewPart implements Observer
             return Openscada_da_client_testPlugin.getDefault().getImageRegistry().get ( imageKey );
         }
     }
-    class NameSorter extends ViewerSorter {
+    
+    class NameSorter extends ViewerSorter
+    {
     }
     
     /**
@@ -178,16 +194,16 @@ public class HiveView extends ViewPart implements Observer
      */
     public HiveView()
     {
-        _repository = Openscada_da_client_testPlugin.getRepository();
-        _repository.addObserver(this);
-        registerAllConnections();
+        _repository = Openscada_da_client_testPlugin.getRepository ();
+        _repository.addObserver ( this );
+        registerAllConnections ();
     }
     
     @Override
     public void dispose ()
     {
-        unregisterAllConnections();
-        _repository.deleteObserver(this);
+        unregisterAllConnections ();
+        _repository.deleteObserver ( this );
         super.dispose ();
     }
     
@@ -201,7 +217,7 @@ public class HiveView extends ViewPart implements Observer
     
     public void triggerUpdateRepository ()
     {
-        if ( !_viewer.getControl().isDisposed() )
+        if ( !_viewer.getControl ().isDisposed () )
         {
             _viewer.getControl().getDisplay().asyncExec(new Runnable(){
 
@@ -320,7 +336,7 @@ public class HiveView extends ViewPart implements Observer
      */
     public void setFocus()
     {
-        _viewer.getControl().setFocus();
+        _viewer.getControl ().setFocus ();
     }
     
     private void refreshItem ( final Object o )
@@ -329,7 +345,7 @@ public class HiveView extends ViewPart implements Observer
         
         if ( !_viewer.getControl().isDisposed() )
         {
-            _viewer.getControl().getDisplay().asyncExec(new Runnable(){
+            _viewer.getControl().getDisplay().asyncExec ( new Runnable(){
 
                 public void run ()
                 {

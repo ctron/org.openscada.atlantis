@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.openscada.da.client.net.operations.WriteOperation;
 import org.openscada.da.client.net.operations.WriteOperationArguments;
 import org.openscada.da.core.data.Variant;
+import org.openscada.net.base.AutoReconnectClientConnection;
 import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
@@ -30,6 +31,15 @@ import org.openscada.utils.lang.Holder;
 public class Connection
 {
     
+    public enum State
+    {
+        CLOSED,
+        CONNECTING,
+        CONNECTED,
+        BOUND,
+        CLOSING,
+    }
+    
     private static Logger _log = Logger.getLogger ( Connection.class );
     
     private ConnectionInfo _connectionInfo = null;
@@ -37,10 +47,11 @@ public class Connection
     
     private ClientConnection _client = null;
     
-    private List<ConnectionStateListener> _connectionStateListeners = new ArrayList<ConnectionStateListener>();
-    private Map<String,ItemSyncController> _itemListeners = new HashMap<String,ItemSyncController>();
+    private List<ConnectionStateListener> _connectionStateListeners = new ArrayList < ConnectionStateListener > ();
+    private Map<String,ItemSyncController> _itemListeners = new HashMap < String, ItemSyncController > ();
     
-    private boolean _connected = false;
+    //private boolean _connected = false;
+    private State _state = State.CLOSED;
     
     private static Object _defaultProcessorLock = new Object();
     private static IOProcessor _defaultProcessor = null;
@@ -68,7 +79,7 @@ public class Connection
         {    
             _log.error ( "unable to created io processor", e );
         }
-        // operation failed;
+        // operation failed
         return null;
     }
     
@@ -80,7 +91,7 @@ public class Connection
         _connectionInfo = connectionInfo;
         
         // register our own list
-        addItemListListener(_itemList);
+        addItemListListener ( _itemList );
         
         init ();
         
@@ -102,16 +113,15 @@ public class Connection
             
             public void closed ()
             {
-                if ( isConnected() )
-                    fireDisconnected();
+                _log.debug ( "closed" );
+                
+                fireDisconnected();
             }
             
             public void opened ()
             {
-                _log.debug("opened");
-                
-                if ( !isConnected() )
-                    fireConnected();
+                _log.debug ( "opened" );
+                fireConnected();
             }});
         
         _client.getMessageProcessor().setHandler(Messages.CC_NOTIFY_VALUE, new MessageListener(){
@@ -138,9 +148,26 @@ public class Connection
         
     }
     
-    public void start ()
+    synchronized public void connect ()
     {
-        _client.start();
+        switch ( _state )
+        {
+        case CLOSED:
+            setState ( State.CONNECTING );
+            break;
+        }        
+    }
+    
+    synchronized public void disconnect ()
+    {
+        switch ( _state )
+        {
+        case BOUND:
+        case CONNECTING:
+        case CONNECTED:
+            setState ( State.CLOSING );
+            break;
+        }
     }
     
     public void addItemListListener ( ItemListListener listener )
@@ -177,49 +204,29 @@ public class Connection
     
     private void fireConnected ()
     {
-        _log.debug("connected");
+        _log.debug ( "connected" );
         
-        _connected = true;
-        
-        List<ConnectionStateListener> connectionStateListeners;
-        synchronized ( _connectionStateListeners )
+        switch ( _state )
         {
-            connectionStateListeners = new ArrayList<ConnectionStateListener>(_connectionStateListeners);
-        }
-        for ( ConnectionStateListener listener : connectionStateListeners )
-        {
-            try
-            {
-                listener.connected(this);
-            }
-            catch ( Exception e )
-            {
-            }
+        case CONNECTING:
+            setState ( State.CONNECTED );
+            break;
         }
         
-        requestSession ();
     }
     
     private void fireDisconnected ()
     {
         _log.debug("dis-connected");
-        
-        _connected = false;
-        
-        List<ConnectionStateListener> connectionStateListeners;
-        synchronized ( _connectionStateListeners )
+     
+        switch ( _state )
         {
-            connectionStateListeners = new ArrayList<ConnectionStateListener>(_connectionStateListeners);
-        }
-        for ( ConnectionStateListener listener : connectionStateListeners )
-        {
-            try
-            {
-                listener.disconnected(this);
-            }
-            catch ( Exception e )
-            {
-            }
+        case BOUND:
+        case CONNECTED:
+        case CONNECTING:
+        case CLOSING:
+            setState ( State.CLOSED );
+            break;
         }
         
     }
@@ -255,14 +262,15 @@ public class Connection
 
             public void messageTimedOut ()
             {
-                // TODO: so something
-                _log.info("Request session timed out");
+               setState ( State.CLOSED );
             }} );
     }
     
     private void gotSession ()
     {
-        _log.debug("Got session!");
+        _log.debug ( "Got session!" );
+        
+        setState ( State.BOUND );
         
         // sync again all items to maintain subscribtions
         resyncAllItems ();
@@ -419,10 +427,10 @@ public class Connection
         }
         
     }
-
-    public boolean isConnected ()
+    
+    public State getState ()
     {
-        return _connected;
+        return _state;
     }
 
     /**
@@ -460,5 +468,78 @@ public class Connection
     public OperationResult<Object> startWrite ( String itemName, Variant value, OperationResultHandler<Object> handler )
     {
         return _writeOperation.startExecute ( handler, new WriteOperationArguments ( itemName, value ) );
+    }
+    
+    /**
+     * set new state internaly
+     * @param state
+     */
+    synchronized private void setState ( State state )
+    {
+        _state = state;
+        
+        stateChanged ( state );
+    }
+    
+    private void stateChanged ( State state )
+    {
+        switch ( state )
+        {
+        
+        case CLOSED:
+            // if we got the close and are auto-reconnect ... schedule the job
+            if ( _connectionInfo.isAutoReconnect () )
+            {
+                _processor.getScheduler ().scheduleJob ( new Runnable() {
+
+                    public void run ()
+                    {
+                        connect ();
+                    }}, _connectionInfo.getReconnectDelay () );
+            }
+            break;
+            
+        case CONNECTING:
+            _client.connect ();
+            break;
+            
+        case CONNECTED:
+            requestSession ();
+            break;
+            
+        case BOUND:
+            break;
+            
+        case CLOSING:
+            _client.disconnect ();
+            break;
+        }
+        
+        notifyStateChange ( state );
+        
+    }
+    
+    /**
+     * Notify state change listeners
+     * @param state new state
+     */
+    private void notifyStateChange ( State state )
+    {   
+        List<ConnectionStateListener> connectionStateListeners;
+        
+        synchronized ( _connectionStateListeners )
+        {
+            connectionStateListeners = new ArrayList<ConnectionStateListener> ( _connectionStateListeners );
+        }
+        for ( ConnectionStateListener listener : connectionStateListeners )
+        {
+            try
+            {
+                listener.stateChange ( this, state );
+            }
+            catch ( Exception e )
+            {
+            }
+        }
     }
 }

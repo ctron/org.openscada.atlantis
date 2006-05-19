@@ -12,7 +12,8 @@ import org.openscada.net.io.ConnectionStateListener;
 import org.openscada.net.utils.MessageCreator;
 import org.openscada.utils.timing.Scheduler;
 
-public class ConnectionHandlerBase  implements ConnectionHandler, ConnectionAware {
+public class ConnectionHandlerBase  implements ConnectionHandler, ConnectionAware
+{
 	
 	private static Logger _log = Logger.getLogger(ConnectionHandlerBase.class);
 

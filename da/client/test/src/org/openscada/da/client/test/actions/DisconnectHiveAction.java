@@ -10,7 +10,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.openscada.da.client.test.impl.HiveConnection;
 
-public class ConnectHiveAction implements IObjectActionDelegate, IViewActionDelegate
+public class DisconnectHiveAction implements IObjectActionDelegate, IViewActionDelegate
 {
     private static Logger _log = Logger.getLogger ( WatchItemAction.class );
     
@@ -23,7 +23,7 @@ public class ConnectHiveAction implements IObjectActionDelegate, IViewActionDele
         
         try
         {
-            _connection.connect();
+            _connection.disconnect ();
         }
         catch ( Exception e )
         {

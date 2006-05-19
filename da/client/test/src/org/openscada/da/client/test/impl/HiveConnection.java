@@ -9,13 +9,15 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.apache.log4j.Logger;
+import org.eclipse.ui.IActionFilter;
 import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.net.ConnectionInfo;
 import org.openscada.da.client.net.ConnectionStateListener;
+import org.openscada.da.client.net.Connection.State;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 
-public class HiveConnection extends Observable
+public class HiveConnection extends Observable implements IActionFilter
 {
     private static Logger _log = Logger.getLogger ( HiveConnection.class );
     
@@ -23,62 +25,66 @@ public class HiveConnection extends Observable
     private HiveConnectionInformation _connectionInfo;
     private Connection _connection = null;
     
-    private Map<String,HiveItem> _itemMap = new HashMap<String,HiveItem>();
+    private Map < String, HiveItem > _itemMap = new HashMap < String, HiveItem > ();
     
     public HiveConnection ( HiveConnectionInformation connectionInfo )
     {
         _connectionInfo = connectionInfo;
+        
+        InetSocketAddress remote = new InetSocketAddress ( _connectionInfo.getHost(), _connectionInfo.getPort() );
+        ConnectionInfo conInfo = new ConnectionInfo ( remote );
+        conInfo.setAutoReconnect ( false );
+        
+        _connection = new Connection ( conInfo );
+        _connection.addConnectionStateListener ( new ConnectionStateListener(){
+
+            public void stateChange ( Connection connection, State state )
+            {
+                performStateChange ( state );
+            }
+            
+            });
+        _connection.getItemList().addObserver(new Observer(){
+            public void update ( Observable o, Object arg )
+            {
+                performItemListUpdate();
+            }
+        });
     }
     
     synchronized public void connect ()
     {
-        _connectionRequested = true;
-        setChanged();
-        notifyObservers();
+        //if ( _connectionRequested )
+        //    return;
         
-        if ( _connection != null )
-            return;
+        _connectionRequested = true;
+        setChanged ();
+        notifyObservers ();
+        
+        //if ( _connection != null )
+        //    return;
         
         _log.debug("Initiating connection...");
         
         try
         {
-            InetSocketAddress remote = new InetSocketAddress(_connectionInfo.getHost(),_connectionInfo.getPort());
-            
-            _connection = new Connection ( new ConnectionInfo ( remote ) );
-            _connection.addConnectionStateListener(new ConnectionStateListener(){
-
-                public void connected ( Connection arg0 )
-                {
-                   performConnected();
-                }
-
-                public void disconnected ( Connection arg0 )
-                {
-                    performDisconnected();
-                }});
-            _connection.getItemList().addObserver(new Observer(){
-                public void update ( Observable o, Object arg )
-                {
-                    performItemListUpdate();
-                }
-            });
-            _connection.start();
+            _connection.connect ();
         }
         catch ( Exception e )
         {
             _log.error ( "Failed to start connection", e );
-            Openscada_da_client_testPlugin.logError(1,"Unable to connect", e);
+            Openscada_da_client_testPlugin.logError ( 1, "Unable to connect", e );
         }
-        _log.debug("Connection fired up...");
+        _log.debug ( "Connection fired up..." );
     }
     
-    synchronized public boolean isConnected ()
+    public void disconnect ()
     {
-        if ( _connection == null )
-            return false;
+        _connectionRequested = false;
+        setChanged ();
+        notifyObservers ();
         
-        return _connection.isConnected();
+        _connection.disconnect ();
     }
     
     public HiveConnectionInformation getConnectionInformation()
@@ -86,24 +92,17 @@ public class HiveConnection extends Observable
         return _connectionInfo;
     }
     
-    private void performConnected ()
+    private void performStateChange ( Connection.State state )
     {
-        _log.debug("Notify observers");
-        setChanged();
-        notifyObservers();
-    }
-    
-    private void performDisconnected ()
-    {
-        setChanged();
-        notifyObservers();
+        setChanged ();
+        notifyObservers ();
     }
     
     synchronized private void performItemListUpdate ()
     {
-        Map<String,HiveItem> items = new HashMap<String,HiveItem>();
+        Map<String,HiveItem> items = new HashMap<String,HiveItem> ();
         
-        Collection<String> list = _connection.getItemList().getItemList();
+        Collection<String> list = _connection.getItemList().getItemList ();
         for ( String item : list )
         {
             if ( _itemMap.containsKey(item) )
@@ -122,7 +121,10 @@ public class HiveConnection extends Observable
     
     synchronized public Collection<HiveItem> getItemList ()
     {
-        if ( !isConnected () )
+        if ( getConnection () == null )
+            return new ArrayList<HiveItem>();
+        
+        if ( getConnection ().getState ().equals ( Connection.State.CLOSED ) )
             return new ArrayList<HiveItem>();
         
         return _itemMap.values();
@@ -142,4 +144,15 @@ public class HiveConnection extends Observable
     {
         return _itemMap.get ( itemName );
     }
+
+    public boolean testAttribute ( Object target, String name, String value )
+    {
+        if ( name.equals ( "state" ) )
+        {
+            return _connection.getState ().equals ( State.valueOf ( value ) );
+        }
+        return false;
+    }
+
+    
 }

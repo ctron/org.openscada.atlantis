@@ -13,18 +13,18 @@ import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.net.ConnectionInfo;
 import org.openscada.da.client.net.ConnectionStateListener;
 import org.openscada.da.client.net.ItemUpdateListener;
+import org.openscada.da.client.net.Connection.State;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
 import org.openscada.utils.timing.Scheduler;
 
 public class Application
 {
-    private static Logger _log = Logger.getLogger(Application.class);
+    private static Logger _log = Logger.getLogger ( Application.class );
     
     public static void main ( String[] args ) throws IOException
     {
-
-        
+   
         ConnectionInfo info = new ConnectionInfo();
         info.setRemote(new InetSocketAddress(
                 InetAddress.getLocalHost(),
@@ -35,16 +35,12 @@ public class Application
         
         connection.addConnectionStateListener(new ConnectionStateListener(){
 
-            public void connected ( Connection connection )
+            public void stateChange ( Connection connection, State state )
             {
-                _log.info ( "Connection established" );
+                _log.info ( "State changed to: " + state.toString () );
             }
 
-            public void disconnected ( Connection connection )
-            {
-                _log.debug ( "Connection lost" );
-                
-            }});
+            });
         
         connection.getItemList().addObserver(new Observer(){
 
@@ -120,7 +116,7 @@ public class Application
                 }
             }}, 10*1000, true );
         
-        connection.start();
+        connection.connect ();
         
         while ( true )
         {

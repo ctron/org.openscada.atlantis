@@ -12,10 +12,11 @@ import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.utils.timing.Scheduler;
 
-public class Connection implements ConnectionListener, MessageListener {
+public class Connection implements ConnectionListener, MessageListener
+{
 	
     private int _timeoutLimit = Integer.getInteger ( "org.openscada.net.message_timeout", 10*1000 );
-    private static Scheduler _scheduler = new Scheduler();
+    private static Scheduler _scheduler = new Scheduler ();
     
 	private Codec _codec = null;
 	protected SocketConnection _connection = null;
@@ -51,7 +52,7 @@ public class Connection implements ConnectionListener, MessageListener {
         }
     }
     
-    private Map<Long,MessageTag> _tagList = new HashMap<Long,MessageTag>(); 
+    private Map<Long,MessageTag> _tagList = new HashMap<Long,MessageTag> (); 
 	
 	public Connection ( MessageListener listener, ConnectionStateListener connectionStateListener, SocketConnection connection )
 	{
@@ -61,16 +62,16 @@ public class Connection implements ConnectionListener, MessageListener {
         
 		_codec = new Codec ( this, this );
         
-        addTimeOutJob();
+        addTimeOutJob ();
 	}
 	
-	public Connection(MessageListener listener, SocketConnection connection)
+	public Connection ( MessageListener listener, SocketConnection connection )
 	{
         _listener = listener;
 		_codec = new Codec ( this, this);
 		_connection = connection;
         
-        addTimeOutJob();
+        addTimeOutJob ();
 	}
     
     private void addTimeOutJob ()
@@ -78,17 +79,17 @@ public class Connection implements ConnectionListener, MessageListener {
         if ( _timeoutJob != null )
             return;
         
-        final WeakReference<Connection> _this = new WeakReference<Connection>(this);
+        final WeakReference<Connection> _this = new WeakReference<Connection> ( this );
         
         _timeoutJob = _scheduler.addJob ( new Runnable(){
 
             public void run ()
             {
-                Connection c = _this.get();
+                Connection c = _this.get ();
                 if ( c == null )
-                    _scheduler.removeJob(this);
+                    _scheduler.removeJob ( this );
                 else
-                    c.processTimeOuts();
+                    c.processTimeOuts ();
             }}, 1000);
     }
     
@@ -96,67 +97,68 @@ public class Connection implements ConnectionListener, MessageListener {
     {
         if ( _timeoutJob != null )
         {
-            _scheduler.removeJob(_timeoutJob);
+            _scheduler.removeJob ( _timeoutJob );
         }
     }
     
 	synchronized public void sendMessage ( Message message )
 	{
-		message.setSequence(_sequence++);
-		_connection.scheduleWrite(_codec.code(message));
+		message.setSequence ( _sequence++ );
+		_connection.scheduleWrite ( _codec.code ( message ) );
 	}
     
     synchronized public void sendMessage ( Message message, MessageStateListener listener )
     {
-        MessageTag tag = new MessageTag();
+        MessageTag tag = new MessageTag ();
         
-        tag.setListener(listener);
-        tag.setTimestamp(System.currentTimeMillis());
+        tag.setListener ( listener );
+        tag.setTimestamp ( System.currentTimeMillis () );
         
-        message.setSequence(_sequence++);
+        message.setSequence ( _sequence++ );
         
         synchronized ( _tagList )
         {
-            _tagList.put ( message.getSequence(), tag );
+            _tagList.put ( message.getSequence (), tag );
         }
         
-        _connection.scheduleWrite ( _codec.code(message) );
+        _connection.scheduleWrite ( _codec.code ( message ) );
     }
 	
-	public void read(ByteBuffer buffer)
+	public void read ( ByteBuffer buffer )
 	{
-		_codec.decode(buffer);
+		_codec.decode ( buffer );
 	}
 
-	public void written() {
+	public void written()
+    {
 		// no op
 	}
 
-	public void connected()
-    {
-       _connection.triggerRead();
-       
-		if ( _connectionStateListener != null )
-			_connectionStateListener.opened ();
+	public void connected ()
+	{
+	    _connection.triggerRead();
+
+	    if ( _connectionStateListener != null )
+	        _connectionStateListener.opened ();
 	}
 
-	public void connectionFailed(IOException e) {
+	public void connectionFailed ( IOException e )
+    {
 		if ( _connectionStateListener != null )
 			_connectionStateListener.closed ();
 	}
 
-	public void closed()
+	public void closed ()
     {
-        
         removeTimeOutJob();
         
         synchronized ( _tagList )
         {
             for ( Map.Entry<Long,MessageTag> tag : _tagList.entrySet() )
             {
-                tag.getValue().getListener().messageTimedOut();
+                tag.getValue ().getListener ().messageTimedOut ();
             }
-            _tagList.clear();
+            _tagList.clear ();
         }
         
 		if ( _connectionStateListener != null )
@@ -165,27 +167,27 @@ public class Connection implements ConnectionListener, MessageListener {
 	
 	public void close ()
 	{
-		_connection.close();
+		_connection.close ();
 	}
 
     public void messageReceived ( Connection connection, Message message )
     {
-        Long seq = Long.valueOf(message.getReplySequence());
+        Long seq = Long.valueOf ( message.getReplySequence () );
         
         _listener.messageReceived ( connection, message );
         
         synchronized ( _tagList )
         {
-            if ( _tagList.containsKey( seq ) )
+            if ( _tagList.containsKey ( seq ) )
             {
                 try
                 {
-                    _tagList.get(seq).getListener().messageReply ( message );
+                    _tagList.get ( seq ).getListener ().messageReply ( message );
                 }
                 catch ( Exception e )
                 {
                 }
-                _tagList.remove(seq);
+                _tagList.remove ( seq );
             }
         }
     }
@@ -194,20 +196,20 @@ public class Connection implements ConnectionListener, MessageListener {
     {
         synchronized ( _tagList )
         {
-            for ( Iterator<Map.Entry<Long,MessageTag>> i = _tagList.entrySet().iterator(); i.hasNext() ;  )
+            for ( Iterator < Map.Entry < Long, MessageTag > > i = _tagList.entrySet ().iterator (); i.hasNext () ;  )
             {
                 MessageTag tag = i.next().getValue();
                 
-                if ( (System.currentTimeMillis() - tag.getTimestamp()) >= _timeoutLimit )
+                if ( ( System.currentTimeMillis () - tag.getTimestamp() ) >= _timeoutLimit )
                 {
                     try
                     {
-                        tag.getListener().messageTimedOut();
+                        tag.getListener ().messageTimedOut ();
                     }
                     catch ( Exception e )
                     {
                     }
-                    i.remove();
+                    i.remove ();
                 }
             }
         }

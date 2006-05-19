@@ -16,7 +16,7 @@ public class Perspective implements IPerspectiveFactory {
         
 		layout.setEditorAreaVisible(false);
 		
-		layout.addStandaloneView("org.openscada.da.client.test.views.HiveView",  true, IPageLayout.LEFT, 0.25f, editorArea);
+		layout.addStandaloneView("org.openscada.da.client.test.views.HiveView",  true, IPageLayout.LEFT, 0.35f, editorArea);
         //layout.addView("org.openscada.da.client.test.views.HiveView", IPageLayout.LEFT, 0.25f, editorArea);
         //layout.addView("org.openscada.da.client.test.views.DataItemWatchView", IPageLayout.BOTTOM, 0.50f, editorArea);
         

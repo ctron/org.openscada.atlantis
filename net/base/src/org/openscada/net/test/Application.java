@@ -5,7 +5,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import org.apache.log4j.Logger;
-import org.openscada.net.base.ClientConnection;
+import org.openscada.net.base.AutoReconnectClientConnection;
 import org.openscada.net.base.ConnectionHandler;
 import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.MessageListener;
@@ -37,7 +37,7 @@ public class Application {
 				}},1202);
 			server.start();
 			
-			ClientConnection client = new ClientConnection ( processor, new InetSocketAddress(InetAddress.getLocalHost(),1202) );
+			AutoReconnectClientConnection client = new AutoReconnectClientConnection ( processor, new InetSocketAddress(InetAddress.getLocalHost(),1202) );
 			
 			processor.run();
 		}

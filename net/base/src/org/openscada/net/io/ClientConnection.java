@@ -6,7 +6,8 @@ public class ClientConnection extends Connection {
 
 	private SocketConnection _connection;
 	
-	public ClientConnection(MessageListener listener, ConnectionStateListener connectionStateListener, SocketConnection connection) {
+	public ClientConnection(MessageListener listener, ConnectionStateListener connectionStateListener, SocketConnection connection)
+    {
 		super(listener, connectionStateListener, connection);
 		_connection = connection;
 		

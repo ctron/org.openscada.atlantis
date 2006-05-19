@@ -93,21 +93,6 @@
             </enablement>
          </action>
          <action
-               class="org.openscada.da.client.test.actions.ConnectHiveAction"
-               icon="icons/stock_connect.png"
-               id="org.openscada.da.client.test.actions.ConnectHiveAction"
-               label="Connect"
-               menubarPath="additions"
-               style="push"
-               toolbarPath="additions"
-               tooltip="Connect to Hive">
-            <enablement>
-               <and>
-                  <objectClass name="org.openscada.da.client.test.impl.HiveConnection"/>
-               </and>
-            </enablement>
-         </action>
-         <action
                class="org.openscada.da.client.test.actions.WriteOperationAction"
                icon="icons/16x16/stock_write.png"
                id="org.openscada.da.client.test.actions.WriteOperationAction"
@@ -119,20 +104,82 @@
                <objectClass name="org.openscada.da.client.test.impl.HiveItem"/>
             </enablement>
          </action>
+         <action
+               class="org.openscada.da.client.test.actions.ConnectHiveAction"
+               icon="icons/stock_connect.png"
+               id="org.openscada.da.client.test.actions.ConnectHiveAction"
+               label="Connect"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions"
+               tooltip="Connect to Hive">
+            <enablement>
+               <and>
+                  <objectClass name="org.openscada.da.client.test.impl.HiveConnection"/>
+                  <objectState
+                        name="state"
+                        value="CLOSED"/>
+               </and>
+            </enablement>
+         </action>
+         <action
+               class="org.openscada.da.client.test.actions.DisconnectHiveAction"
+               icon="icons/stock_disconnect.png"
+               id="org.openscada.da.client.test.actions.DisconnectHiveAction"
+               label="Disconnect"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions"
+               tooltip="Disconnect from hive">
+            <enablement>
+               <and>
+                  <objectClass name="org.openscada.da.client.test.impl.HiveConnection"/>
+                  <not>
+                     <objectState
+                           name="state"
+                           value="CLOSED"/>
+                  </not>
+               </and>
+            </enablement>
+         </action>
       </viewContribution>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             adaptable="false"
-            id="org.openscada.da.client.test.actions.ConnectHiveAction"
+            id="org.openscada.da.client.test.popupMenus.oc2"
             objectClass="org.openscada.da.client.test.impl.HiveConnection">
+         <action
+               class="org.openscada.da.client.test.actions.DisconnectHiveAction"
+               icon="icons/stock_disconnect.png"
+               id="org.openscada.da.client.test.actions.DisconnectHiveAction"
+               label="Disconnect"
+               menubarPath="additions">
+            <enablement>
+               <and>
+                  <not>
+                     <objectState
+                           name="state"
+                           value="CLOSED"/>
+                  </not>
+               </and>
+            </enablement>
+         </action>
          <action
                class="org.openscada.da.client.test.actions.ConnectHiveAction"
                icon="icons/stock_connect.png"
                id="org.openscada.da.client.test.actions.ConnectHiveAction"
                label="Connect"
-               menubarPath="additions"/>
+               menubarPath="additions">
+            <enablement>
+               <and>
+                  <objectState
+                        name="state"
+                        value="CLOSED"/>
+               </and>
+            </enablement>
+         </action>
       </objectContribution>
       <objectContribution
             adaptable="false"
