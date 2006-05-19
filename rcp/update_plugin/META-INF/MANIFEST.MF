@@ -8,5 +8,6 @@ Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.update.core
+ org.eclipse.update.core,
+ log4j_wrapper_plugin
 Eclipse-LazyStart: true

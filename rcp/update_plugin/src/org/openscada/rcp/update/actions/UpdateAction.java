@@ -6,6 +6,7 @@ import java.util.Map;
 
 import openscada_rcp_update.Activator;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
@@ -34,6 +35,8 @@ import org.eclipse.update.standalone.UpdateCommand;
 public class UpdateAction implements IWorkbenchWindowActionDelegate
 {
 
+    private static Logger _log = Logger.getLogger ( UpdateAction.class );
+    
     private final static String FEATURE_PREFIX = "org.openscada.";
     
     private Shell _shell;
@@ -139,6 +142,7 @@ public class UpdateAction implements IWorkbenchWindowActionDelegate
                    }
                    catch ( Exception e )
                    {
+                       _log.error ( "System update failed with error", e );
                        status.add ( new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 93, "System update failed with error", e ) );
                    }
                    finally
@@ -151,10 +155,12 @@ public class UpdateAction implements IWorkbenchWindowActionDelegate
         }
         catch ( InvocationTargetException e )
         {
+            _log.error ( "System update failed with error", e );
             status.add ( new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 94, "System update failed with error", e ) );
         }
         catch ( InterruptedException e )
         {
+            _log.error ( "System update cancelled" );
             status.add ( new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 95, "System update cancelled", null ) );
         }
         if ( !status.isOK () )
@@ -178,11 +184,13 @@ public class UpdateAction implements IWorkbenchWindowActionDelegate
             boolean success = uc.run ( monitor );
             if ( !success )
             {
+                _log.error ( NLS.bind ( "Update of Feature {0} failed", id ) );
                 status.add ( new OperationStatus ( OperationStatus.WARNING, Activator.PLUGIN_ID, 91, NLS.bind ( "Update of Feature {0} failed", id ), null) );
             }
         }
         catch ( Exception e )
         {
+            _log.error ( NLS.bind ( "Update of Feature {0} failed with error", id ), e );
             status.add ( new OperationStatus ( OperationStatus.WARNING, Activator.PLUGIN_ID, 92, NLS.bind ( "Update of Feature {0} failed with error", id ), e) );
         }
     }
