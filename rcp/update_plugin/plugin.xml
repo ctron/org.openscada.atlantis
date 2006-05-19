@@ -4,13 +4,13 @@
  <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
-            id="org.openscada.da.client.test.updateActionSet"
+            id="org.openscada.rcp.update.updateActionSet"
             label="Update Management"
             visible="true">
          <action
                class="org.openscada.rcp.update.actions.UpdateAction"
                icon="icons/stock_refresh.png"
-               id="org.openscada.da.client.test.update.UpdateAction"
+               id="org.openscada.rcp.update.UpdateAction"
                label="&amp;Update"
                menubarPath="help/update"
                style="push"
@@ -20,7 +20,7 @@
  <extension
        point="org.eclipse.ui.perspectiveExtensions">
     <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
-       <actionSet id="org.openscada.da.client.test.updateActionSet"/>
+       <actionSet id="org.openscada.rcp.update.updateActionSet"/>
     </perspectiveExtension>
  </extension>
 </plugin>

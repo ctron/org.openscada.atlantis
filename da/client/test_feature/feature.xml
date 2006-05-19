@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.openscada.da.test_client"
+      id="org.openscada.da.client.test"
       label="OpenSCADA DA Test Client Feature"
       version="0.1.0"
       provider-name="OpenSCADA">
 
    <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+      The OpenSCADA DA Client Test Feature
    </description>
 
    <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+      Copyright by Jens Reimann &amp; inavare GmbH
    </copyright>
 
    <license url="http://www.example.com/license">
-      [Enter License Description here.]
+      Licensed under the GPL
    </license>
 
    <url>
       <update label="OpenSCADA DA Test Client" url="http://openscada.org/ostc"/>
+      <discovery label="OpenSCADA Update Site" url="http://openscada.de/ostc"/>
    </url>
 
    <requires>
       <import plugin="org.eclipse.rcp"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.update.core"/>
+      <import plugin="org.eclipse.equinox.common" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.osgi" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.core.runtime" version="3.1.0" match="compatible"/>
+      <import plugin="org.eclipse.update.configurator" version="3.1.0" match="compatible"/>
    </requires>
 
    <plugin
@@ -49,6 +53,20 @@
 
    <plugin
          id="org.openscada.rcp.update"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.update.configurator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.update.core"
          download-size="0"
          install-size="0"
          version="0.0.0"

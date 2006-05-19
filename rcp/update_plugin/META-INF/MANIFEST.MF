@@ -9,4 +9,4 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.update.core
-Eclipse-LazyStart: false
+Eclipse-LazyStart: true
