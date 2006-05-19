@@ -3,19 +3,17 @@ package org.openscada.net.io;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
-public class SocketConnection extends IOChannel implements IOChannelListener {
-	
+public class SocketConnection extends IOChannel implements IOChannelListener
+{
 	private static Logger _log = Logger.getLogger(SocketConnection.class);
 	
 	protected IOProcessor _processor; 
@@ -173,12 +171,12 @@ public class SocketConnection extends IOChannel implements IOChannelListener {
 				{
 					_log.debug("Connection established");
 					if ( _listener != null )
-						_listener.connected();
+						_listener.connected ();
 				}
 				else
 				{
 					_log.info("Unable to connect");
-					_listener.connectionFailed (null);
+					_listener.connectionFailed ( null );
 					close();
 				}
 			}
@@ -186,7 +184,7 @@ public class SocketConnection extends IOChannel implements IOChannelListener {
 			{
 				_log.info("Connection request failed: ", e );
 				if ( _listener != null )
-					_listener.connectionFailed(e);
+					_listener.connectionFailed ( e );
 				close ();
 			}
 		}
@@ -305,14 +303,15 @@ public class SocketConnection extends IOChannel implements IOChannelListener {
 		
 	}
 
-	public ConnectionListener getListener() {
-		return _listener;
+	public ConnectionListener getListener()
+    {
+	    return _listener;
 	}
 
-	public void setListener(ConnectionListener listener) {
-		_listener = listener;
+	public void setListener(ConnectionListener listener)
+    {
+	    _listener = listener;
 	}
-
 
     public IOChannelListener getIOChannelListener ()
     {
