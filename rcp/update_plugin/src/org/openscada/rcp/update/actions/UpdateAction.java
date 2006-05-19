@@ -59,6 +59,33 @@ public class UpdateAction implements IWorkbenchWindowActionDelegate
         _shell = window.getShell ();
         _display = _shell.getDisplay (); 
     }
+    
+    private boolean shouldUpdate ( Map<String, PluginVersionIdentifier> featureVersions, String id, PluginVersionIdentifier identifier )
+    {
+        if ( !id.startsWith ( FEATURE_PREFIX ) )
+            return false;
+        
+        if ( featureVersions.containsKey ( id ) )
+            if ( featureVersions.get ( id ).isGreaterOrEqualTo ( identifier ) )
+                return false;
+        
+        return true;
+    }
+    
+    private boolean shouldRestart ( Map<String, PluginVersionIdentifier> featureVersions, String id, PluginVersionIdentifier identifier )
+    {
+        if ( !id.startsWith ( FEATURE_PREFIX ) )
+            return false;
+        
+        // although we should not get additional features
+        if ( !featureVersions.containsKey ( id ) )
+            return true;
+        
+        if ( identifier.isGreaterThan ( featureVersions.get ( id  ) ) )
+            return true;
+        
+        return false;
+    }
 
     public void run ( IAction action )
     {
@@ -102,8 +129,10 @@ public class UpdateAction implements IWorkbenchWindowActionDelegate
                                VersionedIdentifier identifier = featureRef.getVersionedIdentifier ();
                                String id = identifier.getIdentifier ();
                                
+                               _log.debug ( "FeatureRef: " + id + " version: " + identifier.getVersion () );
+                               
                                // only update our own features here
-                               if ( id.startsWith ( FEATURE_PREFIX ) )
+                               if ( shouldUpdate ( featureVersions, id, identifier.getVersion() ) )
                                {
                                    featureVersions.put ( id, identifier.getVersion () );
                                    performUpdate ( monitor, id, status );
@@ -119,22 +148,11 @@ public class UpdateAction implements IWorkbenchWindowActionDelegate
                            {
                                VersionedIdentifier identifier = featureRef.getVersionedIdentifier ();
                                String id = identifier.getIdentifier ();
-                               if (
-                                       id.startsWith ( FEATURE_PREFIX ) &&
-                                       !identifier.equals ( featureVersions.get ( 0 ) )
-                               )
+                               _log.debug ( "Comapare versions for " + id + " before: " + featureVersions.get ( id ) + " after: " + identifier.getVersion () );
+                               if ( shouldRestart ( featureVersions, id, identifier.getVersion () ) )
                                {
-                                   _restart = MessageDialog.openQuestion ( _shell, "Update", "System was successfully updated.\nIt is recommended to restart the application.\nRestart now?" );
-                                   if ( _restart )
-                                   {
-                                       try
-                                       {
-                                           PlatformUI.getWorkbench ().restart ();
-                                       }
-                                       catch ( Exception e )
-                                       {
-                                       }
-                                   }
+                                   _log.info ( "Detected upgrade of feature... trigger restart" );
+                                   performRestart ();
                                    break loop;
                                }
                            }
@@ -184,13 +202,13 @@ public class UpdateAction implements IWorkbenchWindowActionDelegate
             boolean success = uc.run ( monitor );
             if ( !success )
             {
-                _log.error ( NLS.bind ( "Update of Feature {0} failed", id ) );
-                status.add ( new OperationStatus ( OperationStatus.WARNING, Activator.PLUGIN_ID, 91, NLS.bind ( "Update of Feature {0} failed", id ), null) );
+                _log.info ( NLS.bind ( "Update of Feature {0} failed", id ) );
+                status.add ( new OperationStatus ( OperationStatus.INFO, Activator.PLUGIN_ID, 91, NLS.bind ( "Update of Feature {0} failed", id ), null) );
             }
         }
         catch ( Exception e )
         {
-            _log.error ( NLS.bind ( "Update of Feature {0} failed with error", id ), e );
+            _log.warn ( NLS.bind ( "Update of Feature {0} failed with error", id ), e );
             status.add ( new OperationStatus ( OperationStatus.WARNING, Activator.PLUGIN_ID, 92, NLS.bind ( "Update of Feature {0} failed with error", id ), e) );
         }
     }
@@ -206,6 +224,26 @@ public class UpdateAction implements IWorkbenchWindowActionDelegate
     public boolean isRestart ()
     {
         return _restart;
+    }
+    
+    private void performRestart ()
+    {
+        _shell.getDisplay ().syncExec ( new Runnable (){
+
+            public void run ()
+            {
+                _restart = MessageDialog.openQuestion ( _shell, "Update", "System was successfully updated.\nIt is recommended to restart the application.\nRestart now?" );
+                if ( _restart )
+                {
+                    try
+                    {
+                        PlatformUI.getWorkbench ().restart ();
+                    }
+                    catch ( Exception e )
+                    {
+                    }
+                }       
+            }}  );
     }
 
 }
