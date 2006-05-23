@@ -13,19 +13,21 @@ public class Application
 		
 		try {
 			
-			// try to instanciate the class
-			Hive hive = (Hive)Class.forName("org.openscada.da.server.sysinfo.Hive").newInstance();
-			
-			Server server = new Server(
-					new ConnectionHandlerServerFactory(hive),
-					Integer.getInteger("openscada.da.net.server.port",1202)
-					);
+		    if ( args.length != 1 )
+		    {
+		        System.err.println ( "syntax: Application <hiveClassName>" );
+                return;
+		    }
             
-			server.run ();
+            Exporter exporter = new Exporter ( args[0] );
+            
+            _log.info ( "Running exporter..." );
+			exporter.run ();
+            _log.warn ( "Exporter returned!" );
 		}
 		catch ( Exception e )
 		{
-			_log.fatal("Error in OpenSCADA DA[NET] Server", e);
+			_log.fatal ( "Error in OpenSCADA DA[NET] Server", e );
 		}
 	}
 }
