@@ -26,7 +26,7 @@ public class Exporter implements Runnable
     
     public Exporter ( String hiveClassName ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
     {
-        _hive= createInstance ( Class.forName ( hiveClassName ) );
+        _hive = createInstance ( Class.forName ( hiveClassName ) );
         
         createServer ();
     }
@@ -49,5 +49,9 @@ public class Exporter implements Runnable
         _server.run ();
     }
     
+    public Class getHiveClass ()
+    {
+        return _hive.getClass ();
+    }
     
 }
