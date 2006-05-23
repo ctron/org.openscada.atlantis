@@ -1,4 +1,4 @@
-package org.openscada.da.server.sysinfo;
+package org.openscada.da.server.sysinfo.items;
 
 
 import java.util.Map;

@@ -1,4 +1,4 @@
-package org.openscada.da.server.sysinfo;
+package org.openscada.da.server.sysinfo.items;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,6 +6,8 @@ import java.util.StringTokenizer;
 
 import org.openscada.da.core.common.DataItemInputCommon;
 import org.openscada.da.core.data.Variant;
+import org.openscada.da.server.sysinfo.Hive;
+import org.openscada.da.server.sysinfo.utils.FileUtils;
 
 public class LoadAverageJob implements Runnable {
 

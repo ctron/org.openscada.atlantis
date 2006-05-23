@@ -1,4 +1,4 @@
-package org.openscada.da.server.sysinfo;
+package org.openscada.da.server.sysinfo.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
