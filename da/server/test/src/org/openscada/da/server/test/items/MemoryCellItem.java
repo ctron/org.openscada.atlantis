@@ -1,7 +1,6 @@
 package org.openscada.da.server.test.items;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.openscada.da.core.InvalidOperationException;

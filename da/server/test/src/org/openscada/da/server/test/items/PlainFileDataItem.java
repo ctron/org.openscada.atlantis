@@ -1,9 +1,7 @@
 package org.openscada.da.server.test.items;
 
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +19,8 @@ public class PlainFileDataItem extends ScheduledDataItem {
 		_file = file;
 	}
 
-	public void run() {
+	public void run()
+    {
 		Map<String,Variant> attributes = new HashMap<String,Variant>();
 		try
 		{
