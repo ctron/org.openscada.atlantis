@@ -7,7 +7,10 @@ import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.MemoryDataItem;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.core.data.Variant;
+import org.openscada.da.server.test.items.LoadAverageJob;
 import org.openscada.da.server.test.items.MemoryCellItem;
+import org.openscada.da.server.test.items.PlainFileDataItem;
+import org.openscada.da.server.test.items.TimeDataItem;
 import org.openscada.da.server.test.items.WriteDelayItem;
 import org.openscada.utils.timing.Scheduler;
 

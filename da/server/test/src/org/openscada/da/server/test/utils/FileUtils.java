@@ -1,4 +1,4 @@
-package org.openscada.da.server.test;
+package org.openscada.da.server.test.utils;
 
 import java.io.BufferedReader;
 import java.io.File;

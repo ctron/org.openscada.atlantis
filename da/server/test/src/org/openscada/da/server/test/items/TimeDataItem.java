@@ -1,4 +1,4 @@
-package org.openscada.da.server.test;
+package org.openscada.da.server.test.items;
 
 
 import java.util.Map;
