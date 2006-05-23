@@ -20,7 +20,7 @@ public interface Hive
     public void unregisterItemList ( Session session ) throws InvalidSessionException;
     
 	// enumerate
-	public Collection<String> listItems ( Session session ) throws InvalidSessionException;
+	public Collection<DataItemInformation> listItems ( Session session ) throws InvalidSessionException;
     
     // async DA operations
     public void startWrite ( Session session, String itemName, Variant value, WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException;

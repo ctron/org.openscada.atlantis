@@ -5,15 +5,17 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Set;
 
+import org.openscada.da.core.DataItemInformation;
+
 public class ItemList extends Observable implements ItemListListener
 {
-    private Set<String> _items = new HashSet<String>();
+    private Set<DataItemInformation> _items = new HashSet<DataItemInformation>();
     
     public ItemList ()
     {
     }
     
-    public void changed ( Collection<String> added, Collection<String> removed, boolean initial )
+    public void changed ( Collection<DataItemInformation> added, Collection<String> removed, boolean initial )
     {
         int changes = 0;
         
@@ -22,13 +24,13 @@ public class ItemList extends Observable implements ItemListListener
             if ( initial )
             {
                 _items.clear ();
-                _items = new HashSet<String> ( added );
+                _items = new HashSet<DataItemInformation> ( added );
                 changes = _items.size ();
             }
             else
             {
                 
-                for ( String item : added )
+                for ( DataItemInformation item : added )
                 {
                     if ( _items.add(item) )
                         changes++;
@@ -50,11 +52,11 @@ public class ItemList extends Observable implements ItemListListener
         
     }
     
-    public Collection<String> getItemList()
+    public Collection<DataItemInformation> getItemList()
     {
         synchronized ( _items )
         {
-            return new HashSet<String>(_items);
+            return new HashSet<DataItemInformation> ( _items );
         }
     }
 }

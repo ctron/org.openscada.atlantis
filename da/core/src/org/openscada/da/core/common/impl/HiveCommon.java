@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.Hive;
 import org.openscada.da.core.InvalidItemException;
 import org.openscada.da.core.InvalidSessionException;
@@ -20,16 +21,18 @@ import org.openscada.da.core.ReadOperationListener;
 import org.openscada.da.core.Session;
 import org.openscada.da.core.WriteOperationListener;
 import org.openscada.da.core.common.DataItem;
+import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.ItemListener;
 import org.openscada.da.core.data.Variant;
 import org.openscada.utils.exec.OperationResultHandler;
 
 public class HiveCommon implements Hive, ItemListener {
 	
-	private Map<DataItem,DataItemInfo> _items = new HashMap<DataItem,DataItemInfo>();
+	
 	private Set<SessionCommon> _sessions = new HashSet<SessionCommon>();
 	
-	private Map<String,DataItem> _itemMap = new HashMap<String,DataItem>();
+    private Map<DataItem,DataItemInfo> _items = new HashMap<DataItem,DataItemInfo>();
+	private Map<DataItemInformation,DataItem> _itemMap = new HashMap<DataItemInformation,DataItem>();
     
     private Executor _executor = Executors.newCachedThreadPool();
 	
@@ -143,7 +146,7 @@ public class HiveCommon implements Hive, ItemListener {
 		_items.get(item).removeSession(sessionCommon);
 	}
 	
-	public Collection<String> listItems(Session session) throws InvalidSessionException {
+	public Collection<DataItemInformation> listItems ( Session session ) throws InvalidSessionException {
 		validateSession ( session );
 		
         synchronized ( _items )
@@ -161,9 +164,9 @@ public class HiveCommon implements Hive, ItemListener {
 			{
 				item.setListener(this);
 				_items.put ( item, new DataItemInfo(item) );
-				_itemMap.put( item.getName(), item );
+				_itemMap.put ( new DataItemInformationBase(item.getInformation()), item );
                 
-                fireAddItem(item.getName());
+                fireAddItem ( item.getInformation () );
 			}
 		}
 	}
@@ -180,9 +183,9 @@ public class HiveCommon implements Hive, ItemListener {
 				info.dispose();
 				
 				_items.remove(item);	
-				_itemMap.remove(item.getName());
+				_itemMap.remove ( new DataItemInformationBase ( item.getInformation ().getName () ) );
                 
-                fireRemoveItem(item.getName());
+                fireRemoveItem ( item.getInformation().getName() );
 			}
 		}
 	}
@@ -207,7 +210,7 @@ public class HiveCommon implements Hive, ItemListener {
 	{
         synchronized ( _items )
         {
-            return _itemMap.get(name);
+            return _itemMap.get ( new DataItemInformationBase ( name ) );
         }
 	}
 	
@@ -234,7 +237,7 @@ public class HiveCommon implements Hive, ItemListener {
 			
 			try
 			{
-				listener.valueChanged ( item.getName(), variant, false );
+				listener.valueChanged ( item.getInformation().getName(), variant, false );
 			}
 			catch ( Exception e )
 			{
@@ -270,7 +273,7 @@ public class HiveCommon implements Hive, ItemListener {
 			
 			try
 			{
-				listener.attributesChanged(item.getName(), attributes, false);
+				listener.attributesChanged ( item.getInformation().getName(), attributes, false);
 			}
 			catch ( Exception e )
 			{
@@ -308,11 +311,11 @@ public class HiveCommon implements Hive, ItemListener {
             // send initial content
             synchronized(_items)
             {
-                Collection<String> items = _itemMap.keySet();
+                Collection<DataItemInformation> items = _itemMap.keySet();
                 sessionCommon.setItemListSubscriber(true);
                 if ( sessionCommon.getItemListListener() != null )
                 {
-                    sessionCommon.getItemListListener().changed(items,new ArrayList<String>(), true);
+                    sessionCommon.getItemListListener().changed ( items, new ArrayList<String>(), true);
                 }
             }
         }
@@ -332,21 +335,21 @@ public class HiveCommon implements Hive, ItemListener {
         }
     }
     
-    private void fireAddItem ( String name )
+    private void fireAddItem ( DataItemInformation item )
     {
-        Collection<String> added = new ArrayList<String>();
-        added.add(name);
+        Collection<DataItemInformation> added = new ArrayList<DataItemInformation>();
+        added.add (item );
         fireItemListChange(added, new ArrayList<String>());
     }
     
-    private void fireRemoveItem ( String name )
+    private void fireRemoveItem ( String item )
     {
         Collection<String> removed = new ArrayList<String>();
-        removed.add(name);
-        fireItemListChange(new ArrayList<String>(), removed);
+        removed.add(item);
+        fireItemListChange(new ArrayList<DataItemInformation>(), removed);
     }
     
-    private void fireItemListChange ( Collection<String> added, Collection<String> removed )
+    private void fireItemListChange ( Collection<DataItemInformation> added, Collection<String> removed )
     {
         synchronized ( _sessions )
         {

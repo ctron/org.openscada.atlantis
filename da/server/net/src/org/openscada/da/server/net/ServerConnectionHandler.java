@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.Hive;
 import org.openscada.da.core.InvalidItemException;
 import org.openscada.da.core.InvalidSessionException;
@@ -243,10 +244,10 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         getConnection().sendMessage(Messages.notifyAttributes(name, attributes, initial));
     }
     
-    public void changed ( Collection<String> added, Collection<String> removed, boolean initial )
+    public void changed ( Collection<DataItemInformation> added, Collection<String> removed, boolean initial )
     {
         _log.debug("Got enum change event from hive");
-        getConnection().sendMessage(EnumEvent.create(added, removed, initial));
+        getConnection().sendMessage ( EnumEvent.create ( added, removed, initial ) );
     }
     
     private void performWrite ( final Message message )

@@ -14,6 +14,8 @@ import org.openscada.da.client.net.ConnectionInfo;
 import org.openscada.da.client.net.ConnectionStateListener;
 import org.openscada.da.client.net.ItemUpdateListener;
 import org.openscada.da.client.net.Connection.State;
+import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.IODirection;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
 import org.openscada.utils.timing.Scheduler;
@@ -46,11 +48,16 @@ public class Application
 
             public void update ( Observable o, Object arg )
             {
-                Collection<String> items = connection.getItemList().getItemList();
+                Collection<DataItemInformation> items = connection.getItemList().getItemList();
                 _log.debug("START - Item list");
-                for ( String item : items )
+                for ( DataItemInformation item : items )
                 {
-                    _log.debug(" - " + item);
+                    String io = "";
+                    if ( item.getIODirection ().contains ( IODirection.INPUT ) )
+                        io += "I";
+                    if ( item.getIODirection ().contains ( IODirection.OUTPUT ) )
+                        io += "O";
+                    _log.debug ( " - " + item.getName () + " " + io );
                 }
                 _log.debug("END - Item list");
             }});

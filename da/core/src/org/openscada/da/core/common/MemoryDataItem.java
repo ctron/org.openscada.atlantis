@@ -12,35 +12,35 @@ import org.openscada.da.core.data.Variant;
 
 public class MemoryDataItem extends DataItemBase {
 
-	public MemoryDataItem(String name) {
-		super(name);
+	public MemoryDataItem ( String name )
+    {
+		super ( new DataItemInformationBase ( name, EnumSet.of(IODirection.INPUT, IODirection.OUTPUT) ) );
 	}
 
 	private Variant _value = new Variant();
 	private Map<String, Variant> _attributes = new HashMap<String, Variant>();
 	
-	public EnumSet<IODirection> getIODirection() {
-		return EnumSet.of(IODirection.INPUT, IODirection.OUTPUT);
+	public Variant getValue () throws InvalidOperationException
+    {
+		return new Variant ( _value );
 	}
 
-	public Variant getValue() throws InvalidOperationException {
-		return new Variant(_value);
-	}
-
-	public void setValue(Variant value) throws InvalidOperationException, NullValueException, NotConvertableException {
-		if ( !_value.equals(value))
+	public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    {
+		if ( !_value.equals ( value ) )
 		{
-			_value = new Variant(value);
-			notifyValue(value);
+			_value = new Variant ( value );
+			notifyValue ( value );
 		}
 	}
 
-	public Map<String, Variant> getAttributes() {		
+	public Map<String, Variant> getAttributes()
+    {		
 		return new HashMap<String, Variant> ( _attributes );
 	}
 
-	public void setAttributes ( Map<String, Variant> attributes ) {
-		
+	public void setAttributes ( Map<String, Variant> attributes )
+    {
 		for ( Map.Entry<String,Variant> entry : attributes.entrySet() )
 		{
 			if ( entry.getValue() != null )

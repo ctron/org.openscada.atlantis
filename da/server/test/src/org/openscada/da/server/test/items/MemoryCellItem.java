@@ -78,7 +78,7 @@ public class MemoryCellItem extends DataItemOutput
             
             for ( int i = pos ; i < num ; i++ )
             {
-                MemoryDataItem item = new MemoryDataItem ( getName() + "-" + i );
+                MemoryDataItem item = new MemoryDataItem ( getInformation ().getName () + "-" + i );
                 _hive.registerItem ( item );
                 newItems.put ( i, item );
             }

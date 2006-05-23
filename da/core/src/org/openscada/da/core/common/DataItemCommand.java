@@ -12,7 +12,8 @@ import org.openscada.da.core.data.Variant;
 
 public class DataItemCommand extends DataItemOutput {
 
-	public DataItemCommand(String name) {
+	public DataItemCommand(String name)
+    {
 		super(name);
 	}
 

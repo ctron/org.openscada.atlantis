@@ -11,6 +11,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.openscada.da.client.net.operations.WriteOperation;
 import org.openscada.da.client.net.operations.WriteOperationArguments;
+import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.AutoReconnectClientConnection;
 import org.openscada.net.base.ClientConnection;
@@ -231,7 +232,7 @@ public class Connection
         
     }
     
-    private void fireItemListChange ( Collection<String> added, Collection<String> removed, boolean initial )
+    private void fireItemListChange ( Collection<DataItemInformation> added, Collection<String> removed, boolean initial )
     {
         synchronized ( _itemListListeners )
         {
@@ -417,11 +418,11 @@ public class Connection
         synchronized ( _itemList )
         {
             
-            List<String> added = new ArrayList<String> ();
+            List<DataItemInformation> added = new ArrayList<DataItemInformation> ();
             List<String> removed = new ArrayList<String> ();
             Holder<Boolean> initial = new Holder<Boolean> ();
             
-            EnumEvent.parse(message, added, removed, initial);
+            EnumEvent.parse ( message, added, removed, initial );
             
             fireItemListChange ( added, removed, initial.value.booleanValue() );
         }

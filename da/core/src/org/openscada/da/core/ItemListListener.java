@@ -4,5 +4,5 @@ import java.util.Collection;
 
 public interface ItemListListener
 {
-    void changed ( Collection<String> added, Collection<String> removed, boolean initial );
+    void changed ( Collection<DataItemInformation> added, Collection<String> removed, boolean initial );
 }

@@ -2,26 +2,26 @@ package org.openscada.da.core.common;
 
 import java.util.Map;
 
+import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.data.Variant;
-
 
 public abstract class DataItemBase implements DataItem {
 	
 	protected ItemListener _listener;
 	
-	private String _name;
+	private DataItemInformation _information;
     
-	public DataItemBase ( String name )
+	public DataItemBase ( DataItemInformation information )
 	{
-		_name = name;
+        _information = information;
 	}
 	
-	public String getName ()
+	public DataItemInformation getInformation ()
 	{
-		return _name;
+		return _information;
 	}
 	
-	public void setListener(ItemListener listener)
+	public void setListener ( ItemListener listener )
     {
 		synchronized ( this )
 		{
@@ -61,5 +61,5 @@ public abstract class DataItemBase implements DataItem {
 		}
 		
 	}
-	
+    
 }
