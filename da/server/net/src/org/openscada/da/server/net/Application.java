@@ -1,14 +1,12 @@
 package org.openscada.da.server.net;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.core.Hive;
-import org.openscada.net.io.Server;
 
 public class Application
 {
 	private static Logger _log = Logger.getLogger(Application.class);
 	
-	public static void main(String[] args)
+	public static void main ( String[] args )
 	{
 		
 		try {
@@ -21,7 +19,7 @@ public class Application
             
             Exporter exporter = new Exporter ( args[0] );
             
-            _log.info ( "Running exporter..." );
+            _log.info ( "Running exporter (hive class: " + exporter.getHiveClass ().getCanonicalName () + ")..." );
 			exporter.run ();
             _log.warn ( "Exporter returned!" );
 		}
