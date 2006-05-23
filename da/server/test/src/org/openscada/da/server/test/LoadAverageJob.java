@@ -1,4 +1,4 @@
-package org.openscada.da.server.sysinfo;
+package org.openscada.da.server.test;
 
 import java.io.File;
 import java.io.IOException;

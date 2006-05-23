@@ -1,4 +1,4 @@
-package org.openscada.da.server.sysinfo;
+package org.openscada.da.server.test;
 
 
 import java.io.File;
@@ -7,8 +7,8 @@ import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.MemoryDataItem;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.core.data.Variant;
-import org.openscada.da.server.sysinfo.items.MemoryCellItem;
-import org.openscada.da.server.sysinfo.items.WriteDelayItem;
+import org.openscada.da.server.test.items.MemoryCellItem;
+import org.openscada.da.server.test.items.WriteDelayItem;
 import org.openscada.utils.timing.Scheduler;
 
 public class Hive extends HiveCommon {

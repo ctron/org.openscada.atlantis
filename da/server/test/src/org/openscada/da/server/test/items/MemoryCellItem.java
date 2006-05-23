@@ -1,4 +1,4 @@
-package org.openscada.da.server.sysinfo.items;
+package org.openscada.da.server.test.items;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,7 +11,7 @@ import org.openscada.da.core.common.MemoryDataItem;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
-import org.openscada.da.server.sysinfo.Hive;
+import org.openscada.da.server.test.Hive;
 
 public class MemoryCellItem extends DataItemOutput
 {

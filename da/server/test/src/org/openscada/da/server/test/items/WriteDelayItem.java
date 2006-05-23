@@ -1,4 +1,4 @@
-package org.openscada.da.server.sysinfo.items;
+package org.openscada.da.server.test.items;
 
 import java.util.HashMap;
 import java.util.Map;
