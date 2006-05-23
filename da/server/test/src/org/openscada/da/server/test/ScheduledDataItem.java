@@ -1,4 +1,4 @@
-package org.openscada.da.server.sysinfo;
+package org.openscada.da.server.test;
 
 
 import org.openscada.da.core.common.DataItemInputCommon;
