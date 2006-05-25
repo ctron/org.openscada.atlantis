@@ -1,4 +1,4 @@
-package org.openscada.net.io;
+package org.openscada.net.codec;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -12,8 +12,9 @@ import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
+import org.openscada.net.io.Connection;
 
-public class Codec {
+public class ProtocolGMPP {
 	
 	public final static int VT_STRING = 	0x000000001;
 	public final static int VT_LONG = 		0x000000002;
@@ -21,13 +22,13 @@ public class Codec {
 	
 	private final static int HEADER_SIZE = 4 + 8 + 8 + 8 + 4 + 4; 
 
-	private static Logger _log = Logger.getLogger(Codec.class);
+	private static Logger _log = Logger.getLogger(ProtocolGMPP.class);
 	
 	private Connection _connection = null;
 	private MessageListener _listener = null;
 	private ByteBuffer _parseBuffer = null;
 	
-	public Codec ( Connection connection, MessageListener listener )
+	public ProtocolGMPP ( Connection connection, MessageListener listener )
 	{
 		_connection = connection;
 		_listener = listener;	

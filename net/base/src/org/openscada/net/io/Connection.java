@@ -10,6 +10,7 @@ import java.util.Map;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
+import org.openscada.net.codec.ProtocolGMPP;
 import org.openscada.utils.timing.Scheduler;
 
 public class Connection implements ConnectionListener, MessageListener
@@ -18,7 +19,7 @@ public class Connection implements ConnectionListener, MessageListener
     private int _timeoutLimit = Integer.getInteger ( "org.openscada.net.message_timeout", 10*1000 );
     private static Scheduler _scheduler = new Scheduler ();
     
-	private Codec _codec = null;
+	private ProtocolGMPP _protocolGMPP = null;
 	protected SocketConnection _connection = null;
 	
 	private ConnectionStateListener _connectionStateListener = null;
@@ -60,7 +61,7 @@ public class Connection implements ConnectionListener, MessageListener
         _listener = listener;
         _connection = connection;
         
-		_codec = new Codec ( this, this );
+		_protocolGMPP = new ProtocolGMPP ( this, this );
         
         addTimeOutJob ();
 	}
@@ -68,7 +69,7 @@ public class Connection implements ConnectionListener, MessageListener
 	public Connection ( MessageListener listener, SocketConnection connection )
 	{
         _listener = listener;
-		_codec = new Codec ( this, this);
+		_protocolGMPP = new ProtocolGMPP ( this, this);
 		_connection = connection;
         
         addTimeOutJob ();
@@ -104,7 +105,7 @@ public class Connection implements ConnectionListener, MessageListener
 	synchronized public void sendMessage ( Message message )
 	{
 		message.setSequence ( _sequence++ );
-		_connection.scheduleWrite ( _codec.code ( message ) );
+		_connection.scheduleWrite ( _protocolGMPP.code ( message ) );
 	}
     
     synchronized public void sendMessage ( Message message, MessageStateListener listener )
@@ -121,12 +122,12 @@ public class Connection implements ConnectionListener, MessageListener
             _tagList.put ( message.getSequence (), tag );
         }
         
-        _connection.scheduleWrite ( _codec.code ( message ) );
+        _connection.scheduleWrite ( _protocolGMPP.code ( message ) );
     }
 	
 	public void read ( ByteBuffer buffer )
 	{
-		_codec.decode ( buffer );
+		_protocolGMPP.decode ( buffer );
 	}
 
 	public void written()
