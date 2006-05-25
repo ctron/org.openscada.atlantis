@@ -1,5 +1,13 @@
 package org.openscada.net.base.data;
 
+/**
+ * A void value type.
+ * <p>
+ * A void instance is equal to all other void instances since they don't have
+ * a real value.
+ * @author jens
+ *
+ */
 public class VoidValue extends Value
 {
     @Override
