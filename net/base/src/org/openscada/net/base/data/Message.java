@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class Message {
+public class Message
+{
 	public final static int CC_UNKNOWN_COMMAND_CODE =  0x00000001;
 	public final static int CC_FAILED =                0x00000002;
 	public final static int CC_ACK =                   0x00000003;
@@ -14,10 +15,10 @@ public class Message {
 	private int _commandCode = 0;
 	private long _sequence = 0;
 	private long _replySequence = 0;
+    private long _timestamp = System.currentTimeMillis ();
 	
 	private Map<String,Value> _values = null;
 
-	
 	// ctors
 	
 	public Message ()
@@ -90,5 +91,15 @@ public class Message {
 	{
 		_values.remove( name );
 	}
+
+    public long getTimestamp ()
+    {
+        return _timestamp;
+    }
+
+    public void setTimestamp ( long timestamp )
+    {
+        _timestamp = timestamp;
+    }
 	
 }

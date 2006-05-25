@@ -10,6 +10,7 @@ import java.util.Map;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
+import org.openscada.net.codec.Protocol;
 import org.openscada.net.codec.ProtocolGMPP;
 import org.openscada.utils.timing.Scheduler;
 
@@ -19,7 +20,7 @@ public class Connection implements ConnectionListener, MessageListener
     private int _timeoutLimit = Integer.getInteger ( "org.openscada.net.message_timeout", 10*1000 );
     private static Scheduler _scheduler = new Scheduler ();
     
-	private ProtocolGMPP _protocolGMPP = null;
+	private Protocol _protocolGMPP = null;
 	protected SocketConnection _connection = null;
 	
 	private ConnectionStateListener _connectionStateListener = null;

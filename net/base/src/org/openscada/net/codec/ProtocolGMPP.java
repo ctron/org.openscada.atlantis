@@ -1,8 +1,6 @@
 package org.openscada.net.codec;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -15,7 +13,8 @@ import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
 import org.openscada.net.io.Connection;
 
-public class ProtocolGMPP {
+public class ProtocolGMPP implements Protocol
+{
 
     public final static int VT_STRING = 	0x000000001;
     public final static int VT_LONG = 		0x000000002;
@@ -23,144 +22,229 @@ public class ProtocolGMPP {
     public final static int VT_VOID =       0x000000004;
 
     private final static int HEADER_SIZE = 4 + 8 + 8 + 8 + 4 + 4; 
+    
+    private final static int BLOCK_SIZE =   4096;
 
     private static Logger _log = Logger.getLogger ( ProtocolGMPP.class );
 
     private Connection _connection = null;
     private MessageListener _listener = null;
-    private ByteBuffer _parseBuffer = null;
+    private ByteBuffer _inputBuffer = null;
 
     public ProtocolGMPP ( Connection connection, MessageListener listener )
     {
         _connection = connection;
         _listener = listener;	
     }
-
-    private ByteBuffer codeValue ( String name, Value value )
+    
+    private ByteBuffer codeValue ( ByteBuffer buffer, String name, Value value )
     {
         byte [] nameData = name.getBytes();
 
-        int namePartLen = nameData.length + 4;
-
-        ByteBuffer valueBuffer = null;
+        boolean validValue = false;
 
         if ( value instanceof StringValue )
         {
+            validValue = true;
+            
             byte [] data = ((StringValue)value).getValue().getBytes();
 
-            valueBuffer = ByteBuffer.allocate ( 4 + 4 + data.length + namePartLen );
-            valueBuffer.putInt ( VT_STRING );
-            valueBuffer.putInt ( data.length );
-            valueBuffer.put ( data );
+            buffer = ensureCapacity ( buffer, 4 + 4 + data.length );
+            buffer.putInt ( VT_STRING );
+            buffer.putInt ( data.length );
+            String s = "";
+            for ( byte b : data )
+            {
+                s += Integer.toHexString ( b ) + " ";
+            }
+            _log.debug ( s );
+            buffer.put ( data );
         }
 
         if ( value instanceof LongValue )
         {
-            valueBuffer = ByteBuffer.allocate ( 4 + 4 + 8 + namePartLen );
-            valueBuffer.putInt ( VT_LONG );
-            valueBuffer.putInt ( 8 );
-            valueBuffer.putLong ( ((LongValue)value).getValue() );
+            validValue = true;
+            
+            buffer = ensureCapacity ( buffer, 4 + 4 + 8 );
+            buffer.putInt ( VT_LONG );
+            buffer.putInt ( 8 );
+            buffer.putLong ( ((LongValue)value).getValue() );
         }
 
         if ( value instanceof DoubleValue )
         {
-            valueBuffer = ByteBuffer.allocate ( 4 + 4 + 8 + namePartLen );
-            valueBuffer.putInt ( VT_DOUBLE );
-            valueBuffer.putInt ( 8 );
-            valueBuffer.putDouble ( ((DoubleValue)value).getValue() );
+            validValue = true;
+            
+            buffer = ensureCapacity ( buffer, 4 + 4 + 8 );
+            buffer.putInt ( VT_DOUBLE );
+            buffer.putInt ( 8 );
+            buffer.putDouble ( ((DoubleValue)value).getValue() );
         }
         
         if ( value instanceof VoidValue )
         {
-            valueBuffer = ByteBuffer.allocate ( 4 + 4 + namePartLen );
-            valueBuffer.putInt ( VT_VOID );
-            valueBuffer.putInt ( 0 );
+            validValue = true;
+            
+            buffer = ensureCapacity ( buffer, 4 + 4 );
+            buffer.putInt ( VT_VOID );
+            buffer.putInt ( 0 );
         }
 
-        if ( valueBuffer != null )
+        if ( validValue )
         {
-            valueBuffer.putInt(nameData.length);
-            valueBuffer.put(nameData);
+            buffer = ensureCapacity ( buffer, 4 + nameData.length );
+            buffer.putInt ( nameData.length );
+            buffer.put ( nameData );
         }
 
-        return valueBuffer;
+        return buffer;
     }
 
+    private ByteBuffer ensureCapacity ( ByteBuffer buffer, int size )
+    {
+        logBuffer ( "before ensure", buffer );
+        
+        ByteBuffer xBuffer = ensureCapacityReal ( buffer, size );
+        
+        logBuffer ( "after ensure", xBuffer );
+        
+        return xBuffer;
+    }
+    
+    private ByteBuffer ensureCapacityReal ( ByteBuffer buffer, int size )
+    {
+        if ( buffer == null )
+        {
+            ByteBuffer newBuffer = ByteBuffer.allocate ( size );
+            newBuffer.clear ();
+            return newBuffer;
+        }
+            
+        if ( buffer.remaining () > size )
+            return buffer;
+        
+        int newSize = buffer.position ();
+        newSize += size;
+        
+        int delta = newSize % BLOCK_SIZE;
+        if ( delta > 0 )
+            newSize += BLOCK_SIZE - delta;
+        
+        _log.debug ( "New size: " + newSize );
+        
+        ByteBuffer newBuffer = ByteBuffer.allocate ( newSize );
+        buffer.flip ();
+        newBuffer.put ( buffer );
+        
+        return newBuffer;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.openscada.net.codec.Protocol#code(org.openscada.net.base.data.Message)
+     */
     public ByteBuffer code ( Message message )
     {
-        ByteBuffer headBuffer = ByteBuffer.allocate ( HEADER_SIZE );
+        ByteBuffer outputBuffer = null;
+        
+        outputBuffer = ensureCapacity ( outputBuffer, HEADER_SIZE );
 
-        headBuffer.clear();
-        headBuffer.putInt ( message.getCommandCode() );
-        headBuffer.putLong ( System.currentTimeMillis() );
-        headBuffer.putLong ( message.getSequence() );
-        headBuffer.putLong ( message.getReplySequence() );
-        headBuffer.putInt ( message.getValues().size() );
+        outputBuffer.clear();
+        outputBuffer.putInt ( message.getCommandCode() );
+        outputBuffer.putLong ( message.getTimestamp () );
+        outputBuffer.putLong ( message.getSequence() );
+        outputBuffer.putLong ( message.getReplySequence() );
 
-        int bodySize = 0;
-        List<ByteBuffer> buffers = new ArrayList<ByteBuffer> ();
-
-        for ( Map.Entry<String,Value> entry : message.getValues().entrySet() )
+        outputBuffer = ensureCapacity ( outputBuffer, 4 + 4 );
+        outputBuffer.putInt ( message.getValues().size () );
+        
+        int bodySizePosition = outputBuffer.position ();
+        outputBuffer.putInt ( 0 ); // dummy body size
+        
+        int bodyStartPosition = outputBuffer.position ();
+        for ( Map.Entry<String, Value> entry : message.getValues ().entrySet () )
         {
-            ByteBuffer data = codeValue ( entry.getKey(), entry.getValue() );
-            if ( data != null )
-            {
-                buffers.add ( data );
-                bodySize += data.capacity();
-            }
+            outputBuffer = codeValue ( outputBuffer, entry.getKey(), entry.getValue() );
         }
-
-        headBuffer.flip();
-        ByteBuffer bodyBuffer = ByteBuffer.allocate(headBuffer.remaining() + 4 + bodySize);
-        bodyBuffer.clear();
-        bodyBuffer.put ( headBuffer );
-        bodyBuffer.putInt ( bodySize );
-        for ( ByteBuffer buffer : buffers )
-        {
-            buffer.flip();
-            bodyBuffer.put(buffer);
-        }
-
-        return bodyBuffer;
+        int bodyEndPosition = outputBuffer.position ();
+        
+        int bodySize = bodyEndPosition - bodyStartPosition;
+        outputBuffer.putInt ( bodySizePosition, bodySize );
+        
+        outputBuffer.flip ();
+        
+        return outputBuffer;
     }
 
+    private void logBuffer ( String where, ByteBuffer buffer )
+    {
+        if ( buffer != null )
+            if ( _log.isDebugEnabled () )
+                _log.debug ( where + " - Position: " + buffer.position () + " Cap: " + buffer.capacity () + " Limit: " + buffer.limit () + " Rem: " + buffer.remaining () );
+    }
+    
+    private void logInputBuffer ( String where )
+    {
+        logBuffer ( where, _inputBuffer );
+    }
+    
+    private void dumpInputBuffer ( )
+    {
+        String str = "";
+        for ( int i = _inputBuffer.position () ; i < _inputBuffer.limit (); i++ )
+        {
+            str += String.format ( "%1$02X ", _inputBuffer.get ( i ) );
+            if ( str.length () > 250 )
+                break;
+        }
+        _log.debug ( "Input buffer: " + str );
+    }
+    
+    /* (non-Javadoc)
+     * @see org.openscada.net.codec.Protocol#decode(java.nio.ByteBuffer)
+     */
     public void decode ( ByteBuffer buffer )
     {
-
-        if ( _parseBuffer == null )
+        _log.debug ( "decode entry: " + buffer.remaining () );
+        
+        logInputBuffer ( "1" );
+        
+        if ( _inputBuffer != null )
         {
-            _parseBuffer = ByteBuffer.allocate(buffer.remaining());
-            _parseBuffer.clear ();
-            _parseBuffer.put(buffer);
+            _inputBuffer.position ( _inputBuffer.limit () );
+            _inputBuffer.limit ( _inputBuffer.capacity () );
         }
-        else
-        {
-            buffer.rewind();
-            ByteBuffer newBuffer = ByteBuffer.allocate(_parseBuffer.remaining() + buffer.remaining());
-            newBuffer.clear();
-            newBuffer.put( _parseBuffer );
-            newBuffer.put( buffer );
+        
+        logInputBuffer ( "1.5" );
+        
+        _inputBuffer = ensureCapacity ( _inputBuffer, buffer.remaining () );
+        
+        logInputBuffer ( "2" );
+        
+        _inputBuffer.put ( buffer );
+        
+        logInputBuffer ( "3" );
 
-            _parseBuffer = newBuffer;
-        }
-
-        _parseBuffer.flip();
-
-        _log.debug(_parseBuffer.remaining() + " byte(s) in parse buffer (before)");
-
+        _inputBuffer.flip ();
+        
+        logInputBuffer ( "4" );
+        
+        dumpInputBuffer ();
         parse ();
+        logInputBuffer ( "5" );
+        
+        _inputBuffer.compact ();
+        _inputBuffer.flip ();
 
-        _log.debug(_parseBuffer.remaining() + " byte(s) in parse buffer (after)");
-
+        logInputBuffer ( "6" );
     }
 
     private void parseItem ( ByteBuffer buffer, Message message )
     {
-        int type = buffer.getInt();
-        int len = buffer.getInt();
+        int type = buffer.getInt ();
+        int len = buffer.getInt ();
 
-        if ( _log.isDebugEnabled() )
-            _log.debug("Additional data: " + type + " len: " + len);
+        if ( _log.isDebugEnabled () )
+            _log.debug ( "Additional data: " + type + " len: " + len );
 
         Value value = null;
 
@@ -170,9 +254,9 @@ public class ProtocolGMPP {
             value = new LongValue(buffer.getLong());
             break;
         case VT_STRING:
-            byte [] data = new byte[len];
-            buffer.get(data);
-            value = new StringValue(new String(data));
+            byte [] data = new byte [ len ];
+            buffer.get ( data );
+            value = new StringValue ( new String ( data ) );
             break;
         case VT_DOUBLE:
             value = new DoubleValue ( buffer.getDouble() );
@@ -181,11 +265,10 @@ public class ProtocolGMPP {
             value = new VoidValue ();
             // nothing to read
             break;
-        default :
+        default:
             // unknown type: just consume data
-            buffer.position( buffer.position() + len );
-        return;
-
+            buffer.position ( buffer.position() + len );
+            break;
         }
 
         // now read the item name
@@ -205,42 +288,42 @@ public class ProtocolGMPP {
     {
         long ts = System.currentTimeMillis();
 
-        _parseBuffer.rewind();
-        while  ( _parseBuffer.remaining() >= HEADER_SIZE )
+        while  ( _inputBuffer.remaining() >= HEADER_SIZE )
         {
-            int bodySize = _parseBuffer.getInt( _parseBuffer.position() + 4 + 8 + 8 + 8 + 4);
+            // peek body size
+            int bodySize = _inputBuffer.getInt( _inputBuffer.position() + 4 + 8 + 8 + 8 + 4 );
             _log.debug("Body length: " + bodySize );
 
-            if ( _parseBuffer.remaining() < HEADER_SIZE + bodySize )
+            if ( _inputBuffer.remaining() < HEADER_SIZE + bodySize )
             {
-                _log.debug("Remaining: " + _parseBuffer.remaining() + " Header: " + HEADER_SIZE + " Body: " + bodySize );
+                _log.debug("Remaining: " + _inputBuffer.remaining() + " Header: " + HEADER_SIZE + " Body: " + bodySize );
                 // message is not complete so skip for next try
                 return;
             }
 
             // read the packet
             Message message = new Message();
-            message.setCommandCode(_parseBuffer.getInt());
-            long st = _parseBuffer.getLong();
-            message.setSequence(_parseBuffer.getLong());
-            message.setReplySequence(_parseBuffer.getLong());
+            message.setCommandCode(_inputBuffer.getInt());
+            long st;
+            message.setTimestamp ( st = _inputBuffer.getLong() );
+            message.setSequence(_inputBuffer.getLong());
+            message.setReplySequence(_inputBuffer.getLong());
 
             // number of items to follow
-            int numItems = _parseBuffer.getInt();
+            int numItems = _inputBuffer.getInt();
             if ( numItems < 0 )
                 numItems = 0; // in case of a negativ number use zero instead
 
             // re-read body size to consume buffer
-            bodySize = _parseBuffer.getInt();
+            bodySize = _inputBuffer.getInt();
 
-            // TODO: need to read items
             for ( int i = 0; i<numItems; i++ )
             {
-                parseItem ( _parseBuffer, message );
+                parseItem ( _inputBuffer, message );
             }
 
             _log.debug ( "Message time diff: " + (ts - st) );
-            _log.debug ( "Bytes remaining: " + _parseBuffer.remaining() );
+            _log.debug ( "Bytes remaining: " + _inputBuffer.remaining() );
             _listener.messageReceived ( _connection, message );
             _log.debug ( "Returned from processing message" );
 
