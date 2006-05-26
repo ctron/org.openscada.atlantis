@@ -2,8 +2,9 @@
 <feature
       id="org.openscada.da.client.test"
       label="OpenSCADA DA Test Client Feature"
-      version="0.1.5"
-      provider-name="OpenSCADA">
+      version="0.1.6"
+      provider-name="OpenSCADA"
+      plugin="org.openscada.da.client.test">
 
    <description url="http://www.example.com/description">
       The OpenSCADA DA Client Test Feature
@@ -41,12 +42,6 @@
 
    <plugin
          id="log4j_wrapper_plugin"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="openscada_da_client_net_plugin_wrapper"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
