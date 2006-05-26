@@ -139,14 +139,14 @@ public class ProtocolGMPP implements Protocol
     {
         logBuffer ( "before ensure", buffer );
         
-        ByteBuffer xBuffer = ensureCapacityReal ( buffer, size );
+        ByteBuffer xBuffer = ensureCapacityPerform ( buffer, size );
         
         logBuffer ( "after ensure", xBuffer );
         
         return xBuffer;
     }
     
-    private ByteBuffer ensureCapacityReal ( ByteBuffer buffer, int size )
+    private ByteBuffer ensureCapacityPerform ( ByteBuffer buffer, int size )
     {
         if ( buffer == null )
         {
@@ -288,6 +288,9 @@ public class ProtocolGMPP implements Protocol
         case VT_LONG:
             value = new LongValue(buffer.getLong());
             break;
+        case VT_INTEGER:
+            value = new IntegerValue ( buffer.getInt() );
+            break;
         case VT_STRING:
             byte [] data = new byte [ len ];
             buffer.get ( data );
@@ -301,7 +304,7 @@ public class ProtocolGMPP implements Protocol
             // nothing to read
             break;
         default:
-            // unknown type: just consume data
+            // unknown type: only consume data
             buffer.position ( buffer.position() + len );
             break;
         }
