@@ -29,7 +29,6 @@ import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.search.VersionedIdentifiersFilter;
 import org.eclipse.update.standalone.UpdateCommand;
 
 public class UpdateAction implements IWorkbenchWindowActionDelegate
