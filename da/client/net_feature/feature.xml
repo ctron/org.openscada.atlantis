@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.openscada.da.net.client.feature"
+      label="OpenSCADA DA NET Client Feature"
+      version="0.1.0"
+      provider-name="OpenSCADA">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <plugin
+         id="log4j_wrapper_plugin"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="openscada_da_client_net_plugin_wrapper"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>
