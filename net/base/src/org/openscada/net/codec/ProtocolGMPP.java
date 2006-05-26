@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.DoubleValue;
+import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
@@ -20,6 +21,7 @@ public class ProtocolGMPP implements Protocol
     public final static int VT_LONG = 		0x000000002;
     public final static int VT_DOUBLE =  	0x000000003;
     public final static int VT_VOID =       0x000000004;
+    public final static int VT_INTEGER =    0x000000005;
 
     private final static int HEADER_SIZE = 4 + 8 + 8 + 8 + 4 + 4; 
     
@@ -37,64 +39,97 @@ public class ProtocolGMPP implements Protocol
         _listener = listener;	
     }
     
+    private ByteBuffer encodeToStream ( ByteBuffer buffer, String data )
+    {
+        byte [] rawData = data.getBytes ();
+        
+        buffer = ensureCapacity ( buffer, 4 + rawData.length );
+        buffer.putInt ( rawData.length );
+        buffer.put ( rawData );
+        
+        return buffer;
+    }
+    
+    private ByteBuffer encodeToStream ( ByteBuffer buffer, IntegerValue value )
+    {
+        buffer = ensureCapacity ( buffer, 4 + 4 + 4 );
+        buffer.putInt ( VT_INTEGER );
+        buffer.putInt ( 4 );
+        buffer.putInt ( value.getValue () );
+        
+        return buffer;
+    }
+    
+    private ByteBuffer encodeToStream ( ByteBuffer buffer, LongValue value )
+    {
+        buffer = ensureCapacity ( buffer, 4 + 4 + 4 );
+        buffer.putInt ( VT_LONG );
+        buffer.putInt ( 8 );
+        buffer.putLong ( value.getValue () );
+        
+        return buffer;
+    }
+    
+    private ByteBuffer encodeToStream ( ByteBuffer buffer, DoubleValue value )
+    {
+        buffer = ensureCapacity ( buffer, 4 + 4 + 4 );
+        buffer.putInt ( VT_DOUBLE );
+        buffer.putInt ( 8 );
+        buffer.putDouble ( value.getValue() );
+        
+        return buffer;
+    }
+    
+    private ByteBuffer encodeToStream ( ByteBuffer buffer, VoidValue value )
+    {
+        buffer = ensureCapacity ( buffer, 4 + 4 );
+        buffer.putInt ( VT_VOID );
+        buffer.putInt ( 0 );
+        
+        return buffer;
+    }
+    
+    private ByteBuffer encodeToStream ( ByteBuffer buffer, StringValue value )
+    {
+        buffer = ensureCapacity ( buffer, 4 );
+        buffer.putInt ( VT_STRING );
+        buffer = encodeToStream ( buffer, value.getValue () );
+        return buffer;
+    }
+    
     private ByteBuffer codeValue ( ByteBuffer buffer, String name, Value value )
     {
-        byte [] nameData = name.getBytes();
-
         boolean validValue = false;
 
         if ( value instanceof StringValue )
         {
             validValue = true;
-            
-            byte [] data = ((StringValue)value).getValue().getBytes();
-
-            buffer = ensureCapacity ( buffer, 4 + 4 + data.length );
-            buffer.putInt ( VT_STRING );
-            buffer.putInt ( data.length );
-            String s = "";
-            for ( byte b : data )
-            {
-                s += Integer.toHexString ( b ) + " ";
-            }
-            _log.debug ( s );
-            buffer.put ( data );
+            buffer = encodeToStream ( buffer, (StringValue)value );
         }
-
-        if ( value instanceof LongValue )
+        else if ( value instanceof IntegerValue )
         {
             validValue = true;
-            
-            buffer = ensureCapacity ( buffer, 4 + 4 + 8 );
-            buffer.putInt ( VT_LONG );
-            buffer.putInt ( 8 );
-            buffer.putLong ( ((LongValue)value).getValue() );
+            buffer = encodeToStream ( buffer, (IntegerValue)value );
         }
-
-        if ( value instanceof DoubleValue )
+        else if ( value instanceof LongValue )
         {
             validValue = true;
-            
-            buffer = ensureCapacity ( buffer, 4 + 4 + 8 );
-            buffer.putInt ( VT_DOUBLE );
-            buffer.putInt ( 8 );
-            buffer.putDouble ( ((DoubleValue)value).getValue() );
+            buffer = encodeToStream ( buffer, (LongValue)value );
         }
-        
-        if ( value instanceof VoidValue )
+        else if ( value instanceof DoubleValue )
         {
             validValue = true;
-            
-            buffer = ensureCapacity ( buffer, 4 + 4 );
-            buffer.putInt ( VT_VOID );
-            buffer.putInt ( 0 );
+            buffer = encodeToStream ( buffer, (DoubleValue)value );
+        }
+        else if ( value instanceof VoidValue )
+        {
+            validValue = true;
+            buffer = encodeToStream ( buffer, (VoidValue)value );
         }
 
         if ( validValue )
         {
-            buffer = ensureCapacity ( buffer, 4 + nameData.length );
-            buffer.putInt ( nameData.length );
-            buffer.put ( nameData );
+            buffer = encodeToStream ( buffer, name );
         }
 
         return buffer;
