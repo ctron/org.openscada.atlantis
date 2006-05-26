@@ -16,6 +16,7 @@ import org.openscada.da.client.net.ConnectionStateListener;
 import org.openscada.da.client.net.Connection.State;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
+import org.openscada.da.core.DataItemInformation;
 
 public class HiveConnection extends Observable implements IActionFilter
 {
@@ -102,14 +103,14 @@ public class HiveConnection extends Observable implements IActionFilter
     {
         Map<String,HiveItem> items = new HashMap<String,HiveItem> ();
         
-        Collection<String> list = _connection.getItemList().getItemList ();
-        for ( String item : list )
+        Collection<DataItemInformation> list = _connection.getItemList().getItemList ();
+        for ( DataItemInformation item : list )
         {
             if ( _itemMap.containsKey(item) )
-                items.put ( item, _itemMap.get ( item ) );
+                items.put ( item.getName(), _itemMap.get ( item ) );
             else
             {
-                items.put ( item, new HiveItem(this, item) );
+                items.put ( item.getName(), new HiveItem ( this, item ) );
             }
         }
         

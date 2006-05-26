@@ -1,5 +1,6 @@
 package org.openscada.da.client.test.views;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -36,6 +37,7 @@ import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveItem;
 import org.openscada.da.client.test.impl.HiveRepository;
 import org.openscada.da.client.net.Connection;
+import org.openscada.da.core.IODirection;
 
 
 /**
@@ -176,7 +178,16 @@ public class HiveView extends ViewPart implements Observer
             }
             else if ( obj instanceof HiveItem )
             {
-                imageKey = ISharedImages.IMG_HIVE_ITEM;
+                HiveItem hiveItem = (HiveItem)obj;
+                EnumSet<IODirection> io = hiveItem.getItemInfo ().getIODirection ();
+                if ( io.containsAll ( EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ))
+                    imageKey = ISharedImages.IMG_HIVE_ITEM_IO;
+                else if ( io.contains ( IODirection.INPUT ) )
+                    imageKey = ISharedImages.IMG_HIVE_ITEM_I;
+                else if ( io.contains ( IODirection.OUTPUT ) )
+                    imageKey = ISharedImages.IMG_HIVE_ITEM_O;
+                else
+                    imageKey = ISharedImages.IMG_HIVE_ITEM;
             }
             else
                 return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_ELEMENT);

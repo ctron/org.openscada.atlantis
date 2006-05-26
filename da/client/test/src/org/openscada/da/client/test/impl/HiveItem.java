@@ -1,14 +1,16 @@
 package org.openscada.da.client.test.impl;
 
+import org.openscada.da.core.DataItemInformation;
+
 public class HiveItem
 {
-    private String _itemName = null;
+    private DataItemInformation _itemInfo = null;
     private HiveConnection _connection = null;
     
-    public HiveItem ( HiveConnection connection, String itemName )
+    public HiveItem ( HiveConnection connection, DataItemInformation itemInfo )
     {
         _connection = connection;
-        _itemName = itemName;
+        _itemInfo = itemInfo;
     }
 
     public HiveConnection getConnection ()
@@ -16,9 +18,14 @@ public class HiveItem
         return _connection;
     }
 
+    public DataItemInformation getItemInfo ()
+    {
+        return _itemInfo;
+    }
+    
     public String getItemName ()
     {
-        return _itemName;
+        return _itemInfo.getName ();
     }
     
     

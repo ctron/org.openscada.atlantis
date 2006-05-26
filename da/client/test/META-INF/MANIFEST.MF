@@ -6,10 +6,10 @@ Bundle-Version: 0.1.1
 Bundle-Activator: org.openscada.da.client.test.Openscada_da_client_testPlugin
 Bundle-Localization: plugin
 Require-Bundle: log4j_wrapper_plugin,
- openscada_da_client_net_plugin_wrapper,
  org.eclipse.rcp,
  org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.openscada.da.net.client
 Eclipse-LazyStart: true
 Bundle-Vendor: OpenSCADA
 Eclipse-RegisterBuddy: org.apache.log4j

@@ -37,7 +37,10 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin {
         getImageRegistry().put ( ISharedImages.IMG_HIVE_CONNECTED, getImageDescriptor ( "icons/stock_connect.png" ) );
         getImageRegistry().put ( ISharedImages.IMG_HIVE_DISCONNECTED, getImageDescriptor ( "icons/stock_disconnect.png" ) );
         
-        getImageRegistry().put ( ISharedImages.IMG_HIVE_ITEM, getImageDescriptor ( "icons/stock_dataitem.png" ) );
+        getImageRegistry().put ( ISharedImages.IMG_HIVE_ITEM, getImageDescriptor ( "icons/16x16/stock_dataitem.png" ) );
+        getImageRegistry().put ( ISharedImages.IMG_HIVE_ITEM_I, getImageDescriptor ( "icons/16x16/stock_dataitem_i.png" ) );
+        getImageRegistry().put ( ISharedImages.IMG_HIVE_ITEM_O, getImageDescriptor ( "icons/16x16/stock_dataitem_o.png" ) );
+        getImageRegistry().put ( ISharedImages.IMG_HIVE_ITEM_IO, getImageDescriptor ( "icons/16x16/stock_dataitem_io.png" ) );
     }
 
 	/**
