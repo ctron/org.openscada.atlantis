@@ -11,6 +11,7 @@ import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
+import org.openscada.net.base.data.VoidValue;
 
 public class Messages
 {
@@ -52,7 +53,7 @@ public class Messages
         msg.getValues().put ( "item-name", new StringValue(itemName) );
         
         if ( initial )
-            msg.getValues().put ( "initial", new StringValue("") );
+            msg.getValues().put ( "initial", new VoidValue () );
         
         return msg;
     }
@@ -111,7 +112,7 @@ public class Messages
         
         // flag if initial bit is set
         if ( initial )
-            msg.getValues().put ( "initial", new StringValue("") );
+            msg.getValues().put ( "initial", new VoidValue () );
         
         Value messageValue = variantToValue ( value );
         if ( messageValue != null )
@@ -128,7 +129,7 @@ public class Messages
         
         // flag if initial bit is set
         if ( initial )
-            msg.getValues().put ( "initial", new StringValue("") );
+            msg.getValues().put ( "initial", new VoidValue () );
         
         for ( Map.Entry<String,Variant> entry : attributes.entrySet() )
         {
