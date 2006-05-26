@@ -12,7 +12,7 @@ import org.openscada.da.client.test.impl.HiveConnection;
 
 public class ConnectHiveAction implements IObjectActionDelegate, IViewActionDelegate
 {
-    private static Logger _log = Logger.getLogger ( WatchItemAction.class );
+    private static Logger _log = Logger.getLogger ( ConnectHiveAction.class );
     
     private HiveConnection _connection = null;
    
