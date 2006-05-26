@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Client Library Wrapper
-Bundle-SymbolicName: openscada_da_client_net_plugin_wrapper
-Bundle-Version: 0.1.0
+Bundle-SymbolicName: org.openscada.da.net.client
+Bundle-Version: 0.1.1
 Bundle-ClassPath: openscada_da_net_client_lib.jar
 Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin
