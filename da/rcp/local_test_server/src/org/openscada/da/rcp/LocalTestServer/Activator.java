@@ -98,6 +98,7 @@ public class Activator extends AbstractUIPlugin {
                         _exporterThread = null;
                     }
                 }} );
+            _exporterThread.setDaemon ( true );
             _exporterThread.start ();
         }
     }
