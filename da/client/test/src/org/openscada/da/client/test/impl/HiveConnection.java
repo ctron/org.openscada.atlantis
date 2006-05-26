@@ -53,7 +53,7 @@ public class HiveConnection extends Observable implements IActionFilter
         });
     }
     
-    synchronized public void connect ()
+    public void connect ()
     {
         //if ( _connectionRequested )
         //    return;
@@ -122,10 +122,7 @@ public class HiveConnection extends Observable implements IActionFilter
     
     synchronized public Collection<HiveItem> getItemList ()
     {
-        if ( getConnection () == null )
-            return new ArrayList<HiveItem>();
-        
-        if ( getConnection ().getState ().equals ( Connection.State.CLOSED ) )
+        if ( _connection.getState ().equals ( Connection.State.CLOSED ) )
             return new ArrayList<HiveItem>();
         
         return _itemMap.values();

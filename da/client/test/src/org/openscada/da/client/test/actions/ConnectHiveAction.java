@@ -25,7 +25,7 @@ public class ConnectHiveAction implements IObjectActionDelegate, IViewActionDele
         {
             _connection.connect();
         }
-        catch ( Exception e )
+        catch ( Throwable e )
         {
             _log.error ( "Connect failed", e );
         }
