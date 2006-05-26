@@ -30,7 +30,8 @@ public class ClientConnection extends ConnectionHandlerBase
     
     public void disconnect ()
     {
-        _client.getConnection ().close ();
+        if ( _client.getConnection () != null )
+            _client.getConnection ().close ();
     }
     
     @Override
