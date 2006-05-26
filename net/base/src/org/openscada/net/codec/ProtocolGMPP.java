@@ -324,7 +324,7 @@ public class ProtocolGMPP implements Protocol
 
     private void parse ()
     {
-        long ts = System.currentTimeMillis();
+        long ts = System.currentTimeMillis ();
 
         while  ( _inputBuffer.remaining() >= HEADER_SIZE )
         {
