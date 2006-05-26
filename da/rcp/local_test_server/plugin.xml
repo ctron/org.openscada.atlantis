@@ -9,11 +9,11 @@
             label="Local Test Server">
          <action
                class="org.openscada.da.rcp.LocalTestServer.actions.StartServerAction"
+               icon="icons/stock_start_sever.png"
                id="org.openscada.da.rcp.LocalTestServer.StartServerAction"
                label="Start Local Test Server"
                menubarPath="testing/localServer"
-               style="push"
-               />
+               style="push"/>
          <menu
                id="testing"
                label="Testing"
