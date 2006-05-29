@@ -7,7 +7,7 @@ import org.openscada.da.core.data.Variant;
 
 public interface Hive
 {
-	public Session createSession ( Properties props );
+	public Session createSession ( Properties props ) throws UnableToCreateSessionException;
 	public void closeSession ( Session session ) throws InvalidSessionException;
 	
 	public void registerForItem ( Session session, String item, boolean initial ) throws InvalidSessionException, InvalidItemException;

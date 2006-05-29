@@ -28,6 +28,8 @@ import org.openscada.utils.lang.Holder;
 public class Connection
 {
     
+    public static final String VERSION = "0.1.0";
+    
     public enum State
     {
         CLOSED,
@@ -108,17 +110,16 @@ public class Connection
         _client = new ClientConnection (_processor, _connectionInfo.getRemote() );
         _client.addStateListener(new  org.openscada.net.io.ConnectionStateListener(){
             
-            public void closed ()
+            public void closed ( Exception error )
             {
                 _log.debug ( "closed" );
-                
-                fireDisconnected();
+                fireDisconnected ( error );
             }
             
             public void opened ()
             {
                 _log.debug ( "opened" );
-                fireConnected();
+                fireConnected ();
             }});
         
         _client.getMessageProcessor().setHandler(Messages.CC_NOTIFY_VALUE, new MessageListener(){
@@ -150,21 +151,26 @@ public class Connection
         switch ( _state )
         {
         case CLOSED:
-            setState ( State.CONNECTING );
+            setState ( State.CONNECTING, null );
             break;
         }        
     }
     
     synchronized public void disconnect ()
     {
+        disconnect ( null );
+    }
+    
+    synchronized private void disconnect ( Throwable reason )
+    {
         switch ( _state )
         {
         case BOUND:
         case CONNECTING:
         case CONNECTED:
-            setState ( State.CLOSING );
+            setState ( State.CLOSING, reason );
             break;
-        }
+        }    
     }
     
     public void addItemListListener ( ItemListListener listener )
@@ -206,15 +212,15 @@ public class Connection
         switch ( _state )
         {
         case CONNECTING:
-            setState ( State.CONNECTED );
+            setState ( State.CONNECTED, null );
             break;
         }
         
     }
     
-    private void fireDisconnected ()
+    private void fireDisconnected ( Throwable error )
     {
-        _log.debug("dis-connected");
+        _log.debug ( "dis-connected" );
      
         switch ( _state )
         {
@@ -222,7 +228,7 @@ public class Connection
         case CONNECTED:
         case CONNECTING:
         case CLOSING:
-            setState ( State.CLOSED );
+            setState ( State.CLOSED, error );
             break;
         }
         
@@ -250,30 +256,41 @@ public class Connection
         if ( _client == null )
             return;
         
-        _client.getConnection().sendMessage ( Messages.createSession(new Properties()), new MessageStateListener(){
+        Properties props = new Properties();
+        props.setProperty ( "client-version", VERSION );
+        
+        _client.getConnection().sendMessage ( Messages.createSession ( props ), new MessageStateListener(){
 
             public void messageReply ( Message message )
             {
-                gotSession ( message );
+                processSessionReply ( message );
             }
 
             public void messageTimedOut ()
             {
-               setState ( State.CLOSED );
+               setState ( State.CLOSED, new OperationTimedOutException().fillInStackTrace () );
             }} );
     }
     
-    private void gotSession ( Message message )
+    private void processSessionReply ( Message message )
     {
-        _log.debug ( "Got session!" );
+        _log.debug ( "Got session reply!" );
         
-        setState ( State.BOUND );
-        
-        // sync again all items to maintain subscribtions
-        resyncAllItems ();
-        
-        // subscribe enum service
-        subscribeEnum ();
+        if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
+        {
+            String errorInfo = message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString ();
+            disconnect ( new DisconnectReason ( "Failed to create session: " + errorInfo ) );
+        }
+        else
+        {
+            setState ( State.BOUND, null );
+
+            // sync again all items to maintain subscribtions
+            resyncAllItems ();
+
+            // subscribe enum service
+            subscribeEnum ();
+        }
     }
     
     private void subscribeEnum ()
@@ -470,15 +487,16 @@ public class Connection
     /**
      * set new state internaly
      * @param state
+     * @param error additional error information or <code>null</code> if we don't have an error.
      */
-    synchronized private void setState ( State state )
+    synchronized private void setState ( State state, Throwable error )
     {
         _state = state;
         
-        stateChanged ( state );
+        stateChanged ( state, error );
     }
     
-    private void stateChanged ( State state )
+    private void stateChanged ( State state, Throwable error )
     {
         switch ( state )
         {
@@ -512,15 +530,16 @@ public class Connection
             break;
         }
         
-        notifyStateChange ( state );
+        notifyStateChange ( state, error );
         
     }
     
     /**
      * Notify state change listeners
      * @param state new state
+     * @param error additional error information or <code>null</code> if we don't have an error. 
      */
-    private void notifyStateChange ( State state )
+    private void notifyStateChange ( State state, Throwable error )
     {   
         List<ConnectionStateListener> connectionStateListeners;
         
@@ -532,7 +551,7 @@ public class Connection
         {
             try
             {
-                listener.stateChange ( this, state );
+                listener.stateChange ( this, state, error );
             }
             catch ( Exception e )
             {

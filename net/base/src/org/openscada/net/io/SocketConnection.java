@@ -164,10 +164,10 @@ public class SocketConnection extends IOChannel implements IOChannelListener
 	{
 		_log.debug("Connection request complete");
 		
-		if ( _channel.isConnectionPending() )
+		if ( _channel.isConnectionPending () )
 		{
 			try {
-				if ( _channel.finishConnect() )
+				if ( _channel.finishConnect () )
 				{
 					_log.debug("Connection established");
 					if ( _listener != null )

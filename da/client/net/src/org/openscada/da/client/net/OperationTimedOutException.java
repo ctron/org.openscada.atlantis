@@ -3,6 +3,8 @@ package org.openscada.da.client.net;
 public class OperationTimedOutException extends Exception
 {
 
+    private String _additionalInformation = "";
+    
     /**
      * 
      */
@@ -10,6 +12,17 @@ public class OperationTimedOutException extends Exception
 
     public OperationTimedOutException ()
     {
-        super ("Operation timed out");
+        super ( "Operation timed out" );
+    }
+    
+    public OperationTimedOutException ( String additionalInformation )
+    {
+        super ( "Operation timed out: " + additionalInformation );
+        _additionalInformation = additionalInformation;
+    }
+
+    public String getAdditionalInformation ()
+    {
+        return _additionalInformation;
     }
 }

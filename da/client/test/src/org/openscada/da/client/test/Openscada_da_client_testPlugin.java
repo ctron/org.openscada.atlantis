@@ -1,10 +1,14 @@
 package org.openscada.da.client.test;
 
+import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 import org.openscada.da.client.test.impl.HiveConnection;
@@ -112,5 +116,26 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin {
     public static IPath getRepostoryFile ()
     {
         return getDefault().getStateLocation().append("hives.xml");
+    }
+
+    public void notifyError ( final String message, final Throwable error )
+    {
+        
+        final Display display = getWorkbench ().getDisplay ();
+        
+        if ( !display.isDisposed () )
+        {
+            display.asyncExec ( new Runnable() {
+
+                public void run ()
+                {
+                    Shell shell = getWorkbench ().getActiveWorkbenchWindow ().getShell ();
+                    if ( !shell.isDisposed () )
+                    {
+                        IStatus status = new OperationStatus ( OperationStatus.ERROR, PLUGIN_ID, 0, error.getMessage (), error );
+                        ErrorDialog.openError ( shell, null, message, status );
+                    }
+                }} );
+        }
     }
 }

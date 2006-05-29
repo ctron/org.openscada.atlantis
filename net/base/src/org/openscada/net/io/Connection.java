@@ -16,7 +16,9 @@ import org.openscada.utils.timing.Scheduler;
 
 public class Connection implements ConnectionListener, MessageListener
 {
-	
+	private static final long MAX_SEQUENCE = 0xFFFFFFFF;
+    private static final long INIT_SEQUENCE = 1;
+    
     private int _timeoutLimit = Integer.getInteger ( "org.openscada.net.message_timeout", 10*1000 );
     private static Scheduler _scheduler = new Scheduler ();
     
@@ -25,7 +27,7 @@ public class Connection implements ConnectionListener, MessageListener
 	
 	private ConnectionStateListener _connectionStateListener = null;
 	
-	private long _sequence = 0;
+	private long _sequence = INIT_SEQUENCE;
     
     private MessageListener _listener = null;
     
@@ -105,7 +107,7 @@ public class Connection implements ConnectionListener, MessageListener
     
 	synchronized public void sendMessage ( Message message )
 	{
-		message.setSequence ( _sequence++ );
+		message.setSequence ( nextSequence () );
 		_connection.scheduleWrite ( _protocolGMPP.code ( message ) );
 	}
     
@@ -116,7 +118,7 @@ public class Connection implements ConnectionListener, MessageListener
         tag.setListener ( listener );
         tag.setTimestamp ( System.currentTimeMillis () );
         
-        message.setSequence ( _sequence++ );
+        message.setSequence ( nextSequence () );
         
         synchronized ( _tagList )
         {
@@ -147,7 +149,7 @@ public class Connection implements ConnectionListener, MessageListener
 	public void connectionFailed ( IOException e )
     {
 		if ( _connectionStateListener != null )
-			_connectionStateListener.closed ();
+			_connectionStateListener.closed ( e );
 	}
 
 	public void closed ()
@@ -164,7 +166,7 @@ public class Connection implements ConnectionListener, MessageListener
         }
         
 		if ( _connectionStateListener != null )
-			_connectionStateListener.closed ();
+			_connectionStateListener.closed ( null );
 	}
 	
 	public void close ()
@@ -184,12 +186,18 @@ public class Connection implements ConnectionListener, MessageListener
             {
                 try
                 {
-                    _tagList.get ( seq ).getListener ().messageReply ( message );
+                    MessageTag tag = _tagList.get ( seq );
+                    // remove the tag .. otherwise a disconnect triggered but the listener
+                    // will trigger also the timeout event for this tag
+                    _tagList.remove ( seq );
+                    tag.getListener ().messageReply ( message );
                 }
                 catch ( Exception e )
                 {
+                    _tagList.remove ( seq );
                 }
-                _tagList.remove ( seq );
+                
+                
             }
         }
     }
@@ -217,4 +225,11 @@ public class Connection implements ConnectionListener, MessageListener
         }
     }
 	
+    synchronized private long nextSequence ()
+    {
+        long seq = _sequence++;
+        if ( _sequence >= MAX_SEQUENCE )
+            _sequence = INIT_SEQUENCE;
+        return seq;
+    }
 }

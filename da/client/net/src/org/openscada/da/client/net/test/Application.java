@@ -35,11 +35,14 @@ public class Application
         
         final Connection connection = new Connection ( info );
         
-        connection.addConnectionStateListener(new ConnectionStateListener(){
+        connection.addConnectionStateListener(new ConnectionStateListener() {
 
-            public void stateChange ( Connection connection, State state )
+            public void stateChange ( Connection connection, State state, Throwable error )
             {
-                _log.info ( "State changed to: " + state.toString () );
+                if ( error != null )
+                    _log.warn ( "State changed to: " + state.toString () + " (" + error.getMessage () + ")" );
+                else
+                    _log.info ( "State changed to: " + state.toString () );
             }
 
             });

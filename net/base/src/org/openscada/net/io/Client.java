@@ -78,12 +78,12 @@ public class Client implements ConnectionStateListener
         }
     }
     
-	public void closed ()
+	public void closed ( Exception error )
 	{
 		_log.debug ( "Connection closed" );
 		
 		if ( _stateListener != null )
-		    _stateListener.closed ();
+		    _stateListener.closed ( error );
 
         _connected = false;
         

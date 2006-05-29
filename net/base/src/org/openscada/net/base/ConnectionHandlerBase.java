@@ -83,15 +83,15 @@ public class ConnectionHandlerBase  implements ConnectionHandler, ConnectionAwar
 	}
 	
 	
-	public void closed() 
+	public void closed ( Exception error ) 
 	{
-        removePingJob();
+        removePingJob ();
         
 		for ( ConnectionStateListener csl : _csListeners )
 		{
 			try
 			{
-				csl.closed();
+				csl.closed ( error );
 			}
 			catch ( Exception e )
 			{

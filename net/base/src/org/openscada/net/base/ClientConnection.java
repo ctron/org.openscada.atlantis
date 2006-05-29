@@ -32,6 +32,8 @@ public class ClientConnection extends ConnectionHandlerBase
     {
         if ( _client.getConnection () != null )
             _client.getConnection ().close ();
+        else
+            _log.warn ( "Client has no connection!" );
     }
     
     @Override

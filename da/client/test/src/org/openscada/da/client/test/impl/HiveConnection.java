@@ -39,9 +39,9 @@ public class HiveConnection extends Observable implements IActionFilter
         _connection = new Connection ( conInfo );
         _connection.addConnectionStateListener ( new ConnectionStateListener(){
 
-            public void stateChange ( Connection connection, State state )
+            public void stateChange ( Connection connection, State state, Throwable error )
             {
-                performStateChange ( state );
+                performStateChange ( state, error );
             }
             
             });
@@ -93,10 +93,15 @@ public class HiveConnection extends Observable implements IActionFilter
         return _connectionInfo;
     }
     
-    private void performStateChange ( Connection.State state )
+    private void performStateChange ( Connection.State state, Throwable error )
     {
         setChanged ();
         notifyObservers ();
+        
+        if ( error != null )
+        {
+            Openscada_da_client_testPlugin.getDefault ().notifyError ( "Connection failed", error );
+        }
     }
     
     synchronized private void performItemListUpdate ()
