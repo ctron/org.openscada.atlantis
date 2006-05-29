@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Local NET Server
 Bundle-SymbolicName: org.openscada.da.rcp.LocalTestServer;singleton:=true
-Bundle-Version: 0.1.0
+Bundle-Version: 0.1.1
 Bundle-Activator: org.openscada.da.rcp.LocalTestServer.Activator
 Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin
