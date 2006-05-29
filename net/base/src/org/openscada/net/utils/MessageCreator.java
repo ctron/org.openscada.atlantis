@@ -19,7 +19,7 @@ public class MessageCreator {
 		Message msg = new Message ( Message.CC_FAILED );
 		
 		msg.setReplySequence(inputMessage.getSequence());
-		msg.setValue ( "message", failMessage );
+		msg.setValue ( Message.FIELD_ERROR_INFO, failMessage );
 		
 		return msg;
 	}

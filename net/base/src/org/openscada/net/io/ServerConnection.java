@@ -1,11 +1,8 @@
 package org.openscada.net.io;
 
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
 import org.openscada.net.base.ConnectionAware;
 import org.openscada.net.base.ConnectionHandler;
-import org.openscada.net.base.MessageListener;
 
 public class ServerConnection extends Connection {
 	

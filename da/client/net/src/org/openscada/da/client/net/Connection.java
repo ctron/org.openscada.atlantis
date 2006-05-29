@@ -13,14 +13,10 @@ import org.openscada.da.client.net.operations.WriteOperation;
 import org.openscada.da.client.net.operations.WriteOperationArguments;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.data.Variant;
-import org.openscada.net.base.AutoReconnectClientConnection;
 import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
-import org.openscada.net.base.data.DoubleValue;
-import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
-import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.da.handler.EnumEvent;
 import org.openscada.net.da.handler.Messages;
@@ -258,7 +254,7 @@ public class Connection
 
             public void messageReply ( Message message )
             {
-                gotSession ();
+                gotSession ( message );
             }
 
             public void messageTimedOut ()
@@ -267,7 +263,7 @@ public class Connection
             }} );
     }
     
-    private void gotSession ()
+    private void gotSession ( Message message )
     {
         _log.debug ( "Got session!" );
         

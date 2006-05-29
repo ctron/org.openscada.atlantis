@@ -6,10 +6,10 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.io.Connection;
-import org.openscada.net.test.Application;
 import org.openscada.net.utils.MessageCreator;
 
-public class MessageProcessor implements MessageListener {
+public class MessageProcessor implements MessageListener
+{
 	
 	private static Logger _log = Logger.getLogger(MessageProcessor.class);
 	
@@ -36,8 +36,8 @@ public class MessageProcessor implements MessageListener {
 		{
 		case Message.CC_FAILED:
             String errorInfo = "";
-            if ( message.getValues().containsKey("message") )
-                errorInfo = message.getValues().get("message").toString();
+            if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
+                errorInfo = message.getValues().get ( Message.FIELD_ERROR_INFO ).toString();
             
 			_log.warn("Failed message: " + message.getSequence() + "/" + message.getReplySequence() + " Message: " + errorInfo );
 			return;

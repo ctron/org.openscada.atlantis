@@ -2,7 +2,6 @@ package org.openscada.da.core.common;
 
 import java.util.EnumSet;
 
-import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.InvalidOperationException;
 import org.openscada.da.core.data.NotConvertableException;

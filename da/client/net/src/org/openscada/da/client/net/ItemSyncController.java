@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.openscada.da.core.data.AttributesHelper;
 import org.openscada.da.core.data.Variant;
-import org.openscada.net.base.AutoReconnectClientConnection;
 import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.da.handler.Messages;

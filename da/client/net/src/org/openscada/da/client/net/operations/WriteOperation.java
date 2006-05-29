@@ -7,7 +7,6 @@ import org.openscada.da.client.net.OperationTimedOutException;
 import org.openscada.da.client.net.ProtocolErrorException;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
-import org.openscada.net.da.handler.Messages;
 import org.openscada.utils.exec.AsyncBasedOperation;
 import org.openscada.utils.exec.OperationResult;
 
@@ -42,8 +41,8 @@ public class WriteOperation extends AsyncBasedOperation<Object,WriteOperationArg
                 case Message.CC_FAILED:
                     String failure = "unknown failure";
                     
-                    if ( message.getValues().containsKey("message") )
-                        failure = message.getValues().get("message").toString();
+                    if ( message.getValues().containsKey ( Message.FIELD_ERROR_INFO ) )
+                        failure = message.getValues().get ( Message.FIELD_ERROR_INFO ).toString();
                     
                     or.notifyFailure ( new OperationFailedException ( failure ) );
                     break;

@@ -36,7 +36,6 @@ import org.openscada.da.client.test.actions.ConnectHiveAction;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveItem;
 import org.openscada.da.client.test.impl.HiveRepository;
-import org.openscada.da.client.net.Connection;
 import org.openscada.da.core.IODirection;
 
 

@@ -13,7 +13,6 @@ import org.openscada.da.core.ItemChangeListener;
 import org.openscada.da.core.ItemListListener;
 import org.openscada.da.core.Session;
 import org.openscada.da.core.WriteOperationListener;
-import org.openscada.da.core.common.impl.WriteOperation;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.MessageListener;

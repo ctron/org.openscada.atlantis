@@ -11,6 +11,8 @@ public class Message
 	public final static int CC_ACK =                   0x00000003;
 	public final static int CC_PING =                  0x00000010;
 	public final static int CC_PONG =                  0x00000011;
+    
+    public final static String FIELD_ERROR_INFO = "error-info";
 	
 	private int _commandCode = 0;
 	private long _sequence = 0;

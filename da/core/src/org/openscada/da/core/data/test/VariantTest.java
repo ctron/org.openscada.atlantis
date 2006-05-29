@@ -1,8 +1,8 @@
 package org.openscada.da.core.data.test;
 
-import org.openscada.da.core.data.Variant;
-
 import junit.framework.TestCase;
+
+import org.openscada.da.core.data.Variant;
 
 public class VariantTest extends TestCase {
 	

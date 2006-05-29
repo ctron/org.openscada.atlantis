@@ -1,11 +1,10 @@
 package org.openscada.utils.exec.test;
 
+import junit.framework.TestCase;
+
 import org.openscada.utils.exec.AsyncBasedOperation;
 import org.openscada.utils.exec.Operation;
 import org.openscada.utils.exec.OperationResult;
-import org.openscada.utils.exec.SyncBasedOperation;
-
-import junit.framework.TestCase;
 
 public class AsyncOperationTests extends TestCase
 {

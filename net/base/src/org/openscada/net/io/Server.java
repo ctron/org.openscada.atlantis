@@ -2,10 +2,7 @@ package org.openscada.net.io;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 
-import org.openscada.net.base.MessageListener;
-import org.openscada.net.base.MessageProcessor;
 import org.openscada.net.base.ConnectionHandlerFactory;
 
 public class Server implements Runnable {

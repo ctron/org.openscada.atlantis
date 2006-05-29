@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.text.DefaultStyledDocument.AttributeUndoableEdit;
-
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.data.AttributesHelper;
 import org.openscada.da.core.data.Variant;

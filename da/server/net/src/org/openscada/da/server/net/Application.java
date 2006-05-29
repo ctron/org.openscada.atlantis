@@ -1,7 +1,6 @@
 package org.openscada.da.server.net;
 
 import org.apache.log4j.Logger;
-import java.lang.Class;
 
 /**
  * Application to export a hive using the OpenSCADA NET protocol

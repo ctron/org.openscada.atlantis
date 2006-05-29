@@ -11,8 +11,6 @@ import org.apache.log4j.Logger;
 import org.openscada.net.base.ConnectionHandlerFactory;
 import org.openscada.net.utils.MessageCreator;
 
-import sun.misc.MessageUtils;
-
 public class ServerSocket extends IOChannel implements IOChannelListener {
 
 	private static Logger _log = Logger.getLogger(ServerSocket.class);
