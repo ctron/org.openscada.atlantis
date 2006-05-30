@@ -28,10 +28,8 @@ public class Application
     {
    
         ConnectionInfo info = new ConnectionInfo();
-        info.setRemote(new InetSocketAddress(
-                InetAddress.getLocalHost(),
-                Integer.getInteger ( "openscada.da.net.server.port", 1202 )
-                ));
+        info.setHostName ( InetAddress.getLocalHost ().getHostAddress () );
+        info.setPort ( Integer.getInteger ( "openscada.da.net.server.port", 1202 ) );
         
         final Connection connection = new Connection ( info );
         

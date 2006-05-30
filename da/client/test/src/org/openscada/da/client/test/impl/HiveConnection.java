@@ -32,8 +32,9 @@ public class HiveConnection extends Observable implements IActionFilter
     {
         _connectionInfo = connectionInfo;
         
-        InetSocketAddress remote = new InetSocketAddress ( _connectionInfo.getHost(), _connectionInfo.getPort() );
-        ConnectionInfo conInfo = new ConnectionInfo ( remote );
+        ConnectionInfo conInfo = new ConnectionInfo ();
+        conInfo.setHostName ( _connectionInfo.getHost () );
+        conInfo.setPort ( connectionInfo.getPort () );
         conInfo.setAutoReconnect ( false );
         
         _connection = new Connection ( conInfo );

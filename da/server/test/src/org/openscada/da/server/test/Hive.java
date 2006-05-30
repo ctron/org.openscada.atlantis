@@ -37,7 +37,7 @@ public class Hive extends HiveCommon {
             }});
         registerItem ( cmd );
         
-		registerItem ( new TimeDataItem("time", _scheduler) );
+		registerItem ( new TimeDataItem ( "time", _scheduler ) );
         registerItem ( new WriteDelayItem ( "write-delay" ) );
         registerItem ( new MemoryCellItem ( this, "memory-cell" ) );
 	}

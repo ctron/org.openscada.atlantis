@@ -26,9 +26,9 @@ public class AutoReconnectClientConnection extends ConnectionHandlerBase
      */
     public void start ()
     {
-        _client = new Client ( _processor, getMessageProcessor(), this, _remote, true );
+        _client = new Client ( _processor, getMessageProcessor(), this, true );
         setConnection ( _client.getConnection () );
-        _client.connect ();
+        _client.connect ( _remote );
     }
 	
 	@Override

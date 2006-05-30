@@ -1,10 +1,10 @@
 package org.openscada.da.client.net;
 
-import java.net.SocketAddress;
 
 public class ConnectionInfo
 {
-    private SocketAddress _remote = null;
+    private String _hostName = "";
+    private int _port = 0;
     private boolean _autoReconnect = true;
     
     private int _reconnectDelay = Integer.getInteger ( "org.openscada.da.net.client.reconnect_delay", 10 * 1000 );
@@ -13,25 +13,21 @@ public class ConnectionInfo
     {
     }
     
-    public ConnectionInfo ( SocketAddress remote )
+    public ConnectionInfo ( String hostName, int port )
     {
         super ();
-        _remote = remote;
-    }
-
-    public SocketAddress getRemote ()
-    {
-        return _remote;
-    }
-
-    public void setRemote ( SocketAddress remote )
-    {
-        _remote = remote;
+        _hostName = hostName;
+        _port = port;
     }
     
     public boolean isValid ()
     {
-        if ( _remote == null )
+        if ( _hostName == null )
+            return false;
+        if ( _hostName.equals ( "" ) )
+            return false;
+        
+        if ( _port <= 0 )
             return false;
         
         return true;
@@ -55,6 +51,26 @@ public class ConnectionInfo
     public void setReconnectDelay ( int reconnectDelay )
     {
         _reconnectDelay = reconnectDelay;
+    }
+
+    public String getHostName ()
+    {
+        return _hostName;
+    }
+
+    public void setHostName ( String hostName )
+    {
+        _hostName = hostName;
+    }
+
+    public int getPort ()
+    {
+        return _port;
+    }
+
+    public void setPort ( int port )
+    {
+        _port = port;
     }
     
 }

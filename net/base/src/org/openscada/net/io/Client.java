@@ -16,19 +16,19 @@ public class Client implements ConnectionStateListener
 	
 	private IOProcessor _processor = null;
 	private MessageListener _listener;
-	private SocketAddress _remote;
 	private ClientConnection _connection = null;
 	private ConnectionStateListener _stateListener = null;
     
     private boolean _connected = false;
     private boolean _autoReconnect = false;
+    
+    private SocketAddress _lastRemote = null;
 
-	public Client ( IOProcessor processor, MessageListener listener, ConnectionStateListener stateListener, SocketAddress remote, boolean autoReconnect )
+	public Client ( IOProcessor processor, MessageListener listener, ConnectionStateListener stateListener, boolean autoReconnect )
 	{
 		_processor = processor;
 		_listener = listener;
 		_stateListener = stateListener;
-		_remote = remote;
         _autoReconnect = autoReconnect;
 	}
 	
@@ -40,17 +40,19 @@ public class Client implements ConnectionStateListener
 		}
 	}
 	
-	public void connect ()
+	public void connect ( SocketAddress remote )
 	{
-        performConnect ();
+        _lastRemote = remote;
+        performConnect ( remote );
 	}
     
-    public void connect ( boolean wait )
+    public void connect ( SocketAddress remote, boolean wait )
     {
-        scheduleConnectJob ( RECONNECT_TIMEOUT );
+        _lastRemote = remote;
+        scheduleConnectJob ( remote, RECONNECT_TIMEOUT );
     }
     
-    private void performConnect ()
+    private void performConnect ( SocketAddress remote )
     {
         _log.debug ( "connecting..." );
         
@@ -60,7 +62,7 @@ public class Client implements ConnectionStateListener
         {
             SocketConnection channel = new SocketConnection ( _processor );
             _connection = new ClientConnection ( _listener, this, channel );
-            channel.connect ( _remote );
+            channel.connect ( remote );
         }
         catch ( IOException e )
         {
@@ -87,8 +89,8 @@ public class Client implements ConnectionStateListener
 
         _connected = false;
         
-        if ( _autoReconnect )
-            connect ( true );
+        if ( _autoReconnect && ( _lastRemote != null ) )
+            connect ( _lastRemote, true );
 	}
 
 	public void opened ()
@@ -111,14 +113,14 @@ public class Client implements ConnectionStateListener
         return _connected;
     }
     
-    private void scheduleConnectJob ( int timeout )
+    private void scheduleConnectJob ( final SocketAddress remote, int timeout )
     {
         _log.debug ( "adding connect job" );
         
         _processor.getScheduler().scheduleJob ( new Runnable(){
             
             public void run() {
-                performConnect ();
+                performConnect ( remote );
             }}, timeout );
     }
 }

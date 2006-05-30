@@ -1,6 +1,11 @@
 package org.openscada.da.client.net;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,39 +32,41 @@ import org.openscada.utils.lang.Holder;
 
 public class Connection
 {
-    
+
     public static final String VERSION = "0.1.0";
-    
+
     public enum State
     {
         CLOSED,
+        LOOKUP,
         CONNECTING,
         CONNECTED,
         BOUND,
         CLOSING,
     }
-    
+
     private static Logger _log = Logger.getLogger ( Connection.class );
-    
+
     private ConnectionInfo _connectionInfo = null;
+    private SocketAddress _remote = null;
     private IOProcessor _processor = null;
-    
+
     private ClientConnection _client = null;
-    
+
     private List<ConnectionStateListener> _connectionStateListeners = new ArrayList < ConnectionStateListener > ();
     private Map<String,ItemSyncController> _itemListeners = new HashMap < String, ItemSyncController > ();
-    
+
     //private boolean _connected = false;
     private State _state = State.CLOSED;
-    
+
     private static Object _defaultProcessorLock = new Object();
     private static IOProcessor _defaultProcessor = null;
-    
+
     private ItemList _itemList = new ItemList ();
     private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener>();
-    
+
     private WriteOperation _writeOperation;
-    
+
     private static IOProcessor getDefaultProcessor ()
     {
         try
@@ -81,61 +88,61 @@ public class Connection
         // operation failed
         return null;
     }
-    
+
     public Connection ( IOProcessor processor, ConnectionInfo connectionInfo )
     {
         super();
-        
+
         _processor = processor;
         _connectionInfo = connectionInfo;
-        
+
         // register our own list
         addItemListListener ( _itemList );
-        
+
         init ();
-        
+
         _writeOperation = new WriteOperation ( this );
     }
-    
+
     public Connection ( ConnectionInfo connectionInfo )
     {
         this ( getDefaultProcessor(), connectionInfo );
     }
-    
+
     private void init ()
     {
         if ( _client != null )
             return;
-        
-        _client = new ClientConnection (_processor, _connectionInfo.getRemote() );
+
+        _client = new ClientConnection ( _processor );
         _client.addStateListener(new  org.openscada.net.io.ConnectionStateListener(){
-            
+
             public void closed ( Exception error )
             {
                 _log.debug ( "closed" );
                 fireDisconnected ( error );
             }
-            
+
             public void opened ()
             {
                 _log.debug ( "opened" );
                 fireConnected ();
             }});
-        
+
         _client.getMessageProcessor().setHandler(Messages.CC_NOTIFY_VALUE, new MessageListener(){
 
             public void messageReceived ( org.openscada.net.io.Connection connection, Message message )
             {
                 notifyValueChange(message);
             }} );
-        
+
         _client.getMessageProcessor().setHandler(Messages.CC_NOTIFY_ATTRIBUTES, new MessageListener(){
 
             public void messageReceived ( org.openscada.net.io.Connection connection, Message message )
             {
                 notifyAttributesChange(message);
             }});
-        
+
         _client.getMessageProcessor().setHandler(Messages.CC_ENUM_EVENT, new MessageListener(){
 
             public void messageReceived ( org.openscada.net.io.Connection connection, Message message )
@@ -143,9 +150,9 @@ public class Connection
                 _log.debug("Enum message from server");
                 performEnumEvent ( message );
             }});
-        
+
     }
-    
+
     synchronized public void connect ()
     {
         switch ( _state )
@@ -155,16 +162,20 @@ public class Connection
             break;
         }        
     }
-    
+
     synchronized public void disconnect ()
     {
         disconnect ( null );
     }
-    
+
     synchronized private void disconnect ( Throwable reason )
     {
         switch ( _state )
         {
+        case LOOKUP:
+            setState ( State.CLOSED, reason );
+            break;
+            
         case BOUND:
         case CONNECTING:
         case CONNECTED:
@@ -172,7 +183,7 @@ public class Connection
             break;
         }    
     }
-    
+
     public void addItemListListener ( ItemListListener listener )
     {
         synchronized ( _itemListListeners )
@@ -180,7 +191,7 @@ public class Connection
             _itemListListeners.add ( listener );
         }
     }
-    
+
     public void removeItemListListener ( ItemListListener listener )
     {
         synchronized ( _itemListListeners )
@@ -188,7 +199,7 @@ public class Connection
             _itemListListeners.remove ( listener );
         }
     }
-    
+
     public void addConnectionStateListener ( ConnectionStateListener connectionStateListener )
     {
         synchronized ( _connectionStateListeners )
@@ -196,7 +207,7 @@ public class Connection
             _connectionStateListeners.add ( connectionStateListener );
         }
     }
-    
+
     public void removeConnectionStateListener ( ConnectionStateListener connectionStateListener )
     {
         synchronized ( _connectionStateListeners )
@@ -204,42 +215,43 @@ public class Connection
             _connectionStateListeners.remove ( connectionStateListener );
         }
     }
-    
+
     private void fireConnected ()
     {
         _log.debug ( "connected" );
-        
+
         switch ( _state )
         {
         case CONNECTING:
             setState ( State.CONNECTED, null );
             break;
         }
-        
+
     }
-    
+
     private void fireDisconnected ( Throwable error )
     {
         _log.debug ( "dis-connected" );
-     
+
         switch ( _state )
         {
         case BOUND:
         case CONNECTED:
         case CONNECTING:
+        case LOOKUP:
         case CLOSING:
             setState ( State.CLOSED, error );
             break;
         }
-        
+
     }
-    
+
     private void fireItemListChange ( Collection<DataItemInformation> added, Collection<String> removed, boolean initial )
     {
         synchronized ( _itemListListeners )
         {
             _log.debug("Sending out enum events");
-            
+
             for ( ItemListListener listener : _itemListListeners )
             {
                 try {
@@ -250,15 +262,15 @@ public class Connection
             }
         }
     }
-    
+
     private void requestSession ()
     {
         if ( _client == null )
             return;
-        
+
         Properties props = new Properties();
         props.setProperty ( "client-version", VERSION );
-        
+
         _client.getConnection().sendMessage ( Messages.createSession ( props ), new MessageStateListener(){
 
             public void messageReply ( Message message )
@@ -268,14 +280,14 @@ public class Connection
 
             public void messageTimedOut ()
             {
-               setState ( State.CLOSED, new OperationTimedOutException().fillInStackTrace () );
+                setState ( State.CLOSED, new OperationTimedOutException().fillInStackTrace () );
             }} );
     }
-    
+
     private void processSessionReply ( Message message )
     {
         _log.debug ( "Got session reply!" );
-        
+
         if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
         {
             String errorInfo = message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString ();
@@ -292,18 +304,18 @@ public class Connection
             subscribeEnum ();
         }
     }
-    
+
     private void subscribeEnum ()
     {
         if ( _client == null )
             return;
-        
+
         _log.debug("Subscribing to enum");
-        
+
         _client.getConnection().sendMessage(Messages.subscribeEnum());
         _log.debug("Subscribing to enum...complete");
     }
-    
+
     public void addItemUpdateListener ( String itemName, boolean initial, ItemUpdateListener listener ) 
     {
         synchronized ( _itemListeners )
@@ -312,12 +324,12 @@ public class Connection
             {
                 _itemListeners.put( itemName, new ItemSyncController(this, itemName) );
             }
-            
+
             ItemSyncController controller = _itemListeners.get ( itemName );
             controller.add ( listener, initial );
         }
     }
-    
+
     public void removeItemUpdateListener ( String itemName, ItemUpdateListener listener ) 
     {
         synchronized ( _itemListeners )
@@ -326,12 +338,12 @@ public class Connection
             {
                 return;
             }
-            
+
             ItemSyncController controller = _itemListeners.get(itemName);
             controller.remove(listener);
         }
     }
-    
+
     /**
      * Synchronized all items that are currently known
      *
@@ -339,7 +351,7 @@ public class Connection
     private void resyncAllItems ()
     {
         _log.debug("Syncing all items");
-        
+
         synchronized ( _itemListeners )
         {
             for ( Map.Entry<String,ItemSyncController> entry : _itemListeners.entrySet() )
@@ -349,8 +361,8 @@ public class Connection
         }
         _log.debug("re-sync complete");
     }
-    
-    
+
+
     private void fireValueChange ( String itemName, Variant value, boolean initial )
     {
         synchronized ( _itemListeners )
@@ -361,7 +373,7 @@ public class Connection
             }
         }
     }
-    
+
     private void fireAttributesChange ( String itemName, Map<String,Variant> attributes, boolean initial )
     {
         synchronized ( _itemListeners )
@@ -372,34 +384,34 @@ public class Connection
             }
         }
     }
-    
+
     private void notifyValueChange ( Message message )
     {
         Variant value = new Variant ();
-        
+
         // extract initial bit
         boolean initial = message.getValues().containsKey("initial");
 
-        
+
         if ( message.getValues().containsKey("value") )
         {
             value = Messages.valueToVariant ( message.getValues().get("value"), null );
         }
-        
+
         String itemName = message.getValues().get("item-name").toString();
         fireValueChange(itemName, value, initial);
     }
-    
-    
-    
+
+
+
     private void notifyAttributesChange ( Message message )
     {
-        
+
         Map<String,Variant> attributes = new HashMap<String,Variant>();
-        
+
         // extract initial bit
         boolean initial = message.getValues().containsKey("initial");
-        
+
         for ( Map.Entry<String,Value> entry : message.getValues().entrySet() )
         {
             String name = entry.getKey();
@@ -419,29 +431,29 @@ public class Connection
                 name = name.substring("unset-".length());
                 attributes.put(name,null);
             }
-            
+
         }
-        
+
         String itemName = message.getValues().get("item-name").toString();
         fireAttributesChange ( itemName, attributes, initial );
     }
-    
+
     private void performEnumEvent ( Message message )
     {
         synchronized ( _itemList )
         {
-            
+
             List<DataItemInformation> added = new ArrayList<DataItemInformation> ();
             List<String> removed = new ArrayList<String> ();
             Holder<Boolean> initial = new Holder<Boolean> ();
-            
+
             EnumEvent.parse ( message, added, removed, initial );
-            
+
             fireItemListChange ( added, removed, initial.value.booleanValue() );
         }
-        
+
     }
-    
+
     public State getState ()
     {
         return _state;
@@ -455,7 +467,7 @@ public class Connection
     {
         return _client;
     }
-    
+
     /**
      * Get the item list. This list is maintained by the connection and will be
      * feeded with events.
@@ -468,22 +480,22 @@ public class Connection
             return _itemList;
         }
     }
-    
+
     public void write ( String itemName, Variant value ) throws Exception
     {
         _writeOperation.execute ( new WriteOperationArguments ( itemName, value ) );
     }
-    
+
     public OperationResult<Object> startWrite ( String itemName, Variant value )
     {
         return _writeOperation.startExecute ( new WriteOperationArguments ( itemName, value ) );
     }
-    
+
     public OperationResult<Object> startWrite ( String itemName, Variant value, OperationResultHandler<Object> handler )
     {
         return _writeOperation.startExecute ( handler, new WriteOperationArguments ( itemName, value ) );
     }
-    
+
     /**
      * set new state internaly
      * @param state
@@ -492,15 +504,15 @@ public class Connection
     synchronized private void setState ( State state, Throwable error )
     {
         _state = state;
-        
+
         stateChanged ( state, error );
     }
-    
+
     private void stateChanged ( State state, Throwable error )
     {
         switch ( state )
         {
-        
+
         case CLOSED:
             // if we got the close and are auto-reconnect ... schedule the job
             if ( _connectionInfo.isAutoReconnect () )
@@ -513,27 +525,32 @@ public class Connection
                     }}, _connectionInfo.getReconnectDelay () );
             }
             break;
-            
+
         case CONNECTING:
-            _client.connect ();
+            performConnect ();
+            break;
+            
+        case LOOKUP:
             break;
             
         case CONNECTED:
             requestSession ();
             break;
-            
+
         case BOUND:
             break;
-            
+
         case CLOSING:
             _client.disconnect ();
             break;
         }
-        
+
         notifyStateChange ( state, error );
-        
+
     }
-    
+
+
+
     /**
      * Notify state change listeners
      * @param state new state
@@ -542,7 +559,7 @@ public class Connection
     private void notifyStateChange ( State state, Throwable error )
     {   
         List<ConnectionStateListener> connectionStateListeners;
-        
+
         synchronized ( _connectionStateListeners )
         {
             connectionStateListeners = new ArrayList<ConnectionStateListener> ( _connectionStateListeners );
@@ -557,5 +574,49 @@ public class Connection
             {
             }
         }
+    }
+
+    synchronized private void performConnect ()
+    {
+        if ( _remote != null )
+        {
+            _client.connect ( _remote );
+        }
+        else
+        {
+            setState ( State.LOOKUP, null );
+            Thread lookupThread = new Thread ( new Runnable() {
+
+                public void run ()
+                {
+                    performLookupAndConnect ();
+                }} );
+            lookupThread.setDaemon ( true );
+            lookupThread.start ();
+        }
+    }
+
+    private void performLookupAndConnect ()
+    {
+        // lookup may take some time
+        try
+        {
+            SocketAddress remote = new InetSocketAddress ( InetAddress.getByName ( _connectionInfo.getHostName () ), _connectionInfo.getPort () );
+            _remote = remote;
+            // this time "remote" should not be null
+            synchronized ( this )
+            {
+                if ( _state.equals ( State.LOOKUP ) )
+                    setState ( State.CONNECTING, null );
+            }
+        }
+        catch ( UnknownHostException e )
+        {
+            synchronized ( this )
+            {
+                if ( _state.equals ( State.LOOKUP ) ) 
+                    setState ( State.CLOSED, e );
+            }
+        } 
     }
 }

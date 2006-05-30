@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
@@ -16,7 +17,9 @@ import org.openscada.utils.timing.Scheduler;
 
 public class Connection implements ConnectionListener, MessageListener
 {
-	private static final long MAX_SEQUENCE = 0xFFFFFFFF;
+    private static Logger _log = Logger.getLogger ( Connection.class );
+    
+	private static final long MAX_SEQUENCE = 0x7FFFFFFF;
     private static final long INIT_SEQUENCE = 1;
     
     private int _timeoutLimit = Integer.getInteger ( "org.openscada.net.message_timeout", 10*1000 );
@@ -140,6 +143,8 @@ public class Connection implements ConnectionListener, MessageListener
 
 	public void connected ()
 	{
+        cleanTagList ();
+        
 	    _connection.triggerRead();
 
 	    if ( _connectionStateListener != null )
@@ -156,14 +161,7 @@ public class Connection implements ConnectionListener, MessageListener
     {
         removeTimeOutJob();
         
-        synchronized ( _tagList )
-        {
-            for ( Map.Entry<Long,MessageTag> tag : _tagList.entrySet() )
-            {
-                tag.getValue ().getListener ().messageTimedOut ();
-            }
-            _tagList.clear ();
-        }
+        cleanTagList ();
         
 		if ( _connectionStateListener != null )
 			_connectionStateListener.closed ( null );
@@ -174,8 +172,22 @@ public class Connection implements ConnectionListener, MessageListener
 		_connection.close ();
 	}
 
+    private void cleanTagList ()
+    {
+        synchronized ( _tagList )
+        {
+            for ( Map.Entry<Long,MessageTag> tag : _tagList.entrySet() )
+            {
+                tag.getValue ().getListener ().messageTimedOut ();
+            }
+            _tagList.clear ();
+        }
+    }
+    
     public void messageReceived ( Connection connection, Message message )
     {
+        _log.info ( "Message received: Seq: " + message.getSequence () + " Reply: " + message.getReplySequence () );
+        
         Long seq = Long.valueOf ( message.getReplySequence () );
         
         _listener.messageReceived ( connection, message );

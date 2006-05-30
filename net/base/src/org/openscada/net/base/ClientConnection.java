@@ -12,20 +12,18 @@ public class ClientConnection extends ConnectionHandlerBase
     
     private Client _client = null;
     private IOProcessor _processor = null;
-    private SocketAddress _remote = null;
     
-    public ClientConnection ( IOProcessor processor, SocketAddress remote )
+    public ClientConnection ( IOProcessor processor )
     {
         _processor = processor;
-        _remote = remote;
         
-        _client = new Client ( _processor, getMessageProcessor(), this, _remote, false );
+        _client = new Client ( _processor, getMessageProcessor(), this, false );
         setConnection ( _client.getConnection () );
     }
     
-    public void connect ()
+    public void connect ( SocketAddress remote )
     {
-        _client.connect ();
+        _client.connect ( remote );
     }
     
     public void disconnect ()
