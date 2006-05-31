@@ -3,7 +3,7 @@ package org.openscada.utils.lang.test;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.openscada.utils.lang.StringEncoder;
+import org.openscada.utils.str.StringEncoder;
 
 public class EncoderTest
 {

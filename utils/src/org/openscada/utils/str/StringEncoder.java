@@ -1,4 +1,4 @@
-package org.openscada.utils.lang;
+package org.openscada.utils.str;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
