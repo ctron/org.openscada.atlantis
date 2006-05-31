@@ -4,7 +4,8 @@ import org.openscada.da.core.ItemChangeListener;
 import org.openscada.da.core.ItemListListener;
 
 
-public class SessionCommon implements org.openscada.da.core.Session {
+public class SessionCommon implements org.openscada.da.core.Session
+{
 	private HiveCommon _hive;
 	private ItemChangeListener _listener;
     
