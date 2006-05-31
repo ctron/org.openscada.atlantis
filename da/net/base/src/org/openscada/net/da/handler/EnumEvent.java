@@ -10,7 +10,7 @@ import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.utils.lang.Holder;
-import org.openscada.utils.lang.StringEncoder;
+import org.openscada.utils.str.StringEncoder;
 
 public class EnumEvent
 {
