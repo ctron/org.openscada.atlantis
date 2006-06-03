@@ -95,8 +95,10 @@ public class ProtocolGMPPTest
                 " 00 00 00 00 00 00 00 00" + // timestamp
                 " 00 00 00 00 00 00 00 02" + // sequence
                 " 00 00 00 00 00 00 00 03" + // reply sequence
-                " 00 00 00 01" + // number of values
-                " 00 00 00 14" + // body size
+                " 00 00 00 20" + // body size
+                " 00 00 00 07" + // VT_MAP
+                " 00 00 00 18" + // VT_MAP - size
+                " 00 00 00 01" + // VT_MAP - item count
                 " 00 00 00 01" + // VT_STRING
                 " 00 00 00 04" + // string length
                 " 74 65 73 74" + // empty string
@@ -211,8 +213,10 @@ public class ProtocolGMPPTest
                 " 00 00 00 00 00 00 00 00" + // timestamp
                 " 00 00 00 00 00 00 00 02" + // sequence
                 " 00 00 00 00 00 00 00 03" + // reply sequence
-                " 00 00 00 01" + // number of values
-                " 00 00 00 14" + // body size
+                " 00 00 00 20" + // body size
+                " 00 00 00 07" + // VT_MAP
+                " 00 00 00 18" + // VT_MAP - size
+                " 00 00 00 01" + // VT_MAP - item count
                 " 00 00 00 01" + // VT_STRING
                 " 00 00 00 04" + // string length
                 " 74 65 73 74" + // test string
@@ -242,8 +246,10 @@ public class ProtocolGMPPTest
                 " 00 00 00 00 00 00 00 00" + // timestamp
                 " 00 00 00 00 00 00 00 02" + // sequence
                 " 00 00 00 00 00 00 01 00" + // reply sequence
-                " 00 00 00 02" + // number of values
-                " 00 00 00 28" + // body size
+                " 00 00 00 34" + // body size
+                " 00 00 00 07" + // VT_MAP
+                " 00 00 00 2C" + // VT_MAP - size
+                " 00 00 00 02" + // VT_MAP - item count
                 " 00 00 00 01" + // VT_STRING
                 " 00 00 00 04" + // string length
                 " 74 65 74 74" + // empty string
@@ -280,8 +286,10 @@ public class ProtocolGMPPTest
                 " 00 00 00 00 00 00 00 00" + // timestamp
                 " 00 00 00 00 00 00 00 02" + // sequence
                 " 00 00 00 00 00 00 01 00" + // reply sequence
-                " 00 00 00 01" + // number of values
-                " 00 00 00 2C" + // body size
+                " 00 00 00 38" + // body size
+                " 00 00 00 07" + // VT_MAP
+                " 00 00 00 30" + // VT_MAP - size
+                " 00 00 00 01" + // VT_MAP - item count
                 " 00 00 00 06" + // VT_LIST
                 " 00 00 00 1C" + // data length
                 " 00 00 00 02" + // number of list items

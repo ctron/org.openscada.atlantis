@@ -38,8 +38,8 @@ public class TestMessageListener implements MessageListener
             Assert.assertEquals ( "Reply sequence", m1.getReplySequence (), m2.getReplySequence () );
             Assert.assertEquals ( "Number of values", m1.getValues ().size (), m2.getValues ().size () );
             
-            Iterator<Map.Entry<String, Value>> vi1 = m1.getValues ().entrySet ().iterator ();
-            Iterator<Map.Entry<String, Value>> vi2 = m2.getValues ().entrySet ().iterator ();
+            Iterator<Map.Entry<String, Value>> vi1 = m1.getValues ().getValues ().entrySet ().iterator ();
+            Iterator<Map.Entry<String, Value>> vi2 = m2.getValues ().getValues ().entrySet ().iterator ();
             
             while ( vi1.hasNext () )
             {

@@ -9,6 +9,7 @@ import org.openscada.net.base.data.DoubleValue;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.LongValue;
+import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
@@ -24,8 +25,9 @@ public class ProtocolGMPP implements Protocol
     public final static int VT_VOID =       0x000000004;
     public final static int VT_INTEGER =    0x000000005;
     public final static int VT_LIST =       0x000000006;
+    public final static int VT_MAP =        0x000000007;
 
-    private final static int HEADER_SIZE = 4 + 8 + 8 + 8 + 4 + 4; 
+    private final static int HEADER_SIZE = 4 + 8 + 8 + 8 + 4;
     
     private final static int BLOCK_SIZE =   4096;
 
@@ -101,7 +103,7 @@ public class ProtocolGMPP implements Protocol
     
     private ByteBuffer encodeToStream ( ByteBuffer buffer, ListValue value ) throws InvalidValueTypeException
     {
-        buffer = ensureCapacity ( buffer, 4 + 4 );
+        buffer = ensureCapacity ( buffer, 4 + 4 + 4 );
         buffer.putInt ( VT_LIST );
         int position = buffer.position (); // remember position
         buffer.putInt ( 0 ); // dummy size length
@@ -112,6 +114,26 @@ public class ProtocolGMPP implements Protocol
         for ( Value valueEntry : value.getValues () )
         {
             buffer = codeValue ( buffer, valueEntry );
+        }
+        int size = buffer.position () - startPos;
+        
+        buffer.putInt ( position, size ); // set value size
+        return buffer;
+    }
+    
+    private ByteBuffer encodeToStream ( ByteBuffer buffer, MapValue value ) throws InvalidValueTypeException
+    {
+        buffer = ensureCapacity ( buffer, 4 + 4 + 4 );
+        buffer.putInt ( VT_MAP );
+        int position = buffer.position (); // remember position
+        buffer.putInt ( 0 ); // dummy size length
+        
+        int startPos = buffer.position ();
+        buffer.putInt ( value.getValues ().size () );
+        
+        for ( Map.Entry < String, Value > valueEntry : value.getValues ().entrySet () )
+        {
+            buffer = codeValue ( buffer, valueEntry.getKey (), valueEntry.getValue () );
         }
         int size = buffer.position () - startPos;
         
@@ -144,6 +166,10 @@ public class ProtocolGMPP implements Protocol
         else if ( value instanceof ListValue )
         {
             buffer = encodeToStream ( buffer, (ListValue)value );
+        }
+        else if ( value instanceof MapValue )
+        {
+            buffer = encodeToStream ( buffer, (MapValue)value );
         }
         else
             throw new InvalidValueTypeException ();
@@ -206,27 +232,18 @@ public class ProtocolGMPP implements Protocol
         
         outputBuffer = ensureCapacity ( outputBuffer, HEADER_SIZE );
 
-        outputBuffer.clear();
+        outputBuffer.clear ();
         outputBuffer.putInt ( message.getCommandCode() );
         outputBuffer.putLong ( message.getTimestamp () );
         outputBuffer.putLong ( message.getSequence() );
         outputBuffer.putLong ( message.getReplySequence() );
-
-        outputBuffer = ensureCapacity ( outputBuffer, 4 + 4 );
-        outputBuffer.putInt ( message.getValues().size () );
-        
-        int bodySizePosition = outputBuffer.position ();
+        int sizePos = outputBuffer.position ();
         outputBuffer.putInt ( 0 ); // dummy body size
-        
-        int bodyStartPosition = outputBuffer.position ();
-        for ( Map.Entry<String, Value> entry : message.getValues ().entrySet () )
-        {
-            outputBuffer = codeValue ( outputBuffer, entry.getKey (), entry.getValue () );
-        }
-        int bodyEndPosition = outputBuffer.position ();
-        
-        int bodySize = bodyEndPosition - bodyStartPosition;
-        outputBuffer.putInt ( bodySizePosition, bodySize );
+
+        int startPos = outputBuffer.position ();
+        outputBuffer = codeValue ( outputBuffer, message.getValues () );
+        int bodySize = outputBuffer.position () - startPos;
+        outputBuffer.putInt ( sizePos, bodySize );
         
         outputBuffer.flip ();
         
@@ -296,6 +313,18 @@ public class ProtocolGMPP implements Protocol
         logInputBuffer ( "6" );
     }
 
+    private String decodeStringFromStream ( ByteBuffer buffer, int size )
+    {
+        byte [] data = new byte [ size ];
+        buffer.get ( data );
+        return new String ( data );
+    }
+    
+    private String decodeStringFromStream ( ByteBuffer buffer )
+    {
+        return decodeStringFromStream ( buffer, buffer.getInt () );
+    }
+    
     private Value decodeValueFromStream ( ByteBuffer buffer )
     {
         int type = buffer.getInt ();
@@ -311,9 +340,7 @@ public class ProtocolGMPP implements Protocol
         case VT_INTEGER:
             return new IntegerValue ( buffer.getInt() );
         case VT_STRING:
-            byte [] data = new byte [ len ];
-            buffer.get ( data );
-            return new StringValue ( new String ( data ) );
+            return new StringValue ( decodeStringFromStream ( buffer, len ) );
         case VT_DOUBLE:
             return new DoubleValue ( buffer.getDouble() );
         case VT_VOID:
@@ -321,6 +348,8 @@ public class ProtocolGMPP implements Protocol
             // nothing to read
         case VT_LIST:
             return decodeListValueFromStream ( buffer );
+        case VT_MAP:
+            return decodeMapValueFromStream ( buffer );
         default:
             // unknown type: only consume data
             buffer.position ( buffer.position() + len );
@@ -328,25 +357,8 @@ public class ProtocolGMPP implements Protocol
         }
         return null;
     }
-    
-    private void parseItem ( ByteBuffer buffer, Message message )
-    {
-        Value value = decodeValueFromStream ( buffer );
-
-        // now read the item name
-        int nameLen = buffer.getInt ();
-        _log.debug ( "Reading " + nameLen + " name bytes" );
-
-        byte[] data = new byte [ nameLen ];
-        buffer.get ( data );
-        String name = new String ( data );
-        if ( value != null )
-        {
-            message.getValues ().put ( name, value );
-        }
-    }
-
-    private Value decodeListValueFromStream ( ByteBuffer buffer )
+  
+    private ListValue decodeListValueFromStream ( ByteBuffer buffer )
     {
         ListValue listValue = new ListValue ();
         
@@ -358,6 +370,21 @@ public class ProtocolGMPP implements Protocol
         
         return listValue;
     }
+    
+    private MapValue decodeMapValueFromStream ( ByteBuffer buffer )
+    {
+        MapValue mapValue = new MapValue ();
+        
+        int items = buffer.getInt ();
+        for ( int i = 0; i < items; i++ )
+        {
+            Value value = decodeValueFromStream ( buffer );
+            String key = decodeStringFromStream ( buffer );
+            mapValue.getValues ().put ( key, value );
+        }
+        
+        return mapValue;
+    }
 
     private void parse ()
     {
@@ -366,37 +393,30 @@ public class ProtocolGMPP implements Protocol
         while  ( _inputBuffer.remaining() >= HEADER_SIZE )
         {
             // peek body size
-            int bodySize = _inputBuffer.getInt( _inputBuffer.position() + 4 + 8 + 8 + 8 + 4 );
-            _log.debug("Body length: " + bodySize );
+            int bodySize = _inputBuffer.getInt ( _inputBuffer.position() + 4 + 8 + 8 + 8 );
+            _log.debug ( "Body length: " + bodySize );
 
             if ( _inputBuffer.remaining() < HEADER_SIZE + bodySize )
             {
-                _log.debug("Remaining: " + _inputBuffer.remaining() + " Header: " + HEADER_SIZE + " Body: " + bodySize );
+                _log.debug ( "Remaining: " + _inputBuffer.remaining () + " Header: " + HEADER_SIZE + " Body: " + bodySize );
                 // message is not complete so skip for next try
                 return;
             }
 
             // read the packet
-            Message message = new Message();
-            message.setCommandCode(_inputBuffer.getInt());
+            Message message = new Message ();
+            message.setCommandCode ( _inputBuffer.getInt () );
             long st;
-            message.setTimestamp ( st = _inputBuffer.getLong() );
-            message.setSequence(_inputBuffer.getLong());
-            message.setReplySequence(_inputBuffer.getLong());
+            message.setTimestamp ( st = _inputBuffer.getLong () );
+            message.setSequence ( _inputBuffer.getLong () );
+            message.setReplySequence ( _inputBuffer.getLong () );
 
-            // number of items to follow
-            int numItems = _inputBuffer.getInt();
-            if ( numItems < 0 )
-                numItems = 0; // in case of a negativ number use zero instead
-
-            // re-read body size to consume buffer
-            bodySize = _inputBuffer.getInt();
-
-            for ( int i = 0; i<numItems; i++ )
-            {
-                parseItem ( _inputBuffer, message );
-            }
-
+            _inputBuffer.getInt (); // re-read to remove from buffer
+            
+            Value value = decodeValueFromStream ( _inputBuffer );
+            if ( value instanceof MapValue )
+                message.setValues ( (MapValue)value );
+            
             _log.debug ( "Message time diff: " + (ts - st) );
             _log.debug ( "Bytes remaining: " + _inputBuffer.remaining() );
             _listener.messageReceived ( _connection, message );

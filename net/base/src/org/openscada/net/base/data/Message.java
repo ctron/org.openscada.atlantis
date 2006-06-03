@@ -1,8 +1,5 @@
 package org.openscada.net.base.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 
 public class Message
 {
@@ -19,21 +16,21 @@ public class Message
 	private long _replySequence = 0;
     private long _timestamp = System.currentTimeMillis ();
 	
-	private Map<String,Value> _values = null;
+	private MapValue _values = null;
 
 	// ctors
 	
 	public Message ()
 	{
 		super();
-		_values = new HashMap<String,Value>();
+		_values = new MapValue ();
 	}
 	
 	public Message ( int commandCode )
 	{
 		super();
 		_commandCode = commandCode;
-		_values = new HashMap<String,Value>();
+		_values = new MapValue ();
 	}
 	
 	public Message ( int commandCode, long replySequence )
@@ -41,40 +38,48 @@ public class Message
 		super();
 		_commandCode = commandCode;
 		_replySequence = replySequence;
-		_values = new HashMap<String,Value>();
+		_values = new MapValue ();
 	}
 	
 	// methods
 	
-	public int getCommandCode() {
+	public int getCommandCode ()
+    {
 		return _commandCode;
 	}
 
-	public void setCommandCode(int commandCode) {
+	public void setCommandCode ( int commandCode )
+    {
 		_commandCode = commandCode;
 	}
 
-	public long getSequence() {
+	public long getSequence  ()
+    {
 		return _sequence;
 	}
 
-	public void setSequence(long sequence) {
+	public void setSequence ( long sequence )
+    {
 		_sequence = sequence;
 	}
 
-	public Map<String, Value> getValues() {
+	public MapValue getValues ()
+    {
 		return _values;
 	}
 
-	public void setValues(Map<String, Value> values) {
+	public void setValues ( MapValue values )
+    {
 		_values = values;
 	}
 
-	public long getReplySequence() {
+	public long getReplySequence ()
+    {
 		return _replySequence;
 	}
 
-	public void setReplySequence(long replySequence) {
+	public void setReplySequence ( long replySequence )
+    {
 		_replySequence = replySequence;
 	}
 	
@@ -91,7 +96,7 @@ public class Message
 	
 	public void unsetValue ( String name )
 	{
-		_values.remove( name );
+		_values.remove ( name );
 	}
 
     public long getTimestamp ()
