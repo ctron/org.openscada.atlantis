@@ -6,7 +6,6 @@ import java.net.SocketAddress;
 import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
-import org.openscada.net.codec.InvalidValueTypeException;
 
 public class Client implements ConnectionStateListener
 {

@@ -3,13 +3,12 @@ package org.openscada.net.base.handlers;
 import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
-import org.openscada.net.codec.InvalidValueTypeException;
 import org.openscada.net.io.Connection;
 import org.openscada.net.utils.MessageCreator;
 
-public class PingHandler implements MessageListener {
-
-	private static Logger _log = Logger.getLogger(PingHandler.class);
+public class PingHandler implements MessageListener
+{
+	private static Logger _log = Logger.getLogger ( PingHandler.class );
 	
 	public void messageReceived ( Connection connection, Message message )
     {
