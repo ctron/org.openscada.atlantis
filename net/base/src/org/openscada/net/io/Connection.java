@@ -212,8 +212,6 @@ public class Connection implements ConnectionListener, MessageListener
 
         Long seq = Long.valueOf ( message.getReplySequence () );
 
-        _listener.messageReceived ( connection, message );
-
         synchronized ( _tagList )
         {
             if ( _tagList.containsKey ( seq ) )
@@ -230,8 +228,10 @@ public class Connection implements ConnectionListener, MessageListener
                 {
                     _tagList.remove ( seq );
                 }
-
-
+            }
+            else
+            {
+                _listener.messageReceived ( connection, message );
             }
         }
     }
