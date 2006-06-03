@@ -9,9 +9,11 @@ import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openscada.net.base.data.DoubleValue;
+import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
+import org.openscada.net.codec.InvalidValueTypeException;
 import org.openscada.net.codec.Protocol;
 import org.openscada.net.codec.ProtocolGMPP;
 
@@ -36,7 +38,7 @@ public class ProtocolGMPPTest
     {
         _log.info ( "Running scatter test with: " + scatterSize );
         
-        List<TestBytePacket> scatteredPackets = new ArrayList<TestBytePacket>();
+        List<TestBytePacket> scatteredPackets = new ArrayList<TestBytePacket> ();
         
         byte [] data = new byte[scatterSize];
         int pos = 0;
@@ -151,18 +153,49 @@ public class ProtocolGMPPTest
         performAllTests ( packets, messages );
     }
     
-    private void performCode ( Message message, TestBytePacket expectedBuffer )
+    private void performCode ( Message message, TestBytePacket expectedBuffer ) throws InvalidValueTypeException
     {
         Protocol protocol = new ProtocolGMPP ( null, null );
         ByteBuffer byteBuffer = protocol.code ( message );
         
-        byteBuffer.flip ();
+        int max = Math.max ( byteBuffer.remaining (), expectedBuffer.getBytes ().length );
+        System.out.println ( "Buffer sizes: " + byteBuffer.remaining () + "/" + expectedBuffer.getBytes ().length );
+        for ( int i = 0; i < max; i ++ )
+        {
+            String line = "";
+            
+            Byte b1 = null;
+            Byte b2 = null;
+            
+            if ( i < byteBuffer.remaining () )
+            {
+                b1 = byteBuffer.get ( i );
+                line += String.format ( "%1$02X - ", b1 );
+            }
+            else
+                line += "   - ";
+            if ( i < expectedBuffer.getBytes ().length )
+            {
+                b2 = expectedBuffer.getBytes ()[i];
+                line += String.format ( "%1$02X", b2 );
+            }
+            else
+                line += "  ";
+            
+            if ( b1 == null && b2 == null )
+                ;
+            else
+                if ( !b1.equals ( b2 ) )
+                    line += " X";
+            
+            System.out.println ( line );
+        }
         
         Assert.assertTrue ( "Compare buffer", expectedBuffer.equalToBuffer ( byteBuffer ) );
     }
     
     @Test
-    public void testEncode1 ()
+    public void testEncode1 () throws InvalidValueTypeException
     {
         _log.info ( "Running encode1" );
         
@@ -182,9 +215,9 @@ public class ProtocolGMPPTest
                 " 00 00 00 14" + // body size
                 " 00 00 00 01" + // VT_STRING
                 " 00 00 00 04" + // string length
-                " 74 65 73 74" + // empty string
+                " 74 65 73 74" + // test string
                 " 00 00 00 04" + // name length
-                " 74 65 73 74" + // empty name
+                " 74 65 73 74" + // test name
                 ""
                 );
         
@@ -192,7 +225,7 @@ public class ProtocolGMPPTest
     }
     
     @Test
-    public void testEncode2 ()
+    public void testEncode2 () throws InvalidValueTypeException
     {
         _log.info ( "Running encode2" );
         
@@ -201,8 +234,8 @@ public class ProtocolGMPPTest
         message.setCommandCode ( 1 + 0xFF );
         message.setSequence ( 2 );
         message.setReplySequence ( 1 + 0xFF );
-        message.getValues ().put ( "test", new StringValue ("test") );
-        message.getValues ().put ( "tett", new StringValue ("tett") );
+        message.getValues ().put ( "test", new StringValue ( "test" ) );
+        message.getValues ().put ( "tett", new StringValue ( "tett" ) );
         
         TestBytePacket packet = new TestBytePacket ( 
                 " 00 00 01 00" +     // command code
@@ -215,12 +248,51 @@ public class ProtocolGMPPTest
                 " 00 00 00 04" + // string length
                 " 74 65 74 74" + // empty string
                 " 00 00 00 04" + // name length
-                " 74 65 74 74" + // empty name
+                " 74 65 74 74" + // test name
                 " 00 00 00 01" + // VT_STRING
                 " 00 00 00 04" + // string length
-                " 74 65 73 74" + // empty string
+                " 74 65 73 74" + // test string
                 " 00 00 00 04" + // name length
-                " 74 65 73 74" + // empty name
+                " 74 65 73 74" + // test name
+                ""
+                );
+        
+        performCode ( message, packet );
+    }
+    
+    @Test
+    public void testEncode3 () throws InvalidValueTypeException
+    {
+        _log.info ( "Running encode3" );
+        
+        Message message = new Message ();
+        message.setTimestamp ( 0 );
+        message.setCommandCode ( 1 + 0xFF );
+        message.setSequence ( 2 );
+        message.setReplySequence ( 1 + 0xFF );
+        ListValue list = new ListValue ();
+        list.getValues ().add ( new StringValue ( "tett") );
+        list.getValues ().add ( new StringValue ( "teut") );
+        message.getValues ().put ( "test", list );
+        
+        TestBytePacket packet = new TestBytePacket ( 
+                " 00 00 01 00" +     // command code
+                " 00 00 00 00 00 00 00 00" + // timestamp
+                " 00 00 00 00 00 00 00 02" + // sequence
+                " 00 00 00 00 00 00 01 00" + // reply sequence
+                " 00 00 00 01" + // number of values
+                " 00 00 00 2C" + // body size
+                " 00 00 00 06" + // VT_LIST
+                " 00 00 00 1C" + // data length
+                " 00 00 00 02" + // number of list items
+                " 00 00 00 01" + // VT_STRING
+                " 00 00 00 04" + // string length
+                " 74 65 74 74" + // test string
+                " 00 00 00 01" + // VT_STRING
+                " 00 00 00 04" + // string length
+                " 74 65 75 74" + // test string
+                " 00 00 00 04" + // name length - of VT_LIST
+                " 74 65 73 74" + // test name
                 ""
                 );
         
@@ -228,12 +300,12 @@ public class ProtocolGMPPTest
     }
     
     
-    public void testPerformance ()
+    public void testPerformance () throws InvalidValueTypeException
     {
         Message message = new Message ();
         
-        message.getValues ().put ( "string-0", new StringValue ("test") );
-        message.getValues ().put ( "string-1", new StringValue ("test") );
+        message.getValues ().put ( "string-0", new StringValue ( "test" ) );
+        message.getValues ().put ( "string-1", new StringValue ( "test" ) );
         message.getValues ().put ( "int-0", new LongValue ( 0 ) );
         message.getValues ().put ( "int-1", new LongValue ( 0 ) );
         message.getValues ().put ( "double-0", new DoubleValue ( 1.234 ) );

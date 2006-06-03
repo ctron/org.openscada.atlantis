@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
+import org.openscada.net.codec.InvalidValueTypeException;
 import org.openscada.net.codec.Protocol;
 import org.openscada.net.codec.ProtocolGMPP;
 import org.openscada.utils.timing.Scheduler;
@@ -18,29 +19,29 @@ import org.openscada.utils.timing.Scheduler;
 public class Connection implements ConnectionListener, MessageListener
 {
     private static Logger _log = Logger.getLogger ( Connection.class );
-    
-	private static final long MAX_SEQUENCE = 0x7FFFFFFF;
+
+    private static final long MAX_SEQUENCE = 0x7FFFFFFF;
     private static final long INIT_SEQUENCE = 1;
-    
+
     private int _timeoutLimit = Integer.getInteger ( "org.openscada.net.message_timeout", 10*1000 );
     private static Scheduler _scheduler = new Scheduler ();
-    
-	private Protocol _protocolGMPP = null;
-	protected SocketConnection _connection = null;
-	
-	private ConnectionStateListener _connectionStateListener = null;
-	
-	private long _sequence = INIT_SEQUENCE;
-    
+
+    private Protocol _protocolGMPP = null;
+    protected SocketConnection _connection = null;
+
+    private ConnectionStateListener _connectionStateListener = null;
+
+    private long _sequence = INIT_SEQUENCE;
+
     private MessageListener _listener = null;
-    
+
     private Scheduler.Job _timeoutJob = null;
-    
+
     private class MessageTag
     {
         private MessageStateListener _listener;
         private long _timestamp;
-        
+
         public MessageStateListener getListener ()
         {
             return _listener;
@@ -58,36 +59,36 @@ public class Connection implements ConnectionListener, MessageListener
             _timestamp = timestamp;
         }
     }
-    
+
     private Map<Long,MessageTag> _tagList = new HashMap<Long,MessageTag> (); 
-	
-	public Connection ( MessageListener listener, ConnectionStateListener connectionStateListener, SocketConnection connection )
-	{
-		_connectionStateListener = connectionStateListener;
+
+    public Connection ( MessageListener listener, ConnectionStateListener connectionStateListener, SocketConnection connection )
+    {
+        _connectionStateListener = connectionStateListener;
         _listener = listener;
         _connection = connection;
-        
-		_protocolGMPP = new ProtocolGMPP ( this, this );
-        
+
+        _protocolGMPP = new ProtocolGMPP ( this, this );
+
         addTimeOutJob ();
-	}
-	
-	public Connection ( MessageListener listener, SocketConnection connection )
-	{
+    }
+
+    public Connection ( MessageListener listener, SocketConnection connection )
+    {
         _listener = listener;
-		_protocolGMPP = new ProtocolGMPP ( this, this);
-		_connection = connection;
-        
+        _protocolGMPP = new ProtocolGMPP ( this, this);
+        _connection = connection;
+
         addTimeOutJob ();
-	}
-    
+    }
+
     private void addTimeOutJob ()
     {
         if ( _timeoutJob != null )
             return;
-        
+
         final WeakReference<Connection> _this = new WeakReference<Connection> ( this );
-        
+
         _timeoutJob = _scheduler.addJob ( new Runnable(){
 
             public void run ()
@@ -99,7 +100,7 @@ public class Connection implements ConnectionListener, MessageListener
                     c.processTimeOuts ();
             }}, 1000);
     }
-    
+
     private void removeTimeOutJob ()
     {
         if ( _timeoutJob != null )
@@ -107,70 +108,91 @@ public class Connection implements ConnectionListener, MessageListener
             _scheduler.removeJob ( _timeoutJob );
         }
     }
-    
-	synchronized public void sendMessage ( Message message )
-	{
-		message.setSequence ( nextSequence () );
-		_connection.scheduleWrite ( _protocolGMPP.code ( message ) );
-	}
-    
+
+    private ByteBuffer encode ( Message message )
+    {
+        try
+        {
+            return _protocolGMPP.code ( message );
+        }
+        catch ( InvalidValueTypeException e )
+        {
+            _log.warn ( "Message contained unsupported value type", e );
+            return null;
+        }
+    }
+
+    synchronized public void sendMessage ( Message message )
+    {
+        message.setSequence ( nextSequence () );
+        
+        ByteBuffer buffer = encode ( message );
+        
+        if ( buffer != null )
+            _connection.scheduleWrite ( buffer );
+    }
+
     synchronized public void sendMessage ( Message message, MessageStateListener listener )
     {
         MessageTag tag = new MessageTag ();
-        
+
         tag.setListener ( listener );
         tag.setTimestamp ( System.currentTimeMillis () );
-        
+
         message.setSequence ( nextSequence () );
         
+        ByteBuffer buffer = encode ( message );
+        if ( buffer == null )
+            return;
+
         synchronized ( _tagList )
         {
             _tagList.put ( message.getSequence (), tag );
         }
-        
-        _connection.scheduleWrite ( _protocolGMPP.code ( message ) );
+
+        _connection.scheduleWrite ( buffer );
     }
-	
-	public void read ( ByteBuffer buffer )
-	{
-		_protocolGMPP.decode ( buffer );
-	}
 
-	public void written()
+    public void read ( ByteBuffer buffer )
     {
-		// no op
-	}
+        _protocolGMPP.decode ( buffer );
+    }
 
-	public void connected ()
-	{
+    public void written()
+    {
+        // no op
+    }
+
+    public void connected ()
+    {
         cleanTagList ();
-        
-	    _connection.triggerRead();
 
-	    if ( _connectionStateListener != null )
-	        _connectionStateListener.opened ();
-	}
+        _connection.triggerRead();
 
-	public void connectionFailed ( IOException e )
+        if ( _connectionStateListener != null )
+            _connectionStateListener.opened ();
+    }
+
+    public void connectionFailed ( IOException e )
     {
-		if ( _connectionStateListener != null )
-			_connectionStateListener.closed ( e );
-	}
+        if ( _connectionStateListener != null )
+            _connectionStateListener.closed ( e );
+    }
 
-	public void closed ()
+    public void closed ()
     {
         removeTimeOutJob();
-        
+
         cleanTagList ();
-        
-		if ( _connectionStateListener != null )
-			_connectionStateListener.closed ( null );
-	}
-	
-	public void close ()
-	{
-		_connection.close ();
-	}
+
+        if ( _connectionStateListener != null )
+            _connectionStateListener.closed ( null );
+    }
+
+    public void close ()
+    {
+        _connection.close ();
+    }
 
     private void cleanTagList ()
     {
@@ -183,15 +205,15 @@ public class Connection implements ConnectionListener, MessageListener
             _tagList.clear ();
         }
     }
-    
+
     public void messageReceived ( Connection connection, Message message )
     {
         _log.info ( "Message received: Seq: " + message.getSequence () + " Reply: " + message.getReplySequence () );
-        
+
         Long seq = Long.valueOf ( message.getReplySequence () );
-        
+
         _listener.messageReceived ( connection, message );
-        
+
         synchronized ( _tagList )
         {
             if ( _tagList.containsKey ( seq ) )
@@ -208,12 +230,12 @@ public class Connection implements ConnectionListener, MessageListener
                 {
                     _tagList.remove ( seq );
                 }
-                
-                
+
+
             }
         }
     }
-    
+
     private void processTimeOuts ()
     {
         synchronized ( _tagList )
@@ -221,7 +243,7 @@ public class Connection implements ConnectionListener, MessageListener
             for ( Iterator < Map.Entry < Long, MessageTag > > i = _tagList.entrySet ().iterator (); i.hasNext () ;  )
             {
                 MessageTag tag = i.next().getValue();
-                
+
                 if ( ( System.currentTimeMillis () - tag.getTimestamp() ) >= _timeoutLimit )
                 {
                     try
@@ -236,7 +258,7 @@ public class Connection implements ConnectionListener, MessageListener
             }
         }
     }
-	
+
     synchronized private long nextSequence ()
     {
         long seq = _sequence++;

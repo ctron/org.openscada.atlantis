@@ -7,12 +7,14 @@ import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.DoubleValue;
 import org.openscada.net.base.data.IntegerValue;
+import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
 import org.openscada.net.io.Connection;
+import org.openscada.utils.lang.Holder;
 
 public class ProtocolGMPP implements Protocol
 {
@@ -22,6 +24,7 @@ public class ProtocolGMPP implements Protocol
     public final static int VT_DOUBLE =  	0x000000003;
     public final static int VT_VOID =       0x000000004;
     public final static int VT_INTEGER =    0x000000005;
+    public final static int VT_LIST =       0x000000006;
 
     private final static int HEADER_SIZE = 4 + 8 + 8 + 8 + 4 + 4; 
     
@@ -97,41 +100,62 @@ public class ProtocolGMPP implements Protocol
         return buffer;
     }
     
-    private ByteBuffer codeValue ( ByteBuffer buffer, String name, Value value )
+    private ByteBuffer encodeToStream ( ByteBuffer buffer, ListValue value ) throws InvalidValueTypeException
     {
-        boolean validValue = false;
-
+        buffer = ensureCapacity ( buffer, 4 + 4 );
+        buffer.putInt ( VT_LIST );
+        int position = buffer.position (); // remember position
+        buffer.putInt ( 0 ); // dummy size length
+        
+        int startPos = buffer.position ();
+        buffer.putInt ( value.getValues ().size () );
+        
+        for ( Value valueEntry : value.getValues () )
+        {
+            buffer = codeValue ( buffer, valueEntry );
+        }
+        int size = buffer.position () - startPos;
+        
+        buffer.putInt ( position, size ); // set value size
+        return buffer;
+    }
+    
+    private ByteBuffer codeValue ( ByteBuffer buffer, Value value ) throws InvalidValueTypeException
+    {
         if ( value instanceof StringValue )
         {
-            validValue = true;
             buffer = encodeToStream ( buffer, (StringValue)value );
         }
         else if ( value instanceof IntegerValue )
         {
-            validValue = true;
             buffer = encodeToStream ( buffer, (IntegerValue)value );
         }
         else if ( value instanceof LongValue )
         {
-            validValue = true;
             buffer = encodeToStream ( buffer, (LongValue)value );
         }
         else if ( value instanceof DoubleValue )
         {
-            validValue = true;
             buffer = encodeToStream ( buffer, (DoubleValue)value );
         }
         else if ( value instanceof VoidValue )
         {
-            validValue = true;
             buffer = encodeToStream ( buffer, (VoidValue)value );
         }
-
-        if ( validValue )
+        else if ( value instanceof ListValue )
         {
-            buffer = encodeToStream ( buffer, name );
+            buffer = encodeToStream ( buffer, (ListValue)value );
         }
-
+        else
+            throw new InvalidValueTypeException ();
+        return buffer;
+    }
+    
+    private ByteBuffer codeValue ( ByteBuffer buffer, String name, Value value ) throws InvalidValueTypeException
+    {
+        buffer = codeValue ( buffer, value );
+        buffer = encodeToStream ( buffer, name );
+        
         return buffer;
     }
 
@@ -177,7 +201,7 @@ public class ProtocolGMPP implements Protocol
     /* (non-Javadoc)
      * @see org.openscada.net.codec.Protocol#code(org.openscada.net.base.data.Message)
      */
-    public ByteBuffer code ( Message message )
+    public ByteBuffer code ( Message message ) throws InvalidValueTypeException
     {
         ByteBuffer outputBuffer = null;
         
@@ -198,7 +222,7 @@ public class ProtocolGMPP implements Protocol
         int bodyStartPosition = outputBuffer.position ();
         for ( Map.Entry<String, Value> entry : message.getValues ().entrySet () )
         {
-            outputBuffer = codeValue ( outputBuffer, entry.getKey(), entry.getValue() );
+            outputBuffer = codeValue ( outputBuffer, entry.getKey (), entry.getValue () );
         }
         int bodyEndPosition = outputBuffer.position ();
         
@@ -273,7 +297,7 @@ public class ProtocolGMPP implements Protocol
         logInputBuffer ( "6" );
     }
 
-    private void parseItem ( ByteBuffer buffer, Message message )
+    private Value decodeValueFromStream ( ByteBuffer buffer )
     {
         int type = buffer.getInt ();
         int len = buffer.getInt ();
@@ -281,45 +305,59 @@ public class ProtocolGMPP implements Protocol
         if ( _log.isDebugEnabled () )
             _log.debug ( "Additional data: " + type + " len: " + len );
 
-        Value value = null;
-
         switch ( type )
         {
         case VT_LONG:
-            value = new LongValue(buffer.getLong());
-            break;
+            return new LongValue ( buffer.getLong() );
         case VT_INTEGER:
-            value = new IntegerValue ( buffer.getInt() );
-            break;
+            return new IntegerValue ( buffer.getInt() );
         case VT_STRING:
             byte [] data = new byte [ len ];
             buffer.get ( data );
-            value = new StringValue ( new String ( data ) );
-            break;
+            return new StringValue ( new String ( data ) );
         case VT_DOUBLE:
-            value = new DoubleValue ( buffer.getDouble() );
-            break;
+            return new DoubleValue ( buffer.getDouble() );
         case VT_VOID:
-            value = new VoidValue ();
+            return new VoidValue ();
             // nothing to read
-            break;
+        case VT_LIST:
+            return decodeListValueFromStream ( buffer );
         default:
             // unknown type: only consume data
             buffer.position ( buffer.position() + len );
             break;
         }
+        return null;
+    }
+    
+    private void parseItem ( ByteBuffer buffer, Message message )
+    {
+        Value value = decodeValueFromStream ( buffer );
 
         // now read the item name
-        int nameLen = buffer.getInt();
-        _log.debug("Reading " + nameLen + " name bytes");
+        int nameLen = buffer.getInt ();
+        _log.debug ( "Reading " + nameLen + " name bytes" );
 
         byte[] data = new byte [ nameLen ];
-        buffer.get(data);
+        buffer.get ( data );
         String name = new String ( data );
         if ( value != null )
         {
-            message.getValues().put(name, value);
+            message.getValues ().put ( name, value );
         }
+    }
+
+    private Value decodeListValueFromStream ( ByteBuffer buffer )
+    {
+        ListValue listValue = new ListValue ();
+        
+        int items = buffer.getInt ();
+        for ( int i = 0; i < items; i++ )
+        {
+            listValue.getValues ().add ( decodeValueFromStream ( buffer ) );
+        }
+        
+        return listValue;
     }
 
     private void parse ()

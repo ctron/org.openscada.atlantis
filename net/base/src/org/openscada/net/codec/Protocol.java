@@ -7,7 +7,7 @@ import org.openscada.net.base.data.Message;
 public interface Protocol
 {
 
-    public abstract ByteBuffer code ( Message message );
+    public abstract ByteBuffer code ( Message message ) throws InvalidValueTypeException;
 
     public abstract void decode ( ByteBuffer buffer );
 

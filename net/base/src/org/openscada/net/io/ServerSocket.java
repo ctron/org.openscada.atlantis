@@ -55,9 +55,9 @@ public class ServerSocket extends IOChannel implements IOChannelListener {
 			if ( channel != null )
 			{
 				_log.debug ( "Accepted connection" );
-				ServerConnection connection = new ServerConnection ( _factory.createConnectionHandler(), new SocketConnection(_processor, channel) );
-                connection.connected();
-				connection.sendMessage(MessageCreator.createPing());
+				ServerConnection connection = new ServerConnection ( _factory.createConnectionHandler (), new SocketConnection ( _processor, channel ) );
+                connection.connected ();
+				connection.sendMessage ( MessageCreator.createPing () );
 			}
 			
 		} catch (IOException e) {
