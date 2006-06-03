@@ -12,6 +12,21 @@ public class ListValue extends Value
     {
         _values = new LinkedList < Value > ();
     }
+    
+    public void add ( Value value )
+    {
+        _values.add ( value );
+    }
+    
+    public void remove ( Value value )
+    {
+        _values.remove ( value );
+    }
+    
+    public int size ()
+    {
+        return _values.size ();
+    }
 
     @Override
     public int hashCode ()
