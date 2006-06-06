@@ -21,4 +21,19 @@ public class StringHelper
         
         return buffer.toString();
     }
+    
+    public static String join ( Object [] items, String delimiter )
+    {
+        StringBuffer buffer = new StringBuffer ();
+        
+        for ( int i = 0; i < items.length; i++ )
+        {
+            if ( i != 0 )
+                buffer.append ( delimiter );
+            
+            buffer.append ( items[i] );
+        }
+        
+        return buffer.toString();
+    }
 }
