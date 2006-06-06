@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveItem;
 import org.openscada.da.core.data.NotConvertableException;
@@ -219,10 +220,10 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         Object obj = _selection.getFirstElement ();
         if ( obj == null )
             return;
-        if ( !(obj instanceof HiveItem) )
+        if ( !(obj instanceof DataItemEntry) )
             return;
         
-        _itemNameText.setText ( ((HiveItem)obj).getItemName () );
+        _itemNameText.setText ( ((DataItemEntry)obj).getId () );
     }
     
     private void setValueText ( String value, boolean systemText )
@@ -331,7 +332,7 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         Object obj = _selection.getFirstElement ();
         if ( obj instanceof HiveConnection )
             _connection = (HiveConnection)obj;
-        else if ( obj instanceof HiveItem )
-            _connection = ((HiveItem)obj).getConnection ();
+        else if ( obj instanceof DataItemEntry )
+            _connection = ((DataItemEntry)obj).getConnection ();
     }
 }

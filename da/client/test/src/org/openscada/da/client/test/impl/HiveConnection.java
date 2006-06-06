@@ -1,6 +1,5 @@
 package org.openscada.da.client.test.impl;
 
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,6 +27,8 @@ public class HiveConnection extends Observable implements IActionFilter
     
     private Map < String, HiveItem > _itemMap = new HashMap < String, HiveItem > ();
     
+    private FolderEntry _rootFolder = null;
+    
     public HiveConnection ( HiveConnectionInformation connectionInfo )
     {
         _connectionInfo = connectionInfo;
@@ -52,6 +53,8 @@ public class HiveConnection extends Observable implements IActionFilter
                 performItemListUpdate();
             }
         });
+        
+        _rootFolder = new FolderEntry ( "", null, this );
     }
     
     public void connect ()
@@ -82,7 +85,10 @@ public class HiveConnection extends Observable implements IActionFilter
     
     public void disconnect ()
     {
+        _rootFolder = new FolderEntry ( "", null, this );
+        
         _connectionRequested = false;
+        
         setChanged ();
         notifyObservers ();
         
@@ -158,5 +164,9 @@ public class HiveConnection extends Observable implements IActionFilter
         return false;
     }
 
+    public FolderEntry getRootFolder ()
+    {
+        return _rootFolder;
+    }
     
 }

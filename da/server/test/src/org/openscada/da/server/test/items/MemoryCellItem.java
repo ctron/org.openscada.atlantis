@@ -7,6 +7,7 @@ import org.openscada.da.core.InvalidOperationException;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemOutput;
 import org.openscada.da.core.common.MemoryDataItem;
+import org.openscada.da.core.common.impl.FolderCommon;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
@@ -16,13 +17,15 @@ public class MemoryCellItem extends DataItemOutput
 {
     private Hive _hive;
     
-    private Map<Integer,MemoryDataItem> _items = new HashMap<Integer,MemoryDataItem>();
+    private Map<Integer,MemoryDataItem> _items = new HashMap<Integer,MemoryDataItem> ();
     private AttributeManager _attributes = null;
+    private FolderCommon _folder = null;
     
-    public MemoryCellItem ( Hive hive, String name )
+    public MemoryCellItem ( Hive hive, String name, FolderCommon folder )
     {
         super ( name );
         _hive = hive;
+        _folder = folder;
         
         _attributes = new AttributeManager ( this );
         
@@ -73,6 +76,7 @@ public class MemoryCellItem extends DataItemOutput
             
             for ( Map.Entry<Integer, MemoryDataItem> entry : _items.entrySet () )
             {
+                _folder.remove ( entry.getValue () );
                 _hive.unregisterItem ( entry.getValue () );
             }
             
@@ -80,6 +84,7 @@ public class MemoryCellItem extends DataItemOutput
             {
                 MemoryDataItem item = new MemoryDataItem ( getInformation ().getName () + "-" + i );
                 _hive.registerItem ( item );
+                _folder.add ( String.valueOf ( i ), item );
                 newItems.put ( i, item );
             }
             

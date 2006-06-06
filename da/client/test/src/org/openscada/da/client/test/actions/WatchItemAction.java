@@ -11,6 +11,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
+import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.HiveItem;
 import org.openscada.da.client.test.views.DataItemWatchView;
 
@@ -21,7 +22,7 @@ public class WatchItemAction implements IViewActionDelegate, IObjectActionDelega
     
     private IWorkbenchPartSite _site = null;
     
-    private HiveItem _item = null;
+    private DataItemEntry _item = null;
     
     public void init ( IViewPart view )
     {
@@ -35,7 +36,7 @@ public class WatchItemAction implements IViewActionDelegate, IObjectActionDelega
        
         try
         {
-            IViewPart viewer = _site.getPage().showView("org.openscada.da.client.test.views.DataItemWatchView",_item.getItemName(),IWorkbenchPage.VIEW_ACTIVATE);
+            IViewPart viewer = _site.getPage ().showView ( "org.openscada.da.client.test.views.DataItemWatchView", _item.getId(), IWorkbenchPage.VIEW_ACTIVATE );
             if ( viewer instanceof DataItemWatchView )
             {
                 ((DataItemWatchView)viewer).setDataItem ( _item );
@@ -62,10 +63,10 @@ public class WatchItemAction implements IViewActionDelegate, IObjectActionDelega
         
         if ( obj == null )
             return;
-        if ( !(obj instanceof HiveItem) )
+        if ( !(obj instanceof DataItemEntry) )
             return;
         
-        _item = (HiveItem)obj;
+        _item = (DataItemEntry)obj;
     }
 
     public void setActivePart ( IAction action, IWorkbenchPart targetPart )

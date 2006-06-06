@@ -17,14 +17,16 @@ import org.openscada.da.core.InvalidSessionException;
 import org.openscada.da.core.ItemChangeListener;
 import org.openscada.da.core.Session;
 import org.openscada.da.core.WriteOperationListener;
+import org.openscada.da.core.browser.Entry;
+import org.openscada.da.core.browser.HiveBrowser;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.ItemListener;
 import org.openscada.da.core.data.Variant;
 import org.openscada.utils.exec.OperationResultHandler;
 
-public class HiveCommon implements Hive, ItemListener {
-	
+public class HiveCommon implements Hive, ItemListener
+{
 	
 	private Set<SessionCommon> _sessions = new HashSet<SessionCommon>();
 	
@@ -32,7 +34,23 @@ public class HiveCommon implements Hive, ItemListener {
 	private Map<DataItemInformation,DataItem> _itemMap = new HashMap<DataItemInformation,DataItem>();
     
     private Executor _executor = Executors.newCachedThreadPool();
+    
+    public HiveBrowserCommon _browser = null;
+    public Folder _rootFolder = null;
 	
+    public HiveCommon ()
+    {
+        super ();
+    }
+    
+    protected synchronized void setRootFolder ( Folder rootFolder )
+    {
+        if ( _rootFolder == null )
+        {
+            _rootFolder = rootFolder;
+        }
+    }
+    
 	public void validateSession ( Session session ) throws InvalidSessionException
 	{
 		if ( !(session instanceof SessionCommon) )
@@ -372,7 +390,7 @@ public class HiveCommon implements Hive, ItemListener {
         if ( listener == null )
             return; // FIXME: report as error
         
-        new WriteOperation().startExecute(new OperationResultHandler<Object>(){
+        new WriteOperation().startExecute ( new OperationResultHandler<Object>(){
 
             public void failure ( Exception e )
             {
@@ -384,6 +402,21 @@ public class HiveCommon implements Hive, ItemListener {
                 listener.success();
             }}, new WriteOperationArguments(item,value));
     }
-
 	
+    public synchronized HiveBrowser getBrowser ()
+    {
+        if ( _browser == null )
+        {
+            if ( _rootFolder != null )
+                _browser = new HiveBrowserCommon ( this ) {
+
+                    @Override
+                    public Folder getRootFolder ()
+                    {
+                       return _rootFolder;
+                    }};
+        }            
+        
+        return _browser;
+    } 
 }

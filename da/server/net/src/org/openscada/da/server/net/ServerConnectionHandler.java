@@ -14,21 +14,26 @@ import org.openscada.da.core.ItemListListener;
 import org.openscada.da.core.Session;
 import org.openscada.da.core.UnableToCreateSessionException;
 import org.openscada.da.core.WriteOperationListener;
+import org.openscada.da.core.browser.Entry;
+import org.openscada.da.core.browser.HiveBrowser;
+import org.openscada.da.core.browser.NoSuchFolderException;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.da.handler.EnumEvent;
+import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.io.Connection;
 import org.openscada.net.utils.MessageCreator;
 import org.openscada.utils.lang.Holder;
+import org.openscada.utils.str.StringHelper;
 
 public class ServerConnectionHandler extends ConnectionHandlerBase implements ItemChangeListener, ItemListListener
 {
     
-    public final static String VERSION = "0.1.0";
+    public final static String VERSION = "0.1.1";
 
     private static Logger _log = Logger.getLogger ( ServerConnectionHandler.class );
 
@@ -85,6 +90,14 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
             {
                 performWrite ( message );
             }});
+        
+        getMessageProcessor ().setHandler ( Messages.CC_BROWSER_LIST_REQ, new MessageListener(){
+
+            public void messageReceived ( Connection connection, Message message )
+            {
+                performBrowse ( message );
+            }});
+        
     }
 
     private void createSession ( Message message )
@@ -97,7 +110,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         }
 
         Properties props = new Properties();
-        for ( Map.Entry<String,Value> entry : message.getValues().entrySet() )
+        for ( Map.Entry<String,Value> entry : message.getValues ().getValues ().entrySet() )
         {
             props.put ( entry.getKey(), entry.getValue().toString() );
         }
@@ -310,5 +323,46 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         {
             getConnection().sendMessage ( MessageCreator.createFailedMessage ( message, "Invalid session" ) );
         }
+    }
+    
+    private void performBrowse ( final Message message )
+    {
+        String [] path = ListBrowser.parseRequest ( message );
+        _log.debug ( "Browse request for: " + StringHelper.join ( path, "/" ) );
+        
+        HiveBrowser browser = _hive.getBrowser ();
+        
+        if ( browser == null )
+        {
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Interface not supported" ) );
+            return;
+        }
+        
+        try
+        {
+            Entry[] entries = browser.list ( _session, path );
+            getConnection ().sendMessage ( ListBrowser.createResponse ( message, entries ) );
+            _log.debug ( String.format ( "Found %1$d entries", entries.length ) );
+            for ( Entry entry : entries )
+            {
+                _log.debug ( " " + entry.getName () );
+            }
+            return;
+        }
+        catch ( InvalidSessionException e )
+        {
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Invalid session" ) );
+            return;
+        }
+        catch ( InvalidItemException e )
+        {
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Invalid item" ) );
+            return;
+        }
+        catch ( NoSuchFolderException e )
+        {
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "No such folder" ) );
+            return;
+        } 
     }
 }

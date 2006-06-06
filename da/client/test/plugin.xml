@@ -101,7 +101,7 @@
                style="push"
                toolbarPath="additions">
             <enablement>
-               <objectClass name="org.openscada.da.client.test.impl.HiveItem"/>
+               <objectClass name="org.openscada.da.client.test.impl.DataItemEntry"/>
             </enablement>
          </action>
          <action
@@ -184,7 +184,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.test.popupMenus.oc1"
-            objectClass="org.openscada.da.client.test.impl.HiveItem">
+            objectClass="org.openscada.da.client.test.impl.DataItemEntry">
          <action
                class="org.openscada.da.client.test.actions.WatchItemAction"
                icon="icons/stock_watch.png"

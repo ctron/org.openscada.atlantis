@@ -27,6 +27,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.da.client.net.DataItem;
 import org.openscada.da.client.net.ItemUpdateListener;
+import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.HiveItem;
 import org.openscada.da.core.data.Variant;
 
@@ -53,7 +54,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 {
     private static Logger _log = Logger.getLogger ( DataItemWatchView.class );
     
-    private HiveItem _hiveItem = null;
+    private DataItemEntry _hiveItem = null;
     
 	private TableViewer viewer;
     
@@ -115,10 +116,10 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         
 		public void dispose()
         {
-            clearItem();
+            clearItem ();
 		}
         
-		public Object[] getElements(Object parent)
+		public Object[] getElements ( Object parent )
         {
             if ( _item == null )
                 return new Object[0];
@@ -314,26 +315,26 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         super.dispose ();
     }
     
-	public void setDataItem ( HiveItem item )
+	public void setDataItem ( DataItemEntry item )
     {
         if ( _hiveItem != null )
         {
-            _hiveItem.getConnection().getConnection().removeItemUpdateListener(_hiveItem.getItemName(),this);
-            appendConsoleMessage("Unsubscribe from item: " + _hiveItem.getItemName() );
+            _hiveItem.getConnection ().getConnection ().removeItemUpdateListener ( _hiveItem.getId (), this );
+            appendConsoleMessage("Unsubscribe from item: " + _hiveItem.getId () );
             
             setPartName("Data Item Viewer");
         }
         
         if ( item != null )
         {
-            setPartName("Data Item Viewer: " + item.getItemName());
+            setPartName("Data Item Viewer: " + item.getId ());
             
-            _log.info ( "Set data item: " + item.getItemName() );
+            _log.info ( "Set data item: " + item.getId () );
             
             _hiveItem = item;
             
-            appendConsoleMessage("Subscribe to item: " + _hiveItem.getItemName() );
-            _hiveItem.getConnection().getConnection().addItemUpdateListener(_hiveItem.getItemName(),true,this);
+            appendConsoleMessage("Subscribe to item: " + _hiveItem.getId () );
+            _hiveItem.getConnection().getConnection().addItemUpdateListener ( _hiveItem.getId (), true, this );
             
             viewer.setInput ( item );
         }

@@ -30,6 +30,9 @@ public class Messages
     public final static int CC_ENUM_UNSUBSCRIBE =  0x00010102;
     public final static int CC_ENUM_EVENT =        0x00010103;
     
+    public final static int CC_BROWSER_LIST_REQ =  0x00010200;
+    public final static int CC_BROWSER_LIST_RES =  0x00010201;
+    
     public static Message createSession ( Properties props )
     {
         Message msg = new Message ( CC_CREATE_SESSION );

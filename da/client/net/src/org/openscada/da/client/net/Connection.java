@@ -14,9 +14,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.client.net.operations.BrowserListOperation;
 import org.openscada.da.client.net.operations.WriteOperation;
 import org.openscada.da.client.net.operations.WriteOperationArguments;
 import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.MessageListener;
@@ -33,7 +35,7 @@ import org.openscada.utils.lang.Holder;
 public class Connection
 {
 
-    public static final String VERSION = "0.1.0";
+    public static final String VERSION = "0.1.1";
 
     public enum State
     {
@@ -54,18 +56,19 @@ public class Connection
     private ClientConnection _client = null;
 
     private List<ConnectionStateListener> _connectionStateListeners = new ArrayList < ConnectionStateListener > ();
-    private Map<String,ItemSyncController> _itemListeners = new HashMap < String, ItemSyncController > ();
+    private Map<String, ItemSyncController> _itemListeners = new HashMap < String, ItemSyncController > ();
 
     //private boolean _connected = false;
     private State _state = State.CLOSED;
 
-    private static Object _defaultProcessorLock = new Object();
+    private static Object _defaultProcessorLock = new Object ();
     private static IOProcessor _defaultProcessor = null;
 
     private ItemList _itemList = new ItemList ();
-    private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener>();
+    private List<ItemListListener> _itemListListeners = new ArrayList < ItemListListener > ();
 
     private WriteOperation _writeOperation;
+    private BrowserListOperation _browseListOperation;
 
     private static IOProcessor getDefaultProcessor ()
     {
@@ -102,6 +105,7 @@ public class Connection
         init ();
 
         _writeOperation = new WriteOperation ( this );
+        _browseListOperation = new BrowserListOperation ( this );
     }
 
     public Connection ( ConnectionInfo connectionInfo )
@@ -182,6 +186,16 @@ public class Connection
             setState ( State.CLOSING, reason );
             break;
         }    
+    }
+    
+    public void sendMessage ( Message message )
+    {
+        _client.getConnection ().sendMessage ( message );
+    }
+    
+    public void sendMessage ( Message message, MessageStateListener listener )
+    {
+        _client.getConnection ().sendMessage ( message, listener );
     }
 
     public void addItemListListener ( ItemListListener listener )
@@ -412,7 +426,7 @@ public class Connection
         // extract initial bit
         boolean initial = message.getValues().containsKey("initial");
 
-        for ( Map.Entry<String,Value> entry : message.getValues().entrySet() )
+        for ( Map.Entry<String,Value> entry : message.getValues().getValues ().entrySet() )
         {
             String name = entry.getKey();
             if ( name.startsWith("set-") )
@@ -480,6 +494,8 @@ public class Connection
             return _itemList;
         }
     }
+    
+    // operations
 
     public void write ( String itemName, Variant value ) throws Exception
     {
@@ -494,6 +510,21 @@ public class Connection
     public OperationResult<Object> startWrite ( String itemName, Variant value, OperationResultHandler<Object> handler )
     {
         return _writeOperation.startExecute ( handler, new WriteOperationArguments ( itemName, value ) );
+    }
+    
+    public Entry[] browse ( String [] path ) throws Exception
+    {
+        return _browseListOperation.execute ( path );
+    }
+
+    public OperationResult<Entry[]> startBrowse ( String [] path, Variant value )
+    {
+        return _browseListOperation.startExecute ( path );
+    }
+
+    public OperationResult<Entry[]> startWrite ( String [] path, OperationResultHandler<Entry[]> handler )
+    {
+        return _browseListOperation.startExecute ( handler, path );
     }
 
     /**
@@ -619,4 +650,6 @@ public class Connection
             }
         } 
     }
+    
+   
 }

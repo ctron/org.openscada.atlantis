@@ -3,6 +3,7 @@ package org.openscada.da.core;
 import java.util.Collection;
 import java.util.Properties;
 
+import org.openscada.da.core.browser.HiveBrowser;
 import org.openscada.da.core.data.Variant;
 
 public interface Hive
@@ -24,5 +25,7 @@ public interface Hive
     
     // async DA operations
     public void startWrite ( Session session, String itemName, Variant value, WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException;
-    //public void startRead ( Session session, String item, Variant value, ReadOperationListener listener ); 
+    //public void startRead ( Session session, String item, Variant value, ReadOperationListener listener );
+    
+    public HiveBrowser getBrowser ();
 }

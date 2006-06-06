@@ -2,9 +2,11 @@ package org.openscada.da.client.test.views;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jface.action.IMenuListener;
@@ -17,6 +19,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -33,6 +36,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.openscada.da.client.test.ISharedImages;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.actions.ConnectHiveAction;
+import org.openscada.da.client.test.impl.BrowserEntry;
+import org.openscada.da.client.test.impl.FolderEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveItem;
 import org.openscada.da.client.test.impl.HiveRepository;
@@ -68,33 +73,48 @@ public class HiveView extends ViewPart implements Observer
     
     private HiveRepository _repository;
     
-    private Map<HiveConnection,Observer> _obversers = new HashMap<HiveConnection,Observer>();
-   
     class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider
     {
        
-        private HiveRepository _repository;
+        private Viewer _viewer = null;
+        private HiveRepository _repository = null;
         
-        public ViewContentProvider ( HiveRepository repository )
+        public ViewContentProvider ()
         {
-            _repository = repository;
         }
         
-        public void inputChanged(Viewer v, Object oldInput, Object newInput)
+        public void inputChanged ( Viewer v, Object oldInput, Object newInput )
         {
+            clearInput ();
+            
+            _viewer = v;
+            if ( newInput instanceof HiveRepository )
+            {
+                _repository = (HiveRepository)newInput;
+            }
+        }
+        
+        public void clearInput ()
+        {
+            if ( _repository != null )
+            {
+                _repository = null;
+            }
         }
         
         public void dispose()
         {
+            clearInput ();
         }
         
-        public Object[] getElements(Object parent) {
-            if (parent.equals(getViewSite())) {
-                return getChildren(_repository);
+        public Object[] getElements ( Object parent )
+        {
+            if ( parent.equals ( getViewSite() ) ) {
+                return getChildren ( _repository );
             }
-            return getChildren(parent);
+            return getChildren ( parent );
         }
-        public Object getParent(Object child)
+        public Object getParent ( Object child )
         {
             if (child instanceof HiveConnection)
             {
@@ -103,6 +123,10 @@ public class HiveView extends ViewPart implements Observer
             else if ( child instanceof HiveItem )
             {
                 return ((HiveItem)child).getConnection();
+            }
+            else if ( child instanceof BrowserEntry )
+            {
+                return ((BrowserEntry)child).getParent ();
             }
             return null;
         }
@@ -114,7 +138,12 @@ public class HiveView extends ViewPart implements Observer
             }
             else if ( parent instanceof HiveConnection )
             {
-                return ((HiveConnection)parent).getItemList().toArray(new HiveItem[0]);
+                //return ((HiveConnection)parent).getItemList().toArray(new HiveItem[0]);
+                return ((HiveConnection)parent).getRootFolder ().getEntries ();
+            }
+            else if ( parent instanceof FolderEntry )
+            {
+                return ((FolderEntry)parent).getEntries ();
             }
             return new Object[0];
         }
@@ -126,13 +155,19 @@ public class HiveView extends ViewPart implements Observer
             }
             else if ( parent instanceof HiveConnection )
             {
-                return ((HiveConnection)parent).getItemList().size() > 0;
+                //return ((HiveConnection)parent).getItemList().size() > 0;
+                return ((HiveConnection)parent).getRootFolder ().hasChildren ();
+            }
+            else if ( parent instanceof FolderEntry )
+            {
+                return ((FolderEntry)parent).hasChildren ();
             }
             return false;
         }
-        
+
     }
-    class ViewLabelProvider extends LabelProvider {
+    class ViewLabelProvider extends LabelProvider
+    {
         
         public String getText(Object obj)
         {
@@ -144,6 +179,10 @@ public class HiveView extends ViewPart implements Observer
             else if ( obj instanceof HiveItem )
             {
                 return ((HiveItem)obj).getItemName();
+            }
+            else if ( obj instanceof BrowserEntry )
+            {
+                return ((BrowserEntry)obj).getName ();
             }
             return obj.toString();
         }
@@ -188,8 +227,10 @@ public class HiveView extends ViewPart implements Observer
                 else
                     imageKey = ISharedImages.IMG_HIVE_ITEM;
             }
+            else if ( obj instanceof FolderEntry )
+                return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER );
             else
-                return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_ELEMENT);
+                return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_ELEMENT );
             
             return Openscada_da_client_testPlugin.getDefault().getImageRegistry().get ( imageKey );
         }
@@ -219,13 +260,40 @@ public class HiveView extends ViewPart implements Observer
     
     public void update ( Observable o, Object arg )
     {
+        _log.debug ( "Update: " + o + " / " + arg );
         if ( o == _repository )
         {
-            triggerUpdateRepository();
+            triggerUpdateRepository ( null );
+        }
+        else if ( o instanceof HiveConnection )
+        {
+            triggerUpdateRepository ( o );
+        }
+        else if ( o instanceof FolderEntry )
+        {
+            if ( (arg != null) && (arg instanceof FolderEntry) )
+            {
+                refreshForFolder ( (FolderEntry)arg  );
+            }
+            else
+            {
+                refreshForFolder ( (FolderEntry)o );
+            }
         }
     }
     
-    public void triggerUpdateRepository ()
+    private void refreshForFolder ( FolderEntry folder )
+    {
+        if ( folder == null )
+            return;
+        
+        if ( folder.getParent () == null )
+            triggerUpdateRepository ( folder.getConnection () );
+        else
+            triggerUpdateRepository ( folder );
+    }
+    
+    public void triggerUpdateRepository ( final Object arg0 )
     {
         if ( !_viewer.getControl ().isDisposed () )
         {
@@ -234,36 +302,45 @@ public class HiveView extends ViewPart implements Observer
                 public void run ()
                 {
                     if ( !_viewer.getControl().isDisposed() )
-                        performUpdateRepository();
+                        performUpdateRepository ( arg0 );
                 }});
         }
     }
     
-    private void performUpdateRepository ()
+    private void performUpdateRepository ( Object arg0 )
     {
-        unregisterAllConnections ();
-        _viewer.refresh ( true );
-        registerAllConnections ();
+        _log.debug ( "Perform update on: " + arg0 );
+        if ( arg0 == null )
+        {
+            unregisterAllConnections ();
+            _viewer.refresh ( true );
+            registerAllConnections ();
+        }
+        else
+        {
+            _viewer.refresh ( arg0, true );
+        }
     }
     
     /**
      * This is a callback that will allow us
      * to create the viewer and initialize it.
      */
-    public void createPartControl(Composite parent)
+    public void createPartControl ( Composite parent )
     {
-        _viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+        _viewer = new TreeViewer ( parent, SWT.H_SCROLL | SWT.V_SCROLL );
         drillDownAdapter = new DrillDownAdapter(_viewer);
-        _viewer.setContentProvider(new ViewContentProvider(_repository));
-        _viewer.setLabelProvider(new ViewLabelProvider());
-        _viewer.setSorter(new NameSorter());
-        _viewer.setInput(getViewSite());
+        _viewer.setContentProvider ( new ViewContentProvider() );
+        _viewer.setLabelProvider ( new ViewLabelProvider() );
+        _viewer.setSorter ( new NameSorter() );
+        _viewer.setInput ( _repository );
+        
         makeActions();
         hookContextMenu();
         hookDoubleClickAction();
         contributeToActionBars();
         
-        getSite().setSelectionProvider(_viewer);
+        getSite().setSelectionProvider ( _viewer );
     }
     
     
@@ -349,32 +426,13 @@ public class HiveView extends ViewPart implements Observer
         _viewer.getControl ().setFocus ();
     }
     
-    private void refreshItem ( final Object o )
-    {
-        _log.debug("Request refresh");
-        
-        if ( !_viewer.getControl().isDisposed() )
-        {
-            _viewer.getControl().getDisplay().asyncExec ( new Runnable(){
-
-                public void run ()
-                {
-                    if ( !_viewer.getControl().isDisposed() )
-                    {
-                        _viewer.refresh(o, true);
-                    }
-                }});
-        }
-    }
-    
     synchronized private void unregisterAllConnections ()
     {
-        // first unregister
-        for ( Map.Entry<HiveConnection,Observer> entry : _obversers.entrySet() )
+        for ( HiveConnection connection : _repository.getConnections() )
         {
-            entry.getKey().deleteObserver(entry.getValue());
+            connection.deleteObserver ( this );
+            connection.getRootFolder ().deleteObserver ( this );
         }
-        _obversers.clear();
     }
     
     synchronized private void registerAllConnections ()
@@ -383,14 +441,8 @@ public class HiveView extends ViewPart implements Observer
         
         for ( HiveConnection connection : _repository.getConnections() )
         {
-            Observer observer = new Observer () {
-                
-                public void update ( Observable o, Object arg )
-                {
-                    refreshItem(o);
-                }};
-                connection.addObserver(observer);
-                _obversers.put(connection, observer);
+            connection.addObserver ( this );
+            connection.getRootFolder ().addObserver ( this );
         }
     }
 }
