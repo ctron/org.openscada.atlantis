@@ -8,9 +8,9 @@ import org.openscada.da.core.InvalidItemException;
 import org.openscada.da.core.InvalidSessionException;
 import org.openscada.da.core.Session;
 import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.browser.Folder;
 import org.openscada.da.core.browser.HiveBrowser;
 import org.openscada.da.core.browser.NoSuchFolderException;
+import org.openscada.da.core.browser.common.Folder;
 import org.openscada.utils.str.StringHelper;
 
 public abstract class HiveBrowserCommon implements HiveBrowser

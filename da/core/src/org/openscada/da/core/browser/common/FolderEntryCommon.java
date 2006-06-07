@@ -2,7 +2,6 @@ package org.openscada.da.core.browser.common;
 
 import java.util.Map;
 
-import org.openscada.da.core.browser.Folder;
 import org.openscada.da.core.browser.FolderEntry;
 import org.openscada.da.core.data.Variant;
 

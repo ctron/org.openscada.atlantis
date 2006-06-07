@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.browser.Folder;
 import org.openscada.da.core.browser.NoSuchFolderException;
 import org.openscada.da.core.browser.common.DataItemEntryCommon;
+import org.openscada.da.core.browser.common.Folder;
 import org.openscada.da.core.browser.common.FolderEntryCommon;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.data.Variant;
