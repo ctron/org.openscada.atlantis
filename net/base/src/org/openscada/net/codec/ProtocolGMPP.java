@@ -386,6 +386,24 @@ public class ProtocolGMPP implements Protocol
         return mapValue;
     }
 
+    private Message decodeMessageFromStream ( ByteBuffer buffer )
+    {
+        // read the packet
+        Message message = new Message ();
+        message.setCommandCode ( _inputBuffer.getInt () );
+        message.setTimestamp ( _inputBuffer.getLong () );
+        message.setSequence ( _inputBuffer.getLong () );
+        message.setReplySequence ( _inputBuffer.getLong () );
+
+        _inputBuffer.getInt (); // re-read to remove from buffer
+        
+        Value value = decodeValueFromStream ( _inputBuffer );
+        if ( value instanceof MapValue )
+            message.setValues ( (MapValue)value );
+        
+        return message;
+    }
+    
     private void parse ()
     {
         long ts = System.currentTimeMillis ();
@@ -403,24 +421,23 @@ public class ProtocolGMPP implements Protocol
                 return;
             }
 
-            // read the packet
-            Message message = new Message ();
-            message.setCommandCode ( _inputBuffer.getInt () );
-            long st;
-            message.setTimestamp ( st = _inputBuffer.getLong () );
-            message.setSequence ( _inputBuffer.getLong () );
-            message.setReplySequence ( _inputBuffer.getLong () );
-
-            _inputBuffer.getInt (); // re-read to remove from buffer
+            Message message = null;
+            try
+            {
+                message = decodeMessageFromStream ( _inputBuffer );
+            }
+            catch ( Exception e )
+            {
+                _log.warn ( "Decoding message from stream failed", e );
+            }
             
-            Value value = decodeValueFromStream ( _inputBuffer );
-            if ( value instanceof MapValue )
-                message.setValues ( (MapValue)value );
-            
-            _log.debug ( "Message time diff: " + (ts - st) );
-            _log.debug ( "Bytes remaining: " + _inputBuffer.remaining() );
-            _listener.messageReceived ( _connection, message );
-            _log.debug ( "Returned from processing message" );
+            if ( message != null )
+            {
+                _log.debug ( "Message time diff: " + ( ts - message.getTimestamp () ) );
+                _log.debug ( "Bytes remaining: " + _inputBuffer.remaining() );
+                _listener.messageReceived ( _connection, message );
+                _log.debug ( "Returned from processing message" );
+            }
 
         }
 
