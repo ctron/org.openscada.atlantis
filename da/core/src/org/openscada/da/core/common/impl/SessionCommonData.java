@@ -1,14 +1,18 @@
 package org.openscada.da.core.common.impl;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import org.openscada.da.core.browser.Location;
 import org.openscada.da.core.common.DataItem;
 
 public class SessionCommonData
 {
 	private Set<DataItem> _items = new HashSet<DataItem> ();
-    private Set<String[]> _paths = new HashSet<String[]> ();
+    private Map<Object,Location> _paths = new HashMap<Object, Location> ();
+    private Map<Location,Object> _pathRev = new HashMap<Location, Object> ();
 	
 	public void addItem ( DataItem item )
 	{
@@ -43,31 +47,45 @@ public class SessionCommonData
 	}
     
     // paths
-    public void addPath ( String[] path )
+    public void addPath ( Object tag, Location path )
     {
         synchronized ( _paths )
         {
-            _paths.add ( path );
+            _paths.put ( tag, path );
+            _pathRev.put ( path, tag );
         }
     }
     
-    public void removePath ( String[] path )
+    public void removePath ( Location path )
     {
         synchronized ( _paths )
         {
-            _paths.remove ( path );
+            Object tag = _pathRev.get ( path );
+            if ( tag != null )
+            {
+                _pathRev.remove ( path );
+                _paths.remove ( tag );
+            }
         }
     }
     
-    public boolean containsPath ( String[] path )
+    public Object getTag ( Location path )
     {
         synchronized ( _paths )
         {
-            return _paths.contains ( path );
+            return _pathRev.get ( path );
+        }
+    }
+    
+    public boolean containsPath ( Object tag )
+    {
+        synchronized ( _paths )
+        {
+            return _paths.containsKey ( tag );
         }   
     }
 
-    public Set<String[]> getPaths ()
+    public Map<Object, Location> getPaths ()
     {
         synchronized ( _paths )
         {

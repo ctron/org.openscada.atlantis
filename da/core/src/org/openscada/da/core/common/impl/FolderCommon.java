@@ -3,6 +3,8 @@ package org.openscada.da.core.common.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -11,13 +13,15 @@ import org.openscada.da.core.browser.NoSuchFolderException;
 import org.openscada.da.core.browser.common.DataItemEntryCommon;
 import org.openscada.da.core.browser.common.Folder;
 import org.openscada.da.core.browser.common.FolderEntryCommon;
+import org.openscada.da.core.browser.common.FolderListener;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.data.Variant;
 
 public class FolderCommon implements Folder
 {
 
-    private Map < String, Entry > _entryMap = new HashMap < String, Entry > ();
+    private Map<String, Entry> _entryMap = new HashMap<String, Entry> ();
+    private Map<Object, FolderListener> _listeners = new HashMap<Object, FolderListener> ();
     
     public Entry[] list ( Stack<String> path ) throws NoSuchFolderException
     {
@@ -29,7 +33,7 @@ public class FolderCommon implements Folder
 
     private Entry [] getAllEntries ()
     {
-        synchronized ( _entryMap )
+        synchronized ( this )
         {
             return _entryMap.values ().toArray ( new Entry[_entryMap.size()] );
         }
@@ -37,7 +41,7 @@ public class FolderCommon implements Folder
     
     private Entry getEntry ( String name )
     {
-        synchronized ( _entryMap )
+        synchronized ( this )
         {
             return _entryMap.get ( name );
         }
@@ -59,7 +63,7 @@ public class FolderCommon implements Folder
     
     public boolean add ( String name, Folder folder, Map < String, Variant > attributes )
     {
-        synchronized ( _entryMap )
+        synchronized ( this )
         {
             if ( !_entryMap.containsKey ( name ) )
             {
@@ -73,7 +77,7 @@ public class FolderCommon implements Folder
     
     public boolean add ( String name, DataItem item, Map < String, Variant > attributes )
     {
-        synchronized ( _entryMap )
+        synchronized ( this )
         {
             if ( !_entryMap.containsKey ( name ) )
             {
@@ -87,7 +91,7 @@ public class FolderCommon implements Folder
     
     public boolean remove ( String name )
     {
-        synchronized ( _entryMap )
+        synchronized ( this )
         {
             if ( _entryMap.containsKey ( name ) )
             {
@@ -101,9 +105,9 @@ public class FolderCommon implements Folder
     
     public boolean remove ( DataItem item )
     {
-        synchronized ( _entryMap )
+        synchronized ( this )
         {
-            for ( Iterator < Map.Entry < String, Entry > > i = _entryMap.entrySet ().iterator () ; i.hasNext () ; )
+            for ( Iterator<Map.Entry<String, Entry>> i = _entryMap.entrySet ().iterator () ; i.hasNext () ; )
             {
                 Map.Entry<String, Entry> entry = i.next ();
                 if ( entry instanceof DataItemEntryCommon )
@@ -114,6 +118,47 @@ public class FolderCommon implements Folder
                     }
             }
             return false;
+        }
+    }
+
+    public void subscribe ( Stack<String> path, FolderListener listener, Object tag ) throws NoSuchFolderException
+    {
+        if ( path.isEmpty () )
+            addListener ( listener, tag );
+        else
+            getFolderEntry ( path.pop () ).subscribe ( path, listener, tag );
+    }
+
+    public void unsubscribe ( Stack<String> path, Object tag ) throws NoSuchFolderException
+    {
+        if ( path.isEmpty () )
+            removeListener ( tag );
+        else
+            getFolderEntry ( path.pop () ).unsubscribe ( path, tag );
+    }
+    
+    private void addListener ( FolderListener listener, Object tag )
+    {
+        synchronized ( this )
+        {
+            _listeners.put ( tag, listener );
+            sendCurrentList ( listener, tag );
+        }
+    }
+    
+    private void removeListener ( Object tag )
+    {
+        synchronized ( this )
+        {
+            _listeners.remove ( tag );
+        } 
+    }
+    
+    private void sendCurrentList ( FolderListener listener, Object tag )
+    {
+        synchronized ( this )
+        {
+            listener.changed ( tag, new ArrayList<Entry> ( _entryMap.values () ), new LinkedList<String> (), true );            
         }
     }
     

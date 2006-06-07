@@ -1,6 +1,8 @@
 package org.openscada.net.da.handler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +21,8 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.ValueTools;
+import org.openscada.net.base.data.VoidValue;
+import org.openscada.utils.lang.Holder;
 
 public class ListBrowser
 {
@@ -58,10 +62,8 @@ public class ListBrowser
         return list.toArray ( new String[0] );
     }
     
-    public static Message createResponse ( Message requestMessage, Entry [] entries )
+    private static void createEntries ( Message message, String field, Iterable<Entry> entries )
     {
-        Message message = new Message ( Messages.CC_BROWSER_LIST_RES, requestMessage.getSequence () );
-        
         ListValue list = new ListValue ();
         for ( Entry entry : entries )
         {
@@ -88,28 +90,35 @@ public class ListBrowser
             
             list.add ( mapValue );
         }
+        message.getValues ().put ( field, list );
+    }
+    
+    public static Message createResponse ( Message requestMessage, Entry [] entries )
+    {
+        Message message = new Message ( Messages.CC_BROWSER_LIST_RES, requestMessage.getSequence () );
         
-        message.getValues ().put ( "entries", list );
+        createEntries ( message, "entries", Arrays.asList ( entries ) );
         
         return message;
     }
     
-    public static Entry [] parseResponse ( Message message )
+    private static void parseEntries ( Message message, String field, List<Entry> list )
     {
-        if ( !message.getValues ().containsKey ( "entries" ) )
+        list.clear ();
+        
+        if ( !message.getValues ().containsKey ( field ) )
         {
-            _log.warn ( "Required value 'entries' missing" );
-            return new Entry[0];
+            _log.warn ( "Required value '" + field + "' missing" );
+            return;
         }
         
-        if ( !(message.getValues ().get ( "entries" ) instanceof ListValue) )
+        if ( !(message.getValues ().get ( field ) instanceof ListValue) )
         {
-            _log.warn ( "'entries' must be of type 'list'" );
-            return new Entry[0];
+            _log.warn ( "'" + field + "' must be of type 'list'" );
+            return;
         }
 
-        ListValue entries = (ListValue)message.getValues ().get ( "entries" );
-        List<Entry> list = new LinkedList<Entry> ();
+        ListValue entries = (ListValue)message.getValues ().get ( field );
         
         for ( Value value : entries.getValues () )
         {
@@ -169,7 +178,97 @@ public class ListBrowser
             if ( entry != null )
                 list.add ( entry );
         }
+    }
+    
+    public static Entry [] parseResponse ( Message message )
+    {
+        List<Entry> list = new ArrayList<Entry> ();
+        parseEntries ( message, "entries", list );
+        return list.toArray ( new Entry[list.size ()] );
+    }
+    
+    public static void parseEvent ( Message message, List<String> path, List<Entry> added, List<String> removed, Holder<Boolean> full )
+    {
+        // first clear what we have
+        path.clear ();
+        added.clear ();
+        removed.clear ();
         
-        return list.toArray ( new Entry[0] );
+        // path 
+        if ( message.getValues ().containsKey ( "path" ) )
+            if ( message.getValues ().get ( "path" ) instanceof ListValue )
+                path.addAll ( ValueTools.fromStringList ( (ListValue)message.getValues ().get ( "path" ) ) );
+        
+        // added
+        parseEntries ( message, "added", added );
+        
+        // full
+        full.value = message.getValues ().containsKey ( "full" );
+        
+        // removed
+        if ( message.getValues ().containsKey ( "removed" ) )
+        {
+            if ( message.getValues ().get ( "removed" ) instanceof ListValue )
+            {
+                ListValue listValue = (ListValue)message.getValues ().get ( "removed" );
+                for ( Value value : listValue.getValues () )
+                {
+                    removed.add ( value.toString () );
+                }
+            }
+        }
+    }
+    
+    public static Message createEvent ( String [] path, Collection<Entry> added, Collection<String> removed, boolean full )
+    {
+        Message message = new Message ( Messages.CC_BROWSER_EVENT );
+        
+        if ( full )
+            message.getValues ().put ( "full", new VoidValue() );
+        
+        message.getValues ().put ( "path", ValueTools.toStringList ( Arrays.asList ( path ) ) );
+        message.getValues().put ( "removed", ValueTools.toStringList ( removed ) );
+        
+        createEntries ( message, "added", added );
+        
+        return message;
+    }
+    
+    private static Message createRegMessage ( int commandCode, String [] path )
+    {
+        Message message = new Message ( commandCode );
+        
+        message.getValues ().put ( "path", ValueTools.toStringList ( Arrays.asList ( path ) ) );
+        
+        return message;
+    }
+    
+    public static Message createSubscribe ( String [] path )
+    {
+        return createRegMessage ( Messages.CC_BROWSER_SUBSCRIBE, path );
+    }
+    
+    public static Message createUnsubscribe ( String [] path )
+    {
+        return createRegMessage ( Messages.CC_BROWSER_UNSUBSCRIBE, path );
+    }
+    
+    private static String[] parseRegMessage ( Message message )
+    {
+        if ( !message.getValues ().containsKey ( "path" ) )
+            return new String[0];
+        if ( !(message.getValues ().get ( "path" ) instanceof ListValue) )
+            return new String[0];
+        return ValueTools.fromStringList ( (ListValue)message.getValues ().get ( "path" ) ).toArray ( new String[0] );
+    }
+    
+    public static String [] parseSubscribeMessage ( Message message )
+    {
+        return parseRegMessage ( message );
+    }
+    
+    public static String [] parseUnsubscribeMessage ( Message message )
+    {
+        return parseRegMessage ( message );
     }
 }

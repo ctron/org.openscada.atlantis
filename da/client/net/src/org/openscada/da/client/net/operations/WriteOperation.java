@@ -27,7 +27,7 @@ public class WriteOperation extends AsyncBasedOperation<Object,WriteOperationArg
     {
         Message msg = org.openscada.net.da.handler.WriteOperation.create(arg0.itemName, arg0.value);
         
-        _connection.getClient().getConnection().sendMessage(msg, new MessageStateListener(){
+        _connection.getClient ().getConnection ().sendMessage ( msg, new MessageStateListener() {
 
             public void messageReply ( Message message )
             {
@@ -48,7 +48,7 @@ public class WriteOperation extends AsyncBasedOperation<Object,WriteOperationArg
                     break;
                     
                 default:
-                    _log.warn ( "Invalid reply to write operation cc=" + message.getCommandCode () );
+                    _log.warn ( String.format ( "Invalid reply to write operation cc=0x%1$08X reply to %2$d", message.getCommandCode (), message.getReplySequence () ) );
                     or.notifyFailure ( new ProtocolErrorException () );
                     break;
                 }

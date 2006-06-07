@@ -36,12 +36,62 @@ public class HiveCommon implements Hive, ItemListener
     
     private Executor _executor = Executors.newCachedThreadPool();
     
-    public HiveBrowserCommon _browser = null;
-    public Folder _rootFolder = null;
+    private HiveBrowserCommon _browser = null;
+    private Folder _rootFolder = null;
+    
+    private Set<SessionListener> _sessionListeners = new HashSet<SessionListener> ();
 	
     public HiveCommon ()
     {
         super ();
+    }
+    
+    public void addSessionListener ( SessionListener listener )
+    {
+        synchronized ( _sessionListeners )
+        {
+            _sessionListeners.add ( listener );
+        }
+    }
+    
+    public void removeSessionListener ( SessionListener listener )
+    {
+        synchronized ( _sessionListeners )
+        {
+            _sessionListeners.remove ( listener );
+        }
+    }
+    
+    private void fireSessionCreate ( SessionCommon session )
+    {
+        synchronized ( _sessionListeners )
+        {
+            for ( SessionListener listener : _sessionListeners )
+            {
+                try
+                {
+                    listener.create ( session );
+                }
+                catch ( Exception e )
+                {}
+            }
+        }
+    }
+    
+    private void fireSessionDestroy ( SessionCommon session )
+    {
+        synchronized ( _sessionListeners )
+        {
+            for ( SessionListener listener : _sessionListeners )
+            {
+                try
+                {
+                    listener.destroy ( session );
+                }
+                catch ( Exception e )
+                {}
+            }
+        }
     }
     
     protected synchronized void setRootFolder ( Folder rootFolder )
@@ -67,12 +117,13 @@ public class HiveCommon implements Hive, ItemListener
 	
 	// implementation of hive interface
 	
-	public Session createSession(Properties props)
+	public Session createSession ( Properties props )
 	{
-		SessionCommon session = new SessionCommon(this);
+		SessionCommon session = new SessionCommon ( this );
 		synchronized ( _sessions )
 		{
-			_sessions.add(session);
+			_sessions.add ( session );
+            fireSessionCreate ( session );
 		}
 		return session;
 	}
@@ -91,13 +142,15 @@ public class HiveCommon implements Hive, ItemListener
 		}
 	}
 	
-	public void closeSession(Session session) throws InvalidSessionException
+	public void closeSession ( Session session ) throws InvalidSessionException
 	{	
 		validateSession ( session );
 		
 		synchronized ( _sessions )
 		{
-			SessionCommonData sessionData = ((SessionCommon)session).getData();
+            fireSessionDestroy ( (SessionCommon)session );
+            
+			SessionCommonData sessionData = ((SessionCommon)session).getData ();
 			SessionCommon sessionCommon = ((SessionCommon)session);
 			
 			Set<DataItem> sessionItems = new HashSet<DataItem>(sessionData.getItems());
@@ -107,13 +160,13 @@ public class HiveCommon implements Hive, ItemListener
 				{
 					if ( _items.containsKey(item) )
 					{
-						DataItemInfo info = _items.get(item);
-						info.removeSession(sessionCommon);
+						DataItemInfo info = _items.get ( item );
+						info.removeSession ( sessionCommon );
 					}
 				}
 			}
 			
-			_sessions.remove(session);
+			_sessions.remove ( session );
 		}
 	}
 	

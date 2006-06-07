@@ -2,6 +2,7 @@ package org.openscada.da.core.common.impl;
 
 import org.openscada.da.core.ItemChangeListener;
 import org.openscada.da.core.ItemListListener;
+import org.openscada.da.core.browser.FolderListener;
 
 
 public class SessionCommon implements org.openscada.da.core.Session
@@ -13,6 +14,8 @@ public class SessionCommon implements org.openscada.da.core.Session
 	
     private boolean _itemListSubscriber = false;
     private ItemListListener _itemListListener;
+    
+    private FolderListener _folderListener = null;
     
 	public SessionCommon ( HiveCommon hive )
 	{
@@ -57,5 +60,15 @@ public class SessionCommon implements org.openscada.da.core.Session
     public void setItemListSubscriber ( boolean itemListSubscriber )
     {
         _itemListSubscriber = itemListSubscriber;
+    }
+
+    public FolderListener getFolderListener ()
+    {
+        return _folderListener;
+    }
+
+    public void setListener ( FolderListener folderListener )
+    {
+        _folderListener = folderListener;
     }
 }

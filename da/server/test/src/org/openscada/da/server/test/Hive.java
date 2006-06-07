@@ -56,7 +56,7 @@ public class Hive extends HiveCommon {
 			public void command(Variant value) {
 				System.out.println ( "Hello World!" );
 			}});
-		registerItem ( cmd );
+		registerItem ( item = cmd );
         helloWorldFolder.add ( "hello world", item, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "This cell triggers a command on the server. On the server it will print out 'Hello World'. On the client side you will see nothing ;-)" ) )
                 .put ( "lang", new Variant ( "en" ) )
@@ -89,13 +89,13 @@ public class Hive extends HiveCommon {
             public void command(Variant value) {
                 System.out.println ( "Command is: " + value.asString ( "<null>" ) );
             }});
-        registerItem ( cmd );
+        registerItem ( item = cmd );
         testFolder.add ( "command", item, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "Like the 'hello world' item it will print out something on the server. Instead of using a fixed string the value that was written to it is used." ) )
                 .getMap ()
         );
         
-		registerItem ( new TimeDataItem ( "time", _scheduler ) );
+		registerItem ( item = new TimeDataItem ( "time", _scheduler ) );
         testFolder.add ( "time", item, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "Need the unix time in microseconds? You get it here!" ) )
                 .getMap ()
@@ -105,7 +105,7 @@ public class Hive extends HiveCommon {
                 .getMap ()
         );
         
-        registerItem ( new WriteDelayItem ( "write-delay" ) );
+        registerItem ( item = new WriteDelayItem ( "write-delay" ) );
         testFolder.add ( "write delay", item, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "Simulate a long running write operation here. The value written to the data item is used as microsecond delay that the write operation will take." ) )
                 .getMap ()

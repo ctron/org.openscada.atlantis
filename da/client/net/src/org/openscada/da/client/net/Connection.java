@@ -1,7 +1,6 @@
 package org.openscada.da.client.net;
 
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -19,6 +18,7 @@ import org.openscada.da.client.net.operations.WriteOperation;
 import org.openscada.da.client.net.operations.WriteOperationArguments;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.browser.Entry;
+import org.openscada.da.core.browser.Location;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.MessageListener;
@@ -26,6 +26,7 @@ import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.da.handler.EnumEvent;
+import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.io.IOProcessor;
 import org.openscada.utils.exec.OperationResult;
@@ -35,7 +36,7 @@ import org.openscada.utils.lang.Holder;
 public class Connection
 {
 
-    public static final String VERSION = "0.1.1";
+    public static final String VERSION = "0.1.2";
 
     public enum State
     {
@@ -55,8 +56,9 @@ public class Connection
 
     private ClientConnection _client = null;
 
-    private List<ConnectionStateListener> _connectionStateListeners = new ArrayList < ConnectionStateListener > ();
-    private Map<String, ItemSyncController> _itemListeners = new HashMap < String, ItemSyncController > ();
+    private List<ConnectionStateListener> _connectionStateListeners = new ArrayList<ConnectionStateListener> ();
+    private Map<String, ItemSyncController> _itemListeners = new HashMap<String, ItemSyncController> ();
+    private Map<Location, FolderSyncController> _folderListeners = new HashMap<Location, FolderSyncController> ();
 
     //private boolean _connected = false;
     private State _state = State.CLOSED;
@@ -65,8 +67,9 @@ public class Connection
     private static IOProcessor _defaultProcessor = null;
 
     private ItemList _itemList = new ItemList ();
-    private List<ItemListListener> _itemListListeners = new ArrayList < ItemListListener > ();
+    private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener> ();
 
+    // operations
     private WriteOperation _writeOperation;
     private BrowserListOperation _browseListOperation;
 
@@ -154,6 +157,14 @@ public class Connection
                 _log.debug("Enum message from server");
                 performEnumEvent ( message );
             }});
+        
+        _client.getMessageProcessor().setHandler(Messages.CC_BROWSER_EVENT, new MessageListener(){
+
+            public void messageReceived ( org.openscada.net.io.Connection connection, Message message )
+            {
+                _log.debug("Browse event message from server");
+                performBrowseEvent ( message );
+            }});
 
     }
 
@@ -190,11 +201,21 @@ public class Connection
     
     public void sendMessage ( Message message )
     {
+        if ( _client == null )
+            return;
+        if ( _client.getConnection () == null )
+            return;
+        
         _client.getConnection ().sendMessage ( message );
     }
     
     public void sendMessage ( Message message, MessageStateListener listener )
     {
+        if ( _client == null )
+            return;
+        if ( _client.getConnection () == null )
+            return;
+        
         _client.getConnection ().sendMessage ( message, listener );
     }
 
@@ -311,11 +332,6 @@ public class Connection
         {
             setState ( State.BOUND, null );
 
-            // sync again all items to maintain subscribtions
-            resyncAllItems ();
-
-            // subscribe enum service
-            subscribeEnum ();
         }
     }
 
@@ -330,13 +346,51 @@ public class Connection
         _log.debug("Subscribing to enum...complete");
     }
 
+    public void addFolderListener ( FolderListener listener, Location location )
+    {
+        synchronized ( _folderListeners )
+        {
+            if ( !_folderListeners.containsKey ( location ) )
+            {
+                _folderListeners.put ( location, new FolderSyncController ( this, new Location ( location ) ) );
+            }
+            
+            FolderSyncController controller = _folderListeners.get ( location );
+            controller.addListener ( listener );
+        }    
+    }
+    
+    public void addFolderWatcher ( FolderWatcher watcher )
+    {
+        addFolderListener ( watcher, watcher.getLocation () );
+    }
+    
+    public void removeFolderListener ( FolderListener listener, Location location )
+    {
+        synchronized ( _folderListeners )
+        {
+            if ( !_folderListeners.containsKey ( location ) )
+            {
+                return;
+            }
+            
+            FolderSyncController controller = _folderListeners.get ( location );
+            controller.removeListener ( listener );
+        }    
+    }
+    
+    public void removeFolderWatcher ( FolderWatcher watcher )
+    {
+        removeFolderListener ( watcher, watcher.getLocation () );
+    }
+    
     public void addItemUpdateListener ( String itemName, boolean initial, ItemUpdateListener listener ) 
     {
         synchronized ( _itemListeners )
         {
-            if (!_itemListeners.containsKey(itemName))
+            if ( !_itemListeners.containsKey ( itemName ) )
             {
-                _itemListeners.put( itemName, new ItemSyncController(this, itemName) );
+                _itemListeners.put ( itemName, new ItemSyncController ( this, new String ( itemName ) ) );
             }
 
             ItemSyncController controller = _itemListeners.get ( itemName );
@@ -370,20 +424,57 @@ public class Connection
         {
             for ( Map.Entry<String,ItemSyncController> entry : _itemListeners.entrySet() )
             {
-                entry.getValue().sync(true);
+                entry.getValue().sync ( true );
             }
         }
         _log.debug("re-sync complete");
     }
 
+    private void resyncAllFolders ()
+    {
+        synchronized ( _folderListeners )
+        {
+            for ( Map.Entry<Location,FolderSyncController> entry : _folderListeners.entrySet () )
+            {
+                entry.getValue ().resync ();
+            }
+        }
+    }
+    
+    private void disconnectAllFolders ()
+    {
+        synchronized ( _folderListeners )
+        {
+            for ( Map.Entry<Location,FolderSyncController> entry : _folderListeners.entrySet () )
+            {
+                entry.getValue ().disconnected ();
+            }
+        }
+    }
+    
+    private void fireBrowseEvent ( Location location, Collection<Entry> added, Collection<String> removed, boolean full )
+    {
+        synchronized ( _folderListeners )
+        {
+            if ( _folderListeners.containsKey ( location ) )
+            {
+                try
+                {
+                    _folderListeners.get ( location ).folderChanged ( added, removed, full );
+                }
+                catch ( Exception e )
+                {}
+            }
+        }
+    }
 
     private void fireValueChange ( String itemName, Variant value, boolean initial )
     {
         synchronized ( _itemListeners )
         {
-            if ( _itemListeners.containsKey(itemName) )
+            if ( _itemListeners.containsKey ( itemName ) )
             {
-                _itemListeners.get(itemName).fireValueChange(value,initial);
+                _itemListeners.get ( itemName ).fireValueChange ( value, initial );
             }
         }
     }
@@ -456,7 +547,6 @@ public class Connection
     {
         synchronized ( _itemList )
         {
-
             List<DataItemInformation> added = new ArrayList<DataItemInformation> ();
             List<String> removed = new ArrayList<String> ();
             Holder<Boolean> initial = new Holder<Boolean> ();
@@ -465,7 +555,27 @@ public class Connection
 
             fireItemListChange ( added, removed, initial.value.booleanValue() );
         }
+    }
+    
+    private void performBrowseEvent ( Message message )
+    {
+        _log.debug ( "Performing browse event" );
+        
+        synchronized ( _itemList )
+        {
+            List<Entry> added = new ArrayList<Entry> ();
+            List<String> removed = new ArrayList<String> ();
+            List<String> path = new ArrayList<String> ();
+            Holder<Boolean> initial = new Holder<Boolean> ();
+            
+            initial.value = false;
 
+            ListBrowser.parseEvent ( message, path, added, removed, initial );
+            
+            _log.debug ( String.format ( "Added: %1$d Removed: %2$d", added.size (), removed.size() ) );
+
+            fireBrowseEvent ( new Location ( path ), added, removed, initial.value );
+        }
     }
 
     public State getState ()
@@ -545,6 +655,9 @@ public class Connection
         {
 
         case CLOSED:
+            // inform folder sync controllers 
+            disconnectAllFolders ();
+            
             // if we got the close and are auto-reconnect ... schedule the job
             if ( _connectionInfo.isAutoReconnect () )
             {
@@ -569,6 +682,14 @@ public class Connection
             break;
 
         case BOUND:
+            // sync again all items to maintain subscribtions
+            resyncAllItems ();
+            
+            // subscribe enum service
+            subscribeEnum ();
+            
+            // sync again all folder subscriptions
+            resyncAllFolders ();
             break;
 
         case CLOSING:

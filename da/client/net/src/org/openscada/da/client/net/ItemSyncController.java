@@ -22,7 +22,7 @@ public class ItemSyncController
     private boolean _subscribed = false;
     
     private Variant _cachedValue = new Variant();
-    private Map<String,Variant> _cachedAttributes = new HashMap<String,Variant>();
+    private Map<String,Variant> _cachedAttributes = new HashMap<String,Variant> ();
     
     /**
      * Holds some additional listner information 
@@ -113,17 +113,17 @@ public class ItemSyncController
     {
         synchronized ( _listeners )
         {
-            if ( !_listeners.containsKey(listener) )
+            if ( !_listeners.containsKey ( listener ) )
             {
-                _listeners.put(listener, new ListenerInfo(listener, initial));
+                _listeners.put ( listener, new ListenerInfo ( listener, initial ) );
                 if ( initial )
                 {
                     _initialListeners++;
-                    listener.notifyValueChange(_cachedValue, true);
-                    listener.notifyAttributeChange(_cachedAttributes, true);
+                    listener.notifyValueChange ( _cachedValue, true );
+                    listener.notifyAttributeChange ( _cachedAttributes, true );
                 }
                 
-                sync();
+                sync ();
             }
         }
         
@@ -160,7 +160,7 @@ public class ItemSyncController
             boolean initial = getNumerOfListenersInitial() > 0;
             boolean subscribe = getNumberOfListeners() > 0; 
             
-            if ( (_subscribedInitial == initial) && (_subscribed == subscribe) && !force )
+            if ( ( _subscribedInitial == initial ) && ( _subscribed == subscribe ) && !force )
                 return; // nothing to do
             
             _subscribed = subscribe;
@@ -168,20 +168,16 @@ public class ItemSyncController
             
             if ( subscribe )
             {
-                _log.debug("Syncing listen state: active " + initial );
+                _log.debug ( "Syncing listen state: active " + initial );
                 message = Messages.subscribeItem ( _itemName, initial );
             }
             else
             {
-                _log.debug("Syncing listen state: inactive " );
+                _log.debug ( "Syncing listen state: inactive " );
                 message = Messages.unsubscribeItem ( _itemName );
             }
             
-            ClientConnection client = _connection.getClient();
-            if ( (client != null) && (client.getConnection()!=null) )
-                client.getConnection().sendMessage ( message );
-            else
-                _log.debug("No connection. Skipping sync message!");
+            _connection.sendMessage ( message );
         }
     }
     
