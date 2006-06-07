@@ -1,18 +1,24 @@
 package org.openscada.net.da.handler;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.core.IODirection;
 import org.openscada.da.core.browser.DataItemEntry;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.FolderEntry;
+import org.openscada.da.core.data.Variant;
+import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
+import org.openscada.net.base.data.ValueTools;
 
 public class ListBrowser
 {
@@ -62,6 +68,8 @@ public class ListBrowser
             MapValue mapValue = new MapValue ();
             
             mapValue.put ( "name", new StringValue ( entry.getName () ) );
+            mapValue.put ( "attributes", Messages.attributesToMap ( entry.getAttributes () ) );
+            
             if ( entry instanceof FolderEntry )
             {
                 mapValue.put ( "type", new StringValue ( "folder" ) );
@@ -71,6 +79,7 @@ public class ListBrowser
                 mapValue.put ( "type", new StringValue ( "item" ) );
                 DataItemEntry dataItemEntry = (DataItemEntry)entry;
                 mapValue.put ( "item-id", new StringValue ( dataItemEntry.getId () ) );
+                mapValue.put ( "io-direction", new IntegerValue ( Messages.encodeIO ( dataItemEntry.getIODirections () )) );
             }
             else
             {
@@ -122,23 +131,38 @@ public class ListBrowser
                 _log.warn ( "map misses required value 'name'" );
                 continue;
             }
+            if ( !mapValue.containsKey ( "attributes" ) )
+            {
+                _log.warn ( "map misses required value 'attributes'" );
+                continue;
+            }
+            if ( !(mapValue.get ( "attributes" ) instanceof MapValue) )
+            {
+                _log.warn ( "map entry 'attributes' is not of type MapValue" );
+                continue;
+            }
             
             String type = mapValue.get ( "type" ).toString ();
+            Map<String, Variant> attributes = Messages.mapToAttributes ( (MapValue)mapValue.get ( "attributes" ) );
             
             _log.debug ( "entry type: '" + type + "'" );
             
             if ( type.equals ( "folder" ) )
             {
-                entry = new FolderEntryCommon ( mapValue.get ( "name" ).toString () );
+                entry = new FolderEntryCommon ( mapValue.get ( "name" ).toString (), attributes );
             }
             else if ( type.equals ( "item" ) )
             {
                 if ( !mapValue.containsKey ( "item-id" ) )
                     continue;
+                if ( !mapValue.containsKey ( "io-direction" ) )
+                    continue;
                 
                 String id = mapValue.get ( "item-id" ).toString ();
                 
-                entry = new DataItemEntryCommon ( mapValue.get ( "name" ).toString (), id );
+                EnumSet<IODirection> io = Messages.decodeIO ( ValueTools.toInteger ( mapValue.get ( "io-direction" ), 0 ) );
+                
+                entry = new DataItemEntryCommon ( mapValue.get ( "name" ).toString (), io, attributes, id );
             }
             
             // now add the entry

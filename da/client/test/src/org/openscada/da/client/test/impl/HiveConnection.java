@@ -16,6 +16,7 @@ import org.openscada.da.client.net.Connection.State;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.data.Variant;
 
 public class HiveConnection extends Observable implements IActionFilter
 {
@@ -54,7 +55,7 @@ public class HiveConnection extends Observable implements IActionFilter
             }
         });
         
-        _rootFolder = new FolderEntry ( "", null, this );
+        _rootFolder = new FolderEntry ( "", new HashMap<String, Variant>(), null, this );
     }
     
     public void connect ()
@@ -85,8 +86,6 @@ public class HiveConnection extends Observable implements IActionFilter
     
     public void disconnect ()
     {
-        _rootFolder = new FolderEntry ( "", null, this );
-        
         _connectionRequested = false;
         
         setChanged ();
@@ -104,6 +103,15 @@ public class HiveConnection extends Observable implements IActionFilter
     {
         setChanged ();
         notifyObservers ();
+        
+        switch ( state )
+        {
+        case CLOSED:
+            _rootFolder.clear ();
+            break;
+        default:
+            break;
+        }
         
         if ( error != null )
         {

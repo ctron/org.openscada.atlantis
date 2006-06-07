@@ -1,17 +1,25 @@
 package org.openscada.net.da.handler;
 
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.IODirection;
+import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.data.DoubleValue;
+import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.LongValue;
+import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
+import org.openscada.utils.str.StringEncoder;
 
 public class Messages
 {
@@ -74,11 +82,15 @@ public class Messages
             return defaultValue;
         
         if ( value instanceof StringValue )
-            return new Variant ( ((StringValue)value).getValue() );
+            return new Variant ( ((StringValue)value).getValue () );
         else if ( value instanceof DoubleValue )
-            return new Variant ( ((DoubleValue)value).getValue() );
+            return new Variant ( ((DoubleValue)value).getValue () );
         else if ( value instanceof LongValue )
-            return new Variant ( ((LongValue)value).getValue() );
+            return new Variant ( ((LongValue)value).getValue () );
+        else if ( value instanceof IntegerValue )
+            return new Variant ( ((IntegerValue)value).getValue () );
+        else if ( value instanceof VoidValue )
+            return new Variant ();
         
         return defaultValue;
     }
@@ -92,19 +104,64 @@ public class Messages
             if ( value.isDouble() )
                 return new DoubleValue(value.asDouble());
             else if ( value.isInteger() )
-                return new LongValue(value.asInteger());
+                return new IntegerValue(value.asInteger());
             else if ( value.isLong() )
                 return new LongValue(value.asLong());
             else if ( value.isString() )
                 return new StringValue(value.asString());
+            else if ( value.isNull () )
+                return new VoidValue ();
         }
         catch ( NullValueException e )
         {
+            return new VoidValue ();
         }
         catch ( NotConvertableException e )
         {
         }
         return null;
+    }
+    
+    /**
+     * Convert a MapValue to a attributes map
+     * @param mapValue the map value to convert
+     * @return the attributes map
+     * @note Only scalar entries in the map are converted. Other values are skipped.
+     */
+    public static Map<String, Variant> mapToAttributes ( MapValue mapValue )
+    {
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        
+        for ( Map.Entry<String, Value> entry : mapValue.getValues ().entrySet () )
+        {
+            Variant value = null;
+            Value entryValue = entry.getValue ();
+            
+            value = valueToVariant ( entryValue, null );
+            
+            if ( value != null )
+            {
+                attributes.put ( new String ( entry.getKey () ) , value );
+            }
+        }
+        
+        return attributes;
+    }
+    
+    public static MapValue attributesToMap ( Map<String, Variant> attributes )
+    {
+        MapValue mapValue = new MapValue ();
+        
+        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+        {
+            Value value = variantToValue ( entry.getValue () );
+            if ( value != null )
+            {
+                mapValue.put ( new String ( entry.getKey () ), value );
+            }
+        }
+        
+        return mapValue;
     }
     
     public static Message notifyValue ( String itemName, Variant value, boolean initial )
@@ -171,4 +228,26 @@ public class Messages
         return msg;
     }
   
+    public static int encodeIO ( EnumSet<IODirection> io )
+    {
+        int bits = 0;
+        if ( io.contains ( IODirection.INPUT ))
+            bits |= 1;
+        if ( io.contains ( IODirection.OUTPUT ))
+            bits |= 2;
+        
+       return bits;
+    }
+    
+    public static EnumSet<IODirection> decodeIO ( int bits )
+    {
+        EnumSet<IODirection> ioDirection = EnumSet.noneOf ( IODirection.class );
+
+        if ( (bits & 1) > 0 )
+            ioDirection.add ( IODirection.INPUT );
+        if ( (bits & 2) > 0 )
+            ioDirection.add ( IODirection.OUTPUT );
+        
+        return ioDirection;
+    }
 }

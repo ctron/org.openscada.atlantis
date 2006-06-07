@@ -216,6 +216,18 @@
             name="OpenSCADA DA"
             />
    </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.openscada.da.client.test.pages.DataItemEntryPage"
+            id="org.openscada.da.client.test.propertyPages.DataItemEntryPage"
+            name="Data Item"
+            objectClass="org.openscada.da.client.test.impl.DataItemEntry">
+      </page>
+   </extension>
    
   
 

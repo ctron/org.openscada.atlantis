@@ -10,4 +10,5 @@ public interface ISharedImages
     static final String IMG_HIVE_ITEM_I = "org.openscada.da.client.test.HiveItem.i";
     static final String IMG_HIVE_ITEM_O = "org.openscada.da.client.test.HiveItem.o";
     static final String IMG_HIVE_ITEM_IO = "org.openscada.da.client.test.HiveItem.io";
+    static final String IMG_HIVE_FOLDER = "org.openscada.da.client.test.FolderEntryItem";
 }

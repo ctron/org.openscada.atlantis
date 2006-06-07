@@ -18,6 +18,7 @@ import org.openscada.da.core.ItemChangeListener;
 import org.openscada.da.core.Session;
 import org.openscada.da.core.WriteOperationListener;
 import org.openscada.da.core.browser.Entry;
+import org.openscada.da.core.browser.Folder;
 import org.openscada.da.core.browser.HiveBrowser;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.DataItemInformationBase;

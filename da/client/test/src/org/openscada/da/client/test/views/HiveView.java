@@ -1,14 +1,11 @@
 package org.openscada.da.client.test.views;
 
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -16,13 +13,16 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -31,12 +31,15 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.openscada.da.client.test.ISharedImages;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.actions.ConnectHiveAction;
 import org.openscada.da.client.test.impl.BrowserEntry;
+import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.FolderEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveItem;
@@ -70,6 +73,7 @@ public class HiveView extends ViewPart implements Observer
     private DrillDownAdapter drillDownAdapter;
     
     private IViewActionDelegate connectAction;
+    private Action propertiesAction;
     
     private HiveRepository _repository;
     
@@ -214,10 +218,10 @@ public class HiveView extends ViewPart implements Observer
                 else
                     imageKey = ISharedImages.IMG_HIVE_CONNECTION;
             }
-            else if ( obj instanceof HiveItem )
+            else if ( obj instanceof DataItemEntry )
             {
-                HiveItem hiveItem = (HiveItem)obj;
-                EnumSet<IODirection> io = hiveItem.getItemInfo ().getIODirection ();
+                DataItemEntry hiveItem = (DataItemEntry)obj;
+                EnumSet<IODirection> io = hiveItem.getIoDirection ();
                 if ( io.containsAll ( EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ))
                     imageKey = ISharedImages.IMG_HIVE_ITEM_IO;
                 else if ( io.contains ( IODirection.INPUT ) )
@@ -228,7 +232,7 @@ public class HiveView extends ViewPart implements Observer
                     imageKey = ISharedImages.IMG_HIVE_ITEM;
             }
             else if ( obj instanceof FolderEntry )
-                return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER );
+                imageKey = ISharedImages.IMG_HIVE_FOLDER;
             else
                 return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_ELEMENT );
             
@@ -340,14 +344,14 @@ public class HiveView extends ViewPart implements Observer
         hookDoubleClickAction();
         contributeToActionBars();
         
-        getSite().setSelectionProvider ( _viewer );
+        getViewSite ().setSelectionProvider ( _viewer );
     }
     
     
     
     private void hookContextMenu()
     {
-        MenuManager menuMgr = new MenuManager("#PopupMenu");
+        MenuManager menuMgr = new MenuManager ( "#PopupMenu" );
         menuMgr.setRemoveAllWhenShown(true);
         menuMgr.addMenuListener(new IMenuListener() {
             public void menuAboutToShow(IMenuManager manager) {
@@ -378,7 +382,10 @@ public class HiveView extends ViewPart implements Observer
         //manager.add(new Separator());
         //drillDownAdapter.addNavigationActions ( manager );
         // Other plug-ins can contribute there actions here
+        
         manager.add ( new Separator ( IWorkbenchActionConstants.MB_ADDITIONS ) );
+        manager.add ( new Separator () );
+        manager.add ( propertiesAction );
     }
     
     private void fillLocalToolBar(IToolBarManager manager)
@@ -404,6 +411,21 @@ public class HiveView extends ViewPart implements Observer
                 getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
         */
         connectAction = new ConnectHiveAction();
+        propertiesAction = new PropertyDialogAction ( new SameShellProvider ( getViewSite ().getShell () ), _viewer );
+        _viewer.addSelectionChangedListener ( new ISelectionChangedListener() {
+
+            public void selectionChanged ( SelectionChangedEvent event )
+            {
+                IStructuredSelection ss = (IStructuredSelection)event.getSelection ();
+                if ( ss.size () == 1 )
+                {
+                    propertiesAction.setEnabled ( true );
+                }
+                else
+                {
+                    propertiesAction.setEnabled ( false );
+                }
+            }} );
     }
     
     private void hookDoubleClickAction()
@@ -444,5 +466,18 @@ public class HiveView extends ViewPart implements Observer
             connection.addObserver ( this );
             connection.getRootFolder ().addObserver ( this );
         }
+    }
+    
+    @Override
+    public Object getAdapter ( Class adapter )
+    {
+        _log.debug ( "getAdapter: " + adapter );
+        if ( adapter.equals ( org.eclipse.ui.views.properties.IPropertySheetPage.class ) )
+        {
+            PropertySheetPage psd = new PropertySheetPage ();
+            return psd;
+        }
+        else
+            return super.getAdapter ( adapter );
     }
 }

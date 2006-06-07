@@ -12,6 +12,7 @@ import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
 import org.openscada.da.server.test.Hive;
+import org.openscada.utils.collection.MapBuilder;
 
 public class MemoryCellItem extends DataItemOutput
 {
@@ -84,7 +85,10 @@ public class MemoryCellItem extends DataItemOutput
             {
                 MemoryDataItem item = new MemoryDataItem ( getInformation ().getName () + "-" + i );
                 _hive.registerItem ( item );
-                _folder.add ( String.valueOf ( i ), item );
+                _folder.add ( String.valueOf ( i ), item, new MapBuilder<String, Variant>()
+                        .put ( "description", new Variant ( "Cell #" + i + " of " + num + " automaticall provided memory cells." ) )
+                        .getMap ()
+                    );
                 newItems.put ( i, item );
             }
             

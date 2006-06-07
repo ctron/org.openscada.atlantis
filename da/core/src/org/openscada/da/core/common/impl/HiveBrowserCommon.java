@@ -8,6 +8,7 @@ import org.openscada.da.core.InvalidItemException;
 import org.openscada.da.core.InvalidSessionException;
 import org.openscada.da.core.Session;
 import org.openscada.da.core.browser.Entry;
+import org.openscada.da.core.browser.Folder;
 import org.openscada.da.core.browser.HiveBrowser;
 import org.openscada.da.core.browser.NoSuchFolderException;
 import org.openscada.utils.str.StringHelper;
@@ -44,12 +45,16 @@ public abstract class HiveBrowserCommon implements HiveBrowser
     {
         _hive.validateSession ( session );
         
+        SessionCommon sessionCommon = (SessionCommon)session;
+        sessionCommon.getData ().addPath ( path );
     }
     
     public void unsubscribe ( Session session, String[] path ) throws InvalidSessionException, InvalidItemException
     {
         _hive.validateSession ( session );
         
+        SessionCommon sessionCommon = (SessionCommon)session;
+        sessionCommon.getData ().removePath ( path );
     }
     
     public abstract Folder getRootFolder ();

@@ -3,19 +3,16 @@
  */
 package org.openscada.net.da.handler;
 
-import org.openscada.da.core.browser.FolderEntry;
+import java.util.Map;
 
-public class FolderEntryCommon implements FolderEntry
+import org.openscada.da.core.browser.FolderEntry;
+import org.openscada.da.core.data.Variant;
+
+public class FolderEntryCommon extends EntryCommon implements FolderEntry
 {
-    private String _name = "";
-    
-    public FolderEntryCommon ( String name )
+    public FolderEntryCommon ( String name, Map<String, Variant> attributes )
     {
-        _name = name;
+        super ( name, attributes );
     }
     
-    public String getName ()
-    {
-        return _name;
-    }
 }

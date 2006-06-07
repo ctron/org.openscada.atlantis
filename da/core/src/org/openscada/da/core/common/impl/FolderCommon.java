@@ -7,10 +7,12 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.openscada.da.core.browser.Entry;
+import org.openscada.da.core.browser.Folder;
 import org.openscada.da.core.browser.NoSuchFolderException;
 import org.openscada.da.core.browser.common.DataItemEntryCommon;
 import org.openscada.da.core.browser.common.FolderEntryCommon;
 import org.openscada.da.core.common.DataItem;
+import org.openscada.da.core.data.Variant;
 
 public class FolderCommon implements Folder
 {
@@ -55,13 +57,13 @@ public class FolderCommon implements Folder
             
     }
     
-    public boolean add ( String name, Folder folder )
+    public boolean add ( String name, Folder folder, Map < String, Variant > attributes )
     {
         synchronized ( _entryMap )
         {
             if ( !_entryMap.containsKey ( name ) )
             {
-                _entryMap.put ( name, new FolderEntryCommon ( name, folder ) );
+                _entryMap.put ( name, new FolderEntryCommon ( name, folder, attributes ) );
                 return true;
             }
             else
@@ -69,13 +71,13 @@ public class FolderCommon implements Folder
         }
     }
     
-    public boolean add ( String name, DataItem item )
+    public boolean add ( String name, DataItem item, Map < String, Variant > attributes )
     {
         synchronized ( _entryMap )
         {
             if ( !_entryMap.containsKey ( name ) )
             {
-                _entryMap.put ( name, new DataItemEntryCommon ( name, item ) );
+                _entryMap.put ( name, new DataItemEntryCommon ( name, item, attributes ) );
                 return true;
             }
             else
