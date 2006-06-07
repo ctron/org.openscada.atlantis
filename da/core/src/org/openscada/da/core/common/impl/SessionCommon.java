@@ -24,17 +24,17 @@ public class SessionCommon implements org.openscada.da.core.Session
 		return _hive;
 	}
 
-	public void setListener(ItemChangeListener listener)
+	public void setListener ( ItemChangeListener listener )
 	{
 		_listener = listener;
 	}
 
-	public ItemChangeListener getListener()
+	public ItemChangeListener getListener ()
 	{
 		return _listener;
 	}
 
-	public SessionCommonData getData()
+	public SessionCommonData getData ()
     {
 		return _data;
 	}
