@@ -28,9 +28,9 @@ public class MessageProcessor implements MessageListener
 	public void messageReceived ( Connection connection, Message message )
 	{
 		if ( message.getReplySequence() == 0 )
-			_log.debug ( "Received message: " + message.getCommandCode() + " ID: " + message.getSequence() );
+			_log.debug ( String.format ( "Received message: 0x%1$08X ID: %2$d", message.getCommandCode(), message.getSequence() ) );
 		else
-			_log.debug ( "Received message: " + message.getCommandCode() + " ID: " + message.getSequence() + " in reply to " + message.getReplySequence() );
+            _log.debug ( String.format ( "Received message: 0x%1$08X ID: %2$d in reply to: %3$d", message.getCommandCode(), message.getSequence(), message.getReplySequence () ) );
 		
 		switch ( message.getCommandCode() )
 		{
@@ -39,11 +39,11 @@ public class MessageProcessor implements MessageListener
             if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
                 errorInfo = message.getValues().get ( Message.FIELD_ERROR_INFO ).toString();
             
-			_log.warn("Failed message: " + message.getSequence() + "/" + message.getReplySequence() + " Message: " + errorInfo );
+			_log.warn ( "Failed message: " + message.getSequence() + "/" + message.getReplySequence() + " Message: " + errorInfo );
 			return;
             
 		case Message.CC_UNKNOWN_COMMAND_CODE:
-			_log.warn("Reply to unknown message: " + message.getSequence() + "/" + message.getReplySequence() );
+			_log.warn ( "Reply to unknown message: " + message.getSequence() + "/" + message.getReplySequence() );
 			return;
             
         case Message.CC_ACK:
