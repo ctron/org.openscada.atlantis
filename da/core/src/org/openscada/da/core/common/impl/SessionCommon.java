@@ -9,7 +9,7 @@ public class SessionCommon implements org.openscada.da.core.Session
 	private HiveCommon _hive;
 	private ItemChangeListener _listener;
     
-	private SessionCommonData _data = new SessionCommonData();
+	private SessionCommonData _data = new SessionCommonData ();
 	
     private boolean _itemListSubscriber = false;
     private ItemListListener _itemListListener;
@@ -34,7 +34,8 @@ public class SessionCommon implements org.openscada.da.core.Session
 		return _listener;
 	}
 
-	public SessionCommonData getData() {
+	public SessionCommonData getData()
+    {
 		return _data;
 	}
 
