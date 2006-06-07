@@ -59,4 +59,16 @@ public class ValueTools
     {
         return toInteger ( value, new Integer ( defaultValue ) );
     }
+    
+    public static ListValue toStringList ( Iterable<Object> list )
+    {
+        ListValue listValue = new ListValue ();
+        
+        for ( Object obj : list )
+        {
+            listValue.add ( new StringValue ( obj.toString () ) );
+        }
+        
+        return listValue;
+    }
 }
