@@ -1,5 +1,9 @@
 package org.openscada.net.base.data;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 
 public class ValueTools
 {
@@ -71,5 +75,17 @@ public class ValueTools
         }
         
         return listValue;
+    }
+    
+    public static List<String> fromStringList ( ListValue list )
+    {
+        List<String> newList = new LinkedList<String> ();
+        
+        for ( Value value : list.getValues () )
+        {
+            newList.add ( value.toString () );
+        }
+        
+        return newList;
     }
 }
