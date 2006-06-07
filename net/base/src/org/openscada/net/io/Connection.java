@@ -3,8 +3,10 @@ package org.openscada.net.io;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -122,35 +124,41 @@ public class Connection implements ConnectionListener, MessageListener
         }
     }
 
-    synchronized public void sendMessage ( Message message )
+    public void sendMessage ( Message message )
     {
-        message.setSequence ( nextSequence () );
-        
-        ByteBuffer buffer = encode ( message );
-        
-        if ( buffer != null )
-            _connection.scheduleWrite ( buffer );
+        synchronized ( _connection )
+        {
+            message.setSequence ( nextSequence () );
+
+            ByteBuffer buffer = encode ( message );
+
+            if ( buffer != null )
+                _connection.scheduleWrite ( buffer );
+        }
     }
 
-    synchronized public void sendMessage ( Message message, MessageStateListener listener )
+    public void sendMessage ( Message message, MessageStateListener listener )
     {
         MessageTag tag = new MessageTag ();
 
         tag.setListener ( listener );
         tag.setTimestamp ( System.currentTimeMillis () );
-
-        message.setSequence ( nextSequence () );
         
-        ByteBuffer buffer = encode ( message );
-        if ( buffer == null )
-            return;
-
         synchronized ( _tagList )
         {
             _tagList.put ( message.getSequence (), tag );
         }
+        
+        synchronized ( _connection )
+        {
+            message.setSequence ( nextSequence () );
 
-        _connection.scheduleWrite ( buffer );
+            ByteBuffer buffer = encode ( message );
+            if ( buffer == null )
+                return;
+
+            _connection.scheduleWrite ( buffer );
+        }
     }
 
     public void read ( ByteBuffer buffer )
@@ -158,7 +166,7 @@ public class Connection implements ConnectionListener, MessageListener
         _protocolGMPP.decode ( buffer );
     }
 
-    public void written()
+    public void written ()
     {
         // no op
     }
@@ -238,6 +246,8 @@ public class Connection implements ConnectionListener, MessageListener
 
     private void processTimeOuts ()
     {
+        List<MessageTag> removeBag = new ArrayList<MessageTag> ();
+        
         synchronized ( _tagList )
         {
             for ( Iterator < Map.Entry < Long, MessageTag > > i = _tagList.entrySet ().iterator (); i.hasNext () ;  )
@@ -246,20 +256,26 @@ public class Connection implements ConnectionListener, MessageListener
 
                 if ( ( System.currentTimeMillis () - tag.getTimestamp() ) >= _timeoutLimit )
                 {
-                    try
-                    {
-                        tag.getListener ().messageTimedOut ();
-                    }
-                    catch ( Exception e )
-                    {
-                    }
+                    removeBag.add ( tag );
                     i.remove ();
                 }
             }
         }
+        
+        // now send out time outs
+        for ( MessageTag tag : removeBag )
+        {
+            try
+            {
+                tag.getListener ().messageTimedOut ();
+            }
+            catch ( Exception e )
+            {
+            }
+        }
     }
 
-    synchronized private long nextSequence ()
+    private long nextSequence ()
     {
         long seq = _sequence++;
         if ( _sequence >= MAX_SEQUENCE )
