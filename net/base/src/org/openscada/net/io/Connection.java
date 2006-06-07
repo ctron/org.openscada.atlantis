@@ -144,11 +144,6 @@ public class Connection implements ConnectionListener, MessageListener
         tag.setListener ( listener );
         tag.setTimestamp ( System.currentTimeMillis () );
         
-        synchronized ( _tagList )
-        {
-            _tagList.put ( message.getSequence (), tag );
-        }
-        
         synchronized ( _connection )
         {
             message.setSequence ( nextSequence () );
@@ -156,6 +151,11 @@ public class Connection implements ConnectionListener, MessageListener
             ByteBuffer buffer = encode ( message );
             if ( buffer == null )
                 return;
+            
+            synchronized ( _tagList )
+            {
+                _tagList.put ( message.getSequence (), tag );
+            }
 
             _connection.scheduleWrite ( buffer );
         }
@@ -220,28 +220,29 @@ public class Connection implements ConnectionListener, MessageListener
 
         Long seq = Long.valueOf ( message.getReplySequence () );
 
+        MessageTag tag = null;
         synchronized ( _tagList )
         {
             if ( _tagList.containsKey ( seq ) )
             {
-                try
-                {
-                    MessageTag tag = _tagList.get ( seq );
-                    // remove the tag .. otherwise a disconnect triggered but the listener
-                    // will trigger also the timeout event for this tag
-                    _tagList.remove ( seq );
-                    tag.getListener ().messageReply ( message );
-                }
-                catch ( Exception e )
-                {
-                    _tagList.remove ( seq );
-                }
+                tag = _tagList.get ( seq );
+                _tagList.remove ( seq );
+            }
+        }
+        
+        try
+        {
+            if ( tag != null )
+            {
+                tag.getListener ().messageReply ( message );
             }
             else
             {
                 _listener.messageReceived ( connection, message );
             }
         }
+        catch ( Exception e )
+        {}
     }
 
     private void processTimeOuts ()
