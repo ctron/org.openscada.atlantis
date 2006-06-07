@@ -1,5 +1,6 @@
 package org.openscada.net.base.data;
 
+
 public class ValueTools
 {
     public static Long toLong ( Value value, Long defaultValue )
@@ -60,7 +61,7 @@ public class ValueTools
         return toInteger ( value, new Integer ( defaultValue ) );
     }
     
-    public static ListValue toStringList ( Iterable<Object> list )
+    public static ListValue toStringList ( Iterable<?> list )
     {
         ListValue listValue = new ListValue ();
         
