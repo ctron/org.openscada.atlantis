@@ -77,7 +77,7 @@ public class MemoryCellItem extends DataItemOutput
             
             for ( Map.Entry<Integer, MemoryDataItem> entry : _items.entrySet () )
             {
-                _folder.remove ( entry.getValue () );
+                _folder.remove ( entry.getKey ().toString () );
                 _hive.unregisterItem ( entry.getValue () );
             }
             
