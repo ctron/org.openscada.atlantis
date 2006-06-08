@@ -4,9 +4,10 @@
 Name "OpenSCADA DA Test Client"
 # Defines
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 0.0.0
+!define VERSION 0.1.8
 !define COMPANY OpenSCADA
 !define URL http://openscada.org
+!define DEPLOY /home/jens/deploy
 
 # MUI defines
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\orange-install.ico"
@@ -47,7 +48,7 @@ InstallDir "$PROGRAMFILES\OpenSCADA DA Test Client"
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 0.1.0.0
+VIProductVersion 0.1.8.0
 VIAddVersionKey ProductName "OpenSCADA DA Test Client"
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
@@ -62,7 +63,7 @@ ShowUninstDetails show
 Section -Main SEC0000
     SetOutPath $INSTDIR\ostc
     SetOverwrite on
-    File /r ..\..\..\openscada\ostc\win32.win32.x86\ostc\*
+    File /r ${DEPLOY}/ostc/win32.win32.x86/ostc/*
     WriteRegStr HKLM "${REGKEY}\Components" Main 1
 SectionEnd
 
@@ -121,7 +122,7 @@ SectionEnd
 Function .onInit
     InitPluginsDir
     Push $R1
-    File /oname=$PLUGINSDIR\spltmp.bmp ..\..\..\openscada\ostc\win32.win32.x86\splash.bmp
+    File /oname=$PLUGINSDIR\spltmp.bmp ${DEPLOY}/splash.bmp
     #advsplash::show 1000 1000 1000 -1 $PLUGINSDIR\spltmp
     advsplash::show 2000 200 0 -1 $PLUGINSDIR\spltmp
     Pop $R1
