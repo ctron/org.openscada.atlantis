@@ -1,6 +1,11 @@
 package org.openscada.net.codec;
 
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -36,6 +41,8 @@ public class ProtocolGMPP implements Protocol
     private Connection _connection = null;
     private MessageListener _listener = null;
     private ByteBuffer _inputBuffer = null;
+    private CharsetEncoder _charEncoder = Charset.forName ( "utf-8" ).newEncoder ();
+    private CharsetDecoder _charDecoder = Charset.forName ( "utf-8" ).newDecoder ();
 
     public ProtocolGMPP ( Connection connection, MessageListener listener )
     {
@@ -45,10 +52,21 @@ public class ProtocolGMPP implements Protocol
     
     private ByteBuffer encodeToStream ( ByteBuffer buffer, String data )
     {
-        byte [] rawData = data.getBytes ();
+        ByteBuffer rawData;
+        synchronized ( _charEncoder )
+        {
+            try
+            {
+                rawData = _charEncoder.encode ( CharBuffer.wrap ( data ) );
+            }
+            catch ( CharacterCodingException e )
+            {
+                rawData = ByteBuffer.wrap ( data.getBytes () );
+            }
+        }
         
-        buffer = ensureCapacity ( buffer, 4 + rawData.length );
-        buffer.putInt ( rawData.length );
+        buffer = ensureCapacity ( buffer, 4 + rawData.remaining () );
+        buffer.putInt ( rawData.remaining () );
         buffer.put ( rawData );
         
         return buffer;
@@ -317,7 +335,17 @@ public class ProtocolGMPP implements Protocol
     {
         byte [] data = new byte [ size ];
         buffer.get ( data );
-        return new String ( data );
+        
+        CharBuffer charBuffer;
+        try
+        {
+            charBuffer = _charDecoder.decode ( ByteBuffer.wrap ( data ) );
+            return charBuffer.toString ();
+        }
+        catch ( CharacterCodingException e )
+        {
+            return new String ( data );
+        }
     }
     
     private String decodeStringFromStream ( ByteBuffer buffer )
