@@ -36,7 +36,7 @@ public class WatchItemAction implements IViewActionDelegate, IObjectActionDelega
        
         try
         {
-            IViewPart viewer = _site.getPage ().showView ( "org.openscada.da.client.test.views.DataItemWatchView", _item.getId(), IWorkbenchPage.VIEW_ACTIVATE );
+            IViewPart viewer = _site.getPage ().showView ( DataItemWatchView.VIEW_ID, _item.getId(), IWorkbenchPage.VIEW_ACTIVATE );
             if ( viewer instanceof DataItemWatchView )
             {
                 ((DataItemWatchView)viewer).setDataItem ( _item );

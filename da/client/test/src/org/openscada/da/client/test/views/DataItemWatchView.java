@@ -52,6 +52,8 @@ import org.openscada.da.core.data.Variant;
 
 public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 {
+    public static final String VIEW_ID = "org.openscada.da.client.test.views.DataItemWatchView";
+    
     private static Logger _log = Logger.getLogger ( DataItemWatchView.class );
     
     private DataItemEntry _hiveItem = null;
@@ -90,15 +92,16 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         
 		public void inputChanged ( Viewer v, Object oldInput, Object newInput )
         {
+            _log.debug ( "Input changed: " + oldInput + " => " + newInput );
             _viewer = viewer;
             
-            clearItem();
+            clearItem ();
             
-            if ( newInput instanceof HiveItem )
+            if ( newInput instanceof DataItemEntry )
             {
-                HiveItem hiveItem = (HiveItem)newInput;
+                DataItemEntry hiveItem = (DataItemEntry)newInput;
 
-                _item = new DataItem ( hiveItem.getItemName() );
+                _item = new DataItem ( hiveItem.getId () );
                 _item.addObserver ( this );
                 _item.register ( hiveItem.getConnection().getConnection() );
             }
@@ -108,8 +111,8 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         {
             if ( _item != null )
             {
-                _item.deleteObserver(this);
-                _item.unregister();
+                _item.deleteObserver ( this );
+                _item.unregister ();
                 _item = null;
             }
         }
@@ -124,7 +127,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
             if ( _item == null )
                 return new Object[0];
             
-            Map<String,Variant> attrs = _item.getAttributes();
+            Map<String,Variant> attrs = _item.getAttributes ();
             Entry [] entries = new Entry[attrs.size()];
             int i = 0;
             
@@ -177,7 +180,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
             case 0:
                 return entry.name;
             case 1:            
-                return entry.value.asString("<null>");
+                return entry.value.asString ( "<null>" );
             }
             return getText(obj);
         }
@@ -210,7 +213,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 	 */
 	public void createPartControl(Composite parent)
     {
-        parent.setLayout(new GridLayout(1,false));
+        parent.setLayout ( new GridLayout ( 1, false ) );
         
         GridData gd;
         
@@ -246,8 +249,8 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         col.setText ( "Value" );
         col.setWidth(500);
 		
-        viewer.getTable().setHeaderVisible(true);
-        viewer.setSorter(new NameSorter());
+        viewer.getTable().setHeaderVisible ( true );
+        viewer.setSorter ( new NameSorter () );
         
         // console window
         _console = new StyledText ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY );
@@ -333,7 +336,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
             
             _hiveItem = item;
             
-            appendConsoleMessage("Subscribe to item: " + _hiveItem.getId () );
+            appendConsoleMessage ( "Subscribe to item: " + _hiveItem.getId () );
             _hiveItem.getConnection().getConnection().addItemUpdateListener ( _hiveItem.getId (), true, this );
             
             viewer.setInput ( item );

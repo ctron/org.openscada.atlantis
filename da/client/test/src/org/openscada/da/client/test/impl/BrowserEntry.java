@@ -72,7 +72,6 @@ public class BrowserEntry extends Observable implements IPropertySource
         
         for ( Map.Entry<String, Variant> entry : _attributes.entrySet () )
         {
-            _log.debug ( "Property: " + entry.getKey() + "=" + entry.getValue() );
             PropertyDescriptor pd = new PropertyDescriptor ( entry.getKey (), entry.getKey() );
             pd.setAlwaysIncompatible ( true );
             pd.setCategory ( "Entry Attributes" );

@@ -67,6 +67,8 @@ import org.openscada.da.core.IODirection;
 
 public class HiveView extends ViewPart implements Observer
 {
+    public static final String VIEW_ID = "org.openscada.da.client.test.views.HiveView";
+    
     private static Logger _log = Logger.getLogger ( HiveView.class );
     
     private TreeViewer _viewer;
