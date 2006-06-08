@@ -29,8 +29,8 @@
 
    <features>
       <feature id="org.eclipse.rcp" version="3.2.0.v20060511-2000-VDNgUi843pOsLRQ"/>
-      <feature id="org.openscada.da.client.test" version="0.1.8"/>
-      <feature id="org.openscada.da.net.client" version="0.1.3"/>
+      <feature id="org.openscada.da.client.test" version="0.1.9"/>
+      <feature id="org.openscada.da.net.client" version="0.1.4"/>
    </features>
 
 </product>
