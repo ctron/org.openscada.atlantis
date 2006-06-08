@@ -81,7 +81,9 @@ public class FolderCommon implements Folder
         {
             if ( !_entryMap.containsKey ( name ) )
             {
-                _entryMap.put ( name, new DataItemEntryCommon ( name, item, attributes ) );
+                Entry entry = new DataItemEntryCommon ( name, item, attributes );
+                _entryMap.put ( name, entry );
+                notifyAdd ( entry );
                 return true;
             }
             else
@@ -96,6 +98,7 @@ public class FolderCommon implements Folder
             if ( _entryMap.containsKey ( name ) )
             {
                 _entryMap.remove ( name );
+                notifyRemove ( name );
                 return true;
             }
             else
@@ -114,6 +117,7 @@ public class FolderCommon implements Folder
                     if ( ((DataItemEntryCommon)entry).getItem () == item )
                     {
                         i.remove ();
+                        notifyRemove ( entry.getKey () );
                         return true;
                     }
             }
@@ -159,6 +163,32 @@ public class FolderCommon implements Folder
         synchronized ( this )
         {
             listener.changed ( tag, new ArrayList<Entry> ( _entryMap.values () ), new LinkedList<String> (), true );            
+        }
+    }
+    
+    private void notifyAdd ( Entry added )
+    {
+        synchronized ( this )
+        {
+            for ( Map.Entry<Object, FolderListener> entry: _listeners.entrySet () )
+            {
+                List<Entry> list = new LinkedList<Entry> ();
+                list.add ( added );
+                entry.getValue ().changed ( entry.getKey(), list, new LinkedList<String> (), false );
+            }
+        }
+    }
+    
+    private void notifyRemove ( String removed )
+    {
+        synchronized ( this )
+        {
+            for ( Map.Entry<Object, FolderListener> entry: _listeners.entrySet () )
+            {
+                List<String> list = new LinkedList<String> ();
+                list.add ( removed );
+                entry.getValue ().changed ( entry.getKey(), new LinkedList<Entry> (), list , false );
+            }
         }
     }
     
