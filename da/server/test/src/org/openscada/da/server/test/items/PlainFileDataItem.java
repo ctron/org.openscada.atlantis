@@ -21,18 +21,17 @@ public class PlainFileDataItem extends ScheduledDataItem {
 
 	public void run()
     {
-		Map<String,Variant> attributes = new HashMap<String,Variant>();
 		try
 		{
 			read ();
-			attributes.put("error-message",new Variant());
+            getAttributeManager ().update ( "error-message", new Variant () );
 		}
 		catch ( Exception e )
 		{
 			// handle error
-			attributes.put("error-message",new Variant(e.getMessage()));
+            getAttributeManager ().update ( "error-message", new Variant ( e.getMessage () ) );
 		}
-		updateAttributes(attributes);
+		
 	}
 	
 	private void read () throws IOException
