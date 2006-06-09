@@ -1,4 +1,4 @@
-package org.openscada.da.server.test;
+package org.openscada.da.server.snmp;
 
 
 import java.util.HashMap;
@@ -9,9 +9,9 @@ import org.openscada.da.core.common.MemoryDataItem;
 import org.openscada.da.core.common.impl.FolderCommon;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.core.data.Variant;
-import org.openscada.da.server.test.items.MemoryCellItem;
-import org.openscada.da.server.test.items.TimeDataItem;
-import org.openscada.da.server.test.items.WriteDelayItem;
+import org.openscada.da.server.snmp.items.MemoryCellItem;
+import org.openscada.da.server.snmp.items.TimeDataItem;
+import org.openscada.da.server.snmp.items.WriteDelayItem;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.lang.Pair;
 import org.openscada.utils.timing.Scheduler;

@@ -1,4 +1,4 @@
-package org.openscada.da.server.test.items;
+package org.openscada.da.server.snmp.items;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package org.openscada.da.server.test.items;
+package org.openscada.da.server.snmp.items;
 
 
 import org.openscada.da.core.data.Variant;

@@ -1,4 +1,4 @@
-package org.openscada.da.server.test.utils;
+package org.openscada.da.server.snmp.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
