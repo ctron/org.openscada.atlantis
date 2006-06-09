@@ -17,7 +17,7 @@ public class DataItemInputCommon extends DataItemInput
 	private Variant _value = new Variant ();
 	private Map<String, Variant> _attributes = new HashMap<String, Variant> ();
 	
-	public Variant getValue() throws InvalidOperationException
+	public Variant getValue () throws InvalidOperationException
     {
 		return _value;
 	}
