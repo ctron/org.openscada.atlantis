@@ -317,11 +317,13 @@ public class Scheduler implements Runnable
             }
             catch ( NotBoundException e )
             {
+                _log.error ( "scheduler failed", e );
                 _thread = null;
                 return;
             }
             catch ( WrongThreadException e )
             {
+                _log.error ( "scheduler failed", e );
                 _thread = null;
                 return;
             }
