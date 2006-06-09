@@ -17,6 +17,7 @@
 
    <windowImages/>
 
+
    <launcher name="ostc">
       <solaris/>
       <win useIco="false">
@@ -24,13 +25,14 @@
       </win>
    </launcher>
 
+
    <plugins>
    </plugins>
 
    <features>
       <feature id="org.eclipse.rcp" version="3.2.0.v20060511-2000-VDNgUi843pOsLRQ"/>
-      <feature id="org.openscada.da.client.test" version="0.1.9"/>
-      <feature id="org.openscada.da.net.client" version="0.1.4"/>
+      <feature id="org.openscada.da.client.test" version="0.1.10"/>
+      <feature id="org.openscada.da.net.client" version="0.1.5"/>
    </features>
 
 </product>
