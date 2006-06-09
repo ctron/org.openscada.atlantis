@@ -121,7 +121,7 @@ public class Scheduler implements Runnable
      * The job will be executed first after the period time.
      * 
      * @param runnable The runnabel to run
-     * @param period the period
+     * @param period the period in milliseconds
      * @return a job handle that can be used to modify the new job
      */
     public Job addJob ( Runnable runnable, int period )
@@ -133,7 +133,7 @@ public class Scheduler implements Runnable
      * Schedule a job to be executed periodically
      * 
      * @param runnable The runnabel to run
-     * @param period the period
+     * @param period the period in milliseconds
      * @param initialDelay if set to true, it will wait the period, otherwise the job will be executed first as soon as possible
      * @return a job handle that can be used to modify the new job
      */
@@ -154,7 +154,7 @@ public class Scheduler implements Runnable
     /**
      * Schedule a job to be executed once after the period time
      * @param runnable The runnabel to run
-     * @param period the period
+     * @param period the period in milliseconds
      * @return a job handle that can be used to modify the new job
      */
 	public Job scheduleJob ( Runnable runnable, int period )
