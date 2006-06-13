@@ -79,9 +79,9 @@ public class Location
     {
         Stack<String> stack = new Stack<String> ();
         
-        for ( String tok : _location )
+        for ( int i = _location.length; i>0; i-- )
         {
-            stack.push ( tok );
+            stack.push ( _location[i-1] );
         }
         
         return stack;
