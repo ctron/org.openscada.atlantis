@@ -170,10 +170,10 @@ public class FolderCommon implements Folder
     {
         synchronized ( this )
         {
+            List<Entry> list = new LinkedList<Entry> ();
+            list.add ( added );
             for ( Map.Entry<Object, FolderListener> entry: _listeners.entrySet () )
             {
-                List<Entry> list = new LinkedList<Entry> ();
-                list.add ( added );
                 entry.getValue ().changed ( entry.getKey(), list, new LinkedList<String> (), false );
             }
         }
@@ -183,10 +183,10 @@ public class FolderCommon implements Folder
     {
         synchronized ( this )
         {
+            List<String> list = new LinkedList<String> ();
+            list.add ( removed );
             for ( Map.Entry<Object, FolderListener> entry: _listeners.entrySet () )
             {
-                List<String> list = new LinkedList<String> ();
-                list.add ( removed );
                 entry.getValue ().changed ( entry.getKey(), new LinkedList<Entry> (), list , false );
             }
         }
