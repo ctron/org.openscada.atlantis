@@ -75,7 +75,7 @@ public class MessageProcessor implements MessageListener
 		catch ( Exception e )
 		{
             _log.info ( "Message processing failed: ", e );
-			connection.sendMessage(MessageCreator.createFailedMessage(message, e.getMessage()));
+			connection.sendMessage(MessageCreator.createFailedMessage ( message, e ) );
 		}
 	}
 }
