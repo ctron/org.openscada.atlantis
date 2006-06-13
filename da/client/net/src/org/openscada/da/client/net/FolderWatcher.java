@@ -25,25 +25,30 @@ public class FolderWatcher extends Observable implements FolderListener
     
     synchronized public void folderChanged ( Collection<Entry> added, Collection<String> removed, boolean full )
     {
+        int changed = 0;
+        
         if ( full )
         {
-            setChanged ();
             _cache.clear ();
         }
         
         for ( Entry entry : added )
         {
             _cache.put ( entry.getName (), entry );
-            setChanged ();
+            changed++;
         }
         
         for ( String name : removed )
         {
             if ( _cache.remove ( name ) != null )
-                setChanged ();
+                changed++;
         }
         
-        notifyObservers ();
+        if ( changed > 0 )
+        {
+            setChanged ();
+            notifyObservers ();
+        }
     }
 
     public Location getLocation ()
