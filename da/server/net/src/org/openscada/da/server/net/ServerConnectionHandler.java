@@ -30,7 +30,6 @@ import org.openscada.net.da.handler.Messages;
 import org.openscada.net.io.Connection;
 import org.openscada.net.utils.MessageCreator;
 import org.openscada.utils.lang.Holder;
-import org.openscada.utils.str.StringHelper;
 
 public class ServerConnectionHandler extends ConnectionHandlerBase implements ItemChangeListener, ItemListListener, FolderListener
 {
