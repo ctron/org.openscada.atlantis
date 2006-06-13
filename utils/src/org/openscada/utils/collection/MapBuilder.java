@@ -25,6 +25,12 @@ public class MapBuilder<Key, Value>
         return this;
     }
     
+    public MapBuilder<Key, Value> clear ( Key key, Value value )
+    {
+        _map.clear ();
+        return this;
+    }
+    
     public Map<Key, Value> getMap ()
     {
         return _map;
