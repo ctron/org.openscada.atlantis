@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.openscada.da.core.data.AttributesHelper;
 import org.openscada.da.core.data.Variant;
-import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.da.handler.Messages;
 
@@ -133,15 +132,15 @@ public class ItemSyncController
     {
         synchronized ( _listeners )
         {
-            if ( !_listeners.containsKey(listener) )
+            if ( _listeners.containsKey ( listener ) )
             {
-                ListenerInfo info = _listeners.get(listener);
-                if ( info.isInitial() )
+                ListenerInfo info = _listeners.get ( listener );
+                if ( info.isInitial () )
                     _initialListeners--;
                 
-                _listeners.remove(listener);
+                _listeners.remove ( listener );
                 
-                sync();
+                sync ();
             }
         }
     }
