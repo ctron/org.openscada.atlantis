@@ -14,7 +14,16 @@ public class MessageCreator {
 		return msg;
 	}
 	
-	public static Message createFailedMessage ( Message inputMessage, String failMessage )
+    public static Message createFailedMessage ( Message inputMessage, Throwable error )
+    {
+        String msg = error.getMessage ();
+        if ( msg == null )
+            msg = error.toString ();
+        
+        return createFailedMessage ( inputMessage, msg );
+    }
+	
+    public static Message createFailedMessage ( Message inputMessage, String failMessage )
 	{
 		Message msg = new Message ( Message.CC_FAILED );
 		
