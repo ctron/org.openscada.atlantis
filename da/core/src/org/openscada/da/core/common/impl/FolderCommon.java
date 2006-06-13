@@ -77,6 +77,9 @@ public class FolderCommon implements Folder
     
     public boolean add ( String name, DataItem item, Map < String, Variant > attributes )
     {
+        if ( item.getInformation ().getName () == null )
+            throw new NullPointerException ( "Item must have an id" );
+        
         synchronized ( this )
         {
             if ( !_entryMap.containsKey ( name ) )
