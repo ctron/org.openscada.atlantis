@@ -1,13 +1,11 @@
 package org.openscada.da.core.common.impl;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.core.InvalidItemException;
 import org.openscada.da.core.InvalidSessionException;
 import org.openscada.da.core.Session;
 import org.openscada.da.core.browser.Entry;
@@ -16,7 +14,6 @@ import org.openscada.da.core.browser.Location;
 import org.openscada.da.core.browser.NoSuchFolderException;
 import org.openscada.da.core.browser.common.Folder;
 import org.openscada.da.core.browser.common.FolderListener;
-import org.openscada.utils.str.StringHelper;
 
 public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, SessionListener
 {
@@ -44,12 +41,11 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
             throw new NoSuchFolderException ();
         }
         
-        Stack<String> pathStack = new Stack<String> ();
-        pathStack.addAll ( location.asList () );
+        Stack<String> pathStack = location.getPathStack ();
         return getRootFolder ().list ( pathStack );
     }
     
-    public void subscribe ( Session session, Location path ) throws NoSuchFolderException, InvalidSessionException
+    public void subscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException
     {
         _hive.validateSession ( session );
         
@@ -59,14 +55,13 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
             throw new NoSuchFolderException ();
         }
         
-        Stack<String> pathStack = new Stack<String> ();
-        pathStack.addAll ( path.asList () );
+        Stack<String> pathStack = location.getPathStack ();
         
         synchronized ( _subscriberMap )
         {
             SessionCommon sessionCommon = (SessionCommon)session;
             Object tag = new Object ();
-            sessionCommon.getData ().addPath ( tag, new Location ( path ) );
+            sessionCommon.getData ().addPath ( tag, new Location ( location ) );
             _subscriberMap.put ( tag, sessionCommon );
 
             boolean success = false;
@@ -79,7 +74,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
             {
                 if ( !success )
                 {
-                    sessionCommon.getData ().removePath ( new Location ( path ) );
+                    sessionCommon.getData ().removePath ( new Location ( location ) );
                     _subscriberMap.remove ( tag );
                 }
             }
@@ -111,8 +106,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
                 _subscriberMap.remove ( tag );
             }
             
-            Stack<String> pathStack = new Stack<String> ();
-            pathStack.addAll ( location.asList () );
+            Stack<String> pathStack = location.getPathStack ();
             
             getRootFolder ().unsubscribe ( pathStack, tag );
         }

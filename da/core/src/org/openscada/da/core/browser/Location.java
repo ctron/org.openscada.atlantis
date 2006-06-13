@@ -3,6 +3,7 @@ package org.openscada.da.core.browser;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Stack;
 
 import org.openscada.utils.str.StringHelper;
 
@@ -72,5 +73,17 @@ public class Location
         if ( !Arrays.equals ( _location, other._location ) )
             return false;
         return true;
+    }
+    
+    public Stack<String> getPathStack ()
+    {
+        Stack<String> stack = new Stack<String> ();
+        
+        for ( String tok : _location )
+        {
+            stack.push ( tok );
+        }
+        
+        return stack;
     }
 }
