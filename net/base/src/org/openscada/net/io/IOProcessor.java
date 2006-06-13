@@ -136,8 +136,6 @@ public class IOProcessor implements Runnable {
 					
 					// clear the selected list
 					_selector.selectedKeys().clear();
-					
-					System.gc();
 				}
                 
                 _scheduler.runOnce ();
