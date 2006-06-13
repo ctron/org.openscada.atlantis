@@ -24,7 +24,7 @@ public class Location
     {
     }
     
-    public Location ( Collection<String> location )
+    public Location ( List<String> location )
     {
         _location = location.toArray ( new String[location.size()] );
     }
