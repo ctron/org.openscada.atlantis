@@ -10,6 +10,7 @@ import org.openscada.da.core.common.impl.FolderCommon;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.core.data.Variant;
 import org.openscada.da.server.test.items.MemoryCellItem;
+import org.openscada.da.server.test.items.SuspendItem;
 import org.openscada.da.server.test.items.TimeDataItem;
 import org.openscada.da.server.test.items.WriteDelayItem;
 import org.openscada.utils.collection.MapBuilder;
@@ -108,6 +109,12 @@ public class Hive extends HiveCommon {
         registerItem ( item = new WriteDelayItem ( "write-delay" ) );
         testFolder.add ( "write delay", item, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "Simulate a long running write operation here. The value written to the data item is used as microsecond delay that the write operation will take." ) )
+                .getMap ()
+        );
+        
+        registerItem ( item = new SuspendItem ( "suspendable" ) );
+        testFolder.add ( "suspendable", item, new MapBuilder<String, Variant> ()
+                .put ( "description", new Variant ( "This item is suspendable and will print is suspend status when it changes. Result can only be seen on the server itself." ) )
                 .getMap ()
         );
         
