@@ -15,12 +15,12 @@ public class SuspendItem extends DataItemInputCommon implements SuspendableItem
 
     public void suspend ()
     {
-       _log.warn ( String.format ( "Item %$1s suspended", getInformation ().getName () ) );
+       _log.warn ( String.format ( "Item %1$s suspended", getInformation ().getName () ) );
     }
 
     public void wakeup ()
     {
-        _log.warn ( String.format ( "Item %$1s woken up", getInformation ().getName () ) );
+        _log.warn ( String.format ( "Item %1$s woken up", getInformation ().getName () ) );
     }
 
 }
