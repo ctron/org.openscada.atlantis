@@ -1,11 +1,11 @@
 package org.openscada.utils.str;
 
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 public class StringHelper
 {
-    public static String join ( Collection items, String delimiter )
+    public static String join ( List items, String delimiter )
     {
         StringBuffer buffer = new StringBuffer ();
         Iterator iter = items.iterator ();
