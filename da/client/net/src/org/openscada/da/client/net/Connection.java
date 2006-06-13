@@ -402,13 +402,13 @@ public class Connection
     {
         synchronized ( _itemListeners )
         {
-            if (!_itemListeners.containsKey(itemName))
+            if ( !_itemListeners.containsKey ( itemName ) )
             {
                 return;
             }
 
-            ItemSyncController controller = _itemListeners.get(itemName);
-            controller.remove(listener);
+            ItemSyncController controller = _itemListeners.get ( itemName );
+            controller.remove ( listener );
         }
     }
 
@@ -686,7 +686,7 @@ public class Connection
             resyncAllItems ();
             
             // subscribe enum service
-            subscribeEnum ();
+            // subscribeEnum ();
             
             // sync again all folder subscriptions
             resyncAllFolders ();
