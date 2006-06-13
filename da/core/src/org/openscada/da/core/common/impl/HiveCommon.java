@@ -181,8 +181,9 @@ public class HiveCommon implements Hive, ItemListener
 			throw new InvalidItemException(itemName);
 		
 		SessionCommon sessionCommon = (SessionCommon)session;
-		sessionCommon.getData().addItem(item);
-        DataItemInfo info = _items.get(item); 
+		sessionCommon.getData().addItem ( item );
+        DataItemInfo info = _items.get ( item );
+        
 		info.addSession ( sessionCommon );
         
         // process initial transmission
