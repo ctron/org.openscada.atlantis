@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openscada.da.core.common.DataItem;
+import org.openscada.da.core.common.SuspendableItem;
 import org.openscada.da.core.data.AttributesHelper;
 import org.openscada.da.core.data.Variant;
 
@@ -26,19 +27,45 @@ public class DataItemInfo {
 		return _sessions;
 	}
 	
+    /**
+     * Add a session to the items listeners
+     * <p>
+     * Also if the item implements SuspendableItem the {@link SuspendableItem#wakeup()}
+     * method is called.
+     * @param session the session to add
+     */
 	public void addSession ( SessionCommon session )
 	{
 		synchronized ( _sessions )
 		{
-			_sessions.add(session);
+            if ( _sessions.size () == 0 )
+            {
+                if ( _item instanceof SuspendableItem )
+                    ((SuspendableItem)_item).wakeup ();
+            }
+            
+			_sessions.add ( session );
         }
 	}
-
+    
+	/**
+	 * Remove a session from the items listeners
+	 * <p>
+	 * Also if the item implements SuspendableItem the {@link SuspendableItem#suspend()}
+	 * method is called.
+	 * @param session the session to remove
+	 */
 	public void removeSession ( SessionCommon session )
 	{
 		synchronized ( _sessions )
 		{
-			_sessions.remove(session);
+			_sessions.remove ( session );
+            
+            if ( _sessions.size () == 0 )
+            {
+                if ( _item instanceof SuspendableItem )
+                    ((SuspendableItem)_item).suspend ();
+            }
 		}		
 	}
 	
