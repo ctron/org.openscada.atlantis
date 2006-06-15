@@ -25,25 +25,25 @@ public class Scheduler implements Runnable
 		{
 			_runnable = runnable;
 			_period = period;
-			_lastTime = System.currentTimeMillis();
+			_lastTime = System.currentTimeMillis ();
 		}
         
         public Job ( Runnable runnable, int period, boolean once )
         {
             _runnable = runnable;
             _period = period;
-            _lastTime = System.currentTimeMillis();
+            _lastTime = System.currentTimeMillis ();
             _once = once;
         }
         
 		public boolean isTimeOut ()
 		{
-			return (System.currentTimeMillis() - _lastTime) >= _period;
+			return (System.currentTimeMillis () - _lastTime) >= _period;
 		}
 		
 		public void run ()
 		{
-			_lastTime = System.currentTimeMillis();
+			_lastTime = System.currentTimeMillis ();
 			if ( _runnable != null)
 				_runnable.run();
 		}
