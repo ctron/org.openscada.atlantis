@@ -1,4 +1,4 @@
-package org.openscada.da.core.common.impl;
+package org.openscada.da.core.browser.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,10 +10,6 @@ import java.util.Stack;
 
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.NoSuchFolderException;
-import org.openscada.da.core.browser.common.DataItemEntryCommon;
-import org.openscada.da.core.browser.common.Folder;
-import org.openscada.da.core.browser.common.FolderEntryCommon;
-import org.openscada.da.core.browser.common.FolderListener;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.data.Variant;
 
@@ -67,7 +63,9 @@ public class FolderCommon implements Folder
         {
             if ( !_entryMap.containsKey ( name ) )
             {
-                _entryMap.put ( name, new FolderEntryCommon ( name, folder, attributes ) );
+                Entry entry = new FolderEntryCommon ( name, folder, attributes );
+                _entryMap.put ( name, entry );
+                notifyAdd ( entry );
                 return true;
             }
             else
@@ -109,6 +107,59 @@ public class FolderCommon implements Folder
         }
     }
     
+    public String findEntry ( DataItem item )
+    {
+        synchronized ( this )
+        {
+            for ( Iterator<Map.Entry<String, Entry>> i = _entryMap.entrySet ().iterator () ; i.hasNext () ; )
+            {
+                Map.Entry<String, Entry> entry = i.next ();
+                if ( entry.getValue() instanceof DataItemEntryCommon )
+                    if ( ((DataItemEntryCommon)entry.getValue()).getItem () == item )
+                    {
+                        return entry.getKey ();
+                    }
+            }
+            return null;
+        }
+    }
+    
+    public String findEntry ( Folder folder )
+    {
+        synchronized ( this )
+        {
+            for ( Iterator<Map.Entry<String, Entry>> i = _entryMap.entrySet ().iterator () ; i.hasNext () ; )
+            {
+                Map.Entry<String, Entry> entry = i.next ();
+                if ( entry.getValue() instanceof FolderEntryCommon )
+                    if ( ((FolderEntryCommon)entry.getValue()).getFolder () == folder )
+                    {
+                        return entry.getKey ();
+                    }
+            }
+            return null;
+        }
+    }
+    
+    public boolean remove ( Folder folder )
+    {
+        synchronized ( this )
+        {
+            for ( Iterator<Map.Entry<String, Entry>> i = _entryMap.entrySet ().iterator () ; i.hasNext () ; )
+            {
+                Map.Entry<String, Entry> entry = i.next ();
+                if ( entry.getValue() instanceof FolderEntryCommon )
+                    if ( ((FolderEntryCommon)entry.getValue()).getFolder () == folder )
+                    {
+                        i.remove ();
+                        notifyRemove ( entry.getKey () );
+                        return true;
+                    }
+            }
+            return false;
+        }
+    }
+    
     public boolean remove ( DataItem item )
     {
         synchronized ( this )
@@ -116,8 +167,8 @@ public class FolderCommon implements Folder
             for ( Iterator<Map.Entry<String, Entry>> i = _entryMap.entrySet ().iterator () ; i.hasNext () ; )
             {
                 Map.Entry<String, Entry> entry = i.next ();
-                if ( entry instanceof DataItemEntryCommon )
-                    if ( ((DataItemEntryCommon)entry).getItem () == item )
+                if ( entry.getValue() instanceof DataItemEntryCommon )
+                    if ( ((DataItemEntryCommon)entry.getValue()).getItem () == item )
                     {
                         i.remove ();
                         notifyRemove ( entry.getKey () );
@@ -193,6 +244,15 @@ public class FolderCommon implements Folder
                 entry.getValue ().changed ( entry.getKey(), new LinkedList<Entry> (), list , false );
             }
         }
+    }
+
+    /**
+     * Get the number of entries in this folder
+     * @return the number of entries in this folder
+     */
+    public int size ()
+    {
+        return _entryMap.size ();
     }
     
 }
