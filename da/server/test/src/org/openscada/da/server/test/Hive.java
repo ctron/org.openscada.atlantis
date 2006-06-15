@@ -2,11 +2,20 @@ package org.openscada.da.server.test;
 
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.openscada.da.core.browser.common.FolderCommon;
+import org.openscada.da.core.browser.common.query.GroupFolder;
+import org.openscada.da.core.browser.common.query.GroupProvider;
+import org.openscada.da.core.browser.common.query.IDNameProvider;
+import org.openscada.da.core.browser.common.query.ItemDescriptor;
+import org.openscada.da.core.browser.common.query.Matcher;
+import org.openscada.da.core.browser.common.query.NullNameProvider;
+import org.openscada.da.core.browser.common.query.QueryFolder;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.MemoryDataItem;
-import org.openscada.da.core.common.impl.FolderCommon;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.core.data.Variant;
 import org.openscada.da.server.test.items.MemoryCellItem;
@@ -14,12 +23,13 @@ import org.openscada.da.server.test.items.SuspendItem;
 import org.openscada.da.server.test.items.TimeDataItem;
 import org.openscada.da.server.test.items.WriteDelayItem;
 import org.openscada.utils.collection.MapBuilder;
-import org.openscada.utils.lang.Pair;
 import org.openscada.utils.timing.Scheduler;
 
 public class Hive extends HiveCommon {
 	
 	private Scheduler _scheduler = new Scheduler();
+    
+    private List<ItemDescriptor> _changingItems = new LinkedList<ItemDescriptor> ();
 	
 	public Hive ()
 	{
@@ -41,8 +51,49 @@ public class Hive extends HiveCommon {
                 .getMap ()
         );
         
+        // query folders
+        final QueryFolder queryFolderRoot = new QueryFolder ( new Matcher () {
+
+            public boolean matches ( ItemDescriptor desc )
+            {
+                return true;
+            }}, new NullNameProvider () );
+        QueryFolder queryFolder1 = new QueryFolder ( new Matcher () {
+
+            public boolean matches ( ItemDescriptor desc )
+            {
+                return desc.getItem ().getInformation ().getName ().matches ( ".*e+.*" );
+            }}, new IDNameProvider () );
+        
+        queryFolderRoot.addChild ( "query", queryFolder1, new MapBuilder<String, Variant> ()
+                .put ( "description", new Variant ( "contains items the have an 'e' in their id" ) )
+                .getMap ()
+        );
+        testFolder.add ( "storage", queryFolderRoot, new MapBuilder<String, Variant> ()
+                .put ( "description", new Variant ( "storage based folder for grouping and query folders" ) )
+                .getMap ()
+        );
+        
+        // Group Folders
+        GroupFolder groupFolder = new GroupFolder ( new GroupProvider () {
+
+            public String[] getGrouping ( ItemDescriptor descriptor )
+            {
+                String id = descriptor.getItem ().getInformation ().getName ();
+                if ( id.length () >= 2 )
+                    return new String [] {
+                        String.valueOf ( id.charAt ( 0 ) ),
+                        String.valueOf ( id.charAt ( 1 ) ) };
+                else
+                    return null;
+            }}, new IDNameProvider () );
+        queryFolderRoot.addChild ( "grouping1", groupFolder, new MapBuilder<String, Variant> ()
+                .put ( "description", new Variant ( "Items with an ID of lenght >=2 will be pre-grouped by their first two characters" ) )
+                .getMap ()
+        );
         
         DataItem item;
+        MapBuilder<String, Variant> builder = new MapBuilder<String, Variant> ();
         
 		registerItem ( item = new MemoryDataItem ( "memory" ) );
 		testFolder.add ( "memory", item, new MapBuilder<String, Variant> ()
@@ -97,10 +148,11 @@ public class Hive extends HiveCommon {
         );
         
 		registerItem ( item = new TimeDataItem ( "time", _scheduler ) );
-        testFolder.add ( "time", item, new MapBuilder<String, Variant> ()
-                .put ( "description", new Variant ( "Need the unix time in microseconds? You get it here!" ) )
-                .getMap ()
-        );
+        builder.clear ();
+        builder.put ( "description", new Variant ( "Need the unix time in microseconds? You get it here!" ) );
+        testFolder.add ( "time", item, builder.getMap () );
+        _changingItems.add ( new ItemDescriptor ( item, builder.getMap () ) );
+        
         testFolder.add ( String.valueOf ( System.currentTimeMillis () ), item, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "Alias to 'time' but with a name that will change every server startup." ) )
                 .getMap ()
@@ -113,10 +165,10 @@ public class Hive extends HiveCommon {
         );
         
         registerItem ( item = new SuspendItem ( "suspendable" ) );
-        testFolder.add ( "suspendable", item, new MapBuilder<String, Variant> ()
-                .put ( "description", new Variant ( "This item is suspendable and will print is suspend status when it changes. Result can only be seen on the server itself." ) )
-                .getMap ()
-        );
+        builder.clear ();
+        builder.put ( "description", new Variant ( "This item is suspendable and will print is suspend status when it changes. Result can only be seen on the server itself." ) );
+        testFolder.add ( "suspendable", item, builder.getMap () );
+        _changingItems.add ( new ItemDescriptor ( item, builder.getMap () ) );
         
         FolderCommon memoryFolder = new FolderCommon ();
         rootFolder.add ( "memory-cell", memoryFolder, new HashMap<String, Variant> () );
@@ -126,5 +178,39 @@ public class Hive extends HiveCommon {
                 .getMap ()
                 );
         
+        Thread changeThread = new Thread ( new Runnable () {
+
+            public void run ()
+            {
+                while ( true )
+                {
+                    for ( ItemDescriptor desc : _changingItems )
+                    {
+                        queryFolderRoot.added ( desc );
+                    }
+                    try
+                    {
+                        Thread.sleep ( 5 * 1000 );
+                    }
+                    catch ( InterruptedException e )
+                    {
+                        e.printStackTrace();
+                    }
+                    for ( ItemDescriptor desc : _changingItems )
+                    {
+                        queryFolderRoot.removed ( desc );
+                    }
+                    try
+                    {
+                        Thread.sleep ( 5 * 1000 );
+                    }
+                    catch ( InterruptedException e )
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }} );
+        changeThread.setDaemon ( true );
+        changeThread.start ();
 	}
 }

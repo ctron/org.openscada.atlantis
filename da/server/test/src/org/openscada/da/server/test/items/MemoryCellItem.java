@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.da.core.InvalidOperationException;
+import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemOutput;
 import org.openscada.da.core.common.MemoryDataItem;
-import org.openscada.da.core.common.impl.FolderCommon;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
