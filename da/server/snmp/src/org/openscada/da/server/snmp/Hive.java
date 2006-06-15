@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.core.common.impl.FolderCommon;
+import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.utils.timing.Scheduler;
 

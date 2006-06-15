@@ -1,29 +1,49 @@
 package org.openscada.da.server.snmp;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
+import net.percederberg.mibble.Mib;
+import net.percederberg.mibble.MibValueSymbol;
+import net.percederberg.mibble.value.ObjectIdentifierValue;
+
+import org.apache.log4j.Logger;
+import org.openscada.da.core.browser.common.FolderCommon;
+import org.openscada.da.core.browser.common.query.AttributeNameProvider;
+import org.openscada.da.core.browser.common.query.GroupFolder;
+import org.openscada.da.core.browser.common.query.InvisibleStorage;
+import org.openscada.da.core.browser.common.query.ItemDescriptor;
+import org.openscada.da.core.browser.common.query.NameProvider;
+import org.openscada.da.core.browser.common.query.SplitGroupProvider;
 import org.openscada.da.core.common.DataItemInputCommon;
-import org.openscada.da.core.common.impl.FolderCommon;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.core.data.Variant;
 import org.openscada.da.server.snmp.items.SNMPItem;
+import org.openscada.da.server.snmp.utils.ListOIDWalker;
+import org.openscada.da.server.snmp.utils.MIBManager;
 import org.openscada.da.server.snmp.utils.SNMPBulkReader;
 import org.openscada.utils.collection.MapBuilder;
-import org.openscada.utils.str.StringHelper;
 import org.openscada.utils.timing.Scheduler;
 import org.snmp4j.smi.OID;
 
 
 public class SNMPNode
 {
+    @SuppressWarnings("unused")
+    private static Logger _log = Logger.getLogger ( SNMPNode.class );
+    
     private HiveCommon _hive = null;
     private FolderCommon _rootFolder = null;
     
     private boolean _registered = false;
     
     private FolderCommon _nodeFolder = null;
-    private FolderCommon _testFolder = null;
+    private FolderCommon _mibFolder = null;
+    private GroupFolder _oidGroupFolder = null;
+    private GroupFolder _mibGroupFolder = null;
     private ConnectionInformation _connectionInformation = null;
     private Connection _connection = null;
     
@@ -32,6 +52,10 @@ public class SNMPNode
     private Scheduler _scheduler = null;
     private SNMPBulkReader _bulkReader = null;
     private Scheduler.Job _bulkReaderJob = null;
+    
+    private Map<OID, SNMPItem> _itemMap = new HashMap<OID, SNMPItem> ();
+    
+    private InvisibleStorage _storage = new InvisibleStorage ();
     
     public SNMPNode ( HiveCommon hive, FolderCommon rootFolder, ConnectionInformation connectionInformation )
     {
@@ -44,6 +68,8 @@ public class SNMPNode
         _connectionInfoItem = new DataItemInputCommon ( getItemIDPrefix () + ".connection" );
         
         _bulkReader = new SNMPBulkReader ( this );
+        
+        
     }
     
     synchronized public void register ()
@@ -58,20 +84,35 @@ public class SNMPNode
                 .getMap ()
         );
         
-        // test folder
-        _testFolder = new FolderCommon ();
-        _nodeFolder.add ( "test", _testFolder, new MapBuilder<String, Variant> ()
+        // oid group folder
+        _oidGroupFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ("snmp.oid" ), "\\." ), new NameProvider (){
+            public String getName ( ItemDescriptor descriptor )
+            {
+                return "value";
+            } } );
+        _nodeFolder.add ( "numeric", _oidGroupFolder, new MapBuilder<String, Variant> ()
+                .put ( "description", new Variant ( "Auto grouping by OID" ) )
                 .getMap ()
         );
-        
+        _storage.addChild ( _oidGroupFolder );
+        // mib group folder
+        _mibGroupFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ("snmp.oid.symbolic" ), "\\." ), new NameProvider (){
+            public String getName ( ItemDescriptor descriptor )
+            {
+                return "value";
+            } } );
+        _nodeFolder.add ( "symbolic", _mibGroupFolder, new MapBuilder<String, Variant> ()
+                .put ( "description", new Variant ( "Auto grouping by symbolic OID" ) )
+                .getMap ()
+        );
+        _storage.addChild ( _mibGroupFolder );
+
+        // connection info item
         _hive.registerItem ( _connectionInfoItem );
         _nodeFolder.add ( "connection", _connectionInfoItem, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "Item contains connection information" ) )
                 .getMap ()
         );
-        
-        createItem ( new OID ( "1.3.6.1.2.1.1.3.0" ) );
-        createItem ( new OID ( ".1.3.6.1.2.1.31.1.1.1.6.4" ) );
         
         _connectionInfoItem.updateValue ( new Variant ( 0 ) );
         try
@@ -92,6 +133,16 @@ public class SNMPNode
                     .put ( "address", new Variant ( _connectionInformation.getAddress () ) )
                     .getMap ()
             );
+            
+            _mibFolder = new FolderCommon ();
+            _nodeFolder.add ( "MIB", _mibFolder, new MapBuilder<String, Variant> ()
+                    .put ( "description", new Variant ( "Contains entries of all MIBs that are loaded" ) )
+                    .getMap ()
+            );
+            
+            populateByWalk ();
+            buildMIBFolders ();
+            
         }
         catch ( IOException e )
         {
@@ -109,10 +160,15 @@ public class SNMPNode
         
         _scheduler.removeJob ( _bulkReaderJob );
         
+        _storage.removeChild ( _oidGroupFolder );
+        
         _hive.unregisterItem ( _connectionInfoItem );
         
         _rootFolder.remove ( getNodeFolderName () );
         _nodeFolder = null;
+        _oidGroupFolder = null;
+        _mibGroupFolder = null;
+        _mibFolder = null;
         
     }
     
@@ -141,18 +197,104 @@ public class SNMPNode
         return _bulkReader;
     }
     
-    private void createItem ( OID oid )
+    private SNMPItem createItem ( OID oid )
     {
-        String itemId = oid.toString ();
+        String itemId;
+        
+        if ( oid.size () > 0 )
+            itemId = oid.toString ();
+        else
+            itemId = "";
         String id = getItemIDPrefix () + "." + itemId; 
         SNMPItem item = new SNMPItem ( this, id, oid );
         
-        _hive.registerItem ( item );
-        _testFolder.add ( itemId, item, new MapBuilder<String, Variant> ()
-                .getMap ()
-        );
+        MapBuilder<String, Variant> builder = new MapBuilder<String, Variant> ();
+        builder.put ( "snmp.oid", new Variant ( oid.toString () ) );
         
+        MIBManager.getInstance ().fillAttributes ( oid, builder);
+        
+        _storage.added ( new ItemDescriptor ( item, builder.getMap () ) );
+        
+        _hive.registerItem ( item );
+        
+        return item;
+    }
+    
+    public SNMPItem getSNMPItem ( OID oid )
+    {
+        synchronized ( _itemMap )
+        {
+            if ( !_itemMap.containsKey ( oid ) )
+            {
+                _itemMap.put ( oid, createItem ( oid ) );
+            }
+            return _itemMap.get ( oid );
+        }
+    }
+    
+    private void populateMIBFolder ( MibValueSymbol vs, FolderCommon baseFolder )
+    {
+        for ( MibValueSymbol child : vs.getChildren () )
+        {
+            MapBuilder<String, Variant> attributes = new MapBuilder<String, Variant> ();
+            
+            if ( child.getComment () != null )
+                attributes.put ( "snmp.mib.comment", new Variant ( child.getComment () ) );
+            
+            FolderCommon folder = new FolderCommon ();
+            
+            if ( child.getValue () instanceof ObjectIdentifierValue )
+            {
+                attributes.put ( "snmp.oid", new Variant ( child.getValue ().toString () ) );
+                
+                // no need to add an item since the instance number is missing anyway
+                // SNMPItem item = getSNMPItem ( new OID ( child.getValue ().toString () ) );
+                //folder.add ( "value", item, attributes.getMap () );
+            }
+            
+            baseFolder.add ( child.getName (), folder, attributes.getMap () );
+            
+            populateMIBFolder ( child, folder );
+        }
+    }
+    
+    private void buildMIBFolders ()
+    {
+        Collection<Mib> mibs = MIBManager.getInstance ().getAllMIBs ();
+        for ( Mib mib : mibs )
+        {
+            FolderCommon mibBaseFolder = new FolderCommon ();
+            MapBuilder<String, Variant> attributes = new MapBuilder<String, Variant> ();
+            attributes.put ( "description", new Variant ( "Automatically generated base folder for MIB" ) );
+            
+            String header = mib.getHeaderComment ();
+            if ( header != null )
+                attributes.put ( "snmp.mib.header", new Variant ( header ) );
+            
+            String footer = mib.getFooterComment ();
+            if ( footer != null )
+                attributes.put ( "snmp.mib.footer", new Variant ( footer ) );
+            
+            attributes.put ( "snmp.mib.root", new Variant ( mib.getRootSymbol ().getValue ().toString () ) );
+            
+            attributes.put ( "snmp.mib.smi.version", new Variant ( mib.getSmiVersion () ) );
+            
+            populateMIBFolder ( mib.getRootSymbol (), mibBaseFolder );
+            
+            _mibFolder.add ( mib.getName (), mibBaseFolder, attributes.getMap () );
 
-        item.start ();
+        }
+    }
+    
+    private void populateByWalk ()
+    {
+        ListOIDWalker walker = new ListOIDWalker ( this, new OID (), false );
+        walker.run ();
+        Set<OID> list = walker.getList ();
+        
+        for ( OID oid : list )
+        {
+            getSNMPItem ( oid );
+        }
     }
 }

@@ -9,11 +9,11 @@ import org.openscada.da.core.InvalidOperationException;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemBase;
 import org.openscada.da.core.common.DataItemInformationBase;
+import org.openscada.da.core.common.SuspendableItem;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
 import org.openscada.da.server.snmp.SNMPNode;
-import org.openscada.da.server.snmp.utils.SNMPBulkReader;
 import org.snmp4j.PDU;
 import org.snmp4j.event.ResponseEvent;
 import org.snmp4j.smi.Null;
@@ -21,7 +21,7 @@ import org.snmp4j.smi.OID;
 import org.snmp4j.smi.Variable;
 import org.snmp4j.smi.VariableBinding;
 
-public class SNMPItem extends DataItemBase implements Runnable
+public class SNMPItem extends DataItemBase implements Runnable, SuspendableItem
 {
     private static Logger _log = Logger.getLogger ( SNMPItem.class );
     private AttributeManager _attributes = null;
@@ -35,8 +35,6 @@ public class SNMPItem extends DataItemBase implements Runnable
     {
         super ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
 
-        _log.debug ( "new snmp item" );
-        
         _node = node;
         _oid = oid;
         
@@ -45,12 +43,15 @@ public class SNMPItem extends DataItemBase implements Runnable
     
     public void start ()
     {
+        _log.debug ( "Starting item: " + _oid );
         //_node.getScheduler ().addJob ( this, 1000, true );
         _node.getBulkReader ().add ( this );
     }
     
     public void stop ()
     {
+        _log.debug ( "Stopping item: " + _oid );
+        
         //_node.getScheduler ().removeJob ( this );
         _node.getBulkReader ().remove ( this );
         
@@ -191,6 +192,16 @@ public class SNMPItem extends DataItemBase implements Runnable
     public OID getOID ()
     {
         return _oid;
+    }
+
+    public void suspend ()
+    {
+       stop ();
+    }
+
+    public void wakeup ()
+    {
+        start ();
     }
 
 }
