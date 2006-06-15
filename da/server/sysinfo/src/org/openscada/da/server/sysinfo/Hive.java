@@ -3,8 +3,8 @@ package org.openscada.da.server.sysinfo;
 
 import java.io.File;
 
+import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.common.DataItem;
-import org.openscada.da.core.common.impl.FolderCommon;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.core.data.Variant;
 import org.openscada.da.server.sysinfo.items.LoadAverageJob;
