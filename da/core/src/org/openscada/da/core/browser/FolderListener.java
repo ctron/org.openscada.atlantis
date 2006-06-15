@@ -2,8 +2,6 @@ package org.openscada.da.core.browser;
 
 import java.util.Collection;
 
-import org.openscada.da.core.browser.Entry;
-
 
 public interface FolderListener
 {

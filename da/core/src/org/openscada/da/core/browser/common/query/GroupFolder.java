@@ -1,9 +1,7 @@
 package org.openscada.da.core.browser.common.query;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 
 import org.openscada.da.core.browser.Entry;
