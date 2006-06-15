@@ -572,9 +572,11 @@ public class Connection
 
             ListBrowser.parseEvent ( message, path, added, removed, initial );
             
-            _log.debug ( String.format ( "Added: %1$d Removed: %2$d", added.size (), removed.size() ) );
+            Location location = new Location ( path );
+            
+            _log.debug ( String.format ( "Folder: %1$s Added: %2$d Removed: %3$d", location.toString (), added.size (), removed.size() ) );
 
-            fireBrowseEvent ( new Location ( path ), added, removed, initial.value );
+            fireBrowseEvent ( location, added, removed, initial.value );
         }
     }
 
