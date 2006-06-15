@@ -2,7 +2,6 @@ package org.openscada.da.client.net.test;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Observable;
@@ -20,6 +19,7 @@ import org.openscada.da.core.IODirection;
 import org.openscada.da.core.browser.DataItemEntry;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.FolderEntry;
+import org.openscada.da.core.browser.Location;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
 import org.openscada.utils.timing.Scheduler;
@@ -67,28 +67,10 @@ public class Application
                 _log.debug("END - Item list");
             }});
         
-        final FolderWatcher folderWatcher = new FolderWatcher ( "test" );
-        folderWatcher.addObserver ( new Observer () {
-
-            public void update ( Observable o, Object arg )
-            {
-                _log.debug ( "Folder 'test' changed to:" );
-                
-                for ( Entry entry : folderWatcher.getList() )
-                {
-                    String str = "";
-                    
-                    str += entry.getName () + " ";
-                    
-                    if ( entry instanceof FolderEntry )
-                        str += "F ";
-                    else if ( entry instanceof DataItemEntry )
-                        str += "D " + ((DataItemEntry)entry).getId ();
-                    
-                    _log.debug ( "  " + str );
-                }
-            }} );
-        connection.addFolderWatcher ( folderWatcher );
+        FolderDumper folderDumper;
+        
+        folderDumper = new FolderDumper ( connection, new Location ( "test" ) );
+        folderDumper.start ();
         
         connection.addItemUpdateListener ( "time", true, new ItemUpdateListener(){
 
