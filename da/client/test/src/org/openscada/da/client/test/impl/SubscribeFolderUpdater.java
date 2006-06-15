@@ -12,6 +12,7 @@ public class SubscribeFolderUpdater extends FolderUpdater implements Observer
     
     private boolean _subscribed = false;
     private FolderWatcher _watcher = null;
+    private boolean _disposing = false;
     
     public SubscribeFolderUpdater ( HiveConnection connection, FolderEntry folder, boolean autoInitialize )
     {
@@ -66,15 +67,17 @@ public class SubscribeFolderUpdater extends FolderUpdater implements Observer
     }
 
     @Override
-    public void dispose ()
+    synchronized public void dispose ()
     {
+        _disposing = true;
         unsubscribe ();
     }
 
     @Override
-    public void init ()
+    synchronized public void init ()
     {
-        subscribe ();
+        if ( !_disposing )
+            subscribe ();
     }
 
 }

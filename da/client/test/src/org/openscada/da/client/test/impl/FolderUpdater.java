@@ -109,9 +109,10 @@ public abstract class FolderUpdater extends Observable
                     folderEntry.dispose ();
                 }
             }
+            _entries.clear ();
             notifyChange ();
         }
-        _entries.clear ();
+        
         _entries = null;
     }
 

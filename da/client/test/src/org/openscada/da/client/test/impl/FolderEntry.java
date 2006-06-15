@@ -37,8 +37,16 @@ public class FolderEntry extends BrowserEntry implements Observer
     
     public void dispose ()
     {
-        _updater.deleteObserver ( this );
-        _updater.dispose ();
+        try
+        {
+            _updater.deleteObserver ( this );
+            _updater.dispose ();
+        }
+        catch ( Exception e )
+        {
+            _log.warn ( "Disposing failed", e );
+        }
+            
     }
 
     public Location getLocation ()
