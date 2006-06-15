@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.client.test"
       label="OpenSCADA DA Test Client Feature"
-      version="0.1.11"
+      version="0.1.12"
       provider-name="OpenSCADA"
       plugin="org.openscada.da.client.test">
 
