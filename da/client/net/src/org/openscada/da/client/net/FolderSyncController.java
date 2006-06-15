@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.Location;
 import org.openscada.net.da.handler.ListBrowser;
-import org.openscada.utils.str.StringHelper;
 
 public class FolderSyncController extends FolderWatcher
 {
