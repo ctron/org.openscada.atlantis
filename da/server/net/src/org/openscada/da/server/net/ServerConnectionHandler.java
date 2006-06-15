@@ -103,7 +103,6 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 
             public void messageReceived ( Connection connection, Message message )
             {
-                _log.debug ( "bla" );
                 performBrowserSubscribe ( message );
             }});
         
@@ -404,14 +403,20 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         }
         catch ( NoSuchFolderException e )
         {
-            _log.warn ( "Unable to subscribe to folder", e );
+            _log.warn ( "Unable to subscribe to folder: " + location.toString (), e );
             getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Folder not found" ) );
             return;
         }
         catch ( InvalidSessionException e )
         {
-            _log.warn ( "Unable to subscribe to folder", e );
+            _log.warn ( "Unable to subscribe to folder: " + location.toString (), e );
             getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Invalid session" ) );
+            return;
+        }
+        catch ( Exception e )
+        {
+            _log.warn ( "Browsing failed", e  );
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, e ) );
             return;
         }
     }
@@ -422,6 +427,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         
         if ( browser == null )
         {
+            _log.warn ( "Unable to unsubscribe from folder: no hive browser set" );
             getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Interface not supported" ) );
             return;
         }
@@ -430,6 +436,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         
         try
         {
+            _log.debug ( "Unsubscribe from folder: " + location.toString () );
             browser.unsubscribe ( _session, location );
         }
         catch ( NoSuchFolderException e )
