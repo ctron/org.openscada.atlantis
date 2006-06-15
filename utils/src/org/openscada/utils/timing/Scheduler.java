@@ -18,38 +18,43 @@ public class Scheduler implements Runnable
 	{
 		private Runnable _runnable;
 		private int _period;
-		private long _lastTime;
+		private long _nextTime;
         private boolean _once = false;
 		
 		public Job ( Runnable runnable, int period )
 		{
 			_runnable = runnable;
 			_period = period;
-			_lastTime = System.currentTimeMillis ();
+            _nextTime = System.currentTimeMillis () + period;
 		}
         
         public Job ( Runnable runnable, int period, boolean once )
         {
             _runnable = runnable;
             _period = period;
-            _lastTime = System.currentTimeMillis ();
+            _nextTime = System.currentTimeMillis () + period;
             _once = once;
         }
         
 		public boolean isTimeOut ()
 		{
-			return (System.currentTimeMillis () - _lastTime) >= _period;
+			return System.currentTimeMillis () >= _nextTime;
 		}
 		
 		public void run ()
 		{
-			_lastTime = System.currentTimeMillis ();
-			if ( _runnable != null)
-				_runnable.run();
+			//_nextTime = System.currentTimeMillis () + _period;
+            if ( _period != 0 )
+                _nextTime = ( ( System.currentTimeMillis () / _period ) + 1 ) * _period;
+            else
+                _nextTime = System.currentTimeMillis ();
+            
+			if ( _runnable != null )
+				_runnable.run ();
 		}
 		
 		@Override
-		public boolean equals (Object obj)
+		public boolean equals ( Object obj )
         {
             if ( obj == null )
                 return false;
@@ -62,7 +67,7 @@ public class Scheduler implements Runnable
             
 			Job job = (Job)obj;
 			
-			return _runnable.equals(job._runnable);
+			return _runnable.equals ( job._runnable );
 		}
 		
 		@Override
@@ -71,11 +76,17 @@ public class Scheduler implements Runnable
 			return _runnable.hashCode ();
 		}
 
-		public int getPeriod() {
+		public int getPeriod ()
+        {
 			return _period;
 		}
 
-		public void setPeriod(int period) {
+        /**
+         * Set the period time. Will be active only for the next period.
+         * @param period the new period
+         */
+		public void setPeriod ( int period )
+        {
 			_period = period;
 		}
 
@@ -90,7 +101,7 @@ public class Scheduler implements Runnable
          */
         public void trigger ()
         {
-            _lastTime = 0;
+            _nextTime = System.currentTimeMillis ();
         }
 	}
 	
