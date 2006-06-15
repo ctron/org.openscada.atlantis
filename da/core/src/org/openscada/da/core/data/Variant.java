@@ -69,7 +69,8 @@ public class Variant {
 
     public void setValue ( String value )
     {
-        _value = new String ( value );
+        if ( value != null )
+            _value = new String ( value );
     }
 
     public void setValue ( double value )
