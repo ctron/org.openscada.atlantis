@@ -55,7 +55,7 @@ public class HiveConnection extends Observable implements IActionFilter
             }
         });
         
-        _rootFolder = new FolderEntry ( "", new HashMap<String, Variant>(), null, this );
+        _rootFolder = new FolderEntry ( "", new HashMap<String, Variant>(), null, this, true );
     }
     
     public void connect ()

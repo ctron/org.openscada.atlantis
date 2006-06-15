@@ -3,6 +3,7 @@ package org.openscada.da.client.test.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -26,17 +27,26 @@ public class FolderEntry extends BrowserEntry implements Observer
     
     private boolean _needRefresh = true;
     private boolean _subscribed = false;
-    private BrowserEntry[] _entries = null;
+    private boolean _shouldSubscribe = false;
+    private Map<String, BrowserEntry> _entries = null;
     
     private FolderWatcher _watcher = null;
 
-    public FolderEntry ( String name, Map<String, Variant> attributes, FolderEntry parent, HiveConnection connection )
+    public FolderEntry ( String name, Map<String, Variant> attributes, FolderEntry parent, HiveConnection connection, boolean shouldSubscribe )
     {
         super ( name, attributes, connection, parent );
         
         _watcher = new FolderWatcher ( getPath() );
         _watcher.addObserver ( this );
-        
+
+        _shouldSubscribe = shouldSubscribe;
+    }
+    
+    @Override
+    protected void finalize () throws Throwable
+    {
+        dispose ();
+        super.finalize ();
     }
     
     public void dispose ()
@@ -72,22 +82,21 @@ public class FolderEntry extends BrowserEntry implements Observer
 
     }
     
-    private List<BrowserEntry> convert ( Collection<Entry> entries )
+    private Map<String, BrowserEntry> convert ( Collection<Entry> entries )
     {
-        List<BrowserEntry> list = new ArrayList<BrowserEntry> ();
+        Map<String, BrowserEntry> list = new HashMap<String, BrowserEntry> ();
         int i = 0;
         for ( Entry entry : entries )
         {
             if ( entry instanceof org.openscada.da.core.browser.FolderEntry )
             {
-                FolderEntry folder = new FolderEntry ( entry.getName (), entry.getAttributes (), this, getConnection () );
-                folder.subscribe ();
-                list.add ( folder ); 
+                FolderEntry folder = new FolderEntry ( entry.getName (), entry.getAttributes (), this, getConnection (), true );
+                list.put ( entry.getName (), folder ); 
             }
             else if ( entry instanceof org.openscada.da.core.browser.DataItemEntry )
             {
                 org.openscada.da.core.browser.DataItemEntry itemEntry = (org.openscada.da.core.browser.DataItemEntry)entry;
-                list.add ( new DataItemEntry ( entry.getName(), entry.getAttributes (), this, getConnection (), itemEntry.getId (), itemEntry.getIODirections () ) ); 
+                list.put ( entry.getName (), new DataItemEntry ( entry.getName(), entry.getAttributes (), this, getConnection (), itemEntry.getId (), itemEntry.getIODirections () ) ); 
             }
             else
                 _log.warn ( "Unknown entry type in tree: " + entry.getClass ().getName () );
@@ -102,12 +111,7 @@ public class FolderEntry extends BrowserEntry implements Observer
 
         Entry [] entries = getConnection ().getConnection ().browse ( getPath() );
 
-        synchronized ( this )
-        {
-            _entries = null;
-        }
-        
-        List<BrowserEntry> list = convert ( Arrays.asList ( entries ) );
+        Map<String, BrowserEntry> list = convert ( Arrays.asList ( entries ) );
 
         synchronized ( this )
         {
@@ -115,17 +119,15 @@ public class FolderEntry extends BrowserEntry implements Observer
             if ( _subscribed )
                 return;
             
-            _entries = list.toArray ( new BrowserEntry [ list.size () ] );
+            update ( list );
         }
         
-        for ( BrowserEntry entry : _entries )
+        for ( Map.Entry<String, BrowserEntry> entry : _entries.entrySet () )
         {
-            _log.debug ( "Entry: " + entry.getName () );
+            _log.debug ( "Entry: " + entry.getKey () );
         }
         
         monitor.worked ( 1 );
-        
-        notifyChange ( this );
     }
 
 
@@ -138,7 +140,7 @@ public class FolderEntry extends BrowserEntry implements Observer
         {
             // only add name if folder is not root folder
             if ( current.getParent () != null )
-                path.add ( current.getName () );
+                path.add ( 0, current.getName () );
             current = current.getParent ();
         }
         
@@ -154,7 +156,7 @@ public class FolderEntry extends BrowserEntry implements Observer
         
         if ( _entries != null )
         {
-            return _entries.length > 0;
+            return _entries.size () > 0;
         }
         else
         {
@@ -171,26 +173,37 @@ public class FolderEntry extends BrowserEntry implements Observer
         checkRefresh ();
         
         if ( _entries != null )
-            return _entries;
+            return _entries.values ().toArray ( new BrowserEntry[_entries.size()] );
         else
             return new BrowserEntry[0];
     }
     
     private void notifyChange ( FolderEntry originEntry )
     {
-        setChanged ();
-        notifyObservers ( originEntry );
-        
         if ( getParent () != null )
-            getParent ().notifyChange ( originEntry );            
+        {
+            getParent ().notifyChange ( originEntry );
+        }
+        else
+        {
+            setChanged ();
+            notifyObservers ( originEntry );
+        }
     }
     
     synchronized private void checkRefresh ()
     {
-        if ( _needRefresh )
+        if ( _shouldSubscribe )
         {
-            refresh ();
-            _needRefresh = false;
+            subscribe ();
+        }
+        else
+        {
+            if ( _needRefresh )
+            {
+                refresh ();
+                _needRefresh = false;
+            }
         }
     }
     
@@ -198,7 +211,7 @@ public class FolderEntry extends BrowserEntry implements Observer
     {
         if ( _entries != null )
         {
-            for ( BrowserEntry entry : _entries )
+            for ( Map.Entry<String, BrowserEntry> entry : _entries.entrySet () )
             {
                 if ( entry instanceof FolderEntry )
                 {
@@ -206,11 +219,10 @@ public class FolderEntry extends BrowserEntry implements Observer
                     folderEntry.unsubscribe ();
                 }
             }
+            notifyChange ( this );
         }
         _needRefresh = true;
         _entries = null;
-        
-        notifyChange ( this );
     }
 
     // update from subcsription
@@ -222,11 +234,47 @@ public class FolderEntry extends BrowserEntry implements Observer
             {
                 if ( _subscribed )
                 {
-                    _entries = convert ( _watcher.getList () ).toArray ( new BrowserEntry[0] );
-                    notifyChange ( this );
+                    updateFromWatcher ();
                 }
             }
         }
+    }
+    
+    private void update ( Map<String, BrowserEntry> newEntries )
+    {
+        synchronized ( this )
+        {
+            // if we don't have content it is quite easy
+            if ( _entries == null )
+            {
+                _entries = newEntries;
+                notifyChange ( this );
+                return;
+            }
+            
+            // not do the merge
+            for ( Map.Entry<String, BrowserEntry> entry : _entries.entrySet () )
+            {
+                if ( !newEntries.containsKey ( entry.getKey () ) )
+                {
+                    // entry was available in old list but is now gone
+                    if ( entry.getValue () instanceof FolderEntry )
+                    {
+                        ((FolderEntry)entry.getValue ()).unsubscribe (); 
+                    }
+                }
+            }
+            
+            // new entries are already subscribed
+            _entries = newEntries;
+        }
+        notifyChange ( this );
+    }
+    
+    private void updateFromWatcher ()
+    {
+        Map<String, BrowserEntry> entries = convert ( _watcher.getList () );
+        update ( entries );
     }
     
     synchronized public void subscribe ()
@@ -234,6 +282,7 @@ public class FolderEntry extends BrowserEntry implements Observer
         if ( !_subscribed )
         {
             _needRefresh = false;
+            clear ();
             getConnection ().getConnection ().addFolderWatcher ( _watcher );
             _subscribed = true;
         }

@@ -308,12 +308,13 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 	 */
 	public void setFocus()
     {
-		viewer.getControl().setFocus();
+		viewer.getControl ().setFocus ();
 	}
 
     @Override
     public void dispose ()
     {
+        _log.debug ( "Dispose data item watcher" );
         setDataItem ( null );
         super.dispose ();
     }
@@ -323,9 +324,10 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         if ( _hiveItem != null )
         {
             _hiveItem.getConnection ().getConnection ().removeItemUpdateListener ( _hiveItem.getId (), this );
-            appendConsoleMessage("Unsubscribe from item: " + _hiveItem.getId () );
+            appendConsoleMessage ( "Unsubscribe from item: " + _hiveItem.getId () );
             
-            setPartName("Data Item Viewer");
+            setPartName ( "Data Item Viewer" );
+            viewer.setInput ( null );
         }
         
         if ( item != null )
