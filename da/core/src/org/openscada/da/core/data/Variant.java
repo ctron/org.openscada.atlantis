@@ -71,6 +71,8 @@ public class Variant {
     {
         if ( value != null )
             _value = new String ( value );
+        else
+            _value = null;
     }
 
     public void setValue ( double value )
