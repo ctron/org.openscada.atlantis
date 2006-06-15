@@ -69,7 +69,7 @@ public class Application
         
         FolderDumper folderDumper;
         
-        folderDumper = new FolderDumper ( connection, new Location ( "test" ) );
+        folderDumper = new FolderDumper ( connection, new Location ( "test", "storage", "grouping1" ) );
         folderDumper.start ();
         
         connection.addItemUpdateListener ( "time", true, new ItemUpdateListener(){
