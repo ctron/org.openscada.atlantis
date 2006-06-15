@@ -24,7 +24,7 @@ public class WriteOperationWizard extends Wizard implements INewWizard
     @Override
     public boolean performFinish ()
     {
-        final HiveItem item = _page.getItem ();
+        final String item = _page.getItem ();
         final Variant value = _page.getValue ();
         final HiveConnection connection = _page.getConnection ();
         
@@ -63,12 +63,12 @@ public class WriteOperationWizard extends Wizard implements INewWizard
         return true;
     }
     
-    private void doFinish ( IProgressMonitor monitor, HiveConnection hiveConnection, HiveItem hiveItem, Variant value ) throws Exception
+    private void doFinish ( IProgressMonitor monitor, HiveConnection hiveConnection, String item, Variant value ) throws Exception
     {
         monitor.beginTask ( "Writing value to item" , 2 );
         
         monitor.worked ( 1 );
-        hiveConnection.getConnection ().write ( hiveItem.getItemName (), value );
+        hiveConnection.getConnection ().write ( item, value );
         monitor.worked ( 1 );
     }
 

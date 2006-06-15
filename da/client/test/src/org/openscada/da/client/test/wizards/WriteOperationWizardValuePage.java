@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.openscada.da.client.net.DataItem;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveItem;
@@ -41,7 +42,6 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
     private Color _defaultValueColor = null;
     
     private HiveConnection _connection = null;
-    private HiveItem _item = null;
     private Variant _value = null;
     
     private enum ValueType
@@ -256,12 +256,6 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
             updateStatus ( "Item name must not be empty" );
             return;
         }
-        _item = _connection.lookupItem ( _itemNameText.getText() );
-        if ( _item == null )
-        {
-            updateStatus ( "Item '" + _itemNameText.getText() + "' is not a valid item in this hive" );
-            return;
-        }
 
         // value stuff
         setValueText ( "<not set>", true );
@@ -310,9 +304,9 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         setPageComplete ( message == null );
     }
     
-    public HiveItem getItem()
+    public String getItem()
     {
-        return _item;
+        return _itemNameText.getText ();
     }
     
     public Variant getValue ()

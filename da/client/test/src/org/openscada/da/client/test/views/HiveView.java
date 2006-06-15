@@ -144,8 +144,11 @@ public class HiveView extends ViewPart implements Observer
             }
             else if ( parent instanceof HiveConnection )
             {
-                //return ((HiveConnection)parent).getItemList().toArray(new HiveItem[0]);
-                return ((HiveConnection)parent).getRootFolder ().getEntries ();
+                FolderEntry rootFolder = ((HiveConnection)parent).getRootFolder ();
+                if ( rootFolder != null )
+                    return rootFolder.getEntries ();
+                else
+                    return new Object [0];
             }
             else if ( parent instanceof FolderEntry )
             {
@@ -161,8 +164,11 @@ public class HiveView extends ViewPart implements Observer
             }
             else if ( parent instanceof HiveConnection )
             {
-                //return ((HiveConnection)parent).getItemList().size() > 0;
-                return ((HiveConnection)parent).getRootFolder ().hasChildren ();
+                FolderEntry rootFolder = ((HiveConnection)parent).getRootFolder ();
+                if ( rootFolder != null )
+                    return rootFolder.hasChildren ();
+                else
+                    return false;
             }
             else if ( parent instanceof FolderEntry )
             {
@@ -273,18 +279,12 @@ public class HiveView extends ViewPart implements Observer
         }
         else if ( o instanceof HiveConnection )
         {
-            triggerUpdateRepository ( o );
-        }
-        else if ( o instanceof FolderEntry )
-        {
-            if ( (arg != null) && (arg instanceof FolderEntry) )
+            if ( arg instanceof FolderEntry )
             {
                 refreshForFolder ( (FolderEntry)arg  );
             }
             else
-            {
-                refreshForFolder ( (FolderEntry)o );
-            }
+                triggerUpdateRepository ( o );
         }
     }
     
@@ -455,7 +455,6 @@ public class HiveView extends ViewPart implements Observer
         for ( HiveConnection connection : _repository.getConnections() )
         {
             connection.deleteObserver ( this );
-            connection.getRootFolder ().deleteObserver ( this );
         }
     }
     
@@ -466,7 +465,6 @@ public class HiveView extends ViewPart implements Observer
         for ( HiveConnection connection : _repository.getConnections() )
         {
             connection.addObserver ( this );
-            connection.getRootFolder ().addObserver ( this );
         }
     }
     

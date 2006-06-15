@@ -55,7 +55,7 @@ public class HiveConnection extends Observable implements IActionFilter
             }
         });
         
-        _rootFolder = new FolderEntry ( "", new HashMap<String, Variant>(), null, this, true );
+        
     }
     
     public void connect ()
@@ -106,8 +106,12 @@ public class HiveConnection extends Observable implements IActionFilter
         
         switch ( state )
         {
+        case BOUND:
+            _rootFolder = new FolderEntry ( "", new HashMap<String, Variant>(), null, this, true );
+            break;
         case CLOSED:
-            _rootFolder.clear ();
+            _rootFolder.dispose ();
+            _rootFolder = null;
             break;
         default:
             break;
@@ -175,6 +179,12 @@ public class HiveConnection extends Observable implements IActionFilter
     public FolderEntry getRootFolder ()
     {
         return _rootFolder;
+    }
+    
+    public void notifyFolderChange ( FolderEntry folder )
+    {
+        setChanged ();
+        notifyObservers ( folder );
     }
     
 }
