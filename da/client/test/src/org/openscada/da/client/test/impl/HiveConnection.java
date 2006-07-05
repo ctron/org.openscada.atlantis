@@ -120,9 +120,6 @@ public class HiveConnection extends Observable implements IActionFilter
     
     private void performStateChange ( Connection.State state, Throwable error )
     {
-        setChanged ();
-        notifyObservers ();
-        
         switch ( state )
         {
         case BOUND:
@@ -135,6 +132,9 @@ public class HiveConnection extends Observable implements IActionFilter
         default:
             break;
         }
+        
+        setChanged ();
+        notifyObservers ();
         
         if ( error != null )
         {
