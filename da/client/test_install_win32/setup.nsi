@@ -4,7 +4,7 @@
 Name "OpenSCADA DA Test Client"
 # Defines
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 0.1.8
+!define VERSION 0.2.0
 !define COMPANY OpenSCADA
 !define URL http://openscada.org
 !define DEPLOY /home/jens/deploy
@@ -48,7 +48,7 @@ InstallDir "$PROGRAMFILES\OpenSCADA DA Test Client"
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 0.1.8.0
+VIProductVersion 0.2.0.0
 VIAddVersionKey ProductName "OpenSCADA DA Test Client"
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
