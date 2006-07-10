@@ -22,7 +22,7 @@
 		<delete file="messages_as_db.xml" />
 	</target>
 	
-	<target name="html" depends="clean">
+	<target name="html" depends="clean, messages_as_db.xml">
 		<xslt style="xhtml.xsl" destdir="html"
 			defaultexcludes="yes"
 			includes="main.xml"
@@ -37,7 +37,7 @@
 		</xslt>
 	</target>
 	
-	<target name="pdf_fo" depends="clean">
+	<target name="pdf_fo" depends="clean, messages_as_db.xml">
 				<xslt style="pdf.xsl"
 					in="main.xml"
 					out="main.fo"

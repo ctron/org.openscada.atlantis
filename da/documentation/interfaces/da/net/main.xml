@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" [
-  <!ENTITY message_reference "messages_as_db.xml">
+  <!ENTITY message_reference SYSTEM "messages_as_db.xml">
 ]>
 <article lang="en">
 	<articleinfo>
@@ -341,6 +341,10 @@
     </sect2>
     
     <sect2><title>Message Reference</title>
+      <para>
+        The following sections describe the messages used in the
+        <quote>OpenSCADA DA NET</quote> interface.
+      </para>
       &message_reference;
     </sect2>
   </sect1>
