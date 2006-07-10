@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="openscada_da_doc_gmpp" default="html">
+
+	<property name="fop.dir" value="../../../fop"/>
+
+	<taskdef name="fop" 
+	         classname="org.apache.fop.tools.anttasks.Fop">
+	         <classpath>
+	            <pathelement location="${fop.dir}/fop.jar"/>
+	            <pathelement location="${fop.dir}/avalon-framework-cvs-20020806.jar"/>
+	            <pathelement location="${fop.dir}/batik.jar"/>
+	         	<pathelement location="/usr/share/java/docbook-xsl-xalan25.jar" />
+	         </classpath>
+	</taskdef>
+	
+	<target name="clean">
+		<delete dir="html" />
+		<delete file="main.fo" />
+		<delete file="main.pdf" />
+	</target>
+	
+	<target name="html" depends="clean">
+		<xslt style="xhtml.xsl" destdir="html"
+			defaultexcludes="yes"
+			includes="main.xml"
+			out=""
+			>
+			<factory name="org.apache.xalan.processor.TransformerFactoryImpl">
+			    <attribute name="http://xml.apache.org/xalan/features/optimize" value="true"/>
+            </factory>
+			<param name="base.dir" expression=""/>
+			<param name="use.extensions" expression="1"/>
+		</xslt>
+	</target>
+	
+	<target name="pdf_fo" depends="clean">
+				<xslt style="pdf_fo.xsl"
+					in="main.xml"
+					out="main.fo"
+					>
+					<factory name="org.apache.xalan.processor.TransformerFactoryImpl">
+					    <attribute name="http://xml.apache.org/xalan/features/optimize" value="true"/>
+				    </factory>
+					<param name="use.extensions" expression="1"/>
+					<param name="fop.extensions" expression="1"/>
+				</xslt>
+		</target>
+		
+	<target name="pdf" depends="pdf_fo">
+		<fop
+			fofile="main.fo"
+			outfile="main.pdf"
+			/>
+	</target>
+</project>
