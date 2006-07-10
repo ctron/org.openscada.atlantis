@@ -3,18 +3,6 @@
 <project name="openscada_da_doc_gmpp" default="html">
 
 	<property name="fop.dir" value="../../fop"/>
-	<property name="xep.dir" value="/home/jens/XEP"/>
-
-	<taskdef name="xep" classname="com.renderx.xepx.ant.XEPTask" classpathref="xep-classpath" />
-    <path id="xep-classpath">
-   		<fileset dir="${xep.dir}/lib">
-			<include name="xep*.jar"/>
-    		<include name="xt.jar"/>
-			<include name="saxon.jar"/>
-   			<include name="XEPTask.jar"/> 
-		</fileset>
-		<pathelement path="XEPTask.jar"/> 
-	</path>
 
 	<taskdef name="fop" 
 	         classname="org.apache.fop.tools.anttasks.Fop">
@@ -28,15 +16,8 @@
 	
 	<target name="clean">
 		<delete dir="html" />
-		<delete file="main.tex" />
 		<delete file="main.fo" />
 		<delete file="main.pdf" />
-		<delete file="main.toc" />
-		<delete file="main.log" />
-		<delete file="main.lot" />
-		<delete file="main.lof" />
-		<delete file="main.aux" />
-		<delete file="main.out" />
 	</target>
 	
 	<target name="html" depends="clean">
@@ -53,30 +34,6 @@
 		</xslt>
 	</target>
 	
-	<target name="pdf_tex" depends="clean">
-		<exec executable="xsltproc">
-			<arg value="-o"/>
-			<arg file="main.tex" />
-			<arg file="pdf_tex.xsl" />
-			<arg file="main.xml" />
-		</exec>
-		<exec executable="pdflatex">
-			<arg file="main.tex" />
-		</exec>
-	</target>
-	
-	<target name="pdf_fo_xep" depends="clean">
-			<xslt style="pdf_fo.xsl"
-				in="main.xml"
-				out="main.fo"
-				>
-				<factory name="org.apache.xalan.processor.TransformerFactoryImpl">
-				    <attribute name="http://xml.apache.org/xalan/features/optimize" value="true"/>
-			    </factory>
-				<param name="use.extensions" expression="1"/>
-			</xslt>
-	</target>
-	
 	<target name="pdf_fo_fop" depends="clean">
 				<xslt style="pdf_fo.xsl"
 					in="main.xml"
@@ -90,16 +47,6 @@
 				</xslt>
 		</target>
 		
-	
-	<target name="pdf_with_xep" depends="pdf_fo_xep">
-		<xep format="PDF"
-						in="main.fo"
-						out="main.pdf"
-					>
-			<sysproperty key="com.renderx.xep.CONFIG" value="${xep.dir}/xep.xml"/> 
-		</xep>
-	</target>
-	
 	<target name="pdf_with_fop" depends="pdf_fo_fop">
 		<fop
 			fofile="main.fo"
