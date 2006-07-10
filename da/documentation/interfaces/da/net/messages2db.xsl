@@ -87,7 +87,7 @@
   </xsl:template>
   
   <xsl:template match="map">
-    <formalpara><title>Map malue</title>
+    <formalpara><title>Map value</title>
       <xsl:apply-templates select="description"/>
       <variablelist>
         <xsl:apply-templates select="entry"/>
