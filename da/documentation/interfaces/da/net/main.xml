@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" >
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" [
+  <!ENTITY message_reference "messages_as_db.xml">
+]>
 <article lang="en">
 	<articleinfo>
 		<title>OpenSCADA DA NET interface specification</title>
@@ -210,9 +212,9 @@
     </sect2>
     
     <sect2><title>The choice</title>
+
       <para>
-        Now what to chose for which task? The answer is quite simple
-        and depends on what you intend to do:
+        What to use when:
       </para>
       
       <sect3><title>You want to create a client application for OpenSCADA</title>
@@ -314,6 +316,33 @@
       
     </sect2>
     
+  </sect1>
+  
+  <sect1><title>OpenSCADA DA NET</title>
+    <para>
+      This section specifies that <quote>OpenSCADA DA NET</quote> interface.
+    </para>
+    
+    <sect2><title>Communication layer</title>
+      <para>
+        As communication layer <quote>GMPP</quote> is used. For the description
+        of <quote>GMPP</quote> itself see the <quote>GMPP protocol specification</quote>.
+      </para>
+      <para>
+        Since GMPP is used there are two distinct peers. A client and a server.
+        The definition of client and server in GMPP are analogue to the definition
+        of client and server in OpenSCADA. So the OpenSCADA client is also the GMPP client.
+      </para>
+      <para>
+        GMPP allows a session oriented communication. The GMPP session must be bound
+        to the OpenSCADA DA session. When the GMPP session is closed (e.g. manual disconnect,
+        broken link, etc) also the OpenSCADA session must be closed.
+      </para>
+    </sect2>
+    
+    <sect2><title>Message Reference</title>
+      &message_reference;
+    </sect2>
   </sect1>
   
   <appendix><title>GNU Free Documentation License</title>

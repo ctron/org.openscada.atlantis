@@ -19,6 +19,7 @@
 		<delete dir="html" />
 		<delete file="main.fo" />
 		<delete file="main.pdf" />
+		<delete file="messages_as_db.xml" />
 	</target>
 	
 	<target name="html" depends="clean">
@@ -55,5 +56,13 @@
 			fofile="main.fo"
 			outfile="main.pdf"
 			/>
+	</target>
+	
+	<target name="messages_as_db.xml">
+		<xslt style="messages2db.xsl"
+							in="messages.xml"
+							out="messages_as_db.xml"
+							>
+		</xslt>
 	</target>
 </project>
