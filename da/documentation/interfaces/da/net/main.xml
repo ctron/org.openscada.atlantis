@@ -36,7 +36,8 @@
     
       <sect3><title>About OpenSCADA</title>
         <para>
-          The OpenSCADA project aims to create a state of the art SCADA system.
+          The OpenSCADA project aims to create a <emphasis>state of the art</emphasis>
+          SCADA system.
         </para>
       </sect3>
       
@@ -92,12 +93,14 @@
       is that also for the interfaces of the different components it should be possible
       to exchange the interface itself.
     </para>
+    
+    <sect2><title>Levels of interfacing</title>
     <para>
       In order to achieve this the interfaces are splitted up in two levels.
       <variablelist>
       
         <varlistentry>
-          <term>Level 0</term>
+          <term>Level 0 interface</term>
           <listitem>
             <para>
               This is the lowest level. Normally neutral to the programming language
@@ -142,8 +145,175 @@
           </listitem>
         </varlistentry>
         
+        <varlistentry>
+          <term>Level 1 interface</term>
+          <listitem>
+            <para>
+              The level 1 interface is the programming language bound interface.
+              So for example you might have a level 1 interface for progamming
+              language you have (Java, C++, ...).
+            </para>
+            <note>
+              <para>
+                In some cases <emphasis>programming language dependant</emphasis>
+                might not be correct. For example both Java and .NET are based on
+                a virtual machine which executes the generated code. Both
+                Java and .NET have different compilers that compile different
+                programming languages to one VM-code they can reuse modules inside
+                their framework.
+              </para>
+              <para>
+                For example Java (the framework) has Java (the programming
+                language and Groovy. Creating an implementation in Java would
+                allow Groovy to re-use the code since it is based on the same
+                virtual machine. Also for .NET you have C# and VB.NET which
+                share the same base. So an implementation in C# would be
+                available in VB.NET.
+              </para>
+              <para>
+                To keep it simple the following sections will refer use <quote>
+                programming language dependant</quote> but in some cases might
+                mean <quote>framework dependant</quote>.
+              </para>
+            </note>
+          </listitem>
+        </varlistentry>
+        
       </variablelist>
+      This results in two levels. One that is communication layer specific but
+      programming language indepedant. And one that is communication layer
+      independant but programming langage specific.
     </para>
+    </sect2>
+    
+    <sect2><title>Level 0 implementations</title>
+      <para>
+        A level 0 implementation is the merger of the both level 0 and level 1 interface.
+        So by using the level 0 interface specification you implement the level 1 interface
+        itself (e.g. you implement the Java interface by using the GMPP interface
+        specification for OpenSCADA DA).
+      </para>
+      <para>
+        For example using the Level 0 interface <quote>OpenSCADA DA NET</quote>
+        you implement the <quote>OpenSCADA DA Java</quote> interface.
+      </para>
+    </sect2>
+    
+    <sect2><title>Different sides</title>
+      <para>
+        In most cases you will have differnt sides of an interface (e.g. OpenSCADA DA
+        has a client and server side). There should be no difference at the level 0
+        interface (e.g. with Corba the IDL is the same for both server and client,
+        only the client will use the Proxy classes whereas the server side implements
+        the Corba interfaces).
+      </para>
+    </sect2>
+    
+    <sect2><title>The choice</title>
+      <para>
+        Now what to chose for which task? The answer is quite simple
+        and depends on what you intend to do:
+      </para>
+      
+      <sect3><title>You want to create a client application for OpenSCADA</title>
+        <para>
+          When creating a client you normally will choose a programming language
+          and stick with that.
+        </para>
+        <para>
+          So you don't care about the way of communication and select a level 1
+          interface which you use as interface to OpenSCADA.
+        </para>
+        <para>
+          For example you use <quote>OpenSCADA DA Java</quote> when developing
+          your application. Later when running you select the
+          <quote>OpenSCADA DA NET Java</quote> implementation.
+        </para>
+      </sect3>
+      
+      <sect3><title>You want to create a server application for OpenSCADA</title>
+        <para>
+          Actually this is the same scenario as when creating client application.
+          Based on your programming language you pick the level 1 interface and
+          later when running let the user choose the level 0 implementation.
+        </para>
+      </sect3>
+      
+      <sect3><title>You have a server and want to access it</title>
+        <para>
+          You have a server application and some client that want to access it.
+        </para>
+        <para>
+          Select what communication layer fits best for your needs and run
+          both client and server with that level 0 implemenation.
+        </para>
+        <para>
+          For example server and client are written in Java and both use the
+          <quote>OpenSCADA DA Java</quote> level 1 interface. You then choose
+          <quote>OpenSCADA DA NET Java</quote> as level 0 implemenation because
+          you need a client/server based protocol to tunnel through your firewall.
+        </para>
+        <para>
+          On the other side you could also choose <quote>OpenSCADA DA Corba Java
+          </quote> because your like Corba more.
+        </para>
+        <para>
+          Or you choose <quote>OpenSCADA DA XXX Java</quote> because ...
+        </para>
+      </sect3>
+      
+      <sect3><title>You want to bring OpenSCADA to a new programming language</title>
+        <para>
+          First check if you can re-use existing implementations. For example if
+          you have implementations for Java and look for a Groovy interface you
+          can reuse the Java interface since the base on the same virtual machine.
+          The same is true for C# and VB.NET on the .NET Framework or on Mono.
+        </para>
+        <para>
+          If you cannot re-use an existing implemenation you need to take a three
+          step approach:
+          <itemizedlist>
+            <listitem>
+              <para>
+                Ensure that the communication layer of the level 0 interface
+                exists for your environment or implement it.
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                Design a level 1 interface for your programming language. It
+                should be close the already existing interface in order
+                to aid others using it.
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                Implement the level 1 interface in your programming language
+                by using the communication layer and specification of the
+                level 0 interface.
+              </para>
+            </listitem>
+          </itemizedlist>
+        </para>
+      </sect3>
+      
+      <sect3><title>When do I have to create a new level 0 interface</title>
+        <para>
+          This question is a little bit harder to answer. Hopefully never because
+          all level 0 interfaces should be provided by the OpenSCADA project itself.
+          The plan is to have level 0 interfaces for: GMPP, Corba and WebServices.
+          Which should cover most needs.
+        </para>
+        <para>
+          However there are also other interesting technologies which could be used
+          as communication layer between OpenSCADA modules: Java RMI,
+          ICE (<ulink url="http://www.zeroc.com/">http://www.zeroc.com/</ulink>),
+          and maybe a dozen more.
+        </para>
+      </sect3>
+      
+    </sect2>
+    
   </sect1>
   
   <appendix><title>GNU Free Documentation License</title>

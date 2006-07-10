@@ -2,7 +2,8 @@
 
 <project name="openscada_da_doc_gmpp" default="html">
 
-	<property name="fop.dir" value="../../fop"/>
+	<property name="prj.dir" value="../.." />
+	<property name="fop.dir" value="${prj.dir}/fop" />
 
 	<taskdef name="fop" 
 	         classname="org.apache.fop.tools.anttasks.Fop">
@@ -10,7 +11,7 @@
 	            <pathelement location="${fop.dir}/fop.jar"/>
 	            <pathelement location="${fop.dir}/avalon-framework-cvs-20020806.jar"/>
 	            <pathelement location="${fop.dir}/batik.jar"/>
-	         	<pathelement location="/usr/share/java/docbook-xsl-xalan25.jar" />
+	         	<pathelement location="${prj.dir}/docbook/extensions/docbook-xsl-xalan25.jar" />
 	         </classpath>
 	</taskdef>
 	
@@ -31,6 +32,7 @@
             </factory>
 			<param name="base.dir" expression=""/>
 			<param name="use.extensions" expression="1"/>
+			<param name="prj.dir" expression="${prj.dir}"/>
 		</xslt>
 	</target>
 	
@@ -44,6 +46,7 @@
 				    </factory>
 					<param name="use.extensions" expression="1"/>
 					<param name="fop.extensions" expression="1"/>
+					<param name="prj.dir" expression="${prj.dir}"/>
 				</xslt>
 		</target>
 		
