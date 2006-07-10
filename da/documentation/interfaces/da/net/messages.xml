@@ -282,17 +282,17 @@
                   </string>
                 </entry>
                 
-                <entry key="attributes" requirement="required">
+               <entry key="attributes" requirement="required">
                   <map>
                     <description>A map of attributes describing the tree entry.</description>
+                    <entry key="*">
+                      <any>
+                        <description>
+                          Any scalar value can be added here as information about this item.
+                        </description>
+                      </any>
+                    </entry>
                   </map>
-                  <entry key="*">
-                    <any>
-                      <description>
-                        Any scalar value can be added here as information about this item.
-                      </description>
-                    </any>
-                  </entry>
                 </entry>
                 
                 <entry key="item-id" requirement="optional">
@@ -441,14 +441,14 @@
                 <entry key="attributes" requirement="required">
                   <map>
                     <description>A map of attributes describing the tree entry.</description>
+                    <entry key="*">
+                      <any>
+                        <description>
+                          Any scalar value can be added here as information about this item.
+                        </description>
+                      </any>
+                    </entry>
                   </map>
-                  <entry key="*">
-                    <any>
-                      <description>
-                        Any scalar value can be added here as information about this item.
-                      </description>
-                    </any>
-                  </entry>
                 </entry>
                 
                 <entry key="item-id" requirement="optional">

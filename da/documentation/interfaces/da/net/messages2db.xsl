@@ -89,14 +89,10 @@
   <xsl:template match="map">
     <formalpara><title>Map malue</title>
       <xsl:apply-templates select="description"/>
-    </formalpara>
-    
-    <para>
-    <variablelist><title>Map entries</title>
-      <xsl:apply-templates select="entry"/>
-    </variablelist>
-    </para>
-    
+      <variablelist>
+        <xsl:apply-templates select="entry"/>
+      </variablelist>
+    </formalpara>    
   </xsl:template>
   
   <xsl:template match="entry">
@@ -137,7 +133,17 @@
   
   <xsl:template match="item">
     <listitem>
-      <xsl:apply-templates/>
+      <xsl:choose>
+        <xsl:when test="@count">
+          <formalpara><title>Cardinality: <xsl:value-of select="@count"/></title>
+            <xsl:apply-templates/>  
+          </formalpara>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates/>
+        </xsl:otherwise>
+      </xsl:choose>
+
     </listitem>
   </xsl:template>
 
