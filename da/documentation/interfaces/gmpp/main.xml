@@ -40,7 +40,7 @@
       <para>
         GMPP was specified during the development of the <quote>OpenSCADA</quote> project.
         The idea was to have a message based protocol, which can be used for client/server
-        connections. It should also be flexible in adding new packets and adding new
+        connections. It should be flexible in adding new packets and adding new
         data structures as message payload. Also it should be portabl between platforms and
         programming languages. And of course: easy to implement!
       </para>
@@ -610,6 +610,11 @@
   			The reply sequence number may be used to indicate that a message is a reply to a previous message.
 			However sending more than one reply message to the same reply sequence is not allowed.
   		</para>
+        <note>
+            <para>
+              0 (zero) must be used if the message is not a reply message.
+            </para>
+        </note>
   	</sect2>
   	
   	<sect2 id="command_codes"><title>Well known command codes</title>
@@ -642,7 +647,7 @@
   					<varlistentry>
   						<term>error-info</term>
   						<listitem>
-  							<para>Error message</para>
+  							<para>An error message. Must be a <quote>String Value</quote></para>
   						</listitem>
   					</varlistentry>
   				</variablelist>
