@@ -20,6 +20,7 @@
 package org.openscada.net.codec;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
@@ -116,8 +117,7 @@ public class ProtocolGMPP implements Protocol
         buffer = ensureCapacity ( buffer, 4 + 4 + 4 );
         buffer.putInt ( VT_DOUBLE );
         buffer.putInt ( 8 );
-        buffer.putDouble ( value.getValue() );
-        
+        buffer.putLong ( Double.doubleToRawLongBits ( value.getValue () ) );        
         return buffer;
     }
     
@@ -389,7 +389,7 @@ public class ProtocolGMPP implements Protocol
         case VT_STRING:
             return new StringValue ( decodeStringFromStream ( buffer, len ) );
         case VT_DOUBLE:
-            return new DoubleValue ( buffer.getDouble() );
+            return decodeDoubleValueFromStream ( buffer );
         case VT_VOID:
             return new VoidValue ();
             // nothing to read
@@ -403,6 +403,15 @@ public class ProtocolGMPP implements Protocol
             break;
         }
         return null;
+    }
+    
+    private DoubleValue decodeDoubleValueFromStream ( ByteBuffer buffer )
+    {
+        Double d = Double.longBitsToDouble ( buffer.getLong () );
+        
+        _log.debug ( "Decoded double: " + d );
+        
+        return new DoubleValue ( d );
     }
   
     private ListValue decodeListValueFromStream ( ByteBuffer buffer )
