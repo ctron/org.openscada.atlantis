@@ -62,7 +62,6 @@ public class Scheduler implements Runnable
 		
 		public void run ()
 		{
-			//_nextTime = System.currentTimeMillis () + _period;
             if ( _period != 0 )
                 _nextTime = ( ( System.currentTimeMillis () / _period ) + 1 ) * _period;
             else
