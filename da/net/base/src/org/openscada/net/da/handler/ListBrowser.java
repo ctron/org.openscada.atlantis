@@ -181,9 +181,15 @@ public class ListBrowser
             else if ( type.equals ( "item" ) )
             {
                 if ( !mapValue.containsKey ( "item-id" ) )
+                {
+                    _log.warn ( "map entry is an item but misses 'item-id' ");
                     continue;
+                }
                 if ( !mapValue.containsKey ( "io-direction" ) )
+                {
+                    _log.warn ( "map entry is an item but misses 'io-direction' ");
                     continue;
+                }
                 
                 String id = mapValue.get ( "item-id" ).toString ();
                 
