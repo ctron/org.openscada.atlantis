@@ -347,6 +347,10 @@ public class Connection
             String errorInfo = message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString ();
             disconnect ( new DisconnectReason ( "Failed to create session: " + errorInfo ) );
         }
+        else if ( message.getCommandCode () != Message.CC_ACK )
+        {
+            disconnect ( new DisconnectReason ( "Received an invalid reply when requesting session" ) );
+        }
         else
         {
             setState ( State.BOUND, null );
