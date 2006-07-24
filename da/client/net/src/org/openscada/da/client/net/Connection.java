@@ -58,7 +58,7 @@ import org.openscada.utils.lang.Holder;
 public class Connection
 {
 
-    public static final String VERSION = "0.1.2";
+    public static final String VERSION = "0.1.3";
 
     public enum State
     {
