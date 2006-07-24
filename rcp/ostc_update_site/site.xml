@@ -3,10 +3,10 @@
    <description url="http://openscada.org/ostc">
       The OpenSCADA Test Client Update Site
    </description>
-   <feature url="features/org.openscada.da.client.test_0.2.0.jar" id="org.openscada.da.client.test" version="0.2.0">
+   <feature url="features/org.openscada.da.client.test_0.2.1.jar" id="org.openscada.da.client.test" version="0.2.1">
       <category name="OpenSCADA DA"/>
    </feature>
-   <feature url="features/org.openscada.da.net.client_0.2.0.jar" id="org.openscada.da.net.client" version="0.2.0">
+   <feature url="features/org.openscada.da.net.client_0.2.1.jar" id="org.openscada.da.net.client" version="0.2.1">
       <category name="OpenSCADA DA"/>
    </feature>
    <category-def name="OpenSCADA DA" label="OpenSCADA DA">
