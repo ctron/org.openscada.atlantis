@@ -42,7 +42,10 @@ import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
+import org.openscada.net.base.data.ListValue;
+import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
+import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.da.handler.EnumEvent;
 import org.openscada.net.da.handler.ListBrowser;
@@ -534,32 +537,30 @@ public class Connection
 
     private void notifyAttributesChange ( Message message )
     {
-
         Map<String,Variant> attributes = new HashMap<String,Variant>();
 
         // extract initial bit
         boolean initial = message.getValues().containsKey("initial");
-
-        for ( Map.Entry<String,Value> entry : message.getValues().getValues ().entrySet() )
+        
+        if ( message.getValues ().get ( "set" ) instanceof MapValue )
         {
-            String name = entry.getKey();
-            if ( name.startsWith("set-") )
+            MapValue setEntries = (MapValue)message.getValues ().get ( "set" );
+            for ( Map.Entry<String,Value> entry : setEntries.getValues ().entrySet () )
             {
-                Variant value = Messages.valueToVariant ( entry.getValue(), null );
-                name = name.substring ( "set-".length() );
-                attributes.put ( name, value );
+                Variant variant = Messages.valueToVariant ( entry.getValue (), null );
+                if ( variant != null )
+                    attributes.put ( entry.getKey (), variant );
             }
-            else if ( name.startsWith("null-"))
+        }
+        
+        if ( message.getValues ().get ( "unset" ) instanceof ListValue )
+        {
+            ListValue unsetEntries = (ListValue)message.getValues ().get ( "unset" );
+            for ( Value entry : unsetEntries.getValues () )
             {
-                name = name.substring("null-".length());
-                attributes.put(name,new Variant());
+                if ( entry instanceof StringValue )
+                    attributes.put ( ((StringValue)entry).getValue (), null );
             }
-            else if ( name.startsWith("unset-"))
-            {
-                name = name.substring("unset-".length());
-                attributes.put(name,null);
-            }
-
         }
 
         String itemName = message.getValues().get("item-name").toString();

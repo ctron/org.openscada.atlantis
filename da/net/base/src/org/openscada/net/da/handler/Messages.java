@@ -30,6 +30,7 @@ import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.data.DoubleValue;
 import org.openscada.net.base.data.IntegerValue;
+import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
@@ -196,7 +197,7 @@ public class Messages
         
         Value messageValue = variantToValue ( value );
         if ( messageValue != null )
-            msg.getValues().put("value", messageValue );
+            msg.getValues ().put("value", messageValue );
         
         return msg;
     }
@@ -205,32 +206,30 @@ public class Messages
     {
         Message msg = new Message ( CC_NOTIFY_ATTRIBUTES );
         
-        msg.getValues().put ( "item-name", new StringValue(itemName) );
+        msg.getValues ().put ( "item-name", new StringValue(itemName) );
         
         // flag if initial bit is set
         if ( initial )
-            msg.getValues().put ( "initial", new VoidValue () );
+            msg.getValues ().put ( "initial", new VoidValue () );
+        
+        ListValue unsetEntries = new ListValue ();
+        MapValue setEntries = new MapValue ();
         
         for ( Map.Entry<String,Variant> entry : attributes.entrySet() )
         {
-            
-            if ( entry.getValue() == null )
+            Value value = variantToValue ( entry.getValue () );
+            if ( value == null )
             {
-                msg.getValues().put("unset-" + entry.getKey(), new StringValue("") );
-            }
-            else if ( entry.getValue().isNull() )
-            {
-                msg.getValues().put("null-" + entry.getKey(), new StringValue("") );
+                unsetEntries.add ( new StringValue ( entry.getKey () ) );
             }
             else
             {
-                Value value = variantToValue(entry.getValue());
-                if ( value != null )
-                {
-                    msg.getValues().put("set-" + entry.getKey(), value );
-                }
+                setEntries.put ( entry.getKey (), value );
             }
         }
+        
+        msg.getValues ().put ( "unset", unsetEntries );
+        msg.getValues ().put ( "set", setEntries );
         
         return msg;
     }
@@ -251,9 +250,9 @@ public class Messages
     public static int encodeIO ( EnumSet<IODirection> io )
     {
         int bits = 0;
-        if ( io.contains ( IODirection.INPUT ))
+        if ( io.contains ( IODirection.INPUT ) )
             bits |= 1;
-        if ( io.contains ( IODirection.OUTPUT ))
+        if ( io.contains ( IODirection.OUTPUT ) )
             bits |= 2;
         
        return bits;
