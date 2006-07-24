@@ -4,6 +4,7 @@
 
 	<property name="prj.dir" value="../../.." />
 	<property name="fop.dir" value="${prj.dir}/fop" />
+	<property name="deploy.dir" value="documentation/specifications/da/level0/net"/>
 	
 	<taskdef name="fop" 
 	         classname="org.apache.fop.tools.anttasks.Fop">
@@ -15,6 +16,8 @@
 	         </classpath>
 	</taskdef>
 	
+	<target name="all" depends="clean, render_html, render_pdf"/>
+	
 	<target name="clean">
 		<delete dir="html" />
 		<delete file="main.fo" />
@@ -22,7 +25,8 @@
 		<delete file="messages_as_db.xml" />
 	</target>
 	
-	<target name="html" depends="clean, messages_as_db.xml">
+	<target name="render_html" depends="clean, html"/>
+	<target name="html" depends="messages_as_db.xml">
 		<xslt style="xhtml.xsl" destdir="html"
 			defaultexcludes="yes"
 			includes="main.xml"
@@ -37,7 +41,7 @@
 		</xslt>
 	</target>
 	
-	<target name="pdf_fo" depends="clean, messages_as_db.xml">
+	<target name="pdf_fo" depends="messages_as_db.xml">
 				<xslt style="pdf.xsl"
 					in="main.xml"
 					out="main.fo"
@@ -51,6 +55,7 @@
 				</xslt>
 		</target>
 		
+	<target name="render_pdf" depends="clean, pdf"/>
 	<target name="pdf" depends="pdf_fo">
 		<fop
 			fofile="main.fo"
@@ -64,5 +69,57 @@
 							out="messages_as_db.xml"
 							>
 		</xslt>
+	</target>
+	
+
+	<target name="deploy" depends="all,deploy_xml,deploy_pdf,deploy_html"/>
+	
+	<target name="deploy_xml">
+		<scp
+			keyfile="${keyfile}"
+			passphrase=""
+			localFile="main.xml"
+			todir="${deploy.base}/${deploy.dir}/xml">
+		</scp>
+		<scp
+			keyfile="${keyfile}"
+			passphrase=""
+			localFile="messages.xml"
+			todir="${deploy.base}/${deploy.dir}/xml">
+		</scp>
+		<scp
+			keyfile="${keyfile}"
+			passphrase=""
+			localFile="messages2db.xsl"
+			todir="${deploy.base}/${deploy.dir}/xml">
+		</scp>
+	</target>
+	
+	<target name="deploy_pdf" depends="render_pdf">
+			<scp
+				keyfile="${keyfile}"
+				localFile="main.pdf"
+				passphrase=""
+				todir="${deploy.base}/${deploy.dir}/pdf">
+			</scp>
+	</target>
+	
+	<target name="deploy_html" depends="render_html">
+			<zip destfile="main.zip">
+				<fileset dir="html"/>
+			</zip>
+			<scp
+				keyfile="${keyfile}"
+				passphrase=""
+				localFile="main.zip"
+				todir="${deploy.base}/${deploy.dir}/html">
+			</scp>
+			<scp
+				keyfile="${keyfile}"
+				passphrase=""
+				todir="${deploy.base}/${deploy.dir}/html">
+				<fileset dir="html"/>
+			</scp>
+		
 	</target>
 </project>
