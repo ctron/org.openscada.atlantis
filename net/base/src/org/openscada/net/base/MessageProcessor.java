@@ -85,7 +85,7 @@ public class MessageProcessor implements MessageListener
 		{
             _log.warn ( "Received message which cannot be processed! cc = " + message.getCommandCode () );
 			connection.sendMessage ( MessageCreator.createUnknownMessage ( message ) );
-			return;			
+			return;
 		}
 		
 		try
