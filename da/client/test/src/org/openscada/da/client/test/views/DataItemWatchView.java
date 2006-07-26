@@ -371,12 +371,19 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 
     public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
     {
-        appendConsoleMessage("Attribute change set " + (initial?"(initial)":"") + " " + attributes.size() + " item(s) follow:");
+        appendConsoleMessage ( "Attribute change set " + ( initial ? "(initial)" : "" ) + " " + attributes.size() + " item(s) follow:" );
         int i = 0;
         for ( Map.Entry<String,Variant> entry : attributes.entrySet() )
         {
-            String q = entry.getValue().isNull() ? "" : "'";
-            appendConsoleMessage ( "#" + i + ": " + entry.getKey() + "->" + q + entry.getValue().asString("<null>") + q );
+            if ( entry.getValue () != null )
+            {
+                String q = entry.getValue().isNull() ? "" : "'";
+                appendConsoleMessage ( "#" + i + ": " + entry.getKey() + "->" + q + entry.getValue().asString("<null>") + q );
+            }
+            else
+            {
+                appendConsoleMessage ( "#" + i + ":" + entry.getKey() + " <null>" );
+            }
         }
     }
 }
