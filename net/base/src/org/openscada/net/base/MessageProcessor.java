@@ -81,20 +81,21 @@ public class MessageProcessor implements MessageListener
 	{
 		Integer cc = message.getCommandCode();
 		
-		if ( !_listeners.containsKey(cc) )
+		if ( !_listeners.containsKey ( cc ) )
 		{
-            _log.warn ( "Received message which cannot be processed! cc = " + message.getCommandCode() );
-			connection.sendMessage(MessageCreator.createUnknownMessage(message));
+            _log.warn ( "Received message which cannot be processed! cc = " + message.getCommandCode () );
+			connection.sendMessage ( MessageCreator.createUnknownMessage ( message ) );
 			return;			
 		}
 		
-		try {
-			_listeners.get(cc).messageReceived(connection, message);
+		try
+        {
+			_listeners.get ( cc ).messageReceived ( connection, message );
 		}
 		catch ( Exception e )
 		{
-            _log.info ( "Message processing failed: ", e );
-			connection.sendMessage(MessageCreator.createFailedMessage ( message, e ) );
+            _log.warn ( "Message processing failed: ", e );
+			connection.sendMessage ( MessageCreator.createFailedMessage ( message, e ) );
 		}
 	}
 }
