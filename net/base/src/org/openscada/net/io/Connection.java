@@ -57,11 +57,14 @@ public class Connection implements ConnectionListener, MessageListener
     private MessageListener _listener = null;
 
     private Scheduler.Job _timeoutJob = null;
+    
+    private boolean _connected = false;
 
     private class MessageTag
     {
         private MessageStateListener _listener;
         private long _timestamp;
+        private long _timeout;
 
         public MessageStateListener getListener ()
         {
@@ -79,6 +82,14 @@ public class Connection implements ConnectionListener, MessageListener
         {
             _timestamp = timestamp;
         }
+        public long getTimeout ()
+        {
+            return _timeout;
+        }
+        public void setTimeout ( long timeout )
+        {
+            _timeout = timeout;
+        }
     }
 
     private Map<Long,MessageTag> _tagList = new HashMap<Long,MessageTag> (); 
@@ -91,6 +102,8 @@ public class Connection implements ConnectionListener, MessageListener
 
         _protocolGMPP = new ProtocolGMPP ( this, this );
 
+        _connected = true;
+        
         addTimeOutJob ();
     }
 
@@ -100,6 +113,8 @@ public class Connection implements ConnectionListener, MessageListener
         _protocolGMPP = new ProtocolGMPP ( this, this);
         _connection = connection;
 
+        _connected = true;
+        
         addTimeOutJob ();
     }
 
@@ -127,6 +142,7 @@ public class Connection implements ConnectionListener, MessageListener
         if ( _timeoutJob != null )
         {
             _scheduler.removeJob ( _timeoutJob );
+            _timeoutJob = null;
         }
     }
 
@@ -145,6 +161,9 @@ public class Connection implements ConnectionListener, MessageListener
 
     public void sendMessage ( Message message )
     {
+        if ( !_connected )
+            return;
+        
         synchronized ( _connection )
         {
             message.setSequence ( nextSequence () );
@@ -156,12 +175,18 @@ public class Connection implements ConnectionListener, MessageListener
         }
     }
 
-    public void sendMessage ( Message message, MessageStateListener listener )
+    public void sendMessage ( Message message, MessageStateListener listener, long timeout )
     {
+        if ( !_connected )
+        {
+            listener.messageTimedOut ();
+            return;
+        }
         MessageTag tag = new MessageTag ();
 
         tag.setListener ( listener );
         tag.setTimestamp ( System.currentTimeMillis () );
+        tag.setTimeout ( timeout );
         
         synchronized ( _connection )
         {
@@ -179,6 +204,11 @@ public class Connection implements ConnectionListener, MessageListener
             _connection.scheduleWrite ( buffer );
         }
     }
+    
+    public void sendMessage ( Message message, MessageStateListener listener )
+    {
+        sendMessage ( message, listener, 0 );
+    }
 
     public void read ( ByteBuffer buffer )
     {
@@ -192,9 +222,11 @@ public class Connection implements ConnectionListener, MessageListener
 
     public void connected ()
     {
+        _connected = true;
+        
         cleanTagList ();
 
-        _connection.triggerRead();
+        _connection.triggerRead ();
 
         if ( _connectionStateListener != null )
             _connectionStateListener.opened ();
@@ -202,12 +234,16 @@ public class Connection implements ConnectionListener, MessageListener
 
     public void connectionFailed ( IOException e )
     {
+        _connected = false;
+        
         if ( _connectionStateListener != null )
             _connectionStateListener.closed ( e );
     }
 
     public void closed ()
     {
+        _connected = false;
+        
         removeTimeOutJob();
 
         cleanTagList ();
@@ -218,6 +254,7 @@ public class Connection implements ConnectionListener, MessageListener
 
     public void close ()
     {
+        _connected = false;
         _connection.close ();
     }
 
