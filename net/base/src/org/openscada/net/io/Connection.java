@@ -65,6 +65,7 @@ public class Connection implements ConnectionListener, MessageListener
         private MessageStateListener _listener;
         private long _timestamp;
         private long _timeout;
+        private boolean _canceled = false;
 
         public MessageStateListener getListener ()
         {
@@ -89,6 +90,23 @@ public class Connection implements ConnectionListener, MessageListener
         public void setTimeout ( long timeout )
         {
             _timeout = timeout;
+        }
+        public boolean isTimedOut ()
+        {
+            if ( _timeout <= 0 )
+                return _canceled;
+            
+            if ( _canceled )
+                return true;
+            
+            return  ( System.currentTimeMillis () - _timestamp ) >= _timeout;
+        }
+        public void cancel ()
+        {
+            if ( _canceled )
+                return;
+            
+            _canceled = true;
         }
     }
 
@@ -175,18 +193,19 @@ public class Connection implements ConnectionListener, MessageListener
         }
     }
 
-    public void sendMessage ( Message message, MessageStateListener listener, long timeout )
+    public MessageTag sendMessage ( Message message, MessageStateListener listener, long timeout )
     {
-        if ( !_connected )
-        {
-            listener.messageTimedOut ();
-            return;
-        }
         MessageTag tag = new MessageTag ();
 
         tag.setListener ( listener );
         tag.setTimestamp ( System.currentTimeMillis () );
         tag.setTimeout ( timeout );
+        
+        if ( !_connected )
+        {
+            listener.messageTimedOut ();
+            return tag;
+        }
         
         synchronized ( _connection )
         {
@@ -194,7 +213,7 @@ public class Connection implements ConnectionListener, MessageListener
 
             ByteBuffer buffer = encode ( message );
             if ( buffer == null )
-                return;
+                return tag;
             
             synchronized ( _tagList )
             {
@@ -203,11 +222,12 @@ public class Connection implements ConnectionListener, MessageListener
 
             _connection.scheduleWrite ( buffer );
         }
+        return tag;
     }
     
-    public void sendMessage ( Message message, MessageStateListener listener )
+    public MessageTag sendMessage ( Message message, MessageStateListener listener )
     {
-        sendMessage ( message, listener, 0 );
+        return sendMessage ( message, listener, 0 );
     }
 
     public void read ( ByteBuffer buffer )
@@ -311,7 +331,7 @@ public class Connection implements ConnectionListener, MessageListener
             {
                 MessageTag tag = i.next().getValue();
 
-                if ( ( System.currentTimeMillis () - tag.getTimestamp() ) >= _timeoutLimit )
+                if ( tag.isTimedOut () )
                 {
                     removeBag.add ( tag );
                     i.remove ();
