@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<project name="snmp_server" default="main" basedir=".">
+
+	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean"/>
+
+	<target name="main">
+		<xmlbean
+			schema="schema/SNMPServerSchema.xsd"
+			destfile="SNMPServerSchema.jar"
+			javasource="1.5"
+			/>
+  	</target>
+  
+</project>

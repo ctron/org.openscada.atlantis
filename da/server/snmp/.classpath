@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/log4j"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SNMP4J"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/mibble"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/xmlbeans"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
