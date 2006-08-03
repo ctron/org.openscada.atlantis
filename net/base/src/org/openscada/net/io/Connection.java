@@ -63,8 +63,8 @@ public class Connection implements ConnectionListener, MessageListener
     private class MessageTag
     {
         private MessageStateListener _listener;
-        private long _timestamp;
-        private long _timeout;
+        private long _timestamp = 0;
+        private long _timeout = 0;
         private boolean _canceled = false;
 
         public MessageStateListener getListener ()
@@ -91,7 +91,7 @@ public class Connection implements ConnectionListener, MessageListener
         {
             _timeout = timeout;
         }
-        public boolean isTimedOut ()
+        synchronized public boolean isTimedOut ()
         {
             if ( _timeout <= 0 )
                 return _canceled;
@@ -101,7 +101,7 @@ public class Connection implements ConnectionListener, MessageListener
             
             return  ( System.currentTimeMillis () - _timestamp ) >= _timeout;
         }
-        public void cancel ()
+        synchronized public void cancel ()
         {
             if ( _canceled )
                 return;
@@ -302,7 +302,10 @@ public class Connection implements ConnectionListener, MessageListener
             if ( _tagList.containsKey ( seq ) )
             {
                 tag = _tagList.get ( seq );
-                _tagList.remove ( seq );
+                if ( !tag.isTimedOut () )
+                    _tagList.remove ( seq );
+                else
+                    tag = null;
             }
         }
         
