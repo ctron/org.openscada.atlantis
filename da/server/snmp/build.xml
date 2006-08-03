@@ -4,6 +4,9 @@
 
 	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean"/>
 
+	<target name="clean">
+		<delete file="SNMPServerSchema.jar"/>
+	</target>
 	<target name="main">
 		<xmlbean
 			schema="schema/SNMPServerSchema.xsd"

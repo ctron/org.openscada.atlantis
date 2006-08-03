@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:po="http://openscada.org/DA/Server/SNMP"
+    xmlns:os="http://openscada.org/DA/Server/SNMP"
     targetNamespace="http://openscada.org/DA/Server/SNMP"
     elementFormDefault="qualified">
     <xs:element name="configuration">
@@ -10,22 +10,9 @@
     <xs:sequence>
     <xs:element name="connection" maxOccurs="unbounded" minOccurs="0">
       <xs:complexType>
-        <xs:attribute name="host">
-          <xs:simpleType>
-            <xs:restriction base="xs:string">
-              <xs:pattern value="(([a-zA-Z0-9]+[a-zA-Z0-9\-]?)\.?)+"></xs:pattern>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="port">
-          <xs:simpleType>
-            <xs:restriction base="xs:integer">
-              <xs:minInclusive value="0" />
-              <xs:maxInclusive value="65535" />
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="name" type="xs:QName"></xs:attribute>
+        <xs:attribute name="name" use="required" type="xs:NMTOKEN"></xs:attribute>
+        <xs:attribute name="community" use="required" type="xs:NMTOKEN"></xs:attribute>
+        <xs:attribute name="address" use="required" type="os:address"></xs:attribute>
       </xs:complexType>
     </xs:element>
     
@@ -36,4 +23,14 @@
     </xs:element>
 
 
+
+
+    <xs:simpleType name="address">
+        <xs:annotation>
+          <xs:documentation>An address to a SNMP device as required by the SNMP4J library</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+        <xs:pattern value="(udp|tcp):([a-zA-Z]+\.?)+/[0-9]{1,5}"></xs:pattern>
+      </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

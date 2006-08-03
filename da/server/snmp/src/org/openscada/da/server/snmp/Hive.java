@@ -19,12 +19,17 @@
 
 package org.openscada.da.server.snmp;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.xmlbeans.XmlException;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.common.impl.HiveCommon;
+import org.openscada.da.server.snmp.ConfigurationDocument.Configuration;
+import org.openscada.da.server.snmp.ConfigurationDocument.Configuration.Connection;
 
 public class Hive extends HiveCommon
 {
@@ -33,23 +38,50 @@ public class Hive extends HiveCommon
     
     private Map<String, SNMPNode> _nodeMap = new HashMap<String, SNMPNode> ();
     
+    private FolderCommon _rootFolder = null;
+    
 	public Hive ()
 	{
 		super();
 		
         // create root folder
-		FolderCommon rootFolder = new FolderCommon ();
-        setRootFolder ( rootFolder );
-
-        SNMPNode node;
-        
-        ConnectionInformation connectionInformation = new ConnectionInformation ( "localhost" );
-        connectionInformation.setAddress ( "udp:127.0.0.1/161" );
-        connectionInformation.setCommunity ( "public" );
-        
-        node = new SNMPNode ( this, rootFolder, connectionInformation );
-        node.register ();
-        _nodeMap.put ( "localhost", node );
-
+		_rootFolder = new FolderCommon ();
+        setRootFolder ( _rootFolder );
+       
+        configure ();
 	}
+    
+    private void configure ()
+    {
+        File configurationFile = new File ( "configuration.xml" );
+        try
+        {
+            ConfigurationDocument doc = ConfigurationDocument.Factory.parse ( configurationFile );
+            for ( Configuration.Connection connection : doc.getConfiguration ().getConnectionList () )
+            {
+                configureConnection ( connection );
+            }
+        }
+        catch ( XmlException e )
+        {
+            _log.warn ( "Unable to configure hive", e );
+        }
+        catch ( IOException e )
+        {
+            _log.warn ( "Unable to configure hive", e );
+        }
+    }
+
+    private void configureConnection ( Connection connection )
+    {
+        _log.debug ( String.format ( "New Connection: %1$s - %2$s", connection.getName (), connection.getAddress () ) );
+        ConnectionInformation ci = new ConnectionInformation ( connection.getName () );
+        
+        ci.setAddress ( connection.getAddress () );
+        ci.setCommunity ( connection.getCommunity () );
+        
+        SNMPNode node = new SNMPNode ( this, _rootFolder, ci );
+        node.register ();
+        _nodeMap.put ( connection.getName (), node );
+    }
 }
