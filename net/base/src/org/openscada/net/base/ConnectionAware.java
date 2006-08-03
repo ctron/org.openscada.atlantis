@@ -19,7 +19,7 @@
 
 package org.openscada.net.base;
 
-import org.openscada.net.io.Connection;
+import org.openscada.net.io.net.Connection;
 
 /**
  * If a connection handler implements ConnectionAware it will get during set up process

@@ -22,8 +22,8 @@ package org.openscada.net.base;
 import java.net.SocketAddress;
 
 import org.apache.log4j.Logger;
-import org.openscada.net.io.Client;
 import org.openscada.net.io.IOProcessor;
+import org.openscada.net.io.net.Client;
 
 public class AutoReconnectClientConnection extends ConnectionHandlerBase
 {

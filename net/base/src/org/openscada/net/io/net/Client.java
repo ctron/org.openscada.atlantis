@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.net.io;
+package org.openscada.net.io.net;
 
 import java.io.IOException;
 import java.net.SocketAddress;
@@ -25,6 +25,9 @@ import java.net.SocketAddress;
 import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
+import org.openscada.net.io.ConnectionStateListener;
+import org.openscada.net.io.IOProcessor;
+import org.openscada.net.io.SocketConnection;
 
 public class Client implements ConnectionStateListener
 {

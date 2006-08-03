@@ -28,6 +28,7 @@ import java.nio.channels.SocketChannel;
 
 import org.apache.log4j.Logger;
 import org.openscada.net.base.ConnectionHandlerFactory;
+import org.openscada.net.io.net.ServerConnection;
 import org.openscada.net.utils.MessageCreator;
 
 public class ServerSocket extends IOChannel implements IOChannelListener {

@@ -29,7 +29,7 @@ import org.junit.Assert;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
-import org.openscada.net.io.Connection;
+import org.openscada.net.io.net.Connection;
 
 public class TestMessageListener implements MessageListener
 {

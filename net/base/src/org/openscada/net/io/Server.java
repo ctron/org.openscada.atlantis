@@ -24,30 +24,30 @@ import java.net.InetSocketAddress;
 
 import org.openscada.net.base.ConnectionHandlerFactory;
 
-public class Server implements Runnable {
-
+public class Server implements Runnable
+{
 	private IOProcessor _processor = null;
 	private ServerSocket _serverSocket = null;
 	
 	public Server ( ConnectionHandlerFactory factory, int port ) throws IOException
 	{
-		this ( factory, new IOProcessor(), port );
+		this ( factory, new IOProcessor (), port );
 	}
     
     public Server ( ConnectionHandlerFactory factory, IOProcessor processor, int port  ) throws IOException
     {
         _processor = processor;
         
-        _serverSocket = new ServerSocket(_processor, new InetSocketAddress(port), factory);
+        _serverSocket = new ServerSocket ( _processor, new InetSocketAddress ( port ), factory );
     }
 	
 	public void start ()
 	{
-		_processor.start();
+		_processor.start ();
 	}
 	
 	public void run ()
 	{
-		_processor.run();
+		_processor.run ();
 	}
 }

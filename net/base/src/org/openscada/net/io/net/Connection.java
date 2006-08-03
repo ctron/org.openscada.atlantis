@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.net.io;
+package org.openscada.net.io.net;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -35,6 +35,9 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.codec.InvalidValueTypeException;
 import org.openscada.net.codec.Protocol;
 import org.openscada.net.codec.ProtocolGMPP;
+import org.openscada.net.io.ConnectionListener;
+import org.openscada.net.io.ConnectionStateListener;
+import org.openscada.net.io.SocketConnection;
 import org.openscada.utils.timing.Scheduler;
 
 public class Connection implements ConnectionListener, MessageListener

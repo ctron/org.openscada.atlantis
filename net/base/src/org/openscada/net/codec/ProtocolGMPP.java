@@ -39,7 +39,7 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
-import org.openscada.net.io.Connection;
+import org.openscada.net.io.net.Connection;
 
 public class ProtocolGMPP implements Protocol
 {

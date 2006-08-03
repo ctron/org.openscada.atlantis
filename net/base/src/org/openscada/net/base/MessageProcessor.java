@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openscada.net.base.data.Message;
-import org.openscada.net.io.Connection;
+import org.openscada.net.io.net.Connection;
 import org.openscada.net.utils.MessageCreator;
 
 public class MessageProcessor implements MessageListener

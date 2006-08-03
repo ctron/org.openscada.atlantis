@@ -27,8 +27,16 @@ import org.openscada.net.base.AutoReconnectClientConnection;
 import org.openscada.net.base.ConnectionHandler;
 import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.ConnectionHandlerFactory;
+import org.openscada.net.base.data.DoubleValue;
+import org.openscada.net.base.data.IntegerValue;
+import org.openscada.net.base.data.ListValue;
+import org.openscada.net.base.data.LongValue;
+import org.openscada.net.base.data.Message;
+import org.openscada.net.base.data.StringValue;
+import org.openscada.net.base.data.VoidValue;
 import org.openscada.net.io.IOProcessor;
 import org.openscada.net.io.Server;
+import org.openscada.net.io.net.Connection;
 
 
 public class Application {
@@ -36,6 +44,25 @@ public class Application {
 	@SuppressWarnings("unused")
     private static Logger _log = Logger.getLogger(Application.class);
 	
+    public static void sendTestMessage ( Connection connection )
+    {
+        Message message = new Message ();
+        message.getValues ().put ( "test", new StringValue ( "nür ün tüst") );
+        
+        ListValue listValue = new ListValue ();
+        listValue.add ( new StringValue ( "test1" ) );
+        listValue.add ( new StringValue ( "test2" ) );
+        listValue.add ( new StringValue ( "test3" ) );
+        message.getValues ().put ( "list", listValue );
+        
+        message.getValues ().put ( "int", new IntegerValue ( 1202 ) );
+        message.getValues ().put ( "long", new LongValue ( 0x0101DEADBEEF0202L ) );
+        message.getValues ().put ( "double", new DoubleValue ( 123.456 ) );
+        message.getValues ().put ( "void", new VoidValue () );
+        
+        connection.sendMessage ( message );   
+    }
+    
 	public static void main(String[] args) {
 		try {
 			IOProcessor processor = new IOProcessor();
@@ -43,7 +70,14 @@ public class Application {
 			Server server = new Server(new ConnectionHandlerFactory(){
 
 				public ConnectionHandler createConnectionHandler() {
-					return new ConnectionHandlerBase();
+					return new ConnectionHandlerBase() {
+					    @Override
+					    public void opened ()
+					    {
+					        super.opened ();
+                            sendTestMessage ( getConnection () );
+					    }
+                    };
 				}},1202);
 			server.start();
 			

@@ -17,20 +17,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.net.io;
+package org.openscada.net.io.net;
 
-import org.openscada.net.base.MessageListener;
+import org.apache.log4j.Logger;
+import org.openscada.net.base.ConnectionAware;
+import org.openscada.net.base.ConnectionHandler;
+import org.openscada.net.io.SocketConnection;
 
-public class ClientConnection extends Connection {
-
-	private SocketConnection _connection;
+public class ServerConnection extends Connection
+{
 	
-	public ClientConnection(MessageListener listener, ConnectionStateListener connectionStateListener, SocketConnection connection)
+	private static Logger _log = Logger.getLogger ( ServerConnection.class );
+	
+	private ConnectionHandler _handler; 
+	
+	public ServerConnection ( ConnectionHandler handler, SocketConnection connection )
     {
-		super(listener, connectionStateListener, connection);
-		_connection = connection;
+		super ( handler, handler, connection );
 		
-		_connection.setListener ( this );
+		_handler = handler;
+		if ( _handler instanceof ConnectionAware )
+			( (ConnectionAware)_handler ).setConnection ( this );
+		
+		connection.setListener ( this );
+		connection.triggerRead ();
 	}
 
+	@Override
+	protected void finalize() throws Throwable
+    {
+		_log.debug ( "Server connection finalized" );
+		super.finalize ();
+	}
 }

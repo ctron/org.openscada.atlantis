@@ -22,7 +22,7 @@ package org.openscada.net.base.handlers;
 import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
-import org.openscada.net.io.Connection;
+import org.openscada.net.io.net.Connection;
 
 public class PongHandler implements MessageListener {
 	
