@@ -21,13 +21,22 @@ package org.openscada.da.server.snmp;
 
 public class ConnectionInformation implements Cloneable
 {
+    public enum Version
+    {
+      V1,
+      V2C,
+      V3,
+    };
+    
+    private Version _version = Version.V2C;
     private String _name = null;
     private String _address = null;
     
     private String _community = null;
    
-    public ConnectionInformation ( String name )
+    public ConnectionInformation ( Version version, String name )
     {
+        _version = version;
         _name = name;
     }
     
@@ -37,6 +46,8 @@ public class ConnectionInformation implements Cloneable
             _address = new String ( arg0._address );
         if ( arg0._name != null )
             _name = new String ( arg0._name );
+        if ( arg0._version != null )
+            _version = arg0._version;
         
         if ( arg0._community != null )
             _community = new String ( arg0._community );
@@ -76,5 +87,15 @@ public class ConnectionInformation implements Cloneable
     public void setCommunity ( String community )
     {
         _community = community;
+    }
+
+    public Version getVersion ()
+    {
+        return _version;
+    }
+
+    public void setVersion ( Version version )
+    {
+        _version = version;
     }
 }

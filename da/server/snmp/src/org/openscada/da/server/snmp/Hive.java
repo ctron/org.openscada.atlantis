@@ -47,8 +47,13 @@ public class Hive extends HiveCommon
         // create root folder
 		_rootFolder = new FolderCommon ();
         setRootFolder ( _rootFolder );
-       
-        configure ();
+
+        new Thread ( new Runnable () {
+
+            public void run ()
+            {
+                configure ();
+            }} ).start ();
 	}
     
     private void configure ()
@@ -75,8 +80,20 @@ public class Hive extends HiveCommon
     private void configureConnection ( Connection connection )
     {
         _log.debug ( String.format ( "New Connection: %1$s - %2$s", connection.getName (), connection.getAddress () ) );
-        ConnectionInformation ci = new ConnectionInformation ( connection.getName () );
+        ConnectionInformation ci;
         
+        switch ( connection.getVersion () )
+        {
+        case 1:
+            ci = new ConnectionInformation ( ConnectionInformation.Version.V1, connection.getName () );
+            break;
+        case 2:
+            ci = new ConnectionInformation ( ConnectionInformation.Version.V2C, connection.getName () );
+            break;
+        default:
+            return;
+        }
+
         ci.setAddress ( connection.getAddress () );
         ci.setCommunity ( connection.getCommunity () );
         

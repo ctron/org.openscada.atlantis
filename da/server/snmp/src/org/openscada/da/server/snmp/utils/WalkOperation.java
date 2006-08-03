@@ -114,8 +114,12 @@ public abstract class WalkOperation
         
         Target target = _node.getConnection ().createTarget ();
         PDU request = _node.getConnection ().createPDU ( target, _useBulkGet ? PDU.GETBULK : PDU.GETNEXT );
-        request.setNonRepeaters ( 0 );
-        request.setMaxRepetitions ( 10 );
+        
+        if ( _useBulkGet )
+        {
+            request.setNonRepeaters ( 0 );
+            request.setMaxRepetitions ( 10 );
+        }
         
         OID currentOID = _oid;
         boolean endOfList = false;

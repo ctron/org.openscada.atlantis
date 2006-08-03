@@ -37,6 +37,7 @@ import org.openscada.da.core.browser.common.query.InvisibleStorage;
 import org.openscada.da.core.browser.common.query.ItemDescriptor;
 import org.openscada.da.core.browser.common.query.NameProvider;
 import org.openscada.da.core.browser.common.query.SplitGroupProvider;
+import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.DataItemInputCommon;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.core.data.Variant;
@@ -67,6 +68,7 @@ public class SNMPNode
     private Connection _connection = null;
     
     private DataItemInputCommon _connectionInfoItem = null;
+    private DataItemCommand _itemRewalkCommand = null;
     
     private Scheduler _scheduler = null;
     private SNMPBulkReader _bulkReader = null;
@@ -85,10 +87,16 @@ public class SNMPNode
         _connectionInformation = connectionInformation;
         
         _connectionInfoItem = new DataItemInputCommon ( getItemIDPrefix () + ".connection" );
+        _itemRewalkCommand = new DataItemCommand ( getItemIDPrefix () + ".rewalk" );
+        _itemRewalkCommand.addListener ( new DataItemCommand.Listener () {
+
+            public void command ( Variant value )
+            {
+                rewalk ();
+            }} );
         
         _bulkReader = new SNMPBulkReader ( this );
-        
-        
+       
     }
     
     synchronized public void register ()
@@ -132,6 +140,11 @@ public class SNMPNode
                 .put ( "description", new Variant ( "Item contains connection information" ) )
                 .getMap ()
         );
+        _hive.registerItem ( _itemRewalkCommand );
+        _nodeFolder.add ( "rewalk", _itemRewalkCommand, new MapBuilder<String, Variant> ()
+                .put ( "description", new Variant ( "Item that can be used to trigger a re-walk of the SNMP tree") )
+                .getMap ()
+        );
         
         _connectionInfoItem.updateValue ( new Variant ( 0 ) );
         try
@@ -159,7 +172,7 @@ public class SNMPNode
                     .getMap ()
             );
             
-            populateByWalk ();
+            rewalk ();
             buildMIBFolders ();
             
         }
@@ -182,6 +195,7 @@ public class SNMPNode
         _storage.removeChild ( _oidGroupFolder );
         
         _hive.unregisterItem ( _connectionInfoItem );
+        _hive.unregisterItem ( _itemRewalkCommand );
         
         _rootFolder.remove ( getNodeFolderName () );
         _nodeFolder = null;
@@ -305,7 +319,7 @@ public class SNMPNode
         }
     }
     
-    private void populateByWalk ()
+    public void rewalk ()
     {
         ListOIDWalker walker = new ListOIDWalker ( this, new OID (), false );
         walker.run ();

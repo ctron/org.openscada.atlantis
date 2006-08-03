@@ -68,14 +68,30 @@ public class Connection
     
     public Target createTarget ()
     {
-        if ( _connectionInformation.getCommunity () != null )
+        switch ( _connectionInformation.getVersion () )
         {
-            CommunityTarget target = new CommunityTarget ( _address, new OctetString ( _connectionInformation.getCommunity () ) );
-            target.setRetries ( 1 );
-            target.setVersion ( SnmpConstants.version2c );
-            target.setTimeout ( 5 * 1000 );
-            return target;
+        case V1:
+            if ( _connectionInformation.getCommunity () != null )
+            {
+                CommunityTarget target = new CommunityTarget ( _address, new OctetString ( _connectionInformation.getCommunity () ) );
+                target.setRetries ( 1 );
+                target.setVersion ( SnmpConstants.version1 );
+                target.setTimeout ( 5 * 1000 );
+                return target;
+            }    
+            break;
+        case V2C:
+            if ( _connectionInformation.getCommunity () != null )
+            {
+                CommunityTarget target = new CommunityTarget ( _address, new OctetString ( _connectionInformation.getCommunity () ) );
+                target.setRetries ( 1 );
+                target.setVersion ( SnmpConstants.version2c );
+                target.setTimeout ( 5 * 1000 );
+                return target;
+            }    
+            break;
         }
+        
         return null;
     }
     
