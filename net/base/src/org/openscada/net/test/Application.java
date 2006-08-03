@@ -35,8 +35,8 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.VoidValue;
 import org.openscada.net.io.IOProcessor;
-import org.openscada.net.io.Server;
 import org.openscada.net.io.net.Connection;
+import org.openscada.net.io.net.Server;
 
 
 public class Application {

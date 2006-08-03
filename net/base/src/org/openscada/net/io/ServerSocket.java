@@ -27,57 +27,64 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
 import org.apache.log4j.Logger;
-import org.openscada.net.base.ConnectionHandlerFactory;
-import org.openscada.net.io.net.ServerConnection;
-import org.openscada.net.utils.MessageCreator;
 
-public class ServerSocket extends IOChannel implements IOChannelListener {
-
-	private static Logger _log = Logger.getLogger(ServerSocket.class);
+public class ServerSocket extends IOChannel implements IOChannelListener
+{
+    public interface ConnectionFactory
+    {
+        public void accepted ( SocketConnection connection );
+    }
+    
+	private static Logger _log = Logger.getLogger ( ServerSocket.class );
 	
 	private IOProcessor _processor = null;
 	private ServerSocketChannel _channel = null;
-	private ConnectionHandlerFactory _factory = null;
+	private ConnectionFactory _factory = null;
 	
-	public ServerSocket ( IOProcessor processor, SocketAddress bindAddress, ConnectionHandlerFactory factory ) throws IOException
+	public ServerSocket ( IOProcessor processor, SocketAddress bindAddress, ConnectionFactory factory ) throws IOException
 	{
 		_processor = processor;
 		_factory = factory;
 		
-		_channel = ServerSocketChannel.open();
-		_channel.configureBlocking(false);
-		_channel.socket().bind(bindAddress);
+		_channel = ServerSocketChannel.open ();
+		_channel.configureBlocking ( false );
+		_channel.socket ().bind ( bindAddress );
 		
 		_processor.registerConnection ( this, SelectionKey.OP_ACCEPT );
 	}
 	
-	public void handleConnect() {
-		// TODO Auto-generated method stub
-		
+	public void handleConnect()
+    {
 	}
 
-	public void handleRead() {
-		// TODO Auto-generated method stub
-		
+	public void handleRead()
+    {
 	}
 
-	public void handleWrite() {
-		// TODO Auto-generated method stub
-		
+	public void handleWrite()
+    {	
 	}
 
-	public void handleAccept() {
+	public void handleAccept()
+    {
 		_log.debug ( "Checking inbound connection");
 		
 		try {
-			SocketChannel channel = _channel.accept();
+			SocketChannel channel = _channel.accept ();
 			
 			if ( channel != null )
 			{
 				_log.debug ( "Accepted connection" );
-				ServerConnection connection = new ServerConnection ( _factory.createConnectionHandler (), new SocketConnection ( _processor, channel ) );
+                if ( _factory != null )
+                {
+                    _factory.accepted ( new SocketConnection ( _processor, channel ) );
+                }
+				
+                /*
+                ServerConnection connection = new ServerConnection ( _factory.createConnectionHandler (), new SocketConnection ( _processor, channel ) );
                 connection.connected ();
 				connection.sendMessage ( MessageCreator.createPing () );
+                */
 			}
 			
 		} catch (IOException e) {
