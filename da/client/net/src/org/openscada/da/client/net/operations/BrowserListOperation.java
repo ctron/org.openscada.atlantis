@@ -80,7 +80,7 @@ public class BrowserListOperation extends AsyncBasedOperation<Entry[], String[]>
             public void messageTimedOut ()
             {
                 or.notifyFailure ( new OperationTimedOutException () );
-            }} );
+            }}, 10*1000 );
     }
 
 }

@@ -76,7 +76,7 @@ public class WriteOperation extends AsyncBasedOperation<Object,WriteOperationArg
             public void messageTimedOut ()
             {
                 or.notifyFailure ( new OperationTimedOutException () );
-            }});
+            }}, 10 * 1000 );
     }
 
 }
