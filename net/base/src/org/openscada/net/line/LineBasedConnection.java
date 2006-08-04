@@ -150,14 +150,6 @@ public class LineBasedConnection implements ConnectionListener
     
     private void triggerLine ( String line )
     {
-        System.err.print ( toString () + " " );
-        for ( byte b : line.getBytes () )
-        {
-            System.err.print ( String.format ( "%d ", (long)b ) );
-        }
-        System.err.println ();
-        System.err.println ( line );
-        
         if ( _handler != null )
             _handler.handleLine ( line );
     }
@@ -165,5 +157,16 @@ public class LineBasedConnection implements ConnectionListener
     public SocketConnection getConnection ()
     {
         return _socket;
+    }
+
+    public void setTimeout ( int timeout )
+    {
+        synchronized ( this )
+        {
+            if ( _socket != null )
+            {
+                _socket.setTimeout ( timeout );
+            }
+        }
     }
 }
