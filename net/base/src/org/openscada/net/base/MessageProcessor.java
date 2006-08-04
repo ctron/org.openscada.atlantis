@@ -62,7 +62,7 @@ public class MessageProcessor implements MessageListener
 			return;
             
 		case Message.CC_UNKNOWN_COMMAND_CODE:
-			_log.warn ( "Reply to unknown message: " + message.getSequence() + "/" + message.getReplySequence() );
+			_log.warn ( "Reply to unknown message command code from peer: " + message.getSequence() + "/" + message.getReplySequence() );
 			return;
             
         case Message.CC_ACK:
