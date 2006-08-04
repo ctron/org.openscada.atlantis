@@ -1,9 +1,7 @@
 package org.openscada.net.test;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 
 import org.openscada.net.io.IOProcessor;
 import org.openscada.net.line.LineBasedClient;
