@@ -74,7 +74,7 @@ public class TestLineHandler implements LineHandler
     {
         _connection = connection;
         if ( _connection != null )
-            _connection.getConnection ().setTimeOut ( 10*1000 );
+            _connection.getConnection ().setTimeout ( 10*1000 );
     }
 
 }
