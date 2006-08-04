@@ -111,7 +111,7 @@ public abstract class IOChannel
         processor.disableConnectionTimeout ( this );
     }
     
-    public void setTimeOut ( long timeout )
+    public void setTimeout ( long timeout )
     {
         _timeout = timeout;
         synchronized ( _processorSet )
