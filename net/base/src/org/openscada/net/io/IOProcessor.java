@@ -39,13 +39,13 @@ public class IOProcessor implements Runnable {
     @SuppressWarnings("unused")
     private static Logger _log = Logger.getLogger ( IOProcessor.class );
 	
-	public Map<SelectionKey,IOChannel> _connections = new HashMap<SelectionKey,IOChannel>();
-    public Set<IOChannel> _timeoutConnections = new HashSet<IOChannel> ();
+    private Map<SelectionKey,IOChannel> _connections = new HashMap<SelectionKey,IOChannel>();
+    private Set<IOChannel> _timeoutConnections = new HashSet<IOChannel> ();
 	
-	public Selector _selector = null;
-	public Thread _thread = null;
-    public boolean _running = false;
-    public Scheduler _scheduler = null;
+    private Selector _selector = null;
+    private Thread _thread = null;
+    private boolean _running = false;
+    private Scheduler _scheduler = null;
 	
 	public IOProcessor () throws IOException
 	{
