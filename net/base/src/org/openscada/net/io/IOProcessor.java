@@ -24,7 +24,9 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openscada.utils.timing.AlreadyBoundException;
@@ -35,9 +37,10 @@ import org.openscada.utils.timing.WrongThreadException;
 public class IOProcessor implements Runnable {
     
     @SuppressWarnings("unused")
-    private static Logger _log = Logger.getLogger(IOProcessor.class);
+    private static Logger _log = Logger.getLogger ( IOProcessor.class );
 	
-	public Map<SelectionKey,IOChannel> _connections = new HashMap<SelectionKey,IOChannel>(); 
+	public Map<SelectionKey,IOChannel> _connections = new HashMap<SelectionKey,IOChannel>();
+    public Set<IOChannel> _timeoutConnections = new HashSet<IOChannel> ();
 	
 	public Selector _selector = null;
 	public Thread _thread = null;
@@ -79,39 +82,76 @@ public class IOProcessor implements Runnable {
 		SelectionKey key = connection.getSelectableChannel().keyFor( _selector );
 		if ( key == null )
 		{
-            key = connection.getSelectableChannel().register ( _selector, ops );
+            key = connection.getSelectableChannel ().register ( _selector, ops );
             _connections.put ( key, connection );
 		}
 		else
 		{
-			key.interestOps(ops);
+			key.interestOps ( ops );
 		}
 		
-		_selector.wakeup();
+		_selector.wakeup ();
 	}
+    
+    public void enableConnectionTimeout ( IOChannel connection )
+    {
+        synchronized ( _timeoutConnections )
+        {
+            _timeoutConnections.add ( connection );
+        }
+    }
+    
+    public void disableConnectionTimeout ( IOChannel connection )
+    {
+        synchronized ( _timeoutConnections )
+        {
+            _timeoutConnections.remove ( connection );
+        }
+    }
+    
+    private void checkTimeouts ()
+    {
+        Set<IOChannel> connections = null;
+        
+        synchronized ( _timeoutConnections )
+        {
+            connections = new HashSet<IOChannel> ( _timeoutConnections );
+        }
+        
+        for ( IOChannel channel : connections )
+        {
+            if ( channel.isTimeOut () )
+            {
+                if ( channel.getIOChannelListener () != null )
+                {
+                    channel.getIOChannelListener ().handleTimeout ();
+                }
+            }
+        }
+    }
 	
 	public void unregisterConnection ( IOChannel connection )
 	{
-		SelectionKey key = connection.getSelectableChannel().keyFor ( _selector );
+		SelectionKey key = connection.getSelectableChannel ().keyFor ( _selector );
 		
 		if ( key != null )
 		{
-			_connections.remove(key);
-			key.cancel();
+			_connections.remove ( key );
+			key.cancel ();
 		}
 	}
 
-	public void run()
+	public void run ()
 	{
         // Try to bind to the scheduler. If this fails there is somebody else
         // bound to it so we return
         try
         {
-            _scheduler.bindToCurrentThread();
+            _scheduler.bindToCurrentThread ();
         }
-        catch ( AlreadyBoundException e1 )
+        catch ( AlreadyBoundException e )
         {
-            e1.printStackTrace();
+            e.printStackTrace();
             return;
         }
         
@@ -121,7 +161,7 @@ public class IOProcessor implements Runnable {
 			try
             {
                 int rc = 0;
-                rc = _selector.select (100);
+                rc = _selector.select ( 100 );
                 
 				if ( rc > 0 )
 				{
@@ -155,28 +195,32 @@ public class IOProcessor implements Runnable {
 					}
 					
 					// clear the selected list
-					_selector.selectedKeys().clear();
+					_selector.selectedKeys ().clear ();
 				}
+                
+                checkTimeouts ();
                 
                 _scheduler.runOnce ();
                 
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch ( IOException e )
+            {
+				e.printStackTrace ();
 			}
             catch ( NotBoundException e )
             {
-                e.printStackTrace();
+                e.printStackTrace ();
                 _running = false;
             }
             catch ( WrongThreadException e )
             {
-                e.printStackTrace();
+                e.printStackTrace ();
                 _running = false;
             }
 		}
 	}
 
-	public Selector getSelector() {
+	public Selector getSelector ()
+    {
 		return _selector;
 	}
 

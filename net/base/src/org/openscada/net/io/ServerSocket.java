@@ -53,19 +53,23 @@ public class ServerSocket extends IOChannel implements IOChannelListener
 		_processor.registerConnection ( this, SelectionKey.OP_ACCEPT );
 	}
 	
-	public void handleConnect()
+	public void handleConnect ()
     {
 	}
 
-	public void handleRead()
+	public void handleRead ()
     {
 	}
 
-	public void handleWrite()
+	public void handleWrite ()
     {	
 	}
+    
+    public void handleTimeout ()
+    {
+    }
 
-	public void handleAccept()
+	public void handleAccept ()
     {
 		_log.debug ( "Checking inbound connection");
 		
@@ -87,8 +91,10 @@ public class ServerSocket extends IOChannel implements IOChannelListener
                 */
 			}
 			
-		} catch (IOException e) {
-			_log.warn("Unable to accept inbound connection", e);
+		}
+        catch (IOException e)
+        {
+			_log.warn ( "Unable to accept inbound connection", e );
 		}
 		
 	}

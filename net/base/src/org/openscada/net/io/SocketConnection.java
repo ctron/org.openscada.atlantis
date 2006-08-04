@@ -35,13 +35,14 @@ public class SocketConnection extends IOChannel implements IOChannelListener
 {
 	private static Logger _log = Logger.getLogger(SocketConnection.class);
 	
-	protected IOProcessor _processor; 
+	protected IOProcessor _processor = null; 
 	private SocketChannel _channel = null;
 	private ConnectionListener _listener = null;
 	
 	private boolean _reading = false;
+    private boolean _closing = false;
 	
-	private ByteBuffer _inputBuffer = ByteBuffer.allocate(4096);
+	private ByteBuffer _inputBuffer = ByteBuffer.allocate ( 4096 );
 	private List<ByteBuffer> _outputBuffers = new ArrayList<ByteBuffer> ();
 	
 	public SocketConnection ( IOProcessor processor ) throws IOException
@@ -52,7 +53,7 @@ public class SocketConnection extends IOChannel implements IOChannelListener
 		_processor = processor;
 		
 		_channel = SocketChannel.open();
-		_channel.configureBlocking(false);
+		_channel.configureBlocking ( false );
 	}
 	
 	public SocketConnection ( IOProcessor processor, SocketChannel channel ) throws IOException
@@ -84,7 +85,7 @@ public class SocketConnection extends IOChannel implements IOChannelListener
 		return _channel;
 	}
 	
-	public void connect (final SocketAddress remote)
+	public void connect ( final SocketAddress remote )
 	{
         try
         {
@@ -111,6 +112,9 @@ public class SocketConnection extends IOChannel implements IOChannelListener
 	
 	public void scheduleWrite ( final ByteBuffer buffer )
 	{
+        if ( _closing )
+            return;
+        
         _processor.getScheduler().executeJobAsync(new Runnable(){
             public void run ()
             {
@@ -165,22 +169,35 @@ public class SocketConnection extends IOChannel implements IOChannelListener
         {
             _log.debug ( "Unregistering socket" );
             unregister ( _processor );
+            
+            // nothing more to do ... so perform close
+            if ( _closing )
+                close ();
         }
 	}
 	
 	public void triggerRead ()
 	{
-		_reading = true;
-		updateOps ();
+	    synchronized ( this )
+	    {
+	        if ( _closing )
+	            return;
+
+	        _reading = true;
+	    }
+	    updateOps ();
 	}
+    
 	public void stopRead ()
 	{
 		_reading = false;
 		updateOps ();
 	}
 
-	public void handleConnect()
+	public void handleConnect ()
 	{
+        tickRead ();
+        
 		_log.debug("Connection request complete");
 		
 		if ( _channel.isConnectionPending () )
@@ -213,10 +230,33 @@ public class SocketConnection extends IOChannel implements IOChannelListener
 		updateOps();
 	}
 
+    public void scheduleClose ()
+    {
+        synchronized ( this )
+        {
+            if ( _closing )
+                return;
+            _closing = true;
+        }
+        
+        // if there is nothing more to send
+        // shut down the connection
+        synchronized ( _outputBuffers )
+        {
+            if ( _outputBuffers.size () == 0 )
+            {
+                close ();
+                return;
+            }
+        }
+        
+        stopRead ();
+    }
+    
 	public void close ()
 	{
-		
-        synchronized(_outputBuffers)
+        _closing = true;
+        synchronized ( _outputBuffers )
         {
             _outputBuffers.clear();
         }
@@ -242,32 +282,36 @@ public class SocketConnection extends IOChannel implements IOChannelListener
 	
 	public void handleRead()
 	{
-		_inputBuffer.clear();
+        tickRead ();
+        
+		_inputBuffer.clear ();
 		
 		try {
 			int rc;
-			rc = _channel.read(_inputBuffer);
+			rc = _channel.read ( _inputBuffer );
 			
 			_log.debug ( "Performed read: rc = " + rc );
 			
-			if ( rc < 0 )
+			if ( rc <= 0 )
             {
 				close ();
                 return;
             }
 			
-			_inputBuffer.flip();			
+			_inputBuffer.flip ();			
 			
 			if ( _listener != null )
-				_listener.read(_inputBuffer);
+				_listener.read ( _inputBuffer );
 			
-		} catch (IOException e) {
-		    _log.warn("Failed to read", e);
+		}
+        catch ( IOException e )
+        {
+		    _log.warn ( "Failed to read", e );
 			close ();
 		}
 	}
 
-	public void handleWrite()
+	public void handleWrite ()
 	{
 		_log.debug("Write event");
 		
@@ -317,17 +361,22 @@ public class SocketConnection extends IOChannel implements IOChannelListener
 		updateOps();
 	}
 
-	public void handleAccept()
+	public void handleAccept ()
 	{
-		
+		// no op
 	}
+    
+    public void handleTimeout ()
+    {
+        close ();
+    }
 
-	public ConnectionListener getListener()
+	public ConnectionListener getListener ()
     {
 	    return _listener;
 	}
 
-	public void setListener(ConnectionListener listener)
+	public void setListener ( ConnectionListener listener )
     {
 	    _listener = listener;
 	}
@@ -336,4 +385,6 @@ public class SocketConnection extends IOChannel implements IOChannelListener
     {
         return this;
     }
+    
+
 }

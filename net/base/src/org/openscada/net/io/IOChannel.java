@@ -21,11 +21,18 @@ package org.openscada.net.io;
 
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectableChannel;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class IOChannel
 {
     public abstract SelectableChannel getSelectableChannel ();
     public abstract IOChannelListener getIOChannelListener ();
+    
+    private long _timeout = 0;
+    private long _lastReadEvent = System.currentTimeMillis ();
+    
+    private Set<IOProcessor> _processorSet = new HashSet<IOProcessor> ();
     
     /**
      * Register the channel from inside the IO processor thread
@@ -39,7 +46,7 @@ public abstract class IOChannel
         
         try 
         {
-            processor.getScheduler().executeJob(new Runnable(){
+            processor.getScheduler ().executeJob ( new Runnable(){
                 
                 public void run ()
                 {
@@ -55,7 +62,16 @@ public abstract class IOChannel
     {
         try
         {
+            synchronized ( _processorSet )
+            {
+                _processorSet.add ( processor );
+            }
             processor.registerConnection ( this, ops );
+            if ( _timeout > 0 )
+                processor.enableConnectionTimeout ( this );
+            else
+                processor.disableConnectionTimeout ( this );
+                
         }
         catch ( ClosedChannelException e )
         {
@@ -86,6 +102,43 @@ public abstract class IOChannel
     
     private void performUnregister ( IOProcessor processor )
     {
+        synchronized ( _processorSet )
+        {
+            _processorSet.remove ( processor );
+        }
+        
         processor.unregisterConnection ( this );
+        processor.disableConnectionTimeout ( this );
+    }
+    
+    public void setTimeOut ( long timeout )
+    {
+        _timeout = timeout;
+        synchronized ( _processorSet )
+        {
+            for ( IOProcessor processor : _processorSet )
+            {
+                if ( timeout > 0 )
+                    processor.enableConnectionTimeout ( this );
+                else
+                    processor.disableConnectionTimeout ( this );
+            }
+        }
+    }
+    
+    public boolean isTimeOut ()
+    {
+        if ( _timeout <= 0 )
+            return false;
+        
+        if ( ( System.currentTimeMillis () - _lastReadEvent ) > _timeout )
+            return true;
+        else
+            return false;
+    }
+    
+    public void tickRead ()
+    {
+        _lastReadEvent = System.currentTimeMillis ();
     }
 }
