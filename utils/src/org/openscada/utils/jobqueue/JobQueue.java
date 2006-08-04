@@ -43,7 +43,7 @@ public class JobQueue
             do
             {
                 id = r.nextLong ();
-            } while ( _jobMap.containsKey ( id ) );
+            } while ( _jobMap.containsKey ( id ) && ( id == 0 ) );
             
             job = new Job ( id, runnable );
             _jobMap.put ( id, job );
