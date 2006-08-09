@@ -150,5 +150,11 @@ public class LongRunningController implements MessageListener
         }
     }
     
-    
+    public void sendStopCommand ( LongRunningOperation operation )
+    {
+        Message message = new Message ( _stopCommandCode );
+        message.getValues ().put ( "id", new LongValue ( operation.getId () ) );
+        
+        _connectionHandler.getConnection ().sendMessage ( message );
+    }
 }

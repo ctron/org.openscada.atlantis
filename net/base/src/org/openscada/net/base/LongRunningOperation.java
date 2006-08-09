@@ -115,8 +115,7 @@ public class LongRunningOperation
         
         _stopSent = true;
         
-        Message message = new Message ( _stopCommandCode );
-        message.getValues ().put ( "id", new LongValue ( _id ) );
+        _controller.sendStopCommand ( this );
     }
     
     synchronized public boolean isComplete ()
