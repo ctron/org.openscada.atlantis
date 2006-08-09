@@ -15,7 +15,6 @@ public class LongRunningOperation
     
     private LongRunningController _controller = null;
     private Listener _listener = null;
-    private int _stopCommandCode = 0;
     
     private long _id = 0;
     private boolean _stopped = false;
@@ -25,11 +24,10 @@ public class LongRunningOperation
     private Throwable _error = null;
     private Message _reply = null;
     
-    protected LongRunningOperation ( LongRunningController controller, Listener listener, int stopCommandCode )
+    protected LongRunningOperation ( LongRunningController controller, Listener listener )
     {
         _controller = controller;
         _listener = listener;
-        _stopCommandCode = stopCommandCode;
     }
 
     protected long getId ()

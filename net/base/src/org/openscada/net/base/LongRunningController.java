@@ -76,7 +76,7 @@ public class LongRunningController implements MessageListener
         if ( message == null )
             return null;
         
-        final LongRunningOperation op = new LongRunningOperation ( this, listener, _stopCommandCode );
+        final LongRunningOperation op = new LongRunningOperation ( this, listener );
         
         _connectionHandler.getConnection ().sendMessage ( message, new MessageStateListener () {
 
