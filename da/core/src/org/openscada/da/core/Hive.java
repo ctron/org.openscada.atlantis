@@ -43,8 +43,11 @@ public interface Hive
 	public Collection<DataItemInformation> listItems ( Session session ) throws InvalidSessionException;
     
     // async DA operations
-    public void startWrite ( Session session, String itemName, Variant value, WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException;
+    public long startWrite ( Session session, String itemName, Variant value, WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException;
     //public void startRead ( Session session, String item, Variant value, ReadOperationListener listener );
+    
+    public void thawOperation ( long id );
+    public void cancelOperation ( long id ) throws CancellationNotSupportedException;
     
     public HiveBrowser getBrowser ();
 }

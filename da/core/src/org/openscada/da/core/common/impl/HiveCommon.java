@@ -26,9 +26,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
+import org.apache.log4j.Logger;
+import org.openscada.da.core.CancellationNotSupportedException;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.Hive;
 import org.openscada.da.core.InvalidItemException;
@@ -42,26 +42,44 @@ import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.ItemListener;
 import org.openscada.da.core.data.Variant;
-import org.openscada.utils.exec.OperationResultHandler;
+import org.openscada.utils.jobqueue.CancelNotSupportedException;
+import org.openscada.utils.jobqueue.OperationManager;
+import org.openscada.utils.jobqueue.OperationProcessor;
+import org.openscada.utils.jobqueue.RunnableOperation;
+import org.openscada.utils.jobqueue.OperationManager.Handle;
 
 public class HiveCommon implements Hive, ItemListener
 {
 	
+    private static Logger _log = Logger.getLogger ( HiveCommon.class );
+    
 	private Set<SessionCommon> _sessions = new HashSet<SessionCommon>();
 	
     private Map<DataItem,DataItemInfo> _items = new HashMap<DataItem,DataItemInfo>();
 	private Map<DataItemInformation,DataItem> _itemMap = new HashMap<DataItemInformation,DataItem>();
     
-    private Executor _executor = Executors.newCachedThreadPool();
-    
     private HiveBrowserCommon _browser = null;
     private Folder _rootFolder = null;
     
     private Set<SessionListener> _sessionListeners = new HashSet<SessionListener> ();
+    
+    private OperationManager _opManager = new OperationManager ();
+    private OperationProcessor _opProcessor = new OperationProcessor ();
+    private Thread _jobQueueThread = null;
 	
     public HiveCommon ()
     {
         super ();
+        
+        _jobQueueThread = new Thread ( _opProcessor );
+        _jobQueueThread.start ();
+    }
+    
+    @Override
+    protected void finalize () throws Throwable
+    {
+        _jobQueueThread.interrupt ();
+        super.finalize ();
     }
     
     public void addSessionListener ( SessionListener listener )
@@ -451,29 +469,34 @@ public class HiveCommon implements Hive, ItemListener
         }
     }
 
-    public void startWrite ( Session session, String itemName, Variant value, final WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException
+    public long startWrite ( Session session, String itemName, final Variant value, final WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException
     {
-        validateSession(session);
+        validateSession ( session );
         
-        DataItem item = lookupItem(itemName);
+        final DataItem item = lookupItem ( itemName );
         
         if ( item == null )
-            throw new InvalidItemException(itemName);
+            throw new InvalidItemException ( itemName );
         
         if ( listener == null )
-            return; // FIXME: report as error
+            throw new NullPointerException ();
         
-        new WriteOperation().startExecute ( new OperationResultHandler<Object>(){
+        Handle handle = _opManager.schedule ( new RunnableOperation ( new Runnable () {
 
-            public void failure ( Exception e )
+            public void run ()
             {
-               listener.failure ( e.getMessage() );
-            }
-
-            public void success ( Object result )
-            {
-                listener.success();
-            }}, new WriteOperationArguments(item,value));
+                try
+                {
+                    item.setValue ( value );
+                    listener.success ();
+                }
+                catch ( Exception e )
+                {
+                    listener.failure ( e );
+                }
+            }}  ) );
+        
+        return handle.getId ();
     }
 	
     public synchronized HiveBrowser getBrowser ()
@@ -491,5 +514,34 @@ public class HiveCommon implements Hive, ItemListener
         }            
         
         return _browser;
+    }
+
+    public void cancelOperation ( long id ) throws CancellationNotSupportedException
+    {
+        _log.info ( String.format ( "Cancelling operation: %d", id ) );
+        
+        Handle handle = _opManager.get ( id );
+        if ( handle != null )
+        {
+            try
+            {
+                handle.cancel ();
+            }
+            catch ( CancelNotSupportedException e )
+            {
+                throw new CancellationNotSupportedException ();
+            }
+        }
+    }
+
+    public void thawOperation ( long id )
+    {
+        _log.info ( String.format ( "Thawing operation %d", id ) );
+        
+        Handle handle = _opManager.get ( id );
+        if ( handle != null )
+            _opProcessor.add ( handle );
+        else
+            _log.warn ( String.format ( "%d is not a valid operation id", id ) );
     } 
 }
