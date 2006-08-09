@@ -324,7 +324,9 @@ public class Connection implements ConnectionListener, MessageListener
             }
         }
         catch ( Exception e )
-        {}
+        {
+            _log.warn ( "Custom message failed", e );
+        }
     }
 
     private void processTimeOuts ()
