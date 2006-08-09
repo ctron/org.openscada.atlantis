@@ -637,23 +637,6 @@ public class Connection
     }
     
     // operations
-
-    /*
-    public void write ( String itemName, Variant value ) throws Exception
-    {
-        _writeOperation.execute ( new WriteOperationArguments ( itemName, value ) );
-    }
-
-    public OperationResult<Object> startWrite ( String itemName, Variant value )
-    {
-        return _writeOperation.startExecute ( new WriteOperationArguments ( itemName, value ) );
-    }
-
-    public OperationResult<Object> startWrite ( String itemName, Variant value, OperationResultHandler<Object> handler )
-    {
-        return _writeOperation.startExecute ( handler, new WriteOperationArguments ( itemName, value ) );
-    }
-     */
     
     public void write ( String itemName, Variant value ) throws InterruptedException, OperationException
     {
