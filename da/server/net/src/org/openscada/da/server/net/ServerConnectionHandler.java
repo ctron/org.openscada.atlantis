@@ -32,7 +32,6 @@ import org.openscada.da.core.ItemChangeListener;
 import org.openscada.da.core.ItemListListener;
 import org.openscada.da.core.Session;
 import org.openscada.da.core.UnableToCreateSessionException;
-import org.openscada.da.core.WriteOperationListener;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.FolderListener;
 import org.openscada.da.core.browser.HiveBrowser;
@@ -41,24 +40,29 @@ import org.openscada.da.core.browser.NoSuchFolderException;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.MessageListener;
+import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.da.handler.EnumEvent;
 import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
-import org.openscada.net.io.Connection;
+import org.openscada.net.io.net.Connection;
 import org.openscada.net.utils.MessageCreator;
+import org.openscada.utils.jobqueue.OperationManager;
+import org.openscada.utils.jobqueue.OperationManager.Handle;
 import org.openscada.utils.lang.Holder;
 
 public class ServerConnectionHandler extends ConnectionHandlerBase implements ItemChangeListener, ItemListListener, FolderListener
 {
     
-    public final static String VERSION = "0.1.3";
+    public final static String VERSION = "0.1.4";
 
     private static Logger _log = Logger.getLogger ( ServerConnectionHandler.class );
 
     private Hive _hive = null;
     private Session _session = null;
+    
+    private OperationManager _operationManager = new OperationManager ();
 
     public ServerConnectionHandler(Hive hive)
     {
@@ -335,29 +339,19 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 
         org.openscada.net.da.handler.WriteOperation.parse ( message, itemName, value );
 
-        _log.debug("Writing to '" + itemName.value + "'" );
+        _log.debug ( "Writing to '" + itemName.value + "'" );
 
-        try {
-            _hive.startWrite ( _session, itemName.value, value.value, new WriteOperationListener(){
+        Handle handle = _operationManager.schedule ( new WriteOperation ( _hive, _session, this, itemName.value, value.value ) );
+        _log.debug ( "Aquired operation handle: " + handle.getId () );
 
-                public void success ()
-                {
-                    getConnection().sendMessage ( MessageCreator.createACK(message) ) ;
-                }
+        // send long running operation reply
+        Message replyMessage = new Message ( Message.CC_ACK, message.getSequence () );
+        replyMessage.getValues ().put ( "id", new LongValue ( handle.getId () ) );
+        getConnection ().sendMessage ( replyMessage );
 
-                public void failure ( String errorMessage )
-                {
-                    getConnection().sendMessage ( MessageCreator.createFailedMessage ( message, errorMessage ) ) ;
-                }} );
-        }
-        catch ( InvalidItemException e )
-        {
-            getConnection().sendMessage ( MessageCreator.createFailedMessage ( message, "Invalid item" ) );
-        }
-        catch ( InvalidSessionException e )
-        {
-            getConnection().sendMessage ( MessageCreator.createFailedMessage ( message, "Invalid session" ) );
-        }
+        _log.debug ( "Kicking off operation" );
+        handle.start ();
+
     }
     
     private void performBrowse ( final Message message )
@@ -469,4 +463,5 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
             return;
         }
     }
+    
 }
