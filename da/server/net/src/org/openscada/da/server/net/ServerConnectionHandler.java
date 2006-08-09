@@ -49,6 +49,7 @@ import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.io.net.Connection;
 import org.openscada.net.utils.MessageCreator;
+import org.openscada.utils.jobqueue.CancelNotSupportedException;
 import org.openscada.utils.jobqueue.OperationManager;
 import org.openscada.utils.jobqueue.OperationManager.Handle;
 import org.openscada.utils.lang.Holder;
@@ -342,8 +343,8 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 
     private void performWrite ( final Message message )
     {
-        Holder<String> itemName = new Holder<String>();
-        Holder<Variant> value = new Holder<Variant>();
+        Holder<String> itemName = new Holder<String> ();
+        Holder<Variant> value = new Holder<Variant> ();
 
         org.openscada.net.da.handler.WriteOperation.parse ( message, itemName, value );
 
@@ -486,12 +487,19 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
             return;
         }
 
+        _log.info ( String.format ( "Request to cancel operation %d", id ) );
+        
         try
         {
-            _hive.cancelOperation ( id );
+            Handle handle = null;
+            synchronized ( _operationManager )
+            {
+                handle = _operationManager.get ( id );
+            }
+            handle.cancel ();
             getConnection ().sendMessage ( MessageCreator.createACK ( message ) );
         }
-        catch ( CancellationNotSupportedException e )
+        catch ( CancelNotSupportedException e )
         {
             getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Cancellation not supported" ) );            
         };
