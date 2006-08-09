@@ -43,6 +43,9 @@ public class Application
 {
     private static Logger _log = Logger.getLogger ( Application.class );
     
+    private static boolean _folder = false;
+    private static boolean _time = false;
+    
     public static void main ( String[] args ) throws IOException
     {
    
@@ -64,6 +67,7 @@ public class Application
 
             });
         
+        if ( _folder )
         connection.getItemList().addObserver(new Observer(){
 
             public void update ( Observable o, Object arg )
@@ -83,10 +87,13 @@ public class Application
             }});
         
         FolderDumper folderDumper;
+
         
         folderDumper = new FolderDumper ( connection, new Location ( "test", "storage", "grouping1" ) );
-        folderDumper.start ();
+        if ( _folder )
+            folderDumper.start ();
         
+        if ( _time )
         connection.addItemUpdateListener ( "time", true, new ItemUpdateListener(){
 
             public void notifyValueChange ( Variant value, boolean initial )
@@ -138,15 +145,15 @@ public class Application
                 try
                 {
                     _log.debug ( "Writing..." );
-                    connection.write ( "memory", new Variant("Test: " + System.currentTimeMillis()) );
-                    connection.write ( "command", new Variant(System.currentTimeMillis()) );
+                    connection.write ( "memory", new Variant("Test: " + System.currentTimeMillis()), new OperationDumpListener () );
+                    connection.write ( "command", new Variant(System.currentTimeMillis()), new OperationDumpListener () );
                     _log.debug ( "Writing...complete!" );
                 }
                 catch ( Exception e )
                 {
                     e.printStackTrace();
                 }
-            }}, 10*1000, true );
+            }}, 5*1000, true );
         
         connection.connect ();
         

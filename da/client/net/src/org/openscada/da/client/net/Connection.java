@@ -33,15 +33,18 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.client.net.operations.BrowserListOperation;
+import org.openscada.da.client.net.operations.OperationException;
 import org.openscada.da.client.net.operations.WriteOperation;
-import org.openscada.da.client.net.operations.WriteOperationArguments;
+import org.openscada.da.client.net.operations.WriteOperationController;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.Location;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.ClientConnection;
+import org.openscada.net.base.LongRunningOperation;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
+import org.openscada.net.base.LongRunningController.Listener;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
@@ -58,7 +61,7 @@ import org.openscada.utils.lang.Holder;
 public class Connection
 {
 
-    public static final String VERSION = "0.1.3";
+    public static final String VERSION = "0.1.4";
 
     public enum State
     {
@@ -94,6 +97,8 @@ public class Connection
     // operations
     private WriteOperation _writeOperation;
     private BrowserListOperation _browseListOperation;
+    
+    private WriteOperationController _writeController = null;
 
     private static IOProcessor getDefaultProcessor ()
     {
@@ -160,21 +165,21 @@ public class Connection
 
         _client.getMessageProcessor().setHandler(Messages.CC_NOTIFY_VALUE, new MessageListener(){
 
-            public void messageReceived ( org.openscada.net.io.Connection connection, Message message )
+            public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message )
             {
                 notifyValueChange(message);
             }} );
 
         _client.getMessageProcessor().setHandler(Messages.CC_NOTIFY_ATTRIBUTES, new MessageListener(){
 
-            public void messageReceived ( org.openscada.net.io.Connection connection, Message message )
+            public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message )
             {
                 notifyAttributesChange(message);
             }});
 
         _client.getMessageProcessor().setHandler(Messages.CC_ENUM_EVENT, new MessageListener(){
 
-            public void messageReceived ( org.openscada.net.io.Connection connection, Message message )
+            public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message )
             {
                 _log.debug("Enum message from server");
                 performEnumEvent ( message );
@@ -182,12 +187,14 @@ public class Connection
         
         _client.getMessageProcessor().setHandler(Messages.CC_BROWSER_EVENT, new MessageListener(){
 
-            public void messageReceived ( org.openscada.net.io.Connection connection, Message message )
+            public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message )
             {
                 _log.debug("Browse event message from server");
                 performBrowseEvent ( message );
             }});
 
+        _writeController = new WriteOperationController ( _client );
+        _writeController.register ( _client.getMessageProcessor () );
     }
 
     synchronized public void connect ()
@@ -231,14 +238,14 @@ public class Connection
         _client.getConnection ().sendMessage ( message );
     }
     
-    public void sendMessage ( Message message, MessageStateListener listener )
+    public void sendMessage ( Message message, MessageStateListener listener, long timeout )
     {
         if ( _client == null )
             return;
         if ( _client.getConnection () == null )
             return;
         
-        _client.getConnection ().sendMessage ( message, listener );
+        _client.getConnection ().sendMessage ( message, listener, timeout );
     }
 
     public void addItemListListener ( ItemListListener listener )
@@ -337,8 +344,9 @@ public class Connection
 
             public void messageTimedOut ()
             {
-                setState ( State.CLOSED, new OperationTimedOutException().fillInStackTrace () );
-            }} );
+                //setState ( State.CLOSED, new OperationTimedOutException().fillInStackTrace () );
+                disconnect (  new OperationTimedOutException().fillInStackTrace () );
+            }}, 10 * 1000 );
     }
 
     private void processSessionReply ( Message message )
@@ -633,6 +641,7 @@ public class Connection
     
     // operations
 
+    /*
     public void write ( String itemName, Variant value ) throws Exception
     {
         _writeOperation.execute ( new WriteOperationArguments ( itemName, value ) );
@@ -647,6 +656,43 @@ public class Connection
     {
         return _writeOperation.startExecute ( handler, new WriteOperationArguments ( itemName, value ) );
     }
+     */
+    
+    public void write ( String itemName, Variant value ) throws InterruptedException, OperationException
+    {
+        write ( itemName, value, null );
+    }
+    
+    public void write ( String itemName, Variant value, Listener listener ) throws InterruptedException, OperationException
+    {
+        LongRunningOperation op = startWrite ( itemName, value, listener );
+        synchronized ( op )
+        {
+            op.wait ();
+            completeWrite ( op );
+        }
+    }
+    
+    public LongRunningOperation startWrite ( String itemName, Variant value, Listener listener )
+    {
+        return _writeController.start ( itemName, value, listener );   
+    }
+    
+    public void completeWrite ( LongRunningOperation op ) throws OperationException
+    {
+        if ( op.getError () != null )
+        {
+            throw new OperationException ( op.getError () );
+        }
+        if ( op.getReply () != null )
+        {
+            Message reply = op.getReply ();
+            if ( reply.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
+            {
+                throw new OperationException ( reply.getValues ().get ( Message.FIELD_ERROR_INFO ).toString () );
+            }
+        }
+    }
     
     public Entry[] browse ( String [] path ) throws Exception
     {
@@ -658,7 +704,7 @@ public class Connection
         return _browseListOperation.startExecute ( path );
     }
 
-    public OperationResult<Entry[]> startWrite ( String [] path, OperationResultHandler<Entry[]> handler )
+    public OperationResult<Entry[]> startBrowse ( String [] path, OperationResultHandler<Entry[]> handler )
     {
         return _browseListOperation.startExecute ( handler, path );
     }
