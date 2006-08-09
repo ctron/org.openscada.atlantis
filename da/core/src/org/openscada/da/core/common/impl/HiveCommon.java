@@ -45,8 +45,11 @@ import org.openscada.da.core.data.Variant;
 import org.openscada.utils.jobqueue.CancelNotSupportedException;
 import org.openscada.utils.jobqueue.OperationManager;
 import org.openscada.utils.jobqueue.OperationProcessor;
+import org.openscada.utils.jobqueue.RunnableCancelOperation;
 import org.openscada.utils.jobqueue.RunnableOperation;
 import org.openscada.utils.jobqueue.OperationManager.Handle;
+
+import sun.nio.cs.ext.ISCII91;
 
 public class HiveCommon implements Hive, ItemListener
 {
@@ -481,20 +484,22 @@ public class HiveCommon implements Hive, ItemListener
         if ( listener == null )
             throw new NullPointerException ();
         
-        Handle handle = _opManager.schedule ( new RunnableOperation ( new Runnable () {
+        Handle handle = _opManager.schedule ( new RunnableCancelOperation () {
 
             public void run ()
             {
                 try
                 {
                     item.setValue ( value );
-                    listener.success ();
+                    if ( !isCanceled () )
+                        listener.success ();
                 }
                 catch ( Exception e )
                 {
-                    listener.failure ( e );
+                    if ( !isCanceled () )
+                        listener.failure ( e );
                 }
-            }}  ) );
+            }} );
         
         return handle.getId ();
     }
