@@ -40,8 +40,8 @@ import org.openscada.net.base.data.VoidValue;
 
 public class Messages
 {
-	public final static int CC_CREATE_SESSION =        0x00010001;
-	public final static int CC_CLOSE_SESSION =         0x00010002;
+	public final static int CC_CREATE_SESSION =         0x00010001;
+	public final static int CC_CLOSE_SESSION =          0x00010002;
     
     public final static int CC_SUBSCRIBE_ITEM =         0x00010010;
     public final static int CC_UNSUBSCRIBE_ITEM =       0x00010011;
@@ -62,6 +62,8 @@ public class Messages
     public final static int CC_BROWSER_EVENT =          0x00010210;
     public final static int CC_BROWSER_SUBSCRIBE =      0x00010211;
     public final static int CC_BROWSER_UNSUBSCRIBE =    0x00010212;
+    
+    public final static int CC_CANCEL_OPERATION =       0x00010300;       
     
     public static Message createSession ( Properties props )
     {
