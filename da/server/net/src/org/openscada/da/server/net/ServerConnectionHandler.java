@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.core.CancellationNotSupportedException;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.Hive;
 import org.openscada.da.core.InvalidItemException;
@@ -136,6 +137,13 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
                 performBrowserUnsubscribe ( message );
             }});
         
+        getMessageProcessor ().setHandler ( Messages.CC_CANCEL_OPERATION, new MessageListener(){
+
+            public void messageReceived ( Connection connection, Message message )
+            {
+                performCancelOperation ( message );
+            }});
+                
     }
 
     private void createSession ( Message message )
@@ -462,6 +470,31 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
             getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Invalid session" ) );
             return;
         }
+    }
+    
+    private void performCancelOperation ( Message message )
+    {
+        Long id = null;
+        
+        if ( message.getValues ().containsKey ( "id" ) )
+            if ( message.getValues ().get ( "id" ) instanceof LongValue )
+                id = ((LongValue)message.getValues ().get ( "id" )).getValue ();
+        
+        if ( id == null )
+        {
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Unknown operation id" ) );
+            return;
+        }
+
+        try
+        {
+            _hive.cancelOperation ( id );
+            getConnection ().sendMessage ( MessageCreator.createACK ( message ) );
+        }
+        catch ( CancellationNotSupportedException e )
+        {
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Cancellation not supported" ) );            
+        };
     }
     
 }
