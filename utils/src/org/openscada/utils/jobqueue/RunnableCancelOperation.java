@@ -19,17 +19,14 @@
 
 package org.openscada.utils.jobqueue;
 
+import org.openscada.utils.jobqueue.OperationManager.Handle;
 
-public class RunnableCancelOperation extends  RunnableOperation
+
+public abstract class RunnableCancelOperation implements Operation, Runnable
 {
     private boolean _canceled = false;
+    private Thread _thread = null;
     
-    public RunnableCancelOperation ( Runnable runnable )
-    {
-        super ( runnable );
-    }
-    
-    @Override
     public void cancel () throws CancelNotSupportedException
     {
         _canceled = true;
@@ -40,4 +37,17 @@ public class RunnableCancelOperation extends  RunnableOperation
         return _canceled;
     }
 
+    public void start ( Handle handle )
+    {
+        final RunnableCancelOperation this_ = this;
+        _thread = new Thread ( new Runnable () {
+
+            public void run ()
+            {
+                this_.run ();
+            }} );
+        
+        _thread.start ();
+    }
+    
 }
