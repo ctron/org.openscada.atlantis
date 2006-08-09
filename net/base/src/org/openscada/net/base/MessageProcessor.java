@@ -83,7 +83,7 @@ public class MessageProcessor implements MessageListener
 		
 		if ( !_listeners.containsKey ( cc ) )
 		{
-            _log.warn ( "Received message which cannot be processed! cc = " + message.getCommandCode () );
+            _log.warn ( String.format ( "Received message which cannot be processed! cc = %x", message.getCommandCode () ) );
 			connection.sendMessage ( MessageCreator.createUnknownMessage ( message ) );
 			return;
 		}
