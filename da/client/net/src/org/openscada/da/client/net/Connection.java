@@ -34,7 +34,6 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.openscada.da.client.net.operations.BrowserListOperation;
 import org.openscada.da.client.net.operations.OperationException;
-import org.openscada.da.client.net.operations.WriteOperation;
 import org.openscada.da.client.net.operations.WriteOperationController;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.browser.Entry;
@@ -95,7 +94,6 @@ public class Connection
     private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener> ();
 
     // operations
-    private WriteOperation _writeOperation;
     private BrowserListOperation _browseListOperation;
     
     private WriteOperationController _writeController = null;
@@ -134,7 +132,6 @@ public class Connection
 
         init ();
 
-        _writeOperation = new WriteOperation ( this );
         _browseListOperation = new BrowserListOperation ( this );
     }
 
