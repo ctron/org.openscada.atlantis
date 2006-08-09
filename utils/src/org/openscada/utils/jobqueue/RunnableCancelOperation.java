@@ -37,14 +37,21 @@ public abstract class RunnableCancelOperation implements Operation, Runnable
         return _canceled;
     }
 
-    public void start ( Handle handle )
+    public void start ( final Handle handle )
     {
         final RunnableCancelOperation this_ = this;
         _thread = new Thread ( new Runnable () {
 
             public void run ()
             {
-                this_.run ();
+                try
+                {
+                    this_.run ();
+                }
+                finally
+                {
+                    handle.completed ();
+                }
             }} );
         
         _thread.start ();
