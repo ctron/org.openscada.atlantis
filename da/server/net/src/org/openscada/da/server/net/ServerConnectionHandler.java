@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.core.CancellationNotSupportedException;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.Hive;
 import org.openscada.da.core.InvalidItemException;
