@@ -15,7 +15,7 @@ public class WriteOperationController
     
     public WriteOperationController ( ConnectionHandlerBase connection )
     {
-        _controller = new LongRunningController ( connection, 0, Messages.CC_WRITE_OPERATION_RESULT );
+        _controller = new LongRunningController ( connection, Messages.CC_CANCEL_OPERATION, Messages.CC_WRITE_OPERATION_RESULT );
     }
 
     public void register ( MessageProcessor processor )
