@@ -6,7 +6,6 @@ package org.openscada.net.base;
 import org.apache.log4j.Logger;
 import org.openscada.net.base.LongRunningController.Listener;
 import org.openscada.net.base.LongRunningController.State;
-import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 
 public class LongRunningOperation
