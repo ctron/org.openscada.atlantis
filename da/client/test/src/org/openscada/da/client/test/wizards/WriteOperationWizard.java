@@ -31,6 +31,10 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.core.data.Variant;
+import org.openscada.net.base.LongRunningController;
+import org.openscada.net.base.LongRunningOperation;
+import org.openscada.net.base.LongRunningController.State;
+import org.openscada.net.base.data.Message;
 
 public class WriteOperationWizard extends Wizard implements INewWizard
 {
@@ -66,7 +70,7 @@ public class WriteOperationWizard extends Wizard implements INewWizard
         };
         try
         {
-            getContainer().run(true, false, op);
+            getContainer().run ( true, true, op );
         }
         catch (InterruptedException e)
         {
@@ -81,13 +85,63 @@ public class WriteOperationWizard extends Wizard implements INewWizard
         return true;
     }
     
-    private void doFinish ( IProgressMonitor monitor, HiveConnection hiveConnection, String item, Variant value ) throws Exception
+    private void doFinish ( final IProgressMonitor monitor, HiveConnection hiveConnection, String item, Variant value ) throws Exception
     {
-        monitor.beginTask ( "Writing value to item" , 2 );
+        monitor.beginTask ( "Writing value to item" , 4 );
         
         monitor.worked ( 1 );
-        hiveConnection.getConnection ().write ( item, value );
-        monitor.worked ( 1 );
+        LongRunningOperation op = hiveConnection.getConnection ().startWrite ( item, value, new LongRunningController.Listener () {
+
+            public void stateChanged ( State arg0, Message arg1, Throwable arg2 )
+            {
+                switch ( arg0 )
+                {
+                case REQUESTED:
+                    monitor.worked ( 1 );
+                    monitor.subTask ( "Requested operation" );
+                    break;
+                case RUNNING:
+                    monitor.worked ( 1 );
+                    monitor.subTask ( "Operation running" );
+                    break;
+                case SUCCESS:
+                    monitor.worked ( 1 );
+                    monitor.subTask ( "Operation complete" );
+                    break;
+                case FAILURE:
+                    monitor.worked ( 1 );
+                    monitor.subTask ( "Operation failed" );
+                default:
+                    break;
+                }
+            }} );
+        
+        boolean waiting = true;
+        while ( waiting )
+        {
+            synchronized ( op )
+            {
+                if ( op.isComplete () )
+                {
+                    waiting = false;
+                }
+                else
+                {
+                    op.wait ( 100 );
+                }
+                
+                if ( monitor.isCanceled () && (!op.isComplete ()) )
+                {
+                    op.cancel ();
+                    waiting = false;
+                }
+                else if ( op.isComplete () )
+                {
+                    waiting = false;
+                    hiveConnection.getConnection ().completeWrite ( op );
+                }
+            }
+        }
     }
 
     public void init ( IWorkbench workbench, IStructuredSelection selection )

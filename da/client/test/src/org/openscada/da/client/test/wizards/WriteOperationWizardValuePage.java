@@ -50,7 +50,6 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
     private Text _valueText = null;
     private Combo _valueTypeSelect = null;
     
-    
     private IStructuredSelection _selection = null;
     private Text _convertedValue = null;
     
