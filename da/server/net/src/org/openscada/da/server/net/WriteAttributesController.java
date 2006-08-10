@@ -11,7 +11,6 @@ import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
-import org.openscada.net.da.handler.Messages;
 import org.openscada.net.da.handler.WriteAttributesOperation;
 import org.openscada.net.utils.MessageCreator;
 import org.openscada.utils.lang.Holder;

@@ -1,12 +1,9 @@
 package org.openscada.da.server.net;
 
-import java.util.Map;
-
 import org.openscada.da.core.Hive;
 import org.openscada.da.core.InvalidItemException;
 import org.openscada.da.core.InvalidSessionException;
 import org.openscada.da.core.Session;
-import org.openscada.da.core.WriteAttributesOperationListener;
 import org.openscada.da.core.WriteOperationListener;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.ConnectionHandlerBase;
@@ -14,7 +11,6 @@ import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.da.handler.Messages;
-import org.openscada.net.da.handler.WriteAttributesOperation;
 import org.openscada.net.utils.MessageCreator;
 import org.openscada.utils.lang.Holder;
 
