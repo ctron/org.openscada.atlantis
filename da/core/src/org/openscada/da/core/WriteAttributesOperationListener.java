@@ -20,7 +20,6 @@
 package org.openscada.da.core;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public interface WriteAttributesOperationListener
 {
@@ -66,5 +65,5 @@ public interface WriteAttributesOperationListener
         private static final long serialVersionUID = 6767947169827708138L;
     }
     
-    void complete ( Map<String, Result> result );
+    void complete ( Results results );
 }
