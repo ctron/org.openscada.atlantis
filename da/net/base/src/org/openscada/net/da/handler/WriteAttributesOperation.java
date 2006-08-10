@@ -57,7 +57,7 @@ public class WriteAttributesOperation
     
     public static Message createResponse ( long id, Results results )
     {
-        Message message = new Message ( Messages.CC_WRITE_ATTRIBUTES_OPERATION_REPLY );
+        Message message = new Message ( Messages.CC_WRITE_ATTRIBUTES_OPERATION_RESULT );
     
         message.getValues (). put ( "id", new LongValue ( id ) );
         
