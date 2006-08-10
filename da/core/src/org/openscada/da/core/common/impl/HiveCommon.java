@@ -171,7 +171,8 @@ public class HiveCommon implements Hive, ItemListener
 	
 	private void closeSessions ( Set<SessionCommon> sessions )
 	{
-		try {
+		try
+        {
 			for ( SessionCommon session : sessions )
 			{
 				closeSession ( session );
