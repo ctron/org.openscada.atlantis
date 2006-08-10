@@ -34,8 +34,10 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.openscada.da.client.net.operations.BrowserListOperation;
 import org.openscada.da.client.net.operations.OperationException;
+import org.openscada.da.client.net.operations.WriteAttributesOperationController;
 import org.openscada.da.client.net.operations.WriteOperationController;
 import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.Location;
 import org.openscada.da.core.data.Variant;
@@ -52,6 +54,7 @@ import org.openscada.net.base.data.Value;
 import org.openscada.net.da.handler.EnumEvent;
 import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
+import org.openscada.net.da.handler.WriteAttributesOperation;
 import org.openscada.net.io.IOProcessor;
 import org.openscada.utils.exec.OperationResult;
 import org.openscada.utils.exec.OperationResultHandler;
@@ -97,6 +100,7 @@ public class Connection
     private BrowserListOperation _browseListOperation;
     
     private WriteOperationController _writeController = null;
+    private WriteAttributesOperationController _writeAttributesController = null;
 
     private static IOProcessor getDefaultProcessor ()
     {
@@ -192,6 +196,9 @@ public class Connection
 
         _writeController = new WriteOperationController ( _client );
         _writeController.register ( _client.getMessageProcessor () );
+        
+        _writeAttributesController = new WriteAttributesOperationController ( _client );
+        _writeAttributesController.register ( _client.getMessageProcessor () );
     }
 
     synchronized public void connect ()
@@ -636,7 +643,7 @@ public class Connection
         }
     }
     
-    // operations
+    // write operation
     
     public void write ( String itemName, Variant value ) throws InterruptedException, OperationException
     {
@@ -672,6 +679,41 @@ public class Connection
                 throw new OperationException ( reply.getValues ().get ( Message.FIELD_ERROR_INFO ).toString () );
             }
         }
+    }
+    
+    // write attributes operation
+    public void writeAttributes ( String itemId, Map<String,Variant> attributes ) throws InterruptedException, OperationException
+    {
+        write ( itemId, attributes, null );
+    }
+    
+    public void write ( String itemId, Map<String,Variant> attributes, Listener listener ) throws InterruptedException, OperationException
+    {
+        LongRunningOperation op = startWriteAttributes ( itemId, attributes, listener );
+        synchronized ( op )
+        {
+            op.wait ();
+            completeWriteAttributes ( op );
+        }
+    }
+    
+    public LongRunningOperation startWriteAttributes ( String itemId, Map<String,Variant> attributes, Listener listener )
+    {
+        return _writeAttributesController.start ( itemId, attributes, listener );   
+    }
+    
+    public Results completeWriteAttributes ( LongRunningOperation op ) throws OperationException
+    {
+        if ( op.getError () != null )
+        {
+            throw new OperationException ( op.getError () );
+        }
+        if ( op.getReply () != null )
+        {
+            Message reply = op.getReply ();
+            return WriteAttributesOperation.parseResponse ( reply );
+        }
+        return null;
     }
     
     public Entry[] browse ( String [] path ) throws Exception
