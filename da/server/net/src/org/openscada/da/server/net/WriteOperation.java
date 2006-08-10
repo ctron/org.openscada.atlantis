@@ -41,11 +41,15 @@ public class WriteOperation implements Operation
     {
         try
         {
-            _hive.cancelOperation ( _hiveID );
+            _hive.cancelOperation ( _session, _hiveID );
         }
         catch ( CancellationNotSupportedException e )
         {
             throw new CancelNotSupportedException ();
+        }
+        catch ( InvalidSessionException e )
+        {
+            // this should never happen
         }
     }
 
@@ -69,7 +73,7 @@ public class WriteOperation implements Operation
                     sendComplete ( handle );
                 }} );
             
-            _hive.thawOperation ( _hiveID );
+            _hive.thawOperation ( _session, _hiveID );
         }
         catch ( InvalidSessionException e )
         {

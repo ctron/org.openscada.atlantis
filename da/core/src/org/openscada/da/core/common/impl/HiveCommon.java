@@ -141,7 +141,7 @@ public class HiveCommon implements Hive, ItemListener
         }
     }
     
-	public void validateSession ( Session session ) throws InvalidSessionException
+	public SessionCommon validateSession ( Session session ) throws InvalidSessionException
 	{
 		if ( !(session instanceof SessionCommon) )
 			throw new InvalidSessionException();
@@ -152,6 +152,8 @@ public class HiveCommon implements Hive, ItemListener
 		
 		if ( !_sessions.contains( sessionCommon ) )
 			throw new InvalidSessionException();
+        
+        return sessionCommon;
 	}
 	
 	// implementation of hive interface
@@ -474,7 +476,7 @@ public class HiveCommon implements Hive, ItemListener
 
     public long startWrite ( Session session, String itemName, final Variant value, final WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException
     {
-        validateSession ( session );
+        SessionCommon sessionCommon = validateSession ( session );
         
         final DataItem item = lookupItem ( itemName );
         
@@ -501,6 +503,8 @@ public class HiveCommon implements Hive, ItemListener
                 }
             }} );
         
+        sessionCommon.getOperations ().addOperation ( handle );
+        
         return handle.getId ();
     }
 	
@@ -521,31 +525,43 @@ public class HiveCommon implements Hive, ItemListener
         return _browser;
     }
 
-    public void cancelOperation ( long id ) throws CancellationNotSupportedException
+    public void cancelOperation ( Session session, long id ) throws CancellationNotSupportedException, InvalidSessionException
     {
+        SessionCommon sessionCommon = validateSession ( session );
+        
         _log.info ( String.format ( "Cancelling operation: %d", id ) );
         
         Handle handle = _opManager.get ( id );
         if ( handle != null )
         {
-            try
+            if ( sessionCommon.getOperations ().containsOperation ( handle ) )
             {
-                handle.cancel ();
-            }
-            catch ( CancelNotSupportedException e )
-            {
-                throw new CancellationNotSupportedException ();
+                try
+                {
+                    handle.cancel ();
+                }
+                catch ( CancelNotSupportedException e )
+                {
+                    throw new CancellationNotSupportedException ();
+                }
             }
         }
     }
 
-    public void thawOperation ( long id )
+    public void thawOperation ( Session session, long id ) throws InvalidSessionException
     {
+        SessionCommon sessionCommon = validateSession ( session );
+        
         _log.info ( String.format ( "Thawing operation %d", id ) );
         
         Handle handle = _opManager.get ( id );
         if ( handle != null )
-            _opProcessor.add ( handle );
+        {
+            if ( sessionCommon.getOperations ().containsOperation ( handle ) )
+            {
+                _opProcessor.add ( handle );
+            }
+        }
         else
             _log.warn ( String.format ( "%d is not a valid operation id", id ) );
     } 

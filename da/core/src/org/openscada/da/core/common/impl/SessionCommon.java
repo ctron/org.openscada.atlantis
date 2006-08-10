@@ -19,9 +19,13 @@
 
 package org.openscada.da.core.common.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.openscada.da.core.ItemChangeListener;
 import org.openscada.da.core.ItemListListener;
 import org.openscada.da.core.browser.FolderListener;
+import org.openscada.utils.jobqueue.OperationManager.Handle;
 
 
 public class SessionCommon implements org.openscada.da.core.Session
@@ -30,6 +34,7 @@ public class SessionCommon implements org.openscada.da.core.Session
 	private ItemChangeListener _listener;
     
 	private SessionCommonData _data = new SessionCommonData ();
+    private SessionCommonOperations _operations = new SessionCommonOperations ();
 	
     private boolean _itemListSubscriber = false;
     private ItemListListener _itemListListener;
@@ -90,4 +95,11 @@ public class SessionCommon implements org.openscada.da.core.Session
     {
         _folderListener = folderListener;
     }
+
+    public SessionCommonOperations getOperations ()
+    {
+        return _operations;
+    }
+    
+    
 }
