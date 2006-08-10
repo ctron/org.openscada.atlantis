@@ -31,17 +31,17 @@ import org.openscada.utils.lang.Holder;
 public class WriteAttributesOperation
 {
 
-    public static Message create ( String itemName, Map<String, Variant> attributes )
+    public static Message createRequest ( String itemId, Map<String, Variant> attributes )
     {
         Message message = new Message ( Messages.CC_WRITE_ATTRIBUTES_OPERATION );
         
-        message.getValues().put ( "item-id", new StringValue(itemName) );
+        message.getValues().put ( "item-id", new StringValue ( itemId ) );
         message.getValues().put ( "attributes", Messages.attributesToMap ( attributes ) );
         
         return message;
     }
 
-    public static void parse ( Message message, Holder<String> itemId, Holder<Map<String, Variant>> attributes )
+    public static void parseRequest ( Message message, Holder<String> itemId, Holder<Map<String, Variant>> attributes )
     {
         // FIXME: handle missing item name
         itemId.value = message.getValues().get ( "item-id" ).toString();
