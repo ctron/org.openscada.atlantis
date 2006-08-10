@@ -40,30 +40,32 @@ import org.openscada.net.base.data.VoidValue;
 
 public class Messages
 {
-	public final static int CC_CREATE_SESSION =         0x00010001;
-	public final static int CC_CLOSE_SESSION =          0x00010002;
+	public final static int CC_CREATE_SESSION =                     0x00010001;
+	public final static int CC_CLOSE_SESSION =                      0x00010002;
     
-    public final static int CC_SUBSCRIBE_ITEM =         0x00010010;
-    public final static int CC_UNSUBSCRIBE_ITEM =       0x00010011;
-    public final static int CC_NOTIFY_VALUE =           0x00010020;
-    public final static int CC_NOTIFY_ATTRIBUTES =      0x00010021;
+    public final static int CC_SUBSCRIBE_ITEM =                     0x00010010;
+    public final static int CC_UNSUBSCRIBE_ITEM =                   0x00010011;
+    public final static int CC_NOTIFY_VALUE =                       0x00010020;
+    public final static int CC_NOTIFY_ATTRIBUTES =                  0x00010021;
     
-    public final static int CC_WRITE_OPERATION =        0x00010030;
-    public final static int CC_WRITE_OPERATION_RESULT = 0x00010031;
-    public final static int CC_READ_OPERATION =         0x00010040;
+    public final static int CC_WRITE_OPERATION =                    0x00010030;
+    public final static int CC_WRITE_OPERATION_RESULT =             0x00010031;
+    public final static int CC_READ_OPERATION =                     0x00010040;
+    public final static int CC_WRITE_ATTRIBUTES_OPERATION =         0x00010050;
+    public final static int CC_WRITE_ATTRIBUTES_OPERATION_REPLY =   0x00010040;
     
-    public final static int CC_ENUM_SUBSCRIBE =         0x00010101;
-    public final static int CC_ENUM_UNSUBSCRIBE =       0x00010102;
-    public final static int CC_ENUM_EVENT =             0x00010103;
+    public final static int CC_ENUM_SUBSCRIBE =                     0x00010101;
+    public final static int CC_ENUM_UNSUBSCRIBE =                   0x00010102;
+    public final static int CC_ENUM_EVENT =                         0x00010103;
     
-    public final static int CC_BROWSER_LIST_REQ =       0x00010200;
-    public final static int CC_BROWSER_LIST_RES =       0x00010201;
+    public final static int CC_BROWSER_LIST_REQ =                   0x00010200;
+    public final static int CC_BROWSER_LIST_RES =                   0x00010201;
     
-    public final static int CC_BROWSER_EVENT =          0x00010210;
-    public final static int CC_BROWSER_SUBSCRIBE =      0x00010211;
-    public final static int CC_BROWSER_UNSUBSCRIBE =    0x00010212;
+    public final static int CC_BROWSER_EVENT =                      0x00010210;
+    public final static int CC_BROWSER_SUBSCRIBE =                  0x00010211;
+    public final static int CC_BROWSER_UNSUBSCRIBE =                0x00010212;
     
-    public final static int CC_CANCEL_OPERATION =       0x00010300;       
+    public final static int CC_CANCEL_OPERATION =                   0x00010300;       
     
     public static Message createSession ( Properties props )
     {
