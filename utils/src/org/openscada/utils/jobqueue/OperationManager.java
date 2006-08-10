@@ -20,8 +20,10 @@
 package org.openscada.utils.jobqueue;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public class OperationManager
 {
@@ -77,6 +79,12 @@ public class OperationManager
         }
     }
     
+    public interface Listener
+    {
+        void removedHandle ( Handle handle );
+    }
+    
+    private Set<Listener> _listeners = new HashSet<Listener> (); 
     private Map<Long, Handle> _operationMap = new HashMap<Long, Handle> ();
     
     public Handle schedule ( Operation operation )
@@ -101,6 +109,7 @@ public class OperationManager
         synchronized ( this )
         {
             _operationMap.remove ( handle.getId () );
+            fireRemoved ( handle );
         }
     }
     
@@ -109,6 +118,33 @@ public class OperationManager
         synchronized ( this )
         {
             return _operationMap.get ( id );
+        }
+    }
+    
+    public void addListener ( Listener listener )
+    {
+        synchronized ( this )
+        {
+            _listeners.add ( listener );
+        }
+    }
+    
+    public void removeListener ( Listener listener )
+    {
+        synchronized ( this )
+        {
+            _listeners.remove ( listener );
+        }
+    }
+    
+    private void fireRemoved ( Handle handle )
+    {
+        synchronized ( this )
+        {
+            for ( Listener listener : _listeners )
+            {
+                listener.removedHandle ( handle );
+            }
         }
     }
 
