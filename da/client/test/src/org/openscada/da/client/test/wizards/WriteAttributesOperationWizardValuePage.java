@@ -538,7 +538,10 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
     {
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
         
-        // FIXME: fill map
+        for ( AttributeEntry entry : _attributes._entries )
+        {
+            attributes.put ( entry.getName (), entry.getValue () );
+        }
         
         return attributes;
     }

@@ -31,6 +31,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.da.client.test.impl.HiveConnection;
+import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.LongRunningController;
 import org.openscada.net.base.LongRunningOperation;
@@ -57,7 +58,7 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
             {
                 try
                 {
-                    //doFinish ( monitor, connection, item, value );
+                    doFinish ( monitor, connection, item, attributes );
                 }
                 catch ( Exception e )
                 {
@@ -86,12 +87,12 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
         return true;
     }
     
-    private void doFinish ( final IProgressMonitor monitor, HiveConnection hiveConnection, String item, Variant value ) throws Exception
+    private void doFinish ( final IProgressMonitor monitor, HiveConnection hiveConnection, String item, Map<String,Variant> attributes ) throws Exception
     {
         monitor.beginTask ( "Writing value to item" , 4 );
         
         monitor.worked ( 1 );
-        LongRunningOperation op = hiveConnection.getConnection ().startWrite ( item, value, new LongRunningController.Listener () {
+        LongRunningOperation op = hiveConnection.getConnection ().startWriteAttributes ( item, attributes, new LongRunningController.Listener () {
 
             public void stateChanged ( State arg0, Message arg1, Throwable arg2 )
             {
@@ -139,7 +140,12 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
                 else if ( op.isComplete () )
                 {
                     waiting = false;
-                    hiveConnection.getConnection ().completeWrite ( op );
+                    Results result = hiveConnection.getConnection ().completeWriteAttributes ( op );
+                    
+                    if ( attributes.size () != result.size () )
+                    {
+                        throw new Exception ( String.format ( "Only %1$d items out of %2$d where processed", result.size (), attributes.size () ) );
+                    }
                 }
             }
         }
