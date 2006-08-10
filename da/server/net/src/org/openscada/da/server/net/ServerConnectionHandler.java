@@ -206,10 +206,13 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         // if session does not exists, silently ignore it
         if ( _session != null )
         {
-            try {
-                _hive.closeSession(_session);
-            } catch (InvalidSessionException e) {
-                e.printStackTrace();
+            try
+            {
+                _hive.closeSession ( _session );
+            }
+            catch (InvalidSessionException e)
+            {
+                e.printStackTrace ();
             }
         }	
     }
