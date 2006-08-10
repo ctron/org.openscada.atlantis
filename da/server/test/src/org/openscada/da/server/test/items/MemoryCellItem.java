@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.da.core.InvalidOperationException;
+import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemOutput;
@@ -57,9 +58,9 @@ public class MemoryCellItem extends DataItemOutput
         return _attributes.getCopy();
     }
 
-    public void setAttributes ( Map<String, Variant> attributes )
+    public Results setAttributes ( Map<String, Variant> attributes )
     {
-        // no op
+        return new Results ();
     }
 
     public void setValue ( Variant value ) throws InvalidOperationException,
