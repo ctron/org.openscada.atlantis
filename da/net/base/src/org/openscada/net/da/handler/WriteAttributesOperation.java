@@ -21,11 +21,15 @@ package org.openscada.net.da.handler;
 
 import java.util.Map;
 
+import org.openscada.da.core.WriteAttributesOperationListener.Results;
+import org.openscada.da.core.WriteAttributesOperationListener.Result;
 import org.openscada.da.core.data.Variant;
+import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
+import org.openscada.net.base.data.VoidValue;
 import org.openscada.utils.lang.Holder;
 
 public class WriteAttributesOperation
@@ -49,5 +53,48 @@ public class WriteAttributesOperation
         Value value = message.getValues ().get ( "attributes" );
         if ( value instanceof MapValue )
             attributes.value = Messages.mapToAttributes ( (MapValue)value );
+    }
+    
+    public static Message createRespone ( long id, Results results )
+    {
+        Message message = new Message ( Messages.CC_WRITE_ATTRIBUTES_OPERATION_REPLY );
+    
+        message.getValues (). put ( "id", new LongValue ( id ) );
+        
+        MapValue resultValues = new MapValue ();
+        for ( Map.Entry<String, Result> result : results.entrySet () )
+        {
+            if ( result.getValue ().isError () )
+                resultValues.put ( result.getKey (), new StringValue ( result.getValue ().getError ().getMessage () ) );
+            else
+                resultValues.put ( result.getKey (), new VoidValue () );
+        }
+        
+        message.getValues ().put ( "results", resultValues );
+        
+        return message;
+    }
+    
+    public static Results parseRequest ( Message message )
+    {
+        Results results = new Results ();
+        
+        if ( message.getValues ().containsKey ( "results" ) )
+        {
+            if ( message.getValues ().get ( "results" ) instanceof MapValue )
+            {
+                MapValue resultValues = (MapValue)message.getValues ().get ( "results" );
+                for ( Map.Entry<String,Value> entry : resultValues.getValues ().entrySet () )
+                {
+                    String name = entry.getKey ();
+                    if ( entry.getValue () instanceof VoidValue )
+                        results.put ( name, new Result () );
+                    else
+                        results.put ( name, new Result ( new Exception ( entry.getValue ().toString () ) ) );
+                }
+            }
+        }
+        
+        return results;
     }
 }
