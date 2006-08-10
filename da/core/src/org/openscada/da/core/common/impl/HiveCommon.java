@@ -530,20 +530,23 @@ public class HiveCommon implements Hive, ItemListener
     {
         SessionCommon sessionCommon = validateSession ( session );
         
-        _log.info ( String.format ( "Cancelling operation: %d", id ) );
-        
-        Handle handle = _opManager.get ( id );
-        if ( handle != null )
+        synchronized ( sessionCommon )
         {
-            if ( sessionCommon.getOperations ().containsOperation ( handle ) )
+            _log.info ( String.format ( "Cancelling operation: %d", id ) );
+
+            Handle handle = _opManager.get ( id );
+            if ( handle != null )
             {
-                try
+                if ( sessionCommon.getOperations ().containsOperation ( handle ) )
                 {
-                    handle.cancel ();
-                }
-                catch ( CancelNotSupportedException e )
-                {
-                    throw new CancellationNotSupportedException ();
+                    try
+                    {
+                        handle.cancel ();
+                    }
+                    catch ( CancelNotSupportedException e )
+                    {
+                        throw new CancellationNotSupportedException ();
+                    }
                 }
             }
         }
@@ -552,18 +555,21 @@ public class HiveCommon implements Hive, ItemListener
     public void thawOperation ( Session session, long id ) throws InvalidSessionException
     {
         SessionCommon sessionCommon = validateSession ( session );
-        
-        _log.info ( String.format ( "Thawing operation %d", id ) );
-        
-        Handle handle = _opManager.get ( id );
-        if ( handle != null )
+
+        synchronized ( sessionCommon )
         {
-            if ( sessionCommon.getOperations ().containsOperation ( handle ) )
+            _log.info ( String.format ( "Thawing operation %d", id ) );
+
+            Handle handle = _opManager.get ( id );
+            if ( handle != null )
             {
-                _opProcessor.add ( handle );
+                if ( sessionCommon.getOperations ().containsOperation ( handle ) )
+                {
+                    _opProcessor.add ( handle );
+                }
             }
+            else
+                _log.warn ( String.format ( "%d is not a valid operation id", id ) );
         }
-        else
-            _log.warn ( String.format ( "%d is not a valid operation id", id ) );
     } 
 }
