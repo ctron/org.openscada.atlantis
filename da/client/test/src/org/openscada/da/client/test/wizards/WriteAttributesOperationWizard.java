@@ -21,6 +21,7 @@ package org.openscada.da.client.test.wizards;
 
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -39,7 +40,7 @@ import org.openscada.net.base.data.Message;
 public class WriteAttributesOperationWizard extends Wizard implements INewWizard
 {
     
-    private WriteOperationWizardValuePage _page = null;
+    private WriteAttributesOperationWizardValuePage _page = null;
     
     private IStructuredSelection _selection = null;
     
@@ -47,7 +48,7 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
     public boolean performFinish ()
     {
         final String item = _page.getItem ();
-        final Variant value = _page.getValue ();
+        final Map<String,Variant> attributes = _page.getAttributes ();
         final HiveConnection connection = _page.getConnection ();
         
         IRunnableWithProgress op = new IRunnableWithProgress()
@@ -56,7 +57,7 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
             {
                 try
                 {
-                    doFinish ( monitor, connection, item, value );
+                    //doFinish ( monitor, connection, item, value );
                 }
                 catch ( Exception e )
                 {
@@ -156,7 +157,7 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
     {
         super.addPages ();
         
-        addPage ( _page = new WriteOperationWizardValuePage() );
+        addPage ( _page = new WriteAttributesOperationWizardValuePage() );
         
         _page.setSelection ( _selection );
     }
