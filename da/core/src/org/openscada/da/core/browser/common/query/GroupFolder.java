@@ -44,22 +44,22 @@ public class GroupFolder implements StorageBasedFolder
         _folder = new GroupSubFolder ( _nameProvider );
     }
 
-    public Entry[] list ( Stack<String> path ) throws NoSuchFolderException
+    synchronized public Entry[] list ( Stack<String> path ) throws NoSuchFolderException
     {
         return _folder.list ( path );
     }
 
-    public void subscribe ( Stack<String> path, FolderListener listener, Object tag ) throws NoSuchFolderException
+    synchronized public void subscribe ( Stack<String> path, FolderListener listener, Object tag ) throws NoSuchFolderException
     {
         _folder.subscribe ( path, listener, tag );
     }
 
-    public void unsubscribe ( Stack<String> path, Object tag ) throws NoSuchFolderException
+    synchronized public void unsubscribe ( Stack<String> path, Object tag ) throws NoSuchFolderException
     {
         _folder.unsubscribe ( path, tag );
     }
 
-    public void added ( ItemDescriptor descriptor )
+    synchronized public void added ( ItemDescriptor descriptor )
     {
         if ( _itemList.containsKey ( descriptor ) )
             return;
@@ -76,7 +76,7 @@ public class GroupFolder implements StorageBasedFolder
             _itemList.put ( descriptor, subFolder );
     }
 
-    public void removed ( ItemDescriptor descriptor )
+    synchronized public void removed ( ItemDescriptor descriptor )
     {
         GroupSubFolder folder = _itemList.get ( descriptor );
         
@@ -86,4 +86,16 @@ public class GroupFolder implements StorageBasedFolder
         folder.remove ( descriptor );
         _itemList.remove ( descriptor );
     }
+
+    public void added ()
+    {
+        _folder.added ();
+    }
+
+    public void removed ()
+    {
+        _folder.removed ();
+    }
+    
+    
 }

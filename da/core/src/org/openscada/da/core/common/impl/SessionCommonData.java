@@ -111,4 +111,13 @@ public class SessionCommonData
             return _paths;
         }
     }
+    
+    public void clearPaths ()
+    {
+        synchronized ( _paths )
+        {
+            _paths.clear ();
+            _pathRev.clear ();
+        }
+    }
 }

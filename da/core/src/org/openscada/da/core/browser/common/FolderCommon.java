@@ -85,6 +85,7 @@ public class FolderCommon implements Folder
                 Entry entry = new FolderEntryCommon ( name, folder, attributes );
                 _entryMap.put ( name, entry );
                 notifyAdd ( entry );
+                folder.added ();
                 return true;
             }
             else
@@ -117,7 +118,10 @@ public class FolderCommon implements Folder
         {
             if ( _entryMap.containsKey ( name ) )
             {
-                _entryMap.remove ( name );
+                Entry entry = _entryMap.remove ( name );
+                if ( entry instanceof FolderEntryCommon )
+                    ((FolderEntryCommon)entry).getFolder ().removed ();
+                
                 notifyRemove ( name );
                 return true;
             }
@@ -171,6 +175,7 @@ public class FolderCommon implements Folder
                     if ( ((FolderEntryCommon)entry.getValue()).getFolder () == folder )
                     {
                         i.remove ();
+                        folder.removed ();
                         notifyRemove ( entry.getKey () );
                         return true;
                     }
@@ -231,6 +236,14 @@ public class FolderCommon implements Folder
         } 
     }
     
+    public void clearListeners ()
+    {
+        synchronized ( _listeners )
+        {
+            _listeners.clear ();
+        }
+    }
+    
     private void sendCurrentList ( FolderListener listener, Object tag )
     {
         synchronized ( this )
@@ -272,6 +285,16 @@ public class FolderCommon implements Folder
     public int size ()
     {
         return _entryMap.size ();
+    }
+
+    public void added ()
+    {
+       
+    }
+
+    public void removed ()
+    {
+       clearListeners ();   
     }
     
 }

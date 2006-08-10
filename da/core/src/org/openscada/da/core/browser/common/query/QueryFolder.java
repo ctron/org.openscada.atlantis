@@ -150,4 +150,14 @@ public class QueryFolder implements StorageBasedFolder
     {
         _folder.unsubscribe ( path, tag );
     }
+
+    public void added ()
+    {
+        _folder.added ();
+    }
+
+    public void removed ()
+    {
+        _folder.removed ();
+    }
 }

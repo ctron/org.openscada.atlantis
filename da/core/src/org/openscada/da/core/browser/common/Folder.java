@@ -31,4 +31,15 @@ public interface Folder
     
     void subscribe ( Stack<String> path, FolderListener listener, Object tag ) throws NoSuchFolderException;
     void unsubscribe ( Stack<String> path, Object tag ) throws NoSuchFolderException;
+    
+    /**
+     * Called when the folder was added to the browser space
+     */
+    void added ();
+    
+    /**
+     * Called when the folder was removed from the browser space
+     *
+     */
+    void removed ();
 }

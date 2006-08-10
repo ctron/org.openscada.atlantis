@@ -78,6 +78,8 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
         
         synchronized ( _subscriberMap )
         {
+            _log.debug ( "Adding path: " + location.toString () );
+            
             SessionCommon sessionCommon = (SessionCommon)session;
             Object tag = new Object ();
             sessionCommon.getData ().addPath ( tag, new Location ( location ) );
@@ -159,17 +161,30 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
     
     public void destroy ( SessionCommon session )
     {
-        for ( Map.Entry<Object, Location> entry : session.getData ().getPaths ().entrySet () )
+        _log.debug ( String.format ( "Session destroy: %d entries", session.getData ().getPaths ().size () ) );
+        
+        Map<Object,Location> entries;
+        
+        synchronized ( session.getData ().getPaths () )
+        {
+            entries = new HashMap<Object,Location> ( session.getData ().getPaths () );
+        }
+        
+        for ( Map.Entry<Object, Location> entry : entries.entrySet () )
         {
             try
             {
+                _log.debug ( "Unsubscribe path: " + entry.getValue ().toString () );
                 unsubscribePath ( session, entry.getValue() );
             }
             catch ( NoSuchFolderException e )
             {
+                _log.warn ( "Unable to unsubscribe form path", e );
             }
         }
-        session.getData ().getItems ().clear ();
+        
+        session.getData ().clearPaths ();
+        _log.debug ( "Destruction of session ok" );
     }
     
     public abstract Folder getRootFolder ();

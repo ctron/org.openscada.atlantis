@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import org.apache.log4j.Logger;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.NoSuchFolderException;
 import org.openscada.da.core.browser.common.Folder;
@@ -34,6 +35,8 @@ import org.openscada.utils.collection.MapBuilder;
 
 public class GroupSubFolder implements Folder
 {
+    private static Logger _log = Logger.getLogger ( GroupSubFolder.class );
+    
     private GroupSubFolder _parent = null;
     private NameProvider _nameProvider = null;
     private FolderCommon _folder = new FolderCommon ();
@@ -50,7 +53,14 @@ public class GroupSubFolder implements Folder
         _nameProvider = nameProvider;
     }
     
-    synchronized GroupSubFolder add ( Stack<String> path, ItemDescriptor descriptor )
+    @Override
+    protected void finalize () throws Throwable
+    {
+        _log.debug ( "Finalized: " + this );
+        super.finalize ();
+    }
+    
+    public GroupSubFolder add ( Stack<String> path, ItemDescriptor descriptor )
     {
         if ( path.isEmpty () )
         {
@@ -88,7 +98,7 @@ public class GroupSubFolder implements Folder
         return _subFolders.get ( name );
     }
     
-    synchronized public void remove ( ItemDescriptor descriptor )
+    public void remove ( ItemDescriptor descriptor )
     {
         DataItem item = descriptor.getItem ();
         
@@ -102,35 +112,52 @@ public class GroupSubFolder implements Folder
         }
     }
     
-    synchronized private void removeSubFolder ( GroupSubFolder subFolder )
+    private void removeSubFolder ( GroupSubFolder subFolder )
     {
         String folderName = _folder.findEntry ( subFolder );
         if ( folderName == null )
             return;
-         
+        
+        subFolder.clearSubscribers ();
         _folder.remove ( folderName );
         _subFolders.remove ( folderName );
         
         if ( _folder.size () <= 0 )
         {
             if ( _parent != null )
+            {
                 _parent.removeSubFolder ( this );
+            }
         }
     }
     
-    public Entry[] list ( Stack<String> path ) throws NoSuchFolderException
+    synchronized public Entry[] list ( Stack<String> path ) throws NoSuchFolderException
     {
-        return _folder.list ( path );
+       return _folder.list ( path );
     }
 
-    public void subscribe ( Stack<String> path, FolderListener listener, Object tag ) throws NoSuchFolderException
+    synchronized public void subscribe ( Stack<String> path, FolderListener listener, Object tag ) throws NoSuchFolderException
     {
         _folder.subscribe ( path, listener, tag );
     }
 
-    public void unsubscribe ( Stack<String> path, Object tag ) throws NoSuchFolderException
+    synchronized public void unsubscribe ( Stack<String> path, Object tag ) throws NoSuchFolderException
     {
         _folder.unsubscribe ( path, tag );
     }
 
+    public void clearSubscribers ()
+    {
+        _folder.clearListeners ();
+    }
+
+    public void added ()
+    {
+        _folder.added ();
+    }
+
+    public void removed ()
+    {
+        _folder.removed ();
+    }
 }
