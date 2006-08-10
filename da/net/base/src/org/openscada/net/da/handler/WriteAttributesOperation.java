@@ -55,7 +55,7 @@ public class WriteAttributesOperation
             attributes.value = Messages.mapToAttributes ( (MapValue)value );
     }
     
-    public static Message createRespone ( long id, Results results )
+    public static Message createResponse ( long id, Results results )
     {
         Message message = new Message ( Messages.CC_WRITE_ATTRIBUTES_OPERATION_REPLY );
     
@@ -75,7 +75,7 @@ public class WriteAttributesOperation
         return message;
     }
     
-    public static Results parseRequest ( Message message )
+    public static Results parseResponse ( Message message )
     {
         Results results = new Results ();
         
