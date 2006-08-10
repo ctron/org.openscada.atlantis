@@ -29,4 +29,14 @@ public class SessionCommonOperations implements OperationManager.Listener
     {
         removeOperation ( handle );
     }
+
+    synchronized public Set<Handle> getOperations ()
+    {
+        return new HashSet<Handle> ( _operations );
+    }
+
+    synchronized public void clear ()
+    {
+        _operations.clear ();
+    }
 }
