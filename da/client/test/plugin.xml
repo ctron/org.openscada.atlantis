@@ -105,6 +105,18 @@
             </enablement>
          </action>
          <action
+               class="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               label="Write Attributes"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions">
+            <enablement>
+               <objectClass name="org.openscada.da.client.test.impl.DataItemEntry"/>
+            </enablement>
+         </action>
+         <action
                class="org.openscada.da.client.test.actions.ConnectHiveAction"
                icon="icons/stock_connect.png"
                id="org.openscada.da.client.test.actions.ConnectHiveAction"
@@ -196,6 +208,12 @@
                icon="icons/16x16/stock_write.png"
                id="org.openscada.da.client.test.actions.WriteOperationAction"
                label="Write Operation"
+               menubarPath="additions"/>
+         <action
+               class="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               label="Write Attributes Operation"
                menubarPath="additions"/>
       </objectContribution>
    </extension>

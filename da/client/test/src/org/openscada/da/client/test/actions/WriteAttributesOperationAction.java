@@ -11,12 +11,12 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.openscada.da.client.test.wizards.WriteOperationWizard;
+import org.openscada.da.client.test.wizards.WriteAttributesOperationWizard;
 
-public class WriteOperationAction implements IObjectActionDelegate, IViewActionDelegate
+public class WriteAttributesOperationAction implements IObjectActionDelegate, IViewActionDelegate
 {
     @SuppressWarnings("unused")
-    private static Logger _log = Logger.getLogger ( WriteOperationAction.class );
+    private static Logger _log = Logger.getLogger ( WriteAttributesOperationAction.class );
     
     private IWorkbenchPartSite _site = null;
     
@@ -27,7 +27,7 @@ public class WriteOperationAction implements IObjectActionDelegate, IViewActionD
         if ( _selection == null )
             return;
         
-        IWorkbenchWizard wiz = new WriteOperationWizard();
+        IWorkbenchWizard wiz = new WriteAttributesOperationWizard ();
         wiz.init ( _site.getWorkbenchWindow ().getWorkbench (), _selection );
         
         // Embed the wizard into a dialog
