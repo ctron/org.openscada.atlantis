@@ -49,10 +49,6 @@ import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.io.net.Connection;
 import org.openscada.net.utils.MessageCreator;
-import org.openscada.utils.jobqueue.CancelNotSupportedException;
-import org.openscada.utils.jobqueue.OperationManager;
-import org.openscada.utils.jobqueue.OperationManager.Handle;
-import org.openscada.utils.lang.Holder;
 
 public class ServerConnectionHandler extends ConnectionHandlerBase implements ItemChangeListener, ItemListListener, FolderListener
 {
@@ -63,9 +59,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 
     private Hive _hive = null;
     private Session _session = null;
-    
-    //private OperationManager _operationManager = new OperationManager ();
-
+ 
     public ServerConnectionHandler(Hive hive)
     {
         super();
@@ -353,47 +347,14 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 
     private void performWrite ( final Message message )
     {
-        /*
-        Holder<String> itemName = new Holder<String> ();
-        Holder<Variant> value = new Holder<Variant> ();
-
-        org.openscada.net.da.handler.WriteOperation.parse ( message, itemName, value );
-
-        _log.debug ( "Writing to '" + itemName.value + "'" );
-
-        Handle handle = _operationManager.schedule ( new WriteOperation ( _hive, _session, this, itemName.value, value.value ) );
-        _log.debug ( "Aquired operation handle: " + handle.getId () );
-
-        // send long running operation reply
-        Message replyMessage = new Message ( Message.CC_ACK, message.getSequence () );
-        replyMessage.getValues ().put ( "id", new LongValue ( handle.getId () ) );
-        getConnection ().sendMessage ( replyMessage );
-
-        _log.debug ( "Kicking off operation" );
-        handle.start ();
-         */
-        
-        WriteValueController c = new WriteValueController (_hive, _session , this );
+        WriteValueController c = new WriteValueController ( _hive, _session, this );
         c.run ( message );
     }
     
     private void performWriteAttributes ( final Message message )
     {
-        /*
-        Holder<String> itemName = new Holder<String> ();
-        Holder<Map<String,Variant>> attributes = new Holder<Map<String,Variant>> ();
-
-        org.openscada.net.da.handler.WriteAttributesOperation.parseRequest ( message, itemName, attributes );
-
-        Handle handle = _operationManager.schedule ( new WriteAttributesOperation ( _hive, _session, this, itemName.value, attributes.value ) );
-
-        // send long running operation reply
-        Message replyMessage = new Message ( Message.CC_ACK, message.getSequence () );
-        replyMessage.getValues ().put ( "id", new LongValue ( handle.getId () ) );
-        getConnection ().sendMessage ( replyMessage );
-
-        handle.start ();
-*/
+        WriteAttributesController c = new WriteAttributesController ( _hive, _session, this );
+        c.run ( message );
     }
     
     private void performBrowse ( final Message message )
@@ -534,23 +495,6 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         {
             getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, e1 ) );
         }
-        
-        /*
-        try
-        {
-            Handle handle = null;
-            synchronized ( _operationManager )
-            {
-                handle = _operationManager.get ( id );
-            }
-            handle.cancel ();
-            getConnection ().sendMessage ( MessageCreator.createACK ( message ) );
-        }
-        catch ( CancelNotSupportedException e )
-        {
-            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Cancellation not supported" ) );            
-        };
-        */
     }
     
 }
