@@ -22,6 +22,8 @@ package org.openscada.da.core.common;
 import java.util.Map;
 
 import org.openscada.da.core.InvalidOperationException;
+import org.openscada.da.core.WriteAttributesOperationListener.Result;
+import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.data.Variant;
 
 public class DataItemInputCommon extends DataItemInput
@@ -61,10 +63,17 @@ public class DataItemInputCommon extends DataItemInput
      * to get the attribute manager which allows you so tweak the
      * items attributes from the side of the item implementation.
      */
-	public void setAttributes ( Map<String, Variant> attributes )
+    public Results setAttributes(Map<String, Variant> attributes)
     {
-		// no op
-	}
+        Results results = new Results ();
+        
+        for ( String name : attributes.keySet () )
+        {
+            results.put ( name, new Result ( new UnsupportedOperationException () ) );
+        }
+        
+        return results;
+    }
 	
 	/** Update the value of this data item
 	 * 

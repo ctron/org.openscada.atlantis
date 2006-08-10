@@ -35,6 +35,7 @@ import org.openscada.da.core.InvalidItemException;
 import org.openscada.da.core.InvalidSessionException;
 import org.openscada.da.core.ItemChangeListener;
 import org.openscada.da.core.Session;
+import org.openscada.da.core.WriteAttributesOperationListener;
 import org.openscada.da.core.WriteOperationListener;
 import org.openscada.da.core.browser.HiveBrowser;
 import org.openscada.da.core.browser.common.Folder;
@@ -473,6 +474,29 @@ public class HiveCommon implements Hive, ItemListener
                 }
             }
         }
+    }
+
+    public long startWriteAttributes ( Session session, String itemId, Map<String, Variant> attributes, WriteAttributesOperationListener listener ) throws InvalidSessionException, InvalidItemException
+    {
+        SessionCommon sessionCommon = validateSession ( session );
+        
+        final DataItem item = lookupItem ( itemId );
+        
+        if ( item == null )
+            throw new InvalidItemException ( itemId );
+        
+        if ( listener == null )
+            throw new NullPointerException ();
+        
+        WriteAttributesOperation op = new WriteAttributesOperation ( item, listener, attributes );
+        Handle handle = _opManager.schedule ( op );
+        
+        synchronized ( sessionCommon )
+        {
+            sessionCommon.getOperations ().addOperation ( handle );
+        }
+        
+        return handle.getId ();
     }
 
     public long startWrite ( Session session, String itemName, final Variant value, final WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException

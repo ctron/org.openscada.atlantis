@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.openscada.da.core.InvalidOperationException;
+import org.openscada.da.core.WriteAttributesOperationListener.Results;
+import org.openscada.da.core.WriteAttributesOperationListener.Result;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
@@ -83,8 +85,16 @@ public class DataItemCommand extends DataItemOutput {
 		return new HashMap<String,Variant>();
 	}
 	
-	public void setAttributes(Map<String, Variant> attributes) {
-		// ignore
+	public Results setAttributes(Map<String, Variant> attributes)
+    {
+        Results results = new Results ();
+        
+	    for ( String name : attributes.keySet () )
+        {
+	        results.put ( name, new Result ( new UnsupportedOperationException () ) );
+        }
+        
+        return results;
 	}
 	
 }

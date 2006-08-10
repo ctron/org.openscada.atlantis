@@ -25,6 +25,8 @@ import java.util.Map;
 
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.InvalidOperationException;
+import org.openscada.da.core.WriteAttributesOperationListener.Results;
+import org.openscada.da.core.WriteAttributesOperationListener.Result;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
@@ -58,16 +60,22 @@ public class MemoryDataItem extends DataItemBase {
 		return new HashMap<String, Variant> ( _attributes );
 	}
 
-	public void setAttributes ( Map<String, Variant> attributes )
+	public Results setAttributes ( Map<String, Variant> attributes )
     {
+        Results results = new Results ();
+        
 		for ( Map.Entry<String,Variant> entry : attributes.entrySet() )
 		{
 			if ( entry.getValue() != null )
 				_attributes.put ( entry.getKey(), entry.getValue() );
 			else
 				_attributes.remove ( entry.getKey() );
+            
+            results.put ( entry.getKey (), new Result () );
 		}
 		notifyAttributes ( attributes );
+        
+        return results;
 	}
 
 }
