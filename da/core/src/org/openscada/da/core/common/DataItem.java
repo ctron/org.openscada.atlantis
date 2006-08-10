@@ -24,6 +24,7 @@ import java.util.Map;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.InvalidOperationException;
 import org.openscada.da.core.WriteAttributesOperationListener;
+import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.common.impl.WriteAttributesOperation;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
@@ -37,7 +38,7 @@ public interface DataItem {
 	public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException;
 	
 	public Map<String, Variant> getAttributes ();
-	public Map<String, WriteAttributesOperationListener.Result> setAttributes ( Map<String,Variant> attributes );
+	public Results setAttributes ( Map<String,Variant> attributes );
 	
 	/** Sets the listener for this item
 	 * @param listener The listener to use or null to disable notification
