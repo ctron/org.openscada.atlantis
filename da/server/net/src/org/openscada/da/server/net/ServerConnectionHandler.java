@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.core.CancellationNotSupportedException;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.Hive;
 import org.openscada.da.core.InvalidItemException;
@@ -63,7 +64,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
     private Hive _hive = null;
     private Session _session = null;
     
-    private OperationManager _operationManager = new OperationManager ();
+    //private OperationManager _operationManager = new OperationManager ();
 
     public ServerConnectionHandler(Hive hive)
     {
@@ -114,6 +115,13 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
             public void messageReceived ( Connection connection, Message message )
             {
                 performWrite ( message );
+            }});
+        
+        getMessageProcessor().setHandler(Messages.CC_WRITE_ATTRIBUTES_OPERATION, new MessageListener(){
+
+            public void messageReceived ( Connection connection, Message message )
+            {
+                performWriteAttributes ( message );
             }});
         
         getMessageProcessor ().setHandler ( Messages.CC_BROWSER_LIST_REQ, new MessageListener(){
@@ -345,6 +353,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 
     private void performWrite ( final Message message )
     {
+        /*
         Holder<String> itemName = new Holder<String> ();
         Holder<Variant> value = new Holder<Variant> ();
 
@@ -362,7 +371,29 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 
         _log.debug ( "Kicking off operation" );
         handle.start ();
+         */
+        
+        WriteValueController c = new WriteValueController (_hive, _session , this );
+        c.run ( message );
+    }
+    
+    private void performWriteAttributes ( final Message message )
+    {
+        /*
+        Holder<String> itemName = new Holder<String> ();
+        Holder<Map<String,Variant>> attributes = new Holder<Map<String,Variant>> ();
 
+        org.openscada.net.da.handler.WriteAttributesOperation.parseRequest ( message, itemName, attributes );
+
+        Handle handle = _operationManager.schedule ( new WriteAttributesOperation ( _hive, _session, this, itemName.value, attributes.value ) );
+
+        // send long running operation reply
+        Message replyMessage = new Message ( Message.CC_ACK, message.getSequence () );
+        replyMessage.getValues ().put ( "id", new LongValue ( handle.getId () ) );
+        getConnection ().sendMessage ( replyMessage );
+
+        handle.start ();
+*/
     }
     
     private void performBrowse ( final Message message )
@@ -493,6 +524,20 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         
         try
         {
+            _hive.cancelOperation ( _session, id );
+        }
+        catch ( InvalidSessionException e1 )
+        {
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, e1 ) );
+        }
+        catch ( CancellationNotSupportedException e1 )
+        {
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, e1 ) );
+        }
+        
+        /*
+        try
+        {
             Handle handle = null;
             synchronized ( _operationManager )
             {
@@ -505,6 +550,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         {
             getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Cancellation not supported" ) );            
         };
+        */
     }
     
 }
