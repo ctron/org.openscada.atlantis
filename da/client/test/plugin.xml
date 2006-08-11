@@ -66,6 +66,9 @@
          <property
                name="preferenceCustomization"
                value="plugin_customization.ini"/>
+         <property
+               name="windowImages"
+               value="icons/app/app_icon_16.gif,icons/app/app_icon_32.gif,icons/app/app_icon_48.gif"/>
       </product>
    </extension>
    <extension
