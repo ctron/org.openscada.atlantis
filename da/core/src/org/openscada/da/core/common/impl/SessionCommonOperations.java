@@ -3,8 +3,8 @@ package org.openscada.da.core.common.impl;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openscada.utils.jobqueue.OperationManager.Handle;
 import org.openscada.utils.jobqueue.OperationManager;
+import org.openscada.utils.jobqueue.OperationManager.Handle;
 
 public class SessionCommonOperations implements OperationManager.Listener
 {

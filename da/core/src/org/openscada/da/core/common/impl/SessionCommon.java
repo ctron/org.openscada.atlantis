@@ -19,13 +19,9 @@
 
 package org.openscada.da.core.common.impl;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.openscada.da.core.ItemChangeListener;
 import org.openscada.da.core.ItemListListener;
 import org.openscada.da.core.browser.FolderListener;
-import org.openscada.utils.jobqueue.OperationManager.Handle;
 
 
 public class SessionCommon implements org.openscada.da.core.Session

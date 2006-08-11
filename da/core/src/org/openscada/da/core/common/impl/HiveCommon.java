@@ -47,10 +47,7 @@ import org.openscada.utils.jobqueue.CancelNotSupportedException;
 import org.openscada.utils.jobqueue.OperationManager;
 import org.openscada.utils.jobqueue.OperationProcessor;
 import org.openscada.utils.jobqueue.RunnableCancelOperation;
-import org.openscada.utils.jobqueue.RunnableOperation;
 import org.openscada.utils.jobqueue.OperationManager.Handle;
-
-import sun.nio.cs.ext.ISCII91;
 
 public class HiveCommon implements Hive, ItemListener
 {

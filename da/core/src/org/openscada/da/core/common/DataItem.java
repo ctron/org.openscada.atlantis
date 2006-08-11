@@ -23,9 +23,7 @@ import java.util.Map;
 
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.InvalidOperationException;
-import org.openscada.da.core.WriteAttributesOperationListener;
 import org.openscada.da.core.WriteAttributesOperationListener.Results;
-import org.openscada.da.core.common.impl.WriteAttributesOperation;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
