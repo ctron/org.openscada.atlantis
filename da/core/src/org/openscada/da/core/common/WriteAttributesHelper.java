@@ -6,7 +6,7 @@ import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.WriteAttributesOperationListener.Result;
 import org.openscada.da.core.data.Variant;
 
-public class WriteAttributeHelper
+public class WriteAttributesHelper
 {
     public static void errorUnhandled ( Results results, Map<String, Variant> attributes )
     {
