@@ -22,6 +22,7 @@ package org.openscada.da.core.common;
 import java.util.Map;
 
 import org.openscada.da.core.InvalidOperationException;
+import org.openscada.da.core.WriteOperationListener;
 import org.openscada.da.core.WriteAttributesOperationListener.Result;
 import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.data.Variant;
@@ -65,14 +66,7 @@ public class DataItemInputCommon extends DataItemInput
      */
     public Results setAttributes(Map<String, Variant> attributes)
     {
-        Results results = new Results ();
-        
-        for ( String name : attributes.keySet () )
-        {
-            results.put ( name, new Result ( new UnsupportedOperationException () ) );
-        }
-        
-        return results;
+        return WriteAttributesHelper.errorUnhandled ( null, attributes );
     }
 	
 	/** Update the value of this data item
