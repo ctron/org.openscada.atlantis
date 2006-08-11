@@ -85,16 +85,9 @@ public class DataItemCommand extends DataItemOutput {
 		return new HashMap<String,Variant>();
 	}
 	
-	public Results setAttributes(Map<String, Variant> attributes)
+	public Results setAttributes ( Map<String, Variant> attributes )
     {
-        Results results = new Results ();
-        
-	    for ( String name : attributes.keySet () )
-        {
-	        results.put ( name, new Result ( new UnsupportedOperationException () ) );
-        }
-        
-        return results;
+        return WriteAttributesHelper.errorUnhandled ( null, attributes );
 	}
 	
 }
