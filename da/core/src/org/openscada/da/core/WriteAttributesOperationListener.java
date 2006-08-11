@@ -33,6 +33,7 @@ public interface WriteAttributesOperationListener
         
         public Result ( Throwable error )
         {
+            _error = error;
         }
         
         public Throwable getError ()
