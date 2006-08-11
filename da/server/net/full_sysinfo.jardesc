@@ -15,14 +15,16 @@
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.test"/>
 <javaElement handleIdentifier="=openscada_da_net_base/src"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.io"/>
-<javaElement handleIdentifier="=openscada_da_core/src"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.base.handlers"/>
+<javaElement handleIdentifier="=openscada_da_core/src"/>
+<javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.io.net"/>
 <javaElement handleIdentifier="=openscada_utils/src"/>
+<javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.line"/>
 <javaElement handleIdentifier="=openscada_da_server_net/src"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.utils"/>
 <javaElement handleIdentifier="=openscada_da_sysinfo/src"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.codec.test"/>
-<javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.base"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.base.data"/>
+<javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.base"/>
 </selectedElements>
 </jardesc>
