@@ -60,8 +60,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.core.data.NotConvertableException;
