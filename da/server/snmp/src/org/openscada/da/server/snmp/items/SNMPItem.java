@@ -23,12 +23,14 @@ import java.util.EnumSet;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.InvalidOperationException;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemBase;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.SuspendableItem;
+import org.openscada.da.core.common.WriteAttributesHelper;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
@@ -98,9 +100,9 @@ public class SNMPItem extends DataItemBase implements Runnable, SuspendableItem
         return _value;
     }
 
-    public void setAttributes ( Map<String, Variant> attributes )
+    public Results setAttributes ( Map<String, Variant> attributes )
     {
-        // no op
+        return WriteAttributesHelper.errorUnhandled ( null, attributes );
     }
 
     public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
