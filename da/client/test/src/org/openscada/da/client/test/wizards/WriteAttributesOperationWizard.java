@@ -23,14 +23,19 @@ package org.openscada.da.client.test.wizards;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
+import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.impl.HiveConnection;
+import org.openscada.da.core.WriteAttributesOperationListener.Result;
 import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.data.Variant;
 import org.openscada.net.base.LongRunningController;
@@ -141,14 +146,50 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
                 {
                     waiting = false;
                     Results result = hiveConnection.getConnection ().completeWriteAttributes ( op );
-                    
-                    if ( attributes.size () != result.size () )
+                   
+                    if ( ( attributes.size () != result.size () ) || (!result.isSuccess ()) )
                     {
-                        throw new Exception ( String.format ( "Only %1$d items out of %2$d where processed", result.size (), attributes.size () ) );
+                        handleError ( attributes, result );
                     }
+                    
                 }
             }
         }
+    }
+    
+    public void handleError ( Map<String, Variant> attributes, Results results )
+    {
+        MultiStatus status = new MultiStatus ( Openscada_da_client_testPlugin.PLUGIN_ID, 0, "Failed to write attributes", null );
+        
+        if ( attributes.size () != results.size () )
+        {
+            status.add ( new OperationStatus ( OperationStatus.WARNING, Openscada_da_client_testPlugin.PLUGIN_ID, 0, String.format ( "Only %1$d items out of %2$d where processed", results.size (), attributes.size () ), null ) );
+        }
+        
+        for ( Map.Entry<String, Result> entry : results.entrySet () )
+        {
+            if ( entry.getValue ().isError () )
+            {
+                status.add ( new OperationStatus ( OperationStatus.ERROR, Openscada_da_client_testPlugin.PLUGIN_ID, 0, String.format ( "Failed to write attribute '%1$s': %2$s", entry.getKey (), entry.getValue ().getError ().getMessage () ), null ) );
+            }
+        }
+        
+        for ( String name : attributes.keySet () )
+        {
+            if ( !results.containsKey ( name ) )
+            {
+                status.add ( new OperationStatus ( OperationStatus.WARNING, Openscada_da_client_testPlugin.PLUGIN_ID, 0, String.format ( "Attribute %s is missing in result list", name ), null ) );
+            }
+        }
+        
+        final ErrorDialog dialog = new ErrorDialog ( getShell (), "Failed write attributes", "The write attributes operation did not complete successfully. There may be one ore more attributes that could not be written. Check the status of each attribute operation using the detailed information.", status, OperationStatus.ERROR | OperationStatus.WARNING );
+
+        getShell ().getDisplay ().syncExec ( new Runnable () {
+
+            public void run ()
+            {
+                dialog.open ();
+            }} );
     }
 
     public void init ( IWorkbench workbench, IStructuredSelection selection )
