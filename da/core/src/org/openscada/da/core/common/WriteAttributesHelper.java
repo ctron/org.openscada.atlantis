@@ -27,8 +27,15 @@ import org.openscada.da.core.data.Variant;
 
 public class WriteAttributesHelper
 {
-    public static Results errorUnhandled ( Results results, Map<String, Variant> attributes )
+    public static Results errorUnhandled ( Results initialResults, Map<String, Variant> attributes )
     {
+        Results results = initialResults;
+        
+        if ( results == null )
+        {
+            results = new Results ();
+        }
+        
         for ( String name : attributes.keySet () )
         {
             results.put ( name, new Result ( new Exception ( "Operation unsupported" ) ) );
