@@ -63,6 +63,16 @@ public interface WriteAttributesOperationListener
          * 
          */
         private static final long serialVersionUID = 6767947169827708138L;
+        
+        public boolean isSuccess ()
+        {
+            for ( Result result : values () )
+            {
+                if ( result.isError () )
+                    return false;
+            }
+            return true;
+        }
     }
     
     void complete ( Results results );
