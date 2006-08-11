@@ -89,7 +89,7 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
     
     private void doFinish ( final IProgressMonitor monitor, HiveConnection hiveConnection, String item, Map<String,Variant> attributes ) throws Exception
     {
-        monitor.beginTask ( "Writing value to item" , 4 );
+        monitor.beginTask ( "Writing attributes to item" , 4 );
         
         monitor.worked ( 1 );
         LongRunningOperation op = hiveConnection.getConnection ().startWriteAttributes ( item, attributes, new LongRunningController.Listener () {
@@ -154,6 +154,7 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
     public void init ( IWorkbench workbench, IStructuredSelection selection )
     {
         setNeedsProgressMonitor ( true );
+        setWindowTitle ( "Write Attributes" );
         
         _selection = selection;
     }
@@ -168,5 +169,4 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
         _page.setSelection ( _selection );
     }
     
-
 }

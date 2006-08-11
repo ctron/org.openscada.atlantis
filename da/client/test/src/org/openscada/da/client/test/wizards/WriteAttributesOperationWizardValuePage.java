@@ -22,19 +22,25 @@ package org.openscada.da.client.test.wizards;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -44,18 +50,18 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.core.data.NotConvertableException;
@@ -245,6 +251,11 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
             _entries.add (  entry );
         }
         
+        public void remove ( AttributeEntry entry )
+        {
+            _entries.remove ( entry );
+        }
+        
         public List<AttributeEntry> getEntries ()
         {
             return _entries;
@@ -372,11 +383,11 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
                 {
                     entry.setValue ( value.toString () );
                 }
-                if ( property.equals ( "name" ) )
+                else if ( property.equals ( "name" ) )
                 {
                     entry.setName ( value.toString () );
                 }
-                if ( property.equals ( "value-type" ) )
+                else if ( property.equals ( "value-type" ) )
                 {
                     Integer i = (Integer)value;
                     String valueType = _valueTypeEditor.getItems ()[i];
@@ -387,17 +398,76 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
                     }
                 }
                 _viewer.update ( entry, PROPERTIES );
+                dialogChanged ();
             }
         }
         
     }
     private Attributes _attributes = new Attributes ();
     
+    private class AddAction extends Action
+    {
+        public AddAction ()
+        {
+            super ( "Add Entry", Action.AS_PUSH_BUTTON );
+            setEnabled ( true );
+        }
+        
+        @Override
+        public void run ()
+        {
+            AttributeEntry entry = new AttributeEntry ( "", ValueType.STRING, "" );
+            _attributes.add ( entry );
+            _table.add ( entry );
+            dialogChanged ();
+        }
+    }
+    
+    private class RemoveAction extends Action implements ISelectionChangedListener
+    {
+
+        private ISelection _selection = null;
+        
+        public RemoveAction ()
+        {
+            super ( "Remove Entry", Action.AS_PUSH_BUTTON );    
+        }
+        
+        @Override
+        public void run ()
+        {
+            if ( _selection instanceof IStructuredSelection )
+            {
+                IStructuredSelection selection = (IStructuredSelection)_selection;
+                Iterator i = selection.iterator ();
+                while ( i.hasNext () )
+                {
+                    Object o = i.next ();
+                    if ( o instanceof AttributeEntry )
+                    {
+                        _attributes.remove ( (AttributeEntry)o );
+                        _table.remove ( o );
+                    }
+                }
+                dialogChanged ();
+            }
+        }
+       
+        public void selectionChanged ( SelectionChangedEvent event )
+        {
+            _selection = event.getSelection ();
+        }
+        
+    }
+    
+    private AddAction _addAction = new AddAction ();
+    private RemoveAction _removeAction = new RemoveAction ();
+    
     protected WriteAttributesOperationWizardValuePage (  )
     {
         super ( "wizardPage" );
-        setTitle ( "Write Data Item" );
-        setDescription ( "Enter the information to write" );
+        setTitle ( "Write Attributes" );
+        setDescription ( "Configure the attributes to write" );
     }
 
     public void createControl ( Composite parent )
@@ -426,6 +496,18 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
         label = new Label ( container, SWT.NONE );
        
         // row 2
+        
+        gd = new GridData ( GridData.FILL_HORIZONTAL );
+        gd.horizontalSpan = 3;
+        gd.grabExcessHorizontalSpace = true;
+        ToolBar toolbar = new ToolBar ( container, SWT.NONE );
+        toolbar.setLayoutData ( gd );
+        ToolBarManager tbm = new ToolBarManager ( toolbar );
+        tbm.add ( _addAction );
+        tbm.add ( _removeAction );
+        tbm.update ( true );
+        
+        // row 3
         
         _attributes.add ( new AttributeEntry ( "test", ValueType.STRING, "1.23" ) );
         
@@ -483,7 +565,7 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
         }
         
         _table.getTable ().setLayoutData ( gd );
-        //_table.getTable ().pack ();
+        _table.addSelectionChangedListener ( _removeAction );
         
         setControl ( container );
         fillFromSelection ();
@@ -518,6 +600,21 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
         {
             updateStatus ( "Item name must not be empty" );
             return;
+        }
+        
+        if ( _attributes._entries.size () <= 0 )
+        {
+            updateStatus ( "No attributes" );
+            return;
+        }
+        
+        for ( AttributeEntry entry : _attributes._entries )
+        {
+            if ( entry._name.equals ( "" ) )
+            {
+                updateStatus ( "Attribute with an empty name is not allowed" );
+                return;
+            }
         }
 
         updateStatus ( null );
