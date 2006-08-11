@@ -28,6 +28,7 @@ import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemOutput;
 import org.openscada.da.core.common.MemoryDataItem;
+import org.openscada.da.core.common.WriteAttributesHelper;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
@@ -60,7 +61,7 @@ public class MemoryCellItem extends DataItemOutput
 
     public Results setAttributes ( Map<String, Variant> attributes )
     {
-        return new Results ();
+        return WriteAttributesHelper.errorUnhandled ( null, attributes );
     }
 
     public void setValue ( Variant value ) throws InvalidOperationException,
