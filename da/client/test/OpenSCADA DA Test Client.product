@@ -19,7 +19,8 @@
 
    <launcher name="ostc">
       <solaris/>
-      <win useIco="false">
+      <win useIco="true">
+         <ico path="/openscada_da_client_test/icons/app/app_icon.ico"/>
          <bmp/>
       </win>
    </launcher>
