@@ -53,13 +53,6 @@ public class GroupSubFolder implements Folder
         _nameProvider = nameProvider;
     }
     
-    @Override
-    protected void finalize () throws Throwable
-    {
-        _log.debug ( "Finalized: " + this );
-        super.finalize ();
-    }
-    
     public GroupSubFolder add ( Stack<String> path, ItemDescriptor descriptor )
     {
         if ( path.isEmpty () )
