@@ -25,6 +25,7 @@ import java.util.Map;
 import org.openscada.da.core.InvalidOperationException;
 import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.common.DataItemOutput;
+import org.openscada.da.core.common.WriteAttributesHelper;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
@@ -44,7 +45,7 @@ public class WriteDelayItem extends DataItemOutput
 
     public Results setAttributes ( Map<String, Variant> attributes )
     {
-        return new Results ();
+        return WriteAttributesHelper.errorUnhandled ( null, attributes );
     }
 
     public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
