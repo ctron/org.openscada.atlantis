@@ -38,7 +38,7 @@ public class WriteAttributesHelper
         
         for ( String name : attributes.keySet () )
         {
-            results.put ( name, new Result ( new Exception ( "Operation unsupported" ) ) );
+            results.put ( name, new Result ( new UnsupportedOperationException () ) );
         }
         return results;
     }
