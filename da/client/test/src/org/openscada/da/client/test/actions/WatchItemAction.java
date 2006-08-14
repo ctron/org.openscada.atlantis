@@ -73,11 +73,11 @@ public class WatchItemAction implements IViewActionDelegate, IObjectActionDelega
         
         if ( selection == null )
             return;
-        if ( ! (selection instanceof IStructuredSelection) )
+        if ( !(selection instanceof IStructuredSelection) )
             return;
         
         IStructuredSelection sel = (IStructuredSelection)selection;
-        Object obj = sel.getFirstElement();
+        Object obj = sel.getFirstElement ();
         
         if ( obj == null )
             return;
@@ -89,7 +89,7 @@ public class WatchItemAction implements IViewActionDelegate, IObjectActionDelega
 
     public void setActivePart ( IAction action, IWorkbenchPart targetPart )
     {
-        _site = targetPart.getSite();
+        _site = targetPart.getSite ();
     }
 
 }
