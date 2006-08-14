@@ -60,7 +60,7 @@ public class ConnectHiveAction implements IObjectActionDelegate, IViewActionDele
             return;
         
         IStructuredSelection sel = (IStructuredSelection)selection;
-        Object obj = sel.getFirstElement();
+        Object obj = sel.getFirstElement ();
         
         if ( obj == null )
             return;
