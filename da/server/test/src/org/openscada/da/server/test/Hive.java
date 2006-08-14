@@ -19,10 +19,12 @@
 
 package org.openscada.da.server.test;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.openscada.da.core.IODirection;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.browser.common.query.GroupFolder;
 import org.openscada.da.core.browser.common.query.GroupProvider;
@@ -33,9 +35,12 @@ import org.openscada.da.core.browser.common.query.NullNameProvider;
 import org.openscada.da.core.browser.common.query.QueryFolder;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.DataItemCommand;
+import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.MemoryDataItem;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.core.data.Variant;
+import org.openscada.da.server.test.items.FactoryMemoryCell;
+import org.openscada.da.server.test.items.MemoryCellFactory;
 import org.openscada.da.server.test.items.MemoryCellItem;
 import org.openscada.da.server.test.items.SuspendItem;
 import org.openscada.da.server.test.items.TimeDataItem;
@@ -48,6 +53,8 @@ public class Hive extends HiveCommon {
 	private Scheduler _scheduler = new Scheduler();
     
     private List<ItemDescriptor> _changingItems = new LinkedList<ItemDescriptor> ();
+    
+    private QueryFolder _queryFolderFactory = null;
 	
 	public Hive ()
 	{
@@ -89,6 +96,18 @@ public class Hive extends HiveCommon {
         );
         testFolder.add ( "storage", queryFolderRoot, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "storage based folder for grouping and query folders" ) )
+                .getMap ()
+        );
+        
+        // memory cell factory
+        _queryFolderFactory = new QueryFolder ( new Matcher () {
+
+            public boolean matches ( ItemDescriptor desc )
+            {
+                return desc.getItem ().getInformation ().getName ().matches ( "memory\\.[a-z0-9]+" );
+            }}, new IDNameProvider () );
+        testFolder.add ( "memory-factory", _queryFolderFactory, new MapBuilder<String, Variant> ()
+                .put ( "description", new Variant ( "storage folder for items automatically created by the memory cell factory" ) )
                 .getMap ()
         );
         
@@ -196,6 +215,9 @@ public class Hive extends HiveCommon {
                 .getMap ()
                 );
         
+        addItemFactory ( new MemoryCellFactory ( this ) );
+        
+        // do some stuff in the query folders
         Thread changeThread = new Thread ( new Runnable () {
 
             public void run ()
@@ -231,4 +253,15 @@ public class Hive extends HiveCommon {
         changeThread.setDaemon ( true );
         changeThread.start ();
 	}
+
+    public void addMemoryFactoryItem ( FactoryMemoryCell item )
+    {
+        ItemDescriptor desc = new ItemDescriptor ( item, new MapBuilder<String, Variant> ().getMap () );
+        _queryFolderFactory.added ( desc );
+    }
+    public void removeMemoryFactoryItem ( FactoryMemoryCell item )
+    {
+        unregisterItem ( item );
+        _queryFolderFactory.removeAllForItem ( item );
+    }
 }
