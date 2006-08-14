@@ -75,6 +75,7 @@
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
          <newWizardShortcut id="org.openscada.da.client.test.newWizards.NewHive"/>
+         <newWizardShortcut id="org.openscada.da.client.test.newWizards.NewWatch"/>
       </perspectiveExtension>
    </extension>
    <extension
@@ -230,6 +231,16 @@
             icon="icons/stock_channel.png"
             id="org.openscada.da.client.test.newWizards.NewHive"
             name="New Hive"
+            project="false">
+      </wizard>
+      <wizard
+            category="org.openscada.da.client.test"
+            class="org.openscada.da.client.test.wizards.NewWatchWizard"
+            descriptionImage="icons/32x32/stock_channel.png"
+            hasPages="true"
+            icon="icons/stock_channel.png"
+            id="org.openscada.da.client.test.newWizards.NewWatch"
+            name="New Watch"
             project="false">
       </wizard>
       <category
