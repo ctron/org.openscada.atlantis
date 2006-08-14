@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -40,6 +42,8 @@ import org.openscada.da.core.WriteOperationListener;
 import org.openscada.da.core.browser.HiveBrowser;
 import org.openscada.da.core.browser.common.Folder;
 import org.openscada.da.core.common.DataItem;
+import org.openscada.da.core.common.DataItemFactory;
+import org.openscada.da.core.common.DataItemFactoryListener;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.ItemListener;
 import org.openscada.da.core.data.Variant;
@@ -67,6 +71,9 @@ public class HiveCommon implements Hive, ItemListener
     private OperationManager _opManager = new OperationManager ();
     private OperationProcessor _opProcessor = new OperationProcessor ();
     private Thread _jobQueueThread = null;
+    
+    private List<DataItemFactory> _factoryList = new LinkedList<DataItemFactory> ();
+    private Set<DataItemFactoryListener> _factoryListeners = new HashSet<DataItemFactoryListener> ();
 	
     public HiveCommon ()
     {
@@ -226,7 +233,7 @@ public class HiveCommon implements Hive, ItemListener
 		}
 	}
 	
-	public void registerForItem(Session session, String itemName, boolean initial) throws InvalidSessionException, InvalidItemException
+	public void registerForItem ( Session session, String itemName, boolean initial ) throws InvalidSessionException, InvalidItemException
 	{
 		validateSession ( session );
 		
@@ -272,7 +279,8 @@ public class HiveCommon implements Hive, ItemListener
 		_items.get(item).removeSession(sessionCommon);
 	}
 	
-	public Collection<DataItemInformation> listItems ( Session session ) throws InvalidSessionException {
+	public Collection<DataItemInformation> listItems ( Session session ) throws InvalidSessionException
+    {
 		validateSession ( session );
 		
         synchronized ( _items )
@@ -320,7 +328,7 @@ public class HiveCommon implements Hive, ItemListener
 	{
 		synchronized ( _items )
 		{
-			return _items.containsKey(item);
+			return _items.containsKey ( item );
 		}
 	}
 	
@@ -332,11 +340,34 @@ public class HiveCommon implements Hive, ItemListener
 		}
 	}
 	
-	private DataItem lookupItem ( String name )
+    private DataItem factoryCreate ( String id )
+    {
+        synchronized ( _factoryList )
+        {
+            for ( DataItemFactory factory : _factoryList )
+            {
+                if ( factory.canCreate ( id ) )
+                {
+                    DataItem dataItem = factory.create ( id );
+                    registerItem ( dataItem );
+                    fireDataItemCreated ( dataItem );
+                    return dataItem;
+                }
+            }
+        }
+        return null;
+    }
+    
+	private DataItem lookupItem ( String id )
 	{
         synchronized ( _items )
         {
-            return _itemMap.get ( new DataItemInformationBase ( name ) );
+            DataItem dataItem = _itemMap.get ( new DataItemInformationBase ( id ) );
+            if ( dataItem == null )
+            {
+                dataItem = factoryCreate ( id );
+            }
+            return dataItem;
         }
 	}
 	
@@ -348,7 +379,7 @@ public class HiveCommon implements Hive, ItemListener
 			return; // ignore
         
         // store the new value in the cache
-        info.setCachedValue(variant);
+        info.setCachedValue ( variant );
 		
 		Set<SessionCommon> sessionsToClose = new HashSet<SessionCommon>();
 		
@@ -374,7 +405,7 @@ public class HiveCommon implements Hive, ItemListener
 		
 		// if we have broken sessions close them now
 		if ( sessionsToClose.size() > 0 )
-			closeSessions(sessionsToClose);
+			closeSessions ( sessionsToClose );
 		
 	}
 	
@@ -608,5 +639,48 @@ public class HiveCommon implements Hive, ItemListener
             else
                 _log.warn ( String.format ( "%d is not a valid operation id", id ) );
         }
-    } 
+    }
+    
+    public void addItemFactory ( DataItemFactory factory )
+    {
+        synchronized ( _factoryList )
+        {
+            _factoryList.add ( factory );
+        }
+    }
+    
+    public void removeItemFactory ( DataItemFactory factory )
+    {
+        synchronized ( _factoryList )
+        {
+            _factoryList.remove ( factory );
+        }
+    }
+    
+    public void addItemFactoryListener ( DataItemFactoryListener listener )
+    {
+        synchronized ( _factoryListeners )
+        {
+            _factoryListeners.add ( listener );
+        }
+    }
+    
+    public void removeItemFactoryListener ( DataItemFactoryListener listener )
+    {
+        synchronized ( _factoryListeners )
+        {
+            _factoryListeners.remove ( listener );
+        }
+    }
+    
+    private void fireDataItemCreated ( DataItem dataItem )
+    {
+        synchronized ( _factoryListeners )
+        {
+            for ( DataItemFactoryListener listener : _factoryListeners )
+            {
+                listener.created ( dataItem );
+            }
+        }
+    }
 }

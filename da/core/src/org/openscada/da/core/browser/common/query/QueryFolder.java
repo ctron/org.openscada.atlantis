@@ -21,6 +21,7 @@ package org.openscada.da.core.browser.common.query;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,7 @@ import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.NoSuchFolderException;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.browser.common.FolderListener;
+import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.data.Variant;
 
 public class QueryFolder implements StorageBasedFolder
@@ -103,6 +105,25 @@ public class QueryFolder implements StorageBasedFolder
 
             _items.remove ( desc );
             notifyRemove ( desc );
+        }
+    }
+    
+    public void removeAllForItem ( DataItem dataItem )
+    {
+        synchronized ( this )
+        {
+            List<ItemDescriptor> removeList = new LinkedList<ItemDescriptor> ();
+            for ( ItemDescriptor desc : _items )
+            {
+                if ( desc.getItem () == dataItem )
+                {
+                    removeList.add ( desc );
+                }
+            }
+            for ( ItemDescriptor desc : removeList )
+            {
+                removed ( desc );
+            }
         }
     }
     
