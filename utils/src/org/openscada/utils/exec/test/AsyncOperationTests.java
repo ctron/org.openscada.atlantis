@@ -19,19 +19,19 @@
 
 package org.openscada.utils.exec.test;
 
-import junit.framework.TestCase;
-
+import org.junit.Assert;
+import org.junit.Test;
 import org.openscada.utils.exec.AsyncBasedOperation;
 import org.openscada.utils.exec.Operation;
 import org.openscada.utils.exec.OperationResult;
 
-public class AsyncOperationTests extends TestCase
+public class AsyncOperationTests
 {
     
     Operation<String,String> _opAsyncSuccess = null;
     
-    @Override
-    protected void setUp () throws Exception
+    @org.junit.Before
+    public void setUp () throws Exception
     {
         _opAsyncSuccess = new AsyncBasedOperation<String,String>(){
 
@@ -59,15 +59,15 @@ public class AsyncOperationTests extends TestCase
 
            
         };
-        
-        super.setUp ();
     }
     
+    @Test
     public void testSync () throws Exception
     {
-        assertEquals ( _opAsyncSuccess.execute("Alice"), "Hello to: Alice" );
+        Assert.assertEquals ( _opAsyncSuccess.execute("Alice"), "Hello to: Alice" );
     }
     
+    @Test
     public void testAsync () throws Exception
     {
         OperationResult<String> or = _opAsyncSuccess.startExecute("Bob");
@@ -75,10 +75,11 @@ public class AsyncOperationTests extends TestCase
         
         or.complete();
         
-        assertTrue ( or.isComplete() );
-        assertTrue ( or.isSuccess() );
+        Assert.assertTrue ( or.isComplete() );
+        Assert.assertTrue ( or.isSuccess() );
     }
     
+    @Test
     public void testAsyncHandler () throws Exception
     {
         TestOperationHandler<String> handler = new TestOperationHandler<String>();
@@ -88,13 +89,13 @@ public class AsyncOperationTests extends TestCase
         
         or.complete();
         
-        assertTrue ( or.isComplete() );
-        assertTrue ( or.isSuccess() );
+        Assert.assertTrue ( or.isComplete() );
+        Assert.assertTrue ( or.isSuccess() );
         
-        assertTrue ( handler.isSuccess() );
-        assertFalse ( handler.isFailure() );
+        Assert.assertTrue ( handler.isSuccess() );
+        Assert.assertFalse ( handler.isFailure() );
         
-        assertNull ( handler.getException() );
-        assertEquals ( handler.getResult(), "Hello to: Bob" );
+        Assert.assertNull ( handler.getException() );
+        Assert.assertEquals ( handler.getResult(), "Hello to: Bob" );
     }
 }
