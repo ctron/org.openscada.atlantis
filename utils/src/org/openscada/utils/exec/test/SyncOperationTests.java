@@ -19,18 +19,18 @@
 
 package org.openscada.utils.exec.test;
 
-import junit.framework.TestCase;
-
+import org.junit.Assert;
+import org.junit.Before;
 import org.openscada.utils.exec.Operation;
 import org.openscada.utils.exec.OperationResult;
 import org.openscada.utils.exec.SyncBasedOperation;
 
-public class SyncOperationTests extends TestCase
+public class SyncOperationTests
 {
     Operation<String,String> _opSyncSuccess = null;
     
-    @Override
-    protected void setUp () throws Exception
+    @Before
+    public void setUp () throws Exception
     {
         _opSyncSuccess = new SyncBasedOperation<String,String>(){
 
@@ -42,13 +42,11 @@ public class SyncOperationTests extends TestCase
                return "Hello to: " + arg0;
             }
         };
-        
-        super.setUp ();
     }
     
     public void testSync () throws Exception
     {
-        assertEquals ( _opSyncSuccess.execute("Alice"), "Hello to: Alice" );
+        Assert.assertEquals ( _opSyncSuccess.execute("Alice"), "Hello to: Alice" );
     }
     
     public void testAsync () throws Exception
@@ -58,8 +56,8 @@ public class SyncOperationTests extends TestCase
         
         or.complete();
         
-        assertTrue ( or.isComplete() );
-        assertTrue ( or.isSuccess() );
+        Assert.assertTrue ( or.isComplete() );
+        Assert.assertTrue ( or.isSuccess() );
     }
     
     public void testAsyncHandler () throws Exception
@@ -71,13 +69,13 @@ public class SyncOperationTests extends TestCase
         
         or.complete();
         
-        assertTrue ( or.isComplete() );
-        assertTrue ( or.isSuccess() );
+        Assert.assertTrue ( or.isComplete() );
+        Assert.assertTrue ( or.isSuccess() );
         
-        assertTrue ( handler.isSuccess() );
-        assertFalse ( handler.isFailure() );
+        Assert.assertTrue ( handler.isSuccess() );
+        Assert.assertFalse ( handler.isFailure() );
         
-        assertNull ( handler.getException() );
-        assertEquals ( handler.getResult(), "Hello to: Bob" );
+        Assert.assertNull ( handler.getException() );
+        Assert.assertEquals ( handler.getResult(), "Hello to: Bob" );
     }
 }
