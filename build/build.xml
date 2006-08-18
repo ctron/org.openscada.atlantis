@@ -169,6 +169,7 @@
 			source="1.5"
 			target="1.5"
 			destdir="${build.base}/utils"
+			encoding="utf-8"
 		>
 				<classpath refid="log4j.classpath"/>
 				<classpath refid="junit4.classpath"/>
@@ -182,6 +183,7 @@
 			source="1.5"
 			target="1.5"
 			destdir="${build.base}/net_base"
+			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
 				<classpath refid="log4j.classpath"/>
@@ -196,6 +198,7 @@
 			source="1.5"
 			target="1.5"
 			destdir="${build.base}/da_core"
+			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
 				<classpath refid="log4j.classpath"/>
@@ -210,6 +213,7 @@
 			source="1.5"
 			target="1.5"
 			destdir="${build.base}/da_net_base"
+			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
 				<classpath location="${build.base}/da_core"/>
@@ -226,6 +230,7 @@
 			source="1.5"
 			target="1.5"
 			destdir="${build.base}/da_server_net"
+			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
 				<classpath location="${build.base}/da_core"/>
@@ -243,6 +248,7 @@
 			source="1.5"
 			target="1.5"
 			destdir="${build.base}/da_testserver"
+			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
 				<classpath location="${build.base}/da_core"/>
@@ -258,6 +264,7 @@
 			source="1.5"
 			target="1.5"
 			destdir="${build.base}/da_sysinfo"
+			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
 				<classpath location="${build.base}/da_core"/>
@@ -275,6 +282,7 @@
 			source="1.5"
 			target="1.5"
 			destdir="${build.base}/da_snmpserver"
+			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
 				<classpath location="${build.base}/da_core"/>
@@ -297,6 +305,7 @@
 			source="1.5"
 			target="1.5"
 			destdir="${build.base}/da_client_net"
+			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
 				<classpath location="${build.base}/da_core"/>
