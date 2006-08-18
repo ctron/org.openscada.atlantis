@@ -445,6 +445,7 @@
 			author="true"
 			version="true"
 			use="true"
+			encoding="utf-8"
 			>
 			<tag name="note" description="Note" scope="all"/>
 			<tag name="warning" description="Warning" scope="all"/>
@@ -507,6 +508,7 @@
     		author="true"
     		version="true"
     		use="true"
+    		encoding="utf-8"
     		>
     		<tag name="note" description="Note" scope="all"/>
     		<tag name="warning" description="Warning" scope="all"/>
