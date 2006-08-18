@@ -1,0 +1,556 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     Aug 17, 2006 2:03:35 PM                                                        
+
+     OpenSCADA    
+     The OpenSCADA DA project
+                   
+     jens                                                                
+     ====================================================================== -->
+<project name="openscada_da" default="all">
+    <description>
+    	The OpenSCADA DA project
+    </description>
+	
+	<property name="version" value="0.4.0"/>
+	<property name="release" value="-nightly"/>
+	<property name="build.base" value="build"/>
+	<property name="dist.base" value="dist"/>
+	<property name="upload.base" value="upload"/>
+	<property name="source.base" value="source"/>
+	
+	<property name="svn.base" value="https://svn.inavare.net/openscada"/>
+	<property name="svn.openscada" value="${svn.base}/modules/atlantis"/>
+	<property name="svn.ext" value="${svn.base}/external"/>
+	
+	<property name="api.href.base" value="http://openscada.org/download/atlantis/${version}${release}/docs/api"/>
+
+	<path id="log4j.classpath">
+		<pathelement location="${source.base}/log4j/log4j-1.2.13.jar"/>
+	</path>
+	<path id="junit4.classpath">
+		<pathelement location="${source.base}/ext_junit/junit-4.1.jar"/>
+	</path>
+	<path id="snmp.classpath">
+		<pathelement location="${source.base}/SNMP4J/SNMP4J.jar"/>
+		<pathelement location="${source.base}/mibble/grammatica-bin-1.4.jar"/>
+		<pathelement location="${source.base}/mibble/mibble-mibs-2.7.jar"/>
+		<pathelement location="${source.base}/mibble/mibble-parser-2.7.jar"/>
+	</path>
+	<path id="xmlbean.classpath">
+		<pathelement location="${source.base}/xmlbeans/xbean.jar"/>
+		<pathelement location="${source.base}/xmlbeans/jsr173_1.0_api.jar"/>
+	</path>
+
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="all" depends="clean, fetch, compile, dist, dist_src, pack" description="">
+        <echo>Have a nice day ;-)</echo>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: fetch_svn_module                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="fetch_svn_module" description="Exporting module: ${module}">
+    	<mkdir dir="${source.base}/${todir}"/>
+        <exec dir="${source.base}" failonerror="true" executable="svn">
+        	<arg value="--force"/>
+        	<arg value="export"/>
+        	<arg value="${url}/${module}"/>
+        	<arg value="${todir}"/>
+    	</exec>
+    </target>
+	
+	<!-- ================================= 
+          target: fetch              
+         ================================= -->
+    <target name="fetch" depends="" if="svn.base" description="--> Fetch the source from svn">
+        <antcall target="fetch_svn_module">
+        	<param name="url" value="${svn.openscada}"/>
+        	<param name="module" value="utils"/>
+        	<param name="todir" value="openscada_utils"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+        	<param name="url" value="${svn.openscada}"/>
+        	<param name="module" value="da/core"/>
+        	<param name="todir" value="openscada_da_core"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+        	<param name="url" value="${svn.openscada}"/>
+        	<param name="module" value="net/base"/>
+        	<param name="todir" value="openscada_net_base"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+        	<param name="url" value="${svn.openscada}"/>
+        	<param name="module" value="da/net/base"/>
+        	<param name="todir" value="openscada_da_net_base"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+        	<param name="url" value="${svn.openscada}"/>
+        	<param name="module" value="da/client/net"/>
+        	<param name="todir" value="openscada_da_client_net"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+        	<param name="url" value="${svn.openscada}"/>
+        	<param name="module" value="da/server/net"/>
+        	<param name="todir" value="openscada_da_server_net"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+        	<param name="url" value="${svn.openscada}"/>
+        	<param name="module" value="da/server/test"/>
+        	<param name="todir" value="openscada_da_testserver"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+        	<param name="url" value="${svn.openscada}"/>
+        	<param name="module" value="da/server/test"/>
+        	<param name="todir" value="openscada_da_testserver"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+       		<param name="url" value="${svn.openscada}"/>
+        	<param name="module" value="da/server/snmp"/>
+        	<param name="todir" value="openscada_da_snmpserver"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+       		<param name="url" value="${svn.openscada}"/>
+        	<param name="module" value="da/server/sysinfo"/>
+        	<param name="todir" value="openscada_da_sysinfo"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+        	<param name="url" value="${svn.ext}"/>
+        	<param name="module" value="log4j"/>
+        	<param name="todir" value="log4j"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+        	<param name="url" value="${svn.ext}"/>
+        	<param name="module" value="junit4"/>
+        	<param name="todir" value="ext_junit"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+        	<param name="url" value="${svn.ext}"/>
+        	<param name="module" value="SNMP4J"/>
+        	<param name="todir" value="SNMP4J"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+        	<param name="url" value="${svn.ext}"/>
+        	<param name="module" value="mibble"/>
+        	<param name="todir" value="mibble"/>
+        </antcall>
+        <antcall target="fetch_svn_module">
+        	<param name="url" value="${svn.ext}"/>
+        	<param name="module" value="xmlbeans"/>
+        	<param name="todir" value="xmlbeans"/>
+        </antcall>
+
+    </target>
+
+	<!-- ================================= 
+          target: compile              
+         ================================= -->
+    <target name="compile" depends="fetch,create_build_base,utils,net_base,da_core,da_net_base,da_server_net,da_testserver,da_sysinfo,da_snmpserver,da_client_net">
+    </target>
+	
+	<target name="create_build_base">
+		<mkdir dir="${build.base}"/>
+	</target>
+		
+	<target name="create_dist_base">
+		<mkdir dir="${dist.base}"/>
+	</target>
+	
+	<target name="create_upload_base">
+		<mkdir dir="${upload.base}"/>
+	</target>
+	
+	<target name="utils">
+		<mkdir dir="${build.base}/utils"/>
+		<javac
+			srcdir="${source.base}/openscada_utils/src"
+			source="1.5"
+			target="1.5"
+			destdir="${build.base}/utils"
+		>
+				<classpath refid="log4j.classpath"/>
+				<classpath refid="junit4.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="net_base" depends="utils">
+		<mkdir dir="${build.base}/net_base"/>
+		<javac
+			srcdir="${source.base}/openscada_net_base/src"
+			source="1.5"
+			target="1.5"
+			destdir="${build.base}/net_base"
+		>
+				<classpath location="${build.base}/utils"/>
+				<classpath refid="log4j.classpath"/>
+				<classpath refid="junit4.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="da_core" depends="utils">
+		<mkdir dir="${build.base}/da_core"/>
+		<javac
+			srcdir="${source.base}/openscada_da_core/src"
+			source="1.5"
+			target="1.5"
+			destdir="${build.base}/da_core"
+		>
+				<classpath location="${build.base}/utils"/>
+				<classpath refid="log4j.classpath"/>
+				<classpath refid="junit4.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="da_net_base" depends="utils,da_core,net_base">
+		<mkdir dir="${build.base}/da_net_base"/>
+		<javac
+			srcdir="${source.base}/openscada_da_net_base/src"
+			source="1.5"
+			target="1.5"
+			destdir="${build.base}/da_net_base"
+		>
+				<classpath location="${build.base}/utils"/>
+				<classpath location="${build.base}/da_core"/>
+				<classpath location="${build.base}/net_base"/>
+				<classpath refid="log4j.classpath"/>
+				<classpath refid="junit4.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="da_server_net" depends="utils,da_core,net_base,da_net_base">
+		<mkdir dir="${build.base}/da_server_net"/>
+		<javac
+			srcdir="${source.base}/openscada_da_server_net/src"
+			source="1.5"
+			target="1.5"
+			destdir="${build.base}/da_server_net"
+		>
+				<classpath location="${build.base}/utils"/>
+				<classpath location="${build.base}/da_core"/>
+				<classpath location="${build.base}/net_base"/>
+				<classpath location="${build.base}/da_net_base"/>
+				<classpath refid="log4j.classpath"/>
+				<classpath refid="junit4.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="da_testserver" depends="utils,da_core">
+		<mkdir dir="${build.base}/da_testserver"/>
+		<javac
+			srcdir="${source.base}/openscada_da_testserver/src"
+			source="1.5"
+			target="1.5"
+			destdir="${build.base}/da_testserver"
+		>
+				<classpath location="${build.base}/utils"/>
+				<classpath location="${build.base}/da_core"/>
+				<classpath refid="log4j.classpath"/>
+				<classpath refid="junit4.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="da_sysinfo" depends="utils,da_core">
+		<mkdir dir="${build.base}/da_sysinfo"/>
+		<javac
+			srcdir="${source.base}/openscada_da_sysinfo/src"
+			source="1.5"
+			target="1.5"
+			destdir="${build.base}/da_sysinfo"
+		>
+				<classpath location="${build.base}/utils"/>
+				<classpath location="${build.base}/da_core"/>
+				<classpath refid="log4j.classpath"/>
+				<classpath refid="junit4.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="da_snmpserver" depends="utils,da_core">
+		<mkdir dir="${build.base}/da_snmpserver"/>
+		<ant dir="${source.base}/openscada_da_snmpserver" antfile="build.xml" target="main">
+		</ant>
+		<javac
+			srcdir="${source.base}/openscada_da_snmpserver/src"
+			source="1.5"
+			target="1.5"
+			destdir="${build.base}/da_snmpserver"
+		>
+				<classpath location="${build.base}/utils"/>
+				<classpath location="${build.base}/da_core"/>
+				<classpath refid="log4j.classpath"/>
+				<classpath refid="junit4.classpath"/>
+				<classpath refid="snmp.classpath"/>
+				<classpath refid="xmlbean.classpath"/>
+				<classpath>
+					<fileset dir="${source.base}/openscada_da_snmpserver">
+						<include name="*.jar"/>
+					</fileset>
+				</classpath>
+		</javac>
+	</target>
+
+	<target name="da_client_net" depends="utils,da_core,net_base,da_net_base">
+		<mkdir dir="${build.base}/da_client_net"/>
+		<javac
+			srcdir="${source.base}/openscada_da_client_net/src"
+			source="1.5"
+			target="1.5"
+			destdir="${build.base}/da_client_net"
+		>
+				<classpath location="${build.base}/utils"/>
+				<classpath location="${build.base}/da_core"/>
+				<classpath location="${build.base}/net_base"/>
+				<classpath location="${build.base}/da_net_base"/>
+				<classpath refid="log4j.classpath"/>
+				<classpath refid="junit4.classpath"/>
+		</javac>
+	</target>
+
+	<!-- ================================= 
+          target: dist              
+         ================================= -->
+    <target name="dist" depends="compile" description="--> Package into JAR files">
+		<mkdir dir="${dist.base}/bin"/>
+
+        <jar destfile="${dist.base}/bin/openscada-utils-${version}${release}.jar">
+			<fileset dir="${build.base}/utils">
+   				<include name="**/*.class"/>
+			</fileset>
+		</jar>
+
+		<jar destfile="${dist.base}/bin/openscada-da-core-${version}${release}.jar">
+			<fileset dir="${build.base}/da_core">
+   				<include name="**/*.class"/>
+			</fileset>
+		</jar>
+
+		<jar destfile="${dist.base}/bin/openscada-net-base-${version}${release}.jar">
+			<fileset dir="${build.base}/net_base">
+   				<include name="**/*.class"/>
+			</fileset>
+		</jar>
+
+		<jar destfile="${dist.base}/bin/openscada-da-net-base-${version}${release}.jar">
+			<fileset dir="${build.base}/da_net_base">
+   				<include name="**/*.class"/>
+			</fileset>
+		</jar>
+    	
+		<jar destfile="${dist.base}/bin/openscada-da-server-net-${version}${release}.jar">
+			<fileset dir="${build.base}/da_server_net">
+   				<include name="**/*.class"/>
+			</fileset>
+		</jar>
+
+		<jar destfile="${dist.base}/bin/openscada-da-client-net-${version}${release}.jar">
+			<fileset dir="${build.base}/da_client_net">
+   				<include name="**/*.class"/>
+			</fileset>
+		</jar>
+
+		<jar destfile="${dist.base}/bin/openscada-da-testserver-${version}${release}.jar">
+			<fileset dir="${build.base}/da_testserver">
+   				<include name="**/*.class"/>
+			</fileset>
+		</jar>
+
+		<jar destfile="${dist.base}/bin/openscada-da-snmpserver-${version}${release}.jar">
+			<fileset dir="${build.base}/da_testserver">
+   				<include name="**/*.class"/>
+			</fileset>
+		</jar>
+    	<copy todir="${dist.base}/bin">
+    		<fileset dir="${source.base}/openscada_da_snmpserver">
+    			<include name="SNMPServerSchema.jar"/>
+    		</fileset>
+    	</copy>
+    	
+		<jar destfile="${dist.base}/bin/openscada-da-sysinfo-${version}${release}.jar">
+			<fileset dir="${build.base}/da_sysinfo">
+   				<include name="**/*.class"/>
+			</fileset>
+		</jar>
+    	
+    	<!-- gather lib jars -->
+    	<mkdir dir="${dist.base}/lib"/>
+    	<copy file="${source.base}/log4j/log4j-1.2.13.jar" todir="${dist.base}/lib"/>
+   		<copy file="${source.base}/ext_junit/junit-4.1.jar" todir="${dist.base}/lib"/>
+    	<copy file="${source.base}/SNMP4J/SNMP4J.jar" todir="${dist.base}/lib"/>
+    	<copy todir="${dist.base}/lib">
+    		<fileset dir="${source.base}/mibble">
+    			<include name="*.jar"/>
+    		</fileset>
+   		</copy>
+    	<copy todir="${dist.base}/lib">
+    		<fileset dir="${source.base}/xmlbeans">
+    			<include name="*.jar"/>
+    		</fileset>
+   		</copy>
+    	
+    	<!-- compiling apps -->
+    	<!-- TODO -->
+
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="dist_project_src">
+		<mkdir dir="${dist.base}/src"/>
+    	<mkdir dir="${dist.base}/src/${module}"/>
+	   	<copy todir="${dist.base}/src/${module}">
+    		<fileset dir="${source.base}/${module}/src">
+    			<patternset id="export_pattern_set">
+	   				<include name="README"/>
+    	  			<include name="COPYING"/>
+	       			<include name="**/*.java"/>
+   				</patternset>
+       		</fileset>
+       	</copy>
+		<mkdir dir="${build.base}/api_doc_complete"/>
+		<copy todir="${build.base}/api_doc_complete">
+    		<fileset dir="${source.base}/${module}/src">
+    			<patternset refid="export_pattern_set"/>
+       		</fileset>
+       	</copy>
+		<mkdir dir="${upload.base}/prj"/>
+		<zip destfile="${upload.base}/prj/${module}-${version}${release}-prj.zip">
+			<fileset dir="${source.base}/${module}">
+    			<include name="**"/>
+       		</fileset>
+		</zip>
+		<mkdir dir="${upload.base}/src"/>
+		<zip destfile="${upload.base}/src/${module}-${version}${release}-src.zip">
+			<fileset dir="${source.base}/${module}/src">
+    			<patternset refid="export_pattern_set"/>
+       		</fileset>
+		</zip>
+	</target>
+	
+	<target name="doc_api_prj">
+		<mkdir dir="${upload.base}/docs"/>
+		<mkdir dir="${upload.base}/docs/api"/>
+		<mkdir dir="${upload.base}/docs/api/${module}"/>
+		<javadoc destdir="${upload.base}/docs/api/${module}"
+			author="true"
+			version="true"
+			use="true"
+			>
+			<tag name="note" description="Note" scope="all"/>
+			<tag name="warning" description="Warning" scope="all"/>
+			<packageset dir="${source.base}/${module}/src" defaultexcludes="yes">
+				<include name="**"/>
+			</packageset>
+			<classpath>
+				<fileset dir="${dist.base}/bin">
+					<include name="**/*.jar"/>
+				</fileset>
+				<fileset dir="${dist.base}/lib">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<link href="${api.href.base}/openscada_utils" offline="true" packagelistloc="${dist.base}/docs/api/openscada_utils"/>
+			<link href="${api.href.base}/openscada_da_core" offline="true" packagelistloc="${dist.base}/docs/api/openscada_da_core"/>
+			<link href="${api.href.base}/openscada_net_base" offline="true" packagelistloc="${dist.base}/docs/api/openscada_net_base"/>
+			<link href="${api.href.base}/openscada_da_net_base" offline="true" packagelistloc="${dist.base}/docs/api/openscada_da_net_base"/>
+			<link href="${api.href.base}/openscada_da_net_server" offline="true" packagelistloc="${dist.base}/docs/api/openscada_da_net_server"/>
+			<link href="${api.href.base}/openscada_da_net_client" offline="true" packagelistloc="${dist.base}/docs/api/openscada_da_net_client"/>
+		</javadoc>
+	</target>
+	
+	<target name="export_project" depends="dist_project_src, doc_api_prj">
+	</target>
+	
+	<!-- ================================= 
+          target: dist_src
+         ================================= -->
+    <target name="dist_src">
+    	<antcall target="export_project">
+    		<param name="module" value="openscada_utils"/>
+    	</antcall>
+    	<antcall target="export_project">
+    		<param name="module" value="openscada_da_core"/>
+    	</antcall>
+    	<antcall target="export_project">
+    		<param name="module" value="openscada_net_base"/>
+    	</antcall>
+    	<antcall target="export_project">
+    		<param name="module" value="openscada_da_net_base"/>
+    	</antcall>
+    	<antcall target="export_project">
+    		<param name="module" value="openscada_da_server_net"/>
+    	</antcall>
+    	<antcall target="export_project">
+    		<param name="module" value="openscada_da_client_net"/>
+    	</antcall>
+    	<antcall target="export_project">
+    		<param name="module" value="openscada_da_testserver"/>
+    	</antcall>
+    	<antcall target="export_project">
+    		<param name="module" value="openscada_da_snmpserver"/>
+    	</antcall>
+    	<antcall target="export_project">
+    		<param name="module" value="openscada_da_sysinfo"/>
+    	</antcall>
+	
+    	<javadoc destdir="${dist.base}/docs/api/complete"
+    		author="true"
+    		version="true"
+    		use="true"
+    		>
+    		<tag name="note" description="Note" scope="all"/>
+    		<tag name="warning" description="Warning" scope="all"/>
+    		<packageset dir="${build.base}/api_doc_complete" defaultexcludes="yes">
+    			<include name="**"/>
+    			<include name="*Test*"/>
+			</packageset>
+    		<classpath>
+    			<fileset dir="${dist.base}/bin">
+    				<include name="**/*.jar"/>
+    			</fileset>
+    			<fileset dir="${dist.base}/lib">
+    				<include name="**/*.jar"/>
+    			</fileset>
+    		</classpath>
+    	</javadoc>
+    	
+	</target>
+	
+	<!-- ================================= 
+          target: pack              
+         ================================= -->
+    <target name="pack" depends="dist_src,dist" description="--> Pack distribution to archive files">
+        <zip destfile="${upload.base}/openscada-da-${version}${release}.zip">
+        	<fileset dir="${dist.base}">
+        		<include name="**"/>
+        	</fileset>
+        </zip>
+    	<tar longfile="gnu" destfile="${upload.base}/openscada-da-${version}${release}.tar">
+    		<tarfileset prefix="openscada-da-${version}${release}" dir="${dist.base}">
+        		<include name="**"/>
+       		</tarfileset>
+    	</tar>
+    	<gzip src="${upload.base}/openscada-da-${version}${release}.tar" destfile="${upload.base}/openscada-da-${version}${release}.tar.gz"/>
+		<bzip2 src="${upload.base}/openscada-da-${version}${release}.tar" destfile="${upload.base}/openscada-da-${version}${release}.tar.bz2"/>
+    	<delete dir="${upload.base}/openscada-da-${version}${release}.tar"/>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean" depends="clean_source">
+    	<delete dir="${build.base}"/>
+		<delete dir="${dist.base}"/>
+    	<delete dir="${upload.base}"/>
+    </target>
+    	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: clean_source                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_source" if="svn.base">
+    	<delete dir="${source.base}"/>
+    </target>
+
+
+</project>
