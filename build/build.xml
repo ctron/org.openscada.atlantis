@@ -548,6 +548,11 @@
     		</classpath>
     	</javadoc>
     	
+    	<copy todir="${upload.base}/docs/api/complete">
+    		<fileset dir="${dist.base}/docs/api/complete">
+    		</fileset>
+    	</copy>
+    	
 	</target>
 	
 	<!-- ================================= 
