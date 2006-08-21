@@ -48,11 +48,12 @@
     <target name="all" depends="clean, fetch, compile, dist, dist_src, pack" description="">
         <echo>Have a nice day ;-)</echo>
     </target>
+
 	
 	<!-- - - - - - - - - - - - - - - - - - 
           target: fetch_svn_module                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="fetch_svn_module" description="Exporting module: ${module}">
+    <target name="fetch_svn_module" if="svn.base" description="Exporting module: ${module}">
     	<mkdir dir="${source.base}/${todir}"/>
         <exec dir="${source.base}" failonerror="true" executable="svn">
         	<arg value="--force"/>
@@ -62,10 +63,31 @@
     	</exec>
     </target>
 	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: fetch_align_module                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="fetch_align_module" unless="svn.base" if="need.align">
+    	<mkdir dir="${source.base}/${todir}"/>
+    	<move todor="${source.base}/${todir}">
+    		<fileset dir="${source.base}/../${module}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</move>
+    </target>
+
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: fetch_module                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="fetch_module" depends="fetch_svn_module,fetch_align_module">
+            
+    </target>
+
+	
 	<!-- ================================= 
           target: fetch              
          ================================= -->
-    <target name="fetch" depends="" if="svn.base" description="--> Fetch the source from svn">
+    <target name="fetch" depends="" description="--> Fetch the source from svn">
         <antcall target="fetch_svn_module">
         	<param name="url" value="${svn.openscada}"/>
         	<param name="module" value="utils"/>
