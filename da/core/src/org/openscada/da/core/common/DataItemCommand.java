@@ -80,7 +80,8 @@ public class DataItemCommand extends DataItemOutput {
 		}
 	}
 	
-	public Map<String, Variant> getAttributes() {
+	public Map<String, Variant> getAttributes()
+    {
 		return new HashMap<String,Variant>();
 	}
 	
