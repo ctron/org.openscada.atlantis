@@ -27,6 +27,11 @@ public class Variant {
     {
     }
 
+    public Variant ( boolean value )
+    {
+        setValue ( value );
+    }
+    
     public Variant ( double value )
     {
         setValue ( value );
@@ -50,15 +55,17 @@ public class Variant {
     public Variant ( Variant arg0 )
     {
         try {
-            if ( arg0.isNull() )
+            if ( arg0.isNull () )
             {}// no-op
-            else if ( arg0.isDouble() )
+            else if ( arg0.isBoolean () )
+                setValue ( arg0.asBoolean () );
+            else if ( arg0.isDouble () )
                 setValue ( arg0.asDouble() );
-            else if ( arg0.isInteger() )
+            else if ( arg0.isInteger () )
                 setValue ( arg0.asInteger() );
-            else if ( arg0.isString() )
+            else if ( arg0.isString () )
                 setValue ( arg0.asString() );
-            else if ( arg0.isLong() )
+            else if ( arg0.isLong () )
                 setValue ( arg0.asLong() );
         }
         catch ( NotConvertableException e )
@@ -76,6 +83,11 @@ public class Variant {
         return _value == null;
     }
 
+    public void setValue ( boolean value )
+    {
+        _value = new Boolean ( value );
+    }
+    
     public void setValue ( int value )
     {
         _value = new Integer ( value );
@@ -101,7 +113,7 @@ public class Variant {
 
     public String asString () throws NullValueException
     {
-        if ( isNull() )
+        if ( isNull () )
             throw new NullValueException();
 
         return _value.toString();
@@ -109,19 +121,21 @@ public class Variant {
 
     public String asString ( String defaultValue )
     {
-        if ( isNull() )
+        if ( isNull () )
             return defaultValue;
 
-        return _value.toString();
+        return _value.toString ();
     }
 
     public double asDouble () throws NullValueException, NotConvertableException
     {
-        if ( isNull() )
+        if ( isNull () )
             throw new NullValueException();
 
         try
         {
+            if ( _value instanceof Boolean )
+                return ((Boolean)_value).booleanValue () ? 1 : 0;
             if ( _value instanceof Double )
                 return ((Double)_value).doubleValue();
             if ( _value instanceof Integer )
@@ -141,11 +155,13 @@ public class Variant {
 
     public int asInteger () throws NullValueException, NotConvertableException
     {
-        if ( isNull() )
-            throw new NullValueException();
+        if ( isNull () )
+            throw new NullValueException ();
 
         try
         {
+            if ( _value instanceof Boolean )
+                return ((Boolean)_value).booleanValue () ? 1 : 0;
             if ( _value instanceof Double )
                 return ((Double)_value).intValue();
             if ( _value instanceof Integer )
@@ -165,19 +181,21 @@ public class Variant {
 
     public long asLong () throws NullValueException, NotConvertableException
     {
-        if ( isNull() )
-            throw new NullValueException();
+        if ( isNull () )
+            throw new NullValueException ();
 
         try
         {
+            if ( _value instanceof Boolean )
+                return ((Boolean)_value).booleanValue () ? 1 : 0;
             if ( _value instanceof Double )
-                return ((Double)_value).intValue();
+                return ((Double)_value).intValue ();
             if ( _value instanceof Integer )
-                return ((Integer)_value).intValue();
+                return ((Integer)_value).intValue ();
             if ( _value instanceof Long )
-                return ((Long)_value).longValue();
+                return ((Long)_value).longValue ();
             if ( _value instanceof String )
-                return Integer.parseInt((String)_value);
+                return Integer.parseInt ((String)_value);
         }
         catch ( NumberFormatException e )
         {
@@ -186,10 +204,64 @@ public class Variant {
 
         throw new NotConvertableException();
     }
+    
+    public boolean asBooleanNumeric () throws NullValueException, NotConvertableException
+    {
+        if ( isNull () )
+            throw new NullValueException ();
+        
+        try
+        {
+            if ( _value instanceof Boolean )
+                return ((Boolean)_value).booleanValue ();
+            if ( _value instanceof Double )
+                return ((Double)_value).doubleValue () != 0;
+            if ( _value instanceof Integer )
+                return ((Integer)_value).intValue () != 0;
+            if ( _value instanceof Long )
+                return ((Long)_value).longValue () != 0;
+            if ( _value instanceof String )
+                return Long.parseLong ( ((String)_value) ) != 0;
+        }
+        catch ( NumberFormatException e )
+        {
+            throw new NotConvertableException ();
+        }
+        throw new NotConvertableException ();
+    }
+    
+    public boolean asBoolean ()
+    {
+        try
+        {
+            if ( _value instanceof Boolean )
+                return ((Boolean)_value).booleanValue ();
+            if ( _value instanceof Double )
+                return ((Double)_value).doubleValue () != 0;
+            if ( _value instanceof Integer )
+                return ((Integer)_value).intValue () != 0;
+            if ( _value instanceof Long )
+                return ((Long)_value).longValue () != 0;
+            if ( _value instanceof String )
+                return ((String)_value).length () > 0;
+        }
+        catch ( Exception e )
+        {
+        }
+        return false;
+    }
 
+    public boolean isBoolean ()
+    {
+        if ( isNull () )
+            return false;
+        
+        return _value instanceof Boolean;
+    }
+    
     public boolean isString ()
     {
-        if ( isNull() )
+        if ( isNull () )
             return false;
 
         return _value instanceof String;
@@ -197,7 +269,7 @@ public class Variant {
 
     public boolean isDouble ()
     {
-        if ( isNull() )
+        if ( isNull () )
             return false;
 
         return _value instanceof Double;
@@ -205,7 +277,7 @@ public class Variant {
 
     public boolean isInteger ()
     {
-        if ( isNull() )
+        if ( isNull () )
             return false;
 
         return _value instanceof Integer;
@@ -213,7 +285,7 @@ public class Variant {
 
     public boolean isLong ()
     {
-        if ( isNull() )
+        if ( isNull () )
             return false;
 
         return _value instanceof Long;
@@ -233,6 +305,8 @@ public class Variant {
         try {
             if ( arg0.isNull() )
                 return isNull();
+            else if ( arg0.isBoolean () )
+                return compareToBoolean ( arg0.asBoolean () );
             else if ( arg0.isDouble() )
                 return compareToDouble ( arg0.asDouble() );
             else if ( arg0.isLong() )
@@ -258,18 +332,20 @@ public class Variant {
 
     private boolean compareToString ( String s )
     {
-        if ( isNull() )
+        if ( isNull () )
             return false;
 
         try {
-            if ( isDouble() )
-                return asDouble() == Double.parseDouble(s);
-            else if ( isLong() )
-                return asLong() == Long.parseLong(s);
-            else if ( isInteger() )
-                return asInteger() == Integer.parseInt(s);
+            if ( isDouble () )
+                return asDouble () == Double.parseDouble(s);
+            else if ( isBoolean () )
+                return asBoolean () == new Variant ( s ).asBoolean ();
+            else if ( isLong () )
+                return asLong () == Long.parseLong(s);
+            else if ( isInteger () )
+                return asInteger () == Integer.parseInt(s);
             else
-                return asString().equals(s);
+                return asString ().equals(s);
         }
         catch ( Exception e )
         {
@@ -279,16 +355,18 @@ public class Variant {
 
     private boolean compareToInteger ( int i )
     {
-        if ( isNull() )
+        if ( isNull () )
             return false;
 
         try {
-            if ( isDouble() )
-                return asDouble() == i;
-            else if ( isLong() )
-                return asLong() == i;
+            if ( isDouble () )
+                return asDouble () == i;
+            else if ( isBoolean () )
+                return asBoolean () ? (i != 0) : (i == 0);
+            else if ( isLong () )
+                return asLong () == i;
             else
-                return asInteger() == i;
+                return asInteger () == i;
         }
         catch ( Exception e )
         {
@@ -298,14 +376,16 @@ public class Variant {
 
     private boolean compareToLong ( long l )
     {
-        if ( isNull() )
+        if ( isNull () )
             return false;
 
         try {
-            if ( isDouble() )
-                return asDouble() == l;
+            if ( isDouble () )
+                return asDouble () == l;
+            else if ( isBoolean () )
+                return asBoolean () ? (l != 0) : (l == 0);
             else
-                return asLong() == l;
+                return asLong () == l;
         }
         catch ( Exception e )
         {
@@ -315,16 +395,22 @@ public class Variant {
 
     private boolean compareToDouble ( double d )
     {
-        if ( isNull() )
+        if ( isNull () )
             return false;
 
         try {
-            return asDouble() == d;
+            if ( isBoolean () )
+                return asBoolean () ? (d != 0) : (d == 0);
+            return asDouble () == d;
         }
         catch ( Exception e )
         {
             return false;
         }
-
+    }
+    
+    private boolean compareToBoolean ( boolean b )
+    {
+        return asBoolean () == b;
     }
 }
