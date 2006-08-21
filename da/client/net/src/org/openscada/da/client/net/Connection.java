@@ -373,17 +373,6 @@ public class Connection
         }
     }
 
-    private void subscribeEnum ()
-    {
-        if ( _client == null )
-            return;
-
-        _log.debug("Subscribing to enum");
-
-        _client.getConnection().sendMessage(Messages.subscribeEnum());
-        _log.debug("Subscribing to enum...complete");
-    }
-
     public void addFolderListener ( FolderListener listener, Location location )
     {
         synchronized ( _folderListeners )
