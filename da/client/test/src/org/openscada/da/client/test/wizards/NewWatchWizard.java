@@ -24,9 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
 import java.util.HashMap;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;

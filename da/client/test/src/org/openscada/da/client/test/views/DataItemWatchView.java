@@ -47,6 +47,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.openscada.da.client.net.DataItem;
 import org.openscada.da.client.net.ItemUpdateListener;
 import org.openscada.da.client.test.impl.DataItemEntry;
+import org.openscada.da.client.test.impl.VariantHelper;
 import org.openscada.da.core.data.Variant;
 
 
@@ -198,7 +199,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
             case 0:
                 return entry.name;
             case 1:            
-                return entry.value.asString ( "<null>" );
+                return VariantHelper.toString ( entry.value );
             }
             return getText(obj);
         }
@@ -308,14 +309,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
                 {
                     if ( !_valueLabel.isDisposed() )
                     {
-                        if ( variant.isNull() )
-                        {
-                            _valueLabel.setText("Value: <null>");
-                        }
-                        else
-                        {
-                            _valueLabel.setText("Value: " + variant.asString("BUG!"));
-                        }
+                        _valueLabel.setText ( VariantHelper.toString ( variant ) );
                     }
                 }});
         }
@@ -365,8 +359,8 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 
     public void notifyValueChange ( Variant value, boolean initial )
     {
-        appendConsoleMessage("Value change event: " + value.asString("<null>") + " " + ( initial ? "initial" : "" ));
-        setValue(value);
+        appendConsoleMessage ( "Value change event: " + VariantHelper.toString ( value ) + " " + ( initial ? "initial" : "" ) );
+        setValue ( value );
     }
 
     public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
@@ -377,8 +371,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         {
             if ( entry.getValue () != null )
             {
-                String q = entry.getValue().isNull() ? "" : "'";
-                appendConsoleMessage ( "#" + i + ": " + entry.getKey() + "->" + q + entry.getValue().asString("<null>") + q );
+                appendConsoleMessage ( "#" + i + ": " + entry.getKey() + "->" + VariantHelper.toString ( entry.getValue() ) );
             }
             else
             {

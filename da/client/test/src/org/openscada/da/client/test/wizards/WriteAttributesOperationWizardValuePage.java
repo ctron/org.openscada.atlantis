@@ -50,7 +50,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -62,8 +61,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
-import org.openscada.da.core.data.NotConvertableException;
-import org.openscada.da.core.data.NullValueException;
+import org.openscada.da.client.test.impl.VariantHelper.ValueType;
 import org.openscada.da.core.data.Variant;
 
 class WriteAttributesOperationWizardValuePage extends WizardPage implements IWizardPage
@@ -77,93 +75,6 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
     private HiveConnection _connection = null;
     
     private TableViewer _table = null;
-    
-
-    private enum ValueType
-    {
-        NULL ( 0, "NULL" )
-        {
-            public Variant convertTo ( String value )
-            {
-                return new Variant();
-            }
-        },
-        STRING ( 1, "string" )
-        {
-            public Variant convertTo ( String value )
-            {
-                return new Variant ( value );
-            }
-        },
-        INT ( 2, "32 bit signed integer" )
-        {
-            public Variant convertTo ( String value ) throws NotConvertableException
-            {
-                Variant stringValue = new Variant ( value );
-                try
-                {
-                    return new Variant ( stringValue.asInteger () );
-                }
-                catch ( NullValueException e )
-                {
-                    return new Variant ();
-                }
-            }
-        },
-        LONG ( 3, "64 bit signed integer" )
-        {
-            public Variant convertTo ( String value ) throws NotConvertableException
-            {
-                Variant stringValue = new Variant ( value );
-                try
-                {
-                    return new Variant ( stringValue.asLong () );
-                }
-                catch ( NullValueException e )
-                {
-                    return new Variant ();
-                }
-            }
-        },
-        DOUBLE ( 4, "double floating point" )
-        {
-            public Variant convertTo ( String value ) throws NotConvertableException
-            {
-                Variant stringValue = new Variant ( value );
-                try
-                {
-                    return new Variant ( stringValue.asDouble () );
-                }
-                catch ( NullValueException e )
-                {
-                    return new Variant ();
-                }
-            }
-        },
-        BOOLEAN ( 5, "boolean" )
-        {
-            public Variant convertTo ( String value ) throws NotConvertableException
-            {
-                Variant stringValue = new Variant ( value );
-                return new Variant ( stringValue.asBoolean () );
-            }
-        },
-        ;
-        
-        private int _index;
-        private String _label;
-        
-        ValueType ( int index, String label )
-        {
-            _index = index;
-            _label = label;
-        }
-        
-        public String label () { return _label; }
-        public int index () { return _index; }
-        public abstract Variant convertTo ( String value ) throws NotConvertableException;
-    }
-    
     
     private class AttributeEntry
     {
