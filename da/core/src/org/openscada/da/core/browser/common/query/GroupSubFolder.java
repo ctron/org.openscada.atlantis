@@ -35,6 +35,7 @@ import org.openscada.utils.collection.MapBuilder;
 
 public class GroupSubFolder implements Folder
 {
+    @SuppressWarnings("unused")
     private static Logger _log = Logger.getLogger ( GroupSubFolder.class );
     
     private GroupSubFolder _parent = null;

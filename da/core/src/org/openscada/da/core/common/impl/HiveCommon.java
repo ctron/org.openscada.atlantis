@@ -326,14 +326,6 @@ public class HiveCommon implements Hive, ItemListener
 		}
 	}
 	
-	private boolean containsItem ( DataItem item )
-	{
-		synchronized ( _items )
-		{
-			return _items.containsKey ( item );
-		}
-	}
-	
 	private DataItemInfo getItemInfo ( DataItem item )
 	{
 		synchronized ( _items )
