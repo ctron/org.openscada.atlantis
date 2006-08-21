@@ -169,6 +169,7 @@ public class HiveCommon implements Hive, ItemListener
 		synchronized ( _sessions )
 		{
 			_sessions.add ( session );
+            _opManager.addListener ( session.getOperations () );
             fireSessionCreate ( session );
 		}
 		return session;
@@ -213,6 +214,7 @@ public class HiveCommon implements Hive, ItemListener
 				}
 			}
             
+            // cancel pending operations
             Set<Handle> operations = sessionCommon.getOperations ().getOperations ();
             for ( Handle handle : operations )
             {
