@@ -158,6 +158,26 @@ public class VariantTest {
         Variant v2 = new Variant ( true );
         
         compareVariant ( v1, v2, true );
+        
+        v1 = new Variant ( "0" );
+        v2 = new Variant ( false );
+        
+        compareVariant ( v1, v2, true );
+        
+        v1 = new Variant ( "" );
+        v2 = new Variant ( false );
+        
+        compareVariant ( v1, v2, true );
+        
+        v1 = new Variant ( "true" );
+        v2 = new Variant ( true );
+        
+        compareVariant ( v1, v2, true );
+        
+        v1 = new Variant ( "false" );
+        v2 = new Variant ( false );
+        
+        compareVariant ( v1, v2, true );
     }
     
     @Test
@@ -165,6 +185,21 @@ public class VariantTest {
     {
         Variant v1 = new Variant ( "1" );
         Variant v2 = new Variant ( false );
+        
+        compareVariant ( v1, v2, false );
+        
+        v1 = new Variant ( "0" );
+        v2 = new Variant ( true );
+        
+        compareVariant ( v1, v2, false );
+        
+        v1 = new Variant ( "true" );
+        v2 = new Variant ( false );
+        
+        compareVariant ( v1, v2, false );
+        
+        v1 = new Variant ( "false" );
+        v2 = new Variant ( true );
         
         compareVariant ( v1, v2, false );
     }

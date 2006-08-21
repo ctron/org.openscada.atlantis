@@ -19,10 +19,20 @@
 
 package org.openscada.da.core.data;
 
-public class Variant {
+/**
+ * A variant data type that can hold any scalar value type.
+ * @author Jens Reimann <jens.reimann@inavare.net>
+ *
+ */
+public class Variant
+{
 
     private Object _value = null;
 
+    /**
+     * Create a variant of type <code>null</code>
+     *
+     */
     public Variant ()
     {
     }
@@ -52,6 +62,10 @@ public class Variant {
         setValue ( value );
     }
 
+    /**
+     * Clones a variant
+     * @param arg0 the value to clone
+     */
     public Variant ( Variant arg0 )
     {
         try {
@@ -111,6 +125,11 @@ public class Variant {
         _value = new Double ( value );
     }
 
+    /**
+     * 
+     * @return
+     * @throws NullValueException
+     */
     public String asString () throws NullValueException
     {
         if ( isNull () )
@@ -243,7 +262,20 @@ public class Variant {
             if ( _value instanceof Long )
                 return ((Long)_value).longValue () != 0;
             if ( _value instanceof String )
-                return ((String)_value).length () > 0;
+            {
+                String str = (String)_value;
+                if ( str.length () == 0 )
+                    return false;
+                try
+                {
+                    long i = Long.parseLong ( str );
+                    return i != 0;
+                }
+                catch ( NumberFormatException e )
+                {
+                }
+                return Boolean.parseBoolean ( str );
+            }
         }
         catch ( Exception e )
         {
