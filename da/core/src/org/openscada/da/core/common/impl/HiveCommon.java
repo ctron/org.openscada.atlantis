@@ -218,7 +218,7 @@ public class HiveCommon implements Hive, ItemListener
             {
                 try
                 {
-                    _log.info ( "Stoping operation: " + handle );
+                    _log.info ( "Stopping operation: " + handle );
                     handle.cancel ();
                 }
                 catch ( CancelNotSupportedException e )
