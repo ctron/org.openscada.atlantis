@@ -53,7 +53,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: fetch_svn_module                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="fetch_svn_module" unless="need.align" if="svn.base" description="Exporting module: ${module}">
+    <target name="fetch_svn_module" unless="need.align" if="need.checkout" description="Exporting module: ${module}">
     	<mkdir dir="${source.base}/${todir}"/>
         <exec dir="${source.base}" failonerror="true" executable="svn">
         	<arg value="--force"/>
@@ -66,7 +66,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: fetch_align_module                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="fetch_align_module" unless="svn.base" if="need.align">
+    <target name="fetch_align_module" unless="need.checkout" if="need.align">
     	<mkdir dir="${source.base}/${todir}"/>
     	<copy todir="${source.base}/${todir}">
     		<fileset dir="../${module}">
