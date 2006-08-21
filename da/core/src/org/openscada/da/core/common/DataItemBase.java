@@ -24,8 +24,8 @@ import java.util.Map;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.data.Variant;
 
-public abstract class DataItemBase implements DataItem {
-	
+public abstract class DataItemBase implements DataItem
+{
 	protected ItemListener _listener;
 	
 	private DataItemInformation _information;
