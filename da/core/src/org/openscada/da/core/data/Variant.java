@@ -124,12 +124,7 @@ public class Variant
     {
         _value = new Double ( value );
     }
-
-    /**
-     * 
-     * @return
-     * @throws NullValueException
-     */
+    
     public String asString () throws NullValueException
     {
         if ( isNull () )
@@ -224,31 +219,24 @@ public class Variant
         throw new NotConvertableException();
     }
     
-    public boolean asBooleanNumeric () throws NullValueException, NotConvertableException
-    {
-        if ( isNull () )
-            throw new NullValueException ();
-        
-        try
-        {
-            if ( _value instanceof Boolean )
-                return ((Boolean)_value).booleanValue ();
-            if ( _value instanceof Double )
-                return ((Double)_value).doubleValue () != 0;
-            if ( _value instanceof Integer )
-                return ((Integer)_value).intValue () != 0;
-            if ( _value instanceof Long )
-                return ((Long)_value).longValue () != 0;
-            if ( _value instanceof String )
-                return Long.parseLong ( ((String)_value) ) != 0;
-        }
-        catch ( NumberFormatException e )
-        {
-            throw new NotConvertableException ();
-        }
-        throw new NotConvertableException ();
-    }
-    
+    /**
+     * Get the value as boolean value
+     * 
+     * If the value is <code>null</code> then <code>false</code> is returned.
+     * 
+     * If the value is a boolean it will simply return the value itself.
+     * 
+     * If the value is a numeric value (double, long, integer) is will
+     * return <code>false</code> if the value zero and <code>true</code>
+     * otherwise.
+     * 
+     * If the value is a string then <code>false</code> is returned if the
+     * string is empty. If the string can be converted to a number (long or
+     * double) it will be compared to that number. Otherwise it will be compared
+     * case insensitive against the string <pre>true</pre>.  
+     * 
+     * @return The boolean value of this variant
+     */
     public boolean asBoolean ()
     {
         try
@@ -269,6 +257,14 @@ public class Variant
                 try
                 {
                     long i = Long.parseLong ( str );
+                    return i != 0;
+                }
+                catch ( NumberFormatException e )
+                {
+                }
+                try
+                {
+                    double i = Double.parseDouble ( str );
                     return i != 0;
                 }
                 catch ( NumberFormatException e )
