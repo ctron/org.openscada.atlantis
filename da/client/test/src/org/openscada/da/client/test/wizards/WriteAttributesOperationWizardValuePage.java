@@ -74,8 +74,6 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
     
     private IStructuredSelection _selection = null;
     
-    private Color _defaultValueColor = null;
-    
     private HiveConnection _connection = null;
     
     private TableViewer _table = null;
