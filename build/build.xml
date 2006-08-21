@@ -88,77 +88,77 @@
           target: fetch              
          ================================= -->
     <target name="fetch" depends="" description="--> Fetch the source from svn">
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
         	<param name="url" value="${svn.openscada}"/>
         	<param name="module" value="utils"/>
         	<param name="todir" value="openscada_utils"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
         	<param name="url" value="${svn.openscada}"/>
         	<param name="module" value="da/core"/>
         	<param name="todir" value="openscada_da_core"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
         	<param name="url" value="${svn.openscada}"/>
         	<param name="module" value="net/base"/>
         	<param name="todir" value="openscada_net_base"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
         	<param name="url" value="${svn.openscada}"/>
         	<param name="module" value="da/net/base"/>
         	<param name="todir" value="openscada_da_net_base"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
         	<param name="url" value="${svn.openscada}"/>
         	<param name="module" value="da/client/net"/>
         	<param name="todir" value="openscada_da_client_net"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
         	<param name="url" value="${svn.openscada}"/>
         	<param name="module" value="da/server/net"/>
         	<param name="todir" value="openscada_da_server_net"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
         	<param name="url" value="${svn.openscada}"/>
         	<param name="module" value="da/server/test"/>
         	<param name="todir" value="openscada_da_testserver"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
         	<param name="url" value="${svn.openscada}"/>
         	<param name="module" value="da/server/test"/>
         	<param name="todir" value="openscada_da_testserver"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
        		<param name="url" value="${svn.openscada}"/>
         	<param name="module" value="da/server/snmp"/>
         	<param name="todir" value="openscada_da_snmpserver"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
        		<param name="url" value="${svn.openscada}"/>
         	<param name="module" value="da/server/sysinfo"/>
         	<param name="todir" value="openscada_da_sysinfo"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
         	<param name="url" value="${svn.ext}"/>
         	<param name="module" value="log4j"/>
         	<param name="todir" value="log4j"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
         	<param name="url" value="${svn.ext}"/>
         	<param name="module" value="junit4"/>
         	<param name="todir" value="ext_junit"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
         	<param name="url" value="${svn.ext}"/>
         	<param name="module" value="SNMP4J"/>
         	<param name="todir" value="SNMP4J"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
         	<param name="url" value="${svn.ext}"/>
         	<param name="module" value="mibble"/>
         	<param name="todir" value="mibble"/>
         </antcall>
-        <antcall target="fetch_svn_module">
+        <antcall target="fetch_module">
         	<param name="url" value="${svn.ext}"/>
         	<param name="module" value="xmlbeans"/>
         	<param name="todir" value="xmlbeans"/>
