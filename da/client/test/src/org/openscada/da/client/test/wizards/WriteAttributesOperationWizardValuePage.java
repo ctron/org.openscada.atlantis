@@ -142,22 +142,14 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
                 }
             }
         },
-        /*
         BOOLEAN ( 5, "boolean" )
         {
             public Variant convertTo ( String value ) throws NotConvertableException
             {
                 Variant stringValue = new Variant ( value );
-                try
-                {
-                    return new Variant ( stringValue.asBoolean () );
-                }
-                catch ( NullValueException e )
-                {
-                    return new Variant ();
-                }
+                return new Variant ( stringValue.asBoolean () );
             }
-        },*/
+        },
         ;
         
         private int _index;
