@@ -107,7 +107,7 @@ class NewHiveWizardConnectionPage extends WizardPage implements IWizardPage
     {
         try
         {
-            InetAddress addr = InetAddress.getByName(_hostNameText.getText());
+            InetAddress.getByName(_hostNameText.getText());
             _hostValid = true;
         }
         catch ( UnknownHostException e )
