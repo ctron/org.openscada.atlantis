@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
+import org.openscada.net.base.data.BooleanValue;
 import org.openscada.net.base.data.DoubleValue;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.ListValue;
@@ -50,6 +51,7 @@ public class ProtocolGMPP implements Protocol
     public final static int VT_INTEGER =    0x000000005;
     public final static int VT_LIST =       0x000000006;
     public final static int VT_MAP =        0x000000007;
+    public final static int VT_BOOLEAN =    0x000000008;
 
     private final static int HEADER_SIZE = 4 + 8 + 8 + 8 + 4;
     
@@ -129,6 +131,16 @@ public class ProtocolGMPP implements Protocol
         return buffer;
     }
     
+    private ByteBuffer encodeToStream ( ByteBuffer buffer, BooleanValue value )
+    {
+        buffer = ensureCapacity ( buffer, 4 + 4 );
+        buffer.putInt ( VT_BOOLEAN );
+        buffer.putInt ( 1 );
+        buffer.put ( value.getValue () ? (byte)0xFF : (byte)0x00 );
+        
+        return buffer;
+    }
+    
     private ByteBuffer encodeToStream ( ByteBuffer buffer, StringValue value )
     {
         buffer = ensureCapacity ( buffer, 4 );
@@ -182,6 +194,10 @@ public class ProtocolGMPP implements Protocol
         if ( value instanceof StringValue )
         {
             buffer = encodeToStream ( buffer, (StringValue)value );
+        }
+        else if ( value instanceof BooleanValue )
+        {
+            buffer = encodeToStream ( buffer, (BooleanValue)value );
         }
         else if ( value instanceof IntegerValue )
         {
@@ -389,6 +405,8 @@ public class ProtocolGMPP implements Protocol
             return new StringValue ( decodeStringFromStream ( buffer, len ) );
         case VT_DOUBLE:
             return decodeDoubleValueFromStream ( buffer );
+        case VT_BOOLEAN:
+            return new BooleanValue ( buffer.get () != 0 );
         case VT_VOID:
             return new VoidValue ();
             // nothing to read
