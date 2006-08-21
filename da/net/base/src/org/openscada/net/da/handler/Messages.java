@@ -28,6 +28,7 @@ import org.openscada.da.core.IODirection;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
+import org.openscada.net.base.data.BooleanValue;
 import org.openscada.net.base.data.DoubleValue;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.ListValue;
@@ -109,6 +110,8 @@ public class Messages
         
         if ( value instanceof StringValue )
             return new Variant ( ((StringValue)value).getValue () );
+        else if ( value instanceof BooleanValue )
+            return new Variant ( ((BooleanValue)value).getValue () );
         else if ( value instanceof DoubleValue )
             return new Variant ( ((DoubleValue)value).getValue () );
         else if ( value instanceof LongValue )
@@ -127,14 +130,16 @@ public class Messages
             return null;
         
         try {
-            if ( value.isDouble() )
-                return new DoubleValue(value.asDouble());
-            else if ( value.isInteger() )
-                return new IntegerValue(value.asInteger());
-            else if ( value.isLong() )
-                return new LongValue(value.asLong());
-            else if ( value.isString() )
-                return new StringValue(value.asString());
+            if ( value.isDouble () )
+                return new DoubleValue ( value.asDouble () );
+            else if ( value.isInteger () )
+                return new IntegerValue ( value.asInteger () );
+            else if ( value.isLong () )
+                return new LongValue ( value.asLong () );
+            else if ( value.isBoolean () )
+                return new BooleanValue ( value.asBoolean () );
+            else if ( value.isString () )
+                return new StringValue ( value.asString () );
             else if ( value.isNull () )
                 return new VoidValue ();
         }
