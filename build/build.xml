@@ -68,11 +68,11 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="fetch_align_module" unless="svn.base" if="need.align">
     	<mkdir dir="${source.base}/${todir}"/>
-    	<move todor="${source.base}/${todir}">
+    	<copy todir="${source.base}/${todir}">
     		<fileset dir="${source.base}/../${module}">
     			<include name="**/*"/>
     		</fileset>
-    	</move>
+    	</copy>
     </target>
 
 	
