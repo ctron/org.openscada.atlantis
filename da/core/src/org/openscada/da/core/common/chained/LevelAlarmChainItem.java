@@ -34,6 +34,9 @@ public class LevelAlarmChainItem extends InputChainItemCommon
     public static final String HIGH_ALARM = "org.openscada.da.level.high.alarm";
     public static final String LOW_ALARM = "org.openscada.da.level.low.alarm";
     
+    public static final String HIGH_ERROR = "org.openscada.da.level.high.error";
+    public static final String LOW_ERROR = "org.openscada.da.level.low.error";
+    
     private VariantBinder _highLevel = new VariantBinder ( new Variant () );
     private VariantBinder _lowLevel = new VariantBinder ( new Variant () );
     
@@ -50,28 +53,30 @@ public class LevelAlarmChainItem extends InputChainItemCommon
     {
         attributes.put ( HIGH_ALARM, null );
         attributes.put ( LOW_ALARM, null );
+        attributes.put ( HIGH_ERROR, null );
+        attributes.put ( LOW_ERROR, null );
         
         try
         {
             if ( !_highLevel.getValue ().isNull () && !value.isNull () )
-                if ( value.asDouble () >= _highLevel.getValue ().asDouble () )
-                    attributes.put ( HIGH_ALARM, new Variant ( true ) );
+                attributes.put ( HIGH_ALARM, new Variant ( value.asDouble () >= _highLevel.getValue ().asDouble () ) );
             
         }
         catch ( Exception e )
         {
             _log.info ( "Failed to evaluate high level alarm", e );
+            attributes.put ( HIGH_ERROR, new Variant ( e.getMessage () ) );
         }
         
         try
         {
             if ( !_lowLevel.getValue().isNull () && !value.isNull () )
-                if ( value.asDouble () <= _lowLevel.getValue ().asDouble () )
-                    attributes.put ( LOW_ALARM, new Variant ( true ) );
+                attributes.put ( LOW_ALARM, new Variant ( value.asDouble () <= _lowLevel.getValue ().asDouble () ) );
         }
         catch ( Exception e )
         {
             _log.info ( "Failed to evaluate low level alarm", e );
+            attributes.put ( LOW_ERROR, new Variant ( e.getMessage () ) );
         }
         
         addAttributes ( attributes );
