@@ -79,4 +79,13 @@ public class WriteAttributesController implements WriteAttributesOperationListen
             _connection.getConnection ().sendMessage ( message );
         }
     }
+
+    public void failed ( Throwable error )
+    {
+        if ( _id != null )
+        {
+            Message message = WriteAttributesOperation.createResponse ( _id, error );
+            _connection.getConnection ().sendMessage ( message );
+        }
+    }
 }
