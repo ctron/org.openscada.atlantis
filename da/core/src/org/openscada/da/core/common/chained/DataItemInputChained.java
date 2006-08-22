@@ -2,6 +2,7 @@ package org.openscada.da.core.common.chained;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemBase;
 import org.openscada.da.core.common.DataItemInformationBase;
+import org.openscada.da.core.common.WriteAttributesHelper;
 import org.openscada.da.core.data.AttributesHelper;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
@@ -60,11 +62,22 @@ public class DataItemInputChained extends DataItemBase
                 }
             }
         }
-        Map<String, Variant> diff = new HashMap<String, Variant> ();
-        AttributesHelper.mergeAttributes ( _primaryAttributes, attributes, diff );
+        
+        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+        {
+            _primaryAttributes.put ( entry.getKey (), entry.getValue () );
+        }
         
         process ();
-        return results;
+        
+        for ( Iterator<Map.Entry<String,Variant>> i = attributes.entrySet ().iterator (); i.hasNext (); )
+        {
+            Map.Entry<String,Variant> entry = i.next ();
+            if ( entry.getValue () == null )
+                i.remove ();
+        }
+        
+        return WriteAttributesHelper.errorUnhandled ( results, attributes );
     }
     
     synchronized public void addInputChainElement ( InputChainItem item )

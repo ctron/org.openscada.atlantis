@@ -2,18 +2,20 @@ package org.openscada.da.core.common.chained;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.WriteAttributesOperationListener.Result;
 import org.openscada.da.core.data.Variant;
 
 public class LevelAlarmChainItem implements InputChainItem
 {
-
-    private static final String HIGH_PRESET = "org.openscada.da.level.high.preset";
-    private static final String LOW_PRESET = "org.openscada.da.level.low.preset";
+    private static Logger _log = Logger.getLogger ( LevelAlarmChainItem.class );
     
-    private static final String HIGH_ALARM = "org.openscada.da.level.high.alarm";
-    private static final String LOW_ALARM = "org.openscada.da.level.low.alarm";
+    public static final String HIGH_PRESET = "org.openscada.da.level.high.preset";
+    public static final String LOW_PRESET = "org.openscada.da.level.low.preset";
+    
+    public static final String HIGH_ALARM = "org.openscada.da.level.high.alarm";
+    public static final String LOW_ALARM = "org.openscada.da.level.low.alarm";
     
     private Double _highLevel = null;
     private Double _lowLevel = null;
@@ -25,23 +27,25 @@ public class LevelAlarmChainItem implements InputChainItem
         
         try
         {
-            if ( _highLevel != null )
+            if ( _highLevel != null && !value.isNull () )
                 if ( value.asDouble () >= _highLevel )
                     attributes.put ( HIGH_ALARM, new Variant ( true ) );
             
         }
         catch ( Exception e )
         {
+            _log.info ( "Failed to evaluate high level alarm", e );
         }
         
         try
         {
-            if ( _lowLevel != null )
+            if ( _lowLevel != null && !value.isNull () )
                 if ( value.asDouble () <= _lowLevel )
                     attributes.put ( LOW_ALARM, new Variant ( true ) );
         }
         catch ( Exception e )
         {
+            _log.info ( "Failed to evaluate low level alarm", e );
         }
     }
 
@@ -57,7 +61,12 @@ public class LevelAlarmChainItem implements InputChainItem
                 if ( value == null )
                     _highLevel = null;
                 else
-                    _highLevel = value.asDouble ();
+                {
+                    if ( value.isNull () )
+                        _highLevel = null;
+                    else
+                        _highLevel = value.asDouble ();
+                }
                 results.put ( HIGH_PRESET, new Result () );
             }
             catch ( Exception e )
@@ -74,13 +83,27 @@ public class LevelAlarmChainItem implements InputChainItem
                 if ( value == null )
                     _lowLevel = null;
                 else
-                    _lowLevel = value.asDouble ();
+                {
+                    if ( value.isNull () )
+                        _lowLevel = null;
+                    else
+                        _lowLevel = value.asDouble ();
+                }
                 results.put ( LOW_PRESET, new Result () );
             }
             catch ( Exception e )
             {
                 results.put ( LOW_PRESET, new Result ( e ) );
             }
+        }
+        
+        if ( attributes.containsKey ( HIGH_ALARM ) )
+        {
+            results.put ( HIGH_ALARM, new Result ( new Exception ( "Attribute may not be overwritten ") ) );
+        }
+        if ( attributes.containsKey ( LOW_ALARM ) )
+        {
+            results.put ( LOW_ALARM, new Result ( new Exception ( "Attribute may not be overwritten ") ) );
         }
         
         return results;
