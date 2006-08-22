@@ -298,11 +298,15 @@ public class HiveCommon implements Hive, ItemListener
 		{
 			if ( !_items.containsKey(item) )
 			{
-				item.setListener(this);
+                // first add internally ...
 				_items.put ( item, new DataItemInfo(item) );
 				_itemMap.put ( new DataItemInformationBase(item.getInformation()), item );
-                
+
                 fireAddItem ( item.getInformation () );
+                
+                // then hook up the listener since the item may
+                // flush its current state 
+                item.setListener ( this );
 			}
 		}
 	}

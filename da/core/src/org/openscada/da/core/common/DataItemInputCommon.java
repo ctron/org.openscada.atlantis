@@ -84,4 +84,17 @@ public class DataItemInputCommon extends DataItemInput
     {
         return _attributes;
     }
+    
+    @Override
+    public void setListener ( ItemListener listener )
+    {
+        super.setListener ( listener );
+        if ( listener != null )
+        {
+            if ( !_value.isNull () )
+                notifyValue ( _value );
+            if ( _attributes.get ().size () > 0 )
+                notifyAttributes ( _attributes.get () );
+        }
+    }
 }

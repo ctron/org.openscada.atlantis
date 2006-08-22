@@ -19,7 +19,9 @@
 
 package org.openscada.da.core.data;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class AttributesHelper
 {
@@ -84,7 +86,7 @@ public class AttributesHelper
      * in the case the difference is flagged initial the target will be cleared first. This
      * is a convenient method to easy the merge.
      * 
-     * @param target  the attributes to merge the difference in
+     * @param target the attributes to merge the difference in
      * @param diff the difference attributes
      * @param initial initial flag
      */
@@ -94,6 +96,55 @@ public class AttributesHelper
             target.clear();
         
         mergeAttributes ( target, diff );
+    }
+
+    /**
+     * update the target attributes to contain only the requested attributes 
+     * @param target the attributes to update the difference to
+     * @param attributes the new attributes set
+     * @param diff the actual difference
+     */
+    public static void set ( Map<String, Variant> target, Map<String, Variant> attributes, Map<String, Variant> diff )
+    {
+        Set<String> initialSet = new HashSet<String> ( target.keySet () );
+        
+        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+        {
+            if ( target.containsKey ( entry.getKey () ) )
+            {
+                if ( entry.getValue () == null )
+                {
+                    // entry removed
+                    target.remove ( entry.getKey () );
+                    diff.put ( entry.getKey (), null );
+                }
+                else
+                {
+                    if ( !target.get ( entry.getKey () ).equals ( entry.getValue () ) )
+                    {
+                        // entry changed
+                        diff.put ( entry.getKey (), entry.getValue () );
+                        target.put ( entry.getKey (), entry.getValue () );
+                    }
+                }
+                initialSet.remove ( entry.getKey () );
+            }
+            else
+            {
+                if ( entry.getValue () != null )
+                {
+                    // entry is new
+                    diff.put ( entry.getKey (), entry.getValue () );
+                    target.put ( entry.getKey (), entry.getValue () );
+                }
+            }
+        }
+        
+        for ( String key : initialSet )
+        {
+            target.remove ( key );
+            diff.put ( key, null );
+        }
     }
    
 }

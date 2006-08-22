@@ -1,15 +1,12 @@
 package org.openscada.da.core.common.chained.test;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openscada.da.core.WriteAttributesOperationListener.Result;
 import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.common.chained.LevelAlarmChainItem;
 import org.openscada.da.core.data.Variant;
@@ -67,7 +64,7 @@ public class TestLevelChainItem extends TestInputChain
     }
     
     @Test
-    public void testSetValueAfterAttributesLateInject ()
+    public void testSetValueAfterAttributesNoInject ()
     {
         
         Map<String,Variant> attributes = new HashMap<String,Variant> ();
@@ -77,7 +74,6 @@ public class TestLevelChainItem extends TestInputChain
         Assert.assertFalse ( "Result is empty", results.isEmpty () );
         Assert.assertFalse ( "Result is ok although it should not", results.isSuccess () );
         Assert.assertFalse ( results.get ( LevelAlarmChainItem.HIGH_PRESET ).isSuccess () );
-        addEvent ( attributes );
         
         _dataItem.updateValue ( new Variant ( 4 ) );
         addEvent ( new Variant ( 4 ) );

@@ -36,10 +36,11 @@ public class MemoryDataItem extends DataItemBase {
 	public MemoryDataItem ( String name )
     {
 		super ( new DataItemInformationBase ( name, EnumSet.of(IODirection.INPUT, IODirection.OUTPUT) ) );
+        _attributes = new AttributeManager ( this );
 	}
 
 	private Variant _value = new Variant();
-	private Map<String, Variant> _attributes = new HashMap<String, Variant>();
+	private AttributeManager _attributes = null;
 	
 	public Variant getValue () throws InvalidOperationException
     {
@@ -57,25 +58,34 @@ public class MemoryDataItem extends DataItemBase {
 
 	public Map<String, Variant> getAttributes()
     {		
-		return new HashMap<String, Variant> ( _attributes );
+		return _attributes.get ();
 	}
 
 	public Results setAttributes ( Map<String, Variant> attributes )
     {
         Results results = new Results ();
         
-		for ( Map.Entry<String,Variant> entry : attributes.entrySet() )
-		{
-			if ( entry.getValue() != null )
-				_attributes.put ( entry.getKey(), entry.getValue() );
-			else
-				_attributes.remove ( entry.getKey() );
-            
+        _attributes.update ( attributes );
+        
+        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+        {
             results.put ( entry.getKey (), new Result () );
-		}
-		notifyAttributes ( attributes );
+        }
         
         return results;
 	}
+    
+    @Override
+    public void setListener ( ItemListener listener )
+    {
+        super.setListener ( listener );
+        if ( listener != null )
+        {
+            if ( !_value.isNull () )
+                notifyValue ( _value );
+            if ( _attributes.get ().size () > 0 )
+                notifyAttributes ( _attributes.get () );
+        }
+    }
 
 }

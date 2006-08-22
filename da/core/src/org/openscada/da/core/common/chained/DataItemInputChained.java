@@ -1,8 +1,8 @@
 package org.openscada.da.core.common.chained;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +15,7 @@ import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemBase;
 import org.openscada.da.core.common.DataItemInformationBase;
+import org.openscada.da.core.common.ItemListener;
 import org.openscada.da.core.common.WriteAttributesHelper;
 import org.openscada.da.core.data.AttributesHelper;
 import org.openscada.da.core.data.NotConvertableException;
@@ -47,7 +48,11 @@ public class DataItemInputChained extends DataItemBase
     {
         Results results = new Results ();
 
-        for ( InputChainItem item : _inputChain )
+        // since set operation may cause the chain to change
+        // we work on a copy
+        List<InputChainItem> inputChain = new ArrayList<InputChainItem> ( _inputChain );
+        
+        for ( InputChainItem item : inputChain )
         {
             Results partialResult = item.setAttributes ( attributes );
             if ( partialResult != null )
@@ -63,33 +68,25 @@ public class DataItemInputChained extends DataItemBase
             }
         }
         
-        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
-        {
-            _primaryAttributes.put ( entry.getKey (), entry.getValue () );
-        }
-        
         process ();
-        
-        for ( Iterator<Map.Entry<String,Variant>> i = attributes.entrySet ().iterator (); i.hasNext (); )
-        {
-            Map.Entry<String,Variant> entry = i.next ();
-            if ( entry.getValue () == null )
-                i.remove ();
-        }
         
         return WriteAttributesHelper.errorUnhandled ( results, attributes );
     }
     
     synchronized public void addInputChainElement ( InputChainItem item )
     {
-        _inputChain.add ( item );
-        process ();
+        if ( _inputChain.add ( item ) )
+        {
+            process ();
+        }
     }
 
     synchronized public void removeInputChainElement ( InputChainItem item )
     {
-        _inputChain.remove ( item );
-        process ();
+        if ( _inputChain.remove ( item ) )
+        {
+            process ();
+        }
     }
  
     synchronized public void updateValue ( Variant value )
@@ -114,16 +111,18 @@ public class DataItemInputChained extends DataItemBase
     {
         Variant primaryValue = new Variant ( _primaryValue );
         Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
+        
         for ( InputChainItem item : _inputChain )
         {
             item.process ( primaryValue, primaryAttributes );
         }
+        
         if ( !_secondaryValue.equals ( primaryValue ) )
         {
-            _secondaryValue = primaryValue;
+            _secondaryValue = new Variant ( primaryValue );
             notifyValue ( _secondaryValue );
         }
-        _secondaryAttributes.update ( primaryAttributes );
+        _secondaryAttributes.set ( primaryAttributes );
     }
 
     public Map<String, Variant> getAttributes ()
@@ -139,6 +138,19 @@ public class DataItemInputChained extends DataItemBase
     public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         throw new InvalidOperationException ();
+    }
+    
+    @Override
+    public void setListener ( ItemListener listener )
+    {
+        super.setListener ( listener );
+        if ( listener != null )
+        {
+            if ( !_secondaryValue.isNull () )
+                notifyValue ( _secondaryValue );
+            if ( _secondaryAttributes.get ().size () > 0 )
+                notifyAttributes ( _secondaryAttributes.get () );
+        }
     }
     
 }

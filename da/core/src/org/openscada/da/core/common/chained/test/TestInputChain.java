@@ -53,6 +53,33 @@ public class TestInputChain
         assertEvents ();
     }
     
+    @Test
+    public void testPreSetValue () throws Exception 
+    {
+        _dataItem.setListener ( null );
+        _dataItem.updateValue ( new Variant ( true ) );
+        assertEvents ();
+        
+        addEvent ( new Variant ( true ) );
+        _dataItem.setListener ( _listener );
+        assertEvents ();
+    }
+    
+    @Test
+    public void testPreSetAttributes () throws Exception 
+    {
+        Map<String,Variant> attributes = new HashMap<String,Variant> ();
+        attributes.put ( "test", new Variant ( "test") );
+        
+        _dataItem.setListener ( null );
+        _dataItem.updateAttributes ( attributes );
+        assertEvents ();
+        
+        addEvent ( attributes );
+        _dataItem.setListener ( _listener );
+        assertEvents ();
+    }
+    
     protected void assertEvents ()
     {
         _listener.assertEquals ( _expectedEvents );

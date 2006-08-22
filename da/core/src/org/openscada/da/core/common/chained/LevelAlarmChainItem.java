@@ -3,11 +3,9 @@ package org.openscada.da.core.common.chained;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.core.WriteAttributesOperationListener.Results;
-import org.openscada.da.core.WriteAttributesOperationListener.Result;
 import org.openscada.da.core.data.Variant;
 
-public class LevelAlarmChainItem implements InputChainItem
+public class LevelAlarmChainItem extends InputChainItemCommon
 {
     private static Logger _log = Logger.getLogger ( LevelAlarmChainItem.class );
     
@@ -17,8 +15,17 @@ public class LevelAlarmChainItem implements InputChainItem
     public static final String HIGH_ALARM = "org.openscada.da.level.high.alarm";
     public static final String LOW_ALARM = "org.openscada.da.level.low.alarm";
     
-    private Double _highLevel = null;
-    private Double _lowLevel = null;
+    private VariantBinder _highLevel = new VariantBinder ( new Variant () );
+    private VariantBinder _lowLevel = new VariantBinder ( new Variant () );
+    
+    public LevelAlarmChainItem ()
+    {
+        super ();
+        addBinder ( HIGH_PRESET, _highLevel );
+        addBinder ( LOW_PRESET, _lowLevel );
+        
+        setReservedAttributes ( HIGH_ALARM, LOW_ALARM );
+    }
     
     public void process ( Variant value, Map<String, Variant> attributes )
     {
@@ -27,8 +34,8 @@ public class LevelAlarmChainItem implements InputChainItem
         
         try
         {
-            if ( _highLevel != null && !value.isNull () )
-                if ( value.asDouble () >= _highLevel )
+            if ( !_highLevel.getValue ().isNull () && !value.isNull () )
+                if ( value.asDouble () >= _highLevel.getValue ().asDouble () )
                     attributes.put ( HIGH_ALARM, new Variant ( true ) );
             
         }
@@ -39,74 +46,15 @@ public class LevelAlarmChainItem implements InputChainItem
         
         try
         {
-            if ( _lowLevel != null && !value.isNull () )
-                if ( value.asDouble () <= _lowLevel )
+            if ( !_lowLevel.getValue().isNull () && !value.isNull () )
+                if ( value.asDouble () <= _lowLevel.getValue ().asDouble () )
                     attributes.put ( LOW_ALARM, new Variant ( true ) );
         }
         catch ( Exception e )
         {
             _log.info ( "Failed to evaluate low level alarm", e );
         }
+        
+        addAttributes ( attributes );
     }
-
-    public Results setAttributes ( Map<String, Variant> attributes )
-    {
-        Results results = new Results ();
-        
-        if ( attributes.containsKey ( HIGH_PRESET ) )
-        {
-            try
-            {
-                Variant value = attributes.get ( HIGH_PRESET );
-                if ( value == null )
-                    _highLevel = null;
-                else
-                {
-                    if ( value.isNull () )
-                        _highLevel = null;
-                    else
-                        _highLevel = value.asDouble ();
-                }
-                results.put ( HIGH_PRESET, new Result () );
-            }
-            catch ( Exception e )
-            {
-                results.put ( HIGH_PRESET, new Result ( e ) );
-            }
-        }
-        
-        if ( attributes.containsKey ( LOW_PRESET ) )
-        {
-            try
-            {
-                Variant value = attributes.get ( LOW_PRESET );
-                if ( value == null )
-                    _lowLevel = null;
-                else
-                {
-                    if ( value.isNull () )
-                        _lowLevel = null;
-                    else
-                        _lowLevel = value.asDouble ();
-                }
-                results.put ( LOW_PRESET, new Result () );
-            }
-            catch ( Exception e )
-            {
-                results.put ( LOW_PRESET, new Result ( e ) );
-            }
-        }
-        
-        if ( attributes.containsKey ( HIGH_ALARM ) )
-        {
-            results.put ( HIGH_ALARM, new Result ( new Exception ( "Attribute may not be overwritten ") ) );
-        }
-        if ( attributes.containsKey ( LOW_ALARM ) )
-        {
-            results.put ( LOW_ALARM, new Result ( new Exception ( "Attribute may not be overwritten ") ) );
-        }
-        
-        return results;
-    }
-
 }

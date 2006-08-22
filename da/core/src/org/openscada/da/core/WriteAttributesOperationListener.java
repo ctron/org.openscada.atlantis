@@ -77,4 +77,6 @@ public interface WriteAttributesOperationListener
     }
     
     void complete ( Results results );
+
+    void failed ( Throwable error );
 }

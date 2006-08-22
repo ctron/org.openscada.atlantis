@@ -62,6 +62,16 @@ public class AttributeManager
         }
     }
     
+    public void set ( Map < String, Variant > values )
+    {
+        Map<String, Variant> diff = new HashMap<String, Variant>();
+        synchronized ( _attributes )
+        {
+            AttributesHelper.set ( _attributes, values, diff );
+            _item.notifyAttributes ( diff );
+        }
+    }
+    
     public void update ( String name, Variant value )
     {
         Map<String, Variant> updates = new HashMap<String,Variant>();
