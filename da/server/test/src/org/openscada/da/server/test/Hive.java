@@ -199,7 +199,6 @@ public class Hive extends HiveCommon {
         );
        
         DataItemInputChained chainedItem = new MemoryChainedItem ( "chained-input" );
-        chainedItem.addInputChainElement ( new LevelAlarmChainItem () );
         registerItem ( chainedItem );
         testFolder.add ( "chained-input", chainedItem, new MapBuilder<String, Variant> ().getMap () );
         
