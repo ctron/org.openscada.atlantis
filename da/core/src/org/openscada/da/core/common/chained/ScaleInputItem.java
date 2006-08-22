@@ -25,9 +25,9 @@ import org.openscada.da.core.data.Variant;
 
 public class ScaleInputItem extends InputChainItemCommon
 {
-    public static final String SCALE_FACTOR = "org.openscada.da.scale.factor";
-    public static final String SCALE_RAW = "org.openscada.da.scale.raw";
-    public static final String SCALE_ERROR = "org.openscada.da.scale.error";
+    public static final String SCALE_FACTOR = "org.openscada.da.input.scale.factor";
+    public static final String SCALE_RAW = "org.openscada.da.input.scale.raw";
+    public static final String SCALE_ERROR = "org.openscada.da.input.scale.error";
     
     private VariantBinder _scaleFactor = new VariantBinder ( new Variant () );
     
