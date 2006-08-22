@@ -110,6 +110,14 @@ public class TestInputChain
     
     protected void addEvent ( Map<String, Variant> attributes )
     {
-        _expectedEvents.add ( new EventEntry ( _dataItem, null, new HashMap<String, Variant> ( attributes ) ) );
+        if ( attributes.size () > 0 )
+            _expectedEvents.add ( new EventEntry ( _dataItem, null, new HashMap<String, Variant> ( attributes ) ) );
+    }
+    
+    protected void addEvent ( String name, Variant value )
+    {
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        attributes.put ( name, value );
+        addEvent ( attributes );
     }
 }

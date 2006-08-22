@@ -112,7 +112,7 @@ public class AttributesHelper
         {
             if ( target.containsKey ( entry.getKey () ) )
             {
-                if ( entry.getValue () == null )
+                if ( ( entry.getValue () == null ) || entry.getValue ().isNull () )
                 {
                     // entry removed
                     target.remove ( entry.getKey () );
@@ -131,7 +131,7 @@ public class AttributesHelper
             }
             else
             {
-                if ( entry.getValue () != null )
+                if ( ( entry.getValue () != null ) && (!entry.getValue ().isNull () ) )
                 {
                     // entry is new
                     diff.put ( entry.getKey (), entry.getValue () );

@@ -33,6 +33,7 @@ import org.openscada.utils.collection.MapBuilder;
 
 public class TestLevelChainItem extends TestInputChain
 {
+    @SuppressWarnings("unused")
     private static Logger _log = Logger.getLogger ( TestLevelChainItem.class );
     
     protected LevelAlarmChainItem _levelAlarm = null;
@@ -124,7 +125,7 @@ public class TestLevelChainItem extends TestInputChain
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 5 ) );
         _dataItem.setAttributes ( attributes );
         addEvent ( new MapBuilder<String, Variant> ()
-                .put ( LevelAlarmChainItem.HIGH_ALARM, null )
+                .put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( false ) )
                 .put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 5 ) )
                 .getMap () );
         
@@ -132,6 +133,7 @@ public class TestLevelChainItem extends TestInputChain
         
         Assert.assertEquals ( new MapBuilder<String, Variant> ()
                 .put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 5 ) )
+                .put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( false ) )
                 .getMap (), _dataItem.getAttributes () );
     }
     
