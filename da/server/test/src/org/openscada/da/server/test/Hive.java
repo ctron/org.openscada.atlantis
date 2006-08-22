@@ -19,12 +19,10 @@
 
 package org.openscada.da.server.test;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.openscada.da.core.IODirection;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.browser.common.query.GroupFolder;
 import org.openscada.da.core.browser.common.query.GroupProvider;
@@ -35,10 +33,8 @@ import org.openscada.da.core.browser.common.query.NullNameProvider;
 import org.openscada.da.core.browser.common.query.QueryFolder;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.DataItemCommand;
-import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.MemoryDataItem;
 import org.openscada.da.core.common.chained.DataItemInputChained;
-import org.openscada.da.core.common.chained.LevelAlarmChainItem;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.core.data.Variant;
 import org.openscada.da.server.test.items.FactoryMemoryCell;
