@@ -93,7 +93,7 @@
                toolbarPath="additions"
                tooltip="Watch selected item">
             <enablement>
-               <objectClass name="org.openscada.da.client.test.impl.HiveItem"/>
+               <objectClass name="org.openscada.da.client.test.impl.DataItemEntry"/>
             </enablement>
          </action>
          <action
