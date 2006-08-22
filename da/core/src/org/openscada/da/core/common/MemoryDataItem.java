@@ -20,7 +20,6 @@
 package org.openscada.da.core.common;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.da.core.IODirection;
