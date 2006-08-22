@@ -94,26 +94,61 @@ public class VariantHelper
     
     public static String toString ( Variant variant )
     {
+        ValueType vt = toValueType ( variant );
         try
         {
-            if ( variant.isNull () )
-                return "VT_NULL";
-            else if ( variant.isBoolean () )
-                return "VT_BOOLEAN[" + ( variant.asBoolean () ? "true" : "false" ) + "]";
-            else if ( variant.isDouble () )
-                return String.format ( "VT_DOUBLE[%f]", variant.asDouble () );
-            else if ( variant.isLong () )
-                return String.format ( "VT_LONG[%d]", variant.asLong () );
-            else if ( variant.isInteger () )
-                return String.format ( "VT_INTEGER[%d]", variant.asInteger () );
-            else if ( variant.isString () )
-                return String.format ( "VT_STRING[%s]", variant.asString () );
-            return "VT_UNKNOWN";
+            if ( vt == null )
+                return "VT_UNKNOWN";
+            
+            StringBuffer str = new StringBuffer ();
+            str.append ( vt.toString () );
+            str.append ( "[" );
+            switch ( vt )
+            {
+            case NULL:
+                str.append ( "<null>" );
+                break;
+            case BOOLEAN:
+                str.append ( variant.asBoolean () ? "true" : "false" );
+                break;
+            case DOUBLE:
+                str.append ( variant.asDouble () );
+                break;
+            case LONG:
+                str.append ( variant.asLong () );
+                break;
+            case INT:
+                str.append ( variant.asInteger () );
+                break;
+            case STRING:
+                str.append ( variant.asString () );
+                break;
+            }
+            str.append ( "]" );
+            return str.toString ();
         }
         catch ( Exception e )
         {
             return "VT_ERROR[" + e.getMessage () + "]";
         }
+    }
+    
+    public static ValueType toValueType ( Variant variant )
+    {
+        if ( variant.isNull () )
+            return ValueType.NULL;
+        else if ( variant.isBoolean () )
+            return ValueType.BOOLEAN;
+        else if ( variant.isDouble () )
+            return ValueType.DOUBLE;
+        else if ( variant.isLong () )
+            return ValueType.LONG;
+        else if ( variant.isInteger () )
+            return ValueType.INT;
+        else if ( variant.isString () )
+            return ValueType.STRING;
+        else
+            return null;
     }
 
 }

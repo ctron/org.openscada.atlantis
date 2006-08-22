@@ -408,8 +408,6 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
         
         // row 3
         
-        _attributes.add ( new AttributeEntry ( "test", ValueType.STRING, "1.23" ) );
-        
         gd = new GridData ( GridData.FILL_BOTH );
         gd.horizontalSpan = 3;
         gd.grabExcessHorizontalSpace = true;

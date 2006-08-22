@@ -25,10 +25,12 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -48,6 +50,7 @@ import org.openscada.da.client.net.DataItem;
 import org.openscada.da.client.net.ItemUpdateListener;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.VariantHelper;
+import org.openscada.da.client.test.impl.VariantHelper.ValueType;
 import org.openscada.da.core.data.Variant;
 
 
@@ -199,9 +202,15 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
             case 0:
                 return entry.name;
             case 1:            
-                return VariantHelper.toString ( entry.value );
+                ValueType vt = VariantHelper.toValueType ( entry.value );
+                if ( vt != null )
+                    return vt.toString ();
+                else
+                    return "VT_UNKNOWN";
+            case 2:
+                return entry.value.asString ( "null" );
             }
-            return getText(obj);
+            return getText ( obj );
         }
 		public Image getColumnImage(Object obj, int index)
         {
@@ -210,12 +219,14 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
             else
                 return null;
 		}
-		public Image getImage(Object obj) {
-			return PlatformUI.getWorkbench().
-					getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
+		public Image getImage ( Object obj )
+        {
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
 	}
-	class NameSorter extends ViewerSorter {
+	
+    class NameSorter extends ViewerSorter
+    {
 	}
 
 	/**
@@ -237,7 +248,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         GridData gd;
         
         // value label
-        gd = new GridData();
+        gd = new GridData ();
         gd.grabExcessHorizontalSpace = true;
         gd.horizontalAlignment = SWT.FILL;
         gd.verticalAlignment = SWT.CENTER;
@@ -245,7 +256,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         _valueLabel.setLayoutData ( gd );
         
         SashForm box = new SashForm ( parent, SWT.VERTICAL );        
-        gd = new GridData();
+        gd = new GridData ();
         gd.grabExcessHorizontalSpace = true;
         gd.grabExcessVerticalSpace = true;
         gd.horizontalAlignment = SWT.FILL;
@@ -254,22 +265,29 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         
         // attributes table
         
-		viewer = new TableViewer(box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-        viewer.getControl().setLayoutData(gd);
-		viewer.setContentProvider(new ViewContentProvider());
-		viewer.setLabelProvider(new ViewLabelProvider());
+		viewer = new TableViewer ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
+        viewer.getControl ().setLayoutData ( gd );
+		viewer.setContentProvider ( new ViewContentProvider () );
+		viewer.setLabelProvider ( new ViewLabelProvider () );
         
         TableColumn col;
         
-        col = new TableColumn(viewer.getTable(),SWT.NONE);
+        col = new TableColumn ( viewer.getTable (), SWT.NONE );
         col.setText ( "Name" );
-        col.setWidth(200);
-        col = new TableColumn(viewer.getTable(),SWT.NONE);
+        col = new TableColumn ( viewer.getTable (), SWT.NONE );
+        col.setText ( "Value Type" );
+        col = new TableColumn ( viewer.getTable (), SWT.NONE );
         col.setText ( "Value" );
-        col.setWidth(500);
 		
-        viewer.getTable().setHeaderVisible ( true );
+        viewer.getTable ().setHeaderVisible ( true );
         viewer.setSorter ( new NameSorter () );
+        
+        // set table layout
+        TableLayout tableLayout = new TableLayout ();
+        tableLayout.addColumnData ( new ColumnWeightData ( 40, 75, true ) );
+        tableLayout.addColumnData ( new ColumnWeightData ( 20, 40, true ) );
+        tableLayout.addColumnData ( new ColumnWeightData ( 40, 75, true ) );
+        viewer.getTable ().setLayout ( tableLayout );
         
         // console window
         _console = new StyledText ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY );
@@ -377,6 +395,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
             {
                 appendConsoleMessage ( "#" + i + ":" + entry.getKey() + " <null>" );
             }
+            i++;
         }
     }
 }
