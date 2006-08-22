@@ -75,9 +75,26 @@ public class WriteAttributesOperation
         return message;
     }
     
-    public static Results parseResponse ( Message message )
+    public static Message createResponse ( long id, Throwable error )
+    {
+        Message message = new Message ( Messages.CC_WRITE_ATTRIBUTES_OPERATION_RESULT );
+    
+        message.getValues ().put ( "id", new LongValue ( id ) );
+
+        if ( error.getMessage () != null )
+            message.getValues ().put ( Message.FIELD_ERROR_INFO, new StringValue ( error.getMessage () ) );
+        else
+            message.getValues ().put ( Message.FIELD_ERROR_INFO, new StringValue ( error.toString () ) );
+        
+        return message;
+    }
+    
+    public static Results parseResponse ( Message message ) throws Exception
     {
         Results results = new Results ();
+        
+        if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
+            throw new Exception ( message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString () );
         
         if ( message.getValues ().containsKey ( "results" ) )
         {
