@@ -63,7 +63,7 @@ import org.openscada.utils.lang.Holder;
 public class Connection
 {
 
-    public static final String VERSION = "0.1.4";
+    public static final String VERSION = "0.1.5";
 
     public enum State
     {
@@ -700,7 +700,14 @@ public class Connection
         if ( op.getReply () != null )
         {
             Message reply = op.getReply ();
-            return WriteAttributesOperation.parseResponse ( reply );
+            try
+            {
+                return WriteAttributesOperation.parseResponse ( reply );
+            }
+            catch ( Exception e )
+            {
+                throw new OperationException ( e );
+            }
         }
         return null;
     }
