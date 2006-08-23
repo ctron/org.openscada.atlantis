@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.common.chained.test;
+package org.openscada.da.core.common.chain.test;
 
 import java.util.Collection;
 import java.util.LinkedList;

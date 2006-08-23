@@ -1,4 +1,4 @@
-package org.openscada.da.core.common.chained;
+package org.openscada.da.core.common.chain;
 
 import java.util.EnumSet;
 

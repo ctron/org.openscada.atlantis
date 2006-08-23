@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.common.chained;
+package org.openscada.da.core.common.chain;
 
 import org.openscada.da.core.data.Variant;
 

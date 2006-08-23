@@ -1,4 +1,4 @@
-package org.openscada.da.core.common.chained.test;
+package org.openscada.da.core.common.chain.test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,9 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.InvalidOperationException;
-import org.openscada.da.core.common.chained.MemoryItemChained;
-import org.openscada.da.core.common.chained.ScaleInputItem;
-import org.openscada.da.core.common.chained.ScaleOutputItem;
+import org.openscada.da.core.common.chain.MemoryItemChained;
+import org.openscada.da.core.common.chain.ScaleInputItem;
+import org.openscada.da.core.common.chain.ScaleOutputItem;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;

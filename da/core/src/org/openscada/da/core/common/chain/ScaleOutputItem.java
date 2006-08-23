@@ -17,26 +17,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.common.chained;
+package org.openscada.da.core.common.chain;
 
-import java.util.Map;
 
-import org.openscada.da.core.WriteAttributesOperationListener.Results;
-import org.openscada.da.core.data.Variant;
-
-public interface ChainItem
+public class ScaleOutputItem extends ScaleBaseItem
 {
-    /**
-     * Request to set attributes
-     * @param attributes the attributes update set
-     * @return result for processed attributes
-     */
-    Results setAttributes ( Map<String, Variant> attributes );
+
+    @Override
+    protected String getBase ()
+    {
+        return "org.openscada.da.scale.output";
+    }
     
-    /**
-     * Process the chain item
-     * @param value the value to process or <code>null</code> if a output item changed only the attributes 
-     * @param attributes The current primary attributes
-     */
-    void process ( Variant value, Map<String, Variant> attributes );
 }

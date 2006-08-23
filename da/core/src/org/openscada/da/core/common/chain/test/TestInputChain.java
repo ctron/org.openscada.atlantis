@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.common.chained.test;
+package org.openscada.da.core.common.chain.test;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -28,7 +28,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openscada.da.core.common.chained.DataItemInputChained;
+import org.openscada.da.core.common.chain.DataItemInputChained;
 import org.openscada.da.core.data.Variant;
 
 public class TestInputChain

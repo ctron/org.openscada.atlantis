@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.common.chained;
+package org.openscada.da.core.common.chain;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -27,43 +27,24 @@ import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.InvalidOperationException;
 import org.openscada.da.core.common.DataItemInformationBase;
-import org.openscada.da.core.common.ItemListener;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
 
-public abstract class DataItemOutputChained extends DataItemBaseChained
-{
-
-    public DataItemOutputChained ( DataItemInformation information )
+public class MemoryItemChained extends DataItemInputChained
+{    
+    public MemoryItemChained ( DataItemInformation di )
     {
-        super ( information );
+        super ( di );
     }
     
-    public DataItemOutputChained ( String id )
+    public MemoryItemChained ( String id )
     {
-        this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.OUTPUT ) ) );
-    }
-
-    public Variant getValue () throws InvalidOperationException
-    {
-        throw new InvalidOperationException ();
-    }
-
-    synchronized public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
-    {
-        process ( value );
-        
-        writeValue ( value );
+        this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
     }
 
     @Override
-    protected void process ()
-    {
-        process ( null );
-    }
-    
-    protected void process ( Variant value )
+    synchronized public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
         
@@ -74,20 +55,12 @@ public abstract class DataItemOutputChained extends DataItemBaseChained
         }
         
         _secondaryAttributes.set ( primaryAttributes );
-    }
-    
-    @Override
-    public void setListener ( ItemListener listener )
-    {
-        super.setListener ( listener );
         
-        if ( listener != null )
-        {
-            if ( _secondaryAttributes.get ().size () > 0 )
-                notifyAttributes ( _secondaryAttributes.get () );
-        }
+        writeValue ( value );
     }
-    
-    protected abstract void writeValue ( Variant value ) throws NullValueException, NotConvertableException;
 
+    private void writeValue ( Variant value )
+    {
+        updateValue ( value );
+    }
 }

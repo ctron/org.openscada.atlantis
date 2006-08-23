@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.common.chained.test;
+package org.openscada.da.core.common.chain.test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributesOperationListener.Results;
-import org.openscada.da.core.common.chained.LevelAlarmChainItem;
+import org.openscada.da.core.common.chain.LevelAlarmChainItem;
 import org.openscada.da.core.data.Variant;
 import org.openscada.utils.collection.MapBuilder;
 
