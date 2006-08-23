@@ -17,10 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.common.chain;
+package org.openscada.da.core.common.chain.item;
 
 import java.util.Map;
 
+import org.openscada.da.core.common.chain.BaseChainItemCommon;
+import org.openscada.da.core.common.chain.VariantBinder;
 import org.openscada.da.core.data.Variant;
 
 public abstract class ScaleBaseItem extends BaseChainItemCommon

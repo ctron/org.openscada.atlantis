@@ -17,16 +17,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.common.chain;
+package org.openscada.da.core.common.chain.item;
 
 
-public class ScaleOutputItem extends ScaleBaseItem
+public class ScaleInputItem extends ScaleBaseItem
 {
 
     @Override
     protected String getBase ()
     {
-        return "org.openscada.da.scale.output";
+        return "org.openscada.da.scale.input";
     }
-    
+
 }
