@@ -35,14 +35,14 @@ import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
 
-public class MemoryChainedItem extends DataItemInputChained
+public class MemoryChainedInputItem extends DataItemInputChained
 {
     
     private class AddClassAttributeBinder implements AttributeBinder
     {
-        private MemoryChainedItem _item = null;
+        private MemoryChainedInputItem _item = null;
         
-        public AddClassAttributeBinder ( MemoryChainedItem item )
+        public AddClassAttributeBinder ( MemoryChainedInputItem item )
         {
             super ();
             _item = item;
@@ -64,9 +64,9 @@ public class MemoryChainedItem extends DataItemInputChained
     
     private class RemoveClassAttributeBinder implements AttributeBinder
     {
-        private MemoryChainedItem _item = null;
+        private MemoryChainedInputItem _item = null;
         
-        public RemoveClassAttributeBinder ( MemoryChainedItem item )
+        public RemoveClassAttributeBinder ( MemoryChainedInputItem item )
         {
             super ();
             _item = item;
@@ -88,9 +88,9 @@ public class MemoryChainedItem extends DataItemInputChained
     
     private class InjectInputChainItem extends InputChainItemCommon
     {
-        private MemoryChainedItem _item = null;
+        private MemoryChainedInputItem _item = null;
         
-        public InjectInputChainItem ( MemoryChainedItem item )
+        public InjectInputChainItem ( MemoryChainedInputItem item )
         {
             _item = item;
             
@@ -117,7 +117,7 @@ public class MemoryChainedItem extends DataItemInputChained
     
     private List<InputChainItem> _inputChainItems = new LinkedList<InputChainItem> ();
 
-    public MemoryChainedItem ( String id )
+    public MemoryChainedInputItem ( String id )
     {
         super ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
         addInputChainElement ( new InjectInputChainItem ( this ) );
