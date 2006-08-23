@@ -441,4 +441,15 @@ public class Variant
     {
         return asBoolean () == b;
     }
+    
+    @Override
+    public String toString ()
+    {
+        if ( _value != null )
+        {
+            return _value.toString ();
+        }
+        else
+            return "<null>";
+    }
 }
