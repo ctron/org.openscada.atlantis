@@ -33,6 +33,7 @@ import org.openscada.da.core.data.Variant;
 
 public class BrowserEntry extends Observable implements IPropertySource
 {
+    @SuppressWarnings("unused")
     private static Logger _log = Logger.getLogger ( BrowserEntry.class );
     
     private String _name = null;
