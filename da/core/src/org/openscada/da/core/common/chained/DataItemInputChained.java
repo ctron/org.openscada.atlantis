@@ -19,12 +19,8 @@
 
 package org.openscada.da.core.common.chained;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.openscada.da.core.DataItemInformation;
@@ -38,10 +34,8 @@ import org.openscada.da.core.data.Variant;
 
 public class DataItemInputChained extends DataItemBaseChained
 {
-    private Variant _primaryValue = new Variant ();
-    private Variant _secondaryValue = new Variant ();
-    
-    private List<InputChainItem> _inputChain = new LinkedList<InputChainItem> ();
+    protected Variant _primaryValue = new Variant ();
+    protected Variant _secondaryValue = new Variant ();
     
     public DataItemInputChained ( DataItemInformation di )
     {
@@ -53,22 +47,6 @@ public class DataItemInputChained extends DataItemBaseChained
         this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT ) ) );
     }
     
-    synchronized public void addInputChainElement ( InputChainItem item )
-    {
-        if ( _inputChain.add ( item ) )
-        {
-            process ();
-        }
-    }
-
-    synchronized public void removeInputChainElement ( InputChainItem item )
-    {
-        if ( _inputChain.remove ( item ) )
-        {
-            process ();
-        }
-    }
- 
     synchronized public void updateValue ( Variant value )
     {
         if ( _primaryValue.equals ( value ) )
@@ -84,9 +62,10 @@ public class DataItemInputChained extends DataItemBaseChained
         Variant primaryValue = new Variant ( _primaryValue );
         Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
         
-        for ( InputChainItem item : _inputChain )
+        for ( ChainProcessEntry entry : _chain )
         {
-            item.process ( primaryValue, primaryAttributes );
+            if ( entry.getWhen ().contains ( IODirection.INPUT ) )
+                entry.getWhat ().process ( primaryValue, primaryAttributes );
         }
         
         if ( !_secondaryValue.equals ( primaryValue ) )
@@ -118,12 +97,6 @@ public class DataItemInputChained extends DataItemBaseChained
             if ( _secondaryAttributes.get ().size () > 0 )
                 notifyAttributes ( _secondaryAttributes.get () );
         }
-    }
-
-    @Override
-    synchronized protected Collection<BaseChainItem> getChainItems ()
-    {
-        return Arrays.asList ( _inputChain.toArray ( new BaseChainItem[0] ) );
     }
     
 }

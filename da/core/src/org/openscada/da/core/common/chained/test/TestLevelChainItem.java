@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.common.chained.LevelAlarmChainItem;
 import org.openscada.da.core.data.Variant;
@@ -50,7 +51,7 @@ public class TestLevelChainItem extends TestInputChain
         
         Map<String,Variant> attributes = new HashMap<String,Variant> ();
         
-        _dataItem.addInputChainElement ( _levelAlarm );
+        _dataItem.addChainElement ( IODirection.INPUT, _levelAlarm );
         
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 3 ) );
         _dataItem.setAttributes ( attributes );
@@ -69,7 +70,7 @@ public class TestLevelChainItem extends TestInputChain
     {
         Map<String,Variant> attributes = new HashMap<String,Variant> ();
         
-        _dataItem.addInputChainElement ( _levelAlarm );
+        _dataItem.addChainElement ( IODirection.INPUT, _levelAlarm );
 
         _dataItem.updateValue ( new Variant ( 4 ) );
         addEvent ( new Variant ( 4 ) );
@@ -108,7 +109,7 @@ public class TestLevelChainItem extends TestInputChain
         
         Map<String,Variant> attributes = new HashMap<String,Variant> ();
         
-        _dataItem.addInputChainElement ( _levelAlarm );
+        _dataItem.addChainElement ( IODirection.INPUT, _levelAlarm );
         
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 3 ) );
         _dataItem.setAttributes ( attributes );
@@ -143,7 +144,7 @@ public class TestLevelChainItem extends TestInputChain
         
         Map<String,Variant> attributes = new HashMap<String,Variant> ();
         
-        _dataItem.addInputChainElement ( _levelAlarm );
+        _dataItem.addChainElement ( IODirection.INPUT, _levelAlarm );
         
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 3 ) );
         _dataItem.setAttributes ( attributes );

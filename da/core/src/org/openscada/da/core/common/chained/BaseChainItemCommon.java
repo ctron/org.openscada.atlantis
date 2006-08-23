@@ -29,7 +29,7 @@ import org.openscada.da.core.WriteAttributesOperationListener.Result;
 import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.data.Variant;
 
-public abstract class InputChainItemCommon implements InputChainItem
+public abstract class BaseChainItemCommon implements ChainItem
 {
 
     private Set<String> _reservedAttributes = new HashSet<String> ();

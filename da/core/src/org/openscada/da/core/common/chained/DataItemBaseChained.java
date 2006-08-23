@@ -19,11 +19,17 @@
 
 package org.openscada.da.core.common.chained;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributesOperationListener.Result;
 import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.common.AttributeManager;
@@ -37,6 +43,7 @@ public abstract class DataItemBaseChained extends DataItemBase
 
     protected Map<String,Variant> _primaryAttributes = null;
     protected AttributeManager _secondaryAttributes = null;
+    protected List<ChainProcessEntry> _chain = new LinkedList<ChainProcessEntry> ();
 
     public DataItemBaseChained ( DataItemInformation di )
     {
@@ -64,8 +71,10 @@ public abstract class DataItemBaseChained extends DataItemBase
     {
         Results results = new Results ();
         
-        for ( BaseChainItem item : getChainItems () )
+        for ( ChainProcessEntry chainEntry : getChainEntries () )
         {
+            ChainItem item = chainEntry.getWhat ();
+            
             Results partialResult = item.setAttributes ( attributes );
             if ( partialResult != null )
             {
@@ -88,11 +97,46 @@ public abstract class DataItemBaseChained extends DataItemBase
     
     protected abstract void process ();
     
-    /**
-     * return a copy of the chain items
-     * @return a copy of all chain items
-     */
-    protected abstract Collection<BaseChainItem> getChainItems ();
+    public synchronized void addChainElement ( EnumSet<IODirection> when, ChainItem item )
+    {
+        if ( _chain.add ( new ChainProcessEntry ( when, item ) ) )
+        {
+            process ();
+        }
+    }
+    
+    public synchronized void addChainElement ( IODirection when, ChainItem item )
+    {
+        if ( _chain.add ( new ChainProcessEntry ( EnumSet.of ( when ), item ) ) )
+        {
+            process ();
+        }
+    }
+
+    public synchronized void removeChainElement ( EnumSet<IODirection> when, ChainItem item )
+    {
+        int n = 0;
+        
+        for ( Iterator<ChainProcessEntry> i = _chain.iterator ();  i.hasNext ();  )
+        {
+            ChainProcessEntry entry = i.next ();
+
+            if ( entry.getWhen ().equals ( when ) )
+                if ( entry.getWhat () == item )
+                {
+                    i.remove ();
+                    n++;
+                }
+        }
+        
+        if ( n > 0 )
+            process ();
+    }
+
+    protected synchronized Collection<ChainProcessEntry> getChainEntries ()
+    {
+        return Arrays.asList ( _chain.toArray ( new ChainProcessEntry[0] ) );
+    }
 
 
 }

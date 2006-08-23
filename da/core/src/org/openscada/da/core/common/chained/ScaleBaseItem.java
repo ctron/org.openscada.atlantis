@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.openscada.da.core.data.Variant;
 
-public abstract class ScaleBaseItem extends InputChainItemCommon
+public abstract class ScaleBaseItem extends BaseChainItemCommon
 {
     public static final String SCALE_FACTOR = ".factor";
     public static final String SCALE_RAW = ".raw";

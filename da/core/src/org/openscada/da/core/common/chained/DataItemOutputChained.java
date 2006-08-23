@@ -19,12 +19,8 @@
 
 package org.openscada.da.core.common.chained;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.openscada.da.core.DataItemInformation;
@@ -39,8 +35,6 @@ import org.openscada.da.core.data.Variant;
 public abstract class DataItemOutputChained extends DataItemBaseChained
 {
 
-    private List<OutputChainItem> _outputChain = new LinkedList<OutputChainItem> ();
-    
     public DataItemOutputChained ( DataItemInformation information )
     {
         super ( information );
@@ -48,7 +42,7 @@ public abstract class DataItemOutputChained extends DataItemBaseChained
     
     public DataItemOutputChained ( String id )
     {
-        this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT ) ) );
+        this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.OUTPUT ) ) );
     }
 
     public Variant getValue () throws InvalidOperationException
@@ -58,43 +52,25 @@ public abstract class DataItemOutputChained extends DataItemBaseChained
 
     synchronized public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        for ( OutputChainItem item : _outputChain )
-        {
-            item.writeValue ( value );
-        }
+        process ( value );
+        
         writeValue ( value );
-    }
-
-    @Override
-    protected Collection<BaseChainItem> getChainItems ()
-    {
-        return Arrays.asList ( _outputChain.toArray ( new BaseChainItem[0] ) );
-    }
-    
-    synchronized public void addInputChainElement ( OutputChainItem item )
-    {
-        if ( _outputChain.add ( item ) )
-        {
-            process ();
-        }
-    }
-
-    synchronized public void removeInputChainElement ( OutputChainItem item )
-    {
-        if ( _outputChain.remove ( item ) )
-        {
-            process ();
-        }
     }
 
     @Override
     protected void process ()
     {
+        process ( null );
+    }
+    
+    protected void process ( Variant value )
+    {
         Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
         
-        for ( OutputChainItem item : _outputChain )
+        for ( ChainProcessEntry entry: _chain )
         {
-            item.process ( primaryAttributes );
+            if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
+                entry.getWhat ().process ( value, primaryAttributes );
         }
         
         _secondaryAttributes.set ( primaryAttributes );

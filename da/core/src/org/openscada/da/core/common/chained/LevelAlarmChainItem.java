@@ -24,7 +24,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.openscada.da.core.data.Variant;
 
-public class LevelAlarmChainItem extends InputChainItemCommon
+public class LevelAlarmChainItem extends BaseChainItemCommon
 {
     private static Logger _log = Logger.getLogger ( LevelAlarmChainItem.class );
     

@@ -19,6 +19,7 @@
 
 package org.openscada.da.core.common.chained;
 
+
 public class ScaleOutputItem extends ScaleBaseItem
 {
 
@@ -27,5 +28,5 @@ public class ScaleOutputItem extends ScaleBaseItem
     {
         return "org.openscada.da.scale.output";
     }
-
+    
 }
