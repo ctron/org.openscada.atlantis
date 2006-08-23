@@ -22,6 +22,9 @@ public abstract class DataItemBaseChained extends DataItemBase
     public DataItemBaseChained ( DataItemInformation di )
     {
         super ( di );
+
+        _primaryAttributes = new HashMap<String, Variant> ();
+        _secondaryAttributes = new AttributeManager ( this );
     }
 
     public synchronized void updateAttributes ( Map<String, Variant> attributes )
