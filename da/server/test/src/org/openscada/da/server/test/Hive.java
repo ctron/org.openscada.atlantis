@@ -34,13 +34,12 @@ import org.openscada.da.core.browser.common.query.QueryFolder;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.MemoryDataItem;
-import org.openscada.da.core.common.chained.DataItemBaseChained;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.core.data.Variant;
 import org.openscada.da.server.test.items.FactoryMemoryCell;
 import org.openscada.da.server.test.items.MemoryCellFactory;
 import org.openscada.da.server.test.items.MemoryCellItem;
-import org.openscada.da.server.test.items.MemoryChainedInputItem;
+import org.openscada.da.server.test.items.MemoryChainedItem;
 import org.openscada.da.server.test.items.SuspendItem;
 import org.openscada.da.server.test.items.TimeDataItem;
 import org.openscada.da.server.test.items.WriteDelayItem;
@@ -194,9 +193,9 @@ public class Hive extends HiveCommon {
                 .getMap ()
         );
        
-        DataItemBaseChained chainedItem = new MemoryChainedInputItem ( "chained-input" );
-        registerItem ( chainedItem );
-        testFolder.add ( "chained-input", chainedItem, new MapBuilder<String, Variant> ().getMap () );
+        MemoryChainedItem memoryChainedItem = new MemoryChainedItem ( "chained" );
+        registerItem ( memoryChainedItem );
+        testFolder.add ( "chained", memoryChainedItem, new MapBuilder<String, Variant> ().getMap () );
         
         registerItem ( item = new WriteDelayItem ( "write-delay" ) );
         testFolder.add ( "write delay", item, new MapBuilder<String, Variant> ()
