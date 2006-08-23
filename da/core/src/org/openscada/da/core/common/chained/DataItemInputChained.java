@@ -30,7 +30,6 @@ import java.util.Map;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.InvalidOperationException;
-import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.ItemListener;
 import org.openscada.da.core.data.NotConvertableException;
