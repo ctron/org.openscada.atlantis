@@ -19,7 +19,8 @@
 
 package org.openscada.da.core.common.chained;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,22 +30,15 @@ import java.util.Map;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.InvalidOperationException;
-import org.openscada.da.core.WriteAttributesOperationListener.Result;
-import org.openscada.da.core.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.common.AttributeManager;
-import org.openscada.da.core.common.DataItemBase;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.ItemListener;
-import org.openscada.da.core.common.WriteAttributesHelper;
-import org.openscada.da.core.data.AttributesHelper;
 import org.openscada.da.core.data.NotConvertableException;
 import org.openscada.da.core.data.NullValueException;
 import org.openscada.da.core.data.Variant;
 
-public class DataItemInputChained extends DataItemBase
+public class DataItemInputChained extends DataItemBaseChained
 {
-    private Map<String,Variant> _primaryAttributes = null;
-    private AttributeManager _secondaryAttributes = null;
     private Variant _primaryValue = new Variant ();
     private Variant _secondaryValue = new Variant ();
     
@@ -61,35 +55,6 @@ public class DataItemInputChained extends DataItemBase
     public DataItemInputChained ( String id )
     {
         this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT ) ) );
-    }
-    
-    synchronized public Results setAttributes ( Map<String, Variant> attributes )
-    {
-        Results results = new Results ();
-
-        // since set operation may cause the chain to change
-        // we work on a copy
-        List<InputChainItem> inputChain = new ArrayList<InputChainItem> ( _inputChain );
-        
-        for ( InputChainItem item : inputChain )
-        {
-            Results partialResult = item.setAttributes ( attributes );
-            if ( partialResult != null )
-            {
-                for ( Map.Entry<String, Result> entry : partialResult.entrySet () )
-                {
-                    if ( entry.getValue ().isError () )
-                    {
-                        attributes.remove ( entry.getKey () );
-                    }
-                    results.put ( entry.getKey (), entry.getValue () );
-                }
-            }
-        }
-        
-        process ();
-        
-        return WriteAttributesHelper.errorUnhandled ( results, attributes );
     }
     
     synchronized public void addInputChainElement ( InputChainItem item )
@@ -117,16 +82,8 @@ public class DataItemInputChained extends DataItemBase
         process ();
     }
     
-    synchronized public void updateAttributes ( Map<String, Variant> attributes )
-    {
-        Map<String, Variant> diff = new HashMap <String, Variant> ();
-        AttributesHelper.mergeAttributes ( _primaryAttributes, attributes, diff );
-        
-        if ( diff.size () > 0 )
-            process ();
-    }
-    
-    private void process ()
+    @Override
+    protected void process ()
     {
         Variant primaryValue = new Variant ( _primaryValue );
         Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
@@ -142,11 +99,6 @@ public class DataItemInputChained extends DataItemBase
             notifyValue ( _secondaryValue );
         }
         _secondaryAttributes.set ( primaryAttributes );
-    }
-
-    public Map<String, Variant> getAttributes ()
-    {
-        return _secondaryAttributes.get ();
     }
 
     public Variant getValue () throws InvalidOperationException
@@ -170,6 +122,12 @@ public class DataItemInputChained extends DataItemBase
             if ( _secondaryAttributes.get ().size () > 0 )
                 notifyAttributes ( _secondaryAttributes.get () );
         }
+    }
+
+    @Override
+    synchronized protected Collection<BaseChainItem> getChainItems ()
+    {
+        return Arrays.asList ( _inputChain.toArray ( new BaseChainItem[0] ) );
     }
     
 }
