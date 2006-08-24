@@ -13,7 +13,7 @@
     </description>
 	
 	<property name="version" value="0.4.0"/>
-	<property name="release" value="-${DSTAMP}-nightly"/>
+	<property name="release" value="-nightly"/>
 	<property name="build.base" value="build"/>
 	<property name="dist.base" value="dist"/>
 	<property name="upload.base" value="upload"/>
@@ -53,6 +53,7 @@
 
 	<target name="init">
 		<tstamp/>
+		<property name="release" value="-nightly"/>
 	</target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
