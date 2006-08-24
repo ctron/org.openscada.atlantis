@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     Aug 24, 2006 11:41:47 AM                                                        
+
+     OpenSCADA DA Test Client    
+     The OpenSCADA DA Test Client
+                   
+     jens                                                                
+     ====================================================================== -->
+<project name="OpenSCADA DA Test Client" default="default">
+    <description>
+            The OpenSCADA DA Test Client
+    </description>
+
+	<property name="eclipse.home" value="/home/jens/Desktop/eclipse32"/>
+	<property name="eclipse.builder.version" value="_3.2.0.v20060603"/>
+	
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="fetch, build, package" description="--> The OpenSCADA DA Test Client">
+        
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: fetch                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="fetch">
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build">
+    	<!-- java -jar <path>/startup.jar -application org.eclipse.ant.core.antRunner -->
+    	<echo>${basedir}</echo>
+		<java jar="${eclipse.home}/startup.jar" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts" >
+			<arg value="-application" />
+    		<arg value="org.eclipse.ant.core.antRunner" />
+			<arg value="-Dbuilder=${basedir}/ostc"/>
+    	</java>
+    </target>
+   	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: package                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="package">
+    	<java jar="${eclipse.home}/startup.jar" fork="true">
+    		<arg value="-application" />
+    	    <arg value="org.eclipse.ant.core.antRunner" />
+    	    <arg value="-buildfile" />
+	   		<arg value="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts/productBuild/productBuild.xml" />
+			<arg value="-Dbuilder=${basedir}/ostc_rcp"/>
+    	</java>
+    </target>
+
+
+
+</project>

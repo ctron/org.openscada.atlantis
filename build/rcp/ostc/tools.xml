@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<project name="tools project">
+
+	<target name="checkoutSvn">
+
+		<mkdir dir="${todir}" />
+		<exec dir="${todir}" failonerror="true" executable="svn">
+			<arg value="--force" />
+			<arg value="export" />
+			<arg value="${module}" />
+			<arg value="${todir}" />
+		</exec>
+
+	</target>
+
+</project>
