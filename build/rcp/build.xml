@@ -28,7 +28,7 @@
           target: build                      
          - - - - - - - - - - - - - - - - - -->
     <target name="build">
-		<java jar="${eclipse.home}/startup.jar" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts" >
+		<java jar="${eclipse.home}/startup.jar" failonerror="true" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts" >
 			<arg value="-application" />
     		<arg value="org.eclipse.ant.core.antRunner" />
 			<arg value="-Dbuilder=${basedir}/ostc"/>
@@ -41,7 +41,7 @@
           target: package                      
          - - - - - - - - - - - - - - - - - -->
     <target name="package" depends="build">
-    	<java jar="${eclipse.home}/startup.jar" fork="true">
+    	<java jar="${eclipse.home}/startup.jar" failonerror="true" fork="true">
     		<arg value="-application" />
     	    <arg value="org.eclipse.ant.core.antRunner" />
     	    <arg value="-buildfile" />
