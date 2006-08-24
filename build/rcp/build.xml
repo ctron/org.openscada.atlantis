@@ -63,7 +63,7 @@
     	</java>
     	<mkdir dir="${upload.base}/bin/ostc"/>
     	<copy todir="${upload.base}/bin/ostc">
-    		<fileset dir="${buildDirectory}/${buildLabel}">
+    		<fileset dir="${buildDirectory}/${buildType}.${buildId}">
     			<include name="**/*"/>
     		</fileset>
     	</copy>
