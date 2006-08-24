@@ -18,22 +18,14 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="fetch, build, package" description="--> The OpenSCADA DA Test Client">
+    <target name="default" depends="build, package" description="--> The OpenSCADA DA Test Client">
         
     </target>
 
-    <!-- - - - - - - - - - - - - - - - - - 
-          target: fetch                      
-         - - - - - - - - - - - - - - - - - -->
-    <target name="fetch">
-    </target>
-	
 	<!-- - - - - - - - - - - - - - - - - - 
           target: build                      
          - - - - - - - - - - - - - - - - - -->
     <target name="build">
-    	<!-- java -jar <path>/startup.jar -application org.eclipse.ant.core.antRunner -->
-    	<echo>${basedir}</echo>
 		<java jar="${eclipse.home}/startup.jar" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts" >
 			<arg value="-application" />
     		<arg value="org.eclipse.ant.core.antRunner" />
