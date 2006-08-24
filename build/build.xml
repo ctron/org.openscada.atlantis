@@ -13,7 +13,7 @@
     </description>
 	
 	<property name="version" value="0.4.0"/>
-	<property name="release" value="-nightly"/>
+	<property name="release" value="-${DSTAMP}-nightly"/>
 	<property name="build.base" value="build"/>
 	<property name="dist.base" value="dist"/>
 	<property name="upload.base" value="upload"/>
@@ -45,12 +45,15 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="all" depends="clean, fetch, compile, dist, dist_src, pack" description="">
+    <target name="all" depends="init, clean, fetch, compile, dist, dist_src, pack" description="">
     	<ant antfile="build.xml" dir="rcp">
     	</ant>
         <echo>Have a nice day ;-)</echo>
     </target>
 
+	<target name="init">
+		<tstamp/>
+	</target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
           target: fetch_svn_module                      
