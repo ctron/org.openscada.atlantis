@@ -15,8 +15,8 @@
 	<property name="eclipse.home" value="/home/user/eclipse"/>
 	<property name="eclipse.builder.version" value="_3.2.0.v20060603"/>
 	<property name="buildDirectory" value="${user.home}/eclipse.build"/>
-	<property name="configs" value="win32,win32,x86&amp;linux,gtk,x86&amp;macos,carbon,ppc"/>
-	
+	<property name="configs" value="win32,win32,x86&amp;linux,gtk,x86&amp;macosx,carbon,ppc"/>
+
     <!-- ================================= 
           target: default              
          ================================= -->
