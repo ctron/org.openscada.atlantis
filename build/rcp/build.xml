@@ -15,6 +15,7 @@
 	<property name="eclipse.home" value="/home/jens/Desktop/eclipse32"/>
 	<property name="eclipse.builder.version" value="_3.2.0.v20060603"/>
 	<property name="baseLocation" value="/home/user/eclipse"/>
+	<property name="buildDirectory" value="${user.home}/eclipse.build"/>
 	
     <!-- ================================= 
           target: default              
@@ -32,6 +33,7 @@
     		<arg value="org.eclipse.ant.core.antRunner" />
 			<arg value="-Dbuilder=${basedir}/ostc"/>
     		<arg value="-DbaseLocation=${baseLocation}"/>
+			<arg value="-DbuildDirectory=${buildDirectory}"/>
     	</java>
     </target>
    	
@@ -46,6 +48,7 @@
 	   		<arg value="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts/productBuild/productBuild.xml" />
 			<arg value="-Dbuilder=${basedir}/ostc_rcp"/>
     		<arg value="-DbaseLocation=${baseLocation}"/>
+    		<arg value="-DbuildDirectory=${buildDirectory}"/>
     	</java>
     </target>
 
