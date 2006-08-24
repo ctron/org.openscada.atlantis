@@ -2,7 +2,7 @@
 <project name="openscada_da_autobuild" default="all">
 	
 	<target name="all">
-		<tsamp/>
+		<tstamp/>
 		<ant antfile="build.xml">
 			<property name="release" value="-${DSTAMP}-nightly"/>
 			<property name="buildId" value="-${DSTAMP}-nightly"/>
