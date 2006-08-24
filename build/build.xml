@@ -53,7 +53,6 @@
 
 	<target name="init">
 		<tstamp/>
-		<property name="release" value="-${DSTAMP}-nightly"/>
 	</target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 

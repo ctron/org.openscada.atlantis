@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<project name="openscada_da_autobuild" default="all">
+	
+	<target name="all">
+		<tsamp/>
+		<ant antfile="build.xml">
+			<property name="release" value="-${DSTAMP}-nightly"/>
+			<property name="buildId" value="-${DSTAMP}-nightly"/>
+			<property name="upload.base" value="/var/vhosts/openscada/download/atlantis/autobuild/current/" />
+			<property name="api.href.base" value="http://openscada.org/download/atlantis/autobuild/current/docs/api/" />
+		</ant>
+	</target>
+	
+</project>

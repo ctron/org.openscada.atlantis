@@ -27,7 +27,6 @@
 	
 	<target name="init">
 		<tstamp/>
-		<property name="buildId" value="-${DSTAMP}-nightly"/>
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
