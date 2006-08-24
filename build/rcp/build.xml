@@ -40,7 +40,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: package                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="package">
+    <target name="package" depends="build">
     	<java jar="${eclipse.home}/startup.jar" fork="true">
     		<arg value="-application" />
     	    <arg value="org.eclipse.ant.core.antRunner" />
