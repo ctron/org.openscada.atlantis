@@ -5,7 +5,8 @@
 		<tstamp/>
 		<ant antfile="build.xml">
 			<property name="release" value="-${DSTAMP}-nightly"/>
-			<property name="buildLabel" value="Nightly-${DSTAMP}"/>
+			<property name="buildType" value="N"/>
+			<property name="buildId" value="Nightly-${DSTAMP}"/>
 			<property name="upload.base" value="/var/vhosts/openscada/download/atlantis/autobuild/current/" />
 			<property name="api.href.base" value="http://openscada.org/download/atlantis/autobuild/current/docs/api/" />
 		</ant>
