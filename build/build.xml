@@ -46,7 +46,7 @@
           target: default              
          ================================= -->
     <target name="all" depends="clean, fetch, compile, dist, dist_src, pack" description="">
-    	<ant antfile="rcp/build.xml" dir="rcp">
+    	<ant antfile="build.xml" dir="rcp">
     	</ant>
         <echo>Have a nice day ;-)</echo>
     </target>
