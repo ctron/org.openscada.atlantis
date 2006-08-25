@@ -15,7 +15,7 @@
 	<property name="eclipse.home" value="/home/user/eclipse"/>
 	<property name="eclipse.builder.version" value="_3.2.0.v20060603"/>
 	<property name="buildDirectory" value="${basedir}/eclipse.build"/>
-	<property name="configs" value="win32,win32,x86&amp;linux,gtk,x86&amp;macosx,carbon&amp;solaris,gtk,sparc"/>
+	<property name="configs" value="win32,win32,x86&amp;linux,gtk,x86&amp;macosx,carbon,ppc&amp;solaris,gtk,sparc"/>
 	<property name="buildType" value="I"/>
 	<property name="buildId" value="AutoBuild"/>
 	
