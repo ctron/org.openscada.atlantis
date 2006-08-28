@@ -5,7 +5,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/log4j"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_sysinfo"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_net_base"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_server_common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_net_base"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_utils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_testserver"/>

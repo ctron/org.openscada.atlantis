@@ -19,7 +19,7 @@
 
 package org.openscada.da.server.net;
 
-import org.openscada.da.core.Hive;
+import org.openscada.da.core.server.Hive;
 import org.openscada.net.base.ConnectionHandler;
 import org.openscada.net.base.ConnectionHandlerFactory;
 
