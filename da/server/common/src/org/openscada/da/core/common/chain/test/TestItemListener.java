@@ -26,9 +26,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.junit.Assert;
+import org.openscada.da.core.Variant;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.ItemListener;
-import org.openscada.da.core.data.Variant;
 
 public class TestItemListener implements ItemListener
 {

@@ -22,13 +22,13 @@ package org.openscada.da.core.common;
 import java.util.EnumSet;
 import java.util.Map;
 
-import org.openscada.da.core.IODirection;
-import org.openscada.da.core.InvalidOperationException;
-import org.openscada.da.core.WriteAttributesOperationListener.Result;
-import org.openscada.da.core.WriteAttributesOperationListener.Results;
-import org.openscada.da.core.data.NotConvertableException;
-import org.openscada.da.core.data.NullValueException;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.NotConvertableException;
+import org.openscada.da.core.NullValueException;
+import org.openscada.da.core.Variant;
+import org.openscada.da.core.server.IODirection;
+import org.openscada.da.core.server.InvalidOperationException;
+import org.openscada.da.core.server.WriteAttributesOperationListener.Result;
+import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 
 public class MemoryDataItem extends DataItemBase {
 

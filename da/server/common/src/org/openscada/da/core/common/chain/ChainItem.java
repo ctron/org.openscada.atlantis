@@ -21,8 +21,8 @@ package org.openscada.da.core.common.chain;
 
 import java.util.Map;
 
-import org.openscada.da.core.WriteAttributesOperationListener.Results;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.Variant;
+import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 
 public interface ChainItem
 {

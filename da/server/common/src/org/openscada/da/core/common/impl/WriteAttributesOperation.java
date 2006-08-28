@@ -21,10 +21,10 @@ package org.openscada.da.core.common.impl;
 
 import java.util.Map;
 
-import org.openscada.da.core.WriteAttributesOperationListener;
-import org.openscada.da.core.WriteAttributesOperationListener.Results;
+import org.openscada.da.core.Variant;
 import org.openscada.da.core.common.DataItem;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.server.WriteAttributesOperationListener;
+import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 import org.openscada.utils.jobqueue.RunnableCancelOperation;
 
 public class WriteAttributesOperation extends RunnableCancelOperation

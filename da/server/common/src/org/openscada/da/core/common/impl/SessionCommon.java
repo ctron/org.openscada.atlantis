@@ -19,12 +19,12 @@
 
 package org.openscada.da.core.common.impl;
 
-import org.openscada.da.core.ItemChangeListener;
-import org.openscada.da.core.ItemListListener;
-import org.openscada.da.core.browser.FolderListener;
+import org.openscada.da.core.server.ItemChangeListener;
+import org.openscada.da.core.server.ItemListListener;
+import org.openscada.da.core.server.browser.FolderListener;
 
 
-public class SessionCommon implements org.openscada.da.core.Session
+public class SessionCommon implements org.openscada.da.core.server.Session
 {
 	private HiveCommon _hive;
 	private ItemChangeListener _listener;

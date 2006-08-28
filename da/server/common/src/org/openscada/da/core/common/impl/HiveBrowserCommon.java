@@ -25,14 +25,14 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.core.InvalidSessionException;
-import org.openscada.da.core.Session;
-import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.browser.HiveBrowser;
-import org.openscada.da.core.browser.Location;
-import org.openscada.da.core.browser.NoSuchFolderException;
 import org.openscada.da.core.browser.common.Folder;
 import org.openscada.da.core.browser.common.FolderListener;
+import org.openscada.da.core.server.InvalidSessionException;
+import org.openscada.da.core.server.Session;
+import org.openscada.da.core.server.browser.Entry;
+import org.openscada.da.core.server.browser.HiveBrowser;
+import org.openscada.da.core.server.browser.Location;
+import org.openscada.da.core.server.browser.NoSuchFolderException;
 
 public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, SessionListener
 {

@@ -28,15 +28,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.IODirection;
-import org.openscada.da.core.WriteAttributesOperationListener.Result;
-import org.openscada.da.core.WriteAttributesOperationListener.Results;
+import org.openscada.da.core.AttributesHelper;
+import org.openscada.da.core.Variant;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemBase;
 import org.openscada.da.core.common.WriteAttributesHelper;
-import org.openscada.da.core.data.AttributesHelper;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.server.DataItemInformation;
+import org.openscada.da.core.server.IODirection;
+import org.openscada.da.core.server.WriteAttributesOperationListener.Result;
+import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 
 public abstract class DataItemBaseChained extends DataItemBase
 {

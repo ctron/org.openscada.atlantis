@@ -22,8 +22,8 @@ package org.openscada.da.core.browser.common.query;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openscada.da.core.Variant;
 import org.openscada.da.core.common.DataItem;
-import org.openscada.da.core.data.Variant;
 
 public class ItemDescriptor
 {

@@ -21,11 +21,11 @@ package org.openscada.da.core.common;
 
 import java.util.EnumSet;
 
-import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.IODirection;
+import org.openscada.da.core.server.DataItemInformation;
+import org.openscada.da.core.server.IODirection;
 
 public class DataItemInformationBase implements
-        org.openscada.da.core.DataItemInformation
+        org.openscada.da.core.server.DataItemInformation
 {
     private String _name = "";
     private EnumSet<IODirection> _ioDirection = EnumSet.noneOf ( IODirection.class );

@@ -21,9 +21,9 @@ package org.openscada.da.core.common.chain.item;
 
 import java.util.Map;
 
+import org.openscada.da.core.Variant;
 import org.openscada.da.core.common.chain.BaseChainItemCommon;
 import org.openscada.da.core.common.chain.VariantBinder;
-import org.openscada.da.core.data.Variant;
 
 public abstract class ScaleBaseItem extends BaseChainItemCommon
 {

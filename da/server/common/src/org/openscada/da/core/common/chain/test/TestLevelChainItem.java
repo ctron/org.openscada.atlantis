@@ -26,10 +26,10 @@ import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openscada.da.core.IODirection;
-import org.openscada.da.core.WriteAttributesOperationListener.Results;
+import org.openscada.da.core.Variant;
 import org.openscada.da.core.common.chain.item.LevelAlarmChainItem;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.server.IODirection;
+import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 import org.openscada.utils.collection.MapBuilder;
 
 public class TestLevelChainItem extends TestInputChain

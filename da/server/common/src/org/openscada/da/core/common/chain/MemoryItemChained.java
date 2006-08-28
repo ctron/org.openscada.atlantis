@@ -23,13 +23,13 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.IODirection;
-import org.openscada.da.core.InvalidOperationException;
+import org.openscada.da.core.NotConvertableException;
+import org.openscada.da.core.NullValueException;
+import org.openscada.da.core.Variant;
 import org.openscada.da.core.common.DataItemInformationBase;
-import org.openscada.da.core.data.NotConvertableException;
-import org.openscada.da.core.data.NullValueException;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.server.DataItemInformation;
+import org.openscada.da.core.server.IODirection;
+import org.openscada.da.core.server.InvalidOperationException;
 
 public class MemoryItemChained extends DataItemInputChained
 {    

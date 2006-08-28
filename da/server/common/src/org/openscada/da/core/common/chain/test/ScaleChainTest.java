@@ -25,14 +25,14 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openscada.da.core.IODirection;
-import org.openscada.da.core.InvalidOperationException;
+import org.openscada.da.core.NotConvertableException;
+import org.openscada.da.core.NullValueException;
+import org.openscada.da.core.Variant;
 import org.openscada.da.core.common.chain.MemoryItemChained;
 import org.openscada.da.core.common.chain.item.ScaleInputItem;
 import org.openscada.da.core.common.chain.item.ScaleOutputItem;
-import org.openscada.da.core.data.NotConvertableException;
-import org.openscada.da.core.data.NullValueException;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.server.IODirection;
+import org.openscada.da.core.server.InvalidOperationException;
 
 public class ScaleChainTest
 {

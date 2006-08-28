@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.browser.Location;
-import org.openscada.da.core.browser.NoSuchFolderException;
 import org.openscada.da.core.browser.common.FolderListener;
+import org.openscada.da.core.server.browser.Entry;
+import org.openscada.da.core.server.browser.Location;
+import org.openscada.da.core.server.browser.NoSuchFolderException;
 
 public class GroupFolder implements StorageBasedFolder
 {

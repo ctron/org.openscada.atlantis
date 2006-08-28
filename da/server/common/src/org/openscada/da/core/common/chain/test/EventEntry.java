@@ -21,8 +21,8 @@ package org.openscada.da.core.common.chain.test;
 
 import java.util.Map;
 
+import org.openscada.da.core.Variant;
 import org.openscada.da.core.common.DataItem;
-import org.openscada.da.core.data.Variant;
 
 public class EventEntry
 {

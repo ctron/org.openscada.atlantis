@@ -21,8 +21,8 @@ package org.openscada.da.core.browser.common;
 
 import java.util.Stack;
 
-import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.browser.NoSuchFolderException;
+import org.openscada.da.core.server.browser.Entry;
+import org.openscada.da.core.server.browser.NoSuchFolderException;
 
 
 public interface Folder

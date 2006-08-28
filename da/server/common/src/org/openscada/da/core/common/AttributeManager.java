@@ -22,8 +22,8 @@ package org.openscada.da.core.common;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.da.core.data.AttributesHelper;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.AttributesHelper;
+import org.openscada.da.core.Variant;
 
 public class AttributeManager
 {
