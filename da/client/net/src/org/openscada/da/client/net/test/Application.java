@@ -32,11 +32,11 @@ import org.openscada.da.client.net.ConnectionInfo;
 import org.openscada.da.client.net.ConnectionStateListener;
 import org.openscada.da.client.net.ItemUpdateListener;
 import org.openscada.da.client.net.Connection.State;
+import org.openscada.da.core.Location;
 import org.openscada.da.core.NullValueException;
 import org.openscada.da.core.Variant;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.IODirection;
-import org.openscada.da.core.server.browser.Location;
 import org.openscada.utils.timing.Scheduler;
 
 public class Application
