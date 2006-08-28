@@ -27,9 +27,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.EnumSet;
 
 import org.junit.Test;
-import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.IODirection;
 import org.openscada.da.core.common.DataItemInformationBase;
+import org.openscada.da.core.server.DataItemInformation;
+import org.openscada.da.core.server.IODirection;
 import org.openscada.net.da.handler.EnumEvent;
 
 public class EnumEventTest

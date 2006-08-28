@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.core.IODirection;
-import org.openscada.da.core.browser.DataItemEntry;
-import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.browser.FolderEntry;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.Variant;
+import org.openscada.da.core.server.IODirection;
+import org.openscada.da.core.server.browser.DataItemEntry;
+import org.openscada.da.core.server.browser.Entry;
+import org.openscada.da.core.server.browser.FolderEntry;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.MapValue;

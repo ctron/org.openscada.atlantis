@@ -22,9 +22,9 @@ package org.openscada.net.da.handler;
 import java.util.EnumSet;
 import java.util.Map;
 
-import org.openscada.da.core.IODirection;
-import org.openscada.da.core.browser.DataItemEntry;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.Variant;
+import org.openscada.da.core.server.IODirection;
+import org.openscada.da.core.server.browser.DataItemEntry;
 
 public class DataItemEntryCommon extends EntryCommon implements DataItemEntry
 {

@@ -21,9 +21,9 @@ package org.openscada.net.da.handler;
 
 import java.util.Map;
 
-import org.openscada.da.core.WriteAttributesOperationListener.Results;
-import org.openscada.da.core.WriteAttributesOperationListener.Result;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.Variant;
+import org.openscada.da.core.server.WriteAttributesOperationListener.Result;
+import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;

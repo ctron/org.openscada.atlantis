@@ -21,8 +21,8 @@ package org.openscada.net.da.handler;
 
 import java.util.Map;
 
-import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.Variant;
+import org.openscada.da.core.server.browser.Entry;
 
 public class EntryCommon implements Entry
 {

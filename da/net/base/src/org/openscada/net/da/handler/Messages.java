@@ -24,10 +24,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openscada.da.core.IODirection;
-import org.openscada.da.core.data.NotConvertableException;
-import org.openscada.da.core.data.NullValueException;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.NotConvertableException;
+import org.openscada.da.core.NullValueException;
+import org.openscada.da.core.Variant;
+import org.openscada.da.core.server.IODirection;
 import org.openscada.net.base.data.BooleanValue;
 import org.openscada.net.base.data.DoubleValue;
 import org.openscada.net.base.data.IntegerValue;

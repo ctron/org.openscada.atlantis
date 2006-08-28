@@ -23,9 +23,9 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.IODirection;
 import org.openscada.da.core.common.DataItemInformationBase;
+import org.openscada.da.core.server.DataItemInformation;
+import org.openscada.da.core.server.IODirection;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.utils.lang.Holder;
