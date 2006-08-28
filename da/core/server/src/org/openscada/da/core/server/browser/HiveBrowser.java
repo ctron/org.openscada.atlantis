@@ -19,6 +19,7 @@
 
 package org.openscada.da.core.server.browser;
 
+import org.openscada.da.core.Location;
 import org.openscada.da.core.server.InvalidSessionException;
 import org.openscada.da.core.server.Session;
 

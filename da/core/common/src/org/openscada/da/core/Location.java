@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.server.browser;
+package org.openscada.da.core;
 
 import java.util.Arrays;
 import java.util.List;
