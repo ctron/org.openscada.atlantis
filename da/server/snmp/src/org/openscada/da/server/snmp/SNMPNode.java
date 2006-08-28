@@ -30,6 +30,7 @@ import net.percederberg.mibble.MibValueSymbol;
 import net.percederberg.mibble.value.ObjectIdentifierValue;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.core.Variant;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.browser.common.query.AttributeNameProvider;
 import org.openscada.da.core.browser.common.query.GroupFolder;
@@ -40,7 +41,6 @@ import org.openscada.da.core.browser.common.query.SplitGroupProvider;
 import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.DataItemInputCommon;
 import org.openscada.da.core.common.impl.HiveCommon;
-import org.openscada.da.core.data.Variant;
 import org.openscada.da.server.snmp.items.SNMPItem;
 import org.openscada.da.server.snmp.utils.ListOIDWalker;
 import org.openscada.da.server.snmp.utils.MIBManager;
