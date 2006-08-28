@@ -21,7 +21,7 @@ package org.openscada.da.client.net;
 
 import java.util.Collection;
 
-import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.server.DataItemInformation;
 
 public interface ItemListListener
 {

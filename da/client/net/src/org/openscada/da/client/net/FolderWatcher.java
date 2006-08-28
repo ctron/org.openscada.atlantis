@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 
-import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.browser.Location;
+import org.openscada.da.core.server.browser.Entry;
+import org.openscada.da.core.server.browser.Location;
 
 public class FolderWatcher extends Observable implements FolderListener
 {

@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Set;
 
-import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.server.DataItemInformation;
 
 public class ItemList extends Observable implements ItemListListener
 {

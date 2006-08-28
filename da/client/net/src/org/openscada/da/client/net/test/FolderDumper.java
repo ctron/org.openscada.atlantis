@@ -25,10 +25,10 @@ import java.util.Observer;
 import org.apache.log4j.Logger;
 import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.net.FolderWatcher;
-import org.openscada.da.core.browser.DataItemEntry;
-import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.browser.FolderEntry;
-import org.openscada.da.core.browser.Location;
+import org.openscada.da.core.server.browser.DataItemEntry;
+import org.openscada.da.core.server.browser.Entry;
+import org.openscada.da.core.server.browser.FolderEntry;
+import org.openscada.da.core.server.browser.Location;
 
 public class FolderDumper implements Observer
 {
