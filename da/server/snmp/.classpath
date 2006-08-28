@@ -5,8 +5,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_server_common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_utils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/log4j"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SNMP4J"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/mibble"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ext_SNMP4J"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ext_mibble"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ext_xmlbeans"/>
 	<classpathentry kind="lib" path="SNMPServerSchema.jar"/>
 	<classpathentry kind="output" path="bin"/>
