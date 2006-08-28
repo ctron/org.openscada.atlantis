@@ -30,7 +30,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.da.client.test.impl.HiveConnection;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.Variant;
 import org.openscada.net.base.LongRunningController;
 import org.openscada.net.base.LongRunningOperation;
 import org.openscada.net.base.LongRunningController.State;

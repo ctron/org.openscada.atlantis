@@ -1,8 +1,8 @@
 package org.openscada.da.client.test.impl;
 
-import org.openscada.da.core.data.NotConvertableException;
-import org.openscada.da.core.data.NullValueException;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.NotConvertableException;
+import org.openscada.da.core.NullValueException;
+import org.openscada.da.core.Variant;
 
 public class VariantHelper
 {

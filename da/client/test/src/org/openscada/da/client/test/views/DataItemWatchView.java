@@ -51,7 +51,7 @@ import org.openscada.da.client.net.ItemUpdateListener;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.VariantHelper;
 import org.openscada.da.client.test.impl.VariantHelper.ValueType;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.Variant;
 
 
 /**

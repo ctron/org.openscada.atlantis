@@ -19,7 +19,7 @@
 
 package org.openscada.da.client.test.impl;
 
-import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.server.DataItemInformation;
 
 public class HiveItem
 {

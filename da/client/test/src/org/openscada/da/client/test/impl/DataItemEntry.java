@@ -25,8 +25,8 @@ import java.util.Map;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
-import org.openscada.da.core.IODirection;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.Variant;
+import org.openscada.da.core.server.IODirection;
 
 public class DataItemEntry extends BrowserEntry
 {

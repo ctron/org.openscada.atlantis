@@ -36,8 +36,8 @@ import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.FolderEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.views.DataItemWatchView;
-import org.openscada.da.core.IODirection;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.Variant;
+import org.openscada.da.core.server.IODirection;
 
 public class NewWatchWizard extends Wizard implements INewWizard
 {

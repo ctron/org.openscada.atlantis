@@ -62,7 +62,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.VariantHelper.ValueType;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.Variant;
 
 class WriteAttributesOperationWizardValuePage extends WizardPage implements IWizardPage
 {

@@ -63,7 +63,7 @@ import org.openscada.da.client.test.impl.FolderEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveItem;
 import org.openscada.da.client.test.impl.HiveRepository;
-import org.openscada.da.core.IODirection;
+import org.openscada.da.core.server.IODirection;
 
 
 /**

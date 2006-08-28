@@ -60,7 +60,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.openscada.da.client.net.DataItem;
 import org.openscada.da.client.net.ItemUpdateListener;
 import org.openscada.da.client.test.impl.HiveItem;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.Variant;
 
 
 /**

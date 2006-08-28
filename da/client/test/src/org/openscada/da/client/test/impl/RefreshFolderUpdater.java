@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
-import org.openscada.da.core.browser.Entry;
+import org.openscada.da.core.server.browser.Entry;
 
 public class RefreshFolderUpdater extends FolderUpdater
 {

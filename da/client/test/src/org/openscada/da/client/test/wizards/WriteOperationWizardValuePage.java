@@ -39,9 +39,9 @@ import org.eclipse.swt.widgets.Text;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.VariantHelper.ValueType;
-import org.openscada.da.core.data.NotConvertableException;
-import org.openscada.da.core.data.NullValueException;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.NotConvertableException;
+import org.openscada.da.core.NullValueException;
+import org.openscada.da.core.Variant;
 
 class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
 {

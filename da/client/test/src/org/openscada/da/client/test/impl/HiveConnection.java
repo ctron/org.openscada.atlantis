@@ -34,8 +34,8 @@ import org.openscada.da.client.net.ConnectionStateListener;
 import org.openscada.da.client.net.Connection.State;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
-import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.Variant;
+import org.openscada.da.core.server.DataItemInformation;
 
 public class HiveConnection extends Observable implements IActionFilter
 {
