@@ -19,20 +19,17 @@
 
 package org.openscada.da.server.test.items;
 
-import java.util.Collection;
 import java.util.EnumSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
-import org.openscada.da.core.IODirection;
+import org.openscada.da.core.Variant;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.chain.AttributeBinder;
 import org.openscada.da.core.common.chain.BaseChainItemCommon;
 import org.openscada.da.core.common.chain.ChainItem;
 import org.openscada.da.core.common.chain.ChainProcessEntry;
 import org.openscada.da.core.common.chain.MemoryItemChained;
-import org.openscada.da.core.data.Variant;
+import org.openscada.da.core.server.IODirection;
 
 public class MemoryChainedItem extends MemoryItemChained
 {

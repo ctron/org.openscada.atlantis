@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.openscada.da.core.Variant;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.browser.common.query.GroupFolder;
 import org.openscada.da.core.browser.common.query.GroupProvider;
@@ -35,7 +36,6 @@ import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.MemoryDataItem;
 import org.openscada.da.core.common.impl.HiveCommon;
-import org.openscada.da.core.data.Variant;
 import org.openscada.da.server.test.items.FactoryMemoryCell;
 import org.openscada.da.server.test.items.MemoryCellFactory;
 import org.openscada.da.server.test.items.MemoryCellItem;
