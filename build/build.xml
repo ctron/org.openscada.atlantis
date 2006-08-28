@@ -26,20 +26,20 @@
 	<property name="api.href.base" value="http://openscada.org/download/atlantis/${version}${release}/docs/api"/>
 
 	<path id="log4j.classpath">
-		<pathelement location="${source.base}/log4j/log4j-1.2.13.jar"/>
+		<pathelement location="${source.base}/ext_log4j/log4j-1.2.13.jar"/>
 	</path>
 	<path id="junit4.classpath">
 		<pathelement location="${source.base}/ext_junit/junit-4.1.jar"/>
 	</path>
 	<path id="snmp.classpath">
-		<pathelement location="${source.base}/SNMP4J/SNMP4J.jar"/>
-		<pathelement location="${source.base}/mibble/grammatica-bin-1.4.jar"/>
-		<pathelement location="${source.base}/mibble/mibble-mibs-2.7.jar"/>
-		<pathelement location="${source.base}/mibble/mibble-parser-2.7.jar"/>
+		<pathelement location="${source.base}/ext_SNMP4J/SNMP4J.jar"/>
+		<pathelement location="${source.base}/ext_mibble/grammatica-bin-1.4.jar"/>
+		<pathelement location="${source.base}/ext_mibble/mibble-mibs-2.7.jar"/>
+		<pathelement location="${source.base}/ext_mibble/mibble-parser-2.7.jar"/>
 	</path>
 	<path id="xmlbean.classpath">
-		<pathelement location="${source.base}/xmlbeans/xbean.jar"/>
-		<pathelement location="${source.base}/xmlbeans/jsr173_1.0_api.jar"/>
+		<pathelement location="${source.base}/ext_xmlbeans/xbean.jar"/>
+		<pathelement location="${source.base}/ext_xmlbeans/jsr173_1.0_api.jar"/>
 	</path>
 
     <!-- ================================= 
@@ -100,8 +100,18 @@
         </antcall>
         <antcall target="fetch_module">
         	<param name="url" value="${svn.openscada}"/>
-        	<param name="module" value="da/core"/>
-        	<param name="todir" value="openscada_da_core"/>
+        	<param name="module" value="da/core/common"/>
+        	<param name="todir" value="openscada_da_core_common"/>
+        </antcall>
+        <antcall target="fetch_module">
+           	<param name="url" value="${svn.openscada}"/>
+           	<param name="module" value="da/core/server"/>
+        	<param name="todir" value="openscada_da_core_server"/>
+        </antcall>
+        <antcall target="fetch_module">
+          	<param name="url" value="${svn.openscada}"/>
+           	<param name="module" value="da/server/common"/>
+           	<param name="todir" value="openscada_da_server_common"/>
         </antcall>
         <antcall target="fetch_module">
         	<param name="url" value="${svn.openscada}"/>
@@ -146,7 +156,7 @@
         <antcall target="fetch_module">
         	<param name="url" value="${svn.ext}"/>
         	<param name="module" value="log4j"/>
-        	<param name="todir" value="log4j"/>
+        	<param name="todir" value="ext_log4j"/>
         </antcall>
         <antcall target="fetch_module">
         	<param name="url" value="${svn.ext}"/>
@@ -156,17 +166,17 @@
         <antcall target="fetch_module">
         	<param name="url" value="${svn.ext}"/>
         	<param name="module" value="SNMP4J"/>
-        	<param name="todir" value="SNMP4J"/>
+        	<param name="todir" value="ext_SNMP4J"/>
         </antcall>
         <antcall target="fetch_module">
         	<param name="url" value="${svn.ext}"/>
         	<param name="module" value="mibble"/>
-        	<param name="todir" value="mibble"/>
+        	<param name="todir" value="ext_mibble"/>
         </antcall>
         <antcall target="fetch_module">
         	<param name="url" value="${svn.ext}"/>
         	<param name="module" value="xmlbeans"/>
-        	<param name="todir" value="xmlbeans"/>
+        	<param name="todir" value="ext_xmlbeans"/>
         </antcall>
 
     </target>
@@ -174,7 +184,7 @@
 	<!-- ================================= 
           target: compile              
          ================================= -->
-    <target name="compile" depends="fetch,create_build_base,utils,net_base,da_core,da_net_base,da_server_net,da_testserver,da_sysinfo,da_snmpserver,da_client_net">
+    <target name="compile" depends="fetch,create_build_base,utils,net_base,da_core_common,da_core_server,da_net_base,da_server_net,da_testserver,da_sysinfo,da_snmpserver,da_client_net">
     </target>
 	
 	<target name="create_build_base">
@@ -218,13 +228,13 @@
 		</javac>
 	</target>
 	
-	<target name="da_core" depends="utils">
-		<mkdir dir="${build.base}/da_core"/>
+	<target name="da_core_common" depends="utils">
+		<mkdir dir="${build.base}/da_core_common"/>
 		<javac
-			srcdir="${source.base}/openscada_da_core/src"
+			srcdir="${source.base}/openscada_da_core_common/src"
 			source="1.5"
 			target="1.5"
-			destdir="${build.base}/da_core"
+			destdir="${build.base}/da_core_common"
 			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
@@ -233,7 +243,40 @@
 		</javac>
 	</target>
 	
-	<target name="da_net_base" depends="utils,da_core,net_base">
+	<target name="da_core_server" depends="utils,da_core_common">
+		<mkdir dir="${build.base}/da_core_server"/>
+		<javac
+			srcdir="${source.base}/openscada_da_core_server/src"
+			source="1.5"
+			target="1.5"
+			destdir="${build.base}/da_core_server"
+			encoding="utf-8"
+		>
+				<classpath location="${build.base}/utils"/>
+				<classpath location="${build.base}/da_core_common"/>
+				<classpath refid="log4j.classpath"/>
+				<classpath refid="junit4.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="da_server_common" depends="utils,da_core_server">
+		<mkdir dir="${build.base}/da_server_common"/>
+		<javac
+			srcdir="${source.base}/openscada_da_server_common/src"
+			source="1.5"
+			target="1.5"
+			destdir="${build.base}/da_server_common"
+			encoding="utf-8"
+		>
+				<classpath location="${build.base}/utils"/>
+				<classpath location="${build.base}/da_core_common"/>
+				<classpath location="${build.base}/da_core_server"/>
+				<classpath refid="log4j.classpath"/>
+				<classpath refid="junit4.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="da_net_base" depends="utils,da_core_server,da_core_common,da_server_common,net_base">
 		<mkdir dir="${build.base}/da_net_base"/>
 		<javac
 			srcdir="${source.base}/openscada_da_net_base/src"
@@ -243,14 +286,16 @@
 			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
-				<classpath location="${build.base}/da_core"/>
+				<classpath location="${build.base}/da_core_common"/>
+				<classpath location="${build.base}/da_core_server"/>
+				<classpath location="${build.base}/da_server_common"/>
 				<classpath location="${build.base}/net_base"/>
 				<classpath refid="log4j.classpath"/>
 				<classpath refid="junit4.classpath"/>
 		</javac>
 	</target>
 	
-	<target name="da_server_net" depends="utils,da_core,net_base,da_net_base">
+	<target name="da_server_net" depends="utils,da_core_server,net_base,da_net_base">
 		<mkdir dir="${build.base}/da_server_net"/>
 		<javac
 			srcdir="${source.base}/openscada_da_server_net/src"
@@ -260,7 +305,8 @@
 			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
-				<classpath location="${build.base}/da_core"/>
+				<classpath location="${build.base}/da_core_common"/>
+				<classpath location="${build.base}/da_core_server"/>
 				<classpath location="${build.base}/net_base"/>
 				<classpath location="${build.base}/da_net_base"/>
 				<classpath refid="log4j.classpath"/>
@@ -268,7 +314,7 @@
 		</javac>
 	</target>
 	
-	<target name="da_testserver" depends="utils,da_core">
+	<target name="da_testserver" depends="utils,da_server_common">
 		<mkdir dir="${build.base}/da_testserver"/>
 		<javac
 			srcdir="${source.base}/openscada_da_testserver/src"
@@ -278,13 +324,15 @@
 			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
-				<classpath location="${build.base}/da_core"/>
+				<classpath location="${build.base}/da_core_common"/>
+				<classpath location="${build.base}/da_core_server"/>
+				<classpath location="${build.base}/da_server_common"/>
 				<classpath refid="log4j.classpath"/>
 				<classpath refid="junit4.classpath"/>
 		</javac>
 	</target>
 	
-	<target name="da_sysinfo" depends="utils,da_core">
+	<target name="da_sysinfo" depends="utils,da_server_common">
 		<mkdir dir="${build.base}/da_sysinfo"/>
 		<javac
 			srcdir="${source.base}/openscada_da_sysinfo/src"
@@ -294,13 +342,15 @@
 			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
-				<classpath location="${build.base}/da_core"/>
+				<classpath location="${build.base}/da_core_common"/>
+				<classpath location="${build.base}/da_core_server"/>
+				<classpath location="${build.base}/da_server_common"/>
 				<classpath refid="log4j.classpath"/>
 				<classpath refid="junit4.classpath"/>
 		</javac>
 	</target>
 	
-	<target name="da_snmpserver" depends="utils,da_core">
+	<target name="da_snmpserver" depends="utils,da_server_common">
 		<mkdir dir="${build.base}/da_snmpserver"/>
 		<ant dir="${source.base}/openscada_da_snmpserver" antfile="build.xml" target="main">
 		</ant>
@@ -312,7 +362,9 @@
 			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
-				<classpath location="${build.base}/da_core"/>
+				<classpath location="${build.base}/da_core_common"/>
+				<classpath location="${build.base}/da_core_server"/>
+				<classpath location="${build.base}/da_server_common"/>
 				<classpath refid="log4j.classpath"/>
 				<classpath refid="junit4.classpath"/>
 				<classpath refid="snmp.classpath"/>
@@ -325,7 +377,7 @@
 		</javac>
 	</target>
 
-	<target name="da_client_net" depends="utils,da_core,net_base,da_net_base">
+	<target name="da_client_net" depends="utils,da_core_common,da_core_server,net_base,da_net_base">
 		<mkdir dir="${build.base}/da_client_net"/>
 		<javac
 			srcdir="${source.base}/openscada_da_client_net/src"
@@ -335,7 +387,8 @@
 			encoding="utf-8"
 		>
 				<classpath location="${build.base}/utils"/>
-				<classpath location="${build.base}/da_core"/>
+				<classpath location="${build.base}/da_core_common"/>
+				<classpath location="${build.base}/da_core_server"/>
 				<classpath location="${build.base}/net_base"/>
 				<classpath location="${build.base}/da_net_base"/>
 				<classpath refid="log4j.classpath"/>
@@ -355,12 +408,24 @@
 			</fileset>
 		</jar>
 
-		<jar destfile="${dist.base}/bin/openscada-da-core-${version}${release}.jar">
-			<fileset dir="${build.base}/da_core">
+		<jar destfile="${dist.base}/bin/openscada-da-core-common-${version}${release}.jar">
+			<fileset dir="${build.base}/da_core_common">
    				<include name="**/*.class"/>
 			</fileset>
 		</jar>
 
+		<jar destfile="${dist.base}/bin/openscada-da-core-server-${version}${release}.jar">
+			<fileset dir="${build.base}/da_core_server">
+   				<include name="**/*.class"/>
+			</fileset>
+		</jar>
+    	
+		<jar destfile="${dist.base}/bin/openscada-da-server-common-${version}${release}.jar">
+			<fileset dir="${build.base}/da_server_common">
+   				<include name="**/*.class"/>
+			</fileset>
+		</jar>
+    	
 		<jar destfile="${dist.base}/bin/openscada-net-base-${version}${release}.jar">
 			<fileset dir="${build.base}/net_base">
    				<include name="**/*.class"/>
@@ -410,16 +475,16 @@
     	
     	<!-- gather lib jars -->
     	<mkdir dir="${dist.base}/lib"/>
-    	<copy file="${source.base}/log4j/log4j-1.2.13.jar" todir="${dist.base}/lib"/>
+    	<copy file="${source.base}/ext_log4j/log4j-1.2.13.jar" todir="${dist.base}/lib"/>
    		<copy file="${source.base}/ext_junit/junit-4.1.jar" todir="${dist.base}/lib"/>
-    	<copy file="${source.base}/SNMP4J/SNMP4J.jar" todir="${dist.base}/lib"/>
+    	<copy file="${source.base}/ext_SNMP4J/SNMP4J.jar" todir="${dist.base}/lib"/>
     	<copy todir="${dist.base}/lib">
-    		<fileset dir="${source.base}/mibble">
+    		<fileset dir="${source.base}/ext_mibble">
     			<include name="*.jar"/>
     		</fileset>
    		</copy>
     	<copy todir="${dist.base}/lib">
-    		<fileset dir="${source.base}/xmlbeans">
+    		<fileset dir="${source.base}/ext_xmlbeans">
     			<include name="*.jar"/>
     		</fileset>
    		</copy>
@@ -507,7 +572,13 @@
     		<param name="module" value="openscada_utils"/>
     	</antcall>
     	<antcall target="export_project">
-    		<param name="module" value="openscada_da_core"/>
+    		<param name="module" value="openscada_da_core_common"/>
+    	</antcall>
+    	<antcall target="export_project">
+    		<param name="module" value="openscada_da_core_server"/>
+    	</antcall>
+    	<antcall target="export_project">
+    		<param name="module" value="openscada_da_server_common"/>
     	</antcall>
     	<antcall target="export_project">
     		<param name="module" value="openscada_net_base"/>
@@ -591,7 +662,7 @@
     <!-- - - - - - - - - - - - - - - - - - 
           target: clean_source                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="clean_source" if="svn.base">
+    <target name="clean_source" if="need.checkout">
     	<delete dir="${source.base}"/>
     </target>
 
