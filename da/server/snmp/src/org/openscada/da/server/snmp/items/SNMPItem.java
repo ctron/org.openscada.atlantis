@@ -23,6 +23,7 @@ import java.util.EnumSet;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
@@ -32,7 +33,6 @@ import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.SuspendableItem;
 import org.openscada.da.core.common.WriteAttributesHelper;
 import org.openscada.da.core.server.IODirection;
-import org.openscada.da.core.server.InvalidOperationException;
 import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 import org.openscada.da.server.snmp.SNMPNode;
 import org.snmp4j.PDU;

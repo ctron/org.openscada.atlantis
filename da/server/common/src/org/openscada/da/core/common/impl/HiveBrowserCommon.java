@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.InvalidSessionException;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.common.Folder;
 import org.openscada.da.core.browser.common.FolderListener;
-import org.openscada.da.core.server.InvalidSessionException;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.Entry;
 import org.openscada.da.core.server.browser.HiveBrowser;

@@ -17,17 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.server;
+package org.openscada.core;
 
-public class InvalidOperationException extends Exception {
+public class InvalidSessionException extends Exception {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7236076680490424429L;
-	
-    public InvalidOperationException ()
+	private static final long serialVersionUID = 6189065814886204302L;
+
+    public InvalidSessionException ()
     {
-        super("Invalid operation");
+        super("Invalid session");
     }
 }

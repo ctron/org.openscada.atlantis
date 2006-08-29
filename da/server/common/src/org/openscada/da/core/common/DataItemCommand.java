@@ -24,10 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.InvalidOperationException;
 import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 
 public class DataItemCommand extends DataItemOutput {

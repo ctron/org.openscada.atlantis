@@ -21,9 +21,9 @@ package org.openscada.da.core.common;
 
 import java.util.EnumSet;
 
+import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.server.IODirection;
-import org.openscada.da.core.server.InvalidOperationException;
 
 public abstract class DataItemOutput extends DataItemBase {
 

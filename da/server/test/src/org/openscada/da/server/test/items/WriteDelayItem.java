@@ -22,12 +22,12 @@ package org.openscada.da.server.test.items;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.common.DataItemOutput;
 import org.openscada.da.core.common.WriteAttributesHelper;
-import org.openscada.da.core.server.InvalidOperationException;
 import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 
 public class WriteDelayItem extends DataItemOutput

@@ -22,11 +22,11 @@ package org.openscada.da.core.common;
 import java.util.EnumSet;
 import java.util.Map;
 
+import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.server.IODirection;
-import org.openscada.da.core.server.InvalidOperationException;
 import org.openscada.da.core.server.WriteAttributesOperationListener.Result;
 import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 
