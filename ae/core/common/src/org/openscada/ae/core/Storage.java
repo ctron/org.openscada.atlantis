@@ -14,5 +14,5 @@ public interface Storage
 
     Collection<QueryDescription> getQueries ( Session session );
     
-    public void submitEvent ( Event event );
+    public void submitEvent ( AttributedIdentifier event );
 }

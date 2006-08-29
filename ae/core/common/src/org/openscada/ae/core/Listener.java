@@ -2,7 +2,7 @@ package org.openscada.ae.core;
 
 public interface Listener
 {
-    void added ( Event[] events );
+    void added ( AttributedIdentifier[] events );
     void removed ( String[] eventIDs );
-    void modified ( Event[] events );
+    void modified ( AttributedIdentifier[] events );
 }
