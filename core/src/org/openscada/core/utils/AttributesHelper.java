@@ -19,6 +19,7 @@
 
 package org.openscada.core.utils;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -147,6 +148,18 @@ public class AttributesHelper
             target.remove ( key );
             diff.put ( key, null );
         }
+    }
+    
+    public static Map<String, Variant> clone ( Map<String, Variant> attributes )
+    {
+        Map<String, Variant> theClone = new HashMap<String, Variant> ();
+        
+        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+        {
+            theClone.put ( entry.getKey (), ( entry.getValue () != null ) ? new Variant ( entry.getValue () ) : null );
+        }
+        
+        return theClone;
     }
    
 }
