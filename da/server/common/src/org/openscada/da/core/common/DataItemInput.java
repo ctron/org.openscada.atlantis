@@ -21,9 +21,9 @@ package org.openscada.da.core.common;
 
 import java.util.EnumSet;
 
-import org.openscada.da.core.NotConvertableException;
-import org.openscada.da.core.NullValueException;
-import org.openscada.da.core.Variant;
+import org.openscada.ae.core.NotConvertableException;
+import org.openscada.ae.core.NullValueException;
+import org.openscada.ae.core.Variant;
 import org.openscada.da.core.server.IODirection;
 import org.openscada.da.core.server.InvalidOperationException;
 

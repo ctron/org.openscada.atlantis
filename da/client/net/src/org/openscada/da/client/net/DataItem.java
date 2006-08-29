@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 
-import org.openscada.da.core.AttributesHelper;
-import org.openscada.da.core.Variant;
+import org.openscada.ae.core.Variant;
+import org.openscada.ae.core.utils.AttributesHelper;
 
 public class DataItem extends Observable
 {

@@ -23,7 +23,7 @@ package org.openscada.da.server.test.items;
 import java.io.File;
 import java.io.IOException;
 
-import org.openscada.da.core.Variant;
+import org.openscada.ae.core.Variant;
 import org.openscada.da.server.test.utils.FileUtils;
 import org.openscada.utils.timing.Scheduler;
 

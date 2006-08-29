@@ -20,7 +20,7 @@
 package org.openscada.da.server.test.items;
 
 
-import org.openscada.da.core.Variant;
+import org.openscada.ae.core.Variant;
 import org.openscada.utils.timing.Scheduler;
 
 public class TimeDataItem extends ScheduledDataItem {

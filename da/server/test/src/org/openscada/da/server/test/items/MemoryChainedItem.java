@@ -22,7 +22,7 @@ package org.openscada.da.server.test.items;
 import java.util.EnumSet;
 import java.util.Map;
 
-import org.openscada.da.core.Variant;
+import org.openscada.ae.core.Variant;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.chain.AttributeBinder;
 import org.openscada.da.core.common.chain.BaseChainItemCommon;

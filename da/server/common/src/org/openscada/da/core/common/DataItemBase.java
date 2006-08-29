@@ -21,7 +21,7 @@ package org.openscada.da.core.common;
 
 import java.util.Map;
 
-import org.openscada.da.core.Variant;
+import org.openscada.ae.core.Variant;
 import org.openscada.da.core.server.DataItemInformation;
 
 public abstract class DataItemBase implements DataItem

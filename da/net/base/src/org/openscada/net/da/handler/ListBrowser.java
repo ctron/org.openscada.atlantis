@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.core.Variant;
+import org.openscada.ae.core.Variant;
 import org.openscada.da.core.server.IODirection;
 import org.openscada.da.core.server.browser.DataItemEntry;
 import org.openscada.da.core.server.browser.Entry;

@@ -28,8 +28,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.openscada.da.core.AttributesHelper;
-import org.openscada.da.core.Variant;
+import org.openscada.ae.core.Variant;
+import org.openscada.ae.core.utils.AttributesHelper;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemBase;
 import org.openscada.da.core.common.WriteAttributesHelper;

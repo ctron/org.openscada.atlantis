@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.core.AttributesHelper;
-import org.openscada.da.core.Variant;
+import org.openscada.ae.core.Variant;
+import org.openscada.ae.core.utils.AttributesHelper;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.da.handler.Messages;
 

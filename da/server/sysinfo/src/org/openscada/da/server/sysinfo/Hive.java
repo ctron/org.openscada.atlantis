@@ -21,7 +21,7 @@ package org.openscada.da.server.sysinfo;
 
 import java.io.File;
 
-import org.openscada.da.core.Variant;
+import org.openscada.ae.core.Variant;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.impl.HiveCommon;

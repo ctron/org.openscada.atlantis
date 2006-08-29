@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.da.core.Variant;
+import org.openscada.ae.core.Variant;
 import org.openscada.da.core.server.WriteAttributesOperationListener.Result;
 import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 
