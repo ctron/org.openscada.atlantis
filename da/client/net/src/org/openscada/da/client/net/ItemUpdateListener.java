@@ -21,7 +21,7 @@ package org.openscada.da.client.net;
 
 import java.util.Map;
 
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 
 public interface ItemUpdateListener
 {

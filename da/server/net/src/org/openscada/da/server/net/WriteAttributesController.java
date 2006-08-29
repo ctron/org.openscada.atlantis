@@ -2,7 +2,7 @@ package org.openscada.da.server.net;
 
 import java.util.Map;
 
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
 import org.openscada.da.core.server.InvalidSessionException;

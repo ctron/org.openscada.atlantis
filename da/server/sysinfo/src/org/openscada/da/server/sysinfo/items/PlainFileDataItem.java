@@ -22,7 +22,7 @@ package org.openscada.da.server.sysinfo.items;
 import java.io.File;
 import java.io.IOException;
 
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.server.sysinfo.utils.FileUtils;
 import org.openscada.utils.timing.Scheduler;
 

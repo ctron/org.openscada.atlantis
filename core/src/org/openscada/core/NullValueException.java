@@ -17,17 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.ae.core;
+package org.openscada.core;
 
-public class NotConvertableException extends Exception {
+public class NullValueException extends Exception {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -1763267117219727670L;
+	private static final long serialVersionUID = -198014812983830196L;
 
-    public NotConvertableException ()
+    public NullValueException ()
     {
-        super("Value not convertable");
+        super("Null value");
     }
 }

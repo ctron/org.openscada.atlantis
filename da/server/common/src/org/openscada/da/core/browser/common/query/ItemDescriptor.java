@@ -22,7 +22,7 @@ package org.openscada.da.core.browser.common.query;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.core.common.DataItem;
 
 public class ItemDescriptor

@@ -17,11 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.ae.core.test;
+package org.openscada.core.test;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 
 public class VariantTest {
 

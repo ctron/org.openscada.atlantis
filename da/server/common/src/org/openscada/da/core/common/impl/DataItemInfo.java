@@ -24,8 +24,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.ae.core.Variant;
-import org.openscada.ae.core.utils.AttributesHelper;
+import org.openscada.core.Variant;
+import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.SuspendableItem;
 

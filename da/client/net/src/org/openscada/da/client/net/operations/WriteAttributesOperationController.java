@@ -2,7 +2,7 @@ package org.openscada.da.client.net.operations;
 
 import java.util.Map;
 
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.LongRunningController;
 import org.openscada.net.base.LongRunningOperation;

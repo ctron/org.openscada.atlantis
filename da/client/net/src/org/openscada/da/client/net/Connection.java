@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.client.net.operations.BrowserListOperation;
 import org.openscada.da.client.net.operations.OperationException;
 import org.openscada.da.client.net.operations.WriteAttributesOperationController;

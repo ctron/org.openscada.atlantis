@@ -30,7 +30,7 @@ import net.percederberg.mibble.MibValueSymbol;
 import net.percederberg.mibble.value.ObjectIdentifierValue;
 
 import org.apache.log4j.Logger;
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.browser.common.query.AttributeNameProvider;
 import org.openscada.da.core.browser.common.query.GroupFolder;

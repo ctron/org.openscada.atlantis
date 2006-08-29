@@ -21,9 +21,9 @@ package org.openscada.da.core.common;
 
 import java.util.Map;
 
-import org.openscada.ae.core.NotConvertableException;
-import org.openscada.ae.core.NullValueException;
-import org.openscada.ae.core.Variant;
+import org.openscada.core.NotConvertableException;
+import org.openscada.core.NullValueException;
+import org.openscada.core.Variant;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.InvalidOperationException;
 import org.openscada.da.core.server.WriteAttributesOperationListener.Results;

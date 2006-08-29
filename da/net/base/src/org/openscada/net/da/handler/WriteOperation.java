@@ -19,7 +19,7 @@
 
 package org.openscada.net.da.handler;
 
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.utils.lang.Holder;

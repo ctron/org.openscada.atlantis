@@ -27,8 +27,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.apache.log4j.Logger;
-import org.openscada.ae.core.NullValueException;
-import org.openscada.ae.core.Variant;
+import org.openscada.core.NullValueException;
+import org.openscada.core.Variant;
 import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.net.ConnectionInfo;
 import org.openscada.da.client.net.ConnectionStateListener;

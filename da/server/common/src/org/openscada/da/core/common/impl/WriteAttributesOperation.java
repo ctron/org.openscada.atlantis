@@ -21,7 +21,7 @@ package org.openscada.da.core.common.impl;
 
 import java.util.Map;
 
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.server.WriteAttributesOperationListener;
 import org.openscada.da.core.server.WriteAttributesOperationListener.Results;

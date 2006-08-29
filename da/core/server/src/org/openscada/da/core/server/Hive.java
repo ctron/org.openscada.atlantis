@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.core.server.browser.HiveBrowser;
 
 public interface Hive

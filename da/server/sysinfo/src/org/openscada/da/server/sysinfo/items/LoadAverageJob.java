@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.common.DataItemInputCommon;
 import org.openscada.da.server.sysinfo.Hive;

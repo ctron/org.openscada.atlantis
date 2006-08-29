@@ -31,7 +31,7 @@ import net.percederberg.mibble.MibValueSymbol;
 import net.percederberg.mibble.snmp.SnmpObjectType;
 
 import org.apache.log4j.Logger;
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.str.StringHelper;
 import org.snmp4j.smi.OID;

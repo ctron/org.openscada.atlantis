@@ -22,7 +22,7 @@ package org.openscada.net.da.handler;
 import java.util.EnumSet;
 import java.util.Map;
 
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.core.server.IODirection;
 import org.openscada.da.core.server.browser.DataItemEntry;
 

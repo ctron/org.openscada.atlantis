@@ -26,7 +26,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.junit.Assert;
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.ItemListener;
 

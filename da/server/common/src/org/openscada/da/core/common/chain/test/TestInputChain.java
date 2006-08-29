@@ -28,7 +28,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.core.common.chain.DataItemInputChained;
 
 public class TestInputChain

@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.browser.common.FolderListener;
 import org.openscada.da.core.common.DataItem;

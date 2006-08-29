@@ -17,13 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.ae.core.utils;
+package org.openscada.core.utils;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 
 public class AttributesHelper
 {

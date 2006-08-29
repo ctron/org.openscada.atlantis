@@ -19,7 +19,7 @@
 
 package org.openscada.da.core.server;
 
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 
 
 public interface ReadOperationListener

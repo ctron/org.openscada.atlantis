@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.log4j.Logger;
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.Folder;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.browser.common.FolderListener;

@@ -22,7 +22,7 @@ package org.openscada.da.core.common.chain.item;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.openscada.ae.core.Variant;
+import org.openscada.core.Variant;
 import org.openscada.da.core.common.chain.BaseChainItemCommon;
 import org.openscada.da.core.common.chain.VariantBinder;
 
