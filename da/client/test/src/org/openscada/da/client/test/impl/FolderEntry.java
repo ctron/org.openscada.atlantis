@@ -26,8 +26,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.Variant;
 import org.openscada.da.core.Location;
-import org.openscada.da.core.Variant;
 
 public class FolderEntry extends BrowserEntry implements Observer
 {

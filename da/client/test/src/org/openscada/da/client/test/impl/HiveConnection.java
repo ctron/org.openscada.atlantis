@@ -28,13 +28,14 @@ import java.util.Observer;
 
 import org.apache.log4j.Logger;
 import org.eclipse.ui.IActionFilter;
+import org.openscada.core.Variant;
+import org.openscada.core.client.net.ConnectionBase;
+import org.openscada.core.client.net.ConnectionInfo;
+import org.openscada.core.client.net.ConnectionStateListener;
+import org.openscada.core.client.net.ConnectionBase.State;
 import org.openscada.da.client.net.Connection;
-import org.openscada.da.client.net.ConnectionInfo;
-import org.openscada.da.client.net.ConnectionStateListener;
-import org.openscada.da.client.net.Connection.State;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
-import org.openscada.da.core.Variant;
 import org.openscada.da.core.server.DataItemInformation;
 
 public class HiveConnection extends Observable implements IActionFilter
@@ -61,7 +62,7 @@ public class HiveConnection extends Observable implements IActionFilter
         _connection = new Connection ( conInfo );
         _connection.addConnectionStateListener ( new ConnectionStateListener(){
 
-            public void stateChange ( Connection connection, State state, Throwable error )
+            public void stateChange ( ConnectionBase connection, State state, Throwable error )
             {
                 performStateChange ( state, error );
             }

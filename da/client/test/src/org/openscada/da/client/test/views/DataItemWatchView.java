@@ -46,12 +46,12 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.openscada.core.Variant;
 import org.openscada.da.client.net.DataItem;
 import org.openscada.da.client.net.ItemUpdateListener;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.VariantHelper;
 import org.openscada.da.client.test.impl.VariantHelper.ValueType;
-import org.openscada.da.core.Variant;
 
 
 /**

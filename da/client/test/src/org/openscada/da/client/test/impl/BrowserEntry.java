@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
-import org.openscada.da.core.Variant;
+import org.openscada.core.Variant;
 
 
 public class BrowserEntry extends Observable implements IPropertySource

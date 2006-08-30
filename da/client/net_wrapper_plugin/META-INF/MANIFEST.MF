@@ -6,7 +6,9 @@ Bundle-Version: 0.2.2
 Bundle-ClassPath: openscada_da_net_client_lib.jar
 Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin
-Export-Package: org.openscada.da.client.net,
+Export-Package: org.openscada.core,
+ org.openscada.core.client.net,
+ org.openscada.da.client.net,
  org.openscada.da.client.net.operations,
  org.openscada.da.client.net.test,
  org.openscada.da.core,
