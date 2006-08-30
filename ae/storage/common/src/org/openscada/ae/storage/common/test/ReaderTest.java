@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openscada.ae.core.Event;
 import org.openscada.ae.core.NoSuchQueryException;
-import org.openscada.ae.storage.common.Reader;
 import org.openscada.core.InvalidSessionException;
 
 public class ReaderTest extends BaseTest

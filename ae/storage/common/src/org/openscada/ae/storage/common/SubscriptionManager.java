@@ -23,7 +23,7 @@ public class SubscriptionManager implements SubscriptionObserver
         
         addSubscription ( subscription );
         
-        reader.open ( this );
+        reader.open ( subscription, this );
     }
     
     synchronized public void unsubscribe ( Query query, SessionCommon session, Listener listener )
