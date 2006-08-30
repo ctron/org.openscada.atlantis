@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openscada.core.InvalidSessionException;
+import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.server.browser.HiveBrowser;
 
