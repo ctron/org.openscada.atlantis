@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_ae_core_common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_utils"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
