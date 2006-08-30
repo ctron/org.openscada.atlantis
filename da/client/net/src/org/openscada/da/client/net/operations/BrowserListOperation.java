@@ -20,10 +20,10 @@
 package org.openscada.da.client.net.operations;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.client.net.OperationFailedException;
+import org.openscada.core.client.net.OperationTimedOutException;
+import org.openscada.core.client.net.ProtocolErrorException;
 import org.openscada.da.client.net.Connection;
-import org.openscada.da.client.net.OperationFailedException;
-import org.openscada.da.client.net.OperationTimedOutException;
-import org.openscada.da.client.net.ProtocolErrorException;
 import org.openscada.da.core.server.browser.Entry;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;

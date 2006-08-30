@@ -17,31 +17,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.client.net;
+package org.openscada.core.client.net;
 
-public class DisconnectReason extends Exception
+public class ProtocolErrorException extends Exception
 {
 
-    private String _reason = "";
-    
     /**
      * 
      */
-    private static final long serialVersionUID = -4831595156582204891L;
-    
-    public DisconnectReason ()
-    {
-        super ( "Disconnected" );
-    }
-    
-    public DisconnectReason ( String reason )
-    {
-        super ( "Disconnected: " + reason );
-        _reason = reason;
-    }
+    private static final long serialVersionUID = 7382933809822999189L;
 
-    public String getReason ()
+    public ProtocolErrorException ( )
     {
-        return _reason;
+        super ( "Protocol error" );
     }
 }

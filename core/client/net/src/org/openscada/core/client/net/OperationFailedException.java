@@ -17,31 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.client.net;
+package org.openscada.core.client.net;
 
-public class OperationTimedOutException extends Exception
+public class OperationFailedException extends Exception
 {
-
-    private String _additionalInformation = "";
-    
     /**
      * 
      */
-    private static final long serialVersionUID = 4454590786147475753L;
+    private static final long serialVersionUID = -6829837359703669899L;
 
-    public OperationTimedOutException ()
+    public OperationFailedException ( String failure )
     {
-        super ( "Operation timed out" );
-    }
-    
-    public OperationTimedOutException ( String additionalInformation )
-    {
-        super ( "Operation timed out: " + additionalInformation );
-        _additionalInformation = additionalInformation;
-    }
-
-    public String getAdditionalInformation ()
-    {
-        return _additionalInformation;
+        super ( failure );
     }
 }

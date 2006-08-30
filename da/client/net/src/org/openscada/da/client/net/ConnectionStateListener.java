@@ -19,6 +19,7 @@
 
 package org.openscada.da.client.net;
 
+
 public interface ConnectionStateListener
 {
     /**

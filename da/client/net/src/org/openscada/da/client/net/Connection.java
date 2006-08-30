@@ -33,6 +33,10 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.core.client.net.ConnectionInfo;
+import org.openscada.core.client.net.DisconnectReason;
+import org.openscada.core.client.net.OperationTimedOutException;
+import org.openscada.core.net.MessageHelper;
 import org.openscada.da.client.net.operations.BrowserListOperation;
 import org.openscada.da.client.net.operations.OperationException;
 import org.openscada.da.client.net.operations.WriteAttributesOperationController;
@@ -527,7 +531,7 @@ public class Connection
 
         if ( message.getValues().containsKey("value") )
         {
-            value = Messages.valueToVariant ( message.getValues().get("value"), null );
+            value = MessageHelper.valueToVariant ( message.getValues().get("value"), null );
         }
 
         String itemName = message.getValues().get("item-name").toString();
