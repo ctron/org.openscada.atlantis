@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.openscada.ae.core.QueryDescription;
 import org.openscada.ae.core.Session;
 import org.openscada.ae.core.Storage;
+import org.openscada.core.UnableToCreateSessionException;
 
 public class BaseTest
 {
@@ -16,7 +17,7 @@ public class BaseTest
     protected Session _session = null;
     
     @Before
-    public void init ()
+    public void init () throws UnableToCreateSessionException
     {
         _storage = new MockStorage ();
         _session = _storage.createSession ( new Properties () );
