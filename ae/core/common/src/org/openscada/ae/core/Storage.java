@@ -3,10 +3,11 @@ package org.openscada.ae.core;
 import java.util.Properties;
 
 import org.openscada.core.InvalidSessionException;
+import org.openscada.core.UnableToCreateSessionException;
 
 public interface Storage
 {
-    public Session createSession ( Properties properties );
+    public Session createSession ( Properties properties ) throws UnableToCreateSessionException;
     public void closeSession ( Session session ) throws InvalidSessionException;
     
     void subscribe ( Session session, String queryID, Listener listener, int maxBatchSize, int archiveSet ) throws InvalidSessionException, NoSuchQueryException;
