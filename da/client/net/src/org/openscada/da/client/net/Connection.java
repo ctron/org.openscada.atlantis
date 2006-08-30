@@ -66,8 +66,6 @@ public class Connection extends ConnectionBase
 
     private static Logger _log = Logger.getLogger ( Connection.class );
 
-    private ClientConnection _client = null;
-
     private Map<String, ItemSyncController> _itemListeners = new HashMap<String, ItemSyncController> ();
     private Map<Location, FolderSyncController> _folderListeners = new HashMap<Location, FolderSyncController> ();
 

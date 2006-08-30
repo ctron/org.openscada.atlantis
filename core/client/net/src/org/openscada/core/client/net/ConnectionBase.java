@@ -51,7 +51,7 @@ public abstract class ConnectionBase
     private SocketAddress _remote = null;
     private IOProcessor _processor = null;
 
-    private ClientConnection _client = null;
+    protected ClientConnection _client = null;
 
     private List<ConnectionStateListener> _connectionStateListeners = new ArrayList<ConnectionStateListener> ();
     
