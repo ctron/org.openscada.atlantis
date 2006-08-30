@@ -45,7 +45,7 @@ public class Application
             Exporter exporter = new Exporter ( args[0] );
             
             // run the lizzard
-            _log.info ( "Running exporter (hive class: " + exporter.getHiveClass ().getCanonicalName () + ")..." );
+            _log.info ( "Running exporter (hive class: " + exporter.getStorageClass ().getCanonicalName () + ")..." );
 			exporter.run ();
             _log.warn ( "Exporter returned!" );
 		}

@@ -19,20 +19,21 @@
 
 package org.openscada.ae.storage.net;
 
-import org.openscada.da.core.server.Hive;
+import org.openscada.ae.core.Storage;
 import org.openscada.net.base.ConnectionHandler;
 import org.openscada.net.base.ConnectionHandlerFactory;
 
 public class ConnectionHandlerServerFactory implements ConnectionHandlerFactory {
 
-	private Hive _hive = null;
+	private Storage _storage = null;
 	
-	public ConnectionHandlerServerFactory ( Hive hive )
+	public ConnectionHandlerServerFactory ( Storage storage )
 	{
-		_hive = hive;
+        _storage = storage;
 	}
 
-	public ConnectionHandler createConnectionHandler() {
-			return new ServerConnectionHandler(_hive);
+	public ConnectionHandler createConnectionHandler ()
+    {
+	    return new ServerConnectionHandler ( _storage );
 	}
 }

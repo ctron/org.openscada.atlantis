@@ -21,45 +21,45 @@ package org.openscada.ae.storage.net;
 
 import java.io.IOException;
 
-import org.openscada.da.core.server.Hive;
+import org.openscada.ae.core.Storage;
 import org.openscada.net.io.net.Server;
 
 public class Exporter implements Runnable
 {
-    private Hive _hive;
+    private Storage _storage;
     private Server _server;
     
-    public Exporter ( Hive hive ) throws IOException
+    public Exporter ( Storage storage ) throws IOException
     {
-        _hive = hive;
+        _storage = storage;
         
         createServer ();
     }
     
-    public Exporter ( Class hiveClass ) throws InstantiationException, IllegalAccessException, IOException
+    public Exporter ( Class storageClass ) throws InstantiationException, IllegalAccessException, IOException
     {
-        _hive = createInstance ( hiveClass );
+        _storage = createInstance ( storageClass );
         
         createServer ();
     }
     
-    public Exporter ( String hiveClassName ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
+    public Exporter ( String storageClassName ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
     {
-        _hive = createInstance ( Class.forName ( hiveClassName ) );
+        _storage = createInstance ( Class.forName ( storageClassName ) );
         
         createServer ();
     }
     
-    private Hive createInstance ( Class hiveClass ) throws InstantiationException, IllegalAccessException
+    private Storage createInstance ( Class storageClass ) throws InstantiationException, IllegalAccessException
     {
-        return (Hive)hiveClass.newInstance();
+        return (Storage)storageClass.newInstance();
     }
     
     private void createServer () throws IOException
     {
         _server = new Server (
-                new ConnectionHandlerServerFactory ( _hive ),
-                Integer.getInteger ( "openscada.da.net.server.port", 1202 )
+                new ConnectionHandlerServerFactory ( _storage ),
+                Integer.getInteger ( "openscada.ae.net.server.port", 1302 )
         );
     }
 
@@ -68,9 +68,9 @@ public class Exporter implements Runnable
         _server.run ();
     }
     
-    public Class getHiveClass ()
+    public Class getStorageClass ()
     {
-        return _hive.getClass ();
+        return _storage.getClass ();
     }
     
 }
