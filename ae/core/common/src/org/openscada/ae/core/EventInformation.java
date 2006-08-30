@@ -13,6 +13,18 @@ public class EventInformation
     private Calendar _timestamp = null;
     private int _action = 0;
     
+    public EventInformation ()
+    {
+        super ();
+    }
+    
+    public EventInformation ( Event event, int action )
+    {
+        _event = event;
+        _action = action;
+        _timestamp = Calendar.getInstance ();
+    }
+    
     public int getAction ()
     {
         return _action;
