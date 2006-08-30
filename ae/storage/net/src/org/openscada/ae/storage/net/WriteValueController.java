@@ -1,21 +1,20 @@
-package org.openscada.da.server.net;
-
-import java.util.Map;
+package org.openscada.ae.storage.net;
 
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
 import org.openscada.da.core.server.Session;
-import org.openscada.da.core.server.WriteAttributesOperationListener;
+import org.openscada.da.core.server.WriteOperationListener;
 import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
-import org.openscada.net.da.handler.WriteAttributesOperation;
+import org.openscada.net.base.data.StringValue;
+import org.openscada.net.da.handler.Messages;
 import org.openscada.net.utils.MessageCreator;
 import org.openscada.utils.lang.Holder;
 
-public class WriteAttributesController implements WriteAttributesOperationListener
+public class WriteValueController implements WriteOperationListener
 {
     private Hive _hive = null;
     private Session _session = null;
@@ -23,7 +22,7 @@ public class WriteAttributesController implements WriteAttributesOperationListen
     
     private Long _id = null; 
     
-    public WriteAttributesController ( Hive hive, Session session, ConnectionHandlerBase connection )
+    public WriteValueController ( Hive hive, Session session, ConnectionHandlerBase connection )
     {
         _hive = hive;
         _session = session;
@@ -35,11 +34,11 @@ public class WriteAttributesController implements WriteAttributesOperationListen
         try
         {
             Holder<String> itemId = new Holder<String> ();
-            Holder<Map<String,Variant>> attributes = new Holder<Map<String,Variant>> ();
+            Holder<Variant> value = new Holder<Variant> ();
             
-            WriteAttributesOperation.parseRequest ( request, itemId, attributes );
+            org.openscada.net.da.handler.WriteOperation.parse ( request, itemId, value );
             
-            _id = _hive.startWriteAttributes ( _session, itemId.value, attributes.value, this );
+            _id = _hive.startWrite ( _session, itemId.value, value.value, this );
         }
         catch ( InvalidSessionException e )
         {
@@ -71,21 +70,18 @@ public class WriteAttributesController implements WriteAttributesOperationListen
         _connection.getConnection ().sendMessage ( message );
     }
     
-    public void complete ( Results results )
+    public void failure ( Throwable throwable )
     {
-        if ( _id != null )
-        {
-            Message message = WriteAttributesOperation.createResponse ( _id, results );
-            _connection.getConnection ().sendMessage ( message );
-        }
+        Message replyMessage = new Message ( Messages.CC_WRITE_OPERATION_RESULT );
+        replyMessage.getValues ().put ( Message.FIELD_ERROR_INFO, new StringValue ( throwable.getMessage () ) );
+        replyMessage.getValues ().put ( "id", new LongValue ( _id ) );
+        _connection.getConnection().sendMessage ( replyMessage );
     }
 
-    public void failed ( Throwable error )
+    public void success ()
     {
-        if ( _id != null )
-        {
-            Message message = WriteAttributesOperation.createResponse ( _id, error );
-            _connection.getConnection ().sendMessage ( message );
-        }
+        Message replyMessage = new Message ( Messages.CC_WRITE_OPERATION_RESULT );
+        replyMessage.getValues ().put ( "id", new LongValue ( _id ) );
+        _connection.getConnection().sendMessage ( replyMessage );
     }
 }
