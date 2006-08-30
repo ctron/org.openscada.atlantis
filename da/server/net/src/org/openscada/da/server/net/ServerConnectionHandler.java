@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.InvalidSessionException;
+import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.server.CancellationNotSupportedException;
@@ -34,7 +35,6 @@ import org.openscada.da.core.server.InvalidItemException;
 import org.openscada.da.core.server.ItemChangeListener;
 import org.openscada.da.core.server.ItemListListener;
 import org.openscada.da.core.server.Session;
-import org.openscada.da.core.server.UnableToCreateSessionException;
 import org.openscada.da.core.server.browser.Entry;
 import org.openscada.da.core.server.browser.FolderListener;
 import org.openscada.da.core.server.browser.HiveBrowser;
