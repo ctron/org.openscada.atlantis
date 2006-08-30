@@ -6,11 +6,25 @@ import java.util.Map;
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
 
+/**
+ * An ID with some attributes (metadata) attached
+ * 
+ * Attributed identifiers are equal by their ID only!
+ * @author Jens Reimann <jens.reimann@inavare.net>
+ *
+ */
 public class AttributedIdentifier
 {
     protected String _id = null;
     protected Map<String,Variant> _attributes = null;
 
+    public AttributedIdentifier ( AttributedIdentifier attributedIdentifier )
+    {
+        super ();
+        _id = attributedIdentifier._id;
+        _attributes = AttributesHelper.clone ( attributedIdentifier._attributes );
+    }
+    
     public AttributedIdentifier ( String id, Map<String, Variant> attributes )
     {
         super ();
