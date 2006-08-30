@@ -46,11 +46,11 @@ public class ServerConnectionHandler extends ConnectionHandlerBase
     private Storage _storage = null;
     private Session _session = null;
  
-    public ServerConnectionHandler ( Storage hive )
+    public ServerConnectionHandler ( Storage storage )
     {
         super();
 
-        _storage = hive;
+        _storage = storage;
 
         getMessageProcessor().setHandler(Messages.CC_CREATE_SESSION, new MessageListener(){
 
