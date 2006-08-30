@@ -17,8 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.client.net;
-
+package org.openscada.core.client.net;
 
 public interface ConnectionStateListener
 {
@@ -28,5 +27,5 @@ public interface ConnectionStateListener
      * @param state the new state of the connection
      * @param error some error information that lead to the new state (can be <code>null</code> if it was not an error)
      */
-    public void stateChange ( Connection connection, Connection.State state, Throwable error );
+    public void stateChange ( ConnectionBase connection, ConnectionBase.State state, Throwable error );
 }

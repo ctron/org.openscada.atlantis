@@ -19,11 +19,6 @@
 
 package org.openscada.da.client.net;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,6 +28,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.core.client.net.DisconnectReason;
 import org.openscada.core.client.net.OperationTimedOutException;
@@ -59,43 +55,21 @@ import org.openscada.net.da.handler.EnumEvent;
 import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.da.handler.WriteAttributesOperation;
-import org.openscada.net.io.IOProcessor;
 import org.openscada.utils.exec.OperationResult;
 import org.openscada.utils.exec.OperationResultHandler;
 import org.openscada.utils.lang.Holder;
 
-public class Connection
+public class Connection extends ConnectionBase
 {
 
     public static final String VERSION = "0.1.5";
 
-    public enum State
-    {
-        CLOSED,
-        LOOKUP,
-        CONNECTING,
-        CONNECTED,
-        BOUND,
-        CLOSING,
-    }
-
     private static Logger _log = Logger.getLogger ( Connection.class );
-
-    private ConnectionInfo _connectionInfo = null;
-    private SocketAddress _remote = null;
-    private IOProcessor _processor = null;
 
     private ClientConnection _client = null;
 
-    private List<ConnectionStateListener> _connectionStateListeners = new ArrayList<ConnectionStateListener> ();
     private Map<String, ItemSyncController> _itemListeners = new HashMap<String, ItemSyncController> ();
     private Map<Location, FolderSyncController> _folderListeners = new HashMap<Location, FolderSyncController> ();
-
-    //private boolean _connected = false;
-    private State _state = State.CLOSED;
-
-    private static Object _defaultProcessorLock = new Object ();
-    private static IOProcessor _defaultProcessor = null;
 
     private ItemList _itemList = new ItemList ();
     private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener> ();
@@ -106,68 +80,16 @@ public class Connection
     private WriteOperationController _writeController = null;
     private WriteAttributesOperationController _writeAttributesController = null;
 
-    private static IOProcessor getDefaultProcessor ()
-    {
-        try
-        {
-            synchronized ( _defaultProcessorLock )
-            {
-                if ( _defaultProcessor == null )
-                {
-                    _defaultProcessor = new IOProcessor ();
-                    _defaultProcessor.start();
-                }
-                return _defaultProcessor;
-            }
-        }
-        catch ( IOException e )
-        {    
-            _log.error ( "unable to created io processor", e );
-        }
-        // operation failed
-        return null;
-    }
-
-    public Connection ( IOProcessor processor, ConnectionInfo connectionInfo )
-    {
-        super();
-
-        _processor = processor;
-        _connectionInfo = connectionInfo;
-
-        // register our own list
-        addItemListListener ( _itemList );
-
-        init ();
-
-        _browseListOperation = new BrowserListOperation ( this );
-    }
-
     public Connection ( ConnectionInfo connectionInfo )
     {
-        this ( getDefaultProcessor(), connectionInfo );
+        super ( connectionInfo );
     }
-
-    private void init ()
+    
+    @Override
+    protected void init ()
     {
-        if ( _client != null )
-            return;
-
-        _client = new ClientConnection ( _processor );
-        _client.addStateListener(new  org.openscada.net.io.ConnectionStateListener(){
-
-            public void closed ( Exception error )
-            {
-                _log.debug ( "closed" );
-                fireDisconnected ( error );
-            }
-
-            public void opened ()
-            {
-                _log.debug ( "opened" );
-                fireConnected ();
-            }});
-
+        super.init ();
+       
         _client.getMessageProcessor().setHandler(Messages.CC_NOTIFY_VALUE, new MessageListener(){
 
             public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message )
@@ -205,57 +127,6 @@ public class Connection
         _writeAttributesController.register ( _client.getMessageProcessor () );
     }
 
-    synchronized public void connect ()
-    {
-        switch ( _state )
-        {
-        case CLOSED:
-            setState ( State.CONNECTING, null );
-            break;
-        }        
-    }
-
-    synchronized public void disconnect ()
-    {
-        disconnect ( null );
-    }
-
-    synchronized private void disconnect ( Throwable reason )
-    {
-        switch ( _state )
-        {
-        case LOOKUP:
-            setState ( State.CLOSED, reason );
-            break;
-            
-        case BOUND:
-        case CONNECTING:
-        case CONNECTED:
-            setState ( State.CLOSING, reason );
-            break;
-        }    
-    }
-    
-    public void sendMessage ( Message message )
-    {
-        if ( _client == null )
-            return;
-        if ( _client.getConnection () == null )
-            return;
-        
-        _client.getConnection ().sendMessage ( message );
-    }
-    
-    public void sendMessage ( Message message, MessageStateListener listener, long timeout )
-    {
-        if ( _client == null )
-            return;
-        if ( _client.getConnection () == null )
-            return;
-        
-        _client.getConnection ().sendMessage ( message, listener, timeout );
-    }
-
     public void addItemListListener ( ItemListListener listener )
     {
         synchronized ( _itemListListeners )
@@ -270,52 +141,6 @@ public class Connection
         {
             _itemListListeners.remove ( listener );
         }
-    }
-
-    public void addConnectionStateListener ( ConnectionStateListener connectionStateListener )
-    {
-        synchronized ( _connectionStateListeners )
-        {
-            _connectionStateListeners.add ( connectionStateListener );
-        }
-    }
-
-    public void removeConnectionStateListener ( ConnectionStateListener connectionStateListener )
-    {
-        synchronized ( _connectionStateListeners )
-        {
-            _connectionStateListeners.remove ( connectionStateListener );
-        }
-    }
-
-    private void fireConnected ()
-    {
-        _log.debug ( "connected" );
-
-        switch ( _state )
-        {
-        case CONNECTING:
-            setState ( State.CONNECTED, null );
-            break;
-        }
-
-    }
-
-    private void fireDisconnected ( Throwable error )
-    {
-        _log.debug ( "dis-connected" );
-
-        switch ( _state )
-        {
-        case BOUND:
-        case CONNECTED:
-        case CONNECTING:
-        case LOOKUP:
-        case CLOSING:
-            setState ( State.CLOSED, error );
-            break;
-        }
-
     }
 
     private void fireItemListChange ( Collection<DataItemInformation> added, Collection<String> removed, boolean initial )
@@ -609,20 +434,6 @@ public class Connection
         }
     }
 
-    public State getState ()
-    {
-        return _state;
-    }
-
-    /**
-     * Get the network client
-     * @return the client instance of <em>null</em> if the client has not been started
-     */
-    public ClientConnection getClient ()
-    {
-        return _client;
-    }
-
     /**
      * Get the item list. This list is maintained by the connection and will be
      * feeded with events.
@@ -731,139 +542,24 @@ public class Connection
         return _browseListOperation.startExecute ( handler, path );
     }
 
-    /**
-     * set new state internaly
-     * @param state
-     * @param error additional error information or <code>null</code> if we don't have an error.
-     */
-    synchronized private void setState ( State state, Throwable error )
+    @Override
+    protected void onConnectionBound ()
     {
-        _state = state;
-
-        stateChanged ( state, error );
+        resyncAllItems ();
+        // sync again all folder subscriptions
+        resyncAllFolders ();   
     }
 
-    private void stateChanged ( State state, Throwable error )
+    @Override
+    protected void onConnectionClosed ()
     {
-        switch ( state )
-        {
-
-        case CLOSED:
-            // inform folder sync controllers 
-            disconnectAllFolders ();
-            
-            // if we got the close and are auto-reconnect ... schedule the job
-            if ( _connectionInfo.isAutoReconnect () )
-            {
-                _processor.getScheduler ().scheduleJob ( new Runnable() {
-
-                    public void run ()
-                    {
-                        connect ();
-                    }}, _connectionInfo.getReconnectDelay () );
-            }
-            break;
-
-        case CONNECTING:
-            performConnect ();
-            break;
-            
-        case LOOKUP:
-            break;
-            
-        case CONNECTED:
-            requestSession ();
-            break;
-
-        case BOUND:
-            // sync again all items to maintain subscribtions
-            resyncAllItems ();
-            
-            // subscribe enum service
-            // subscribeEnum ();
-            
-            // sync again all folder subscriptions
-            resyncAllFolders ();
-            break;
-
-        case CLOSING:
-            _client.disconnect ();
-            break;
-        }
-
-        notifyStateChange ( state, error );
-
+        disconnectAllFolders ();
     }
 
-
-
-    /**
-     * Notify state change listeners
-     * @param state new state
-     * @param error additional error information or <code>null</code> if we don't have an error. 
-     */
-    private void notifyStateChange ( State state, Throwable error )
-    {   
-        List<ConnectionStateListener> connectionStateListeners;
-
-        synchronized ( _connectionStateListeners )
-        {
-            connectionStateListeners = new ArrayList<ConnectionStateListener> ( _connectionStateListeners );
-        }
-        for ( ConnectionStateListener listener : connectionStateListeners )
-        {
-            try
-            {
-                listener.stateChange ( this, state, error );
-            }
-            catch ( Exception e )
-            {
-            }
-        }
-    }
-
-    synchronized private void performConnect ()
+    @Override
+    protected void onConnectionEstablished ()
     {
-        if ( _remote != null )
-        {
-            _client.connect ( _remote );
-        }
-        else
-        {
-            setState ( State.LOOKUP, null );
-            Thread lookupThread = new Thread ( new Runnable() {
-
-                public void run ()
-                {
-                    performLookupAndConnect ();
-                }} );
-            lookupThread.setDaemon ( true );
-            lookupThread.start ();
-        }
-    }
-
-    private void performLookupAndConnect ()
-    {
-        // lookup may take some time
-        try
-        {
-            SocketAddress remote = new InetSocketAddress ( InetAddress.getByName ( _connectionInfo.getHostName () ), _connectionInfo.getPort () );
-            _remote = remote;
-            // this time "remote" should not be null
-            synchronized ( this )
-            {
-                if ( _state.equals ( State.LOOKUP ) )
-                    setState ( State.CONNECTING, null );
-            }
-        }
-        catch ( UnknownHostException e )
-        {
-            synchronized ( this )
-            {
-                if ( _state.equals ( State.LOOKUP ) ) 
-                    setState ( State.CLOSED, e );
-            }
-        } 
+       requestSession ();
     }
     
    
