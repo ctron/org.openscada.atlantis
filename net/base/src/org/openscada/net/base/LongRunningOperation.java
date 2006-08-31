@@ -139,4 +139,20 @@ public class LongRunningOperation
     {
         return _state;
     }
+    
+    synchronized public void waitForCompletion () throws InterruptedException
+    {
+        if ( isComplete () )
+            return;
+        
+        wait ();
+    }
+    
+    synchronized public void waitForCompletion ( int timeout ) throws InterruptedException
+    {
+        if ( isComplete () )
+            return;
+        
+        wait ( timeout );
+    }
 }
