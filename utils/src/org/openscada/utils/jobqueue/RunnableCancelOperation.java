@@ -27,7 +27,7 @@ public abstract class RunnableCancelOperation implements Operation, Runnable
     private boolean _canceled = false;
     private Thread _thread = null;
     
-    public void cancel () throws CancelNotSupportedException
+    synchronized public void cancel () throws CancelNotSupportedException
     {
         _canceled = true;
     }
