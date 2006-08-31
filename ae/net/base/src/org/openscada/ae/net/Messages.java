@@ -4,6 +4,7 @@ public interface Messages
 {
     public final static int CC_CREATE_SESSION =                     0x00020000;
     public final static int CC_CLOSE_SESSION =                      0x00020001;
+    public final static int CC_CANCEL_OPERATION =                   0x00020002;
     
     public final static int CC_LIST =                               0x00020010;
     public final static int CC_LIST_REPLY =                         0x00020011;
