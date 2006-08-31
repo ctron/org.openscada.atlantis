@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jardesc>
 <jar path="/home/jens/openscada_da_net_client_lib.jar"/>
-<options buildIfNeeded="true" compress="true" descriptionLocation="/openscada_da_client_net/full_lib.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+<options buildIfNeeded="true" compress="true" descriptionLocation="/openscada_da_client_net_plugin_wrapper/full_lib.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
 <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
 <selectedProjects/>
-<manifest generateManifest="true" mainClassHandleIdentifier="=openscada_da_client_net/src&lt;org.openscada.da.client.net.test{Application.java[Application" manifestLocation="/oxygen_snmp_driver/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+<manifest generateManifest="true" manifestLocation="/oxygen_snmp_driver/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
 <sealing sealJar="false">
 <packagesToSeal/>
 <packagesToUnSeal/>
