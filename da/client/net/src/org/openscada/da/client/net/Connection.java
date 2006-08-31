@@ -32,9 +32,9 @@ import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.core.client.net.DisconnectReason;
 import org.openscada.core.client.net.OperationTimedOutException;
+import org.openscada.core.client.net.operations.OperationException;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.da.client.net.operations.BrowserListOperation;
-import org.openscada.da.client.net.operations.OperationException;
 import org.openscada.da.client.net.operations.WriteAttributesOperationController;
 import org.openscada.da.client.net.operations.WriteOperationController;
 import org.openscada.da.core.Location;
@@ -81,12 +81,12 @@ public class Connection extends ConnectionBase
     public Connection ( ConnectionInfo connectionInfo )
     {
         super ( connectionInfo );
+        
+        init ();
     }
     
-    @Override
-    protected void init ()
+    private void init ()
     {
-        super.init ();
        
         _client.getMessageProcessor().setHandler(Messages.CC_NOTIFY_VALUE, new MessageListener(){
 
