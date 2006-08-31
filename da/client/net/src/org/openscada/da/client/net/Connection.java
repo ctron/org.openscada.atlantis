@@ -455,11 +455,8 @@ public class Connection extends ConnectionBase
     public void write ( String itemName, Variant value, Listener listener ) throws InterruptedException, OperationException
     {
         LongRunningOperation op = startWrite ( itemName, value, listener );
-        synchronized ( op )
-        {
-            op.wait ();
-            completeWrite ( op );
-        }
+        op.waitForCompletion ();
+        completeWrite ( op );
     }
     
     public LongRunningOperation startWrite ( String itemName, Variant value, Listener listener )
@@ -492,11 +489,8 @@ public class Connection extends ConnectionBase
     public void write ( String itemId, Map<String,Variant> attributes, Listener listener ) throws InterruptedException, OperationException
     {
         LongRunningOperation op = startWriteAttributes ( itemId, attributes, listener );
-        synchronized ( op )
-        {
-            op.wait ();
-            completeWriteAttributes ( op );
-        }
+        op.waitForCompletion ();
+        completeWriteAttributes ( op );
     }
     
     public LongRunningOperation startWriteAttributes ( String itemId, Map<String,Variant> attributes, Listener listener )
