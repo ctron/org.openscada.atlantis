@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.openscada.ae.core.Event;
 import org.openscada.ae.core.EventInformation;
 import org.openscada.ae.storage.common.Subscription;
@@ -12,6 +13,8 @@ import org.openscada.ae.storage.common.SubscriptionReader;
 
 public class QueueSubscriptionReader implements SubscriptionReader, PushEventReader
 {
+    private static Logger _log = Logger.getLogger ( QueueSubscriptionReader.class );
+    
     private ListeningQuery _query = null;
     
     private InitialEventsProvider _eventsProvider = null;
@@ -56,6 +59,7 @@ public class QueueSubscriptionReader implements SubscriptionReader, PushEventRea
 
     synchronized public void open ( Subscription subscription, SubscriptionObserver observer )
     {
+        _log.debug ( "Opened" );
         _subscription = subscription;
         _subscriptionObserver = observer;
         
@@ -65,6 +69,7 @@ public class QueueSubscriptionReader implements SubscriptionReader, PushEventRea
         {
             _events.add ( new EventInformation ( event, EventInformation.ACTION_ADDED ) );
         }
+        _log.debug ( _events.size () + " initial event(s)" );
         if ( !_events.isEmpty () )
         {
             notifyChange ();
@@ -95,6 +100,7 @@ public class QueueSubscriptionReader implements SubscriptionReader, PushEventRea
         if ( _events != null )
         {
             _events.add ( event );
+            notifyChange ();
         }
     }
 

@@ -20,15 +20,22 @@
 package org.openscada.ae.storage.net;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openscada.ae.core.EventInformation;
+import org.openscada.ae.core.Listener;
+import org.openscada.ae.core.NoSuchQueryException;
 import org.openscada.ae.core.Session;
 import org.openscada.ae.core.Storage;
+import org.openscada.ae.net.EventMessage;
 import org.openscada.ae.net.ListMessage;
-import org.openscada.ae.net.ListReplyMessage;
 import org.openscada.ae.net.Messages;
+import org.openscada.ae.net.SubscribeMessage;
+import org.openscada.ae.net.UnsubscribeMessage;
+import org.openscada.ae.net.UnsubscribedMessage;
 import org.openscada.ae.storage.net.controller.ListController;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
@@ -39,7 +46,7 @@ import org.openscada.net.base.data.Value;
 import org.openscada.net.io.net.Connection;
 import org.openscada.net.utils.MessageCreator;
 
-public class ServerConnectionHandler extends ConnectionHandlerBase
+public class ServerConnectionHandler extends ConnectionHandlerBase implements QueryListener
 {
     
     public final static String VERSION = "0.1.0";
@@ -49,6 +56,8 @@ public class ServerConnectionHandler extends ConnectionHandlerBase
 
     private Storage _storage = null;
     private Session _session = null;
+    
+    private Map<Long, EventListener> _listenerMap = new HashMap<Long,EventListener> ();
  
     public ServerConnectionHandler ( Storage storage )
     {
@@ -76,6 +85,21 @@ public class ServerConnectionHandler extends ConnectionHandlerBase
             {
                 performList ( message );
             }});
+        
+        getMessageProcessor ().setHandler ( Messages.CC_SUBSCRIBE, new MessageListener () {
+
+            public void messageReceived ( Connection connection, Message message ) throws Exception
+            {
+                performSubscribe ( message );
+            }});
+        
+        getMessageProcessor ().setHandler ( Messages.CC_UNSUBSCRIBE, new MessageListener () {
+
+            public void messageReceived ( Connection connection, Message message ) throws Exception
+            {
+                performUnsubscribe ( message );
+            }});
+        
     }
 
     private void createSession ( Message message )
@@ -167,5 +191,55 @@ public class ServerConnectionHandler extends ConnectionHandlerBase
     {
         ListMessage.fromMessage ( message );
         new ListController ( _storage, _session, this ).run ( message );
+    }
+    
+    synchronized public void performSubscribe ( Message message ) throws Exception
+    {
+        SubscribeMessage subscribeMessage = SubscribeMessage.fromMessage ( message );
+        _log.debug ( String.format ( "Requested subscribe: Query: %s, Listener: %d, Batch Size: %d, Archive Set: %d", subscribeMessage.getQueryId (), subscribeMessage.getListenerId (), subscribeMessage.getMaxBatchSize (), subscribeMessage.getArchiveSet () ) );
+        EventListener eventListener = new EventListener ( subscribeMessage.getQueryId (), subscribeMessage.getListenerId (), this );
+        try
+        {
+            _listenerMap.put ( subscribeMessage.getListenerId (), eventListener );
+            _storage.subscribe ( _session, subscribeMessage.getQueryId (), eventListener, subscribeMessage.getMaxBatchSize (), subscribeMessage.getArchiveSet () );
+        }
+        catch ( Exception e )
+        {
+            _listenerMap.remove ( subscribeMessage.getListenerId () );
+            _log.warn ( "Subscribe failed", e );
+            throw e;
+        }
+    }
+    
+    synchronized public void performUnsubscribe ( Message message ) throws InvalidSessionException, NoSuchQueryException
+    {
+        UnsubscribeMessage unsubscribeMessage = UnsubscribeMessage.fromMessage ( message );
+        EventListener eventListener = _listenerMap.get ( unsubscribeMessage.getListenerId () );
+        if ( eventListener != null )
+        {
+            _storage.unsubscribe ( _session, unsubscribeMessage.getQueryId (), eventListener );
+            _listenerMap.remove ( unsubscribeMessage.getListenerId ());
+        }
+    }
+
+    public void events ( String queryId, long listenerId, EventInformation[] events )
+    {
+        _log.debug ( "Got events for: " + queryId + "/" + listenerId );
+        
+        EventMessage eventMessage = new EventMessage ();
+        eventMessage.setQueryId ( queryId );
+        eventMessage.setEvents ( Arrays.asList ( events ) );
+        eventMessage.setListenerId ( listenerId );
+        getConnection ().sendMessage ( eventMessage.toMessage () );
+    }
+
+    synchronized public void unsubscribed ( String queryId, long listenerId, String reason )
+    {
+        _listenerMap.remove ( listenerId );
+        UnsubscribedMessage message = new UnsubscribedMessage ();
+        message.setQueryId ( queryId );
+        message.setReason ( reason );
+        message.setListenerId ( listenerId );
+        getConnection ().sendMessage ( message.toMessage () );
     }
 }

@@ -7,7 +7,7 @@ import org.openscada.utils.collection.MapBuilder;
 
 public class Storage extends StorageCommon
 {
-    private MemoryQuery _allQuery = new MemoryQuery ();
+    private TimedGeneratorMemoryQuery _allQuery = new TimedGeneratorMemoryQuery ();
     
     public Storage ()
     {
