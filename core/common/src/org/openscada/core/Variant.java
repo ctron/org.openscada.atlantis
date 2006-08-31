@@ -459,6 +459,6 @@ public class Variant
         else if ( _value instanceof Boolean )
             return "[VT_BOOLEAN](" + _value.toString () + ")";
         else
-            return "[VT_UNKNOWN]";
+            return "[VT_UNKNOWN](" + _value.toString () + ")";
     }
 }
