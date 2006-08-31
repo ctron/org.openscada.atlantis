@@ -22,13 +22,13 @@ package org.openscada.ae.storage.net;
 import org.apache.log4j.Logger;
 
 /**
- * Application to export a hive using the OpenSCADA NET protocol
+ * Application to export an AE storage using the OpenSCADA NET protocol
  * @author jens
  *
  */
 public class Application
 {
-	private static Logger _log = Logger.getLogger(Application.class);
+	private static Logger _log = Logger.getLogger ( Application.class );
 	
 	public static void main ( String[] args )
 	{
@@ -45,7 +45,7 @@ public class Application
             Exporter exporter = new Exporter ( args[0] );
             
             // run the lizzard
-            _log.info ( "Running exporter (hive class: " + exporter.getStorageClass ().getCanonicalName () + ")..." );
+            _log.info ( "Running exporter (storage class: " + exporter.getStorageClass ().getCanonicalName () + ")..." );
 			exporter.run ();
             _log.warn ( "Exporter returned!" );
 		}
