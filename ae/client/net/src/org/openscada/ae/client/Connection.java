@@ -20,15 +20,23 @@
 package org.openscada.ae.client;
 
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.openscada.ae.client.operations.ListOperationController;
+import org.openscada.ae.core.QueryDescription;
 import org.openscada.ae.net.CreateSessionMessage;
+import org.openscada.ae.net.ListReplyMessage;
 import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.core.client.net.DisconnectReason;
 import org.openscada.core.client.net.OperationTimedOutException;
+import org.openscada.core.client.net.operations.OperationException;
+import org.openscada.net.base.LongRunningOperation;
 import org.openscada.net.base.MessageStateListener;
+import org.openscada.net.base.LongRunningController.Listener;
 import org.openscada.net.base.data.Message;
+import org.openscada.net.io.IOProcessor;
 
 public class Connection extends ConnectionBase
 {
@@ -36,16 +44,23 @@ public class Connection extends ConnectionBase
     public static final String VERSION = "0.1.0";
 
     private static Logger _log = Logger.getLogger ( Connection.class );
+    
+    private ListOperationController _listOperationController = null;
 
     public Connection ( ConnectionInfo connectionInfo )
     {
         super ( connectionInfo );
+        
+        _listOperationController = new ListOperationController ( _client );
+        _listOperationController.register ( _client.getMessageProcessor () );
     }
-
-    @Override
-    protected void init ()
+    
+    public Connection ( ConnectionInfo connectionInfo, IOProcessor processor )
     {
-        super.init ();
+        super ( processor, connectionInfo );
+        
+        _listOperationController = new ListOperationController ( _client );
+        _listOperationController.register ( _client.getMessageProcessor () );
     }
 
     private void requestSession ()
@@ -107,5 +122,38 @@ public class Connection extends ConnectionBase
         requestSession ();
     }
     
+    public LongRunningOperation startList ( Listener listener )
+    {
+        return _listOperationController.start ( listener );
+    }
+    
+    public Set<QueryDescription> completeList ( LongRunningOperation op ) throws OperationException
+    {
+        if ( op.getError () != null )
+        {
+            throw new OperationException ( op.getError () );
+        }
+        if ( op.getReply () != null )
+        {
+            Message reply = op.getReply ();
+            try
+            {
+                ListReplyMessage listReplyMessage = ListReplyMessage.fromMessage ( reply );
+                return listReplyMessage.getQueries ();
+            }
+            catch ( Exception e )
+            {
+                throw new OperationException ( e );
+            }
+        }
+        return null;
+    }
+    
+    public Set<QueryDescription> list () throws InterruptedException, OperationException
+    {
+        LongRunningOperation op = startList ( null );
+        op.waitForCompletion ();
+        return completeList ( op );
+    }
    
 }
