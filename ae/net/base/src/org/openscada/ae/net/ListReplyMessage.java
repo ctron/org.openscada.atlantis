@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openscada.ae.core.QueryDescription;
 import org.openscada.core.net.MessageHelper;
+import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
@@ -26,12 +27,12 @@ public class ListReplyMessage
     
     /**
      * Create a message in order to send it back
-     * @param requestMessage The original request message
+     * @param id The operation id
      * @return
      */
-    public Message toMessage ( Message requestMessage )
+    public Message toMessage ( long id )
     {
-        Message message = new Message ( Messages.CC_LIST_REPLY, requestMessage.getSequence () );
+        Message message = new Message ( Messages.CC_LIST_REPLY );
         
         MapValue list = new MapValue ();
         
@@ -41,6 +42,7 @@ public class ListReplyMessage
         }
         
         message.getValues ().put ( "queries", list );
+        message.getValues ().put ( "id", new LongValue ( id ) );
         
         return message;
     }
