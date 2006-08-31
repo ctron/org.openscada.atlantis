@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.openscada.ae.core.EventInformation;
 import org.openscada.net.base.data.ListValue;
+import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
@@ -12,6 +13,7 @@ import org.openscada.net.base.data.Value;
 public class EventMessage
 {
     private String _queryId = null;
+    private long _listenerId = 0;
     private List<EventInformation> _events = null;
     
     public List<EventInformation> getEvents ()
@@ -31,11 +33,21 @@ public class EventMessage
         _queryId = queryId;
     }
     
+    public long getListenerId ()
+    {
+        return _listenerId;
+    }
+    public void setListenerId ( long listenerId )
+    {
+        _listenerId = listenerId;
+    }
+    
     public Message toMessage ()
     {
         Message message = new Message ( Messages.CC_SUBSCRIPTION_EVENT );
         
         message.getValues ().put ( "query-id", new StringValue ( _queryId ) );
+        message.getValues ().put ( "listener-id", new LongValue ( _listenerId ) );
         
         ListValue list = new ListValue ();
         
@@ -54,6 +66,7 @@ public class EventMessage
         EventMessage eventMessage = new EventMessage ();
         
         eventMessage.setQueryId ( ((StringValue)message.getValues ().get ( "query-id" )).getValue () );
+        eventMessage.setListenerId ( ((LongValue)message.getValues ().get ( "listener-id" ) ).getValue () );
         
         List<EventInformation> events = new LinkedList<EventInformation> ();
         
@@ -62,7 +75,9 @@ public class EventMessage
         {
             events.add ( Messages.valueToEventInformation ( value ) );
         }
+        eventMessage.setEvents ( events );
         
         return eventMessage;
     }
+    
 }

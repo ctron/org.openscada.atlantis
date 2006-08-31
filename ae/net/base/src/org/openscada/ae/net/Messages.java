@@ -16,21 +16,23 @@ import sun.util.calendar.CalendarUtils;
 
 public class Messages
 {
-    public final static int CC_CREATE_SESSION =                     0x00020000;
-    public final static int CC_CLOSE_SESSION =                      0x00020001;
-    public final static int CC_CANCEL_OPERATION =                   0x00020002;
+    public static final int CC_CREATE_SESSION =                     0x00020000;
+    public static final int CC_CLOSE_SESSION =                      0x00020001;
+    public static final int CC_CANCEL_OPERATION =                   0x00020002;
     
-    public final static int CC_LIST =                               0x00020010;
-    public final static int CC_LIST_REPLY =                         0x00020011;
+    public static final int CC_LIST =                               0x00020010;
+    public static final int CC_LIST_REPLY =                         0x00020011;
     
-    public final static int CC_READ =                               0x00020100;
-    public final static int CC_READ_REPLY =                         0x00020101;
+    public static final int CC_READ =                               0x00020100;
+    public static final int CC_READ_REPLY =                         0x00020101;
     
-    public final static int CC_SUBSCRIBE =                          0x00020200;
-    public final static int CC_UNSUBSCRIBE =                        0x00020201;
-    public final static int CC_SUBSCRIPTION_EVENT =                 0x00020202;
+    public static final int CC_SUBSCRIBE =                          0x00020200;
+    public static final int CC_UNSUBSCRIBE =                        0x00020201;
+    public static final int CC_SUBSCRIPTION_EVENT =                 0x00020202;
+    public static final int CC_SUBSCRIPTION_UNSUBSCRIBED =          0x00020203;
     
-    public final static int CC_MODIFY_EVENT =                       0x00020300;
+    public static final int CC_MODIFY_EVENT =                       0x00020300;
+    
     
     public static Value eventInformationToValue ( EventInformation eventInformation )
     {
