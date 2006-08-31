@@ -35,6 +35,41 @@ import org.openscada.net.io.IOProcessor;
 
 public abstract class ConnectionBase
 {
+    private class WaitConnectionStateListener implements ConnectionStateListener
+    {
+        public void stateChange ( ConnectionBase connection, State state, Throwable error )
+        {
+            switch ( state )
+            {
+            case BOUND:
+                notifyComplete ();
+            case CLOSED:
+                notifyError ( error );
+            }
+        }
+
+        private void notifyComplete ()
+        {
+            synchronized ( this )
+            {
+                notifyAll ();
+            }
+        }
+        
+        private Throwable _error = null;
+        
+        private void notifyError ( Throwable error )
+        {
+            _error = error;
+        }
+
+        public void complete () throws Throwable
+        {
+            if ( _error != null )
+                throw _error;
+        }
+    }
+    
     public enum State
     {
         CLOSED,
@@ -129,6 +164,28 @@ public abstract class ConnectionBase
             setState ( State.CONNECTING, null );
             break;
         }        
+    }
+    
+    public void waitForConnection () throws Throwable
+    {
+        // Check if we are already connected and return then
+        if ( _state == State.BOUND )
+            return;
+        
+        WaitConnectionStateListener csl = new WaitConnectionStateListener ();
+        try
+        {
+            addConnectionStateListener ( csl );
+            synchronized ( csl )
+            {
+                csl.wait ();
+                csl.complete ();
+            }
+        }
+        finally
+        {
+            removeConnectionStateListener ( csl );
+        }
     }
 
     synchronized public void disconnect ()
