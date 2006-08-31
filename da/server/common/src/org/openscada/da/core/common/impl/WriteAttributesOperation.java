@@ -46,16 +46,22 @@ public class WriteAttributesOperation extends RunnableCancelOperation
         try
         {
             Results results = _item.setAttributes ( _attributes );
-            if ( !isCanceled () )
+            synchronized ( this )
             {
-                _listener.complete ( results );
+                if ( !isCanceled () )
+                {
+                    _listener.complete ( results );
+                }
             }
         }
         catch ( Exception e )
         {
-            if ( !isCanceled () )
+            synchronized ( this )
             {
-                _listener.failed ( e );
+                if ( !isCanceled () )
+                {
+                    _listener.failed ( e );
+                }
             }
         }
         
