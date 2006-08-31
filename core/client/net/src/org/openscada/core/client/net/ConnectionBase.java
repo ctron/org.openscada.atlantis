@@ -99,7 +99,7 @@ public abstract class ConnectionBase
         this ( getDefaultProcessor(), connectionInfo );
     }
 
-    protected void init ()
+    private void init ()
     {
         if ( _client != null )
             return;
