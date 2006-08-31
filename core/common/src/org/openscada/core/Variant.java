@@ -446,11 +446,19 @@ public class Variant
     @Override
     public String toString ()
     {
-        if ( _value != null )
-        {
-            return _value.toString ();
-        }
+        if ( _value == null )
+            return "[VT_NULL]";
+        else if ( _value instanceof Double )
+            return "[VT_DOUBLE](" + _value.toString () + ")";
+        else if ( _value instanceof Integer )
+            return "[VT_INT32](" + _value.toString () + ")";
+        else if ( _value instanceof Long )
+            return "[VT_INT64](" + _value.toString () + ")";
+        else if ( _value instanceof String )
+            return "[VT_STRING](" + _value.toString () + ")";
+        else if ( _value instanceof Boolean )
+            return "[VT_BOOLEAN](" + _value.toString () + ")";
         else
-            return "<null>";
+            return "[VT_UNKNOWN]";
     }
 }
