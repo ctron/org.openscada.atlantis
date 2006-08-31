@@ -30,6 +30,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.CancellationNotSupportedException;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.Folder;
@@ -38,7 +39,6 @@ import org.openscada.da.core.common.DataItemFactory;
 import org.openscada.da.core.common.DataItemFactoryListener;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.ItemListener;
-import org.openscada.da.core.server.CancellationNotSupportedException;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
