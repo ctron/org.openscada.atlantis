@@ -214,22 +214,8 @@ public class HiveCommon implements Hive, ItemListener
 				}
 			}
             
-            // cancel pending operations
-            Set<Handle> operations = sessionCommon.getOperations ().getOperations ();
-            for ( Handle handle : operations )
-            {
-                try
-                {
-                    _log.info ( "Stopping operation: " + handle );
-                    handle.cancel ();
-                }
-                catch ( CancelNotSupportedException e )
-                {
-                    _log.warn ( "Failed to cancel job on session destruction", e );
-                    // ignore it .. we can't do anything
-                }
-            }
-            sessionCommon.getOperations ().clear ();
+            // cancel all pending operations
+            sessionCommon.getOperations ().cancelAll ();
 			
 			_sessions.remove ( session );
 		}

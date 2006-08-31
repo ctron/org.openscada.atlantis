@@ -19,6 +19,7 @@
 
 package org.openscada.da.core.common.impl;
 
+import org.openscada.core.server.common.SessionCommonOperations;
 import org.openscada.da.core.server.ItemChangeListener;
 import org.openscada.da.core.server.ItemListListener;
 import org.openscada.da.core.server.browser.FolderListener;
