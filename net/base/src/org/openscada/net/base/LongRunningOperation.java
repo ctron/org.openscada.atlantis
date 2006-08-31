@@ -48,12 +48,12 @@ public class LongRunningOperation
         }
     }
     
-    synchronized protected void fail ()
+    synchronized protected void fail ( Throwable error )
     {
         if ( _stopped )
             return;
 
-        stateChange ( State.FAILURE, null, null );
+        stateChange ( State.FAILURE, null, error );
 
         notifyAll ();
     }

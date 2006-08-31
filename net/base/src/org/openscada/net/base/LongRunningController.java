@@ -91,12 +91,12 @@ public class LongRunningController implements MessageListener
                         return;
                     }
                 // else
-                op.fail ();
+                op.fail ( new InvalidMessageReplyException ().fillInStackTrace () );
             }
 
             public void messageTimedOut ()
             {
-                op.fail ();
+                op.fail ( new MessageTimeoutException ().fillInStackTrace () );
             }} );
         
         if ( listener != null )
