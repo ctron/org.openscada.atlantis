@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.Variant;
+import org.openscada.core.net.OperationController;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
 import org.openscada.da.core.server.Session;
@@ -15,7 +16,7 @@ import org.openscada.net.da.handler.WriteAttributesOperation;
 import org.openscada.net.utils.MessageCreator;
 import org.openscada.utils.lang.Holder;
 
-public class WriteAttributesController implements WriteAttributesOperationListener
+public class WriteAttributesController extends OperationController implements WriteAttributesOperationListener
 {
     private Hive _hive = null;
     private Session _session = null;
@@ -25,6 +26,7 @@ public class WriteAttributesController implements WriteAttributesOperationListen
     
     public WriteAttributesController ( Hive hive, Session session, ConnectionHandlerBase connection )
     {
+        super ( connection );
         _hive = hive;
         _session = session;
         _connection = connection;
@@ -51,9 +53,7 @@ public class WriteAttributesController implements WriteAttributesOperationListen
         }
         
         // send out ACK with operation id
-        Message message = MessageCreator.createACK ( request );
-        message.getValues ().put ( "id", new LongValue ( _id ) );
-        _connection.getConnection ().sendMessage ( message );
+        sendACK ( request, _id );
         
         try
         {
@@ -65,11 +65,7 @@ public class WriteAttributesController implements WriteAttributesOperationListen
         }
     }
 
-    private void sendFailure ( Message request, Throwable e )
-    {
-        Message message = MessageCreator.createFailedMessage ( request, e );
-        _connection.getConnection ().sendMessage ( message );
-    }
+    
     
     public void complete ( Results results )
     {
