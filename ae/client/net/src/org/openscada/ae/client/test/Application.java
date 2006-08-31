@@ -36,8 +36,6 @@ public class Application
         ci.setHostName ( "localhost" );
         ci.setPort ( 1302 );
         
-        IOProcessor processor = new IOProcessor ();
-        
         Connection connection = new Connection ( ci );
         _log.debug ( "Initiating connection..." );
         connection.connect ();
@@ -47,6 +45,11 @@ public class Application
         
         list ( connection );
         
+        connection.subscribe ( "all", new DumpListener (), 10, 10 );
         
+        while ( true )
+        {
+            Thread.sleep ( 1000 );
+        }
     }
 }

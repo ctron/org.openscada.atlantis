@@ -19,20 +19,31 @@
 
 package org.openscada.ae.client;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openscada.ae.client.operations.ListOperationController;
+import org.openscada.ae.core.EventInformation;
 import org.openscada.ae.core.QueryDescription;
 import org.openscada.ae.net.CreateSessionMessage;
+import org.openscada.ae.net.EventMessage;
 import org.openscada.ae.net.ListReplyMessage;
+import org.openscada.ae.net.Messages;
+import org.openscada.ae.net.SubscribeMessage;
+import org.openscada.ae.net.UnsubscribeMessage;
+import org.openscada.ae.net.UnsubscribedMessage;
 import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.core.client.net.DisconnectReason;
 import org.openscada.core.client.net.OperationTimedOutException;
 import org.openscada.core.client.net.operations.OperationException;
 import org.openscada.net.base.LongRunningOperation;
+import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.LongRunningController.Listener;
 import org.openscada.net.base.data.Message;
@@ -46,21 +57,41 @@ public class Connection extends ConnectionBase
     private static Logger _log = Logger.getLogger ( Connection.class );
     
     private ListOperationController _listOperationController = null;
+    
+    private Map<Long,org.openscada.ae.core.Listener> _eventListenerMap = new HashMap<Long,org.openscada.ae.core.Listener> ();
 
     public Connection ( ConnectionInfo connectionInfo )
     {
         super ( connectionInfo );
         
-        _listOperationController = new ListOperationController ( _client );
-        _listOperationController.register ( _client.getMessageProcessor () );
+        init ();
     }
     
     public Connection ( ConnectionInfo connectionInfo, IOProcessor processor )
     {
         super ( processor, connectionInfo );
         
+        init ();
+    }
+    
+    private void init ()
+    {
         _listOperationController = new ListOperationController ( _client );
         _listOperationController.register ( _client.getMessageProcessor () );
+        
+        _client.getMessageProcessor ().setHandler ( Messages.CC_SUBSCRIPTION_EVENT, new MessageListener () {
+
+            public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message ) throws Exception
+            {
+                handleSubscriptionEvent ( message ); 
+            }} );
+        
+        _client.getMessageProcessor ().setHandler ( Messages.CC_SUBSCRIPTION_UNSUBSCRIBED, new MessageListener () {
+
+            public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message ) throws Exception
+            {
+                handleSubscriptionUnsubscribed ( message ); 
+            }} );
     }
 
     private void requestSession ()
@@ -154,6 +185,74 @@ public class Connection extends ConnectionBase
         LongRunningOperation op = startList ( null );
         op.waitForCompletion ();
         return completeList ( op );
+    }
+    
+    synchronized public void subscribe ( String queryId, org.openscada.ae.core.Listener listener, int maxBatchSize, int archiveSet )
+    {
+        Random r = new Random ();
+        Long id;
+        
+        do {
+            id = r.nextLong ();
+        } while ( _eventListenerMap.containsKey ( id ) );
+        
+        _eventListenerMap.put ( id, listener );
+        
+        SubscribeMessage message = new SubscribeMessage ();
+        message.setQueryId ( queryId );
+        message.setListenerId ( id );
+        message.setArchiveSet ( archiveSet );
+        message.setMaxBatchSize ( maxBatchSize );
+        getClient ().getConnection ().sendMessage ( message.toMessage () );
+    }
+    
+    synchronized public void unsubscribe ( String queryId, org.openscada.ae.core.Listener listener )
+    {
+        Long id = findListenerId ( listener );
+        
+        if ( id == null )
+            return;
+        
+        UnsubscribeMessage message = new UnsubscribeMessage ();
+        message.setListenerId ( id );
+        message.setQueryId ( queryId );
+        getClient ().getConnection ().sendMessage ( message.toMessage () );
+    }
+    
+    synchronized private Long findListenerId ( org.openscada.ae.core.Listener listener )
+    {
+        for ( Map.Entry<Long, org.openscada.ae.core.Listener> entry : _eventListenerMap.entrySet () )
+        {
+            if ( entry.getValue () == listener )
+            {
+                return entry.getKey ();
+            }
+        }
+        return null;
+    }
+    
+    synchronized private void handleSubscriptionEvent ( Message message )
+    {
+        EventMessage eventMessage = EventMessage.fromMessage ( message );
+        
+        org.openscada.ae.core.Listener listener = _eventListenerMap.get ( eventMessage.getListenerId () );
+
+        if ( listener != null )
+        {
+            listener.events ( eventMessage.getEvents ().toArray ( new EventInformation[eventMessage.getEvents ().size ()] ) );
+        }
+    }
+    
+    private void handleSubscriptionUnsubscribed ( Message message )
+    {
+        UnsubscribedMessage unsubscribedMessage = UnsubscribedMessage.fromMessage ( message );
+        org.openscada.ae.core.Listener listener = _eventListenerMap.get ( unsubscribedMessage.getListenerId () );
+        
+        if ( listener != null )
+        {
+            listener.unsubscribed ( unsubscribedMessage.getReason () );
+            _eventListenerMap.remove ( unsubscribedMessage.getListenerId () );
+        }
     }
    
 }
