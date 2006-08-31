@@ -508,7 +508,14 @@ public class ProtocolGMPP implements Protocol
             {
                 _log.debug ( "Message time diff: " + ( ts - message.getTimestamp () ) );
                 _log.debug ( "Bytes remaining: " + _inputBuffer.remaining() );
-                _listener.messageReceived ( _connection, message );
+                try
+                {
+                    _listener.messageReceived ( _connection, message );
+                }
+                catch ( Exception e )
+                {
+                    _log.error ( "Failed to process message", e );
+                }
                 _log.debug ( "Returned from processing message" );
             }
 
