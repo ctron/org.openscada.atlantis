@@ -24,9 +24,14 @@ public class ListReplyMessage
         _queries = queries;
     }
     
-    public Message toMessage ()
+    /**
+     * Create a message in order to send it back
+     * @param requestMessage The original request message
+     * @return
+     */
+    public Message toMessage ( Message requestMessage )
     {
-        Message message = new Message ( Messages.CC_LIST_REPLY );
+        Message message = new Message ( Messages.CC_LIST_REPLY, requestMessage.getSequence () );
         
         MapValue list = new MapValue ();
         
