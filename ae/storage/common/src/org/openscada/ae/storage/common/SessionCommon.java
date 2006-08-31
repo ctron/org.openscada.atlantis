@@ -4,12 +4,14 @@ import java.util.List;
 
 import org.openscada.ae.core.Listener;
 import org.openscada.ae.core.Session;
+import org.openscada.core.server.common.SessionCommonOperations;
 
 public class SessionCommon implements Session
 {
     private StorageCommon _storage = null;
     
     private List<Subscription> _subscriptions = null;
+    private SessionCommonOperations _operations = new SessionCommonOperations ();
     
     public SessionCommon ( StorageCommon storage )
     {
@@ -55,5 +57,15 @@ public class SessionCommon implements Session
                 return subscription;
         }
         return null;
+    }
+
+    public SessionCommonOperations getOperations ()
+    {
+        return _operations;
+    }
+
+    public void setOperations ( SessionCommonOperations operations )
+    {
+        _operations = operations;
     }
 }

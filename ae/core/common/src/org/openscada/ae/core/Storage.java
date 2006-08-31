@@ -2,6 +2,7 @@ package org.openscada.ae.core;
 
 import java.util.Properties;
 
+import org.openscada.core.CancellationNotSupportedException;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 
@@ -14,7 +15,10 @@ public interface Storage
     void unsubscribe ( Session session, String queryID, Listener listener ) throws InvalidSessionException, NoSuchQueryException;
     Event[] read ( Session session, String queryID ) throws InvalidSessionException, NoSuchQueryException;
 
-    QueryDescription[] getQueries ( Session session ) throws InvalidSessionException;
+    long startList ( Session session, ListOperationListener listener ) throws InvalidSessionException;
     
     public void submitEvent ( Properties properties, Event event ) throws Exception;
+    
+    public void cancelOperation ( Session session, long id ) throws InvalidSessionException, CancellationNotSupportedException;
+    public void thawOperation ( Session session, long id ) throws InvalidSessionException;
 }

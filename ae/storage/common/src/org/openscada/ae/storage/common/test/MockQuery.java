@@ -41,5 +41,9 @@ public class MockQuery implements Query
         
         return reader;
     }
+
+    public void submitEvent ( Event event )
+    {
+    }
     
 }

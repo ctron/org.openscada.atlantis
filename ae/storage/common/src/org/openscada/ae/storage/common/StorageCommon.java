@@ -1,24 +1,42 @@
 package org.openscada.ae.storage.common;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.openscada.ae.core.Event;
+import org.openscada.ae.core.ListOperationListener;
 import org.openscada.ae.core.Listener;
 import org.openscada.ae.core.NoSuchQueryException;
 import org.openscada.ae.core.QueryDescription;
 import org.openscada.ae.core.Session;
 import org.openscada.ae.core.Storage;
+import org.openscada.ae.storage.common.operations.ListOperation;
+import org.openscada.core.CancellationNotSupportedException;
 import org.openscada.core.InvalidSessionException;
+import org.openscada.utils.jobqueue.CancelNotSupportedException;
+import org.openscada.utils.jobqueue.OperationManager;
+import org.openscada.utils.jobqueue.OperationProcessor;
+import org.openscada.utils.jobqueue.OperationManager.Handle;
 
 public class StorageCommon implements Storage
 {
+    private static Logger _log = Logger.getLogger ( StorageCommon.class );
+    
     private Map<String, QueryEntry> _queries = new HashMap<String, QueryEntry> ();
     
     private SubscriptionManager _subscriptionManager = new SubscriptionManager ();
+    private OperationManager _opManager = new OperationManager ();
+    private OperationProcessor _opProcessor = new OperationProcessor ();
+    private Thread _opThread =  new Thread ( _opProcessor );
+    
+    public StorageCommon ()
+    {
+        super ();
+        _opThread.setDaemon ( true );
+        _opThread.start ();
+    }
     
     /**
      * Validate a session and return the internal session object
@@ -62,18 +80,28 @@ public class StorageCommon implements Storage
         return new SessionCommon ( this );
     }
 
-    synchronized public QueryDescription[] getQueries ( Session session ) throws InvalidSessionException
+    synchronized public long startList ( Session session, ListOperationListener listener ) throws InvalidSessionException
     {
         @SuppressWarnings("unused")
         SessionCommon sessionCommon = validateSession ( session );
         
-        List<QueryDescription> descriptions = new ArrayList<QueryDescription> ( _queries.size () );
+        Handle handle = _opManager.schedule ( new ListOperation ( this, listener ) );
+        
+        sessionCommon.getOperations ().addOperation ( handle );
+        
+        return handle.getId ();
+    }
+    
+    synchronized public QueryDescription[] list ()
+    {
+        QueryDescription[] descriptions = new QueryDescription[_queries.size ()];
+        int i = 0;
         for ( QueryEntry entry : _queries.values () )
         {
-            descriptions.add ( new QueryDescription ( entry.getDescription () ) );
+            descriptions[i] = new QueryDescription ( entry.getDescription () );
+            i++;
         }
-        
-        return descriptions.toArray ( new QueryDescription[descriptions.size ()] );
+        return descriptions;
     }
 
     synchronized public Event[] read ( Session session, String queryID ) throws InvalidSessionException, NoSuchQueryException
@@ -111,9 +139,13 @@ public class StorageCommon implements Storage
     {
     }
     
-    public void submitEvent ( Properties properties, Event event ) throws Exception
+    synchronized public void submitEvent ( Properties properties, Event event ) throws Exception
     {   
         validateSubmission ( properties, event );
+        for ( QueryEntry queryEntry : _queries.values () )
+        {
+            queryEntry.getQuery ().submitEvent ( event );
+        }
     }
 
     synchronized public void subscribe ( Session session, String queryID, Listener listener, int maxBatchSize, int archiveSet ) throws InvalidSessionException, NoSuchQueryException
@@ -154,6 +186,53 @@ public class StorageCommon implements Storage
         if ( ( queryEntry = _queries.remove ( name ) ) != null )
         {
             _subscriptionManager.unsubscribe ( queryEntry.getQuery () );
+        }
+    }
+
+    public void cancelOperation ( Session session, long id ) throws CancellationNotSupportedException, InvalidSessionException
+    {
+        SessionCommon sessionCommon = validateSession ( session );
+        
+        synchronized ( sessionCommon )
+        {
+            _log.info ( String.format ( "Cancelling operation: %d", id ) );
+
+            Handle handle = _opManager.get ( id );
+            if ( handle != null )
+            {
+                if ( sessionCommon.getOperations ().containsOperation ( handle ) )
+                {
+                    try
+                    {
+                        handle.cancel ();
+                    }
+                    catch ( CancelNotSupportedException e )
+                    {
+                        throw new CancellationNotSupportedException ();
+                    }
+                }
+            }
+        }
+    }
+
+    public void thawOperation ( Session session, long id ) throws InvalidSessionException
+    {
+        SessionCommon sessionCommon = validateSession ( session );
+
+        synchronized ( sessionCommon )
+        {
+            _log.info ( String.format ( "Thawing operation %d", id ) );
+
+            Handle handle = _opManager.get ( id );
+            if ( handle != null )
+            {
+                if ( sessionCommon.getOperations ().containsOperation ( handle ) )
+                {
+                    _opProcessor.add ( handle );
+                }
+            }
+            else
+                _log.warn ( String.format ( "%d is not a valid operation id", id ) );
         }
     }
 }

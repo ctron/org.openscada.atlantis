@@ -3,9 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ext_log4j"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/openscada_ae_core_common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/openscada_core_common"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/openscada_ae_core_common"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/openscada_core_common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_utils"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/openscada_core_server_common"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
