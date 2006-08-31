@@ -22,11 +22,15 @@ package org.openscada.da.core.common.impl;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.openscada.utils.jobqueue.CancelNotSupportedException;
 import org.openscada.utils.jobqueue.OperationManager;
 import org.openscada.utils.jobqueue.OperationManager.Handle;
 
 public class SessionCommonOperations implements OperationManager.Listener
 {
+    private static Logger _log = Logger.getLogger ( SessionCommonOperations.class );
+    
     private Set<Handle> _operations = new HashSet<Handle> (); 
     
     synchronized public boolean addOperation ( Handle handle )
@@ -57,5 +61,24 @@ public class SessionCommonOperations implements OperationManager.Listener
     synchronized public void clear ()
     {
         _operations.clear ();
+    }
+    
+    synchronized public void cancelAll ()
+    {
+        // cancel all pending operations
+        for ( Handle handle : _operations )
+        {
+            try
+            {
+                _log.info ( "Stopping operation: " + handle );
+                handle.cancel ();
+            }
+            catch ( CancelNotSupportedException e )
+            {
+                _log.warn ( "Failed to cancel job on session destruction", e );
+                // ignore it .. we can't do anything
+            }
+        }
+        clear ();
     }
 }
