@@ -19,13 +19,17 @@
 
 package org.openscada.ae.storage.net;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openscada.ae.core.Session;
 import org.openscada.ae.core.Storage;
+import org.openscada.ae.net.ListMessage;
+import org.openscada.ae.net.ListReplyMessage;
 import org.openscada.ae.net.Messages;
+import org.openscada.ae.storage.net.controller.ListController;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.net.base.ConnectionHandlerBase;
@@ -52,16 +56,25 @@ public class ServerConnectionHandler extends ConnectionHandlerBase
 
         _storage = storage;
 
-        getMessageProcessor().setHandler(Messages.CC_CREATE_SESSION, new MessageListener(){
+        getMessageProcessor ().setHandler ( Messages.CC_CREATE_SESSION, new MessageListener () {
 
-            public void messageReceived(Connection connection, Message message) {
+            public void messageReceived ( Connection connection, Message message )
+            {
                 createSession ( message );
             }});
 
-        getMessageProcessor().setHandler(Messages.CC_CLOSE_SESSION, new MessageListener(){
+        getMessageProcessor ().setHandler ( Messages.CC_CLOSE_SESSION, new MessageListener () {
 
-            public void messageReceived(Connection connection, Message message) {
+            public void messageReceived ( Connection connection, Message message )
+            {
                 closeSession ();
+            }});
+        
+        getMessageProcessor ().setHandler ( Messages.CC_LIST, new MessageListener () {
+
+            public void messageReceived ( Connection connection, Message message ) throws Exception
+            {
+                performList ( message );
             }});
     }
 
@@ -150,4 +163,9 @@ public class ServerConnectionHandler extends ConnectionHandlerBase
         super.closed ( error );
     }
 
+    public void performList ( Message message ) throws InvalidSessionException
+    {
+        ListMessage.fromMessage ( message );
+        new ListController ( _storage, _session, this ).run ( message );
+    }
 }
