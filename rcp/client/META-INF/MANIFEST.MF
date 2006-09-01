@@ -7,5 +7,6 @@ Bundle-Activator: org.openscada.rcp.client.Activator
 Bundle-Vendor: openscada.org
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ log4j_wrapper_plugin
 Eclipse-LazyStart: true

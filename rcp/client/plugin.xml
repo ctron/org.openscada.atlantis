@@ -3,7 +3,8 @@
 <plugin>
 
    <extension
-         id="application"
+         id="org.openscada.rcp.client.application"
+         name="OpenSCADA RCP Client Application"
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
@@ -18,6 +19,29 @@
             class="org.openscada.rcp.client.Perspective"
             id="org.openscada.rcp.client.perspective">
       </perspective>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.openscada.rcp.client.application"
+            name="OpenSCADA Client">
+         <property
+               name="aboutImage"
+               value="about.png"/>
+         <property
+               name="aboutText"
+               value="%aboutText"/>
+         <property
+               name="windowImages"
+               value="platform:/plugin/org.openscada.da.client.test/icons/app/app_icon_16.gif,platform:/plugin/org.openscada.da.client.test/icons/app/app_icon_32.gif,platform:/plugin/org.openscada.da.client.test/icons/app/app_icon_48.gif"/>
+      </product>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.openscada.rcp.client.perspective">
+         <perspectiveShortcut id="org.openscada.da.client.test.perspective"/>
+      </perspectiveExtension>
    </extension>
 
 </plugin>

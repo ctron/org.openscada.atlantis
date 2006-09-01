@@ -16,11 +16,13 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         return new ApplicationActionBarAdvisor(configurer);
     }
     
-    public void preWindowOpen() {
-        IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
-        configurer.setInitialSize(new Point(400, 300));
-        configurer.setShowCoolBar(false);
-        configurer.setShowStatusLine(false);
-        configurer.setTitle("OpenSCADA RCP Client");
+    public void preWindowOpen ()
+    {
+        IWorkbenchWindowConfigurer configurer = getWindowConfigurer ();
+        configurer.setInitialSize ( new Point ( 1024, 768 ) );
+        configurer.setShowCoolBar ( true );
+        configurer.setShowStatusLine ( true );
+        configurer.setShowProgressIndicator ( true );
+        configurer.setShowPerspectiveBar ( true );
     }
 }

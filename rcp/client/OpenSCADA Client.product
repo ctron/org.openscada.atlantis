@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.1"?>
 
-<product name="OpenSCADA DA Test Client" id="org.openscada.da.client.test.product" application="org.openscada.da.client.test.application" useFeatures="true">
+<product name="OpenSCADA Client" id="org.openscada.rcp.client.product" application="org.openscada.rcp.client.application" useFeatures="true">
 
    <aboutInfo>
       <image path="about.png"/>
@@ -17,7 +17,6 @@
 
    <windowImages i16="/openscada_da_client_test/icons/app/app_icon_16.gif" i32="/openscada_da_client_test/icons/app/app_icon_32.gif" i48="/openscada_da_client_test/icons/app/app_icon_48.gif"/>
 
-
    <launcher name="ostc">
       <solaris/>
       <win useIco="true">
@@ -26,7 +25,6 @@
       </win>
    </launcher>
 
-
    <plugins>
    </plugins>
 
@@ -34,6 +32,7 @@
       <feature id="org.eclipse.rcp" version="3.2.0.v20060609m-SVDNgVrNoh-MeGG"/>
       <feature id="org.openscada.da.client.test" version="0.2.2"/>
       <feature id="org.openscada.da.net.client" version="0.2.2"/>
+      <feature id="org.openscada.rcp.client" version="0.4.0"/>
    </features>
 
 </product>
