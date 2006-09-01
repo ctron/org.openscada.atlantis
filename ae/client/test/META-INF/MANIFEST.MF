@@ -7,5 +7,8 @@ Bundle-Activator: org.openscada.ae.client.test.Activator
 Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ log4j_wrapper_plugin,
+ org.openscada.ae.net.client,
+ org.eclipse.ui.views
 Eclipse-LazyStart: true
