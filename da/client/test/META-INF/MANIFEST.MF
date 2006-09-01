@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA DA Test Client
+Bundle-Name: OpenSCADA DA Client
 Bundle-SymbolicName: org.openscada.da.client.test; singleton:=true
 Bundle-Version: 0.2.2
 Bundle-Activator: org.openscada.da.client.test.Openscada_da_client_testPlugin
