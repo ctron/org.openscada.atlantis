@@ -123,5 +123,13 @@
             id="org.openscada.ae.client.test.newWizards.NewStorageWizard"
             name="New Storage"/>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig" 
+            content="intro/whatsNewExtensionContent.xml"/>  
+   </extension>
+   
 
 </plugin>
