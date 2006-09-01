@@ -1,0 +1,23 @@
+<extensions>
+   <page id="overview">
+      <group path="page-content/top-left">
+          <extension id="org.openscada.rcp.client" importance="high"/>
+          <extension id="foo2" importance="medium"/>
+      </group>
+      <group path="page-content/top-right">
+           <extension id="foo3" importance="low"/>
+           <extension id="foo4" importance="low"/>
+           <extension id="foo5" importance="callout"/>
+      </group>
+      <hidden>
+            <extension id="foo6"/>
+            <extension id="foo7"/>
+      </hidden>
+   </page>
+   
+   <page id="whatsnew">
+    <group path="page-content/top-left">
+      <extension id="org.openscada.rcp.client.whatsnew" importance="high"/>
+    </group>
+   </page>
+</extensions>

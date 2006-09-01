@@ -24,6 +24,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private IWorkbenchAction exitAction;
     private IWorkbenchAction aboutAction;
     private IWorkbenchAction newWindowAction;
+    private IWorkbenchAction introAction;
     
 
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
@@ -49,6 +50,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         register(ActionFactory.SHOW_VIEW_MENU.create(window));
         register(ActionFactory.NEW_WIZARD_DROP_DOWN.create(window));
         register(ActionFactory.NEW.create(window));
+        register(ActionFactory.INTRO.create ( window ) );
     }
     
     protected void fillMenuBar(IMenuManager menuBar) {
@@ -71,6 +73,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         
         // Help
         helpMenu.add(aboutAction);
+        helpMenu.add ( getAction ( ActionFactory.INTRO.getId () ) );
     }
     
     protected void fillCoolBar(ICoolBarManager coolBar) {
