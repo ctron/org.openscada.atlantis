@@ -24,7 +24,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private IWorkbenchAction exitAction;
     private IWorkbenchAction aboutAction;
     private IWorkbenchAction newWindowAction;
-    private IWorkbenchAction introAction;
     
 
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
