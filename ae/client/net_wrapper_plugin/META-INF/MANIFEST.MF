@@ -7,14 +7,23 @@ Bundle-ClassPath: openscada_ae_client_net_full.jar
 Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin
 Export-Package: org.openscada.ae.client,
+ org.openscada.ae.client.operations,
  org.openscada.ae.core,
  org.openscada.core,
  org.openscada.core.client.net,
+ org.openscada.core.client.net.operations,
  org.openscada.net.base,
  org.openscada.net.base.data,
  org.openscada.net.base.handlers,
  org.openscada.net.io,
  org.openscada.net.test,
  org.openscada.net.utils,
+ org.openscada.utils.collection,
+ org.openscada.utils.exec,
+ org.openscada.utils.exec.test,
+ org.openscada.utils.jobqueue,
+ org.openscada.utils.lang,
+ org.openscada.utils.lang.test,
+ org.openscada.utils.str,
  org.openscada.utils.timing
 Require-Bundle: log4j_wrapper_plugin
