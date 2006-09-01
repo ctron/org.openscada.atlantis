@@ -17,6 +17,7 @@
 
    <windowImages i16="/openscada_da_client_test/icons/app/app_icon_16.gif" i32="/openscada_da_client_test/icons/app/app_icon_32.gif" i48="/openscada_da_client_test/icons/app/app_icon_48.gif"/>
 
+
    <launcher name="ostc">
       <solaris/>
       <win useIco="true">
@@ -24,6 +25,8 @@
          <bmp/>
       </win>
    </launcher>
+
+   <intro introId="org.eclipse.ui.intro.universal"/>
 
    <plugins>
    </plugins>
