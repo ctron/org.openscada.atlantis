@@ -17,6 +17,10 @@
       [Enter License Description here.]
    </license>
 
+   <url>
+      <update label="OpenSCADA RCP Client" url="http://openscada.org/ostc"/>
+   </url>
+
    <plugin
          id="log4j_wrapper_plugin"
          download-size="0"
