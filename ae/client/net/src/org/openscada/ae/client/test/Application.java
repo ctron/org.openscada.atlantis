@@ -9,7 +9,6 @@ import org.openscada.ae.core.QueryDescription;
 import org.openscada.core.Variant;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.core.client.net.operations.OperationException;
-import org.openscada.net.io.IOProcessor;
 
 public class Application
 {
