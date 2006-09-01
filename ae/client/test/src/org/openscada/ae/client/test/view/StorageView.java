@@ -19,9 +19,9 @@
 
 package org.openscada.ae.client.test.view;
 
-import java.util.EnumSet;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jface.action.Action;
@@ -58,6 +58,7 @@ import org.openscada.ae.client.test.ISharedImages;
 import org.openscada.ae.client.test.actions.ConnectStorageAction;
 import org.openscada.ae.client.test.impl.StorageConnection;
 import org.openscada.ae.client.test.impl.StorageRepository;
+import org.openscada.ae.core.QueryDescription;
 
 
 /**
@@ -156,20 +157,13 @@ public class StorageView extends ViewPart implements Observer
             {
                 return((StorageRepository)parent).getConnections().toArray(new StorageConnection[0]);
             }
-            /*
             else if ( parent instanceof StorageConnection )
             {
-                FolderEntry rootFolder = ((StorageRepository)parent).getRootFolder ();
-                if ( rootFolder != null )
-                    return rootFolder.getEntries ();
-                else
-                    return new Object [0];
+                Set<QueryDescription> queries = ((StorageConnection)parent).getQueries (); 
+                if ( queries == null )
+                    return new String [] { "Loading..." };
+                return queries.toArray ( new QueryDescription [queries.size ()] );
             }
-            else if ( parent instanceof FolderEntry )
-            {
-                return ((FolderEntry)parent).getEntries ();
-            }
-            */
             return new Object[0];
         }
         public boolean hasChildren(Object parent)
@@ -178,19 +172,13 @@ public class StorageView extends ViewPart implements Observer
             {
                 return ((StorageRepository)parent).getConnections().size() > 0;
             }
-            /*
             else if ( parent instanceof StorageConnection )
             {
-                FolderEntry rootFolder = ((HiveConnection)parent).getRootFolder ();
-                if ( rootFolder != null )
-                    return rootFolder.hasChildren ();
-                else
-                    return false;
+                Set<QueryDescription> queries = ((StorageConnection)parent).getQueries (); 
+                if ( queries == null )
+                    return true; // the loading string
+                return !queries.isEmpty ();
             }
-            else if ( parent instanceof FolderEntry )
-            {
-                return ((FolderEntry)parent).hasChildren ();
-            }*/
             return false;
         }
 
@@ -205,15 +193,10 @@ public class StorageView extends ViewPart implements Observer
                 StorageConnection connection = (StorageConnection)obj;
                 return connection.getConnectionInformation().getHost() + ":" + connection.getConnectionInformation().getPort() + " (" + connection.getConnection ().getState ().toString () + ")";
             }
-            /*
-            else if ( obj instanceof HiveItem )
+            else if ( obj instanceof QueryDescription )
             {
-                return ((HiveItem)obj).getItemName();
+                return ((QueryDescription)obj).getId ();
             }
-            else if ( obj instanceof BrowserEntry )
-            {
-                return ((BrowserEntry)obj).getName ();
-            }*/
             return obj.toString();
         }
         public Image getImage(Object obj)

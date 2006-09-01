@@ -19,21 +19,31 @@
 
 package org.openscada.ae.client.test.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.commands.operations.OperationStatus;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IActionFilter;
 import org.openscada.ae.client.Connection;
-import org.openscada.core.Variant;
+import org.openscada.ae.client.test.Activator;
+import org.openscada.ae.core.EventInformation;
+import org.openscada.ae.core.Listener;
+import org.openscada.ae.core.QueryDescription;
 import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.core.client.net.ConnectionStateListener;
 import org.openscada.core.client.net.ConnectionBase.State;
+import org.openscada.core.client.net.operations.OperationException;
+import org.openscada.net.base.LongRunningController;
+import org.openscada.net.base.LongRunningOperation;
+import org.openscada.net.base.data.Message;
 
 
 public class StorageConnection extends Observable implements IActionFilter
@@ -43,6 +53,9 @@ public class StorageConnection extends Observable implements IActionFilter
     private boolean _connectionRequested = false;
     private StorageConnectionInformation _connectionInfo;
     private Connection _connection = null;
+    
+    private boolean _refreshing = false;
+    private Set<QueryDescription> _queries = new HashSet<QueryDescription> (); 
     
     public StorageConnection ( StorageConnectionInformation connectionInfo )
     {
@@ -106,8 +119,11 @@ public class StorageConnection extends Observable implements IActionFilter
         switch ( state )
         {
         case BOUND:
+            // force refresh
+            _queries = null;
             break;
         case CLOSED:
+            _queries = new HashSet<QueryDescription> ();
             break;
         default:
             break;
@@ -140,4 +156,76 @@ public class StorageConnection extends Observable implements IActionFilter
         }
         return false;
     }
+    
+    synchronized public Set<QueryDescription> getQueries ()
+    {
+        if ( ( _queries == null ) && !_refreshing )
+            refreshQueries ();
+        return _queries;
+    }
+
+    synchronized public void setQueries ( Set<QueryDescription> queries )
+    {
+        _queries = queries;
+        setChanged ();
+        notifyObservers ();
+    }
+    
+    public void refreshQueries ()
+    {
+        if ( !_connection.getState ().equals ( State.BOUND ) )
+            return;
+        
+        _refreshing = true;
+        
+        Job job = new Job ( "Refreshing storage" ) {
+
+            @Override
+            protected IStatus run ( IProgressMonitor monitor )
+            {
+                try
+                {
+                    performRefreshQueries ( monitor );
+                }
+                catch ( InterruptedException e )
+                {
+                    setQueries ( new HashSet<QueryDescription> () );
+                    return new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Failed to refresh queries", e );
+                }
+                catch ( OperationException e )
+                {
+                    setQueries ( new HashSet<QueryDescription> () );
+                    return new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 1, "Failed to refresh queries", e );
+                }
+                return Status.OK_STATUS;
+            }
+        };
+        job.setUser ( true );
+        job.schedule ();
+    }
+    
+    private void performRefreshQueries ( final IProgressMonitor monitor ) throws InterruptedException, OperationException
+    {
+        setQueries ( null );
+        
+        LongRunningOperation op = _connection.startList ( new LongRunningController.Listener () {
+
+            public void stateChanged ( org.openscada.net.base.LongRunningController.State arg0, Message arg1, Throwable arg2 )
+            {
+                monitor.setTaskName ( arg0.toString () );
+            }} );
+        
+        try
+        {
+            op.waitForCompletion ();
+            setQueries ( _connection.completeList ( op ) );
+        }
+        finally
+        {
+            monitor.done ();
+            _refreshing = false;
+        }
+        
+    }
+    
 }
