@@ -5,13 +5,15 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.openscada.ae.client.test.PerspectiveFactory"
+            icon="icons/stock_channel.png"
             id="org.openscada.ae.client.test.perspective"
-            name="AE Perspective"/>
+            name="AE"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension targetID="org.openscada.ae.client.test.perspective">
          <perspectiveShortcut id="org.openscada.da.client.test.perspective"/>
+         <newWizardShortcut id="org.openscada.ae.client.test.newWizards.NewStorageWizard"/>
       </perspectiveExtension>
    </extension>
    <extension
@@ -22,6 +24,7 @@
       <view
             category="org.openscada.ae.caterory"
             class="org.openscada.ae.client.test.view.StorageView"
+            icon="icons/stock_channel.png"
             id="org.openscada.ae.client.test.views.StorageView"
             name="Storage View"/>
    </extension>
@@ -106,6 +109,19 @@
             </enablement>
          </action>
       </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.openscada.ae.caterory"
+            name="OpenSCADA AE"/>
+      <wizard
+            category="org.openscada.ae.caterory"
+            class="org.openscada.ae.client.test.wizzard.NewStorageWizard"
+            finalPerspective="org.openscada.ae.client.test.perspective"
+            icon="icons/stock_channel.png"
+            id="org.openscada.ae.client.test.newWizards.NewStorageWizard"
+            name="New Storage"/>
    </extension>
 
 </plugin>
