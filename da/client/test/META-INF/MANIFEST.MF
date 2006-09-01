@@ -9,8 +9,8 @@ Require-Bundle: log4j_wrapper_plugin,
  org.eclipse.rcp,
  org.eclipse.ui,
  org.eclipse.core.runtime,
- org.openscada.da.net.client,
- org.eclipse.ui.views
+ org.eclipse.ui.views,
+ org.openscada.da.net.client
 Eclipse-LazyStart: true
 Bundle-Vendor: OpenSCADA
 Eclipse-RegisterBuddy: org.apache.log4j

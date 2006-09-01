@@ -8,6 +8,7 @@ Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin
 Export-Package: org.openscada.core,
  org.openscada.core.client.net,
+ org.openscada.core.utils,
  org.openscada.da.client.net,
  org.openscada.da.client.net.operations,
  org.openscada.da.client.net.test,
