@@ -1,23 +1,18 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA DA Client Library Wrapper
-Bundle-SymbolicName: org.openscada.da.net.client
-Bundle-Version: 0.2.2
-Bundle-ClassPath: openscada_da_net_client_lib.jar
+Bundle-Name: OpenSCADA AE Client Library Wrapper
+Bundle-SymbolicName: org.openscada.ae.net.client
+Bundle-Version: 0.4.0
+Bundle-ClassPath: openscada_ae_client_net_full.jar
 Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin
-Export-Package: org.openscada.core,
+Export-Package: org.openscada.ae.client,
+ org.openscada.ae.core,
+ org.openscada.core,
  org.openscada.core.client.net,
- org.openscada.da.client.net,
- org.openscada.da.client.net.operations,
- org.openscada.da.client.net.test,
- org.openscada.da.core,
- org.openscada.da.core.server,
- org.openscada.da.core.server.browser,
  org.openscada.net.base,
  org.openscada.net.base.data,
  org.openscada.net.base.handlers,
- org.openscada.net.da.handler,
  org.openscada.net.io,
  org.openscada.net.test,
  org.openscada.net.utils,
