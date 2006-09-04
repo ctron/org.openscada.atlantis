@@ -1,3 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: org.openscada.da.server.net.Application
-Class-Path: log4j.jar
+
