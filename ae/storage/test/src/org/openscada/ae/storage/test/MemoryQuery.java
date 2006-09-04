@@ -13,9 +13,9 @@ import org.openscada.ae.storage.common.SubscriptionReader;
 
 public class MemoryQuery implements Query, ListeningQuery, InitialEventsProvider
 {
-    private Set<Event> _events = new HashSet<Event> ();
+    protected Set<Event> _events = new HashSet<Event> ();
     
-    private Set<PushEventReader> _subscriptionReaders = new HashSet<PushEventReader> ();
+    protected Set<PushEventReader> _subscriptionReaders = new HashSet<PushEventReader> ();
     
     synchronized public Reader createReader ()
     {
@@ -24,18 +24,33 @@ public class MemoryQuery implements Query, ListeningQuery, InitialEventsProvider
 
     synchronized public SubscriptionReader createSubscriptionReader ( int archiveSet )
     {
-        QueueSubscriptionReader reader = new QueueSubscriptionReader ( this, this );
+        QueueSubscriptionReader reader = new QueueSubscriptionReader ( this, this, archiveSet );
         _subscriptionReaders.add ( reader );
         return reader;
+    }
+    
+    synchronized protected void fireEvent ( EventInformation eventInformation )
+    {
+        for ( PushEventReader reader : _subscriptionReaders )
+        {
+            reader.pushEvent ( eventInformation );
+        }
     }
 
     synchronized public void submitEvent ( Event event )
     {
         EventInformation eventInformation = new EventInformation ( event, EventInformation.ACTION_ADDED );
         
-        for ( PushEventReader reader : _subscriptionReaders )
+        fireEvent ( eventInformation );
+        _events.add ( event );
+    }
+    
+    synchronized public void removeEvent ( Event event )
+    {
+        if ( _events.remove ( event ) )
         {
-            reader.pushEvent ( eventInformation );
+            EventInformation eventInformation = new EventInformation ( event, EventInformation.ACTION_REMOVED );
+            fireEvent ( eventInformation );
         }
     }
     
@@ -47,9 +62,9 @@ public class MemoryQuery implements Query, ListeningQuery, InitialEventsProvider
         _subscriptionReaders.remove ( reader );
     }
 
-    synchronized public Collection<Event> getInitialEvents ()
+    synchronized public Event[] getInitialEvents ()
     {
-        return new ArrayList<Event> ( _events );
+        return _events.toArray ( new Event [ _events.size () ] );
     }
 
 }

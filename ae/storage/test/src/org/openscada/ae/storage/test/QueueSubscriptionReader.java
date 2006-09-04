@@ -1,5 +1,7 @@
 package org.openscada.ae.storage.test;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,10 +25,13 @@ public class QueueSubscriptionReader implements SubscriptionReader, PushEventRea
     private Subscription _subscription = null;
     private SubscriptionObserver _subscriptionObserver = null;
     
-    public QueueSubscriptionReader ( ListeningQuery query, InitialEventsProvider eventsProvider )
+    private int _archiveSet = 0;
+    
+    public QueueSubscriptionReader ( ListeningQuery query, InitialEventsProvider eventsProvider, int archiveSet )
     {
         _query = query;
         _eventsProvider = eventsProvider;
+        _archiveSet = archiveSet;
     }
 
     synchronized public EventInformation[] fetchNext ( int maxBatchSize )
@@ -59,16 +64,29 @@ public class QueueSubscriptionReader implements SubscriptionReader, PushEventRea
 
     synchronized public void open ( Subscription subscription, SubscriptionObserver observer )
     {
-        _log.debug ( "Opened" );
+        _log.debug ( String.format ( "Opened: archiveSet: %1$d", _archiveSet ) );
         _subscription = subscription;
         _subscriptionObserver = observer;
         
+        // check if subscribe wants archive entries
+        if ( _archiveSet == 0 )
+            return;
+        
+        // get initial events
+        Event[] initial = _eventsProvider.getInitialEvents (); 
+        if ( _archiveSet < 0 )
+        {
+            _archiveSet = initial.length;
+        }
+        
         // copy events into event pool
         _events = new LinkedList<EventInformation> ();
-        for ( Event event : _eventsProvider.getInitialEvents () )
+        
+        for ( int i = initial.length - _archiveSet; i<initial.length; i++ )
         {
-            _events.add ( new EventInformation ( event, EventInformation.ACTION_ADDED ) );
+            _events.add ( new EventInformation ( initial[i], EventInformation.ACTION_ADDED ) );
         }
+        
         _log.debug ( _events.size () + " initial event(s)" );
         if ( !_events.isEmpty () )
         {

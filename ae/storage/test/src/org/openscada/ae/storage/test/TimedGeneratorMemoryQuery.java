@@ -33,7 +33,7 @@ public class TimedGeneratorMemoryQuery implements Query, ListeningQuery, Initial
 
     synchronized public SubscriptionReader createSubscriptionReader ( int archiveSet )
     {
-        QueueSubscriptionReader reader = new QueueSubscriptionReader ( this, this );
+        QueueSubscriptionReader reader = new QueueSubscriptionReader ( this, this, archiveSet );
         _subscriptionReaders.add ( reader );
         return reader;
     }
@@ -57,9 +57,9 @@ public class TimedGeneratorMemoryQuery implements Query, ListeningQuery, Initial
         _subscriptionReaders.remove ( reader );
     }
 
-    synchronized public Collection<Event> getInitialEvents ()
+    synchronized public Event [] getInitialEvents ()
     {
-        return new ArrayList<Event> ( _events );
+        return _events.toArray ( new Event [ _events.size () ] );
     }
 
     public void run ()
