@@ -50,6 +50,7 @@
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension targetID="org.openscada.rcp.client.perspective">
          <perspectiveShortcut id="org.openscada.da.client.test.perspective"/>
+         <perspectiveShortcut id="org.openscada.ae.client.test.perspective"/>
       </perspectiveExtension>
    </extension>
 <extension
