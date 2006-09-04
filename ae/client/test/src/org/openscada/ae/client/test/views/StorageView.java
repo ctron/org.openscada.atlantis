@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.ae.client.test.view;
+package org.openscada.ae.client.test.views;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -57,6 +57,7 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.openscada.ae.client.test.ISharedImages;
 import org.openscada.ae.client.test.actions.ConnectStorageAction;
 import org.openscada.ae.client.test.impl.StorageConnection;
+import org.openscada.ae.client.test.impl.StorageQuery;
 import org.openscada.ae.client.test.impl.StorageRepository;
 import org.openscada.ae.core.QueryDescription;
 
@@ -159,10 +160,10 @@ public class StorageView extends ViewPart implements Observer
             }
             else if ( parent instanceof StorageConnection )
             {
-                Set<QueryDescription> queries = ((StorageConnection)parent).getQueries (); 
+                Set<StorageQuery> queries = ((StorageConnection)parent).getQueries (); 
                 if ( queries == null )
                     return new String [] { "Loading..." };
-                return queries.toArray ( new QueryDescription [queries.size ()] );
+                return queries.toArray ( new StorageQuery [queries.size ()] );
             }
             return new Object[0];
         }
@@ -174,7 +175,7 @@ public class StorageView extends ViewPart implements Observer
             }
             else if ( parent instanceof StorageConnection )
             {
-                Set<QueryDescription> queries = ((StorageConnection)parent).getQueries (); 
+                Set<StorageQuery> queries = ((StorageConnection)parent).getQueries (); 
                 if ( queries == null )
                     return true; // the loading string
                 return !queries.isEmpty ();
@@ -193,9 +194,9 @@ public class StorageView extends ViewPart implements Observer
                 StorageConnection connection = (StorageConnection)obj;
                 return connection.getConnectionInformation().getHost() + ":" + connection.getConnectionInformation().getPort() + " (" + connection.getConnection ().getState ().toString () + ")";
             }
-            else if ( obj instanceof QueryDescription )
+            else if ( obj instanceof StorageQuery )
             {
-                return ((QueryDescription)obj).getId ();
+                return ((StorageQuery)obj).getQueryDescription ().getId ();
             }
             return obj.toString();
         }

@@ -55,7 +55,7 @@ public class StorageConnection extends Observable implements IActionFilter
     private Connection _connection = null;
     
     private boolean _refreshing = false;
-    private Set<QueryDescription> _queries = new HashSet<QueryDescription> (); 
+    private Set<StorageQuery> _queries = new HashSet<StorageQuery> (); 
     
     public StorageConnection ( StorageConnectionInformation connectionInfo )
     {
@@ -123,7 +123,7 @@ public class StorageConnection extends Observable implements IActionFilter
             _queries = null;
             break;
         case CLOSED:
-            _queries = new HashSet<QueryDescription> ();
+            _queries = new HashSet<StorageQuery> ();
             break;
         default:
             break;
@@ -157,14 +157,14 @@ public class StorageConnection extends Observable implements IActionFilter
         return false;
     }
     
-    synchronized public Set<QueryDescription> getQueries ()
+    synchronized public Set<StorageQuery> getQueries ()
     {
         if ( ( _queries == null ) && !_refreshing )
             refreshQueries ();
         return _queries;
     }
 
-    synchronized public void setQueries ( Set<QueryDescription> queries )
+    synchronized public void setQueries ( Set<StorageQuery> queries )
     {
         _queries = queries;
         setChanged ();
@@ -189,12 +189,12 @@ public class StorageConnection extends Observable implements IActionFilter
                 }
                 catch ( InterruptedException e )
                 {
-                    setQueries ( new HashSet<QueryDescription> () );
+                    setQueries ( new HashSet<StorageQuery> () );
                     return new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Failed to refresh queries", e );
                 }
                 catch ( OperationException e )
                 {
-                    setQueries ( new HashSet<QueryDescription> () );
+                    setQueries ( new HashSet<StorageQuery> () );
                     return new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 1, "Failed to refresh queries", e );
                 }
                 return Status.OK_STATUS;
@@ -218,7 +218,13 @@ public class StorageConnection extends Observable implements IActionFilter
         try
         {
             op.waitForCompletion ();
-            setQueries ( _connection.completeList ( op ) );
+            
+            Set<StorageQuery> queries = new HashSet<StorageQuery> ();
+            for ( QueryDescription queryDescription : _connection.completeList ( op ) )
+            {
+                queries.add ( new StorageQuery ( this, queryDescription ) );
+            }
+            setQueries ( queries );
         }
         finally
         {

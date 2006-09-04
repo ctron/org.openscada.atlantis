@@ -23,10 +23,16 @@
             name="OpenSCADA AE"/>
       <view
             category="org.openscada.ae.caterory"
-            class="org.openscada.ae.client.test.view.StorageView"
+            class="org.openscada.ae.client.test.views.StorageView"
             icon="icons/stock_channel.png"
             id="org.openscada.ae.client.test.views.StorageView"
             name="Storage View"/>
+      <view
+            allowMultiple="true"
+            category="org.openscada.ae.caterory"
+            class="org.openscada.ae.client.test.views.QueryView"
+            id="org.openscada.ae.client.test.views.QueryView"
+            name="Query View"/>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -69,6 +75,18 @@
                         value="CLOSED"/>
                </not>
                </and>
+            </enablement>
+         </action>
+         <action
+               class="org.openscada.ae.client.test.actions.ShowQueryAction"
+               id="org.openscada.ae.client.StorageView.ShowQueryAction"
+               label="Show Query"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions"
+               tooltip="Show Query">
+            <enablement>
+               <objectClass name="org.openscada.ae.client.test.impl.StorageQuery"/>
             </enablement>
          </action>
       </viewContribution>

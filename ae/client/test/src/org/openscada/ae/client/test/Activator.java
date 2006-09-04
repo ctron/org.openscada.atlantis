@@ -135,8 +135,10 @@ public class Activator extends AbstractUIPlugin {
         }
         return _repository;
     }
+    
     public static IPath getRepostoryFile ()
     {
         return getDefault ().getStateLocation ().append ( "storages.xml" );
     }
+    
 }
