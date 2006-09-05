@@ -105,7 +105,7 @@ public class ProtocolGMPP implements Protocol
     
     private ByteBuffer encodeToStream ( ByteBuffer buffer, LongValue value )
     {
-        buffer = ensureCapacity ( buffer, 4 + 4 + 4 );
+        buffer = ensureCapacity ( buffer, 4 + 4 + 8 );
         buffer.putInt ( VT_LONG );
         buffer.putInt ( 8 );
         buffer.putLong ( value.getValue () );
