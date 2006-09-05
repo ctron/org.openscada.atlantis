@@ -115,7 +115,7 @@ public class ProtocolGMPP implements Protocol
     
     private ByteBuffer encodeToStream ( ByteBuffer buffer, DoubleValue value )
     {
-        buffer = ensureCapacity ( buffer, 4 + 4 + 4 );
+        buffer = ensureCapacity ( buffer, 4 + 4 + 8 );
         buffer.putInt ( VT_DOUBLE );
         buffer.putInt ( 8 );
         buffer.putLong ( Double.doubleToRawLongBits ( value.getValue () ) );        
@@ -133,7 +133,7 @@ public class ProtocolGMPP implements Protocol
     
     private ByteBuffer encodeToStream ( ByteBuffer buffer, BooleanValue value )
     {
-        buffer = ensureCapacity ( buffer, 4 + 4 );
+        buffer = ensureCapacity ( buffer, 4 + 4 + 1 );
         buffer.putInt ( VT_BOOLEAN );
         buffer.putInt ( 1 );
         buffer.put ( value.getValue () ? (byte)0xFF : (byte)0x00 );
