@@ -22,6 +22,7 @@ public class SyslogProvider extends FileProviderBase
     private String _severity = null;
     
     private Pattern _pattern = null;
+    private DateParser _dateParser = new SyslogDateParser ();
     
     public SyslogProvider ( DataStore storage, File file, String sourceName, String severity )
     {
@@ -45,7 +46,7 @@ public class SyslogProvider extends FileProviderBase
             String app = matcher.group ( 4 );
             String message = matcher.group ( 5 );
             
-            event.setTimestamp ( parseDate ( timestamp ) );
+            event.setTimestamp ( _dateParser.parseDate ( timestamp ) );
             event.getAttributes ().put ( "raw_timestamp", new Variant ( timestamp ) );
             event.getAttributes ().put ( "host", new Variant ( host ) );
             event.getAttributes ().put ( "application", new Variant ( app ) );
@@ -61,22 +62,4 @@ public class SyslogProvider extends FileProviderBase
         else
             _log.debug ( "did not match: " + line );
     }
-    
-    protected Calendar parseDate ( String date )
-    {
-        try
-        {
-            Calendar timestamp = Calendar.getInstance ();
-            DateFormat df = new SimpleDateFormat ( "MMM d HH:mm:ss" );
-            timestamp.setTime ( df.parse ( date ) );
-            timestamp.set ( Calendar.YEAR, Calendar.getInstance ().get ( Calendar.YEAR  ) );
-            return timestamp;
-        }
-        catch ( Exception e )
-        {
-            _log.info ( "Failed to parse date: " + date, e );
-        }
-        return Calendar.getInstance ();
-    }
-
 }
