@@ -3,6 +3,7 @@ package org.openscada.ae.storage.syslog.provider;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
@@ -18,7 +19,7 @@ public class SyslogDateParser implements DateParser
         try
         {
             Calendar timestamp = Calendar.getInstance ();
-            DateFormat df = new SimpleDateFormat ( _format );
+            DateFormat df = new SimpleDateFormat ( _format, Locale.US );
             timestamp.setTime ( df.parse ( date ) );
             
             if ( _fixYear )
