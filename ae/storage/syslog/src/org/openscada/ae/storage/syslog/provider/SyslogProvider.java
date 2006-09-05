@@ -1,6 +1,7 @@
 package org.openscada.ae.storage.syslog.provider;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +14,9 @@ public class SyslogProvider extends FileProviderBase
 {
     private static Logger _log = Logger.getLogger ( SyslogProvider.class );
     
+    private Calendar _lastTimestamp = null;
     private long _cnt = 0;
+    
     private File _file = null;
     private String _sourceName = null;
     private String _severity = null;
@@ -35,13 +38,15 @@ public class SyslogProvider extends FileProviderBase
     {
         Matcher matcher = _pattern.matcher ( line );
         if ( matcher.matches () )
-        {
-            Event event = new Event ( _file.getAbsolutePath () + "." + System.currentTimeMillis () + "." + _cnt );
-            
+        {   
             String timestamp = matcher.group ( 1 );
             String host = matcher.group ( 2 );
             String app = matcher.group ( 4 );
             String message = matcher.group ( 5 );
+         
+            Calendar datetime = _dateParser.parseDate ( timestamp );
+            
+            Event event = new Event ( getNextEventId ( datetime, host ) );
             
             event.setTimestamp ( _dateParser.parseDate ( timestamp ) );
             event.getAttributes ().put ( "raw_timestamp", new Variant ( timestamp ) );
@@ -53,10 +58,27 @@ public class SyslogProvider extends FileProviderBase
             event.getAttributes ().put ( "severity", new Variant ( _severity ) );
             
             submitEvent ( event );
-            
-            _cnt++;
         }
         else
             _log.debug ( "did not match: " + line );
+    }
+    
+    protected String getNextEventId ( Calendar timestamp, String hostname )
+    {
+        if ( _lastTimestamp == null )
+        {
+            _cnt = 0;
+            _lastTimestamp = timestamp;
+        }
+        else if ( _lastTimestamp.equals ( timestamp ) )
+        {
+            _cnt++;
+        }
+        else
+        {
+            _lastTimestamp = timestamp;
+            _cnt = 0;
+        }
+        return hostname + "." + _file.getAbsolutePath () + "." + _lastTimestamp.getTimeInMillis () + "." + _cnt;
     }
 }
