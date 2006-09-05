@@ -37,11 +37,17 @@ public class Storage extends StorageCommon implements DataStore
         _providers.add ( new SyslogProvider ( this, new File ( "/var/log/debug" ), "debug", "DEBUG" ) );
     }
 
+    @Override
+    public synchronized void submitEvent ( Properties properties, Event event ) throws Exception
+    {
+        throw new Exception ( "not supported" );
+    }
+    
     public void submitEvent ( Event event )
     {
         try
         {
-            submitEvent ( new Properties (), event );
+            super.submitEvent ( new Properties (), event );
         }
         catch ( Exception e )
         {
