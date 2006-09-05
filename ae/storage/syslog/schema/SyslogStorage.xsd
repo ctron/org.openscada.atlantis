@@ -9,26 +9,26 @@
     
     <complexType name="configurationType">
       <sequence>
-        <element name="provider" type="syslog:providerType"></element>
+        <element name="providers" type="syslog:providersType" maxOccurs="1" minOccurs="0"></element>
       </sequence>
     </complexType>
 
-    <complexType name="providerType">
+    <complexType name="providersType">
       <sequence>
-        <choice>
-          <element name="file-provider" type="syslog:FileProviderType"></element>
-          <element name="syslog-udp-provider" type="syslog:SyslogUdpProviderType"></element>
-        </choice>
+
+          <element name="file-provider" type="syslog:FileProviderType" maxOccurs="unbounded" minOccurs="0"></element>
+          <element name="syslog-udp-provider" type="syslog:SyslogUdpProviderType" maxOccurs="unbounded" minOccurs="0"></element>
+
       </sequence>
     </complexType>
 
     <complexType name="FileProviderType">
-      <attribute name="file" type="string"></attribute>
-      <attribute name="default-severity" type="syslog:SeverityType"></attribute>
+      <attribute name="file" type="string" use="required"></attribute>
+      <attribute name="default-severity" use="required" type="syslog:SeverityType"></attribute>
     </complexType>
 
     <complexType name="SyslogUdpProviderType">
-      <attribute name="port" type="syslog:UdpPortType"></attribute>
+      <attribute name="port" use="required" type="syslog:UdpPortType"></attribute>
     </complexType>
 
     <simpleType name="SeverityType">
