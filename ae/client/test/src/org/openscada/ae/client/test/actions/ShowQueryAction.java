@@ -11,7 +11,6 @@ import org.eclipse.ui.PartInitException;
 import org.openscada.ae.client.test.Activator;
 import org.openscada.ae.client.test.impl.StorageQuery;
 import org.openscada.ae.client.test.views.QueryView;
-import org.openscada.ae.core.QueryDescription;
 
 public class ShowQueryAction implements IViewActionDelegate
 {

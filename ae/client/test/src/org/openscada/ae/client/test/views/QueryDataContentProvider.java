@@ -1,7 +1,6 @@
 package org.openscada.ae.client.test.views;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -10,6 +9,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.openscada.ae.client.test.Activator;
+import org.openscada.ae.client.test.impl.EventData;
 import org.openscada.ae.client.test.impl.QueryDataModel;
 import org.openscada.ae.core.Event;
 import org.openscada.core.Variant;
@@ -57,11 +57,11 @@ public class QueryDataContentProvider implements ITreeContentProvider, Observer
 
     public Object[] getChildren ( Object parentElement )
     {
-        if ( parentElement instanceof Event )
+        if ( parentElement instanceof EventData )
         {
-            Event event = (Event)parentElement;
-            ArrayList<AttributePair> pairs = new ArrayList<AttributePair> ( event.getAttributes ().size () );
-            for ( Map.Entry<String, Variant> entry : event.getAttributes ().entrySet () )
+            EventData event = (EventData)parentElement;
+            ArrayList<AttributePair> pairs = new ArrayList<AttributePair> ( event.getEvent ().getAttributes ().size () );
+            for ( Map.Entry<String, Variant> entry : event.getEvent ().getAttributes ().entrySet () )
             {
                 AttributePair pair = new AttributePair ();
                 pair._key = entry.getKey ();
@@ -75,15 +75,20 @@ public class QueryDataContentProvider implements ITreeContentProvider, Observer
 
     public Object getParent ( Object element )
     {
+        if ( element instanceof EventData )
+        {
+            EventData eventData = (EventData)element;
+            return eventData.getQuery ();
+        }
         return null; 
     }
 
     public boolean hasChildren ( Object element )
     {
-        if ( element instanceof Event )
+        if ( element instanceof EventData )
         {
-            Event event = (Event)element;
-            return event.getAttributes ().size () > 0;
+            EventData event = (EventData)element;
+            return event.getEvent ().getAttributes ().size () > 0;
         }
         return false;
     }
@@ -108,7 +113,7 @@ public class QueryDataContentProvider implements ITreeContentProvider, Observer
         }
     }
 
-    public void update ( Observable o, Object arg )
+    public void update ( Observable o, final Object arg )
     {
         // just in case
         if ( o != _model )
@@ -120,7 +125,7 @@ public class QueryDataContentProvider implements ITreeContentProvider, Observer
 
             public void run ()
             {
-                performUpdate ();
+                performUpdate ( arg );
             }} );
         }
         catch ( Exception e )
@@ -129,10 +134,24 @@ public class QueryDataContentProvider implements ITreeContentProvider, Observer
         }
     }
     
-    private void performUpdate ()
+    private void performUpdate ( Object arg )
     {
-        if ( _viewer != null )
+        if ( _viewer == null )
+            return;
+        if ( _viewer.getTree ().isDisposed () )
+            return;
+        
+        if ( !(arg instanceof QueryDataModel.UpdateData) )
+        {
             _viewer.refresh ();
+        }
+        else
+        {
+            QueryDataModel.UpdateData updateData = (QueryDataModel.UpdateData)arg;
+            _viewer.add ( _model, updateData.added.toArray ( new EventData[updateData.added.size ()] ) );
+            _viewer.remove ( updateData.removed.toArray ( new EventData[updateData.removed.size ()] ) );
+            _viewer.refresh ( updateData.modified.toArray ( new EventData[updateData.modified.size ()] ) );
+        }
     }
 
 }

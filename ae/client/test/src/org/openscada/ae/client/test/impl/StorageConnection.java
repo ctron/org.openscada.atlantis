@@ -20,7 +20,6 @@
 package org.openscada.ae.client.test.impl;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Observable;
 import java.util.Set;
 
@@ -33,8 +32,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IActionFilter;
 import org.openscada.ae.client.Connection;
 import org.openscada.ae.client.test.Activator;
-import org.openscada.ae.core.EventInformation;
-import org.openscada.ae.core.Listener;
 import org.openscada.ae.core.QueryDescription;
 import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;

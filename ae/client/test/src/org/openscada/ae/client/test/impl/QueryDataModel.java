@@ -5,21 +5,25 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Set;
 
-import org.openscada.ae.core.Event;
-import org.openscada.ae.core.EventInformation;
-
 public class QueryDataModel extends Observable
 {
+    public class UpdateData
+    {
+        public Set<EventData> added = new HashSet<EventData> ();
+        public Set<EventData> removed = new HashSet<EventData> ();
+        public Set<EventData> modified = new HashSet<EventData> ();
+    }
+    
     private String _unsubscribed = null;
     
-    private Set<Event> _events = new HashSet<Event> ();
+    private Set<EventData> _events = new HashSet<EventData> ();
 
-    public Set<Event> getEvents ()
+    public Set<EventData> getEvents ()
     {
         return Collections.unmodifiableSet ( _events );
     }
 
-    public void setEvents ( Set<Event> events )
+    public void setEvents ( Set<EventData> events )
     {
         setChanged ();
         _events = events;
@@ -40,7 +44,7 @@ public class QueryDataModel extends Observable
         return _unsubscribed != null;
     }
     
-    public void addEvent ( Event event )
+    public void addEvent ( EventData event )
     {
         if ( _events.add ( event ) )
         {
@@ -48,7 +52,7 @@ public class QueryDataModel extends Observable
         }
     }
     
-    public void removeEvent ( Event event )
+    public void removeEvent ( EventData event )
     {
         if ( _events.remove ( event ) )
         {
@@ -56,8 +60,8 @@ public class QueryDataModel extends Observable
         }
     }
     
-    public void notifyUpdates ( EventInformation[] eventInformations )
+    public void notifyUpdates ( UpdateData updateData )
     {
-        notifyObservers ( eventInformations );
+        notifyObservers ( updateData );
     }
 }

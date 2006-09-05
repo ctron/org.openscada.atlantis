@@ -59,7 +59,6 @@ import org.openscada.ae.client.test.actions.ConnectStorageAction;
 import org.openscada.ae.client.test.impl.StorageConnection;
 import org.openscada.ae.client.test.impl.StorageQuery;
 import org.openscada.ae.client.test.impl.StorageRepository;
-import org.openscada.ae.core.QueryDescription;
 
 
 /**

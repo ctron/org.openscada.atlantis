@@ -16,6 +16,8 @@ public class QueryDataController implements Listener
 
     public void events ( EventInformation[] eventInformations )
     {
+        QueryDataModel.UpdateData updateData = _model.new UpdateData ();
+        
         synchronized ( _model )
         {
             for ( EventInformation eventInformation : eventInformations )
@@ -23,25 +25,35 @@ public class QueryDataController implements Listener
                 switch ( eventInformation.getAction () )
                 {
                 case EventInformation.ACTION_ADDED:
-                    addEvent ( eventInformation );
-                    break;
+                    {
+                        EventData eventData = new EventData ( eventInformation.getEvent (), _model );
+                        addEvent ( eventData );
+                        updateData.added.add ( eventData );
+                        updateData.removed.remove ( eventData );
+                        break;
+                    }
                 case EventInformation.ACTION_REMOVED:
-                    removeEvent ( eventInformation );
-                    break;
+                    {
+                        EventData eventData = new EventData ( eventInformation.getEvent (), _model );
+                        removeEvent ( eventData );
+                        updateData.removed.add ( eventData );
+                        updateData.added.remove ( eventData );
+                        break;
+                    }
                 }
             }
-            _model.notifyUpdates ( eventInformations );
+            _model.notifyUpdates ( updateData );
         }
     }
     
-    protected void removeEvent ( EventInformation eventInformation )
+    protected void removeEvent ( EventData eventData )
     {
-        _model.removeEvent ( eventInformation.getEvent () );
+        _model.removeEvent ( eventData );
     }
 
-    protected void addEvent ( EventInformation eventInformation )
+    protected void addEvent ( EventData eventData )
     {
-        _model.addEvent ( eventInformation.getEvent () );
+        _model.addEvent ( eventData );
     }
 
     public void unsubscribed ( String arg0 )
