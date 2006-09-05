@@ -13,7 +13,7 @@ public class SyslogDateParser implements DateParser
     
     private String _format = "MMM d HH:mm:ss";
     private boolean _fixYear = true;
-
+    
     public Calendar parseDate ( String date )
     {
         try
@@ -33,5 +33,5 @@ public class SyslogDateParser implements DateParser
         }
         return Calendar.getInstance ();
     }
-
+    
 }

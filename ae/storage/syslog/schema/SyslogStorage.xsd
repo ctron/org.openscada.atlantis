@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://openscada.org/ae/syslog" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:syslog="http://openscada.org/ae/syslog">
+
+
+
+    
+
+    <element name="configuration" type="syslog:configurationType"></element>
+    
+    <complexType name="configurationType">
+      <sequence>
+        <element name="provider" type="syslog:providerType"></element>
+      </sequence>
+    </complexType>
+
+    <complexType name="providerType">
+      <sequence>
+        <choice>
+          <element name="file-provider" type="syslog:FileProviderType"></element>
+          <element name="syslog-udp-provider" type="syslog:SyslogUdpProviderType"></element>
+        </choice>
+      </sequence>
+    </complexType>
+
+    <complexType name="FileProviderType">
+      <attribute name="file" type="string"></attribute>
+      <attribute name="default-severity" type="syslog:SeverityType"></attribute>
+    </complexType>
+
+    <complexType name="SyslogUdpProviderType">
+      <attribute name="port" type="syslog:UdpPortType"></attribute>
+    </complexType>
+
+    <simpleType name="SeverityType">
+      <restriction base="string">
+        <enumeration value="FATAL"></enumeration>
+        <enumeration value="ERROR"></enumeration>
+        <enumeration value="WARNING"></enumeration>
+        <enumeration value="INFO"></enumeration>
+        <enumeration value="DEBUG"></enumeration>
+      </restriction>
+    </simpleType>
+
+    <simpleType name="UdpPortType">
+      <restriction base="int">
+        <minInclusive value="1"></minInclusive>
+        <maxInclusive value="65535"></maxInclusive>
+      </restriction>
+    </simpleType>
+</schema>
