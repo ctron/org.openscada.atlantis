@@ -19,15 +19,9 @@
 
 package org.openscada.ae.storage.common.operations;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.openscada.ae.core.ListOperationListener;
 import org.openscada.ae.core.QueryDescription;
-import org.openscada.ae.core.Storage;
 import org.openscada.ae.storage.common.StorageCommon;
-import org.openscada.core.Variant;
 import org.openscada.utils.jobqueue.RunnableCancelOperation;
 
 public class ListOperation extends RunnableCancelOperation

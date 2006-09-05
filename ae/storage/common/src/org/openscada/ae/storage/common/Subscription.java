@@ -9,6 +9,8 @@ public class Subscription
     private Listener _listener = null;
     private SubscriptionReader _reader = null;
     
+    private int _maxBatchSize = 0;
+    
     public Listener getListener ()
     {
         return _listener;
@@ -40,5 +42,13 @@ public class Subscription
     public void setReader ( SubscriptionReader reader )
     {
         _reader = reader;
+    }
+    public int getMaxBatchSize ()
+    {
+        return _maxBatchSize;
+    }
+    public void setMaxBatchSize ( int maxBatchSize )
+    {
+        _maxBatchSize = maxBatchSize;
     }
 }

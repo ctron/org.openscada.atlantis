@@ -17,6 +17,7 @@ public class SubscriptionManager implements SubscriptionObserver
         subscription.setQuery ( query );
         subscription.setListener ( listener );
         subscription.setSession ( session );
+        subscription.setMaxBatchSize ( maxBatchSize );
         
         SubscriptionReader reader = query.createSubscriptionReader ( archiveSet );
         subscription.setReader ( reader );
@@ -83,10 +84,14 @@ public class SubscriptionManager implements SubscriptionObserver
             return;
         }
         
-        EventInformation[] eventInformations = subscription.getReader ().fetchNext ( 0 );
-        if ( eventInformations.length > 0 )
+        EventInformation[] eventInformations;
+        do
         {
-            subscription.getListener ().events ( eventInformations );
-        }
+            eventInformations = subscription.getReader ().fetchNext ( subscription.getMaxBatchSize () );
+            if ( eventInformations.length > 0 )
+            {
+                subscription.getListener ().events ( eventInformations );
+            }
+        } while ( eventInformations.length > 0 );
     }
 }
