@@ -6,7 +6,7 @@ import org.openscada.core.CancellationNotSupportedException;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 
-public interface Storage
+public interface Storage extends Submission
 {
     public Session createSession ( Properties properties ) throws UnableToCreateSessionException;
     public void closeSession ( Session session ) throws InvalidSessionException;
@@ -16,8 +16,6 @@ public interface Storage
     Event[] read ( Session session, String queryID ) throws InvalidSessionException, NoSuchQueryException;
 
     long startList ( Session session, ListOperationListener listener ) throws InvalidSessionException;
-    
-    public void submitEvent ( Properties properties, Event event ) throws Exception;
     
     public void cancelOperation ( Session session, long id ) throws InvalidSessionException, CancellationNotSupportedException;
     public void thawOperation ( Session session, long id ) throws InvalidSessionException;
