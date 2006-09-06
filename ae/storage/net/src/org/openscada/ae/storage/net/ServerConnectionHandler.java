@@ -26,13 +26,13 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openscada.ae.core.EventInformation;
-import org.openscada.ae.core.Listener;
 import org.openscada.ae.core.NoSuchQueryException;
 import org.openscada.ae.core.Session;
 import org.openscada.ae.core.Storage;
 import org.openscada.ae.net.EventMessage;
 import org.openscada.ae.net.ListMessage;
 import org.openscada.ae.net.Messages;
+import org.openscada.ae.net.SubmitEventMessage;
 import org.openscada.ae.net.SubscribeMessage;
 import org.openscada.ae.net.UnsubscribeMessage;
 import org.openscada.ae.net.UnsubscribedMessage;
@@ -98,6 +98,13 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements Qu
             public void messageReceived ( Connection connection, Message message ) throws Exception
             {
                 performUnsubscribe ( message );
+            }});
+        
+        getMessageProcessor ().setHandler ( Messages.CC_SUBMIT_EVENT, new MessageListener () {
+
+            public void messageReceived ( Connection connection, Message message ) throws Exception
+            {
+                performSubmitEvent ( message );
             }});
         
     }
@@ -241,5 +248,20 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements Qu
         message.setReason ( reason );
         message.setListenerId ( listenerId );
         getConnection ().sendMessage ( message.toMessage () );
+    }
+    
+    public void performSubmitEvent ( Message message )
+    {
+        SubmitEventMessage submitEventMessage = SubmitEventMessage.fromMessage ( message );
+        
+        try
+        {
+            _storage.submitEvent ( submitEventMessage.getProperties (), submitEventMessage.getEvent () );
+            getConnection ().sendMessage ( MessageCreator.createACK ( message ) );
+        }
+        catch ( Exception e )
+        {
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, e ) );
+        }
     }
 }

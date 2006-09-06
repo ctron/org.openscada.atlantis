@@ -31,7 +31,8 @@ public class Messages
     public static final int CC_SUBSCRIPTION_EVENT =                 0x00020202;
     public static final int CC_SUBSCRIPTION_UNSUBSCRIBED =          0x00020203;
     
-    public static final int CC_MODIFY_EVENT =                       0x00020300;
+    public static final int CC_SUBMIT_EVENT =                       0x00020300;
+    public static final int CC_MODIFY_EVENT =                       0x00020301;
     
     
     public static Value eventInformationToValue ( EventInformation eventInformation )
