@@ -2,7 +2,6 @@ package org.openscada.ae.storage.syslog;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -17,7 +16,6 @@ import org.openscada.ae.storage.syslog.provider.SyslogDaemonProvider;
 import org.openscada.ae.storage.syslog.provider.SyslogFileProvider;
 import org.openscada.ae.syslog.ConfigurationDocument;
 import org.openscada.ae.syslog.FileProviderType;
-import org.openscada.ae.syslog.ProvidersType;
 import org.openscada.ae.syslog.SyslogUdpProviderType;
 import org.openscada.core.Variant;
 import org.openscada.utils.collection.MapBuilder;

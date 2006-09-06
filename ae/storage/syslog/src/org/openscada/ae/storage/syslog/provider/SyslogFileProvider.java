@@ -1,14 +1,9 @@
 package org.openscada.ae.storage.syslog.provider;
 
 import java.io.File;
-import java.util.Calendar;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.openscada.ae.core.Event;
 import org.openscada.ae.storage.syslog.DataStore;
-import org.openscada.core.Variant;
 
 public class SyslogFileProvider extends FileProviderBase
 {
