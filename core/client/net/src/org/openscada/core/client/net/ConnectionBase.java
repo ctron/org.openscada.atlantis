@@ -37,8 +37,11 @@ public abstract class ConnectionBase
 {
     private class WaitConnectionStateListener implements ConnectionStateListener
     {
+        private Logger _log = Logger.getLogger ( WaitConnectionStateListener.class );
+        
         public void stateChange ( ConnectionBase connection, State state, Throwable error )
         {
+            _log.debug ( "State change: " + state );
             switch ( state )
             {
             case BOUND:
@@ -61,6 +64,10 @@ public abstract class ConnectionBase
         private void notifyError ( Throwable error )
         {
             _error = error;
+            synchronized ( this )
+            {
+                notifyAll ();
+            }
         }
 
         public void complete () throws Throwable
@@ -168,16 +175,17 @@ public abstract class ConnectionBase
     
     public void waitForConnection () throws Throwable
     {
-        // Check if we are already connected and return then
-        if ( _state == State.BOUND )
-            return;
-        
         WaitConnectionStateListener csl = new WaitConnectionStateListener ();
         try
         {
-            addConnectionStateListener ( csl );
             synchronized ( csl )
             {
+                addConnectionStateListener ( csl );
+                
+                // Check if we are already connected and return then
+                if ( _state == State.BOUND )
+                    return;
+                
                 csl.wait ();
                 csl.complete ();
             }
@@ -303,6 +311,7 @@ public abstract class ConnectionBase
 
     private void stateChanged ( State state, Throwable error )
     {
+        _log.debug ( "State Change: " + state );
         switch ( state )
         {
 
