@@ -51,26 +51,20 @@ public abstract class ConnectionBase
             }
         }
 
-        private void notifyComplete ()
+        synchronized private void notifyComplete ()
         {
-            synchronized ( this )
-            {
-                notifyAll ();
-            }
+            notifyAll ();
         }
         
         private Throwable _error = null;
         
-        private void notifyError ( Throwable error )
+        synchronized private void notifyError ( Throwable error )
         {
             _error = error;
-            synchronized ( this )
-            {
-                notifyAll ();
-            }
+            notifyAll ();
         }
 
-        public void complete () throws Throwable
+        synchronized public void complete () throws Throwable
         {
             if ( _error != null )
                 throw _error;
