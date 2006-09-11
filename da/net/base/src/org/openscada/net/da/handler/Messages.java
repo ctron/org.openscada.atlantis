@@ -20,19 +20,12 @@
 package org.openscada.net.da.handler;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.server.IODirection;
-import org.openscada.net.base.data.BooleanValue;
-import org.openscada.net.base.data.DoubleValue;
-import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.ListValue;
-import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
@@ -88,10 +81,10 @@ public class Messages extends org.openscada.core.net.MessageHelper
     public static Message subscribeItem ( String itemName, boolean initial )
     {
         Message msg = new Message ( CC_SUBSCRIBE_ITEM );
-        msg.getValues().put ( "item-name", new StringValue(itemName) );
+        msg.getValues().put ( "item-id", new StringValue(itemName) );
         
         if ( initial )
-            msg.getValues().put ( "initial", new VoidValue () );
+            msg.getValues().put ( "cache-read", new VoidValue () );
         
         return msg;
     }
@@ -99,7 +92,7 @@ public class Messages extends org.openscada.core.net.MessageHelper
     public static Message unsubscribeItem ( String itemName )
     {
         Message msg = new Message ( CC_UNSUBSCRIBE_ITEM );
-        msg.getValues().put ( "item-name", new StringValue(itemName) );
+        msg.getValues().put ( "item-id", new StringValue(itemName) );
         return msg;
     }
     
@@ -107,7 +100,7 @@ public class Messages extends org.openscada.core.net.MessageHelper
     {
         Message msg = new Message ( CC_NOTIFY_VALUE );
         
-        msg.getValues().put ( "item-name", new StringValue(itemName) );
+        msg.getValues().put ( "item-id", new StringValue(itemName) );
         
         // flag if initial bit is set
         if ( initial )
@@ -115,7 +108,7 @@ public class Messages extends org.openscada.core.net.MessageHelper
         
         Value messageValue = variantToValue ( value );
         if ( messageValue != null )
-            msg.getValues ().put("value", messageValue );
+            msg.getValues ().put ( "value", messageValue );
         
         return msg;
     }
@@ -124,7 +117,7 @@ public class Messages extends org.openscada.core.net.MessageHelper
     {
         Message msg = new Message ( CC_NOTIFY_ATTRIBUTES );
         
-        msg.getValues ().put ( "item-name", new StringValue(itemName) );
+        msg.getValues ().put ( "item-id", new StringValue(itemName) );
         
         // flag if initial bit is set
         if ( initial )
