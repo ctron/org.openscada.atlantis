@@ -104,7 +104,7 @@ public class Messages extends org.openscada.core.net.MessageHelper
         
         // flag if initial bit is set
         if ( initial )
-            msg.getValues().put ( "initial", new VoidValue () );
+            msg.getValues().put ( "cache-read", new VoidValue () );
         
         Value messageValue = variantToValue ( value );
         if ( messageValue != null )
@@ -121,7 +121,7 @@ public class Messages extends org.openscada.core.net.MessageHelper
         
         // flag if initial bit is set
         if ( initial )
-            msg.getValues ().put ( "initial", new VoidValue () );
+            msg.getValues ().put ( "cache-read", new VoidValue () );
         
         ListValue unsetEntries = new ListValue ();
         MapValue setEntries = new MapValue ();
