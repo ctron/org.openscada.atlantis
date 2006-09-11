@@ -41,7 +41,6 @@ import org.openscada.da.core.Location;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.server.browser.Entry;
-import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.LongRunningOperation;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
@@ -349,7 +348,7 @@ public class Connection extends ConnectionBase
         Variant value = new Variant ();
 
         // extract initial bit
-        boolean initial = message.getValues().containsKey("initial");
+        boolean initial = message.getValues().containsKey("cache-read");
 
 
         if ( message.getValues().containsKey("value") )
@@ -357,7 +356,7 @@ public class Connection extends ConnectionBase
             value = MessageHelper.valueToVariant ( message.getValues().get("value"), null );
         }
 
-        String itemName = message.getValues().get("item-name").toString();
+        String itemName = message.getValues().get("item-id").toString();
         fireValueChange(itemName, value, initial);
     }
 
@@ -368,7 +367,7 @@ public class Connection extends ConnectionBase
         Map<String,Variant> attributes = new HashMap<String,Variant>();
 
         // extract initial bit
-        boolean initial = message.getValues().containsKey("initial");
+        boolean initial = message.getValues().containsKey("cache-read");
         
         if ( message.getValues ().get ( "set" ) instanceof MapValue )
         {
@@ -391,7 +390,7 @@ public class Connection extends ConnectionBase
             }
         }
 
-        String itemName = message.getValues().get("item-name").toString();
+        String itemName = message.getValues().get("item-id").toString();
         fireAttributesChange ( itemName, attributes, initial );
     }
 
