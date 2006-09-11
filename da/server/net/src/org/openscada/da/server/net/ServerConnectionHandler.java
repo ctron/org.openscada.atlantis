@@ -230,26 +230,26 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
     {
         if ( _session == null )
         {
-            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"No session"));
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "No session" ) );
             return;
         }
 
-        String itemName = message.getValues().get("item-name").toString();
-        boolean initial = message.getValues().containsKey("initial");
+        String itemName = message.getValues ().get ( "item-id" ).toString ();
+        boolean initial = message.getValues ().containsKey ( "cache-read" );
 
-        _log.debug("Subscribe to " + itemName + " initial " + initial );
+        _log.debug ( "Subscribe to " + itemName + " initial " + initial );
 
         try
         {
-            _hive.registerForItem (_session, itemName, initial );
+            _hive.registerForItem ( _session, itemName, initial );
         }
         catch ( InvalidSessionException e )
         {
-            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"Invalid session"));
+            getConnection ().sendMessage(MessageCreator.createFailedMessage ( message,"Invalid session" ) );
         }
         catch ( InvalidItemException e )
         {
-            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"Invalid item"));
+            getConnection ().sendMessage(MessageCreator.createFailedMessage ( message,"Invalid item" ) );
         }
 
     }
@@ -258,23 +258,23 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
     {
         if ( _session == null )
         {
-            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"No session"));
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "No session" ) );
             return;
         }
 
-        String itemName = message.getValues().get("item-name").toString();
+        String itemName = message.getValues().get ( "item-id" ).toString ();
 
         try
         {
-            _hive.unregisterForItem(_session, itemName);
+            _hive.unregisterForItem ( _session, itemName );
         }
         catch ( InvalidSessionException e )
         {
-            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"Invalid session"));
+            getConnection ().sendMessage(MessageCreator.createFailedMessage ( message, "Invalid session" ) );
         }
         catch ( InvalidItemException e )
         {
-            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"Invalid item"));
+            getConnection ().sendMessage(MessageCreator.createFailedMessage ( message, "Invalid item" ) );
         }
     }
 
