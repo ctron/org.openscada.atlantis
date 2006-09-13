@@ -4,7 +4,7 @@ Bundle-Name: OpenSCADA RCP Client
 Bundle-SymbolicName: org.openscada.rcp.client; singleton:=true
 Bundle-Version: 0.4.0
 Bundle-Activator: org.openscada.rcp.client.Activator
-Bundle-Vendor: openscada.org
+Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
