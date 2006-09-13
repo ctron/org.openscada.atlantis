@@ -69,11 +69,10 @@ public class MessageProcessor implements MessageListener
             // no op
             break;
 			
-		default:
-			processCustomMessage(connection, message);
-		break;
+        default:
+            processCustomMessage(connection, message);
+            break;
 		}
-		
 		
 	}
 	
