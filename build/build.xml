@@ -1030,7 +1030,7 @@
         		<include name="**"/>
         	</fileset>
         </zip>
-    	<tar longfile="gnu" destfile="${upload.base}/openscada-da-${version}${release}.tar">
+    	<tar longfile="gnu" destfile="${upload.base}/openscada-atlantis-${version}${release}.tar">
     		<tarfileset prefix="openscada-atlantis-${version}${release}" dir="${dist.base}">
         		<include name="**"/>
        		</tarfileset>
