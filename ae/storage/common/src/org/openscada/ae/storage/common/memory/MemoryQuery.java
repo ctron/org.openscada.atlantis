@@ -2,6 +2,8 @@ package org.openscada.ae.storage.common.memory;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.openscada.ae.core.Event;
@@ -12,7 +14,7 @@ import org.openscada.ae.storage.common.SubscriptionReader;
 
 public class MemoryQuery implements Query, ListeningQuery, InitialEventsProvider
 {
-    protected Set<Event> _events = new HashSet<Event> ();
+    protected List<Event> _events = new LinkedList<Event> ();
     
     protected Set<PushEventReader> _subscriptionReaders = new HashSet<PushEventReader> ();
     
