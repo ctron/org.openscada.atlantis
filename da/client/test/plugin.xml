@@ -17,7 +17,7 @@
             class="org.openscada.da.client.test.Perspective"
             icon="icons/stock_channel.png"
             id="org.openscada.da.client.test.perspective"
-            name="DA Perspective">
+            name="DA">
       </perspective>
    </extension>
    <extension
@@ -76,6 +76,7 @@
       <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
          <newWizardShortcut id="org.openscada.da.client.test.newWizards.NewHive"/>
          <newWizardShortcut id="org.openscada.da.client.test.newWizards.NewWatch"/>
+         <perspectiveShortcut id="org.openscada.ae.client.test.perspective"/>
       </perspectiveExtension>
    </extension>
    <extension
