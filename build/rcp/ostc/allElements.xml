@@ -27,18 +27,6 @@
     <ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
   </target>
   
-  <target name="assemble.org.openscada.rcp.update">  
-    <ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-  </target>
-
-  <target name="assemble.org.openscada.da.client.test">  
-    <ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-  </target>
-	
-  <target name="assemble.org.openscada.ae.client.test">  
-    <ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-  </target>
-	
   <target name="assemble.org.openscada.rcp.client">  
     <ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
   </target>
