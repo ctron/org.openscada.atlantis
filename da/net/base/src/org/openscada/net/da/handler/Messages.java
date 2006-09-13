@@ -46,7 +46,7 @@ public class Messages extends org.openscada.core.net.MessageHelper
     public final static int CC_WRITE_OPERATION_RESULT =             0x00010031;
     public final static int CC_READ_OPERATION =                     0x00010040;
     public final static int CC_WRITE_ATTRIBUTES_OPERATION =         0x00010050;
-    public final static int CC_WRITE_ATTRIBUTES_OPERATION_RESULT =   0x00010040;
+    public final static int CC_WRITE_ATTRIBUTES_OPERATION_RESULT =  0x00010040;
     
     public final static int CC_ENUM_SUBSCRIBE =                     0x00010101;
     public final static int CC_ENUM_UNSUBSCRIBE =                   0x00010102;
