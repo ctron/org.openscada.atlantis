@@ -67,7 +67,7 @@
     			<include name="**/*"/>
     		</fileset>
     	</copy>
-    	<move dest="${upload.base}/bin/ostc/${buildId}-macosx.carbon.tar.gz" src="${upload.base}/bin/ostc/${buildId}-macosx.carbon.ppc.tar.gz"/>
+    	<move tofile="${upload.base}/bin/ostc/${buildId}-macosx.carbon.tar.gz" file="${upload.base}/bin/ostc/${buildId}-macosx.carbon.ppc.tar.gz"/>
     </target>
 
 

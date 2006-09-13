@@ -117,7 +117,7 @@
 	</antcall>
 	<antcall target="checkoutSvn">
  		<param name="todir" value="${buildDirectory}/features/org.openscada.ae.client.test"/>
-		<param name="module" value="${svn.base}/ae/client/test_feature"/>
+		<param name="module" value="${svn.base}/ae/client/net_feature"/>
 	</antcall>
   </target>
 
