@@ -69,7 +69,7 @@ public class SyslogHelper
         case LOG_EMERG:
             return "panic";
         case LOG_ALERT:
-            return "alart";
+            return "alert";
         case LOG_CRIT:
             return "critical";
         case LOG_ERR:

@@ -30,7 +30,7 @@ public class SyslogParser
         _sourceName = sourceName;
         _defaultSeverity = severity;
         
-        _pattern = Pattern.compile ( "(\\<([0-9]+)\\>|)(.*?[0-9]{2}:[0-9]{2}:[0-9]{2})\\s+(\\w+)\\s+(([\\w\\S]+):\\s*|)(.*)" );
+        _pattern = Pattern.compile ( "(\\<([0-9]+)\\>|)(.*?[0-9]{2}:[0-9]{2}:[0-9]{2})\\s+([a-zA-Z0-9\\.-]+)\\s+(([\\w\\S]+):\\s*|)(.*)" );
     }
     
     public void handleLine ( String line )

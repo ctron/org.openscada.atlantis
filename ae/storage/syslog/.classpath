@@ -6,7 +6,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_ae_core_common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_utils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_ae_storage_common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ext_xmlbeans"/>
-	<classpathentry kind="lib" path="SyslogStorageSchema.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ext_xmlbeans"/>
+	<classpathentry exported="true" kind="lib" path="SyslogStorageSchema.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

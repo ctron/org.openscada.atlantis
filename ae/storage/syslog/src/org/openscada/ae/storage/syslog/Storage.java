@@ -2,6 +2,8 @@ package org.openscada.ae.storage.syslog;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -20,6 +22,8 @@ import org.openscada.ae.syslog.SyslogUdpProviderType;
 import org.openscada.core.Variant;
 import org.openscada.utils.collection.MapBuilder;
 
+import com.sun.corba.se.spi.servicecontext.SendingContextServiceContext;
+
 public class Storage extends StorageCommon implements DataStore
 {
     private static Logger _log = Logger.getLogger ( Storage.class );
@@ -27,6 +31,7 @@ public class Storage extends StorageCommon implements DataStore
     private MemoryQuery _allQuery = new MemoryQuery ();
     
     private List<Object> _providers = new LinkedList<Object> ();
+    private SyslogClient _client = null;
     
     public Storage () throws XmlException, IOException
     {
@@ -38,13 +43,19 @@ public class Storage extends StorageCommon implements DataStore
     
         configure ();
         
-        _providers.add ( new SyslogFileProvider ( this, new File ( "/var/log/syslog" ), "INFO" ) );
-        _providers.add ( new SyslogFileProvider ( this, new File ( "/var/log/auth.log" ), "INFO" ) );
-        _providers.add ( new SyslogFileProvider ( this, new File ( "/var/log/daemon.log" ), "INFO" ) );
-        _providers.add ( new SyslogFileProvider ( this, new File ( "/var/log/user.log" ), "INFO" ) );
-        _providers.add ( new SyslogFileProvider ( this, new File ( "/var/log/debug" ), "DEBUG" ) );
+        _client = new SyslogClient ( new InetSocketAddress ( "localhost", 514 ) );
         
-        _providers.add ( new SyslogDaemonProvider ( this, 1402 ) );
+        Event event = new Event ( "" );
+        event.getAttributes ().put ( "message", new Variant ( "Hello World" ) );
+        event.getAttributes ().put ( "application", new Variant ( "test" ) );
+        try
+        {
+            submitEvent ( new Properties (), event );
+        }
+        catch ( Exception e )
+        {
+            _log.debug ( "Failed to send hello world", e );
+        }
     }
     
     private void configure () throws XmlException, IOException
@@ -52,7 +63,7 @@ public class Storage extends StorageCommon implements DataStore
         String fileName = System.getProperty ( "org.openscada.ae.syslog.configuration", "configuration.xml" );
         
         File file = new File ( fileName );
-        if ( file.canRead () )
+        try
         {
             ConfigurationDocument doc = ConfigurationDocument.Factory.parse ( file );
             for ( FileProviderType fileProvider : doc.getConfiguration ().getProviders ().getFileProviderList () )
@@ -65,12 +76,59 @@ public class Storage extends StorageCommon implements DataStore
             }
 
         }
+        catch ( Exception e )
+        {
+            _log.warn ( "Unable to open configuration", e );
+        }
     }
 
     @Override
     public synchronized void submitEvent ( Properties properties, Event event ) throws Exception
     {
-        throw new Exception ( "not supported" );
+        if ( _client == null )
+            throw new Exception ( "Instance cannot handle submitted messages" );
+        
+        if ( !event.getAttributes ().containsKey ( "message" ) )
+            throw new Exception ( "Can only handle events with 'message' attribute" );
+        
+        if ( !event.getAttributes ().containsKey ( "application" ) )
+            throw new Exception ( "Can only handle events with 'application' attribute" );
+        
+        SyslogMessage message = new SyslogMessage ();
+        
+        message.setMessage ( event.getAttributes ().get ( "message" ).asString ( "" ) );
+        message.setApplication ( event.getAttributes ().get ( "application" ).asString ( "openscada" ) );
+        
+        // process id
+        Variant pid = event.getAttributes ().get ( "pid" );
+        if ( pid != null )
+            if ( pid.isInteger () || pid.isLong () )
+                message.setProcessId ( pid.asLong () );
+        
+        // hostname
+        if ( event.getAttributes ().containsKey ( "host" ) )
+            message.setHost ( event.getAttributes ().get ( "host" ).asString ( "localhost" ) );
+        
+        if ( event.getAttributes ().containsKey ( "severity" ) )
+        {
+            String severity = event.getAttributes ().get ( "severity" ).asString ( "" ).toUpperCase ();
+            if ( severity.equals ( "FATAL" ) )
+                message.setPriority ( SyslogMessage.Priority.ALERT );
+            else if ( severity.equals ( "ERROR" ) )
+                message.setPriority ( SyslogMessage.Priority.ERROR );
+            else if ( severity.equals ( "WARNING" ) )
+                message.setPriority ( SyslogMessage.Priority.WARNING );
+            else if ( severity.equals ( "INFO" ) )
+                message.setPriority ( SyslogMessage.Priority.INFO );
+            else if ( severity.equals ( "DEBUG " ) )
+                message.setPriority ( SyslogMessage.Priority.DEBUG );
+            else
+                message.setPriority ( SyslogMessage.Priority.INFO );
+        }
+        
+        message.setTimestamp ( event.getTimestamp () );
+        
+        _client.sendMessage ( message );
     }
     
     public void submitEvent ( Event event )
