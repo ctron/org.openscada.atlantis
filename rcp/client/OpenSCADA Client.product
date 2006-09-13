@@ -17,7 +17,6 @@
 
    <windowImages i16="/openscada_da_client_test/icons/app/app_icon_16.gif" i32="/openscada_da_client_test/icons/app/app_icon_32.gif" i48="/openscada_da_client_test/icons/app/app_icon_48.gif"/>
 
-
    <launcher name="ostc">
       <solaris/>
       <win useIco="true">
@@ -33,6 +32,7 @@
 
    <features>
       <feature id="org.eclipse.rcp" version="3.2.0.v20060609m-SVDNgVrNoh-MeGG"/>
+      <feature id="org.openscada.ae.client.test" version="0.4.0"/>
       <feature id="org.openscada.da.client.test" version="0.2.2"/>
       <feature id="org.openscada.da.net.client" version="0.2.2"/>
       <feature id="org.openscada.rcp.client" version="0.4.0"/>
