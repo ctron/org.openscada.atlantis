@@ -99,6 +99,26 @@
  		<param name="todir" value="${buildDirectory}/plugins/org.openscada.da.rcp.LocalTestServer"/>
 		<param name="module" value="${svn.base}/da/rcp/local_test_server"/>
 	</antcall>
+	<antcall target="checkoutSvn">
+ 		<param name="todir" value="${buildDirectory}/plugins/org.openscada.rcp.client"/>
+		<param name="module" value="${svn.base}/rcp/client"/>
+	</antcall>
+	<antcall target="checkoutSvn">
+		<param name="todir" value="${buildDirectory}/features/org.openscada.rcp.client"/>
+		<param name="module" value="${svn.base}/rcp/client_feature"/>
+	</antcall>
+	<antcall target="checkoutSvn">
+ 		<param name="todir" value="${buildDirectory}/plugins/org.openscada.ae.net.client"/>
+		<param name="module" value="${svn.base}/ae/client/net_wrapper_plugin"/>
+	</antcall>
+	<antcall target="checkoutSvn">
+ 		<param name="todir" value="${buildDirectory}/plugins/org.openscada.ae.client.test"/>
+		<param name="module" value="${svn.base}/ae/client/test"/>
+	</antcall>
+	<antcall target="checkoutSvn">
+ 		<param name="todir" value="${buildDirectory}/features/org.openscada.ae.client.test"/>
+		<param name="module" value="${svn.base}/ae/client/test_feature"/>
+	</antcall>
   </target>
 
   <!-- ===================================================================== -->

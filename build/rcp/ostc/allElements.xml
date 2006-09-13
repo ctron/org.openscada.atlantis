@@ -12,7 +12,7 @@
   <target name="allElementsDelegator">
   	<ant antfile="${genericTargets}" target="${target}">
       <property name="type" value="feature" />
-      <property name="id" value="org.openscada.da.client.test" />
+      <property name="id" value="org.openscada.rcp.client" />
     </ant>
   </target>
  
@@ -34,4 +34,13 @@
   <target name="assemble.org.openscada.da.client.test">  
     <ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
   </target>
+	
+  <target name="assemble.org.openscada.ae.client.test">  
+    <ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+  </target>
+	
+  <target name="assemble.org.openscada.rcp.client">  
+    <ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+  </target>
+		
 </project>

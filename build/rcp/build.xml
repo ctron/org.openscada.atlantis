@@ -2,14 +2,14 @@
 <!-- ====================================================================== 
      Aug 24, 2006 11:41:47 AM                                                        
 
-     OpenSCADA DA Test Client    
-     The OpenSCADA DA Test Client
+     OpenSCADA RCP Client    
+     The OpenSCADA RCP Client
                    
      jens                                                                
      ====================================================================== -->
-<project name="OpenSCADA DA Test Client" default="default">
+<project name="OpenSCADA RCP Client" default="default">
     <description>
-            The OpenSCADA DA Test Client
+            The OpenSCADA RCP Client
     </description>
 
 	<property name="eclipse.home" value="/home/user/eclipse"/>
@@ -22,7 +22,7 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="init, build, package" description="--> The OpenSCADA DA Test Client">
+    <target name="default" depends="init, build, package" description="--> The OpenSCADA RCP Client">
         
     </target>
 	
@@ -67,7 +67,7 @@
     			<include name="**/*"/>
     		</fileset>
     	</copy>
-    	<rename dest="${upload.base}/bin/ostc/${buildId}-macosx.carbon.tar.gz" src="${upload.base}/bin/ostc/${buildId}-macosx.carbon.ppc.tar.gz"/>
+    	<move dest="${upload.base}/bin/ostc/${buildId}-macosx.carbon.tar.gz" src="${upload.base}/bin/ostc/${buildId}-macosx.carbon.ppc.tar.gz"/>
     </target>
 
 
