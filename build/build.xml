@@ -909,6 +909,10 @@
 			<link href="${api.href.base}/openscada_da_net_base" offline="true" packagelistloc="${dist.base}/docs/api/openscada_da_net_base"/>
 			<link href="${api.href.base}/openscada_da_net_server" offline="true" packagelistloc="${dist.base}/docs/api/openscada_da_net_server"/>
 			<link href="${api.href.base}/openscada_da_net_client" offline="true" packagelistloc="${dist.base}/docs/api/openscada_da_net_client"/>
+			<link href="${api.href.base}/openscada_ae_net_client" offline="true" packagelistloc="${dist.base}/docs/api/openscada_ae_net_client"/>
+			<link href="${api.href.base}/openscada_ae_net_base" offline="true" packagelistloc="${dist.base}/docs/api/openscada_ae_net_base"/>
+			<link href="${api.href.base}/openscada_ae_core_common" offline="true" packagelistloc="${dist.base}/docs/api/openscada_ae_core_common"/>
+			<link href="${api.href.base}/openscada_ae_storage_common" offline="true" packagelistloc="${dist.base}/docs/api/openscada_ae_storage_common"/>
 		</javadoc>
 	</target>
 	
@@ -964,7 +968,30 @@
     	<antcall target="export_project">
     		<param name="module" value="openscada_da_sysinfo"/>
     	</antcall>
-	
+    	<!-- export AE -->
+    	<antcall target="export_project">
+    		<param name="module" value="openscada_ae_core_common"/>
+    	</antcall>
+       	<antcall target="export_project">
+       		<param name="module" value="openscada_ae_storage_common"/>
+       	</antcall>
+      	<antcall target="export_project">
+       		<param name="module" value="openscada_ae_storage_net"/>
+       	</antcall>
+       	<antcall target="export_project">
+       		<param name="module" value="openscada_ae_storage_syslog"/>
+       	</antcall>
+       	<antcall target="export_project">
+       		<param name="module" value="openscada_ae_storage_test"/>
+       	</antcall>
+       	<antcall target="export_project">
+       		<param name="module" value="openscada_ae_net_base"/>
+       	</antcall>
+       	<antcall target="export_project">
+       		<param name="module" value="openscada_ae_client_net"/>
+       	</antcall>
+
+       		
     	<javadoc destdir="${dist.base}/docs/api/complete"
     		author="true"
     		version="true"
@@ -998,19 +1025,19 @@
           target: pack              
          ================================= -->
     <target name="pack" depends="dist_src,dist" description="--> Pack distribution to archive files">
-        <zip destfile="${upload.base}/openscada-da-${version}${release}.zip">
+        <zip destfile="${upload.base}/openscada-atlantis-${version}${release}.zip">
         	<fileset dir="${dist.base}">
         		<include name="**"/>
         	</fileset>
         </zip>
     	<tar longfile="gnu" destfile="${upload.base}/openscada-da-${version}${release}.tar">
-    		<tarfileset prefix="openscada-da-${version}${release}" dir="${dist.base}">
+    		<tarfileset prefix="openscada-atlantis-${version}${release}" dir="${dist.base}">
         		<include name="**"/>
        		</tarfileset>
     	</tar>
-    	<gzip src="${upload.base}/openscada-da-${version}${release}.tar" destfile="${upload.base}/openscada-da-${version}${release}.tar.gz"/>
-		<bzip2 src="${upload.base}/openscada-da-${version}${release}.tar" destfile="${upload.base}/openscada-da-${version}${release}.tar.bz2"/>
-    	<delete dir="${upload.base}/openscada-da-${version}${release}.tar"/>
+    	<gzip src="${upload.base}/openscada-atlantis-${version}${release}.tar" destfile="${upload.base}/openscada-atlantis-${version}${release}.tar.gz"/>
+		<bzip2 src="${upload.base}/openscada-atlantis-${version}${release}.tar" destfile="${upload.base}/openscada-atlantis-${version}${release}.tar.bz2"/>
+    	<delete dir="${upload.base}/openscada-atlantis-${version}${release}.tar"/>
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
