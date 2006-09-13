@@ -319,7 +319,7 @@ POSSIBILITY OF SUCH DAMAGES.
    </license>
 
    <url>
-      <update label="OpenSCADA DA Test Client" url="http://openscada.org/ostc"/>
+      <update label="OpenSCADA RCP Client" url="http://openscada.org/ostc"/>
       <discovery label="OpenSCADA Update Site" url="http://openscada.de/ostc"/>
    </url>
 
