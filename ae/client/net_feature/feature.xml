@@ -341,4 +341,11 @@ POSSIBILITY OF SUCH DAMAGES.
          install-size="0"
          version="0.0.0"/>
 
+   <plugin
+         id="org.openscada.ae.rcp.LocalTestServer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
