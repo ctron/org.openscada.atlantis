@@ -89,21 +89,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
             public void messageReceived(Connection connection, Message message) {
                 unsubscribe ( message );
             }});
-
-        getMessageProcessor().setHandler(Messages.CC_ENUM_SUBSCRIBE, new MessageListener(){
-
-            public void messageReceived ( Connection connection, Message message )
-            {
-                enumSubscribe ( message );
-            }});
-
-        getMessageProcessor().setHandler(Messages.CC_ENUM_UNSUBSCRIBE, new MessageListener(){
-
-            public void messageReceived ( Connection connection, Message message )
-            {
-                enumUnsubscribe ( message );
-            }});
-
+       
         getMessageProcessor().setHandler(Messages.CC_WRITE_OPERATION, new MessageListener(){
 
             public void messageReceived ( Connection connection, Message message )
@@ -276,45 +262,6 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         {
             getConnection ().sendMessage(MessageCreator.createFailedMessage ( message, "Invalid item" ) );
         }
-    }
-
-    private void enumSubscribe ( Message message )
-    {
-        if ( _session == null )
-        {
-            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"No session"));
-            return;
-        }
-
-        try
-        {
-            _log.debug("Got request to enum subscription");
-            _hive.registerItemList(_session);
-        }
-        catch ( InvalidSessionException e )
-        {
-            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"Invalid session"));
-        }
-
-    }
-
-    private void enumUnsubscribe ( Message message )
-    {
-        if ( _session == null )
-        {
-            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"No session"));
-            return;
-        }
-
-        try
-        {
-            _hive.unregisterItemList(_session);
-        }
-        catch ( InvalidSessionException e )
-        {
-            getConnection().sendMessage(MessageCreator.createFailedMessage(message,"Invalid session"));
-        }
-
     }
 
     private void cleanUp ()
