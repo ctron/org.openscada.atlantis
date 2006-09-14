@@ -29,7 +29,6 @@ import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.Location;
-import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
 import org.openscada.da.core.server.ItemChangeListener;
@@ -44,13 +43,12 @@ import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
-import org.openscada.net.da.handler.EnumEvent;
 import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.io.net.Connection;
 import org.openscada.net.utils.MessageCreator;
 
-public class ServerConnectionHandler extends ConnectionHandlerBase implements ItemChangeListener, ItemListListener, FolderListener
+public class ServerConnectionHandler extends ConnectionHandlerBase implements ItemChangeListener, FolderListener
 {
     
     public final static String VERSION = "0.1.5";
@@ -284,12 +282,6 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
     public void attributesChanged ( String name, Map<String, Variant> attributes, boolean initial )
     {
         getConnection().sendMessage(Messages.notifyAttributes(name, attributes, initial));
-    }
-
-    public void changed ( Collection<DataItemInformation> added, Collection<String> removed, boolean initial )
-    {
-        _log.debug("Got enum change event from hive");
-        getConnection().sendMessage ( EnumEvent.create ( added, removed, initial ) );
     }
 
     private void performWrite ( final Message message )
