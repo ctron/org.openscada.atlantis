@@ -19,12 +19,9 @@
 
 package org.openscada.da.client.test.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
-import java.util.Observer;
 
 import org.apache.log4j.Logger;
 import org.eclipse.ui.IActionFilter;
@@ -36,7 +33,6 @@ import org.openscada.core.client.net.ConnectionBase.State;
 import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
-import org.openscada.da.core.server.DataItemInformation;
 
 public class HiveConnection extends Observable implements IActionFilter
 {
@@ -66,15 +62,10 @@ public class HiveConnection extends Observable implements IActionFilter
             {
                 performStateChange ( state, error );
             }
-            
-            });
-        _connection.getItemList().addObserver(new Observer(){
-            public void update ( Observable o, Object arg )
-            {
-                performItemListUpdate();
-            }
+
         });
-        
+
+
         
     }
     
@@ -90,7 +81,7 @@ public class HiveConnection extends Observable implements IActionFilter
         //if ( _connection != null )
         //    return;
         
-        _log.debug("Initiating connection...");
+        _log.debug ( "Initiating connection..." );
         
         try
         {
@@ -142,36 +133,7 @@ public class HiveConnection extends Observable implements IActionFilter
             Openscada_da_client_testPlugin.getDefault ().notifyError ( "Connection failed", error );
         }
     }
-    
-    synchronized private void performItemListUpdate ()
-    {
-        Map<String,HiveItem> items = new HashMap<String,HiveItem> ();
-        
-        Collection<DataItemInformation> list = _connection.getItemList().getItemList ();
-        for ( DataItemInformation item : list )
-        {
-            if ( _itemMap.containsKey(item) )
-                items.put ( item.getName(), _itemMap.get ( item ) );
-            else
-            {
-                items.put ( item.getName(), new HiveItem ( this, item ) );
-            }
-        }
-        
-        _itemMap = items;
-        
-        setChanged();
-        notifyObservers();
-    }
-    
-    synchronized public Collection<HiveItem> getItemList ()
-    {
-        if ( _connection.getState ().equals ( Connection.State.CLOSED ) )
-            return new ArrayList<HiveItem>();
-        
-        return _itemMap.values();
-    }
-
+   
     public Connection getConnection ()
     {
         return _connection;

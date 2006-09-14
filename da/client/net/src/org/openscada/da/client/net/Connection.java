@@ -38,7 +38,6 @@ import org.openscada.da.client.net.operations.BrowserListOperation;
 import org.openscada.da.client.net.operations.WriteAttributesOperationController;
 import org.openscada.da.client.net.operations.WriteOperationController;
 import org.openscada.da.core.Location;
-import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 import org.openscada.da.core.server.browser.Entry;
 import org.openscada.net.base.LongRunningOperation;
@@ -50,7 +49,6 @@ import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
-import org.openscada.net.da.handler.EnumEvent;
 import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.da.handler.WriteAttributesOperation;
@@ -68,7 +66,6 @@ public class Connection extends ConnectionBase
     private Map<String, ItemSyncController> _itemListeners = new HashMap<String, ItemSyncController> ();
     private Map<Location, FolderSyncController> _folderListeners = new HashMap<Location, FolderSyncController> ();
 
-    private ItemList _itemList = new ItemList ();
     private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener> ();
 
     // operations
@@ -101,14 +98,6 @@ public class Connection extends ConnectionBase
                 notifyAttributesChange(message);
             }});
 
-        _client.getMessageProcessor().setHandler(Messages.CC_ENUM_EVENT, new MessageListener(){
-
-            public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message )
-            {
-                _log.debug("Enum message from server");
-                performEnumEvent ( message );
-            }});
-        
         _client.getMessageProcessor().setHandler(Messages.CC_BROWSER_EVENT, new MessageListener(){
 
             public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message )
@@ -122,39 +111,6 @@ public class Connection extends ConnectionBase
         
         _writeAttributesController = new WriteAttributesOperationController ( _client );
         _writeAttributesController.register ( _client.getMessageProcessor () );
-    }
-
-    public void addItemListListener ( ItemListListener listener )
-    {
-        synchronized ( _itemListListeners )
-        {
-            _itemListListeners.add ( listener );
-        }
-    }
-
-    public void removeItemListListener ( ItemListListener listener )
-    {
-        synchronized ( _itemListListeners )
-        {
-            _itemListListeners.remove ( listener );
-        }
-    }
-
-    private void fireItemListChange ( Collection<DataItemInformation> added, Collection<String> removed, boolean initial )
-    {
-        synchronized ( _itemListListeners )
-        {
-            _log.debug("Sending out enum events");
-
-            for ( ItemListListener listener : _itemListListeners )
-            {
-                try {
-                    listener.changed ( added, removed, initial );
-                }
-                catch ( Exception e )
-                {}
-            }
-        }
     }
 
     private void requestSession ()
@@ -394,56 +350,26 @@ public class Connection extends ConnectionBase
         fireAttributesChange ( itemName, attributes, initial );
     }
 
-    private void performEnumEvent ( Message message )
-    {
-        synchronized ( _itemList )
-        {
-            List<DataItemInformation> added = new ArrayList<DataItemInformation> ();
-            List<String> removed = new ArrayList<String> ();
-            Holder<Boolean> initial = new Holder<Boolean> ();
-
-            EnumEvent.parse ( message, added, removed, initial );
-
-            fireItemListChange ( added, removed, initial.value.booleanValue() );
-        }
-    }
-    
     private void performBrowseEvent ( Message message )
     {
         _log.debug ( "Performing browse event" );
         
-        synchronized ( _itemList )
-        {
-            List<Entry> added = new ArrayList<Entry> ();
-            List<String> removed = new ArrayList<String> ();
-            List<String> path = new ArrayList<String> ();
-            Holder<Boolean> initial = new Holder<Boolean> ();
-            
-            initial.value = false;
+        List<Entry> added = new ArrayList<Entry> ();
+        List<String> removed = new ArrayList<String> ();
+        List<String> path = new ArrayList<String> ();
+        Holder<Boolean> initial = new Holder<Boolean> ();
 
-            ListBrowser.parseEvent ( message, path, added, removed, initial );
-            
-            Location location = new Location ( path );
-            
-            _log.debug ( String.format ( "Folder: %1$s Added: %2$d Removed: %3$d", location.toString (), added.size (), removed.size() ) );
+        initial.value = false;
 
-            fireBrowseEvent ( location, added, removed, initial.value );
-        }
+        ListBrowser.parseEvent ( message, path, added, removed, initial );
+
+        Location location = new Location ( path );
+
+        _log.debug ( String.format ( "Folder: %1$s Added: %2$d Removed: %3$d", location.toString (), added.size (), removed.size() ) );
+
+        fireBrowseEvent ( location, added, removed, initial.value );
     }
 
-    /**
-     * Get the item list. This list is maintained by the connection and will be
-     * feeded with events.
-     * @return the dynamic item list
-     */
-    public ItemList getItemList ()
-    {
-        synchronized ( _itemList )
-        {
-            return _itemList;
-        }
-    }
-    
     // write operation
     
     public void write ( String itemName, Variant value ) throws InterruptedException, OperationException

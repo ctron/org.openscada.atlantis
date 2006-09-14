@@ -21,10 +21,7 @@ package org.openscada.da.client.net.test;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.Collection;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.NullValueException;
@@ -36,8 +33,6 @@ import org.openscada.core.client.net.ConnectionBase.State;
 import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.net.ItemUpdateListener;
 import org.openscada.da.core.Location;
-import org.openscada.da.core.server.DataItemInformation;
-import org.openscada.da.core.server.IODirection;
 import org.openscada.utils.timing.Scheduler;
 
 public class Application
@@ -67,25 +62,6 @@ public class Application
             }
 
             });
-        
-        if ( _folder )
-        connection.getItemList().addObserver(new Observer(){
-
-            public void update ( Observable o, Object arg )
-            {
-                Collection<DataItemInformation> items = connection.getItemList().getItemList();
-                _log.debug("START - Item list");
-                for ( DataItemInformation item : items )
-                {
-                    String io = "";
-                    if ( item.getIODirection ().contains ( IODirection.INPUT ) )
-                        io += "I";
-                    if ( item.getIODirection ().contains ( IODirection.OUTPUT ) )
-                        io += "O";
-                    _log.debug ( " - " + item.getName () + " " + io );
-                }
-                _log.debug("END - Item list");
-            }});
         
         FolderDumper folderDumper;
 
