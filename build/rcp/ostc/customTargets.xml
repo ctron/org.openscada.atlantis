@@ -119,6 +119,10 @@
  		<param name="todir" value="${buildDirectory}/features/org.openscada.ae.client.test"/>
 		<param name="module" value="${svn.base}/ae/client/net_feature"/>
 	</antcall>
+	<antcall target="checkoutSvn">
+ 		<param name="todir" value="${buildDirectory}/plugins/org.openscada.ae.rcp.LocalTestServer"/>
+		<param name="module" value="${svn.base}/ae/rcp/local_test_server"/>
+	</antcall>
   </target>
 
   <!-- ===================================================================== -->
