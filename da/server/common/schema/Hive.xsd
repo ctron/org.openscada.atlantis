@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://openscada.org/DA/Hive" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:hive="http://openscada.org/DA/Hive" xmlns:item="http://openscada.org/DA/Storage/DataItem" >
+
+    <import schemaLocation="DataItem.xsd" namespace="http://openscada.org/DA/Storage/DataItem"></import>
+
+  <element name="items" type="hive:ItemsType"></element>
+
+  <complexType name="ItemsType">
+    <sequence>
+      <element name="item" type="item:DataItemType"></element>
+    </sequence>
+  </complexType>
+
+  <element name="item-templates" type="hive:ItemTemplatesType"></element>
+  
+    <complexType name="ItemTemplatesType">
+      <sequence>
+        <element name="template" type="hive:ItemTemplateType"></element>
+      </sequence></complexType>
+
+    <complexType name="ItemTemplateType">
+      <sequence>
+        <element name="reference-item" type="item:DataItemType"></element>
+      </sequence></complexType>
+</schema>
