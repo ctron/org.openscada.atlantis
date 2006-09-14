@@ -47,11 +47,7 @@ public class Messages extends org.openscada.core.net.MessageHelper
     public final static int CC_READ_OPERATION =                     0x00010040;
     public final static int CC_WRITE_ATTRIBUTES_OPERATION =         0x00010050;
     public final static int CC_WRITE_ATTRIBUTES_OPERATION_RESULT =  0x00010040;
-    
-    public final static int CC_ENUM_SUBSCRIBE =                     0x00010101;
-    public final static int CC_ENUM_UNSUBSCRIBE =                   0x00010102;
-    public final static int CC_ENUM_EVENT =                         0x00010103;
-    
+   
     public final static int CC_BROWSER_LIST_REQ =                   0x00010200;
     public final static int CC_BROWSER_LIST_RES =                   0x00010201;
     
@@ -145,19 +141,6 @@ public class Messages extends org.openscada.core.net.MessageHelper
         return msg;
     }
     
-    
-    public static Message subscribeEnum ()
-    {
-        Message msg = new Message ( CC_ENUM_SUBSCRIBE );
-        return msg;
-    }
-    
-    public static Message unsubscribeEnum ( )
-    {
-        Message msg = new Message ( CC_ENUM_UNSUBSCRIBE );
-        return msg;
-    }
-  
     public static int encodeIO ( EnumSet<IODirection> io )
     {
         int bits = 0;
