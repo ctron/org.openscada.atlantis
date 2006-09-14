@@ -71,19 +71,6 @@ public interface Hive
 	public void registerForAll ( Session session ) throws InvalidSessionException;
 	public void unregisterForAll ( Session session ) throws InvalidSessionException;
 	
-    /**
-     * @deprecated The browser interface should be used instead
-     * @param session the session to use  
-     * @throws InvalidSessionException
-     */
-    public void registerItemList ( Session session ) throws InvalidSessionException;
-    /**
-     * @deprecated The browser interface should be used instead
-     * @param session the session to use 
-     * @throws InvalidSessionException
-     */
-    public void unregisterItemList ( Session session ) throws InvalidSessionException;
-    
 	// enumerate
     /**
      * @deprecated The browser interface should be used instead
