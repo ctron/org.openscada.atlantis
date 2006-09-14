@@ -10,5 +10,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  log4j_wrapper_plugin
 Eclipse-LazyStart: true
-Bundle-ClassPath: openscada_net_server_test.jar,
- .
+Bundle-ClassPath: .,
+ openscada_ae_test_server_net.jar
