@@ -259,7 +259,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements Qu
             _storage.submitEvent ( submitEventMessage.getProperties (), submitEventMessage.getEvent () );
             getConnection ().sendMessage ( MessageCreator.createACK ( message ) );
         }
-        catch ( Exception e )
+        catch ( Throwable e )
         {
             getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, e ) );
         }
