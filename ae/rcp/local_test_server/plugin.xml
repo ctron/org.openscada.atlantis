@@ -5,14 +5,14 @@
          point="org.eclipse.ui.actionSets">
       <actionSet
             description="Control the local testserver"
-            id="org.openscada.da.rcp.LocalTestServer.actionSet"
-            label="Local Test Server">
+            id="org.openscada.ae.rcp.LocalTestServer.actionSet"
+            label="Local AE Test Server">
          <action
-               class="org.openscada.da.rcp.LocalTestServer.actions.StartServerAction"
+               class="org.openscada.ae.rcp.LocalTestServer.actions.StartServerAction"
                icon="icons/stock_start_sever.png"
-               id="org.openscada.da.rcp.LocalTestServer.StartServerAction"
-               label="Start Local Test Server"
-               menubarPath="testing/localServer"
+               id="org.openscada.ae.rcp.LocalTestServer.StartServerAction"
+               label="Start Local AE Test Server"
+               menubarPath="testing/localServerAE"
                style="push"/>
          <menu
                id="testing"
@@ -22,8 +22,8 @@
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
-         <actionSet id="org.openscada.da.rcp.LocalTestServer.actionSet"/>
+      <perspectiveExtension targetID="org.openscada.ae.client.test.perspective">
+         <actionSet id="org.openscada.ae.rcp.LocalTestServer.actionSet"/>
       </perspectiveExtension>
    </extension>
 

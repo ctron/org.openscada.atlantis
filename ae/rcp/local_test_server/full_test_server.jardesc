@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jardesc>
+<jar path="/home/jens/deploy/openscada_ae_test_server_net.jar"/>
+<options buildIfNeeded="true" compress="true" descriptionLocation="/openscada_ae_rcp_localtestserver/full_test_server.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+<storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+<selectedProjects/>
+<manifest generateManifest="false" manifestLocation="/openscada_da_server_net/MANIFEST.MF" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
+<sealing sealJar="false">
+<packagesToSeal/>
+<packagesToUnSeal/>
+</sealing>
+</manifest>
+<selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+<javaElement handleIdentifier="=openscada_ae_storage_net/src"/>
+<javaElement handleIdentifier="=openscada_utils/src"/>
+<javaElement handleIdentifier="=openscada_ae_core_common/src"/>
+<javaElement handleIdentifier="=openscada_core_common/src"/>
+<javaElement handleIdentifier="=openscada_core_net_base/src"/>
+<javaElement handleIdentifier="=openscada_core_server_common/src"/>
+<javaElement handleIdentifier="=openscada_ae_storage_common/src"/>
+<javaElement handleIdentifier="=openscada_net_base/src"/>
+<javaElement handleIdentifier="=openscada_ae_net_base/src"/>
+<javaElement handleIdentifier="=openscada_ae_storage_test/src"/>
+</selectedElements>
+</jardesc>

@@ -1,4 +1,4 @@
-package org.openscada.da.rcp.LocalTestServer;
+package org.openscada.ae.rcp.LocalTestServer;
 
 import java.io.IOException;
 
@@ -8,7 +8,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.openscada.da.server.net.Exporter;
+import org.openscada.ae.storage.net.Exporter;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -17,12 +17,12 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.openscada.da.rcp.LocalTestServer";
+	public static final String PLUGIN_ID = "org.openscada.ae.rcp.LocalTestServer";
 
 	// The shared instance
 	private static Activator plugin;
     
-    private org.openscada.da.server.net.Exporter _exporter = null;
+    private Exporter _exporter = null;
     private Thread _exporterThread = null;
 	
 	/**
@@ -81,7 +81,7 @@ public class Activator extends AbstractUIPlugin {
             if ( _exporter != null )
                 throw new AlreadyStartedException();
             
-            _exporter = new Exporter ( org.openscada.da.server.test.Hive.class );
+            _exporter = new Exporter ( org.openscada.ae.storage.test.Storage.class );
             
             _exporterThread = new Thread ( new Runnable () {
 
