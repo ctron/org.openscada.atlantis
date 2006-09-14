@@ -5,6 +5,6 @@ import java.util.Properties;
 public interface Submission
 {
 
-    public void submitEvent ( Properties properties, Event event ) throws Exception;
+    public void submitEvent ( Properties properties, Event event ) throws Throwable;
 
 }
