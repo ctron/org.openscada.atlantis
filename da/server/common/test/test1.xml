@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hive:hive
+  xmlns:hive="http://openscada.org/DA/Hive"
+  xmlns:item="http://openscada.org/DA/Storage/DataItem"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://openscada.org/DA/Hive ../schema/Hive.xsd http://openscada.org/DA/Storage/DataItem DataItem.xsd ">
+  
+</hive:hive>

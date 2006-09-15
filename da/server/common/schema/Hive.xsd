@@ -3,23 +3,82 @@
 
     <import schemaLocation="DataItem.xsd" namespace="http://openscada.org/DA/Storage/DataItem"></import>
 
-  <element name="items" type="hive:ItemsType"></element>
+  
 
   <complexType name="ItemsType">
     <sequence>
-      <element name="item" type="item:DataItemType"></element>
+      <element ref="item:data-item" maxOccurs="unbounded" minOccurs="0">
+      </element>
     </sequence>
   </complexType>
 
-  <element name="item-templates" type="hive:ItemTemplatesType"></element>
-  
+
     <complexType name="ItemTemplatesType">
       <sequence>
-        <element name="template" type="hive:ItemTemplateType"></element>
+        <element name="template" type="hive:ItemTemplateType" maxOccurs="unbounded" minOccurs="0"></element>
       </sequence></complexType>
 
     <complexType name="ItemTemplateType">
       <sequence>
-        <element name="reference-item" type="item:DataItemType"></element>
+        <element name="reference-item" type="item:DataItemType" maxOccurs="1" minOccurs="1"></element>
+      </sequence>
+      <attribute name="id-pattern" use="required">
+      </attribute>
+
+    </complexType>
+
+    <element name="hive" type="hive:HiveType">
+      <key name="itemKey">
+        <selector xpath=".//data-item"></selector>
+        <field xpath="@id"></field>
+      </key>
+
+      <keyref name="itemRef" refer="hive:itemKey">
+        <selector xpath=".//data-item-reference"></selector>
+        <field xpath="@ref"></field>
+      </keyref>
+    </element>
+    
+    <complexType name="HiveType">
+      <sequence>
+        <element name="items" type="hive:ItemsType" maxOccurs="1"
+          minOccurs="0">
+          
+        </element>
+        <element name="item-templates" type="hive:ItemTemplatesType"
+          maxOccurs="1" minOccurs="0">
+        </element>
+        <element name="browser" type="hive:BrowserType" maxOccurs="1"
+          minOccurs="0">
+
+        </element>
+      </sequence>
+    </complexType>
+
+    <complexType name="BrowserType">
+      <sequence>
+        <element name="folder" type="hive:FolderType" maxOccurs="unbounded" minOccurs="0"></element>
       </sequence></complexType>
+
+    <complexType name="FolderType">
+      <sequence>
+        <element name="entry" type="hive:FolderEntryType" maxOccurs="unbounded" minOccurs="0">
+        <unique name="nameUnique">
+          <selector xpath=".//entry"/>
+          <field xpath="@name"/>
+        </unique>
+        </element>
+      </sequence>
+      <attribute name="name" type="string"></attribute>
+    </complexType>
+
+    <complexType name="FolderEntryType">
+      <sequence>
+        <element name="folder" type="hive:FolderType" maxOccurs="unbounded" minOccurs="0"></element>
+        <element ref="item:data-item-reference" maxOccurs="unbounded" minOccurs="0">
+        </element>
+      </sequence>
+      <attribute name="name" type="string"></attribute>
+    </complexType>
+    
 </schema>
