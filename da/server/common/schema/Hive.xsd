@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://openscada.org/DA/Hive" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:hive="http://openscada.org/DA/Hive" xmlns:item="http://openscada.org/DA/Storage/DataItem" >
+<schema targetNamespace="http://openscada.org/DA/Hive" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:hive="http://openscada.org/DA/Hive" xmlns:item="http://openscada.org/DA/Hive/DataItem" >
 
-    <import schemaLocation="DataItem.xsd" namespace="http://openscada.org/DA/Storage/DataItem"></import>
+    <import schemaLocation="DataItem.xsd" namespace="http://openscada.org/DA/Hive/DataItem"></import>
 
   
 

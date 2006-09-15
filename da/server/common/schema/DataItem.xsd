@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://openscada.org/DA/Storage/DataItem" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:item="http://openscada.org/DA/Storage/DataItem">
+<schema targetNamespace="http://openscada.org/DA/Hive/DataItem" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:item="http://openscada.org/DA/Hive/DataItem">
 
     <element name="data-item" type="item:DataItemType"></element>
 
