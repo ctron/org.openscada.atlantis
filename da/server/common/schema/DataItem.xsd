@@ -28,15 +28,39 @@
     
     <complexType name="VariantType">
       <choice>
-        <element name="void" type="item:VariantVoidType"></element>
-        <element name="string" type="string"></element>
-        <element name="integer" type="int"></element>
-        <element name="double" type="double"></element>
-        <element name="boolean" type="boolean"></element>
+        <element
+          name="null"
+          type="item:VariantNullType">
+        </element>
+        <element
+          name="string"
+          type="string">
+        </element>
+        <element
+          name="int32"
+          type="item:VariantInt32Type">
+        </element>
+        <element
+          name="double"
+          type="item:VariantDoubleType">
+        </element>
+        <element
+          name="boolean"
+          type="item:VariantBooleanType">
+        </element>
+        <element
+          name="int64"
+          type="item:VariantInt64Type">
+        </element>
       </choice>
     </complexType>
     
-    <complexType name="VariantVoidType"></complexType>
+    <complexType name="VariantNullType"></complexType>
+    <complexType name="VariantBooleanType">
+      <simpleContent>
+        <extension base="boolean"></extension>
+      </simpleContent>
+    </complexType>
 
     <element name="data-item-reference" type="item:DataItemReferenceType">
     </element>
@@ -46,4 +70,22 @@
         </attribute>
     </complexType>
 
+
+    <complexType name="VariantDoubleType">
+      <simpleContent>
+        <extension base="double"></extension>
+      </simpleContent>
+    </complexType>
+
+    <complexType name="VariantInt32Type">
+      <simpleContent>
+        <extension base="int"></extension>
+      </simpleContent>
+    </complexType>
+
+    <complexType name="VariantInt64Type">
+      <simpleContent>
+        <extension base="long"></extension>
+      </simpleContent>
+    </complexType>
 </schema>

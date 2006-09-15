@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hive:hive
+  xmlns:hive="http://openscada.org/DA/Hive"
+  xmlns:item="http://openscada.org/DA/Storage/DataItem"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://openscada.org/DA/Hive ../schema/Hive.xsd http://openscada.org/DA/Storage/DataItem DataItem.xsd ">
+  
+  <items>
+    <item:data-item id="item1">
+      <attributes>
+        <attribute name="attr1">
+          <string>Hello World</string>
+        </attribute>
+        <attribute name="attr2">
+          <boolean>true</boolean>
+        </attribute>
+      </attributes>
+    </item:data-item>
+  </items>
+
+  <item-templates>
+    <template id-pattern=".*">
+      <reference-item id="all">
+        <attributes>
+          <attribute name="attr1">
+            <string>Hallo Welt</string>
+          </attribute>
+        </attributes>
+      </reference-item>
+    </template>
+  </item-templates>
+
+  <browser>
+  </browser>
+  
+</hive:hive>

@@ -29,12 +29,12 @@
 
     <element name="hive" type="hive:HiveType">
       <key name="itemKey">
-        <selector xpath=".//data-item"></selector>
+        <selector xpath=".//item:data-item"></selector>
         <field xpath="@id"></field>
       </key>
 
       <keyref name="itemRef" refer="hive:itemKey">
-        <selector xpath=".//data-item-reference"></selector>
+        <selector xpath=".//item:data-item-reference"></selector>
         <field xpath="@ref"></field>
       </keyref>
     </element>
