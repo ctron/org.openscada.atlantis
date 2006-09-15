@@ -17,7 +17,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 package org.openscada.ae.client.test.wizzard;
 
 import java.net.InetAddress;
