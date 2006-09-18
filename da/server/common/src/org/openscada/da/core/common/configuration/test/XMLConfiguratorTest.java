@@ -11,8 +11,8 @@ import org.apache.xmlbeans.XmlOptions;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
+import org.openscada.common.AttributeType;
 import org.openscada.da.hive.HiveDocument;
-import org.openscada.da.hive.dataItem.AttributeType;
 import org.openscada.da.hive.dataItem.DataItemType;
 
 public class XMLConfiguratorTest

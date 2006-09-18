@@ -1,91 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://openscada.org/DA/Hive/DataItem" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:item="http://openscada.org/DA/Hive/DataItem">
+<schema targetNamespace="http://openscada.org/DA/Hive/DataItem"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:common="http://openscada.org/Common"
+	xmlns:item="http://openscada.org/DA/Hive/DataItem" xmlns:chain="http://openscada.org/DA/Hive/ItemChain">
 
-    <element name="data-item" type="item:DataItemType"></element>
+	<import schemaLocation="ItemChain.xsd"
+		namespace="http://openscada.org/DA/Hive/ItemChain" />
+		
+	<import schemaLocation="Common.xsd"
+		namespace="http://openscada.org/Common" />
 
-    <complexType name="DataItemType">
-        <sequence>
-          <element name="attributes" type="item:AttributesType" maxOccurs="1" minOccurs="0"></element>
-        </sequence>
-        <attribute name="id" type="string" use="required">
-        </attribute>
-    </complexType>
+	<element name="data-item" type="item:DataItemType"></element>
 
-    <complexType name="AttributesType">
-      <sequence>
-        <element name="attribute" type="item:AttributeType" maxOccurs="unbounded" minOccurs="0"></element>
-      </sequence></complexType>
+	<complexType name="DataItemType">
+		<sequence>
+			<element ref="common:attributes" maxOccurs="1" minOccurs="0"></element>
+			<element ref="chain:chain" maxOccurs="1" minOccurs="0"></element>
+		</sequence>
+		<attribute name="id" type="string" use="required"></attribute>
+		<attribute name="template" type="string" use="optional"></attribute>
+	</complexType>
 
-    <complexType name="AttributeType">
-      <complexContent>
-        <extension base="item:VariantType">
-          <sequence></sequence>
-          <attribute name="name" use="required" type="string"></attribute>
-        </extension>
-      </complexContent>
-    </complexType>
+	<element name="data-item-reference" type="item:DataItemReferenceType">
+	</element>
 
-    
-    <complexType name="VariantType">
-      <choice>
-        <element
-          name="null"
-          type="item:VariantNullType">
-        </element>
-        <element
-          name="string"
-          type="string">
-        </element>
-        <element
-          name="int32"
-          type="item:VariantInt32Type">
-        </element>
-        <element
-          name="double"
-          type="item:VariantDoubleType">
-        </element>
-        <element
-          name="boolean"
-          type="item:VariantBooleanType">
-        </element>
-        <element
-          name="int64"
-          type="item:VariantInt64Type">
-        </element>
-      </choice>
-    </complexType>
-    
-    <complexType name="VariantNullType"></complexType>
-    <complexType name="VariantBooleanType">
-      <simpleContent>
-        <extension base="boolean"></extension>
-      </simpleContent>
-    </complexType>
-
-    <element name="data-item-reference" type="item:DataItemReferenceType">
-    </element>
-
-    <complexType name="DataItemReferenceType">
-        <attribute name="ref" type="string" use="required">
-        </attribute>
-    </complexType>
+	<complexType name="DataItemReferenceType">
+		<attribute name="ref" type="string" use="required"></attribute>
+	</complexType>
 
 
-    <complexType name="VariantDoubleType">
-      <simpleContent>
-        <extension base="double"></extension>
-      </simpleContent>
-    </complexType>
-
-    <complexType name="VariantInt32Type">
-      <simpleContent>
-        <extension base="int"></extension>
-      </simpleContent>
-    </complexType>
-
-    <complexType name="VariantInt64Type">
-      <simpleContent>
-        <extension base="long"></extension>
-      </simpleContent>
-    </complexType>
 </schema>
