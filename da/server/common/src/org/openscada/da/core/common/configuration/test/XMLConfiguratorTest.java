@@ -12,8 +12,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openscada.da.hive.HiveDocument;
-import org.openscada.da.storage.dataItem.AttributeType;
-import org.openscada.da.storage.dataItem.DataItemType;
+import org.openscada.da.hive.dataItem.AttributeType;
+import org.openscada.da.hive.dataItem.DataItemType;
 
 public class XMLConfiguratorTest
 {
@@ -114,7 +114,7 @@ public class XMLConfiguratorTest
     @Test
     public void test4 () throws XmlException, IOException
     {
-        setup ( new File ( _testFileBase + "test4.xml" ) );
+        setup ( new File ( _testFileBase + "test4.xml_invalid" ) );
         
         Assert.assertEquals ( "Document is valid", false, _valid );
     }
