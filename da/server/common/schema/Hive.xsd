@@ -92,6 +92,13 @@
 
 	<complexType name="HiveType">
 		<sequence>
+			<element name="item-templates" type="hive:ItemTemplatesType"
+				maxOccurs="1" minOccurs="0">
+                <annotation>
+                	<documentation>The place where all item templates are configured.</documentation>
+                </annotation>
+			</element>
+			
 			<element name="items" type="hive:ItemsType" maxOccurs="1"
 				minOccurs="0">
 
@@ -99,12 +106,7 @@
                 	<documentation>The location where all pre-defined items are configured.</documentation>
                 </annotation>
 			</element>
-			<element name="item-templates" type="hive:ItemTemplatesType"
-				maxOccurs="1" minOccurs="0">
-                <annotation>
-                	<documentation>The place where all item templates are configured.</documentation>
-                </annotation>
-			</element>
+
 			<element name="browser" type="hive:BrowserType" maxOccurs="1"
 				minOccurs="0">
 

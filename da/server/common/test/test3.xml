@@ -6,19 +6,6 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://openscada.org/DA/Hive ../schema/Hive.xsd http://openscada.org/DA/Hive/DataItem DataItem.xsd http://openscada.org/Common Common.xsd ">
 
-  <items>
-    <item:data-item id="item1">
-      <common:attributes>
-        <attribute name="attr1">
-          <string>Hello World</string>
-        </attribute>
-        <attribute name="attr2">
-          <boolean>true</boolean>
-        </attribute>
-      </common:attributes>
-    </item:data-item>
-  </items>
-
   <item-templates>
     <template id="template1" item-pattern=".*">
 
@@ -36,6 +23,19 @@
 
     </template>
   </item-templates>
+  
+  <items>
+    <item:data-item id="item1">
+      <common:attributes>
+        <attribute name="attr1">
+          <string>Hello World</string>
+        </attribute>
+        <attribute name="attr2">
+          <boolean>true</boolean>
+        </attribute>
+      </common:attributes>
+    </item:data-item>
+  </items>
 
   <browser>
   	<hive:folder></hive:folder>
