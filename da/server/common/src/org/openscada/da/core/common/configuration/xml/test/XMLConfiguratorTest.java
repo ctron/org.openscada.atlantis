@@ -1,4 +1,4 @@
-package org.openscada.da.core.common.configuration.test;
+package org.openscada.da.core.common.configuration.xml.test;
 
 import java.io.File;
 import java.io.IOException;

@@ -39,6 +39,7 @@ import org.openscada.da.core.common.DataItemFactory;
 import org.openscada.da.core.common.DataItemFactoryListener;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.ItemListener;
+import org.openscada.da.core.common.configuration.ConfigurableHive;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
@@ -53,7 +54,7 @@ import org.openscada.utils.jobqueue.OperationProcessor;
 import org.openscada.utils.jobqueue.RunnableCancelOperation;
 import org.openscada.utils.jobqueue.OperationManager.Handle;
 
-public class HiveCommon implements Hive, ItemListener
+public class HiveCommon implements Hive, ItemListener, ConfigurableHive
 {
 	
     private static Logger _log = Logger.getLogger ( HiveCommon.class );
@@ -278,6 +279,9 @@ public class HiveCommon implements Hive, ItemListener
 	}
 	
 	// data item
+	/* (non-Javadoc)
+     * @see org.openscada.da.core.common.impl.ConfigurableHive#registerItem(org.openscada.da.core.common.DataItem)
+     */
 	public void registerItem ( DataItem item )
 	{
 		synchronized ( _items )
@@ -625,6 +629,9 @@ public class HiveCommon implements Hive, ItemListener
         }
     }
     
+    /* (non-Javadoc)
+     * @see org.openscada.da.core.common.impl.ConfigurableHive#addItemFactory(org.openscada.da.core.common.DataItemFactory)
+     */
     public void addItemFactory ( DataItemFactory factory )
     {
         synchronized ( _factoryList )
