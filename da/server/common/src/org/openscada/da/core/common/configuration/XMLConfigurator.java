@@ -13,6 +13,6 @@ public class XMLConfigurator
     public XMLConfigurator ( File file ) throws XmlException, IOException
     {
         _document = HiveDocument.Factory.parse ( file );
-        _document.getHive ().getBrowser ().getFolderArray ( 0 ).getEntryArray ( 0 ).getDataItemReferenceArray ( 0 ).getRef ();
+        _document.getHive ().getBrowser ().getFolder ().getEntryArray ( 0 ).getDataItemReferenceArray ( 0 ).getRef ();
     }
 }
