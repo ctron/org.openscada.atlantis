@@ -12,6 +12,7 @@
   </item-templates>
 
   <browser>
+  	<hive:folder></hive:folder>
   </browser>
   
 </hive:hive>
