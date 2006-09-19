@@ -223,8 +223,6 @@ public class Hive extends HiveCommon {
                 .getMap ()
                 );
         
-        //addItemFactory ( new MemoryCellFactory ( this ) );
-        
         // do some stuff in the query folders
         Thread changeThread = new Thread ( new Runnable () {
 
@@ -270,8 +268,12 @@ public class Hive extends HiveCommon {
         if ( configurationFile != null )
         {
             File file = new File ( configurationFile );
-            new XMLConfigurator ( this, file ).configure ();
+            xmlConfigure ( file );
         }
+    }
+    private void xmlConfigure ( File file ) throws ConfigurationError, XmlException, IOException
+    {
+        new XMLConfigurator ( this, file ).configure ();
     }
 
     public void addMemoryFactoryItem ( FactoryMemoryCell item, Map<String, Variant> browserAttributes )

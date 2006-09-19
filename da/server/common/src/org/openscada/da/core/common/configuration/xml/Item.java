@@ -5,13 +5,14 @@ import java.util.List;
 
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.chain.ChainItem;
+import org.openscada.da.core.common.chain.ChainProcessEntry;
 
 
 public class Item extends ItemBase
 {
     private String _id = null;
     private DataItem _item = null;
-    private List<ChainItem> _chainItems = null;
+    private List<ChainProcessEntry> _chainItems = null;
 
     public Item ()
     {
@@ -50,12 +51,12 @@ public class Item extends ItemBase
         _item = item;
     }
 
-    public List<ChainItem> getChainItems ()
+    public List<ChainProcessEntry> getChainItems ()
     {
         return _chainItems;
     }
 
-    public void setChainItems ( List<ChainItem> chainItems )
+    public void setChainItems ( List<ChainProcessEntry> chainItems )
     {
         _chainItems = chainItems;
     }

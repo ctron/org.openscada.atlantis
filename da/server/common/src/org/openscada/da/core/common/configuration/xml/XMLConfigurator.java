@@ -3,6 +3,7 @@ package org.openscada.da.core.common.configuration.xml;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.openscada.da.core.browser.common.Folder;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.chain.ChainItem;
+import org.openscada.da.core.common.chain.ChainProcessEntry;
 import org.openscada.da.core.common.configuration.ConfigurableFactory;
 import org.openscada.da.core.common.configuration.ConfigurableFolder;
 import org.openscada.da.core.common.configuration.ConfigurableHive;
@@ -25,6 +27,7 @@ import org.openscada.da.core.common.configuration.Configurator;
 import org.openscada.da.core.common.factory.DataItemFactory;
 import org.openscada.da.core.common.factory.DataItemFactoryRequest;
 import org.openscada.da.core.common.factory.FactoryTemplate;
+import org.openscada.da.core.server.IODirection;
 import org.openscada.da.hive.BrowserType;
 import org.openscada.da.hive.FactoriesType;
 import org.openscada.da.hive.FactoryType;
@@ -216,11 +219,15 @@ public class XMLConfigurator implements Configurator
         }
     }
     
-    private List<ChainItem> createChainItems ( DataItemType dataItem ) throws ConfigurationError
+    private List<ChainProcessEntry> createChainItems ( DataItemType dataItem ) throws ConfigurationError
     {
+        List<ChainProcessEntry> chainItems = new LinkedList<ChainProcessEntry> ();
+        
+        if ( dataItem.getChain () == null )
+            return chainItems;
+
         String id = dataItem.getId ();
         
-        List<ChainItem> chainItems = new LinkedList<ChainItem> ();
         for ( ItemType chainItem : dataItem.getChain ().getItemList () )
         {
             Class chainItemClass;
@@ -247,7 +254,18 @@ public class XMLConfigurator implements Configurator
             {
                 throw new ConfigurationError ( String.format ( "Chain item %s of item %s does not implement interface ChainItem", chainItem.getClass1 (), id ) );
             }
-            chainItems.add ( (ChainItem)chainItemObject );
+            
+            ChainProcessEntry entry = new ChainProcessEntry ();
+            entry.setWhat ( (ChainItem)chainItemObject );
+            
+            if (  chainItem.getDirection ().toString ().equals ( "in" ) )
+                entry.setWhen ( EnumSet.of ( IODirection.INPUT ) );
+            else if ( chainItem.getDirection ().toString ().equals ( "out" ) )
+                entry.setWhen ( EnumSet.of ( IODirection.OUTPUT ) );
+            else if ( chainItem.getDirection ().toString ().equals ( "inout" ) )
+                entry.setWhen ( EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) );
+            
+            chainItems.add ( entry );
         }
         return chainItems;
     }
@@ -322,6 +340,7 @@ public class XMLConfigurator implements Configurator
         request.setId ( item.getId () );
         request.setBrowserAttributes ( item.getBrowserAttributes () );
         request.setItemAttributes ( item.getItemAttributes () );
+        request.setItemChain ( item.getChainItems () );
         
         if ( item.getFactory () != null )
         {

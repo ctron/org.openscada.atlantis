@@ -7,13 +7,14 @@ import java.util.Map;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.common.chain.ChainItem;
+import org.openscada.da.core.common.chain.ChainProcessEntry;
 
 public class DataItemFactoryRequest
 {
     private String _id = null;
     private Map<String, Variant> _itemAttributes = new HashMap<String, Variant> ();
     private Map<String, Variant> _browserAttributes = new HashMap<String, Variant> ();
-    private List<ChainItem> _itemChain = new LinkedList<ChainItem> ();
+    private List<ChainProcessEntry> _itemChain = new LinkedList<ChainProcessEntry> ();
     
     public Map<String, Variant> getBrowserAttributes ()
     {
@@ -39,11 +40,11 @@ public class DataItemFactoryRequest
     {
         _itemAttributes = itemAttributes;
     }
-    public List<ChainItem> getItemChain ()
+    public List<ChainProcessEntry> getItemChain ()
     {
         return _itemChain;
     }
-    public void setItemChain ( List<ChainItem> itemChain )
+    public void setItemChain ( List<ChainProcessEntry> itemChain )
     {
         _itemChain = itemChain;
     }

@@ -2,8 +2,9 @@
 <hive:hive xmlns:common="http://openscada.org/Common"
 	xmlns:hive="http://openscada.org/DA/Hive"
 	xmlns:item="http://openscada.org/DA/Hive/DataItem"
+	xmlns:chain="http://openscada.org/DA/Hive/ItemChain"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://openscada.org/DA/Hive ../openscada_da_server_common/schema/Hive.xsd http://openscada.org/DA/Hive/DataItem DataItem.xsd http://openscada.org/Common Common.xsd ">
+	xsi:schemaLocation="http://openscada.org/DA/Hive ../openscada_da_server_common/schema/Hive.xsd http://openscada.org/DA/Hive/DataItem DataItem.xsd http://openscada.org/Common Common.xsd http://openscada.org/DA/Hive/ItemChain ItemChain.xsd">
 	
 	<factories>
 		<factory factoryClass="org.openscada.da.server.test.items.MemoryCellFactory" id="memoryCellFactory"/>
@@ -40,6 +41,17 @@
 		</item:data-item>
 		<item:data-item id="memory.explicit1" template="test-template" item-factory="memoryCellFactory">
 		</item:data-item>
+
+		<item:data-item id="memory.chain1" template="test-template">
+			<item-attributes>
+				<attribute name="org.openscada.da.level.high.preset"><int32>100</int32></attribute>
+				<attribute name="org.openscada.da.level.low.preset"><int32>-100</int32></attribute>
+			</item-attributes>
+			<chain:chain>
+				<item direction="in" class="org.openscada.da.core.common.chain.item.LevelAlarmChainItem"/>
+			</chain:chain>
+		</item:data-item>
+
 	</items>
 	
 	<browser>
@@ -49,8 +61,10 @@
 					<attribute name="description"><string>this folder contains some XML configured items</string></attribute>
 				</common:attributes>
 				<hive:folder>
-					<hive:entry name="memory-item-1"><item:data-item-reference ref="memory.test1"/></hive:entry>
-					<hive:entry name="memory-item-2"><item:data-item-reference ref="memory.test2"/></hive:entry>
+					<hive:entry name="memory-item-1"><item:data-item-reference><ref>memory.test1</ref></item:data-item-reference></hive:entry>
+					<hive:entry name="memory-item-2"><item:data-item-reference><ref>memory.test2</ref></item:data-item-reference></hive:entry>
+					<hive:entry name="hardcoded-1"><item:data-item-reference><weak-ref>time</weak-ref></item:data-item-reference></hive:entry>
+					<hive:entry name="chain-1"><item:data-item-reference><ref>memory.chain1</ref></item:data-item-reference></hive:entry>
 				</hive:folder>
 			</hive:entry>
 		</hive:folder>
