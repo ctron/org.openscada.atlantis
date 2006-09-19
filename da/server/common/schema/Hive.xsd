@@ -25,45 +25,37 @@
 	</complexType>
 
 	<complexType name="ItemTemplateType">
-		<sequence>
-			<element name="item-attributes" type="common:AttributesType"
-				maxOccurs="1" minOccurs="0">
-				<annotation>
-					<documentation>
-						Attributes that will be initially set for the item.
-					</documentation>
-				</annotation>
-			</element>
-			<element name="browser-attributes" type="common:AttributesType"
-				maxOccurs="1" minOccurs="0">
-				<annotation>
-					<documentation>
-						Attributes that will be used when inserting the item
-						into a browser folder
-					</documentation>
-				</annotation>
-			</element>
-		</sequence>
-		<attribute name="item-pattern" type="string">
-			<annotation>
-				<documentation>Pattern of the item ID</documentation>
-			</annotation>
-		</attribute>
-		<attribute name="id" type="string">
-			<annotation>
-				<documentation>ID of the item template</documentation>
-			</annotation>
-		</attribute>
-		<attribute name="factory" type="common:ClassType">
-            <annotation>
-            	<documentation>The class name of the factory that should be used to create instances of this type.</documentation>
-            </annotation>
-		</attribute>
-		<attribute name="extends" type="string">
-		</attribute>
+		<complexContent>
+			<extension base="item:DataItemBaseType">
+				<sequence></sequence>
+				<attribute name="item-pattern" type="string">
+					<annotation>
+						<documentation>Pattern of the item ID</documentation>
+					</annotation>
+				</attribute>
+
+				<attribute name="extends" type="string"></attribute>
+			</extension>
+		</complexContent>
 	</complexType>
 
 	<element name="hive" type="hive:HiveType">
+	
+		<key name="factoryKey">
+			<selector xpath=".//factory"/>
+			<field xpath="@id"/>
+		</key>
+		
+		<keyref name="factoryRefItems" refer="hive:factoryKey">
+			<selector xpath=".//item:data-item"/>
+			<field xpath="@item-factory"/>
+		</keyref>
+		
+		<keyref name="factoryRefTemplates" refer="hive:factoryKey">
+			<selector xpath=".//template"/>
+			<field xpath="@item-factory"/>
+		</keyref>
+	
 		<key name="itemKey">
 			<selector xpath=".//item:data-item"></selector>
 			<field xpath="@id"></field>
@@ -92,27 +84,37 @@
 
 	<complexType name="HiveType">
 		<sequence>
-			<element name="item-templates" type="hive:ItemTemplatesType"
+            <element name="factories" type="hive:FactoriesType" maxOccurs="1" minOccurs="0"></element>
+            <element name="item-templates" type="hive:ItemTemplatesType"
 				maxOccurs="1" minOccurs="0">
-                <annotation>
-                	<documentation>The place where all item templates are configured.</documentation>
-                </annotation>
+				<annotation>
+					<documentation>
+						The place where all item templates are configured.
+					</documentation>
+				</annotation>
 			</element>
-			
+
 			<element name="items" type="hive:ItemsType" maxOccurs="1"
 				minOccurs="0">
 
-                <annotation>
-                	<documentation>The location where all pre-defined items are configured.</documentation>
-                </annotation>
+				<annotation>
+					<documentation>
+						The location where all pre-defined items are configured.
+					</documentation>
+				</annotation>
 			</element>
 
 			<element name="browser" type="hive:BrowserType" maxOccurs="1"
 				minOccurs="0">
 
-                <annotation>
-                	<documentation>The browser interface which holds the item browser configuration. The root of the browser is exactly one root folder which then may contain lots of different sub items.</documentation>
-                </annotation>
+				<annotation>
+					<documentation>
+						The browser interface which holds the item browser
+						configuration. The root of the browser is exactly one
+						root folder which then may contain lots of different sub
+						items.
+					</documentation>
+				</annotation>
 			</element>
 		</sequence>
 	</complexType>
@@ -162,4 +164,16 @@ The entry has a name that must the unique in this folder and some additional att
 		<attribute name="name" type="string"></attribute>
 	</complexType>
 
+
+    <complexType name="FactoriesType">
+    	<sequence>
+    		<element name="factory" type="hive:FactoryType" minOccurs="0"
+    			maxOccurs="unbounded">
+    		</element>
+    	</sequence></complexType>
+
+    <complexType name="FactoryType">
+    	<attribute name="id" type="string" use="required"></attribute>
+    	<attribute name="factoryClass" type="common:ClassType" use="required"></attribute>
+    </complexType>
 </schema>
