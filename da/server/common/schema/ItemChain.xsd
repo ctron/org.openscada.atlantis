@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema
 	xmlns:chain="http://openscada.org/DA/Hive/ItemChain"
+	xmlns:common="http://openscada.org/Common"
 	xmlns="http://www.w3.org/2001/XMLSchema"
 	targetNamespace="http://openscada.org/DA/Hive/ItemChain">
+	
+    <import schemaLocation="Common.xsd" namespace="http://openscada.org/Common" />
 
     <element name="chain" type="chain:ChainType"></element>
     
@@ -12,6 +15,6 @@
     	</sequence></complexType>
 
     <complexType name="ItemType">
-    	<attribute name="class" type="string"></attribute>
+    	<attribute name="class" type="common:ClassType"></attribute>
     </complexType>
 </schema>
