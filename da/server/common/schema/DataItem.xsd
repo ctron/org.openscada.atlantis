@@ -52,7 +52,7 @@
 				</annotation>
 			</element>
 		</sequence>
-		<attribute name="id" type="string">
+		<attribute name="id" type="string" use="required">
 			<annotation>
 				<documentation>ID of the item template</documentation>
 			</annotation>
