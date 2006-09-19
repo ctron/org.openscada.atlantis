@@ -179,7 +179,6 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         }
 
         // we have a working session .. so connect listeners
-        _session.setListener ( (ItemListListener)this );
         _session.setListener ( (ItemChangeListener)this );
         _session.setListener ( (FolderListener) this );
 
