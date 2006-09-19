@@ -35,11 +35,13 @@ import org.openscada.core.InvalidSessionException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.Folder;
 import org.openscada.da.core.common.DataItem;
-import org.openscada.da.core.common.DataItemFactory;
-import org.openscada.da.core.common.DataItemFactoryListener;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.ItemListener;
 import org.openscada.da.core.common.configuration.ConfigurableHive;
+import org.openscada.da.core.common.factory.DataItemFactory;
+import org.openscada.da.core.common.factory.DataItemFactoryListener;
+import org.openscada.da.core.common.factory.DataItemFactoryRequest;
+import org.openscada.da.core.common.factory.FactoryTemplate;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
@@ -75,6 +77,8 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
     
     private List<DataItemFactory> _factoryList = new LinkedList<DataItemFactory> ();
     private Set<DataItemFactoryListener> _factoryListeners = new HashSet<DataItemFactoryListener> ();
+    
+    private List<FactoryTemplate> _templates = new LinkedList<FactoryTemplate> ();
 	
     public HiveCommon ()
     {
@@ -139,7 +143,12 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
         }
     }
     
-    protected synchronized void setRootFolder ( Folder rootFolder )
+    public Folder getRootFolder ()
+    {
+        return _rootFolder;
+    }
+    
+    public synchronized void setRootFolder ( Folder rootFolder )
     {
         if ( _rootFolder == null )
         {
@@ -227,7 +236,7 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
 		validateSession ( session );
 		
 		// lookup the item first
-		DataItem item = lookupItem ( itemName );
+		DataItem item = retrieveItem ( itemName );
 		
 		if ( item == null )
 			throw new InvalidItemException(itemName);
@@ -258,7 +267,7 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
 	{
 		validateSession ( session );
 		
-		DataItem item = lookupItem ( itemName );
+		DataItem item = retrieveItem ( itemName );
 		
 		if ( item == null )
 			throw new InvalidItemException(itemName);
@@ -290,7 +299,7 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
 			{
                 // first add internally ...
 				_items.put ( item, new DataItemInfo(item) );
-				_itemMap.put ( new DataItemInformationBase(item.getInformation()), item );
+				_itemMap.put ( new DataItemInformationBase ( item.getInformation () ), item );
 
                 fireAddItem ( item.getInformation () );
                 
@@ -328,15 +337,15 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
 		}
 	}
 	
-    private DataItem factoryCreate ( String id )
+    private DataItem factoryCreate ( DataItemFactoryRequest request  )
     {
         synchronized ( _factoryList )
         {
             for ( DataItemFactory factory : _factoryList )
             {
-                if ( factory.canCreate ( id ) )
+                if ( factory.canCreate ( request ) )
                 {
-                    DataItem dataItem = factory.create ( id );
+                    DataItem dataItem = factory.create ( request );
                     registerItem ( dataItem );
                     fireDataItemCreated ( dataItem );
                     return dataItem;
@@ -345,22 +354,73 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
         }
         return null;
     }
+
+    public boolean validateItem ( String id )
+    {
+        if ( lookupItem ( id ) != null )
+            return true;
+        
+        DataItemFactoryRequest request = new DataItemFactoryRequest ();
+        request.setId ( id );
+        
+        synchronized ( _factoryList )
+        {
+            for ( DataItemFactory factory : _factoryList )
+            {
+                if ( factory.canCreate ( request ) )
+                    return true;
+            }
+        }
+        return false;
+    }
     
-	private DataItem lookupItem ( String id )
+    public DataItem lookupItem ( String id )
+    {
+        synchronized ( _items )
+        {
+            return _itemMap.get ( new DataItemInformationBase ( id ) );
+        }
+    }
+    
+    public DataItem retrieveItem ( String id )
+    {
+        DataItem dataItem = lookupItem ( id );
+        if ( dataItem != null )
+            return dataItem;
+        
+        DataItemFactoryRequest request = new DataItemFactoryRequest ();
+        request.setId ( id );
+        
+        synchronized ( _templates )
+        {
+            for ( FactoryTemplate template : _templates )
+            {
+                if ( template.getPattern ().matcher ( id ).matches () )
+                {
+                    request.setBrowserAttributes ( template.getBrowserAttributes () );
+                    request.setItemAttributes ( template.getItemAttributes () );
+                }
+            }
+        }
+        
+        return retrieveItem ( request );
+    }
+    
+	public DataItem retrieveItem ( DataItemFactoryRequest request )
 	{
         synchronized ( _items )
         {
-            DataItem dataItem = _itemMap.get ( new DataItemInformationBase ( id ) );
+            DataItem dataItem = lookupItem ( request.getId () );
             if ( dataItem == null )
             {
-                dataItem = factoryCreate ( id );
+                dataItem = factoryCreate ( request );
             }
             return dataItem;
         }
 	}
 	
 	// ItemListener Interface
-	public void valueChanged(DataItem item, Variant variant)
+	public void valueChanged ( DataItem item, Variant variant )
 	{
 		DataItemInfo info = getItemInfo ( item );
 		if ( info == null )
@@ -397,7 +457,7 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
 		
 	}
 	
-	public void attributesChanged(DataItem item, Map<String, Variant> attributes)
+	public void attributesChanged ( DataItem item, Map<String, Variant> attributes )
 	{
 		DataItemInfo info = getItemInfo ( item );
 		if ( info == null )
@@ -482,16 +542,16 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
     
     private void fireAddItem ( DataItemInformation item )
     {
-        Collection<DataItemInformation> added = new ArrayList<DataItemInformation>();
+        Collection<DataItemInformation> added = new ArrayList<DataItemInformation> ();
         added.add (item );
-        fireItemListChange(added, new ArrayList<String>());
+        fireItemListChange ( added, new ArrayList<String> () );
     }
     
     private void fireRemoveItem ( String item )
     {
-        Collection<String> removed = new ArrayList<String>();
-        removed.add(item);
-        fireItemListChange(new ArrayList<DataItemInformation>(), removed);
+        Collection<String> removed = new ArrayList<String> ();
+        removed.add ( item );
+        fireItemListChange ( new ArrayList<DataItemInformation> (), removed );
     }
     
     private void fireItemListChange ( Collection<DataItemInformation> added, Collection<String> removed )
@@ -512,7 +572,7 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
     {
         SessionCommon sessionCommon = validateSession ( session );
         
-        final DataItem item = lookupItem ( itemId );
+        final DataItem item = retrieveItem ( itemId );
         
         if ( item == null )
             throw new InvalidItemException ( itemId );
@@ -535,7 +595,7 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
     {
         SessionCommon sessionCommon = validateSession ( session );
         
-        final DataItem item = lookupItem ( itemName );
+        final DataItem item = retrieveItem ( itemName );
         
         if ( item == null )
             throw new InvalidItemException ( itemName );
@@ -672,6 +732,14 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
             {
                 listener.created ( dataItem );
             }
+        }
+    }
+
+    public void registerTemplate ( FactoryTemplate template )
+    {
+        synchronized ( _templates )
+        {
+            _templates.add ( template );
         }
     }
 }

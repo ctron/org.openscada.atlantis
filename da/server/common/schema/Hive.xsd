@@ -153,15 +153,23 @@ The entry has a name that must the unique in this folder and some additional att
 
 	<complexType name="FolderEntryType">
 		<sequence>
-			<element ref="common:attributes" minOccurs="0" maxOccurs="1"/>
-			<element ref="hive:folder" maxOccurs="unbounded" minOccurs="0" />
-			<element ref="item:data-item-reference" maxOccurs="unbounded"
-				minOccurs="0" >
+			<element ref="common:attributes" minOccurs="0" maxOccurs="1" />
+			<choice maxOccurs="1" minOccurs="1">
+			<element ref="hive:folder" maxOccurs="1" minOccurs="1" />
+			<element ref="item:data-item-reference" maxOccurs="1"
+				minOccurs="1">
 				<annotation>
-					<documentation>Configure an item reference from a folder to a configured item in the hives item list. Only pre-configured items can be addressed here.</documentation>
-				</annotation></element>
+					<documentation>
+						Configure an item reference from a folder to a
+						configured item in the hives item list. Only
+						pre-configured items can be addressed here.
+					</documentation>
+				</annotation>
+			</element>
+
+			</choice>
 		</sequence>
-		<attribute name="name" type="string"></attribute>
+		<attribute name="name" type="string" use="required"></attribute>
 	</complexType>
 
 
@@ -173,6 +181,9 @@ The entry has a name that must the unique in this folder and some additional att
     	</sequence></complexType>
 
     <complexType name="FactoryType">
+    	<sequence>
+    		<any minOccurs="0" maxOccurs="unbounded" processContents="lax"></any>
+    	</sequence>
     	<attribute name="id" type="string" use="required"></attribute>
     	<attribute name="factoryClass" type="common:ClassType" use="required"></attribute>
     </complexType>

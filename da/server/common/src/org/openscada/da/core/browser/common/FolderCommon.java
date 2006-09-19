@@ -29,10 +29,11 @@ import java.util.Stack;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.common.DataItem;
+import org.openscada.da.core.common.configuration.ConfigurableFolder;
 import org.openscada.da.core.server.browser.Entry;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 
-public class FolderCommon implements Folder
+public class FolderCommon implements Folder, ConfigurableFolder
 {
 
     private Map<String, Entry> _entryMap = new HashMap<String, Entry> ();
@@ -76,6 +77,9 @@ public class FolderCommon implements Folder
             
     }
     
+    /* (non-Javadoc)
+     * @see org.openscada.da.core.browser.common.ConfigurableFolder#add(java.lang.String, org.openscada.da.core.browser.common.Folder, java.util.Map)
+     */
     public boolean add ( String name, Folder folder, Map < String, Variant > attributes )
     {
         synchronized ( this )
@@ -93,6 +97,9 @@ public class FolderCommon implements Folder
         }
     }
     
+    /* (non-Javadoc)
+     * @see org.openscada.da.core.browser.common.ConfigurableFolder#add(java.lang.String, org.openscada.da.core.common.DataItem, java.util.Map)
+     */
     public boolean add ( String name, DataItem item, Map < String, Variant > attributes )
     {
         if ( item.getInformation ().getName () == null )

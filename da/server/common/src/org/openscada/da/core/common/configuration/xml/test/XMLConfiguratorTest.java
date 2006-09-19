@@ -86,8 +86,8 @@ public class XMLConfiguratorTest
         Assert.assertNotNull ( "Item list is null", items );
         Assert.assertEquals ( "Must contain one item", 1, items.size () );
         Assert.assertEquals ( "Item name must be 'item1'", "item1", items.get ( 0 ).getId () );
-        Assert.assertNotNull ( "Attribute are null", items.get ( 0 ).getAttributes () );
-        List<AttributeType> attributes = items.get ( 0 ).getAttributes ().getAttributeList ();
+        Assert.assertNotNull ( "Attribute are null", items.get ( 0 ).getItemAttributes () );
+        List<AttributeType> attributes = items.get ( 0 ).getItemAttributes ().getAttributeList ();
         Assert.assertNotNull ( "Attributes list is null", attributes );
         Assert.assertEquals ( "Attributes size does not match", 2, attributes.size () );
         

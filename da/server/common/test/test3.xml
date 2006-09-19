@@ -26,14 +26,14 @@
   
   <items>
     <item:data-item id="item1">
-      <common:attributes>
+      <item-attributes>
         <attribute name="attr1">
           <string>Hello World</string>
         </attribute>
         <attribute name="attr2">
           <boolean>true</boolean>
         </attribute>
-      </common:attributes>
+      </item-attributes>
     </item:data-item>
   </items>
 
