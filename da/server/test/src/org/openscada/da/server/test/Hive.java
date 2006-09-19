@@ -19,10 +19,14 @@
 
 package org.openscada.da.server.test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.xmlbeans.XmlException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.browser.common.query.GroupFolder;
@@ -35,6 +39,8 @@ import org.openscada.da.core.browser.common.query.QueryFolder;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.MemoryDataItem;
+import org.openscada.da.core.common.configuration.ConfigurationError;
+import org.openscada.da.core.common.configuration.xml.XMLConfigurator;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.server.test.items.FactoryMemoryCell;
 import org.openscada.da.server.test.items.MemoryCellFactory;
@@ -54,7 +60,7 @@ public class Hive extends HiveCommon {
     
     private QueryFolder _queryFolderFactory = null;
 	
-	public Hive ()
+	public Hive () throws ConfigurationError, IOException, XmlException
 	{
 		super();
 		
@@ -217,7 +223,7 @@ public class Hive extends HiveCommon {
                 .getMap ()
                 );
         
-        addItemFactory ( new MemoryCellFactory ( this ) );
+        //addItemFactory ( new MemoryCellFactory ( this ) );
         
         // do some stuff in the query folders
         Thread changeThread = new Thread ( new Runnable () {
@@ -254,11 +260,23 @@ public class Hive extends HiveCommon {
             }} );
         changeThread.setDaemon ( true );
         changeThread.start ();
+        
+        xmlConfigure ();
 	}
 
-    public void addMemoryFactoryItem ( FactoryMemoryCell item )
+    private void xmlConfigure () throws ConfigurationError, IOException, XmlException
     {
-        ItemDescriptor desc = new ItemDescriptor ( item, new MapBuilder<String, Variant> ().getMap () );
+        String configurationFile = System.getProperty ( "openscada.da.hive.configuration" ); 
+        if ( configurationFile != null )
+        {
+            File file = new File ( configurationFile );
+            new XMLConfigurator ( this, file ).configure ();
+        }
+    }
+
+    public void addMemoryFactoryItem ( FactoryMemoryCell item, Map<String, Variant> browserAttributes )
+    {
+        ItemDescriptor desc = new ItemDescriptor ( item, browserAttributes );
         _queryFolderFactory.added ( desc );
     }
     public void removeMemoryFactoryItem ( FactoryMemoryCell item )

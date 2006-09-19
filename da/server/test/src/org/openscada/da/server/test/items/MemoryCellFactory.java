@@ -41,7 +41,7 @@ public class MemoryCellFactory implements DataItemFactory
     public DataItem create ( DataItemFactoryRequest request )
     {
         FactoryMemoryCell item = new FactoryMemoryCell ( _hive, request.getId () );
-        _hive.addMemoryFactoryItem ( item );
+        _hive.addMemoryFactoryItem ( item, request.getBrowserAttributes () );
         return item;
     }
 
