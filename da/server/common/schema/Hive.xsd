@@ -63,7 +63,7 @@
 
 		<keyref name="itemRef" refer="hive:itemKey">
 			<selector xpath=".//item:data-item-reference"></selector>
-			<field xpath="@ref"></field>
+			<field xpath="ref"></field>
 		</keyref>
 		
 		<key name="templateKey">

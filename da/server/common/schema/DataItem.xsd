@@ -29,7 +29,12 @@
 	</element>
 
 	<complexType name="DataItemReferenceType">
-		<attribute name="ref" type="string" use="required"></attribute>
+		<choice maxOccurs="1" minOccurs="1">
+			<element name="ref" type="string">
+			</element>
+			<element name="weak-ref" type="string">
+			</element>
+		</choice>
 	</complexType>
 
 	<complexType name="DataItemBaseType">
