@@ -20,7 +20,8 @@
 package org.openscada.da.server.test.items;
 
 import org.openscada.da.core.common.DataItem;
-import org.openscada.da.core.common.DataItemFactory;
+import org.openscada.da.core.common.factory.DataItemFactory;
+import org.openscada.da.core.common.factory.DataItemFactoryRequest;
 import org.openscada.da.server.test.Hive;
 
 public class MemoryCellFactory implements DataItemFactory
@@ -32,14 +33,14 @@ public class MemoryCellFactory implements DataItemFactory
         _hive = hive;
     }
     
-    public boolean canCreate ( String id )
+    public boolean canCreate ( DataItemFactoryRequest request )
     {
-        return id.matches ( "memory\\.[a-z0-9]+" );
+        return request.getId ().matches ( "memory\\.[a-z0-9]+" );
     }
 
-    public DataItem create ( String id )
+    public DataItem create ( DataItemFactoryRequest request )
     {
-        FactoryMemoryCell item = new FactoryMemoryCell ( _hive, id );
+        FactoryMemoryCell item = new FactoryMemoryCell ( _hive, request.getId () );
         _hive.addMemoryFactoryItem ( item );
         return item;
     }
