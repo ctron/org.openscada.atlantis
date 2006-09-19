@@ -177,16 +177,38 @@ public class XMLConfigurator implements Configurator
             }
             else
             {
-                Item item = _items.get ( itemReference.getRef () );
-                if ( item == null )
-                    throw new ConfigurationError ( String.format ( "Entry %s in folder %s requests item %s which is unknown" ) );
-                
-                // merge local browser attributes over item's browser attributes 
-                Map<String, Variant> itemAttributes = new HashMap<String, Variant> ( item.getBrowserAttributes () );
-                itemAttributes.putAll ( attributes );
-                
-                configurableFolder.add ( name, item.getItem (), itemAttributes );
+                configureItemEntry ( configurableFolder, itemReference, name, attributes, folderStack );
             }
+        }
+    }
+
+    private void configureItemEntry ( ConfigurableFolder configurableFolder, DataItemReferenceType itemReference, String name, Map<String, Variant> attributes, Stack<String> folderStack ) throws ConfigurationError
+    {
+        
+        if ( itemReference.getRef () != null )
+        {
+            Item item = _items.get ( itemReference.getRef () );
+            
+            if ( item == null )
+                throw new ConfigurationError ( String.format ( "Entry %s in folder %s is strict-referencing to item %s which is not configured. Either use weak-ref or configure item", name, StringHelper.join ( folderStack, "/" ), itemReference.getRef () ) );
+            
+            // merge local browser attributes over item's browser attributes 
+            Map<String, Variant> browserAttributes = new HashMap<String, Variant> ( item.getBrowserAttributes () );
+            browserAttributes.putAll ( attributes );
+
+            configurableFolder.add ( name, item.getItem (), browserAttributes );
+        }
+        else if ( itemReference.getWeakRef () != null )
+        {
+            DataItemFactoryRequest request = new DataItemFactoryRequest ();
+            request.setId ( itemReference.getWeakRef () );
+            request.setBrowserAttributes ( attributes );
+            DataItem dataItem = _hive.retrieveItem ( request );
+            
+            if ( dataItem != null )
+                configurableFolder.add ( name, dataItem, attributes );
+            else
+                throw new ConfigurationError ( String.format ( "Entry %s in folder %s is weak-referencing to item %s which cannot be found", name, StringHelper.join ( folderStack, "/" ), itemReference.getRef () ) );
         }
     }
 
