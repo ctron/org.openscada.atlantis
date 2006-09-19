@@ -53,6 +53,7 @@ public class Application
 		{
             // ops
 			_log.fatal ( "Error in OpenSCADA DA[NET] Server", e );
+            System.exit ( 1 );
 		}
 	}
 }
