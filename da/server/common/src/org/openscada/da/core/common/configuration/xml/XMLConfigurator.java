@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Pattern;
@@ -14,6 +16,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.Folder;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.common.DataItem;
+import org.openscada.da.core.common.chain.ChainItem;
 import org.openscada.da.core.common.configuration.ConfigurableFactory;
 import org.openscada.da.core.common.configuration.ConfigurableFolder;
 import org.openscada.da.core.common.configuration.ConfigurableHive;
@@ -34,6 +37,7 @@ import org.openscada.da.hive.ItemsType;
 import org.openscada.da.hive.dataItem.DataItemBaseType;
 import org.openscada.da.hive.dataItem.DataItemReferenceType;
 import org.openscada.da.hive.dataItem.DataItemType;
+import org.openscada.da.hive.itemChain.ItemType;
 import org.openscada.utils.str.StringHelper;
 
 public class XMLConfigurator implements Configurator
@@ -211,6 +215,42 @@ public class XMLConfigurator implements Configurator
                 throw new ConfigurationError ( String.format ( "Entry %s in folder %s is weak-referencing to item %s which cannot be found", name, StringHelper.join ( folderStack, "/" ), itemReference.getRef () ) );
         }
     }
+    
+    private List<ChainItem> createChainItems ( DataItemType dataItem ) throws ConfigurationError
+    {
+        String id = dataItem.getId ();
+        
+        List<ChainItem> chainItems = new LinkedList<ChainItem> ();
+        for ( ItemType chainItem : dataItem.getChain ().getItemList () )
+        {
+            Class chainItemClass;
+            try
+            {
+                chainItemClass = Class.forName ( chainItem.getClass1 () );
+            }
+            catch ( ClassNotFoundException e )
+            {
+                throw new ConfigurationError ( String.format ( "Unable to create item element of class %s for item %s", chainItem.getClass1 (), id ), e );
+            }
+            
+            Object chainItemObject;
+            try
+            {
+                chainItemObject = chainItemClass.newInstance ();
+            }
+            catch ( Exception e )
+            {
+                throw new ConfigurationError ( String.format ( "unable to create new chain item object %s for item: %s", chainItem.getClass1 (), id ), e );
+            }
+            
+            if ( ! ( chainItemObject instanceof ChainItem ) )
+            {
+                throw new ConfigurationError ( String.format ( "Chain item %s of item %s does not implement interface ChainItem", chainItem.getClass1 (), id ) );
+            }
+            chainItems.add ( (ChainItem)chainItemObject );
+        }
+        return chainItems;
+    }
 
     private void configureItems ( ItemsType items ) throws ConfigurationError
     {
@@ -238,6 +278,8 @@ public class XMLConfigurator implements Configurator
             {
                 item = new Item ( id );
             }
+
+            item.setChainItems ( createChainItems ( dataItem ) );
             
             // expand local configuration to object
             overwriteWithLocal ( item, dataItem, "item", id );
@@ -381,6 +423,9 @@ public class XMLConfigurator implements Configurator
     {
         if ( _templates.containsKey ( id ) )
             return _templates.get ( id );
+        
+        if ( templateStack.contains ( id ) )
+            throw new ConfigurationError ( String.format ( "Infinite template recursion on template %s: path is: %s", id, StringHelper.join ( templateStack, "->" ) ) );
         
         _log.debug ( "Expanding template: " + id );
         
