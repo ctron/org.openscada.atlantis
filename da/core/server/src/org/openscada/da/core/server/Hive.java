@@ -144,4 +144,15 @@ public interface Hive
     public void cancelOperation ( Session session, long id ) throws InvalidSessionException, CancellationNotSupportedException;
     
     public HiveBrowser getBrowser ();
+    
+    /**
+     * Validate an item it.
+     * 
+     * An item ID is valid if either the item already exists, or it can be created on
+     * the fly (e.g. using data item factories).
+     * 
+     * @param id the item ID to validate
+     * @return <code>true</code> if the item ID is valid, <code>false</code> otherwise
+     */
+    public boolean validateItem ( String id );
 }
