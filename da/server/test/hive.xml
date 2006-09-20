@@ -21,6 +21,17 @@
 				<attribute name="hello-world"><int32>042</int32></attribute>
 			</browser-attributes>
 		</template>
+		
+		<template id="test-chain-template" extends="test-template" item-pattern="memory\.chained\..*">
+			<item-attributes>
+				<attribute name="org.openscada.da.level.high.preset"><int32>100</int32></attribute>
+				<attribute name="org.openscada.da.level.low.preset"><int32>-100</int32></attribute>
+			</item-attributes>
+			<chain:chain>
+				<item direction="in" class="org.openscada.da.core.common.chain.item.LevelAlarmChainItem"/>
+			</chain:chain>
+		</template>
+		
 		<template id="pattern-1" item-pattern="memory\..*" extends="test-template">
 			<browser-attributes>
 				<attribute name="pattern-based"><string>memory\..*</string></attribute>
@@ -42,14 +53,7 @@
 		<item:data-item id="memory.explicit1" template="test-template" item-factory="memoryCellFactory">
 		</item:data-item>
 
-		<item:data-item id="memory.chain1" template="test-template">
-			<item-attributes>
-				<attribute name="org.openscada.da.level.high.preset"><int32>100</int32></attribute>
-				<attribute name="org.openscada.da.level.low.preset"><int32>-100</int32></attribute>
-			</item-attributes>
-			<chain:chain>
-				<item direction="in" class="org.openscada.da.core.common.chain.item.LevelAlarmChainItem"/>
-			</chain:chain>
+		<item:data-item id="memory.chain1" template="test-chain-template">
 		</item:data-item>
 
 	</items>

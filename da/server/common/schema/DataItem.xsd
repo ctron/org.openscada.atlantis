@@ -16,7 +16,6 @@
 		<complexContent>
 			<extension base="item:DataItemBaseType">
 				<sequence>
-					<element ref="chain:chain" maxOccurs="1" minOccurs="0"></element>
 				</sequence>
 				<attribute name="template" type="string" use="optional"></attribute>
 			</extension>
@@ -56,6 +55,7 @@
 					</documentation>
 				</annotation>
 			</element>
+			<element ref="chain:chain" maxOccurs="1" minOccurs="0"></element>
 		</sequence>
 		<attribute name="id" type="string" use="required">
 			<annotation>

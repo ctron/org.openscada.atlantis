@@ -36,7 +36,7 @@ public class MemoryCellFactory implements DataItemFactory
     
     public boolean canCreate ( DataItemFactoryRequest request )
     {
-        return request.getId ().matches ( "memory\\.[a-z0-9]+" );
+        return request.getId ().matches ( "memory\\..*" );
     }
 
     public DataItem create ( DataItemFactoryRequest request )

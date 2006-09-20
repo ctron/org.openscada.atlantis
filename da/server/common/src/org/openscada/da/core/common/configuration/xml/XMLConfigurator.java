@@ -6,10 +6,11 @@ import java.lang.reflect.Constructor;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Pattern;
+
+import javax.naming.ConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
@@ -17,15 +18,15 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.Folder;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.common.DataItem;
-import org.openscada.da.core.common.chain.ChainItem;
-import org.openscada.da.core.common.chain.ChainProcessEntry;
 import org.openscada.da.core.common.configuration.ConfigurableFactory;
 import org.openscada.da.core.common.configuration.ConfigurableFolder;
 import org.openscada.da.core.common.configuration.ConfigurableHive;
 import org.openscada.da.core.common.configuration.ConfigurationError;
 import org.openscada.da.core.common.configuration.Configurator;
+import org.openscada.da.core.common.factory.ChainEntry;
 import org.openscada.da.core.common.factory.DataItemFactory;
 import org.openscada.da.core.common.factory.DataItemFactoryRequest;
+import org.openscada.da.core.common.factory.FactoryHelper;
 import org.openscada.da.core.common.factory.FactoryTemplate;
 import org.openscada.da.core.server.IODirection;
 import org.openscada.da.hive.BrowserType;
@@ -219,57 +220,6 @@ public class XMLConfigurator implements Configurator
         }
     }
     
-    private List<ChainProcessEntry> createChainItems ( DataItemType dataItem ) throws ConfigurationError
-    {
-        List<ChainProcessEntry> chainItems = new LinkedList<ChainProcessEntry> ();
-        
-        if ( dataItem.getChain () == null )
-            return chainItems;
-
-        String id = dataItem.getId ();
-        
-        for ( ItemType chainItem : dataItem.getChain ().getItemList () )
-        {
-            Class chainItemClass;
-            try
-            {
-                chainItemClass = Class.forName ( chainItem.getClass1 () );
-            }
-            catch ( ClassNotFoundException e )
-            {
-                throw new ConfigurationError ( String.format ( "Unable to create item element of class %s for item %s", chainItem.getClass1 (), id ), e );
-            }
-            
-            Object chainItemObject;
-            try
-            {
-                chainItemObject = chainItemClass.newInstance ();
-            }
-            catch ( Exception e )
-            {
-                throw new ConfigurationError ( String.format ( "unable to create new chain item object %s for item: %s", chainItem.getClass1 (), id ), e );
-            }
-            
-            if ( ! ( chainItemObject instanceof ChainItem ) )
-            {
-                throw new ConfigurationError ( String.format ( "Chain item %s of item %s does not implement interface ChainItem", chainItem.getClass1 (), id ) );
-            }
-            
-            ChainProcessEntry entry = new ChainProcessEntry ();
-            entry.setWhat ( (ChainItem)chainItemObject );
-            
-            if (  chainItem.getDirection ().toString ().equals ( "in" ) )
-                entry.setWhen ( EnumSet.of ( IODirection.INPUT ) );
-            else if ( chainItem.getDirection ().toString ().equals ( "out" ) )
-                entry.setWhen ( EnumSet.of ( IODirection.OUTPUT ) );
-            else if ( chainItem.getDirection ().toString ().equals ( "inout" ) )
-                entry.setWhen ( EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) );
-            
-            chainItems.add ( entry );
-        }
-        return chainItems;
-    }
-
     private void configureItems ( ItemsType items ) throws ConfigurationError
     {
         if ( items == null )
@@ -297,8 +247,6 @@ public class XMLConfigurator implements Configurator
                 item = new Item ( id );
             }
 
-            item.setChainItems ( createChainItems ( dataItem ) );
-            
             // expand local configuration to object
             overwriteWithLocal ( item, dataItem, "item", id );
             
@@ -340,7 +288,7 @@ public class XMLConfigurator implements Configurator
         request.setId ( item.getId () );
         request.setBrowserAttributes ( item.getBrowserAttributes () );
         request.setItemAttributes ( item.getItemAttributes () );
-        request.setItemChain ( item.getChainItems () );
+        request.setItemChain ( FactoryHelper.instantiateChainList ( item.getChainEntries () ) );
         
         if ( item.getFactory () != null )
         {
@@ -398,6 +346,7 @@ public class XMLConfigurator implements Configurator
                 factoryTemplate.setPattern ( template.getPattern () );
                 factoryTemplate.setBrowserAttributes ( template.getBrowserAttributes () );
                 factoryTemplate.setItemAttributes ( template.getItemAttributes () );
+                factoryTemplate.setChainEntries ( template.getChainEntries () );
                 _hive.registerTemplate ( factoryTemplate );
             }
         }
@@ -434,6 +383,35 @@ public class XMLConfigurator implements Configurator
         catch ( Exception e )
         {
             throw new ConfigurationError ( String.format ( "Failed to merge item attributes for %s %s", objectType, id ), e );
+        }
+        
+        // merge item chains
+        if ( dataItemBase.getChain () != null )
+        {
+            for ( ItemType chainItem : dataItemBase.getChain ().getItemList () )
+            {
+                Class chainItemClass;
+                try
+                {
+                    chainItemClass = Class.forName ( chainItem.getClass1 () );
+                }
+                catch ( ClassNotFoundException e )
+                {
+                    throw new ConfigurationError ( String.format ( "Unable to create item element of class %s for item %s", chainItem.getClass1 (), id ), e );
+                }
+               
+                ChainEntry entry = new ChainEntry ();
+                entry.setWhat ( chainItemClass );
+                
+                if (  chainItem.getDirection ().toString ().equals ( "in" ) )
+                    entry.setWhen ( EnumSet.of ( IODirection.INPUT ) );
+                else if ( chainItem.getDirection ().toString ().equals ( "out" ) )
+                    entry.setWhen ( EnumSet.of ( IODirection.OUTPUT ) );
+                else if ( chainItem.getDirection ().toString ().equals ( "inout" ) )
+                    entry.setWhen ( EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) );
+                
+                itemBase.getChainEntries ().add ( entry );
+            }
         }
 
     }

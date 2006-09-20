@@ -1,6 +1,8 @@
 package org.openscada.da.core.common.factory;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -11,6 +13,7 @@ public class FactoryTemplate
     private Pattern _pattern = null;
     private Map<String, Variant> _itemAttributes = new HashMap<String, Variant> ();
     private Map<String, Variant> _browserAttributes = new HashMap<String, Variant> ();
+    private List<ChainEntry> _chainEntries = new LinkedList<ChainEntry> ();
     
     public FactoryTemplate ()
     {
@@ -24,6 +27,7 @@ public class FactoryTemplate
         _pattern = arg0._pattern;
         _itemAttributes = new HashMap<String, Variant> ( arg0._itemAttributes );
         _browserAttributes = new HashMap<String, Variant> ( arg0._browserAttributes );
+        _chainEntries = new LinkedList<ChainEntry> ( arg0._chainEntries );
     }
     
     public Map<String, Variant> getBrowserAttributes ()
@@ -51,5 +55,15 @@ public class FactoryTemplate
     public void setPattern ( Pattern pattern )
     {
         _pattern = pattern;
+    }
+
+    public List<ChainEntry> getChainEntries ()
+    {
+        return _chainEntries;
+    }
+
+    public void setChainEntries ( List<ChainEntry> chainEntries )
+    {
+        _chainEntries = chainEntries;
     }
 }

@@ -38,9 +38,11 @@ import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.ItemListener;
 import org.openscada.da.core.common.configuration.ConfigurableHive;
+import org.openscada.da.core.common.configuration.ConfigurationError;
 import org.openscada.da.core.common.factory.DataItemFactory;
 import org.openscada.da.core.common.factory.DataItemFactoryListener;
 import org.openscada.da.core.common.factory.DataItemFactoryRequest;
+import org.openscada.da.core.common.factory.FactoryHelper;
 import org.openscada.da.core.common.factory.FactoryTemplate;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.Hive;
@@ -399,6 +401,16 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
                 {
                     request.setBrowserAttributes ( template.getBrowserAttributes () );
                     request.setItemAttributes ( template.getItemAttributes () );
+                    try
+                    {
+                        request.setItemChain ( FactoryHelper.instantiateChainList ( template.getChainEntries () ) );
+                    }
+                    catch ( ConfigurationError e )
+                    {
+                        _log.warn ( String.format ( "Unable to create item %s", id ), e );
+                        return null;
+                    }
+                    break;
                 }
             }
         }
