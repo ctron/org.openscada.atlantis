@@ -59,7 +59,12 @@ public class Hive extends HiveCommon {
     
     private QueryFolder _queryFolderFactory = null;
 	
-	public Hive () throws ConfigurationError, IOException, XmlException
+    public Hive () throws ConfigurationError, IOException, XmlException
+    {
+        this ( null );
+    }
+    
+	public Hive ( File xmlConfigurationFile ) throws ConfigurationError, IOException, XmlException
 	{
 		super();
 		
@@ -258,7 +263,10 @@ public class Hive extends HiveCommon {
         changeThread.setDaemon ( true );
         changeThread.start ();
         
-        xmlConfigure ();
+        if ( xmlConfigurationFile == null )
+            xmlConfigure ();
+        else
+            xmlConfigure ( xmlConfigurationFile );
 	}
 
     private void xmlConfigure () throws ConfigurationError, IOException, XmlException
