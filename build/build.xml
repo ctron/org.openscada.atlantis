@@ -377,6 +377,14 @@
 	<target name="da_server_common" depends="utils,core_common,core_server_common,da_core_common,da_core_server">
 		<mkdir dir="${build.base}/da_server_common"/>
 		<ant dir="${source.base}/openscada_da_server_common" antfile="build.xml" target="main"/>
+		
+		<copy todir="${build.base}/da_server_common">
+			<fileset dir="${source.base}/openscada_da_server_common/schemasrc">
+				<include name="**/*.class"/>
+				<include name="**/*.xsb"/>
+			</fileset>
+		</copy>
+		
 		<javac
 			srcdir="${source.base}/openscada_da_server_common/src"
 			source="1.5"
@@ -389,7 +397,7 @@
 				<classpath location="${build.base}/core_server_common"/>
 				<classpath location="${build.base}/da_core_common"/>
 				<classpath location="${build.base}/da_core_server"/>
-				<classpath location="schemasrc"/>
+				<classpath location="${build.base}/da_server_common"/>
 				<classpath refid="log4j.classpath"/>
 				<classpath refid="junit4.classpath"/>
 				<classpath refid="xmlbean.classpath"/>
