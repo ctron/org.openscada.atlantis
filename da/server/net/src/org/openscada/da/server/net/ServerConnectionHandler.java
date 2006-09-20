@@ -32,7 +32,6 @@ import org.openscada.da.core.Location;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
 import org.openscada.da.core.server.ItemChangeListener;
-import org.openscada.da.core.server.ItemListListener;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.Entry;
 import org.openscada.da.core.server.browser.FolderListener;
