@@ -851,7 +851,7 @@
     	
     	<mkdir dir="${dist.base}/schema"/>
     	<copy todir="${dist.base}/schema">
-    		<fileset>
+    		<fileset dir="${source.base}">
     			<include name="**/*.xsd"/>
     		</fileset>
     	</copy>
