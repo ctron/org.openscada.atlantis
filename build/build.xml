@@ -480,6 +480,7 @@
 				<classpath location="${build.base}/da_server_common"/>
 				<classpath refid="log4j.classpath"/>
 				<classpath refid="junit4.classpath"/>
+				<classpath refid="xmlbean.classpath"/>
 		</javac>
 	</target>
 	
