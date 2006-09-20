@@ -22,6 +22,7 @@ package org.openscada.da.rcp.LocalTestServer.actions;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.apache.xmlbeans.XmlException;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
@@ -29,6 +30,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.openscada.da.core.common.configuration.ConfigurationError;
 import org.openscada.da.rcp.LocalTestServer.Activator;
 import org.openscada.da.rcp.LocalTestServer.AlreadyStartedException;
 
@@ -75,6 +77,14 @@ public class StartServerAction implements IWorkbenchWindowActionDelegate
         catch ( AlreadyStartedException e )
         {
             status = new OperationStatus ( OperationStatus.WARNING, Activator.PLUGIN_ID, 0, "Local server was already started", e );
+        }
+        catch ( ConfigurationError e )
+        {
+            status = new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, "Configuration error", e );
+        }
+        catch ( XmlException e )
+        {
+            status = new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, "XML Error", e );
         }
         if ( status != null )
         {

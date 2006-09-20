@@ -21,14 +21,22 @@ package org.openscada.da.rcp.LocalTestServer;
 
 import java.io.IOException;
 
+import org.apache.xmlbeans.XmlException;
 import org.eclipse.core.commands.operations.OperationStatus;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.openscada.da.core.common.configuration.ConfigurationError;
 import org.openscada.da.server.net.Exporter;
+import org.openscada.da.server.test.Hive;
 import org.osgi.framework.BundleContext;
+
+import com.sun.org.apache.bcel.internal.generic.ATHROW;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -93,14 +101,16 @@ public class Activator extends AbstractUIPlugin {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
     
-    public void startLocalServer () throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException, AlreadyStartedException
+    public void startLocalServer () throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException, AlreadyStartedException, ConfigurationError, XmlException
     {
         synchronized ( this )
         {
             if ( _exporter != null )
                 throw new AlreadyStartedException();
             
-            _exporter = new Exporter ( org.openscada.da.server.test.Hive.class );
+            Hive testHive = new Hive ( new Path ( "hive.xml" ).toFile () );
+            
+            _exporter = new Exporter ( testHive );
             
             _exporterThread = new Thread ( new Runnable () {
 

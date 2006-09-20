@@ -8,7 +8,8 @@ Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- log4j_wrapper_plugin
+ log4j_wrapper_plugin,
+ ext_plugin_xmlbeans
 Eclipse-LazyStart: true
 Bundle-ClassPath: openscada_net_server_test.jar,
  .

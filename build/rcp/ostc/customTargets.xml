@@ -92,6 +92,10 @@
  		<param name="module" value="${svn.ext.base}/log4j_wrapper_plugin"/>
  	</antcall>
   	<antcall target="checkoutSvn">
+ 		<param name="todir" value="${buildDirectory}/plugins/ext_xmlbeans_plugin"/>
+ 		<param name="module" value="${svn.ext.base}/xmlbeans_plugin"/>
+ 	</antcall>
+  	<antcall target="checkoutSvn">
  		<param name="todir" value="${buildDirectory}/plugins/org.openscada.da.net.client"/>
  		<param name="module" value="${svn.base}/da/client/net_wrapper_plugin"/>
  	</antcall>
