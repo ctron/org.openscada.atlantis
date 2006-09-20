@@ -6,6 +6,7 @@
 <listEntry value="4"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="openscada_da_server_net"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dopenscada.da.hive.configuration=../openscada_da_testserver/hive.xml"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/openscada_da_server_net"/>
 </listAttribute>
