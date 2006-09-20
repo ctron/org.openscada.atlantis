@@ -2,7 +2,6 @@ package org.openscada.da.core.common.factory;
 
 import java.util.EnumSet;
 
-import org.openscada.da.core.common.chain.ChainItem;
 import org.openscada.da.core.server.IODirection;
 
 public class ChainEntry

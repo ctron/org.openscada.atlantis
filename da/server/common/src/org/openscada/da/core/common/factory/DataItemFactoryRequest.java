@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.common.chain.ChainItem;
 import org.openscada.da.core.common.chain.ChainProcessEntry;
 
 public class DataItemFactoryRequest

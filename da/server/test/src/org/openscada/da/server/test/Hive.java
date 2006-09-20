@@ -43,7 +43,6 @@ import org.openscada.da.core.common.configuration.ConfigurationError;
 import org.openscada.da.core.common.configuration.xml.XMLConfigurator;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.server.test.items.FactoryMemoryCell;
-import org.openscada.da.server.test.items.MemoryCellFactory;
 import org.openscada.da.server.test.items.MemoryCellItem;
 import org.openscada.da.server.test.items.MemoryChainedItem;
 import org.openscada.da.server.test.items.SuspendItem;

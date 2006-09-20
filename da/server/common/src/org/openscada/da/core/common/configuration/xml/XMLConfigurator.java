@@ -5,12 +5,9 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Pattern;
-
-import javax.naming.ConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
