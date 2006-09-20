@@ -52,7 +52,7 @@ public class XMLConfigurator implements Configurator
     private Map<String, Template> _templates = new HashMap<String, Template> ();
     private Map<String, Item> _items = new HashMap<String, Item> ();
     
-    public XMLConfigurator ( ConfigurableHive hive, File file ) throws XmlException, IOException
+    public XMLConfigurator ( ConfigurableHive hive, File file ) throws XmlException, IOException, ConfigurationError
     {
         _hive = hive;
         
@@ -60,7 +60,7 @@ public class XMLConfigurator implements Configurator
         
         if ( !_document.validate () )
         {
-            throw new XmlException ( "Document is not valid!" );
+            throw new ConfigurationError ( "Document is not valid!" );
         }
     }
     
