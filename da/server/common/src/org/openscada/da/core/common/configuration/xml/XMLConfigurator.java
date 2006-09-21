@@ -75,7 +75,7 @@ public class XMLConfigurator implements Configurator
     /* (non-Javadoc)
      * @see org.openscada.da.core.common.configuration.Configurator#configure()
      */
-    public void configure ( ConfigurableHive hive ) throws ConfigurationError
+    synchronized public void configure ( ConfigurableHive hive ) throws ConfigurationError
     {
         _factories.clear ();
         _items.clear ();
