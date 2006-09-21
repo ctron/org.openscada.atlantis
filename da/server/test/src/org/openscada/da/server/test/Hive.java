@@ -267,7 +267,7 @@ public class Hive extends HiveCommon {
         if ( configurator == null )
             xmlConfigure ();
         else
-            configurator.configure ();
+            configurator.configure ( this );
 	}
 
     private void xmlConfigure () throws ConfigurationError, IOException, XmlException
@@ -281,7 +281,7 @@ public class Hive extends HiveCommon {
     }
     private void xmlConfigure ( File file ) throws ConfigurationError, XmlException, IOException
     {
-        new XMLConfigurator ( this, file ).configure ();
+        new XMLConfigurator ( file ).configure ( this );
     }
 
     public void addMemoryFactoryItem ( FactoryMemoryCell item, Map<String, Variant> browserAttributes )
