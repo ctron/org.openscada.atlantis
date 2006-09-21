@@ -43,19 +43,17 @@ import org.openscada.da.hive.itemChain.ItemType;
 import org.openscada.utils.str.StringHelper;
 
 public class XMLConfigurator implements Configurator
-{
+{   
     private static Logger _log = Logger.getLogger ( XMLConfigurator.class );
     
-    private ConfigurableHive _hive = null;
     private HiveDocument _document = null;
     
     private Map<String, Factory> _factories = new HashMap<String, Factory> ();
     private Map<String, Template> _templates = new HashMap<String, Template> ();
     private Map<String, Item> _items = new HashMap<String, Item> ();
     
-    public XMLConfigurator ( ConfigurableHive hive, HiveDocument hiveDocument ) throws ConfigurationError
+    public XMLConfigurator ( HiveDocument hiveDocument ) throws ConfigurationError
     {
-        _hive = hive;
         _document = hiveDocument;
         
         if ( !_document.validate () )
@@ -64,33 +62,33 @@ public class XMLConfigurator implements Configurator
         }
     }
     
-    public XMLConfigurator ( ConfigurableHive hive, InputStream stream ) throws ConfigurationError, XmlException, IOException
+    public XMLConfigurator ( InputStream stream ) throws ConfigurationError, XmlException, IOException
     {
-        this ( hive, HiveDocument.Factory.parse ( stream ) );
+        this ( HiveDocument.Factory.parse ( stream ) );
     }
     
-    public XMLConfigurator ( ConfigurableHive hive, File file ) throws ConfigurationError, XmlException, IOException
+    public XMLConfigurator ( File file ) throws ConfigurationError, XmlException, IOException
     {
-        this ( hive, HiveDocument.Factory.parse ( file ) );
+        this ( HiveDocument.Factory.parse ( file ) );
     }
     
     /* (non-Javadoc)
      * @see org.openscada.da.core.common.configuration.Configurator#configure()
      */
-    public void configure () throws ConfigurationError
+    public void configure ( ConfigurableHive hive ) throws ConfigurationError
     {
         _factories.clear ();
         _items.clear ();
         _templates.clear ();
         
-        configureFactories ( _document.getHive ().getFactories () );
-        configureTemplates ( _document.getHive ().getItemTemplates () );
-        configureItems ( _document.getHive ().getItems () );
-        configureBrowser ( _document.getHive ().getBrowser () );
+        configureFactories ( hive, _document.getHive ().getFactories () );
+        configureTemplates ( hive, _document.getHive ().getItemTemplates () );
+        configureItems ( hive, _document.getHive ().getItems () );
+        configureBrowser ( hive, _document.getHive ().getBrowser () );
     }
 
     @SuppressWarnings("unchecked")
-    private void configureFactories ( FactoriesType factories ) throws ConfigurationError
+    private void configureFactories ( ConfigurableHive hive, FactoriesType factories ) throws ConfigurationError
     {
         for ( FactoryType factory : factories.getFactoryList () )
         {
@@ -111,9 +109,9 @@ public class XMLConfigurator implements Configurator
                 {
                     if ( ctor.getParameterTypes ().length == 1 )
                     {
-                        if ( ctor.getParameterTypes ()[0].isAssignableFrom ( _hive.getClass () ) )
+                        if ( ctor.getParameterTypes ()[0].isAssignableFrom ( hive.getClass () ) )
                         {
-                            factoryObject = ctor.newInstance ( new Object[] { _hive } );
+                            factoryObject = ctor.newInstance ( new Object[] { hive } );
                             break;
                         }
                     }
@@ -137,7 +135,7 @@ public class XMLConfigurator implements Configurator
                 ((ConfigurableFactory)factoryObject).configure ( factory.newDomNode () );
             }
             
-            _hive.addItemFactory ( (DataItemFactory)factoryObject );
+            hive.addItemFactory ( (DataItemFactory)factoryObject );
             
             // remember factory for later use
             Factory factory2 = new Factory ();
@@ -147,15 +145,15 @@ public class XMLConfigurator implements Configurator
         }
     }
 
-    private void configureBrowser ( BrowserType browser ) throws ConfigurationError
+    private void configureBrowser ( ConfigurableHive hive, BrowserType browser ) throws ConfigurationError
     {
         if ( browser == null )
             return;
         
-        Folder folder = _hive.getRootFolder ();
+        Folder folder = hive.getRootFolder ();
         if ( folder == null )
         {
-            _hive.setRootFolder ( folder = new FolderCommon () );
+            hive.setRootFolder ( folder = new FolderCommon () );
         }
         
         if ( ! ( folder instanceof ConfigurableFolder ) )
@@ -164,10 +162,10 @@ public class XMLConfigurator implements Configurator
         }
         
         Stack<String> folderStack = new Stack<String> ();
-        configureFolder ( (ConfigurableFolder)folder, browser.getFolder (), folderStack );
+        configureFolder ( hive, (ConfigurableFolder)folder, browser.getFolder (), folderStack );
     }
 
-    private void configureFolder ( ConfigurableFolder configurableFolder, FolderType folder, Stack<String> folderStack ) throws ConfigurationError
+    private void configureFolder ( ConfigurableHive hive, ConfigurableFolder configurableFolder, FolderType folder, Stack<String> folderStack ) throws ConfigurationError
     {
         for ( FolderEntryType entry : folder.getEntryList () )
         {
@@ -187,17 +185,17 @@ public class XMLConfigurator implements Configurator
                 ConfigurableFolder newSubFolder = new FolderCommon ();
                 configurableFolder.add ( name, newSubFolder, attributes );
                 folderStack.push ( name );
-                configureFolder ( newSubFolder, subFolder, folderStack );
+                configureFolder ( hive, newSubFolder, subFolder, folderStack );
                 folderStack.pop ();
             }
             else
             {
-                configureItemEntry ( configurableFolder, itemReference, name, attributes, folderStack );
+                configureItemEntry ( hive, configurableFolder, itemReference, name, attributes, folderStack );
             }
         }
     }
 
-    private void configureItemEntry ( ConfigurableFolder configurableFolder, DataItemReferenceType itemReference, String name, Map<String, Variant> attributes, Stack<String> folderStack ) throws ConfigurationError
+    private void configureItemEntry ( ConfigurableHive hive, ConfigurableFolder configurableFolder, DataItemReferenceType itemReference, String name, Map<String, Variant> attributes, Stack<String> folderStack ) throws ConfigurationError
     {
         
         if ( itemReference.getRef () != null )
@@ -218,7 +216,7 @@ public class XMLConfigurator implements Configurator
             DataItemFactoryRequest request = new DataItemFactoryRequest ();
             request.setId ( itemReference.getWeakRef () );
             request.setBrowserAttributes ( attributes );
-            DataItem dataItem = _hive.retrieveItem ( request );
+            DataItem dataItem = hive.retrieveItem ( request );
             
             if ( dataItem != null )
                 configurableFolder.add ( name, dataItem, attributes );
@@ -227,7 +225,7 @@ public class XMLConfigurator implements Configurator
         }
     }
     
-    private void configureItems ( ItemsType items ) throws ConfigurationError
+    private void configureItems ( ConfigurableHive hive, ItemsType items ) throws ConfigurationError
     {
         if ( items == null )
             return;
@@ -257,7 +255,7 @@ public class XMLConfigurator implements Configurator
             // expand local configuration to object
             overwriteWithLocal ( item, dataItem, "item", id );
             
-            instantiateItem ( item );
+            instantiateItem ( hive, item );
             
             _items.put ( id, item );
         }
@@ -284,7 +282,7 @@ public class XMLConfigurator implements Configurator
      * @throws ConfigurationError any configuration error that prevents the item from being
      * instantiated.
      */
-    private void instantiateItem ( Item item ) throws ConfigurationError
+    private void instantiateItem ( ConfigurableHive hive, Item item ) throws ConfigurationError
     {
         if ( item.getItem () != null )
             return;
@@ -302,21 +300,21 @@ public class XMLConfigurator implements Configurator
             // explicit instatiation
             _log.debug ( String.format ( "Trying to create item %s using provided item factory", item.getId () ) );
             
-            if ( _hive.lookupItem ( item.getId () ) != null )
+            if ( hive.lookupItem ( item.getId () ) != null )
             {
                 throw new ConfigurationError ( String.format ( "Data item %s was configured to be instiated explicitly but already exists in the hive. Unable to create it twice. Remove from configuration, change item id or change to implict creating using hive/factories", item.getId () ) );
             }
             
             dataItem = item.getFactory ().getFactory ().create ( request );
             
-            _hive.registerItem ( dataItem );
+            hive.registerItem ( dataItem );
         }
         else
         {
             // try using hive::retrieveItem
             _log.debug ( String.format ( "Trying to retrieve the item %s from the hive", item.getId () ) );
             
-            dataItem = _hive.retrieveItem ( request );
+            dataItem = hive.retrieveItem ( request );
             if ( dataItem == null )
             {
                 throw new ConfigurationError ( String.format ( "Unable to retrieve item %s from factory", item.getId () ) );
@@ -326,7 +324,7 @@ public class XMLConfigurator implements Configurator
         item.setItem ( dataItem );
     }
 
-    private void configureTemplates ( ItemTemplatesType itemTemplates ) throws ConfigurationError
+    private void configureTemplates ( ConfigurableHive hive, ItemTemplatesType itemTemplates ) throws ConfigurationError
     {
         if ( itemTemplates == null )
             return;
@@ -354,7 +352,7 @@ public class XMLConfigurator implements Configurator
                 factoryTemplate.setBrowserAttributes ( template.getBrowserAttributes () );
                 factoryTemplate.setItemAttributes ( template.getItemAttributes () );
                 factoryTemplate.setChainEntries ( template.getChainEntries () );
-                _hive.registerTemplate ( factoryTemplate );
+                hive.registerTemplate ( factoryTemplate );
             }
         }
     }
