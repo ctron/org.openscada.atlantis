@@ -9,6 +9,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/openscada_da_core_server"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/openscada_core_server_common"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ext_xmlbeans"/>
-	<classpathentry kind="lib" path="schemasrc"/>
+	<classpathentry exported="true" kind="lib" path="schemasrc"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

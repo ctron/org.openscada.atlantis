@@ -2,6 +2,7 @@ package org.openscada.da.core.common.configuration.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -52,16 +53,25 @@ public class XMLConfigurator implements Configurator
     private Map<String, Template> _templates = new HashMap<String, Template> ();
     private Map<String, Item> _items = new HashMap<String, Item> ();
     
-    public XMLConfigurator ( ConfigurableHive hive, File file ) throws XmlException, IOException, ConfigurationError
+    public XMLConfigurator ( ConfigurableHive hive, HiveDocument hiveDocument ) throws ConfigurationError
     {
         _hive = hive;
-        
-        _document = HiveDocument.Factory.parse ( file );
+        _document = hiveDocument;
         
         if ( !_document.validate () )
         {
             throw new ConfigurationError ( "Document is not valid!" );
         }
+    }
+    
+    public XMLConfigurator ( ConfigurableHive hive, InputStream stream ) throws ConfigurationError, XmlException, IOException
+    {
+        this ( hive, HiveDocument.Factory.parse ( stream ) );
+    }
+    
+    public XMLConfigurator ( ConfigurableHive hive, File file ) throws ConfigurationError, XmlException, IOException
+    {
+        this ( hive, HiveDocument.Factory.parse ( file ) );
     }
     
     /* (non-Javadoc)
