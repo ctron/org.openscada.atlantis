@@ -40,6 +40,7 @@ import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.MemoryDataItem;
 import org.openscada.da.core.common.configuration.ConfigurationError;
+import org.openscada.da.core.common.configuration.Configurator;
 import org.openscada.da.core.common.configuration.xml.XMLConfigurator;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.server.test.items.FactoryMemoryCell;
@@ -64,7 +65,7 @@ public class Hive extends HiveCommon {
         this ( null );
     }
     
-	public Hive ( File xmlConfigurationFile ) throws ConfigurationError, IOException, XmlException
+	public Hive ( Configurator configurator ) throws ConfigurationError, IOException, XmlException
 	{
 		super();
 		
@@ -263,10 +264,10 @@ public class Hive extends HiveCommon {
         changeThread.setDaemon ( true );
         changeThread.start ();
         
-        if ( xmlConfigurationFile == null )
+        if ( configurator == null )
             xmlConfigure ();
         else
-            xmlConfigure ( xmlConfigurationFile );
+            configurator.configure ();
 	}
 
     private void xmlConfigure () throws ConfigurationError, IOException, XmlException
