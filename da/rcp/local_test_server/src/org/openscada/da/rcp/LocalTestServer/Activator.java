@@ -32,11 +32,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.openscada.da.core.common.configuration.ConfigurationError;
+import org.openscada.da.core.common.configuration.Configurator;
+import org.openscada.da.core.common.configuration.xml.XMLConfigurator;
 import org.openscada.da.server.net.Exporter;
 import org.openscada.da.server.test.Hive;
 import org.osgi.framework.BundleContext;
-
-import com.sun.org.apache.bcel.internal.generic.ATHROW;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -108,7 +108,11 @@ public class Activator extends AbstractUIPlugin {
             if ( _exporter != null )
                 throw new AlreadyStartedException();
             
-            Hive testHive = new Hive ( new Path ( "hive.xml" ).toFile () );
+            Path path = new Path ( "hive.xml" );
+            
+            Configurator configurator = new XMLConfigurator ( FileLocator.openStream ( getBundle (), path, true ) );
+            Hive testHive = new Hive ();
+            configurator.configure ( testHive );
             
             _exporter = new Exporter ( testHive );
             
