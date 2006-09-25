@@ -38,6 +38,11 @@
             icon="icons/stock_watch.png"
             id="org.openscada.da.client.test.views.DataItemWatchView"
             name="Data Item View"/>
+      <view
+            allowMultiple="true"
+            class="org.openscada.da.client.test.views.realtime.RealTimeList"
+            id="org.openscada.da.test.views.RealTimeList"
+            name="Real Time List"/>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -160,6 +165,34 @@
             </enablement>
          </action>
       </viewContribution>
+      <viewContribution
+            id="org.openscada.da.test.views.RealTimeList.vc1"
+            targetID="org.openscada.da.test.views.RealTimeList">
+            <action
+               class="org.openscada.da.client.test.actions.WriteOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteOperationAction"
+               label="Write"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions">
+            <enablement>
+               <objectClass name="org.openscada.da.client.test.views.realtime.ListEntry"/>
+            </enablement>
+         </action>
+         <action
+               class="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               label="Write Attributes"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions">
+            <enablement>
+               <objectClass name="org.openscada.da.client.test.views.realtime.ListEntry"/>
+            </enablement>
+         </action>
+            </viewContribution>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -221,6 +254,23 @@
                label="Write Attributes Operation"
                menubarPath="additions"/>
       </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.openscada.da.client.test.popupMenus.oc3"
+            objectClass="org.openscada.da.client.test.views.realtime.ListEntry">
+         <action
+               class="org.openscada.da.client.test.actions.WriteOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteOperationAction"
+               label="Write Operation"
+               menubarPath="additions"/>
+         <action
+               class="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               label="Write Attributes Operation"
+               menubarPath="additions"/>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -260,6 +310,12 @@
             name="Data Item"
             objectClass="org.openscada.da.client.test.impl.DataItemEntry">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.dropActions">
+      <action
+            class="org.openscada.da.client.test.dnd.ItemDropAction"
+            id="itemDrop"/>
    </extension>
    
   

@@ -42,6 +42,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.VariantHelper.ValueType;
+import org.openscada.da.client.test.views.realtime.ListEntry;
 
 class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
 {
@@ -77,7 +78,7 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         
         
         Label label = new Label ( container, SWT.NONE );
-        label.setText("&Item:");
+        label.setText ( "&Item:" );
 
         _itemNameText = new Text ( container, SWT.BORDER | SWT.SINGLE );
         GridData gd = new GridData ( GridData.FILL_HORIZONTAL );
@@ -94,7 +95,7 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         // row 2
         
         label = new Label(container, SWT.NONE );
-        label.setText("&Value:");
+        label.setText ( "&Value:" );
 
         _valueText = new Text(container, SWT.BORDER | SWT.SINGLE);
         gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -142,10 +143,10 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         Object obj = _selection.getFirstElement ();
         if ( obj == null )
             return;
-        if ( !(obj instanceof DataItemEntry) )
-            return;
-        
-        _itemNameText.setText ( ((DataItemEntry)obj).getId () );
+        if ( obj instanceof DataItemEntry )
+            _itemNameText.setText ( ((DataItemEntry)obj).getId () );
+        else if ( obj instanceof ListEntry )
+            _itemNameText.setText ( ((ListEntry)obj).getDataItem ().getId () );
     }
     
     private void setValueText ( String value, boolean systemText )
@@ -250,5 +251,7 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
             _connection = (HiveConnection)obj;
         else if ( obj instanceof DataItemEntry )
             _connection = ((DataItemEntry)obj).getConnection ();
+        else if ( obj instanceof ListEntry )
+            _connection = ((ListEntry)obj).getDataItem ().getConnection ();
     }
 }

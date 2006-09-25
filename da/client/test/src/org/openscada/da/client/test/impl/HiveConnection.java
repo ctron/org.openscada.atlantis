@@ -65,8 +65,6 @@ public class HiveConnection extends Observable implements IActionFilter
 
         });
 
-
-        
     }
     
     public void connect ()

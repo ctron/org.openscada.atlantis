@@ -101,14 +101,14 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin {
 		return AbstractUIPlugin.imageDescriptorFromPlugin("org.openscada.da.client.test", path);
 	}
     
-    public static String getId()
+    public static String getId ()
     {
-        return getDefault().getBundle().getSymbolicName();
+        return getDefault ().getBundle ().getSymbolicName ();
     }
     
     public static void logError ( int code, String msg, Throwable ex )
     {
-        getDefault().getLog().log(new Status(IStatus.ERROR, getId(), code, msg, ex));
+        getDefault ().getLog().log(new Status(IStatus.ERROR, getId(), code, msg, ex));
     }
     
     private static HiveRepository _repository = null;

@@ -113,4 +113,14 @@ public class HiveRepository extends Observable
     {
         return _connections;
     }
+    
+    public HiveConnection findConnection ( HiveConnectionInformation connectionInformation )
+    {
+        for ( HiveConnection connection : _connections )
+        {
+            if ( connection.getConnectionInformation ().equals ( connectionInformation ) )
+                return connection;
+        }
+        return null;
+    }
 }

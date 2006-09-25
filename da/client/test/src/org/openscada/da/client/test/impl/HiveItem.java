@@ -19,32 +19,65 @@
 
 package org.openscada.da.client.test.impl;
 
-import org.openscada.da.core.server.DataItemInformation;
 
 public class HiveItem
 {
-    private DataItemInformation _itemInfo = null;
+    private String _id = null;
     private HiveConnection _connection = null;
     
-    public HiveItem ( HiveConnection connection, DataItemInformation itemInfo )
+    public HiveItem ( HiveConnection connection, String id )
     {
         _connection = connection;
-        _itemInfo = itemInfo;
+        _id = id;
     }
 
     public HiveConnection getConnection ()
     {
         return _connection;
     }
-
-    public DataItemInformation getItemInfo ()
+  
+    public String getId ()
     {
-        return _itemInfo;
+        return _id;
     }
-    
-    public String getItemName ()
+
+    @Override
+    public int hashCode ()
     {
-        return _itemInfo.getName ();
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + ( ( _connection == null ) ? 0 : _connection.hashCode () );
+        result = PRIME * result + ( ( _id == null ) ? 0 : _id.hashCode () );
+        return result;
+    }
+
+    @Override
+    public boolean equals ( Object obj )
+    {
+        if ( this == obj )
+            return true;
+        if ( obj == null )
+            return false;
+        if ( getClass () != obj.getClass () )
+            return false;
+        final HiveItem other = (HiveItem)obj;
+        if ( _connection == null )
+        {
+            if ( other._connection != null )
+                return false;
+        }
+        else
+            if ( !_connection.equals ( other._connection ) )
+                return false;
+        if ( _id == null )
+        {
+            if ( other._id != null )
+                return false;
+        }
+        else
+            if ( !_id.equals ( other._id ) )
+                return false;
+        return true;
     }
     
     

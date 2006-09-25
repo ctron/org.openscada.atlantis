@@ -25,6 +25,7 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.openscada.da.client.test.views.HiveView;
+import org.openscada.da.client.test.views.realtime.RealTimeList;
 
 public class Perspective implements IPerspectiveFactory {
 
@@ -44,6 +45,7 @@ public class Perspective implements IPerspectiveFactory {
         IFolderLayout folder = layout.createFolder ( "org.openscada.da.client.test.CenterFolder", IPageLayout.TOP, 0.65f, IPageLayout.ID_EDITOR_AREA  );
 		//folder.addPlaceholder ( DataItemWatchView.VIEW_ID + ":*" );
         folder.addPlaceholder ( "*:*" );
+        folder.addView ( RealTimeList.VIEW_ID );
        
         layout.addStandaloneView ( IPageLayout.ID_PROP_SHEET, true, IPageLayout.BOTTOM, 0.25f, IPageLayout.ID_EDITOR_AREA  );
 	}

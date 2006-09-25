@@ -20,6 +20,8 @@
 package org.openscada.da.client.test.config;
 
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class HiveConnectionInformation implements Serializable
 {
@@ -67,5 +69,67 @@ public class HiveConnectionInformation implements Serializable
     public void setAutoReconnect ( boolean autoReconnect )
     {
         _autoReconnect = autoReconnect;
+    }
+    
+    public URI toUri ()
+    {
+        
+            try
+            {
+                return new URI ( "net", null, _host, _port, null, null, null );
+            }
+            catch ( URISyntaxException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return null;
+            }
+        
+    }
+    
+    public static HiveConnectionInformation fromUri ( URI uri )
+    {
+        HiveConnectionInformation ci =  new HiveConnectionInformation ();
+        
+        if ( !uri.getScheme ().equals ( "net" ) )
+            return null;
+        
+        ci.setHost ( uri.getHost () );
+        ci.setPort ( uri.getPort () );
+        
+        return ci;
+    }
+
+    @Override
+    public int hashCode ()
+    {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + ( ( _host == null ) ? 0 : _host.hashCode () );
+        result = PRIME * result + _port;
+        return result;
+    }
+
+    @Override
+    public boolean equals ( Object obj )
+    {
+        if ( this == obj )
+            return true;
+        if ( obj == null )
+            return false;
+        if ( getClass () != obj.getClass () )
+            return false;
+        final HiveConnectionInformation other = (HiveConnectionInformation)obj;
+        if ( _host == null )
+        {
+            if ( other._host != null )
+                return false;
+        }
+        else
+            if ( !_host.equals ( other._host ) )
+                return false;
+        if ( _port != other._port )
+            return false;
+        return true;
     }
 }

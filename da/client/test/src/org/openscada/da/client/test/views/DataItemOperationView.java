@@ -134,7 +134,7 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
                 {
                     HiveItem hiveItem = (HiveItem)newInput;
                     
-                    _item = new DataItem ( hiveItem.getItemName() );
+                    _item = new DataItem ( hiveItem.getId() );
                     _item.addObserver ( this );
                     _item.register ( hiveItem.getConnection().getConnection() );
                 }
@@ -427,22 +427,22 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
     {
         if ( _hiveItem != null )
         {
-            _hiveItem.getConnection().getConnection().removeItemUpdateListener(_hiveItem.getItemName(),this);
-            appendConsoleMessage("Unsubscribe from item: " + _hiveItem.getItemName() );
+            _hiveItem.getConnection().getConnection().removeItemUpdateListener(_hiveItem.getId(),this);
+            appendConsoleMessage("Unsubscribe from item: " + _hiveItem.getId() );
             
             setPartName("Data Item Viewer");
         }
         
         if ( item != null )
         {
-            setPartName("Data Item Viewer: " + item.getItemName());
+            setPartName("Data Item Viewer: " + item.getId());
             
-            _log.info ( "Set data item: " + item.getItemName() );
+            _log.info ( "Set data item: " + item.getId() );
             
             _hiveItem = item;
             
-            appendConsoleMessage("Subscribe to item: " + _hiveItem.getItemName() );
-            _hiveItem.getConnection().getConnection().addItemUpdateListener(_hiveItem.getItemName(),true,this);
+            appendConsoleMessage("Subscribe to item: " + _hiveItem.getId() );
+            _hiveItem.getConnection().getConnection().addItemUpdateListener(_hiveItem.getId(),true,this);
             
             viewer.setInput ( item );
         }

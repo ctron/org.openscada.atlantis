@@ -63,6 +63,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.VariantHelper.ValueType;
+import org.openscada.da.client.test.views.realtime.ListEntry;
 
 class WriteAttributesOperationWizardValuePage extends WizardPage implements IWizardPage
 {
@@ -477,10 +478,11 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
         Object obj = _selection.getFirstElement ();
         if ( obj == null )
             return;
-        if ( !(obj instanceof DataItemEntry) )
-            return;
         
-        _itemIdText.setText ( ((DataItemEntry)obj).getId () );
+        if ( obj instanceof DataItemEntry )
+            _itemIdText.setText ( ((DataItemEntry)obj).getId () );
+        else if ( obj instanceof ListEntry )
+            _itemIdText.setText ( ((ListEntry)obj).getDataItem ().getId () );
     }
     
     private void dialogChanged ()
@@ -540,7 +542,7 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
         return attributes;
     }
     
-    public HiveConnection getConnection()
+    public HiveConnection getConnection ()
     {
         return _connection;
     }
@@ -554,5 +556,7 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
             _connection = (HiveConnection)obj;
         else if ( obj instanceof DataItemEntry )
             _connection = ((DataItemEntry)obj).getConnection ();
+        else if ( obj instanceof ListEntry )
+            _connection = ((ListEntry)obj).getDataItem ().getConnection ();
     }
 }

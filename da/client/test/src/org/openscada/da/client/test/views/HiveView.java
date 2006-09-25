@@ -43,6 +43,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -57,6 +62,8 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.openscada.da.client.test.ISharedImages;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.actions.ConnectHiveAction;
+import org.openscada.da.client.test.dnd.ItemDragSourceListener;
+import org.openscada.da.client.test.dnd.ItemTransfer;
 import org.openscada.da.client.test.impl.BrowserEntry;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.FolderEntry;
@@ -209,7 +216,7 @@ public class HiveView extends ViewPart implements Observer
             }
             else if ( obj instanceof HiveItem )
             {
-                return ((HiveItem)obj).getItemName();
+                return ((HiveItem)obj).getId();
             }
             else if ( obj instanceof BrowserEntry )
             {
@@ -360,15 +367,20 @@ public class HiveView extends ViewPart implements Observer
         _viewer.setSorter ( new NameSorter() );
         _viewer.setInput ( _repository );
         
-        makeActions();
-        hookContextMenu();
-        hookDoubleClickAction();
-        contributeToActionBars();
+        addDragSupport ();
+        
+        makeActions ();
+        hookContextMenu ();
+        hookDoubleClickAction ();
+        contributeToActionBars ();
         
         getViewSite ().setSelectionProvider ( _viewer );
     }
     
-    
+    private void addDragSupport ()
+    {
+        _viewer.addDragSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance () }, new ItemDragSourceListener ( _viewer ) );
+    }
     
     private void hookContextMenu()
     {
