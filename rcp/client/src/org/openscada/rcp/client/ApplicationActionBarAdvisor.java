@@ -49,6 +49,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private IWorkbenchAction newWindowAction;
     
     private IContributionItem _showViews = null;
+    private IContributionItem _newWizards = null;
 
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer)
     {
@@ -70,7 +71,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         aboutAction = ActionFactory.ABOUT.create(window);
         register(aboutAction);
         
-        newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(window);
+        newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create ( window );
         register(newWindowAction);
         
         register ( ActionFactory.NEW_WIZARD_DROP_DOWN.create ( window ) );        
@@ -78,6 +79,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         register ( ActionFactory.INTRO.create ( window ) );
         
         _showViews = ContributionItemFactory.VIEWS_SHORTLIST.create ( window );
+        _newWizards = ContributionItemFactory.NEW_WIZARD_SHORTLIST.create ( window );
     }
     
     @Override
@@ -86,6 +88,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         MenuManager fileMenu = new MenuManager("&File", IWorkbenchActionConstants.M_FILE);
         MenuManager windowMenu = new MenuManager("&Window", IWorkbenchActionConstants.M_WINDOW);
         MenuManager helpMenu = new MenuManager("&Help", IWorkbenchActionConstants.M_HELP);
+        MenuManager fileNewMenu = new MenuManager ( "&New", IWorkbenchActionConstants.NEW_EXT );
         
         menuBar.add(fileMenu);
         menuBar.add(windowMenu);
@@ -96,9 +99,12 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         // File
         fileMenu.add ( newWindowAction );
         fileMenu.add ( new Separator () );
-        fileMenu.add ( getAction ( ActionFactory.NEW.getId () ) );
+        fileMenu.add ( fileNewMenu );
+        
         fileMenu.add ( new Separator () );
         fileMenu.add ( exitAction );
+        
+        fileNewMenu.add ( _newWizards );
         
         // Window
         windowMenu.add ( _showViews );
