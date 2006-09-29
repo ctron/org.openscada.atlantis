@@ -19,7 +19,9 @@
 
 package org.openscada.rcp.client;
 
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -31,6 +33,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
@@ -44,12 +48,16 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private IWorkbenchAction aboutAction;
     private IWorkbenchAction newWindowAction;
     
+    private IContributionItem _showViews = null;
 
-    public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
-        super(configurer);
+    public ApplicationActionBarAdvisor(IActionBarConfigurer configurer)
+    {
+        super ( configurer );
     }
     
-    protected void makeActions(final IWorkbenchWindow window) {
+    @Override
+    protected void makeActions ( final IWorkbenchWindow window )
+    {
         // Creates the actions and registers them.
         // Registering is needed to ensure that key bindings work.
         // The corresponding commands keybindings are defined in the plugin.xml file.
@@ -65,35 +73,42 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(window);
         register(newWindowAction);
         
-        register(ActionFactory.SHOW_VIEW_MENU.create(window));
-        register(ActionFactory.NEW_WIZARD_DROP_DOWN.create(window));
-        register(ActionFactory.NEW.create(window));
-        register(ActionFactory.INTRO.create ( window ) );
+        register ( ActionFactory.NEW_WIZARD_DROP_DOWN.create ( window ) );        
+        register ( ActionFactory.NEW.create ( window ) );
+        register ( ActionFactory.INTRO.create ( window ) );
+        
+        _showViews = ContributionItemFactory.VIEWS_SHORTLIST.create ( window );
     }
     
-    protected void fillMenuBar(IMenuManager menuBar) {
+    @Override
+    protected void fillMenuBar ( IMenuManager menuBar )
+    {
         MenuManager fileMenu = new MenuManager("&File", IWorkbenchActionConstants.M_FILE);
+        MenuManager windowMenu = new MenuManager("&Window", IWorkbenchActionConstants.M_WINDOW);
         MenuManager helpMenu = new MenuManager("&Help", IWorkbenchActionConstants.M_HELP);
         
         menuBar.add(fileMenu);
+        menuBar.add(windowMenu);
         // Add a group marker indicating where action set menus will appear.
         menuBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
         menuBar.add(helpMenu);
         
-       
-               
         // File
-        fileMenu.add(newWindowAction);
-        fileMenu.add(new Separator());
-        fileMenu.add(getAction(ActionFactory.NEW.getId()));
-        fileMenu.add(new Separator());
-        fileMenu.add(exitAction);
+        fileMenu.add ( newWindowAction );
+        fileMenu.add ( new Separator () );
+        fileMenu.add ( getAction ( ActionFactory.NEW.getId () ) );
+        fileMenu.add ( new Separator () );
+        fileMenu.add ( exitAction );
+        
+        // Window
+        windowMenu.add ( _showViews );
         
         // Help
-        helpMenu.add(aboutAction);
+        helpMenu.add ( aboutAction );
         helpMenu.add ( getAction ( ActionFactory.INTRO.getId () ) );
     }
     
+    @Override
     protected void fillCoolBar(ICoolBarManager coolBar) {
         IToolBarManager toolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
         coolBar.add(new ToolBarContributionItem(toolbar, "main"));
