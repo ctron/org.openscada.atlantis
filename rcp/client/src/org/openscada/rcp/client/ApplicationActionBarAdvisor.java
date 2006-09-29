@@ -90,11 +90,11 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         MenuManager helpMenu = new MenuManager("&Help", IWorkbenchActionConstants.M_HELP);
         MenuManager fileNewMenu = new MenuManager ( "&New", IWorkbenchActionConstants.NEW_EXT );
         
-        menuBar.add(fileMenu);
-        menuBar.add(windowMenu);
+        menuBar.add ( fileMenu );
+        menuBar.add ( windowMenu );
         // Add a group marker indicating where action set menus will appear.
-        menuBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-        menuBar.add(helpMenu);
+        menuBar.add ( new GroupMarker ( IWorkbenchActionConstants.MB_ADDITIONS ) );
+        menuBar.add ( helpMenu );
         
         // File
         fileMenu.add ( newWindowAction );
