@@ -119,8 +119,7 @@ public class RealTimeList extends ViewPart
     @Override
     public void setFocus ()
     {
-        // TODO Auto-generated method stub
-        
+        _viewer.getControl ().setFocus ();
     }
 
     public void remove ( ListEntry entry )
