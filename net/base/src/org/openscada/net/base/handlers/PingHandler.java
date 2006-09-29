@@ -27,13 +27,13 @@ import org.openscada.net.utils.MessageCreator;
 
 public class PingHandler implements MessageListener
 {
-	private static Logger _log = Logger.getLogger ( PingHandler.class );
-	
-	public void messageReceived ( Connection connection, Message message )
+    private static Logger _log = Logger.getLogger ( PingHandler.class );
+
+    public void messageReceived ( Connection connection, Message message )
     {
-		_log.debug ( "Ping request: " + message.getValues ().get ( "ping-data" ) );
-		
-		connection.sendMessage ( MessageCreator.createPong ( message ) );
-	}
+        _log.debug ( "Ping request: " + message.getValues ().get ( "ping-data" ) );
+
+        connection.sendMessage ( MessageCreator.createPong ( message ) );
+    }
 
 }

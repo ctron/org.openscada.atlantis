@@ -44,18 +44,18 @@ import org.openscada.net.io.net.Connection;
 public class ProtocolGMPP implements Protocol
 {
 
-    public final static int VT_STRING = 	0x000000001;
-    public final static int VT_LONG = 		0x000000002;
-    public final static int VT_DOUBLE =  	0x000000003;
-    public final static int VT_VOID =       0x000000004;
-    public final static int VT_INTEGER =    0x000000005;
-    public final static int VT_LIST =       0x000000006;
-    public final static int VT_MAP =        0x000000007;
-    public final static int VT_BOOLEAN =    0x000000008;
+    public final static int VT_STRING = 0x000000001;
+    public final static int VT_LONG = 0x000000002;
+    public final static int VT_DOUBLE = 0x000000003;
+    public final static int VT_VOID = 0x000000004;
+    public final static int VT_INTEGER = 0x000000005;
+    public final static int VT_LIST = 0x000000006;
+    public final static int VT_MAP = 0x000000007;
+    public final static int VT_BOOLEAN = 0x000000008;
 
     private final static int HEADER_SIZE = 4 + 8 + 8 + 8 + 4;
-    
-    private final static int BLOCK_SIZE =   4096;
+
+    private final static int BLOCK_SIZE = 4096;
 
     private static Logger _log = Logger.getLogger ( ProtocolGMPP.class );
 
@@ -68,9 +68,9 @@ public class ProtocolGMPP implements Protocol
     public ProtocolGMPP ( Connection connection, MessageListener listener )
     {
         _connection = connection;
-        _listener = listener;	
+        _listener = listener;
     }
-    
+
     private ByteBuffer encodeToStream ( ByteBuffer buffer, String data )
     {
         ByteBuffer rawData;
@@ -85,62 +85,62 @@ public class ProtocolGMPP implements Protocol
                 rawData = ByteBuffer.wrap ( data.getBytes () );
             }
         }
-        
+
         buffer = ensureCapacity ( buffer, 4 + rawData.remaining () );
         buffer.putInt ( rawData.remaining () );
         buffer.put ( rawData );
-        
+
         return buffer;
     }
-    
+
     private ByteBuffer encodeToStream ( ByteBuffer buffer, IntegerValue value )
     {
         buffer = ensureCapacity ( buffer, 4 + 4 + 4 );
         buffer.putInt ( VT_INTEGER );
         buffer.putInt ( 4 );
         buffer.putInt ( value.getValue () );
-        
+
         return buffer;
     }
-    
+
     private ByteBuffer encodeToStream ( ByteBuffer buffer, LongValue value )
     {
         buffer = ensureCapacity ( buffer, 4 + 4 + 8 );
         buffer.putInt ( VT_LONG );
         buffer.putInt ( 8 );
         buffer.putLong ( value.getValue () );
-        
+
         return buffer;
     }
-    
+
     private ByteBuffer encodeToStream ( ByteBuffer buffer, DoubleValue value )
     {
         buffer = ensureCapacity ( buffer, 4 + 4 + 8 );
         buffer.putInt ( VT_DOUBLE );
         buffer.putInt ( 8 );
-        buffer.putLong ( Double.doubleToRawLongBits ( value.getValue () ) );        
+        buffer.putLong ( Double.doubleToRawLongBits ( value.getValue () ) );
         return buffer;
     }
-    
+
     private ByteBuffer encodeToStream ( ByteBuffer buffer, VoidValue value )
     {
         buffer = ensureCapacity ( buffer, 4 + 4 );
         buffer.putInt ( VT_VOID );
         buffer.putInt ( 0 );
-        
+
         return buffer;
     }
-    
+
     private ByteBuffer encodeToStream ( ByteBuffer buffer, BooleanValue value )
     {
         buffer = ensureCapacity ( buffer, 4 + 4 + 1 );
         buffer.putInt ( VT_BOOLEAN );
         buffer.putInt ( 1 );
         buffer.put ( value.getValue () ? (byte)0xFF : (byte)0x00 );
-        
+
         return buffer;
     }
-    
+
     private ByteBuffer encodeToStream ( ByteBuffer buffer, StringValue value )
     {
         buffer = ensureCapacity ( buffer, 4 );
@@ -148,47 +148,47 @@ public class ProtocolGMPP implements Protocol
         buffer = encodeToStream ( buffer, value.getValue () );
         return buffer;
     }
-    
+
     private ByteBuffer encodeToStream ( ByteBuffer buffer, ListValue value ) throws InvalidValueTypeException
     {
         buffer = ensureCapacity ( buffer, 4 + 4 + 4 );
         buffer.putInt ( VT_LIST );
         int position = buffer.position (); // remember position
         buffer.putInt ( 0 ); // dummy size length
-        
+
         int startPos = buffer.position ();
         buffer.putInt ( value.getValues ().size () );
-        
+
         for ( Value valueEntry : value.getValues () )
         {
             buffer = codeValue ( buffer, valueEntry );
         }
         int size = buffer.position () - startPos;
-        
+
         buffer.putInt ( position, size ); // set value size
         return buffer;
     }
-    
+
     private ByteBuffer encodeToStream ( ByteBuffer buffer, MapValue value ) throws InvalidValueTypeException
     {
         buffer = ensureCapacity ( buffer, 4 + 4 + 4 );
         buffer.putInt ( VT_MAP );
         int position = buffer.position (); // remember position
         buffer.putInt ( 0 ); // dummy size length
-        
+
         int startPos = buffer.position ();
         buffer.putInt ( value.getValues ().size () );
-        
-        for ( Map.Entry < String, Value > valueEntry : value.getValues ().entrySet () )
+
+        for ( Map.Entry<String, Value> valueEntry : value.getValues ().entrySet () )
         {
             buffer = codeValue ( buffer, valueEntry.getKey (), valueEntry.getValue () );
         }
         int size = buffer.position () - startPos;
-        
+
         buffer.putInt ( position, size ); // set value size
         return buffer;
     }
-    
+
     private ByteBuffer codeValue ( ByteBuffer buffer, Value value ) throws InvalidValueTypeException
     {
         if ( value instanceof StringValue )
@@ -227,26 +227,26 @@ public class ProtocolGMPP implements Protocol
             throw new InvalidValueTypeException ();
         return buffer;
     }
-    
+
     private ByteBuffer codeValue ( ByteBuffer buffer, String name, Value value ) throws InvalidValueTypeException
     {
         buffer = codeValue ( buffer, value );
         buffer = encodeToStream ( buffer, name );
-        
+
         return buffer;
     }
 
     private ByteBuffer ensureCapacity ( ByteBuffer buffer, int size )
     {
         logBuffer ( "before ensure", buffer );
-        
+
         ByteBuffer xBuffer = ensureCapacityPerform ( buffer, size );
-        
+
         logBuffer ( "after ensure", xBuffer );
-        
+
         return xBuffer;
     }
-    
+
     private ByteBuffer ensureCapacityPerform ( ByteBuffer buffer, int size )
     {
         if ( buffer == null )
@@ -255,40 +255,42 @@ public class ProtocolGMPP implements Protocol
             newBuffer.clear ();
             return newBuffer;
         }
-            
+
         if ( buffer.remaining () > size )
             return buffer;
-        
+
         int newSize = buffer.position ();
         newSize += size;
-        
+
         int delta = newSize % BLOCK_SIZE;
         if ( delta > 0 )
             newSize += BLOCK_SIZE - delta;
-        
+
         _log.debug ( "New size: " + newSize );
-        
+
         ByteBuffer newBuffer = ByteBuffer.allocate ( newSize );
         buffer.flip ();
         newBuffer.put ( buffer );
-        
+
         return newBuffer;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.openscada.net.codec.Protocol#code(org.openscada.net.base.data.Message)
      */
     public ByteBuffer code ( Message message ) throws InvalidValueTypeException
     {
         ByteBuffer outputBuffer = null;
-        
+
         outputBuffer = ensureCapacity ( outputBuffer, HEADER_SIZE );
 
         outputBuffer.clear ();
-        outputBuffer.putInt ( message.getCommandCode() );
+        outputBuffer.putInt ( message.getCommandCode () );
         outputBuffer.putLong ( message.getTimestamp () );
-        outputBuffer.putLong ( message.getSequence() );
-        outputBuffer.putLong ( message.getReplySequence() );
+        outputBuffer.putLong ( message.getSequence () );
+        outputBuffer.putLong ( message.getReplySequence () );
         int sizePos = outputBuffer.position ();
         outputBuffer.putInt ( 0 ); // dummy body size
 
@@ -296,9 +298,9 @@ public class ProtocolGMPP implements Protocol
         outputBuffer = codeValue ( outputBuffer, message.getValues () );
         int bodySize = outputBuffer.position () - startPos;
         outputBuffer.putInt ( sizePos, bodySize );
-        
+
         outputBuffer.flip ();
-        
+
         return outputBuffer;
     }
 
@@ -306,18 +308,19 @@ public class ProtocolGMPP implements Protocol
     {
         if ( buffer != null )
             if ( _log.isDebugEnabled () )
-                _log.debug ( where + " - Position: " + buffer.position () + " Cap: " + buffer.capacity () + " Limit: " + buffer.limit () + " Rem: " + buffer.remaining () );
+                _log.debug ( where + " - Position: " + buffer.position () + " Cap: " + buffer.capacity () + " Limit: "
+                        + buffer.limit () + " Rem: " + buffer.remaining () );
     }
-    
+
     private void logInputBuffer ( String where )
     {
         logBuffer ( where, _inputBuffer );
     }
-    
-    private void dumpInputBuffer ( )
+
+    private void dumpInputBuffer ()
     {
         String str = "";
-        for ( int i = _inputBuffer.position () ; i < _inputBuffer.limit (); i++ )
+        for ( int i = _inputBuffer.position (); i < _inputBuffer.limit (); i++ )
         {
             str += String.format ( "%1$02X ", _inputBuffer.get ( i ) );
             if ( str.length () > 250 )
@@ -325,40 +328,42 @@ public class ProtocolGMPP implements Protocol
         }
         _log.debug ( "Input buffer: " + str );
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.openscada.net.codec.Protocol#decode(java.nio.ByteBuffer)
      */
     public void decode ( ByteBuffer buffer )
     {
         _log.debug ( "decode entry: " + buffer.remaining () );
-        
+
         logInputBuffer ( "1" );
-        
+
         if ( _inputBuffer != null )
         {
             _inputBuffer.position ( _inputBuffer.limit () );
             _inputBuffer.limit ( _inputBuffer.capacity () );
         }
-        
+
         logInputBuffer ( "1.5" );
-        
+
         _inputBuffer = ensureCapacity ( _inputBuffer, buffer.remaining () );
-        
+
         logInputBuffer ( "2" );
-        
+
         _inputBuffer.put ( buffer );
-        
+
         logInputBuffer ( "3" );
 
         _inputBuffer.flip ();
-        
+
         logInputBuffer ( "4" );
-        
+
         dumpInputBuffer ();
         parse ();
         logInputBuffer ( "5" );
-        
+
         _inputBuffer.compact ();
         _inputBuffer.flip ();
 
@@ -367,9 +372,9 @@ public class ProtocolGMPP implements Protocol
 
     private String decodeStringFromStream ( ByteBuffer buffer, int size )
     {
-        byte [] data = new byte [ size ];
+        byte[] data = new byte[size];
         buffer.get ( data );
-        
+
         CharBuffer charBuffer;
         try
         {
@@ -381,12 +386,12 @@ public class ProtocolGMPP implements Protocol
             return new String ( data );
         }
     }
-    
+
     private String decodeStringFromStream ( ByteBuffer buffer )
     {
         return decodeStringFromStream ( buffer, buffer.getInt () );
     }
-    
+
     private Value decodeValueFromStream ( ByteBuffer buffer )
     {
         int type = buffer.getInt ();
@@ -398,9 +403,9 @@ public class ProtocolGMPP implements Protocol
         switch ( type )
         {
         case VT_LONG:
-            return new LongValue ( buffer.getLong() );
+            return new LongValue ( buffer.getLong () );
         case VT_INTEGER:
-            return new IntegerValue ( buffer.getInt() );
+            return new IntegerValue ( buffer.getInt () );
         case VT_STRING:
             return new StringValue ( decodeStringFromStream ( buffer, len ) );
         case VT_DOUBLE:
@@ -416,38 +421,38 @@ public class ProtocolGMPP implements Protocol
             return decodeMapValueFromStream ( buffer );
         default:
             // unknown type: only consume data
-            buffer.position ( buffer.position() + len );
+            buffer.position ( buffer.position () + len );
             break;
         }
         return null;
     }
-    
+
     private DoubleValue decodeDoubleValueFromStream ( ByteBuffer buffer )
     {
         Double d = Double.longBitsToDouble ( buffer.getLong () );
-        
+
         _log.debug ( "Decoded double: " + d );
-        
+
         return new DoubleValue ( d );
     }
-  
+
     private ListValue decodeListValueFromStream ( ByteBuffer buffer )
     {
         ListValue listValue = new ListValue ();
-        
+
         int items = buffer.getInt ();
         for ( int i = 0; i < items; i++ )
         {
             listValue.getValues ().add ( decodeValueFromStream ( buffer ) );
         }
-        
+
         return listValue;
     }
-    
+
     private MapValue decodeMapValueFromStream ( ByteBuffer buffer )
     {
         MapValue mapValue = new MapValue ();
-        
+
         int items = buffer.getInt ();
         for ( int i = 0; i < items; i++ )
         {
@@ -455,7 +460,7 @@ public class ProtocolGMPP implements Protocol
             String key = decodeStringFromStream ( buffer );
             mapValue.getValues ().put ( key, value );
         }
-        
+
         return mapValue;
     }
 
@@ -469,27 +474,28 @@ public class ProtocolGMPP implements Protocol
         message.setReplySequence ( _inputBuffer.getLong () );
 
         _inputBuffer.getInt (); // re-read to remove from buffer
-        
+
         Value value = decodeValueFromStream ( _inputBuffer );
         if ( value instanceof MapValue )
             message.setValues ( (MapValue)value );
-        
+
         return message;
     }
-    
+
     private void parse ()
     {
         long ts = System.currentTimeMillis ();
 
-        while  ( _inputBuffer.remaining() >= HEADER_SIZE )
+        while ( _inputBuffer.remaining () >= HEADER_SIZE )
         {
             // peek body size
-            int bodySize = _inputBuffer.getInt ( _inputBuffer.position() + 4 + 8 + 8 + 8 );
+            int bodySize = _inputBuffer.getInt ( _inputBuffer.position () + 4 + 8 + 8 + 8 );
             _log.debug ( "Body length: " + bodySize );
 
-            if ( _inputBuffer.remaining() < HEADER_SIZE + bodySize )
+            if ( _inputBuffer.remaining () < HEADER_SIZE + bodySize )
             {
-                _log.debug ( "Remaining: " + _inputBuffer.remaining () + " Header: " + HEADER_SIZE + " Body: " + bodySize );
+                _log.debug ( "Remaining: " + _inputBuffer.remaining () + " Header: " + HEADER_SIZE + " Body: "
+                        + bodySize );
                 // message is not complete so skip for next try
                 return;
             }
@@ -503,11 +509,11 @@ public class ProtocolGMPP implements Protocol
             {
                 _log.warn ( "Decoding message from stream failed", e );
             }
-            
+
             if ( message != null )
             {
                 _log.debug ( "Message time diff: " + ( ts - message.getTimestamp () ) );
-                _log.debug ( "Bytes remaining: " + _inputBuffer.remaining() );
+                _log.debug ( "Bytes remaining: " + _inputBuffer.remaining () );
                 try
                 {
                     _listener.messageReceived ( _connection, message );

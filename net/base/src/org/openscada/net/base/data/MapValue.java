@@ -24,38 +24,38 @@ import java.util.Map;
 
 public class MapValue extends Value
 {
-    private Map < String, Value > _values = null;
-    
+    private Map<String, Value> _values = null;
+
     public MapValue ()
     {
-        _values = new HashMap < String, Value > ();
+        _values = new HashMap<String, Value> ();
     }
-    
-    public Map < String, Value > getValues ()
+
+    public Map<String, Value> getValues ()
     {
         return _values;
     }
-    
+
     public void put ( String key, Value value )
     {
         _values.put ( key, value );
     }
-    
+
     public void remove ( String key )
     {
         _values.remove ( key );
     }
-    
+
     public Value get ( String key )
     {
         return _values.get ( key );
     }
-    
+
     public boolean containsKey ( String key )
     {
         return _values.containsKey ( key );
     }
-    
+
     public int size ()
     {
         return _values.size ();
@@ -85,9 +85,8 @@ public class MapValue extends Value
             if ( other._values != null )
                 return false;
         }
-        else
-            if ( !_values.equals ( other._values ) )
-                return false;
+        else if ( !_values.equals ( other._values ) )
+            return false;
         return true;
     }
 }

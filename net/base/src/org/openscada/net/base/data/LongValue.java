@@ -19,32 +19,32 @@
 
 package org.openscada.net.base.data;
 
+public class LongValue extends Value
+{
 
-public class LongValue extends Value {
+    private long _value;
 
-	private long _value;
-
-	public LongValue(long value)
+    public LongValue ( long value )
     {
-		super();
-		_value = value;
-	}
+        super ();
+        _value = value;
+    }
 
-	public long getValue()
+    public long getValue ()
     {
-		return _value;
-	}
+        return _value;
+    }
 
-	public void setValue(long value)
+    public void setValue ( long value )
     {
-		_value = value;
-	}
-	
-	@Override
-	public String toString()
+        _value = value;
+    }
+
+    @Override
+    public String toString ()
     {
-		return String.valueOf(_value);
-	}
+        return String.valueOf ( _value );
+    }
 
     @Override
     public int hashCode ()

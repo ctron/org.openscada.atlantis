@@ -34,75 +34,77 @@ public class ServerSocket extends IOChannel implements IOChannelListener
     {
         public void accepted ( SocketConnection connection );
     }
-    
-	private static Logger _log = Logger.getLogger ( ServerSocket.class );
-	
-	private IOProcessor _processor = null;
-	private ServerSocketChannel _channel = null;
-	private ConnectionFactory _factory = null;
-	
-	public ServerSocket ( IOProcessor processor, SocketAddress bindAddress, ConnectionFactory factory ) throws IOException
-	{
-		_processor = processor;
-		_factory = factory;
-		
-		_channel = ServerSocketChannel.open ();
-		_channel.configureBlocking ( false );
-		_channel.socket ().bind ( bindAddress );
-		
-		_processor.registerConnection ( this, SelectionKey.OP_ACCEPT );
-	}
-	
-	public void handleConnect ()
-    {
-	}
 
-	public void handleRead ()
-    {
-	}
+    private static Logger _log = Logger.getLogger ( ServerSocket.class );
 
-	public void handleWrite ()
-    {	
-	}
-    
+    private IOProcessor _processor = null;
+    private ServerSocketChannel _channel = null;
+    private ConnectionFactory _factory = null;
+
+    public ServerSocket ( IOProcessor processor, SocketAddress bindAddress, ConnectionFactory factory ) throws IOException
+    {
+        _processor = processor;
+        _factory = factory;
+
+        _channel = ServerSocketChannel.open ();
+        _channel.configureBlocking ( false );
+        _channel.socket ().bind ( bindAddress );
+
+        _processor.registerConnection ( this, SelectionKey.OP_ACCEPT );
+    }
+
+    public void handleConnect ()
+    {
+    }
+
+    public void handleRead ()
+    {
+    }
+
+    public void handleWrite ()
+    {
+    }
+
     public void handleTimeout ()
     {
     }
 
-	public void handleAccept ()
+    public void handleAccept ()
     {
-		_log.debug ( "Checking inbound connection");
-		
-		try {
-			SocketChannel channel = _channel.accept ();
-			
-			if ( channel != null )
-			{
-				_log.debug ( "Accepted connection" );
+        _log.debug ( "Checking inbound connection" );
+
+        try
+        {
+            SocketChannel channel = _channel.accept ();
+
+            if ( channel != null )
+            {
+                _log.debug ( "Accepted connection" );
                 if ( _factory != null )
                 {
                     _factory.accepted ( new SocketConnection ( _processor, channel ) );
                 }
-				
-                /*
-                ServerConnection connection = new ServerConnection ( _factory.createConnectionHandler (), new SocketConnection ( _processor, channel ) );
-                connection.connected ();
-				connection.sendMessage ( MessageCreator.createPing () );
-                */
-			}
-			
-		}
-        catch (IOException e)
-        {
-			_log.warn ( "Unable to accept inbound connection", e );
-		}
-		
-	}
 
-	public SelectableChannel getSelectableChannel() {
-		return _channel;
-	}
-    
+                /*
+                 * ServerConnection connection = new ServerConnection ( _factory.createConnectionHandler (), new
+                 * SocketConnection ( _processor, channel ) ); connection.connected (); connection.sendMessage (
+                 * MessageCreator.createPing () );
+                 */
+            }
+
+        }
+        catch ( IOException e )
+        {
+            _log.warn ( "Unable to accept inbound connection", e );
+        }
+
+    }
+
+    public SelectableChannel getSelectableChannel ()
+    {
+        return _channel;
+    }
+
     public IOChannelListener getIOChannelListener ()
     {
         return this;

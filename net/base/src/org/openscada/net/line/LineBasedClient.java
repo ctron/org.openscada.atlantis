@@ -28,16 +28,16 @@ import org.openscada.net.io.SocketConnection;
 public class LineBasedClient implements LineHandler
 {
     private LineBasedConnection _connection = null;
-    
+
     private IOProcessor _processor = null;
     private LineHandler _handler = null;
-    
+
     public LineBasedClient ( IOProcessor processor, LineHandler handler )
     {
         _processor = processor;
         _handler = handler;
     }
-    
+
     public void connect ( SocketAddress remote )
     {
         synchronized ( this )

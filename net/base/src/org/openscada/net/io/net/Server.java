@@ -30,37 +30,40 @@ import org.openscada.net.utils.MessageCreator;
 
 public class Server implements Runnable
 {
-    private ConnectionHandlerFactory _factory = null; 
-	private IOProcessor _processor = null;
-	private ServerSocket _serverSocket = null;
-	
-	public Server ( ConnectionHandlerFactory factory, int port ) throws IOException
-	{
-		this ( factory, new IOProcessor (), port );
-	}
-    
-    public Server ( ConnectionHandlerFactory factory, IOProcessor processor, int port  ) throws IOException
+    private ConnectionHandlerFactory _factory = null;
+    private IOProcessor _processor = null;
+    private ServerSocket _serverSocket = null;
+
+    public Server ( ConnectionHandlerFactory factory, int port ) throws IOException
+    {
+        this ( factory, new IOProcessor (), port );
+    }
+
+    public Server ( ConnectionHandlerFactory factory, IOProcessor processor, int port ) throws IOException
     {
         _factory = factory;
         _processor = processor;
-        
-        _serverSocket = new ServerSocket ( _processor, new InetSocketAddress ( port ), new ServerSocket.ConnectionFactory () {
 
-            public void accepted ( SocketConnection connection )
-            {
-                ServerConnection newConnection = new ServerConnection ( _factory.createConnectionHandler (), connection );
-                newConnection.connected ();
-                newConnection.sendMessage ( MessageCreator.createPing () );
-            }} );
+        _serverSocket = new ServerSocket ( _processor, new InetSocketAddress ( port ),
+                new ServerSocket.ConnectionFactory () {
+
+                    public void accepted ( SocketConnection connection )
+                    {
+                        ServerConnection newConnection = new ServerConnection ( _factory.createConnectionHandler (),
+                                connection );
+                        newConnection.connected ();
+                        newConnection.sendMessage ( MessageCreator.createPing () );
+                    }
+                } );
     }
-	
-	public void start ()
-	{
-		_processor.start ();
-	}
-	
-	public void run ()
-	{
-		_processor.run ();
-	}
+
+    public void start ()
+    {
+        _processor.start ();
+    }
+
+    public void run ()
+    {
+        _processor.run ();
+    }
 }

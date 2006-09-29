@@ -27,37 +27,42 @@ import java.util.Set;
 public abstract class IOChannel
 {
     public abstract SelectableChannel getSelectableChannel ();
+
     public abstract IOChannelListener getIOChannelListener ();
-    
+
     private long _timeout = 0;
     private long _lastReadEvent = System.currentTimeMillis ();
-    
+
     private Set<IOProcessor> _processorSet = new HashSet<IOProcessor> ();
-    
+
     /**
      * Register the channel from inside the IO processor thread
-     * @param processor the processor to register
-     * @param ops the operation
+     * 
+     * @param processor
+     *            the processor to register
+     * @param ops
+     *            the operation
      */
     public void register ( IOProcessor processor, int ops )
     {
         final IOProcessor processor_ = processor;
         final int ops_ = ops;
-        
-        try 
+
+        try
         {
-            processor.getScheduler ().executeJob ( new Runnable(){
-                
+            processor.getScheduler ().executeJob ( new Runnable () {
+
                 public void run ()
                 {
                     performRegister ( processor_, ops_ );
-                }});
+                }
+            } );
         }
         catch ( Exception e )
         {
         }
     }
-    
+
     private void performRegister ( IOProcessor processor, int ops )
     {
         try
@@ -71,46 +76,49 @@ public abstract class IOChannel
                 processor.enableConnectionTimeout ( this );
             else
                 processor.disableConnectionTimeout ( this );
-                
+
         }
         catch ( ClosedChannelException e )
         {
         }
     }
-    
+
     /**
      * Perform the unregister operation inside the IO loop thread
-     * @param processor The IO processor from which it should unregister
+     * 
+     * @param processor
+     *            The IO processor from which it should unregister
      */
     public void unregister ( IOProcessor processor )
     {
         final IOProcessor processor_ = processor;
-        
+
         try
         {
-            processor.getScheduler().executeJob(new Runnable (){
+            processor.getScheduler ().executeJob ( new Runnable () {
 
                 public void run ()
                 {
                     performUnregister ( processor_ );
-                }});
+                }
+            } );
         }
         catch ( InterruptedException e )
         {
         }
     }
-    
+
     private void performUnregister ( IOProcessor processor )
     {
         synchronized ( _processorSet )
         {
             _processorSet.remove ( processor );
         }
-        
+
         processor.unregisterConnection ( this );
         processor.disableConnectionTimeout ( this );
     }
-    
+
     public void setTimeout ( long timeout )
     {
         _timeout = timeout;
@@ -125,18 +133,18 @@ public abstract class IOChannel
             }
         }
     }
-    
+
     public boolean isTimeOut ()
     {
         if ( _timeout <= 0 )
             return false;
-        
+
         if ( ( System.currentTimeMillis () - _lastReadEvent ) > _timeout )
             return true;
         else
             return false;
     }
-    
+
     public void tickRead ()
     {
         _lastReadEvent = System.currentTimeMillis ();

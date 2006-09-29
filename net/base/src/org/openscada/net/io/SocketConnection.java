@@ -33,133 +33,136 @@ import org.apache.log4j.Logger;
 
 public class SocketConnection extends IOChannel implements IOChannelListener
 {
-	private static Logger _log = Logger.getLogger(SocketConnection.class);
-	
-	protected IOProcessor _processor = null; 
-	private SocketChannel _channel = null;
-	private ConnectionListener _listener = null;
-	
-	private boolean _reading = false;
+    private static Logger _log = Logger.getLogger ( SocketConnection.class );
+
+    protected IOProcessor _processor = null;
+    private SocketChannel _channel = null;
+    private ConnectionListener _listener = null;
+
+    private boolean _reading = false;
     private boolean _closing = false;
-	
-	private ByteBuffer _inputBuffer = ByteBuffer.allocate ( 4096 );
-	private List<ByteBuffer> _outputBuffers = new ArrayList<ByteBuffer> ();
-	
-	public SocketConnection ( IOProcessor processor ) throws IOException
-	{
+
+    private ByteBuffer _inputBuffer = ByteBuffer.allocate ( 4096 );
+    private List<ByteBuffer> _outputBuffers = new ArrayList<ByteBuffer> ();
+
+    public SocketConnection ( IOProcessor processor ) throws IOException
+    {
         if ( processor == null )
-            throw new NullPointerException();
-        
-		_processor = processor;
-		
-		_channel = SocketChannel.open();
-		_channel.configureBlocking ( false );
-	}
-	
-	public SocketConnection ( IOProcessor processor, SocketChannel channel ) throws IOException
-	{
+            throw new NullPointerException ();
+
+        _processor = processor;
+
+        _channel = SocketChannel.open ();
+        _channel.configureBlocking ( false );
+    }
+
+    public SocketConnection ( IOProcessor processor, SocketChannel channel ) throws IOException
+    {
         if ( processor == null )
-            throw new NullPointerException();
-        
-		_processor = processor;
-		
-		_channel = channel;
-		_channel.configureBlocking(false);
-		
-		// check for registration 
-		updateOps();
-	}
-	
-	@Override
-	protected void finalize() throws Throwable {
-		
-		_log.debug("Finalizing socket connection");
-		
-		close ();
-		
-		super.finalize();
-	}
-	
-	public SelectableChannel getSelectableChannel ()
-	{
-		return _channel;
-	}
-	
-	public void connect ( final SocketAddress remote )
-	{
+            throw new NullPointerException ();
+
+        _processor = processor;
+
+        _channel = channel;
+        _channel.configureBlocking ( false );
+
+        // check for registration
+        updateOps ();
+    }
+
+    @Override
+    protected void finalize () throws Throwable
+    {
+
+        _log.debug ( "Finalizing socket connection" );
+
+        close ();
+
+        super.finalize ();
+    }
+
+    public SelectableChannel getSelectableChannel ()
+    {
+        return _channel;
+    }
+
+    public void connect ( final SocketAddress remote )
+    {
         try
         {
-            _processor.getScheduler().executeJob(new Runnable(){
+            _processor.getScheduler ().executeJob ( new Runnable () {
 
                 public void run ()
                 {
-                    try {
-                        _log.debug("Initiating contact");
-                        register(_processor,SelectionKey.OP_CONNECT);
-                        _channel.connect ( remote );
-                        _log.debug("Contact request on its way");
-                    }
-                    catch (IOException e)
+                    try
                     {
-                        e.printStackTrace();
+                        _log.debug ( "Initiating contact" );
+                        register ( _processor, SelectionKey.OP_CONNECT );
+                        _channel.connect ( remote );
+                        _log.debug ( "Contact request on its way" );
                     }
-                }});
+                    catch ( IOException e )
+                    {
+                        e.printStackTrace ();
+                    }
+                }
+            } );
         }
         catch ( InterruptedException e )
         {
         }
-	}
-	
-	public void scheduleWrite ( final ByteBuffer buffer )
-	{
+    }
+
+    public void scheduleWrite ( final ByteBuffer buffer )
+    {
         if ( _closing )
             return;
-        
-        _processor.getScheduler().executeJobAsync(new Runnable(){
+
+        _processor.getScheduler ().executeJobAsync ( new Runnable () {
             public void run ()
             {
                 appendWriteData ( buffer );
             }
-        });
-	}
-    
+        } );
+    }
+
     private void appendWriteData ( ByteBuffer buffer )
     {
-        if ( _channel.isOpen() )
+        if ( _channel.isOpen () )
         {
-            buffer.rewind();
+            buffer.rewind ();
             synchronized ( _outputBuffers )
             {
                 _outputBuffers.add ( buffer );
             }
-            updateOps();
+            updateOps ();
         }
     }
-	    
-	private void updateOps ()
-	{
-		if ( !_channel.isOpen() )
-		{
-			_log.debug ( "Unregistering socket" );
-            unregister(_processor);
+
+    private void updateOps ()
+    {
+        if ( !_channel.isOpen () )
+        {
+            _log.debug ( "Unregistering socket" );
+            unregister ( _processor );
             _log.debug ( "Socket unregistered" );
-			return;
-		}
-		
-		int ops = 0;
-		
-		if ( _channel.isConnectionPending() )
-		{
-			ops = SelectionKey.OP_CONNECT;
-		}
-		else if ( _channel.isConnected() )
-		{
-			if ( _reading )
-				ops += SelectionKey.OP_READ;
-			if ( _outputBuffers.size() > 0 )
-				ops += SelectionKey.OP_WRITE;
-		}
-        
+            return;
+        }
+
+        int ops = 0;
+
+        if ( _channel.isConnectionPending () )
+        {
+            ops = SelectionKey.OP_CONNECT;
+        }
+        else if ( _channel.isConnected () )
+        {
+            if ( _reading )
+                ops += SelectionKey.OP_READ;
+            if ( _outputBuffers.size () > 0 )
+                ops += SelectionKey.OP_WRITE;
+        }
+
         if ( ops > 0 )
         {
             _log.debug ( "Setting ops = " + ops );
@@ -169,66 +172,67 @@ public class SocketConnection extends IOChannel implements IOChannelListener
         {
             _log.debug ( "Unregistering socket" );
             unregister ( _processor );
-            
+
             // nothing more to do ... so perform close
             if ( _closing )
                 close ();
         }
-	}
-	
-	public void triggerRead ()
-	{
-	    synchronized ( this )
-	    {
-	        if ( _closing )
-	            return;
+    }
 
-	        _reading = true;
-	    }
-	    updateOps ();
-	}
-    
-	public void stopRead ()
-	{
-		_reading = false;
-		updateOps ();
-	}
+    public void triggerRead ()
+    {
+        synchronized ( this )
+        {
+            if ( _closing )
+                return;
 
-	public void handleConnect ()
-	{
+            _reading = true;
+        }
+        updateOps ();
+    }
+
+    public void stopRead ()
+    {
+        _reading = false;
+        updateOps ();
+    }
+
+    public void handleConnect ()
+    {
         tickRead ();
-        
-		_log.debug("Connection request complete");
-		
-		if ( _channel.isConnectionPending () )
-		{
-			try {
-				if ( _channel.finishConnect () )
-				{
-					_log.debug("Connection established");
-					if ( _listener != null )
-						_listener.connected ();
-				}
-				else
-				{
-					_log.info("Unable to connect");
-					_listener.connectionFailed ( null );
-					close();
-				}
-			}
-			catch ( IOException e )
-			{
-				_log.info("Connection request failed: ", e );
-				if ( _listener != null )
-					_listener.connectionFailed ( e );
-				close ();
-			}
-		}
+
+        _log.debug ( "Connection request complete" );
+
+        if ( _channel.isConnectionPending () )
+        {
+            try
+            {
+                if ( _channel.finishConnect () )
+                {
+                    _log.debug ( "Connection established" );
+                    if ( _listener != null )
+                        _listener.connected ();
+                }
+                else
+                {
+                    _log.info ( "Unable to connect" );
+                    _listener.connectionFailed ( null );
+                    close ();
+                }
+            }
+            catch ( IOException e )
+            {
+                _log.info ( "Connection request failed: ", e );
+                if ( _listener != null )
+                    _listener.connectionFailed ( e );
+                close ();
+            }
+        }
         else
-            _log.debug("Handle connect called although socket is not connecting");
-        
-		updateOps();
-	}
+            _log.debug ( "Handle connect called although socket is not connecting" );
+
+        updateOps ();
+    }
 
     public void scheduleClose ()
     {
@@ -238,7 +242,7 @@ public class SocketConnection extends IOChannel implements IOChannelListener
                 return;
             _closing = true;
         }
-        
+
         // if there is nothing more to send
         // shut down the connection
         synchronized ( _outputBuffers )
@@ -249,142 +253,145 @@ public class SocketConnection extends IOChannel implements IOChannelListener
                 return;
             }
         }
-        
+
         stopRead ();
     }
-    
-	public void close ()
-	{
+
+    public void close ()
+    {
         _closing = true;
         synchronized ( _outputBuffers )
         {
-            _outputBuffers.clear();
+            _outputBuffers.clear ();
         }
-		
-		try
+
+        try
         {
-			if ( _channel.isOpen() )
-			{
-				_log.debug ( "Closing connection" );
-				_channel.close();
-				
-				if ( _listener != null )
-					_listener.closed();
-			}
-            updateOps();
-		}
-        catch (IOException e)
-        {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	public void handleRead()
-	{
-        tickRead ();
-        
-		_inputBuffer.clear ();
-		
-		try {
-			int rc;
-			rc = _channel.read ( _inputBuffer );
-			
-			_log.debug ( "Performed read: rc = " + rc );
-			
-			if ( rc <= 0 )
+            if ( _channel.isOpen () )
             {
-				close ();
-                return;
+                _log.debug ( "Closing connection" );
+                _channel.close ();
+
+                if ( _listener != null )
+                    _listener.closed ();
             }
-			
-			_inputBuffer.flip ();			
-			
-			if ( _listener != null )
-				_listener.read ( _inputBuffer );
-			
-		}
+            updateOps ();
+        }
         catch ( IOException e )
         {
-		    _log.warn ( "Failed to read", e );
-			close ();
-		}
-	}
+            e.printStackTrace ();
+        }
 
-	public void handleWrite ()
-	{
-		_log.debug("Write event");
-		
-		synchronized ( _outputBuffers )
-		{
-			Iterator<ByteBuffer> i = _outputBuffers.iterator();
-			
-			_log.debug(_outputBuffers.size() + " buffer(s) in outbound queue (before)");
-			
-			while ( i.hasNext() )
-			{
-				ByteBuffer buffer = i.next();
-				
-				while ( buffer.hasRemaining() )
-				{
-					try {
-						int rc = _channel.write(buffer);
-						
-						_log.debug ( "write: rc = " + rc );
-						
-						if ( !buffer.hasRemaining() )
-						{
-							i.remove();
-							continue;
-						}
-						
-						if ( rc < 0 )
-						{
-							close ();
-							return;
-						}
-						else if ( rc == 0 )
-						{
-							// output buffer is full .. so stop here
-							return;
-						}
-					} catch (IOException e) {
-						close ();
-						return;
-					}
-				}
-			}
-		} // end-sync
-		
-		_log.debug(_outputBuffers.size() + " buffer(s) in outbound queue (after)");
-		
-		updateOps();
-	}
+    }
 
-	public void handleAccept ()
-	{
-		// no op
-	}
-    
+    public void handleRead ()
+    {
+        tickRead ();
+
+        _inputBuffer.clear ();
+
+        try
+        {
+            int rc;
+            rc = _channel.read ( _inputBuffer );
+
+            _log.debug ( "Performed read: rc = " + rc );
+
+            if ( rc <= 0 )
+            {
+                close ();
+                return;
+            }
+
+            _inputBuffer.flip ();
+
+            if ( _listener != null )
+                _listener.read ( _inputBuffer );
+
+        }
+        catch ( IOException e )
+        {
+            _log.warn ( "Failed to read", e );
+            close ();
+        }
+    }
+
+    public void handleWrite ()
+    {
+        _log.debug ( "Write event" );
+
+        synchronized ( _outputBuffers )
+        {
+            Iterator<ByteBuffer> i = _outputBuffers.iterator ();
+
+            _log.debug ( _outputBuffers.size () + " buffer(s) in outbound queue (before)" );
+
+            while ( i.hasNext () )
+            {
+                ByteBuffer buffer = i.next ();
+
+                while ( buffer.hasRemaining () )
+                {
+                    try
+                    {
+                        int rc = _channel.write ( buffer );
+
+                        _log.debug ( "write: rc = " + rc );
+
+                        if ( !buffer.hasRemaining () )
+                        {
+                            i.remove ();
+                            continue;
+                        }
+
+                        if ( rc < 0 )
+                        {
+                            close ();
+                            return;
+                        }
+                        else if ( rc == 0 )
+                        {
+                            // output buffer is full .. so stop here
+                            return;
+                        }
+                    }
+                    catch ( IOException e )
+                    {
+                        close ();
+                        return;
+                    }
+                }
+            }
+        } // end-sync
+
+        _log.debug ( _outputBuffers.size () + " buffer(s) in outbound queue (after)" );
+
+        updateOps ();
+    }
+
+    public void handleAccept ()
+    {
+        // no op
+    }
+
     public void handleTimeout ()
     {
         close ();
     }
 
-	public ConnectionListener getListener ()
+    public ConnectionListener getListener ()
     {
-	    return _listener;
-	}
+        return _listener;
+    }
 
-	public void setListener ( ConnectionListener listener )
+    public void setListener ( ConnectionListener listener )
     {
-	    _listener = listener;
-	}
+        _listener = listener;
+    }
 
     public IOChannelListener getIOChannelListener ()
     {
         return this;
     }
-    
 
 }

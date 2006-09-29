@@ -22,11 +22,11 @@ package org.openscada.net.base;
 import org.openscada.net.io.net.Connection;
 
 /**
- * If a connection handler implements ConnectionAware it will get during set up process
- * the connection via setConnection
+ * If a connection handler implements ConnectionAware it will get during set up process the connection via setConnection
+ * 
  * @author jens
- *
  */
-public interface ConnectionAware {
-	public void setConnection ( Connection connection );
+public interface ConnectionAware
+{
+    public void setConnection ( Connection connection );
 }

@@ -19,32 +19,32 @@
 
 package org.openscada.net.base.data;
 
+public class BooleanValue extends Value
+{
 
-public class BooleanValue extends Value {
+    private boolean _value;
 
-	private boolean _value;
-
-	public BooleanValue ( boolean value )
+    public BooleanValue ( boolean value )
     {
-		super();
-		_value = value;
-	}
+        super ();
+        _value = value;
+    }
 
-	public boolean getValue ()
+    public boolean getValue ()
     {
-		return _value;
-	}
+        return _value;
+    }
 
-	public void setValue ( boolean value )
+    public void setValue ( boolean value )
     {
-		_value = value;
-	}
-	
-	@Override
-	public String toString ()
+        _value = value;
+    }
+
+    @Override
+    public String toString ()
     {
-		return String.valueOf ( _value );
-	}
+        return String.valueOf ( _value );
+    }
 
     @Override
     public int hashCode ()
@@ -69,5 +69,5 @@ public class BooleanValue extends Value {
             return false;
         return true;
     }
-  
+
 }

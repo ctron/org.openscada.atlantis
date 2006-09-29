@@ -37,17 +37,19 @@ public class LineApplication
             public LineHandler createHandler ()
             {
                 return new TestLineHandler ( true );
-            }} ); 
-        
+            }
+        } );
+
         final LineBasedClient client = new LineBasedClient ( io, new TestLineHandler ( false ) );
-        
+
         io.getScheduler ().executeJobAsync ( new Runnable () {
 
             public void run ()
             {
                 client.connect ( new InetSocketAddress ( "localhost", 1202 ) );
-            }} );
-        
+            }
+        } );
+
         io.run ();
     }
 }

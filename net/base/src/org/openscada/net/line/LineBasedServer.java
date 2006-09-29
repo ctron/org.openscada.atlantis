@@ -31,18 +31,18 @@ public class LineBasedServer
 {
     public interface HandlerFactory
     {
-        LineHandler createHandler (); 
+        LineHandler createHandler ();
     }
-    
+
     private HandlerFactory _factory = null;
-    
-    @SuppressWarnings("unused")
+
+    @SuppressWarnings ( "unused" )
     private ServerSocket _server = null;
-    
+
     public LineBasedServer ( IOProcessor processor, int port, HandlerFactory factory ) throws IOException
     {
         _factory = factory;
-        
+
         _server = new ServerSocket ( processor, new InetSocketAddress ( port ), new ConnectionFactory () {
 
             public void accepted ( SocketConnection connection )
@@ -52,7 +52,7 @@ public class LineBasedServer
                     LineBasedConnection newConnection = new LineBasedConnection ( connection, _factory.createHandler () );
                     newConnection.connected ();
                 }
-            }}
-        );
+            }
+        } );
     }
 }

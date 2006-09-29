@@ -24,5 +24,5 @@ import org.openscada.net.io.net.Connection;
 
 public interface MessageListener
 {
-	public void messageReceived ( Connection connection, Message message ) throws Exception;
+    public void messageReceived ( Connection connection, Message message ) throws Exception;
 }

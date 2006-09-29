@@ -35,9 +35,9 @@ public class TestInputStream
      */
     public TestInputStream ()
     {
-        super();
+        super ();
     }
-    
+
     public TestInputStream ( Collection<TestBytePacket> packetList )
     {
         _pseudoStream = new ArrayList<TestBytePacket> ( packetList );

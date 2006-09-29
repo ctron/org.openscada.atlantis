@@ -28,23 +28,23 @@ import org.openscada.net.line.LineHandler;
 public class TestLineHandler implements LineHandler
 {
     private static Logger _log = Logger.getLogger ( TestLineHandler.class );
-    
+
     private LineBasedConnection _connection = null;
-    
+
     private boolean _echo = false;
-    
+
     public TestLineHandler ( boolean echo )
     {
         _echo = echo;
     }
-    
+
     public void handleLine ( String line )
     {
         _log.info ( "New line: '" + line + "'" );
-        
+
         if ( _echo )
             _connection.sendLine ( "000 ECHO " + line );
-        
+
         try
         {
             StringTokenizer tok = new StringTokenizer ( line );
@@ -60,7 +60,7 @@ public class TestLineHandler implements LineHandler
             _connection.sendLine ( "999 Command failed: " + e.getMessage () );
         }
         _log.debug ( "Line handler complete" );
-        
+
     }
 
     @Override
@@ -71,7 +71,7 @@ public class TestLineHandler implements LineHandler
         _connection = null;
         super.finalize ();
     }
-    
+
     public void closed ()
     {
         _log.info ( "Closed" );
@@ -93,7 +93,7 @@ public class TestLineHandler implements LineHandler
     {
         _connection = connection;
         if ( _connection != null )
-            _connection.getConnection ().setTimeout ( 10*1000 );
+            _connection.getConnection ().setTimeout ( 10 * 1000 );
     }
 
 }

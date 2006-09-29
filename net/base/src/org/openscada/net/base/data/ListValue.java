@@ -29,19 +29,19 @@ public class ListValue extends Value
 
     public ListValue ()
     {
-        _values = new LinkedList < Value > ();
+        _values = new LinkedList<Value> ();
     }
-    
+
     public void add ( Value value )
     {
         _values.add ( value );
     }
-    
+
     public void remove ( Value value )
     {
         _values.remove ( value );
     }
-    
+
     public int size ()
     {
         return _values.size ();
@@ -71,12 +71,11 @@ public class ListValue extends Value
             if ( other._values != null )
                 return false;
         }
-        else
-            if ( !_values.equals ( other._values ) )
-                return false;
+        else if ( !_values.equals ( other._values ) )
+            return false;
         return true;
     }
-    
+
     public List<Value> getValues ()
     {
         return _values;

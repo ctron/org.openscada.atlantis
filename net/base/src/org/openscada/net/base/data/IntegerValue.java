@@ -19,32 +19,32 @@
 
 package org.openscada.net.base.data;
 
+public class IntegerValue extends Value
+{
 
-public class IntegerValue extends Value {
+    private int _value;
 
-	private int _value;
-
-	public IntegerValue ( int value )
+    public IntegerValue ( int value )
     {
-		super();
-		_value = value;
-	}
+        super ();
+        _value = value;
+    }
 
-	public int getValue ()
+    public int getValue ()
     {
-		return _value;
-	}
+        return _value;
+    }
 
-	public void setValue ( int value )
+    public void setValue ( int value )
     {
-		_value = value;
-	}
-	
-	@Override
-	public String toString()
+        _value = value;
+    }
+
+    @Override
+    public String toString ()
     {
-		return String.valueOf ( _value );
-	}
+        return String.valueOf ( _value );
+    }
 
     @Override
     public int hashCode ()
@@ -70,5 +70,4 @@ public class IntegerValue extends Value {
         return true;
     }
 
-   
 }

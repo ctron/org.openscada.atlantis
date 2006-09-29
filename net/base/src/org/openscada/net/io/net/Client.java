@@ -31,55 +31,55 @@ import org.openscada.net.io.SocketConnection;
 
 public class Client implements ConnectionStateListener
 {
-	
-	private static Logger _log = Logger.getLogger ( Client.class );
-    
-    private int RECONNECT_TIMEOUT = Integer.getInteger ( "openscada.net.reconnect_period" , 10000 );
-	
-	private IOProcessor _processor = null;
-	private MessageListener _listener;
-	private ClientConnection _connection = null;
-	private ConnectionStateListener _stateListener = null;
-    
+
+    private static Logger _log = Logger.getLogger ( Client.class );
+
+    private int RECONNECT_TIMEOUT = Integer.getInteger ( "openscada.net.reconnect_period", 10000 );
+
+    private IOProcessor _processor = null;
+    private MessageListener _listener;
+    private ClientConnection _connection = null;
+    private ConnectionStateListener _stateListener = null;
+
     private boolean _connected = false;
     private boolean _autoReconnect = false;
-    
+
     private SocketAddress _lastRemote = null;
 
-	public Client ( IOProcessor processor, MessageListener listener, ConnectionStateListener stateListener, boolean autoReconnect )
-	{
-		_processor = processor;
-		_listener = listener;
-		_stateListener = stateListener;
+    public Client ( IOProcessor processor, MessageListener listener, ConnectionStateListener stateListener, boolean autoReconnect )
+    {
+        _processor = processor;
+        _listener = listener;
+        _stateListener = stateListener;
         _autoReconnect = autoReconnect;
-	}
-	
-	public void sendMessage ( Message message )
-	{
-		if ( _connection != null )
-		{
-		    _connection.sendMessage ( message );
-		}
-	}
-	
-	public void connect ( SocketAddress remote )
-	{
+    }
+
+    public void sendMessage ( Message message )
+    {
+        if ( _connection != null )
+        {
+            _connection.sendMessage ( message );
+        }
+    }
+
+    public void connect ( SocketAddress remote )
+    {
         _lastRemote = remote;
         performConnect ( remote );
-	}
-    
+    }
+
     public void connect ( SocketAddress remote, boolean wait )
     {
         _lastRemote = remote;
         scheduleConnectJob ( remote, RECONNECT_TIMEOUT );
     }
-    
+
     private void performConnect ( SocketAddress remote )
     {
         _log.debug ( "connecting..." );
-        
+
         closeCurrent ();
-        
+
         try
         {
             SocketConnection channel = new SocketConnection ( _processor );
@@ -101,48 +101,50 @@ public class Client implements ConnectionStateListener
             _connection = null;
         }
     }
-    
-	public void closed ( Exception error )
-	{
-		_log.debug ( "Connection closed" );
-		
-		if ( _stateListener != null )
-		    _stateListener.closed ( error );
+
+    public void closed ( Exception error )
+    {
+        _log.debug ( "Connection closed" );
+
+        if ( _stateListener != null )
+            _stateListener.closed ( error );
 
         _connected = false;
-        
+
         if ( _autoReconnect && ( _lastRemote != null ) )
             connect ( _lastRemote, true );
-	}
+    }
 
-	public void opened ()
-	{
-        _connected = true;
-        
-		_log.debug ( "Connection open" );
-		
-		if ( _stateListener != null )
-			_stateListener.opened ();
-	}
-
-	public ClientConnection getConnection ()
+    public void opened ()
     {
-		return _connection;
-	}
+        _connected = true;
+
+        _log.debug ( "Connection open" );
+
+        if ( _stateListener != null )
+            _stateListener.opened ();
+    }
+
+    public ClientConnection getConnection ()
+    {
+        return _connection;
+    }
 
     public boolean isConnected ()
     {
         return _connected;
     }
-    
+
     private void scheduleConnectJob ( final SocketAddress remote, int timeout )
     {
         _log.debug ( "adding connect job" );
-        
-        _processor.getScheduler().scheduleJob ( new Runnable(){
-            
-            public void run() {
+
+        _processor.getScheduler ().scheduleJob ( new Runnable () {
+
+            public void run ()
+            {
                 performConnect ( remote );
-            }}, timeout );
+            }
+        }, timeout );
     }
 }

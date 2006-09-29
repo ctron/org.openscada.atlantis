@@ -27,33 +27,32 @@ import org.openscada.net.io.net.Client;
 
 public class AutoReconnectClientConnection extends ConnectionHandlerBase
 {
-	private static Logger _log = Logger.getLogger ( AutoReconnectClientConnection.class );
-	
-	private Client _client = null;
+    private static Logger _log = Logger.getLogger ( AutoReconnectClientConnection.class );
+
+    private Client _client = null;
     private IOProcessor _processor = null;
     private SocketAddress _remote = null;
-    
-	public AutoReconnectClientConnection ( IOProcessor processor, SocketAddress remote )
-	{
+
+    public AutoReconnectClientConnection ( IOProcessor processor, SocketAddress remote )
+    {
         _processor = processor;
-	    _remote = remote;   
-	}
-    
+        _remote = remote;
+    }
+
     /**
      * start connecting to the server
-     *
      */
     public void start ()
     {
-        _client = new Client ( _processor, getMessageProcessor(), this, true );
+        _client = new Client ( _processor, getMessageProcessor (), this, true );
         setConnection ( _client.getConnection () );
         _client.connect ( _remote );
     }
-	
-	@Override
-	public void opened ()
-	{
-	    setConnection ( _client.getConnection() );
-	    super.opened ();
-	}
+
+    @Override
+    public void opened ()
+    {
+        setConnection ( _client.getConnection () );
+        super.opened ();
+    }
 }
