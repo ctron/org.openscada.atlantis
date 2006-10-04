@@ -81,6 +81,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor
 
         _showViews = ContributionItemFactory.VIEWS_SHORTLIST.create ( window );
         _newWizards = ContributionItemFactory.NEW_WIZARD_SHORTLIST.create ( window );
+        
+        register ( ActionFactory.NEW_EDITOR.create ( window ) );
+        
     }
 
     @Override
@@ -90,17 +93,20 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor
         MenuManager windowMenu = new MenuManager ( "&Window", IWorkbenchActionConstants.M_WINDOW );
         MenuManager helpMenu = new MenuManager ( "&Help", IWorkbenchActionConstants.M_HELP );
         MenuManager fileNewMenu = new MenuManager ( "&New", IWorkbenchActionConstants.NEW_EXT );
+        MenuManager windowNewMenu = new MenuManager ( "Show &View", IWorkbenchActionConstants.SHOW_EXT );
 
         menuBar.add ( fileMenu );
-        menuBar.add ( windowMenu );
         // Add a group marker indicating where action set menus will appear.
         menuBar.add ( new GroupMarker ( IWorkbenchActionConstants.MB_ADDITIONS ) );
+        menuBar.add ( windowMenu );
         menuBar.add ( helpMenu );
 
         // File
         fileMenu.add ( newWindowAction );
         fileMenu.add ( new Separator () );
         fileMenu.add ( fileNewMenu );
+        fileMenu.add ( getAction ( ActionFactory.NEW_EDITOR.getId () ) );
+        fileMenu.add ( new GroupMarker ( IWorkbenchActionConstants.OPEN_EXT ) );
 
         fileMenu.add ( new Separator () );
         fileMenu.add ( exitAction );
@@ -108,7 +114,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor
         fileNewMenu.add ( _newWizards );
 
         // Window
-        windowMenu.add ( _showViews );
+        windowNewMenu.add ( _showViews );
+        windowMenu.add ( windowNewMenu );
 
         // Help
         helpMenu.add ( aboutAction );
