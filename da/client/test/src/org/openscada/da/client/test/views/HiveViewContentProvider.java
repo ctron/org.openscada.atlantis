@@ -18,6 +18,7 @@ class HiveViewContentProvider implements IStructuredContentProvider, ITreeConten
     /**
      * 
      */
+    @SuppressWarnings("unused")
     private Viewer _viewer = null;
     private HiveRepository _repository = null;
     
