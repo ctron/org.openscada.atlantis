@@ -40,6 +40,7 @@
             name="Data Item View"/>
       <view
             allowMultiple="true"
+            category="org.openscada.da.client.test"
             class="org.openscada.da.client.test.views.realtime.RealTimeList"
             id="org.openscada.da.test.views.RealTimeList"
             name="Real Time List"/>
@@ -82,6 +83,7 @@
          <newWizardShortcut id="org.openscada.da.client.test.newWizards.NewHive"/>
          <newWizardShortcut id="org.openscada.da.client.test.newWizards.NewWatch"/>
          <perspectiveShortcut id="org.openscada.ae.client.test.perspective"/>
+         <viewShortcut id="org.openscada.da.test.views.RealTimeList"/>
       </perspectiveExtension>
    </extension>
    <extension
@@ -316,6 +318,18 @@
       <action
             class="org.openscada.da.client.test.dnd.ItemDropAction"
             id="itemDrop"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.openscada.da.client.test.editors.realtime.DataItemListEditor"
+            default="false"
+            extensions="dail"
+            id="org.openscada.da.test.views.RealTimeListEditor"
+            name="DA Item List Editor"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
    </extension>
    
   
