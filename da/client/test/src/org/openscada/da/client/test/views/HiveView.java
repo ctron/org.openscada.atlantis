@@ -19,7 +19,6 @@
 
 package org.openscada.da.client.test.views;
 
-import java.util.EnumSet;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -33,13 +32,9 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.SWT;
@@ -48,29 +43,22 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.PropertySheetPage;
-import org.openscada.da.client.test.ISharedImages;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.actions.ConnectHiveAction;
 import org.openscada.da.client.test.dnd.ItemDragSourceListener;
 import org.openscada.da.client.test.dnd.ItemTransfer;
-import org.openscada.da.client.test.impl.BrowserEntry;
-import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.FolderEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
-import org.openscada.da.client.test.impl.HiveItem;
 import org.openscada.da.client.test.impl.HiveRepository;
-import org.openscada.da.core.server.IODirection;
 
 
 /**
@@ -104,175 +92,6 @@ public class HiveView extends ViewPart implements Observer
     private Action propertiesAction;
     
     private HiveRepository _repository;
-    
-    class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider
-    {
-       
-        private Viewer _viewer = null;
-        private HiveRepository _repository = null;
-        
-        public ViewContentProvider ()
-        {
-        }
-        
-        public void inputChanged ( Viewer v, Object oldInput, Object newInput )
-        {
-            clearInput ();
-            
-            _viewer = v;
-            if ( newInput instanceof HiveRepository )
-            {
-                _repository = (HiveRepository)newInput;
-            }
-        }
-        
-        public void clearInput ()
-        {
-            if ( _repository != null )
-            {
-                _repository = null;
-            }
-        }
-        
-        public void dispose()
-        {
-            clearInput ();
-        }
-        
-        public Object[] getElements ( Object parent )
-        {
-            if ( parent.equals ( getViewSite() ) ) {
-                return getChildren ( _repository );
-            }
-            return getChildren ( parent );
-        }
-        public Object getParent ( Object child )
-        {
-            if (child instanceof HiveConnection)
-            {
-                return _repository;
-            }
-            else if ( child instanceof HiveItem )
-            {
-                return ((HiveItem)child).getConnection();
-            }
-            else if ( child instanceof BrowserEntry )
-            {
-                return ((BrowserEntry)child).getParent ();
-            }
-            return null;
-        }
-        public Object [] getChildren(Object parent)
-        {
-            if ( parent instanceof HiveRepository )
-            {
-                return((HiveRepository)parent).getConnections().toArray(new HiveConnection[0]);
-            }
-            else if ( parent instanceof HiveConnection )
-            {
-                FolderEntry rootFolder = ((HiveConnection)parent).getRootFolder ();
-                if ( rootFolder != null )
-                    return rootFolder.getEntries ();
-                else
-                    return new Object [0];
-            }
-            else if ( parent instanceof FolderEntry )
-            {
-                return ((FolderEntry)parent).getEntries ();
-            }
-            return new Object[0];
-        }
-        public boolean hasChildren(Object parent)
-        {
-            if (parent instanceof HiveRepository)
-            {
-                return ((HiveRepository)parent).getConnections().size() > 0;
-            }
-            else if ( parent instanceof HiveConnection )
-            {
-                FolderEntry rootFolder = ((HiveConnection)parent).getRootFolder ();
-                if ( rootFolder != null )
-                    return rootFolder.hasChildren ();
-                else
-                    return false;
-            }
-            else if ( parent instanceof FolderEntry )
-            {
-                return ((FolderEntry)parent).hasChildren ();
-            }
-            return false;
-        }
-
-    }
-    class ViewLabelProvider extends LabelProvider
-    {
-        
-        public String getText(Object obj)
-        {
-            if ( obj instanceof HiveConnection )
-            {
-                HiveConnection connection = (HiveConnection)obj;
-                return connection.getConnectionInformation().getHost() + ":" + connection.getConnectionInformation().getPort() + " (" + connection.getConnection ().getState ().toString () + ")";
-            }
-            else if ( obj instanceof HiveItem )
-            {
-                return ((HiveItem)obj).getId();
-            }
-            else if ( obj instanceof BrowserEntry )
-            {
-                return ((BrowserEntry)obj).getName ();
-            }
-            return obj.toString();
-        }
-        public Image getImage(Object obj)
-        {
-            String imageKey;
-            
-            if ( obj instanceof HiveConnection )
-            {
-                HiveConnection connection = (HiveConnection)obj;
-                if ( connection.isConnectionRequested() )
-                {
-                    switch ( connection.getConnection ().getState () )
-                    {
-                    case CLOSED:
-                        imageKey = ISharedImages.IMG_HIVE_DISCONNECTED;
-                        break;
-                    case CONNECTED:
-                        imageKey = ISharedImages.IMG_HIVE_CONNECTION;
-                        break;
-                    case BOUND:
-                        imageKey = ISharedImages.IMG_HIVE_CONNECTED;
-                        break;
-                    default:
-                        imageKey = ISharedImages.IMG_HIVE_DISCONNECTED;
-                        break;
-                    }
-                }
-                else
-                    imageKey = ISharedImages.IMG_HIVE_CONNECTION;
-            }
-            else if ( obj instanceof DataItemEntry )
-            {
-                DataItemEntry hiveItem = (DataItemEntry)obj;
-                EnumSet<IODirection> io = hiveItem.getIoDirection ();
-                if ( io.containsAll ( EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ))
-                    imageKey = ISharedImages.IMG_HIVE_ITEM_IO;
-                else if ( io.contains ( IODirection.INPUT ) )
-                    imageKey = ISharedImages.IMG_HIVE_ITEM_I;
-                else if ( io.contains ( IODirection.OUTPUT ) )
-                    imageKey = ISharedImages.IMG_HIVE_ITEM_O;
-                else
-                    imageKey = ISharedImages.IMG_HIVE_ITEM;
-            }
-            else if ( obj instanceof FolderEntry )
-                imageKey = ISharedImages.IMG_HIVE_FOLDER;
-            else
-                return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_ELEMENT );
-            
-            return Openscada_da_client_testPlugin.getDefault().getImageRegistry().get ( imageKey );
-        }
-    }
     
     class NameSorter extends ViewerSorter
     {
@@ -362,8 +181,8 @@ public class HiveView extends ViewPart implements Observer
     {
         _viewer = new TreeViewer ( parent, SWT.H_SCROLL | SWT.V_SCROLL );
         drillDownAdapter = new DrillDownAdapter(_viewer);
-        _viewer.setContentProvider ( new ViewContentProvider() );
-        _viewer.setLabelProvider ( new ViewLabelProvider() );
+        _viewer.setContentProvider ( new HiveViewContentProvider () );
+        _viewer.setLabelProvider ( new HiveViewLabelProvider () );
         _viewer.setSorter ( new NameSorter() );
         _viewer.setInput ( _repository );
         
