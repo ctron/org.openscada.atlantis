@@ -37,6 +37,31 @@ public class Variant
     public Variant ()
     {
     }
+    
+    /**
+     * Convert the object to the best matching variant type
+     * @param object the object to convert
+     */
+    public Variant ( Object object )
+    {
+        if ( object == null )
+            return;
+        
+        if ( object instanceof Long )
+            setValue ( (Long)object );
+        else if ( object instanceof Integer )
+            setValue ( (Integer)object );
+        else if ( object instanceof String )
+            setValue ( (String)object );
+        else if ( object instanceof Boolean )
+            setValue ( (Boolean)object );
+        else if ( object instanceof Double )
+            setValue ( (Double)object );
+        else if ( object instanceof Float )
+            setValue ( (Float)object );
+        else
+            setValue ( object.toString () );
+    }
 
     public Variant ( boolean value )
     {
@@ -69,28 +94,7 @@ public class Variant
      */
     public Variant ( Variant arg0 )
     {
-        try {
-            if ( arg0.isNull () )
-            {}// no-op
-            else if ( arg0.isBoolean () )
-                setValue ( arg0.asBoolean () );
-            else if ( arg0.isDouble () )
-                setValue ( arg0.asDouble() );
-            else if ( arg0.isInteger () )
-                setValue ( arg0.asInteger() );
-            else if ( arg0.isString () )
-                setValue ( arg0.asString() );
-            else if ( arg0.isLong () )
-                setValue ( arg0.asLong() );
-        }
-        catch ( NotConvertableException e )
-        {
-            // no-op
-        }
-        catch ( NullValueException e )
-        {
-            // no-op
-        }
+        this ( (Object)arg0 );
     }
 
     public boolean isNull ()
