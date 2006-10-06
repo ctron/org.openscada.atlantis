@@ -48,6 +48,6 @@ public class Perspective implements IPerspectiveFactory {
         folder.addPlaceholder ( "*" );
         folder.addView ( RealTimeList.VIEW_ID );
        
-        layout.addStandaloneView ( IPageLayout.ID_PROP_SHEET, true, IPageLayout.BOTTOM, 0.25f, IPageLayout.ID_EDITOR_AREA  );
+        layout.addView ( IPageLayout.ID_PROP_SHEET, IPageLayout.BOTTOM, 0.25f, IPageLayout.ID_EDITOR_AREA  );
 	}
 }
