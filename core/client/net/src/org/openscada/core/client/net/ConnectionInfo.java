@@ -19,6 +19,9 @@
 
 package org.openscada.core.client.net;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 
 public class ConnectionInfo
 {
@@ -91,5 +94,35 @@ public class ConnectionInfo
     {
         _port = port;
     }
+
+    public URI toUri ()
+    {
+
+        try
+        {
+            return new URI ( "net", null, _hostName, _port, null, null, null );
+        }
+        catch ( URISyntaxException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    public static ConnectionInfo fromUri ( URI uri )
+    {
+        ConnectionInfo ci =  new ConnectionInfo ();
+        
+        if ( !uri.getScheme ().equals ( "net" ) )
+            return null;
+        
+        ci.setHostName ( uri.getHost () );
+        ci.setPort ( uri.getPort () );
+        
+        return ci;
+    }
+
     
 }
