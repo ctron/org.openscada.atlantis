@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
+         <viewShortcut id="org.openscada.da.client.viewer.ProcessView"/>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            category="org.openscada.da.client.test"
+            class="org.openscada.da.client.viewer.views.ProcessView"
+            id="org.openscada.da.client.viewer.ProcessView"
+            name="ProcessView"/>
+   </extension>
+
+</plugin>

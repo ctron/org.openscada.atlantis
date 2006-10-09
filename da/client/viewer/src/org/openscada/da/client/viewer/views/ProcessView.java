@@ -1,0 +1,210 @@
+package org.openscada.da.client.viewer.views;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.LightweightSystem;
+import org.eclipse.draw2d.XYLayout;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.part.ViewPart;
+import org.openscada.core.client.net.ConnectionInfo;
+import org.openscada.da.client.net.Connection;
+import org.openscada.da.client.viewer.Activator;
+import org.openscada.da.client.viewer.configurator.Configurator;
+import org.openscada.da.client.viewer.configurator.xml.XMLConfigurator;
+import org.openscada.da.client.viewer.model.AlreadyConnectedException;
+import org.openscada.da.client.viewer.model.Connector;
+import org.openscada.da.client.viewer.model.DynamicObject;
+import org.openscada.da.client.viewer.model.DynamicUIObject;
+import org.openscada.da.client.viewer.model.OutputDefinition;
+import org.openscada.da.client.viewer.model.View;
+import org.openscada.da.client.viewer.model.impl.DataItemOutput;
+import org.openscada.da.client.viewer.model.impl.DisplaySynchronizedConnector;
+import org.openscada.da.client.viewer.model.impl.IntegerSetterOutput;
+import org.openscada.da.client.viewer.model.impl.PassThroughConnector;
+import org.openscada.da.client.viewer.model.impl.Rectangle;
+import org.openscada.da.client.viewer.model.impl.converter.ColorComposer;
+import org.openscada.da.client.viewer.model.impl.converter.Double2IntegerConverter;
+import org.openscada.da.client.viewer.model.impl.converter.FactorCalculator;
+import org.openscada.da.client.viewer.model.impl.converter.Integer2DoubleConverter;
+import org.openscada.da.client.viewer.model.impl.converter.ModuloCalculator;
+import org.openscada.da.client.viewer.model.impl.converter.SimpleVariantIntegerConverter;
+
+public class ProcessView extends ViewPart
+{
+    private static Logger _log = Logger.getLogger ( ProcessView.class );
+    
+    private Canvas _canvas = null;
+    private LightweightSystem _system = null;
+
+    private IFigure _rootFigure = null;
+    
+    private View _view = null;
+
+    public ProcessView ()
+    {
+        try
+        {
+            test2 ();
+        }
+        catch ( Exception e )
+        {
+            _log.warn ( "failed to create test view", e );
+        }
+    }
+    
+    private void test2 ()
+    {
+        try
+        {
+            Configurator cfg = new XMLConfigurator ( Activator.getDefault ().getSampleView () );
+            List<View> views = cfg.configure ();
+            
+            setView ( views.get ( 0 ) );
+        }
+        catch ( Exception e )
+        {
+            _log.warn ( "Failed to parse view", e );
+        }
+    }
+    
+    protected void setView ( View view )
+    {
+        _view = view;   
+    }
+    
+    @SuppressWarnings("unused")
+    private void test () throws AlreadyConnectedException
+    {
+        org.openscada.da.client.viewer.model.impl.View view = new org.openscada.da.client.viewer.model.impl.View ();
+        
+        Rectangle rect = new Rectangle ();
+        
+        IntegerSetterOutput boundsOutput = new IntegerSetterOutput ( "bounds" );
+        
+        Connector connector3 = new PassThroughConnector ();
+        connector3.setOutput ( boundsOutput );
+        connector3.setInput ( rect.getInputByName ( "height" ) );
+        
+        ConnectionInfo ci = new ConnectionInfo ();
+        ci.setAutoReconnect ( true );
+        ci.setHostName ( "localhost" );
+        ci.setPort ( 1202 );
+        
+        Connection c = new Connection ( ci );
+        c.connect ();
+        
+        OutputDefinition diOutput = new DataItemOutput ( c, "time", "time" );
+        OutputDefinition diOutput2 = new DataItemOutput ( c, "memory", "memory" );
+        
+        SimpleVariantIntegerConverter svic = new SimpleVariantIntegerConverter ();
+        svic.setDefaultValue ( 0L );
+        
+        Connector connector7 = new DisplaySynchronizedConnector ();
+        connector7.setOutput ( diOutput );
+        connector7.setInput ( svic.getInputByName ( "value" ) );
+        
+        SimpleVariantIntegerConverter svic2 = new SimpleVariantIntegerConverter ();
+        svic2.setDefaultValue ( 0L );
+        
+        Connector connector9 = new DisplaySynchronizedConnector ();
+        connector9.setOutput ( diOutput2 );
+        connector9.setInput ( svic2.getInputByName ( "value" ) );
+
+        FactorCalculator fc = new FactorCalculator ();
+        fc.setFactor ( 0.01 );
+        
+        ModuloCalculator mc = new ModuloCalculator ();
+        mc.setModulo ( 255L );
+        
+        Integer2DoubleConverter i2dc = new Integer2DoubleConverter ();
+        Connector connector12 = new PassThroughConnector ();
+        connector12.setOutput ( svic.getOutputByName ( "value" ) );
+        connector12.setInput ( i2dc.getInputByName ( "value" ) );
+        
+        Connector connector13 = new PassThroughConnector ();
+        connector13.setInput ( fc.getInputByName ( "value" ) );
+        connector13.setOutput ( i2dc.getOutputByName ( "value" ) );
+        
+        Double2IntegerConverter d2ic = new Double2IntegerConverter ();
+        
+        Connector connector11 = new PassThroughConnector ();
+        connector11.setOutput ( fc.getOutputByName ( "value" ) );
+        connector11.setInput ( d2ic.getInputByName ( "value" ) );
+        
+        Connector connector5 = new PassThroughConnector ();
+        connector5.setInput ( mc.getInputByName ( "value" ) );
+        connector5.setOutput ( d2ic.getOutputByName ( "value" ) );
+        
+        ModuloCalculator mc2 = new ModuloCalculator ();
+        mc2.setModulo ( 255L );
+        
+        Connector connector8 = new PassThroughConnector ();
+        connector8.setInput ( mc2.getInputByName ( "value" ) );
+        connector8.setOutput ( svic2.getOutputByName ( "value" ) );
+        
+        ColorComposer cc = new ColorComposer ();
+        
+        Connector connector4r = new PassThroughConnector ();
+        connector4r.setOutput ( mc.getOutputByName ( "value" ) );
+        connector4r.setInput ( cc.getInputByName ( "red" ) );
+        Connector connector4g = new PassThroughConnector ();
+        connector4g.setOutput ( mc2.getOutputByName ( "value" ) );
+        connector4g.setInput ( cc.getInputByName ( "green" ) );
+        
+        Connector connector10 = new PassThroughConnector ();
+        connector10.setOutput ( mc.getOutputByName ( "value" ) );
+        connector10.setInput ( rect.getInputByName ( "width" ) );
+        
+        Connector connector6 = new PassThroughConnector ();
+        connector6.setInput ( rect.getInputByName ( "color" ) );
+        connector6.setOutput ( cc.getOutputByName ( "color" ) );
+     
+        view.getObjects ().add ( rect );
+        setView ( view );
+        
+        boundsOutput.setValue ( 100 );
+    }
+    
+    @Override
+    public void createPartControl ( Composite parent )
+    {
+        _canvas = new Canvas ( parent, SWT.NONE );
+        _system = new LightweightSystem ( _canvas );
+
+        _rootFigure = new Figure ();
+        _rootFigure.setLayoutManager ( new XYLayout () );
+        _rootFigure.setBackgroundColor ( ColorConstants.white );
+        _rootFigure.setOpaque ( true );
+        _system.setContents ( _rootFigure );
+        
+        createObjects ();
+    }
+
+    protected void createObjects ()
+    {
+        if ( _view == null )
+            return;
+        
+        for ( DynamicObject object : _view.getObjects () )
+        {
+            if ( object instanceof DynamicUIObject )
+            {
+                IFigure figure = ( (DynamicUIObject)object ).createFigure ();
+                _rootFigure.add ( figure );
+            }
+        }
+    }
+
+    @Override
+    public void setFocus ()
+    {
+        _canvas.setFocus ();
+    }
+
+}

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<viewer:root
+  xmlns:common="http://openscada.org/Common"
+  xmlns:viewer="http://openscada.org/DA/Viewer"
+  xmlns:template="http://openscada.org/DA/Viewer/Template"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://openscada.org/DA/Viewer schema/Viewer.xsd http://openscada.org/Common http://schema.openscada.org/Common.xsd http://openscada.org/DA/Viewer/Template schema/TemplateObject.xsd"
+  >
+  
+	<factories>
+		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.RectangleFactory"/>
+		<object-factory id="item" class="org.openscada.da.client.viewer.model.impl.DataItemObjectFactory"/>
+		<object-factory id="colorcomposer" class="org.openscada.da.client.viewer.model.impl.converter.ColorComposerFactory"/>
+		<object-factory id="modulo" class="org.openscada.da.client.viewer.model.impl.converter.ModuloCalculatorFactory"/>
+		<object-factory id="factor" class="org.openscada.da.client.viewer.model.impl.converter.FactorCalculatorFactory"/>
+		<object-factory id="variantasinteger" class="org.openscada.da.client.viewer.model.impl.converter.SimpleVariantIntegerConverterFactory"/>
+		<object-factory id="variantasdouble" class="org.openscada.da.client.viewer.configurator.xml.XMLObjectFactory">
+			<arg class="org.openscada.da.client.viewer.model.impl.converter.SimpleVariantDoubleConverter"/>
+		</object-factory>
+		<object-factory id="d2i" class="org.openscada.da.client.viewer.configurator.xml.XMLObjectFactory">
+			<arg class="org.openscada.da.client.viewer.model.impl.converter.Double2IntegerConverter"/>
+		</object-factory>
+		<object-factory id="variant_cc" class="org.openscada.da.client.viewer.configurator.xml.XMLTemplateFactory">
+			<template:template id="variant_cc">
+				<objects>
+					<object type="colorcomposer" id="cc">
+						<property name="red">0</property>
+						<property name="green">0</property>
+						<property name="blue">0</property>
+					</object>
+					<object type="variantasinteger" id="vai_r"/>
+					<object type="variantasinteger" id="vai_g"/>
+					<object type="variantasinteger" id="vai_b"/>
+					<object type="modulo" id="mod_r"><property name="modulo">255</property></object>
+					<object type="modulo" id="mod_g"><property name="modulo">255</property></object>
+					<object type="modulo" id="mod_b"><property name="modulo">255</property></object>
+				</objects>
+				
+				<connectors>
+				
+					<connector type="default">
+						<output object="vai_r" name="value"/>
+						<input object="mod_r" name="value"/>
+					</connector>
+					<connector type="default">
+						<output object="mod_r" name="value"/>
+						<input object="cc" name="red"/>
+					</connector>
+					
+					<connector type="default">
+						<output object="vai_g" name="value"/>
+						<input object="mod_g" name="value"/>
+					</connector>
+					<connector type="default">
+						<output object="mod_g" name="value"/>
+						<input object="cc" name="green"/>
+					</connector>
+					
+					<connector type="default">
+						<output object="vai_b" name="value"/>
+						<input object="mod_b" name="value"/>
+					</connector>
+					<connector type="default">
+						<output object="mod_b" name="value"/>
+						<input object="cc" name="blue"/>
+					</connector>
+					
+				</connectors>
+				<outputs>
+					<output-export object="cc" name="color" export-name="color"/>
+				</outputs>
+				<inputs>
+					<input-export object="vai_r" name="value" export-name="red"/>
+					<input-export object="vai_g" name="value" export-name="green"/>
+					<input-export object="vai_b" name="value" export-name="blue"/>
+				</inputs>
+			</template:template>
+		</object-factory>
+		<connector-factory id="default" class="org.openscada.da.client.viewer.model.impl.PassThroughConnectorFactory"/>
+		<connector-factory id="display" class="org.openscada.da.client.viewer.model.impl.DisplaySynchronizedConnectorFactory"/>
+	</factories>
+	
+	<views>
+		<view id="view1">
+			<objects>
+				<constant id="int_zero">
+					<variant><int32>0</int32></variant>
+				</constant>
+				
+				<object id="fc1" type="factor">
+					<property name="factor">0.01</property>
+				</object>
+				<object id="vad1" type="variantasdouble"/>
+				<object id="d2i1" type="d2i"/>
+				<object id="mod1" type="modulo">
+					<property name="modulo">255</property>
+				</object>
+				<object id="item1" type="item">
+					<property name="item">time</property>
+					<property name="connection">net://localhost:1202</property>
+				</object>
+				<object id="item2" type="item">
+					<property name="item">memory</property>
+					<property name="connection">net://localhost:1202</property>
+				</object>
+				<object id="rect2" type="rectangle">
+					<property name="x">100</property>
+					<property name="y">100</property>
+					<property name="width">255</property>
+					<property name="height">100</property>
+				</object>
+
+				<object id="rect1" type="rectangle">
+					<property name="x">100</property>
+					<property name="y">100</property>
+					<property name="width">0</property>
+					<property name="height">100</property>
+				</object>
+				
+				<template-object template="variant_cc" id="cc1"/>
+			</objects>
+			
+			<connectors>
+				<connector type="display">
+					<output object="item1" name="value"/>
+					<input object="vad1" name="value"/>
+				</connector>
+				<connector type="default">
+					<output object="vad1" name="value"/>
+					<input object="fc1" name="value"/>
+				</connector>
+				<connector type="default">
+					<output object="fc1" name="value"/>
+					<input object="d2i1" name="value"/>
+				</connector>
+				<connector type="default">
+					<output object="d2i1" name="value"/>
+					<input object="mod1" name="value"/>
+				</connector>
+				<connector type="default">
+					<output object="mod1" name="value"/>
+					<input object="rect1" name="width"/>
+				</connector>
+				<connector type="default">
+					<output object="mod1" name="value"/>
+					<input object="cc1" name="red"/>
+				</connector>
+				
+				<connector type="default">
+					<output object="int_zero" name="value"/>
+					<input object="cc1" name="blue"/>
+				</connector>
+				
+				<connector type="display">
+					<output object="item2" name="value"/>
+					<input object="cc1" name="green"/>
+				</connector>
+				
+				<connector type="default">
+					<output object="cc1" name="color"/>
+					<input object="rect1" name="color"/>
+				</connector>
+			</connectors>
+		</view>
+	</views>
+</viewer:root>
