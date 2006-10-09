@@ -22,7 +22,7 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="init, build, package" description="--> The OpenSCADA RCP Client">
+    <target name="default" depends="init, build, package, win32installer" description="--> The OpenSCADA RCP Client">
         
     </target>
 	
@@ -70,6 +70,10 @@
     	<move tofile="${upload.base}/bin/ostc/${buildId}-macosx.carbon.tar.gz" file="${upload.base}/bin/ostc/${buildId}-macosx.carbon.ppc.tar.gz"/>
     </target>
 
-
+	<target name="win32installer" depends="package">
+		<exec command="makensis">
+			<arg value="-Dversion=${version}-${release}"/>
+		</exec>
+	</target>
 
 </project>
