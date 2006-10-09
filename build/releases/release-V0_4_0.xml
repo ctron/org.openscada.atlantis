@@ -9,7 +9,8 @@
 	<property name="api.href.base" value="http://openscada.org/download/atlantis/0.4.0/docs/api/" />
 	
 	<target name="all" depends="main"/>
-		<target name="init">
+
+	<target name="init">
 		<tstamp/>
 	</target>
 		
