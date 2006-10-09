@@ -44,23 +44,7 @@ public class Variant
      */
     public Variant ( Object object )
     {
-        if ( object == null )
-            return;
-        
-        if ( object instanceof Long )
-            setValue ( (Long)object );
-        else if ( object instanceof Integer )
-            setValue ( (Integer)object );
-        else if ( object instanceof String )
-            setValue ( (String)object );
-        else if ( object instanceof Boolean )
-            setValue ( (Boolean)object );
-        else if ( object instanceof Double )
-            setValue ( (Double)object );
-        else if ( object instanceof Float )
-            setValue ( (Float)object );
-        else
-            setValue ( object.toString () );
+        setValue ( object );
     }
 
     public Variant ( boolean value )
@@ -94,7 +78,7 @@ public class Variant
      */
     public Variant ( Variant arg0 )
     {
-        this ( (Object)arg0 );
+        this ( arg0._value );
     }
 
     public boolean isNull ()
@@ -102,6 +86,28 @@ public class Variant
         return _value == null;
     }
 
+    public void setValue ( Object value )
+    {
+        if ( value == null )
+            _value = null;
+        else if ( value instanceof Variant )
+            setValue ( ((Variant)value)._value );
+        else if ( value instanceof Long )
+            setValue ( ((Long)value).longValue () );
+        else if ( value instanceof Integer )
+            setValue ( ((Integer)value).intValue () );
+        else if ( value instanceof String )
+            setValue ( (String)value );
+        else if ( value instanceof Boolean )
+            setValue ( ((Boolean)value).booleanValue () );
+        else if ( value instanceof Double )
+            setValue ( ((Double)value).doubleValue () );
+        else if ( value instanceof Float )
+            setValue ( ((Float)value).doubleValue () );
+        else
+            setValue ( value.toString () );
+    }
+    
     public void setValue ( boolean value )
     {
         _value = new Boolean ( value );
