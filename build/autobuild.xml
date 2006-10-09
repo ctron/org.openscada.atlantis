@@ -1,23 +1,15 @@
 <?xml version="1.0"?>
 <project name="openscada_da_autobuild" default="all">
 	
-
-	<target name="all" depends="main,rcp"/>
-
-	<target name="init">
+	<target name="all">
 		<tstamp/>
 		<property name="release" value="-${DSTAMP}-nightly"/>
 		<property name="buildType" value="N"/>
 		<property name="buildId" value="Nightly-${DSTAMP}"/>
 		<property name="upload.base" value="/var/vhosts/openscada/download/atlantis/autobuild/${DSTAMP}/" />
 		<property name="api.href.base" value="http://openscada.org/download/atlantis/autobuild/${DSTAMP}/docs/api/" />
-	</target>
 		
-	<target name="main" depends="init">
 		<ant antfile="build.xml" dir="."/>
-	</target>
-	
-	<target name="rcp" depends="init">
 		<ant antfile="build.xml" dir="rcp"/>
 	</target>
 	
