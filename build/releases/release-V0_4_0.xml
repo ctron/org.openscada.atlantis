@@ -3,7 +3,7 @@
 	
 	<target name="all">
 		<tstamp/>
-		<ant antfile="build.xml">
+		<ant antfile="build.xml" dir="..">
 			<property name="release" value=""/>
 			<property name="buildType" value="R"/>
 			<property name="buildId" value="Release-0.4.0"/>
