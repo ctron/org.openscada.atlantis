@@ -29,7 +29,7 @@
 
 
 	<complexType name="VariantType">
-		<choice>
+		<choice minOccurs="1" maxOccurs="1">
 			<element name="null" type="common:VariantNullType"></element>
 			<element name="string" type="string"></element>
 			<element name="int32" type="common:VariantInt32Type"></element>
