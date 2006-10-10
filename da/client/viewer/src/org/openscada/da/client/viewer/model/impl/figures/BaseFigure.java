@@ -1,52 +1,29 @@
-package org.openscada.da.client.viewer.model.impl;
+package org.openscada.da.client.viewer.model.impl.figures;
 
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.openscada.da.client.viewer.model.DynamicUIObject;
+import org.openscada.da.client.viewer.model.impl.AliasedPropertyInput;
+import org.openscada.da.client.viewer.model.impl.BaseDynamicObject;
+import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
-public class Rectangle extends BaseDynamicObject implements DynamicUIObject
+public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIObject
 {
-
     private Color _color = null;
     private org.eclipse.draw2d.geometry.Rectangle _bounds = new org.eclipse.draw2d.geometry.Rectangle ( 0, 0, 0, 0 );
-    
-    private RectangleFigure _rectangle = null;
-    
-    public Rectangle ()
+
+    public BaseFigure ()
     {
-        addInput ( new AliasedPropertyInput ( this, "color", "color" ) );
+        super ();
+        addInput ( new PropertyInput ( this, "color" ) );
         addInput ( new AliasedPropertyInput ( this, "width", "width" ) );
         addInput ( new AliasedPropertyInput ( this, "height", "height" ) );
         addInput ( new AliasedPropertyInput ( this, "x", "x" ) );
         addInput ( new AliasedPropertyInput ( this, "y", "y" ) );
     }
     
-    public IFigure createFigure ()
-    {
-        _rectangle = new RectangleFigure ();
-        update ();
-        return _rectangle;
-    }
-
-    public RGB getColor ()
-    {
-        return _color.getRGB ();
-    }
-
-    public void setColor ( RGB color )
-    {
-        _color = new Color ( Display.getCurrent (), color );
-        update ();
-    }
-
-    public void dispose ()
-    {
-        _rectangle = null;
-    }
-
     public void setHeight ( Long height )
     {
         if ( height != null )
@@ -74,18 +51,40 @@ public class Rectangle extends BaseDynamicObject implements DynamicUIObject
             _bounds.y = y.intValue ();
         update ();
     }
-    
-    protected void update ()
+
+    public RGB getColor ()
     {
-        if ( _rectangle == null )
+        return _color.getRGB ();
+    }
+
+    public void setColor ( RGB color )
+    {
+        _color = new Color ( Display.getCurrent (), color );
+        update ();
+    }
+
+    public org.eclipse.draw2d.geometry.Rectangle getBounds ()
+    {
+        return _bounds;
+    }
+
+    public void setBounds ( org.eclipse.draw2d.geometry.Rectangle bounds )
+    {
+        _bounds = bounds;
+    }
+    
+    protected void updateFigure ( IFigure figure )
+    {
+        if ( figure == null )
             return;
         
-        _rectangle.setBounds ( _bounds );
+        figure.setBounds ( _bounds );
         
         if ( _color != null )
         {
-            _rectangle.setBackgroundColor ( _color );
+            figure.setBackgroundColor ( _color );
         }
     }
-
+    
+    protected abstract void update ();
 }

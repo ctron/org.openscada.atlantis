@@ -23,19 +23,29 @@ public class ColorComposer extends BaseDynamicObject
     
     public void setRed ( Long value )
     {
-        _color.red = value.intValue ();
+        if ( value == null )
+            _color.red = 0;
+        else
+            _color.red = value.intValue ();
         update ();
     }
     
     public void setGreen ( Long value )
     {
-        _color.green = value.intValue ();
+        if ( value == null )
+            _color.green = 0;
+        else
+            _color.green = value.intValue ();
         update ();
     }
     
     public void setBlue ( Long value )
     {
-        _color.blue = value.intValue ();
+        if ( value != null )
+            _color.blue = 0;
+        else
+            _color.blue = value.intValue ();
+
         update ();
     }
     

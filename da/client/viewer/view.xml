@@ -9,7 +9,8 @@
   >
   
 	<factories>
-		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.RectangleFactory"/>
+		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.figures.RectangleFactory"/>
+		<object-factory id="triangle" class="org.openscada.da.client.viewer.model.impl.figures.TriangleFactory"/>
 		<object-factory id="item" class="org.openscada.da.client.viewer.model.impl.DataItemObjectFactory"/>
 		<object-factory id="colorcomposer" class="org.openscada.da.client.viewer.model.impl.converter.ColorComposerFactory"/>
 		<object-factory id="modulo" class="org.openscada.da.client.viewer.model.impl.converter.ModuloCalculatorFactory"/>
@@ -92,6 +93,7 @@
 					<property name="factor">0.01</property>
 				</object>
 				<object id="vad1" type="variantasdouble"/>
+				<object id="vai1" type="variantasinteger"/>
 				<object id="d2i1" type="d2i"/>
 				<object id="mod1" type="modulo">
 					<property name="modulo">255</property>
@@ -116,6 +118,13 @@
 					<property name="y">100</property>
 					<property name="width">0</property>
 					<property name="height">100</property>
+				</object>
+				
+				<object id="tri1" type="triangle">
+					<property name="x">50</property>
+					<property name="y">50</property>
+					<property name="height">25</property>
+					<property name="width">25</property>
 				</object>
 				
 				<template-object template="variant_cc" id="cc1"/>
@@ -161,6 +170,17 @@
 					<output object="cc1" name="color"/>
 					<input object="rect1" name="color"/>
 				</connector>
+				
+				<connector type="display">
+					<output object="item2" name="value"/>
+					<input object="vai1" name="value"/>
+				</connector>
+
+				<connector type="default">
+					<output object="vai1" name="value"/>
+					<input object="tri1" name="direction"/>
+				</connector>
+				
 			</connectors>
 		</view>
 	</views>

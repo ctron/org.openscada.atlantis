@@ -27,13 +27,13 @@ import org.openscada.da.client.viewer.model.impl.DataItemOutput;
 import org.openscada.da.client.viewer.model.impl.DisplaySynchronizedConnector;
 import org.openscada.da.client.viewer.model.impl.IntegerSetterOutput;
 import org.openscada.da.client.viewer.model.impl.PassThroughConnector;
-import org.openscada.da.client.viewer.model.impl.Rectangle;
 import org.openscada.da.client.viewer.model.impl.converter.ColorComposer;
 import org.openscada.da.client.viewer.model.impl.converter.Double2IntegerConverter;
 import org.openscada.da.client.viewer.model.impl.converter.FactorCalculator;
 import org.openscada.da.client.viewer.model.impl.converter.Integer2DoubleConverter;
 import org.openscada.da.client.viewer.model.impl.converter.ModuloCalculator;
 import org.openscada.da.client.viewer.model.impl.converter.SimpleVariantIntegerConverter;
+import org.openscada.da.client.viewer.model.impl.figures.Rectangle;
 
 public class ProcessView extends ViewPart
 {
