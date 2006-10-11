@@ -22,6 +22,41 @@
 		<object-factory id="d2i" class="org.openscada.da.client.viewer.configurator.xml.XMLObjectFactory">
 			<arg class="org.openscada.da.client.viewer.model.impl.converter.Double2IntegerConverter"/>
 		</object-factory>
+		
+		<object-factory id="mov" class="org.openscada.da.client.viewer.configurator.xml.XMLTemplateFactory">
+			<template:template id="mov" gui="true">
+				<objects>
+					<object type="rectangle" id="rect1">
+						<property name="x">0</property>
+						<property name="y">0</property>
+						<property name="width">20</property>
+						<property name="height">20</property>
+					</object>
+					<object type="triangle" id="tri1">
+						<property name="x">0</property>
+						<property name="y">0</property>
+						<property name="width">10</property>
+						<property name="width">20</property>
+						<property name="direction">2</property>
+					</object>
+					<object type="triangle" id="tri2">
+						<property name="x">10</property>
+						<property name="y">0</property>
+						<property name="width">10</property>
+						<property name="width">20</property>
+						<property name="direction">8</property>
+					</object>
+
+				</objects>
+				<connectors>
+				</connectors>
+				<outputs>
+				</outputs>
+				<inputs>
+				</inputs>
+			</template:template>
+		</object-factory>
+		
 		<object-factory id="variant_cc" class="org.openscada.da.client.viewer.configurator.xml.XMLTemplateFactory">
 			<template:template id="variant_cc">
 				<objects>
@@ -125,7 +160,10 @@
 					<property name="y">50</property>
 					<property name="height">25</property>
 					<property name="width">25</property>
+					<property name="color">#00FF00</property>
 				</object>
+				
+				<template-object template="mov" id="mov1"/>
 				
 				<template-object template="variant_cc" id="cc1"/>
 			</objects>

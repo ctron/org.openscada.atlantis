@@ -2,11 +2,11 @@ package org.openscada.da.client.viewer.model.impl.figures;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.openscada.da.client.viewer.model.DynamicUIObject;
 import org.openscada.da.client.viewer.model.impl.AliasedPropertyInput;
 import org.openscada.da.client.viewer.model.impl.BaseDynamicObject;
+import org.openscada.da.client.viewer.model.impl.Helper;
 import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
 public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIObject
@@ -52,14 +52,14 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
         update ();
     }
 
-    public RGB getColor ()
+    public org.openscada.da.client.viewer.model.types.Color getColor ()
     {
-        return _color.getRGB ();
+        return Helper.colorFromRGB ( _color.getRGB () );
     }
 
-    public void setColor ( RGB color )
+    public void setColor ( org.openscada.da.client.viewer.model.types.Color color )
     {
-        _color = new Color ( Display.getCurrent (), color );
+        _color = new Color ( Display.getCurrent (), Helper.colorToRGB ( color ) );
         update ();
     }
 

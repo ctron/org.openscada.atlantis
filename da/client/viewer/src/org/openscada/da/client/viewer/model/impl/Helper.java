@@ -7,6 +7,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.openscada.common.VariantType;
 import org.openscada.core.Variant;
 import org.openscada.da.client.viewer.model.Type;
+import org.openscada.da.client.viewer.model.types.Color;
 
 public class Helper
 {
@@ -25,7 +26,7 @@ public class Helper
             set.add ( Type.BOOLEAN );
         if ( clazz.isAssignableFrom ( Double.class ) )
             set.add ( Type.DOUBLE );
-        if ( clazz.isAssignableFrom ( RGB.class ) )
+        if ( clazz.isAssignableFrom ( Color.class ) )
             set.add ( Type.COLOR );
         if ( clazz.isAssignableFrom ( Long.class ) )
             set.add ( Type.INTEGER );
@@ -80,5 +81,15 @@ public class Helper
         {
             return null;
         }
+    }
+    
+    public static RGB colorToRGB ( Color color )
+    {
+        return new RGB ( color.getRed (), color.getGreen (), color.getBlue () ); 
+    }
+    
+    public static Color colorFromRGB ( RGB rgb )
+    {
+        return new Color ( rgb.red, rgb.green, rgb.blue );
     }
 }

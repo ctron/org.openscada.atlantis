@@ -19,7 +19,10 @@ public class Double2IntegerConverter extends BaseDynamicObject
     
     public void setValue ( Double value )
     {
-        _value = value.doubleValue ();
+        if ( value == null )
+            _value = null;
+        else
+            _value = value.doubleValue ();
         update ();
     }
 
