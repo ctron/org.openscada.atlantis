@@ -6,9 +6,9 @@ import org.openscada.da.client.viewer.model.ObjectFactory;
 public class RectangleFactory implements ObjectFactory
 {
 
-    public DynamicObject create ()
+    public DynamicObject create ( String id )
     {
-        return new Rectangle ();
+        return new Rectangle ( id );
     }
 
 }

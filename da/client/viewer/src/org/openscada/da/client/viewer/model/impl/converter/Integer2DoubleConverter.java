@@ -10,8 +10,10 @@ public class Integer2DoubleConverter extends BaseDynamicObject
 
     protected DoubleSetterOutput _output = new DoubleSetterOutput ( "value" );
     
-    public Integer2DoubleConverter ()
+    public Integer2DoubleConverter ( String id )
     {
+        super ( id );
+        
         addInput ( new PropertyInput ( this, "value" ) );
         
         addOutput ( _output );

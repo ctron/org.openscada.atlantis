@@ -11,8 +11,10 @@ public class FactorCalculator extends BaseDynamicObject
     
     protected DoubleSetterOutput _output = new DoubleSetterOutput ( "value" );
     
-    public FactorCalculator ()
+    public FactorCalculator ( String id )
     {
+        super ( id );
+        
         addInput ( new PropertyInput ( this, "value" ) );
         addInput ( new PropertyInput ( this, "factor" ) );
         

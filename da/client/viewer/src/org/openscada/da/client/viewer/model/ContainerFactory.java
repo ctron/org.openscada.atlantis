@@ -2,7 +2,7 @@ package org.openscada.da.client.viewer.model;
 
 import org.openscada.da.client.viewer.configurator.ConfigurationError;
 
-public interface ObjectFactory
+public interface ContainerFactory
 {
-    public abstract DynamicObject create ( String id ) throws ConfigurationError; 
+    public abstract Container create ( String id ) throws ConfigurationError;
 }

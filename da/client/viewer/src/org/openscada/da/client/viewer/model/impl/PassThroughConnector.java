@@ -1,5 +1,6 @@
 package org.openscada.da.client.viewer.model.impl;
 
+import org.apache.log4j.Logger;
 import org.openscada.da.client.viewer.model.AlreadyConnectedException;
 import org.openscada.da.client.viewer.model.Connector;
 import org.openscada.da.client.viewer.model.InputDefinition;
@@ -9,6 +10,8 @@ import org.openscada.da.client.viewer.model.Type;
 
 public class PassThroughConnector implements Connector, OutputListener
 {
+    private static Logger _log = Logger.getLogger ( PassThroughConnector.class );
+    
     private InputDefinition _input = null;
     private OutputDefinition _output = null;
     
@@ -51,6 +54,8 @@ public class PassThroughConnector implements Connector, OutputListener
 
     public void update ( Type type, Object value )
     {
+        _log.debug ( String.format ( "Passing on value: %s/%s", type.name (), value ) );
+        
         _lastType = type;
         _lastValue = value;
         if ( _input != null )

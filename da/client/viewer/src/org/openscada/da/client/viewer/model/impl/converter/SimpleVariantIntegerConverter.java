@@ -11,9 +11,9 @@ public class SimpleVariantIntegerConverter extends BaseDynamicObject
     private Variant _value = null;
     private long _defaultValue = 0;
     
-    public SimpleVariantIntegerConverter ()
+    public SimpleVariantIntegerConverter ( String id )
     {
-        super ();
+        super ( id );
         
         addOutput ( _output );
         addInput ( new PropertyInput ( this, "value" ) );

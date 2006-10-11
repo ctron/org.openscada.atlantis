@@ -1,4 +1,4 @@
-package org.openscada.da.client.viewer.configurator.xml;
+package org.openscada.da.client.viewer.model.impl;
 
 import java.util.EnumSet;
 
@@ -6,12 +6,12 @@ import org.openscada.da.client.viewer.model.OutputDefinition;
 import org.openscada.da.client.viewer.model.OutputListener;
 import org.openscada.da.client.viewer.model.Type;
 
-public class XMLOutputExport implements OutputDefinition
+public class OutputExport implements OutputDefinition
 {
     private OutputDefinition _output = null;
     private String _alias = null;
     
-    public XMLOutputExport ( OutputDefinition output, String alias )
+    public OutputExport ( OutputDefinition output, String alias )
     {
         _output = output;
         _alias = alias;

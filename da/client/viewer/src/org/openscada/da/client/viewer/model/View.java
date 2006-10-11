@@ -1,9 +1,7 @@
 package org.openscada.da.client.viewer.model;
 
-import java.util.List;
+import java.util.Collection;
 
-public interface View
+public interface View extends Container
 {
-    public abstract List<DynamicObject> getObjects ();
-    public abstract List<Connector> getConnectors ();
 }

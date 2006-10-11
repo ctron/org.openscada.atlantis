@@ -1,6 +1,5 @@
 package org.openscada.da.client.viewer.model.impl.converter;
 
-import org.eclipse.swt.graphics.RGB;
 import org.openscada.da.client.viewer.model.impl.BaseDynamicObject;
 import org.openscada.da.client.viewer.model.impl.ColorSetterOutput;
 import org.openscada.da.client.viewer.model.impl.PropertyInput;
@@ -11,9 +10,9 @@ public class ColorComposer extends BaseDynamicObject
     private Color _color = new Color ( 0, 0, 0 );
     private ColorSetterOutput _output = new ColorSetterOutput ( "color" );
     
-    public ColorComposer ()
+    public ColorComposer ( String id )
     {
-        super ();
+        super ( id );
         
         addInput ( new PropertyInput ( this, "red" ) );
         addInput ( new PropertyInput ( this, "green" ) );

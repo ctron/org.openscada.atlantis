@@ -17,18 +17,22 @@ import org.openscada.da.client.viewer.configurator.Configurator;
 import org.openscada.da.client.viewer.model.AlreadyConnectedException;
 import org.openscada.da.client.viewer.model.Connector;
 import org.openscada.da.client.viewer.model.ConnectorFactory;
+import org.openscada.da.client.viewer.model.Container;
+import org.openscada.da.client.viewer.model.ContainerFactory;
 import org.openscada.da.client.viewer.model.DynamicObject;
 import org.openscada.da.client.viewer.model.InputDefinition;
 import org.openscada.da.client.viewer.model.ObjectFactory;
 import org.openscada.da.client.viewer.model.OutputDefinition;
 import org.openscada.da.client.viewer.model.Type;
+import org.openscada.da.client.viewer.model.View;
 import org.openscada.da.client.viewer.model.impl.ConstantObject;
 import org.openscada.da.client.viewer.model.impl.ConstantOutput;
 import org.openscada.da.client.viewer.model.impl.Helper;
-import org.openscada.da.client.viewer.model.impl.View;
 import org.openscada.da.viewer.ConnectorFactoryType;
 import org.openscada.da.viewer.ConnectorType;
 import org.openscada.da.viewer.ConstantType;
+import org.openscada.da.viewer.ContainerFactoryType;
+import org.openscada.da.viewer.ContainerType;
 import org.openscada.da.viewer.FactoriesType;
 import org.openscada.da.viewer.InputType;
 import org.openscada.da.viewer.ObjectFactoryType;
@@ -58,12 +62,12 @@ public class XMLConfigurator implements Configurator
         this ( RootDocument.Factory.parse ( stream ) );
     }
     
-    public List<org.openscada.da.client.viewer.model.View> configure () throws ConfigurationError
+    public List<View> configure () throws ConfigurationError
     {
         XMLConfigurationContext ctx = new XMLConfigurationContext ();
         ctx.setDocument ( _document );
         
-        List<org.openscada.da.client.viewer.model.View> views = new LinkedList<org.openscada.da.client.viewer.model.View> ();
+        List<View> views = new LinkedList<View> ();
         
         configureFactories ( ctx, _document.getRoot ().getFactories () );
         configureViews ( ctx, _document.getRoot ().getViews (), views );
@@ -73,6 +77,10 @@ public class XMLConfigurator implements Configurator
 
     public static void configureFactories ( XMLConfigurationContext ctx, FactoriesType factories ) throws ConfigurationError
     {
+        for ( ContainerFactoryType factory : factories.getContainerFactoryList () )
+        {
+            createContainerFactory ( ctx, factory );
+        }
         for ( ConnectorFactoryType factory : factories.getConnectorFactoryList () )
         {
             createConnectorFactory ( ctx, factory );
@@ -81,6 +89,36 @@ public class XMLConfigurator implements Configurator
         {
             createObjectFactory ( ctx, factory );
         }
+    }
+
+    private static void createContainerFactory ( XMLConfigurationContext ctx, ContainerFactoryType factory ) throws ConfigurationError
+    {
+        try
+        {
+            Class factoryClass = Class.forName ( factory.getClass1 () );
+            
+            Object factoryObject = factoryClass.newInstance ();
+            
+            if ( ! ( factoryObject instanceof ContainerFactory ) )
+                throw new ConfigurationError ( "Class does not implement ContainerFactory interface" );
+            
+            ContainerFactory containerFactory = (ContainerFactory)factoryObject;
+            checkCallConfigurationHook ( ctx, containerFactory, factory.getDomNode () );
+            
+            ctx.getContainerFactories ().put ( factory.getId (), containerFactory );
+                
+        }
+        catch ( ClassNotFoundException e )
+        {
+            throw new ConfigurationError ( "Unable to load class", e );
+        }
+        catch ( InstantiationException e )
+        {
+            throw new ConfigurationError ( "Unable to instatiate connector factory class", e );
+        }
+        catch ( IllegalAccessException e )
+        {
+            throw new ConfigurationError ( "No access to instatiate connector factory class", e );        }
     }
 
     public static void createConnectorFactory ( XMLConfigurationContext ctx, ConnectorFactoryType factory ) throws ConfigurationError
@@ -144,60 +182,76 @@ public class XMLConfigurator implements Configurator
             throw new ConfigurationError ( "No access to instatiate object factory class", e );        }
     }
 
-    public static void configureViews ( XMLConfigurationContext ctx, ViewsType views, List<org.openscada.da.client.viewer.model.View> viewList ) throws ConfigurationError
+    public static void configureViews ( XMLConfigurationContext ctx, ViewsType views, List<View> viewList ) throws ConfigurationError
     {
         for ( ViewType view : views.getViewList () )
         {
-            viewList.add ( createView ( new XMLViewContext ( ctx ), view ) );
+            Container container = createContainer ( new XMLViewContext ( ctx ), view.getId (), view );
+            if ( container instanceof View )
+            {
+                viewList.add ( (View)container );
+            }
         }
     }
 
-    public static View createView ( XMLViewContext ctx, ViewType view ) throws ConfigurationError
+    public static Container createContainer ( XMLViewContext ctx, String id, ContainerType container ) throws ConfigurationError
     {
-        View viewObject = new View ();
+        Container containerObject = null;
+
+        ContainerFactory containerFactory = ctx.getConfigurationContext ().getContainerFactories ().get ( container.getType () );
+        if ( containerFactory == null )
+            throw new ConfigurationError ( String.format ( "Unable to find container factory %s", container.getType () ) );
         
-        for ( ConstantType constant : view.getObjects ().getConstantList () )
+        containerObject = containerFactory.create ( id );
+        
+        for ( PropertyType property : container.getPropertyList () )
         {
-            createConstant ( ctx, constant, viewObject );
+            setObjectProperty ( containerObject, property.getName ().toString (), property.getStringValue () );
         }
         
-        for ( ObjectType object : view.getObjects ().getObjectList () )
+        for ( ConstantType constant : container.getObjects ().getConstantList () )
         {
-            createObject ( ctx, object, viewObject );
+            createConstant ( ctx, constant, containerObject );
         }
         
-        for ( TemplateObjectType template : view.getObjects ().getTemplateObjectList () )
+        for ( ObjectType object : container.getObjects ().getObjectList () )
         {
-            createTemplateObject ( ctx, template, viewObject );
+            createObject ( ctx, object, containerObject );
         }
         
-        for ( ConnectorType connector : view.getConnectors ().getConnectorList () )
+        for ( TemplateObjectType template : container.getObjects ().getTemplateObjectList () )
         {
-            createConnector ( ctx, connector, viewObject );
+            createTemplateObject ( ctx, template, containerObject );
         }
-        return viewObject;
+        
+        for ( ConnectorType connector : container.getConnectors ().getConnectorList () )
+        {
+            createConnector ( ctx, connector, containerObject );
+        }
+       
+        return containerObject;
     }
 
-    public static void createTemplateObject ( XMLViewContext ctx, TemplateObjectType template, View viewObject ) throws ConfigurationError
+    public static void createTemplateObject ( XMLViewContext ctx, TemplateObjectType template, Container viewObject ) throws ConfigurationError
     {
         ObjectFactory factory = ctx.getConfigurationContext ().getObjectFactories ().get ( template.getTemplate () );
         
         if ( factory == null )
             throw new ConfigurationError ( String.format ( "Unable to find template object factory %s", template.getTemplate () ) );
         
-        DynamicObject dynamicObject = factory.create ();
+        DynamicObject dynamicObject = factory.create ( template.getId () );
         
         if ( dynamicObject == null )
         {
             throw new ConfigurationError ( String.format ( "Unable to create template object %s", template.getTemplate () ) );
         }
         
-        viewObject.getObjects ().add ( dynamicObject );
+        viewObject.add ( dynamicObject );
         ctx.getObjects ().put ( template.getId (), dynamicObject );
         _log.debug ( String.format ( "Created object (template) %s", template.getId () ) );
     }
 
-    public static void createConstant ( XMLViewContext ctx, ConstantType constant, View viewObject )
+    public static void createConstant ( XMLViewContext ctx, ConstantType constant, Container viewObject )
     {
         ConstantOutput co = new ConstantOutput ( "value" );
         if ( constant.getNull () != null )
@@ -229,42 +283,42 @@ public class XMLConfigurator implements Configurator
             _log.warn ( "Unknown constant type! Setting null!" );
             co.setValue ( Type.NULL, null );
         }
-        ConstantObject constantObject = new ConstantObject ( co );
-        viewObject.getObjects ().add ( constantObject );
+        ConstantObject constantObject = new ConstantObject ( constant.getId (), co );
+        viewObject.add ( constantObject );
         ctx.getObjects ().put ( constant.getId (), constantObject );
         _log.debug ( String.format ( "Created object (constant) %s", constant.getId () ) );
     }
 
-    public static void createObject ( XMLViewContext ctx, ObjectType object, View viewObject ) throws ConfigurationError
+    public static void createObject ( XMLViewContext ctx, ObjectType object, Container viewObject ) throws ConfigurationError
     {
         ObjectFactory factory = ctx.getConfigurationContext ().getObjectFactories ().get ( object.getType () );
         if ( factory == null )
             throw new ConfigurationError ( String.format ( "Failed to create object since object type %s is unknown", object.getType () ) );
         
-        DynamicObject dynamicObject = factory.create ();
+        DynamicObject dynamicObject = factory.create ( object.getId () );
         
         for ( PropertyType property : object.getPropertyList () )
         {
             setObjectProperty ( dynamicObject, property.getName ().toString (), property.getStringValue () );
         }
         
-        viewObject.getObjects ().add ( dynamicObject );
+        viewObject.add ( dynamicObject );
         ctx.getObjects ().put ( object.getId (), dynamicObject );
         _log.debug ( String.format ( "Created object %s", object.getId () ) );
     }
 
-    public static void setObjectProperty ( DynamicObject dynamicObject, String name, String stringValue ) throws ConfigurationError
+    public static void setObjectProperty ( Object object, String name, String stringValue ) throws ConfigurationError
     {
         try
         {
-            BeanInfo beanInfo = Introspector.getBeanInfo ( dynamicObject.getClass () );
+            BeanInfo beanInfo = Introspector.getBeanInfo ( object.getClass () );
             for ( PropertyDescriptor pd  : beanInfo.getPropertyDescriptors () )
             {
                 if ( pd.getName ().equals ( name ) )
                 {
                     PropertyEditor pe = PropertyEditorManager.findEditor ( pd.getPropertyType () );
                     pe.setAsText ( stringValue );
-                    pd.getWriteMethod ().invoke ( dynamicObject, new Object[] { pe.getValue () } );
+                    pd.getWriteMethod ().invoke ( object, new Object[] { pe.getValue () } );
                 }
             }
         }
@@ -274,7 +328,7 @@ public class XMLConfigurator implements Configurator
         }
     }
 
-    public static void createConnector ( XMLViewContext ctx, ConnectorType connector, View viewObject ) throws ConfigurationError
+    public static void createConnector ( XMLViewContext ctx, ConnectorType connector, Container viewObject ) throws ConfigurationError
     {
         Connector connectorObject = ctx.getConfigurationContext ().getConnectorFactories ().get ( connector.getType () ).create ();
         
@@ -307,7 +361,7 @@ public class XMLConfigurator implements Configurator
             throw new ConfigurationError ( String.format ( "Unable to find output: %s/%s Input: %s/%s", output.getObject (), output.getName (), input.getObject (), input.getName () ) );
         connectorObject.setOutput ( outputDef );
         
-        viewObject.getConnectors ().add ( connectorObject );
+        viewObject.add ( connectorObject );
     }
 
     private static void checkCallConfigurationHook ( XMLConfigurationContext ctx, Object object, Node node ) throws ConfigurationError

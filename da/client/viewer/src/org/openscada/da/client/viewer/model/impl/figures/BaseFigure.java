@@ -14,9 +14,9 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
     private Color _color = null;
     private org.eclipse.draw2d.geometry.Rectangle _bounds = new org.eclipse.draw2d.geometry.Rectangle ( 0, 0, 0, 0 );
 
-    public BaseFigure ()
+    public BaseFigure ( String id )
     {
-        super ();
+        super ( id );
         addInput ( new PropertyInput ( this, "color" ) );
         addInput ( new AliasedPropertyInput ( this, "width", "width" ) );
         addInput ( new AliasedPropertyInput ( this, "height", "height" ) );

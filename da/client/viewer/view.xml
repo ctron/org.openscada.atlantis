@@ -9,13 +9,25 @@
   >
   
 	<factories>
+		<container-factory id="figure" class="org.openscada.da.client.viewer.model.impl.containers.FigureContainerFactory"/>
+		<container-factory id="view" class="org.openscada.da.client.viewer.model.impl.containers.BasicViewFactory"/>
+		<container-factory id="hidden" class="org.openscada.da.client.viewer.model.impl.containers.HiddenContainerFactory"/>
+		
 		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.figures.RectangleFactory"/>
 		<object-factory id="triangle" class="org.openscada.da.client.viewer.model.impl.figures.TriangleFactory"/>
 		<object-factory id="item" class="org.openscada.da.client.viewer.model.impl.DataItemObjectFactory"/>
-		<object-factory id="colorcomposer" class="org.openscada.da.client.viewer.model.impl.converter.ColorComposerFactory"/>
-		<object-factory id="modulo" class="org.openscada.da.client.viewer.model.impl.converter.ModuloCalculatorFactory"/>
-		<object-factory id="factor" class="org.openscada.da.client.viewer.model.impl.converter.FactorCalculatorFactory"/>
-		<object-factory id="variantasinteger" class="org.openscada.da.client.viewer.model.impl.converter.SimpleVariantIntegerConverterFactory"/>
+		<object-factory id="colorcomposer" class="org.openscada.da.client.viewer.configurator.xml.XMLObjectFactory">
+			<arg class="org.openscada.da.client.viewer.model.impl.converter.ColorComposer"/>
+		</object-factory>
+		<object-factory id="modulo" class="org.openscada.da.client.viewer.configurator.xml.XMLObjectFactory">
+			<arg class="org.openscada.da.client.viewer.model.impl.converter.ModuloCalculator"/>
+		</object-factory>
+		<object-factory id="factor" class="org.openscada.da.client.viewer.configurator.xml.XMLObjectFactory">
+			<arg class="org.openscada.da.client.viewer.model.impl.converter.FactorCalculator"/>
+		</object-factory>
+		<object-factory id="variantasinteger" class="org.openscada.da.client.viewer.configurator.xml.XMLObjectFactory">
+			<arg class="org.openscada.da.client.viewer.model.impl.converter.SimpleVariantIntegerConverter"/>
+		</object-factory>
 		<object-factory id="variantasdouble" class="org.openscada.da.client.viewer.configurator.xml.XMLObjectFactory">
 			<arg class="org.openscada.da.client.viewer.model.impl.converter.SimpleVariantDoubleConverter"/>
 		</object-factory>
@@ -24,26 +36,29 @@
 		</object-factory>
 		
 		<object-factory id="mov" class="org.openscada.da.client.viewer.configurator.xml.XMLTemplateFactory">
-			<template:template id="mov" gui="true">
+			<template:template id="mov" type="figure">
+				<property name="width">24</property>
+				<property name="height">24</property>
+				
 				<objects>
 					<object type="rectangle" id="rect1">
 						<property name="x">0</property>
 						<property name="y">0</property>
-						<property name="width">20</property>
-						<property name="height">20</property>
+						<property name="width">24</property>
+						<property name="height">24</property>
 					</object>
 					<object type="triangle" id="tri1">
-						<property name="x">0</property>
-						<property name="y">0</property>
+						<property name="x">2</property>
+						<property name="y">2</property>
 						<property name="width">10</property>
-						<property name="width">20</property>
+						<property name="height">20</property>
 						<property name="direction">2</property>
 					</object>
 					<object type="triangle" id="tri2">
-						<property name="x">10</property>
-						<property name="y">0</property>
+						<property name="x">12</property>
+						<property name="y">2</property>
 						<property name="width">10</property>
-						<property name="width">20</property>
+						<property name="height">20</property>
 						<property name="direction">8</property>
 					</object>
 
@@ -58,7 +73,7 @@
 		</object-factory>
 		
 		<object-factory id="variant_cc" class="org.openscada.da.client.viewer.configurator.xml.XMLTemplateFactory">
-			<template:template id="variant_cc">
+			<template:template id="variant_cc" type="hidden">
 				<objects>
 					<object type="colorcomposer" id="cc">
 						<property name="red">0</property>
@@ -118,7 +133,10 @@
 	</factories>
 	
 	<views>
-		<view id="view1">
+		<view id="view1" type="view">
+			<property name="width">1000</property>
+			<property name="height">1000</property>
+			
 			<objects>
 				<constant id="int_zero">
 					<variant><int32>0</int32></variant>

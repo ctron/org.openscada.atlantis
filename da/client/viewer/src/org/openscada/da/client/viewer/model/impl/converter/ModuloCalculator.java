@@ -11,8 +11,10 @@ public class ModuloCalculator extends BaseDynamicObject
     
     protected IntegerSetterOutput _output = new IntegerSetterOutput ( "value" );
     
-    public ModuloCalculator ()
+    public ModuloCalculator ( String id )
     {
+        super ( id );
+        
         addInput ( new PropertyInput ( this, "value" ) );
         addInput ( new PropertyInput ( this, "modulo" ) );
         

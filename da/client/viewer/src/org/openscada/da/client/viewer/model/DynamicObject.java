@@ -2,6 +2,8 @@ package org.openscada.da.client.viewer.model;
 
 public interface DynamicObject
 {
+    public abstract String getId ();
+    
     public abstract InputDefinition [] getInputs ();
     public abstract OutputDefinition [] getOutputs ();
     

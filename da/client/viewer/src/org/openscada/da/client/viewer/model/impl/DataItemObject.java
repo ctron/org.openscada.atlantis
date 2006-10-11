@@ -13,9 +13,9 @@ public class DataItemObject extends BaseDynamicObject
     private String _item = null;
     private String _connectionURI = null;
     
-    public DataItemObject ()
+    public DataItemObject ( String id )
     {
-        super ();
+        super ( id );
         addInput ( new PropertyInput ( this, "connection" ) );
         addInput ( new PropertyInput ( this, "item" ) );
     }

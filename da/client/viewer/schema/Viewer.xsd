@@ -23,6 +23,9 @@
 
     <complexType name="FactoriesType">
     	<sequence>
+    		<element name="container-factory" type="viewer:ContainerFactoryType"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
     		<element name="object-factory" type="viewer:ObjectFactoryType"
     			maxOccurs="unbounded" minOccurs="0">
     		</element>
@@ -36,32 +39,32 @@
     		<element name="view" type="viewer:ViewType" maxOccurs="unbounded" minOccurs="1"></element>
     	</sequence></complexType>
 
-    <complexType name="ObjectFactoryType">
+	<complexType name="BaseFactoryType">
     	<sequence>
     		<any processContents="lax" maxOccurs="1" minOccurs="0"></any>
     	</sequence>
     	<attribute name="id" type="string" use="required"></attribute>
     	<attribute name="class" type="common:ClassType" use="required"></attribute>
+
+	</complexType>
+
+    <complexType name="ObjectFactoryType">
+    	<complexContent>
+    		<extension base="viewer:BaseFactoryType"></extension>
+    	</complexContent>
     </complexType>
 
     <complexType name="ConnectorFactoryType">
-    	<sequence>
-    		<any processContents="lax" maxOccurs="1" minOccurs="0"></any>
-    	</sequence>
-    	<attribute name="id" type="string" use="required"></attribute>
-    	<attribute name="class" type="common:ClassType" use="required"></attribute>
+    	<complexContent>
+    		<extension base="viewer:BaseFactoryType"></extension>
+    	</complexContent>
     </complexType>
 
     <complexType name="ViewType">
-        <sequence>
-        	<element name="objects" type="viewer:ObjectsType"
-        		maxOccurs="1" minOccurs="0">
-        	</element>
-        	<element name="connectors" type="viewer:ConnectorsType"
-        		maxOccurs="1" minOccurs="0">
-        	</element>
-        </sequence>
-        <attribute name="id" type="string" use="required"></attribute>
+    	<complexContent>
+    		<extension base="viewer:ContainerType">
+    		</extension>
+    	</complexContent>
     </complexType>
 
     <complexType name="ObjectsType">
@@ -159,5 +162,28 @@
     	<simpleContent>
     		<extension base="double"></extension>
     	</simpleContent>
+    </complexType>
+
+    <complexType name="ContainerType">
+    
+        <sequence>
+        	<element name="property" type="viewer:PropertyType"
+        		maxOccurs="unbounded" minOccurs="0">
+        	</element>
+        	<element name="objects" type="viewer:ObjectsType" maxOccurs="1"
+        		minOccurs="0">
+        	</element>
+        	<element name="connectors" type="viewer:ConnectorsType"
+        		maxOccurs="1" minOccurs="0">
+        	</element>
+        </sequence>
+        <attribute name="type" type="string" use="required"></attribute>
+        <attribute name="id" type="string" use="required"></attribute>
+    </complexType>
+
+    <complexType name="ContainerFactoryType">
+    	<complexContent>
+    		<extension base="viewer:BaseFactoryType"></extension>
+    	</complexContent>
     </complexType>
 </schema>

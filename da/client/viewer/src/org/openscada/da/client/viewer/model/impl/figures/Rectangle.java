@@ -8,12 +8,12 @@ public class Rectangle extends BaseFigure implements DynamicUIObject
 {
     private RectangleFigure _rectangle = null;
     
-    public Rectangle ()
+    public Rectangle ( String id )
     {
-        super ();
+        super ( id );
     }
     
-    public IFigure createFigure ()
+    public IFigure getFigure ()
     {
         _rectangle = new RectangleFigure ();
         update ();

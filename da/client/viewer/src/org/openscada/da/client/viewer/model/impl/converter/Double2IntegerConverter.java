@@ -10,10 +10,11 @@ public class Double2IntegerConverter extends BaseDynamicObject
 
     protected IntegerSetterOutput _output = new IntegerSetterOutput ( "value" );
     
-    public Double2IntegerConverter ()
+    public Double2IntegerConverter ( String id )
     {
-        addInput ( new PropertyInput ( this, "value" ) );
+        super ( id );
         
+        addInput ( new PropertyInput ( this, "value" ) );
         addOutput ( _output );
     }
     

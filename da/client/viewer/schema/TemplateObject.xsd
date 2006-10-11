@@ -12,7 +12,7 @@
 
     <complexType name="TemplateType">
     	<complexContent>
-    		<extension base="viewer:ViewType">
+    		<extension base="viewer:ContainerType">
     		
     			<sequence>
     				<element name="outputs" type="template:OutputsType"
@@ -23,7 +23,6 @@
     				</element>
     			</sequence>
 
-    			<attribute name="gui" type="boolean"></attribute>
     		</extension>
     	</complexContent>
     </complexType>

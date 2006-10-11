@@ -9,13 +9,13 @@ public class Triangle extends BaseFigure implements DynamicUIObject
     private org.eclipse.draw2d.Triangle _triangle = null;
     private int _direction = 0;
     
-    public Triangle ()
+    public Triangle ( String id )
     {
-        super ();
+        super ( id );
         addInput ( new PropertyInput ( this, "direction" ) );
     }
     
-    public IFigure createFigure ()
+    public IFigure getFigure ()
     {
         _triangle = new org.eclipse.draw2d.Triangle  ();
         

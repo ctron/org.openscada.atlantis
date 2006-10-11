@@ -9,8 +9,21 @@ import org.openscada.da.client.viewer.model.OutputDefinition;
 
 public class BaseDynamicObject implements DynamicObject
 {
+    private String _id = null;
+    
     private Map<String, InputDefinition> _inputs = new HashMap<String, InputDefinition> ();
     private Map<String, OutputDefinition> _outputs = new HashMap<String, OutputDefinition> ();
+    
+    public BaseDynamicObject ( String id )
+    {
+        super ();
+        _id = id;
+    }
+    
+    public String getId ()
+    {
+        return _id;
+    }
     
     public InputDefinition getInputByName ( String name )
     {

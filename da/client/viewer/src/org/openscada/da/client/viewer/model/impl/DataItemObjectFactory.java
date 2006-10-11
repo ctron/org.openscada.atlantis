@@ -6,9 +6,9 @@ import org.openscada.da.client.viewer.model.ObjectFactory;
 public class DataItemObjectFactory implements ObjectFactory
 {
 
-    public DynamicObject create ()
+    public DynamicObject create ( String id )
     {
-        return new DataItemObject ();
+        return new DataItemObject ( id );
     }
 
 }

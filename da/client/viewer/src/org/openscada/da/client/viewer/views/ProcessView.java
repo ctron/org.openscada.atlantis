@@ -5,8 +5,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.FreeformLayer;
+import org.eclipse.draw2d.FreeformViewport;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LightweightSystem;
+import org.eclipse.draw2d.ScrollPane;
 import org.eclipse.draw2d.XYLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Canvas;
@@ -19,6 +22,7 @@ import org.openscada.da.client.viewer.configurator.Configurator;
 import org.openscada.da.client.viewer.configurator.xml.XMLConfigurator;
 import org.openscada.da.client.viewer.model.AlreadyConnectedException;
 import org.openscada.da.client.viewer.model.Connector;
+import org.openscada.da.client.viewer.model.Container;
 import org.openscada.da.client.viewer.model.DynamicObject;
 import org.openscada.da.client.viewer.model.DynamicUIObject;
 import org.openscada.da.client.viewer.model.OutputDefinition;
@@ -27,6 +31,7 @@ import org.openscada.da.client.viewer.model.impl.DataItemOutput;
 import org.openscada.da.client.viewer.model.impl.DisplaySynchronizedConnector;
 import org.openscada.da.client.viewer.model.impl.IntegerSetterOutput;
 import org.openscada.da.client.viewer.model.impl.PassThroughConnector;
+import org.openscada.da.client.viewer.model.impl.containers.FigureContainer;
 import org.openscada.da.client.viewer.model.impl.converter.ColorComposer;
 import org.openscada.da.client.viewer.model.impl.converter.Double2IntegerConverter;
 import org.openscada.da.client.viewer.model.impl.converter.FactorCalculator;
@@ -44,7 +49,7 @@ public class ProcessView extends ViewPart
 
     private IFigure _rootFigure = null;
     
-    private View _view = null;
+    private Container _container = null;
 
     public ProcessView ()
     {
@@ -73,17 +78,17 @@ public class ProcessView extends ViewPart
         }
     }
     
-    protected void setView ( View view )
+    protected void setView ( Container container )
     {
-        _view = view;   
+        _container = container;   
     }
     
     @SuppressWarnings("unused")
     private void test () throws AlreadyConnectedException
     {
-        org.openscada.da.client.viewer.model.impl.View view = new org.openscada.da.client.viewer.model.impl.View ();
+        Container container = new FigureContainer ( "1" );
         
-        Rectangle rect = new Rectangle ();
+        Rectangle rect = new Rectangle ( "2" );
         
         IntegerSetterOutput boundsOutput = new IntegerSetterOutput ( "bounds" );
         
@@ -102,27 +107,27 @@ public class ProcessView extends ViewPart
         OutputDefinition diOutput = new DataItemOutput ( c, "time", "time" );
         OutputDefinition diOutput2 = new DataItemOutput ( c, "memory", "memory" );
         
-        SimpleVariantIntegerConverter svic = new SimpleVariantIntegerConverter ();
+        SimpleVariantIntegerConverter svic = new SimpleVariantIntegerConverter ( "3" );
         svic.setDefaultValue ( 0L );
         
         Connector connector7 = new DisplaySynchronizedConnector ();
         connector7.setOutput ( diOutput );
         connector7.setInput ( svic.getInputByName ( "value" ) );
         
-        SimpleVariantIntegerConverter svic2 = new SimpleVariantIntegerConverter ();
+        SimpleVariantIntegerConverter svic2 = new SimpleVariantIntegerConverter ( "4" );
         svic2.setDefaultValue ( 0L );
         
         Connector connector9 = new DisplaySynchronizedConnector ();
         connector9.setOutput ( diOutput2 );
         connector9.setInput ( svic2.getInputByName ( "value" ) );
 
-        FactorCalculator fc = new FactorCalculator ();
+        FactorCalculator fc = new FactorCalculator ( "5" );
         fc.setFactor ( 0.01 );
         
-        ModuloCalculator mc = new ModuloCalculator ();
+        ModuloCalculator mc = new ModuloCalculator ( "6" );
         mc.setModulo ( 255L );
         
-        Integer2DoubleConverter i2dc = new Integer2DoubleConverter ();
+        Integer2DoubleConverter i2dc = new Integer2DoubleConverter ( "7" );
         Connector connector12 = new PassThroughConnector ();
         connector12.setOutput ( svic.getOutputByName ( "value" ) );
         connector12.setInput ( i2dc.getInputByName ( "value" ) );
@@ -131,7 +136,7 @@ public class ProcessView extends ViewPart
         connector13.setInput ( fc.getInputByName ( "value" ) );
         connector13.setOutput ( i2dc.getOutputByName ( "value" ) );
         
-        Double2IntegerConverter d2ic = new Double2IntegerConverter ();
+        Double2IntegerConverter d2ic = new Double2IntegerConverter ( "8" );
         
         Connector connector11 = new PassThroughConnector ();
         connector11.setOutput ( fc.getOutputByName ( "value" ) );
@@ -141,14 +146,14 @@ public class ProcessView extends ViewPart
         connector5.setInput ( mc.getInputByName ( "value" ) );
         connector5.setOutput ( d2ic.getOutputByName ( "value" ) );
         
-        ModuloCalculator mc2 = new ModuloCalculator ();
+        ModuloCalculator mc2 = new ModuloCalculator ( "9" );
         mc2.setModulo ( 255L );
         
         Connector connector8 = new PassThroughConnector ();
         connector8.setInput ( mc2.getInputByName ( "value" ) );
         connector8.setOutput ( svic2.getOutputByName ( "value" ) );
         
-        ColorComposer cc = new ColorComposer ();
+        ColorComposer cc = new ColorComposer ( "10" );
         
         Connector connector4r = new PassThroughConnector ();
         connector4r.setOutput ( mc.getOutputByName ( "value" ) );
@@ -165,8 +170,8 @@ public class ProcessView extends ViewPart
         connector6.setInput ( rect.getInputByName ( "color" ) );
         connector6.setOutput ( cc.getOutputByName ( "color" ) );
      
-        view.getObjects ().add ( rect );
-        setView ( view );
+        container.getObjects ().add ( rect );
+        setView ( container );
         
         boundsOutput.setValue ( 100 );
     }
@@ -188,16 +193,12 @@ public class ProcessView extends ViewPart
 
     protected void createObjects ()
     {
-        if ( _view == null )
+        if ( _container == null )
             return;
         
-        for ( DynamicObject object : _view.getObjects () )
+        if ( _container instanceof DynamicUIObject )
         {
-            if ( object instanceof DynamicUIObject )
-            {
-                IFigure figure = ( (DynamicUIObject)object ).createFigure ();
-                _rootFigure.add ( figure );
-            }
+            _rootFigure.add ( ((DynamicUIObject)_container).getFigure () );
         }
     }
 

@@ -11,9 +11,9 @@ public class SimpleVariantDoubleConverter extends BaseDynamicObject
     private Variant _value = null;
     private double _defaultValue = 0;
     
-    public SimpleVariantDoubleConverter ()
+    public SimpleVariantDoubleConverter ( String id )
     {
-        super ();
+        super ( id );
         
         addOutput ( _output );
         addInput ( new PropertyInput ( this, "value" ) );

@@ -1,16 +1,11 @@
 package org.openscada.da.client.viewer.configurator.xml;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.openscada.da.client.viewer.configurator.ConfigurationError;
+import org.openscada.da.client.viewer.model.Container;
 import org.openscada.da.client.viewer.model.DynamicObject;
-import org.openscada.da.client.viewer.model.InputDefinition;
 import org.openscada.da.client.viewer.model.ObjectFactory;
-import org.openscada.da.client.viewer.model.OutputDefinition;
-import org.openscada.da.client.viewer.model.impl.View;
 import org.openscada.da.viewer.template.InputExportType;
 import org.openscada.da.viewer.template.OutputExportType;
 import org.openscada.da.viewer.template.TemplateDocument;
@@ -25,65 +20,28 @@ public class XMLTemplateFactory implements ObjectFactory, XMLConfigurable
     private TemplateType _template = null;
     private XMLConfigurationContext _context = null;
 
-    public DynamicObject create () throws ConfigurationError
+    public DynamicObject create ( String id ) throws ConfigurationError
     {
         XMLViewContext ctx = new XMLViewContext ( _context );
-        View view = XMLConfigurator.createView ( ctx, _template );
-        return createTemplate ( ctx, view, _template ); 
+        return createTemplate ( id, ctx );
     }
 
-    private DynamicObject createTemplate ( XMLViewContext ctx, View view, TemplateType template ) throws ConfigurationError
+    private DynamicObject createTemplate ( String id, XMLViewContext ctx ) throws ConfigurationError
     {
-        XMLDynamicObject xo = null;
-        if ( template.getGui () )
-        {
-            xo = new XMLDynamicUIObject ( view );
-        }
-        else
-        {
-            xo =  new XMLDynamicObject ( view );
-        }
+        Container container = XMLConfigurator.createContainer ( ctx, id, _template );
         
-        configureXO ( ctx, xo, template );
-        
-        return xo;
-    }
-
-    private void configureXO ( XMLViewContext ctx, XMLDynamicObject xo, TemplateType template ) throws ConfigurationError
-    {
-        List<XMLInputExport> inputExports = new LinkedList<XMLInputExport> ();
-        
-        for ( InputExportType input : template.getInputs ().getInputExportList () )
+        for ( InputExportType input : _template.getInputs ().getInputExportList () )
         {
-            DynamicObject object = ctx.getObjects ().get ( input.getObject () );
-            if ( object == null )
-                throw new ConfigurationError ( String.format ( "Unable to export input since object %s is unknown", input.getObject () ) );
-             
-            InputDefinition inputDef = object.getInputByName ( input.getName () );
-            if ( inputDef == null )
-                throw new ConfigurationError ( String.format ( "Unable to export input since input %s of object %s is unknown", input.getName (), input.getObject () ) );
-            
-            inputExports.add ( new XMLInputExport ( inputDef, input.getExportName () ) );
+            container.addInputExport ( new Container.Export ( input.getObject (), input.getName (), input.getExportName () ) );
         }
-        xo.setInputExports ( inputExports );
         
         // now the same for outputs
-        
-        List<XMLOutputExport> outputExports = new LinkedList<XMLOutputExport> ();
-        
-        for ( OutputExportType output : template.getOutputs ().getOutputExportList () )
+        for ( OutputExportType output : _template.getOutputs ().getOutputExportList () )
         {
-            DynamicObject object = ctx.getObjects ().get ( output.getObject () );
-            if ( object == null )
-                throw new ConfigurationError ( String.format ( "Unable to export output since object %s is unknown", output.getObject () ) );
-             
-            OutputDefinition outputDef = object.getOutputByName ( output.getName () );
-            if ( outputDef == null )
-                throw new ConfigurationError ( String.format ( "Unable to export input since output %s of object %s is unknown", output.getName (), output.getObject () ) );
-            
-            outputExports.add ( new XMLOutputExport ( outputDef, output.getExportName () ) );
+            container.addOutputExport ( new Container.Export ( output.getObject (), output.getName (), output.getExportName () ) );
         }
-        xo.setOutputExports ( outputExports );
+        
+        return container;
     }
 
     public void configure ( XMLConfigurationContext ctx, Node node ) throws ConfigurationError
