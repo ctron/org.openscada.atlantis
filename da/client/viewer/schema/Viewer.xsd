@@ -144,13 +144,13 @@
     </complexType>
 
     <complexType name="InputType">
-    	<attribute name="object" type="string"></attribute>
-    	<attribute name="name" type="string"></attribute>
+    	<attribute name="object" type="string" use="required"></attribute>
+    	<attribute name="name" type="string" use="required"></attribute>
     </complexType>
 
     <complexType name="OutputType">
-    	<attribute name="object" type="string"></attribute>
-    	<attribute name="name" type="string"></attribute>
+    	<attribute name="object" type="string" use="required"></attribute>
+    	<attribute name="name" type="string" use="required"></attribute>
     </complexType>
 
     <complexType name="ValueIntegerType">
