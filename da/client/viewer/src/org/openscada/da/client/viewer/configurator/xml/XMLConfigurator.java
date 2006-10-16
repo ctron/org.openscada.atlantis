@@ -27,7 +27,9 @@ import org.openscada.da.client.viewer.model.Type;
 import org.openscada.da.client.viewer.model.View;
 import org.openscada.da.client.viewer.model.impl.ConstantObject;
 import org.openscada.da.client.viewer.model.impl.ConstantOutput;
+import org.openscada.da.client.viewer.model.impl.DynamicObjectCreator;
 import org.openscada.da.client.viewer.model.impl.Helper;
+import org.openscada.da.client.viewer.model.types.Color;
 import org.openscada.da.viewer.ConnectorFactoryType;
 import org.openscada.da.viewer.ConnectorType;
 import org.openscada.da.viewer.ConstantType;
@@ -155,14 +157,9 @@ public class XMLConfigurator implements Configurator
     {
         try
         {
-            Class factoryClass = Class.forName ( factory.getClass1 () );
+            Class objectClass = Class.forName ( factory.getClass1 () );
             
-            Object factoryObject = factoryClass.newInstance ();
-            
-            if ( ! ( factoryObject instanceof ObjectFactory ) )
-                throw new ConfigurationError ( "Class does not implement ObjectFactory interface" );
-            
-            ObjectFactory objectFactory = (ObjectFactory)factoryObject;
+            ObjectFactory objectFactory = DynamicObjectCreator.findFactory ( objectClass );
             checkCallConfigurationHook ( ctx, objectFactory, factory.getDomNode () );
             
             ctx.getObjectFactories ().put ( factory.getId (), objectFactory );
@@ -173,13 +170,6 @@ public class XMLConfigurator implements Configurator
         {
             throw new ConfigurationError ( "Unable to load class", e );
         }
-        catch ( InstantiationException e )
-        {
-            throw new ConfigurationError ( "Unable to instatiate object factory class", e );
-        }
-        catch ( IllegalAccessException e )
-        {
-            throw new ConfigurationError ( "No access to instatiate object factory class", e );        }
     }
 
     public static void configureViews ( XMLConfigurationContext ctx, ViewsType views, List<View> viewList ) throws ConfigurationError
@@ -277,6 +267,11 @@ public class XMLConfigurator implements Configurator
         else if ( constant.getVariant () != null )
         {
             co.setValue ( Type.VARIANT, Helper.fromXML ( constant.getVariant () ) );
+        }
+        else if ( constant.getColor () != null )
+        {
+            Color color = new Color ( constant.getColor ().getRed (), constant.getColor ().getGreen (), constant.getColor ().getBlue () );
+            co.setValue ( Type.COLOR, color );
         }
         else 
         {

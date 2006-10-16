@@ -109,8 +109,15 @@
     		</element>
     		<element name="double" type="viewer:ValueDoubleType"></element>
     		<element name="string" type="string"></element>
+    		<element name="color" type="viewer:ColorType"></element>
     	</choice>
     	<attribute name="id" type="string" use="required"></attribute>    	
+    </complexType>
+    
+    <complexType name="ColorType">
+    	<attribute name="red" use="required" type="int"></attribute>
+    	<attribute name="green" use="required" type="int"></attribute>
+    	<attribute name="blue" use="required" type="int"></attribute>
     </complexType>
     
     <complexType name="ObjectType">

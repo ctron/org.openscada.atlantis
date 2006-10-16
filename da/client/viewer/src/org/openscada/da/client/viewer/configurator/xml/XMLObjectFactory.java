@@ -1,32 +1,12 @@
 package org.openscada.da.client.viewer.configurator.xml;
 
-import java.lang.reflect.Constructor;
-
 import org.openscada.da.client.viewer.configurator.ConfigurationError;
 import org.openscada.da.client.viewer.model.DynamicObject;
-import org.openscada.da.client.viewer.model.ObjectFactory;
+import org.openscada.da.client.viewer.model.impl.GenericObjectFactory;
 import org.w3c.dom.Node;
 
-public class XMLObjectFactory implements ObjectFactory, XMLConfigurable
+public class XMLObjectFactory extends GenericObjectFactory implements XMLConfigurable
 {
-    private Class _class = null;
-    
-    public DynamicObject create ( String id ) throws ConfigurationError
-    {
-        try
-        {
-            Constructor ctor = _class.getConstructor ( new Class [] { String.class } );
-            if ( ctor == null )
-                throw new ConfigurationError ( String.format ( "Unable to instatiate class %s since a constructor with parameter type String is missing" ) );
-            
-            return (DynamicObject)ctor.newInstance ( new Object[] { id } );
-        }
-        catch ( Throwable e )
-        {
-            throw new ConfigurationError ( "Unable to create instance", e );
-        }
-    }
-
     @SuppressWarnings("unchecked")
     public void configure ( XMLConfigurationContext context, Node node ) throws ConfigurationError
     {
@@ -35,16 +15,17 @@ public class XMLObjectFactory implements ObjectFactory, XMLConfigurable
         {
             String className = attr.getNodeValue ();
             try
-            {
-                _class = Class.forName ( className );
+            {   
+                Class clazz = Class.forName ( className );
+                if ( !DynamicObject.class.isAssignableFrom ( clazz ) )
+                {
+                    throw new ConfigurationError ( String.format ( "%s must implement interface DynamicObject", clazz.getName () ) );
+                }
+                setClass ( clazz );
             }
             catch ( ClassNotFoundException e )
             {
                 throw new ConfigurationError ( "Unable to create factory", e );
-            }
-            if ( !DynamicObject.class.isAssignableFrom ( _class ) )
-            {
-                throw new ConfigurationError ( String.format ( "%s must implement interface DynamicObject", _class.getName () ) );
             }
         }
     }

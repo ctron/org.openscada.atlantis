@@ -14,17 +14,11 @@
 		<container-factory id="hidden" class="org.openscada.da.client.viewer.model.impl.containers.HiddenContainerFactory"/>
 		
 		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.figures.RectangleFactory"/>
-		<object-factory id="triangle" class="org.openscada.da.client.viewer.model.impl.figures.TriangleFactory"/>
+		<object-factory id="triangle" class="org.openscada.da.client.viewer.model.impl.figures.Triangle"/>
 		<object-factory id="item" class="org.openscada.da.client.viewer.model.impl.DataItemObjectFactory"/>
-		<object-factory id="colorcomposer" class="org.openscada.da.client.viewer.configurator.xml.XMLObjectFactory">
-			<arg class="org.openscada.da.client.viewer.model.impl.converter.ColorComposer"/>
-		</object-factory>
-		<object-factory id="modulo" class="org.openscada.da.client.viewer.configurator.xml.XMLObjectFactory">
-			<arg class="org.openscada.da.client.viewer.model.impl.converter.ModuloCalculator"/>
-		</object-factory>
-		<object-factory id="factor" class="org.openscada.da.client.viewer.configurator.xml.XMLObjectFactory">
-			<arg class="org.openscada.da.client.viewer.model.impl.converter.FactorCalculator"/>
-		</object-factory>
+		<object-factory id="colorcomposer" class="org.openscada.da.client.viewer.model.impl.converter.ColorComposer"/>
+		<object-factory id="modulo" class="org.openscada.da.client.viewer.model.impl.converter.ModuloCalculator"/>
+		<object-factory id="factor" class="org.openscada.da.client.viewer.model.impl.converter.FactorCalculator"/>
 		<object-factory id="variantasinteger" class="org.openscada.da.client.viewer.configurator.xml.XMLObjectFactory">
 			<arg class="org.openscada.da.client.viewer.model.impl.converter.SimpleVariantIntegerConverter"/>
 		</object-factory>
@@ -41,6 +35,10 @@
 				<property name="height">24</property>
 				
 				<objects>
+					<constant id="mov_open"><color red="0" green="255" blue="0"/></constant>
+					<constant id="mov_closed"><null/></constant>
+					<constant id="mov_error"><color red="255" green="0" blue="0"/></constant>
+					
 					<object type="rectangle" id="rect1">
 						<property name="x">0</property>
 						<property name="y">0</property>
@@ -230,11 +228,6 @@
 				<connector type="display">
 					<output object="item2" name="value"/>
 					<input object="vai1" name="value"/>
-				</connector>
-
-				<connector type="default">
-					<output object="vai1" name="value"/>
-					<input object="tri1" name="direction"/>
 				</connector>
 				
 			</connectors>
