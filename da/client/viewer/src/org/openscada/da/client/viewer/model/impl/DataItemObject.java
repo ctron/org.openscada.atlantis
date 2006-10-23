@@ -9,6 +9,7 @@ import org.openscada.da.client.net.Connection;
 public class DataItemObject extends BaseDynamicObject
 {
     private DataItemOutput _output = null;
+    private DataItemInput _input = null;
     
     private String _item = null;
     private String _connectionURI = null;
@@ -40,6 +41,8 @@ public class DataItemObject extends BaseDynamicObject
             {
                 _output = new DataItemOutput ( getConnection (), _item, "value" );
                 addOutput ( _output );
+                _input = new DataItemInput ( getConnection (), _item, "value" );
+                addInput ( _input );
             }
             catch ( Exception e )
             {

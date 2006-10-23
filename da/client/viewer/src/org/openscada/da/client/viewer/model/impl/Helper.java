@@ -21,15 +21,30 @@ public class Helper
         _log.debug ( String.format ( "Class to type: %s", clazz ) );
         
         if ( clazz.isAssignableFrom ( String.class ) )
+        {
             set.add ( Type.STRING );
+            set.add ( Type.NULL );
+        }
         if ( clazz.isAssignableFrom ( Boolean.class ) )
+        {
             set.add ( Type.BOOLEAN );
+            set.add ( Type.NULL );
+        }
         if ( clazz.isAssignableFrom ( Double.class ) )
+        {
             set.add ( Type.DOUBLE );
+            set.add ( Type.NULL );
+        }
         if ( clazz.isAssignableFrom ( Color.class ) )
+        {
             set.add ( Type.COLOR );
+            set.add ( Type.NULL );
+        }
         if ( clazz.isAssignableFrom ( Long.class ) )
+        {
             set.add ( Type.INTEGER );
+            set.add ( Type.NULL );
+        }
         if ( clazz.isAssignableFrom ( Variant.class ) )
         {
             set.add ( Type.VARIANT );
@@ -38,6 +53,10 @@ public class Helper
             set.add ( Type.DOUBLE );
             set.add ( Type.INTEGER );
             set.add ( Type.NULL );
+        }
+        if ( clazz.isAssignableFrom ( AnyValue.class ) )
+        {
+            set.addAll ( EnumSet.allOf ( Type.class ) );
         }
         
         if ( _log.isDebugEnabled () )

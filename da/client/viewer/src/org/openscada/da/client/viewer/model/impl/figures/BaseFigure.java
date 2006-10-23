@@ -59,7 +59,10 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
 
     public void setColor ( org.openscada.da.client.viewer.model.types.Color color )
     {
-        _color = new Color ( Display.getCurrent (), Helper.colorToRGB ( color ) );
+        if ( color == null )
+            _color = null;
+        else
+            _color = new Color ( Display.getCurrent (), Helper.colorToRGB ( color ) );
         update ();
     }
 
@@ -79,11 +82,7 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
             return;
         
         figure.setBounds ( _bounds );
-        
-        if ( _color != null )
-        {
-            figure.setBackgroundColor ( _color );
-        }
+        figure.setBackgroundColor ( _color );
     }
     
     protected abstract void update ();

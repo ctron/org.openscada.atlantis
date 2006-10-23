@@ -93,6 +93,11 @@ public class PropertyInput implements InputDefinition
             Variant variant = new Variant ( value );
             method.invoke ( _object, new Object [] { variant } );
         }
+        else if ( pd.getPropertyType ().isAssignableFrom ( AnyValue.class ) )
+        {
+            AnyValue anyValue = new AnyValue ( type, value );
+            method.invoke ( _object, new Object [] { anyValue } );
+        }
         else
         {
             method.invoke ( _object, new Object [] { value } );

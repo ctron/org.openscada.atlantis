@@ -22,11 +22,11 @@ public class XMLTemplateFactory implements ObjectFactory, XMLConfigurable
 
     public DynamicObject create ( String id ) throws ConfigurationError
     {
-        XMLViewContext ctx = new XMLViewContext ( _context );
+        XMLContainerContext ctx = new XMLContainerContext ( _context );
         return createTemplate ( id, ctx );
     }
 
-    private DynamicObject createTemplate ( String id, XMLViewContext ctx ) throws ConfigurationError
+    private DynamicObject createTemplate ( String id, XMLContainerContext ctx ) throws ConfigurationError
     {
         Container container = XMLConfigurator.createContainer ( ctx, id, _template );
         

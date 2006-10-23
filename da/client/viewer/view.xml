@@ -12,13 +12,18 @@
 		<container-factory id="figure" class="org.openscada.da.client.viewer.model.impl.containers.FigureContainerFactory"/>
 		<container-factory id="view" class="org.openscada.da.client.viewer.model.impl.containers.BasicViewFactory"/>
 		<container-factory id="hidden" class="org.openscada.da.client.viewer.model.impl.containers.HiddenContainerFactory"/>
+		<container-factory id="command" class="org.openscada.da.client.viewer.model.impl.containers.CommandContainer"/>
 		
 		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.figures.RectangleFactory"/>
 		<object-factory id="triangle" class="org.openscada.da.client.viewer.model.impl.figures.Triangle"/>
+		
 		<object-factory id="item" class="org.openscada.da.client.viewer.model.impl.DataItemObjectFactory"/>
+		
 		<object-factory id="colorcomposer" class="org.openscada.da.client.viewer.model.impl.converter.ColorComposer"/>
 		<object-factory id="modulo" class="org.openscada.da.client.viewer.model.impl.converter.ModuloCalculator"/>
 		<object-factory id="factor" class="org.openscada.da.client.viewer.model.impl.converter.FactorCalculator"/>
+		
+		<object-factory id="variantasboolean" class="org.openscada.da.client.viewer.model.impl.converter.VariantBooleanConverter"/>
 		<object-factory id="variantasinteger" class="org.openscada.da.client.viewer.configurator.xml.XMLObjectFactory">
 			<arg class="org.openscada.da.client.viewer.model.impl.converter.SimpleVariantIntegerConverter"/>
 		</object-factory>
@@ -29,13 +34,17 @@
 			<arg class="org.openscada.da.client.viewer.model.impl.converter.Double2IntegerConverter"/>
 		</object-factory>
 		
+		<object-factory id="boolean2matrix" class="org.openscada.da.client.viewer.model.impl.converter.Boolean2Matrix"/>
+		
 		<object-factory id="mov" class="org.openscada.da.client.viewer.configurator.xml.XMLTemplateFactory">
 			<template:template id="mov" type="figure">
 				<property name="width">24</property>
 				<property name="height">24</property>
 				
 				<objects>
-					<constant id="mov_open"><color red="0" green="255" blue="0"/></constant>
+					<constant id="mov_fatal"><color red="255" green="0" blue="255"/></constant>
+					<constant id="mov_opened"><color red="0" green="255" blue="0"/></constant>
+					<constant id="mov_transit"><color red="255" green="255" blue="0"/></constant>
 					<constant id="mov_closed"><null/></constant>
 					<constant id="mov_error"><color red="255" green="0" blue="0"/></constant>
 					
@@ -59,14 +68,59 @@
 						<property name="height">20</property>
 						<property name="direction">8</property>
 					</object>
+					<object type="boolean2matrix" id="oc_matrix_1"/>
+					<object type="variantasboolean" id="v2b_opened"/>
+					<object type="variantasboolean" id="v2b_closed"/>
 
 				</objects>
 				<connectors>
+					<connector type="default">
+						<output object="mov_fatal" name="value"/>
+						<input object="oc_matrix_1" name="defaultValue"/>
+					</connector>
+					<connector type="default">
+						<output object="mov_transit" name="value"/>
+						<input object="oc_matrix_1" name="value00"/>
+					</connector>
+					<connector type="default">
+						<output object="mov_opened" name="value"/>
+						<input object="oc_matrix_1" name="value01"/>
+					</connector>
+					<connector type="default">
+						<output object="mov_closed" name="value"/>
+						<input object="oc_matrix_1" name="value10"/>
+					</connector>
+					<connector type="default">
+						<output object="mov_error" name="value"/>
+						<input object="oc_matrix_1" name="value11"/>
+					</connector>
+					<connector type="default">
+						<output object="oc_matrix_1" name="value"/>
+						<input object="tri1" name="color"/>
+					</connector>
+					<connector type="default">
+						<output object="oc_matrix_1" name="value"/>
+						<input object="tri2" name="color"/>
+					</connector>
+					
+					<connector type="default">
+						<output object="v2b_opened" name="value"/>
+						<input object="oc_matrix_1" name="valueA"/>
+					</connector>
+					<connector type="default">
+						<output object="v2b_closed" name="value"/>
+						<input object="oc_matrix_1" name="valueB"/>
+					</connector>
+					
 				</connectors>
 				<outputs>
 				</outputs>
+				
 				<inputs>
+					<input-export object="v2b_opened" name="value" export-name="open"/>
+					<input-export object="v2b_closed" name="value" export-name="close"/>
 				</inputs>
+				
 			</template:template>
 		</object-factory>
 		
@@ -136,6 +190,7 @@
 			<property name="height">1000</property>
 			
 			<objects>
+				<!-- 
 				<constant id="int_zero">
 					<variant><int32>0</int32></variant>
 				</constant>
@@ -157,6 +212,7 @@
 					<property name="item">memory</property>
 					<property name="connection">net://localhost:1202</property>
 				</object>
+
 				<object id="rect2" type="rectangle">
 					<property name="x">100</property>
 					<property name="y">100</property>
@@ -179,12 +235,60 @@
 					<property name="color">#00FF00</property>
 				</object>
 				
-				<template-object template="mov" id="mov1"/>
-				
 				<template-object template="variant_cc" id="cc1"/>
+				-->				
+
+				<object id="mov1_cmd_open" type="item">
+					<property name="item">mov.1000.open-command</property>
+					<property name="connection">net://localhost:1202</property>
+				</object>
+				<object id="mov1_cmd_close" type="item">
+					<property name="item">mov.1000.close-command</property>
+					<property name="connection">net://localhost:1202</property>
+				</object>
+				
+				<container type="command" id="c1">
+					<property name="width">24</property>
+					<property name="height">24</property>
+					<property name="commands">open|Open,close|Close</property>
+	
+					<objects>
+						<object id="mov1_open" type="item">
+ 							<property name="item">mov.1000.open-signal</property>
+ 							<property name="connection">net://localhost:1202</property>
+						</object>
+						<object id="mov1_close" type="item">
+							<property name="item">mov.1000.close-signal</property>
+							<property name="connection">net://localhost:1202</property>
+						</object>
+						<template-object template="mov" id="mov1"/>
+					</objects>
+					
+					<connectors>
+						<connector type="display">
+							<output object="mov1_open" name="value"/>
+							<input object="mov1" name="open"/>
+						</connector>
+						<connector type="display">
+							<output object="mov1_close" name="value"/>
+							<input object="mov1" name="close"/>
+						</connector>
+					</connectors>
+					
+				</container>
+				
 			</objects>
 			
 			<connectors>
+				<connector type="default">
+					<output object="c1" name="open"/>
+					<input object="mov1_cmd_open" name="value"/>
+				</connector>
+				<connector type="default">
+					<output object="c1" name="close"/>
+					<input object="mov1_cmd_close" name="value"/>
+				</connector>
+			<!-- 
 				<connector type="display">
 					<output object="item1" name="value"/>
 					<input object="vad1" name="value"/>
@@ -229,6 +333,7 @@
 					<output object="item2" name="value"/>
 					<input object="vai1" name="value"/>
 				</connector>
+				-->
 				
 			</connectors>
 		</view>

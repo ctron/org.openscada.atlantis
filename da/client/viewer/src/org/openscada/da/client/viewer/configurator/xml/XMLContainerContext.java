@@ -5,13 +5,13 @@ import java.util.Map;
 
 import org.openscada.da.client.viewer.model.DynamicObject;
 
-public class XMLViewContext
+public class XMLContainerContext
 {
     
     private XMLConfigurationContext _configurationContext = null;
     private Map<String, DynamicObject> _objects = new HashMap<String, DynamicObject> ();
 
-    public XMLViewContext ( XMLConfigurationContext configurationContext)
+    public XMLContainerContext ( XMLConfigurationContext configurationContext)
     {
         _configurationContext = configurationContext;
     }

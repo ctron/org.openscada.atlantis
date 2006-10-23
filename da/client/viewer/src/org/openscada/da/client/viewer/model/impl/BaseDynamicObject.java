@@ -50,9 +50,19 @@ public class BaseDynamicObject implements DynamicObject
         _inputs.put ( input.getName (), input );
     }
     
+    protected void removeInput ( String name )
+    {
+        _inputs.remove ( name );
+    }
+    
     protected void addOutput ( OutputDefinition output )
     {
         _outputs.put ( output.getName (), output );
+    }
+    
+    protected void removeOutput ( String name )
+    {
+        _outputs.remove ( name );
     }
 
 }

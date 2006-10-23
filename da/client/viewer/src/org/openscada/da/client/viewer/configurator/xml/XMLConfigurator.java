@@ -27,6 +27,7 @@ import org.openscada.da.client.viewer.model.Type;
 import org.openscada.da.client.viewer.model.View;
 import org.openscada.da.client.viewer.model.impl.ConstantObject;
 import org.openscada.da.client.viewer.model.impl.ConstantOutput;
+import org.openscada.da.client.viewer.model.impl.ContainerCreator;
 import org.openscada.da.client.viewer.model.impl.DynamicObjectCreator;
 import org.openscada.da.client.viewer.model.impl.Helper;
 import org.openscada.da.client.viewer.model.types.Color;
@@ -99,12 +100,13 @@ public class XMLConfigurator implements Configurator
         {
             Class factoryClass = Class.forName ( factory.getClass1 () );
             
-            Object factoryObject = factoryClass.newInstance ();
             
-            if ( ! ( factoryObject instanceof ContainerFactory ) )
-                throw new ConfigurationError ( "Class does not implement ContainerFactory interface" );
+            ContainerFactory containerFactory = ContainerCreator.findFactory ( factoryClass );
+            if ( containerFactory == null )
+            {
+                throw new ConfigurationError ( String.format ( "Unable to create new container factory." ) );
+            }
             
-            ContainerFactory containerFactory = (ContainerFactory)factoryObject;
             checkCallConfigurationHook ( ctx, containerFactory, factory.getDomNode () );
             
             ctx.getContainerFactories ().put ( factory.getId (), containerFactory );
@@ -114,13 +116,6 @@ public class XMLConfigurator implements Configurator
         {
             throw new ConfigurationError ( "Unable to load class", e );
         }
-        catch ( InstantiationException e )
-        {
-            throw new ConfigurationError ( "Unable to instatiate connector factory class", e );
-        }
-        catch ( IllegalAccessException e )
-        {
-            throw new ConfigurationError ( "No access to instatiate connector factory class", e );        }
     }
 
     public static void createConnectorFactory ( XMLConfigurationContext ctx, ConnectorFactoryType factory ) throws ConfigurationError
@@ -176,7 +171,7 @@ public class XMLConfigurator implements Configurator
     {
         for ( ViewType view : views.getViewList () )
         {
-            Container container = createContainer ( new XMLViewContext ( ctx ), view.getId (), view );
+            Container container = createContainer ( new XMLContainerContext ( ctx ), view.getId (), view );
             if ( container instanceof View )
             {
                 viewList.add ( (View)container );
@@ -184,7 +179,7 @@ public class XMLConfigurator implements Configurator
         }
     }
 
-    public static Container createContainer ( XMLViewContext ctx, String id, ContainerType container ) throws ConfigurationError
+    public static Container createContainer ( XMLContainerContext ctx, String id, ContainerType container ) throws ConfigurationError
     {
         Container containerObject = null;
 
@@ -214,6 +209,11 @@ public class XMLConfigurator implements Configurator
             createTemplateObject ( ctx, template, containerObject );
         }
         
+        for ( ContainerType containerType : container.getObjects ().getContainerList () )
+        {
+            createContainer ( ctx, containerType, containerObject );
+        }
+        
         for ( ConnectorType connector : container.getConnectors ().getConnectorList () )
         {
             createConnector ( ctx, connector, containerObject );
@@ -222,7 +222,15 @@ public class XMLConfigurator implements Configurator
         return containerObject;
     }
 
-    public static void createTemplateObject ( XMLViewContext ctx, TemplateObjectType template, Container viewObject ) throws ConfigurationError
+    private static void createContainer ( XMLContainerContext ctx, ContainerType template, Container parentContainer ) throws ConfigurationError
+    {
+        XMLContainerContext cctx = new XMLContainerContext ( ctx.getConfigurationContext () );
+        Container container = createContainer ( cctx, template.getId (), template );
+        parentContainer.add ( container );
+        ctx.getObjects ().put ( template.getId (), container );
+    }
+
+    public static void createTemplateObject ( XMLContainerContext ctx, TemplateObjectType template, Container viewObject ) throws ConfigurationError
     {
         ObjectFactory factory = ctx.getConfigurationContext ().getObjectFactories ().get ( template.getTemplate () );
         
@@ -241,7 +249,7 @@ public class XMLConfigurator implements Configurator
         _log.debug ( String.format ( "Created object (template) %s", template.getId () ) );
     }
 
-    public static void createConstant ( XMLViewContext ctx, ConstantType constant, Container viewObject )
+    public static void createConstant ( XMLContainerContext ctx, ConstantType constant, Container viewObject )
     {
         ConstantOutput co = new ConstantOutput ( "value" );
         if ( constant.getNull () != null )
@@ -284,7 +292,7 @@ public class XMLConfigurator implements Configurator
         _log.debug ( String.format ( "Created object (constant) %s", constant.getId () ) );
     }
 
-    public static void createObject ( XMLViewContext ctx, ObjectType object, Container viewObject ) throws ConfigurationError
+    public static void createObject ( XMLContainerContext ctx, ObjectType object, Container viewObject ) throws ConfigurationError
     {
         ObjectFactory factory = ctx.getConfigurationContext ().getObjectFactories ().get ( object.getType () );
         if ( factory == null )
@@ -323,7 +331,7 @@ public class XMLConfigurator implements Configurator
         }
     }
 
-    public static void createConnector ( XMLViewContext ctx, ConnectorType connector, Container viewObject ) throws ConfigurationError
+    public static void createConnector ( XMLContainerContext ctx, ConnectorType connector, Container viewObject ) throws ConfigurationError
     {
         Connector connectorObject = ctx.getConfigurationContext ().getConnectorFactories ().get ( connector.getType () ).create ();
         
