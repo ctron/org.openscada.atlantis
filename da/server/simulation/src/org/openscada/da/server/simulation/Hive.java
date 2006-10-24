@@ -1,20 +1,15 @@
 /*
- * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * This file is part of the OpenSCADA project Copyright (C) 2006 inavare GmbH
+ * (http://inavare.com) This program is free software; you can redistribute it
+ * and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version. This program is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program; if not, write
+ * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301 USA.
  */
 
 package org.openscada.da.server.simulation;
@@ -39,37 +34,40 @@ import org.openscada.utils.timing.Scheduler;
 public class Hive extends HiveCommon
 {
     private Scheduler _scheduler = null;
+
     private List<BaseModule> _modules = new LinkedList<BaseModule> ();
+
     private InvisibleStorage _storage = new InvisibleStorage ();
-    
+
     public Hive ()
-	{
-		super();
-	
+    {
+        super ();
+
         _scheduler = new Scheduler ( true );
-        
+
         // create root folder
-		FolderCommon rootFolder = new FolderCommon ();
+        FolderCommon rootFolder = new FolderCommon ();
         setRootFolder ( rootFolder );
-        
+
         _modules.add ( new SimpleMOV ( this, "1000" ) );
-        
+
         QueryFolder queryFolder = new QueryFolder ( new Matcher () {
 
             public boolean matches ( ItemDescriptor desc )
             {
                 return true;
-            }}, new IDNameProvider () );
+            }
+        }, new IDNameProvider () );
         _storage.addChild ( queryFolder );
-        
-        rootFolder.add ( "all", queryFolder, new HashMap<String,Variant> () );
+
+        rootFolder.add ( "all", queryFolder, new HashMap<String, Variant> () );
     }
 
     public Scheduler getScheduler ()
     {
         return _scheduler;
     }
-    
+
     public ItemStorage getStorage ()
     {
         return _storage;

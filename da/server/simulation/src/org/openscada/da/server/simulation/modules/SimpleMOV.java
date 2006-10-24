@@ -10,41 +10,49 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
 {
     public enum State
     {
-        CLOSED,
-        OPENED,
-        TRANSIT_OPEN,
-        TRANSIT_CLOSE
+        CLOSED, OPENED, TRANSIT_OPEN, TRANSIT_CLOSE
     }
-    
+
     protected final static int JOB_PERIOD = 1000;
+
     protected final static int MOV_RUNTIME = 10 * 1000;
-    
+
     private long _switchTime = MOV_RUNTIME;
-    
+
     private long _lastTick = 0;
+
     private long _switchRunning = 0;
+
     private State _switchTarget = null;
+
     private boolean _error = false;
+
     private State _state = State.CLOSED;
-    
+
     private DataItemInputChained _openInput = null;
+
     private DataItemInputChained _closeInput = null;
+
     private DataItemInputChained _transitInput = null;
+
     private DataItemInputChained _errorInput = null;
+
     private DataItemInputChained _runtimeInput = null;
+
     private DataItemInputChained _percentInput = null;
-    
+
     private DataItemCommand _openCommand = null;
+
     private DataItemCommand _closeCommand = null;
-    
+
     private Scheduler _scheduler = null;
-    
+
     public SimpleMOV ( Hive hive, String id )
     {
         super ( hive, "mov." + id );
-        
+
         _scheduler = hive.getScheduler ();
-        
+
         _openInput = getInput ( "open-signal" );
         _closeInput = getInput ( "close-signal" );
         _transitInput = getInput ( "transit-signal" );
@@ -54,22 +62,24 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
 
         _lastTick = System.currentTimeMillis ();
         _scheduler.addJob ( this, JOB_PERIOD );
-        
+
         _openCommand = getOutput ( "open-command" );
         _openCommand.addListener ( new DataItemCommand.Listener () {
 
             public void command ( Variant value )
             {
                 open ();
-            }} );
+            }
+        } );
         _closeCommand = getOutput ( "close-command" );
         _closeCommand.addListener ( new DataItemCommand.Listener () {
 
             public void command ( Variant value )
             {
                 close ();
-            }} );
-        
+            }
+        } );
+
         update ();
     }
 
@@ -77,7 +87,7 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
     {
         if ( _state.equals ( State.CLOSED ) )
             return;
-        
+
         startTransit ( State.CLOSED, State.TRANSIT_CLOSE );
     }
 
@@ -85,15 +95,15 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
     {
         if ( _state.equals ( State.OPENED ) )
             return;
-        
+
         startTransit ( State.OPENED, State.TRANSIT_OPEN );
     }
-    
+
     public synchronized void startTransit ( State target, State currentState )
     {
         if ( ( _switchTarget != null ) && _switchTarget.equals ( target ) )
             return;
-        
+
         if ( _switchRunning > 0 )
         {
             _switchRunning = _switchTime - _switchRunning;
@@ -102,10 +112,10 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
         {
             _switchRunning = _switchTime;
         }
-        
+
         _switchTarget = target;
         _state = currentState;
-        
+
         update ();
     }
 
@@ -113,17 +123,17 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
     {
         if ( _error = state )
             return;
-        
+
         _error = state;
     }
-    
+
     protected void setOpenStates ( boolean open, boolean close )
     {
         _openInput.updateValue ( new Variant ( open ) );
         _closeInput.updateValue ( new Variant ( close ) );
         _transitInput.updateValue ( new Variant ( isTransit () ) );
     }
-    
+
     protected synchronized void update ()
     {
         if ( _error )
@@ -154,10 +164,9 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
         }
         _errorInput.updateValue ( new Variant ( _error ) );
         _runtimeInput.updateValue ( new Variant ( _switchRunning ) );
-        
-        
+
     }
-    
+
     public boolean isTransit ()
     {
         switch ( _state )
@@ -167,7 +176,7 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
         case TRANSIT_CLOSE:
             return true;
         default:
-            return false;    
+            return false;
         }
     }
 
@@ -176,21 +185,21 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
         long ts = System.currentTimeMillis ();
         long diff = ts - _lastTick;
         _lastTick = ts;
-        
+
         _switchRunning -= diff;
-        
+
         if ( _switchRunning < 0 )
             _switchRunning = 0;
-        
+
         if ( _switchTarget == null )
             return;
-        
+
         if ( _switchRunning == 0 )
         {
             _state = _switchTarget;
             _switchTarget = null;
         }
-        
+
         update ();
     }
 }
