@@ -342,17 +342,19 @@ public class Variant
         Variant arg0 = (Variant)obj;
 
         try {
-            if ( arg0.isNull() )
-                return isNull();
+            if ( arg0.isNull () )
+                return isNull ();
+            else if ( isNull () )
+                return arg0.isNull ();
             else if ( arg0.isBoolean () )
                 return compareToBoolean ( arg0.asBoolean () );
-            else if ( arg0.isDouble() )
+            else if ( arg0.isDouble () )
                 return compareToDouble ( arg0.asDouble() );
-            else if ( arg0.isLong() )
+            else if ( arg0.isLong () )
                 return compareToLong ( arg0.asLong() );
-            else if ( arg0.isInteger() )
+            else if ( arg0.isInteger () )
                 return compareToInteger ( arg0.asInteger() );
-            else if ( arg0.isString() )
+            else if ( arg0.isString () )
                 return compareToString ( arg0.asString() );
 
             return false;
