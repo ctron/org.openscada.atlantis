@@ -121,6 +121,15 @@ public class Scheduler implements Runnable
         {
             _nextTime = System.currentTimeMillis ();
         }
+
+        /**
+         * delay the job to be executed at period from <b>now!</b>
+         *
+         */
+        public void bump ()
+        {
+            _nextTime = System.currentTimeMillis () + _period;
+        }
 	}
 	
 	public Scheduler ()
