@@ -3,7 +3,7 @@
 <plugin>
 
    <extension
-         id="org.openscada.rcp.client.application"
+         id="application"
          name="OpenSCADA RCP Client Application"
          point="org.eclipse.core.runtime.applications">
       <application>
