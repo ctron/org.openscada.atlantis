@@ -1,5 +1,6 @@
 package org.openscada.da.client.viewer.model.impl.figures;
 
+import org.apache.log4j.Logger;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
@@ -11,8 +12,10 @@ import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
 public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIObject
 {
+    private static Logger _log = Logger.getLogger ( BaseFigure.class );
+    
     private Color _color = null;
-    private org.eclipse.draw2d.geometry.Rectangle _bounds = new org.eclipse.draw2d.geometry.Rectangle ( 0, 0, 0, 0 );
+    private org.eclipse.draw2d.geometry.Rectangle _bounds = new org.eclipse.draw2d.geometry.Rectangle ( 0, 0, -1, -1 );
 
     public BaseFigure ( String id )
     {
@@ -22,6 +25,8 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
         addInput ( new AliasedPropertyInput ( this, "height", "height" ) );
         addInput ( new AliasedPropertyInput ( this, "x", "x" ) );
         addInput ( new AliasedPropertyInput ( this, "y", "y" ) );
+        
+        
     }
     
     public void setHeight ( Long height )
@@ -54,7 +59,10 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
 
     public org.openscada.da.client.viewer.model.types.Color getColor ()
     {
-        return Helper.colorFromRGB ( _color.getRGB () );
+        if ( _color == null )
+            return null;
+        else
+            return Helper.colorFromRGB ( _color.getRGB () );
     }
 
     public void setColor ( org.openscada.da.client.viewer.model.types.Color color )
@@ -81,7 +89,12 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
         if ( figure == null )
             return;
         
-        figure.setBounds ( _bounds );
+        //figure.setBounds ( _bounds );
+        if ( figure.getParent () != null )
+        {
+            _log.debug ( String.format ( "Setting layout bounds: %d/%d/%d/%d", _bounds.x, _bounds.y, _bounds.width, _bounds.height ) );
+            figure.getParent ().setConstraint ( figure, _bounds.getCopy () );
+        }
         figure.setBackgroundColor ( _color );
     }
     
