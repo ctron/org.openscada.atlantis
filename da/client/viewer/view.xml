@@ -14,7 +14,7 @@
 		<container-factory id="hidden" class="org.openscada.da.client.viewer.model.impl.containers.HiddenContainerFactory"/>
 		<container-factory id="command" class="org.openscada.da.client.viewer.model.impl.containers.CommandContainer"/>
 		
-		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.figures.RectangleFactory"/>
+		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.figures.Rectangle"/>
 		<object-factory id="triangle" class="org.openscada.da.client.viewer.model.impl.figures.Triangle"/>
 		<object-factory id="item" class="org.openscada.da.client.viewer.model.impl.items.DataItemObject"/>
 		
