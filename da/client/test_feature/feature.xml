@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.client.test"
       label="OpenSCADA DA Test Client Feature"
-      version="0.4.0"
+      version="0.5.0"
       provider-name="OpenSCADA"
       plugin="org.openscada.da.client.test">
 
@@ -380,6 +380,13 @@ POSSIBILITY OF SUCH DAMAGES.
 
    <plugin
          id="org.eclipse.ui.views"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.client.viewer"
          download-size="0"
          install-size="0"
          version="0.0.0"
