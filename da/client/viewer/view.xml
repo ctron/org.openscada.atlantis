@@ -222,54 +222,7 @@
 		<view id="view1" type="view">
 			
 			<objects>
-				<!-- 
-				<constant id="int_zero">
-					<variant><int32>0</int32></variant>
-				</constant>
 				
-				<object id="fc1" type="factor">
-					<property name="factor">0.01</property>
-				</object>
-				<object id="vad1" type="variantasdouble"/>
-				<object id="vai1" type="variantasinteger"/>
-				<object id="d2i1" type="d2i"/>
-				<object id="mod1" type="modulo">
-					<property name="modulo">255</property>
-				</object>
-				<object id="item1" type="item">
-					<property name="item">time</property>
-					<property name="connection">net://localhost:1202</property>
-				</object>
-				<object id="item2" type="item">
-					<property name="item">memory</property>
-					<property name="connection">net://localhost:1202</property>
-				</object>
-
-				<object id="rect2" type="rectangle">
-					<property name="x">100</property>
-					<property name="y">100</property>
-					<property name="width">255</property>
-					<property name="height">100</property>
-				</object>
-
-				<object id="rect1" type="rectangle">
-					<property name="x">100</property>
-					<property name="y">100</property>
-					<property name="width">0</property>
-					<property name="height">100</property>
-				</object>
-				
-				<object id="tri1" type="triangle">
-					<property name="x">50</property>
-					<property name="y">50</property>
-					<property name="height">25</property>
-					<property name="width">25</property>
-					<property name="color">#00FF00</property>
-				</object>
-				
-				<template-object template="variant_cc" id="cc1"/>
-				-->				
-
 				<object id="mov1_cmd_open" type="item">
 					<property name="item">mov.1000.open-command</property>
 					<property name="connection">net://localhost:1202</property>
@@ -298,50 +251,10 @@
 					<property name="y">100</property>
 				</template-object>
 				
-				<!-- 
-				<container type="command" id="c1">
-					<property name="width">24</property>
-					<property name="height">24</property>
-					<property name="commands">open-command|Open,close-command|Close</property>
-	
-					<objects>
-						<object id="mov1_open" type="item">
- 							<property name="item">mov.1000.open-signal</property>
- 							<property name="connection">net://localhost:1202</property>
-						</object>
-						<object id="mov1_close" type="item">
-							<property name="item">mov.1000.close-signal</property>
-							<property name="connection">net://localhost:1202</property>
-						</object>
-						<template-object template="mov" id="mov1"/>
-					</objects>
-					
-					<connectors>
-						<connector type="display">
-							<output object="mov1_open" name="value"/>
-							<input object="mov1" name="open-signal"/>
-						</connector>
-						<connector type="display">
-							<output object="mov1_close" name="value"/>
-							<input object="mov1" name="close-signal"/>
-						</connector>
-					</connectors>
-					
-				</container>
-				-->
 			</objects>
 			
 			<connectors>
-			<!-- 
-				<connector type="default">
-					<output object="c1" name="open-command"/>
-					<input object="mov1_cmd_open" name="value"/>
-				</connector>
-				<connector type="default">
-					<output object="c1" name="close-command"/>
-					<input object="mov1_cmd_close" name="value"/>
-				</connector>
-				-->
+			
 				<connector type="display">
 					<output object="mov1_open" name="value"/>
 					<input object="mov-cmd-1" name="open-signal"/>
@@ -358,54 +271,6 @@
 					<output object="mov-cmd-1" name="close-command"/>
 					<input object="mov1_cmd_close" name="value"/>
 				</connector>
-
-
-			<!-- 
-				<connector type="display">
-					<output object="item1" name="value"/>
-					<input object="vad1" name="value"/>
-				</connector>
-				<connector type="default">
-					<output object="vad1" name="value"/>
-					<input object="fc1" name="value"/>
-				</connector>
-				<connector type="default">
-					<output object="fc1" name="value"/>
-					<input object="d2i1" name="value"/>
-				</connector>
-				<connector type="default">
-					<output object="d2i1" name="value"/>
-					<input object="mod1" name="value"/>
-				</connector>
-				<connector type="default">
-					<output object="mod1" name="value"/>
-					<input object="rect1" name="width"/>
-				</connector>
-				<connector type="default">
-					<output object="mod1" name="value"/>
-					<input object="cc1" name="red"/>
-				</connector>
-				
-				<connector type="default">
-					<output object="int_zero" name="value"/>
-					<input object="cc1" name="blue"/>
-				</connector>
-				
-				<connector type="display">
-					<output object="item2" name="value"/>
-					<input object="cc1" name="green"/>
-				</connector>
-				
-				<connector type="default">
-					<output object="cc1" name="color"/>
-					<input object="rect1" name="color"/>
-				</connector>
-				
-				<connector type="display">
-					<output object="item2" name="value"/>
-					<input object="vai1" name="value"/>
-				</connector>
-				-->
 				
 			</connectors>
 		</view>
