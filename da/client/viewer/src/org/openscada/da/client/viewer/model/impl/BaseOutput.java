@@ -32,6 +32,11 @@ public abstract class BaseOutput implements OutputDefinition
     {
         _listeners.remove ( listener );
     }
+    
+    public synchronized boolean hasListeners ()
+    {
+        return _listeners.size () > 0;
+    }
 
     public String getName ()
     {
