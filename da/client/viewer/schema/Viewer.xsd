@@ -5,7 +5,7 @@
 	xmlns:common="http://openscada.org/Common"
 	>
 
- <import namespace="http://openscada.org/Common" schemaLocation="../../openscada_da_server_common/schema/Common.xsd"/>
+ <import namespace="http://openscada.org/Common" schemaLocation="openscada_da_server_common/Common.xsd"/>
 
 
 
