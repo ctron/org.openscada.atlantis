@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.openscada.da.client.viewer.model.AlreadyConnectedException;
 import org.openscada.da.client.viewer.model.Connector;
 import org.openscada.da.client.viewer.model.InputDefinition;
+import org.openscada.da.client.viewer.model.NotConnectedException;
 import org.openscada.da.client.viewer.model.OutputDefinition;
 import org.openscada.da.client.viewer.model.OutputListener;
 import org.openscada.da.client.viewer.model.Type;
@@ -27,7 +28,14 @@ public class PassThroughConnector implements Connector, OutputListener
     {
         if ( _input != null )
         {
-            _input.disconnect ();
+            try
+            {
+                _input.disconnect ( this );
+            }
+            catch ( NotConnectedException e )
+            {
+                _log.warn ( "Failed to disconnect", e );
+            }
         }
 
         _input = input;
@@ -82,5 +90,9 @@ public class PassThroughConnector implements Connector, OutputListener
             // will not be thrown since we only disconnect
         }
         setOutput ( null );
+        
+        // dispose value
+        _lastType = Type.NULL;
+        _lastValue = null;
     }
 }

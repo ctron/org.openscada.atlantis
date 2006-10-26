@@ -60,6 +60,7 @@ public class FigureContainer extends BaseFigure implements Container
         {
             connector.dispose ();
         }
+        _connectors.clear ();
         
         // dispose objects
         for ( DynamicObject object : _objects.values () )

@@ -114,6 +114,12 @@ public class HiddenContainer extends BaseDynamicObject implements Container
 
     public void dispose ()
     {
+        for ( Connector connector : _connectors )
+        {
+            connector.dispose ();
+        }
+        _connectors.clear ();
+        
         for ( DynamicObject object : _objects.values () )
         {
             object.dispose ();

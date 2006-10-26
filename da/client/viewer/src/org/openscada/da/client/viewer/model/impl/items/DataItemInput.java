@@ -8,6 +8,7 @@ import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.viewer.model.AlreadyConnectedException;
 import org.openscada.da.client.viewer.model.Connector;
 import org.openscada.da.client.viewer.model.InputDefinition;
+import org.openscada.da.client.viewer.model.NotConnectedException;
 import org.openscada.da.client.viewer.model.Type;
 
 public class DataItemInput implements InputDefinition
@@ -44,9 +45,12 @@ public class DataItemInput implements InputDefinition
         }
     }
 
-    public void disconnect ()
+    public void disconnect ( Connector connector ) throws NotConnectedException
     {
-        _connector = null;
+        if ( _connector == connector )
+            _connector = null;
+        else
+            throw new NotConnectedException ();
     }
 
     public String getName ()

@@ -74,6 +74,8 @@ public class DataItemOutput extends BaseOutput implements OutputDefinition, Obse
     @Override
     public synchronized void removeListener ( OutputListener listener )
     {
+        _log.debug ( "Removing listener" );
+        
         super.removeListener ( listener );
         if ( !hasListeners () )
         {

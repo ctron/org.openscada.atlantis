@@ -1,6 +1,5 @@
 package org.openscada.da.client.viewer.model.impl.containers;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,20 +14,4 @@ public class BasicView extends FigureContainer implements View
     {
         super ( id );
     }
-
-    public void add ( Connector connector )
-    {
-        _connectors.add ( connector );
-    }
-
-    public Collection<Connector> getConnectors ()
-    {
-        return _connectors;
-    }
-
-    public void remove ( Connector connector )
-    {
-        _connectors.remove ( connector );
-    }
-
 }

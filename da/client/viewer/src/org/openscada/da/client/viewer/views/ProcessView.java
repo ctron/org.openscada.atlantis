@@ -224,13 +224,16 @@ public class ProcessView extends ViewPart
     @Override
     public void dispose ()
     {
+        _log.debug ( "Disposing..." );
         if ( _container != null )
         {
+            _log.debug ( "Disposing...container" );
             _container.dispose ();
             _container = null;
         }
         if ( _canvas != null )
         {
+            _log.debug ( "Disposing...canvas" );
             _canvas.dispose ();
             _canvas = null;
         }
