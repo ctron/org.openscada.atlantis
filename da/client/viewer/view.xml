@@ -242,13 +242,18 @@
 				</object>
 			
 				<template-object template="mov-cmd" id="mov-cmd-1">
-					<property name="x">0</property>
-					<property name="y">0</property>
+					<property name="x">10</property>
+					<property name="y">10</property>
 				</template-object>
 			
 				<template-object template="mov-cmd" id="mov-cmd-2">
-					<property name="x">100</property>
+					<property name="x">10</property>
 					<property name="y">100</property>
+				</template-object>
+				
+				<template-object template="mov-cmd" id="mov-cmd-3">
+					<property name="x">10</property>
+					<property name="y">200</property>
 				</template-object>
 				
 			</objects>
@@ -270,6 +275,15 @@
 				<connector type="default">
 					<output object="mov-cmd-1" name="close-command"/>
 					<input object="mov1_cmd_close" name="value"/>
+				</connector>
+				
+				<connector type="display">
+					<output object="mov1_open" name="value"/>
+					<input object="mov-cmd-2" name="open-signal"/>
+				</connector>
+				<connector type="display">
+					<output object="mov1_close" name="value"/>
+					<input object="mov-cmd-2" name="close-signal"/>
 				</connector>
 				
 			</connectors>
