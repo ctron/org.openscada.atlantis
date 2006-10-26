@@ -14,7 +14,7 @@
             category="org.openscada.da.client.test"
             class="org.openscada.da.client.viewer.views.ProcessView"
             id="org.openscada.da.client.viewer.ProcessView"
-            name="ProcessView"/>
+            name="Process Viewer"/>
    </extension>
 
 </plugin>
