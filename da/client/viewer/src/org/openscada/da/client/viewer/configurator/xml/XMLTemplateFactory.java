@@ -3,7 +3,6 @@ package org.openscada.da.client.viewer.configurator.xml;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.openscada.da.client.viewer.configurator.ConfigurationError;
-import org.openscada.da.client.viewer.model.Container;
 import org.openscada.da.client.viewer.model.DynamicObject;
 import org.openscada.da.client.viewer.model.ObjectFactory;
 import org.openscada.da.viewer.template.TemplateDocument;
