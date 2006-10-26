@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.apache.log4j.Logger;
 import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.net.DataItem;
 import org.openscada.da.client.viewer.model.OutputDefinition;
@@ -13,6 +14,8 @@ import org.openscada.da.client.viewer.model.impl.BaseOutput;
 
 public class DataItemOutput extends BaseOutput implements OutputDefinition, Observer
 {
+    private static Logger _log = Logger.getLogger ( DataItemOutput.class );
+    
     private Connection _connection = null;
     private DataItem _dataItem = null;
     private boolean _subscribed = false;
@@ -29,6 +32,8 @@ public class DataItemOutput extends BaseOutput implements OutputDefinition, Obse
         if ( _subscribed )
             return;
         
+        _log.debug ( String.format ( "Subscribing to item" ) );
+        
         _dataItem.addObserver ( this );
         _dataItem.register ( _connection );
         _subscribed = true;
@@ -38,6 +43,8 @@ public class DataItemOutput extends BaseOutput implements OutputDefinition, Obse
     {
         if ( !_subscribed )
             return;
+        
+        _log.debug ( String.format ( "Un-Subscribing from item" ) );
         
         _dataItem.deleteObserver ( this );
         _dataItem.unregister ();

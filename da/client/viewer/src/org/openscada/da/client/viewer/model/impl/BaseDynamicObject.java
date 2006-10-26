@@ -65,4 +65,7 @@ public class BaseDynamicObject implements DynamicObject
         _outputs.remove ( name );
     }
 
+    public void dispose ()
+    {
+    }
 }

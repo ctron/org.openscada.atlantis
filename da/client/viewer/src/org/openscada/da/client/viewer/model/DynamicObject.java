@@ -9,4 +9,6 @@ public interface DynamicObject
     
     public abstract InputDefinition getInputByName ( String name );
     public abstract OutputDefinition getOutputByName ( String name );
+    
+    public abstract void dispose ();
 }

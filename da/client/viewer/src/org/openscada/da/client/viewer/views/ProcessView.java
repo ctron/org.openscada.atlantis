@@ -203,5 +203,22 @@ public class ProcessView extends ViewPart
     {
         _canvas.setFocus ();
     }
+    
+    @Override
+    public void dispose ()
+    {
+        if ( _container != null )
+        {
+            _container.dispose ();
+            _container = null;
+        }
+        if ( _canvas != null )
+        {
+            _canvas.dispose ();
+            _canvas = null;
+        }
+        _system = null;
+        super.dispose ();
+    }
 
 }

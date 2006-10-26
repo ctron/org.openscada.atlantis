@@ -51,7 +51,20 @@ public class FigureContainer extends BaseFigure implements Container
 
     public void dispose ()
     {
+        // dispose connections
+        for ( Connector connector : _connectors )
+        {
+            connector.dispose ();
+        }
+        
+        // dispose objects
+        for ( DynamicObject object : _objects.values () )
+        {
+            object.dispose ();
+        }
         _objects.clear ();
+        
+        // dispose gui stuff
         if ( _figure != null )
         {
             _figure.removeAll ();

@@ -23,10 +23,15 @@ public class PassThroughConnector implements Connector, OutputListener
         return _input;
     }
 
-    public void setInput ( InputDefinition input ) throws AlreadyConnectedException
+    public synchronized void setInput ( InputDefinition input ) throws AlreadyConnectedException
     {
+        if ( _input != null )
+        {
+            _input.disconnect ();
+        }
+
         _input = input;
-        
+
         if ( _input != null )
         {
             _input.connect ( this );
@@ -39,13 +44,15 @@ public class PassThroughConnector implements Connector, OutputListener
         return _output;
     }
 
-    public void setOutput ( OutputDefinition output )
+    public synchronized void setOutput ( OutputDefinition output )
     {
         if ( _output != null )
         {
             _output.removeListener ( this );
         }
+        
         _output = output;
+        
         if ( _output != null )
         {
             _output.addListener ( this );
@@ -62,5 +69,18 @@ public class PassThroughConnector implements Connector, OutputListener
         {
             _input.update ( type, value );
         }
+    }
+    
+    public void dispose ()
+    {
+        try
+        {
+            setInput ( null );
+        }
+        catch ( AlreadyConnectedException e )
+        {
+            // will not be thrown since we only disconnect
+        }
+        setOutput ( null );
     }
 }
