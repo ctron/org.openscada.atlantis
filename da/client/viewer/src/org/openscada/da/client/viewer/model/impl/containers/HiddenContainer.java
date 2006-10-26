@@ -21,6 +21,9 @@ public class HiddenContainer extends BaseDynamicObject implements Container
     private Map<String, DynamicObject> _objects = new HashMap<String, DynamicObject>();
     private List<Connector> _connectors = new LinkedList<Connector> ();
     
+    private Map<String,Export> _outputExports = new HashMap<String, Export> ();
+    private Map<String,Export> _inputExports = new HashMap<String, Export> ();
+    
     public HiddenContainer ( String id )
     {
         super ( id );
@@ -81,6 +84,32 @@ public class HiddenContainer extends BaseDynamicObject implements Container
     public void remove ( Connector connector )
     {
         _connectors.remove ( connector );
+    }
+
+    public Collection<Export> getInputExports ()
+    {
+        return _inputExports.values ();
+    }
+
+    public Collection<Export> getOutputExports ()
+    {
+        return _outputExports.values ();
+    }
+
+    public synchronized void removeInputExport ( String exportName )
+    {
+        if ( _inputExports.remove ( exportName ) != null )
+        {
+            removeInput ( exportName );
+        }
+    }
+
+    public void removeOutputExport ( String exportName )
+    {
+        if ( _outputExports.remove ( exportName ) != null )
+        {
+            removeOutput ( exportName );
+        }        
     }
 
     public void dispose ()
