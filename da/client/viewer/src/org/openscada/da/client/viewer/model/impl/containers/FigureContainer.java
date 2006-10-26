@@ -27,26 +27,30 @@ public class FigureContainer extends BaseFigure implements Container
     private List<Connector> _connectors = new LinkedList<Connector> ();
     private Map<String, DynamicObject> _objects = new HashMap<String, DynamicObject> ();
     
+    private Map<String,Export> _outputExports = new HashMap<String, Export> ();
+    private Map<String,Export> _inputExports = new HashMap<String, Export> ();
+    
     public FigureContainer ( String id )
     {
         super ( id );
     }
     
-    public IFigure getFigure ()
+    public void createFigure ( IFigure parent )
     {
         _figure = new Figure ();
         _figure.setLayoutManager ( new XYLayout () );
+        
+        parent.add ( _figure );
+        
         update ();
         
         for ( DynamicObject object : _objects.values () )
         {
             if ( object instanceof DynamicUIObject )
             {
-                _figure.add ( ((DynamicUIObject)object).getFigure () );
+                ((DynamicUIObject)object).createFigure ( _figure );
             }
         }
-        
-        return _figure;
     }
 
     public void dispose ()
@@ -67,7 +71,7 @@ public class FigureContainer extends BaseFigure implements Container
         // dispose gui stuff
         if ( _figure != null )
         {
-            _figure.removeAll ();
+            _figure.getParent ().remove ( _figure );
             _figure = null;
         }
     }
@@ -79,19 +83,20 @@ public class FigureContainer extends BaseFigure implements Container
         {
             if ( object instanceof DynamicUIObject )
             {
-                _figure.add ( ((DynamicUIObject)object).getFigure () );
+                ((DynamicUIObject)object).createFigure ( _figure );
             }
         }
     }
 
     public void remove ( DynamicObject object )
     {
+        // FIXME: cannot use getFigure anymore!!
         _objects.remove ( object.getId () );
         if ( _figure != null )
         {
             if ( object instanceof DynamicUIObject )
             {
-                _figure.remove ( ((DynamicUIObject)object).getFigure () );
+                ((DynamicUIObject)object).dispose ();
             }
         }
     }
@@ -148,6 +153,33 @@ public class FigureContainer extends BaseFigure implements Container
     public void remove ( Connector connector )
     {
         _connectors.remove ( connector );
+    }
+
+
+    public Collection<Export> getInputExports ()
+    {
+        return _inputExports.values ();
+    }
+
+    public Collection<Export> getOutputExports ()
+    {
+        return _outputExports.values ();
+    }
+
+    public synchronized void removeInputExport ( String exportName )
+    {
+        if ( _inputExports.remove ( exportName ) != null )
+        {
+            removeInput ( exportName );
+        }
+    }
+
+    public void removeOutputExport ( String exportName )
+    {
+        if ( _outputExports.remove ( exportName ) != null )
+        {
+            removeOutput ( exportName );
+        }        
     }
 
 }
