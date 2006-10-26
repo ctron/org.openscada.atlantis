@@ -1,4 +1,4 @@
-package org.openscada.da.client.viewer.model.impl;
+package org.openscada.da.client.viewer.model.impl.items;
 
 import org.openscada.da.client.viewer.model.DynamicObject;
 import org.openscada.da.client.viewer.model.ObjectFactory;

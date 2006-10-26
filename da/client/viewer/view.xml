@@ -17,7 +17,7 @@
 		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.figures.RectangleFactory"/>
 		<object-factory id="triangle" class="org.openscada.da.client.viewer.model.impl.figures.Triangle"/>
 		
-		<object-factory id="item" class="org.openscada.da.client.viewer.model.impl.DataItemObjectFactory"/>
+		<object-factory id="item" class="org.openscada.da.client.viewer.model.impl.items.DataItemObject"/>
 		
 		<object-factory id="colorcomposer" class="org.openscada.da.client.viewer.model.impl.converter.ColorComposer"/>
 		<object-factory id="modulo" class="org.openscada.da.client.viewer.model.impl.converter.ModuloCalculator"/>

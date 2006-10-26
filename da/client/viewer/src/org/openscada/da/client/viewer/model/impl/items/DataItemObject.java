@@ -1,10 +1,12 @@
-package org.openscada.da.client.viewer.model.impl;
+package org.openscada.da.client.viewer.model.impl.items;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.da.client.net.Connection;
+import org.openscada.da.client.viewer.model.impl.BaseDynamicObject;
+import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
 public class DataItemObject extends BaseDynamicObject
 {

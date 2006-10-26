@@ -23,7 +23,6 @@ import org.openscada.da.client.viewer.model.Container;
 import org.openscada.da.client.viewer.model.DynamicUIObject;
 import org.openscada.da.client.viewer.model.OutputDefinition;
 import org.openscada.da.client.viewer.model.View;
-import org.openscada.da.client.viewer.model.impl.DataItemOutput;
 import org.openscada.da.client.viewer.model.impl.DisplaySynchronizedConnector;
 import org.openscada.da.client.viewer.model.impl.IntegerSetterOutput;
 import org.openscada.da.client.viewer.model.impl.PassThroughConnector;
@@ -35,6 +34,7 @@ import org.openscada.da.client.viewer.model.impl.converter.Integer2DoubleConvert
 import org.openscada.da.client.viewer.model.impl.converter.ModuloCalculator;
 import org.openscada.da.client.viewer.model.impl.converter.SimpleVariantIntegerConverter;
 import org.openscada.da.client.viewer.model.impl.figures.Rectangle;
+import org.openscada.da.client.viewer.model.impl.items.DataItemOutput;
 
 public class ProcessView extends ViewPart
 {

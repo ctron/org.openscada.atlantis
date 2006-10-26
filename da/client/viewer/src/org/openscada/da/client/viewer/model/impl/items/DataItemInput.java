@@ -1,4 +1,4 @@
-package org.openscada.da.client.viewer.model.impl;
+package org.openscada.da.client.viewer.model.impl.items;
 
 import java.util.EnumSet;
 

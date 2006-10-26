@@ -1,4 +1,4 @@
-package org.openscada.da.client.viewer.model.impl;
+package org.openscada.da.client.viewer.model.impl.items;
 
 import java.util.EnumSet;
 import java.util.Observable;
@@ -9,6 +9,7 @@ import org.openscada.da.client.net.DataItem;
 import org.openscada.da.client.viewer.model.OutputDefinition;
 import org.openscada.da.client.viewer.model.OutputListener;
 import org.openscada.da.client.viewer.model.Type;
+import org.openscada.da.client.viewer.model.impl.BaseOutput;
 
 public class DataItemOutput extends BaseOutput implements OutputDefinition, Observer
 {
