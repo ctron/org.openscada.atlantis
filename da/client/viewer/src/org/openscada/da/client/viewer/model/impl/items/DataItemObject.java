@@ -3,13 +3,14 @@ package org.openscada.da.client.viewer.model.impl.items;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.viewer.model.impl.BaseDynamicObject;
 import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
 public class DataItemObject extends BaseDynamicObject
 {
+    protected static ConnectionPool _connectionPool = new ConnectionPool ();
+    
     private DataItemOutput _output = null;
     private DataItemInput _input = null;
     
@@ -55,9 +56,6 @@ public class DataItemObject extends BaseDynamicObject
     
     protected Connection getConnection () throws URISyntaxException
     {
-        ConnectionInfo ci = ConnectionInfo.fromUri ( new URI ( _connectionURI ) );
-        Connection connection = new Connection ( ci );
-        connection.connect ();
-        return connection;
+        return _connectionPool.getConnection ( new URI ( _connectionURI ) );
     }
 }
