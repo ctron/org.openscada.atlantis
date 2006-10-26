@@ -68,7 +68,7 @@
     </complexType>
 
     <complexType name="ObjectsType">
-    	<sequence>
+    	<choice maxOccurs="unbounded" minOccurs="0">
     		<element name="constant" type="viewer:ConstantType"
     			maxOccurs="unbounded" minOccurs="0">
     		</element>
@@ -81,7 +81,7 @@
     		<element name="container" type="viewer:ContainerType"
     			maxOccurs="unbounded" minOccurs="0">
     		</element>
-    	</sequence></complexType>
+    	</choice></complexType>
 
     <complexType name="ConnectorsType">
     	<sequence>

@@ -14,6 +14,7 @@
 		<container-factory id="hidden" class="org.openscada.da.client.viewer.model.impl.containers.HiddenContainerFactory"/>
 		<container-factory id="command" class="org.openscada.da.client.viewer.model.impl.containers.CommandContainer"/>
 		
+		<object-factory id="label" class="org.openscada.da.client.viewer.model.impl.figures.Label"/>
 		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.figures.Rectangle"/>
 		<object-factory id="triangle" class="org.openscada.da.client.viewer.model.impl.figures.Triangle"/>
 		<object-factory id="item" class="org.openscada.da.client.viewer.model.impl.items.DataItemObject"/>
@@ -245,16 +246,34 @@
 					<property name="x">10</property>
 					<property name="y">10</property>
 				</template-object>
+				
+				<object type="label" id="mov-cmd-label-1">
+					<property name="text">MOV 1000</property>
+					<property name="x">100</property>
+					<property name="y">15</property>
+				</object>
 			
 				<template-object template="mov-cmd" id="mov-cmd-2">
 					<property name="x">10</property>
-					<property name="y">100</property>
+					<property name="y">60</property>
 				</template-object>
+				
+				<object type="label" id="mov-cmd-label-2">
+					<property name="text">MOV 1000 (commands unconnected)</property>
+					<property name="x">100</property>
+					<property name="y">65</property>
+				</object>
 				
 				<template-object template="mov-cmd" id="mov-cmd-3">
 					<property name="x">10</property>
-					<property name="y">200</property>
+					<property name="y">110</property>
 				</template-object>
+				
+				<object type="label" id="mov-cmd-label-3">
+					<property name="text">MOV unconnected</property>
+					<property name="x">100</property>
+					<property name="y">115</property>
+				</object>
 				
 			</objects>
 			
