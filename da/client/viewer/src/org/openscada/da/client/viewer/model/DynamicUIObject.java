@@ -4,6 +4,6 @@ import org.eclipse.draw2d.IFigure;
 
 public interface DynamicUIObject extends DynamicObject
 {
-    public abstract IFigure getFigure ();
+    public abstract void createFigure ( IFigure parent );
     public abstract void dispose ();
 }

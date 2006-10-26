@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import org.openscada.da.client.viewer.model.AlreadyConnectedException;
 import org.openscada.da.client.viewer.model.Connector;
 import org.openscada.da.client.viewer.model.InputDefinition;
+import org.openscada.da.client.viewer.model.NotConnectedException;
 import org.openscada.da.client.viewer.model.Type;
 
 public class InputExport implements InputDefinition
@@ -23,9 +24,9 @@ public class InputExport implements InputDefinition
         _input.connect ( connector );
     }
 
-    public void disconnect ()
+    public void disconnect ( Connector connector ) throws NotConnectedException
     {
-        _input.disconnect ();
+        _input.disconnect ( connector );
     }
 
     public String getName ()

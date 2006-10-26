@@ -55,7 +55,12 @@ public interface Container extends DynamicObject
     }
     
     public abstract void addInputExport ( Export export ) throws ConfigurationError;
+    public abstract void removeInputExport ( String eportName );
+    public abstract Collection<Export> getInputExports ();
+    
     public abstract void addOutputExport ( Export export ) throws ConfigurationError;
+    public abstract void removeOutputExport ( String exportName );
+    public abstract Collection<Export> getOutputExports ();
     
     public abstract void add ( Connector connector );
     public abstract void remove ( Connector connector );

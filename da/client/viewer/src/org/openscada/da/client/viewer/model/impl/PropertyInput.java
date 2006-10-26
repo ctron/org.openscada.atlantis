@@ -13,6 +13,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.viewer.model.AlreadyConnectedException;
 import org.openscada.da.client.viewer.model.Connector;
 import org.openscada.da.client.viewer.model.InputDefinition;
+import org.openscada.da.client.viewer.model.NotConnectedException;
 import org.openscada.da.client.viewer.model.Type;
 
 public class PropertyInput implements InputDefinition
@@ -112,8 +113,15 @@ public class PropertyInput implements InputDefinition
         _connector = connector;
     }
     
-    public void disconnect ()
+    public void disconnect ( Connector connector ) throws NotConnectedException
     {
-        _connector = null;
+        if ( _connector == connector )
+        {
+            _connector = null;
+        }
+        else
+        {
+            throw new NotConnectedException ();
+        }
     }
 }

@@ -37,9 +37,11 @@ import org.openscada.da.viewer.ConstantType;
 import org.openscada.da.viewer.ContainerFactoryType;
 import org.openscada.da.viewer.ContainerType;
 import org.openscada.da.viewer.FactoriesType;
+import org.openscada.da.viewer.InputExportType;
 import org.openscada.da.viewer.InputType;
 import org.openscada.da.viewer.ObjectFactoryType;
 import org.openscada.da.viewer.ObjectType;
+import org.openscada.da.viewer.OutputExportType;
 import org.openscada.da.viewer.OutputType;
 import org.openscada.da.viewer.PropertyType;
 import org.openscada.da.viewer.RootDocument;
@@ -219,6 +221,22 @@ public class XMLConfigurator implements Configurator
             createConnector ( ctx, connector, containerObject );
         }
        
+        if ( container.getInputs () != null )
+        {
+            for ( InputExportType input : container.getInputs ().getInputExportList () )
+            {
+                containerObject.addInputExport ( new Container.Export ( input.getObject (), input.getName (), input.getExportName () ) );
+            }
+        }
+        
+        if ( container.getOutputs () != null )
+        {
+            for ( OutputExportType output : container.getOutputs ().getOutputExportList () )
+            {
+                containerObject.addOutputExport ( new Container.Export ( output.getObject (), output.getName (), output.getExportName () ) );
+            }
+        }
+        
         return containerObject;
     }
 
@@ -242,6 +260,11 @@ public class XMLConfigurator implements Configurator
         if ( dynamicObject == null )
         {
             throw new ConfigurationError ( String.format ( "Unable to create template object %s", template.getTemplate () ) );
+        }
+        
+        for ( PropertyType property : template.getPropertyList () )
+        {
+            setObjectProperty ( dynamicObject, property.getName ().toString (), property.getStringValue () );
         }
         
         viewObject.add ( dynamicObject );

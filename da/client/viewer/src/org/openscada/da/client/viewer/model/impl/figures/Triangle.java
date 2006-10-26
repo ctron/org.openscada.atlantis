@@ -15,17 +15,21 @@ public class Triangle extends BaseFigure implements DynamicUIObject
         addInput ( new PropertyInput ( this, "direction" ) );
     }
     
-    public IFigure getFigure ()
+    public void createFigure ( IFigure parent )
     {
-        _triangle = new org.eclipse.draw2d.Triangle  ();
+        _triangle = new org.eclipse.draw2d.Triangle ();
+        parent.add ( _triangle );
         
         update ();
-        return _triangle;
     }
     
     public void dispose ()
     {
-        _triangle = null;
+        if ( _triangle != null )
+        {
+            _triangle.getParent ().remove ( _triangle );
+            _triangle = null;
+        }
     }
     
     protected void update ()

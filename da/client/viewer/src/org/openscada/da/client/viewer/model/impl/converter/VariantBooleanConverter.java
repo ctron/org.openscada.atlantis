@@ -3,6 +3,7 @@ package org.openscada.da.client.viewer.model.impl.converter;
 import org.openscada.core.Variant;
 import org.openscada.da.client.viewer.model.impl.BaseDynamicObject;
 import org.openscada.da.client.viewer.model.impl.BooleanSetterOutput;
+import org.openscada.da.client.viewer.model.impl.IntegerSetterOutput;
 import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
 public class VariantBooleanConverter extends BaseDynamicObject

@@ -6,8 +6,6 @@ import org.openscada.da.client.viewer.configurator.ConfigurationError;
 import org.openscada.da.client.viewer.model.Container;
 import org.openscada.da.client.viewer.model.DynamicObject;
 import org.openscada.da.client.viewer.model.ObjectFactory;
-import org.openscada.da.viewer.template.InputExportType;
-import org.openscada.da.viewer.template.OutputExportType;
 import org.openscada.da.viewer.template.TemplateDocument;
 import org.openscada.da.viewer.template.TemplateType;
 import org.w3c.dom.Node;
@@ -28,20 +26,7 @@ public class XMLTemplateFactory implements ObjectFactory, XMLConfigurable
 
     private DynamicObject createTemplate ( String id, XMLContainerContext ctx ) throws ConfigurationError
     {
-        Container container = XMLConfigurator.createContainer ( ctx, id, _template );
-        
-        for ( InputExportType input : _template.getInputs ().getInputExportList () )
-        {
-            container.addInputExport ( new Container.Export ( input.getObject (), input.getName (), input.getExportName () ) );
-        }
-        
-        // now the same for outputs
-        for ( OutputExportType output : _template.getOutputs ().getOutputExportList () )
-        {
-            container.addOutputExport ( new Container.Export ( output.getObject (), output.getName (), output.getExportName () ) );
-        }
-        
-        return container;
+        return XMLConfigurator.createContainer ( ctx, id, _template );
     }
 
     public void configure ( XMLConfigurationContext ctx, Node node ) throws ConfigurationError

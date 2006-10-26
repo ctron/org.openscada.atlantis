@@ -13,16 +13,20 @@ public class Rectangle extends BaseFigure implements DynamicUIObject
         super ( id );
     }
     
-    public IFigure getFigure ()
+    public void createFigure ( IFigure parent )
     {
         _rectangle = new RectangleFigure ();
+        parent.add ( _rectangle );
         update ();
-        return _rectangle;
     }
 
     public void dispose ()
     {
-        _rectangle = null;
+        if ( _rectangle != null )
+        {
+            _rectangle.getParent ().remove ( _rectangle );
+            _rectangle = null;
+        }
     }
 
     protected void update ()

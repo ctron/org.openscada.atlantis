@@ -184,6 +184,23 @@ public class ProcessView extends ViewPart
         _rootFigure.setOpaque ( true );
         _system.setContents ( _rootFigure );
         
+        /*
+        Figure f1 = new Figure ();
+        f1.setBackgroundColor ( ColorConstants.red );
+        f1.setOpaque ( true );
+        f1.setLayoutManager ( new XYLayout () );
+        Figure f2 = new Figure ();
+        f2.setBackgroundColor ( ColorConstants.green );
+        f2.setOpaque ( true );
+        
+        //f2.setBounds ( new org.eclipse.draw2d.geometry.Rectangle ( 0, 0, 50, 50 ) );
+        f1.setSize ( -1, -1 );
+        
+        f1.add ( f2 );
+        f1.setConstraint ( f2, new org.eclipse.draw2d.geometry.Rectangle ( 50, 50, 50, 50 ) );
+        _rootFigure.add ( f1 );
+        _rootFigure.setConstraint ( f1, new org.eclipse.draw2d.geometry.Rectangle ( 100, 100, -1, -1 ) );
+        */
         createObjects ();
     }
 
@@ -194,7 +211,7 @@ public class ProcessView extends ViewPart
         
         if ( _container instanceof DynamicUIObject )
         {
-            _rootFigure.add ( ((DynamicUIObject)_container).getFigure () );
+            ((DynamicUIObject)_container).createFigure ( _rootFigure );
         }
     }
 

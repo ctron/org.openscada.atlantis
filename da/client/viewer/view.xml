@@ -16,7 +16,6 @@
 		
 		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.figures.RectangleFactory"/>
 		<object-factory id="triangle" class="org.openscada.da.client.viewer.model.impl.figures.Triangle"/>
-		
 		<object-factory id="item" class="org.openscada.da.client.viewer.model.impl.items.DataItemObject"/>
 		
 		<object-factory id="colorcomposer" class="org.openscada.da.client.viewer.model.impl.converter.ColorComposer"/>
@@ -35,12 +34,47 @@
 		</object-factory>
 		
 		<object-factory id="boolean2matrix" class="org.openscada.da.client.viewer.model.impl.converter.Boolean2Matrix"/>
+
+		<object-factory id="mov-cmd" class="org.openscada.da.client.viewer.configurator.xml.XMLTemplateFactory">
+			<template:template id="mov-cmd" type="figure">
+				<objects>					
+					<container type="command" id="c1">
+						<property name="commands">open-command|Open,close-command|Close</property>
 		
+						<objects>
+							<template-object template="mov" id="mov1"/>
+						</objects>
+						
+						<connectors>
+						</connectors>
+						
+						<inputs>
+							<input-export object="mov1" name="open-signal" export-name="open-signal"/>
+							<input-export object="mov1" name="close-signal" export-name="close-signal"/>
+						</inputs>
+						
+					</container>
+				</objects>
+
+				<connectors>
+				</connectors>
+
+				<outputs>
+					<output-export object="c1" name="open-command" export-name="open-command"/>
+					<output-export object="c1" name="close-command" export-name="close-command"/>
+				</outputs>
+
+				<inputs>
+					<input-export object="c1" name="open-signal" export-name="open-signal"/>
+					<input-export object="c1" name="close-signal" export-name="close-signal"/>
+				</inputs>
+				
+			</template:template>
+		</object-factory>
+				
 		<object-factory id="mov" class="org.openscada.da.client.viewer.configurator.xml.XMLTemplateFactory">
 			<template:template id="mov" type="figure">
-				<property name="width">24</property>
-				<property name="height">24</property>
-				
+
 				<objects>
 					<constant id="mov_fatal"><color red="255" green="0" blue="255"/></constant>
 					<constant id="mov_opened"><color red="0" green="255" blue="0"/></constant>
@@ -117,8 +151,8 @@
 				</outputs>
 				
 				<inputs>
-					<input-export object="v2b_opened" name="value" export-name="open"/>
-					<input-export object="v2b_closed" name="value" export-name="close"/>
+					<input-export object="v2b_opened" name="value" export-name="open-signal"/>
+					<input-export object="v2b_closed" name="value" export-name="close-signal"/>
 				</inputs>
 				
 			</template:template>
@@ -186,8 +220,6 @@
 	
 	<views>
 		<view id="view1" type="view">
-			<property name="width">1000</property>
-			<property name="height">1000</property>
 			
 			<objects>
 				<!-- 
@@ -246,11 +278,31 @@
 					<property name="item">mov.1000.close-command</property>
 					<property name="connection">net://localhost:1202</property>
 				</object>
+
+				<object id="mov1_open" type="item">
+					<property name="item">mov.1000.open-signal</property>
+					<property name="connection">net://localhost:1202</property>
+				</object>
+				<object id="mov1_close" type="item">
+					<property name="item">mov.1000.close-signal</property>
+					<property name="connection">net://localhost:1202</property>
+				</object>
+			
+				<template-object template="mov-cmd" id="mov-cmd-1">
+					<property name="x">0</property>
+					<property name="y">0</property>
+				</template-object>
+			
+				<template-object template="mov-cmd" id="mov-cmd-2">
+					<property name="x">100</property>
+					<property name="y">100</property>
+				</template-object>
 				
+				<!-- 
 				<container type="command" id="c1">
 					<property name="width">24</property>
 					<property name="height">24</property>
-					<property name="commands">open|Open,close|Close</property>
+					<property name="commands">open-command|Open,close-command|Close</property>
 	
 					<objects>
 						<object id="mov1_open" type="item">
@@ -267,27 +319,47 @@
 					<connectors>
 						<connector type="display">
 							<output object="mov1_open" name="value"/>
-							<input object="mov1" name="open"/>
+							<input object="mov1" name="open-signal"/>
 						</connector>
 						<connector type="display">
 							<output object="mov1_close" name="value"/>
-							<input object="mov1" name="close"/>
+							<input object="mov1" name="close-signal"/>
 						</connector>
 					</connectors>
 					
 				</container>
-				
+				-->
 			</objects>
 			
 			<connectors>
+			<!-- 
 				<connector type="default">
-					<output object="c1" name="open"/>
+					<output object="c1" name="open-command"/>
 					<input object="mov1_cmd_open" name="value"/>
 				</connector>
 				<connector type="default">
-					<output object="c1" name="close"/>
+					<output object="c1" name="close-command"/>
 					<input object="mov1_cmd_close" name="value"/>
 				</connector>
+				-->
+				<connector type="display">
+					<output object="mov1_open" name="value"/>
+					<input object="mov-cmd-1" name="open-signal"/>
+				</connector>
+				<connector type="display">
+					<output object="mov1_close" name="value"/>
+					<input object="mov-cmd-1" name="close-signal"/>
+				</connector>
+				<connector type="default">
+					<output object="mov-cmd-1" name="open-command"/>
+					<input object="mov1_cmd_open" name="value"/>
+				</connector>
+				<connector type="default">
+					<output object="mov-cmd-1" name="close-command"/>
+					<input object="mov1_cmd_close" name="value"/>
+				</connector>
+
+
 			<!-- 
 				<connector type="display">
 					<output object="item1" name="value"/>

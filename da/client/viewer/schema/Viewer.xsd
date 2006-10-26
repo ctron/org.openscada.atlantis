@@ -132,6 +132,9 @@
     </complexType>
 
     <complexType name="TemplateObjectType">
+        <sequence>
+        	<element name="property" type="viewer:PropertyType" maxOccurs="unbounded" minOccurs="0"></element>
+        </sequence>
     	<attribute name="id" type="string" use="required"></attribute>
     	<attribute name="template" type="string" use="required"></attribute>
     </complexType>
@@ -186,6 +189,12 @@
         	<element name="connectors" type="viewer:ConnectorsType"
         		maxOccurs="1" minOccurs="0">
         	</element>
+			<element name="outputs" type="viewer:OutputsType"
+				maxOccurs="1" minOccurs="0">
+			</element>
+			<element name="inputs" type="viewer:InputsType"
+				maxOccurs="1" minOccurs="0">
+			</element>
         </sequence>
         <attribute name="type" type="string" use="required"></attribute>
         <attribute name="id" type="string" use="required"></attribute>
@@ -196,4 +205,42 @@
     		<extension base="viewer:BaseFactoryType"></extension>
     	</complexContent>
     </complexType>
+    
+        
+    <complexType name="OutputsType">
+    	<sequence>
+    		<element name="output-export" type="viewer:OutputExportType"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    	</sequence></complexType>
+
+    <complexType name="InputsType">
+    	<sequence>
+    		<element name="input-export" type="viewer:InputExportType"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    	</sequence></complexType>
+
+    <complexType name="OutputExportType">
+    	<complexContent>
+    		<extension base="viewer:ExportType">
+    			<sequence></sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="InputExportType">
+    	<complexContent>
+    		<extension base="viewer:ExportType">
+    			<sequence></sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="ExportType">
+    	<attribute name="name" type="string" use="required"></attribute>
+    	<attribute name="object" type="string"  use="required"></attribute>
+    	<attribute name="export-name" type="string"  use="required"></attribute>
+    </complexType>
+    
 </schema>
