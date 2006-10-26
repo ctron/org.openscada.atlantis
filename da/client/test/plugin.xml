@@ -320,15 +320,6 @@
             id="itemDrop"/>
    </extension>
    <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="org.openscada.da.client.test.editors.realtime.DataItemListEditor"
-            default="false"
-            extensions="dail"
-            id="org.openscada.da.test.views.RealTimeListEditor"
-            name="DA Item List Editor"/>
-   </extension>
-   <extension
          point="org.eclipse.ui.menus">
    </extension>
    
