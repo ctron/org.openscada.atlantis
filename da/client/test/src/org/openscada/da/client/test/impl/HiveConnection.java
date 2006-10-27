@@ -108,16 +108,21 @@ public class HiveConnection extends Observable implements IActionFilter
         return _connectionInfo;
     }
     
-    private void performStateChange ( Connection.State state, Throwable error )
+    private synchronized void performStateChange ( Connection.State state, Throwable error )
     {
+        _log.debug ( String.format ( "State Change to %s (%s)", state, error ) );
+        
         switch ( state )
         {
         case BOUND:
             _rootFolder = new FolderEntry ( "", new HashMap<String, Variant>(), null, this, true );
             break;
         case CLOSED:
-            _rootFolder.dispose ();
-            _rootFolder = null;
+            if ( _rootFolder != null )
+            {
+                _rootFolder.dispose ();
+                _rootFolder = null;
+            }
             break;
         default:
             break;
