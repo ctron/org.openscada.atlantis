@@ -127,7 +127,14 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin {
                 connection.setHost ( "localhost" );
                 connection.setPort ( 1202 );
                 _repository.getConnections().add(new HiveConnection(connection));
+                
+                connection = new HiveConnectionInformation ();
+                connection.setHost ( "localhost" );
+                connection.setPort ( 1203 );
+                _repository.getConnections ().add ( new HiveConnection ( connection ) );
+                
                 _repository.save(hives);
+                
             }
             
             
