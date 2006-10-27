@@ -105,8 +105,7 @@ public class Activator extends AbstractUIPlugin {
     {
         synchronized ( this )
         {
-            if ( _exporter != null )
-                throw new AlreadyStartedException();
+            checkRunning ();
             
             Path path = new Path ( "hive.xml" );
             
@@ -114,26 +113,37 @@ public class Activator extends AbstractUIPlugin {
             Hive testHive = new Hive ();
             configurator.configure ( testHive );
             
-            _exporter = new Exporter ( testHive );
-            
-            _exporterThread = new Thread ( new Runnable () {
-
-                public void run ()
-                {
-                    try
-                    {
-                        _exporter.run ();
-                    }
-                    catch ( Exception e )
-                    {
-                        notifyServerError ( e );
-                        _exporter = null;
-                        _exporterThread = null;
-                    }
-                }} );
-            _exporterThread.setDaemon ( true );
-            _exporterThread.start ();
+            exportServer ( testHive );
         }
+    }
+    
+    private void checkRunning () throws AlreadyStartedException
+    {
+        if ( _exporter != null )
+            throw new AlreadyStartedException ();
+    }
+    
+    private void exportServer ( Hive hive ) throws IOException
+    {
+        _exporter = new Exporter ( hive );
+        
+        _exporterThread = new Thread ( new Runnable () {
+
+            public void run ()
+            {
+                try
+                {
+                    _exporter.run ();
+                }
+                catch ( Exception e )
+                {
+                    notifyServerError ( e );
+                    _exporter = null;
+                    _exporterThread = null;
+                }
+            }} );
+        _exporterThread.setDaemon ( true );
+        _exporterThread.start ();
     }
     
     private void notifyServerError ( Throwable t )
