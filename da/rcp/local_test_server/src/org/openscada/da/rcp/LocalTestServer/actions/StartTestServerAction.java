@@ -34,9 +34,9 @@ import org.openscada.da.core.common.configuration.ConfigurationError;
 import org.openscada.da.rcp.LocalTestServer.Activator;
 import org.openscada.da.rcp.LocalTestServer.AlreadyStartedException;
 
-public class StartServerAction implements IWorkbenchWindowActionDelegate
+public class StartTestServerAction implements IWorkbenchWindowActionDelegate
 {
-    private static Logger _log = Logger.getLogger ( StartServerAction.class );
+    private static Logger _log = Logger.getLogger ( StartTestServerAction.class );
     
     private IWorkbenchWindow _window = null;
     

@@ -8,11 +8,18 @@
             id="org.openscada.da.rcp.LocalTestServer.actionSet"
             label="Local Test Server">
          <action
-               class="org.openscada.da.rcp.LocalTestServer.actions.StartServerAction"
+               class="org.openscada.da.rcp.LocalTestServer.actions.StartTestServerAction"
                icon="icons/stock_start_sever.png"
-               id="org.openscada.da.rcp.LocalTestServer.StartServerAction"
+               id="org.openscada.da.rcp.LocalTestServer.StartTestServerAction"
                label="Start Local Test Server"
-               menubarPath="testing/localServer"
+               menubarPath="testing/localTestServer"
+               style="push"/>
+         <action
+               class="org.openscada.da.rcp.LocalTestServer.actions.StartSimServerAction"
+               icon="icons/stock_start_sever.png"
+               id="org.openscada.da.rcp.LocalTestServer.StartSimServerAction"
+               label="Start Local Simulation Server"
+               menubarPath="testing/localSimServer"
                style="push"/>
          <menu
                id="testing"

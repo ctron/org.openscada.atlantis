@@ -20,6 +20,8 @@
 package org.openscada.da.rcp.LocalTestServer;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.eclipse.core.commands.operations.OperationStatus;
@@ -33,8 +35,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.openscada.da.core.common.configuration.ConfigurationError;
 import org.openscada.da.core.common.configuration.Configurator;
 import org.openscada.da.core.common.configuration.xml.XMLConfigurator;
+import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.net.Exporter;
-import org.openscada.da.server.test.Hive;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -47,10 +49,15 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-    
-    private org.openscada.da.server.net.Exporter _exporter = null;
-    private Thread _exporterThread = null;
 	
+    class Server
+    {
+       Exporter _exporter = null;
+       Thread _thread = null;
+    }
+    
+    private Map<Integer, Server> _exportMap = new HashMap<Integer, Server> ();
+    
 	/**
 	 * The constructor
 	 */
@@ -104,45 +111,60 @@ public class Activator extends AbstractUIPlugin {
     {
         synchronized ( this )
         {
-            checkRunning ();
+            checkRunning ( 1202 );
             
             Path path = new Path ( "hive.xml" );
             
             Configurator configurator = new XMLConfigurator ( FileLocator.openStream ( getBundle (), path, true ) );
-            Hive testHive = new Hive ();
+            org.openscada.da.server.test.Hive testHive = new org.openscada.da.server.test.Hive ();
             configurator.configure ( testHive );
             
             exportServer ( testHive, 1202 );
         }
     }
     
-    private void checkRunning () throws AlreadyStartedException
+    public void startLocalSimServer () throws AlreadyStartedException, IOException
     {
-        if ( _exporter != null )
+        synchronized ( this )
+        {
+            checkRunning ( 1203 );
+            org.openscada.da.core.server.Hive hive = new org.openscada.da.server.simulation.Hive ();
+            exportServer ( hive, 1203 );
+        }
+    }
+    
+    private void checkRunning ( Integer port ) throws AlreadyStartedException
+    {
+        if ( _exportMap.containsKey ( port ) )
             throw new AlreadyStartedException ();
     }
     
-    private void exportServer ( Hive hive, int port ) throws IOException
+    private void exportServer ( Hive hive, final int port ) throws IOException
     {
-        _exporter = new Exporter ( hive, port );
-        
-        _exporterThread = new Thread ( new Runnable () {
+        final Server server = new Server ();
+        server._exporter = new Exporter ( hive, port );
+        server._thread = new Thread ( new Runnable () {
 
             public void run ()
             {
                 try
                 {
-                    _exporter.run ();
+                    server._exporter.run ();
                 }
                 catch ( Exception e )
                 {
                     notifyServerError ( e );
-                    _exporter = null;
-                    _exporterThread = null;
+                    exportEnded ( port );
                 }
             }} );
-        _exporterThread.setDaemon ( true );
-        _exporterThread.start ();
+        server._thread.setDaemon ( true );
+        server._thread.start ();
+        _exportMap.put ( port, server );
+    }
+    
+    private synchronized void exportEnded ( int port )
+    {
+        _exportMap.remove ( port );
     }
     
     private void notifyServerError ( Throwable t )
