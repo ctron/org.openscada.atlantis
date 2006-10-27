@@ -70,11 +70,6 @@ public class Exporter implements Runnable
         return (Hive)hiveClass.newInstance();
     }
     
-    private void createServer () throws IOException
-    {
-        createServer ( null );
-    }
-    
     private void createServer ( Integer port ) throws IOException
     {
         if ( port == null )
