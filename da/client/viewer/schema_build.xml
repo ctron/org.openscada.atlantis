@@ -4,8 +4,8 @@
 
 	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
 		 <classpath id="xmlbeanspath">
-            <pathelement location="../ext_xmlbeans/xbean.jar"/>
-            <pathelement location="../ext_xmlbeans/jsr173_1.0_api.jar"/>
+            <pathelement location="../ext_plugin_xmlbeans/xbean.jar"/>
+            <pathelement location="../ext_plugin_xmlbeans/jsr173_1.0_api.jar"/>
          </classpath>
 	</taskdef>
 
