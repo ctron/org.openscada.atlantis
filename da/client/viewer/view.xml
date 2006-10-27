@@ -226,20 +226,20 @@
 				
 				<object id="mov1_cmd_open" type="item">
 					<property name="item">mov.1000.open-command</property>
-					<property name="connection">net://localhost:1202</property>
+					<property name="connection">net://localhost:1203</property>
 				</object>
 				<object id="mov1_cmd_close" type="item">
 					<property name="item">mov.1000.close-command</property>
-					<property name="connection">net://localhost:1202</property>
+					<property name="connection">net://localhost:1203</property>
 				</object>
 
 				<object id="mov1_open" type="item">
 					<property name="item">mov.1000.open-signal</property>
-					<property name="connection">net://localhost:1202</property>
+					<property name="connection">net://localhost:1203</property>
 				</object>
 				<object id="mov1_close" type="item">
 					<property name="item">mov.1000.close-signal</property>
-					<property name="connection">net://localhost:1202</property>
+					<property name="connection">net://localhost:1203</property>
 				</object>
 			
 				<template-object template="mov-cmd" id="mov-cmd-1">
@@ -273,6 +273,14 @@
 					<property name="text">MOV unconnected</property>
 					<property name="x">100</property>
 					<property name="y">115</property>
+				</object>
+				
+				<object type="label" id="description">
+					<property name="text">If the simulation server is not started the MOVs will all shown in purple. Start the simulation server and wait at least 10 seconds until the automatic re-connect will bind the visualization to the data items.</property>
+					<property name="x">400</property>
+					<property name="y">65</property>
+					<property name="width">200</property>
+					<property name="height">100</property>
 				</object>
 				
 			</objects>
