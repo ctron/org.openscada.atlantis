@@ -24,7 +24,6 @@ import java.io.IOException;
 import org.apache.xmlbeans.XmlException;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -113,7 +112,7 @@ public class Activator extends AbstractUIPlugin {
             Hive testHive = new Hive ();
             configurator.configure ( testHive );
             
-            exportServer ( testHive );
+            exportServer ( testHive, 1202 );
         }
     }
     
@@ -123,9 +122,9 @@ public class Activator extends AbstractUIPlugin {
             throw new AlreadyStartedException ();
     }
     
-    private void exportServer ( Hive hive ) throws IOException
+    private void exportServer ( Hive hive, int port ) throws IOException
     {
-        _exporter = new Exporter ( hive );
+        _exporter = new Exporter ( hive, port );
         
         _exporterThread = new Thread ( new Runnable () {
 
