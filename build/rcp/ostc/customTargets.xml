@@ -162,6 +162,8 @@
   <!-- Steps to do before running the build.xmls for the elements being built. -->
   <!-- ===================================================================== -->
   <target name="preProcess">
+	<ant antfile="schema_build.xml" dir="${buildDirectory}/plugins/org.openscada.da.client.viewer">
+	</ant>
   </target>
 
   <!-- ===================================================================== -->
