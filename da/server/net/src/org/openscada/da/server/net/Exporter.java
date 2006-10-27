@@ -29,25 +29,40 @@ public class Exporter implements Runnable
     private Hive _hive;
     private Server _server;
     
-    public Exporter ( Hive hive ) throws IOException
+    public Exporter ( Hive hive, Integer port ) throws IOException
     {
         _hive = hive;
         
-        createServer ();
+        createServer ( port );
+    }
+    
+    public Exporter ( Hive hive ) throws IOException
+    {
+        this ( hive, null );
+    }
+    
+    public Exporter ( Class hiveClass, Integer port ) throws InstantiationException, IllegalAccessException, IOException
+    {
+        _hive = createInstance ( hiveClass );
+        
+        createServer ( port );
     }
     
     public Exporter ( Class hiveClass ) throws InstantiationException, IllegalAccessException, IOException
     {
-        _hive = createInstance ( hiveClass );
+        this ( hiveClass, null );
+    }
+    
+    public Exporter ( String hiveClassName, Integer port ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
+    {
+        _hive = createInstance ( Class.forName ( hiveClassName ) );
         
-        createServer ();
+        createServer ( port );
     }
     
     public Exporter ( String hiveClassName ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
     {
-        _hive = createInstance ( Class.forName ( hiveClassName ) );
-        
-        createServer ();
+        this ( hiveClassName, null );
     }
     
     private Hive createInstance ( Class hiveClass ) throws InstantiationException, IllegalAccessException
@@ -57,9 +72,17 @@ public class Exporter implements Runnable
     
     private void createServer () throws IOException
     {
+        createServer ( null );
+    }
+    
+    private void createServer ( Integer port ) throws IOException
+    {
+        if ( port == null )
+            port = Integer.getInteger ( "openscada.da.net.server.port", 1202 );
+        
         _server = new Server (
                 new ConnectionHandlerServerFactory ( _hive ),
-                Integer.getInteger ( "openscada.da.net.server.port", 1202 )
+                port
         );
     }
 
