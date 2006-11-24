@@ -27,15 +27,11 @@ import org.openscada.da.core.browser.common.query.ItemStorage;
 import org.openscada.da.core.browser.common.query.Matcher;
 import org.openscada.da.core.browser.common.query.QueryFolder;
 import org.openscada.da.core.common.impl.HiveCommon;
-import org.openscada.da.server.simulation.modules.BaseModule;
-import org.openscada.da.server.simulation.modules.SimpleMOV;
 import org.openscada.utils.timing.Scheduler;
 
 public class Hive extends HiveCommon
 {
     private Scheduler _scheduler = null;
-
-    private List<BaseModule> _modules = new LinkedList<BaseModule> ();
 
     private InvisibleStorage _storage = new InvisibleStorage ();
 
@@ -48,19 +44,6 @@ public class Hive extends HiveCommon
         // create root folder
         FolderCommon rootFolder = new FolderCommon ();
         setRootFolder ( rootFolder );
-
-        _modules.add ( new SimpleMOV ( this, "1000" ) );
-
-        QueryFolder queryFolder = new QueryFolder ( new Matcher () {
-
-            public boolean matches ( ItemDescriptor desc )
-            {
-                return true;
-            }
-        }, new IDNameProvider () );
-        _storage.addChild ( queryFolder );
-
-        rootFolder.add ( "all", queryFolder, new HashMap<String, Variant> () );
     }
 
     public Scheduler getScheduler ()

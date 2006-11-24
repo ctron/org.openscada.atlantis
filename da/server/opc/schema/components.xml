@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<components:root
-	xmlns:components="http://openscada.org/DA/Simulation/Components"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://openscada.org/DA/Simulation/Components components.xsd ">
-	<components:components>
-		<components:mov id="1000"/>
-	</components:components>
-</components:root>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+	xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://openscada.org/DA/OPC/Configuration"
+	xmlns:components="http://openscada.org/DA/OPC/Configuration"
+	elementFormDefault="qualified">
+
+    <element name="root" type="components:RootType"></element>
+    
+    <complexType name="RootType">
+    	<sequence>
+    		<element name="connections"
+    			type="components:ConnectionsType" maxOccurs="1" minOccurs="0">
+    		</element>
+    	</sequence>
+    </complexType>
+
+
+    <complexType name="ConnectionsType">
+    	<sequence>
+    		<element name="configuration"
+    			type="components:ConfigurationType" maxOccurs="unbounded"
+    			minOccurs="0">
+    		</element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="ConfigurationType">
+    	<attribute name="host" type="string"></attribute>
+    	<attribute name="domain" type="string"></attribute>
+    	<attribute name="user" type="string"></attribute>
+    	<attribute name="password" type="string"></attribute>
+    	<attribute name="clsid" type="string"></attribute>
+    </complexType>
+</schema>
