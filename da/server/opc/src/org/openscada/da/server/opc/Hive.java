@@ -12,7 +12,7 @@
  * Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.server.simulation;
+package org.openscada.da.server.opc;
 
 import java.util.HashMap;
 import java.util.LinkedList;
