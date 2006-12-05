@@ -92,6 +92,8 @@ public class Variant
             _value = null;
         else if ( value instanceof Variant )
             setValue ( ((Variant)value)._value );
+        else if ( value instanceof Short )
+            setValue ( ((Short)value).intValue () );
         else if ( value instanceof Long )
             setValue ( ((Long)value).longValue () );
         else if ( value instanceof Integer )
