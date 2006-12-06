@@ -77,16 +77,16 @@ public class OPCItemManager
         _storage.added ( desc.getItemDescriptor () );
     }
     
-    public synchronized OPCItem getItem ( String itemId, EnumSet<IODirection> ioDirection )
+    public synchronized OPCItem getItem ( String opcItemId, EnumSet<IODirection> ioDirection )
     {
-        OPCItem item = _itemMap.get ( itemId );
+        OPCItem item = _itemMap.get ( opcItemId );
         if ( item != null )
             return item;
         
-        DataItemInformationBase di = new DataItemInformationBase ( itemId, ioDirection );
+        DataItemInformationBase di = new DataItemInformationBase ( _connection.getBaseId () + "." + opcItemId, ioDirection );
         try
         {
-            item = new OPCItem ( di, _connection, itemId );
+            item = new OPCItem ( di, _connection, opcItemId );
             addItem ( item );
             return item;
         }

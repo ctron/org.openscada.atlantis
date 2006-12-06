@@ -14,19 +14,9 @@
 
 package org.openscada.da.server.opc;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.jinterop.dcom.core.JISession;
-import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.FolderCommon;
-import org.openscada.da.core.browser.common.query.IDNameProvider;
 import org.openscada.da.core.browser.common.query.InvisibleStorage;
-import org.openscada.da.core.browser.common.query.ItemDescriptor;
 import org.openscada.da.core.browser.common.query.ItemStorage;
-import org.openscada.da.core.browser.common.query.Matcher;
-import org.openscada.da.core.browser.common.query.QueryFolder;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.opc.lib.common.ConnectionInformation;
 import org.openscada.utils.timing.Scheduler;
@@ -34,8 +24,6 @@ import org.openscada.utils.timing.Scheduler;
 public class Hive extends HiveCommon
 {
     private Scheduler _scheduler = null;
-
-    private InvisibleStorage _storage = new InvisibleStorage ();
     
     private OPCConnection _connection = null;
     
@@ -51,17 +39,6 @@ public class Hive extends HiveCommon
         _rootFolderCommon = new FolderCommon ();
         setRootFolder ( _rootFolderCommon );
         
-        // Add a storage based folder
-        QueryFolder queryFolder = new QueryFolder ( new Matcher () {
-
-            public boolean matches ( ItemDescriptor desc )
-            {
-                return true;
-            }
-        }, new IDNameProvider () );
-        _rootFolderCommon.add ( "flat", queryFolder, new HashMap<String, Variant> () );
-        _storage.addChild ( queryFolder );
-        
         // test
         ConnectionInformation ci = new ConnectionInformation ();
         ci.setUser ( "jens" );
@@ -69,19 +46,15 @@ public class Hive extends HiveCommon
         ci.setDomain ( "localhost" );
         ci.setHost ( "172.16.15.128" );
         ci.setClsid ( "F8582CF2-88FB-11D0-B850-00C0F0104305" );
+        
         _connection = new OPCConnection ( this, ci );
         _connection.start ();
-        _connection.connect ();
+        _connection.triggerConnect ();
     }
 
     public Scheduler getScheduler ()
     {
         return _scheduler;
-    }
-
-    public ItemStorage getStorage ()
-    {
-        return _storage;
     }
     
     public FolderCommon getRootFolderCommon ()

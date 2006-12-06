@@ -2,6 +2,7 @@ package org.openscada.da.server.opc;
 
 import java.util.EnumSet;
 
+import org.apache.log4j.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JICurrency;
 import org.jinterop.dcom.core.JIString;
@@ -12,6 +13,8 @@ import org.openscada.opc.lib.da.browser.Access;
 
 public class Helper
 {
+    private static Logger _log = Logger.getLogger ( Helper.class );
+    
     public static Variant theirs2ours ( JIVariant variant )
     {
         try
@@ -91,11 +94,12 @@ public class Helper
             }
             else if ( value.isString () )
             {
-                return new JIVariant ( value.asString () );
+                return new JIVariant ( new JIString ( value.asString () ) );
             }
         }
         catch ( Exception e )
         {
+            _log.warn ( "Unable to convert write value", e );
             return null;
         }
         return null;

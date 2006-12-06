@@ -151,12 +151,21 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
         }
     }
     
+    /**
+     * perform a write request
+     * @param value
+     * @throws NotConvertableException
+     * @throws InvalidOperationException
+     */
     protected void write ( Variant value ) throws NotConvertableException, InvalidOperationException
     {
         JIVariant variant = Helper.ours2theirs ( value );
         
         if ( variant == null )
+        {
+            _log.warn ( "Unable to convert value to JIVariant: " + value.toString () );
             throw new NotConvertableException ();
+        }
         
         try
         {

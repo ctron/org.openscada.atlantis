@@ -18,7 +18,9 @@ import org.openscada.da.core.browser.common.query.InvisibleStorage;
 import org.openscada.da.core.browser.common.query.ItemDescriptor;
 import org.openscada.da.core.browser.common.query.QueryFolder;
 import org.openscada.da.core.browser.common.query.StorageBasedFolder;
+import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.DataItemInformationBase;
+import org.openscada.da.core.common.chain.DataItemInputChained;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.IODirection;
 import org.openscada.opc.dcom.common.Result;
@@ -51,6 +53,14 @@ public class OPCConnection
     private OPCItemManager _itemManager = null;
 
     private FolderCommon _connectionFolder = null;
+    
+    private ConnectionState _state = ConnectionState.DISCONNECTED;
+    
+    private DataItemInputChained _stateItem = null;
+    private DataItemCommand _connectCommandItem = null;
+    private DataItemCommand _disconnectCommandItem = null;
+    
+    private Thread _connectThread = null;
 
     public OPCConnection ( Hive hive, ConnectionInformation connectionInformation )
     {
@@ -58,6 +68,47 @@ public class OPCConnection
         _connectionInformation = connectionInformation;
 
         _connectionTag = _connectionInformation.getHost () + ":" + _connectionInformation.getClsid ();
+        
+        // state item
+        _stateItem = new DataItemInputChained ( new DataItemInformationBase ( getBaseId () + ".state", EnumSet.of ( IODirection.INPUT ) ) );
+        
+        // command items
+        _connectCommandItem = new DataItemCommand ( getBaseId () + ".connect" );
+        _connectCommandItem.addListener ( new DataItemCommand.Listener () {
+
+            public void command ( Variant value )
+            {
+                triggerConnect ();
+            }} );
+        _disconnectCommandItem = new DataItemCommand ( getBaseId () + ".disconnect" );
+        _disconnectCommandItem.addListener ( new DataItemCommand.Listener () {
+
+            public void command ( Variant value )
+            {
+                triggerDisconnect ();
+            }} );
+
+    }
+    
+    public ConnectionState getState ()
+    {
+        return _state;
+    }
+    
+    protected synchronized void setConnectionState ( ConnectionState state )
+    {
+        if ( _state != state )
+        {
+            notifyState ( _state = state );
+        }
+    }
+    
+    protected void notifyState ( ConnectionState state )
+    {
+        if ( _stateItem != null )
+        {
+            _stateItem.updateValue ( new Variant ( state.name () ) );
+        }
     }
 
     public String getConnectionTag ()
@@ -78,20 +129,65 @@ public class OPCConnection
         QueryFolder queryFolder1 = new QueryFolder ( new AnyMatcher (), new AttributeNameProvider ( "opc.item-id" ) );
         _itemManager.getStorage ().addChild ( queryFolder1 );
         _connectionFolder.add ( "flat", queryFolder1, new MapBuilder<String,Variant> ().getMap () );
+        
+        // register state item
+        _hive.registerItem ( _stateItem );
+        _connectionFolder.add ( "state", _stateItem, new MapBuilder<String,Variant> ().getMap () );
+        
+        // register command items
+        _hive.registerItem ( _connectCommandItem );
+        _connectionFolder.add ( "connect", _connectCommandItem, new MapBuilder<String,Variant>().getMap () );
+        _hive.registerItem ( _disconnectCommandItem );
+        _connectionFolder.add ( "disconnect", _disconnectCommandItem, new MapBuilder<String,Variant>().getMap () );
     }
 
     public synchronized void stop ()
     {
-        disconnect ();
+        performDisconnect ();
+        
+        // remove state item
+        _hive.unregisterItem ( _stateItem );
+
+        // unregister command items
+        _hive.unregisterItem ( _connectCommandItem );
+        _hive.unregisterItem ( _disconnectCommandItem );
 
         // remove folder
         _hive.getRootFolderCommon ().remove ( _connectionTag );
         _itemManager = null;
-        _connectionFolder = null;
+        _connectionFolder = null;        
+    }
+    
+    public synchronized void triggerConnect ()
+    {
+        start ();
+        
+        if ( !_state.equals ( ConnectionState.DISCONNECTED ) )
+            return;
+        
+        setConnectionState ( ConnectionState.CONNECTING );
+        _connectThread = new Thread ( new Runnable () {
 
+            public void run ()
+            {
+                try
+                {
+                    performConnect ();
+                    setConnectionState ( ConnectionState.CONNECTED );
+                }
+                catch ( Throwable e )
+                {
+                    setConnectionState ( ConnectionState.DISCONNECTED );
+                }
+                finally
+                {
+                    _connectThread = null;
+                }
+            }} );
+        _connectThread.run ();
     }
 
-    public synchronized void connect ()
+    private void performConnect ()
     {
         start ();
 
@@ -116,7 +212,30 @@ public class OPCConnection
         }
     }
 
-    public synchronized void disconnect ()
+    public synchronized void triggerDisconnect ()
+    {
+        if ( !_state.equals ( ConnectionState.CONNECTED ) )
+            return;
+        
+        setConnectionState ( ConnectionState.DISCONNECTING );
+        _connectThread = new Thread ( new Runnable () {
+
+            public void run ()
+            {
+                try
+                {
+                    performDisconnect ();
+                }
+                finally
+                {
+                    setConnectionState ( ConnectionState.DISCONNECTED );
+                    _connectThread = null;
+                }
+            }} );
+        _connectThread.run ();
+    }
+    
+    public synchronized void performDisconnect ()
     {
         if ( _server == null )
             return;
@@ -191,7 +310,7 @@ public class OPCConnection
         */
     }
 
-    protected String getBaseId ()
+    public String getBaseId ()
     {
         return _connectionTag;
     }
