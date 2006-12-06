@@ -3,6 +3,8 @@
 	<name>openscada_da_opcserver</name>
 	<comment></comment>
 	<projects>
+		<project>openscada_opc_dcom</project>
+		<project>openscada_opc_lib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
