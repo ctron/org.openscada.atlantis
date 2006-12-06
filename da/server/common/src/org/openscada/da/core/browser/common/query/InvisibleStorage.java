@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-public class InvisibleStorage implements ItemStorage
+public class InvisibleStorage implements SubscribeableStorage
 {
     private Set<ItemDescriptor> _items = new HashSet<ItemDescriptor> ();
     private Collection<ItemStorage> _childs = new LinkedList <ItemStorage> ();
