@@ -34,8 +34,7 @@ import org.eclipse.swt.widgets.Text;
 class NewWatchWizardPage extends WizardPage implements IWizardPage
 {
 
-    private String _initId = null;
-    private Text _dataItemID = null;
+    private Text _dataItemID;
 
     protected NewWatchWizardPage (  )
     {
@@ -59,11 +58,6 @@ class NewWatchWizardPage extends WizardPage implements IWizardPage
 
         GridData gd;
         _dataItemID = new Text ( container, SWT.BORDER | SWT.SINGLE );
-        
-        // if we have some initial ID set it
-        if ( _initId != null )
-            _dataItemID.setText ( _initId );
-        
         gd = new GridData ( GridData.FILL_HORIZONTAL );
         _dataItemID.setLayoutData ( gd );
         _dataItemID.addModifyListener ( new ModifyListener() {
@@ -96,11 +90,6 @@ class NewWatchWizardPage extends WizardPage implements IWizardPage
     public String getDataItemID ()
     {
         return _dataItemID.getText ();
-    }
-    
-    public void setInitId ( String id )
-    {
-        _initId = id;
     }
 
 }

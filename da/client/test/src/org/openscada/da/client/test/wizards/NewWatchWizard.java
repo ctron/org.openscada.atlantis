@@ -24,7 +24,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -42,8 +41,6 @@ import org.openscada.da.core.server.IODirection;
 
 public class NewWatchWizard extends Wizard implements INewWizard
 {
-    private static Logger _log = Logger.getLogger ( NewWatchWizard.class );
-    
     private HiveConnection _connection = null;
     private NewWatchWizardPage _page = null;
     private IWorkbenchSite _site = null;
@@ -58,7 +55,7 @@ public class NewWatchWizard extends Wizard implements INewWizard
             try
             {
                 DataItemEntry dataItem = new DataItemEntry ( dataItemID, new HashMap<String,Variant> (), null, _connection, dataItemID, EnumSet.noneOf ( IODirection.class ) );
-                IViewPart viewer = _site.getPage ().showView ( DataItemWatchView.VIEW_ID, dataItem.getAsSecondardId(), IWorkbenchPage.VIEW_ACTIVATE );
+                IViewPart viewer = _site.getPage ().showView ( DataItemWatchView.VIEW_ID, dataItem.getId (), IWorkbenchPage.VIEW_ACTIVATE );
                 if ( viewer instanceof DataItemWatchView )
                 {
                     ((DataItemWatchView)viewer).setDataItem ( dataItem );
@@ -83,8 +80,6 @@ public class NewWatchWizard extends Wizard implements INewWizard
         setNeedsProgressMonitor ( true );
         setWindowTitle ( "Request watch" );
         
-        addPage ( _page = new NewWatchWizardPage () );
-        
         _site = workbench.getActiveWorkbenchWindow ().getActivePage ().getActivePart ().getSite ();
         
         Object o = selection.getFirstElement ();
@@ -95,12 +90,20 @@ public class NewWatchWizard extends Wizard implements INewWizard
         else if ( o instanceof DataItemEntry )
         {
             _connection = ((DataItemEntry)o).getConnection ();
-            _page.setInitId ( ((DataItemEntry)o).getId () );
         }
         else if ( o instanceof FolderEntry )
         {
             _connection = ((FolderEntry)o).getConnection ();
         }
     }
+    
+    @Override
+    public void addPages ()
+    {
+        super.addPages ();
+        
+        addPage ( _page = new NewWatchWizardPage () );
+    }
+    
 
 }

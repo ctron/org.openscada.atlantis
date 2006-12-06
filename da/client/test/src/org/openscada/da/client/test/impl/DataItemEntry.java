@@ -51,11 +51,6 @@ public class DataItemEntry extends BrowserEntry
         return _id;
     }
     
-    public String getAsSecondardId ()
-    {
-        return _id.replace ( "_", "__" ).replace ( ':', '_' );
-    }
-    
     @Override
     protected void fillPropertyDescriptors ( List<IPropertyDescriptor> list )
     {

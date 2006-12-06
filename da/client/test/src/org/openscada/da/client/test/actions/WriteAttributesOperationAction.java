@@ -23,73 +23,55 @@ import org.apache.log4j.Logger;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.PartInitException;
-import org.openscada.da.client.test.impl.DataItemEntry;
-import org.openscada.da.client.test.views.DataItemWatchView;
+import org.eclipse.ui.IWorkbenchWizard;
+import org.openscada.da.client.test.wizards.WriteAttributesOperationWizard;
 
-public class WatchItemAction implements IViewActionDelegate, IObjectActionDelegate
+public class WriteAttributesOperationAction implements IObjectActionDelegate, IViewActionDelegate
 {
     @SuppressWarnings("unused")
-    private static Logger _log = Logger.getLogger ( WatchItemAction.class );
+    private static Logger _log = Logger.getLogger ( WriteAttributesOperationAction.class );
     
     private IWorkbenchPartSite _site = null;
     
-    private DataItemEntry _item = null;
-    
-    public void init ( IViewPart view )
-    {
-        _site = view.getSite();
-    }
-
+    private IStructuredSelection _selection = null;
+   
     public void run ( IAction action )
     {
-        if ( _item == null )
+        if ( _selection == null )
             return;
-       
-        try
-        {
-            IViewPart viewer = _site.getPage ().showView ( DataItemWatchView.VIEW_ID, _item.getId(), IWorkbenchPage.VIEW_ACTIVATE );
-            if ( viewer instanceof DataItemWatchView )
-            {
-                ((DataItemWatchView)viewer).setDataItem ( _item );
-            }
-        }
-        catch ( PartInitException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        
+        IWorkbenchWizard wiz = new WriteAttributesOperationWizard ();
+        wiz.init ( _site.getWorkbenchWindow ().getWorkbench (), _selection );
+        
+        // Embed the wizard into a dialog
+        WizardDialog dialog = new WizardDialog ( _site.getShell () , wiz );
+        dialog.open();
     }
 
     public void selectionChanged ( IAction action, ISelection selection )
-    {
-        _item = null;
-        
+    {     
         if ( selection == null )
             return;
-        if ( !(selection instanceof IStructuredSelection) )
+        if ( ! (selection instanceof IStructuredSelection) )
             return;
         
-        IStructuredSelection sel = (IStructuredSelection)selection;
-        Object obj = sel.getFirstElement ();
-        
-        if ( obj == null )
-            return;
-        if ( !(obj instanceof DataItemEntry) )
-            return;
-        
-        _item = (DataItemEntry)obj;
+        _selection = (IStructuredSelection)selection;
     }
 
     public void setActivePart ( IAction action, IWorkbenchPart targetPart )
     {
         _site = targetPart.getSite ();
+    }
+
+    public void init ( IViewPart view )
+    {
+        _site = view.getSite ();
     }
 
 }
