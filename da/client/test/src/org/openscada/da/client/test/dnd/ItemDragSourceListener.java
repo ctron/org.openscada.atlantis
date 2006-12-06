@@ -10,7 +10,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.openscada.da.client.test.impl.DataItemEntry;
-import org.openscada.da.client.test.impl.HiveItem;
 
 public class ItemDragSourceListener implements DragSourceListener
 {
