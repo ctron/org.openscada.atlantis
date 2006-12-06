@@ -25,6 +25,8 @@ public class Label extends BaseFigure
 {
     private org.eclipse.draw2d.Label _label = null;
     private String _text = null;
+    private String _format = null;
+    private String _displayText = null;
     
     public Label ( String id )
     {
@@ -40,9 +42,24 @@ public class Label extends BaseFigure
         updateFigure ( _label );
     }
 
-    protected void updateFigure ( org.eclipse.draw2d.Label label )
+    protected synchronized void updateDisplayText ()
     {
         if ( _text == null )
+            _displayText = null;
+        else if ( _format == null )
+            _displayText = _text;
+        else
+            _displayText = String.format ( _format, _text );
+    }
+    
+    protected synchronized String getDisplayText ()
+    {
+        return _displayText;
+    }
+    
+    protected void updateFigure ( org.eclipse.draw2d.Label label )
+    {
+        if ( _displayText == null )
         {
             label.setVisible ( false );
             label.setText ( "" );
@@ -51,7 +68,7 @@ public class Label extends BaseFigure
         {
             super.updateFigure ( label );
             label.setVisible ( true );
-            label.setText ( _text );
+            label.setText ( _displayText );
         }
     }
 
@@ -70,9 +87,21 @@ public class Label extends BaseFigure
         return _text;
     }
 
-    public void setText ( String text )
+    public synchronized void setText ( String text )
     {
         _text = text;
+        updateDisplayText ();
+    }
+
+    public String getFormat ()
+    {
+        return _format;
+    }
+
+    public synchronized void setFormat ( String format )
+    {
+        _format = format;
+        updateDisplayText ();
     }
 
 }
