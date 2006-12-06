@@ -63,10 +63,12 @@ public class WriteValueController extends OperationController implements WriteOp
         catch ( InvalidSessionException e )
         {
             sendFailure ( request, e );
+            return;
         }
         catch ( InvalidItemException e )
         {
-            sendFailure ( request, e );  
+            sendFailure ( request, e );
+            return;
         }
         
         // send out ACK with operation id
