@@ -13,6 +13,7 @@ import org.openscada.da.client.test.impl.DataItemEntry;
 
 public class ItemDragSourceListener implements DragSourceListener
 {
+    @SuppressWarnings("unused")
     private static Logger _log = Logger.getLogger ( ItemDragSourceListener.class );
     
     private Viewer _viewer = null;
