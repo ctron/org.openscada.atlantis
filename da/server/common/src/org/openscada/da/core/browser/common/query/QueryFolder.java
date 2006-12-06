@@ -132,7 +132,7 @@ public class QueryFolder implements StorageBasedFolder
         String name = _nameProvider.getName ( desc );
         if ( name != null )
         {
-            _folder.add ( desc.getItem ().getInformation ().getName (), desc.getItem (), desc.getAttributes () );
+            _folder.add ( name, desc.getItem (), desc.getAttributes () );
         }
         
         // notify childs
