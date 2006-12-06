@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import org.apache.log4j.Logger;
 import org.jinterop.dcom.common.JIException;
@@ -14,24 +13,17 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.browser.common.query.AnyMatcher;
 import org.openscada.da.core.browser.common.query.AttributeNameProvider;
-import org.openscada.da.core.browser.common.query.InvisibleStorage;
-import org.openscada.da.core.browser.common.query.ItemDescriptor;
 import org.openscada.da.core.browser.common.query.QueryFolder;
-import org.openscada.da.core.browser.common.query.StorageBasedFolder;
 import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.chain.DataItemInputChained;
-import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.IODirection;
 import org.openscada.opc.dcom.common.Result;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.lib.common.ConnectionInformation;
-import org.openscada.opc.lib.common.NotConnectedException;
-import org.openscada.opc.lib.da.DuplicateGroupException;
 import org.openscada.opc.lib.da.Group;
 import org.openscada.opc.lib.da.Server;
 import org.openscada.opc.lib.da.SyncAccess;
-import org.openscada.opc.lib.da.browser.Branch;
 import org.openscada.utils.collection.MapBuilder;
 
 public class OPCConnection

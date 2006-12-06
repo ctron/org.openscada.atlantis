@@ -1,25 +1,16 @@
 package org.openscada.da.server.opc;
 
-import java.net.UnknownHostException;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.jinterop.dcom.common.JIException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.query.InvisibleStorage;
-import org.openscada.da.core.browser.common.query.ItemDescriptor;
-import org.openscada.da.core.browser.common.query.ItemStorage;
 import org.openscada.da.core.browser.common.query.SubscribeableStorage;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.server.IODirection;
-import org.openscada.opc.lib.common.NotConnectedException;
-import org.openscada.opc.lib.da.AddFailedException;
-import org.openscada.opc.lib.da.DuplicateGroupException;
-import org.openscada.opc.lib.da.Group;
-import org.openscada.opc.lib.da.Server;
 
 public class OPCItemManager
 {

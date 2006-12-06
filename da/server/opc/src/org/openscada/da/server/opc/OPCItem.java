@@ -10,12 +10,10 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemBase;
 import org.openscada.da.core.common.SuspendableItem;
 import org.openscada.da.core.common.WriteAttributesHelper;
-import org.openscada.da.core.common.chain.DataItemBaseChained;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.IODirection;
 import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
@@ -23,7 +21,6 @@ import org.openscada.opc.lib.da.AddFailedException;
 import org.openscada.opc.lib.da.DataCallback;
 import org.openscada.opc.lib.da.Item;
 import org.openscada.opc.lib.da.ItemState;
-import org.openscada.opc.lib.da.SyncAccess;
 
 public class OPCItem extends DataItemBase implements SuspendableItem, DataCallback
 {

@@ -15,8 +15,6 @@
 package org.openscada.da.server.opc;
 
 import org.openscada.da.core.browser.common.FolderCommon;
-import org.openscada.da.core.browser.common.query.InvisibleStorage;
-import org.openscada.da.core.browser.common.query.ItemStorage;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.opc.lib.common.ConnectionInformation;
 import org.openscada.utils.timing.Scheduler;
