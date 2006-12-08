@@ -84,8 +84,7 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
 
     public Map<String, Variant> getAttributes ()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return _attributes.getCopy ();
     }
 
     public synchronized Variant getValue () throws InvalidOperationException
