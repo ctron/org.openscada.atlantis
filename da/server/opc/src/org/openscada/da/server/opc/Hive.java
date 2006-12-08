@@ -14,6 +14,7 @@
 
 package org.openscada.da.server.opc;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -21,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.apache.xmlbeans.XmlException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.common.DataItemCommand;
@@ -41,7 +43,7 @@ public class Hive extends HiveCommon
     
     private DataItemCommand _gcCommand = null;
 
-    public Hive ()
+    public Hive () throws XmlException, IOException
     {
         super ();
 
@@ -80,7 +82,15 @@ public class Hive extends HiveCommon
         registerItem ( _gcCommand );
         _rootFolderCommon.add ( "gc", _gcCommand, new MapBuilder<String,Variant> ().put ( "description", new Variant ( "Run the garbage collector once." ) ).getMap () );
         
-        addConnection ( "opcda://localhost\\jens:test12@172.16.15.128?clsid=F8582CF2-88FB-11D0-B850-00C0F0104305" );
+        configure ();
+    }
+    
+    public void configure () throws XmlException, IOException
+    {
+        XMLConfigurator configurator = new XMLConfigurator ( "configuration.xml" );
+        configurator.configure ( this );
+        
+        //addConnection ( "opcda://localhost\\jens:test12@172.16.15.128?clsid=F8582CF2-88FB-11D0-B850-00C0F0104305" );
         //addConnection ( "opcda://localhost\\jens:test12@172.16.15.128?clsid=2E565242-B238-11D3-842D-0008C779D775" );
         
         //addConnection ( "opcda://localhost\\jens:test12@172.16.15.128?progid=Softing.OPCToolboxDemo_ServerDA.1" );

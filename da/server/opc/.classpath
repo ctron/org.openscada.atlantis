@@ -5,7 +5,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_server_common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_utils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ext_log4j"/>
-	<classpathentry kind="lib" path="schemasrc"/>
+	<classpathentry exported="true" kind="lib" path="schemasrc"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_opc_dcom"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_opc_lib"/>
 	<classpathentry kind="output" path="bin"/>
