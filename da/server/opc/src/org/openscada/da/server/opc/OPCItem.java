@@ -21,8 +21,9 @@ import org.openscada.opc.lib.da.AddFailedException;
 import org.openscada.opc.lib.da.DataCallback;
 import org.openscada.opc.lib.da.Item;
 import org.openscada.opc.lib.da.ItemState;
+import org.openscada.opc.lib.da.SyncAccessStateListener;
 
-public class OPCItem extends DataItemBase implements SuspendableItem, DataCallback
+public class OPCItem extends DataItemBase implements SuspendableItem, DataCallback, SyncAccessStateListener
 {
     private static Logger _log = Logger.getLogger ( OPCItem.class );
     
@@ -33,7 +34,7 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
     private AttributeManager _attributes = null;
     
     private Variant _value = new Variant ();
-
+    
     public OPCItem ( DataItemInformation information, OPCConnection connection, String itemId ) throws JIException, AddFailedException
     {
         super ( information );
@@ -42,6 +43,7 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
         _itemId = itemId;
         
         _connection = connection;
+        _connection.getAccess ().addStateListener ( this );
     }
     
     public synchronized Item getItem ()
@@ -112,6 +114,9 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
         }
     }
 
+    /**
+     * Callback from sync access object
+     */
     public void changed ( Item item, ItemState itemState )
     {
         updateValue ( itemState );
@@ -215,6 +220,32 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
         {
             _attributes.update ( "opc.write.last-error-code", new Variant ( e.getErrorCode () ) );
             throw new InvalidOperationException ();
+        }
+    }
+
+    public void errorOccured ( Throwable t )
+    {
+        if ( t == null )
+        {
+            _attributes.update ( "opc.last-error", null );
+        }
+        else {
+            _attributes.update ( "opc.last-error", new Variant ( t.getMessage () ) );        
+        }
+
+    }
+
+    public synchronized void stateChanged ( boolean state )
+    {   
+        _attributes.update ( "connected", new Variant ( state ) );
+        
+        if ( state )
+        {
+            
+        }
+        else
+        {
+            _item = null;
         }
     }
 }
