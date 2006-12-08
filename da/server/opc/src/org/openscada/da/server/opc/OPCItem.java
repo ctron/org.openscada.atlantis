@@ -12,6 +12,7 @@ import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemBase;
+import org.openscada.da.core.common.ItemListener;
 import org.openscada.da.core.common.SuspendableItem;
 import org.openscada.da.core.common.WriteAttributesHelper;
 import org.openscada.da.core.server.DataItemInformation;
@@ -44,6 +45,22 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
         
         _connection = connection;
         _connection.getAccess ().addStateListener ( this );
+    }
+    
+    /**
+     * We might already have data when the listener connects 
+     */
+    @Override
+    public void setListener ( ItemListener listener )
+    {
+        super.setListener ( listener );
+        if ( listener != null )
+        {
+            if ( !_value.isNull () )
+                notifyValue ( _value );
+            if ( _attributes.get ().size () > 0 )
+                notifyAttributes ( _attributes.get () );
+        }
     }
     
     public synchronized Item getItem ()
