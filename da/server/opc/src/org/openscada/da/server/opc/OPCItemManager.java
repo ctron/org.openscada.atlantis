@@ -93,9 +93,10 @@ public class OPCItemManager
      */
     public synchronized void clear ()
     {
+        _storage.clear ();
+        
         for ( Map.Entry<String,OPCItem> entry : _itemMap.entrySet () )
         {
-            removeDescriptions ( entry.getValue () );
             _hive.unregisterItem ( entry.getValue () );
         }
         

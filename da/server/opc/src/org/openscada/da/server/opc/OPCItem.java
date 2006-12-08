@@ -42,8 +42,20 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
         _itemId = itemId;
         
         _connection = connection;
-        
-        _item = _connection.getGroup ().addItem ( itemId );
+    }
+    
+    public synchronized Item getItem ()
+    {
+        if ( _item == null )
+        {
+            try
+            {
+                _item = _connection.getGroup ().addItem ( _itemId );
+            }
+            catch ( Throwable t )
+            {}
+        }
+        return _item;
     }
     
     public String getId ()
@@ -109,28 +121,50 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
     {
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
         
+        attributes.put ( "opc.value-error.message", null );
         attributes.put ( "opc.quality", new Variant ( itemState.getQuality () ) );
         attributes.put ( "timestamp", new Variant ( itemState.getTimestamp ().getTimeInMillis () ) );
+        attributes.put ( "opc.update-error.code", null );
+        attributes.put ( "opc.update-error.message", null );
+        attributes.put ( "opc.read-error.code", null );
+        attributes.put ( "opc.read-error.message", null );
+        
         try
         {
             attributes.put ( "opc.value-type", new Variant ( itemState.getValue().getType () ) );
+
+            Variant newValue = new Variant ();
+
+            if ( itemState.getErrorCode () != 0 )
+            {
+                int errorCode = itemState.getErrorCode ();
+                attributes.put ( "opc.read-error.code", new Variant ( errorCode ) );
+                attributes.put ( "opc.read-error.message", new Variant ( _connection.getServer ().getErrorMessage ( errorCode ) ) );
+            }
+            else if ( itemState.getValue ().getType () == JIVariant.VT_ERROR )
+            {
+                int errorCode = itemState.getValue().getObjectAsSCODE ();
+                attributes.put ( "opc.read-error.code", new Variant ( errorCode ) );
+                attributes.put ( "opc.read-error.message", new Variant ( _connection.getServer ().getErrorMessage ( errorCode ) ) );
+            }
+            else
+            {
+                newValue = Helper.theirs2ours ( itemState.getValue () );
+
+                if ( newValue == null )
+                {
+                    attributes.put ( "opc.value-error.message", new Variant ( "Unable to convert value: " + itemState.getValue ().toString () ) );
+                }
+                else
+                {
+                }
+            }
+            updateValue ( newValue );
         }
         catch ( JIException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        Variant newValue = Helper.theirs2ours ( itemState.getValue () ); 
-        
-        if ( newValue == null )
-        {
-            attributes.put ( "opc.value.error", new Variant ( "Unable to convert value: " + itemState.getValue ().toString () ) );
-        }
-        else
-        {
-            attributes.put ( "opc.value.error", null );
-            updateValue ( newValue );
+            attributes.put ( "opc.update-error.code", new Variant ( e.getErrorCode () ) );
+            attributes.put ( "opc.update-error.message", new Variant ( e.getMessage () ) );
         }
         
         _attributes.update ( attributes );
@@ -139,7 +173,7 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
     protected synchronized void updateValue ( Variant value )
     {
         if ( value == null )
-            return;
+            value = new Variant ();
         
         if ( !_value.equals ( value ) )
         {
@@ -166,8 +200,16 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
         
         try
         {
-            _item.write ( variant );
-            _attributes.update ( "opc.write.last-error-code", null );
+            Item item = getItem ();
+            if ( item != null )
+            {
+                _item.write ( variant );
+                _attributes.update ( "opc.write.last-error-code", null );
+            }
+            else
+            {
+                throw new InvalidOperationException ();
+            }
         }
         catch ( JIException e )
         {
