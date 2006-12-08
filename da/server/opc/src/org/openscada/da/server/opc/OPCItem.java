@@ -224,8 +224,17 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
             Item item = getItem ();
             if ( item != null )
             {
-                _item.write ( variant );
-                _attributes.update ( "opc.write.last-error-code", null );
+                int errorCode = _item.write ( variant );
+                _attributes.update ( "opc.write.last-error.code", new Variant ( errorCode ) );
+                if ( errorCode != 0 )
+                {
+                    _attributes.update ( "opc.write.last-error.message", new Variant ( _connection.getServer ().getErrorMessage ( errorCode ) ) );
+                    throw new InvalidOperationException ();
+                }
+                else
+                {
+                    _attributes.update ( "opc.write.last-error.message", null );
+                }
             }
             else
             {
