@@ -66,7 +66,16 @@ public class Scheduler implements Runnable
                 _nextTime = System.currentTimeMillis ();
 
             if ( _runnable != null )
-                _runnable.run ();
+            {
+                try
+                {
+                    _runnable.run ();
+                }
+                catch ( Throwable t )
+                {
+                    _log.warn ( "Job failed", t );
+                }
+            }
         }
 
         @Override
@@ -214,7 +223,7 @@ public class Scheduler implements Runnable
     }
 
     /**
-     * Schedules a job to be executed as soon as possible on the scheduler
+     * Schedules a job to be executed once as soon as possible on the scheduler
      * thread If the scheduler is bound to the current thread the job will be
      * executed directly. If the scheduler is not bound it will wait until the
      * binding is established.
@@ -250,7 +259,7 @@ public class Scheduler implements Runnable
     }
 
     /**
-     * Schedules a job to be executed as soon as possible on the scheduler
+     * Schedules a job to be executed once as soon as possible on the scheduler
      * thread If the scheduler is bound to the current thread the job will be
      * executed directly. If the scheduler is not bound it will wait until the
      * binding is established.
@@ -266,7 +275,7 @@ public class Scheduler implements Runnable
     }
 
     /**
-     * Schedules a job to be executed as soon as possible on the scheduler
+     * Schedules a job to be executed once as soon as possible on the scheduler
      * thread If the scheduler is bound to the current thread the job will be
      * executed directly. If the scheduler is not bound it will <em>not</em>
      * wait until the binding is established.
