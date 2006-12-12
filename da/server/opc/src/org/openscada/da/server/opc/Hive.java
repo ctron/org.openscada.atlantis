@@ -18,16 +18,20 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
+import org.jinterop.dcom.common.JIException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.opc.lib.common.ConnectionInformation;
+import org.openscada.opc.lib.common.NotConnectedException;
+import org.openscada.opc.lib.da.DuplicateGroupException;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.timing.Scheduler;
 
@@ -125,13 +129,27 @@ public class Hive extends HiveCommon
             ci.setProgId ( m.group ( 6 ) );
         else
             return;
-        addConnection ( ci );
+        addConnection ( new ConnectionSetup ( ci ), true );
     }
     
-    public void addConnection ( ConnectionInformation ci )
+    public void addConnection ( ConnectionSetup setup, boolean connect )
     {
-        OPCConnection connection = new OPCConnection ( this, ci );
-        connection.start ();
-        connection.triggerConnect ();
+        OPCConnection connection = new OPCConnection ( this, setup );
+        
+        try
+        {
+            connection.start ();
+
+            if ( connect )
+            {
+                connection.triggerConnect ();
+            }
+        }
+        catch (Exception e )
+        {
+            _log.warn ( "Failed to add connection", e );
+        }
+        
+        
     }
 }

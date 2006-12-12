@@ -30,12 +30,27 @@
     		<element name="clsid" type="components:UUIDType"
     			maxOccurs="1" minOccurs="1">
     		</element>
-    		<element name="progid" type="components:ProgIdType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="progid" type="components:ProgIdType"
+    			maxOccurs="1" minOccurs="1">
+    		</element>
     	</choice>
     	<attribute name="host" type="string" use="required"></attribute>
     	<attribute name="domain" type="string" use="required"></attribute>
     	<attribute name="user" type="string" use="required"></attribute>
     	<attribute name="password" type="string" use="required"></attribute>
+    	<attribute name="enabled" type="boolean" use="optional"
+    		default="true">
+    	</attribute>
+    	<attribute name="connected" type="boolean" use="optional"
+    		default="true">
+    	</attribute>
+    	<attribute name="access" type="string" use="optional"
+    		default="async20">
+    	</attribute>
+    	<attribute name="refresh" type="int" use="optional"
+    		default="500">
+    	</attribute>
+    	<attribute name="initial-refresh" type="boolean"></attribute>
     </complexType>
 
     <simpleType name="ProgIdType">

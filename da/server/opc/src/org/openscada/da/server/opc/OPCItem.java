@@ -22,9 +22,9 @@ import org.openscada.opc.lib.da.AddFailedException;
 import org.openscada.opc.lib.da.DataCallback;
 import org.openscada.opc.lib.da.Item;
 import org.openscada.opc.lib.da.ItemState;
-import org.openscada.opc.lib.da.SyncAccessStateListener;
+import org.openscada.opc.lib.da.AccessStateListener;
 
-public class OPCItem extends DataItemBase implements SuspendableItem, DataCallback, SyncAccessStateListener
+public class OPCItem extends DataItemBase implements SuspendableItem, DataCallback, AccessStateListener
 {
     private static Logger _log = Logger.getLogger ( OPCItem.class );
     

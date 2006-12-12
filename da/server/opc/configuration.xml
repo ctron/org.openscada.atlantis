@@ -5,8 +5,9 @@
 		<components:configuration domain="localhost" host="172.16.15.128" user="jens" password="test12">
 			<components:clsid>F8582CF2-88FB-11D0-B850-00C0F0104305</components:clsid>
 		</components:configuration>
+		
 		<!-- Softing OPC Demo Server -->
-		<components:configuration domain="localhost" host="172.16.15.128" user="jens" password="test12">
+		<components:configuration connected="false" domain="localhost" host="172.16.15.128" access="sync" user="jens" password="test12">
 			<components:clsid>2E565242-B238-11D3-842D-0008C779D775</components:clsid>
 		</components:configuration>
 	</components:connections>

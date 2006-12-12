@@ -27,6 +27,9 @@ public class XMLConfigurator
     {
         for ( ConfigurationType configuration : _rootDocument.getRoot ().getConnections ().getConfigurationList () )
         {
+            if ( !configuration.getEnabled () )
+                continue;
+            
             ConnectionInformation ci = new ConnectionInformation ();
             ci.setUser ( configuration.getUser () );
             ci.setPassword ( configuration.getPassword () );
@@ -34,7 +37,17 @@ public class XMLConfigurator
             ci.setHost ( configuration.getHost () );
             ci.setClsid ( configuration.getClsid () );
             ci.setProgId ( configuration.getProgid () );
-            hive.addConnection ( ci );
+            
+            ConnectionSetup setup = new ConnectionSetup ( ci );
+            
+            String access = configuration.getAccess ();
+            if ( access.equalsIgnoreCase ( "sync" ) )
+                setup.setAccessMethod ( AccessMethod.SYNC );
+            
+            setup.setRefreshTimeout ( configuration.getRefresh () );
+            setup.setInitialConnect ( configuration.getInitialRefresh () );
+            
+            hive.addConnection ( setup, configuration.getConnected () );
         }
     }
 }

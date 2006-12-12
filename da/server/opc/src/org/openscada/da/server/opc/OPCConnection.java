@@ -24,20 +24,22 @@ import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 import org.openscada.opc.lib.common.AlreadyConnectedException;
 import org.openscada.opc.lib.common.ConnectionInformation;
 import org.openscada.opc.lib.common.NotConnectedException;
+import org.openscada.opc.lib.da.AccessBase;
+import org.openscada.opc.lib.da.AccessStateListener;
+import org.openscada.opc.lib.da.Async20Access;
 import org.openscada.opc.lib.da.DuplicateGroupException;
 import org.openscada.opc.lib.da.Group;
 import org.openscada.opc.lib.da.Server;
 import org.openscada.opc.lib.da.ServerStateListener;
 import org.openscada.opc.lib.da.ServerStateReader;
 import org.openscada.opc.lib.da.SyncAccess;
-import org.openscada.opc.lib.da.SyncAccessStateListener;
 import org.openscada.utils.collection.MapBuilder;
 
-public class OPCConnection implements SyncAccessStateListener, ServerStateListener
+public class OPCConnection implements AccessStateListener, ServerStateListener
 {
     private static Logger _log = Logger.getLogger ( OPCConnection.class );
 
-    private ConnectionInformation _connectionInformation = null;
+    private ConnectionSetup _connectionSetup = null;
 
     private String _connectionTag = null;
 
@@ -47,7 +49,7 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
 
     private Group _group = null;
 
-    private SyncAccess _access = null;
+    private AccessBase _access = null;
 
     private OPCItemManager _itemManager = null;
 
@@ -62,23 +64,24 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
     private DataItemCommand _disconnectCommandItem = null;
 
     private DataItemCommand _suicideCommandItem = null;
-    
+
     private DataItemInputChained _accessStateItem = null;
 
     private Thread _connectThread = null;
-    
+
     private ServerStateReader _serverStateReader = null;
 
-    public OPCConnection ( Hive hive, ConnectionInformation connectionInformation )
+    public OPCConnection ( Hive hive, ConnectionSetup connectionSetup )
     {
         _hive = hive;
-        _connectionInformation = connectionInformation;
-        
-        _connectionTag = _connectionInformation.getHost () + ":" + _connectionInformation.getClsOrProgId ();
+        _connectionSetup = connectionSetup;
+
+        _connectionTag = _connectionSetup.getConnectionInformation ().getHost () + ":"
+                + _connectionSetup.getConnectionInformation ().getClsOrProgId ();
 
         // state item
-        _stateItem = new DataItemInputChained ( new DataItemInformationBase ( getBaseId () + ".state", EnumSet
-                .of ( IODirection.INPUT ) ) );
+        _stateItem = new DataItemInputChained ( new DataItemInformationBase ( getBaseId () + ".state",
+                EnumSet.of ( IODirection.INPUT ) ) );
 
         // command items
         _connectCommandItem = new DataItemCommand ( getBaseId () + ".connect" );
@@ -105,11 +108,11 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
                 suicide ();
             }
         } );
-        
+
         // Access state
         _accessStateItem = new DataItemInputChained ( getBaseId () + ".access-state" );
     }
-    
+
     @Override
     protected void finalize () throws Throwable
     {
@@ -143,12 +146,17 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
         return _connectionTag;
     }
 
-    public synchronized void start ()
+    public synchronized void start () throws IllegalArgumentException, UnknownHostException, NotConnectedException, JIException, DuplicateGroupException
     {
         if ( _connectionFolder != null )
             return;
 
-        _server = new Server ( _connectionInformation );
+        _server = new Server ( _connectionSetup.getConnectionInformation () );
+
+        //_access = new SyncAccess ( _server, _connectionSetup.getRefreshTimeout () );
+        _access = new Async20Access ( _server, _connectionSetup.getRefreshTimeout (), _connectionSetup.isInitialConnect () );
+        _access.addStateListener ( this );
+        _access.bind ();
 
         _connectionFolder = new FolderCommon ();
         _hive.getRootFolderCommon ().add ( _connectionTag, _connectionFolder,
@@ -170,14 +178,14 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
         _connectionFolder.add ( "disconnect", _disconnectCommandItem, new MapBuilder<String, Variant> ().getMap () );
         _hive.registerItem ( _suicideCommandItem );
         _connectionFolder.add ( "suicide", _suicideCommandItem, new MapBuilder<String, Variant> ().getMap () );
-        
+
         // register access state
         _accessStateItem.updateValue ( new Variant ( false ) );
         _hive.registerItem ( _accessStateItem );
         _connectionFolder.add ( "access-state", _accessStateItem, new MapBuilder<String, Variant> ().getMap () );
-        
+
         // server state reader
-        _serverStateReader = new ServerStateReader ( _server );
+        _serverStateReader = new ServerStateReader ( _server, _server.getScheduler () );
         _serverStateReader.addListener ( this );
         _serverStateReader.start ();
     }
@@ -197,7 +205,7 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
         _hive.unregisterItem ( _disconnectCommandItem );
         _connectionFolder.remove ( "suicide" );
         _hive.unregisterItem ( _suicideCommandItem );
-        
+
         // access state
         _connectionFolder.remove ( "access-state" );
         _hive.unregisterItem ( _accessStateItem );
@@ -206,7 +214,7 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
         _hive.getRootFolderCommon ().remove ( _connectionTag );
         _itemManager = null;
         _connectionFolder = null;
-        
+
         _serverStateReader.removeListener ( this );
         _serverStateReader.stop ();
         _serverStateReader = null;
@@ -215,8 +223,6 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
 
     public synchronized void triggerConnect ()
     {
-        start ();
-
         if ( !_state.equals ( ConnectionState.DISCONNECTED ) )
             return;
 
@@ -246,12 +252,9 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
     private void performConnect () throws IllegalArgumentException, UnknownHostException, JIException, NotConnectedException, DuplicateGroupException, AlreadyConnectedException
     {
         start ();
-        
+
         _log.debug ( "Connecting...to " + getBaseId () );
         _server.connect ();
-        _access = new SyncAccess ( _server, 500 );
-        _access.addStateListener ( this );
-        _access.bind ();
         _log.debug ( "Connecting...connected" );
         setConnectionState ( ConnectionState.CONNECTED );
     }
@@ -262,7 +265,7 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
             return;
 
         setConnectionState ( ConnectionState.DISCONNECTING );
-        _connectThread = new Thread ( new Runnable () {
+        Runnable connectRunner = new Runnable () {
 
             public void run ()
             {
@@ -275,8 +278,13 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
                     _connectThread = null;
                 }
             }
-        } );
-        _connectThread.start ();
+        };
+
+        /*
+         _connectThread = new Thread ( connectRunner );
+         _connectThread.start ();
+         */
+        _hive.getScheduler ().executeJobAsync ( connectRunner );
     }
 
     public synchronized void performDisconnect ()
@@ -359,14 +367,14 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
         return _group;
     }
 
-    public SyncAccess getAccess ()
+    public AccessBase getAccess ()
     {
         return _access;
     }
 
     protected void suicide ()
     {
-        _log.info ( "Perfom suicide");
+        _log.info ( "Perfom suicide" );
         stop ();
     }
 
@@ -404,7 +412,7 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
             disconnected ();
         }
     }
-    
+
     protected void disconnected ()
     {
     }
@@ -424,17 +432,21 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
     public void stateUpdate ( OPCSERVERSTATUS state )
     {
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        
+
         if ( state != null )
         {
-            attributes.put ( "opc.server.bandwidth", new Variant ( state.getBandWidth () ) ); 
+            attributes.put ( "opc.server.bandwidth", new Variant ( state.getBandWidth () ) );
             attributes.put ( "opc.server.build-number", new Variant ( state.getBuildNumber () ) );
             attributes.put ( "opc.server.minor-version", new Variant ( state.getMinorVersion () ) );
             attributes.put ( "opc.server.major-version", new Variant ( state.getMajorVersion () ) );
-            attributes.put ( "opc.server.version", new Variant ( String.format ( "%d.%d.%d", state.getMajorVersion (), state.getMinorVersion (), state.getBuildNumber () ) ) );
-            attributes.put ( "opc.server.current-time", new Variant ( state.getCurrentTime ().asCalendar ().getTimeInMillis () ) );
-            attributes.put ( "opc.server.last-update-time", new Variant ( state.getLastUpdateTime ().asCalendar ().getTimeInMillis () ) );
-            attributes.put ( "opc.server.start-time", new Variant ( state.getStartTime ().asCalendar ().getTimeInMillis () ) );
+            attributes.put ( "opc.server.version", new Variant ( String.format ( "%d.%d.%d", state.getMajorVersion (),
+                    state.getMinorVersion (), state.getBuildNumber () ) ) );
+            attributes.put ( "opc.server.current-time", new Variant (
+                    state.getCurrentTime ().asCalendar ().getTimeInMillis () ) );
+            attributes.put ( "opc.server.last-update-time", new Variant (
+                    state.getLastUpdateTime ().asCalendar ().getTimeInMillis () ) );
+            attributes.put ( "opc.server.start-time", new Variant (
+                    state.getStartTime ().asCalendar ().getTimeInMillis () ) );
             attributes.put ( "opc.server.group-count", new Variant ( state.getGroupCount () ) );
             attributes.put ( "opc.server.server-state.name", new Variant ( state.getServerState ().name () ) );
             attributes.put ( "opc.server.server-state.id", new Variant ( state.getServerState ().id () ) );
@@ -442,7 +454,7 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
         }
         else
         {
-            attributes.put ( "opc.server.bandwidth", null ); 
+            attributes.put ( "opc.server.bandwidth", null );
             attributes.put ( "opc.server.build-number", null );
             attributes.put ( "opc.server.minor-version", null );
             attributes.put ( "opc.server.major-version", null );
@@ -455,7 +467,7 @@ public class OPCConnection implements SyncAccessStateListener, ServerStateListen
             attributes.put ( "opc.server.server-state.id", null );
             attributes.put ( "opc.server.vendor-info", null );
         }
-        
+
         _stateItem.updateAttributes ( attributes );
     }
 }
