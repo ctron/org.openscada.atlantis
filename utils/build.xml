@@ -11,6 +11,8 @@
     <description>
             OpenSCADA Atlantis Utilities Project
     </description>
+	
+	<import file="../release/lib/build.xml"/>
 
     <!-- ================================= 
           target: default              
@@ -37,6 +39,7 @@
          ================================= -->
     <target name="prepare" depends="init" description="--> Prepare It">
         <mkdir dir="${build.dir}"/>
+		<openscada.prepare-local-libs/>
     </target>
 
 	<!-- ================================= 

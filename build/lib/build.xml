@@ -38,7 +38,7 @@
           macrodef: openscada.prepare-local-libs  
           Copy the local libraries into the build-lib folder                    
          - - - - - - - - - - - - - - - - - -->
-    <macrodef name="openscada.prepare-libs">
+    <macrodef name="openscada.prepare-local-libs">
     	<sequential>
 			<copy todir="${build.dir}/lib">
 				<fileset dir="lib">
