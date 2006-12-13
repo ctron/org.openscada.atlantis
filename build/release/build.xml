@@ -23,14 +23,14 @@
           target: default              
          ================================= -->
     <target name="default" depends="clean, init" description="--> Master build file for OpenSCADA Atlabtis">
-        
+    	<mkdir dir="${upload.dir}"/>
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
           target: clean                      
          - - - - - - - - - - - - - - - - - -->
     <target name="clean" depends="init">
-            <delete dir="${upload.dir}"/>
+        <delete dir="${upload.dir}"/>
     </target>
 
 	

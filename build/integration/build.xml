@@ -20,6 +20,7 @@
     <target name="default" depends="init" description="--> Building for the continous integraton server">
         <ant dir="../release" antfile="build.xml">
         	<property name="upload.dir" value="${upload.base}/${DSTAMP}"/>
+        	<property name="release" value="-${DSTAMP}-nightly"/>
     	</ant>
     </target>
 
