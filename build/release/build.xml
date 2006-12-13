@@ -22,6 +22,7 @@
 	<property name="deploy.dir" value="${deploy.base}/${tag}"/>
 	
 	<property name="build.dir" value="build"/>
+	<property name="libfile" location="../lib/build.xml"/>
 	
     <!-- ================================= 
           target: default              
