@@ -76,6 +76,11 @@
 				<include name="**/*.class"/>
 			</fileset>
 		</jar>
+	
+		<mkdir dir="${deploy.dir}"/>
+		<zip basedir="${build.dir}" destfile="${deploy.dir}/${package}-${tag}.zip">
+			<include name="**/*"/>
+		</zip>
     </target>
 
 
