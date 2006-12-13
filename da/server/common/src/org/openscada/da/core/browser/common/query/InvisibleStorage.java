@@ -93,4 +93,10 @@ public class InvisibleStorage implements SubscribeableStorage
         }
     }
 
+    public void clear ()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
