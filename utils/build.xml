@@ -17,7 +17,7 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="deploy" description="--> OpenSCADA Atlantis Utilities Project">
+    <target name="default" depends="clean, deploy" description="--> OpenSCADA Atlantis Utilities Project">
         
     </target>
 
