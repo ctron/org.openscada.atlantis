@@ -15,11 +15,11 @@
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 	  <classpath>
-	    <pathelement location="ant-contrib-1.0b3.jar"/>
-	  	<pathelement location="bcel-5.1.jar"/>
-	  	<pathelement location="commons-httpclient-3.0.1.jar"/>
-	  	<pathelement location="commons-logging-1.0.4.jar"/>
-	  	<pathelement location="ivy-1.3.1.jar"/>
+	    <pathelement location="${source.base}/build/lib/ant-contrib-1.0b3.jar"/>
+	  	<pathelement location="${source.base}/build/lib/bcel-5.1.jar"/>
+	  	<pathelement location="${source.base}/build/lib/commons-httpclient-3.0.1.jar"/>
+	  	<pathelement location="${source.base}/build/lib/commons-logging-1.0.4.jar"/>
+	  	<pathelement location="${source.base}/build/lib/ivy-1.3.1.jar"/>
 	  </classpath>
 	</taskdef>
 	
