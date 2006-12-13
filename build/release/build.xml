@@ -16,7 +16,7 @@
 	<property name="release" value=""/>
 	<property name="tag" value="${version}${release}"/>
 	
-	<property name="source.base" value=".."/>
+	<property name="source.base" value="../.."/>
 	
 	<property name="deploy.base" value="/var/vhosts/openscada/download/atlantis"/>
 	<property name="deploy.dir" value="${deploy.base}/${tag}"/>
@@ -29,6 +29,7 @@
     <target name="default" depends="clean, init" description="--> Master build file for OpenSCADA Atlabtis">
     	<mkdir dir="${deploy.dir}"/>
     	
+    	<ant dir="${source.base}/external/log4j"/>
     	<ant dir="${source.base}/utils"/>
     </target>
 
