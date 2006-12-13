@@ -64,6 +64,8 @@
 				</fileset>
 			</classpath>
 		</javac>
+	
+		<copy file="COPYING" todir="${build.dir}"/>
     </target>
 	
 	<!-- ================================= 
@@ -76,7 +78,7 @@
 				<include name="**/*.class"/>
 			</fileset>
 		</jar>
-	
+
 		<mkdir dir="${deploy.dir}"/>
 		<zip basedir="${build.dir}" destfile="${deploy.dir}/${package}-${tag}.zip">
 			<include name="**/*"/>
