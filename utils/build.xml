@@ -12,7 +12,7 @@
             OpenSCADA Atlantis Utilities Project
     </description>
 	
-	<import file="../release/lib/build.xml"/>
+	<import file="../build/lib/build.xml"/>
 
     <!-- ================================= 
           target: default              
