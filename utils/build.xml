@@ -19,7 +19,6 @@
           target: default              
          ================================= -->
     <target name="default" depends="clean, deploy" description="--> OpenSCADA Atlantis Utilities Project">
-        
     </target>
 
     <!-- - - - - - - - - - - - - - - - - - 
@@ -57,17 +56,7 @@
           target: deploy              
          ================================= -->
     <target name="deploy" depends="build" description="--> Deploy It">
-		<mkdir dir="${build.dir}/bin"/>
-		<jar destfile="${build.dir}/bin/${package}-${tag}.jar">
-			<fileset dir="bin">
-				<include name="**/*.class"/>
-			</fileset>
-		</jar>
 
-		<mkdir dir="${deploy.dir}"/>
-		<zip basedir="${build.dir}" destfile="${deploy.dir}/${package}-${tag}.zip">
-			<include name="**/*"/>
-		</zip>
     </target>
 
 

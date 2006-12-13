@@ -143,5 +143,23 @@
         </sequential>
     </macrodef>
 
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.common.deploy          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.common.deploy">
+        <sequential>
+    		<mkdir dir="${build.dir}/bin"/>
+    		<jar destfile="${build.dir}/bin/${package}-${tag}.jar">
+    			<fileset dir="bin">
+    				<include name="**/*.class"/>
+    			</fileset>
+    		</jar>
+
+    		<mkdir dir="${deploy.dir}"/>
+    		<zip basedir="${build.dir}" destfile="${deploy.dir}/${package}-${tag}.zip">
+    			<include name="**/*"/>
+    		</zip>
+        </sequential>
+    </macrodef>
 
 </project>
