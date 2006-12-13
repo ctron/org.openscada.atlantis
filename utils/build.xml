@@ -56,7 +56,7 @@
           target: deploy              
          ================================= -->
     <target name="deploy" depends="build" description="--> Deploy It">
-
+		<openscada.common.deploy/>
     </target>
 
 
