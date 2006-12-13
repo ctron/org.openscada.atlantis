@@ -178,6 +178,7 @@
     <macrodef name="openscada.common.deploy">
         <sequential>
     		<mkdir dir="${build.dir}/bin"/>
+        	<mkdir dir="schemabin"/>
     		<jar destfile="${build.dir}/bin/openscada-${package}-${tag}.jar">
     			<fileset dir="bin">
     				<include name="**/*.class"/>
