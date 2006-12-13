@@ -2,23 +2,23 @@
 <!-- ====================================================================== 
      Dec 13, 2006 11:38:26 AM                                                        
 
-     openscada_utils    
-     OpenSCADA Atlantis Utilities Project
+     openscada_core_common
+     OpenSCADA Atlantis
                    
      jens                                                                
      ====================================================================== -->
-<project name="openscada_utils" default="default">
+<project name="openscada_core_common" default="default">
     <description>
-            OpenSCADA Atlantis Utilities Project
+            OpenSCADA Atlantis Project
     </description>
 	
 	<import file="${libfile}"/>
-	<property name="package" value="utils"/>
+	<property name="package" value="core-common"/>
 
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="clean, deploy" description="--> OpenSCADA Atlantis Utilities Project">
+    <target name="default" depends="clean, deploy" description="--> OpenSCADA Atlantis Project">
     </target>
 
     <!-- - - - - - - - - - - - - - - - - - 
@@ -43,6 +43,7 @@
 		<openscada.prepare-local-libs/>
 		<openscada.pull-in-external-lib name="log4j"/>
 		<openscada.pull-in-external-lib name="junit4"/>
+    	<openscada.pull-in-module name="utils"/>
     </target>
 
 	<!-- ================================= 

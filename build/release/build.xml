@@ -34,6 +34,8 @@
        	<ant dir="${source.base}/external/xmlbeans"/>
        	<ant dir="${source.base}/external/junit4"/>
     	<ant dir="${source.base}/utils"/>
+    	<ant dir="${source.base}/core/common"/>
+       	<ant dir="${source.base}/da/core/common"/>
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
