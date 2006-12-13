@@ -26,7 +26,7 @@
     	<attribute name="name"/>
     	<sequential>
 	    	<mkdir dir="${build.dir}/lib"/>
-	    	<unzip src="${deploy.dir}/@{name}.zip" dest="${build.dir}/lib">
+	    	<unzip src="${deploy.dir}/@{name}.zip" dest="${build.dir}">
 	    		<fileset dir="lib">
 	    		</fileset>
 	   		</unzip>
