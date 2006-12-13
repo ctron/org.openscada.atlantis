@@ -17,6 +17,12 @@
          ================================= -->
     <target name="default" description="--> Nothing">
     </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: openscada.pull-lib-in                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="openscada.pull-lib-in">
+    </target>
 
 
 </project>

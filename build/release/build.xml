@@ -21,6 +21,8 @@
 	<property name="deploy.base" value="/var/vhosts/openscada/download/atlantis"/>
 	<property name="deploy.dir" value="${deploy.base}/${tag}"/>
 	
+	<property name="build.dir" value="build"/>
+	
     <!-- ================================= 
           target: default              
          ================================= -->

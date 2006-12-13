@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     Dec 13, 2006 11:38:26 AM                                                        
+
+     openscada_utils    
+     OpenSCADA Atlantis Utilities Project
+                   
+     jens                                                                
+     ====================================================================== -->
+<project name="openscada_utils" default="default">
+    <description>
+            OpenSCADA Atlantis Utilities Project
+    </description>
+
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="deploy" description="--> OpenSCADA Atlantis Utilities Project">
+        
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: init                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="init">
+    </target>
+	
+	<!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" depends="init" description="--> Clean Up">
+        <delete dir="${build.dir}"/>
+    </target>
+	
+	<!-- ================================= 
+          target: prepare              
+         ================================= -->
+    <target name="prepare" depends="init" description="--> Prepare It">
+        <mkdir dir="${build.dir}"/>
+    </target>
+
+	<!-- ================================= 
+          target: build              
+         ================================= -->
+    <target name="build" depends="init, prepare" description="--> Build It">
+    </target>
+	
+	<!-- ================================= 
+          target: deploy              
+         ================================= -->
+    <target name="deploy" depends="build" description="--> Deploy It">
+    </target>
+
+
+</project>
