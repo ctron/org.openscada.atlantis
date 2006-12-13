@@ -2,18 +2,18 @@
 <!-- ====================================================================== 
      Dec 13, 2006 11:38:26 AM                                                        
 
-     openscada_da_core_server
+     da-server-common
      OpenSCADA Atlantis
                    
      jens                                                                
      ====================================================================== -->
-<project name="openscada_da_core_server" default="default">
+<project name="da-server-common" default="default">
     <description>
             OpenSCADA Atlantis Project
     </description>
 	
 	<import file="${libfile}"/>
-	<property name="package" value="da-core-server"/>
+	<property name="package" value="da-server-common"/>
 
     <!-- ================================= 
           target: default              
