@@ -87,7 +87,6 @@
     		<mkdir dir="${build.dir}/src"/>
     		<copy todir="${build.dir}/src">
     			<fileset dir="src">
-    				<include name="**/*.java"/>
     				<exclude name="**/.svn"/>
     			</fileset>
     		</copy>
@@ -115,6 +114,9 @@
     				<fileset dir="${build.dir}/lib">
     					<include name="*.jar"/>
     				</fileset>
+    				<fileset dir="${build.dir}/bin">
+    					<include name="*.jar"/>
+    				</fileset>
     	  		</classpath>
     		</javadoc>
         </sequential>
@@ -137,6 +139,9 @@
     				<fileset dir="${build.dir}/lib">
     					<include name="**/*.jar"/>
     				</fileset>
+       				<fileset dir="${build.dir}/bin">
+       					<include name="*.jar"/>
+       				</fileset>
     			</classpath>
     		</javac>
         </sequential>
