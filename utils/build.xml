@@ -70,6 +70,7 @@
           target: deploy              
          ================================= -->
     <target name="deploy" depends="build" description="--> Deploy It">
+		<mkdir dir="${build.dir}/bin"/>
 		<jar destfile="${build.dir}/bin/${package}-${tag}.jar">
 			<fileset dir="bin">
 				<include name="**/*.class"/>
