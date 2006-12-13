@@ -50,6 +50,7 @@
           target: build              
          ================================= -->
     <target name="build" depends="init, prepare" description="--> Build It">
+		<!-- compile stuff -->
 		<mkdir dir="bin"/>
 		<javac
 			encoding="utf-8"
@@ -64,7 +65,37 @@
 				</fileset>
 			</classpath>
 		</javac>
+
+		<!-- generate javadoc -->
+	   	<mkdir dir="docs/api"/>
+  		<javadoc destdir="docs/api"
+	       	author="true"
+	       	version="true"
+	       	use="true"
+	       	encoding="utf-8"
+	       	>
+	       	<tag name="note" description="Note" scope="all"/>
+	       	<tag name="warning" description="Warning" scope="all"/>
+	       	<packageset dir="src" defaultexcludes="yes">
+	       		<include name="**"/>
+	       	</packageset>
+			<classpath>
+				<fileset dir="${build.dir}/lib">
+					<include name="*.jar"/>
+				</fileset>
+	  		</classpath>
+		</javadoc>
 	
+		<!-- export source -->
+		<mkdir dir="${build.dir}/src"/>
+		<copy todir="${build.dir}/src">
+			<fileset dir="src">
+				<include name="**/*.java"/>
+				<exclude name="**/.svn"/>
+			</fileset>
+		</copy>
+	
+		<!-- export license -->
 		<copy file="COPYING" todir="${build.dir}"/>
     </target>
 	
