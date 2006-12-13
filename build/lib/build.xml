@@ -26,9 +26,11 @@
     	<attribute name="name"/>
     	<sequential>
 	    	<mkdir dir="${build.dir}/lib"/>
+	    	<mkdir dir="${build.dir}/bin"/>
 	    	<unzip src="${deploy.dir}/@{name}.zip" dest="${build.dir}">
 	    		<patternset>
 	    			<include name="lib/*.jar"/>
+	    			<include name="bin/*.jar"/>
 	    		</patternset>
 	   		</unzip>
     	</sequential>
@@ -43,8 +45,17 @@
             <openscada.pull-in-lib name="external-@{name}"/>
         </sequential>
     </macrodef>
-
 	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.pull-in-module          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.pull-in-module">
+        <attribute name="name" />
+        <sequential>
+        	<openscada.pull-in-lib name="openscada-@{name}-${tag}"/>
+        </sequential>
+    </macrodef>
+
 	<!-- - - - - - - - - - - - - - - - - - 
           macrodef: openscada.prepare-local-libs  
           Copy the local libraries into the build-lib folder                    
