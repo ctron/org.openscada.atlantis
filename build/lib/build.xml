@@ -40,7 +40,7 @@
          - - - - - - - - - - - - - - - - - -->
     <macrodef name="openscada.prepare-local-libs">
     	<sequential>
-			<copy todir="${build.dir}/lib">
+			<copy todir="${build.dir}/lib" failonerror="false">
 				<fileset dir="lib">
 					<exclude name="**/.svn"/>
 				</fileset>
