@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     Dec 13, 2006 11:33:32 AM                                                        
+
+     OpenSCADA Atlantis Build Tools File    
+     Providing common build targets for all other ant-scripts
+                   
+     jens                                                                
+     ====================================================================== -->
+<project name="OpenSCADA Atlantis Build Tools File" default="default">
+    <description>
+            Providing common build targets for all other ant-scripts
+    </description>
+	
+	<!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" description="--> Nothing">
+    </target>
+
+
+</project>
