@@ -12,7 +12,7 @@
             OpenSCADA Atlantis Utilities Project
     </description>
 	
-	<import file="../build/lib/build.xml"/>
+	<import file="${libfile}"/>
 	<property name="package" value="openscada-utils"/>
 
     <!-- ================================= 
