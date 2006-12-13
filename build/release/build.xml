@@ -35,7 +35,10 @@
        	<ant dir="${source.base}/external/junit4"/>
     	<ant dir="${source.base}/utils"/>
     	<ant dir="${source.base}/core/common"/>
+       	<ant dir="${source.base}/net/base"/>
+       	<ant dir="${source.base}/core/server/common"/>
        	<ant dir="${source.base}/da/core/common"/>
+       	<ant dir="${source.base}/da/net/base"/>
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
