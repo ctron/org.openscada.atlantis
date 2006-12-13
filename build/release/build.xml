@@ -30,6 +30,7 @@
     	<mkdir dir="${deploy.dir}"/>
     	
     	<ant dir="${source.base}/external/log4j"/>
+       	<ant dir="${source.base}/external/xmlbeans"/>
     	<ant dir="${source.base}/utils"/>
     </target>
 
