@@ -12,14 +12,14 @@
             Building for the continous integraton server
     </description>
 
-	<property name="upload.base" value="/var/vhosts/openscada/download/atlantis/integration"/>
+	<property name="deploy.base" value="/var/vhosts/openscada/download/atlantis/integration"/>
 	
     <!-- ================================= 
           target: default              
          ================================= -->
     <target name="default" depends="init" description="--> Building for the continous integraton server">
         <ant dir="../release" antfile="build.xml">
-        	<property name="upload.dir" value="${upload.base}/${DSTAMP}"/>
+        	<property name="deploy.dir" value="${deploy.base}/${DSTAMP}"/>
         	<property name="release" value="-${DSTAMP}-nightly"/>
     	</ant>
     </target>

@@ -16,21 +16,21 @@
 	<property name="release" value=""/>
 	<property name="tag" value="${version}${release}"/>
 	
-	<property name="upload.base" value="/var/vhosts/openscada/download/atlantis"/>
-	<property name="upload.dir" value="${upload.base}/${tag}"/>
+	<property name="deploy.base" value="/var/vhosts/openscada/download/atlantis"/>
+	<property name="deploy.dir" value="${deploy.base}/${tag}"/>
 	
     <!-- ================================= 
           target: default              
          ================================= -->
     <target name="default" depends="clean, init" description="--> Master build file for OpenSCADA Atlabtis">
-    	<mkdir dir="${upload.dir}"/>
+    	<mkdir dir="${deploy.dir}"/>
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
           target: clean                      
          - - - - - - - - - - - - - - - - - -->
     <target name="clean" depends="init">
-        <delete dir="${upload.dir}"/>
+        <delete dir="${deploy.dir}"/>
     </target>
 
 	
