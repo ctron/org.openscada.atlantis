@@ -27,8 +27,9 @@
     	<sequential>
 	    	<mkdir dir="${build.dir}/lib"/>
 	    	<unzip src="${deploy.dir}/@{name}.zip" dest="${build.dir}">
-	    		<fileset dir="lib">
-	    		</fileset>
+	    		<patternset>
+	    			<include name="lib/*.jar"/>
+	    		</patternset>
 	   		</unzip>
     	</sequential>
     </macrodef>
