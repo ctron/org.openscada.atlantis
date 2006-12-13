@@ -67,8 +67,8 @@
 		</javac>
 
 		<!-- generate javadoc -->
-	   	<mkdir dir="docs/api"/>
-  		<javadoc destdir="docs/api"
+	   	<mkdir dir="${build.dir}/docs/api"/>
+  		<javadoc destdir="${build.dir}/docs/api"
 	       	author="true"
 	       	version="true"
 	       	use="true"
