@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     Dec 13, 2006 11:07:43 AM                                                        
+
+     OpenSCADA Atlantis    
+     Master build file for OpenSCADA Atlabtis
+                   
+     jens                                                                
+     ====================================================================== -->
+<project name="OpenSCADA Atlantis" default="default">
+    <description>
+            Master build file for OpenSCADA Atlantis
+    </description>
+
+	<property name="version" value="0.5.0"/>
+	<property name="release" value=""/>
+	<property name="tag" value="${version}${release}"/>
+	
+	<property name="upload.base" value="/var/vhosts/openscada/download/atlantis"/>
+	<property name="upload.dir" value="${upload.base}/${tag}"/>
+	
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="clean, init" description="--> Master build file for OpenSCADA Atlabtis">
+        
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean" depends="init">
+            <delete dir="${upload.dir}"/>
+    </target>
+
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: init                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="init">
+    </target>
+
+</project>
