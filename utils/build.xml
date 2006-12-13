@@ -40,6 +40,8 @@
     <target name="prepare" depends="init" description="--> Prepare It">
         <mkdir dir="${build.dir}"/>
 		<openscada.prepare-local-libs/>
+		<openscada.pull-in-external-lib name="log4j"/>
+		<openscada.pull-in-external-lib name="junit4"/>
     </target>
 
 	<!-- ================================= 

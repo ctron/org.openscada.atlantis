@@ -19,7 +19,7 @@
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
-          macrodef: openscada.pull-lib-in
+          macrodef: openscada.pull-in-lib
           Unpack a deployed archive and copy the libraries into the build-lib folder
          - - - - - - - - - - - - - - - - - -->
     <macrodef name="openscada.pull-in-lib">
@@ -33,6 +33,17 @@
 	   		</unzip>
     	</sequential>
     </macrodef>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.pull-in-external-lib          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.pull-in-external-lib">
+        <attribute name="name"/>
+        <sequential>
+            <openscada.pull-in-lib name="external-@{name}"/>
+        </sequential>
+    </macrodef>
+
 	
 	<!-- - - - - - - - - - - - - - - - - - 
           macrodef: openscada.prepare-local-libs  
