@@ -48,6 +48,18 @@
           target: build              
          ================================= -->
     <target name="build" depends="init, prepare" description="--> Build It">
+		<javac
+			encoding="utf-8"
+			source="1.5"
+			target="1.5"
+			srcdir="src"
+			>
+			<classpath>
+				<fileset dir="${build.dir}/lib">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
     </target>
 	
 	<!-- ================================= 
