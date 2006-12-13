@@ -149,6 +149,7 @@
        				<fileset dir="${build.dir}/bin">
        					<include name="*.jar"/>
        				</fileset>
+    				<pathelement location="schemabin"/>
     			</classpath>
     		</javac>
         </sequential>
@@ -177,6 +178,7 @@
     			<fileset dir="bin">
     				<include name="**/*.class"/>
     			</fileset>
+    			<fileset dir="schemabin"/>
     		</jar>
 
     		<mkdir dir="${deploy.dir}"/>

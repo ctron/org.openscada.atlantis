@@ -39,6 +39,7 @@
        	<ant dir="${source.base}/core/server/common"/>
        	<ant dir="${source.base}/da/core/common"/>
        	<ant dir="${source.base}/da/net/base"/>
+    	<ant dir="${source.base}/da/core/server"/>
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
