@@ -19,10 +19,35 @@
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
-          target: openscada.pull-lib-in                      
+          macrodef: openscada.pull-lib-in
+          Unpack a deployed archive and copy the libraries into the build-lib folder
          - - - - - - - - - - - - - - - - - -->
-    <target name="openscada.pull-lib-in">
-    </target>
+    <macrodef name="openscada.pull-in-lib">
+    	<attribute name="name"/>
+    	<sequential>
+	    	<mkdir dir="${build.dir}/lib"/>
+	    	<unzip src="${deploy.dir}/lib/@{name}.zip" dest="${build.dir}/lib">
+	    		<fileset>
+	    			<include name="lib/*.jar"/>
+	    		</fileset>
+	   		</unzip>
+    	</sequential>
+    </macrodef>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          macrodef: openscada.prepare-local-libs  
+          Copy the local libraries into the build-lib folder                    
+         - - - - - - - - - - - - - - - - - -->
+    <macrodef name="openscada.prepare-libs">
+    	<sequential>
+			<copy todir="${build.dir}/lib">
+				<fileset dir="lib">
+					<exclude name="**/.svn"/>
+				</fileset>
+	    	</copy>
+    	</sequential>
+    </macrodef>
+
 
 
 </project>
