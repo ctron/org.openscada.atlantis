@@ -59,6 +59,89 @@
     	</sequential>
     </macrodef>
 
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.export.license          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.export.license">
+        <sequential>
+    		<copy file="COPYING" todir="${build.dir}"/>
+        </sequential>
+    </macrodef>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.export.source          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.export.source">
+        <sequential>
+    		<mkdir dir="${build.dir}/src"/>
+    		<copy todir="${build.dir}/src">
+    			<fileset dir="src">
+    				<include name="**/*.java"/>
+    				<exclude name="**/.svn"/>
+    			</fileset>
+    		</copy>
+        </sequential>
+    </macrodef>
+
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.compile.javadoc          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.compile.javadoc">
+        <sequential>
+    	   	<mkdir dir="${build.dir}/docs/api"/>
+      		<javadoc destdir="${build.dir}/docs/api"
+    	       	author="true"
+    	       	version="true"
+    	       	use="true"
+    	       	encoding="utf-8"
+    	       	>
+    	       	<tag name="note" description="Note" scope="all"/>
+    	       	<tag name="warning" description="Warning" scope="all"/>
+    	       	<packageset dir="src" defaultexcludes="yes">
+    	       		<include name="**"/>
+    	       	</packageset>
+    			<classpath>
+    				<fileset dir="${build.dir}/lib">
+    					<include name="*.jar"/>
+    				</fileset>
+    	  		</classpath>
+    		</javadoc>
+        </sequential>
+    </macrodef>
+
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.compile.source          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.compile.source">
+        <sequential>
+    		<mkdir dir="bin"/>
+    		<javac
+    			encoding="utf-8"
+    			source="1.5"
+    			target="1.5"
+    			srcdir="src"
+    			destdir="bin"
+    			>
+    			<classpath>
+    				<fileset dir="${build.dir}/lib">
+    					<include name="**/*.jar"/>
+    				</fileset>
+    			</classpath>
+    		</javac>
+        </sequential>
+    </macrodef>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.common.build          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.common.build">
+        <sequential>
+    		<openscada.compile.source/>
+    		<openscada.compile.javadoc/>
+    		<openscada.export.source/>
+    		<openscada.export.license/>
+        </sequential>
+    </macrodef>
 
 
 </project>
