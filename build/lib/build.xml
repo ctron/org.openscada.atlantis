@@ -26,6 +26,8 @@
 	  </classpath>
 	</taskdef>
 	
+	<import file="append-line.xml"/>
+	
 	<!-- ================================= 
           target: default              
          ================================= -->
@@ -47,8 +49,8 @@
 	    			<include name="bin/*.jar"/>
 	    		</patternset>
 	   		</unzip>
-			<concat append="true" destfile="module.deps"><![CDATA[${package} -> @{name}
-]]></concat>
+			<mkdir dir="${temp.dir}/deps"/>
+			<append-line file="${temp.dir}/deps/@{name}.deps">${package} -&gt; @{name}</append-line>
     	</sequential>
     </macrodef>
 	
