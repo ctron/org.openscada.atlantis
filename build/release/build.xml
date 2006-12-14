@@ -49,6 +49,7 @@
        	<ant dir="${source.base}/da/server/simulation"/>
        	<ant dir="${source.base}/da/server/snmp"/>
       	<ant dir="${source.base}/da/server/sysinfo"/>
+      	<ant dir="${source.base}/da/server/test"/>
 
        	<ant dir="${source.base}/core/client/net"/>
        	<ant dir="${source.base}/da/client/net"/>
