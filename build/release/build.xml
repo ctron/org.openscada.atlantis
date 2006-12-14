@@ -92,7 +92,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: dist-source
          - - - - - - - - - - - - - - - - - -->
-    <target name="dist-source">
+    <target name="dist-source" depends="build">
     	<mkdir dir="${build.dir}/dist-source"/>
     	<unzip dest="dist-source">
     		<fileset dir="${deploy.dist.module}">
@@ -109,7 +109,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: dist-binary
          - - - - - - - - - - - - - - - - - -->
-    <target name="dist-binary">
+    <target name="dist-binary" depends="build">
             
     </target>
 
