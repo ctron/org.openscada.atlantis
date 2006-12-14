@@ -38,7 +38,7 @@
     	<sequential>
 	    	<mkdir dir="${build.dir}/lib"/>
 	    	<mkdir dir="${build.dir}/bin"/>
-	    	<unzip src="${deploy.dir}/@{name}.zip" dest="${build.dir}">
+	    	<unzip src="${deploy.dist.module}/@{name}.zip" dest="${build.dir}">
 	    		<patternset>
 	    			<include name="lib/*.jar"/>
 	    			<include name="bin/*.jar"/>
@@ -187,7 +187,7 @@
     		</jar>
 
     		<mkdir dir="${deploy.dir}"/>
-    		<zip basedir="${build.dir}" destfile="${deploy.dir}/openscada-${package}-${tag}.zip">
+    		<zip basedir="${build.dir}" destfile="${deploy.dist.module}/openscada-${package}-${tag}.zip">
     			<include name="**/*"/>
     		</zip>
         </sequential>
@@ -228,7 +228,7 @@
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.deploy.external">
         <sequential>
-        	<zip basedir="${build.dir}" file="${deploy.dir}/external-${package}.zip">
+        	<zip basedir="${build.dir}" file="${deploy.dist.module}/external-${package}.zip">
         	</zip>
         </sequential>
     </macrodef>
