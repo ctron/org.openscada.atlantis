@@ -28,7 +28,7 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="clean, init, build, dist-source, dist-binary" description="--> Master build file for OpenSCADA Atlabtis">
+    <target name="default" depends="clean, init, build, dist-source, dist-binary, rcp" description="--> Master build file for OpenSCADA Atlabtis">
     </target>
 	
 	<!-- ================================= 
