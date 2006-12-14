@@ -49,7 +49,6 @@
 	    			<include name="bin/*.jar"/>
 	    		</patternset>
 	   		</unzip>
-			<append-line file="${module.dep.file}">${package} -&gt; @{name}</append-line>
     	</sequential>
     </macrodef>
 	
@@ -60,6 +59,7 @@
         <attribute name="name"/>
         <sequential>
             <openscada.pull-in-lib name="external-@{name}"/>
+			<append-line file="${module.dep.file}">${package} -&gt; @{name}</append-line>
         </sequential>
     </macrodef>
 	
@@ -70,6 +70,7 @@
         <attribute name="name" />
         <sequential>
         	<openscada.pull-in-lib name="openscada-@{name}-${tag}"/>
+			<append-line file="${module.dep.file}">${package} -&gt; @{name}</append-line>
         </sequential>
     </macrodef>
 
