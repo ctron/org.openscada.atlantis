@@ -49,8 +49,7 @@
 	    			<include name="bin/*.jar"/>
 	    		</patternset>
 	   		</unzip>
-			<mkdir dir="${temp.dir}/deps"/>
-			<append-line file="${temp.dir}/deps/@{package}.deps">${package} -&gt; @{name}</append-line>
+			<append-line file="${module.dep.file}">${package} -&gt; @{name}</append-line>
     	</sequential>
     </macrodef>
 	
