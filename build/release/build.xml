@@ -1,11 +1,9 @@
 <?xml version="1.0"?>
 <!-- ====================================================================== 
-     Dec 13, 2006 11:07:43 AM                                                        
-
      OpenSCADA Atlantis    
      Master build file for OpenSCADA Atlabtis
                    
-     jens                                                                
+	 Jens Reimann <jens.reimann@inavare.net>
      ====================================================================== -->
 <project name="OpenSCADA Atlantis" default="default">
     <description>
