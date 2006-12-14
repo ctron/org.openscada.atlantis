@@ -129,5 +129,17 @@
     	</zip>
     </target>
 
+	<!-- ================================= 
+          target: rcp              
+         ================================= -->
+    <target name="rcp" depends="build" description="--> Build RCP Application">
+		<property name="buildType" value="N"/>
+		<property name="buildId" value="Nightly-${DSTAMP}"/>
+		
+		<ant antfile="build.xml" dir="../rcp">
+			<property name="upload.base.ostc" value="${deploy.dir}/ostc"/>
+    	</ant>
+    </target>
+
 
 </project>
