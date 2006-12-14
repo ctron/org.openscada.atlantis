@@ -79,6 +79,7 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="clean" depends="init">
         <delete dir="${deploy.dir}"/>
+    	<delete dir="${build.dir}"/>
     </target>
 
 	
@@ -92,6 +93,17 @@
           target: dist-source
          - - - - - - - - - - - - - - - - - -->
     <target name="dist-source">
+    	<mkdir dir="${build.dir}/dist-source"/>
+    	<unzip dest="dist-source">
+    		<fileset dir="${deploy.dist.module}">
+    			<include name="**/*.zip"/>
+    		</fileset>
+    		<patternset>
+    			<include name="src/**"/>
+    		</patternset>
+    	</unzip>
+    	<zip basedir="${build.dir}/dist-source" destfile="${deploy.dist.source}/openscada-atlantis-source-${tag}.zip">
+    	</zip>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
