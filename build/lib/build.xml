@@ -70,7 +70,7 @@
         <attribute name="name" />
         <sequential>
         	<openscada.pull-in-lib name="openscada-@{name}-${tag}"/>
-			<append-line file="${module.dep.file}">${package} -&gt; @{name}</append-line>
+			<append-line file="${module.dep.file}">&quot;${package}&quot; -&gt; &quot;@{name}&quot;</append-line>
         </sequential>
     </macrodef>
 
