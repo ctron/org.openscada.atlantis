@@ -102,6 +102,8 @@
     			<include name="src/**"/>
     		</patternset>
     	</unzip>
+    	
+    	<!-- re-package -->
     	<mkdir dir="${deploy.dist.source}"/>
     	<zip basedir="${build.dir}/dist-source" destfile="${deploy.dist.source}/openscada-atlantis-source-${tag}.zip">
     	</zip>
@@ -111,7 +113,22 @@
           target: dist-binary
          - - - - - - - - - - - - - - - - - -->
     <target name="dist-binary" depends="build">
-            
+    	<!-- unpack what we need -->
+    	<mkdir dir="${build.dir}/dist-binary"/>
+    	<unzip dest="${build.dir}/dist-binary">
+    		<fileset dir="${deploy.dist.module}">
+    			<include name="**/*.zip"/>
+    		</fileset>
+    		<patternset>
+    			<include name="bin/**"/>
+       			<include name="lib/**"/>
+    		</patternset>
+    	</unzip>
+    	
+    	<!-- re-pack it -->
+    	<mkdir dir="${deploy.dist.binary}"/>
+    	<zip basedir="${build.dir}/dist-binary" destfile="${deploy.dist.binary}/openscada-atlantis-bin-${tag}.zip">
+    	</zip>
     </target>
 
 
