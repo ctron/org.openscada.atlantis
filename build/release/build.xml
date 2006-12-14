@@ -94,7 +94,7 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="dist-source" depends="build">
     	<mkdir dir="${build.dir}/dist-source"/>
-    	<unzip dest="dist-source">
+    	<unzip dest="${build.dir}/dist-source">
     		<fileset dir="${deploy.dist.module}">
     			<include name="**/*.zip"/>
     		</fileset>
@@ -102,6 +102,7 @@
     			<include name="src/**"/>
     		</patternset>
     	</unzip>
+    	<mkdir dir="${deploy.dist.source}"/>
     	<zip basedir="${build.dir}/dist-source" destfile="${deploy.dist.source}/openscada-atlantis-source-${tag}.zip">
     	</zip>
     </target>
