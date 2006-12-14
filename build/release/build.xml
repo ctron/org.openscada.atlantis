@@ -27,7 +27,13 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="clean, init" description="--> Master build file for OpenSCADA Atlabtis">
+    <target name="default" depends="clean, init, build, dist-source, dist-binary" description="--> Master build file for OpenSCADA Atlabtis">
+    </target>
+	
+	<!-- ================================= 
+          target: build              
+         ================================= -->
+    <target name="build" depends="init" description="--> Build all">
     	<mkdir dir="${deploy.dir}"/>
     	<copy file="../data/htaccess" tofile="${deploy.dir}/.htaccess"/>
     	
@@ -64,6 +70,7 @@
     	<ant dir="${source.base}/ae/submitter/net"/>
     </target>
 
+
 	<!-- - - - - - - - - - - - - - - - - - 
           target: clean                      
          - - - - - - - - - - - - - - - - - -->
@@ -77,5 +84,20 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="init">
     </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: dist-source
+         - - - - - - - - - - - - - - - - - -->
+    <target name="dist-source">
+            
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: dist-binary
+         - - - - - - - - - - - - - - - - - -->
+    <target name="dist-binary">
+            
+    </target>
+
 
 </project>

@@ -223,4 +223,15 @@
 		</sequential>
     </macrodef>
 	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.deploy.external          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.deploy.external">
+        <sequential>
+        	<zip basedir="${build.dir}" file="${deploy.dir}/external-${package}.zip">
+        	</zip>
+        </sequential>
+    </macrodef>
+
+	
 </project>
