@@ -48,6 +48,7 @@
       	<ant dir="${source.base}/da/server/net"/>
        	<ant dir="${source.base}/da/server/simulation"/>
        	<ant dir="${source.base}/da/server/snmp"/>
+      	<ant dir="${source.base}/da/server/sysinfo"/>
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
