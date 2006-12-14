@@ -43,6 +43,7 @@
 		<openscada.pull-in-external-lib name="junit4"/>
     	<openscada.pull-in-module name="utils"/>
       	<openscada.pull-in-module name="ae-core-common"/>
+       	<openscada.pull-in-module name="core-server-common"/>
     </target>
 
 	<!-- ================================= 
