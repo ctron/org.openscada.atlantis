@@ -53,6 +53,14 @@
 
        	<ant dir="${source.base}/core/client/net"/>
        	<ant dir="${source.base}/da/client/net"/>
+    	
+    	<ant dir="${source.base}/ae/core/common"/>
+    	<ant dir="${source.base}/ae/net/base"/>
+    	<ant dir="${source.base}/ae/storage/common"/>
+		<ant dir="${source.base}/ae/client/net"/>
+    	<ant dir="${source.base}/ae/storage/test"/>
+    	<ant dir="${source.base}/ae/storage/syslog"/>
+    	<ant dir="${source.base}/ae/submitter/net"/>
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
