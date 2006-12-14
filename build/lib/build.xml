@@ -12,6 +12,11 @@
             Providing common build targets for all other ant-scripts
     </description>
 	
+	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
+		<classpath>
+			<pathelement location="xmltask-v1.14.jar"/>
+		</classpath>
+	</taskdef>
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 	  <classpath>
