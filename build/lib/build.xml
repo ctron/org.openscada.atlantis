@@ -228,6 +228,7 @@
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.deploy.external">
         <sequential>
+        	<mkdir dir="${deploy.dist.module}"/>
         	<zip basedir="${build.dir}" file="${deploy.dist.module}/external-${package}.zip">
         	</zip>
         </sequential>
