@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <!-- ====================================================================== 
-     openscada-da-client-net
+     da-client-net
      OpenSCADA Atlantis
                    
 	 Jens Reimann <jens.reimann@inavare.net>
      ====================================================================== -->
-<project name="openscada-da-client-net" default="default">
+<project name="da-client-net" default="default">
     <description>
             OpenSCADA Atlantis Project
     </description>
 	
 	<import file="${libfile}"/>
-	<property name="package" value="openscada-da-client-net"/>
+	<property name="package" value="da-client-net"/>
 
     <!-- ================================= 
           target: default              
