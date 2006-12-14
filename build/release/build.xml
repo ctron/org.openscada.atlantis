@@ -42,6 +42,8 @@
        	<ant dir="${source.base}/da/core/server"/>
        	<ant dir="${source.base}/da/server/common"/>
        	<ant dir="${source.base}/da/net/base"/>
+      	<ant dir="${source.base}/da/server/net"/>
+       	<ant dir="${source.base}/da/server/simulation"/>
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
