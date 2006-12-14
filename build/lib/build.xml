@@ -47,8 +47,8 @@
 	    			<include name="bin/*.jar"/>
 	    		</patternset>
 	   		</unzip>
-			<concat append="true" destfile="module.deps">${package} -> @{name}
-</concat>
+			<concat append="true" destfile="module.deps"><![CDATA[${package} -> @{name}
+]]></concat>
     	</sequential>
     </macrodef>
 	
