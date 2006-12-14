@@ -1,9 +1,13 @@
 package org.openscada.da.server.simulation.modules;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.openscada.core.Variant;
 import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.chain.DataItemInputChained;
 import org.openscada.da.server.simulation.Hive;
+import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.timing.Scheduler;
 
 public class SimpleMOV extends BaseModule implements MOV, Runnable
@@ -53,17 +57,19 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
 
         _scheduler = hive.getScheduler ();
 
-        _openInput = getInput ( "open-signal" );
-        _closeInput = getInput ( "close-signal" );
-        _transitInput = getInput ( "transit-signal" );
-        _errorInput = getInput ( "error-signal" );
-        _runtimeInput = getInput ( "runtime-value" );
-        _percentInput = getInput ( "percent-value" );
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        attributes.put ( "tag", new Variant ( "mov." + id ) );
+        _openInput = getInput ( "open-signal", attributes );
+        _closeInput = getInput ( "close-signal", attributes  );
+        _transitInput = getInput ( "transit-signal", attributes  );
+        _errorInput = getInput ( "error-signal", attributes  );
+        _runtimeInput = getInput ( "runtime-value", attributes  );
+        _percentInput = getInput ( "percent-value", attributes  );
 
         _lastTick = System.currentTimeMillis ();
         _scheduler.addJob ( this, JOB_PERIOD );
 
-        _openCommand = getOutput ( "open-command" );
+        _openCommand = getOutput ( "open-command", attributes  );
         _openCommand.addListener ( new DataItemCommand.Listener () {
 
             public void command ( Variant value )
@@ -71,7 +77,7 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
                 open ();
             }
         } );
-        _closeCommand = getOutput ( "close-command" );
+        _closeCommand = getOutput ( "close-command", attributes  );
         _closeCommand.addListener ( new DataItemCommand.Listener () {
 
             public void command ( Variant value )

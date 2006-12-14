@@ -20,12 +20,16 @@ import java.util.List;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.browser.common.FolderCommon;
+import org.openscada.da.core.browser.common.query.AttributeNameProvider;
+import org.openscada.da.core.browser.common.query.GroupFolder;
 import org.openscada.da.core.browser.common.query.IDNameProvider;
 import org.openscada.da.core.browser.common.query.InvisibleStorage;
 import org.openscada.da.core.browser.common.query.ItemDescriptor;
 import org.openscada.da.core.browser.common.query.ItemStorage;
 import org.openscada.da.core.browser.common.query.Matcher;
+import org.openscada.da.core.browser.common.query.NameProvider;
 import org.openscada.da.core.browser.common.query.QueryFolder;
+import org.openscada.da.core.browser.common.query.SplitGroupProvider;
 import org.openscada.da.core.common.impl.HiveCommon;
 import org.openscada.da.server.simulation.modules.BaseModule;
 import org.openscada.da.server.simulation.modules.SimpleMOV;
@@ -49,7 +53,7 @@ public class Hive extends HiveCommon
         FolderCommon rootFolder = new FolderCommon ();
         setRootFolder ( rootFolder );
 
-        _modules.add ( new SimpleMOV ( this, "1000" ) );
+        addModule ( new SimpleMOV ( this, "1000" ) );
 
         QueryFolder queryFolder = new QueryFolder ( new Matcher () {
 
@@ -58,9 +62,12 @@ public class Hive extends HiveCommon
                 return true;
             }
         }, new IDNameProvider () );
-        _storage.addChild ( queryFolder );
-
         rootFolder.add ( "all", queryFolder, new HashMap<String, Variant> () );
+        _storage.addChild ( queryFolder );
+        
+        GroupFolder groupFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "tag" ), "\\." ), new IDNameProvider () );
+        rootFolder.add ( "components", groupFolder, new HashMap<String, Variant> () );
+        _storage.addChild ( groupFolder );
     }
 
     public Scheduler getScheduler ()
@@ -71,5 +78,10 @@ public class Hive extends HiveCommon
     public ItemStorage getStorage ()
     {
         return _storage;
+    }
+    
+    public void addModule ( BaseModule module )
+    {
+        _modules.add ( module );
     }
 }

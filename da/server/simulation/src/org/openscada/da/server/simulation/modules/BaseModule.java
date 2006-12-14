@@ -34,7 +34,7 @@ public class BaseModule
         _items.clear ();
     }
 
-    protected DataItemInputChained getInput ( String name )
+    protected DataItemInputChained getInput ( String name, Map<String, Variant> attributes )
     {
         String id = getItemId ( name );
 
@@ -51,12 +51,12 @@ public class BaseModule
         _items.put ( name, item );
         _hive.registerItem ( item );
 
-        ItemDescriptor idesc = new ItemDescriptor ( item, new HashMap<String, Variant> () );
+        ItemDescriptor idesc = new ItemDescriptor ( item, attributes );
         _hive.getStorage ().added ( idesc );
         return item;
     }
 
-    protected DataItemCommand getOutput ( String name )
+    protected DataItemCommand getOutput ( String name, Map<String, Variant> attributes )
     {
         String id = getItemId ( name );
 
@@ -73,7 +73,7 @@ public class BaseModule
         _items.put ( name, item );
         _hive.registerItem ( item );
 
-        ItemDescriptor idesc = new ItemDescriptor ( item, new HashMap<String, Variant> () );
+        ItemDescriptor idesc = new ItemDescriptor ( item, attributes );
         _hive.getStorage ().added ( idesc );
         return item;
     }
