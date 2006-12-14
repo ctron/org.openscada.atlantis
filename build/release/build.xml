@@ -33,6 +33,9 @@
     	<ant dir="${source.base}/external/log4j"/>
        	<ant dir="${source.base}/external/xmlbeans"/>
        	<ant dir="${source.base}/external/junit4"/>
+       	<ant dir="${source.base}/external/mibble"/>
+       	<ant dir="${source.base}/external/SNMP4J"/>
+       		
     	<ant dir="${source.base}/utils"/>
     	<ant dir="${source.base}/core/common"/>
        	<ant dir="${source.base}/net/base"/>
@@ -44,6 +47,7 @@
        	<ant dir="${source.base}/da/net/base"/>
       	<ant dir="${source.base}/da/server/net"/>
        	<ant dir="${source.base}/da/server/simulation"/>
+       	<ant dir="${source.base}/da/server/snmp"/>
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
