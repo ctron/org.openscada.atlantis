@@ -50,7 +50,7 @@
 	    		</patternset>
 	   		</unzip>
 			<mkdir dir="${temp.dir}/deps"/>
-			<append-line file="${temp.dir}/deps/@{name}.deps">${package} -&gt; @{name}</append-line>
+			<append-line file="${temp.dir}/deps/@{package}.deps">${package} -&gt; @{name}</append-line>
     	</sequential>
     </macrodef>
 	
