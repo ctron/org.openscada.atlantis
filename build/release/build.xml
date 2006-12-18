@@ -130,7 +130,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: dist-source
          - - - - - - - - - - - - - - - - - -->
-    <target name="dist-source" depends="build">
+    <target name="dist-source" depends="build, dist-binary">
     	<mkdir dir="${build.dir}/dist-source"/>
     	<unzip dest="${build.dir}/dist-source">
     		<fileset dir="${deploy.dist.module}">
@@ -154,6 +154,12 @@
 	       		<include name="**"/>
 	       	</packageset>
 			<classpath>
+				<fileset dir="${build.dir}/dist-binary/lib">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${build.dir}/dist-binary/bin">
+					<include name="*.jar"/>
+				</fileset>
 	  		</classpath>
 		</javadoc>
 	
