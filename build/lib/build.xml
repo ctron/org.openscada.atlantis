@@ -252,9 +252,8 @@
 			<zip basedir="${temp.dir}/export-project/${package}" destfile="${deploy.dist.project}/${project.name}-project-${tag}.zip">
 			</zip>
 	
-			<xmltask sourcebuffer="genworkspace" destbuffer="temp"/>
-			<xmltask sourcebuffer="temp" destbuffer="genworkspace">
-				<insert path="project/target[@name='export']" xml="&lt;fetch-and-unpack name=&quot;${url.dist.project}/${project.name}-project-${tag}.zip&quot;/&gt;"/>
+			<xmltask sourcebuffer="genworkspace" destbuffer="genworkspace">
+				<insert path="project/target[@name='export-list']" xml="&lt;fetch-and-unpack name=&quot;${url.dist.project}/${project.name}-project-${tag}.zip&quot;/&gt;"/>
 			</xmltask>
 	
         </sequential>

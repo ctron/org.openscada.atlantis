@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     atalantis_gen_workspace    
+     Generate an Atlantis Development Workspace
+                   
+	 Jens Reimann <jens.reimann@inavare.net>
+     ====================================================================== -->
+<project name="genworkspace" default="export">
+    <description>
+            Generate an Atlantis Development Workspace
+    </description>
+	
+	<target name="export" depends="export-list">
+	</target>
+	
+	<target name="export-list"/>
+</project>
