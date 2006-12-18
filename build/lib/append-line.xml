@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project>
+<project name="append-line">
 	<macrodef name="append-line">
 		<attribute name="file"/>
 		<text name="text"/>
