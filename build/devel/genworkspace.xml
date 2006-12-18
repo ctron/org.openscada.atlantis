@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     atalantis_gen_workspace    
+     Generate an Atlantis Development Workspace
+                   
+	 Jens Reimann <jens.reimann@inavare.net>
+     ====================================================================== -->
+<project name="atalantis_gen_workspace" default="default">
+    <description>
+            Generate an Atlantis Development Workspace
+    </description>
+	
+	<property name="repository.base" value="https://svn.inavare.net/openscada"/>
+	<property name="repository" value="${repository.base}/modules/atlantis"/>
+	
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="init, checkout" description="--> Generate an Atlantis Development Workspace">
+        <echo>Have a nice day ;-)</echo>
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: init                    
+         - - - - - - - - - - - - - - - - - -->
+    <target name="init">
+    </target>
+        	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: checkout                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="checkout">
+		
+    </target>
+
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: export-module          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="export-module">
+        <attribute name="name"/>
+        <sequential>
+        </sequential>
+    </macrodef>
+
+
+</project>
