@@ -16,6 +16,14 @@
 			<pathelement location="${source.base}/build/lib/xmltask-v1.14.jar"/>
 		</classpath>
 	</taskdef>
+	
+	<taskdef name="svn" resource="svntask.properties">
+		<classpath>
+			<pathelement location="${source.base}/build/lib/svnant.jar"/>
+			<pathelement location="${source.base}/build/lib/svnClientAdapter.jar"/>
+			<pathelement location="${source.base}/build/lib/svnjavahl.jar"/>
+		</classpath>
+	</taskdef>
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 	  <classpath>
