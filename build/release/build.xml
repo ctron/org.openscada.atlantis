@@ -46,6 +46,8 @@
     
     <target name="init.genworkspace">
     	<!-- init genworkspace XML buffer -->
+    	<dirname property="dir" file="${file.genworkspace}"/>
+    	<mkdir dir="${dir}"/>
     	<xmltask source="${source.base}/build/data/genworkspace.xml" dest="${file.genworkspace}"/>
     </target>
     
