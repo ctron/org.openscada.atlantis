@@ -27,6 +27,8 @@
 	<property name="deploy.dist.project" value="${deploy.dir}/project"/>
 	<property name="deploy.additional" value="${deploy.dir}/additional"/>
 	
+	<property name="file.genworkspace" value="${deploy.additional}/genworkspace.xml"/>
+	
 	<property name="temp.dir" location="/tmp/atlantis"/>
 	
 	<property name="build.dir" value="${temp.dir}/build"/>
@@ -44,11 +46,11 @@
     
     <target name="init.genworkspace">
     	<!-- init genworkspace XML buffer -->
-    	<xmltask source="${source.base}/build/data/genworkspace.xml" destbuffer="genworkspace"/>
+    	<xmltask source="${source.base}/build/data/genworkspace.xml" dest="${file.genworkspace}"/>
     </target>
     
     <target name="build.post.genworkspace">
-    	<xmltask sourcebuffer="genworkspace" dest="${deploy.additional}/genworkspace.xml"/>
+    	<!-- <xmltask sourcebuffer="genworkspace" dest="${file.genworkspace}"/> -->
     </target>
 	
 	<!-- ================================= 
