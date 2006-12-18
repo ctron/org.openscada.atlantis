@@ -17,6 +17,7 @@
 	<property name="source.base" location="../.."/>
 	
 	<property name="url.base" value="http://openscada.org/download/atlantis"/>
+	<property name="url.dir" value="${url.base}/${tag}"/>
 	<property name="url.dist.project" value="${url.base}/project"/>
 	
 	<property name="deploy.base" value="/var/vhosts/openscada/download/atlantis"/>

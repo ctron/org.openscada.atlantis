@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 <!-- ====================================================================== 
-     Dec 13, 2006 11:10:07 AM                                                        
-
      OpenSCADA Atlantis Integration Build    
      Building for the continous integraton server
                    
@@ -12,6 +10,7 @@
             Building for the continous integraton server
     </description>
 
+	<property name="url.base" value="http://openscada.org/download/atlantis/integration"/>
 	<property name="deploy.base" value="/var/vhosts/openscada/download/atlantis/integration"/>
 	
     <!-- ================================= 
@@ -20,6 +19,7 @@
     <target name="default" depends="init" description="--> Building for the continous integraton server">
         <ant dir="../release" antfile="build.xml">
         	<property name="deploy.dir" value="${deploy.base}/${DSTAMP}"/>
+        	<property name="url.dir" value="${url.base}/${DSTAMP}"/>
         	<property name="release" value="-${DSTAMP}-nightly"/>
     	</ant>
     </target>
