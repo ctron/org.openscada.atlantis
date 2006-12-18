@@ -236,9 +236,9 @@
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.export.project">
         <sequential>
-            <xml source=".project">
+            <xmltask source=".project">
 				<copy path="projectDescription/name/text()" property="project.name"/>
-			</xml>
+			</xmltask>
 	
 			<!-- copy project files to temp dir -->
 			<mkdir dir="${temp.dir}/export-project/${project.name}"/>
