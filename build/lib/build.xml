@@ -253,7 +253,7 @@
 			</zip>
 	
 			<xmltask sourcebuffer="genworkspace" destbuffer="genworkspace">
-				<insert path="project/target[@name='export']" xml="&gt;fetch-and-unpack name=&quot;${url.dist.project}/${project.name}-project-${tag}.zip&quot;/&lt;"/>
+				<insert path="project/target[@name='export']" xml="&lt;fetch-and-unpack name=&quot;${url.dist.project}/${project.name}-project-${tag}.zip&quot;/&gt;"/>
 			</xmltask>
 	
         </sequential>
