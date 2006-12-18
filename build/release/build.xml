@@ -52,7 +52,7 @@
     </target>
     
     <target name="build.post.genworkspace">
-    	<!-- <xmltask sourcebuffer="genworkspace" dest="${file.genworkspace}"/> -->
+    	<xmltask source="${file.genworkspace}" dest="${file.genworkspace}" outputter="simple:2"/>
     </target>
 	
 	<!-- ================================= 
