@@ -16,6 +16,9 @@
 	
 	<property name="source.base" location="../.."/>
 	
+	<property name="url.base" value="http://openscada.org/download/atlantis"/>
+	<property name="url.dist.project" value="${url.base}/project"/>
+	
 	<property name="deploy.base" value="/var/vhosts/openscada/download/atlantis"/>
 	<property name="deploy.dir" value="${deploy.base}/${tag}"/>
 	<property name="deploy.dist.module" value="${deploy.dir}/module"/>
@@ -36,13 +39,33 @@
          ================================= -->
     <target name="default" depends="clean, init, build, dist-source, dist-binary, rcp" description="--> Master build file for OpenSCADA Atlabtis">
     </target>
+    
+    <target name="init.genworkspace">
+    	<!-- init genworkspace XML buffer -->
+    	<xmltask destbuffer="genworkspace">
+    		<insert path="/">
+    			<![CDATA[
+<project name="genworkspace" default="export">
+  <description>Automatic export of an Eclipse Workspace</description>
+  <target name="export" description="--> Running export"/>
+
+</project>
+]]>
+    		</insert>
+    	</xmltask>
+    </target>
+    
+    <target name="build.post.genworkspace">
+    	<xmltask sourcebuffer="genworkspace" dest="${deploy.additional}/genworkspace.xml"/>
+    </target>
 	
 	<!-- ================================= 
           target: build              
          ================================= -->
-    <target name="build" depends="init" description="--> Build all">
+    <target name="build" depends="init, init.genworkspace" description="--> Build all">
     	<mkdir dir="${temp.dir}"/>
     	
+    	<!-- init dependency file -->
     	<concat append="false" destfile="${module.dep.file}">
     		<path location="${source.base}/build/data/module.deps.header"/>
     	</concat>
@@ -85,6 +108,8 @@
     	<concat append="true" destfile="${module.dep.file}">
     		<path location="${source.base}/build/data/module.deps.footer"/>
     	</concat>
+    	
+    	<antcall target="build.post.genworkspace"/>
 
     </target>
 
