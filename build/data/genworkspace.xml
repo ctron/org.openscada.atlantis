@@ -20,7 +20,7 @@
 	<macrodef name="fetch-and-unpack">
 		<attribute name="location"/>
 		<sequential>
-			<tempfile name="tempfile"/>
+			<tempfile property="tempfile"/>
 			<get src="@{location}" dest="${tempfile}"/>
 			<unzip src="${tempfile}" dest="${workspace.dir}"/>
 			<delete file="${tempfile}"/>
