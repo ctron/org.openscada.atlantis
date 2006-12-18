@@ -137,7 +137,7 @@
     			source="1.5"
     			target="1.5"
     			srcdir="src"
-    			destdir="bin"
+    			destdir="${build.dir}/${package}/bin"
     			>
     			<classpath>
     				<fileset dir="${build.dir}/${package}/lib">
