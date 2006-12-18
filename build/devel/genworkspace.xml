@@ -5,14 +5,14 @@
                    
 	 Jens Reimann <jens.reimann@inavare.net>
      ====================================================================== -->
-<project name="atalantis_gen_workspace" default="default">
+<project name="genworkspace" default="default">
     <description>
             Generate an Atlantis Development Workspace
     </description>
 	
 	<property name="repository.base" value="https://svn.inavare.net/openscada"/>
 	<property name="repository.module" value="${repository.base}/modules/atlantis"/>
-	<property name="repository.external" value="${repository.base}/extarnal"/>
+	<property name="repository.external" value="${repository.base}/external"/>
 	<property name="workspace.dir" value="/tmp/workspace.atlantis"/>
 		
 	<property name="svn.username" value=""/>
@@ -32,11 +32,21 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="init">
     </target>
+
+	<!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" depends="" description="--> Clean up">
+        <delete dir="${workspace.dir}"/>
+    </target>
+
         	
 	<!-- - - - - - - - - - - - - - - - - - 
           target: checkout                      
          - - - - - - - - - - - - - - - - - -->
     <target name="checkout">
+		<export-external name="junit4"/>
+		<export-external name="junit4"/>
 		<export-module name="openscada_utils" source="utils"/>
     </target>
 
@@ -64,5 +74,14 @@
         </sequential>
     </macrodef>
 
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: export-external
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="export-external">
+        <attribute name="name"/>
+        <sequential>
+            <export source="${repository.external}/@{name}" destination="${workspace.dir}/ext_@{name}"/>
+        </sequential>
+    </macrodef>
 
 </project>

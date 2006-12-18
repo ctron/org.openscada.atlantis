@@ -183,9 +183,12 @@
     		<zip basedir="${build.dir}" destfile="${deploy.dist.module}/openscada-${package}-${tag}.zip">
     			<include name="**/*"/>
     		</zip>
+	
+			<openscada.export.project/>
         </sequential>
     </macrodef>
 	
+	<!-- included here to use the same version as used in the build -->
 	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
 		 <classpath id="xmlbeanspath">
             <pathelement location="${source.base}/external/xmlbeans/xbean.jar"/>
@@ -224,6 +227,28 @@
         	<mkdir dir="${deploy.dist.module}"/>
         	<zip basedir="${build.dir}" file="${deploy.dist.module}/external-${package}.zip">
         	</zip>
+			<openscada.export.project/>
+        </sequential>
+    </macrodef>
+
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.export.project          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.export.project">
+        <sequential>
+            <xml source=".project">
+				<copy path="projectDescription/name/text()" property="project.name"/>
+			</xml>
+	
+			<!-- copy project files to temp dir -->
+			<mkdir dir="${temp.dir}/export-project/${project.name}"/>
+			<copy todir="${temp.dir}/export-project/${project.name}">
+				<exclude name="**/.svn"/>
+			</copy>
+	
+			<zip basedir="${temp.dir}/export-project/" destfile="${deploy.dist.project}/openscada-${package}-project-${tag}.zip">
+			</zip>
+	
         </sequential>
     </macrodef>
 
