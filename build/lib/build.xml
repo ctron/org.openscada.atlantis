@@ -247,7 +247,8 @@
 					<exclude name="**/.svn"/>
 				</fileset>
 			</copy>
-	
+
+			<mkdir dir="${deploy.dist.project}"/>
 			<zip basedir="${temp.dir}/export-project/" destfile="${deploy.dist.project}/openscada-${package}-project-${tag}.zip">
 			</zip>
 	
