@@ -241,15 +241,15 @@
 			</xmltask>
 	
 			<!-- copy project files to temp dir -->
-			<mkdir dir="${temp.dir}/export-project/${project.name}"/>
-			<copy todir="${temp.dir}/export-project/${project.name}">
+			<mkdir dir="${temp.dir}/export-project/${package}/${project.name}"/>
+			<copy todir="${temp.dir}/export-project/${package}/${project.name}">
 				<fileset dir=".">
 					<exclude name="**/.svn"/>
 				</fileset>
 			</copy>
 
 			<mkdir dir="${deploy.dist.project}"/>
-			<zip basedir="${temp.dir}/export-project/" destfile="${deploy.dist.project}/openscada-${package}-project-${tag}.zip">
+			<zip basedir="${temp.dir}/export-project/${package}" destfile="${deploy.dist.project}/${project.name}-project-${tag}.zip">
 			</zip>
 	
         </sequential>
