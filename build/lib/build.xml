@@ -243,7 +243,9 @@
 			<!-- copy project files to temp dir -->
 			<mkdir dir="${temp.dir}/export-project/${project.name}"/>
 			<copy todir="${temp.dir}/export-project/${project.name}">
-				<exclude name="**/.svn"/>
+				<fileset dir=".">
+					<exclude name="**/.svn"/>
+				</fileset>
 			</copy>
 	
 			<zip basedir="${temp.dir}/export-project/" destfile="${deploy.dist.project}/openscada-${package}-project-${tag}.zip">
