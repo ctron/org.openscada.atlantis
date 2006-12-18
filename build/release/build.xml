@@ -44,7 +44,7 @@
     
     <target name="init.genworkspace">
     	<!-- init genworkspace XML buffer -->
-    	<xmltask source="../data/genworkspace.xml" destbuffer="genworkspace"/>
+    	<xmltask source="${source.base}/build/data/genworkspace.xml" destbuffer="genworkspace"/>
     </target>
     
     <target name="build.post.genworkspace">
