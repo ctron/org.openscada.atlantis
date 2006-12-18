@@ -26,7 +26,7 @@
 	
 	<property name="temp.dir" location="/tmp/atlantis"/>
 	
-	<property name="build.dir" value="build"/>
+	<property name="build.dir" value="${temp.dir}/build"/>
 	<property name="libfile" location="../lib/build.xml"/>
 	
 	<property name="module.dep.file" location="${deploy.additional}/module.deps"/>

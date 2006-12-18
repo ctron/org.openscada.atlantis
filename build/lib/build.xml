@@ -27,9 +27,9 @@
     <macrodef name="openscada.pull-in-lib">
     	<attribute name="name"/>
     	<sequential>
-	    	<mkdir dir="${build.dir}/lib"/>
-	    	<mkdir dir="${build.dir}/bin"/>
-	    	<unzip src="${deploy.dist.module}/@{name}.zip" dest="${build.dir}">
+	    	<mkdir dir="${build.dir}/${package}/lib"/>
+	    	<mkdir dir="${build.dir}/${package}/bin"/>
+	    	<unzip src="${deploy.dist.module}/@{name}.zip" dest="${build.dir}/${package}">
 	    		<patternset>
 	    			<include name="lib/*.jar"/>
 	    			<include name="bin/*.jar"/>
@@ -66,7 +66,7 @@
          - - - - - - - - - - - - - - - - - -->
     <macrodef name="openscada.prepare-local-libs">
     	<sequential>
-			<copy todir="${build.dir}/lib" failonerror="false">
+			<copy todir="${build.dir}/${package}/lib" failonerror="false">
 				<fileset dir="lib">
 					<exclude name="**/.svn"/>
 				</fileset>
@@ -79,7 +79,7 @@
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.export.license">
         <sequential>
-    		<copy file="COPYING" todir="${build.dir}"/>
+    		<copy file="COPYING" todir="${build.dir}/${package}"/>
         </sequential>
     </macrodef>
 	
@@ -88,8 +88,8 @@
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.export.source">
         <sequential>
-    		<mkdir dir="${build.dir}/src"/>
-    		<copy todir="${build.dir}/src">
+    		<mkdir dir="${build.dir}/${package}/src"/>
+    		<copy todir="${build.dir}/${package}/src">
     			<fileset dir="src">
     				<exclude name="**/.svn"/>
     			</fileset>
@@ -102,8 +102,8 @@
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.compile.javadoc">
         <sequential>
-    	   	<mkdir dir="${build.dir}/docs/api"/>
-      		<javadoc destdir="${build.dir}/docs/api"
+    	   	<mkdir dir="${build.dir}/${package}/docs/api"/>
+      		<javadoc destdir="${build.dir}/${package}/docs/api"
     	       	author="true"
     	       	version="true"
     	       	use="true"
@@ -115,10 +115,10 @@
     	       		<include name="**"/>
     	       	</packageset>
     			<classpath>
-    				<fileset dir="${build.dir}/lib">
+    				<fileset dir="${build.dir}/${package}/lib">
     					<include name="*.jar"/>
     				</fileset>
-    				<fileset dir="${build.dir}/bin">
+    				<fileset dir="${build.dir}/${package}/bin">
     					<include name="*.jar"/>
     				</fileset>
     	  		</classpath>
@@ -131,7 +131,7 @@
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.compile.source">
         <sequential>
-    		<mkdir dir="bin"/>
+    		<mkdir dir="${build.dir}/${package}/bin"/>
     		<javac
     			encoding="utf-8"
     			source="1.5"
@@ -140,13 +140,13 @@
     			destdir="bin"
     			>
     			<classpath>
-    				<fileset dir="${build.dir}/lib">
+    				<fileset dir="${build.dir}/${package}/lib">
     					<include name="**/*.jar"/>
     				</fileset>
-       				<fileset dir="${build.dir}/bin">
+       				<fileset dir="${build.dir}/${package}/bin">
        					<include name="*.jar"/>
        				</fileset>
-    				<pathelement location="schemabin"/>
+    				<pathelement location="${build.dir}/${package}/schemabin"/>
     			</classpath>
     		</javac>
         </sequential>
@@ -170,17 +170,17 @@
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.common.deploy">
         <sequential>
-    		<mkdir dir="${build.dir}/bin"/>
-        	<mkdir dir="schemabin"/>
-    		<jar destfile="${build.dir}/bin/openscada-${package}-${tag}.jar">
-    			<fileset dir="bin">
+    		<mkdir dir="${build.dir}/${package}/bin"/>
+        	<mkdir dir="${build.dir}/${package}/schemabin"/>
+    		<jar destfile="${build.dir}/${package}/bin/openscada-${package}-${tag}.jar">
+    			<fileset dir="${build.dir}/${package}/bin">
     				<include name="**/*.class"/>
     			</fileset>
-    			<fileset dir="schemabin"/>
+    			<fileset dir="${build.dir}/${package}/schemabin"/>
     		</jar>
 
     		<mkdir dir="${deploy.dir}"/>
-    		<zip basedir="${build.dir}" destfile="${deploy.dist.module}/openscada-${package}-${tag}.zip">
+    		<zip basedir="${build.dir}/${package}" destfile="${deploy.dist.module}/openscada-${package}-${tag}.zip">
     			<include name="**/*"/>
     		</zip>
 	
@@ -205,10 +205,10 @@
         	<if>
         		<available type="dir" file="schema"/>
         		<then>
-		        	<mkdir dir="schemabin"/>
+		        	<mkdir dir="${build.dir}/${package}/schemabin"/>
 	    	    	<xmlbean
 	   					failonerror="true"
-	   					classgendir="schemabin"
+	   					classgendir="${build.dir}/${package}/schemabin"
 						javasource="1.5"
 			            classpathref="xmlbeanspath"
 						>
@@ -225,7 +225,7 @@
     <macrodef name="openscada.deploy.external">
         <sequential>
         	<mkdir dir="${deploy.dist.module}"/>
-        	<zip basedir="${build.dir}" file="${deploy.dist.module}/external-${package}.zip">
+        	<zip basedir="${build.dir}/${package}" file="${deploy.dist.module}/external-${package}.zip">
         	</zip>
 			<openscada.export.project/>
         </sequential>
