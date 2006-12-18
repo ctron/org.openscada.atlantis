@@ -11,7 +11,14 @@
     </description>
 	
 	<property name="repository.base" value="https://svn.inavare.net/openscada"/>
-	<property name="repository" value="${repository.base}/modules/atlantis"/>
+	<property name="repository.module" value="${repository.base}/modules/atlantis"/>
+	<property name="repository.external" value="${repository.base}/extarnal"/>
+	<property name="workspace.dir" value="/tmp/workspace.atlantis"/>
+		
+	<property name="svn.username" value=""/>
+	<property name="svn.password" value=""/>
+	
+	<import file="../lib/libs.xml"/>
 	
     <!-- ================================= 
           target: default              
@@ -30,15 +37,30 @@
           target: checkout                      
          - - - - - - - - - - - - - - - - - -->
     <target name="checkout">
-		
+		<export-module name="openscada_utils" source="utils"/>
     </target>
 
 	<!-- = = = = = = = = = = = = = = = = =
-          macrodef: export-module          
+          macrodef: export
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="export">
+        <attribute name="source"/>
+        <attribute name="destination"/>
+        <sequential>
+			<svn username="${svn.username}" password="${svn.password}">
+				<checkout url="@{source}" destPath="@{destination}"/>
+			</svn>
+        </sequential>
+    </macrodef>
+
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: export-module
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="export-module">
+		<attribute name="source"/>
         <attribute name="name"/>
         <sequential>
+            <export source="${repository.module}/@{source}" destination="${workspace.dir}/@{name}"/>
         </sequential>
     </macrodef>
 

@@ -11,27 +11,29 @@
     	Providing common build targets for all other ant-scripts
     </description>
 	
+	<dirname property="builddir" file="${ant.file.libs}"/>
+	
 	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
 		<classpath>
-			<pathelement location="${source.base}/build/lib/xmltask-v1.14.jar"/>
+			<path path="${builddir}/xmltask-v1.14.jar"/>
 		</classpath>
 	</taskdef>
 	
-	<taskdef name="svn" resource="svntask.properties">
+	<taskdef resource="svntask.properties">
 		<classpath>
-			<pathelement location="${source.base}/build/lib/svnant.jar"/>
-			<pathelement location="${source.base}/build/lib/svnClientAdapter.jar"/>
-			<pathelement location="${source.base}/build/lib/svnjavahl.jar"/>
+			<pathelement location="${builddir}/svnant.jar"/>
+			<pathelement location="${builddir}/svnClientAdapter.jar"/>
+			<pathelement location="${builddir}/svnjavahl.jar"/>
 		</classpath>
 	</taskdef>
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 	  <classpath>
-	    <pathelement location="${source.base}/build/lib/ant-contrib-1.0b3.jar"/>
-	  	<pathelement location="${source.base}/build/lib/bcel-5.1.jar"/>
-	  	<pathelement location="${source.base}/build/lib/commons-httpclient-3.0.1.jar"/>
-	  	<pathelement location="${source.base}/build/lib/commons-logging-1.0.4.jar"/>
-	  	<pathelement location="${source.base}/build/lib/ivy-1.3.1.jar"/>
+	    <pathelement location="${builddir}/ant-contrib-1.0b3.jar"/>
+	  	<pathelement location="${builddir}/bcel-5.1.jar"/>
+	  	<pathelement location="${builddir}/commons-httpclient-3.0.1.jar"/>
+	  	<pathelement location="${builddir}/commons-logging-1.0.4.jar"/>
+	  	<pathelement location="${builddir}/ivy-1.3.1.jar"/>
 	  </classpath>
 	</taskdef>
 </project>
