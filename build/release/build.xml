@@ -140,7 +140,23 @@
     			<include name="src/**"/>
     		</patternset>
     	</unzip>
-    	
+	
+		<mkdir dir="${deploy.dir}/doc/api"/>
+		<javadoc destdir="${deploy.dir}/doc/api"
+	       	author="true"
+	       	version="true"
+	       	use="true"
+	       	encoding="utf-8"
+	       	>
+	       	<tag name="note" description="Note" scope="all"/>
+	       	<tag name="warning" description="Warning" scope="all"/>
+	       	<packageset dir="${build.dir}/dist-source/src" defaultexcludes="yes">
+	       		<include name="**"/>
+	       	</packageset>
+			<classpath>
+	  		</classpath>
+		</javadoc>
+	
     	<!-- re-package -->
     	<mkdir dir="${deploy.dist.source}"/>
     	<zip basedir="${build.dir}/dist-source" destfile="${deploy.dist.source}/openscada-atlantis-source-${tag}.zip">
