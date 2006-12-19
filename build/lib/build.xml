@@ -6,22 +6,34 @@
 	 Jens Reimann <jens.reimann@inavare.net>
      ====================================================================== -->
 
-<project name="tools" default="default">
+<project name="tools">
     <description>
     	Providing common build targets for all other ant-scripts
     </description>
 
 	<import file="libs.xml"/>
 	<import file="append-line.xml"/>
+	<dirname property="datadir1" file="${ant.file.tools}"/>
+	<property name="datadir" location="${datadir1}/../data"/>
 	
-	<property name="datadir" location="${ant.file.tools}/../data"/>
-	
-	<!-- ================================= 
-          target: default              
-         ================================= -->
-    <target name="default" description="--> Nothing">
-    </target>
-	
+	<!-- - - - - - - - - - - - - - - - - - 
+          macrodef: openscada.unpack-module
+          Unpack a deployed module
+         - - - - - - - - - - - - - - - - - -->
+	<macrodef name="openscada.unpack-module">
+		<attribute name="todir"/>
+		<attribute name="name"/>
+		<sequential>
+			<mkdir dir="@{todir}"/>
+			<unzip src="${deploy.dist.module}/openscada-@{name}-${tag}.zip" dest="@{todir}">
+		    		<patternset>
+		    			<include name="lib/*.jar"/>
+		    			<include name="bin/*.jar"/>
+		    		</patternset>
+			</unzip>
+		</sequential>
+	</macrodef>
+
 	<!-- - - - - - - - - - - - - - - - - - 
           macrodef: openscada.pull-in-lib
           Unpack a deployed archive and copy the libraries into the build-lib folder
@@ -36,7 +48,7 @@
 	    			<include name="lib/*.jar"/>
 	    			<include name="bin/*.jar"/>
 	    		</patternset>
-	   		</unzip>
+	   	</unzip>
     	</sequential>
     </macrodef>
 	
@@ -260,6 +272,47 @@
 	
         </sequential>
     </macrodef>
+
+
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.runfile.transform          
+         = = = = = = = = = = = = = = = = = -->
+	<macrodef name="openscada.runfile.transform">
+		<attribute name="dir"/>
+		<sequential>
+			<parallel>
+				<xslt in="@{dir}/runfile.xml" out="@{dir}/run.sh" style="${datadir}/runfile2sh.xsl"/>
+				<xslt in="@{dir}/runfile.xml" out="@{dir}/run.bat" style="${datadir}/runfile2bat.xsl"/>
+			</parallel>
+		</sequential>
+	</macrodef>
+
+
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.runfile.arg.add
+         = = = = = = = = = = = = = = = = = -->
+	<macrodef name="openscada.runfile.arg.add">
+		<attribute name="file"/>
+		<attribute name="value"/>
+		<sequential>
+			<xmltask outputter="simple:2" source="@{file}" dest="@{file}">
+				<insert path="/run/arguments" xml="&lt;entry&gt;@{value}&lt;/entry&gt;"/>
+			</xmltask>
+		</sequential>
+	</macrodef>
+
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.runfile.set-main
+         = = = = = = = = = = = = = = = = = -->
+	<macrodef name="openscada.runfile.set-main">
+		<attribute name="file"/>
+		<attribute name="value"/>
+		<sequential>
+			<xmltask outputter="simple:2" source="@{file}" dest="@{file}">
+				<attr path="/run" attr="main" value="@{value}"/>
+			</xmltask>
+		</sequential>
+	</macrodef>
 
 	
 </project>

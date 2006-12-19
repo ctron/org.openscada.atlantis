@@ -20,7 +20,7 @@
 	<property name="url.dir" value="${url.base}/${tag}"/>
 	<property name="url.dist.project" value="${url.dir}/project"/>
 	
-	<property name="deploy.base" value="/var/vhosts/openscada/download/atlantis"/>
+	<property name="deploy.base" value="/home/jens/tmp"/>
 	<property name="deploy.dir" value="${deploy.base}/${tag}"/>
 	<property name="deploy.dist.module" value="${deploy.dir}/module"/>
 	<property name="deploy.dist.source" value="${deploy.dir}/source"/>
@@ -214,26 +214,14 @@
           target: unpack-net-server-dist                      
          - - - - - - - - - - - - - - - - - -->
     <target name="unpack-net-server-dist">
-		<mkdir dir="${temp.dir}/dist-net-server"/>
-		<unzip dest="${temp.dir}/dist-net-server">
-			<patternset>
-				<include name="lib/*.jar"/>
-				<include name="bin/*.jar"/>
-			</patternset>
-		</unzip>
+		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-net-server"/>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
           target: make-sim-server-dist                      
          - - - - - - - - - - - - - - - - - -->
     <target name="make-sim-server-dist" depends="unpack-net-server-dist">
-		<mkdir dir="${temp.dir}/dist-sim-server"/>
-		<unzip dest="${temp.dir}/dist-sim-server">
-			<patternset>
-				<include name="lib/*.jar"/>
-				<include name="bin/*.jar"/>
-			</patternset>
-		</unzip>
+		<openscada.unpack-module name="da-server-simulation" todir="${temp.dir}/dist-sim-server"/>
 
 		<copy todir="${temp.dir}/dist-sim-server">
 			<fileset dir="${temp.dir}/dist-net-server">
@@ -243,17 +231,31 @@
 		<xmltask source="${source.base}/build/data/runfile.xml" dest="${temp.dir}/dist-sim-server/runfile.xml"/>
 		<for param="jar">
 			<fileset dir="${temp.dir}/dist-sim-server">
+				<include name="**/*.jar"/>
 			</fileset>
 	
 			<sequential>
-				<xmltask source="${temp.dir}/dist-sim-server/runfile.xml" dest="${temp.dir}/dist-sim-server/runfile.xml">
-					<insert path="/run/classpath" xml="&lt;entry&gt;@{jar}&lt;/entry&gt;"/>
+				<!-- remove prefix -->
+				<stringutil string="${temp.dir}/dist-sim-server/" property="length">
+					<length/>
+				</stringutil>
+				<stringutil string="@{jar}" property="jar">
+					<substring beginindex="${length}"/>
+				</stringutil>
+				<xmltask outputter="simple:2" source="${temp.dir}/dist-sim-server/runfile.xml" dest="${temp.dir}/dist-sim-server/runfile.xml">
+					<insert path="/run/classpath" xml="&lt;entry&gt;${jar}&lt;/entry&gt;"/>
 				</xmltask>
 			</sequential>
 		</for>
-	
+
+		<openscada.runfile.arg.add file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.simulation.Hive"/>
+		<openscada.runfile.set-main file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.net.Application"/>
+		<openscada.runfile.transform dir="${temp.dir}/dist-sim-server"/>
+
+		<mkdir dir="${deploy.dist.binary}/"/>
 		<zip basedir="${temp.dir}/dist-sim-server" destfile="${deploy.dist.binary}/openscada-atlantis-simserver-net-${tag}.zip">
 		</zip>
+		
 	
     </target>
 

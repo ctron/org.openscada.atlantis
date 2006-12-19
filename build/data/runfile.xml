@@ -2,6 +2,6 @@
 
 <run>
 	<classpath/>
-	<properties/>
-	<arguments/>
+	<properties><entry name="test">value</entry></properties>
+	<arguments></arguments>
 </run>
