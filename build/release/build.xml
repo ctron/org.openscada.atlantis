@@ -229,25 +229,9 @@
 		</copy>
 
 		<xmltask source="${source.base}/build/data/runfile.xml" dest="${temp.dir}/dist-sim-server/runfile.xml"/>
-		<for param="jar">
-			<fileset dir="${temp.dir}/dist-sim-server">
-				<include name="**/*.jar"/>
-			</fileset>
-	
-			<sequential>
-				<!-- remove prefix -->
-				<stringutil string="${temp.dir}/dist-sim-server/" property="length">
-					<length/>
-				</stringutil>
-				<stringutil string="@{jar}" property="jar">
-					<substring beginindex="${length}"/>
-				</stringutil>
-				<xmltask outputter="simple:2" source="${temp.dir}/dist-sim-server/runfile.xml" dest="${temp.dir}/dist-sim-server/runfile.xml">
-					<insert path="/run/classpath" xml="&lt;entry&gt;${jar}&lt;/entry&gt;"/>
-				</xmltask>
-			</sequential>
-		</for>
 
+		<openscada.runfile.init file="${temp.dir}/dist-sim-server/runfile.xml"/>
+    	<openscada.runfile.gather-jars file="${temp.dir}/dist-sim-server/runfile.xml" dir="${temp.dir}/dist-sim-server"/>
 		<openscada.runfile.arg.add file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.simulation.Hive"/>
 		<openscada.runfile.set-main file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.net.Application"/>
 		<openscada.runfile.transform dir="${temp.dir}/dist-sim-server"/>

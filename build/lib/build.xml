@@ -313,6 +313,44 @@
 			</xmltask>
 		</sequential>
 	</macrodef>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.runfile.gather-jars
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.runfile.gather-jars">
+        <attribute name="dir"/>
+		<attribute name="file"/>
+        <sequential>
+			<for param="jar">
+				<fileset dir="@{dir}">
+					<include name="**/*.jar"/>
+				</fileset>
+		
+				<sequential>
+					<!-- remove prefix -->
+					<stringutil string="@{dir}/" property="length">
+						<length/>
+					</stringutil>
+					<stringutil string="@{jar}" property="jar">
+						<substring beginindex="${length}"/>
+					</stringutil>
+					<xmltask outputter="simple:2" source="@{file}" dest="@{file}">
+						<insert path="/run/classpath" xml="&lt;entry&gt;${jar}&lt;/entry&gt;"/>
+					</xmltask>
+				</sequential>
+			</for>
+        </sequential>
+    </macrodef>
+
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.runfile.init          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.runfile.init">
+        <attribute name="file"/>
+        <sequential>
+			<xmltask source="${source.base}/build/data/runfile.xml" dest="file"/>
+        </sequential>
+    </macrodef>
 
 	
 </project>
