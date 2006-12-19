@@ -19,6 +19,7 @@
 	</target>
 	
 	<target name="main" depends="clean">
+		<mkdir dir="schemasrc"/>
 		<xmlbean
 			failonerror="true"
 			download="true"
