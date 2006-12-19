@@ -27,7 +27,7 @@
 		</classpath>
 	</taskdef>
 
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
 	  <classpath>
 	    <pathelement location="${builddir}/ant-contrib-1.0b3.jar"/>
 	  	<pathelement location="${builddir}/bcel-5.1.jar"/>
