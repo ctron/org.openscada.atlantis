@@ -141,6 +141,7 @@
     		</patternset>
     	</unzip>
 	
+		<!-- create a "all in one" javadoc -->
 		<mkdir dir="${deploy.dir}/doc/api"/>
 		<javadoc destdir="${deploy.dir}/doc/api"
 	       	author="true"
@@ -167,6 +168,10 @@
     	<mkdir dir="${deploy.dist.source}"/>
     	<zip basedir="${build.dir}/dist-source" destfile="${deploy.dist.source}/openscada-atlantis-source-${tag}.zip">
     	</zip>
+	
+		<!-- pack up javadoc -->
+		<zip basedir="${deploy.dir}/doc/api" destfile="${deploy.dist.source}/openscada-atlantis-doc-${tag}.zip">
+		</zip>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -204,6 +209,5 @@
 			<property name="upload.base.ostc" value="${deploy.dir}/ostc"/>
     	</ant>
     </target>
-
 
 </project>
