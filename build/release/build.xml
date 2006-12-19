@@ -141,7 +141,7 @@
     		</patternset>
     	</unzip>
 	
-		<!-- create a "all in one" javadoc -->
+		<!-- create an "all in one" javadoc -->
 		<mkdir dir="${deploy.dir}/doc/api"/>
 		<javadoc destdir="${deploy.dir}/doc/api"
 	       	author="true"
@@ -209,5 +209,54 @@
 			<property name="upload.base.ostc" value="${deploy.dir}/ostc"/>
     	</ant>
     </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: unpack-net-server-dist                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="make-net-server-dist">
+		<mkdir dir="${temp.dir}/dist-net-server"/>
+		<unzip dest="${temp.dir}/dist-net-server">
+			<patternset>
+				<include name="lib/*.jar"/>
+				<include name="bin/*.jar"/>
+			</patternset>
+		</unzip>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: make-sim-server-dist                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="make-sim-server-dist" depends="make-net-server-dist">
+		<mkdir dir="${temp.dir}/dist-sim-server"/>
+		<unzip dest="${temp.dir}/dist-sim-server">
+			<patternset>
+				<include name="lib/*.jar"/>
+				<include name="bin/*.jar"/>
+			</patternset>
+		</unzip>
+
+		<copy todir="${temp.dir}/dist-sim-server">
+			<fileset dir="${temp.dir}/dist-net-server">
+			</fileset>
+		</copy>
+
+		<xmltask source="${source.base}/build/data/runfile.xml" dest="${temp.dir}/dist-sim-server/runfile.xml"/>
+		<for>
+			<fileset dir="${temp.dir}/dist-sim-server" param="jar">
+			</fileset>
+	
+			<sequential>
+				<xmltask source="${temp.dir}/dist-sim-server/runfile.xml" dest="${temp.dir}/dist-sim-server/runfile.xml">
+					<insert path="/run/classpath" xml="&lt;entry&gt;@{jar}&lt;/entry&gt;"/>
+				</xmltask>
+			</sequential>
+		</for>
+	
+		<zip basedir="${temp.dir}/dist-sim-server" destfile="${deploy.dist.binary}/openscada-atlantis-simserver-net-${tag}.zip">
+		</zip>
+	
+    </target>
+
+
 
 </project>
