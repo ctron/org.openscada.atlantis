@@ -1,6 +1,7 @@
 package org.openscada.io.lcl.test;
 
 import org.apache.log4j.Logger;
+import org.openscada.io.lcl.DumpStateListener;
 import org.openscada.io.lcl.Client;
 import org.openscada.io.lcl.ClientHandler;
 import org.openscada.io.lcl.data.Request;
@@ -8,32 +9,7 @@ import org.openscada.io.lcl.data.Response;
 
 public class TestClientHandler implements ClientHandler
 {
-    private static Logger _log = Logger.getLogger ( TestClientHandler.class );
-    
-    class DumpStateListener implements Client.RequestStateListener
-    {
-
-        public boolean isResponse ( Response response )
-        {
-            return response.getCode () == 1;
-        }
-
-        public void stateChanged ( State state, Response response )
-        {
-            switch ( state )
-            {
-            case SENT:
-                _log.info ( "Request sent" );
-                break;
-            case RESPONSE:
-                _log.info ( "Request-Response: " + response.getCode () + "/" + response.getData () );
-                break;
-            case ERROR:
-                _log.info ( "Request error" );
-                break;
-            }
-        }
-    };
+    static private Logger _log = Logger.getLogger ( TestClientHandler.class );
     
     private Client _client = null;
     
