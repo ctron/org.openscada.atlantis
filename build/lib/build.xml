@@ -6,13 +6,15 @@
 	 Jens Reimann <jens.reimann@inavare.net>
      ====================================================================== -->
 
-<project name="OpenSCADA Atlantis Build Tools File" default="default">
+<project name="tools" default="default">
     <description>
     	Providing common build targets for all other ant-scripts
     </description>
 
 	<import file="libs.xml"/>
 	<import file="append-line.xml"/>
+	
+	<property name="datadir" location="${ant.file.tools}/../data"/>
 	
 	<!-- ================================= 
           target: default              

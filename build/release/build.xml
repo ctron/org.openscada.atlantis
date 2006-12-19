@@ -213,7 +213,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: unpack-net-server-dist                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="make-net-server-dist">
+    <target name="unpack-net-server-dist">
 		<mkdir dir="${temp.dir}/dist-net-server"/>
 		<unzip dest="${temp.dir}/dist-net-server">
 			<patternset>
@@ -226,7 +226,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: make-sim-server-dist                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="make-sim-server-dist" depends="make-net-server-dist">
+    <target name="make-sim-server-dist" depends="unpack-net-server-dist">
 		<mkdir dir="${temp.dir}/dist-sim-server"/>
 		<unzip dest="${temp.dir}/dist-sim-server">
 			<patternset>
@@ -241,8 +241,8 @@
 		</copy>
 
 		<xmltask source="${source.base}/build/data/runfile.xml" dest="${temp.dir}/dist-sim-server/runfile.xml"/>
-		<for>
-			<fileset dir="${temp.dir}/dist-sim-server" param="jar">
+		<for param="jar">
+			<fileset dir="${temp.dir}/dist-sim-server">
 			</fileset>
 	
 			<sequential>
