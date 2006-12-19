@@ -328,12 +328,12 @@
 		
 				<sequential>
 					<!-- remove prefix -->
-					<stringutil string="@{dir}/" property="length">
-						<length/>
-					</stringutil>
-					<stringutil string="@{jar}" property="jar">
-						<substring beginindex="${length}"/>
-					</stringutil>
+					<ante:stringutil string="@{dir}/" property="length" xmlns:ante="openscada:/antelope">
+						<ante:length/>
+					</ante:stringutil>
+					<ante:stringutil string="@{jar}" property="jar" xmlns:ante="openscada:/antelope">
+						<ante:substring beginindex="${length}"/>
+					</ante:stringutil>
 					<xmltask outputter="simple:2" source="@{file}" dest="@{file}">
 						<insert path="/run/classpath" xml="&lt;entry&gt;${jar}&lt;/entry&gt;"/>
 					</xmltask>

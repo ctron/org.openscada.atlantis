@@ -37,7 +37,7 @@
 	  </classpath>
 	</taskdef>
 	
-	<taskdef resource="ise/antelope/tasks/antlib.xml">
+	<taskdef resource="ise/antelope/tasks/antlib.xml" uri="openscada:/antelope">
 		<classpath>
 			<pathelement location="${builddir}/AntelopeTasks_3.2.19.jar"/>
 		</classpath>
