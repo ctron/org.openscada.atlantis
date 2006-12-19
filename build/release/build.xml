@@ -28,7 +28,7 @@
 	<property name="deploy.dist.project" value="${deploy.dir}/project"/>
 	<property name="deploy.additional" value="${deploy.dir}/additional"/>
 	
-	<property name="file.genworkspace" value="${deploy.additional}/genworkspace.xml"/>
+	<property name="file.genworkspace" value="${deploy.additional}/prepareimport.xml"/>
 	
 	<property name="temp.dir" location="/tmp/atlantis"/>
 	
