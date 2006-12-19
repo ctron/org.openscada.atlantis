@@ -11,7 +11,7 @@
     </description>
 
 	<property name="url.base" value="http://openscada.org/download/atlantis/integration"/>
-	<property name="deploy.base" value="/var/vhosts/openscada/download/atlantis"/>
+	<property name="deploy.base" value="/var/vhosts/openscada/download/atlantis/integration"/>
 	
     <!-- ================================= 
           target: default              
