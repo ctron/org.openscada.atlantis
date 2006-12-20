@@ -56,7 +56,7 @@ public class NewWatchWizard extends Wizard implements INewWizard
             try
             {
                 DataItemEntry dataItem = new DataItemEntry ( dataItemID, new HashMap<String,Variant> (), null, _connection, dataItemID, EnumSet.noneOf ( IODirection.class ) );
-                IViewPart viewer = _site.getPage ().showView ( DataItemWatchView.VIEW_ID, dataItem.getId (), IWorkbenchPage.VIEW_ACTIVATE );
+                IViewPart viewer = _site.getPage ().showView ( DataItemWatchView.VIEW_ID, dataItem.getAsSecondaryId (), IWorkbenchPage.VIEW_ACTIVATE );
                 if ( viewer instanceof DataItemWatchView )
                 {
                     ((DataItemWatchView)viewer).setDataItem ( dataItem );
