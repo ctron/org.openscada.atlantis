@@ -42,6 +42,7 @@ import org.openscada.da.core.server.IODirection;
 public class NewWatchWizard extends Wizard implements INewWizard
 {
     private HiveConnection _connection = null;
+    private DataItemEntry _itemEntry = null;
     private NewWatchWizardPage _page = null;
     private IWorkbenchSite _site = null;
     
@@ -89,7 +90,8 @@ public class NewWatchWizard extends Wizard implements INewWizard
         }
         else if ( o instanceof DataItemEntry )
         {
-            _connection = ((DataItemEntry)o).getConnection ();
+            _itemEntry = (DataItemEntry)o;
+            _connection = _itemEntry.getConnection ();
         }
         else if ( o instanceof FolderEntry )
         {
@@ -101,8 +103,9 @@ public class NewWatchWizard extends Wizard implements INewWizard
     public void addPages ()
     {
         super.addPages ();
-        
+         
         addPage ( _page = new NewWatchWizardPage () );
+        _page.setDataItemId ( _itemEntry.getId () );
     }
     
 

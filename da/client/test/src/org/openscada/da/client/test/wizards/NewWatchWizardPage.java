@@ -34,7 +34,8 @@ import org.eclipse.swt.widgets.Text;
 class NewWatchWizardPage extends WizardPage implements IWizardPage
 {
 
-    private Text _dataItemID;
+    private Text _dataItemID = null;
+    private String _dataItemIdText = null;
 
     protected NewWatchWizardPage (  )
     {
@@ -65,6 +66,8 @@ class NewWatchWizardPage extends WizardPage implements IWizardPage
                 dialogChanged ();
             }
         });
+        if ( _dataItemIdText != null )
+            _dataItemID.setText ( _dataItemIdText );
         
         setControl ( container );
         
@@ -90,6 +93,11 @@ class NewWatchWizardPage extends WizardPage implements IWizardPage
     public String getDataItemID ()
     {
         return _dataItemID.getText ();
+    }
+
+    public void setDataItemId ( String id )
+    {
+        _dataItemIdText  = id;
     }
 
 }
