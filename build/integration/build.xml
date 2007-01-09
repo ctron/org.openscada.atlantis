@@ -20,7 +20,9 @@
         <ant dir="../release" antfile="build.xml">
         	<property name="deploy.dir" value="${deploy.base}/${DSTAMP}"/>
         	<property name="url.dir" value="${url.base}/${DSTAMP}"/>
-        	<property name="release" value="-${DSTAMP}-nightly"/>
+        	<property name="release" value="-${DSTAMP}-integration"/>
+       		<property name="buildType" value="I"/>
+       		<property name="buildId" value="Integration-${version}-${DSTAMP}"/>
     	</ant>
     </target>
 

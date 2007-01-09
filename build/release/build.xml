@@ -12,6 +12,8 @@
 
 	<property name="version" value="0.5.0"/>
 	<property name="release" value=""/>
+	<property name="buildType" value="R"/>
+	<property name="buildId" value="Release-${version}"/>
 	<property name="tag" value="${version}${release}"/>
 	
 	<property name="source.base" location="../.."/>

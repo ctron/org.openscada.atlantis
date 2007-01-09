@@ -54,7 +54,7 @@
     </macrodef>
 
 	<!-- = = = = = = = = = = = = = = = = =
-          macrodef: openscada.pull-in-module          
+          macrodef: openscada.pde.init-import-module
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.pde.init-import-module">
         <attribute name="name" />
