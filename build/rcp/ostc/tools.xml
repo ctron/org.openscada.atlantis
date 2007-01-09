@@ -45,10 +45,9 @@
     	<attribute name="name"/>
         <sequential>
         	<if>
-        		<available type="file" file="${buildDirectory}/${type}s/${name}/support-build.xml"/>
+        		<available type="file" file="${buildDirectory}/@{type}s/@{name}/support-build.xml"/>
         		<then>
-        			<echo message="Descent into support-build file"/>
-        			<ant antfile="${buildDirectory}/${type}s/${name}/support-build.xml"/>
+        			<ant antfile="${buildDirectory}/@{type}s/@{name}/support-build.xml"/>
         		</then>
         	</if>
 		</sequential>
