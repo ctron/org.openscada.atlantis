@@ -31,7 +31,7 @@
     	
         <sequential>
         	<!-- ${buildDirectory}/plugins/org.openscada.da.client.test -->
-        	<exportSvn module="@{src}" todir="${buildDirectory}/${type}s/${name}"/>
+        	<exportSvn module="@{src}" todir="${buildDirectory}/@{type}s/@{name}"/>
         	<prepare-module name="@{name}" type="@{type}"/>
         </sequential>
     </macrodef>
