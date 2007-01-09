@@ -505,16 +505,6 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
 		
 	}
 
-	public void registerForAll(Session session) throws InvalidSessionException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void unregisterForAll(Session session) throws InvalidSessionException {
-		// TODO Auto-generated method stub
-		
-	}
-
     public void registerItemList ( Session session ) throws InvalidSessionException
     {
         validateSession ( session );
