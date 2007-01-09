@@ -351,5 +351,53 @@
 			<xmltask source="${source.base}/build/data/runfile.xml" dest="file"/>
         </sequential>
     </macrodef>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.pde.import-module.init
+          Cleans up a previously build import lib jar.
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.pde.import-module.init">
+        <sequential>
+			<delete file="lib.jar"/>
+			<delete dir="lib-jar-build-dir"/>
+			<mkdir dir="lib-jar-build-dir"/>
+        </sequential>
+    </macrodef>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.pde.import-module.add-module
+          Add the content of a openscada module built during
+          the normal build process to this import lib jar for the
+          current PDE module.
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.pde.import-module.add-module">
+		<attribute name="name"/>
+        <sequential>
+			<delete dir="extract-module"/>
+			<unzip overwrite="true" src="${deploy.dist.module}/openscada-@{name}-${tag}.zip" dest="extract-module">
+				<patternset>
+					<include name="lib/*.jar"/>
+					<include name="bin/*.jar"/>
+				</patternset>
+			</unzip>
+			<unzip overwrite="true" dest="lib-jar-build-dir">
+				<fileset dir="extract-module">
+					<include name="**/*.jar"/>
+				</fileset>
+			</unzip>
+			<delete dir="extract-module"/>
+        </sequential>
+    </macrodef>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.pde.import-module.finalize
+          Build the import lib jar. Don't add stuff afterwards.
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.pde.import-module.finalize">
+        <sequential>
+			<jar basedir="lib-jar-build-dir" destfile="lib.jar">
+			</jar>
+        </sequential>
+    </macrodef>
 
 </project>

@@ -4,6 +4,8 @@
      Support build file                                                  
      ====================================================================== -->
 <project name="openscada_da_client_net_plugin_wrapper" default="default" basedir=".">
+	<import file="${libfile}"/>
+	
     <description>
             Support build file
     </description>
@@ -18,7 +20,9 @@
           target: genjar              
          ================================= -->
     <target name="genjar" depends="" description="--> Generate the JAR file">
-        <echo message="Hello World!"/>
+		<openscada.pde.import-module.init/>
+		<openscada.pde.import-module.add-module name=""/>
+		<openscada.pde.import-module.finalize/>
     </target>
 
 

@@ -53,6 +53,8 @@
     		<arg value="-Dlibfile=${libfile}"/>
    			<arg value="-Dsource.base=${source.base}"/>
    			<arg value="-Ddeploy.dir=${deploy.dir}"/>
+			<arg value="-Ddeploy.dist.module=${deploy.dist.module}"/>
+			<arg value="-Dtag=${tag}"/>
     	</java>
     </target>
    	
@@ -74,6 +76,8 @@
     		<arg value="-Dlibfile=${libfile}"/>
    			<arg value="-Dsource.base=${source.base}"/>
    			<arg value="-Ddeploy.dir=${deploy.dir}"/>
+			<arg value="-Ddeploy.dist.module=${deploy.dist.module}"/>
+			<arg value="-Dtag=${tag}"/>
     	</java>
     	<mkdir dir="${upload.base.ostc}"/>
     	<copy todir="${upload.base.ostc}">
