@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     openscada_da_client_net_plugin_wrapper    
+     Support build file                                                  
+     ====================================================================== -->
+<project name="openscada_da_client_net_plugin_wrapper" default="default" basedir=".">
+    <description>
+            Support build file
+    </description>
+
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="genjar" description="--> Support build file">
+    </target>
+    	
+   	<!-- ================================= 
+          target: genjar              
+         ================================= -->
+    <target name="genjar" depends="" description="--> Generate the JAR file">
+        <echo message="Hello World!"/>
+    </target>
+
+
+</project>

@@ -1,17 +1,65 @@
 <?xml version="1.0"?>
 
 <project name="tools project">
+	
+	<macrodef name="exportSvn">
+		<attribute name="todir"/>
+		<attribute name="module"/>
+		
+		<sequential>
+			<mkdir dir="@{todir}" />
+			<svn>
+				<export srcUrl="@{module}" destDir="@{todir}"/>
+			</svn>
+		</sequential>
+
+	</macrodef>
 
 	<target name="checkoutSvn">
-
-		<mkdir dir="${todir}" />
-		<exec dir="${todir}" failonerror="true" executable="svn">
-			<arg value="--force" />
-			<arg value="export" />
-			<arg value="${module}" />
-			<arg value="${todir}" />
-		</exec>
-
+		<exportSvn module="${module}" todir="${todir}"/>
 	</target>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: fetch-module          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="fetch-module">
+        <attribute name="type" default="plugin" />
+    	<attribute name="name"/>
+    	<attribute name="src"/>
+    	
+        <sequential>
+        	<!-- ${buildDirectory}/plugins/org.openscada.da.client.test -->
+        	<exportSvn module="@{src}" todir="${buildDirectory}/${type}s/${name}"/>
+        	<prepare-module name="@{name}" type="@{type}"/>
+        </sequential>
+    </macrodef>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: prepare-module
+          Run the support-build.xml file is it exists
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="prepare-module">
+        <attribute name="type" default="plugin" />
+    	<attribute name="name"/>
+        <sequential>
+        	<if>
+        		<available type="file" file="${buildDirectory}/${type}s/${name}/support-build.xml"/>
+        		<then>
+        			<ant antfile="${buildDirectory}/${type}s/${name}/support-build.xml"/>
+        		</then>
+        	</if>
+		</sequential>
+    </macrodef>
 
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.pull-in-module          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.pde.init-import-module">
+        <attribute name="name" />
+        <sequential>
+        	<openscada.pull-in-lib name="openscada-@{name}-${tag}"/>
+			<append-line file="${module.dep.file}">&quot;${package}&quot; -&gt; &quot;@{name}&quot;</append-line>
+        </sequential>
+    </macrodef>
+	
 </project>
