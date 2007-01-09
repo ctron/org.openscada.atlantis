@@ -2,6 +2,8 @@
 
 <project name="tools project">
 	
+	<import file="${libfile}"/>
+	
 	<macrodef name="exportSvn">
 		<attribute name="todir"/>
 		<attribute name="module"/>
