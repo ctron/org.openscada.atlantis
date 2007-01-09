@@ -50,6 +50,7 @@
 			<arg value="-DbuildDirectory=${buildDirectory}"/>
        		<arg value="-DbuildType=${buildType}"/>
     		<arg value="-DbuildId=${buildId}"/>
+    		<arg value="-Dlibfile=${libfile}"/>
     	</java>
     </target>
    	
@@ -68,6 +69,7 @@
     		<arg value="-Dconfigs=${configs}"/>
        		<arg value="-DbuildType=${buildType}"/>
     		<arg value="-DbuildId=${buildId}"/>
+    		<arg value="-Dlibfile=${libfile}"/>
     	</java>
     	<mkdir dir="${upload.base.ostc}"/>
     	<copy todir="${upload.base.ostc}">
