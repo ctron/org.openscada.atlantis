@@ -10,7 +10,7 @@
 		
 		<sequential>
 			<basename file="@{todir}" property="tobasedir"/>
-			<mkdir dir="${tobsaedir}"/>
+			<mkdir dir="${tobasedir}"/>
 			<delete dir="@{todir}" />
 			<svn>
 				<export force="true" srcUrl="@{module}" destPath="@{todir}"/>
