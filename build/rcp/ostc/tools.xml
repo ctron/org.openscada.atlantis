@@ -47,6 +47,7 @@
         	<if>
         		<available type="file" file="${buildDirectory}/${type}s/${name}/support-build.xml"/>
         		<then>
+        			<echo message="Descent into support-build file"/>
         			<ant antfile="${buildDirectory}/${type}s/${name}/support-build.xml"/>
         		</then>
         	</if>
