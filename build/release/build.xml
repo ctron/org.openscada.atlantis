@@ -202,9 +202,6 @@
           target: rcp              
          ================================= -->
     <target name="rcp" depends="build" description="--> Build RCP Application">
-		<property name="buildType" value="N"/>
-		<property name="buildId" value="Nightly-${DSTAMP}"/>
-		
 		<ant antfile="build.xml" dir="../rcp">
 			<property name="eclipse.home" value="/home/user/eclipse"/>
 			<property name="eclipse.builder.version" value="_3.2.0.v20060603"/>
