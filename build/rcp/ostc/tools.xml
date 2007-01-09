@@ -9,9 +9,9 @@
 		<attribute name="module"/>
 		
 		<sequential>
-			<mkdir dir="@{todir}" />
+			<delete dir="@{todir}" />
 			<svn>
-				<export srcUrl="@{module}" destPath="@{todir}"/>
+				<export force="true" srcUrl="@{module}" destPath="@{todir}"/>
 			</svn>
 		</sequential>
 
