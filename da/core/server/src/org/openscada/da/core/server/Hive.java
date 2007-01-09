@@ -68,9 +68,6 @@ public interface Hive
      */
 	public void unregisterForItem ( Session session, String item ) throws InvalidSessionException, InvalidItemException;
 	
-	public void registerForAll ( Session session ) throws InvalidSessionException;
-	public void unregisterForAll ( Session session ) throws InvalidSessionException;
-	
 	// enumerate
     /**
      * @deprecated The browser interface should be used instead
