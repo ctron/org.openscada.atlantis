@@ -374,6 +374,7 @@
 		<attribute name="name"/>
         <sequential>
 			<delete dir="extract-module"/>
+			<mkdir dir="extract-module"/>
 			<unzip overwrite="true" src="${deploy.dist.module}/openscada-@{name}-${tag}.zip" dest="extract-module">
 				<patternset>
 					<include name="bin/*.jar"/>
