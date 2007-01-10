@@ -26,10 +26,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.core.client.net.ConnectionBase;
+import org.openscada.core.client.ConnectionState;
+import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.client.net.ConnectionInfo;
-import org.openscada.core.client.net.ConnectionStateListener;
-import org.openscada.core.client.net.ConnectionBase.State;
 import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.net.ItemUpdateListener;
 import org.openscada.da.core.Location;
@@ -53,12 +52,12 @@ public class Application
         
         connection.addConnectionStateListener(new ConnectionStateListener() {
 
-            public void stateChange ( ConnectionBase connection, State state, Throwable error )
+            public void stateChange ( org.openscada.core.client.Connection connection, ConnectionState state, Throwable error )
             {
                 if ( error != null )
-                    _log.warn ( "State changed to: " + state.toString () + " (" + error.getMessage () + ")" );
+                    _log.warn ( "ConnectionState changed to: " + state.toString () + " (" + error.getMessage () + ")" );
                 else
-                    _log.info ( "State changed to: " + state.toString () );
+                    _log.info ( "ConnectionState changed to: " + state.toString () );
             }
 
             });

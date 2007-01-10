@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.core.client.net.DisconnectReason;
@@ -130,7 +131,7 @@ public class Connection extends ConnectionBase
 
             public void messageTimedOut ()
             {
-                //setState ( State.CLOSED, new OperationTimedOutException().fillInStackTrace () );
+                //setState ( ConnectionState.CLOSED, new OperationTimedOutException().fillInStackTrace () );
                 disconnect (  new OperationTimedOutException().fillInStackTrace () );
             }}, 10 * 1000 );
     }
@@ -150,7 +151,7 @@ public class Connection extends ConnectionBase
         }
         else
         {
-            setState ( State.BOUND, null );
+            setState ( ConnectionState.BOUND, null );
 
         }
     }
