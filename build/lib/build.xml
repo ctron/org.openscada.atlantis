@@ -393,7 +393,7 @@
           Build the import lib jar. Don't add stuff afterwards.
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.pde.import-module.finalize">
-		<attribute name="destfile" value="lib.jar"/>
+		<attribute name="destfile"/>
         <sequential>
 			<jar basedir="lib-jar-build-dir" destfile="@{destfile}">
 			</jar>
