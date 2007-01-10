@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     openscada_ae_rcp_localtestserver
+     Support build file                                                  
+     ====================================================================== -->
+<project name="openscada_ae_rcp_localtestserver" default="default" basedir=".">
+	<import file="${libfile}"/>
+	
+    <description>
+            Support build file
+    </description>
+
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="genjar" description="--> Support build file">
+    </target>
+    	
+   	<!-- ================================= 
+          target: genjar              
+         ================================= -->
+    <target name="genjar" depends="" description="--> Generate the JAR file">
+		<openscada.pde.import-module.init/>
+		<openscada.pde.import-module.add-module name="ae-storage-test"/>
+		<openscada.pde.import-module.add-module name="ae-storage-net"/>
+		<openscada.pde.import-module.finalize destfile="openscada_ae_test_server_net.jar"/>
+    </target>
+
+
+</project>
