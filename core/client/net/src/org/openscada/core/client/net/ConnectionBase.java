@@ -28,21 +28,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.client.Connection;
+import org.openscada.core.client.ConnectionState;
+import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.io.IOProcessor;
 
-public abstract class ConnectionBase
+public abstract class ConnectionBase implements Connection
 {
     private class WaitConnectionStateListener implements ConnectionStateListener
     {
         private Logger _log = Logger.getLogger ( WaitConnectionStateListener.class );
         
-        public void stateChange ( ConnectionBase connection, State state, Throwable error )
+        public void stateChange ( Connection connection, ConnectionState connectionState, Throwable error )
         {
-            _log.debug ( "State change: " + state );
-            switch ( state )
+            _log.debug ( "ConnectionState change: " + connectionState );
+            switch ( connectionState )
             {
             case BOUND:
                 notifyComplete ();
@@ -71,16 +74,6 @@ public abstract class ConnectionBase
         }
     }
     
-    public enum State
-    {
-        CLOSED,
-        LOOKUP,
-        CONNECTING,
-        CONNECTED,
-        BOUND,
-        CLOSING,
-    }
-
     private static Logger _log = Logger.getLogger ( ConnectionBase.class );
 
     private ConnectionInfo _connectionInfo = null;
@@ -92,7 +85,7 @@ public abstract class ConnectionBase
     private List<ConnectionStateListener> _connectionStateListeners = new ArrayList<ConnectionStateListener> ();
     
     //private boolean _connected = false;
-    private State _state = State.CLOSED;
+    private ConnectionState _connectionState = ConnectionState.CLOSED;
 
     private static Object _defaultProcessorLock = new Object ();
     private static IOProcessor _defaultProcessor = null;
@@ -159,10 +152,10 @@ public abstract class ConnectionBase
 
     synchronized public void connect ()
     {
-        switch ( _state )
+        switch ( _connectionState )
         {
         case CLOSED:
-            setState ( State.CONNECTING, null );
+            setState ( ConnectionState.CONNECTING, null );
             break;
         }        
     }
@@ -177,7 +170,7 @@ public abstract class ConnectionBase
                 addConnectionStateListener ( csl );
                 
                 // Check if we are already connected and return then
-                if ( _state == State.BOUND )
+                if ( _connectionState == ConnectionState.BOUND )
                     return;
                 
                 csl.wait ();
@@ -197,16 +190,16 @@ public abstract class ConnectionBase
 
     synchronized protected void disconnect ( Throwable reason )
     {
-        switch ( _state )
+        switch ( _connectionState )
         {
         case LOOKUP:
-            setState ( State.CLOSED, reason );
+            setState ( ConnectionState.CLOSED, reason );
             break;
             
         case BOUND:
         case CONNECTING:
         case CONNECTED:
-            setState ( State.CLOSING, reason );
+            setState ( ConnectionState.CLOSING, reason );
             break;
         }    
     }
@@ -251,10 +244,10 @@ public abstract class ConnectionBase
     {
         _log.debug ( "connected" );
 
-        switch ( _state )
+        switch ( _connectionState )
         {
         case CONNECTING:
-            setState ( State.CONNECTED, null );
+            setState ( ConnectionState.CONNECTED, null );
             break;
         }
 
@@ -264,22 +257,22 @@ public abstract class ConnectionBase
     {
         _log.debug ( "dis-connected" );
 
-        switch ( _state )
+        switch ( _connectionState )
         {
         case BOUND:
         case CONNECTED:
         case CONNECTING:
         case LOOKUP:
         case CLOSING:
-            setState ( State.CLOSED, error );
+            setState ( ConnectionState.CLOSED, error );
             break;
         }
 
     }
 
-    public State getState ()
+    public ConnectionState getState ()
     {
-        return _state;
+        return _connectionState;
     }
 
     /**
@@ -293,20 +286,20 @@ public abstract class ConnectionBase
 
     /**
      * set new state internaly
-     * @param state
+     * @param connectionState
      * @param error additional error information or <code>null</code> if we don't have an error.
      */
-    synchronized protected void setState ( State state, Throwable error )
+    synchronized protected void setState ( ConnectionState connectionState, Throwable error )
     {
-        _state = state;
+        _connectionState = connectionState;
 
-        stateChanged ( state, error );
+        stateChanged ( connectionState, error );
     }
 
-    private void stateChanged ( State state, Throwable error )
+    private void stateChanged ( ConnectionState connectionState, Throwable error )
     {
-        _log.debug ( "State Change: " + state );
-        switch ( state )
+        _log.debug ( "ConnectionState Change: " + connectionState );
+        switch ( connectionState )
         {
 
         case CLOSED:
@@ -344,7 +337,7 @@ public abstract class ConnectionBase
             break;
         }
 
-        notifyStateChange ( state, error );
+        notifyStateChange ( connectionState, error );
 
     }
 
@@ -352,10 +345,10 @@ public abstract class ConnectionBase
 
     /**
      * Notify state change listeners
-     * @param state new state
+     * @param connectionState new state
      * @param error additional error information or <code>null</code> if we don't have an error. 
      */
-    private void notifyStateChange ( State state, Throwable error )
+    private void notifyStateChange ( ConnectionState connectionState, Throwable error )
     {   
         List<ConnectionStateListener> connectionStateListeners;
 
@@ -367,7 +360,7 @@ public abstract class ConnectionBase
         {
             try
             {
-                listener.stateChange ( this, state, error );
+                listener.stateChange ( this, connectionState, error );
             }
             catch ( Exception e )
             {
@@ -383,7 +376,7 @@ public abstract class ConnectionBase
         }
         else
         {
-            setState ( State.LOOKUP, null );
+            setState ( ConnectionState.LOOKUP, null );
             Thread lookupThread = new Thread ( new Runnable() {
 
                 public void run ()
@@ -405,16 +398,16 @@ public abstract class ConnectionBase
             // this time "remote" should not be null
             synchronized ( this )
             {
-                if ( _state.equals ( State.LOOKUP ) )
-                    setState ( State.CONNECTING, null );
+                if ( _connectionState.equals ( ConnectionState.LOOKUP ) )
+                    setState ( ConnectionState.CONNECTING, null );
             }
         }
         catch ( UnknownHostException e )
         {
             synchronized ( this )
             {
-                if ( _state.equals ( State.LOOKUP ) ) 
-                    setState ( State.CLOSED, e );
+                if ( _connectionState.equals ( ConnectionState.LOOKUP ) ) 
+                    setState ( ConnectionState.CLOSED, e );
             }
         } 
     }

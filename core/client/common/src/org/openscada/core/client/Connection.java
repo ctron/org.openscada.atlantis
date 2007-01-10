@@ -6,6 +6,4 @@ public interface Connection
     public void disconnect ();
     
     public void waitForConnection () throws Throwable;
-    
-    public void addConnectionStateListener ( Conn) 
 }
