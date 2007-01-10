@@ -21,7 +21,7 @@
          ================================= -->
     <target name="genjar" depends="" description="--> Generate the JAR file">
 		<openscada.pde.import-module.init/>
-		<openscada.pde.import-module.add-module name=""/>
+		<openscada.pde.import-module.add-module name="da-client-net"/>
 		<openscada.pde.import-module.finalize/>
     </target>
 
