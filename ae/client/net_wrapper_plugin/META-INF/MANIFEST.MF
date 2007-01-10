@@ -7,9 +7,15 @@ Bundle-ClassPath: lib.jar
 Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin
 Export-Package: org.openscada.ae.client,
+ org.openscada.ae.client.net,
+ org.openscada.ae.client.net.operations,
+ org.openscada.ae.client.net.test,
  org.openscada.ae.core,
+ org.openscada.ae.net,
  org.openscada.core,
+ org.openscada.core.client,
  org.openscada.core.client.net,
+ org.openscada.core.utils,
  org.openscada.net.base,
  org.openscada.net.base.data,
  org.openscada.net.base.handlers,
