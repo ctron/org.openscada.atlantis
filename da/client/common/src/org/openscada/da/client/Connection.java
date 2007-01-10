@@ -1,7 +1,10 @@
 package org.openscada.da.client;
 
+import java.util.Map;
+
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.utils.exec.LongRunningOperation;
 import org.openscada.utils.exec.OperationResult;
@@ -21,4 +24,12 @@ public interface Connection extends org.openscada.core.client.Connection
     public LongRunningOperation startWrite ( String itemName, Variant value, Listener listener );
     
     public void completeWrite ( LongRunningOperation op ) throws OperationException;
+    
+    public void writeAttributes ( String itemId, Map<String,Variant> attributes ) throws InterruptedException, OperationException;
+    
+    public void writeAttributes ( String itemId, Map<String,Variant> attributes, Listener listener ) throws InterruptedException, OperationException;
+    
+    public LongRunningOperation startWriteAttributes ( String itemId, Map<String,Variant> attributes, Listener listener );
+    
+    public WriteAttributeResults completeWriteAttributes ( LongRunningOperation operation ) throws OperationException;
 }

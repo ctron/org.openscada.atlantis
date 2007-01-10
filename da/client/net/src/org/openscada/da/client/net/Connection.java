@@ -41,8 +41,8 @@ import org.openscada.da.client.net.operations.BrowserListOperation;
 import org.openscada.da.client.net.operations.WriteAttributesOperationController;
 import org.openscada.da.client.net.operations.WriteOperationController;
 import org.openscada.da.core.Location;
+import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.LongRunningController.Listener;
@@ -416,10 +416,10 @@ public class Connection extends ConnectionBase
     // write attributes operation
     public void writeAttributes ( String itemId, Map<String,Variant> attributes ) throws InterruptedException, OperationException
     {
-        write ( itemId, attributes, null );
+        writeAttributes ( itemId, attributes, null );
     }
     
-    public void write ( String itemId, Map<String,Variant> attributes, Listener listener ) throws InterruptedException, OperationException
+    public void writeAttributes ( String itemId, Map<String,Variant> attributes, Listener listener ) throws InterruptedException, OperationException
     {
         LongRunningOperation op = startWriteAttributes ( itemId, attributes, listener );
         op.waitForCompletion ();
@@ -431,7 +431,7 @@ public class Connection extends ConnectionBase
         return _writeAttributesController.start ( itemId, attributes, listener );   
     }
     
-    public Results completeWriteAttributes ( LongRunningOperation operation ) throws OperationException
+    public WriteAttributeResults completeWriteAttributes ( LongRunningOperation operation ) throws OperationException
     {
         if ( !(operation instanceof org.openscada.net.base.LongRunningOperation ) )
             throw new RuntimeException ( "Operation is not of type org.openscada.net.base.LongRunningOperation" );
