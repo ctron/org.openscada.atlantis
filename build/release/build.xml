@@ -103,6 +103,7 @@
     	<ant dir="${source.base}/ae/storage/test"/>
     	<ant dir="${source.base}/ae/storage/syslog"/>
     	<ant dir="${source.base}/ae/submitter/net"/>
+       	<ant dir="${source.base}/ae/storage/net"/>
     	
     	<concat append="true" destfile="${module.dep.file}">
     		<path location="${source.base}/build/data/module.deps.footer"/>
