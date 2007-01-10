@@ -47,6 +47,7 @@
        	<openscada.pull-in-module name="da-server-common"/>
        	<openscada.pull-in-module name="core-client-net"/>
        	<openscada.pull-in-module name="da-net-base"/>
+       	<openscada.pull-in-module name="da-client-common"/>
     </target>
 
 	<!-- ================================= 
