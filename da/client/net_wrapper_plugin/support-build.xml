@@ -6,6 +6,8 @@
 <project name="openscada_da_client_net_plugin_wrapper" default="default" basedir=".">
 	<import file="${libfile}"/>
 	
+	<property name="libjar" location="./lib.jar"/>
+	
     <description>
             Support build file
     </description>
@@ -22,7 +24,7 @@
     <target name="genjar" depends="" description="--> Generate the JAR file">
 		<openscada.pde.import-module.init/>
 		<openscada.pde.import-module.add-module name="da-client-net"/>
-		<openscada.pde.import-module.finalize/>
+		<openscada.pde.import-module.finalize destfile="${libjar}"/>
     </target>
 
 
