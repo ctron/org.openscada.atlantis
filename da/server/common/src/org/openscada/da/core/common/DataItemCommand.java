@@ -28,7 +28,7 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
+import org.openscada.da.core.WriteAttributeResults;
 
 public class DataItemCommand extends DataItemOutput {
 
@@ -85,7 +85,7 @@ public class DataItemCommand extends DataItemOutput {
 		return new HashMap<String,Variant>();
 	}
 	
-	public Results setAttributes ( Map<String, Variant> attributes )
+	public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
     {
         return WriteAttributesHelper.errorUnhandled ( null, attributes );
 	}

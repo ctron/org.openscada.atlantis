@@ -30,13 +30,13 @@ import java.util.Map;
 
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
+import org.openscada.da.core.IODirection;
+import org.openscada.da.core.WriteAttributeResult;
+import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemBase;
 import org.openscada.da.core.common.WriteAttributesHelper;
 import org.openscada.da.core.server.DataItemInformation;
-import org.openscada.da.core.server.IODirection;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Result;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 
 public abstract class DataItemBaseChained extends DataItemBase
 {
@@ -67,31 +67,31 @@ public abstract class DataItemBaseChained extends DataItemBase
         return _secondaryAttributes.get ();
     }
   
-    public synchronized Results setAttributes ( Map<String, Variant> attributes )
+    public synchronized WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
     {
-        Results results = new Results ();
+        WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
         
         for ( ChainProcessEntry chainEntry : getChainEntries () )
         {
             ChainItem item = chainEntry.getWhat ();
             
-            Results partialResult = item.setAttributes ( attributes );
+            WriteAttributeResults partialResult = item.setAttributes ( attributes );
             if ( partialResult != null )
             {
-                for ( Map.Entry<String, Result> entry : partialResult.entrySet () )
+                for ( Map.Entry<String, WriteAttributeResult> entry : partialResult.entrySet () )
                 {
                     if ( entry.getValue ().isError () )
                     {
                         attributes.remove ( entry.getKey () );
                     }
-                    results.put ( entry.getKey (), entry.getValue () );
+                    writeAttributeResults.put ( entry.getKey (), entry.getValue () );
                 }
             }
         }
         
         process ();
         
-        return WriteAttributesHelper.errorUnhandled ( results, attributes );
+        return WriteAttributesHelper.errorUnhandled ( writeAttributeResults, attributes );
     }
     
     

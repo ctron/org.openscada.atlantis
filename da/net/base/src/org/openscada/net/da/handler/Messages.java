@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.IODirection;
+import org.openscada.da.core.IODirection;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;

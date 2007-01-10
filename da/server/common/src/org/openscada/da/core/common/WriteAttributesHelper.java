@@ -22,25 +22,25 @@ package org.openscada.da.core.common;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Result;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
+import org.openscada.da.core.WriteAttributeResult;
+import org.openscada.da.core.WriteAttributeResults;
 
 public class WriteAttributesHelper
 {
-    public static Results errorUnhandled ( Results initialResults, Map<String, Variant> attributes )
+    public static WriteAttributeResults errorUnhandled ( WriteAttributeResults initialResults, Map<String, Variant> attributes )
     {
-        Results results = initialResults;
+        WriteAttributeResults writeAttributeResults = initialResults;
         
-        if ( results == null )
+        if ( writeAttributeResults == null )
         {
-            results = new Results ();
+            writeAttributeResults = new WriteAttributeResults ();
         }
         
         for ( String name : attributes.keySet () )
         {
-            if ( !results.containsKey ( name ) )
-                results.put ( name, new Result ( new UnsupportedOperationException ( "Operation not supported" ) ) );
+            if ( !writeAttributeResults.containsKey ( name ) )
+                writeAttributeResults.put ( name, new WriteAttributeResult ( new UnsupportedOperationException ( "Operation not supported" ) ) );
         }
-        return results;
+        return writeAttributeResults;
     }
 }

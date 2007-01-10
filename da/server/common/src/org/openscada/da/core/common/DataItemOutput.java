@@ -23,7 +23,7 @@ import java.util.EnumSet;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.IODirection;
+import org.openscada.da.core.IODirection;
 
 public abstract class DataItemOutput extends DataItemBase {
 

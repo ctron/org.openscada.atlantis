@@ -27,13 +27,13 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
+import org.openscada.da.core.IODirection;
+import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemBase;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.SuspendableItem;
 import org.openscada.da.core.common.WriteAttributesHelper;
-import org.openscada.da.core.server.IODirection;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 import org.openscada.da.server.snmp.SNMPNode;
 import org.snmp4j.PDU;
 import org.snmp4j.event.ResponseEvent;
@@ -100,7 +100,7 @@ public class SNMPItem extends DataItemBase implements Runnable, SuspendableItem
         return _value;
     }
 
-    public Results setAttributes ( Map<String, Variant> attributes )
+    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
     {
         return WriteAttributesHelper.errorUnhandled ( null, attributes );
     }

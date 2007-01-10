@@ -22,9 +22,9 @@ package org.openscada.da.core.common.impl;
 import java.util.Map;
 
 import org.openscada.core.Variant;
+import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.server.WriteAttributesOperationListener;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 import org.openscada.utils.jobqueue.RunnableCancelOperation;
 
 public class WriteAttributesOperation extends RunnableCancelOperation
@@ -45,12 +45,12 @@ public class WriteAttributesOperation extends RunnableCancelOperation
     {
         try
         {
-            Results results = _item.setAttributes ( _attributes );
+            WriteAttributeResults writeAttributeResults = _item.setAttributes ( _attributes );
             synchronized ( this )
             {
                 if ( !isCanceled () )
                 {
-                    _listener.complete ( results );
+                    _listener.complete ( writeAttributeResults );
                 }
             }
         }

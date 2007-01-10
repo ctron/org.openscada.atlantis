@@ -24,6 +24,7 @@ import java.util.Map;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.Variant;
 import org.openscada.core.net.OperationController;
+import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
 import org.openscada.da.core.server.Session;
@@ -84,11 +85,11 @@ public class WriteAttributesController extends OperationController implements Wr
 
     
     
-    public void complete ( Results results )
+    public void complete ( WriteAttributeResults writeAttributeResults )
     {
         if ( _id != null )
         {
-            Message message = WriteAttributesOperation.createResponse ( _id, results );
+            Message message = WriteAttributesOperation.createResponse ( _id, writeAttributeResults );
             _connection.getConnection ().sendMessage ( message );
         }
     }

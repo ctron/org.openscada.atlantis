@@ -28,9 +28,9 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.openscada.core.Variant;
+import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.common.DataItem;
 import org.openscada.da.core.common.configuration.ConfigurableFolder;
-import org.openscada.da.core.server.browser.Entry;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 
 public class FolderCommon implements Folder, ConfigurableFolder

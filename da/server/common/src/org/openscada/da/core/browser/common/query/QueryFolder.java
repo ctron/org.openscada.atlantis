@@ -28,10 +28,10 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.openscada.core.Variant;
+import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.browser.common.FolderListener;
 import org.openscada.da.core.common.DataItem;
-import org.openscada.da.core.server.browser.Entry;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 
 public class QueryFolder implements StorageBasedFolder

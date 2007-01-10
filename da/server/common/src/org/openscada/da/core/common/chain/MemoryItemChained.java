@@ -27,9 +27,9 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
+import org.openscada.da.core.IODirection;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.server.DataItemInformation;
-import org.openscada.da.core.server.IODirection;
 
 public class MemoryItemChained extends DataItemInputChained
 {    

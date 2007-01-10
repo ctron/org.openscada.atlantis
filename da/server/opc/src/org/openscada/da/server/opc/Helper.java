@@ -8,7 +8,7 @@ import org.jinterop.dcom.core.JICurrency;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.IODirection;
+import org.openscada.da.core.IODirection;
 import org.openscada.opc.lib.da.browser.Access;
 
 public class Helper

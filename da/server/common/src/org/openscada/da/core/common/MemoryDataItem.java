@@ -26,9 +26,9 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.IODirection;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Result;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
+import org.openscada.da.core.IODirection;
+import org.openscada.da.core.WriteAttributeResult;
+import org.openscada.da.core.WriteAttributeResults;
 
 public class MemoryDataItem extends DataItemBase {
 
@@ -60,18 +60,18 @@ public class MemoryDataItem extends DataItemBase {
 		return _attributes.get ();
 	}
 
-	public Results setAttributes ( Map<String, Variant> attributes )
+	public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
     {
-        Results results = new Results ();
+        WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
         
         _attributes.update ( attributes );
         
         for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
-            results.put ( entry.getKey (), new Result () );
+            writeAttributeResults.put ( entry.getKey (), new WriteAttributeResult () );
         }
         
-        return results;
+        return writeAttributeResults;
 	}
     
     @Override

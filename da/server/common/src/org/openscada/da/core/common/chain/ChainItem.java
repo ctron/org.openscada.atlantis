@@ -22,7 +22,7 @@ package org.openscada.da.core.common.chain;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
+import org.openscada.da.core.WriteAttributeResults;
 
 public interface ChainItem
 {
@@ -31,7 +31,7 @@ public interface ChainItem
      * @param attributes the attributes update set
      * @return result for processed attributes
      */
-    Results setAttributes ( Map<String, Variant> attributes );
+    WriteAttributeResults setAttributes ( Map<String, Variant> attributes );
     
     /**
      * Process the chain item

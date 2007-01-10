@@ -22,7 +22,7 @@ package org.openscada.net.da.handler;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.browser.Entry;
+import org.openscada.da.core.browser.Entry;
 
 public class EntryCommon implements Entry
 {

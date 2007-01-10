@@ -216,7 +216,7 @@ public class Hive extends HiveCommon {
         
         registerItem ( item = new SuspendItem ( "suspendable" ) );
         builder.clear ();
-        builder.put ( "description", new Variant ( "This item is suspendable and will print is suspend status when it changes. Result can only be seen on the server itself." ) );
+        builder.put ( "description", new Variant ( "This item is suspendable and will print is suspend status when it changes. WriteAttributeResult can only be seen on the server itself." ) );
         testFolder.add ( "suspendable", item, builder.getMap () );
         _changingItems.add ( new ItemDescriptor ( item, builder.getMap () ) );
         

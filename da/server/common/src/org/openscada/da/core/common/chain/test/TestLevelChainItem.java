@@ -27,9 +27,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openscada.core.Variant;
+import org.openscada.da.core.IODirection;
+import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.common.chain.item.LevelAlarmChainItem;
-import org.openscada.da.core.server.IODirection;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 import org.openscada.utils.collection.MapBuilder;
 
 public class TestLevelChainItem extends TestInputChain
@@ -91,10 +91,10 @@ public class TestLevelChainItem extends TestInputChain
         Map<String,Variant> attributes = new HashMap<String,Variant> ();
         
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 3 ) );
-        Results results = _dataItem.setAttributes ( attributes );
-        Assert.assertFalse ( "Result is empty", results.isEmpty () );
-        Assert.assertFalse ( "Result is ok although it should not", results.isSuccess () );
-        Assert.assertFalse ( results.get ( LevelAlarmChainItem.HIGH_PRESET ).isSuccess () );
+        WriteAttributeResults writeAttributeResults = _dataItem.setAttributes ( attributes );
+        Assert.assertFalse ( "WriteAttributeResult is empty", writeAttributeResults.isEmpty () );
+        Assert.assertFalse ( "WriteAttributeResult is ok although it should not", writeAttributeResults.isSuccess () );
+        Assert.assertFalse ( writeAttributeResults.get ( LevelAlarmChainItem.HIGH_PRESET ).isSuccess () );
         
         _dataItem.updateValue ( new Variant ( 4 ) );
         addEvent ( new Variant ( 4 ) );

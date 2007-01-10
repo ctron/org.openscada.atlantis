@@ -22,8 +22,8 @@ package org.openscada.net.da.handler;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Result;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
+import org.openscada.da.core.WriteAttributeResult;
+import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
@@ -55,19 +55,19 @@ public class WriteAttributesOperation
             attributes.value = Messages.mapToAttributes ( (MapValue)value );
     }
     
-    public static Message createResponse ( long id, Results results )
+    public static Message createResponse ( long id, WriteAttributeResults writeAttributeResults )
     {
         Message message = new Message ( Messages.CC_WRITE_ATTRIBUTES_OPERATION_RESULT );
     
         message.getValues (). put ( "id", new LongValue ( id ) );
         
         MapValue resultValues = new MapValue ();
-        for ( Map.Entry<String, Result> result : results.entrySet () )
+        for ( Map.Entry<String, WriteAttributeResult> writeAttributeResult : writeAttributeResults.entrySet () )
         {
-            if ( result.getValue ().isError () )
-                resultValues.put ( result.getKey (), new StringValue ( result.getValue ().getError ().getMessage () ) );
+            if ( writeAttributeResult.getValue ().isError () )
+                resultValues.put ( writeAttributeResult.getKey (), new StringValue ( writeAttributeResult.getValue ().getError ().getMessage () ) );
             else
-                resultValues.put ( result.getKey (), new VoidValue () );
+                resultValues.put ( writeAttributeResult.getKey (), new VoidValue () );
         }
         
         message.getValues ().put ( "results", resultValues );
@@ -89,9 +89,9 @@ public class WriteAttributesOperation
         return message;
     }
     
-    public static Results parseResponse ( Message message ) throws Exception
+    public static WriteAttributeResults parseResponse ( Message message ) throws Exception
     {
-        Results results = new Results ();
+        WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
         
         if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
             throw new Exception ( message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString () );
@@ -105,13 +105,13 @@ public class WriteAttributesOperation
                 {
                     String name = entry.getKey ();
                     if ( entry.getValue () instanceof VoidValue )
-                        results.put ( name, new Result () );
+                        writeAttributeResults.put ( name, new WriteAttributeResult () );
                     else
-                        results.put ( name, new Result ( new Exception ( entry.getValue ().toString () ) ) );
+                        writeAttributeResults.put ( name, new WriteAttributeResult ( new Exception ( entry.getValue ().toString () ) ) );
                 }
             }
         }
         
-        return results;
+        return writeAttributeResults;
     }
 }

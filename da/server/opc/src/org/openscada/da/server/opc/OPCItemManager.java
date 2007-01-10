@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.openscada.core.Variant;
+import org.openscada.da.core.IODirection;
 import org.openscada.da.core.browser.common.query.InvisibleStorage;
 import org.openscada.da.core.browser.common.query.SubscribeableStorage;
 import org.openscada.da.core.common.DataItemInformationBase;
-import org.openscada.da.core.server.IODirection;
 
 public class OPCItemManager
 {

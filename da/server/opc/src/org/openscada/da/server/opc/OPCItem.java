@@ -10,14 +10,14 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
+import org.openscada.da.core.IODirection;
+import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.common.AttributeManager;
 import org.openscada.da.core.common.DataItemBase;
 import org.openscada.da.core.common.ItemListener;
 import org.openscada.da.core.common.SuspendableItem;
 import org.openscada.da.core.common.WriteAttributesHelper;
 import org.openscada.da.core.server.DataItemInformation;
-import org.openscada.da.core.server.IODirection;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
 import org.openscada.opc.lib.da.AddFailedException;
 import org.openscada.opc.lib.da.DataCallback;
 import org.openscada.opc.lib.da.Item;
@@ -92,7 +92,7 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
         return _value;
     }
 
-    public Results setAttributes ( Map<String, Variant> attributes )
+    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
     {
         return WriteAttributesHelper.errorUnhandled ( null, attributes );
     }

@@ -29,10 +29,10 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
+import org.openscada.da.core.IODirection;
 import org.openscada.da.core.common.chain.MemoryItemChained;
 import org.openscada.da.core.common.chain.item.ScaleInputItem;
 import org.openscada.da.core.common.chain.item.ScaleOutputItem;
-import org.openscada.da.core.server.IODirection;
 
 public class ScaleChainTest
 {

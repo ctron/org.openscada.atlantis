@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
+import org.openscada.da.core.WriteAttributeResults;
 
 public class DataItemInputCommon extends DataItemInput
 {
@@ -62,7 +62,7 @@ public class DataItemInputCommon extends DataItemInput
      * to get the attribute manager which allows you so tweak the
      * items attributes from the side of the item implementation.
      */
-    public Results setAttributes(Map<String, Variant> attributes)
+    public WriteAttributeResults setAttributes(Map<String, Variant> attributes)
     {
         return WriteAttributesHelper.errorUnhandled ( null, attributes );
     }

@@ -10,6 +10,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.openscada.core.Variant;
+import org.openscada.da.core.IODirection;
 import org.openscada.da.core.browser.common.FolderCommon;
 import org.openscada.da.core.browser.common.query.AnyMatcher;
 import org.openscada.da.core.browser.common.query.AttributeNameProvider;
@@ -17,7 +18,6 @@ import org.openscada.da.core.browser.common.query.QueryFolder;
 import org.openscada.da.core.common.DataItemCommand;
 import org.openscada.da.core.common.DataItemInformationBase;
 import org.openscada.da.core.common.chain.DataItemInputChained;
-import org.openscada.da.core.server.IODirection;
 import org.openscada.opc.dcom.common.Result;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
@@ -348,8 +348,8 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         // FIXME: should use "all in one" call ... but fails due to RPC stuff
         /*
          * String [] items = itemSet.toArray ( new String[itemSet.size ()] );
-         * Map<String, Result<OPCITEMRESULT>> itemResult =
-         * _group.validateItems ( items ); for ( Map.Entry<String,Result<OPCITEMRESULT>>
+         * Map<String, WriteAttributeResult<OPCITEMRESULT>> itemResult =
+         * _group.validateItems ( items ); for ( Map.Entry<String,WriteAttributeResult<OPCITEMRESULT>>
          * entry : itemResult.entrySet () ) { if ( entry.getValue
          * ().getErrorCode () == 0 ) { int accessRights = entry.getValue
          * ().getValue ().getAccessRights (); addFlatItem ( entry.getKey (),

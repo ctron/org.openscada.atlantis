@@ -25,7 +25,7 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.IODirection;
+import org.openscada.da.core.IODirection;
 
 public abstract class DataItemInput extends DataItemBase
 {
