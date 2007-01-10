@@ -1,10 +1,10 @@
-package org.openscada.ae.client.test;
+package org.openscada.ae.client.net.test;
 
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.openscada.ae.client.Connection;
+import org.openscada.ae.client.net.Connection;
 import org.openscada.ae.core.QueryDescription;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;

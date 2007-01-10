@@ -1,4 +1,4 @@
-package org.openscada.ae.client.operations;
+package org.openscada.ae.client.net.operations;
 
 import org.openscada.ae.net.ListMessage;
 import org.openscada.ae.net.Messages;

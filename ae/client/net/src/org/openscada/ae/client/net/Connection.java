@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.ae.client;
+package org.openscada.ae.client.net;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.openscada.ae.client.operations.ListOperationController;
+import org.openscada.ae.client.net.operations.ListOperationController;
 import org.openscada.ae.core.EventInformation;
 import org.openscada.ae.core.QueryDescription;
 import org.openscada.ae.net.CreateSessionMessage;

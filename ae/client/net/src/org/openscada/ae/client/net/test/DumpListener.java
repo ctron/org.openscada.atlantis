@@ -1,4 +1,4 @@
-package org.openscada.ae.client.test;
+package org.openscada.ae.client.net.test;
 
 import java.util.Map;
 
