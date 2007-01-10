@@ -5,6 +5,8 @@ package org.openscada.net.base;
 
 import org.apache.log4j.Logger;
 import org.openscada.net.base.data.Message;
+import org.openscada.utils.exec.LongRunningListener;
+import org.openscada.utils.exec.LongRunningState;
 
 public class LongRunningOperation implements org.openscada.utils.exec.LongRunningOperation
 {
@@ -42,7 +44,7 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
 
         if ( _listener != null )
         {
-            _listener.stateChanged ( state, message, error );
+            _listener.stateChanged ( state, error );
         }
     }
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.openscada.net.base;
+package org.openscada.utils.exec;
 
 public enum LongRunningState
 {

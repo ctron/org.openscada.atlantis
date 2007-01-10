@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.io.net.Connection;
+import org.openscada.utils.exec.LongRunningListener;
+import org.openscada.utils.exec.LongRunningState;
 
 public class LongRunningController implements MessageListener
 {
@@ -88,7 +90,7 @@ public class LongRunningController implements MessageListener
         } );
 
         if ( listener != null )
-            listener.stateChanged ( LongRunningState.REQUESTED, null, null );
+            listener.stateChanged ( LongRunningState.REQUESTED, null );
 
         return op;
     }
