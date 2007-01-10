@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.client.net;
+package org.openscada.da.client;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ import java.util.Observable;
 
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
-import org.openscada.da.client.ItemUpdateListener;
+import org.openscada.da.client.Connection;
 
 public class DataItem extends Observable
 {
