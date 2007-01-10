@@ -26,14 +26,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.management.RuntimeErrorException;
+
 import org.apache.log4j.Logger;
+import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.core.client.net.DisconnectReason;
 import org.openscada.core.client.net.OperationTimedOutException;
-import org.openscada.core.client.net.operations.OperationException;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.da.client.net.operations.BrowserListOperation;
 import org.openscada.da.client.net.operations.WriteAttributesOperationController;
@@ -41,7 +43,6 @@ import org.openscada.da.client.net.operations.WriteOperationController;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
-import org.openscada.net.base.LongRunningOperation;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.LongRunningController.Listener;
@@ -53,6 +54,7 @@ import org.openscada.net.base.data.Value;
 import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.da.handler.WriteAttributesOperation;
+import org.openscada.utils.exec.LongRunningOperation;
 import org.openscada.utils.exec.OperationResult;
 import org.openscada.utils.exec.OperationResultHandler;
 import org.openscada.utils.lang.Holder;
@@ -390,8 +392,13 @@ public class Connection extends ConnectionBase
         return _writeController.start ( itemName, value, listener );   
     }
     
-    public void completeWrite ( LongRunningOperation op ) throws OperationException
+    public void completeWrite ( LongRunningOperation operation ) throws OperationException
     {
+        if ( !(operation instanceof org.openscada.net.base.LongRunningOperation ) )
+            throw new RuntimeException ( "Operation is not of type org.openscada.net.base.LongRunningOperation" );
+        
+        org.openscada.net.base.LongRunningOperation op = (org.openscada.net.base.LongRunningOperation)operation;
+        
         if ( op.getError () != null )
         {
             throw new OperationException ( op.getError () );
@@ -424,8 +431,13 @@ public class Connection extends ConnectionBase
         return _writeAttributesController.start ( itemId, attributes, listener );   
     }
     
-    public Results completeWriteAttributes ( LongRunningOperation op ) throws OperationException
+    public Results completeWriteAttributes ( LongRunningOperation operation ) throws OperationException
     {
+        if ( !(operation instanceof org.openscada.net.base.LongRunningOperation ) )
+            throw new RuntimeException ( "Operation is not of type org.openscada.net.base.LongRunningOperation" );
+        
+        org.openscada.net.base.LongRunningOperation op = (org.openscada.net.base.LongRunningOperation)operation;
+        
         if ( op.getError () != null )
         {
             throw new OperationException ( op.getError () );

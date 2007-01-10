@@ -24,12 +24,12 @@ import java.util.Map;
 import org.openscada.core.Variant;
 import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.LongRunningController;
-import org.openscada.net.base.LongRunningOperation;
 import org.openscada.net.base.MessageProcessor;
 import org.openscada.net.base.LongRunningController.Listener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.da.handler.WriteAttributesOperation;
+import org.openscada.utils.exec.LongRunningOperation;
 
 public class WriteAttributesOperationController
 {
