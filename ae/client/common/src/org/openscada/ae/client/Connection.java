@@ -7,7 +7,7 @@ import org.openscada.core.OperationException;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
 
-public interface Connection
+public interface Connection extends org.openscada.core.client.Connection
 {
     public LongRunningOperation startList ( LongRunningListener listener );    
     public Set<QueryDescription> completeList ( LongRunningOperation operation ) throws OperationException;
