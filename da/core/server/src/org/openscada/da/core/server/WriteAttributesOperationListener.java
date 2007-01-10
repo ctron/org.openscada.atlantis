@@ -19,64 +19,10 @@
 
 package org.openscada.da.core.server;
 
-import java.util.HashMap;
 
 public interface WriteAttributesOperationListener
 {
-    public class Result
-    {
-        private Throwable _error = null;
-        
-        public Result ()
-        {
-        }
-        
-        public Result ( Throwable error )
-        {
-            _error = error;
-        }
-        
-        public Throwable getError ()
-        {
-            return _error;
-        }
-
-        public void setError ( Throwable error )
-        {
-            _error = error;
-        }
-        
-        public boolean isError ()
-        {
-            return _error != null;
-        }
-        
-        public boolean isSuccess ()
-        {
-            return _error == null;
-        }
-    }
-    
-    public class Results extends HashMap<String,Result>
-    {
-
-        /**
-         * 
-         */
-        private static final long serialVersionUID = 6767947169827708138L;
-        
-        public boolean isSuccess ()
-        {
-            for ( Result result : values () )
-            {
-                if ( result.isError () )
-                    return false;
-            }
-            return true;
-        }
-    }
-    
-    void complete ( Results results );
+    void complete ( WriteAttributeResults writeAttributeResults );
 
     void failed ( Throwable error );
 }
