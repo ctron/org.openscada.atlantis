@@ -47,7 +47,7 @@
         	<if>
         		<available type="file" file="${buildDirectory}/@{type}s/@{name}/support-build.xml"/>
         		<then>
-        			<ant antfile="${buildDirectory}/@{type}s/@{name}/support-build.xml"/>
+        			<ant antfile="${buildDirectory}/@{type}s/@{name}/support-build.xml" dir="${buildDirectory}/@{type}s/@{name}"/>
         		</then>
         	</if>
 		</sequential>
