@@ -42,7 +42,6 @@
 		<openscada.pull-in-external-lib name="log4j"/>
 		<openscada.pull-in-external-lib name="junit4"/>
     	<openscada.pull-in-module name="utils"/>
-       	<openscada.pull-in-module name="da-common"/>
        	<openscada.pull-in-module name="da-core-common"/>
        	<openscada.pull-in-module name="core-client-common"/>
     </target>
