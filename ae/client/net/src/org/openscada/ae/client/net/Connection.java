@@ -49,7 +49,7 @@ import org.openscada.net.io.IOProcessor;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
 
-public class Connection extends ConnectionBase
+public class Connection extends ConnectionBase implements org.openscada.ae.client.Connection
 {
 
     public static final String VERSION = "0.1.0";

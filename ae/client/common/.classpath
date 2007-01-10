@@ -4,5 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ext_log4j"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/openscada_core_client_common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openscada_utils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openscada_ae_core_common"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
