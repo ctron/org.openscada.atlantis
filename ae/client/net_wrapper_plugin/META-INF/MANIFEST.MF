@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA AE Client Library Wrapper
 Bundle-SymbolicName: org.openscada.ae.net.client
-Bundle-Version: 0.4.0
+Bundle-Version: 0.5.0
 Bundle-ClassPath: lib.jar
 Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin
