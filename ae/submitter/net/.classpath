@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_ae_net_base"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_utils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_core_client_net"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openscada_ae_client_common"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

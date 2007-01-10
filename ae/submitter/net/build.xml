@@ -45,6 +45,7 @@
        	<openscada.pull-in-module name="core-client-net"/>
        	<openscada.pull-in-module name="ae-net-base"/>
        	<openscada.pull-in-module name="ae-core-common"/>
+       	<openscada.pull-in-module name="ae-client-common"/>
     </target>
 
 	<!-- ================================= 
