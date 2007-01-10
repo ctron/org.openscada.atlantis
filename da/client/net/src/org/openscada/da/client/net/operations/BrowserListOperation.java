@@ -24,7 +24,7 @@ import org.openscada.core.client.net.OperationFailedException;
 import org.openscada.core.client.net.OperationTimedOutException;
 import org.openscada.core.client.net.ProtocolErrorException;
 import org.openscada.da.client.net.Connection;
-import org.openscada.da.core.server.browser.Entry;
+import org.openscada.da.core.browser.Entry;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.da.handler.ListBrowser;
