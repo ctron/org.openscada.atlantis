@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.openscada.da.core.server;
+package org.openscada.da.core;
 
 public class WriteAttributeResult
 {

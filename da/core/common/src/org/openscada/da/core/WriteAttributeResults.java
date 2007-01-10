@@ -1,9 +1,10 @@
 /**
  * 
  */
-package org.openscada.da.core.server;
+package org.openscada.da.core;
 
 import java.util.HashMap;
+
 
 public class WriteAttributeResults extends HashMap<String,WriteAttributeResult>
 {

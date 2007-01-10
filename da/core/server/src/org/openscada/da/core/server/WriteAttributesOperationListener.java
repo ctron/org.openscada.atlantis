@@ -19,6 +19,8 @@
 
 package org.openscada.da.core.server;
 
+import org.openscada.da.core.WriteAttributeResults;
+
 
 public interface WriteAttributesOperationListener
 {
