@@ -22,7 +22,7 @@
         	<property name="url.dir" value="${url.base}/${DSTAMP}"/>
         	<property name="release" value="-${DSTAMP}-integration"/>
        		<property name="buildType" value="I"/>
-       		<property name="buildId" value="Integration-${version}-${DSTAMP}"/>
+       		<property name="buildId" value="Integration-${DSTAMP}"/>
     	</ant>
     </target>
 
