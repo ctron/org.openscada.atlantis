@@ -203,7 +203,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements Qu
     synchronized public void performSubscribe ( Message message ) throws Exception
     {
         SubscribeMessage subscribeMessage = SubscribeMessage.fromMessage ( message );
-        _log.debug ( String.format ( "Requested subscribe: Query: %s, Listener: %d, Batch Size: %d, Archive Set: %d", subscribeMessage.getQueryId (), subscribeMessage.getListenerId (), subscribeMessage.getMaxBatchSize (), subscribeMessage.getArchiveSet () ) );
+        _log.debug ( String.format ( "Requested subscribe: Query: %s, LongRunningListener: %d, Batch Size: %d, Archive Set: %d", subscribeMessage.getQueryId (), subscribeMessage.getListenerId (), subscribeMessage.getMaxBatchSize (), subscribeMessage.getArchiveSet () ) );
         EventListener eventListener = new EventListener ( subscribeMessage.getQueryId (), subscribeMessage.getListenerId (), this );
         try
         {
