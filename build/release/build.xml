@@ -93,7 +93,9 @@
       	<ant dir="${source.base}/da/server/sysinfo"/>
       	<ant dir="${source.base}/da/server/test"/>
 
+	   	<ant dir="${source.base}/core/client/common"/>
        	<ant dir="${source.base}/core/client/net"/>
+	   	<ant dir="${source.base}/core/da/common"/>
        	<ant dir="${source.base}/da/client/net"/>
     	
     	<ant dir="${source.base}/ae/core/common"/>
