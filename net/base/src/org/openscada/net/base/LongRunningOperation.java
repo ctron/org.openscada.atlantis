@@ -8,7 +8,7 @@ import org.openscada.net.base.LongRunningController.Listener;
 import org.openscada.net.base.LongRunningController.State;
 import org.openscada.net.base.data.Message;
 
-public class LongRunningOperation
+public class LongRunningOperation implements org.openscada.utils.exec.LongRunningOperation
 {
     private static Logger _log = Logger.getLogger ( LongRunningOperation.class );
 
@@ -115,31 +115,49 @@ public class LongRunningOperation
         _controller.sendStopCommand ( this );
     }
 
+    /* (non-Javadoc)
+     * @see org.openscada.net.base.ILongRunningOperation#isComplete()
+     */
     synchronized public boolean isComplete ()
     {
         return _state.equals ( State.SUCCESS ) || _state.equals ( State.FAILURE );
     }
 
+    /* (non-Javadoc)
+     * @see org.openscada.net.base.ILongRunningOperation#cancel()
+     */
     public void cancel ()
     {
         _controller.stop ( this );
     }
 
+    /* (non-Javadoc)
+     * @see org.openscada.net.base.ILongRunningOperation#getError()
+     */
     public Throwable getError ()
     {
         return _error;
     }
 
+    /* (non-Javadoc)
+     * @see org.openscada.net.base.ILongRunningOperation#getReply()
+     */
     public Message getReply ()
     {
         return _reply;
     }
 
+    /* (non-Javadoc)
+     * @see org.openscada.net.base.ILongRunningOperation#getState()
+     */
     public State getState ()
     {
         return _state;
     }
 
+    /* (non-Javadoc)
+     * @see org.openscada.net.base.ILongRunningOperation#waitForCompletion()
+     */
     synchronized public void waitForCompletion () throws InterruptedException
     {
         if ( isComplete () )
@@ -148,6 +166,9 @@ public class LongRunningOperation
         wait ();
     }
 
+    /* (non-Javadoc)
+     * @see org.openscada.net.base.ILongRunningOperation#waitForCompletion(int)
+     */
     synchronized public void waitForCompletion ( int timeout ) throws InterruptedException
     {
         if ( isComplete () )
