@@ -36,17 +36,18 @@ import org.openscada.ae.net.Messages;
 import org.openscada.ae.net.SubscribeMessage;
 import org.openscada.ae.net.UnsubscribeMessage;
 import org.openscada.ae.net.UnsubscribedMessage;
+import org.openscada.core.OperationException;
+import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.core.client.net.DisconnectReason;
 import org.openscada.core.client.net.OperationTimedOutException;
-import org.openscada.core.client.net.operations.OperationException;
-import org.openscada.net.base.LongRunningOperation;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
-import org.openscada.net.base.LongRunningController.Listener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.io.IOProcessor;
+import org.openscada.utils.exec.LongRunningListener;
+import org.openscada.utils.exec.LongRunningOperation;
 
 public class Connection extends ConnectionBase
 {
@@ -131,7 +132,7 @@ public class Connection extends ConnectionBase
         }
         else
         {
-            setState ( State.BOUND, null );
+            setState ( ConnectionState.BOUND, null );
 
         }
     }
@@ -152,13 +153,18 @@ public class Connection extends ConnectionBase
         requestSession ();
     }
     
-    public LongRunningOperation startList ( Listener listener )
+    public LongRunningOperation startList ( LongRunningListener listener )
     {
         return _listOperationController.start ( listener );
     }
     
-    public Set<QueryDescription> completeList ( LongRunningOperation op ) throws OperationException
+    public Set<QueryDescription> completeList ( LongRunningOperation operation ) throws OperationException
     {
+        if ( !(operation instanceof org.openscada.net.base.LongRunningOperation ) )
+            throw new RuntimeException ( "Operation is not of type org.openscada.net.base.LongRunningOperation" );
+        
+        org.openscada.net.base.LongRunningOperation op = (org.openscada.net.base.LongRunningOperation)operation;
+        
         if ( op.getError () != null )
         {
             throw new OperationException ( op.getError () );

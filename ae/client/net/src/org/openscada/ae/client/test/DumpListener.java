@@ -30,7 +30,7 @@ public class DumpListener implements Listener
 
     public void unsubscribed ( String reason )
     {
-        _log.debug ( String.format ( "Listener unsubscribed: %s", reason ) );
+        _log.debug ( String.format ( "LongRunningListener unsubscribed: %s", reason ) );
     }
 
 }

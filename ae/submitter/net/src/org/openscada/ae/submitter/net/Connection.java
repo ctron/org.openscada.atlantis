@@ -24,6 +24,7 @@ import java.util.Properties;
 import org.openscada.ae.core.Event;
 import org.openscada.ae.core.Submission;
 import org.openscada.ae.net.SubmitEventMessage;
+import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.net.base.MessageStateListener;
@@ -51,7 +52,7 @@ public class Connection extends ConnectionBase implements Submission
     protected void onConnectionEstablished ()
     {
         // we don't need no binding for submitting an event
-        setState ( State.BOUND, null );
+        setState ( ConnectionState.BOUND, null );
     }
 
     public void submitEvent ( Properties properties, Event event ) throws Exception

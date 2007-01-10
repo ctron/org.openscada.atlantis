@@ -4,9 +4,9 @@ import org.openscada.ae.net.ListMessage;
 import org.openscada.ae.net.Messages;
 import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.LongRunningController;
-import org.openscada.net.base.LongRunningOperation;
 import org.openscada.net.base.MessageProcessor;
-import org.openscada.net.base.LongRunningController.Listener;
+import org.openscada.utils.exec.LongRunningListener;
+import org.openscada.utils.exec.LongRunningOperation;
 
 public class ListOperationController
 {
@@ -27,7 +27,7 @@ public class ListOperationController
         _controller.unregister ( processor );
     }
     
-    public LongRunningOperation start ( Listener listener )
+    public LongRunningOperation start ( LongRunningListener listener )
     {
         ListMessage message = new ListMessage ();
         return _controller.start ( message.toMessage (), listener );
