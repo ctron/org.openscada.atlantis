@@ -25,6 +25,8 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.client.FolderListener;
+import org.openscada.da.client.FolderWatcher;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.net.da.handler.ListBrowser;

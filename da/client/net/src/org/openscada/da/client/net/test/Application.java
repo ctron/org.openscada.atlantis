@@ -29,8 +29,8 @@ import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.client.net.ConnectionInfo;
-import org.openscada.da.client.net.Connection;
-import org.openscada.da.client.net.ItemUpdateListener;
+import org.openscada.da.client.Connection;
+import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.core.Location;
 import org.openscada.utils.timing.Scheduler;
 
@@ -48,7 +48,7 @@ public class Application
         info.setHostName ( InetAddress.getLocalHost ().getHostAddress () );
         info.setPort ( Integer.getInteger ( "openscada.da.net.server.port", 1202 ) );
         
-        final Connection connection = new Connection ( info );
+        final Connection connection = new org.openscada.da.client.net.Connection ( info );
         
         connection.addConnectionStateListener(new ConnectionStateListener() {
 

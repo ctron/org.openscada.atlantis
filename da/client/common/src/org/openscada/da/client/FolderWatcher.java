@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.client.net;
+package org.openscada.da.client;
 
 import java.util.Collection;
 import java.util.HashMap;

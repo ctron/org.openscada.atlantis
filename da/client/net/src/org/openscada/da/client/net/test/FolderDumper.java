@@ -23,8 +23,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.client.net.Connection;
-import org.openscada.da.client.net.FolderWatcher;
+import org.openscada.da.client.FolderWatcher;
+import org.openscada.da.client.Connection;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.DataItemEntry;
 import org.openscada.da.core.browser.Entry;

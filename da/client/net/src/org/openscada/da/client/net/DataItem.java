@@ -25,6 +25,7 @@ import java.util.Observable;
 
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
+import org.openscada.da.client.ItemUpdateListener;
 
 public class DataItem extends Observable
 {

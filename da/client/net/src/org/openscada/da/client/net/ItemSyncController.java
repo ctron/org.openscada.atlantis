@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
+import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.da.handler.Messages;
 

@@ -17,13 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.client.net;
+package org.openscada.da.client;
 
-import java.util.Collection;
+import java.util.Map;
 
-import org.openscada.da.core.browser.Entry;
+import org.openscada.core.Variant;
 
-public interface FolderListener
+public interface ItemUpdateListener
 {
-    void folderChanged ( Collection<Entry> added, Collection<String> removed, boolean full );
+    public void notifyValueChange ( Variant value, boolean initial );
+    public void notifyAttributeChange ( Map<String,Variant> attributes, boolean initial );
 }

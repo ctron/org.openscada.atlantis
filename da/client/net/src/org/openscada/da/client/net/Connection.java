@@ -37,6 +37,9 @@ import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.core.client.net.DisconnectReason;
 import org.openscada.core.client.net.OperationTimedOutException;
 import org.openscada.core.net.MessageHelper;
+import org.openscada.da.client.FolderListener;
+import org.openscada.da.client.FolderWatcher;
+import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.net.operations.BrowserListOperation;
 import org.openscada.da.client.net.operations.WriteAttributesOperationController;
 import org.openscada.da.client.net.operations.WriteOperationController;
@@ -45,7 +48,6 @@ import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
-import org.openscada.net.base.LongRunningController.Listener;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
@@ -54,12 +56,13 @@ import org.openscada.net.base.data.Value;
 import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.da.handler.WriteAttributesOperation;
+import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
 import org.openscada.utils.exec.OperationResult;
 import org.openscada.utils.exec.OperationResultHandler;
 import org.openscada.utils.lang.Holder;
 
-public class Connection extends ConnectionBase
+public class Connection extends ConnectionBase implements org.openscada.da.client.Connection
 {
 
     public static final String VERSION = "0.1.5";
@@ -380,14 +383,14 @@ public class Connection extends ConnectionBase
         write ( itemName, value, null );
     }
     
-    public void write ( String itemName, Variant value, Listener listener ) throws InterruptedException, OperationException
+    public void write ( String itemName, Variant value, LongRunningListener listener ) throws InterruptedException, OperationException
     {
         LongRunningOperation op = startWrite ( itemName, value, listener );
         op.waitForCompletion ();
         completeWrite ( op );
     }
     
-    public LongRunningOperation startWrite ( String itemName, Variant value, Listener listener )
+    public LongRunningOperation startWrite ( String itemName, Variant value, LongRunningListener listener )
     {
         return _writeController.start ( itemName, value, listener );   
     }
@@ -419,14 +422,14 @@ public class Connection extends ConnectionBase
         writeAttributes ( itemId, attributes, null );
     }
     
-    public void writeAttributes ( String itemId, Map<String,Variant> attributes, Listener listener ) throws InterruptedException, OperationException
+    public void writeAttributes ( String itemId, Map<String,Variant> attributes, LongRunningListener listener ) throws InterruptedException, OperationException
     {
         LongRunningOperation op = startWriteAttributes ( itemId, attributes, listener );
         op.waitForCompletion ();
         completeWriteAttributes ( op );
     }
     
-    public LongRunningOperation startWriteAttributes ( String itemId, Map<String,Variant> attributes, Listener listener )
+    public LongRunningOperation startWriteAttributes ( String itemId, Map<String,Variant> attributes, LongRunningListener listener )
     {
         return _writeAttributesController.start ( itemId, attributes, listener );   
     }
