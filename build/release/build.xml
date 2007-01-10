@@ -101,6 +101,7 @@
     	<ant dir="${source.base}/ae/core/common"/>
     	<ant dir="${source.base}/ae/net/base"/>
     	<ant dir="${source.base}/ae/storage/common"/>
+   		<ant dir="${source.base}/ae/client/common"/>
 		<ant dir="${source.base}/ae/client/net"/>
     	<ant dir="${source.base}/ae/storage/test"/>
     	<ant dir="${source.base}/ae/storage/syslog"/>
