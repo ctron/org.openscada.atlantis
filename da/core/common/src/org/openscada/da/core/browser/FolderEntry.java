@@ -17,14 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.server.browser;
+package org.openscada.da.core.browser;
 
-import java.util.EnumSet;
 
-import org.openscada.da.core.server.IODirection;
 
-public interface DataItemEntry extends Entry
+public interface FolderEntry extends Entry
 {
-    String getId ();
-    EnumSet<IODirection> getIODirections ();
+    
 }

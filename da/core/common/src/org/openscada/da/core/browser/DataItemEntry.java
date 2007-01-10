@@ -17,14 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.server.browser;
+package org.openscada.da.core.browser;
 
-import java.util.Map;
+import java.util.EnumSet;
 
-import org.openscada.core.Variant;
+import org.openscada.da.core.IODirection;
 
-public interface Entry
+public interface DataItemEntry extends Entry
 {
-    String getName ();
-    Map < String, Variant > getAttributes ();
+    String getId ();
+    EnumSet<IODirection> getIODirections ();
 }

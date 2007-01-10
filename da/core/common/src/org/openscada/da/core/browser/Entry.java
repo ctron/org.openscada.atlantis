@@ -17,9 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.server;
+package org.openscada.da.core.browser;
 
-public enum IODirection {
-	INPUT,
-	OUTPUT;
+import java.util.Map;
+
+import org.openscada.core.Variant;
+
+public interface Entry
+{
+    String getName ();
+    Map < String, Variant > getAttributes ();
 }

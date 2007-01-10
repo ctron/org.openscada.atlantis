@@ -21,6 +21,8 @@ package org.openscada.da.core.server;
 
 import java.util.EnumSet;
 
+import org.openscada.da.core.IODirection;
+
 
 /**
  * Data item information

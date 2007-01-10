@@ -22,6 +22,7 @@ package org.openscada.da.core.server.browser;
 import java.util.Collection;
 
 import org.openscada.da.core.Location;
+import org.openscada.da.core.browser.Entry;
 
 
 
