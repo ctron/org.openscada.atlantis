@@ -15,16 +15,6 @@ public class LongRunningController implements MessageListener
 {
     private static Logger _log = Logger.getLogger ( LongRunningController.class );
 
-    public enum State
-    {
-        REQUESTED, RUNNING, FAILURE, SUCCESS,
-    }
-
-    public interface Listener
-    {
-        void stateChanged ( State state, Message reply, Throwable error );
-    }
-
     private Set<Integer> _commandCodes = new HashSet<Integer> ();
     private int _stopCommandCode = 0;
     private ConnectionHandlerBase _connectionHandler = null;
@@ -68,7 +58,7 @@ public class LongRunningController implements MessageListener
         }
     }
 
-    synchronized public LongRunningOperation start ( Message message, Listener listener )
+    synchronized public LongRunningOperation start ( Message message, LongRunningListener listener )
     {
         if ( message == null )
             return null;
@@ -98,7 +88,7 @@ public class LongRunningController implements MessageListener
         } );
 
         if ( listener != null )
-            listener.stateChanged ( State.REQUESTED, null, null );
+            listener.stateChanged ( LongRunningState.REQUESTED, null, null );
 
         return op;
     }

@@ -4,8 +4,6 @@
 package org.openscada.net.base;
 
 import org.apache.log4j.Logger;
-import org.openscada.net.base.LongRunningController.Listener;
-import org.openscada.net.base.LongRunningController.State;
 import org.openscada.net.base.data.Message;
 
 public class LongRunningOperation implements org.openscada.utils.exec.LongRunningOperation
@@ -13,17 +11,17 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
     private static Logger _log = Logger.getLogger ( LongRunningOperation.class );
 
     private LongRunningController _controller = null;
-    private Listener _listener = null;
+    private LongRunningListener _listener = null;
 
     private long _id = 0;
     private boolean _stopped = false;
     private boolean _stopSent = false;
 
-    private State _state = State.REQUESTED;
+    private LongRunningState _longRunningState = LongRunningState.REQUESTED;
     private Throwable _error = null;
     private Message _reply = null;
 
-    protected LongRunningOperation ( LongRunningController controller, Listener listener )
+    protected LongRunningOperation ( LongRunningController controller, LongRunningListener listener )
     {
         _controller = controller;
         _listener = listener;
@@ -34,11 +32,11 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
         return _id;
     }
 
-    private synchronized void stateChange ( State state, Message message, Throwable error )
+    private synchronized void stateChange ( LongRunningState state, Message message, Throwable error )
     {
-        _log.debug ( "State change: " + state.toString () );
+        _log.debug ( "LongRunningState change: " + state.toString () );
 
-        _state = state;
+        _longRunningState = state;
         _reply = message;
         _error = error;
 
@@ -53,7 +51,7 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
         if ( _stopped )
             return;
 
-        stateChange ( State.FAILURE, null, error );
+        stateChange ( LongRunningState.FAILURE, null, error );
 
         notifyAll ();
     }
@@ -69,21 +67,21 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
             return;
         }
 
-        stateChange ( State.RUNNING, null, null );
+        stateChange ( LongRunningState.RUNNING, null, null );
     }
 
     synchronized protected void result ( Message message )
     {
         _log.debug ( String.format ( "Result: %d", _id ) );
 
-        stateChange ( State.SUCCESS, message, null );
+        stateChange ( LongRunningState.SUCCESS, message, null );
 
         notifyAll ();
     }
 
     synchronized protected void stop ()
     {
-        switch ( _state )
+        switch ( _longRunningState )
         {
         case SUCCESS:
         case FAILURE:
@@ -100,7 +98,7 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
         if ( _id != 0 )
             sendStop ();
 
-        stateChange ( State.FAILURE, null, null );
+        stateChange ( LongRunningState.FAILURE, null, null );
 
         notifyAll ();
     }
@@ -120,7 +118,7 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
      */
     synchronized public boolean isComplete ()
     {
-        return _state.equals ( State.SUCCESS ) || _state.equals ( State.FAILURE );
+        return _longRunningState.equals ( LongRunningState.SUCCESS ) || _longRunningState.equals ( LongRunningState.FAILURE );
     }
 
     /* (non-Javadoc)
@@ -150,9 +148,9 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
     /* (non-Javadoc)
      * @see org.openscada.net.base.ILongRunningOperation#getState()
      */
-    public State getState ()
+    public LongRunningState getState ()
     {
-        return _state;
+        return _longRunningState;
     }
 
     /* (non-Javadoc)
