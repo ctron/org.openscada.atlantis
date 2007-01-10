@@ -15,7 +15,7 @@ import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.FolderEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveItem;
-import org.openscada.da.core.server.IODirection;
+import org.openscada.da.core.IODirection;
 
 class HiveViewLabelProvider extends LabelProvider
 {

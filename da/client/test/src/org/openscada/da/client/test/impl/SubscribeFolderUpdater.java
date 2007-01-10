@@ -23,7 +23,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.client.net.FolderWatcher;
+import org.openscada.da.client.FolderWatcher;
 
 public class SubscribeFolderUpdater extends FolderUpdater implements Observer
 {

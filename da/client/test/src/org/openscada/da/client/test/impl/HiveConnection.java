@@ -28,9 +28,9 @@ import org.eclipse.ui.IActionFilter;
 import org.openscada.core.Variant;
 import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
-import org.openscada.core.client.net.ConnectionStateListener;
-import org.openscada.core.client.net.ConnectionBase.State;
-import org.openscada.da.client.net.Connection;
+import org.openscada.core.client.ConnectionStateListener;
+import org.openscada.core.client.ConnectionState;
+import org.openscada.da.client.Connection;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 
@@ -55,10 +55,10 @@ public class HiveConnection extends Observable implements IActionFilter
         conInfo.setPort ( connectionInfo.getPort () );
         conInfo.setAutoReconnect ( false );
         
-        _connection = new Connection ( conInfo );
+        _connection = new org.openscada.da.client.net.Connection ( conInfo );
         _connection.addConnectionStateListener ( new ConnectionStateListener(){
 
-            public void stateChange ( ConnectionBase connection, State state, Throwable error )
+            public void stateChange ( org.openscada.core.client.Connection connection, ConnectionState state, Throwable error )
             {
                 performStateChange ( state, error );
             }
@@ -108,7 +108,7 @@ public class HiveConnection extends Observable implements IActionFilter
         return _connectionInfo;
     }
     
-    private synchronized void performStateChange ( Connection.State state, Throwable error )
+    private synchronized void performStateChange ( ConnectionState state, Throwable error )
     {
         _log.debug ( String.format ( "State Change to %s (%s)", state, error ) );
         
@@ -156,7 +156,7 @@ public class HiveConnection extends Observable implements IActionFilter
     {
         if ( name.equals ( "state" ) )
         {
-            return _connection.getState ().equals ( State.valueOf ( value ) );
+            return _connection.getState ().equals ( ConnectionState.valueOf ( value ) );
         }
         return false;
     }

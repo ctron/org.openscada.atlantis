@@ -36,12 +36,11 @@ import org.eclipse.ui.IWorkbench;
 import org.openscada.core.Variant;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.impl.HiveConnection;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Result;
-import org.openscada.da.core.server.WriteAttributesOperationListener.Results;
-import org.openscada.net.base.LongRunningController;
-import org.openscada.net.base.LongRunningOperation;
-import org.openscada.net.base.LongRunningController.State;
-import org.openscada.net.base.data.Message;
+import org.openscada.da.core.WriteAttributeResult;
+import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.utils.exec.LongRunningListener;
+import org.openscada.utils.exec.LongRunningOperation;
+import org.openscada.utils.exec.LongRunningState;
 
 public class WriteAttributesOperationWizard extends Wizard implements INewWizard
 {
@@ -97,9 +96,9 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
         monitor.beginTask ( "Writing attributes to item" , 4 );
         
         monitor.worked ( 1 );
-        LongRunningOperation op = hiveConnection.getConnection ().startWriteAttributes ( item, attributes, new LongRunningController.Listener () {
+        LongRunningOperation op = hiveConnection.getConnection ().startWriteAttributes ( item, attributes, new LongRunningListener () {
 
-            public void stateChanged ( State arg0, Message arg1, Throwable arg2 )
+            public void stateChanged ( LongRunningState arg0, Throwable arg2 )
             {
                 switch ( arg0 )
                 {
@@ -145,7 +144,7 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
                 else if ( op.isComplete () )
                 {
                     waiting = false;
-                    Results result = hiveConnection.getConnection ().completeWriteAttributes ( op );
+                    WriteAttributeResults result = hiveConnection.getConnection ().completeWriteAttributes ( op );
                    
                     if ( ( attributes.size () != result.size () ) || (!result.isSuccess ()) )
                     {
@@ -157,7 +156,7 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
         }
     }
     
-    public void handleError ( Map<String, Variant> attributes, Results results )
+    public void handleError ( Map<String, Variant> attributes, WriteAttributeResults results )
     {
         MultiStatus status = new MultiStatus ( Openscada_da_client_testPlugin.PLUGIN_ID, 0, "Failed to write attributes", null );
         
@@ -166,7 +165,7 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
             status.add ( new OperationStatus ( OperationStatus.WARNING, Openscada_da_client_testPlugin.PLUGIN_ID, 0, String.format ( "Only %1$d items out of %2$d where processed", results.size (), attributes.size () ), null ) );
         }
         
-        for ( Map.Entry<String, Result> entry : results.entrySet () )
+        for ( Map.Entry<String, WriteAttributeResult> entry : results.entrySet () )
         {
             if ( entry.getValue ().isError () )
             {

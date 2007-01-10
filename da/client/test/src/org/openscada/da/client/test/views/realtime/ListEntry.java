@@ -10,7 +10,7 @@ import java.util.Observer;
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
-import org.openscada.da.client.net.ItemUpdateListener;
+import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.test.impl.HiveItem;
 
 public class ListEntry extends Observable implements ItemUpdateListener

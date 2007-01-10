@@ -58,8 +58,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.core.Variant;
-import org.openscada.da.client.net.DataItem;
-import org.openscada.da.client.net.ItemUpdateListener;
+import org.openscada.da.client.DataItem;
+import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.test.impl.HiveItem;
 
 

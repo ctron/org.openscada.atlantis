@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Observable;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.core.server.browser.Entry;
+import org.openscada.da.core.browser.Entry;
 
 public abstract class FolderUpdater extends Observable
 {
@@ -63,14 +63,14 @@ public abstract class FolderUpdater extends Observable
         int i = 0;
         for ( Entry entry : entries )
         {
-            if ( entry instanceof org.openscada.da.core.server.browser.FolderEntry )
+            if ( entry instanceof org.openscada.da.core.browser.FolderEntry )
             {
                 FolderEntry folder = new FolderEntry ( entry.getName (), entry.getAttributes (), _folder, getConnection (), true );
                 list.put ( entry.getName (), folder ); 
             }
-            else if ( entry instanceof org.openscada.da.core.server.browser.DataItemEntry )
+            else if ( entry instanceof org.openscada.da.core.browser.DataItemEntry )
             {
-                org.openscada.da.core.server.browser.DataItemEntry itemEntry = (org.openscada.da.core.server.browser.DataItemEntry)entry;
+                org.openscada.da.core.browser.DataItemEntry itemEntry = (org.openscada.da.core.browser.DataItemEntry)entry;
                 list.put ( entry.getName (), new DataItemEntry ( entry.getName(), entry.getAttributes (), _folder, getConnection (), itemEntry.getId (), itemEntry.getIODirections () ) ); 
             }
             else

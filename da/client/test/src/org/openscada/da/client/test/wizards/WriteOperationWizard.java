@@ -31,10 +31,9 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.core.Variant;
 import org.openscada.da.client.test.impl.HiveConnection;
-import org.openscada.net.base.LongRunningController;
-import org.openscada.net.base.LongRunningOperation;
-import org.openscada.net.base.LongRunningController.State;
-import org.openscada.net.base.data.Message;
+import org.openscada.utils.exec.LongRunningListener;
+import org.openscada.utils.exec.LongRunningOperation;
+import org.openscada.utils.exec.LongRunningState;
 
 public class WriteOperationWizard extends Wizard implements INewWizard
 {
@@ -90,9 +89,9 @@ public class WriteOperationWizard extends Wizard implements INewWizard
         monitor.beginTask ( "Writing value to item" , 4 );
         
         monitor.worked ( 1 );
-        LongRunningOperation op = hiveConnection.getConnection ().startWrite ( item, value, new LongRunningController.Listener () {
+        LongRunningOperation op = hiveConnection.getConnection ().startWrite ( item, value, new LongRunningListener () {
 
-            public void stateChanged ( State arg0, Message arg1, Throwable arg2 )
+            public void stateChanged ( LongRunningState arg0, Throwable arg2 )
             {
                 switch ( arg0 )
                 {
