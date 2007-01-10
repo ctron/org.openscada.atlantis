@@ -33,14 +33,13 @@ import org.eclipse.ui.IActionFilter;
 import org.openscada.ae.client.Connection;
 import org.openscada.ae.client.test.Activator;
 import org.openscada.ae.core.QueryDescription;
-import org.openscada.core.client.net.ConnectionBase;
+import org.openscada.core.OperationException;
+import org.openscada.core.client.ConnectionState;
+import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.client.net.ConnectionInfo;
-import org.openscada.core.client.net.ConnectionStateListener;
-import org.openscada.core.client.net.ConnectionBase.State;
-import org.openscada.core.client.net.operations.OperationException;
-import org.openscada.net.base.LongRunningController;
-import org.openscada.net.base.LongRunningOperation;
-import org.openscada.net.base.data.Message;
+import org.openscada.utils.exec.LongRunningListener;
+import org.openscada.utils.exec.LongRunningOperation;
+import org.openscada.utils.exec.LongRunningState;
 
 
 public class StorageConnection extends Observable implements IActionFilter
@@ -63,10 +62,10 @@ public class StorageConnection extends Observable implements IActionFilter
         conInfo.setPort ( connectionInfo.getPort () );
         conInfo.setAutoReconnect ( false );
         
-        _connection = new Connection ( conInfo );
+        _connection = new org.openscada.ae.client.net.Connection ( conInfo );
         _connection.addConnectionStateListener ( new ConnectionStateListener(){
 
-            public void stateChange ( ConnectionBase connection, State state, Throwable error )
+            public void stateChange ( org.openscada.core.client.Connection connection, ConnectionState state, Throwable error )
             {
                 performStateChange ( state, error );
             }
@@ -111,7 +110,7 @@ public class StorageConnection extends Observable implements IActionFilter
         return _connectionInfo;
     }
     
-    private void performStateChange ( Connection.State state, Throwable error )
+    private void performStateChange ( ConnectionState state, Throwable error )
     {
         switch ( state )
         {
@@ -149,7 +148,7 @@ public class StorageConnection extends Observable implements IActionFilter
     {
         if ( name.equals ( "state" ) )
         {
-            return _connection.getState ().equals ( State.valueOf ( value ) );
+            return _connection.getState ().equals ( ConnectionState.valueOf ( value ) );
         }
         return false;
     }
@@ -170,7 +169,7 @@ public class StorageConnection extends Observable implements IActionFilter
     
     public void refreshQueries ()
     {
-        if ( !_connection.getState ().equals ( State.BOUND ) )
+        if ( !_connection.getState ().equals ( ConnectionState.BOUND ) )
             return;
         
         _refreshing = true;
@@ -205,9 +204,9 @@ public class StorageConnection extends Observable implements IActionFilter
     {
         setQueries ( null );
         
-        LongRunningOperation op = _connection.startList ( new LongRunningController.Listener () {
+        LongRunningOperation op = _connection.startList ( new LongRunningListener () {
 
-            public void stateChanged ( org.openscada.net.base.LongRunningController.State arg0, Message arg1, Throwable arg2 )
+            public void stateChanged ( LongRunningState arg0, Throwable arg2 )
             {
                 monitor.setTaskName ( arg0.toString () );
             }} );
