@@ -12,14 +12,14 @@
                icon="icons/stock_start_sever.png"
                id="org.openscada.da.rcp.LocalTestServer.StartTestServerAction"
                label="Start Local Test Server"
-               menubarPath="testing/localTestServer"
+               menubarPath="testing/server"
                style="push"/>
          <action
                class="org.openscada.da.rcp.LocalTestServer.actions.StartSimServerAction"
                icon="icons/stock_start_sever.png"
                id="org.openscada.da.rcp.LocalTestServer.StartSimServerAction"
                label="Start Local Simulation Server"
-               menubarPath="testing/localSimServer"
+               menubarPath="testing/server"
                style="push"/>
          <menu
                id="testing"
