@@ -7,12 +7,17 @@ Bundle-ClassPath: lib.jar
 Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin
 Export-Package: org.openscada.core,
+ org.openscada.core.client,
  org.openscada.core.client.net,
+ org.openscada.core.net,
+ org.openscada.core.test,
  org.openscada.core.utils,
+ org.openscada.da.client,
  org.openscada.da.client.net,
  org.openscada.da.client.net.operations,
  org.openscada.da.client.net.test,
  org.openscada.da.core,
+ org.openscada.da.core.browser,
  org.openscada.da.core.server,
  org.openscada.da.core.server.browser,
  org.openscada.net.base,
@@ -22,5 +27,6 @@ Export-Package: org.openscada.core,
  org.openscada.net.io,
  org.openscada.net.test,
  org.openscada.net.utils,
+ org.openscada.utils.exec,
  org.openscada.utils.timing
 Require-Bundle: log4j_wrapper_plugin
