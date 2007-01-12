@@ -27,7 +27,7 @@ public class ConnectionInfo
 {
     private String _hostName = "";
     private int _port = 0;
-    private boolean _autoReconnect = true;
+    private boolean _autoReconnect = false;
     
     private int _reconnectDelay = Integer.getInteger ( "org.openscada.da.net.client.reconnect_delay", 10 * 1000 );
 
