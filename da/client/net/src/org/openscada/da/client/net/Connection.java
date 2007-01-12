@@ -26,12 +26,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.management.RuntimeErrorException;
-
 import org.apache.log4j.Logger;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.client.ConnectionFactory;
+import org.openscada.core.client.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
+import org.openscada.core.client.DriverFactory;
+import org.openscada.core.client.DriverInformation;
 import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.core.client.net.DisconnectReason;
@@ -64,7 +66,25 @@ import org.openscada.utils.lang.Holder;
 
 public class Connection extends ConnectionBase implements org.openscada.da.client.Connection
 {
+    static
+    {
+        ConnectionFactory.registerDriverFactory ( new DriverFactory ()  {
 
+            public DriverInformation getDriverInformation ( ConnectionInformation connectionInformation )
+            {
+                if ( !connectionInformation.getInterface ().equalsIgnoreCase ( "da" ) )
+                    return null;
+                if ( ! ( connectionInformation.getDriver ().equalsIgnoreCase ( "net" ) || 
+                        connectionInformation.getDriver ().equalsIgnoreCase ( "gmpp" ) ) )
+                    return null;
+                
+                if ( connectionInformation.getSecondaryTarget () == null )
+                    return null;
+                
+                return new org.openscada.da.client.net.DriverInformation ();
+            }} );
+    }
+    
     public static final String VERSION = "0.1.5";
 
     private static Logger _log = Logger.getLogger ( Connection.class );
