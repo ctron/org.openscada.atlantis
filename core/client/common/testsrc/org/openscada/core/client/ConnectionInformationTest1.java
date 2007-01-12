@@ -206,4 +206,20 @@ public class ConnectionInformationTest1
         
         testParserEqual ( "da:net://%25:%25@localhost:1202/%25/%25?%25=%25", expected );
     }
+    
+    @Test
+    public void test12 () throws Throwable
+    {
+        ConnectionInformation o = new ConnectionInformation ();
+        o.setInterface ( "da" );
+        o.setDriver ( "net" );
+        o.getProperties ().put ( "user", "jens" );
+        o.getProperties ().put ( "password", "test" );
+        o.setTarget ( "localhost" );
+        o.setSecondaryTarget ( 1202 );
+        o.getSubtargets ().add ( "sub1" );
+        o.getSubtargets ().add ( "sub2" );
+        o.getProperties ().put ( "key", "value" );
+        assertEquals ( o.toString (), "da:net://jens:test@localhost:1202/sub1/sub2?key=value" );
+    }
 }
