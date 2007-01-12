@@ -7,6 +7,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.TransferData;
+import org.openscada.core.client.ConnectionInformation;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 import org.openscada.da.client.test.dnd.Item;
@@ -49,7 +50,7 @@ public class ItemDropAdapter extends ViewerDropAdapter
 
     private void dropItem ( Item item, ListData listData, TreeViewer viewer ) throws URISyntaxException
     {
-        HiveConnectionInformation connectionInformation = HiveConnectionInformation.fromUri ( new URI ( item.getConnectionString () ) );
+        ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( item.getConnectionString () );
         
         HiveConnection connection = Openscada_da_client_testPlugin.getRepository ().findConnection ( connectionInformation );
         if ( connection != null )

@@ -47,7 +47,7 @@ public class ItemDragSourceListener implements DragSourceListener
 
                     Item item = new Item ();
                     item.setId ( entry.getId () );
-                    item.setConnectionString ( entry.getConnection ().getConnectionInformation ().toUri ().toString () );
+                    item.setConnectionString ( entry.getConnection ().getConnectionInformation ().toString () );
                     items.add ( item );
                 }
                 event.data = items.toArray ( new Item[items.size ()] );

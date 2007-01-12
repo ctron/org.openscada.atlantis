@@ -25,7 +25,7 @@ class HiveViewLabelProvider extends LabelProvider
         if ( obj instanceof HiveConnection )
         {
             HiveConnection connection = (HiveConnection)obj;
-            return connection.getConnectionInformation().getHost() + ":" + connection.getConnectionInformation().getPort() + " (" + connection.getConnection ().getState ().toString () + ")";
+            return connection.getConnectionInformation().toString () + " (" + connection.getConnection ().getState ().toString () + ")";
         }
         else if ( obj instanceof HiveItem )
         {

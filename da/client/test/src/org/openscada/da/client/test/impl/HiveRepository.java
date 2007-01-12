@@ -30,33 +30,34 @@ import java.util.List;
 import java.util.Observable;
 
 import org.eclipse.core.runtime.IPath;
+import org.openscada.core.client.ConnectionInformation;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 
 public class HiveRepository extends Observable
 {
-    private List<HiveConnection> _connections = new ArrayList<HiveConnection>();
-    
+    private List<HiveConnection> _connections = new ArrayList<HiveConnection> ();
+
     public HiveRepository ()
     {
     }
-    
+
     synchronized public void load ( IPath path )
     {
-        _connections.clear();
-        
-        File file = path.toFile();
+        _connections.clear ();
+
+        File file = path.toFile ();
         XMLDecoder decoder = null;
         try
         {
-            decoder = new XMLDecoder(new FileInputStream(file));
+            decoder = new XMLDecoder ( new FileInputStream ( file ) );
             while ( true )
             {
                 try
                 {
-                    Object o = decoder.readObject();
-                    if ( !(o instanceof HiveConnectionInformation) )
+                    Object o = decoder.readObject ();
+                    if ( ! ( o instanceof HiveConnectionInformation ) )
                         continue;
-                    _connections.add( new HiveConnection((HiveConnectionInformation)o) );
+                    _connections.add ( new HiveConnection ( (HiveConnectionInformation)o ) );
                 }
                 catch ( ArrayIndexOutOfBoundsException e )
                 {
@@ -67,54 +68,54 @@ public class HiveRepository extends Observable
         catch ( FileNotFoundException e )
         {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.printStackTrace ();
         }
         finally
         {
             if ( decoder != null )
-                decoder.close();
+                decoder.close ();
         }
     }
-    
+
     synchronized public void save ( IPath path )
     {
-        File file = path.toFile();
+        File file = path.toFile ();
         XMLEncoder encoder = null;
-        
+
         try
         {
-            encoder = new XMLEncoder(new FileOutputStream(file));
+            encoder = new XMLEncoder ( new FileOutputStream ( file ) );
             for ( HiveConnection connection : _connections )
             {
-                encoder.writeObject(connection.getConnectionInformation());
+                encoder.writeObject ( new HiveConnectionInformation ( connection.getConnectionInformation ().toString () ) );
             }
         }
         catch ( FileNotFoundException e )
         {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.printStackTrace ();
         }
         finally
         {
             if ( encoder != null )
-                encoder.close();
+                encoder.close ();
         }
     }
 
     public void addConnection ( HiveConnection connection )
     {
         _connections.add ( connection );
-        
-        setChanged();
-        notifyObservers();
+
+        setChanged ();
+        notifyObservers ();
     }
-    
+
     public List<HiveConnection> getConnections ()
     {
         return _connections;
     }
-    
-    public HiveConnection findConnection ( HiveConnectionInformation connectionInformation )
+
+    public HiveConnection findConnection ( ConnectionInformation connectionInformation )
     {
         for ( HiveConnection connection : _connections )
         {

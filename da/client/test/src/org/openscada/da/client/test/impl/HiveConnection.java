@@ -19,43 +19,57 @@
 
 package org.openscada.da.client.test.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
 import org.apache.log4j.Logger;
 import org.eclipse.ui.IActionFilter;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.openscada.core.Variant;
-import org.openscada.core.client.net.ConnectionBase;
-import org.openscada.core.client.net.ConnectionInfo;
-import org.openscada.core.client.ConnectionStateListener;
+import org.openscada.core.client.ConnectionFactory;
+import org.openscada.core.client.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
+import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 
-public class HiveConnection extends Observable implements IActionFilter
+public class HiveConnection extends Observable implements IActionFilter, IPropertySource
 {
     private static Logger _log = Logger.getLogger ( HiveConnection.class );
     
     private boolean _connectionRequested = false;
-    private HiveConnectionInformation _connectionInfo;
+    private ConnectionInformation _connectionInformation = null;
     private Connection _connection = null;
     
     private Map < String, HiveItem > _itemMap = new HashMap < String, HiveItem > ();
     
     private FolderEntry _rootFolder = null;
     
+    private enum Properties
+    {
+        URI,
+        STATE
+    };
+    
     public HiveConnection ( HiveConnectionInformation connectionInfo )
     {
-        _connectionInfo = connectionInfo;
+        _connectionInformation = ConnectionInformation.fromURI ( connectionInfo.getConnectionString () );
         
-        ConnectionInfo conInfo = new ConnectionInfo ();
-        conInfo.setHostName ( _connectionInfo.getHost () );
-        conInfo.setPort ( connectionInfo.getPort () );
-        conInfo.setAutoReconnect ( false );
+        try
+        {
+            Class.forName ( "org.openscada.da.client.net.Connection" );
+        }
+        catch ( ClassNotFoundException e )
+        {}
         
-        _connection = new org.openscada.da.client.net.Connection ( conInfo );
+        _connection = (Connection)ConnectionFactory.create ( _connectionInformation );
+        
         _connection.addConnectionStateListener ( new ConnectionStateListener(){
 
             public void stateChange ( org.openscada.core.client.Connection connection, ConnectionState state, Throwable error )
@@ -103,9 +117,9 @@ public class HiveConnection extends Observable implements IActionFilter
         _connection.disconnect ();
     }
     
-    public HiveConnectionInformation getConnectionInformation()
+    public ConnectionInformation getConnectionInformation()
     {
-        return _connectionInfo;
+        return _connectionInformation;
     }
     
     private synchronized void performStateChange ( ConnectionState state, Throwable error )
@@ -170,6 +184,61 @@ public class HiveConnection extends Observable implements IActionFilter
     {
         setChanged ();
         notifyObservers ( folder );
+    }
+    
+    protected void fillPropertyDescriptors ( List<IPropertyDescriptor> list )
+    {
+        {
+            PropertyDescriptor pd = new PropertyDescriptor ( Properties.URI, "URI" );
+            pd.setCategory ( "Connection Information" );
+            pd.setAlwaysIncompatible ( true );
+            list.add ( pd );
+        }
+        {
+            PropertyDescriptor pd = new PropertyDescriptor ( Properties.STATE, "State" );
+            pd.setCategory ( "Connection" );
+            pd.setAlwaysIncompatible ( true );
+            list.add ( pd );
+        }
+    }
+    
+    public IPropertyDescriptor[] getPropertyDescriptors ()
+    {
+        List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor> ();
+        
+        fillPropertyDescriptors ( list );
+        
+        return list.toArray ( new IPropertyDescriptor[list.size()] );
+    }
+    
+    public Object getPropertyValue ( Object id )
+    {
+        if ( id.equals ( Properties.URI ) )
+            return _connectionInformation.toString ();
+        if ( id.equals ( Properties.STATE  ) )
+            return _connection.getState ().name ();
+        
+        return null;
+    }
+    
+    public Object getEditableValue ()
+    {
+        return _connectionInformation.toString ();
+    }
+    
+    public boolean isPropertySet ( Object id )
+    {
+        return false;
+    }
+
+    public void resetPropertyValue ( Object id )
+    {
+        // no op
+    }
+
+    public void setPropertyValue ( Object id, Object value )
+    {
+        // no op
     }
     
 }

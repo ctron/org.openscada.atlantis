@@ -19,7 +19,6 @@
 
 package org.openscada.da.client.test.wizards;
 
-
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,22 +34,20 @@ import org.openscada.da.client.test.impl.HiveConnection;
 
 public class NewHiveWizard extends Wizard implements INewWizard
 {
-    
+
     private NewHiveWizardConnectionPage _page = null;
-    
+
     @Override
     public boolean performFinish ()
     {
-        final String hostName = _page.getHostName();
-        final int port = _page.getPort();
-        
-        IRunnableWithProgress op = new IRunnableWithProgress()
-        {
+        final String connectionString = _page.getConnectionString ();
+
+        IRunnableWithProgress op = new IRunnableWithProgress () {
             public void run ( IProgressMonitor monitor ) throws InvocationTargetException
             {
                 try
                 {
-                    doFinish ( monitor, hostName, port );
+                    doFinish ( monitor, connectionString );
                 }
                 catch ( Exception e )
                 {
@@ -64,54 +61,51 @@ public class NewHiveWizard extends Wizard implements INewWizard
         };
         try
         {
-            getContainer().run(true, false, op);
+            getContainer ().run ( true, false, op );
         }
-        catch (InterruptedException e)
+        catch ( InterruptedException e )
         {
             return false;
         }
-        catch (InvocationTargetException e)
+        catch ( InvocationTargetException e )
         {
-            Throwable realException = e.getTargetException();
-            MessageDialog.openError ( getShell(), "Error", realException.getMessage () );
+            Throwable realException = e.getTargetException ();
+            MessageDialog.openError ( getShell (), "Error", realException.getMessage () );
             return false;
         }
         return true;
     }
-    
-    private void doFinish ( IProgressMonitor monitor, String hostName, int port ) throws Exception
+
+    private void doFinish ( IProgressMonitor monitor, String connectionString ) throws Exception
     {
-        
-        monitor.beginTask("Adding hive connection..." , 2 );
-        
+
+        monitor.beginTask ( "Adding hive connection...", 2 );
+
         // add the hive
-        HiveConnectionInformation info = new HiveConnectionInformation();
-        info.setHost ( hostName );
-        info.setPort ( port );
-        
-        HiveConnection connection = new HiveConnection(info);
-        Openscada_da_client_testPlugin.getRepository().addConnection ( connection );
+        HiveConnectionInformation info = new HiveConnectionInformation ( connectionString );
+
+        HiveConnection connection = new HiveConnection ( info );
+        Openscada_da_client_testPlugin.getRepository ().addConnection ( connection );
         monitor.worked ( 1 );
-        
+
         // store all
-        monitor.subTask("Saving hive configuration");
-        Openscada_da_client_testPlugin.getRepository().save(Openscada_da_client_testPlugin.getRepostoryFile());
+        monitor.subTask ( "Saving hive configuration" );
+        Openscada_da_client_testPlugin.getRepository ().save ( Openscada_da_client_testPlugin.getRepostoryFile () );
         monitor.worked ( 1 );
     }
 
     public void init ( IWorkbench workbench, IStructuredSelection selection )
     {
         setNeedsProgressMonitor ( true );
-        setDefaultPageImageDescriptor(Openscada_da_client_testPlugin.getImageDescriptor("icons/48x48/stock_channel.png"));
+        setDefaultPageImageDescriptor ( Openscada_da_client_testPlugin.getImageDescriptor ( "icons/48x48/stock_channel.png" ) );
     }
-    
+
     @Override
     public void addPages ()
     {
         super.addPages ();
-        
-        addPage ( _page = new NewHiveWizardConnectionPage() );
+
+        addPage ( _page = new NewHiveWizardConnectionPage () );
     }
-    
 
 }
