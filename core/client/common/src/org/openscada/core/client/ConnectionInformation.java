@@ -98,19 +98,22 @@ public class ConnectionInformation
             // parse query
             if ( subUri.getRawQuery () != null )
             {
-                Pattern p = Pattern.compile ( "(.*?)=(.*)" );
-                for ( String pair : subUri.getRawQuery ().split ( "\\&" ) )
+                if ( subUri.getRawQuery ().length () > 0 )
                 {
-                    Matcher m = p.matcher ( pair );
-                    if ( m.matches () )
+                    Pattern p = Pattern.compile ( "(.*?)=(.*)" );
+                    for ( String pair : subUri.getRawQuery ().split ( "\\&" ) )
                     {
-                        String key = URLDecoder.decode ( m.group ( 1 ), "utf-8" );
-                        String value = URLDecoder.decode ( m.group ( 2 ), "utf-8" );
-                        ci._properties.put ( key, value );
-                    }
-                    else
-                    {
-                        ci._properties.put ( URLDecoder.decode ( pair, "utf-8" ), "" );
+                        Matcher m = p.matcher ( pair );
+                        if ( m.matches () )
+                        {
+                            String key = URLDecoder.decode ( m.group ( 1 ), "utf-8" );
+                            String value = URLDecoder.decode ( m.group ( 2 ), "utf-8" );
+                            ci._properties.put ( key, value );
+                        }
+                        else
+                        {
+                            ci._properties.put ( URLDecoder.decode ( pair, "utf-8" ), "" );
+                        }
                     }
                 }
             }
