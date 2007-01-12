@@ -13,6 +13,12 @@
 	
 	<dirname property="builddir" file="${ant.file.libs}"/>
 	
+	<taskdef name="slice2java" classname="Slice2JavaTask">
+		<classpath>
+			<path path="${builddir}/icej-ant.jar"/>
+		</classpath>
+	</taskdef>
+	
 	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
 		<classpath>
 			<path path="${builddir}/xmltask-v1.14.jar"/>
