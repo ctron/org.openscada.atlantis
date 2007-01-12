@@ -2,7 +2,6 @@ package org.openscada.core.client;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -115,9 +114,6 @@ public class ConnectionInformation
             String password = _properties.get ( "password" );
             String subtargets = null;
             String query = null;
-            int secondaryTarget = -1;
-            if ( _secondaryTarget != null )
-                secondaryTarget = _secondaryTarget;
 
             // prepare subtargets
             if ( _subtargets.size () > 0 )
@@ -152,7 +148,11 @@ public class ConnectionInformation
 
             String uri = "";
             
-            uri += URLEncoder.encode ( _interface, "utf-8" ) + ":" + URLEncoder.encode ( _driver, "utf-8" ) + "://" + URLEncoder.encode ( _target, "utf-8" );
+            uri += URLEncoder.encode ( _interface, "utf-8" ) + ":" + URLEncoder.encode ( _driver, "utf-8" ) + "://";
+            if ( userInfo != null )
+                uri += userInfo + "@";
+            
+            uri += URLEncoder.encode ( _target, "utf-8" );
             if ( _secondaryTarget != null )
                 uri += ":" + _secondaryTarget;
             uri += subtargets + query;
