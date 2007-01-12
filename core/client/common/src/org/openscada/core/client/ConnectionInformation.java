@@ -174,7 +174,10 @@ public class ConnectionInformation
             uri += URLEncoder.encode ( _target, "utf-8" );
             if ( _secondaryTarget != null )
                 uri += ":" + _secondaryTarget;
-            uri += subtargets + query;
+            if ( subtargets != null)
+                uri += subtargets;
+            if ( query != null )
+                uri += query;
             
             return uri;
         }
