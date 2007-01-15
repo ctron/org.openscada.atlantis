@@ -21,17 +21,17 @@ package org.openscada.da.server.net;
 
 import java.io.IOException;
 
+import org.openscada.da.core.common.impl.ExporterBase;
 import org.openscada.da.core.server.Hive;
 import org.openscada.net.io.net.Server;
 
-public class Exporter implements Runnable
+public class Exporter extends ExporterBase implements Runnable
 {
-    private Hive _hive;
     private Server _server;
     
     public Exporter ( Hive hive, Integer port ) throws IOException
     {
-        _hive = hive;
+        super ( hive );
         
         createServer ( port );
     }
@@ -43,7 +43,7 @@ public class Exporter implements Runnable
     
     public Exporter ( Class hiveClass, Integer port ) throws InstantiationException, IllegalAccessException, IOException
     {
-        _hive = createInstance ( hiveClass );
+        super ( hiveClass );
         
         createServer ( port );
     }
@@ -55,7 +55,7 @@ public class Exporter implements Runnable
     
     public Exporter ( String hiveClassName, Integer port ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
     {
-        _hive = createInstance ( Class.forName ( hiveClassName ) );
+        super ( hiveClassName );
         
         createServer ( port );
     }
@@ -63,11 +63,6 @@ public class Exporter implements Runnable
     public Exporter ( String hiveClassName ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
     {
         this ( hiveClassName, null );
-    }
-    
-    private Hive createInstance ( Class hiveClass ) throws InstantiationException, IllegalAccessException
-    {
-        return (Hive)hiveClass.newInstance();
     }
     
     private void createServer ( Integer port ) throws IOException
@@ -85,10 +80,4 @@ public class Exporter implements Runnable
     {
         _server.run ();
     }
-    
-    public Class getHiveClass ()
-    {
-        return _hive.getClass ();
-    }
-    
 }
