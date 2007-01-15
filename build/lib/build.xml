@@ -348,7 +348,7 @@
     <macrodef name="openscada.runfile.init">
         <attribute name="file"/>
         <sequential>
-			<xmltask source="${source.base}/build/data/runfile.xml" dest="file"/>
+			<xmltask source="${source.base}/build/data/runfile.xml" dest="@{file}"/>
         </sequential>
     </macrodef>
 	
