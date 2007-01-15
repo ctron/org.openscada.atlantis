@@ -47,6 +47,7 @@ import org.openscada.da.server.test.items.FactoryMemoryCell;
 import org.openscada.da.server.test.items.MemoryCellItem;
 import org.openscada.da.server.test.items.MemoryChainedItem;
 import org.openscada.da.server.test.items.SuspendItem;
+import org.openscada.da.server.test.items.TestItem1;
 import org.openscada.da.server.test.items.TimeDataItem;
 import org.openscada.da.server.test.items.WriteDelayItem;
 import org.openscada.utils.collection.MapBuilder;
@@ -144,6 +145,11 @@ public class Hive extends HiveCommon {
 		registerItem ( item = new MemoryDataItem ( "memory" ) );
 		testFolder.add ( "memory", item, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "A memory cell that simply maps the output to its input." ) )
+		        .getMap ()
+		);
+        
+		registerItem ( item = new TestItem1 ( "test-1" ) );
+		testFolder.add ( "test-1", item, new MapBuilder<String,Variant > ()
 		        .getMap ()
 		);
         
