@@ -44,7 +44,7 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="clean, init, build, dist-source, dist-binary, rcp" description="--> Master build file for OpenSCADA Atlabtis">
+    <target name="default" depends="clean, init, build, dist-source, dist-binary, rcp, apps" description="--> Master build file for OpenSCADA Atlabtis">
     </target>
     
     <target name="init.genworkspace">
@@ -214,24 +214,19 @@
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
-          target: unpack-net-server-dist                      
+          target: apps                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="unpack-net-server-dist">
-		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-net-server"/>
+    <target name="apps" depends="make-sim-server-dist, make-test-server-dist">
     </target>
-	
+
 	<!-- - - - - - - - - - - - - - - - - - 
           target: make-sim-server-dist                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="make-sim-server-dist" depends="unpack-net-server-dist">
+    <target name="make-sim-server-dist" depends="">
+		<delete dir="${temp.dir}/dist-sim-server"/>
+	
+		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-sim-server"/>
 		<openscada.unpack-module name="da-server-simulation" todir="${temp.dir}/dist-sim-server"/>
-
-		<copy todir="${temp.dir}/dist-sim-server">
-			<fileset dir="${temp.dir}/dist-net-server">
-			</fileset>
-		</copy>
-
-		<xmltask source="${source.base}/build/data/runfile.xml" dest="${temp.dir}/dist-sim-server/runfile.xml"/>
 
 		<openscada.runfile.init file="${temp.dir}/dist-sim-server/runfile.xml"/>
     	<openscada.runfile.gather-jars file="${temp.dir}/dist-sim-server/runfile.xml" dir="${temp.dir}/dist-sim-server"/>
@@ -243,9 +238,27 @@
 		<zip basedir="${temp.dir}/dist-sim-server" destfile="${deploy.dist.binary}/openscada-atlantis-simserver-net-${tag}.zip">
 		</zip>
 		
-	
     </target>
 
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: make-test-server-dist                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="make-test-server-dist" depends="">
+		<delete dir="${temp.dir}/dist-test-server"/>
+	
+		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-test-server"/>
+		<openscada.unpack-module name="da-server-test" todir="${temp.dir}/dist-test-server"/>
 
+		<openscada.runfile.init file="${temp.dir}/dist-test-server/runfile.xml"/>
+    	<openscada.runfile.gather-jars file="${temp.dir}/dist-test-server/runfile.xml" dir="${temp.dir}/dist-test-server"/>
+		<openscada.runfile.arg.add file="${temp.dir}/dist-test-server/runfile.xml" value="org.openscada.da.server.test.Hive"/>
+		<openscada.runfile.set-main file="${temp.dir}/dist-test-server/runfile.xml" value="org.openscada.da.server.net.Application"/>
+		<openscada.runfile.transform dir="${temp.dir}/dist-test-server"/>
+
+		<mkdir dir="${deploy.dist.binary}/"/>
+		<zip basedir="${temp.dir}/dist-test-server" destfile="${deploy.dist.binary}/openscada-atlantis-testserver-net-${tag}.zip">
+		</zip>
+		
+    </target>
 
 </project>
