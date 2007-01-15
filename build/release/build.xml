@@ -97,6 +97,7 @@
        	<ant dir="${source.base}/core/client/net"/>
 	   	<ant dir="${source.base}/da/client/common"/>
        	<ant dir="${source.base}/da/client/net"/>
+		<ant dir="${source.base}/da/client/samples"/>
     	
     	<ant dir="${source.base}/ae/core/common"/>
     	<ant dir="${source.base}/ae/net/base"/>
@@ -107,7 +108,7 @@
     	<ant dir="${source.base}/ae/storage/syslog"/>
     	<ant dir="${source.base}/ae/submitter/net"/>
        	<ant dir="${source.base}/ae/storage/net"/>
-    	
+	
     	<concat append="true" destfile="${module.dep.file}">
     		<path location="${source.base}/build/data/module.deps.footer"/>
     	</concat>
