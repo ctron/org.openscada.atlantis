@@ -25,6 +25,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionFactory;
 import org.openscada.core.client.ConnectionInformation;
 import org.openscada.da.client.Connection;
+import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.ItemUpdateListener;
 
 /**
@@ -46,6 +47,7 @@ public class Sample1 implements ItemUpdateListener
         ConnectionInformation ci = ConnectionInformation.fromURI ( "da:net://localhost:1202" );
         
         Connection c = (Connection)ConnectionFactory.create ( ci );
+        ItemManager itemManager = new ItemManager ( c );
         if ( c == null )
             throw new Exception ( "Unable to find a connection driver for specified URI" );
         
@@ -68,7 +70,7 @@ public class Sample1 implements ItemUpdateListener
         // since we subscribe with "initial=true" we will get the current value
         // before any other event. Setting to "false" would ignore the current
         // value of this item and wait for the first change.
-        c.addItemUpdateListener ( "time", true, this );
+        itemManager.addItemUpdateListener ( "time", true, this );
     }
     
     public static void main ( String[] args ) throws Exception

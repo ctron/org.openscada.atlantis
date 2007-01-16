@@ -22,6 +22,7 @@ package org.openscada.da.client.samples;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionFactory;
 import org.openscada.core.client.ConnectionInformation;
@@ -42,42 +43,89 @@ import org.openscada.da.client.Connection;
  */
 public class Sample2
 {
-    public Sample2 () throws Exception
+    private String _uri = null;
+    private Connection _connection = null;
+    
+    public Sample2 ( String uri, String className) throws ClassNotFoundException
     {
-        Class.forName ( "org.openscada.da.client.net.Connection" );
-        ConnectionInformation ci = ConnectionInformation.fromURI ( "da:net://localhost:1202" );
+        _uri = uri;
         
-        Connection c = (Connection)ConnectionFactory.create ( ci );
-        if ( c == null )
+        // If we got a class name load it
+        if ( className != null )
+            Class.forName ( className );
+
+        if ( _uri == null )
+            _uri = "da:net://localhost:1202";
+    }
+    
+    public void connect () throws Exception 
+    {
+        ConnectionInformation ci = ConnectionInformation.fromURI ( _uri );
+        
+        _connection = (Connection)ConnectionFactory.create ( ci );
+        if ( _connection == null )
             throw new Exception ( "Unable to find a connection driver for specified URI" );
         
         // trigger the connection
-        c.connect ();
+        _connection.connect ();
         try
         {
             // wait until the connection is established. If it already is the call
             // will return immediately.
             // If the connect attempt fails an exception is thrown.
-            c.waitForConnection ();
+            _connection.waitForConnection ();
         }
         catch ( Throwable e )
         {
             // we were unlucky
             throw new Exception ( "Unable to create connection", e );
         }
-        
+    }
+    
+    public void run () throws InterruptedException, OperationException
+    {
         // set the main value
-        c.write ( "test", new Variant ( "Hello World" ) );
+        _connection.write ( "test-1", new Variant ( "Hello World" ) );
         
         // set some attributes
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "hello", new Variant ( "world" ) );
         attributes.put ( "foo", new Variant ( "bar" ) );
-        c.writeAttributes ( "test", attributes );
+        _connection.writeAttributes ( "test-1", attributes );
+    }
+    
+    public void disconnect ()
+    {
+        _connection.disconnect ();
     }
     
     public static void main ( String[] args ) throws Exception
     {
-        new Sample2 ();
+        String uri = null;
+        String className = null;
+        
+        if ( args.length > 0 )
+            uri = args[0];
+        if ( args.length > 1 )
+            className = args[1];
+        
+        Sample2 s = null;
+        try
+        {
+            s = new Sample2 ( uri, className );
+            s.connect ();
+            s.run ();
+        }
+        catch ( Throwable e )
+        {
+            e.printStackTrace ();
+        }
+        finally
+        {
+            if ( s != null )
+            {
+                s.disconnect ();
+            }
+        }
     }
 }
