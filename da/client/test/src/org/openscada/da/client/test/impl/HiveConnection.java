@@ -36,6 +36,7 @@ import org.openscada.core.client.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.da.client.Connection;
+import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 
@@ -50,6 +51,8 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     private Map < String, HiveItem > _itemMap = new HashMap < String, HiveItem > ();
     
     private FolderEntry _rootFolder = null;
+
+    private ItemManager _itemManager;
     
     private enum Properties
     {
@@ -78,6 +81,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
             }
 
         });
+        _itemManager = new ItemManager ( _connection );
 
     }
     
@@ -239,6 +243,11 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     public void setPropertyValue ( Object id, Object value )
     {
         // no op
+    }
+    
+    public ItemManager getItemManager ()
+    {
+        return _itemManager;
     }
     
 }

@@ -18,14 +18,16 @@ public class ListEntry extends Observable implements ItemUpdateListener
     public class AttributePair
     {
         public String key;
+
         public Variant value;
-        
+
         public AttributePair ( String key, Variant value )
         {
             super ();
             this.key = key;
             this.value = value;
         }
+
         @Override
         public int hashCode ()
         {
@@ -35,6 +37,7 @@ public class ListEntry extends Observable implements ItemUpdateListener
             result = PRIME * result + ( ( value == null ) ? 0 : value.hashCode () );
             return result;
         }
+
         @Override
         public boolean equals ( Object obj )
         {
@@ -50,27 +53,27 @@ public class ListEntry extends Observable implements ItemUpdateListener
                 if ( other.key != null )
                     return false;
             }
-            else
-                if ( !key.equals ( other.key ) )
-                    return false;
+            else if ( !key.equals ( other.key ) )
+                return false;
             if ( value == null )
             {
                 if ( other.value != null )
                     return false;
             }
-            else
-                if ( !value.equals ( other.value ) )
-                    return false;
+            else if ( !value.equals ( other.value ) )
+                return false;
             return true;
         }
     }
-    
+
     private static Logger _log = Logger.getLogger ( ListEntry.class );
-    
+
     private HiveItem _dataItem = null;
+
     private Variant _value = null;
+
     private Map<String, Variant> _attributes = new HashMap<String, Variant> ();
-    
+
     private boolean _subscribed = false;
 
     public HiveItem getDataItem ()
@@ -84,7 +87,7 @@ public class ListEntry extends Observable implements ItemUpdateListener
         _dataItem = dataItem;
         checkObservers ();
     }
-    
+
     public synchronized void clear ()
     {
         if ( _dataItem != null )
@@ -98,7 +101,7 @@ public class ListEntry extends Observable implements ItemUpdateListener
     {
         return _value;
     }
-    
+
     public synchronized List<AttributePair> getAttributes ()
     {
         List<AttributePair> pairs = new ArrayList<AttributePair> ( _attributes.size () );
@@ -112,9 +115,9 @@ public class ListEntry extends Observable implements ItemUpdateListener
     public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
     {
         _log.debug ( "Attribute change: " + attributes.size () );
-        
+
         AttributesHelper.mergeAttributes ( _attributes, attributes, initial );
-        
+
         setChanged ();
         notifyObservers ();
     }
@@ -122,39 +125,39 @@ public class ListEntry extends Observable implements ItemUpdateListener
     public synchronized void notifyValueChange ( Variant value, boolean cache )
     {
         _log.debug ( "Value change: " + value );
-        
+
         _value = value;
         setChanged ();
         notifyObservers ();
     }
-    
+
     protected synchronized void subscribe ()
     {
-        if ( (_dataItem != null) && (!_subscribed) )
+        if ( ( _dataItem != null ) && ( !_subscribed ) )
         {
             _log.debug ( "Subscribe: " + _dataItem.getId () );
-            _dataItem.getConnection ().getConnection ().addItemUpdateListener ( _dataItem.getId (), true, this );
+            _dataItem.getConnection ().getItemManager ().addItemUpdateListener ( _dataItem.getId (), true, this );
             _subscribed = true;
         }
     }
-    
+
     protected synchronized void unsubscribe ()
     {
-        if ( (_dataItem != null) && _subscribed )
+        if ( ( _dataItem != null ) && _subscribed )
         {
             _log.debug ( "Unsubscribe: " + _dataItem.getId () );
-            _dataItem.getConnection ().getConnection ().removeItemUpdateListener ( _dataItem.getId (), this );
+            _dataItem.getConnection ().getItemManager ().removeItemUpdateListener ( _dataItem.getId (), this );
             _subscribed = false;
         }
     }
-    
+
     @Override
     public synchronized void addObserver ( Observer o )
     {
         super.addObserver ( o );
         checkObservers ();
     }
-    
+
     @Override
     public synchronized void deleteObserver ( Observer o )
     {

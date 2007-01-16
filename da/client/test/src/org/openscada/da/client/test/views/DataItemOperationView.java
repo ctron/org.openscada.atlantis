@@ -19,7 +19,6 @@
 
 package org.openscada.da.client.test.views;
 
-
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -62,7 +61,6 @@ import org.openscada.da.client.DataItem;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.test.impl.HiveItem;
 
-
 /**
  * This sample class demonstrates how to plug-in a new
  * workbench view. The view shows data obtained from the
@@ -84,337 +82,364 @@ import org.openscada.da.client.test.impl.HiveItem;
 public class DataItemOperationView extends ViewPart implements ItemUpdateListener
 {
     private static Logger _log = Logger.getLogger ( DataItemOperationView.class );
-    
+
     private HiveItem _hiveItem = null;
-    
-	private TableViewer viewer;
-	private Action action1;
-	private Action action2;
-	private Action doubleClickAction;
-    
+
+    private TableViewer viewer;
+
+    private Action action1;
+
+    private Action action2;
+
+    private Action doubleClickAction;
+
     private Label _valueLabel;
+
     private StyledText _console;
 
-	/*
-	 * The content provider class is responsible for
-	 * providing objects to the view. It can wrap
-	 * existing objects in adapters or simply return
-	 * objects as-is. These objects may be sensitive
-	 * to the current input of the view, or ignore
-	 * it and always show the same content 
-	 * (like Task List, for example).
-	 */
-	
+    /*
+     * The content provider class is responsible for
+     * providing objects to the view. It can wrap
+     * existing objects in adapters or simply return
+     * objects as-is. These objects may be sensitive
+     * to the current input of the view, or ignore
+     * it and always show the same content 
+     * (like Task List, for example).
+     */
+
     class Entry
     {
         public String name;
+
         public Variant value;
-        
+
         public Entry ( String name, Variant value )
         {
             this.name = name;
             this.value = value;
         }
     }
-    
-	class ViewContentProvider implements IStructuredContentProvider, Observer
+
+    class ViewContentProvider implements IStructuredContentProvider, Observer
     {
         private Viewer _viewer = null;
+
         private DataItem _item = null;
-        
-		public void inputChanged(Viewer v, Object oldInput, Object newInput)
+
+        public void inputChanged ( Viewer v, Object oldInput, Object newInput )
         {
             _viewer = viewer;
-            
-            clearItem();
-            
+
+            clearItem ();
+
             if ( newInput instanceof HiveItem )
             {
-                if ( newInput != null ) 
+                if ( newInput != null )
                 {
                     HiveItem hiveItem = (HiveItem)newInput;
-                    
-                    _item = new DataItem ( hiveItem.getId() );
+
+                    _item = new DataItem ( hiveItem.getId () );
                     _item.addObserver ( this );
-                    _item.register ( hiveItem.getConnection().getConnection() );
+                    _item.register ( hiveItem.getConnection ().getItemManager () );
                 }
             }
         }
-        
+
         private void clearItem ()
         {
             if ( _item != null )
             {
-                _item.deleteObserver(this);
-                _item.unregister();
+                _item.deleteObserver ( this );
+                _item.unregister ();
                 _item = null;
             }
         }
-        
-		public void dispose()
+
+        public void dispose ()
         {
-            clearItem();
-		}
-        
-		public Object[] getElements(Object parent)
+            clearItem ();
+        }
+
+        public Object[] getElements ( Object parent )
         {
             if ( _item == null )
                 return new Object[0];
-            
-            Map<String,Variant> attrs = _item.getAttributes();
-            Entry [] entries = new Entry[attrs.size()];
+
+            Map<String, Variant> attrs = _item.getAttributes ();
+            Entry[] entries = new Entry[attrs.size ()];
             int i = 0;
-            
-            for ( Map.Entry<String,Variant> entry : attrs.entrySet() )
+
+            for ( Map.Entry<String, Variant> entry : attrs.entrySet () )
             {
-                entries[i++] = new Entry ( entry.getKey(), entry.getValue() );
+                entries[i++] = new Entry ( entry.getKey (), entry.getValue () );
             }
             return entries;
-		}
+        }
 
         public void update ( Observable o, Object arg )
         {
-            if ( !_viewer.getControl().isDisposed() )
+            if ( !_viewer.getControl ().isDisposed () )
             {
-                _viewer.getControl().getDisplay().asyncExec(new Runnable(){
-                    
+                _viewer.getControl ().getDisplay ().asyncExec ( new Runnable () {
+
                     public void run ()
                     {
-                        if ( !_viewer.getControl().isDisposed() )
+                        if ( !_viewer.getControl ().isDisposed () )
                         {
-                            _viewer.refresh();
+                            _viewer.refresh ();
                         }
-                    }});
+                    }
+                } );
             }
         }
     }
-	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index)
+
+    class ViewLabelProvider extends LabelProvider implements ITableLabelProvider
+    {
+        public String getColumnText ( Object obj, int index )
         {
-            if ( !(obj instanceof Entry) )
+            if ( ! ( obj instanceof Entry ) )
                 return "";
-            
+
             Entry entry = (Entry)obj;
-            
+
             switch ( index )
             {
             case 0:
                 return entry.name;
-            case 1:            
-                return entry.value.asString("<null>");
+            case 1:
+                return entry.value.asString ( "<null>" );
             }
-            return getText(obj);
+            return getText ( obj );
         }
-		public Image getColumnImage(Object obj, int index)
+
+        public Image getColumnImage ( Object obj, int index )
         {
             if ( index == 0 )
-                return getImage(obj);
+                return getImage ( obj );
             else
                 return null;
-		}
-		public Image getImage(Object obj) {
-			return PlatformUI.getWorkbench().
-					getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
-		}
-	}
-	class NameSorter extends ViewerSorter {
-	}
+        }
 
-	/**
-	 * The constructor.
-	 */
-	public DataItemOperationView()
-    {
-        
-	}
+        public Image getImage ( Object obj )
+        {
+            return PlatformUI.getWorkbench ().getSharedImages ().getImage ( ISharedImages.IMG_OBJ_ELEMENT );
+        }
+    }
 
-	/**
-	 * This is a callback that will allow us
-	 * to create the viewer and initialize it.
-	 */
-	public void createPartControl(Composite parent)
+    class NameSorter extends ViewerSorter
     {
-        parent.setLayout(new GridLayout(1,false));
-        
+    }
+
+    /**
+     * The constructor.
+     */
+    public DataItemOperationView ()
+    {
+
+    }
+
+    /**
+     * This is a callback that will allow us
+     * to create the viewer and initialize it.
+     */
+    public void createPartControl ( Composite parent )
+    {
+        parent.setLayout ( new GridLayout ( 1, false ) );
+
         GridData gd;
-        
+
         // value label
-        gd = new GridData();
+        gd = new GridData ();
         gd.grabExcessHorizontalSpace = true;
         gd.horizontalAlignment = SWT.FILL;
         gd.verticalAlignment = SWT.CENTER;
         _valueLabel = new Label ( parent, SWT.NONE );
         _valueLabel.setLayoutData ( gd );
-        
-        SashForm box = new SashForm ( parent, SWT.VERTICAL );        
-        gd = new GridData();
+
+        SashForm box = new SashForm ( parent, SWT.VERTICAL );
+        gd = new GridData ();
         gd.grabExcessHorizontalSpace = true;
         gd.grabExcessVerticalSpace = true;
         gd.horizontalAlignment = SWT.FILL;
         gd.verticalAlignment = SWT.FILL;
         box.setLayoutData ( gd );
-        
+
         // attributes table
-        
-		viewer = new TableViewer(box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-        viewer.getControl().setLayoutData(gd);
-		viewer.setContentProvider(new ViewContentProvider());
-		viewer.setLabelProvider(new ViewLabelProvider());
-        
+
+        viewer = new TableViewer ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
+        viewer.getControl ().setLayoutData ( gd );
+        viewer.setContentProvider ( new ViewContentProvider () );
+        viewer.setLabelProvider ( new ViewLabelProvider () );
+
         TableColumn col;
-        
-        col = new TableColumn(viewer.getTable(),SWT.NONE);
+
+        col = new TableColumn ( viewer.getTable (), SWT.NONE );
         col.setText ( "Name" );
-        col.setWidth(200);
-        col = new TableColumn(viewer.getTable(),SWT.NONE);
+        col.setWidth ( 200 );
+        col = new TableColumn ( viewer.getTable (), SWT.NONE );
         col.setText ( "Value" );
-        col.setWidth(500);
-		
-        viewer.getTable().setHeaderVisible(true);
-        viewer.setSorter(new NameSorter());
-        
+        col.setWidth ( 500 );
+
+        viewer.getTable ().setHeaderVisible ( true );
+        viewer.setSorter ( new NameSorter () );
+
         // console window
         _console = new StyledText ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY );
         _console.setLayoutData ( gd );
-        
+
         // set up sash
-        box.setWeights ( new int[]{60,40} );
+        box.setWeights ( new int[] { 60, 40 } );
         //box.setMaximizedControl ( _console );
-        
+
         // actions
-		makeActions();
-		//hookContextMenu();
-		//hookDoubleClickAction();
-		//contributeToActionBars();
-	}
-    
+        makeActions ();
+        //hookContextMenu();
+        //hookDoubleClickAction();
+        //contributeToActionBars();
+    }
+
     private void appendConsoleMessage ( final String message )
     {
-        if (!_console.isDisposed() )
+        if ( !_console.isDisposed () )
         {
-            _console.getDisplay().asyncExec(new Runnable(){
-                
-                public void run ()
-                {
-                    if ( !_console.isDisposed() )
-                    {
-                        _console.append ( message + "\n" );
-                        _console.setSelection(_console.getCharCount());
-                        _console.showSelection();
-                    }
-                }});
-        }
-    }
-    
-    private void setValue ( final Variant variant )
-    {
-        if ( !_valueLabel.isDisposed() )
-        {
-            _valueLabel.getDisplay().asyncExec(new Runnable(){
+            _console.getDisplay ().asyncExec ( new Runnable () {
 
                 public void run ()
                 {
-                    if ( !_valueLabel.isDisposed() )
+                    if ( !_console.isDisposed () )
                     {
-                        if ( variant.isNull() )
+                        _console.append ( message + "\n" );
+                        _console.setSelection ( _console.getCharCount () );
+                        _console.showSelection ();
+                    }
+                }
+            } );
+        }
+    }
+
+    private void setValue ( final Variant variant )
+    {
+        if ( !_valueLabel.isDisposed () )
+        {
+            _valueLabel.getDisplay ().asyncExec ( new Runnable () {
+
+                public void run ()
+                {
+                    if ( !_valueLabel.isDisposed () )
+                    {
+                        if ( variant.isNull () )
                         {
-                            _valueLabel.setText("Value: <null>");
+                            _valueLabel.setText ( "Value: <null>" );
                         }
                         else
                         {
-                            _valueLabel.setText("Value: " + variant.asString("BUG!"));
+                            _valueLabel.setText ( "Value: " + variant.asString ( "BUG!" ) );
                         }
                     }
-                }});
+                }
+            } );
         }
     }
 
-	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-                fillContextMenu(manager);
-			}
-		});
-		Menu menu = menuMgr.createContextMenu(viewer.getControl());
-		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
-	}
+    private void hookContextMenu ()
+    {
+        MenuManager menuMgr = new MenuManager ( "#PopupMenu" );
+        menuMgr.setRemoveAllWhenShown ( true );
+        menuMgr.addMenuListener ( new IMenuListener () {
+            public void menuAboutToShow ( IMenuManager manager )
+            {
+                fillContextMenu ( manager );
+            }
+        } );
+        Menu menu = menuMgr.createContextMenu ( viewer.getControl () );
+        viewer.getControl ().setMenu ( menu );
+        getSite ().registerContextMenu ( menuMgr, viewer );
+    }
 
-	private void contributeToActionBars() {
-		IActionBars bars = getViewSite().getActionBars();
-		fillLocalPullDown(bars.getMenuManager());
-		fillLocalToolBar(bars.getToolBarManager());
-	}
+    private void contributeToActionBars ()
+    {
+        IActionBars bars = getViewSite ().getActionBars ();
+        fillLocalPullDown ( bars.getMenuManager () );
+        fillLocalToolBar ( bars.getToolBarManager () );
+    }
 
-	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(new Separator());
-		manager.add(action2);
-	}
+    private void fillLocalPullDown ( IMenuManager manager )
+    {
+        manager.add ( action1 );
+        manager.add ( new Separator () );
+        manager.add ( action2 );
+    }
 
-	private void fillContextMenu(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(action2);
-		// Other plug-ins can contribute there actions here
-		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-	}
-	
-	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(action1);
-		manager.add(action2);
-	}
+    private void fillContextMenu ( IMenuManager manager )
+    {
+        manager.add ( action1 );
+        manager.add ( action2 );
+        // Other plug-ins can contribute there actions here
+        manager.add ( new Separator ( IWorkbenchActionConstants.MB_ADDITIONS ) );
+    }
 
-	private void makeActions() {
-		action1 = new Action() {
-			public void run() {
-				showMessage("Action 1 executed");
-			}
-		};
-		action1.setText("Action 1");
-		action1.setToolTipText("Action 1 tooltip");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-		
-		action2 = new Action() {
-			public void run() {
-				showMessage("Action 2 executed");
-			}
-		};
-		action2.setText("Action 2");
-		action2.setToolTipText("Action 2 tooltip");
-		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-		doubleClickAction = new Action() {
-			public void run() {
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection)selection).getFirstElement();
-				showMessage("Double-click detected on "+obj.toString());
-			}
-		};
-	}
+    private void fillLocalToolBar ( IToolBarManager manager )
+    {
+        manager.add ( action1 );
+        manager.add ( action2 );
+    }
 
-	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
-			}
-		});
-	}
-	private void showMessage(String message) {
-		MessageDialog.openInformation(
-			viewer.getControl().getShell(),
-			"Data Item View",
-			message);
-	}
+    private void makeActions ()
+    {
+        action1 = new Action () {
+            public void run ()
+            {
+                showMessage ( "Action 1 executed" );
+            }
+        };
+        action1.setText ( "Action 1" );
+        action1.setToolTipText ( "Action 1 tooltip" );
+        action1.setImageDescriptor ( PlatformUI.getWorkbench ().getSharedImages ().getImageDescriptor (
+                ISharedImages.IMG_OBJS_INFO_TSK ) );
 
-	/**
-	 * Passing the focus request to the viewer's control.
-	 */
-	public void setFocus() {
-		viewer.getControl().setFocus();
-	}
+        action2 = new Action () {
+            public void run ()
+            {
+                showMessage ( "Action 2 executed" );
+            }
+        };
+        action2.setText ( "Action 2" );
+        action2.setToolTipText ( "Action 2 tooltip" );
+        action2.setImageDescriptor ( PlatformUI.getWorkbench ().getSharedImages ().getImageDescriptor (
+                ISharedImages.IMG_OBJS_INFO_TSK ) );
+        doubleClickAction = new Action () {
+            public void run ()
+            {
+                ISelection selection = viewer.getSelection ();
+                Object obj = ( (IStructuredSelection)selection ).getFirstElement ();
+                showMessage ( "Double-click detected on " + obj.toString () );
+            }
+        };
+    }
+
+    private void hookDoubleClickAction ()
+    {
+        viewer.addDoubleClickListener ( new IDoubleClickListener () {
+            public void doubleClick ( DoubleClickEvent event )
+            {
+                doubleClickAction.run ();
+            }
+        } );
+    }
+
+    private void showMessage ( String message )
+    {
+        MessageDialog.openInformation ( viewer.getControl ().getShell (), "Data Item View", message );
+    }
+
+    /**
+     * Passing the focus request to the viewer's control.
+     */
+    public void setFocus ()
+    {
+        viewer.getControl ().setFocus ();
+    }
 
     @Override
     public void dispose ()
@@ -422,46 +447,48 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
         setDataItem ( null );
         super.dispose ();
     }
-    
-	public void setDataItem ( HiveItem item )
+
+    public void setDataItem ( HiveItem item )
     {
         if ( _hiveItem != null )
         {
-            _hiveItem.getConnection().getConnection().removeItemUpdateListener(_hiveItem.getId(),this);
-            appendConsoleMessage("Unsubscribe from item: " + _hiveItem.getId() );
-            
-            setPartName("Data Item Viewer");
+            _hiveItem.getConnection ().getItemManager ().removeItemUpdateListener ( _hiveItem.getId (), this );
+            appendConsoleMessage ( "Unsubscribe from item: " + _hiveItem.getId () );
+
+            setPartName ( "Data Item Viewer" );
         }
-        
+
         if ( item != null )
         {
-            setPartName("Data Item Viewer: " + item.getId());
-            
-            _log.info ( "Set data item: " + item.getId() );
-            
+            setPartName ( "Data Item Viewer: " + item.getId () );
+
+            _log.info ( "Set data item: " + item.getId () );
+
             _hiveItem = item;
-            
-            appendConsoleMessage("Subscribe to item: " + _hiveItem.getId() );
-            _hiveItem.getConnection().getConnection().addItemUpdateListener(_hiveItem.getId(),true,this);
-            
+
+            appendConsoleMessage ( "Subscribe to item: " + _hiveItem.getId () );
+            _hiveItem.getConnection ().getItemManager ().addItemUpdateListener ( _hiveItem.getId (), true, this );
+
             viewer.setInput ( item );
         }
     }
 
     public void notifyValueChange ( Variant value, boolean initial )
     {
-        appendConsoleMessage("Value change event: " + value.asString("<null>") + " " + ( initial ? "initial" : "" ));
-        setValue(value);
+        appendConsoleMessage ( "Value change event: " + value.asString ( "<null>" ) + " " + ( initial ? "initial" : "" ) );
+        setValue ( value );
     }
 
     public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
     {
-        appendConsoleMessage("Attribute change set " + (initial?"(initial)":"") + " " + attributes.size() + " item(s) follow:");
+        appendConsoleMessage ( "Attribute change set " + ( initial ? "(initial)" : "" ) + " " + attributes.size ()
+                + " item(s) follow:" );
         int i = 0;
-        for ( Map.Entry<String,Variant> entry : attributes.entrySet() )
+        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
-            String q = entry.getValue().isNull() ? "" : "'";
-            appendConsoleMessage ( "#" + i + ": " + entry.getKey() + "->" + q + entry.getValue().asString("<null>") + q );
+            String q = entry.getValue ().isNull () ? "" : "'";
+            appendConsoleMessage ( "#" + i + ": " + entry.getKey () + "->" + q + entry.getValue ().asString ( "<null>" )
+                    + q );
         }
     }
 }
