@@ -21,7 +21,7 @@
 		<mkdir dir="gensrc"/>
     	<slice2java outputdir="gensrc" casesensitive="true">
 			<meta value="true"/>
-			<fileset dir="../openscada_ice_interface">
+			<fileset dir="../openscada_interface_ice">
 				<include name="core/*.ice"/>
 			</fileset>
 		</slice2java>
