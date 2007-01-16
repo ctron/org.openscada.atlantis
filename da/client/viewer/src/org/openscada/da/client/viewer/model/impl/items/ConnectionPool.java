@@ -24,22 +24,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.client.net.ConnectionInfo;
+import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.net.Connection;
 
 public class ConnectionPool
 {
     private Map<URI, Connection> _connectionMap = new HashMap<URI, Connection> ();
+    private Map<URI, ItemManager> _itemManagerMap = new HashMap<URI, ItemManager> ();
     
     public synchronized Connection getConnection ( URI uri )
     {
-        Connection c = _connectionMap.get ( uri );
-        if ( c == null )
+        Connection connection = _connectionMap.get ( uri );
+        if ( connection == null )
         {
             ConnectionInfo ci = ConnectionInfo.fromUri ( uri );
-            c = new Connection ( ci );
-            c.connect ();
-            _connectionMap.put ( uri, c );
+            connection = new Connection ( ci );
+            connection.connect ();
+            _connectionMap.put ( uri, connection );
         }
-        return c;
+        return connection;
+    } 
+    
+    public synchronized ItemManager getItemManager ( URI uri )
+    {
+        ItemManager itemManager = _itemManagerMap.get ( uri );
+        if ( itemManager == null )
+        {
+           Connection conncetion = getConnection ( uri );
+           itemManager = new ItemManager ( conncetion );
+            _itemManagerMap.put ( uri, itemManager );
+        }
+        return itemManager;
     } 
 }

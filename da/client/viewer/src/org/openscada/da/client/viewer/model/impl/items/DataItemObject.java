@@ -22,6 +22,7 @@ package org.openscada.da.client.viewer.model.impl.items;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.viewer.model.impl.BaseDynamicObject;
 import org.openscada.da.client.viewer.model.impl.PropertyInput;
@@ -61,7 +62,7 @@ public class DataItemObject extends BaseDynamicObject
         {
             try
             {
-                _output = new DataItemOutput ( getConnection (), _item, "value" );
+                _output = new DataItemOutput ( getItemManager (), _item, "value" );
                 addOutput ( _output );
                 _input = new DataItemInput ( getConnection (), _item, "value" );
                 addInput ( _input );
@@ -76,5 +77,10 @@ public class DataItemObject extends BaseDynamicObject
     protected Connection getConnection () throws URISyntaxException
     {
         return _connectionPool.getConnection ( new URI ( _connectionURI ) );
+    }
+    
+    protected ItemManager getItemManager () throws URISyntaxException
+    {
+        return _connectionPool.getItemManager ( new URI ( _connectionURI ) );
     }
 }

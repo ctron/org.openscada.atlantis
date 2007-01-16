@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.core.client.net.ConnectionInfo;
+import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.viewer.Activator;
 import org.openscada.da.client.viewer.configurator.Configurator;
@@ -118,9 +119,10 @@ public class ProcessView extends ViewPart
         
         Connection c = new Connection ( ci );
         c.connect ();
+        ItemManager i = new ItemManager ( c );
         
-        OutputDefinition diOutput = new DataItemOutput ( c, "time", "time" );
-        OutputDefinition diOutput2 = new DataItemOutput ( c, "memory", "memory" );
+        OutputDefinition diOutput = new DataItemOutput ( i, "time", "time" );
+        OutputDefinition diOutput2 = new DataItemOutput ( i, "memory", "memory" );
         
         SimpleVariantIntegerConverter svic = new SimpleVariantIntegerConverter ( "3" );
         svic.setDefaultValue ( 0L );

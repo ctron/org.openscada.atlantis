@@ -25,6 +25,7 @@ import java.util.Observer;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.client.DataItem;
+import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.viewer.model.OutputDefinition;
 import org.openscada.da.client.viewer.model.OutputListener;
@@ -35,14 +36,14 @@ public class DataItemOutput extends BaseOutput implements OutputDefinition, Obse
 {
     private static Logger _log = Logger.getLogger ( DataItemOutput.class );
     
-    private Connection _connection = null;
+    private ItemManager _itemManager = null;
     private DataItem _dataItem = null;
     private boolean _subscribed = false;
     
-    public DataItemOutput ( Connection connection, String item, String name )
+    public DataItemOutput ( ItemManager itemManager, String item, String name )
     {
         super ( name );
-        _connection = connection;
+        _itemManager = itemManager;
         _dataItem = new DataItem ( item );
     }
     
@@ -54,7 +55,7 @@ public class DataItemOutput extends BaseOutput implements OutputDefinition, Obse
         _log.debug ( String.format ( "Subscribing to item" ) );
         
         _dataItem.addObserver ( this );
-        _dataItem.register ( _connection );
+        _dataItem.register ( _itemManager );
         _subscribed = true;
     }
     
