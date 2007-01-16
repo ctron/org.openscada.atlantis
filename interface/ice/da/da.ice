@@ -1,6 +1,7 @@
 #ifndef _OPENSCADA_DA_SLICE_
 #define _OPENSCADA_DA_SLICE_
 
+#include "../ice/Ice/Identity.ice"
 #include "../core/core.ice"
 
 module OpenSCADA
@@ -16,8 +17,8 @@ module OpenSCADA
 		
 		interface Session extends Core::Session
 		{
-			void registerCallback ( DataCallback * dataCallback );	
-			void unregisterCallback ();
+			void setCallback ( Ice::Identity ident );	
+			void unsetCallback ();
 		};
 		
 		exception UnableToCreateSession
@@ -26,6 +27,7 @@ module OpenSCADA
 		
 		exception InvalidItemException
 		{
+			string item;
 		};
 		
 		["ami"]
@@ -33,11 +35,11 @@ module OpenSCADA
 		{
 			Session * createSession ( Core::Properties properties ) throws UnableToCreateSession;
 			
-			void registerForItem ( Core::Session * session, string item ) throws Core::InvalidSessionException, InvalidItemException;
-			void unregisterForItem ( Core::Session * session, string item ) throws Core::InvalidSessionException, InvalidItemException;
+			void registerForItem ( Session * session, string item, bool initialCacheRead ) throws Core::InvalidSessionException, InvalidItemException;
+			void unregisterForItem ( Session * session, string item ) throws Core::InvalidSessionException, InvalidItemException;
 			
-			["amd"] void write ( Core::Session * session, string item, Core::VariantBase value ) throws Core::InvalidSessionException, InvalidItemException;
-			["amd"] Core::Properties writeAttributes ( Core::Session * session, string item, Core::Attributes attributes ) throws Core::InvalidSessionException, InvalidItemException;
+			["amd"] void write ( Session * session, string item, Core::VariantBase value ) throws Core::InvalidSessionException, InvalidItemException;
+			["amd"] Core::Properties writeAttributes ( Session * session, string item, Core::Attributes attributes ) throws Core::InvalidSessionException, InvalidItemException;
 		};
 	};
 };

@@ -20,7 +20,7 @@ module OpenSCADA
 			void closeSession ( Session * session ) throws InvalidSessionException;
 		};
 		
-		enum VariantType { VTboolean, VTstring, VTint32, VTint64, VTdouble };
+		enum VariantType { VTboolean, VTstring, VTint32, VTint64, VTdouble, VTnull };
 		
 		class VariantBase
 		{
@@ -35,6 +35,21 @@ module OpenSCADA
 		class VariantString extends VariantBase
 		{
 			string value;
+		};
+		
+		class VariantInt32 extends VariantBase
+		{
+			int value;
+		};
+		
+		class VariantInt64 extends VariantBase
+		{
+			long value;
+		};
+		
+		class VariantDouble extends VariantBase
+		{
+			double value;
 		};
 		
 		dictionary <string, VariantBase> Attributes;
