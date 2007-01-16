@@ -21,8 +21,8 @@ package org.openscada.da.server.net;
 
 import java.io.IOException;
 
-import org.openscada.da.core.common.impl.ExporterBase;
 import org.openscada.da.core.server.Hive;
+import org.openscada.da.server.common.impl.ExporterBase;
 import org.openscada.net.io.net.Server;
 
 public class Exporter extends ExporterBase implements Runnable
