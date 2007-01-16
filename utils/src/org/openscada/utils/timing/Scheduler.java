@@ -145,6 +145,11 @@ public class Scheduler implements Runnable
         this ( true );
     }
 
+    /**
+     * Create a new scheduler. If it is asynchronous a new start will be started to process
+     * things.
+     * @param async flag if this scheduler is asynchronous or not
+     */
     public Scheduler ( boolean async )
     {
         if ( async )
