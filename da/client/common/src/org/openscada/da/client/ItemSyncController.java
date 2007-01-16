@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
 
-public class ItemSyncController
+public class ItemSyncController implements ItemUpdateListener
 {
     
     private static Logger _log = Logger.getLogger ( ItemSyncController.class );
@@ -102,6 +102,8 @@ public class ItemSyncController
     {
         _connection = connection;
         _itemName = itemName;
+        
+        _connection.setItemUpdateListener ( _itemName, this );
     }
 
     public String getItemName ()
@@ -180,6 +182,8 @@ public class ItemSyncController
             _subscribed = subscribe;
             _subscribedInitial = initial;
             
+            try
+            {
             if ( subscribe )
             {
                 _log.debug ( "Syncing listen state: active " + initial );
@@ -190,10 +194,20 @@ public class ItemSyncController
                 _log.debug ( "Syncing listen state: inactive " );
                 _connection.unsubscribeItem ( _itemName );
             }
+            }
+            catch ( Throwable e )
+            {
+                handleError ( e );
+            }
         }
     }
     
-    public void fireValueChange ( Variant value, boolean initial )
+    private void handleError ( Throwable e )
+    {
+        // FIXME: solve problem when subscription fails
+    }
+    
+    public void notifyValueChange ( Variant value, boolean initial )
     {
         synchronized ( _listeners )
         {
@@ -207,7 +221,7 @@ public class ItemSyncController
         }
     }
 
-    public void fireAttributesChange ( Map<String, Variant> attributes, boolean initial )
+    public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
     {
         synchronized ( _listeners )
         {

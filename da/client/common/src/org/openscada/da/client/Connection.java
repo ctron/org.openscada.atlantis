@@ -2,6 +2,7 @@ package org.openscada.da.client;
 
 import java.util.Map;
 
+import org.openscada.core.InvalidSessionException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.Location;
@@ -33,7 +34,7 @@ public interface Connection extends org.openscada.core.client.Connection
     public abstract void removeFolderListener ( FolderListener listener, Location location );
     public abstract void removeFolderWatcher ( FolderWatcher watcher );
     
-    public abstract void subscribeItem ( String itemId, boolean initial );
-    public abstract void unsubscribeItem ( String itemId );
+    public abstract void subscribeItem ( String itemId, boolean initial ) throws InvalidSessionException, OperationException;
+    public abstract void unsubscribeItem ( String itemId ) throws InvalidSessionException, OperationException;
     public abstract ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener );
 }
