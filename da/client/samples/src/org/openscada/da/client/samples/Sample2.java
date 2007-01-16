@@ -41,45 +41,11 @@ import org.openscada.da.client.Connection;
  * 
  * @author Jens Reimann <jens.reimann@inavare.net>
  */
-public class Sample2
+public class Sample2 extends SampleBase
 {
-    private String _uri = null;
-    private Connection _connection = null;
-    
     public Sample2 ( String uri, String className) throws ClassNotFoundException
     {
-        _uri = uri;
-        
-        // If we got a class name load it
-        if ( className != null )
-            Class.forName ( className );
-
-        if ( _uri == null )
-            _uri = "da:net://localhost:1202";
-    }
-    
-    public void connect () throws Exception 
-    {
-        ConnectionInformation ci = ConnectionInformation.fromURI ( _uri );
-        
-        _connection = (Connection)ConnectionFactory.create ( ci );
-        if ( _connection == null )
-            throw new Exception ( "Unable to find a connection driver for specified URI" );
-        
-        // trigger the connection
-        _connection.connect ();
-        try
-        {
-            // wait until the connection is established. If it already is the call
-            // will return immediately.
-            // If the connect attempt fails an exception is thrown.
-            _connection.waitForConnection ();
-        }
-        catch ( Throwable e )
-        {
-            // we were unlucky
-            throw new Exception ( "Unable to create connection", e );
-        }
+        super ( uri, className );
     }
     
     public void run () throws InterruptedException, OperationException
@@ -92,11 +58,6 @@ public class Sample2
         attributes.put ( "hello", new Variant ( "world" ) );
         attributes.put ( "foo", new Variant ( "bar" ) );
         _connection.writeAttributes ( "test-1", attributes );
-    }
-    
-    public void disconnect ()
-    {
-        _connection.disconnect ();
     }
     
     public static void main ( String[] args ) throws Exception

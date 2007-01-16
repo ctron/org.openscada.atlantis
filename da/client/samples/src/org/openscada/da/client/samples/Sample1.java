@@ -39,47 +39,30 @@ import org.openscada.da.client.ItemUpdateListener;
  * 
  * @author Jens Reimann <jens.reimann@inavare.net>
  */
-public class Sample1 implements ItemUpdateListener
+public class Sample1 extends SampleBase implements ItemUpdateListener
 {
-    public Sample1 () throws Exception
+    private ItemManager _itemManager;
+
+    public Sample1 ( String uri, String className ) throws Exception
     {
-        Class.forName ( "org.openscada.da.client.net.Connection" );
-        ConnectionInformation ci = ConnectionInformation.fromURI ( "da:net://localhost:1202" );
-        
-        Connection c = (Connection)ConnectionFactory.create ( ci );
-        ItemManager itemManager = new ItemManager ( c );
-        if ( c == null )
-            throw new Exception ( "Unable to find a connection driver for specified URI" );
-        
-        // trigger the connection
-        c.connect ();
-        try
-        {
-            // wait until the connection is established. If it already is the call
-            // will return immediately.
-            // If the connect attempt fails an exception is thrown.
-            c.waitForConnection ();
-        }
-        catch ( Throwable e )
-        {
-            // we were unlucky
-            throw new Exception ( "Unable to create connection", e );
-        }
-        
+        super ( uri, className );
+        _itemManager = new ItemManager ( _connection );
+    }
+    
+    public void subscribe ()
+    {
         // add us as item update listener
         // since we subscribe with "initial=true" we will get the current value
         // before any other event. Setting to "false" would ignore the current
         // value of this item and wait for the first change.
-        itemManager.addItemUpdateListener ( "time", true, this );
+        _itemManager.addItemUpdateListener ( "time", true, this );
     }
     
-    public static void main ( String[] args ) throws Exception
+    public void unsubscribe ()
     {
-        new Sample1 ();
-        // Sleep a little bit to get some events
-        Thread.sleep ( 10 * 1000 );
+        _itemManager.removeItemUpdateListener ( "item", this );
     }
-
+    
     public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
     {
         // Attributes have changed
@@ -97,5 +80,37 @@ public class Sample1 implements ItemUpdateListener
         // The value has changed
         // If it is an initial transmission it is not a change but the last change that occurred.
         System.out.println ( "Value of item changed: " + value.toString () + ( initial ? " (cache read)" : "" ) );
+    }
+    
+    public static void main ( String[] args ) throws Exception
+    {
+        String uri = null;
+        String className = null;
+        
+        if ( args.length > 0 )
+            uri = args[0];
+        if ( args.length > 1 )
+            className = args[1];
+        
+        Sample1 s = null;
+        try
+        {
+            s = new Sample1 ( uri, className );
+            s.connect ();
+            s.subscribe ();
+            Thread.sleep ( 10 * 1000 );
+            s.unsubscribe ();
+        }
+        catch ( Throwable e )
+        {
+            e.printStackTrace ();
+        }
+        finally
+        {
+            if ( s != null )
+            {
+                s.disconnect ();
+            }
+        }
     }
 }
