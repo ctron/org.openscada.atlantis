@@ -30,7 +30,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.openscada.da.core.common.configuration.ConfigurationError;
+import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.rcp.LocalTestServer.Activator;
 import org.openscada.da.rcp.LocalTestServer.AlreadyStartedException;
 
