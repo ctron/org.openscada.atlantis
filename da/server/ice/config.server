@@ -1,0 +1,1 @@
+Hive.Endpoints=tcp -p 10000:udp -p 10000
