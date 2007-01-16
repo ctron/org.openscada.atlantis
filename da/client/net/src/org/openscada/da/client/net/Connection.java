@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -89,7 +89,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
     private static Logger _log = Logger.getLogger ( Connection.class );
 
-    private Map<String, ItemSyncController> _itemListeners = new HashMap<String, ItemSyncController> ();
+    private Map<String, ItemUpdateListener> _itemListeners = new HashMap<String, ItemUpdateListener> ();
     private Map<Location, FolderSyncController> _folderListeners = new HashMap<Location, FolderSyncController> ();
 
     private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener> ();
@@ -219,52 +219,6 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         removeFolderListener ( watcher, watcher.getLocation () );
     }
     
-    public void addItemUpdateListener ( String itemName, boolean initial, ItemUpdateListener listener ) 
-    {
-        synchronized ( _itemListeners )
-        {
-            if ( !_itemListeners.containsKey ( itemName ) )
-            {
-                _itemListeners.put ( itemName, new ItemSyncController ( this, new String ( itemName ) ) );
-            }
-
-            ItemSyncController controller = _itemListeners.get ( itemName );
-            controller.add ( listener, initial );
-        }
-    }
-
-    public void removeItemUpdateListener ( String itemName, ItemUpdateListener listener ) 
-    {
-        synchronized ( _itemListeners )
-        {
-            if ( !_itemListeners.containsKey ( itemName ) )
-            {
-                return;
-            }
-
-            ItemSyncController controller = _itemListeners.get ( itemName );
-            controller.remove ( listener );
-        }
-    }
-
-    /**
-     * Synchronized all items that are currently known
-     *
-     */
-    private void resyncAllItems ()
-    {
-        _log.debug("Syncing all items");
-
-        synchronized ( _itemListeners )
-        {
-            for ( Map.Entry<String,ItemSyncController> entry : _itemListeners.entrySet() )
-            {
-                entry.getValue().sync ( true );
-            }
-        }
-        _log.debug("re-sync complete");
-    }
-
     private void resyncAllFolders ()
     {
         synchronized ( _folderListeners )
@@ -307,9 +261,10 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
     {
         synchronized ( _itemListeners )
         {
-            if ( _itemListeners.containsKey ( itemName ) )
+            ItemUpdateListener listener = _itemListeners.get ( itemName );
+            if ( listener != null )
             {
-                _itemListeners.get ( itemName ).fireValueChange ( value, initial );
+                listener.notifyValueChange ( value, initial );
             }
         }
     }
@@ -318,9 +273,10 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
     {
         synchronized ( _itemListeners )
         {
-            if ( _itemListeners.containsKey ( itemName ) )
+            ItemUpdateListener listener = _itemListeners.get ( itemName );
+            if ( listener != null )
             {
-                _itemListeners.get ( itemName ).fireAttributesChange(attributes,initial);
+                listener.notifyAttributeChange ( attributes, initial );
             }
         }
     }
@@ -498,7 +454,6 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
     @Override
     protected void onConnectionBound ()
     {
-        resyncAllItems ();
         // sync again all folder subscriptions
         resyncAllFolders ();   
     }
@@ -515,5 +470,18 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
        requestSession ();
     }
     
-   
+    public void subscribeItem ( String itemId, boolean initial )
+    {
+        sendMessage ( Messages.subscribeItem ( itemId, initial ) );
+    }
+    
+    public void unsubscribeItem ( String itemId )
+    {
+        sendMessage ( Messages.unsubscribeItem ( itemId ) );
+    }
+    
+    public synchronized ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener )
+    {
+        return _itemListeners.put ( itemId, listener );
+    }
 }

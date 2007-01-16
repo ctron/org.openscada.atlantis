@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,17 +25,18 @@ import java.util.Observable;
 
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
-import org.openscada.da.client.Connection;
 
 public class DataItem extends Observable
 {
     private String _itemName;
-    private Connection _connection = null;
-    
-    private Variant _value = new Variant();
-    private Map<String,Variant> _attributes = new HashMap<String,Variant>();
-    
-    private ItemUpdateListener _listener = new ItemUpdateListener(){
+
+    private ItemManager _itemManager = null;
+
+    private Variant _value = new Variant ();
+
+    private Map<String, Variant> _attributes = new HashMap<String, Variant> ();
+
+    private ItemUpdateListener _listener = new ItemUpdateListener () {
 
         public void notifyValueChange ( Variant value, boolean initial )
         {
@@ -45,55 +46,56 @@ public class DataItem extends Observable
         public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
         {
             performNotifyAttributeChange ( attributes, initial );
-        }};
-    
+        }
+    };
+
     public DataItem ( String itemName )
     {
-        _itemName = new String(itemName);
+        _itemName = new String ( itemName );
     }
-    
-    public DataItem ( String itemName, Connection connection )
+
+    public DataItem ( String itemName, ItemManager connection )
     {
-        this(itemName);
-        
+        this ( itemName );
+
         register ( connection );
     }
-    
-    synchronized public void register ( Connection connection )
+
+    synchronized public void register ( ItemManager connection )
     {
-        if ( _connection == connection )
+        if ( _itemManager == connection )
             return;
-        
-        _connection = connection;
-        _connection.addItemUpdateListener ( _itemName, true, _listener );
+
+        _itemManager = connection;
+        _itemManager.addItemUpdateListener ( _itemName, true, _listener );
     }
-    
+
     synchronized public void unregister ()
     {
-        if ( _connection == null )
+        if ( _itemManager == null )
             return;
-        
-        _connection.removeItemUpdateListener ( _itemName, _listener );
+
+        _itemManager.removeItemUpdateListener ( _itemName, _listener );
     }
-    
+
     private void performNotifyValueChange ( Variant value, boolean initial )
     {
         _value = value;
-        setChanged();
-        notifyObservers();
+        setChanged ();
+        notifyObservers ();
     }
 
     private void performNotifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
     {
         if ( initial )
-            _attributes = new HashMap<String,Variant> ( attributes );
+            _attributes = new HashMap<String, Variant> ( attributes );
         else
             AttributesHelper.mergeAttributes ( _attributes, attributes );
-        
-        setChanged();
-        notifyObservers();
+
+        setChanged ();
+        notifyObservers ();
     }
-    
+
     /**
      * Fetch the current cached value.
      * 
@@ -105,7 +107,7 @@ public class DataItem extends Observable
     {
         return _value;
     }
-    
+
     /**
      * Fetch the current cached attributes.
      * 
@@ -113,9 +115,9 @@ public class DataItem extends Observable
      *  
      * @return the current attributes
      */
-    public Map<String,Variant> getAttributes ()
+    public Map<String, Variant> getAttributes ()
     {
         return _attributes;
     }
-    
+
 }

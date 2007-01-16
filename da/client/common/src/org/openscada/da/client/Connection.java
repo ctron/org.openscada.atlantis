@@ -28,11 +28,12 @@ public interface Connection extends org.openscada.core.client.Connection
     public abstract LongRunningOperation startWriteAttributes ( String itemId, Map<String,Variant> attributes, LongRunningListener listener );
     public abstract WriteAttributeResults completeWriteAttributes ( LongRunningOperation operation ) throws OperationException;
     
-    public abstract void addItemUpdateListener ( String itemName, boolean initial, ItemUpdateListener listener ); 
-    public abstract void removeItemUpdateListener ( String itemName, ItemUpdateListener listener ) ;
-    
     public abstract void addFolderListener ( FolderListener listener, Location location );
     public abstract void addFolderWatcher ( FolderWatcher watcher );
     public abstract void removeFolderListener ( FolderListener listener, Location location );
     public abstract void removeFolderWatcher ( FolderWatcher watcher );
+    
+    public abstract void subscribeItem ( String itemId, boolean initial );
+    public abstract void unsubscribeItem ( String itemId );
+    public abstract ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener );
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.client.net;
+package org.openscada.da.client;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,16 +25,13 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
-import org.openscada.da.client.ItemUpdateListener;
-import org.openscada.net.base.data.Message;
-import org.openscada.net.da.handler.Messages;
 
 public class ItemSyncController
 {
     
     private static Logger _log = Logger.getLogger ( ItemSyncController.class );
     
-    private Connection _connection;
+    private org.openscada.da.client.Connection _connection;
     private String _itemName;
     
     private boolean _subscribedInitial = false;
@@ -44,7 +41,7 @@ public class ItemSyncController
     private Map<String,Variant> _cachedAttributes = new HashMap<String,Variant> ();
     
     /**
-     * Holds some additional listner information 
+     * Holds some additional listener information 
      * @author jens
      *
      */
@@ -101,7 +98,7 @@ public class ItemSyncController
     private Map<ItemUpdateListener,ListenerInfo> _listeners = new HashMap<ItemUpdateListener,ListenerInfo>();
     private long _initialListeners = 0;
     
-    public ItemSyncController ( Connection connection, String itemName )
+    public ItemSyncController ( org.openscada.da.client.Connection connection, String itemName )
     {
         _connection = connection;
         _itemName = itemName;
@@ -174,8 +171,6 @@ public class ItemSyncController
     {
         synchronized ( _listeners )
         {
-            Message message;
-            
             boolean initial = getNumerOfListenersInitial() > 0;
             boolean subscribe = getNumberOfListeners() > 0; 
             
@@ -188,15 +183,13 @@ public class ItemSyncController
             if ( subscribe )
             {
                 _log.debug ( "Syncing listen state: active " + initial );
-                message = Messages.subscribeItem ( _itemName, initial );
+                _connection.subscribeItem ( _itemName, initial );
             }
             else
             {
                 _log.debug ( "Syncing listen state: inactive " );
-                message = Messages.unsubscribeItem ( _itemName );
+                _connection.unsubscribeItem ( _itemName );
             }
-            
-            _connection.sendMessage ( message );
         }
     }
     

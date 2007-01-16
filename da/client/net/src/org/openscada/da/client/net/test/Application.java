@@ -30,6 +30,7 @@ import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.da.client.Connection;
+import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.core.Location;
 import org.openscada.utils.timing.Scheduler;
@@ -49,6 +50,7 @@ public class Application
         info.setPort ( Integer.getInteger ( "openscada.da.net.server.port", 1202 ) );
         
         final Connection connection = new org.openscada.da.client.net.Connection ( info );
+        ItemManager itemManager = new ItemManager ( connection );
         
         connection.addConnectionStateListener(new ConnectionStateListener() {
 
@@ -70,7 +72,7 @@ public class Application
             folderDumper.start ();
         
         if ( _time )
-        connection.addItemUpdateListener ( "time", true, new ItemUpdateListener(){
+        itemManager.addItemUpdateListener ( "time", true, new ItemUpdateListener(){
 
             public void notifyValueChange ( Variant value, boolean initial )
             {
@@ -91,7 +93,7 @@ public class Application
                 
             }});
         
-        connection.addItemUpdateListener("memory", true, new ItemUpdateListener(){
+        itemManager.addItemUpdateListener("memory", true, new ItemUpdateListener(){
 
             public void notifyValueChange ( Variant value, boolean initial )
             {
