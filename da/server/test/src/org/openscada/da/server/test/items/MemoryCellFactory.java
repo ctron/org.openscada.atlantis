@@ -19,10 +19,10 @@
 
 package org.openscada.da.server.test.items;
 
-import org.openscada.da.core.common.DataItem;
-import org.openscada.da.core.common.chain.ChainProcessEntry;
-import org.openscada.da.core.common.factory.DataItemFactory;
-import org.openscada.da.core.common.factory.DataItemFactoryRequest;
+import org.openscada.da.server.common.DataItem;
+import org.openscada.da.server.common.chain.ChainProcessEntry;
+import org.openscada.da.server.common.factory.DataItemFactory;
+import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 import org.openscada.da.server.test.Hive;
 
 public class MemoryCellFactory implements DataItemFactory

@@ -27,8 +27,8 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.core.common.DataItemOutput;
-import org.openscada.da.core.common.WriteAttributesHelper;
+import org.openscada.da.server.common.DataItemOutput;
+import org.openscada.da.server.common.WriteAttributesHelper;
 
 public class WriteDelayItem extends DataItemOutput
 {

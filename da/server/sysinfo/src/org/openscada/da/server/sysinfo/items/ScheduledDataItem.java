@@ -20,7 +20,7 @@
 package org.openscada.da.server.sysinfo.items;
 
 
-import org.openscada.da.core.common.DataItemInputCommon;
+import org.openscada.da.server.common.DataItemInputCommon;
 import org.openscada.utils.timing.Scheduler;
 
 public abstract class ScheduledDataItem extends DataItemInputCommon implements Runnable {

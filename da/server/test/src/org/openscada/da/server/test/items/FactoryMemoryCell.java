@@ -19,8 +19,8 @@
 
 package org.openscada.da.server.test.items;
 
-import org.openscada.da.core.common.SuspendableItem;
-import org.openscada.da.core.common.chain.MemoryItemChained;
+import org.openscada.da.server.common.SuspendableItem;
+import org.openscada.da.server.common.chain.MemoryItemChained;
 import org.openscada.da.server.test.Hive;
 
 public class FactoryMemoryCell extends MemoryItemChained implements SuspendableItem

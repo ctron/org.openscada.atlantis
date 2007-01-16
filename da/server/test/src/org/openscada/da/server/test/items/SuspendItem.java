@@ -20,8 +20,8 @@
 package org.openscada.da.server.test.items;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.core.common.DataItemInputCommon;
-import org.openscada.da.core.common.SuspendableItem;
+import org.openscada.da.server.common.DataItemInputCommon;
+import org.openscada.da.server.common.SuspendableItem;
 
 public class SuspendItem extends DataItemInputCommon implements SuspendableItem
 {

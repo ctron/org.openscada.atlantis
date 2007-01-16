@@ -27,11 +27,11 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.core.browser.common.FolderCommon;
-import org.openscada.da.core.common.AttributeManager;
-import org.openscada.da.core.common.DataItemOutput;
-import org.openscada.da.core.common.MemoryDataItem;
-import org.openscada.da.core.common.WriteAttributesHelper;
+import org.openscada.da.server.browser.common.FolderCommon;
+import org.openscada.da.server.common.AttributeManager;
+import org.openscada.da.server.common.DataItemOutput;
+import org.openscada.da.server.common.MemoryDataItem;
+import org.openscada.da.server.common.WriteAttributesHelper;
 import org.openscada.da.server.test.Hive;
 import org.openscada.utils.collection.MapBuilder;
 

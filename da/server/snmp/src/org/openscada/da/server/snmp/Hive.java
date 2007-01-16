@@ -26,8 +26,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
-import org.openscada.da.core.browser.common.FolderCommon;
-import org.openscada.da.core.common.impl.HiveCommon;
+import org.openscada.da.server.browser.common.FolderCommon;
+import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.snmp.ConfigurationDocument.Configuration;
 import org.openscada.da.server.snmp.ConfigurationDocument.Configuration.Connection;
 

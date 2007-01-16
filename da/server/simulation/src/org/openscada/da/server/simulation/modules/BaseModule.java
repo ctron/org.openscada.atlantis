@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.browser.common.query.ItemDescriptor;
-import org.openscada.da.core.common.DataItem;
-import org.openscada.da.core.common.DataItemCommand;
-import org.openscada.da.core.common.chain.DataItemInputChained;
+import org.openscada.da.server.browser.common.query.ItemDescriptor;
+import org.openscada.da.server.common.DataItem;
+import org.openscada.da.server.common.DataItemCommand;
+import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.simulation.Hive;
 
 public class BaseModule

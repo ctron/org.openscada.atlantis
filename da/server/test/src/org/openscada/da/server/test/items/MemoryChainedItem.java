@@ -24,12 +24,12 @@ import java.util.Map;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
-import org.openscada.da.core.common.DataItemInformationBase;
-import org.openscada.da.core.common.chain.AttributeBinder;
-import org.openscada.da.core.common.chain.BaseChainItemCommon;
-import org.openscada.da.core.common.chain.ChainItem;
-import org.openscada.da.core.common.chain.ChainProcessEntry;
-import org.openscada.da.core.common.chain.MemoryItemChained;
+import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.da.server.common.chain.AttributeBinder;
+import org.openscada.da.server.common.chain.BaseChainItemCommon;
+import org.openscada.da.server.common.chain.ChainItem;
+import org.openscada.da.server.common.chain.ChainProcessEntry;
+import org.openscada.da.server.common.chain.MemoryItemChained;
 
 public class MemoryChainedItem extends MemoryItemChained
 {

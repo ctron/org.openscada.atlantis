@@ -22,9 +22,9 @@ package org.openscada.da.server.sysinfo;
 import java.io.File;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.browser.common.FolderCommon;
-import org.openscada.da.core.common.DataItem;
-import org.openscada.da.core.common.impl.HiveCommon;
+import org.openscada.da.server.browser.common.FolderCommon;
+import org.openscada.da.server.common.DataItem;
+import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.sysinfo.items.LoadAverageJob;
 import org.openscada.da.server.sysinfo.items.PlainFileDataItem;
 import org.openscada.da.server.sysinfo.items.TimeDataItem;
