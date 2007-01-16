@@ -3,7 +3,7 @@ package org.openscada.da.server.opc;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.browser.common.query.ItemDescriptor;
+import org.openscada.da.server.browser.common.query.ItemDescriptor;
 
 public class OPCItemDescription
 {
