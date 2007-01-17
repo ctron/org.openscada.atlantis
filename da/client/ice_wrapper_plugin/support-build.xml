@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!-- ====================================================================== 
-     openscada_da_client_net_plugin_wrapper    
+     openscada_da_client_ice_plugin_wrapper    
      Support build file                                                  
      ====================================================================== -->
-<project name="openscada_da_client_net_plugin_wrapper" default="default" basedir=".">
+<project name="openscada_da_client_ice_plugin_wrapper" default="default" basedir=".">
 	<import file="${libfile}"/>
 	
 	<property name="libjar" location="./lib.jar"/>
@@ -23,7 +23,7 @@
          ================================= -->
     <target name="genjar" depends="" description="--> Generate the JAR file">
 		<openscada.pde.import-module.init/>
-		<openscada.pde.import-module.add-module name="da-client-net"/>
+		<openscada.pde.import-module.add-module name="da-client-ice"/>
 		<openscada.pde.import-module.finalize destfile="${libjar}"/>
     </target>
 
