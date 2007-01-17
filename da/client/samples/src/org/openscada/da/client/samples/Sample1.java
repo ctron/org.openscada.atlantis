@@ -46,6 +46,12 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
     public Sample1 ( String uri, String className ) throws Exception
     {
         super ( uri, className );
+    }
+    
+    @Override
+    public void connect () throws Exception
+    {
+        super.connect ();
         _itemManager = new ItemManager ( _connection );
     }
     
@@ -60,7 +66,8 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
     
     public void unsubscribe ()
     {
-        _itemManager.removeItemUpdateListener ( "item", this );
+        // now remove the update listener again
+        _itemManager.removeItemUpdateListener ( "time", this );
     }
     
     public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
@@ -68,7 +75,7 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
         // Attributes have changed
         // If it is an "initial" transmission it is a complete set. Otherwise it is only
         // the set of changed attributes.
-        System.out.println ( String.format ( "Attributes changed for item: %d update(s)%s", attributes.size (), ( initial ? " (cache-read)" : "" ) ) );
+        System.out.println ( String.format ( "Attributes changed for item: %d update(s)%s", attributes.size (), ( initial ? " (cache read)" : "" ) ) );
         for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
             System.out.println ( String.format ( "'%s' => '%s'", entry.getKey (), entry.getValue ().toString () ) );
