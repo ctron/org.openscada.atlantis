@@ -36,6 +36,7 @@ import org.openscada.core.client.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.da.client.Connection;
+import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
@@ -53,6 +54,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     private FolderEntry _rootFolder = null;
 
     private ItemManager _itemManager;
+    private FolderManager _folderManager;
     
     private enum Properties
     {
@@ -82,7 +84,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
         });
         _itemManager = new ItemManager ( _connection );
-
+        _folderManager = new FolderManager ( _connection );
     }
     
     public void connect ()
@@ -248,6 +250,11 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     public ItemManager getItemManager ()
     {
         return _itemManager;
+    }
+    
+    public FolderManager getFolderManager ()
+    {
+        return _folderManager;
     }
     
 }

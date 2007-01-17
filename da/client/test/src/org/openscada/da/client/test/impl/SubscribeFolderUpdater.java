@@ -45,7 +45,7 @@ public class SubscribeFolderUpdater extends FolderUpdater implements Observer
         if ( !_subscribed )
         {
             _subscribed = true;
-            getConnection ().getConnection ().addFolderWatcher ( _watcher );
+            getConnection ().getFolderManager ().addFolderWatcher ( _watcher );
         }
     }
     
@@ -54,7 +54,7 @@ public class SubscribeFolderUpdater extends FolderUpdater implements Observer
         if ( _subscribed )
         {
             _log.info ( "Unsubscribe from folder: " + _watcher.getLocation ().toString () );
-            getConnection ().getConnection ().removeFolderWatcher ( _watcher );
+            getConnection ().getFolderManager ().removeFolderWatcher ( _watcher );
             _subscribed = false;
             
             clear ();
