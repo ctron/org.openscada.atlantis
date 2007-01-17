@@ -22,9 +22,6 @@ package org.openscada.da.client.samples;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.core.client.ConnectionFactory;
-import org.openscada.core.client.ConnectionInformation;
-import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.ItemUpdateListener;
 

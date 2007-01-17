@@ -24,9 +24,6 @@ import java.util.Map;
 
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.client.ConnectionFactory;
-import org.openscada.core.client.ConnectionInformation;
-import org.openscada.da.client.Connection;
 
 /**
  * Sample showing how to write to a data item
