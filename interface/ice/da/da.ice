@@ -88,8 +88,8 @@ module OpenSCADA
 			["amd"] Core::Properties writeAttributes ( Session * session, string item, Core::Attributes attributes ) throws Core::InvalidSessionException, InvalidItemException;
 			
 			 nonmutating Browser::EntrySequence browse ( Session * session, Browser::Location location ) throws Core::InvalidSessionException, Core::OperationNotSupportedException, Browser::InvalidLocationException;
-			 void registerFolder ( Session * session, Browser::Location location ) throws Core::InvalidSessionException, Core::OperationNotSupportedException, Browser::InvalidLocationException;
-			 void unregisterFolder ( Session * session, Browser::Location location ) throws Core::InvalidSessionException, Core::OperationNotSupportedException, Browser::InvalidLocationException;
+			 void subscribeFolder ( Session * session, Browser::Location location ) throws Core::InvalidSessionException, Core::OperationNotSupportedException, Browser::InvalidLocationException;
+			 void unsubscribeFolder ( Session * session, Browser::Location location ) throws Core::InvalidSessionException, Core::OperationNotSupportedException, Browser::InvalidLocationException;
 		};
 	};
 };
