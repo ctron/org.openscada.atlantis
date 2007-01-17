@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenSCADA DA Client
+Bundle-SymbolicName: org.openscada.da.client
+Bundle-Version: 0.5.0
+Bundle-Vendor: OpenSCADA.org
+Bundle-Localization: plugin
+Bundle-ClassPath: lib.jar,
+ .
+Export-Package: org.openscada.core,
+ org.openscada.core.client,
+ org.openscada.core.client.net,
+ org.openscada.core.net,
+ org.openscada.core.test,
+ org.openscada.core.utils
