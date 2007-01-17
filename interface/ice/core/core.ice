@@ -11,6 +11,10 @@ module OpenSCADA
 		{
 		};
 		
+		exception OperationNotSupportedException
+		{
+		};
+		
 		interface Session
 		{
 		};
