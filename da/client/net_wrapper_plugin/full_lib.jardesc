@@ -13,25 +13,20 @@
 <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
 <javaElement handleIdentifier="=openscada_da_client_net/src&lt;org.openscada.da.client.net"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.codec"/>
-<javaElement handleIdentifier="=openscada_da_core_common/src"/>
-<javaElement handleIdentifier="=openscada_da_net_base/src"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.test"/>
-<javaElement handleIdentifier="=openscada_da_core_server/src"/>
-<javaElement handleIdentifier="=openscada_core_client_common/src"/>
+<javaElement handleIdentifier="=openscada_da_net_base/src"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.io"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.base.handlers"/>
 <javaElement handleIdentifier="=openscada_da_client_net/src&lt;org.openscada.da.client.net.test"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.io.net"/>
 <javaElement handleIdentifier="=openscada_utils/src"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.line"/>
-<javaElement handleIdentifier="=openscada_da_client_common/src"/>
 <javaElement handleIdentifier="=openscada_da_client_net/src&lt;org.openscada.da.client.net.operations"/>
-<javaElement handleIdentifier="=openscada_core_common/src"/>
-<javaElement handleIdentifier="=openscada_core_client_net/src"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.utils"/>
+<javaElement handleIdentifier="=openscada_core_client_net/src"/>
 <javaElement handleIdentifier="=openscada_core_net_base/src"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.codec.test"/>
-<javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.base.data"/>
 <javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.base"/>
+<javaElement handleIdentifier="=openscada_net_base/src&lt;org.openscada.net.base.data"/>
 </selectedElements>
 </jardesc>

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Client
-Bundle-SymbolicName: org.openscada.da.client
+Bundle-SymbolicName: org.openscada.da.client;singleton:=true
 Bundle-Version: 0.5.0
 Bundle-Vendor: OpenSCADA.org
 Bundle-Localization: plugin
@@ -9,7 +9,23 @@ Bundle-ClassPath: lib.jar,
  .
 Export-Package: org.openscada.core,
  org.openscada.core.client,
- org.openscada.core.client.net,
- org.openscada.core.net,
  org.openscada.core.test,
- org.openscada.core.utils
+ org.openscada.core.utils,
+ org.openscada.da.client,
+ org.openscada.da.core,
+ org.openscada.da.core.browser,
+ org.openscada.da.core.server,
+ org.openscada.da.core.server.browser,
+ org.openscada.rcp.da.client,
+ org.openscada.utils.collection,
+ org.openscada.utils.exec,
+ org.openscada.utils.exec.test,
+ org.openscada.utils.jobqueue,
+ org.openscada.utils.lang,
+ org.openscada.utils.lang.test,
+ org.openscada.utils.str,
+ org.openscada.utils.timing
+Bundle-Activator: org.openscada.rcp.da.client.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ log4j_wrapper_plugin
+Eclipse-LazyStart: true

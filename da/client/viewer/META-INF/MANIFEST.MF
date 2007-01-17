@@ -8,9 +8,10 @@ Bundle-Vendor: OpenSCADA.org
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.draw2d,
- org.openscada.da.net.client,
  log4j_wrapper_plugin,
- ext_plugin_xmlbeans
+ ext_plugin_xmlbeans,
+ org.openscada.da.client,
+ org.openscada.da.net.client
 Eclipse-LazyStart: true
 Bundle-ClassPath: schemasrc/,
  .

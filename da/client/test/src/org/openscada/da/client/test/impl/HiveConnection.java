@@ -66,13 +66,6 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     {
         _connectionInformation = ConnectionInformation.fromURI ( connectionInfo.getConnectionString () );
         
-        try
-        {
-            Class.forName ( "org.openscada.da.client.net.Connection" );
-        }
-        catch ( ClassNotFoundException e )
-        {}
-        
         _connection = (Connection)ConnectionFactory.create ( _connectionInformation );
         
         _connection.addConnectionStateListener ( new ConnectionStateListener(){

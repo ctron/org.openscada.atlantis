@@ -3,7 +3,7 @@
       id="org.openscada.da.client.test"
       label="OpenSCADA DA Test Client Feature"
       version="0.5.0"
-      provider-name="OpenSCADA"
+      provider-name="OpenSCADA.org"
       plugin="org.openscada.da.client.test">
 
    <description>
@@ -387,6 +387,32 @@ POSSIBILITY OF SUCH DAMAGES.
 
    <plugin
          id="org.openscada.da.client.viewer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.ice.client"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openscada.da.net.client"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="ext_plugin_icej"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.client"
          download-size="0"
          install-size="0"
          version="0.0.0"

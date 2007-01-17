@@ -23,7 +23,7 @@ import java.util.EnumSet;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
-import org.openscada.da.client.net.Connection;
+import org.openscada.da.client.Connection;
 import org.openscada.da.client.viewer.model.AlreadyConnectedException;
 import org.openscada.da.client.viewer.model.Connector;
 import org.openscada.da.client.viewer.model.InputDefinition;

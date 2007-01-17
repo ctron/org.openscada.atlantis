@@ -26,7 +26,6 @@ import java.util.Observer;
 import org.apache.log4j.Logger;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.ItemManager;
-import org.openscada.da.client.net.Connection;
 import org.openscada.da.client.viewer.model.OutputDefinition;
 import org.openscada.da.client.viewer.model.OutputListener;
 import org.openscada.da.client.viewer.model.Type;

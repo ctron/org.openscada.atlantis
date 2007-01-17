@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.openscada.da.client">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.openscada.da.client" id="connector" name="connector"/>
+      </appInfo>
+      <documentation>
+         A DA client connector.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <documentation>
+            The definition of the connector extension point
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="driver"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="driver">
+      <annotation>
+         <documentation>
+            The definition of the connection driver to use
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class name of the ConnectorLoader class
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.openscada.rcp.da.client.ConnectorLoader"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         0.5.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         &lt;ul&gt;
+&lt;li&gt;org.openscada.da.client.net&lt;/li&gt;
+&lt;li&gt;org.openscada.da.client.ice&lt;/li&gt;
+&lt;/ul&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &amp;copy; by inavare GmbH 2006-2007&lt;br/&gt;
+Licensed under the LGPL
+      </documentation>
+   </annotation>
+
+</schema>
