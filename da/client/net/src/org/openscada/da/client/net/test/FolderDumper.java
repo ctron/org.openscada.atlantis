@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,8 +23,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.FolderWatcher;
-import org.openscada.da.client.Connection;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.DataItemEntry;
 import org.openscada.da.core.browser.Entry;
@@ -34,14 +34,14 @@ public class FolderDumper implements Observer
 {
     private static Logger _log = Logger.getLogger ( FolderDumper.class );
     
-    private Connection _connection = null;
+    private FolderManager _folderManager = null;
     private Location _location = null;
     
     private FolderWatcher _watcher = null;
     
-    public FolderDumper ( Connection connection, Location location )
+    public FolderDumper ( FolderManager folderManager, Location location )
     {
-        _connection = connection;
+        _folderManager = folderManager;
         _location = location;
         
         _watcher = new FolderWatcher ( _location );
@@ -50,12 +50,12 @@ public class FolderDumper implements Observer
     
     public void start ()
     {
-        _connection.addFolderWatcher ( _watcher );
+        _folderManager.addFolderWatcher ( _watcher );
     }
     
     public void stop ()
     {
-        _connection.removeFolderWatcher ( _watcher );
+        _folderManager.removeFolderWatcher ( _watcher );
     }
 
     public void update ( Observable o, Object arg )

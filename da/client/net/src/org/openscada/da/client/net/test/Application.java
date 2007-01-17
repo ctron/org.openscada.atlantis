@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,7 @@ import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.da.client.Connection;
+import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.core.Location;
@@ -51,6 +52,7 @@ public class Application
         
         final Connection connection = new org.openscada.da.client.net.Connection ( info );
         ItemManager itemManager = new ItemManager ( connection );
+        FolderManager folderManager = new FolderManager ( connection );
         
         connection.addConnectionStateListener(new ConnectionStateListener() {
 
@@ -67,7 +69,7 @@ public class Application
         FolderDumper folderDumper;
 
         
-        folderDumper = new FolderDumper ( connection, new Location ( "test", "storage", "grouping1" ) );
+        folderDumper = new FolderDumper ( folderManager, new Location ( "test", "storage", "grouping1" ) );
         if ( _folder )
             folderDumper.start ();
         

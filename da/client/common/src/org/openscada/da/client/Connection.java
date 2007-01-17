@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.da.client;
 
 import java.util.Map;
@@ -16,7 +35,7 @@ import org.openscada.utils.exec.OperationResultHandler;
 public interface Connection extends org.openscada.core.client.Connection
 {
     public abstract Entry[] browse ( String [] path ) throws Exception;
-    public abstract OperationResult<Entry[]> startBrowse ( String [] path, Variant value );
+    public abstract OperationResult<Entry[]> startBrowse ( String [] path );
     public abstract OperationResult<Entry[]> startBrowse ( String [] path, OperationResultHandler<Entry[]> handler );
     
     public abstract void write ( String itemName, Variant value ) throws InterruptedException, OperationException;
@@ -29,10 +48,9 @@ public interface Connection extends org.openscada.core.client.Connection
     public abstract LongRunningOperation startWriteAttributes ( String itemId, Map<String,Variant> attributes, LongRunningListener listener );
     public abstract WriteAttributeResults completeWriteAttributes ( LongRunningOperation operation ) throws OperationException;
     
-    public abstract void addFolderListener ( FolderListener listener, Location location );
-    public abstract void addFolderWatcher ( FolderWatcher watcher );
-    public abstract void removeFolderListener ( FolderListener listener, Location location );
-    public abstract void removeFolderWatcher ( FolderWatcher watcher );
+    public abstract void subscribeFolder ( Location location ) throws InvalidSessionException, OperationException;
+    public abstract void unsubscribeFolder ( Location location ) throws InvalidSessionException, OperationException;
+    public abstract FolderListener setFolderListener ( Location location, FolderListener listener );
     
     public abstract void subscribeItem ( String itemId, boolean initial ) throws InvalidSessionException, OperationException;
     public abstract void unsubscribeItem ( String itemId ) throws InvalidSessionException, OperationException;

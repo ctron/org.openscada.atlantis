@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.client.net;
+package org.openscada.da.client;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -25,11 +25,8 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.client.FolderListener;
-import org.openscada.da.client.FolderWatcher;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
-import org.openscada.net.da.handler.ListBrowser;
 
 public class FolderSyncController extends FolderWatcher
 {
@@ -44,6 +41,7 @@ public class FolderSyncController extends FolderWatcher
     {
         super ( location );
         _connection = connection;
+        _connection.setFolderListener ( _location, this );
     }
     
     public void addListener ( FolderListener listener )
@@ -51,7 +49,9 @@ public class FolderSyncController extends FolderWatcher
         synchronized ( this )
         {
             if ( _listener.add ( listener ) )
+            {
                 sync ();
+            }
             transmitCache ( listener );
         }
     }
@@ -61,7 +61,9 @@ public class FolderSyncController extends FolderWatcher
         synchronized ( this )
         {
             if ( _listener.remove ( listener ) )
+            {
                 sync ();
+            }
         }
     }
     
@@ -91,22 +93,41 @@ public class FolderSyncController extends FolderWatcher
         }
     }
     
-    private void subscribe ()
+    private synchronized void subscribe ()
     {
         _log.debug ( "subscribing to folder: " + _location.toString () );
         
         _subscribed = true;
         
-        _connection.sendMessage ( ListBrowser.createSubscribe ( _location.asArray () ) );
+        try
+        {
+            _connection.subscribeFolder ( _location );
+        }
+        catch ( Exception e )
+        {
+            handleError ( e );
+        }
     }
     
-    private void unsubscribe ()
+    private synchronized void unsubscribe ()
     {
         _log.debug ( "unsubscribing from folder: " + _location.toString () );
         
         _subscribed = false;
         
-        _connection.sendMessage ( ListBrowser.createUnsubscribe ( _location.asArray () ) );
+        try
+        {
+            _connection.unsubscribeFolder ( _location );
+        }
+        catch ( Exception e )
+        {
+            handleError ( e );
+        }
+    }
+    
+    protected synchronized void handleError ( Throwable e )
+    {
+        _subscribed = false;
     }
     
     private void transmitCache ( FolderListener listener )

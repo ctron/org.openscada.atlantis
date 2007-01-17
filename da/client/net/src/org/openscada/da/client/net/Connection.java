@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.InvalidSessionException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionFactory;
@@ -40,7 +41,6 @@ import org.openscada.core.client.net.DisconnectReason;
 import org.openscada.core.client.net.OperationTimedOutException;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.da.client.FolderListener;
-import org.openscada.da.client.FolderWatcher;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.net.operations.BrowserListOperation;
 import org.openscada.da.client.net.operations.WriteAttributesOperationController;
@@ -90,9 +90,9 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
     private static Logger _log = Logger.getLogger ( Connection.class );
 
     private Map<String, ItemUpdateListener> _itemListeners = new HashMap<String, ItemUpdateListener> ();
-    private Map<Location, FolderSyncController> _folderListeners = new HashMap<Location, FolderSyncController> ();
+    private Map<Location, FolderListener> _folderListeners = new HashMap<Location, FolderListener> ();
 
-    private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener> ();
+    //private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener> ();
 
     // operations
     private BrowserListOperation _browseListOperation;
@@ -178,66 +178,6 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         {
             setState ( ConnectionState.BOUND, null );
 
-        }
-    }
-
-    public void addFolderListener ( FolderListener listener, Location location )
-    {
-        synchronized ( _folderListeners )
-        {
-            if ( !_folderListeners.containsKey ( location ) )
-            {
-                _folderListeners.put ( location, new FolderSyncController ( this, new Location ( location ) ) );
-            }
-            
-            FolderSyncController controller = _folderListeners.get ( location );
-            controller.addListener ( listener );
-        }    
-    }
-    
-    public void addFolderWatcher ( FolderWatcher watcher )
-    {
-        addFolderListener ( watcher, watcher.getLocation () );
-    }
-    
-    public void removeFolderListener ( FolderListener listener, Location location )
-    {
-        synchronized ( _folderListeners )
-        {
-            if ( !_folderListeners.containsKey ( location ) )
-            {
-                return;
-            }
-            
-            FolderSyncController controller = _folderListeners.get ( location );
-            controller.removeListener ( listener );
-        }    
-    }
-    
-    public void removeFolderWatcher ( FolderWatcher watcher )
-    {
-        removeFolderListener ( watcher, watcher.getLocation () );
-    }
-    
-    private void resyncAllFolders ()
-    {
-        synchronized ( _folderListeners )
-        {
-            for ( Map.Entry<Location,FolderSyncController> entry : _folderListeners.entrySet () )
-            {
-                entry.getValue ().resync ();
-            }
-        }
-    }
-    
-    private void disconnectAllFolders ()
-    {
-        synchronized ( _folderListeners )
-        {
-            for ( Map.Entry<Location,FolderSyncController> entry : _folderListeners.entrySet () )
-            {
-                entry.getValue ().disconnected ();
-            }
         }
     }
     
@@ -441,7 +381,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         return _browseListOperation.execute ( path );
     }
 
-    public OperationResult<Entry[]> startBrowse ( String [] path, Variant value )
+    public OperationResult<Entry[]> startBrowse ( String [] path )
     {
         return _browseListOperation.startExecute ( path );
     }
@@ -454,14 +394,11 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
     @Override
     protected void onConnectionBound ()
     {
-        // sync again all folder subscriptions
-        resyncAllFolders ();   
     }
 
     @Override
     protected void onConnectionClosed ()
     {
-        disconnectAllFolders ();
     }
 
     @Override
@@ -483,5 +420,20 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
     public synchronized ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener )
     {
         return _itemListeners.put ( itemId, listener );
+    }
+
+    public synchronized FolderListener setFolderListener ( Location location, FolderListener listener )
+    {
+        return _folderListeners.put ( location, listener );
+    }
+
+    public void subscribeFolder ( Location location ) throws InvalidSessionException, OperationException
+    {
+        sendMessage ( ListBrowser.createSubscribe ( location.asArray () ) );
+    }
+
+    public void unsubscribeFolder ( Location location ) throws InvalidSessionException, OperationException
+    {
+        sendMessage ( ListBrowser.createUnsubscribe ( location.asArray () ) );
     }
 }
