@@ -28,7 +28,7 @@
 				<attribute name="org.openscada.da.level.low.preset"><int32>-100</int32></attribute>
 			</item-attributes>
 			<chain:chain>
-				<item direction="in" class="org.openscada.da.core.common.chain.item.LevelAlarmChainItem"/>
+				<item direction="in" class="org.openscada.da.server.common.chain.item.LevelAlarmChainItem"/>
 			</chain:chain>
 		</template>
 		
