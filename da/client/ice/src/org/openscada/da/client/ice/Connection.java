@@ -364,7 +364,7 @@ public class Connection implements org.openscada.da.client.Connection
             return;
         }
         
-        _log.debug ( "Shuting down connection" );
+        _log.debug ( "Shutting down connection" );
         handleDisconnect ( null );
     }
 
