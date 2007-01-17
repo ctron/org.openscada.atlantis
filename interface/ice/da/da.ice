@@ -46,7 +46,7 @@ module OpenSCADA
 			["ami"]
 			interface FolderCallback
 			{
-				void folderChanged ( EntrySequence added, NameSequence removed, bool full );
+				void folderChanged ( NameSequence location, EntrySequence added, NameSequence removed, bool full );
 			};
 			
 		};
