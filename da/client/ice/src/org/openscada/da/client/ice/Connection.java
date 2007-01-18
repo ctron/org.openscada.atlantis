@@ -371,7 +371,6 @@ public class Connection implements org.openscada.da.client.Connection
         switch ( _state )
         {
         case BOUND:
-        case CONNECTED:
             break;
         default:
             return;
