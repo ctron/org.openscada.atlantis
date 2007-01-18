@@ -3,15 +3,15 @@ package org.openscada.da.server.ice.impl;
 import org.apache.log4j.Logger;
 
 import Ice.LocalException;
-import OpenSCADA.DA.AMI_DataCallback_valueChange;
+import OpenSCADA.DA.Browser.AMI_FolderCallback_folderChanged;
 
-public class AsyncValueChange extends AMI_DataCallback_valueChange
+public class AsyncFolderChange extends AMI_FolderCallback_folderChanged
 {
-    private static Logger _log = Logger.getLogger ( AsyncValueChange.class );
-    
+    private static Logger _log = Logger.getLogger ( AsyncFolderChange.class );
+
     private SessionImpl _session = null;
     
-    public AsyncValueChange ( SessionImpl session )
+    public AsyncFolderChange ( SessionImpl session )
     {
         super ();
         _session = session;

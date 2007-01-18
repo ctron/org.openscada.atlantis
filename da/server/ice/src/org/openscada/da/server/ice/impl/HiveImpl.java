@@ -10,21 +10,27 @@ import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
 import org.openscada.core.ice.AttributesHelper;
 import org.openscada.core.ice.VariantHelper;
+import org.openscada.da.core.Location;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
-import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.WriteAttributesOperationListener;
 import org.openscada.da.core.server.WriteOperationListener;
+import org.openscada.da.core.server.browser.HiveBrowser;
+import org.openscada.da.core.server.browser.NoSuchFolderException;
+import org.openscada.da.ice.BrowserEntryHelper;
 
 import Ice.Current;
+import OpenSCADA.Core.OperationNotSupportedException;
 import OpenSCADA.Core.VariantBase;
 import OpenSCADA.DA.AMD_Hive_write;
 import OpenSCADA.DA.AMD_Hive_writeAttributes;
 import OpenSCADA.DA.SessionPrx;
 import OpenSCADA.DA.SessionPrxHelper;
 import OpenSCADA.DA._HiveDisp;
+import OpenSCADA.DA.Browser.Entry;
+import OpenSCADA.DA.Browser.InvalidLocationException;
 
 public class HiveImpl extends _HiveDisp
 {
@@ -62,19 +68,45 @@ public class HiveImpl extends _HiveDisp
         }
     }
 
-    public void registerForItem ( OpenSCADA.Core.SessionPrx session, String item, Current __current )
+    public void registerForItem ( OpenSCADA.DA.SessionPrx session, String item, boolean initialCacheRead, Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
     {
-        // TODO Auto-generated method stub
-
+        _log.debug ( String.format ( "Register for item '%s'", item ) );
+        
+        SessionImpl sessionImpl = getSession ( session );
+        try
+        {
+            _hive.registerForItem ( sessionImpl.getSession (), item, initialCacheRead );
+        }
+        catch ( InvalidSessionException e )
+        {
+            throw new OpenSCADA.Core.InvalidSessionException ();
+        }
+        catch ( InvalidItemException e )
+        {
+            throw new OpenSCADA.DA.InvalidItemException ( item );
+        }
     }
 
-    public void unregisterForItem ( OpenSCADA.Core.SessionPrx session, String item, Current __current )
+    public void unregisterForItem ( OpenSCADA.DA.SessionPrx session, String item, Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
     {
-        // TODO Auto-generated method stub
-
+        _log.debug ( String.format ( "Un-Register for item '%s'", item ) );
+        
+        SessionImpl sessionImpl = getSession ( session );
+        try
+        {
+            _hive.unregisterForItem ( sessionImpl.getSession (), item );
+        }
+        catch ( InvalidSessionException e )
+        {
+            throw new OpenSCADA.Core.InvalidSessionException ();
+        }
+        catch ( InvalidItemException e )
+        {
+            throw new OpenSCADA.DA.InvalidItemException ( item );
+        }
     }
 
-    public void write_async ( AMD_Hive_write __cb, OpenSCADA.Core.SessionPrx session, String item, VariantBase value, Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
+    public void write_async ( AMD_Hive_write __cb, OpenSCADA.DA.SessionPrx session, String item, VariantBase value, Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
     {
         _log.debug ( String.format ( "write request: item - '%s'", item ) );
         
@@ -109,7 +141,7 @@ public class HiveImpl extends _HiveDisp
         }
     }
 
-    public void writeAttributes_async ( AMD_Hive_writeAttributes __cb, OpenSCADA.Core.SessionPrx session, String item, Map attributes, Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
+    public void writeAttributes_async ( AMD_Hive_writeAttributes __cb, OpenSCADA.DA.SessionPrx session, String item, Map attributes, Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
     {
         _log.debug ( String.format ( "write attribute request: item - '%s'", item ) );
         
@@ -176,4 +208,73 @@ public class HiveImpl extends _HiveDisp
             throw new OpenSCADA.Core.InvalidSessionException ();
         }
     }
+
+    public Entry[] browse ( SessionPrx session, String[] location, Current __current ) throws OpenSCADA.Core.InvalidSessionException, InvalidLocationException, OperationNotSupportedException
+    {
+        SessionImpl sessionImpl = getSession ( session );
+        
+        HiveBrowser browser = _hive.getBrowser ();
+        if ( browser == null )
+            throw new OpenSCADA.Core.OperationNotSupportedException ();
+        
+        try
+        {
+            org.openscada.da.core.browser.Entry [] entries = browser.list ( sessionImpl.getSession (), new Location ( location ) );
+            return BrowserEntryHelper.toIce ( entries );
+        }
+        catch ( InvalidSessionException e )
+        {
+            throw new OpenSCADA.Core.OperationNotSupportedException ();
+        }
+        catch ( NoSuchFolderException e )
+        {
+            throw new OpenSCADA.DA.Browser.InvalidLocationException ();
+        }
+    }
+
+    public void subscribeFolder ( SessionPrx session, String[] location, Current __current ) throws OpenSCADA.Core.InvalidSessionException, InvalidLocationException, OperationNotSupportedException
+    {
+        SessionImpl sessionImpl = getSession ( session );
+        
+        HiveBrowser browser = _hive.getBrowser ();
+        if ( browser == null )
+            throw new OpenSCADA.Core.OperationNotSupportedException ();
+        
+        try
+        {
+            browser.subscribe ( sessionImpl.getSession (), new Location ( location ) );
+        }
+        catch ( NoSuchFolderException e )
+        {
+            throw new OpenSCADA.DA.Browser.InvalidLocationException ();
+        }
+        catch ( InvalidSessionException e )
+        {
+            throw new OpenSCADA.Core.OperationNotSupportedException ();
+        }
+    }
+
+    public void unsubscribeFolder ( SessionPrx session, String[] location, Current __current ) throws OpenSCADA.Core.InvalidSessionException, InvalidLocationException, OperationNotSupportedException
+    {
+        SessionImpl sessionImpl = getSession ( session );
+        
+        HiveBrowser browser = _hive.getBrowser ();
+        if ( browser == null )
+            throw new OpenSCADA.Core.OperationNotSupportedException ();
+        
+        try
+        {
+            browser.unsubscribe ( sessionImpl.getSession (), new Location ( location ) );
+        }
+        catch ( NoSuchFolderException e )
+        {
+            throw new OpenSCADA.DA.Browser.InvalidLocationException ();
+        }
+        catch ( InvalidSessionException e )
+        {
+            throw new OpenSCADA.Core.OperationNotSupportedException ();
+        }
+    }
+
+
 }
