@@ -43,6 +43,7 @@
 		<openscada.pull-in-external-lib name="junit4"/>
 		<openscada.pull-in-external-lib name="icej"/>
 	   	<openscada.pull-in-module name="core-ice-base"/>
+	   	<openscada.pull-in-module name="da-core-common"/>
     </target>
 
 	<!-- ================================= 
