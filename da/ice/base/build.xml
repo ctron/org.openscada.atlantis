@@ -44,6 +44,15 @@
 		<openscada.pull-in-external-lib name="icej"/>
 	   	<openscada.pull-in-module name="core-ice-base"/>
 	   	<openscada.pull-in-module name="da-core-common"/>
+    	
+		<delete dir="gensrc"/>
+		<mkdir dir="gensrc"/>
+		<slice2java outputdir="gensrc" casesensitive="true">
+			<meta value="true"/>
+			<fileset dir="../openscada_interface_ice">
+				<include name="da/*.ice"/>
+			</fileset>
+		</slice2java>
     </target>
 
 	<!-- ================================= 
