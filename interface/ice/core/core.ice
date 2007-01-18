@@ -21,7 +21,7 @@ module OpenSCADA
 		
 		interface Server
 		{
-			void closeSession ( Session * session ) throws InvalidSessionException;
+			void closeSession ( Session * sessionP ) throws InvalidSessionException;
 		};
 		
 		enum VariantType { VTboolean, VTstring, VTint32, VTint64, VTdouble, VTnull };
