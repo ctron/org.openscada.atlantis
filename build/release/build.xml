@@ -100,7 +100,6 @@
 		<ant dir="${source.base}/core/client/ice"/>
        	<ant dir="${source.base}/core/client/net"/>
 	   	<ant dir="${source.base}/da/client/common"/>
-       	<ant dir="${source.base}/da/client/ice"/>
 		<ant dir="${source.base}/da/client/net"/>
     	
 		<ant dir="${source.base}/da/client/samples"/>
