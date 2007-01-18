@@ -1,5 +1,6 @@
 package org.openscada.da.client.ice;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -81,7 +82,8 @@ public class Connection implements org.openscada.da.client.Connection
     
     private Set<ConnectionStateListener> _listeners = new HashSet<ConnectionStateListener> ();
     private ObjectAdapter _adapter;
-    private DataCallbackImpl _callback;
+    private DataCallbackImpl _dataCallback;
+    private FolderCallbackImpl _folderCallback;
     private Queue<Runnable> _eventQueue = new LinkedList<Runnable> ();
     private Thread _eventPusher = null;
     
@@ -323,13 +325,24 @@ public class Connection implements org.openscada.da.client.Connection
             setState ( ConnectionState.CONNECTED, null );
             _session = _hive.createSession ( _connectionInformation.getProperties () );
             
-            _callback = new DataCallbackImpl ( this );
+            // register data callback
+            _dataCallback = new DataCallbackImpl ( this );
             Ice.Identity ident = new Ice.Identity ();
             ident.name = Ice.Util.generateUUID ();
             ident.category = "";
-            _adapter.add ( _callback, ident );
+            _adapter.add ( _dataCallback, ident );
             _session.ice_getConnection ().setAdapter ( _adapter );
             _session.setDataCallback ( ident );
+            
+            // register folder callback
+            _folderCallback = new FolderCallbackImpl ( this );
+            ident = new Ice.Identity ();
+            ident.name = Ice.Util.generateUUID ();
+            ident.category = "";
+            _adapter.add ( _folderCallback, ident );
+            _session.ice_getConnection ().setAdapter ( _adapter );
+            _session.setFolderCallback ( ident );
+            
             setState ( ConnectionState.BOUND, null );
         }
         catch ( Exception e )
@@ -412,6 +425,20 @@ public class Connection implements org.openscada.da.client.Connection
         }
     }
     
+    public void folderChanged ( final Location location, final Entry[] entries, final String[] removed, final boolean full )
+    {
+        synchronized ( _eventQueue )
+        {
+            _eventQueue.add ( new Runnable () {
+
+                public void run ()
+                {
+                    fireFolderChange ( location, entries, removed, full );
+                }} );
+            _eventQueue.notify ();
+        }
+    }
+    
     protected synchronized void fireAttributesChange ( String itemId, Map<String, Variant> attributes, boolean full )
     {
         ItemUpdateListener listener = _itemListenerMap.get ( itemId );
@@ -427,6 +454,15 @@ public class Connection implements org.openscada.da.client.Connection
         if ( listener != null )
         {
             listener.notifyValueChange ( variant, cache );
+        }
+    }
+    
+    protected synchronized void fireFolderChange ( Location location, Entry [] added, String [] removed, boolean full )
+    {
+        FolderListener listener = _folderListenerMap.get ( location );
+        if ( listener != null )
+        {
+            listener.folderChanged ( Arrays.asList ( added ), Arrays.asList ( removed ), full );
         }
     }
 
@@ -512,5 +548,6 @@ public class Connection implements org.openscada.da.client.Connection
             throw new OperationException ( e );
         }
     }
+
 
 }
