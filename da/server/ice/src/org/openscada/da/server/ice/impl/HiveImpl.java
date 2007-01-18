@@ -22,6 +22,7 @@ import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.da.ice.BrowserEntryHelper;
 
 import Ice.Current;
+import Ice.ObjectAdapter;
 import OpenSCADA.Core.OperationNotSupportedException;
 import OpenSCADA.Core.VariantBase;
 import OpenSCADA.DA.AMD_Hive_write;
@@ -32,18 +33,49 @@ import OpenSCADA.DA._HiveDisp;
 import OpenSCADA.DA.Browser.Entry;
 import OpenSCADA.DA.Browser.InvalidLocationException;
 
-public class HiveImpl extends _HiveDisp
+public class HiveImpl extends _HiveDisp implements Runnable
 {
     private static Logger _log = Logger.getLogger ( HiveImpl.class );
     
     private Hive _hive = null;
     
-    private Map<SessionPrx,SessionImpl> _sessionMap = new HashMap<SessionPrx,SessionImpl> ();
+    private Map<SessionPrx, SessionImpl> _sessionMap = new HashMap<SessionPrx,SessionImpl> ();
+    private Map<SessionImpl, SessionPrx> _sessionMapRev = new HashMap<SessionImpl, SessionPrx> ();
     
-    public HiveImpl ( Hive hive )
+    private Thread _pingThread = null;
+    private ObjectAdapter _adapter = null;
+    
+    public HiveImpl ( Hive hive, ObjectAdapter adapter )
     {
         super ();
         _hive = hive;
+        _adapter = adapter;
+        
+        _pingThread = new Thread ( this );
+        _pingThread.setDaemon ( true );
+        _pingThread.start ();
+    }
+    
+    public void run ()
+    {
+        while ( true )
+        {
+            try
+            {
+                Thread.sleep ( 1000 );
+            }
+            catch ( InterruptedException e )
+            {
+            }
+            
+            synchronized ( this )
+            {
+                for ( SessionImpl session : _sessionMapRev.keySet () )
+                {
+                    session.ping ();
+                }
+            }
+        }
     }
 
     public SessionPrx createSession ( Map properties, Current __current ) throws OpenSCADA.DA.UnableToCreateSession
@@ -57,9 +89,10 @@ public class HiveImpl extends _HiveDisp
         
         try
         {
-            SessionImpl session = new SessionImpl ( _hive.createSession ( props ) );
+            SessionImpl session = new SessionImpl ( this, _hive.createSession ( props ) );
             SessionPrx sessionProxy = SessionPrxHelper.uncheckedCast ( __current.adapter.addWithUUID ( session ) );
             _sessionMap.put ( sessionProxy, session );
+            _sessionMapRev.put ( session, sessionProxy );
             return sessionProxy;
         }
         catch ( UnableToCreateSessionException e )
@@ -198,15 +231,7 @@ public class HiveImpl extends _HiveDisp
     {
         SessionImpl sessionImpl = getSession ( session );
         
-        try
-        {
-            _sessionMap.remove ( session );
-            _hive.closeSession ( sessionImpl.getSession () );
-        }
-        catch ( InvalidSessionException e )
-        {
-            throw new OpenSCADA.Core.InvalidSessionException ();
-        }
+        closeSession ( sessionImpl );
     }
 
     public Entry[] browse ( SessionPrx session, String[] location, Current __current ) throws OpenSCADA.Core.InvalidSessionException, InvalidLocationException, OperationNotSupportedException
@@ -274,6 +299,31 @@ public class HiveImpl extends _HiveDisp
         {
             throw new OpenSCADA.Core.OperationNotSupportedException ();
         }
+    }
+
+    public void closeSession ( SessionImpl session ) throws OpenSCADA.Core.InvalidSessionException
+    {
+        _log.debug ( "Close session" );
+        
+        try
+        {
+            SessionPrx sessionProxy = _sessionMapRev.get ( session );
+            if ( sessionProxy == null )
+                return;
+            
+            // remove the session object from ice
+            _adapter.remove ( sessionProxy.ice_getIdentity () );
+            
+            _sessionMap.remove ( sessionProxy );
+            _sessionMapRev.remove ( session );
+            
+            session.destroy ();
+            _hive.closeSession ( session.getSession () );
+        }
+        catch ( InvalidSessionException e )
+        {
+            throw new OpenSCADA.Core.InvalidSessionException ();
+        }   
     }
 
 

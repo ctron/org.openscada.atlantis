@@ -33,7 +33,7 @@ public class Exporter extends ExporterBase implements Runnable
     public void run ()
     {
         Ice.ObjectAdapter adapter = _communicator.createObjectAdapter ( "Hive" );
-        adapter.add ( new HiveImpl ( _hive ), _communicator.stringToIdentity ( "hive" ) );
+        adapter.add ( new HiveImpl ( _hive, adapter ), _communicator.stringToIdentity ( "hive" ) );
         adapter.activate ();
         _communicator.waitForShutdown ();
     }

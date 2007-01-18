@@ -16,6 +16,7 @@ import org.openscada.da.ice.BrowserEntryHelper;
 
 import Ice.Current;
 import Ice.Identity;
+import OpenSCADA.Core.InvalidSessionException;
 import OpenSCADA.DA.DataCallbackPrx;
 import OpenSCADA.DA.DataCallbackPrxHelper;
 import OpenSCADA.DA._SessionDisp;
@@ -26,16 +27,27 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
 {
     private static Logger _log = Logger.getLogger ( SessionImpl.class );
     
+    private HiveImpl _hive;
     private Session _session;
     private DataCallbackPrx _dataCallback = null;
     private FolderCallbackPrx _folderCallback = null;
     
-    public SessionImpl ( Session session )
+    public SessionImpl ( HiveImpl hive, Session session )
     {
         super ();
+        _hive = hive;
         _session = session;
         _session.setListener ( (ItemChangeListener)this );
         _session.setListener ( (FolderListener)this );
+        
+        System.gc ();
+    }
+    
+    @Override
+    protected void finalize () throws Throwable
+    {
+        _log.debug ( "Session finalized" );
+        super.finalize ();
     }
     
     public synchronized void setDataCallback ( Identity ident, Current __current )
@@ -89,8 +101,34 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
 
     public synchronized void handleListenerError ()
     {
+        _log.info ( "handleListenerError" );
+        destroy ();
+    }
+    
+    public synchronized void destroy ()
+    {
+        _log.debug ( "destroy session" );
+        
+        if ( _session == null )
+            return;
+        
         _dataCallback = null;
+        _folderCallback = null;
         _session.setListener ( (ItemChangeListener)null );
+        _session.setListener ( (FolderListener)null );
+        
+        _session = null;
+        
+        try
+        {
+            _hive.closeSession ( this );
+        }
+        catch ( InvalidSessionException e )
+        {
+            // we don't care
+        }
+        
+        _hive = null;
     }
 
     public synchronized void folderChanged ( Location location, Collection<Entry> added, Collection<String> removed, boolean full )
@@ -105,5 +143,25 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
        
        AsyncFolderChange cb = new AsyncFolderChange ( this );
        _folderCallback.folderChanged_async ( cb, location.asArray (), BrowserEntryHelper.toIce ( added.toArray ( new Entry[0] ) ), removed.toArray ( new String[0] ), full );
+    }
+
+    public void ping ()
+    {
+        try
+        {
+            if ( _dataCallback != null )
+            {
+                _dataCallback.ice_ping ();
+            }
+            if ( _folderCallback != null )
+            {
+                _folderCallback.ice_ping ();
+            }
+        }
+        catch ( Throwable e )
+        {
+            _log.debug ( "Ping failed", e );
+            handleListenerError ();
+        }
     }
 }
