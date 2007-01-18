@@ -73,6 +73,7 @@
     	<copy file="../data/htaccess" tofile="${deploy.dir}/.htaccess"/>
     	
     	<ant dir="${source.base}/external/log4j"/>
+    	<ant dir="${source.base}/external/icej"/>
        	<ant dir="${source.base}/external/xmlbeans"/>
        	<ant dir="${source.base}/external/junit4"/>
        	<ant dir="${source.base}/external/mibble"/>
