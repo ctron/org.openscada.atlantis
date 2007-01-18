@@ -199,9 +199,11 @@
         <sequential>
         	<openscada.compile.schema/>
     		<openscada.compile.source/>
-    		<openscada.compile.javadoc/>
-    		<openscada.export.source/>
-    		<openscada.export.license/>
+			<parallel>
+	    		<openscada.compile.javadoc/>
+	    		<openscada.export.source/>
+	    		<openscada.export.license/>
+			</parallel>
         </sequential>
     </macrodef>
 
