@@ -3,12 +3,15 @@ package org.openscada.da.ice;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.openscada.core.ice.AttributesHelper;
 
 import OpenSCADA.DA.IODirection;
 
 public class BrowserEntryHelper
 {
+    private static Logger _log = Logger.getLogger ( BrowserEntryHelper.class );
+    
     public static OpenSCADA.DA.Browser.Entry[] toIce ( org.openscada.da.core.browser.Entry [] entries )
     {
         OpenSCADA.DA.Browser.Entry[] iceEntries = new OpenSCADA.DA.Browser.Entry[entries.length];
@@ -29,6 +32,10 @@ public class BrowserEntryHelper
                     ioDir.add ( IODirection.OUTPUT );
                 iceEntries[i] = new OpenSCADA.DA.Browser.ItemEntry ( entries[i].getName (), AttributesHelper.toIce ( entries[i].getAttributes () ), d.getId (), ioDir.toArray ( new IODirection[0] ) );
             }
+            else
+            {
+                _log.error ( "Failed to convert entry of type: " + entries[i].getClass () );
+            }
         }
         return iceEntries;
     }
@@ -39,6 +46,7 @@ public class BrowserEntryHelper
         
         for ( int i = 0; i < entries.length; i++ )
         {
+            _log.debug ( String.format ( "Entry %d#: %s", i, entries[i].getClass () ) );
             if ( entries[i] instanceof OpenSCADA.DA.Browser.FolderEntry )
             {
                 osEntries[i] = new org.openscada.da.ice.FolderEntry ( (OpenSCADA.DA.Browser.FolderEntry)entries[i] );
