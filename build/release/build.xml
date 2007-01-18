@@ -82,10 +82,12 @@
     	<ant dir="${source.base}/core/common"/>
        	<ant dir="${source.base}/net/base"/>
        	<ant dir="${source.base}/core/server/common"/>
+		<ant dir="${source.base}/core/ice/base"/>
        	<ant dir="${source.base}/core/net/base"/>
        	<ant dir="${source.base}/da/core/common"/>
        	<ant dir="${source.base}/da/core/server"/>
        	<ant dir="${source.base}/da/server/common"/>
+    	<ant dir="${source.base}/da/ice/base"/>
        	<ant dir="${source.base}/da/net/base"/>
       	<ant dir="${source.base}/da/server/net"/>
        	<ant dir="${source.base}/da/server/simulation"/>
@@ -94,9 +96,12 @@
       	<ant dir="${source.base}/da/server/test"/>
 
 	   	<ant dir="${source.base}/core/client/common"/>
+		<ant dir="${source.base}/core/client/ice"/>
        	<ant dir="${source.base}/core/client/net"/>
 	   	<ant dir="${source.base}/da/client/common"/>
-       	<ant dir="${source.base}/da/client/net"/>
+       	<ant dir="${source.base}/da/client/ice"/>
+		<ant dir="${source.base}/da/client/net"/>
+    	
 		<ant dir="${source.base}/da/client/samples"/>
     	
     	<ant dir="${source.base}/ae/core/common"/>
