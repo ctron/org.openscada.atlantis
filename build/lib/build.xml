@@ -186,6 +186,7 @@
        					<include name="*.jar"/>
        				</fileset>
     				<pathelement location="${build.dir}/${package}/schemabin"/>
+					<pathelement location="${build.dir}/${package}/build"/>
     			</classpath>
     		</javac>
         </sequential>
