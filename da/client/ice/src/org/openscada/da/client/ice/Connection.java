@@ -360,6 +360,9 @@ public class Connection implements org.openscada.da.client.Connection
         _adapter.deactivate ();
         _communicator.destroy ();
         
+        _dataCallback = null;
+        _folderCallback = null;
+        
         _adapter = null;
         _communicator = null;
         
