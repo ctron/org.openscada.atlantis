@@ -27,9 +27,9 @@ public class ItemEntry implements DataItemEntry
         _attributes = AttributesHelper.fromIce ( entry.attributes );
         _ioDirections = EnumSet.noneOf ( IODirection.class );
 
-        for ( int i = 0; i < entry.ioDirections.length; i++ )
+        for ( int i = 0; i < entry.ioDirectionsM.length; i++ )
         {
-            switch ( entry.ioDirections[i].value () )
+            switch ( entry.ioDirectionsM[i].value () )
             {
             case OpenSCADA.DA.IODirection._INPUT:
                 _ioDirections.add ( IODirection.INPUT );
