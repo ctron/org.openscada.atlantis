@@ -19,7 +19,12 @@
 
 package org.openscada.da.client.samples;
 
+import java.util.Collection;
+
 import org.openscada.core.OperationException;
+import org.openscada.da.client.FolderListener;
+import org.openscada.da.client.FolderManager;
+import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.DataItemEntry;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.FolderEntry;
@@ -29,11 +34,20 @@ import org.openscada.da.core.browser.FolderEntry;
  * <br> 
  * @author Jens Reimann <jens.reimann@inavare.net>
  */
-public class Sample3 extends SampleBase
-{   
-    public Sample3 ( String uri, String className) throws ClassNotFoundException
+public class Sample4 extends SampleBase
+{
+    private FolderManager _folderManager = null;
+    
+    public Sample4 ( String uri, String className) throws ClassNotFoundException
     {
         super ( uri, className );
+    }
+    
+    @Override
+    public void connect () throws Exception
+    {
+        super.connect ();
+        _folderManager = new FolderManager ( _connection );
     }
     
     protected void showEntry ( Entry entry )
@@ -51,19 +65,22 @@ public class Sample3 extends SampleBase
         System.out.println ();
     }
     
-    public void run () throws InterruptedException, OperationException
+    public void subscribe () throws InterruptedException, OperationException
     {
-        try
-        {
-            for ( Entry entry : _connection.browse ( new String [] {} ) )
+        _folderManager.addFolderListener ( new FolderListener () {
+
+            public void folderChanged ( Collection<Entry> added, Collection<String> removed, boolean full )
             {
-                showEntry ( entry );
-            }
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
+                System.out.println ( String.format ( "Added: %d Removed: %d, Full: %s" , added.size (), removed.size (), full ) );
+                for ( Entry entry : added )
+                {
+                    showEntry ( entry );
+                }
+                for ( String entry : removed )
+                {
+                    System.out.println ( String.format ( "Remove: '%s'", entry ) );
+                }
+            }}, new Location () );
     }
     
     public static void main ( String[] args ) throws Exception
@@ -76,12 +93,13 @@ public class Sample3 extends SampleBase
         if ( args.length > 1 )
             className = args[1];
         
-        Sample3 s = null;
+        Sample4 s = null;
         try
         {
-            s = new Sample3 ( uri, className );
+            s = new Sample4 ( uri, className );
             s.connect ();
-            s.run ();
+            s.subscribe ();
+            Thread.sleep ( 5 * 1000 );
         }
         catch ( Throwable e )
         {
