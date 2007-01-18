@@ -145,18 +145,17 @@
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.compile.source">
         <sequential>
-    		<mkdir dir="${build.dir}/${package}/bin"/>
+    		<mkdir dir="${build.dir}/${package}/build"/>
     		<javac
     			encoding="utf-8"
     			source="1.5"
     			target="1.5"
-    			destdir="${build.dir}/${package}/bin"
+    			destdir="${build.dir}/${package}/build"
     			>
 				<src path="src"/>
-				<src path="gensrc"/>
     			<classpath>
     				<fileset dir="${build.dir}/${package}/lib">
-    					<include name="**/*.jar"/>
+    					<include name="*.jar"/>
     				</fileset>
        				<fileset dir="${build.dir}/${package}/bin">
        					<include name="*.jar"/>
@@ -188,13 +187,13 @@
     		<mkdir dir="${build.dir}/${package}/bin"/>
         	<mkdir dir="${build.dir}/${package}/schemabin"/>
     		<jar destfile="${build.dir}/${package}/bin/openscada-${package}-${tag}.jar">
-    			<fileset dir="${build.dir}/${package}/bin">
+    			<fileset dir="${build.dir}/${package}/build">
     				<include name="**/*.class"/>
     			</fileset>
     			<fileset dir="${build.dir}/${package}/schemabin"/>
     		</jar>
 
-    		<mkdir dir="${deploy.dir}"/>
+    		<mkdir dir="${deploy.dist.module}"/>
     		<zip basedir="${build.dir}/${package}" destfile="${deploy.dist.module}/openscada-${package}-${tag}.zip">
     			<include name="**/*"/>
     		</zip>
