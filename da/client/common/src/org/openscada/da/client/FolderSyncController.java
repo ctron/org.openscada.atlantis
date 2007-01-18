@@ -130,40 +130,30 @@ public class FolderSyncController extends FolderWatcher
         _subscribed = false;
     }
     
-    private void transmitCache ( FolderListener listener )
+    private synchronized void transmitCache ( FolderListener listener )
     {
-        synchronized ( this )
-        {
-            listener.folderChanged ( _cache.values (), new LinkedList<String>(), true );
-        }
+        listener.folderChanged ( _cache.values (), new LinkedList<String>(), true );
     }
     
     @Override
-    public void folderChanged ( Collection<Entry> added, Collection<String> removed, boolean full )
+    public synchronized void folderChanged ( Collection<Entry> added, Collection<String> removed, boolean full )
     {
-        synchronized ( this )
+        super.folderChanged ( added, removed, full );
+
+        for ( FolderListener listener : _listener )
         {
-            super.folderChanged ( added, removed, full );
-            
-            for ( FolderListener listener : _listener )
-            {
-                listener.folderChanged ( added, removed, full );
-            }
+            listener.folderChanged ( added, removed, full );
         }
     }
     
-    public void disconnected ()
+    public synchronized void disconnected ()
     {
         _subscribed = false;
-        
-        synchronized ( this )
+        _cache.clear ();
+
+        for ( FolderListener listener : _listener )
         {
-            _cache.clear ();
-            
-            for ( FolderListener listener : _listener )
-            {
-                listener.folderChanged ( new LinkedList<Entry> (), new LinkedList<String> (), true );
-            }
+            listener.folderChanged ( new LinkedList<Entry> (), new LinkedList<String> (), true );
         }
     }
 }
