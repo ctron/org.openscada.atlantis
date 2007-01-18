@@ -97,7 +97,7 @@
  	</antcall>
   	<antcall target="checkoutSvn">
  		<param name="todir" value="${buildDirectory}/plugins/ext_plugin_icej"/>
- 		<param name="module" value="${svn.ext.base}/ext_plugin_icej"/>
+ 		<param name="module" value="${svn.ext.base}/plugins/icej"/>
  	</antcall>
   	<fetch-module src="${svn.base}/da/client/plugin_wrapper" type="plugin" name="org.openscada.da.client"/>
   	<fetch-module src="${svn.base}/da/client/ice_wrapper_plugin" type="plugin" name="org.openscada.da.ice.client"/>
