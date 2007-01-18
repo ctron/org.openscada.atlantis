@@ -152,8 +152,8 @@
     			target="1.5"
     			destdir="${build.dir}/${package}/bin"
     			>
-				<src dir="src"/>
-				<src dir="gensrc"/>
+				<src path="src"/>
+				<src path="gensrc"/>
     			<classpath>
     				<fileset dir="${build.dir}/${package}/lib">
     					<include name="**/*.jar"/>
