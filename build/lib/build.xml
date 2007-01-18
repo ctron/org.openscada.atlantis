@@ -151,6 +151,7 @@
 			<if>
 				<available type="dir" file="gensrc"/>
 				<then>
+					<echo message="Building gensrc"/>
 					<javac
 						encoding="utf-8"
 						source="1.5"
