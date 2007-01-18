@@ -145,7 +145,32 @@
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.compile.source">
         <sequential>
-    		<mkdir dir="${build.dir}/${package}/build"/>
+			<mkdir dir="${build.dir}/${package}/build"/>
+	
+			<!-- guild "gensrc" directory if it exists -->
+			<if>
+				<available type="dir" file="gensrc"/>
+				<then>
+					<javac
+						encoding="utf-8"
+						source="1.5"
+						target="1.5"
+						destdir="${build.dir}/${package}/build"
+						>
+						<src path="gensrc"/>
+						<classpath>
+							<fileset dir="${build.dir}/${package}/lib">
+								<include name="*.jar"/>
+							</fileset>
+								<fileset dir="${build.dir}/${package}/bin">
+									<include name="*.jar"/>
+								</fileset>
+							<pathelement location="${build.dir}/${package}/schemabin"/>
+						</classpath>
+					</javac>
+				</then>
+			</if>
+    		
     		<javac
     			encoding="utf-8"
     			source="1.5"
