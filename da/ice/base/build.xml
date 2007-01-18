@@ -49,7 +49,7 @@
 		<mkdir dir="gensrc"/>
 		<slice2java outputdir="gensrc" casesensitive="true">
 			<meta value="true"/>
-			<fileset dir="../openscada_interface_ice">
+			<fileset dir="${source.base}/interface/ice">
 				<include name="da/*.ice"/>
 			</fileset>
 		</slice2java>
