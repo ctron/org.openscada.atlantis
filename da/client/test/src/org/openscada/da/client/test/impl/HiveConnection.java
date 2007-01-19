@@ -68,20 +68,26 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
         
         _connection = (Connection)ConnectionFactory.create ( _connectionInformation );
         
-        _connection.addConnectionStateListener ( new ConnectionStateListener(){
+        if ( _connection != null )
+        {
+            _connection.addConnectionStateListener ( new ConnectionStateListener(){
 
-            public void stateChange ( org.openscada.core.client.Connection connection, ConnectionState state, Throwable error )
-            {
-                performStateChange ( state, error );
-            }
+                public void stateChange ( org.openscada.core.client.Connection connection, ConnectionState state, Throwable error )
+                {
+                    performStateChange ( state, error );
+                }
 
-        });
-        _itemManager = new ItemManager ( _connection );
-        _folderManager = new FolderManager ( _connection );
+            });
+            _itemManager = new ItemManager ( _connection );
+            _folderManager = new FolderManager ( _connection );
+        }
     }
     
     public void connect ()
     {
+        if ( _connection == null )
+            return;
+        
         //if ( _connectionRequested )
         //    return;
         
@@ -108,6 +114,9 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     
     public void disconnect ()
     {
+        if ( _connection == null )
+            return;
+        
         _connectionRequested = false;
         
         setChanged ();
@@ -250,4 +259,8 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
         return _folderManager;
     }
     
+    public boolean isValid ()
+    {
+        return _connection != null;
+    }
 }

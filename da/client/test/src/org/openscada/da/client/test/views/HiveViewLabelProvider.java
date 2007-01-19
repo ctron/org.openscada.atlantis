@@ -20,31 +20,46 @@ import org.openscada.da.core.IODirection;
 class HiveViewLabelProvider extends LabelProvider
 {
 
-    public String getText(Object obj)
+    public String getText ( Object obj )
     {
         if ( obj instanceof HiveConnection )
         {
             HiveConnection connection = (HiveConnection)obj;
-            return connection.getConnectionInformation().toString () + " (" + connection.getConnection ().getState ().toString () + ")";
+            String label = connection.getConnectionInformation ().toString () + " (";
+            if ( connection.isValid () )
+            {
+                label += connection.getConnection ().getState ().toString ();
+            }
+            else
+            {
+                label += "INVALID";
+            }
+            label += ")";
+            return label;
         }
         else if ( obj instanceof HiveItem )
         {
-            return ((HiveItem)obj).getId();
+            return ( (HiveItem)obj ).getId ();
         }
         else if ( obj instanceof BrowserEntry )
         {
-            return ((BrowserEntry)obj).getName ();
+            return ( (BrowserEntry)obj ).getName ();
         }
-        return obj.toString();
+        return obj.toString ();
     }
-    public Image getImage(Object obj)
+
+    public Image getImage ( Object obj )
     {
         String imageKey;
-        
+
         if ( obj instanceof HiveConnection )
         {
             HiveConnection connection = (HiveConnection)obj;
-            if ( connection.isConnectionRequested() )
+            if ( !connection.isValid () )
+            {
+                imageKey = ISharedImages.IMG_HIVE_CONNECTION;
+            }
+            else if ( connection.isConnectionRequested () )
             {
                 switch ( connection.getConnection ().getState () )
                 {
@@ -69,7 +84,7 @@ class HiveViewLabelProvider extends LabelProvider
         {
             DataItemEntry hiveItem = (DataItemEntry)obj;
             EnumSet<IODirection> io = hiveItem.getIoDirection ();
-            if ( io.containsAll ( EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ))
+            if ( io.containsAll ( EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) )
                 imageKey = ISharedImages.IMG_HIVE_ITEM_IO;
             else if ( io.contains ( IODirection.INPUT ) )
                 imageKey = ISharedImages.IMG_HIVE_ITEM_I;
@@ -81,8 +96,9 @@ class HiveViewLabelProvider extends LabelProvider
         else if ( obj instanceof FolderEntry )
             imageKey = ISharedImages.IMG_HIVE_FOLDER;
         else
-            return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_ELEMENT );
-        
-        return Openscada_da_client_testPlugin.getDefault().getImageRegistry().get ( imageKey );
+            return PlatformUI.getWorkbench ().getSharedImages ().getImage (
+                    org.eclipse.ui.ISharedImages.IMG_OBJ_ELEMENT );
+
+        return Openscada_da_client_testPlugin.getDefault ().getImageRegistry ().get ( imageKey );
     }
 }
