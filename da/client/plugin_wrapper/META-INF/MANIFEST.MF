@@ -28,4 +28,4 @@ Export-Package: org.openscada.core,
 Bundle-Activator: org.openscada.rcp.da.client.Activator
 Require-Bundle: org.eclipse.core.runtime,
  log4j_wrapper_plugin
-Eclipse-LazyStart: false
+Eclipse-LazyStart: true
