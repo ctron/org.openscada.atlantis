@@ -80,25 +80,6 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin
     public void start ( BundleContext context ) throws Exception
     {
         super.start ( context );
-        
-        /*
-        try
-        {
-            Class.forName ( "org.openscada.da.client.net.Connection" );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            logError ( 0, "Failed to load NET protocol", e );
-        }
-        try
-        {
-            Class.forName ( "org.openscada.da.client.ice.Connection" );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            logError ( 0, "Failed to load ICE protocol", e );
-        }
-        */
     }
 
     /**
