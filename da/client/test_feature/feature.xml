@@ -324,7 +324,6 @@ POSSIBILITY OF SUCH DAMAGES.
    </url>
 
    <requires>
-      <import plugin="org.openscada.da.net.client"/>
       <import plugin="org.eclipse.rcp"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
@@ -335,6 +334,8 @@ POSSIBILITY OF SUCH DAMAGES.
       <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.help" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.ui" version="3.2.0" match="compatible"/>
+      <import plugin="ext_plugin_xmlbeans"/>
+      <import plugin="org.eclipse.draw2d"/>
    </requires>
 
    <plugin
