@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     openscada_da_client_net_plugin_wrapper    
+     Support build file                                                  
+     ====================================================================== -->
+<project name="openscada_da_client_net_plugin_wrapper" default="default" basedir=".">
+	<import file="${libfile}"/>
+	
+	<property name="libjar" location="./lib.jar"/>
+	
+    <description>
+            Support build file
+    </description>
+
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="genjar" description="--> Support build file">
+    </target>
+    	
+   	<!-- ================================= 
+          target: genjar              
+         ================================= -->
+    <target name="genjar" depends="" description="--> Generate the JAR file">
+		<openscada.pde.import-module.init/>
+		<openscada.pde.import-module.add-module name="da-client-common"/>
+		<openscada.pde.import-module.finalize destfile="${libjar}"/>
+    </target>
+
+
+</project>
