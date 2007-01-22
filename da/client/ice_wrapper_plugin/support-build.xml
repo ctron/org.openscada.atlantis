@@ -24,8 +24,6 @@
     <target name="genjar" depends="" description="--> Generate the JAR file">
 		<openscada.pde.import-module.init/>
 		<openscada.pde.import-module.add-module name="da-client-ice"/>
-		<openscada.pde.import-module.add-module name="utils"/>
-		<openscada.pde.import-module.add-module name="da-core"/>
 		<openscada.pde.import-module.finalize destfile="${libjar}"/>
     </target>
 
