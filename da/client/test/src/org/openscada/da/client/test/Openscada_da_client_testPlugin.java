@@ -32,6 +32,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveRepository;
+import org.openscada.rcp.da.client.ConnectorInitializer;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -80,6 +81,8 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin
     public void start ( BundleContext context ) throws Exception
     {
         super.start ( context );
+
+        ConnectorInitializer.initialize ();
     }
 
     /**

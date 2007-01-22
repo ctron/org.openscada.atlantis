@@ -25,7 +25,6 @@ Export-Package: org.openscada.core,
  org.openscada.utils.lang.test,
  org.openscada.utils.str,
  org.openscada.utils.timing
-Bundle-Activator: org.openscada.rcp.da.client.Activator
 Require-Bundle: org.eclipse.core.runtime,
  log4j_wrapper_plugin
-Eclipse-LazyStart: true
+Eclipse-LazyStart: false

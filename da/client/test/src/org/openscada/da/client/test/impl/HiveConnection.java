@@ -40,6 +40,7 @@ import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
+import org.openscada.rcp.da.client.ConnectorInitializer;
 
 public class HiveConnection extends Observable implements IActionFilter, IPropertySource
 {
@@ -64,6 +65,8 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     
     public HiveConnection ( HiveConnectionInformation connectionInfo )
     {
+        super ();
+        
         _connectionInformation = ConnectionInformation.fromURI ( connectionInfo.getConnectionString () );
         
         _connection = (Connection)ConnectionFactory.create ( _connectionInformation );
