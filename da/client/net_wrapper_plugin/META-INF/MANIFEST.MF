@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Client NET Library Wrapper
 Bundle-SymbolicName: org.openscada.da.net.client;singleton:=true
 Bundle-Version: 0.5.0
-Bundle-ClassPath: lib.jar
+Bundle-ClassPath: lib.jar, .
 Bundle-Vendor: OpenSCADA.org
 Bundle-Localization: plugin
 Export-Package: org.openscada.core.client.net,
