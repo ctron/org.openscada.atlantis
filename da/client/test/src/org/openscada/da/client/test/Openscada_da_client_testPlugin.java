@@ -20,6 +20,7 @@
 package org.openscada.da.client.test;
 
 import org.eclipse.core.commands.operations.OperationStatus;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -81,8 +82,6 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin
     public void start ( BundleContext context ) throws Exception
     {
         super.start ( context );
-
-        ConnectorInitializer.initialize ();
     }
 
     /**
@@ -130,6 +129,17 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin
     {
         if ( _repository == null )
         {
+
+            try
+            {
+                ConnectorInitializer.initialize ();
+            }
+            catch ( CoreException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
             _repository = new HiveRepository ();
 
             IPath hives = getRepostoryFile ();
