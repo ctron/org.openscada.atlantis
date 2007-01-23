@@ -44,7 +44,7 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="clean, init, build, dist-source, dist-binary, rcp, apps" description="--> Master build file for OpenSCADA Atlabtis">
+    <target name="default" depends="clean, init, build, dist-source, dist-binary, rcp, apps, make-ice-documentation" description="--> Master build file for OpenSCADA Atlabtis">
     </target>
     
     <target name="init.genworkspace">
@@ -266,5 +266,28 @@
 		</zip>
 		
     </target>
+	
+	<!-- ================================= 
+          target: make-ice-documentation              
+         ================================= -->
+    <target name="make-ice-documentation" depends="" description="--> Generate the ICE documentation">
+		<mkdir dir="${deploy.dir}/doc/ice/sgml"/>
+		<mkdir dir="${deploy.dir}/doc/ice/html"/>
+		<mkdir dir="${deploy.dir}/doc/ice/pdf"/>
+        <exec executable="slice2docbook" failonerror="true">
+			<arg line="-s"/>
+			<arg line="${deploy.dir}/doc/ice/sgml/openscada.sgml"/>
+			<arg line="${source.base}/interface/ice/core/core.ice"/>
+			<arg line="${source.base}/interface/ice/da/da.ice"/>
+		</exec>
+		<exec executable="docbook2html" failonerror="true" dir="${deploy.dir}/doc/ice/html">
+			<arg line="${deploy.dir}/doc/ice/sgml/openscada.sgml"/>
+		</exec>
+		<exec executable="docbook2pdf" failonerror="true" dir="${deploy.dir}/doc/ice/pdf">
+			<arg line="${deploy.dir}/doc/ice/sgml/openscada.sgml"/>
+		</exec>
+    </target>
+
+
 
 </project>
