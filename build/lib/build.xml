@@ -157,7 +157,7 @@
 	
 			<!-- guild "gensrc" directory if it exists -->
 			<if>
-				<available type="dir" file="gensrc"/>
+				<available type="dir" file="${build.dir}/${package}-build/gensrc"/>
 				<then>
 					<echo message="Building gensrc"/>
 					<javac
