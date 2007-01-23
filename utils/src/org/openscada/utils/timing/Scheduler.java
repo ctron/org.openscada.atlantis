@@ -208,8 +208,8 @@ public class Scheduler implements Runnable
     }
 
     /**
-     * Schedule a job to be executed once after the period time
-     * 
+     * Schedule a job to be executed once after the period time.
+     *
      * @param runnable
      *            The runnabel to run
      * @param period
@@ -218,7 +218,6 @@ public class Scheduler implements Runnable
      */
     public Job scheduleJob ( Runnable runnable, int period )
     {
-
         Job job = new Job ( runnable, period, true );
         synchronized ( _jobs )
         {
@@ -258,7 +257,9 @@ public class Scheduler implements Runnable
             }
 
             if ( wait )
+            {
                 job.wait ();
+            }
         }
 
     }
@@ -393,17 +394,17 @@ public class Scheduler implements Runnable
         }
     }
 
-    synchronized public boolean isBound ()
+    public synchronized boolean isBound ()
     {
         return _thread != null;
     }
 
-    synchronized public void unbindFromThread ()
+    public synchronized void unbindFromThread ()
     {
         _thread = null;
     }
 
-    synchronized public void bindToThread ( Thread thread ) throws AlreadyBoundException
+    public synchronized void bindToThread ( Thread thread ) throws AlreadyBoundException
     {
         if ( ( _thread != null ) && !_thread.equals ( thread ) )
             throw new AlreadyBoundException ();
@@ -411,7 +412,7 @@ public class Scheduler implements Runnable
         _thread = thread;
     }
 
-    synchronized public void bindToCurrentThread () throws AlreadyBoundException
+    public synchronized void bindToCurrentThread () throws AlreadyBoundException
     {
         bindToThread ( Thread.currentThread () );
     }
@@ -424,7 +425,7 @@ public class Scheduler implements Runnable
      * @param thread
      *            The thread to bind to
      */
-    synchronized public void rebindToThread ( Thread thread )
+    public synchronized void rebindToThread ( Thread thread )
     {
         unbindFromThread ();
         try
@@ -437,7 +438,7 @@ public class Scheduler implements Runnable
         }
     }
 
-    synchronized public void rebindToCurrentThread ()
+    public synchronized void rebindToCurrentThread ()
     {
         rebindToThread ( Thread.currentThread () );
     }
@@ -450,12 +451,16 @@ public class Scheduler implements Runnable
      * @throws NotBoundException
      * @throws WrongThreadException
      */
-    synchronized private void ensureIsBound () throws NotBoundException, WrongThreadException
+    private synchronized void ensureIsBound () throws NotBoundException, WrongThreadException
     {
         if ( !isBound () )
+        {
             throw new NotBoundException ();
+        }
 
         if ( !_thread.equals ( Thread.currentThread () ) )
+        {
             throw new WrongThreadException ();
+        }
     }
 }
