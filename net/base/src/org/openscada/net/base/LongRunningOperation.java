@@ -25,6 +25,7 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
 
     protected LongRunningOperation ( LongRunningController controller, LongRunningListener listener )
     {
+        super ();
         _controller = controller;
         _listener = listener;
     }
