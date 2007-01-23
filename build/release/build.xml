@@ -280,12 +280,14 @@
 			<arg line="${source.base}/interface/ice/core/core.ice"/>
 			<arg line="${source.base}/interface/ice/da/da.ice"/>
 		</exec>
-		<exec executable="docbook2html" failonerror="true" dir="${deploy.dir}/doc/ice/html">
-			<arg line="${deploy.dir}/doc/ice/sgml/openscada.sgml"/>
-		</exec>
-		<exec executable="docbook2pdf" failonerror="true" dir="${deploy.dir}/doc/ice/pdf">
-			<arg line="${deploy.dir}/doc/ice/sgml/openscada.sgml"/>
-		</exec>
+    	<parallel>
+			<exec executable="docbook2html" failonerror="true" dir="${deploy.dir}/doc/ice/html">
+				<arg line="${deploy.dir}/doc/ice/sgml/openscada.sgml"/>
+			</exec>
+			<exec executable="docbook2pdf" failonerror="true" dir="${deploy.dir}/doc/ice/pdf">
+				<arg line="${deploy.dir}/doc/ice/sgml/openscada.sgml"/>
+			</exec>
+		</parallel>
     </target>
 
 
