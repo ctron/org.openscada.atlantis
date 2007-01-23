@@ -30,7 +30,6 @@
          ================================= -->
     <target name="clean" depends="init" description="--> Clean Up">
         <delete dir="${build.dir}"/>
-		<delete dir="bin"/>
     </target>
 	
 	<!-- ================================= 
