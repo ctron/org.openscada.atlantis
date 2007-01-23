@@ -102,10 +102,22 @@ public class HiveRepository extends Observable
         }
     }
 
-    public void addConnection ( HiveConnection connection )
+    public synchronized void addConnection ( HiveConnection connection )
     {
         _connections.add ( connection );
 
+        setChanged ();
+        notifyObservers ();
+    }
+    
+    public synchronized void removeConnection ( HiveConnection connection )
+    {
+        // disconnect first
+        connection.disconnect ();
+        
+        // now remove from the list
+        _connections.remove ( connection );
+        
         setChanged ();
         notifyObservers ();
     }

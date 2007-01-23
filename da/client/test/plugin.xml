@@ -129,6 +129,19 @@
             </enablement>
          </action>
          <action
+               class="org.openscada.da.client.test.actions.DeleteHiveAction"
+               icon="icons/16x16/stock_delete.png"
+               id="org.openscada.da.client.test.actions.DeleteHiveAction"
+               label="Delete"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions"
+               tooltip="Delete a Hive">
+            <enablement>
+               <objectClass name="org.openscada.da.client.test.impl.HiveConnection"/>
+            </enablement>
+         </action>
+         <action
                class="org.openscada.da.client.test.actions.ConnectHiveAction"
                icon="icons/stock_connect.png"
                id="org.openscada.da.client.test.actions.ConnectHiveAction"
@@ -202,6 +215,13 @@
             adaptable="false"
             id="org.openscada.da.client.test.popupMenus.oc2"
             objectClass="org.openscada.da.client.test.impl.HiveConnection">
+		<action
+               class="org.openscada.da.client.test.actions.DeleteHiveAction"
+               icon="icons/16x16/stock_delete.png"
+               id="org.openscada.da.client.test.actions.DeleteHiveAction"
+               label="Delete"
+               menubarPath="additions">
+         </action>
          <action
                class="org.openscada.da.client.test.actions.DisconnectHiveAction"
                icon="icons/stock_disconnect.png"
