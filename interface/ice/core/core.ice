@@ -7,6 +7,9 @@ module OpenSCADA
 	{
 		dictionary <string, string> Properties;
 		
+		/**
+		 * Thrown in the case a interface gets passed an invalid session
+		 **/
 		exception InvalidSessionException
 		{
 		};
