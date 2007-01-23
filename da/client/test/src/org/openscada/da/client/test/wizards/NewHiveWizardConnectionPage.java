@@ -247,6 +247,14 @@ class NewHiveWizardConnectionPage extends WizardPage implements IWizardPage
             else
             {
                 updateDI ( di );
+                try
+                {
+                    di.validate ( ci );
+                }
+                catch ( Throwable e )
+                {
+                    updateStatus ( String.format ( "Driver failed to validate connection: %s", e.getMessage () ) );
+                }
             }
         }
         catch ( Throwable e )
