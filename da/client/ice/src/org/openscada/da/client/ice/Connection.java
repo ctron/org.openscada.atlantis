@@ -44,8 +44,6 @@ import org.openscada.da.core.browser.Entry;
 import org.openscada.da.ice.BrowserEntryHelper;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
-import org.openscada.utils.exec.OperationResult;
-import org.openscada.utils.exec.OperationResultHandler;
 
 import Ice.Communicator;
 import Ice.InitializationData;
@@ -192,49 +190,43 @@ public class Connection implements org.openscada.da.client.Connection
     {
         return BrowserEntryHelper.fromIce ( _hive.browse ( _session, path ) );
     }
-
-    public void completeWrite ( LongRunningOperation op ) throws OperationException
+    
+    public Entry[] browse ( String[] path, LongRunningListener listener ) throws Exception 
     {
-        if ( !(op instanceof AsyncWriteOperation) )
-            throw new OperationException ( "async operation is not of type AsyncWriteOperation" );
-        
-        AsyncWriteOperation a = (AsyncWriteOperation)op;
-        Throwable e = a.getError ();
-        if ( e != null )
-            throw new OperationException ( e );
+        LongRunningOperation op = startBrowse ( path, listener );
+        op.waitForCompletion ();
+        return completeBrowse ( op );
+    }
+    
+    public LongRunningOperation startBrowse ( String[] path )
+    {
+        return startBrowse ( path, null );
     }
 
-    public WriteAttributeResults completeWriteAttributes ( LongRunningOperation operation ) throws OperationException
+    public LongRunningOperation startBrowse ( String[] path, LongRunningListener listener )
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public OperationResult<Entry[]> startBrowse ( String[] path )
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public OperationResult<Entry[]> startBrowse ( String[] path, OperationResultHandler<Entry[]> handler )
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public LongRunningOperation startWrite ( String itemName, Variant value, LongRunningListener listener )
-    {
-        AsyncWriteOperation cb = new AsyncWriteOperation ( listener );
-        _hive.write_async ( cb, _session, itemName, VariantHelper.toIce ( value ) );
+        AsyncBrowseOperation cb = new AsyncBrowseOperation ( listener );
+        _hive.browse_async ( cb, _session, path );
         return cb;
     }
 
-    public LongRunningOperation startWriteAttributes ( String itemId, Map<String, Variant> attributes, LongRunningListener listener )
+    public Entry[] completeBrowse ( LongRunningOperation op ) throws OperationException
     {
-        // TODO Auto-generated method stub
-        return null;
+        if ( !(op instanceof AsyncBrowseOperation) )
+            throw new OperationException ( "async operation is not of type AsyncBrowseOperation" );
+        
+        AsyncBrowseOperation a = (AsyncBrowseOperation)op;
+        Throwable e = a.getError ();
+        if ( e != null )
+        {
+            throw new OperationException ( e );
+        }
+        
+        return BrowserEntryHelper.fromIce ( a.getResult () );
     }
-
+    
+    // write operation
+    
     public void write ( String itemName, Variant value ) throws InterruptedException, OperationException
     {
         try
@@ -250,14 +242,39 @@ public class Connection implements org.openscada.da.client.Connection
             throw new OperationException ( e );
         }
     }
-
+    
     public void write ( String itemName, Variant value, LongRunningListener listener ) throws InterruptedException, OperationException
     {
-        AsyncWriteOperation cb = new AsyncWriteOperation ( listener );
-        
-        _hive.write_async ( cb, _session, itemName, VariantHelper.toIce ( value ) );
+        LongRunningOperation op = startWrite ( itemName, value, listener );
+        op.waitForCompletion ();
+        completeWrite ( op );
+    }
+    
+    public LongRunningOperation startWrite ( String itemName, Variant value )
+    {
+        return startWrite ( itemName, null );
     }
 
+    public LongRunningOperation startWrite ( String itemName, Variant value, LongRunningListener listener )
+    {
+        AsyncWriteOperation cb = new AsyncWriteOperation ( listener );
+        _hive.write_async ( cb, _session, itemName, VariantHelper.toIce ( value ) );
+        return cb;
+    }
+    
+    public void completeWrite ( LongRunningOperation op ) throws OperationException
+    {
+        if ( !(op instanceof AsyncWriteOperation) )
+            throw new OperationException ( "async operation is not of type AsyncWriteOperation" );
+        
+        AsyncBaseOperation a = (AsyncBaseOperation)op;
+        Throwable e = a.getError ();
+        if ( e != null )
+            throw new OperationException ( e );
+    }
+
+    // write attributes operation
+    
     public void writeAttributes ( String itemId, Map<String, Variant> attributes ) throws InterruptedException, OperationException
     {
         try
@@ -276,8 +293,31 @@ public class Connection implements org.openscada.da.client.Connection
 
     public void writeAttributes ( String itemId, Map<String, Variant> attributes, LongRunningListener listener ) throws InterruptedException, OperationException
     {
-        // TODO Auto-generated method stub
+        LongRunningOperation op = startWriteAttributes ( itemId, attributes, listener );
+        op.waitForCompletion ();
+        completeWriteAttributes ( op );
+    }
+    
+    public LongRunningOperation startWriteAttributes ( String itemId, Map<String, Variant> attributes, LongRunningListener listener )
+    {
+        AsyncWriteAttributesOperation cb = new AsyncWriteAttributesOperation ( listener );
+        _hive.writeAttributes_async ( cb, _session, itemId, AttributesHelper.toIce ( attributes ) );
+        return cb;
+    }
+    
+    public WriteAttributeResults completeWriteAttributes ( LongRunningOperation op ) throws OperationException
+    {
+        if ( !(op instanceof AsyncWriteAttributesOperation) )
+            throw new OperationException ( "async operation is not of type AsyncWriteAttributesOperation" );
         
+        AsyncWriteAttributesOperation a = (AsyncWriteAttributesOperation)op;
+        Throwable e = a.getError ();
+        if ( e != null )
+        {
+            throw new OperationException ( e );
+        }
+        
+        return a.getResult ();
     }
 
     public synchronized void addConnectionStateListener ( ConnectionStateListener connectionStateListener )

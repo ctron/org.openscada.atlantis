@@ -19,18 +19,26 @@
 
 package org.openscada.da.client.ice;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.openscada.core.Variant;
+import org.openscada.da.core.WriteAttributeResult;
+import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
 
 import Ice.LocalException;
 import Ice.UserException;
 import OpenSCADA.DA.AMI_Hive_write;
+import OpenSCADA.DA.AMI_Hive_writeAttributes;
 
-public class AsyncWriteOperation extends AMI_Hive_write implements LongRunningOperation 
+public class AsyncWriteAttributesOperation extends AMI_Hive_writeAttributes implements LongRunningOperation 
 {
     private AsyncBaseOperation _op;
+    private WriteAttributeResults _result;
     
-    public AsyncWriteOperation ( LongRunningListener listener )
+    public AsyncWriteAttributesOperation ( LongRunningListener listener )
     {
         super ();
         _op = new AsyncBaseOperation ( listener );
@@ -47,11 +55,36 @@ public class AsyncWriteOperation extends AMI_Hive_write implements LongRunningOp
     {
         _op.failure ( ex );
     }
-
+    
     @Override
-    public void ice_response ()
+    public void ice_response ( Map __ret )
     {
-        _op.success ();
+        try
+        {
+            _result = new WriteAttributeResults ();
+            for ( Object o : __ret.entrySet () )
+            {
+                Map.Entry e = (Map.Entry)o;
+                if ( e.getValue () != null )
+                {
+                    _result.put ( e.getKey ().toString (), new WriteAttributeResult ( new Exception ( e.getValue ().toString () ) ) );
+                }
+                else
+                {
+                    _result.put ( e.getKey ().toString (), new WriteAttributeResult () );
+                }
+            }
+            _op.success ();
+        }
+        catch ( Throwable e )
+        {
+            _op.failure ( e );
+        }
+    }
+    
+    public WriteAttributeResults getResult ()
+    {
+        return _result;
     }
 
     // Forward to AsyncBaseOperation

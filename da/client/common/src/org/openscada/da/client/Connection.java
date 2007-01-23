@@ -29,17 +29,18 @@ import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
-import org.openscada.utils.exec.OperationResult;
-import org.openscada.utils.exec.OperationResultHandler;
 
 public interface Connection extends org.openscada.core.client.Connection
 {
     public abstract Entry[] browse ( String [] path ) throws Exception;
-    public abstract OperationResult<Entry[]> startBrowse ( String [] path );
-    public abstract OperationResult<Entry[]> startBrowse ( String [] path, OperationResultHandler<Entry[]> handler );
+    public abstract Entry[] browse ( String [] path, LongRunningListener listener ) throws Exception;
+    public abstract LongRunningOperation startBrowse ( String [] path, LongRunningListener listener ) throws Exception;
+    public abstract LongRunningOperation startBrowse ( String [] path );
+    public abstract Entry[] completeBrowse ( LongRunningOperation op ) throws OperationException;
     
     public abstract void write ( String itemName, Variant value ) throws InterruptedException, OperationException;
     public abstract void write ( String itemName, Variant value, LongRunningListener listener ) throws InterruptedException, OperationException;
+    public abstract LongRunningOperation startWrite ( String itemName, Variant value );
     public abstract LongRunningOperation startWrite ( String itemName, Variant value, LongRunningListener listener );
     public abstract void completeWrite ( LongRunningOperation op ) throws OperationException;
     

@@ -42,7 +42,7 @@ import org.openscada.core.client.net.OperationTimedOutException;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.da.client.FolderListener;
 import org.openscada.da.client.ItemUpdateListener;
-import org.openscada.da.client.net.operations.BrowserListOperation;
+import org.openscada.da.client.net.operations.BrowseOperationController;
 import org.openscada.da.client.net.operations.WriteAttributesOperationController;
 import org.openscada.da.client.net.operations.WriteOperationController;
 import org.openscada.da.core.Location;
@@ -95,8 +95,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
     //private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener> ();
 
     // operations
-    private BrowserListOperation _browseListOperation;
-    
+    private BrowseOperationController _browseController = null;
     private WriteOperationController _writeController = null;
     private WriteAttributesOperationController _writeAttributesController = null;
 
@@ -132,6 +131,9 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                 performBrowseEvent ( message );
             }});
 
+        _browseController = new BrowseOperationController ( _client );
+        _browseController.register ( _client.getMessageProcessor () );
+        
         _writeController = new WriteOperationController ( _client );
         _writeController.register ( _client.getMessageProcessor () );
         
@@ -306,6 +308,11 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         completeWrite ( op );
     }
     
+    public LongRunningOperation startWrite ( String itemId, Variant value )
+    {
+        return startWrite ( itemId, value, null );
+    }
+    
     public LongRunningOperation startWrite ( String itemName, Variant value, LongRunningListener listener )
     {
         return _writeController.start ( itemName, value, listener );   
@@ -378,19 +385,52 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
     
     public Entry[] browse ( String [] path ) throws Exception
     {
-        return _browseListOperation.execute ( path );
+        return browse ( path, null );
     }
-
-    public OperationResult<Entry[]> startBrowse ( String [] path )
+    
+    public Entry[] browse ( String[] path, LongRunningListener listener ) throws Exception
     {
-        return _browseListOperation.startExecute ( path );
+        LongRunningOperation op = startBrowse ( path, listener );
+        op.waitForCompletion ();
+        return completeBrowse ( op );
     }
 
-    public OperationResult<Entry[]> startBrowse ( String [] path, OperationResultHandler<Entry[]> handler )
+    public LongRunningOperation startBrowse ( String [] path )
     {
-        return _browseListOperation.startExecute ( handler, path );
+        return startBrowse ( path, null );
     }
 
+    public LongRunningOperation startBrowse ( String [] path, LongRunningListener listener )
+    {
+        return _browseController.start ( path, listener );
+    }
+
+    public Entry[] completeBrowse ( LongRunningOperation operation ) throws OperationException
+    {
+        if ( !(operation instanceof org.openscada.net.base.LongRunningOperation ) )
+            throw new RuntimeException ( "Operation is not of type org.openscada.net.base.LongRunningOperation" );
+        
+        org.openscada.net.base.LongRunningOperation op = (org.openscada.net.base.LongRunningOperation)operation;
+        
+        if ( op.getError () != null )
+        {
+            throw new OperationException ( op.getError () );
+        }
+        if ( op.getReply () != null )
+        {
+            Message reply = op.getReply ();
+            try
+            {
+                return ListBrowser.parseResponse ( reply );
+            }
+            catch ( Exception e )
+            {
+                throw new OperationException ( e );
+            }
+        }
+        return null;
+    }
+    
     @Override
     protected void onConnectionBound ()
     {
