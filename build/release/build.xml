@@ -44,7 +44,7 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="clean, init, build, dist-source, dist-binary, rcp, apps, make-ice-documentation" description="--> Master build file for OpenSCADA Atlabtis">
+    <target name="default" depends="clean, init, build, dist-source, dist-binary, rcp, apps, make-ice-documentation, dist-doc" description="--> Master build file for OpenSCADA Atlabtis">
     </target>
     
     <target name="init.genworkspace">
@@ -290,6 +290,102 @@
 		</parallel>
     </target>
 
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: dist-doc                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="dist-doc" depends="dist-doc-client, dist-doc-server">
+    </target>
 
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: dist-doc-client
+         - - - - - - - - - - - - - - - - - -->
+    <target name="dist-doc-client" depends="build, dist-binary">
+    	<mkdir dir="${build.dir}/dist-doc-client"/>
+    	<unzip dest="${build.dir}/dist-doc-client">
+    		<fileset dir="${deploy.dist.module}">
+				<include name="**/openscada-core-common-*.zip"/>
+    			<include name="**/openscada-core-client-common-*.zip"/>
+	
+				<include name="**/openscada-da-core-common-*.zip"/>
+				<include name="**/openscada-da-client-common-*.zip"/>
+    		</fileset>
+    		<patternset>
+    			<include name="src/**"/>
+    		</patternset>
+    	</unzip>
+	
+		<!-- create an "all in one" javadoc -->
+		<mkdir dir="${deploy.dir}/doc/client/api"/>
+		<javadoc destdir="${deploy.dir}/doc/client/api"
+	       	author="true"
+	       	version="true"
+	       	use="true"
+	       	encoding="utf-8"
+	       	>
+	       	<tag name="note" description="Note" scope="all"/>
+	       	<tag name="warning" description="Warning" scope="all"/>
+	       	<packageset dir="${build.dir}/dist-doc-client/src" defaultexcludes="yes">
+	       		<include name="**"/>
+	       	</packageset>
+			<classpath>
+				<fileset dir="${build.dir}/dist-binary/lib">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${build.dir}/dist-binary/bin">
+					<include name="*.jar"/>
+				</fileset>
+	  		</classpath>
+		</javadoc>
+
+		<!-- pack up javadoc -->
+		<zip basedir="${deploy.dir}/doc/client/api" destfile="${deploy.dist.source}/openscada-atlantis-client-doc-${tag}.zip">
+		</zip>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: dist-doc-server
+         - - - - - - - - - - - - - - - - - -->
+    <target name="dist-doc-server" depends="build, dist-binary">
+    	<mkdir dir="${build.dir}/dist-doc-server"/>
+    	<unzip dest="${build.dir}/dist-doc-server">
+    		<fileset dir="${deploy.dist.module}">
+				<include name="**/openscada-core-common-*.zip"/>
+    			<include name="**/openscada-core-server-*.zip"/>
+			
+				<include name="**/openscada-da-core-common-*.zip"/>
+				<include name="**/openscada-da-core-server-*.zip"/>
+    		</fileset>
+    		<patternset>
+    			<include name="src/**"/>
+    		</patternset>
+    	</unzip>
+	
+		<!-- create an "all in one" javadoc -->
+		<mkdir dir="${deploy.dir}/doc/server/api"/>
+		<javadoc destdir="${deploy.dir}/doc/server/api"
+	       	author="true"
+	       	version="true"
+	       	use="true"
+	       	encoding="utf-8"
+	       	>
+	       	<tag name="note" description="Note" scope="all"/>
+	       	<tag name="warning" description="Warning" scope="all"/>
+	       	<packageset dir="${build.dir}/dist-doc-server/src" defaultexcludes="yes">
+	       		<include name="**"/>
+	       	</packageset>
+			<classpath>
+				<fileset dir="${build.dir}/dist-binary/lib">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${build.dir}/dist-binary/bin">
+					<include name="*.jar"/>
+				</fileset>
+	  		</classpath>
+		</javadoc>
+
+		<!-- pack up javadoc -->
+		<zip basedir="${deploy.dir}/doc/server/api" destfile="${deploy.dist.source}/openscada-atlantis-server-doc-${tag}.zip">
+		</zip>
+    </target>
 
 </project>
