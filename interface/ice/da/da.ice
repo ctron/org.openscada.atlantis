@@ -6,6 +6,9 @@
 
 module OpenSCADA
 {
+	/**
+	 * The data access interfaces for OpenSCADA
+	 **/
 	module DA
 	{
 		/**
@@ -24,14 +27,37 @@ module OpenSCADA
 		};
 		sequence<IODirection> IODirections;
 		
+		/**
+		 * The browser module contains all data structures and interfaces
+		 * needed by the item browser interface. The item browser is a
+		 * hierarchical enumeration of data item IDs including additional
+		 * meta data information.
+		 *
+		 * Since the item browser is optional when implementing a DA server
+		 * it is seperated from the main DA module. The item browser is considered
+		 * an "add-on" which helps a human user to select data items from the servers
+		 * list of data items.
+		 **/
 		module Browser
 		{
 			/**
-			 * A generic browser entry
+			 * A generic browser entry.
+             * This class is the generic base class for all browser entries and
+             * must not be instatiated directly.
 			 **/
 			class Entry
 			{
+				/**
+				 * The name of the entry. The name must be unique at its location
+				 * but not in the whole server. In contrast the "item ID" must be unique
+				 * throughout the whole server.
+				 **/
 				string name;
+				
+				/**
+				 * A set of attributes providing additional information about this entry
+				 * (e.g. content of the folder or a description of the data item).
+				 **/
 				Core::Attributes attributes;
 			};
 			
@@ -48,11 +74,14 @@ module OpenSCADA
 			class ItemEntry extends Entry
 			{
 				/**
-				 * The ID of the item in the server
+				 * The ID of the item in the server. It must be the server-unique
+				 * ID of the item.
 				 **/
 				string itemId;
+				
 				/**
-				 * The supported IO operations as a hint to the user
+				 * The supported IO operations as a hint to the user. The entry should
+				 * contain the allowed IO operations but it is not required.
 				 **/
 				IODirections ioDirectionsM;
 			};
@@ -67,7 +96,7 @@ module OpenSCADA
 			};
 		
 			/**
-			 * The folder callback that will be attached to the session
+			 * The folder callback that will be attached to the session.
 			 **/
 			["ami"]
 			interface FolderCallback
@@ -81,7 +110,7 @@ module OpenSCADA
 		};
 
 		/**
-		 * The data callback that will be attached to the session
+		 * The data callback that will be attached to the session.
 		 **/
 		["ami"]
 		interface DataCallback
@@ -140,10 +169,17 @@ module OpenSCADA
 		interface Hive extends Core::Server
 		{
 			/**
-			 * Create a new session
+			 * Create a new session.
+			 *
+			 * The server might require additional session properties in order the create
+			 * a new session (e.g. username/password). What properties are required depend
+			 * in the implementation of the server.
+			 *
+			 * @param properties The properties used to create the session.
+			 * @throws UnableToCreateSession Raised if the session cannot be created to due any reason
 			 * @return A new session
 			 **/
-			Session * createSession ( Core::Properties propertiesP ) throws UnableToCreateSession;
+			Session * createSession ( Core::Properties \properties ) throws UnableToCreateSession;
 			
 			/**
 			 * Subscribe the session to an item
@@ -155,11 +191,11 @@ module OpenSCADA
 			void unregisterForItem ( Session * sessionP, string item ) throws Core::InvalidSessionException, InvalidItemException;
 			
 			/**
-			 * Write a value to an item
+			 * Write a value to an item. The call will be return once the value is written.
 			 **/
 			["amd"] void write ( Session * sessionP, string item, Core::VariantBase value ) throws Core::InvalidSessionException, InvalidItemException;
 			/**
-			 * Write attributes to an item
+			 * Write attributes to an item. The call will be return once all attributes are written.
 			 **/
 			["amd"] Core::Properties writeAttributes ( Session * sessionP, string item, Core::Attributes attributes ) throws Core::InvalidSessionException, InvalidItemException;
 			
