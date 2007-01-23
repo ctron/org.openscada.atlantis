@@ -25,10 +25,10 @@
        		<property name="buildId" value="Integration-${DSTAMP}"/>
     	</ant>
     	
-    	<exec executable="ln">
+    	<exec executable="ln" dir="${deploy.base}">
     		<arg line="-sf"/>
-    		<arg line="${deploy.base}/${DSTAMP}"/>
-    		<arg line="${deploy.base}/latest"/>
+    		<arg line="${DSTAMP}"/>
+    		<arg line="latest"/>
     	</exec>
     </target>
 
