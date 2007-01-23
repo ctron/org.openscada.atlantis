@@ -24,6 +24,12 @@
        		<property name="buildType" value="I"/>
        		<property name="buildId" value="Integration-${DSTAMP}"/>
     	</ant>
+    	
+    	<exec executable="ln">
+    		<arg line="-sf"/>
+    		<arg line="${deploy.base}/${DSTAMP}"/>
+    		<arg line="${deploy.base}/latest"/>
+    	</exec>
     </target>
 
     <!-- - - - - - - - - - - - - - - - - - 
