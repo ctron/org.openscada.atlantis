@@ -45,7 +45,12 @@ public class MessageCreator
 
     public static Message createFailedMessage ( Message inputMessage, String failMessage )
     {
-        Message msg = new Message ( Message.CC_FAILED );
+        return createFailedMessage ( inputMessage, Message.CC_FAILED, failMessage );
+    }
+    
+    public static Message createFailedMessage ( Message inputMessage, int commandCode, String failMessage )
+    {
+        Message msg = new Message ( commandCode );
 
         msg.setReplySequence ( inputMessage.getSequence () );
         msg.setValue ( Message.FIELD_ERROR_INFO, failMessage );
