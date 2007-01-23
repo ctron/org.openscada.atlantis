@@ -45,9 +45,9 @@
 	   	<openscada.pull-in-module name="core-ice-base"/>
 	   	<openscada.pull-in-module name="da-core-common"/>
     	
-		<delete dir="gensrc"/>
-		<mkdir dir="gensrc"/>
-		<slice2java outputdir="gensrc" casesensitive="true">
+		<delete dir="${build.dir}/${package}-build/gensrc"/>
+		<mkdir dir="${build.dir}/${package}-build/gensrc"/>
+		<slice2java outputdir="${build.dir}/${package}-build/gensrc" casesensitive="true">
 			<meta value="true"/>
 			<fileset dir="${source.base}/interface/ice">
 				<include name="da/*.ice"/>
