@@ -68,4 +68,8 @@ public class DriverInformation implements org.openscada.core.client.DriverInform
         return org.openscada.da.client.net.Connection.class;
     }
 
+    public void validate ( ConnectionInformation connectionInformation ) throws Throwable
+    {
+    }
+
 }
