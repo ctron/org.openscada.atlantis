@@ -19,29 +19,19 @@
 
 package org.openscada.da.client.ice;
 
-import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionInformation;
+import org.openscada.core.client.DriverInformation;
 
-public class DriverInformation implements org.openscada.core.client.DriverInformation
+public class DriverFactory implements org.openscada.core.client.DriverFactory
 {
-
-    public Connection create ( ConnectionInformation connectionInformation )
+    public DriverInformation getDriverInformation ( ConnectionInformation connectionInformation )
     {
-        return new org.openscada.da.client.ice.Connection ( connectionInformation );
+        if ( !connectionInformation.getInterface ().equalsIgnoreCase ( "da" ) )
+            return null;
+        
+        if ( !connectionInformation.getDriver ().equalsIgnoreCase ( "ice" ) )
+            return null;
+        
+        return new org.openscada.da.client.ice.DriverInformation ();
     }
-
-    public Class getConnectionClass ()
-    {
-        return org.openscada.da.client.ice.Connection.class;
-    }
-
-    public void validate ( ConnectionInformation connectionInformation ) throws Throwable
-    {
-        String str = connectionInformation.getProperties ().get ( connectionInformation.getTarget () );
-        if ( str == null )
-        {
-            throw new Exception ( String.format ( "Property with key of target is missing (target: '%s')", connectionInformation.getTarget () ) );
-        }
-    }
-
 }

@@ -34,12 +34,9 @@ import org.openscada.core.client.ConnectionFactory;
 import org.openscada.core.client.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
-import org.openscada.core.client.DriverFactory;
-import org.openscada.core.client.DriverInformation;
 import org.openscada.core.ice.AttributesHelper;
 import org.openscada.core.ice.VariantHelper;
 import org.openscada.da.client.FolderListener;
-import org.openscada.da.client.FolderWatcher;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.WriteAttributeResults;
@@ -55,13 +52,8 @@ import Ice.InitializationData;
 import Ice.ObjectAdapter;
 import Ice.ObjectPrx;
 import Ice.Util;
-import Ice._PropertiesOperationsNC;
 import OpenSCADA.Core.InvalidSessionException;
 import OpenSCADA.Core.OperationNotSupportedException;
-import OpenSCADA.Core.VariantBoolean;
-import OpenSCADA.Core.VariantType;
-import OpenSCADA.DA.DataCallbackPrx;
-import OpenSCADA.DA.DataCallbackPrxHelper;
 import OpenSCADA.DA.HivePrx;
 import OpenSCADA.DA.HivePrxHelper;
 import OpenSCADA.DA.InvalidItemException;
@@ -74,18 +66,7 @@ public class Connection implements org.openscada.da.client.Connection
     
     static
     {
-        ConnectionFactory.registerDriverFactory ( new DriverFactory () {
-
-            public DriverInformation getDriverInformation ( ConnectionInformation connectionInformation )
-            {
-                if ( !connectionInformation.getInterface ().equalsIgnoreCase ( "da" ) )
-                    return null;
-                
-                if ( !connectionInformation.getDriver ().equalsIgnoreCase ( "ice" ) )
-                    return null;
-                
-                return new org.openscada.da.client.ice.DriverInformation ();
-            }} );
+        ConnectionFactory.registerDriverFactory ( new DriverFactory () );
     }
     
     protected ConnectionState _state = ConnectionState.CLOSED;
