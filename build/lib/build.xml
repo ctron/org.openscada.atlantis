@@ -73,6 +73,14 @@
 			<append-line file="${module.dep.file}">&quot;${package}&quot; -&gt; &quot;@{name}&quot;</append-line>
         </sequential>
     </macrodef>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: openscada.clean                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="openscada.clean">
+			<delete dir="${build.dir}/${package}-build"/>
+    </target>
+
 
 	<!-- - - - - - - - - - - - - - - - - - 
           macrodef: openscada.prepare-local-libs  
@@ -145,7 +153,7 @@
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.compile.source">
         <sequential>
-			<mkdir dir="${build.dir}/${package}/build"/>
+			<mkdir dir="${build.dir}/${package}-build/bin"/>
 	
 			<!-- guild "gensrc" directory if it exists -->
 			<if>
@@ -156,9 +164,9 @@
 						encoding="utf-8"
 						source="1.5"
 						target="1.5"
-						destdir="${build.dir}/${package}/build"
+						destdir="${build.dir}/${package}-build/bin"
 						>
-						<src path="gensrc"/>
+						<src path="${build.dir}/${package}-build/gensrc"/>
 						<classpath>
 							<fileset dir="${build.dir}/${package}/lib">
 								<include name="*.jar"/>
@@ -166,7 +174,7 @@
 								<fileset dir="${build.dir}/${package}/bin">
 									<include name="*.jar"/>
 								</fileset>
-							<pathelement location="${build.dir}/${package}/schemabin"/>
+							<pathelement location="${build.dir}/${package}-build/schemabin"/>
 						</classpath>
 					</javac>
 				</then>
@@ -176,7 +184,7 @@
     			encoding="utf-8"
     			source="1.5"
     			target="1.5"
-    			destdir="${build.dir}/${package}/build"
+    			destdir="${build.dir}/${package}-build/bin"
     			>
 				<src path="src"/>
     			<classpath>
@@ -186,8 +194,8 @@
        				<fileset dir="${build.dir}/${package}/bin">
        					<include name="*.jar"/>
        				</fileset>
-    				<pathelement location="${build.dir}/${package}/schemabin"/>
-					<pathelement location="${build.dir}/${package}/build"/>
+    				<pathelement location="${build.dir}/${package}-build/schemabin"/>
+					<pathelement location="${build.dir}/${package}-build/bin"/>
     			</classpath>
     		</javac>
         </sequential>
@@ -214,12 +222,13 @@
     <macrodef name="openscada.common.deploy">
         <sequential>
     		<mkdir dir="${build.dir}/${package}/bin"/>
-        	<mkdir dir="${build.dir}/${package}/schemabin"/>
+			<mkdir dir="${build.dir}/${package}-build/bin"/>
+        	<mkdir dir="${build.dir}/${package}-build/schemabin"/>
     		<jar destfile="${build.dir}/${package}/bin/openscada-${package}-${tag}.jar">
-    			<fileset dir="${build.dir}/${package}/build">
+    			<fileset dir="${build.dir}/${package}-build/bin">
     				<include name="**/*.class"/>
     			</fileset>
-    			<fileset dir="${build.dir}/${package}/schemabin"/>
+    			<fileset dir="${build.dir}/${package}-build/schemabin"/>
     		</jar>
 
     		<mkdir dir="${deploy.dist.module}"/>
@@ -248,10 +257,10 @@
         	<if>
         		<available type="dir" file="schema"/>
         		<then>
-		        	<mkdir dir="${build.dir}/${package}/schemabin"/>
+		        	<mkdir dir="${build.dir}/${package}-build/schemabin"/>
 	    	    	<xmlbean
 	   					failonerror="true"
-	   					classgendir="${build.dir}/${package}/schemabin"
+	   					classgendir="${build.dir}/${package}-build/schemabin"
 						javasource="1.5"
 			            classpathref="xmlbeanspath"
 						>
