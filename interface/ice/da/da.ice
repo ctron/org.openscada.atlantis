@@ -19,7 +19,7 @@ module OpenSCADA
 			INPUT,
 			/**
 			 * [OUTPUT] Data going out from the OpenSCADA System
-			 ** /
+			 **/
 			OUTPUT
 		};
 		sequence<IODirection> IODirections;
