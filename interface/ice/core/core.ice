@@ -24,6 +24,10 @@ module OpenSCADA
 		
 		exception OperationNotSupportedException
 		{
+			/**
+			 * A message explaining why the operation is not supported
+			 **/
+			string message;
 		};
 		
 		interface Session
