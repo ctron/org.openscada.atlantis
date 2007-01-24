@@ -244,6 +244,7 @@
 		<openscada.unpack-module name="da-server-simulation" todir="${temp.dir}/dist-sim-server"/>
 
 		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-opc-server"/>
+		<copy file="${source.base}/da/server/opc/configuration.xml" todir="${temp.dir}/dist-opc-server"/>
 	
 		<openscada.runfile.init file="${temp.dir}/dist-sim-server/runfile.xml"/>
     	<openscada.runfile.gather-jars file="${temp.dir}/dist-sim-server/runfile.xml" dir="${temp.dir}/dist-sim-server"/>
