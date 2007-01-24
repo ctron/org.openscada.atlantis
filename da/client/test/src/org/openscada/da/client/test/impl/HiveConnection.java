@@ -158,6 +158,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
         
         if ( error != null )
         {
+            _log.info ( "Connection failed with additional error", error );
             Openscada_da_client_testPlugin.getDefault ().notifyError ( "Connection failed", error );
         }
     }
