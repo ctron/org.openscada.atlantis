@@ -26,7 +26,7 @@
     	</ant>
     	
     	<exec executable="ln" dir="${deploy.base}">
-    		<arg line="-sf"/>
+    		<arg line="-snf"/>
     		<arg line="${DSTAMP}"/>
     		<arg line="latest"/>
     	</exec>
