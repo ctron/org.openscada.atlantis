@@ -47,6 +47,7 @@
     	<openscada.pull-in-module name="da-core-common"/>
        	<openscada.pull-in-module name="da-core-server"/>
        	<openscada.pull-in-module name="da-ice-base"/>
+    	<openscada.pull-in-module name="da-server-common"/>
     </target>
 
 	<!-- ================================= 
