@@ -30,7 +30,7 @@ import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.FolderEntry;
 
 /**
- * Sample showing how to browse once
+ * Sample showing how to browse using subscriptions
  * <br> 
  * @author Jens Reimann <jens.reimann@inavare.net>
  */
