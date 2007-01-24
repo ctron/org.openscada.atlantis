@@ -143,7 +143,14 @@ public class Connection implements org.openscada.da.client.Connection
         while ( true )
         {
             Runnable r = pollEvent ();
-            r.run ();
+            
+            // ignore errors in event handling
+            try
+            {
+                r.run ();
+            }
+            catch ( Throwable e )
+            {}
         }
     }
     
