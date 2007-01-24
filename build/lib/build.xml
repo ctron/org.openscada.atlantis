@@ -288,6 +288,7 @@
           macrodef: openscada.export.project          
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.export.project">
+    	<attribute name="dir" value="."/>
         <sequential>
             <xmltask source=".project">
 				<copy path="projectDescription/name/text()" property="project.name"/>
@@ -296,7 +297,7 @@
 			<!-- copy project files to temp dir -->
 			<mkdir dir="${temp.dir}/export-project/${package}/${project.name}"/>
 			<copy todir="${temp.dir}/export-project/${package}/${project.name}">
-				<fileset dir=".">
+				<fileset dir="@{dir}">
 					<exclude name="**/.svn"/>
 				</fileset>
 			</copy>
