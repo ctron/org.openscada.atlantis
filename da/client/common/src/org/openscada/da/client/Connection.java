@@ -32,11 +32,11 @@ import org.openscada.utils.exec.LongRunningOperation;
 
 public interface Connection extends org.openscada.core.client.Connection
 {
-    public abstract Entry[] browse ( String [] path ) throws Exception;
-    public abstract Entry[] browse ( String [] path, LongRunningListener listener ) throws Exception;
+    public abstract Entry[] browse ( String [] path ) throws InvalidSessionException, OperationException;
+    public abstract Entry[] browse ( String [] path, LongRunningListener listener ) throws InvalidSessionException, OperationException;
     public abstract LongRunningOperation startBrowse ( String [] path, LongRunningListener listener ) throws Exception;
     public abstract LongRunningOperation startBrowse ( String [] path );
-    public abstract Entry[] completeBrowse ( LongRunningOperation op ) throws OperationException;
+    public abstract Entry[] completeBrowse ( LongRunningOperation op ) throws InvalidSessionException, OperationException;
     
     public abstract void write ( String itemName, Variant value ) throws InterruptedException, OperationException;
     public abstract void write ( String itemName, Variant value, LongRunningListener listener ) throws InterruptedException, OperationException;

@@ -383,16 +383,23 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         return null;
     }
     
-    public Entry[] browse ( String [] path ) throws Exception
+    public Entry[] browse ( String [] path ) throws OperationException
     {
         return browse ( path, null );
     }
     
-    public Entry[] browse ( String[] path, LongRunningListener listener ) throws Exception
+    public Entry[] browse ( String[] path, LongRunningListener listener ) throws OperationException
     {
         LongRunningOperation op = startBrowse ( path, listener );
-        op.waitForCompletion ();
-        return completeBrowse ( op );
+        try
+        {
+            op.waitForCompletion ();
+            return completeBrowse ( op );
+        }
+        catch ( InterruptedException e )
+        {
+            throw new OperationException ( e );
+        }
     }
 
     public LongRunningOperation startBrowse ( String [] path )

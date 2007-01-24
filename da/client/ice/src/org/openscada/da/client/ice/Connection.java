@@ -186,16 +186,38 @@ public class Connection implements org.openscada.da.client.Connection
         return -1;
     }
     
-    public Entry[] browse ( String[] path ) throws Exception
+    public Entry[] browse ( String[] path ) throws org.openscada.core.InvalidSessionException, OperationException
     {
-        return BrowserEntryHelper.fromIce ( _hive.browse ( _session, path ) );
+        try
+        {
+            return BrowserEntryHelper.fromIce ( _hive.browse ( _session, path ) );
+        }
+        catch ( InvalidSessionException e )
+        {
+            throw new org.openscada.core.InvalidSessionException ();
+        }
+        catch ( OperationNotSupportedException e )
+        {
+            throw new org.openscada.core.OperationException ( e.message );
+        }
+        catch ( InvalidLocationException e )
+        {
+            throw new org.openscada.core.OperationException ( e );
+        }
     }
     
-    public Entry[] browse ( String[] path, LongRunningListener listener ) throws Exception 
+    public Entry[] browse ( String[] path, LongRunningListener listener ) throws OperationException 
     {
         LongRunningOperation op = startBrowse ( path, listener );
-        op.waitForCompletion ();
-        return completeBrowse ( op );
+        try
+        {
+            op.waitForCompletion ();
+            return completeBrowse ( op );
+        }
+        catch ( InterruptedException e )
+        {
+            throw new OperationException ( e );
+        }
     }
     
     public LongRunningOperation startBrowse ( String[] path )
@@ -213,7 +235,9 @@ public class Connection implements org.openscada.da.client.Connection
     public Entry[] completeBrowse ( LongRunningOperation op ) throws OperationException
     {
         if ( !(op instanceof AsyncBrowseOperation) )
+        {
             throw new OperationException ( "async operation is not of type AsyncBrowseOperation" );
+        }
         
         AsyncBrowseOperation a = (AsyncBrowseOperation)op;
         Throwable e = a.getError ();

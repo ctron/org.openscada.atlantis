@@ -32,6 +32,7 @@ import org.openscada.core.ice.VariantHelper;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.server.BrowseOperationListener;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
 import org.openscada.da.core.server.WriteAttributesOperationListener;
@@ -259,20 +260,45 @@ public class HiveImpl extends _HiveDisp implements Runnable
         
         HiveBrowser browser = _hive.getBrowser ();
         if ( browser == null )
-            throw new OpenSCADA.Core.OperationNotSupportedException ();
-        
+        {
+            throw new OpenSCADA.Core.OperationNotSupportedException ( "The hive has no root folder registered" );
+        }
+
         try
         {
-            org.openscada.da.core.browser.Entry [] entries = browser.list ( sessionImpl.getSession (), new Location ( location ) );
-            return BrowserEntryHelper.toIce ( entries );
+            BrowseOperationListenerImpl listener = new BrowseOperationListenerImpl ();    
+            long id = browser.startBrowse ( sessionImpl.getSession (), new Location ( location ), listener );
+
+            _hive.thawOperation ( sessionImpl.getSession (), id );
+
+            listener.waitForCompletion ();
+
+            if ( listener.getError () != null )
+            {
+                Throwable e = listener.getError ();
+                if ( e instanceof NoSuchFolderException )
+                {
+                    throw new OpenSCADA.DA.Browser.InvalidLocationException ();
+                }
+                else
+                {
+                    _log.warn ( "Failed to browse", e );
+                    throw new OpenSCADA.Core.OperationNotSupportedException ( e.toString () );
+                }
+            }
+            else
+            {
+                // handle success
+                return BrowserEntryHelper.toIce ( listener.getResult () );
+            }
         }
         catch ( InvalidSessionException e )
         {
-            throw new OpenSCADA.Core.OperationNotSupportedException ();
+            throw new OpenSCADA.Core.InvalidSessionException ();
         }
-        catch ( NoSuchFolderException e )
+        catch ( InterruptedException e )
         {
-            throw new OpenSCADA.DA.Browser.InvalidLocationException ();
+            throw new OpenSCADA.Core.OperationNotSupportedException ( e.getMessage () );
         }
     }
 
