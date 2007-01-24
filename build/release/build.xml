@@ -58,6 +58,10 @@
     	<xmltask source="${file.genworkspace}" dest="${file.genworkspace}" outputter="simple:2"/>
     </target>
 	
+	<target name="export-all-pde">
+		<openscada.export.project dir="${source.base}/external/plugins/icej"/>
+	</target>
+	
 	<!-- ================================= 
           target: build              
          ================================= -->
@@ -73,7 +77,7 @@
     	<copy file="../data/htaccess" tofile="${deploy.dir}/.htaccess"/>
 	
 		<!-- now add all plugins projects that are build using the PDE builder -->
-		<openscada.export.project dir="${source.base}/external/plugins/icej"/>
+		<antcall target="export-all-pde"/>
     	
     	<ant dir="${source.base}/external/log4j"/>
     	<ant dir="${source.base}/external/icej"/>
