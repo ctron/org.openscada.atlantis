@@ -73,9 +73,7 @@
     	<copy file="../data/htaccess" tofile="${deploy.dir}/.htaccess"/>
 	
 		<!-- now add all plugins projects that are build using the PDE builder -->
-		<parallel>
-			<openscada.export.project dir="${source.base}/external/plugins/icej" package="external-plugin-icej"/>
-		</parallel>
+		<openscada.export.project dir="${source.base}/external/plugins/icej" package="external-plugin-icej"/>
     	
     	<ant dir="${source.base}/external/log4j"/>
     	<ant dir="${source.base}/external/icej"/>
