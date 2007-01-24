@@ -27,4 +27,8 @@ public class NoSuchFolderException extends Exception
      */
     private static final long serialVersionUID = -3884575549921027507L;
 
+    public NoSuchFolderException ()
+    {
+        super ( "No such folder" );
+    }
 }
