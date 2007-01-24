@@ -66,6 +66,12 @@
 		<antcall target="export-one-pde">
 			<param name="dir" value="${source.base}/external/plugins/icej"/>
 		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/external/log4j_wrapper_plugin"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/external/xmlbeans_plugin"/>
+		</antcall>
 	</target>
 	
 	<!-- ================================= 
