@@ -91,6 +91,7 @@
     	<ant dir="${source.base}/da/ice/base"/>
        	<ant dir="${source.base}/da/net/base"/>
       	<ant dir="${source.base}/da/server/net"/>
+	  	<ant dir="${source.base}/da/server/ice"/>
        	<ant dir="${source.base}/da/server/simulation"/>
        	<ant dir="${source.base}/da/server/snmp"/>
       	<ant dir="${source.base}/da/server/sysinfo"/>
