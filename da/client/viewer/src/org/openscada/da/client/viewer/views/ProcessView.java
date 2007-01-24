@@ -31,9 +31,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
-import org.openscada.core.client.net.ConnectionInfo;
+import org.openscada.core.client.ConnectionFactory;
+import org.openscada.core.client.ConnectionInformation;
 import org.openscada.da.client.ItemManager;
-import org.openscada.da.client.net.Connection;
+import org.openscada.da.client.Connection;
 import org.openscada.da.client.viewer.Activator;
 import org.openscada.da.client.viewer.configurator.Configurator;
 import org.openscada.da.client.viewer.configurator.xml.XMLConfigurator;
@@ -112,12 +113,9 @@ public class ProcessView extends ViewPart
         connector3.setOutput ( boundsOutput );
         connector3.setInput ( rect.getInputByName ( "height" ) );
         
-        ConnectionInfo ci = new ConnectionInfo ();
-        ci.setAutoReconnect ( true );
-        ci.setHostName ( "localhost" );
-        ci.setPort ( 1202 );
+        ConnectionInformation ci = ConnectionInformation.fromURI ( "da:net://localhost:1202?auto-reconnect=true" );
         
-        Connection c = new Connection ( ci );
+        Connection c = (Connection)ConnectionFactory.create ( ci );
         c.connect ();
         ItemManager i = new ItemManager ( c );
         

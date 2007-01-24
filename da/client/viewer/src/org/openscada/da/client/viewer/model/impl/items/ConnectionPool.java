@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,9 +23,10 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.client.net.ConnectionInfo;
+import org.openscada.core.client.ConnectionFactory;
+import org.openscada.core.client.ConnectionInformation;
 import org.openscada.da.client.ItemManager;
-import org.openscada.da.client.net.Connection;
+import org.openscada.da.client.Connection;
 
 public class ConnectionPool
 {
@@ -37,10 +38,13 @@ public class ConnectionPool
         Connection connection = _connectionMap.get ( uri );
         if ( connection == null )
         {
-            ConnectionInfo ci = ConnectionInfo.fromUri ( uri );
-            connection = new Connection ( ci );
-            connection.connect ();
-            _connectionMap.put ( uri, connection );
+            ConnectionInformation ci = ConnectionInformation.fromURI ( uri );
+            connection = (Connection)ConnectionFactory.create ( ci );
+            if ( connection != null )
+            {
+                connection.connect ();
+                _connectionMap.put ( uri, connection );
+            }
         }
         return connection;
     } 
@@ -50,9 +54,12 @@ public class ConnectionPool
         ItemManager itemManager = _itemManagerMap.get ( uri );
         if ( itemManager == null )
         {
-           Connection conncetion = getConnection ( uri );
-           itemManager = new ItemManager ( conncetion );
-            _itemManagerMap.put ( uri, itemManager );
+           Connection connection = getConnection ( uri );
+           if ( connection != null )
+           {
+               itemManager = new ItemManager ( connection );
+               _itemManagerMap.put ( uri, itemManager );
+           }
         }
         return itemManager;
     } 
