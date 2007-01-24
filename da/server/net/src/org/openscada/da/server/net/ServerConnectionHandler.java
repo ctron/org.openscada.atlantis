@@ -296,38 +296,8 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
     
     private void performBrowse ( final Message message )
     {
-        Location location = new Location ( ListBrowser.parseRequest ( message ) );
-        _log.debug ( "Browse request for: " + location.toString () );
-        
-        HiveBrowser browser = _hive.getBrowser ();
-        
-        if ( browser == null )
-        {
-            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Interface not supported" ) );
-            return;
-        }
-        
-        try
-        {
-            Entry[] entries = browser.list ( _session, location );
-            getConnection ().sendMessage ( ListBrowser.createResponse ( message, entries ) );
-            _log.debug ( String.format ( "Found %1$d entries", entries.length ) );
-            for ( Entry entry : entries )
-            {
-                _log.debug ( " " + entry.getName () );
-            }
-            return;
-        }
-        catch ( InvalidSessionException e )
-        {
-            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Invalid session" ) );
-            return;
-        }
-        catch ( NoSuchFolderException e )
-        {
-            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "No such folder" ) );
-            return;
-        } 
+        BrowseController c = new BrowseController ( _hive, _session, this );
+        c.run ( message );
     }
 
     public void folderChanged ( Location location, Collection<Entry> added, Collection<String> removed, boolean full )

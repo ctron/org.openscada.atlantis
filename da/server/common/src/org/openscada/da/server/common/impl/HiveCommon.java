@@ -53,6 +53,7 @@ import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.utils.jobqueue.CancelNotSupportedException;
+import org.openscada.utils.jobqueue.Operation;
 import org.openscada.utils.jobqueue.OperationManager;
 import org.openscada.utils.jobqueue.OperationProcessor;
 import org.openscada.utils.jobqueue.RunnableCancelOperation;
@@ -605,7 +606,7 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
         if ( listener == null )
             throw new NullPointerException ();
         
-        Handle handle = _opManager.schedule ( new RunnableCancelOperation () {
+        Handle handle = scheduleOperation ( sessionCommon, new RunnableCancelOperation () {
 
             public void run ()
             {
@@ -622,9 +623,20 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
                 }
             }} );
         
-        sessionCommon.getOperations ().addOperation ( handle );
-        
         return handle.getId ();
+    }
+    
+    /**
+     * Schedule an operation for this session
+     * @param sessionCommon The session to which this operation is attached
+     * @param operation The operation to perfom
+     * @return The operation handle
+     */
+    public synchronized Handle scheduleOperation ( SessionCommon sessionCommon, Operation operation )
+    {
+        Handle handle = _opManager.schedule ( operation );
+        sessionCommon.getOperations ().addOperation ( handle );        
+        return handle;
     }
 	
     public synchronized HiveBrowser getBrowser ()

@@ -34,6 +34,7 @@ import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.FolderEntry;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.ListValue;
+import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
@@ -111,11 +112,22 @@ public class ListBrowser
         message.getValues ().put ( field, list );
     }
     
-    public static Message createResponse ( Message requestMessage, Entry [] entries )
+    public static Message createResponse ( long id, Entry [] entries )
     {
-        Message message = new Message ( Messages.CC_BROWSER_LIST_RES, requestMessage.getSequence () );
+        Message message = new Message ( Messages.CC_BROWSER_LIST_RES );
         
         createEntries ( message, "entries", Arrays.asList ( entries ) );
+        message.getValues ().put ( "id", new LongValue ( id ) );
+        
+        return message;
+    }
+    
+    public static Message createResponse ( long id, String failure )
+    {
+        Message message = new Message ( Messages.CC_BROWSER_LIST_RES );
+        
+        message.getValues ().put ( Message.FIELD_ERROR_INFO, new StringValue ( failure ) );
+        message.getValues ().put ( "id", new LongValue ( id ) );
         
         return message;
     }

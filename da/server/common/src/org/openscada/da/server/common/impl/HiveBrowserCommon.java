@@ -28,11 +28,14 @@ import org.apache.log4j.Logger;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
+import org.openscada.da.core.server.BrowseOperationListener;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderListener;
+import org.openscada.utils.jobqueue.RunnableCancelOperation;
+import org.openscada.utils.jobqueue.OperationManager.Handle;
 
 public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, SessionListener
 {
@@ -48,20 +51,38 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
         _hive.addSessionListener ( this );
     }
    
-    public Entry [] list ( Session session, Location location ) throws InvalidSessionException, NoSuchFolderException
+    public long startBrowse ( Session session, final Location location, final BrowseOperationListener listener ) throws InvalidSessionException
     {
         _log.debug ( "List request for: " + location.toString () );
         
-        _hive.validateSession ( session );
+        SessionCommon sessionCommon = _hive.validateSession ( session );
+
+        Handle handle = _hive.scheduleOperation ( sessionCommon, new RunnableCancelOperation () {
+
+            public void run ()
+            {
+                try
+                {
+                    if ( getRootFolder () == null )
+                    {
+                        throw new NoSuchFolderException ();
+                    }
+                    Entry [] entry = getRootFolder ().list ( location.getPathStack () );
+                    if ( !isCanceled () )
+                    {
+                        listener.success ( entry );
+                    }
+                }
+                catch ( NoSuchFolderException e )
+                {
+                    if ( !isCanceled () )
+                    {
+                        listener.failure ( e );
+                    }
+                }
+            }});
         
-        if ( getRootFolder() == null )
-        {
-            _log.warn ( "Having a brower interface without root folder" );
-            throw new NoSuchFolderException ();
-        }
-        
-        Stack<String> pathStack = location.getPathStack ();
-        return getRootFolder ().list ( pathStack );
+        return handle.getId ();
     }
     
     public void subscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException

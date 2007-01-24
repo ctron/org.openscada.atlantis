@@ -90,7 +90,9 @@ public class LongRunningController implements MessageListener
         } );
 
         if ( listener != null )
+        {
             listener.stateChanged ( LongRunningState.REQUESTED, null );
+        }
 
         return op;
     }

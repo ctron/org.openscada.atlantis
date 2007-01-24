@@ -17,17 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.server.browser;
+package org.openscada.da.core.server;
 
-import org.openscada.core.InvalidSessionException;
-import org.openscada.da.core.Location;
-import org.openscada.da.core.server.BrowseOperationListener;
-import org.openscada.da.core.server.Session;
+import org.openscada.da.core.browser.Entry;
 
-public interface HiveBrowser
+public interface BrowseOperationListener
 {
-    public abstract void subscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException;
-    public abstract void unsubscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException;
-    
-    public abstract long startBrowse ( Session session, Location location, BrowseOperationListener listener ) throws InvalidSessionException;
+    void success ( Entry[] result );
+    void failure ( Throwable throwable );
 }

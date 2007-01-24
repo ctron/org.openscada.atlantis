@@ -419,14 +419,25 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         if ( op.getReply () != null )
         {
             Message reply = op.getReply ();
-            try
+            
+            if ( reply.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
             {
-                return ListBrowser.parseResponse ( reply );
+                // in case of an error
+                throw new OperationException ( reply.getValues ().get ( Message.FIELD_ERROR_INFO ).toString () );
             }
-            catch ( Exception e )
+            else
             {
-                throw new OperationException ( e );
+                // in case of success
+                try
+                {
+                    return ListBrowser.parseResponse ( reply );
+                }
+                catch ( Exception e )
+                {
+                    throw new OperationException ( e );
+                }
             }
+            
         }
         return null;
     }
