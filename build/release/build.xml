@@ -243,6 +243,8 @@
 		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-sim-server"/>
 		<openscada.unpack-module name="da-server-simulation" todir="${temp.dir}/dist-sim-server"/>
 
+		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-opc-server"/>
+	
 		<openscada.runfile.init file="${temp.dir}/dist-sim-server/runfile.xml"/>
     	<openscada.runfile.gather-jars file="${temp.dir}/dist-sim-server/runfile.xml" dir="${temp.dir}/dist-sim-server"/>
 		<openscada.runfile.arg.add file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.simulation.Hive"/>
@@ -263,6 +265,8 @@
 	
 		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-test-server"/>
 		<openscada.unpack-module name="da-server-test" todir="${temp.dir}/dist-test-server"/>
+	
+		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-opc-server"/>
 
 		<openscada.runfile.init file="${temp.dir}/dist-test-server/runfile.xml"/>
     	<openscada.runfile.gather-jars file="${temp.dir}/dist-test-server/runfile.xml" dir="${temp.dir}/dist-test-server"/>
@@ -284,6 +288,7 @@
 	
 		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-opc-server"/>
 		<openscada.unpack-module name="da-server-opc" todir="${temp.dir}/dist-opc-server"/>
+		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-opc-server"/>
 
 		<openscada.runfile.init file="${temp.dir}/dist-opc-server/runfile.xml"/>
     	<openscada.runfile.gather-jars file="${temp.dir}/dist-opc-server/runfile.xml" dir="${temp.dir}/dist-opc-server"/>
