@@ -237,7 +237,7 @@
     			<include name="**/*"/>
     		</zip>
 	
-			<openscada.export.project/>
+			<openscada.export.project dir="${basedir}"/>
         </sequential>
     </macrodef>
 	
@@ -280,7 +280,7 @@
         	<mkdir dir="${deploy.dist.module}"/>
         	<zip basedir="${build.dir}/${package}" file="${deploy.dist.module}/external-${package}.zip">
         	</zip>
-			<openscada.export.project/>
+			<openscada.export.project dir="${basedir}"/>
         </sequential>
     </macrodef>
 
