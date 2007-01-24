@@ -119,6 +119,13 @@
     	<concat append="true" destfile="${module.dep.file}">
     		<path location="${source.base}/build/data/module.deps.footer"/>
     	</concat>
+	
+		<!-- Create dot graph from deps file -->
+		<exec executable="dot" dir="${deploy.additional}">
+			<arg line="-Tps"/>
+			<arg line="modules.deps"/>
+			<arg line="-omodules.ps"/>
+		</exec>
     	
     	<antcall target="build.post.genworkspace"/>
 
