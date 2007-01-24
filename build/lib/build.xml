@@ -288,8 +288,8 @@
           macrodef: openscada.export.project          
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.export.project">
-    	<attribute name="dir" value="."/>
-		<attribute name="package" value="${project}"/>
+    	<attribute name="dir" default="."/>
+		<attribute name="package" default="${project}"/>
         <sequential>
             <xmltask source="@{dir}/.project">
 				<copy path="projectDescription/name/text()" property="project.name"/>
