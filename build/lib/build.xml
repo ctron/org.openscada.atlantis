@@ -291,6 +291,7 @@
     	<attribute name="dir" default="."/>
 		<attribute name="package" default="${package}"/>
         <sequential>
+			<echo message="@{dir}/.project"/>
             <xmltask source="@{dir}/.project">
 				<copy path="projectDescription/name/text()" property="project.name"/>
 			</xmltask>
