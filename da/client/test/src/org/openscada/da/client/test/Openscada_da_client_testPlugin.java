@@ -19,6 +19,7 @@
 
 package org.openscada.da.client.test;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -41,7 +42,8 @@ import org.osgi.framework.BundleContext;
  */
 public class Openscada_da_client_testPlugin extends AbstractUIPlugin
 {
-
+    private static Logger _log = Logger.getLogger ( "org.openscada.da.client.test.Plugin" );
+    
     public static final String PLUGIN_ID = "org.openscada.da.client.test";
 
     //The shared instance.
@@ -167,9 +169,13 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin
         return getDefault ().getStateLocation ().append ( "hives.xml" );
     }
 
+    /**
+     * Notify error using message box (thread safe).
+     * @param message The message to display
+     * @param error The error that occurred
+     */
     public void notifyError ( final String message, final Throwable error )
     {
-
         final Display display = getWorkbench ().getDisplay ();
 
         if ( !display.isDisposed () )
@@ -179,10 +185,11 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin
                 public void run ()
                 {
                     Shell shell = getWorkbench ().getActiveWorkbenchWindow ().getShell ();
+                    _log.debug ( String.format ( "Shell disposed: %s", shell.isDisposed () ) );
                     if ( !shell.isDisposed () )
                     {
                         IStatus status = new OperationStatus ( OperationStatus.ERROR, PLUGIN_ID, 0,
-                                error.getMessage (), error );
+                                message + ":" + error.getMessage (), error );
                         ErrorDialog.openError ( shell, null, message, status );
                     }
                 }
