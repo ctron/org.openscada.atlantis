@@ -27,11 +27,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionFactory;
-import org.openscada.core.client.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.DriverFactory;
 import org.openscada.core.client.DriverInformation;

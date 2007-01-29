@@ -19,7 +19,7 @@
 
 package org.openscada.da.client.ice;
 
-import org.openscada.core.client.ConnectionInformation;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.DriverInformation;
 
 public class DriverFactory implements org.openscada.core.client.DriverFactory

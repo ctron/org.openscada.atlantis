@@ -28,10 +28,10 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionFactory;
-import org.openscada.core.client.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.ice.AttributesHelper;

@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.openscada.core.ConnectionInformation;
+
 import sun.misc.Service;
 
 

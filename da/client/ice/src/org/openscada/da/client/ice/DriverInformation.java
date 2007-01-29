@@ -19,8 +19,8 @@
 
 package org.openscada.da.client.ice;
 
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
-import org.openscada.core.client.ConnectionInformation;
 
 public class DriverInformation implements org.openscada.core.client.DriverInformation
 {

@@ -3,7 +3,7 @@ package org.openscada.da.client.ice;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.openscada.core.client.ConnectionInformation;
+import org.openscada.core.ConnectionInformation;
 
 public class DriverInformationTest
 {

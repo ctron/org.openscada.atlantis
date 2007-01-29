@@ -19,6 +19,8 @@
 
 package org.openscada.core.client;
 
+import org.openscada.core.ConnectionInformation;
+
 public interface DriverFactory
 {
     public abstract DriverInformation getDriverInformation ( ConnectionInformation connectionInformation );

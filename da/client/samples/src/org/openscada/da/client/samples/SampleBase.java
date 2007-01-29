@@ -1,7 +1,7 @@
 package org.openscada.da.client.samples;
 
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionFactory;
-import org.openscada.core.client.ConnectionInformation;
 import org.openscada.da.client.Connection;
 
 public class SampleBase
