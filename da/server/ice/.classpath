@@ -4,7 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_core_server"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_ice_base"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ext_icej"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ext_icej"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_core_common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_server_common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ext_log4j"/>
