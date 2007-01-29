@@ -4,4 +4,27 @@
 		<exporter:export uri="da:net://0.0.0.0:1202"/>
 		<exporter:export uri="da:ice://hive?hive=tcp+-p+10000"/>
 	</exporter:hive>
+	<exporter:hive class="org.openscada.da.server.test.Hive">
+		<exporter:export uri="da:net://0.0.0.0:1203"/>
+		<exporter:export uri="da:ice://hive?hive=tcp+-p+10001"/>
+	</exporter:hive>
+	<exporter:hive class="org.openscada.da.server.opc.Hive">
+		<exporter:configuration>
+			<opc:root xmlns:opc="http://openscada.org/DA/OPC/Configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://openscada.org/DA/OPC/Configuration ../openscada_da_opcserver/schema/configuration.xsd ">
+				<opc:connections>
+					<!-- Matrikon OPC Simulation Server -->
+					<opc:configuration domain="localhost" host="172.16.15.128" user="jens" password="test12">
+						<opc:clsid>F8582CF2-88FB-11D0-B850-00C0F0104305</opc:clsid>
+					</opc:configuration>
+					
+					<!-- Softing OPC Demo Server -->
+					<opc:configuration connected="false" domain="localhost" host="172.16.15.128" access="sync" user="jens" password="test12">
+						<opc:clsid>2E565242-B238-11D3-842D-0008C779D775</opc:clsid>
+					</opc:configuration>
+				</opc:connections>
+			</opc:root>
+		</exporter:configuration>
+		<exporter:export uri="da:net://0.0.0.0:1204"/>
+		<exporter:export uri="da:ice://hive?hive=tcp+-p+10002"/>
+	</exporter:hive>
 </exporter:configuration>

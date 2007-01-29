@@ -2,6 +2,7 @@ package org.openscada.da.server.exporter;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.exporter.ConfigurationDocument;
 import org.openscada.da.server.exporter.ConfigurationType;
 import org.openscada.da.server.exporter.HiveType;
+import org.w3c.dom.Node;
 
 public class Controller
 {
@@ -42,7 +44,20 @@ public class Controller
             HiveExport hiveExport = null;
             try
             {
-                hiveExport = new HiveExport ( hive.getClass1 () );
+                HiveConfigurationType hc = hive.getConfiguration ();
+                Node subNode = null;
+                if ( hc != null )
+                {
+                    for ( int i = 0; i < hc.getDomNode ().getChildNodes ().getLength (); i++ )
+                    {
+                        Node node = hc.getDomNode ().getChildNodes ().item ( i ); 
+                        if ( node.getNodeType () == Node.ELEMENT_NODE )
+                        {
+                            subNode = node;
+                        }
+                    }
+                }
+                hiveExport = new HiveExport ( hive.getClass1 (), subNode );
             }
             catch ( ClassNotFoundException e )
             {
@@ -55,6 +70,15 @@ public class Controller
             catch ( IllegalAccessException e )
             {
                 _log.error ( String.format ( "Unable to create hive instance" ), e );
+            }
+            catch ( IllegalArgumentException e )
+            {
+                _log.error ( String.format ( "Unable to create hive instance" ), e );
+            }
+            catch ( InvocationTargetException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
             
             if ( hiveExport != null )

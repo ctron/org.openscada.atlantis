@@ -7,6 +7,7 @@ import org.apache.xmlbeans.XmlException;
 import org.openscada.da.opc.configuration.ConfigurationType;
 import org.openscada.da.opc.configuration.RootDocument;
 import org.openscada.opc.lib.common.ConnectionInformation;
+import org.w3c.dom.Node;
 
 public class XMLConfigurator
 {
@@ -16,6 +17,11 @@ public class XMLConfigurator
     public XMLConfigurator ( RootDocument rootDocument )
     {
         _rootDocument  = rootDocument;
+    }
+    
+    public XMLConfigurator ( Node node ) throws XmlException
+    {
+        this ( RootDocument.Factory.parse ( node ) );
     }
     
     public XMLConfigurator ( String filename ) throws XmlException, IOException
@@ -43,6 +49,10 @@ public class XMLConfigurator
             String access = configuration.getAccess ();
             if ( access.equalsIgnoreCase ( "sync" ) )
                 setup.setAccessMethod ( AccessMethod.SYNC );
+            else if ( access.equalsIgnoreCase ( "async" ) )
+                setup.setAccessMethod ( AccessMethod.ASYNC20 );
+            else if ( access.equalsIgnoreCase ( "async20" ) )
+                setup.setAccessMethod ( AccessMethod.ASYNC20 );
             
             setup.setRefreshTimeout ( configuration.getRefresh () );
             setup.setInitialConnect ( configuration.getInitialRefresh () );

@@ -34,6 +34,7 @@ import org.openscada.opc.lib.common.NotConnectedException;
 import org.openscada.opc.lib.da.DuplicateGroupException;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.timing.Scheduler;
+import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
 {
@@ -47,7 +48,18 @@ public class Hive extends HiveCommon
     
     private DataItemCommand _gcCommand = null;
 
-    public Hive () throws XmlException, IOException
+    public Hive () throws XmlException, IOException 
+    {
+        this ( (XMLConfigurator)null );
+        configure ();
+    }
+    
+    public Hive ( Node node ) throws XmlException, IOException
+    {
+        this ( new XMLConfigurator ( node ) );
+    }
+    
+    public Hive ( XMLConfigurator configurator ) throws XmlException, IOException
     {
         super ();
 
@@ -86,13 +98,20 @@ public class Hive extends HiveCommon
         registerItem ( _gcCommand );
         _rootFolderCommon.add ( "gc", _gcCommand, new MapBuilder<String,Variant> ().put ( "description", new Variant ( "Run the garbage collector once." ) ).getMap () );
         
-        configure ();
+        configure ( configurator );
+    }
+    
+    public void configure ( XMLConfigurator configurator )
+    {
+        if ( configurator != null )
+        {
+            configurator.configure ( this );
+        }
     }
     
     public void configure () throws XmlException, IOException
     {
-        XMLConfigurator configurator = new XMLConfigurator ( "configuration.xml" );
-        configurator.configure ( this );
+        configure ( new XMLConfigurator ( "configuration.xml" ) );
         
         //addConnection ( "opcda://localhost\\jens:test12@172.16.15.128?clsid=F8582CF2-88FB-11D0-B850-00C0F0104305" );
         //addConnection ( "opcda://localhost\\jens:test12@172.16.15.128?clsid=2E565242-B238-11D3-842D-0008C779D775" );

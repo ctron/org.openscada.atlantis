@@ -21,8 +21,17 @@
 
     <complexType name="HiveType">
     	<sequence>
-    		<element name="export" type="exporter:ExportType" maxOccurs="unbounded" minOccurs="0"></element>
-    	</sequence>
+            <element name="configuration" type="exporter:HiveConfigurationType" maxOccurs="1" minOccurs="0"></element>
+            <element name="export" type="exporter:ExportType"
+            	maxOccurs="unbounded" minOccurs="0">
+            </element>
+        </sequence>
     	<attribute name="class" type="string" use="required"></attribute>
+    </complexType>
+
+    <complexType name="HiveConfigurationType">
+    	<sequence>
+    		<any minOccurs="0" maxOccurs="1"></any>
+    	</sequence>
     </complexType>
 </schema>
