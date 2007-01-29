@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://openscada.org/DA/Server/Exporter" xmlns:exporter="http://openscada.org/DA/Server/Exporter" elementFormDefault="qualified">
+
+    <element name="configuration" type="exporter:ConfigurationType"></element>
+    
+    <complexType name="ConfigurationType">
+    	<sequence>
+    		<element name="hive" type="exporter:HiveType"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="ExportType">
+    	<attribute name="uri" type="string" use="required">
+    		<annotation>
+    			<documentation>The connection string URI</documentation>
+    		</annotation></attribute>
+    </complexType>
+
+
+    <complexType name="HiveType">
+    	<sequence>
+    		<element name="export" type="exporter:ExportType" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    	<attribute name="class" type="string" use="required"></attribute>
+    </complexType>
+</schema>

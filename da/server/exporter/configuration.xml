@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exporter:configuration xmlns:exporter="http://openscada.org/DA/Server/Exporter" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://openscada.org/DA/Server/Exporter schema/configuration.xsd ">
+	<exporter:hive class="org.openscada.da.server.sim.Hive">
+		<exporter:export uri="da:net://0.0.0.0:1202"/>
+	</exporter:hive>
+</exporter:configuration>
