@@ -30,31 +30,88 @@ import Ice.Communicator;
 public class Exporter extends ExporterBase implements Runnable
 {
     private Communicator _communicator = null;
+    private String _endpoints = null;
+    private Ice.ObjectAdapter _adapter = null;
+    private boolean _running = false;
 
     public Exporter ( String hiveClassName, Communicator communicator ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
     {
-        super ( hiveClassName );
-        _communicator = communicator;
+        this ( hiveClassName, communicator, null );
     }
     
     public Exporter ( Hive hive, Communicator communicator ) throws IOException
     {
-        super ( hive );
-        _communicator = communicator;
+        this ( hive, communicator, null );
     }
     
     public Exporter ( Class hiveClass, Communicator communicator ) throws InstantiationException, IllegalAccessException, IOException
     {
+        this ( hiveClass, communicator, null );
+    }
+    
+    public Exporter ( String hiveClassName, Communicator communicator, String endpoints ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
+    {
+        super ( hiveClassName );
+        _communicator = communicator;
+        _endpoints = endpoints;
+    }
+    
+    public Exporter ( Hive hive, Communicator communicator, String endpoints ) throws IOException
+    {
+        super ( hive );
+        _communicator = communicator;
+        _endpoints = endpoints;
+    }
+    
+    public Exporter ( Class hiveClass, Communicator communicator, String endpoints ) throws InstantiationException, IllegalAccessException, IOException
+    {
         super ( hiveClass );
         _communicator = communicator;
+        _endpoints = endpoints;
     }
 
     public void run ()
     {
-        Ice.ObjectAdapter adapter = _communicator.createObjectAdapter ( "Hive" );
-        adapter.add ( new HiveImpl ( _hive, adapter ), _communicator.stringToIdentity ( "hive" ) );
-        adapter.activate ();
+        if ( _endpoints == null )
+        {
+            _adapter = _communicator.createObjectAdapter ( "Hive" );
+        }
+        else
+        {
+            _adapter = _communicator.createObjectAdapterWithEndpoints ( "Hive", _endpoints );
+        }
+        
+        _adapter.add ( new HiveImpl ( _hive, _adapter ), _communicator.stringToIdentity ( "hive" ) );
+        _adapter.activate ();
         _communicator.waitForShutdown ();
+    }
+    
+    public synchronized void start ()
+    {
+        if ( _running )
+        {
+            return;
+        }
+        
+        Thread thread = new Thread ( this );
+        thread.setDaemon ( true );
+        thread.start ();
+        
+        _running = true;
+    }
+    
+    public synchronized void stop ()
+    {
+        if ( _running )
+        {
+            _adapter.deactivate ();
+            _communicator.shutdown ();
+
+            _adapter = null;
+            _communicator = null;
+            
+            _running = false;
+        }
     }
 
 }

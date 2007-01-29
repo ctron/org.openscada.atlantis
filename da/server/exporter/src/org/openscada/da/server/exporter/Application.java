@@ -16,6 +16,8 @@ public class Application
         Controller controller = new Controller ( configurationFile );
         controller.start ();
         
+        _log.info ( "Exporter running..." );
+        
         while ( true )
         {
             try

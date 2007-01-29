@@ -33,11 +33,6 @@ public class Controller
         this ( ConfigurationDocument.Factory.parse ( file ) );
     }
     
-    public Controller ()
-    {
-        super ();
-    }
-    
     public void configure ( ConfigurationDocument configurationDocument )
     {
         ConfigurationType configuration = configurationDocument.getConfiguration ();
@@ -68,6 +63,8 @@ public class Controller
                 {
                     try
                     {
+                        _log.debug ( String.format ( "Adding export: %s", export.getUri () ) );
+                        
                         hiveExport.addExport ( export );
                     }
                     catch ( ConfigurationError e )
@@ -75,6 +72,7 @@ public class Controller
                         _log.error ( String.format ( "Unable to configure export (%s) for hive (%s)", hive.getClass1 (), export.getUri () ) );
                     }
                 }
+                _hives.add ( hiveExport );
             }
         }
     }
