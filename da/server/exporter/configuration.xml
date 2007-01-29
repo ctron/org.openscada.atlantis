@@ -2,6 +2,6 @@
 <exporter:configuration xmlns:exporter="http://openscada.org/DA/Server/Exporter" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://openscada.org/DA/Server/Exporter schema/configuration.xsd ">
 	<exporter:hive class="org.openscada.da.server.simulation.Hive">
 		<exporter:export uri="da:net://0.0.0.0:1202"/>
-		<exporter:export uri="da:ice://Hive?Hive.Endpoints=tcp+-p+10000"/>
+		<exporter:export uri="da:ice://hive?hive=tcp+-p+10000"/>
 	</exporter:hive>
 </exporter:configuration>

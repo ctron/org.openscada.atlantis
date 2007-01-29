@@ -50,7 +50,7 @@ public class IceExport implements Export
         
         _communicator = Ice.Util.initialize ( initData );
         
-        _exporter = new Exporter ( _hive, _communicator, null );
+        _exporter = new Exporter ( _hive, _communicator, getEndpoints () );
         
         _exporter.start ();
     }
