@@ -87,6 +87,7 @@
  		<param name="todir" value="${buildDirectory}/features/org.openscada.da.net.client"/>
  		<param name="module" value="${svn.base}/da/client/net_feature"/>
  	</antcall>
+	<fetch-module src="${svn.base}/da/client/net_feature" type="feature" name="org.openscada.da.ice.client"/>
   	<antcall target="checkoutSvn">
  		<param name="todir" value="${buildDirectory}/plugins/log4j_wrapper_plugin"/>
  		<param name="module" value="${svn.ext.base}/log4j_wrapper_plugin"/>
