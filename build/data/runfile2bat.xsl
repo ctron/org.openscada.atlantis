@@ -10,7 +10,7 @@
 
 <xsl:template match="/run">
 @echo off
-set CLASSPATH=&quot;&quot;
+set CLASSPATH=
 <xsl:apply-templates select="classpath/entry"/>
 java -cp &quot;%CLASSPATH%&quot; <xsl:apply-templates select="properties/entry"/> <xsl:value-of select="@main"/><xsl:text> </xsl:text><xsl:apply-templates select="arguments/entry"/>
 <xsl:text>
