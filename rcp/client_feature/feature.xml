@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.rcp.client"
       label="OpenSCADA RCP Client Feature"
-      version="0.5.0"
+      version="0.6.0"
       provider-name="OpenSCADA.org">
 
    <description url="http://www.example.com/description">
