@@ -334,7 +334,7 @@
 		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-exporter"/>
 		<copy file="${source.base}/da/server/exporter/configuration.xml" todir="${temp.dir}/dist-exporter"/>
 
-		<openscada.runfile.init file="${temp.dir}/ddist-exporter/runfile.xml"/>
+		<openscada.runfile.init file="${temp.dir}/dist-exporter/runfile.xml"/>
     	<openscada.runfile.gather-jars file="${temp.dir}/dist-exporter/runfile.xml" dir="${temp.dir}/dist-exporter"/>
 		<openscada.runfile.set-main file="${temp.dir}/dist-exporter/runfile.xml" value="org.openscada.da.server.exporter.Application"/>
 		<openscada.runfile.transform dir="${temp.dir}/dist-exporter"/>
