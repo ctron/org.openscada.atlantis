@@ -332,7 +332,7 @@
 	
 		<openscada.unpack-module name="da-server-exporter" todir="${temp.dir}/dist-exporter"/>
 		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-exporter"/>
-		<copy file="${source.base}/da/server/exporter/configuration" todir="${temp.dir}/dist-exporter"/>
+		<copy file="${source.base}/da/server/exporter/configuration.xml" todir="${temp.dir}/dist-exporter"/>
 
 		<openscada.runfile.init file="${temp.dir}/ddist-exporter/runfile.xml"/>
     	<openscada.runfile.gather-jars file="${temp.dir}/ddist-exporter/runfile.xml" dir="${temp.dir}/dist-exporter"/>
