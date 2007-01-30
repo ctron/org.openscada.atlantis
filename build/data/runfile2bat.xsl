@@ -9,6 +9,7 @@
     />
 
 <xsl:template match="/run">
+@echo off
 set CLASSPATH=&quot;&quot;
 <xsl:apply-templates select="classpath/entry"/>
 java -cp &quot;%CLASSPATH%&quot; <xsl:apply-templates select="properties/entry"/> <xsl:value-of select="@main"/><xsl:text> </xsl:text><xsl:apply-templates select="arguments/entry"/>
@@ -19,7 +20,7 @@ pause
 </xsl:text>
 </xsl:template>
 
-<xsl:template match="classpath/entry">set CLASSPATH=&quot;%CLASSPATH%;<xsl:apply-templates/>&quot;<xsl:text>
+<xsl:template match="classpath/entry">set CLASSPATH=%CLASSPATH%;<xsl:apply-templates/><xsl:text>
 </xsl:text></xsl:template>
 
 <xsl:template match="properties/entry">&quot;-D<xsl:value-of select="@name"/>=<xsl:apply-templates/>&quot; </xsl:template>
