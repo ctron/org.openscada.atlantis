@@ -331,6 +331,9 @@
 		<delete dir="${temp.dir}/dist-exporter"/>
 	
 		<openscada.unpack-module name="da-server-exporter" todir="${temp.dir}/dist-exporter"/>
+		<openscada.unpack-module name="da-server-test" todir="${temp.dir}/dist-exporter"/>
+		<openscada.unpack-module name="da-server-simulation" todir="${temp.dir}/dist-exporter"/>
+		<openscada.unpack-module name="da-server-opc" todir="${temp.dir}/dist-exporter"/>
 		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-exporter"/>
 		<copy file="${source.base}/da/server/exporter/configuration.xml" todir="${temp.dir}/dist-exporter"/>
 
