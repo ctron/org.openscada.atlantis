@@ -22,8 +22,8 @@ package org.openscada.da.client.viewer.model.impl.items;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.Connection;
+import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.viewer.model.impl.BaseDynamicObject;
 import org.openscada.da.client.viewer.model.impl.PropertyInput;
 

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Observable;
 
 import org.eclipse.core.runtime.IPath;
-import org.openscada.core.client.ConnectionInformation;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 
 public class HiveRepository extends Observable

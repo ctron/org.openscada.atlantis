@@ -30,9 +30,9 @@ import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionFactory;
-import org.openscada.core.client.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.da.client.Connection;
@@ -40,7 +40,6 @@ import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
-import org.openscada.rcp.da.client.ConnectorInitializer;
 
 public class HiveConnection extends Observable implements IActionFilter, IPropertySource
 {

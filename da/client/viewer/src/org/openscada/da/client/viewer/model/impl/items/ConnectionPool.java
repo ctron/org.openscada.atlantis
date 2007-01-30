@@ -23,10 +23,10 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionFactory;
-import org.openscada.core.client.ConnectionInformation;
-import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.Connection;
+import org.openscada.da.client.ItemManager;
 
 public class ConnectionPool
 {

@@ -1,15 +1,13 @@
 package org.openscada.da.client.test.views.realtime;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.TransferData;
-import org.openscada.core.client.ConnectionInformation;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
-import org.openscada.da.client.test.config.HiveConnectionInformation;
 import org.openscada.da.client.test.dnd.Item;
 import org.openscada.da.client.test.dnd.ItemTransfer;
 import org.openscada.da.client.test.impl.HiveConnection;
