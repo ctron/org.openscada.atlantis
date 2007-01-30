@@ -144,8 +144,8 @@
 		<!-- Create dot graph from deps file -->
 		<exec executable="dot" dir="${deploy.additional}">
 			<arg line="-Tps"/>
-			<arg line="modules.deps"/>
-			<arg line="-omodules.ps"/>
+			<arg line="module.deps"/>
+			<arg line="-omodule.ps"/>
 		</exec>
     	
     	<antcall target="build.post.genworkspace"/>
