@@ -125,6 +125,7 @@
 		<ant dir="${source.base}/da/client/net"/>
     	
 		<ant dir="${source.base}/da/client/samples"/>
+		<ant dir="${source.base}/da/server/exporter"/>
     	
     	<ant dir="${source.base}/ae/core/common"/>
     	<ant dir="${source.base}/ae/net/base"/>
@@ -251,7 +252,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: apps                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="apps" depends="make-sim-server-dist, make-test-server-dist, make-opc-server-dist">
+    <target name="apps" depends="make-sim-server-dist, make-test-server-dist, make-opc-server-dist, make-exporter-dist">
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -319,6 +320,27 @@
 
 		<mkdir dir="${deploy.dist.binary}/"/>
 		<zip basedir="${temp.dir}/dist-opc-server" destfile="${deploy.dist.binary}/openscada-atlantis-opcserver-net-${tag}.zip">
+		</zip>
+		
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: make-exporter-dist
+         - - - - - - - - - - - - - - - - - -->
+    <target name="make-exporter-dist" depends="">
+		<delete dir="${temp.dir}/dist-exporter"/>
+	
+		<openscada.unpack-module name="da-server-exporter" todir="${temp.dir}/dist-exporter"/>
+		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-exporter"/>
+		<copy file="${source.base}/da/server/exporter/configuration" todir="${temp.dir}/dist-exporter"/>
+
+		<openscada.runfile.init file="${temp.dir}/ddist-exporter/runfile.xml"/>
+    	<openscada.runfile.gather-jars file="${temp.dir}/ddist-exporter/runfile.xml" dir="${temp.dir}/dist-exporter"/>
+		<openscada.runfile.set-main file="${temp.dir}/dist-exporter/runfile.xml" value="org.openscada.da.server.exporter.Application"/>
+		<openscada.runfile.transform dir="${temp.dir}/dist-exporter"/>
+
+		<mkdir dir="${deploy.dist.binary}/"/>
+		<zip basedir="${temp.dir}/dist-exporter" destfile="${deploy.dist.binary}/openscada-atlantis-da-exporter-${tag}.zip">
 		</zip>
 		
     </target>
