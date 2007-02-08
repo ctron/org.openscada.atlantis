@@ -369,7 +369,7 @@ public class Connection implements org.openscada.da.client.Connection
         if ( ! ( op instanceof AsyncWriteOperation ) )
             throw new OperationException ( "async operation is not of type AsyncWriteOperation" );
 
-        AsyncBaseOperation a = (AsyncBaseOperation)op;
+        AsyncWriteOperation a = (AsyncWriteOperation)op;
         Throwable e = a.getError ();
         if ( e != null )
         {
