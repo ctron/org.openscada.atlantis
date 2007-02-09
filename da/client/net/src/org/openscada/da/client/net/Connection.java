@@ -60,8 +60,6 @@ import org.openscada.net.da.handler.Messages;
 import org.openscada.net.da.handler.WriteAttributesOperation;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
-import org.openscada.utils.exec.OperationResult;
-import org.openscada.utils.exec.OperationResultHandler;
 import org.openscada.utils.lang.Holder;
 
 public class Connection extends ConnectionBase implements org.openscada.da.client.Connection
