@@ -19,7 +19,6 @@
 
 package org.openscada.da.core.server;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
