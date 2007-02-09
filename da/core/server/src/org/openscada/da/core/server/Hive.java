@@ -67,13 +67,7 @@ public interface Hive
      * @throws InvalidItemException In the case the item is not valid
      */
 	public void unregisterForItem ( Session session, String item ) throws InvalidSessionException, InvalidItemException;
-	
-	// enumerate
-    /**
-     * @deprecated The browser interface should be used instead
-     */
-	public Collection<DataItemInformation> listItems ( Session session ) throws InvalidSessionException;
-    
+	 
 	/**
      * Start a write operation
      * 
