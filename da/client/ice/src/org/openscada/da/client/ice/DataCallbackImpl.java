@@ -27,6 +27,7 @@ import org.openscada.core.ice.VariantHelper;
 
 import Ice.Current;
 import OpenSCADA.Core.VariantBase;
+import OpenSCADA.DA.SubscriptionState;
 import OpenSCADA.DA._DataCallbackDisp;
 
 public class DataCallbackImpl extends _DataCallbackDisp
@@ -51,6 +52,11 @@ public class DataCallbackImpl extends _DataCallbackDisp
     {
         _log.debug ( String.format ( "Value change: '%s'", item ) );
         _connection.valueChange ( item, VariantHelper.fromIce ( value ), cache );
+    }
+
+    public void subscriptionChange ( String item, SubscriptionState subscriptionState, Current __current )
+    {
+        _log.debug ( String.format ( "Subscription change: '%s' - '%s'", item, subscriptionState.value () ) );
     }
 
 }

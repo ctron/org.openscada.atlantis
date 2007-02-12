@@ -28,6 +28,7 @@ import org.openscada.core.CancellationNotSupportedException;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.Hive;
@@ -223,7 +224,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 
         try
         {
-            _hive.registerForItem ( _session, itemName, initial );
+            _hive.subscribeItem ( _session, itemName );
         }
         catch ( InvalidSessionException e )
         {
@@ -248,7 +249,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 
         try
         {
-            _hive.unregisterForItem ( _session, itemName );
+            _hive.unsubscribeItem ( _session, itemName );
         }
         catch ( InvalidSessionException e )
         {
@@ -402,6 +403,11 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         {
             getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, e1 ) );
         }
+    }
+
+    public void subscriptionChanged ( String item, SubscriptionState subscriptionState )
+    {
+        
     }
     
 }

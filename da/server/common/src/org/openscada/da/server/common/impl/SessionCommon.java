@@ -19,13 +19,22 @@
 
 package org.openscada.da.server.common.impl;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.openscada.core.Variant;
 import org.openscada.core.server.common.SessionCommonOperations;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.core.server.ItemChangeListener;
-import org.openscada.da.core.server.ItemListListener;
+import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.FolderListener;
+import org.openscada.da.server.common.DataItem;
+import org.openscada.da.server.common.ItemListener;
 
 
-public class SessionCommon implements org.openscada.da.core.server.Session
+public class SessionCommon implements Session, DataItemSubscriptionListener
 {
 	private HiveCommon _hive;
 	private ItemChangeListener _listener;
@@ -33,10 +42,8 @@ public class SessionCommon implements org.openscada.da.core.server.Session
 	private SessionCommonData _data = new SessionCommonData ();
     private SessionCommonOperations _operations = new SessionCommonOperations ();
 	
-    private boolean _itemListSubscriber = false;
-    private ItemListListener _itemListListener;
-    
     private FolderListener _folderListener = null;
+    private Map<String, DataItemSubscriptionListener> itemListeners = new HashMap<String, DataItemSubscriptionListener> ();
     
 	public SessionCommon ( HiveCommon hive )
 	{
@@ -63,26 +70,6 @@ public class SessionCommon implements org.openscada.da.core.server.Session
 		return _data;
 	}
 
-    public void setListener ( ItemListListener listener )
-    {
-        _itemListListener = listener;
-    }
-
-    public ItemListListener getItemListListener ()
-    {
-        return _itemListListener;
-    }
-
-    public boolean isItemListSubscriber ()
-    {
-        return _itemListSubscriber;
-    }
-
-    public void setItemListSubscriber ( boolean itemListSubscriber )
-    {
-        _itemListSubscriber = itemListSubscriber;
-    }
-
     public FolderListener getFolderListener ()
     {
         return _folderListener;
@@ -98,5 +85,35 @@ public class SessionCommon implements org.openscada.da.core.server.Session
         return _operations;
     }
     
-    
+    // Data item listener stuff
+
+    public void attributesChanged ( DataItem item, Map<String, Variant> attributes )
+    {
+        ItemChangeListener listener;
+        
+        if ( ( listener = _listener ) != null )
+        {
+            listener.attributesChanged ( item.getInformation ().getName (), attributes, false );
+        }
+    }
+
+    public void updateStatus ( Object topic, SubscriptionState subscriptionState )
+    {
+        ItemChangeListener listener;
+        
+        if ( ( listener = _listener ) != null )
+        {
+            listener.subscriptionChanged ( topic.toString (), subscriptionState );
+        }
+    }
+
+    public void valueChanged ( DataItem item, Variant value )
+    {
+        ItemChangeListener listener;
+        
+        if ( ( listener = _listener ) != null )
+        {
+            listener.valueChanged ( item.getInformation ().getName (), value, false );
+        }
+    }
 }

@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.ice.AttributesHelper;
 import org.openscada.core.ice.VariantHelper;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.ItemChangeListener;
@@ -181,6 +182,31 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
         {
             _log.debug ( "Ping failed", e );
             handleListenerError ();
+        }
+    }
+
+    public synchronized void subscriptionChanged ( String item, SubscriptionState subscriptionState )
+    {
+        _log.debug ( String.format ( "Subscription changed: '%s' - '%s'", item, subscriptionState.name () ) );
+        if ( _dataCallback != null )
+        {
+            AsyncSubscriptionChange cb = new AsyncSubscriptionChange ( this );
+            OpenSCADA.DA.SubscriptionState ss = OpenSCADA.DA.SubscriptionState.DISCONNECTED;
+            
+            switch ( subscriptionState )
+            {
+            case CONNECTED:
+                ss = OpenSCADA.DA.SubscriptionState.CONNECTED;
+                break;
+            case DISCONNECTED:
+                ss = OpenSCADA.DA.SubscriptionState.DISCONNECTED;
+                break;
+            case GRANTED:
+                ss = OpenSCADA.DA.SubscriptionState.GRANTED;
+                break;
+            }
+            
+            _dataCallback.subscriptionChange_async ( cb, item, ss );
         }
     }
 }

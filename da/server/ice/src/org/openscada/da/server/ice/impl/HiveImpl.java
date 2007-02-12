@@ -128,7 +128,7 @@ public class HiveImpl extends _HiveDisp implements Runnable
         SessionImpl sessionImpl = getSession ( session );
         try
         {
-            _hive.registerForItem ( sessionImpl.getSession (), item, initialCacheRead );
+            _hive.subscribeItem ( sessionImpl.getSession (), item );
         }
         catch ( InvalidSessionException e )
         {
@@ -147,7 +147,7 @@ public class HiveImpl extends _HiveDisp implements Runnable
         SessionImpl sessionImpl = getSession ( session );
         try
         {
-            _hive.unregisterForItem ( sessionImpl.getSession (), item );
+            _hive.unsubscribeItem ( sessionImpl.getSession (), item );
         }
         catch ( InvalidSessionException e )
         {

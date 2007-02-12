@@ -22,9 +22,13 @@ package org.openscada.da.core.server;
 import java.util.Map;
 
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionState;
 
+public interface ItemChangeListener
+{
+    public void valueChanged ( String item, Variant value, boolean cache );
 
-public interface ItemChangeListener {
-	public void valueChanged ( String name, Variant value, boolean initial );
-	public void attributesChanged ( String name, Map<String,Variant> attributes, boolean initial );
+    public void attributesChanged ( String item, Map<String, Variant> attributes, boolean full );
+
+    public void subscriptionChanged ( String item, SubscriptionState subscriptionState );
 }

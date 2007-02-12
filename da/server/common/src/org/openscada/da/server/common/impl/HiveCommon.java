@@ -33,6 +33,8 @@ import org.apache.log4j.Logger;
 import org.openscada.core.CancellationNotSupportedException;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionManager;
+import org.openscada.core.subscription.ValidationException;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
@@ -87,6 +89,8 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
     private Set<DataItemFactoryListener> _factoryListeners = new HashSet<DataItemFactoryListener> ();
 
     private List<FactoryTemplate> _templates = new LinkedList<FactoryTemplate> ();
+    
+    private SubscriptionManager _itemSubscriptionManager = new SubscriptionManager ();
 
     public HiveCommon ()
     {
@@ -212,27 +216,14 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
 
     public void closeSession ( Session session ) throws InvalidSessionException
     {
-        validateSession ( session );
+        SessionCommon sessionCommon = validateSession ( session );
 
         synchronized ( _sessions )
         {
             fireSessionDestroy ( (SessionCommon)session );
-
-            SessionCommonData sessionData = ( (SessionCommon)session ).getData ();
-            SessionCommon sessionCommon = ( (SessionCommon)session );
-
-            Set<DataItem> sessionItems = new HashSet<DataItem> ( sessionData.getItems () );
-            for ( DataItem item : sessionItems )
-            {
-                synchronized ( _items )
-                {
-                    if ( _items.containsKey ( item ) )
-                    {
-                        DataItemInfo info = _items.get ( item );
-                        info.removeSession ( sessionCommon );
-                    }
-                }
-            }
+            
+            // destroy all subscriptions for this session
+            _itemSubscriptionManager.unsubscribeAll ( sessionCommon );
 
             // cancel all pending operations
             sessionCommon.getOperations ().cancelAll ();
@@ -241,64 +232,59 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
         }
     }
 
-    public void registerForItem ( Session session, String itemName, boolean initial ) throws InvalidSessionException, InvalidItemException
+    public void subscribeItem ( Session session, String itemId ) throws InvalidSessionException, InvalidItemException
     {
-        validateSession ( session );
+        // validate the session first
+        SessionCommon sessionCommon = validateSession ( session );
+        
+        // subscribe using the new item subscription manager
+        try
+        {
+            _itemSubscriptionManager.subscribe ( itemId, sessionCommon );
+        }
+        catch ( ValidationException e )
+        {
+            throw new InvalidItemException ( itemId );
+        }
+        
+        // old stuff
 
+        /*
         // lookup the item first
-        DataItem item = retrieveItem ( itemName );
+        DataItem item = retrieveItem ( itemId );
 
         if ( item == null )
         {
-            throw new InvalidItemException ( itemName );
+            throw new InvalidItemException ( itemId );
         }
 
-        SessionCommon sessionCommon = (SessionCommon)session;
         sessionCommon.getData ().addItem ( item );
         DataItemInfo info = _items.get ( item );
 
         info.addSession ( sessionCommon );
-
-        // process initial transmission
-        if ( initial && ( sessionCommon.getListener () != null ) )
-        {
-            try
-            {
-                ItemChangeListener listener = sessionCommon.getListener ();
-                listener.valueChanged ( itemName, info.getCachedValue (), true );
-                listener.attributesChanged ( itemName, info.getCachedAttributes (), true );
-            }
-            catch ( Exception e )
-            {
-                closeSession ( session );
-            }
-        }
+        */
     }
 
-    public void unregisterForItem ( Session session, String itemName ) throws InvalidSessionException, InvalidItemException
+    public void unsubscribeItem ( Session session, String itemId ) throws InvalidSessionException, InvalidItemException
     {
-        validateSession ( session );
-
-        DataItem item = retrieveItem ( itemName );
+        SessionCommon sessionCommon = validateSession ( session );
+        
+        // unsubscribe using the new item subscription manager
+        _itemSubscriptionManager.unsubscribe ( itemId, sessionCommon );
+        
+        // old stuff
+        /*
+        
+        DataItem item = retrieveItem ( itemId );
 
         if ( item == null )
         {
-            throw new InvalidItemException ( itemName );
+            throw new InvalidItemException ( itemId );
         }
 
-        SessionCommon sessionCommon = (SessionCommon)session;
         sessionCommon.getData ().removeItem ( item );
         _items.get ( item ).removeSession ( sessionCommon );
-    }
-
-    public Collection<DataItemInformation> listItems ( Session session ) throws InvalidSessionException
-    {
-        validateSession ( session );
-
-        synchronized ( _items )
-        {
-            return _itemMap.keySet ();
-        }
+        */
     }
 
     // data item
@@ -315,11 +301,14 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
                 _items.put ( item, new DataItemInfo ( item ) );
                 _itemMap.put ( new DataItemInformationBase ( item.getInformation () ), item );
 
-                fireAddItem ( item.getInformation () );
-
+                /*
                 // then hook up the listener since the item may
                 // flush its current state 
                 item.setListener ( this );
+                */
+                
+                // add new topic to the new item subscription manager
+                _itemSubscriptionManager.setSource ( item.getInformation ().getName (), new DataItemSubscriptionSource ( item ) );
             }
         }
     }
@@ -330,15 +319,17 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
         {
             if ( _items.containsKey ( item ) )
             {
+                /*
                 item.setListener ( null );
+                */
 
                 DataItemInfo info = _items.get ( item );
                 info.dispose ();
 
                 _items.remove ( item );
                 _itemMap.remove ( new DataItemInformationBase ( item.getInformation ().getName () ) );
-
-                fireRemoveItem ( item.getInformation ().getName () );
+                
+                _itemSubscriptionManager.setSource ( item.getInformation (), null );
             }
         }
     }
@@ -372,7 +363,9 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
     public boolean validateItem ( String id )
     {
         if ( lookupItem ( id ) != null )
+        {
             return true;
+        }
 
         DataItemFactoryRequest request = new DataItemFactoryRequest ();
         request.setId ( id );
@@ -382,7 +375,9 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
             for ( DataItemFactory factory : _factoryList )
             {
                 if ( factory.canCreate ( request ) )
+                {
                     return true;
+                }
             }
         }
         return false;
@@ -400,7 +395,9 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
     {
         DataItem dataItem = lookupItem ( id );
         if ( dataItem != null )
+        {
             return dataItem;
+        }
 
         DataItemFactoryRequest request = new DataItemFactoryRequest ();
         request.setId ( id );
@@ -476,8 +473,10 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
         }
 
         // if we have broken sessions close them now
-        if ( sessionsToClose.size () > 0 )
+        if ( !sessionsToClose.isEmpty () )
+        {
             closeSessions ( sessionsToClose );
+        }
 
     }
 
@@ -515,71 +514,6 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
         if ( sessionsToClose.size () > 0 )
             closeSessions ( sessionsToClose );
 
-    }
-
-    public void registerItemList ( Session session ) throws InvalidSessionException
-    {
-        validateSession ( session );
-
-        synchronized ( session )
-        {
-            SessionCommon sessionCommon = (SessionCommon)session;
-            if ( sessionCommon.isItemListSubscriber () )
-                return;
-
-            // send initial content
-            synchronized ( _items )
-            {
-                Collection<DataItemInformation> items = _itemMap.keySet ();
-                sessionCommon.setItemListSubscriber ( true );
-                if ( sessionCommon.getItemListListener () != null )
-                {
-                    sessionCommon.getItemListListener ().changed ( items, new ArrayList<String> (), true );
-                }
-            }
-        }
-    }
-
-    public void unregisterItemList ( Session session ) throws InvalidSessionException
-    {
-        validateSession ( session );
-
-        synchronized ( session )
-        {
-            SessionCommon sessionCommon = (SessionCommon)session;
-            if ( !sessionCommon.isItemListSubscriber () )
-                return;
-
-            sessionCommon.setItemListSubscriber ( false );
-        }
-    }
-
-    private void fireAddItem ( DataItemInformation item )
-    {
-        Collection<DataItemInformation> added = new ArrayList<DataItemInformation> ();
-        added.add ( item );
-        fireItemListChange ( added, new ArrayList<String> () );
-    }
-
-    private void fireRemoveItem ( String item )
-    {
-        Collection<String> removed = new ArrayList<String> ();
-        removed.add ( item );
-        fireItemListChange ( new ArrayList<DataItemInformation> (), removed );
-    }
-
-    private void fireItemListChange ( Collection<DataItemInformation> added, Collection<String> removed )
-    {
-        synchronized ( _sessions )
-        {
-            for ( SessionCommon session : _sessions )
-            {
-                if ( session.isItemListSubscriber () && session.getItemListListener () != null )
-                {
-                    session.getItemListListener ().changed ( added, removed, false );
-                }
-            }
-        }
     }
 
     public long startWriteAttributes ( Session session, String itemId, Map<String, Variant> attributes, WriteAttributesOperationListener listener ) throws InvalidSessionException, InvalidItemException

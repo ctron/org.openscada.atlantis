@@ -56,7 +56,7 @@ public interface Hive
      * @throws InvalidSessionException In the case the session is not a valid session
      * @throws InvalidItemException In the case the item is not valid
      */
-	public void registerForItem ( Session session, String item, boolean initial ) throws InvalidSessionException, InvalidItemException;
+	public void subscribeItem ( Session session, String item ) throws InvalidSessionException, InvalidItemException;
     
     /**
      * Unregister from an an item for event notification
@@ -65,7 +65,7 @@ public interface Hive
      * @throws InvalidSessionException In the case the session is not a valid session
      * @throws InvalidItemException In the case the item is not valid
      */
-	public void unregisterForItem ( Session session, String item ) throws InvalidSessionException, InvalidItemException;
+	public void unsubscribeItem ( Session session, String item ) throws InvalidSessionException, InvalidItemException;
 	 
 	/**
      * Start a write operation
@@ -73,7 +73,7 @@ public interface Hive
      * The operation is not started unless {@link #thawOperation(Session, long)} is called. 
      * 
      * @param session the session to use 
-     * @param itemName The item to write to
+     * @param item The item to write to
      * @param value The value to write
      * @param listener The listener which receives status changes
      * @return An operation ID which can be used to cancel or run the operation
@@ -81,14 +81,14 @@ public interface Hive
      * @throws InvalidItemException In the case the item is not valid
 	 */
     
-    public long startWrite ( Session session, String itemName, Variant value, WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException;
+    public long startWrite ( Session session, String item, Variant value, WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException;
     /**
      * Start a write attributes operation
      * 
      * The operation is not started unless {@link #thawOperation(Session, long)} is called.
      * 
      * @param session the session to use 
-     * @param itemId The item to write to
+     * @param item The item to write to
      * @param attribute The attributes to write
      * @param listener The listener which receives status changes
      * @return An operation ID which can be used to cancel or run the operation
@@ -96,7 +96,7 @@ public interface Hive
      * @throws InvalidItemException In the case the item is not valid
      */
     
-    public long startWriteAttributes ( Session session, String itemId, Map<String, Variant> attribute, WriteAttributesOperationListener listener ) throws InvalidSessionException, InvalidItemException;
+    public long startWriteAttributes ( Session session, String item, Map<String, Variant> attribute, WriteAttributesOperationListener listener ) throws InvalidSessionException, InvalidItemException;
     //public void startRead ( Session session, String item, Variant value, ReadOperationListener listener );
     
     /**
@@ -141,8 +141,8 @@ public interface Hive
      * An item ID is valid if either the item already exists, or it can be created on
      * the fly (e.g. using data item factories).
      * 
-     * @param id the item ID to validate
+     * @param item the item ID to validate
      * @return <code>true</code> if the item ID is valid, <code>false</code> otherwise
      */
-    public boolean validateItem ( String id );
+    public boolean validateItem ( String item );
 }
