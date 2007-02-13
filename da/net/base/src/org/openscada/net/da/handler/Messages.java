@@ -74,14 +74,10 @@ public class Messages extends org.openscada.core.net.MessageHelper
         return new Message ( CC_CLOSE_SESSION );
     }
     
-    public static Message subscribeItem ( String itemName, boolean initial )
+    public static Message subscribeItem ( String itemName )
     {
         Message msg = new Message ( CC_SUBSCRIBE_ITEM );
-        msg.getValues().put ( "item-id", new StringValue(itemName) );
-        
-        if ( initial )
-            msg.getValues().put ( "cache-read", new VoidValue () );
-        
+        msg.getValues().put ( "item-id", new StringValue(itemName) );       
         return msg;
     }
     
