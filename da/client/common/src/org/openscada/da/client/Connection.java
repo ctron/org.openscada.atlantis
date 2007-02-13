@@ -28,6 +28,11 @@ import org.openscada.da.core.Location;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.browser.Entry;
 
+/**
+ * A DataAccess (DA) connection.
+ * @author Jens Reimann &lt;jens.reimann@inavare.net&gt;
+ *
+ */
 public interface Connection extends org.openscada.core.client.Connection
 {
     /**
@@ -68,9 +73,21 @@ public interface Connection extends org.openscada.core.client.Connection
 
     public abstract void subscribeFolder ( Location location ) throws NoConnectionException, OperationException;
     public abstract void unsubscribeFolder ( Location location ) throws NoConnectionException, OperationException;
+    /**
+     * Set the listener for this location.
+     * @param location The location for which to set the listener
+     * @param listener The listener to set
+     * @return The previous set listener or <code>null</code> if there was no previous listener
+     */
     public abstract FolderListener setFolderListener ( Location location, FolderListener listener );
 
     public abstract void subscribeItem ( String itemId ) throws NoConnectionException, OperationException;
     public abstract void unsubscribeItem ( String itemId ) throws NoConnectionException, OperationException;
+    /**
+     * Set the listener for this item.
+     * @param itemId The item for which to set the listener
+     * @param listener The listener to set
+     * @return The previous set listener or <code>null</code> if there was no previous listener
+     */
     public abstract ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener );
 }
