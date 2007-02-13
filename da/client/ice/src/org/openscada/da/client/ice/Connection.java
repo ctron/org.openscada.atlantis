@@ -73,7 +73,7 @@ public class Connection implements org.openscada.da.client.Connection
     }
 
     private Scheduler _scheduler = new Scheduler ( true );
-    
+
     protected ConnectionState _state = ConnectionState.CLOSED;
 
     protected Communicator _communicator = null;
@@ -103,8 +103,8 @@ public class Connection implements org.openscada.da.client.Connection
     private Queue<Runnable> _eventQueue = new LinkedList<Runnable> ();
 
     private Thread _eventPusher = null;
-    
-    private boolean _connectionRequested = false; 
+
+    private boolean _connectionRequested = false;
 
     public Connection ( ConnectionInformation connectionInformation )
     {
@@ -136,14 +136,15 @@ public class Connection implements org.openscada.da.client.Connection
         } );
         _eventPusher.setDaemon ( true );
         _eventPusher.start ();
-        
+
         // add the connection checker
         _scheduler.addJob ( new Runnable () {
 
             public void run ()
             {
                 checkConnection ();
-            }}, 5 * 1000 );
+            }
+        }, 5 * 1000 );
     }
 
     /**
@@ -253,7 +254,7 @@ public class Connection implements org.openscada.da.client.Connection
         }
         return -1;
     }
-    
+
     protected HivePrx getHive () throws NoConnectionException
     {
         HivePrx hive;
@@ -289,7 +290,7 @@ public class Connection implements org.openscada.da.client.Connection
             throw new org.openscada.core.OperationException ( e );
         }
     }
-    
+
     public Entry[] browse ( String[] path ) throws NoConnectionException, OperationException
     {
         return browse ( getHive (), path );
@@ -299,10 +300,17 @@ public class Connection implements org.openscada.da.client.Connection
     {
         return browse ( HivePrxHelper.uncheckedCast ( getHive ().ice_timeout ( timeout ) ), path );
     }
-    
-    public void browse ( String[] path, BrowseOperationCallback callback ) throws NoConnectionException
+
+    public void browse ( String[] path, BrowseOperationCallback callback )
     {
-        getHive ().browse_async ( new AsyncBrowseOperation ( callback ), _session, path );
+        try
+        {
+            getHive ().browse_async ( new AsyncBrowseOperation ( callback ), _session, path );
+        }
+        catch ( NoConnectionException e )
+        {
+            callback.error ( e );
+        }
     }
 
     // write operation
@@ -327,39 +335,47 @@ public class Connection implements org.openscada.da.client.Connection
             throw new OperationException ( e );
         }
     }
-    
+
     public void write ( String item, Variant value ) throws OperationException, NoConnectionException
     {
         write ( getHive (), item, value );
     }
-    
+
     public void write ( String item, Variant value, int timeout ) throws NoConnectionException, OperationException
     {
         write ( HivePrxHelper.uncheckedCast ( getHive ().ice_timeout ( timeout ) ), item, value );
     }
-    
-    public void write ( String item, Variant value, WriteOperationCallback callback ) throws NoConnectionException
+
+    public void write ( String item, Variant value, WriteOperationCallback callback )
     {
-        getHive ().write_async ( new AsyncWriteOperation ( callback ), _session, item, VariantHelper.toIce ( value ) );
+        try
+        {
+            getHive ().write_async ( new AsyncWriteOperation ( callback ), _session, item, VariantHelper.toIce ( value ) );
+        }
+        catch ( NoConnectionException e )
+        {
+            callback.error ( e );
+        }
     }
-    
+
     // write attributes operation
-    
-    public WriteAttributeResults writeAttributes ( String item, Map<String, Variant> attributes  ) throws OperationException, NoConnectionException
+
+    public WriteAttributeResults writeAttributes ( String item, Map<String, Variant> attributes ) throws OperationException, NoConnectionException
     {
         return writeAttributes ( getHive (), item, attributes );
     }
-    
-    public WriteAttributeResults writeAttributes ( String item, Map<String, Variant> attributes, int timeout  ) throws OperationException, NoConnectionException
+
+    public WriteAttributeResults writeAttributes ( String item, Map<String, Variant> attributes, int timeout ) throws OperationException, NoConnectionException
     {
         return writeAttributes ( HivePrxHelper.uncheckedCast ( getHive ().ice_timeout ( timeout ) ), item, attributes );
     }
-    
+
     protected WriteAttributeResults writeAttributes ( HivePrx hive, String itemId, Map<String, Variant> attributes ) throws OperationException
     {
         try
         {
-            WriteAttributesResultEntry [] result = hive.writeAttributes ( _session, itemId, AttributesHelper.toIce ( attributes ) );
+            WriteAttributesResultEntry[] result = hive.writeAttributes ( _session, itemId,
+                    AttributesHelper.toIce ( attributes ) );
             return ConnectionHelper.fromIce ( result );
         }
         catch ( Ice.LocalException e )
@@ -377,10 +393,18 @@ public class Connection implements org.openscada.da.client.Connection
             throw new OperationException ( e );
         }
     }
-    
-    public void writeAttributes ( String item, Map<String, Variant> attributes, WriteAttributeOperationCallback callback ) throws NoConnectionException
+
+    public void writeAttributes ( String item, Map<String, Variant> attributes, WriteAttributeOperationCallback callback )
     {
-        getHive ().writeAttributes_async ( new AsyncWriteAttributesOperation ( callback ), _session, item, AttributesHelper.toIce ( attributes ) );
+        try
+        {
+            getHive ().writeAttributes_async ( new AsyncWriteAttributesOperation ( callback ), _session, item,
+                    AttributesHelper.toIce ( attributes ) );
+        }
+        catch ( NoConnectionException e )
+        {
+            callback.error ( e );
+        }
     }
 
     public synchronized void addConnectionStateListener ( ConnectionStateListener connectionStateListener )
@@ -404,16 +428,16 @@ public class Connection implements org.openscada.da.client.Connection
             listener.stateChange ( this, state, error );
         }
     }
-    
+
     public void checkConnection ()
     {
         SessionPrx session = _session;
-        
+
         if ( session == null )
         {
             return;
         }
-        
+
         try
         {
             session.ice_ping ();
@@ -468,7 +492,7 @@ public class Connection implements org.openscada.da.client.Connection
             _adapter.add ( _folderCallback, ident );
             _session.ice_getConnection ().setAdapter ( _adapter );
             _session.setFolderCallback ( ident );
-            
+
             setState ( ConnectionState.BOUND, null );
         }
         catch ( Exception e )
@@ -548,7 +572,8 @@ public class Connection implements org.openscada.da.client.Connection
                 public void run ()
                 {
                     fireSubscriptionChange ( item, subscriptionState );
-                }} );
+                }
+            } );
             _eventQueue.notify ();
         }
     }
@@ -615,7 +640,7 @@ public class Connection implements org.openscada.da.client.Connection
             listener.notifyValueChange ( variant, cache );
         }
     }
-    
+
     protected synchronized void fireSubscriptionChange ( String itemId, SubscriptionState subscriptionState )
     {
         ItemUpdateListener listener = _itemListenerMap.get ( itemId );

@@ -30,17 +30,41 @@ import org.openscada.da.core.browser.Entry;
 
 public interface Connection extends org.openscada.core.client.Connection
 {
+    /**
+     * Browse a server folder for items. The operation will block until the result is available,
+     * an error occurred or the connection failed.
+     * @param path The path to browse
+     * @return The entries of the server folder
+     * @throws NoConnectionException Raised if there is currently no connect to the server
+     * @throws OperationException Raised if the operation failed
+     */
     public abstract Entry[] browse ( String[] path ) throws NoConnectionException, OperationException;
+    
+    /**
+     * Browse a server folder for items. The operation will block until the result is available,
+     * an error occurred, the timeout expired or the connection failed.
+     * @param path The path to browse
+     * @param timeout Timeout of the operation in milliseconds
+     * @return The entries of the server folder
+     * @throws NoConnectionException Raised if there is currently no connect to the server
+     * @throws OperationException Raised if the operation failed
+     */
     public abstract Entry[] browse ( String[] path, int timeout ) throws NoConnectionException, OperationException;
-    public abstract void browse ( String[] path, BrowseOperationCallback callback ) throws NoConnectionException;
+    
+    /**
+     * Browse a server folder for items. The operation will return immediately.
+     * @param path The path to browse
+     * @param callback The callback the shall received notifications of the operation
+     */
+    public abstract void browse ( String[] path, BrowseOperationCallback callback );
 
     public abstract void write ( String itemName, Variant value ) throws NoConnectionException, OperationException;
     public abstract void write ( String itemName, Variant value, int timeout ) throws NoConnectionException, OperationException;
-    public abstract void write ( String itemName, Variant value, WriteOperationCallback callback ) throws NoConnectionException;
+    public abstract void write ( String itemName, Variant value, WriteOperationCallback callback );
 
     public abstract WriteAttributeResults writeAttributes ( String itemId, Map<String, Variant> attributes ) throws NoConnectionException, OperationException;
     public abstract WriteAttributeResults writeAttributes ( String itemId, Map<String, Variant> attributes, int timeout ) throws NoConnectionException, OperationException;
-    public abstract void writeAttributes ( String itemId, Map<String, Variant> attributes, WriteAttributeOperationCallback callback ) throws NoConnectionException;
+    public abstract void writeAttributes ( String itemId, Map<String, Variant> attributes, WriteAttributeOperationCallback callback );
 
     public abstract void subscribeFolder ( Location location ) throws NoConnectionException, OperationException;
     public abstract void unsubscribeFolder ( Location location ) throws NoConnectionException, OperationException;
