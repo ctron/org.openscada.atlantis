@@ -32,7 +32,7 @@ import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.server.common.AttributeManager;
 import org.openscada.da.server.common.DataItemBase;
 import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.SuspendableItem;
+import org.openscada.da.server.common.ItemListener;
 import org.openscada.da.server.common.WriteAttributesHelper;
 import org.openscada.da.server.snmp.SNMPNode;
 import org.snmp4j.PDU;
@@ -42,24 +42,38 @@ import org.snmp4j.smi.OID;
 import org.snmp4j.smi.Variable;
 import org.snmp4j.smi.VariableBinding;
 
-public class SNMPItem extends DataItemBase implements Runnable, SuspendableItem
+public class SNMPItem extends DataItemBase implements Runnable
 {
     private static Logger _log = Logger.getLogger ( SNMPItem.class );
     private AttributeManager _attributes = null;
-    
+
     private SNMPNode _node = null;
     private OID _oid = null;
-    
+
     private Variant _value = new Variant ();
-    
+
     public SNMPItem ( SNMPNode node, String id, OID oid )
     {
         super ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
 
         _node = node;
         _oid = oid;
-        
+
         _attributes = new AttributeManager ( this );
+    }
+
+    @Override
+    public void setListener ( ItemListener listener )
+    {
+        super.setListener ( listener );
+        if ( listener != null )
+        {
+            wakeup ();
+        }
+        else
+        {
+            suspend ();
+        }
     }
     
     public void start ()
@@ -68,17 +82,17 @@ public class SNMPItem extends DataItemBase implements Runnable, SuspendableItem
         //_node.getScheduler ().addJob ( this, 1000, true );
         _node.getBulkReader ().add ( this );
     }
-    
+
     public void stop ()
     {
         _log.debug ( "Stopping item: " + _oid );
-        
+
         //_node.getScheduler ().removeJob ( this );
         _node.getBulkReader ().remove ( this );
-        
+
         updateValue ( new Variant () );
     }
-    
+
     synchronized private void updateValue ( Variant value )
     {
         _log.debug ( "Value update: " + value.asString ( "<null>" ) );
@@ -91,7 +105,7 @@ public class SNMPItem extends DataItemBase implements Runnable, SuspendableItem
 
     public Map<String, Variant> getAttributes ()
     {
-        return _attributes.get ();  
+        return _attributes.get ();
     }
 
     public Variant getValue () throws InvalidOperationException
@@ -113,31 +127,31 @@ public class SNMPItem extends DataItemBase implements Runnable, SuspendableItem
     public void run ()
     {
         _log.debug ( "Updating value" );
-        
+
         try
         {
             read ();
         }
         catch ( Exception e )
         {
-           readFailed ( e );
+            readFailed ( e );
         }
-        
+
         _log.debug ( "Update complete" );
     }
-    
+
     private Variant convertValue ( VariableBinding vb ) throws Exception
     {
         if ( vb == null )
         {
             throw new Exception ( "Empty reply" );
         }
-        
+
         if ( vb.isException () )
         {
             throw new Exception ( vb.toString () );
         }
-        
+
         Variable v = vb.getVariable ();
         _log.debug ( "Variable is: " + v );
         if ( v instanceof Null )
@@ -145,12 +159,12 @@ public class SNMPItem extends DataItemBase implements Runnable, SuspendableItem
         else
             return new Variant ( v.toString () );
     }
-    
+
     public void readFailed ( Throwable t )
     {
         setError ( t.getMessage () );
     }
-    
+
     public void readComplete ( VariableBinding vb )
     {
         try
@@ -164,42 +178,45 @@ public class SNMPItem extends DataItemBase implements Runnable, SuspendableItem
             setError ( e );
         }
     }
-    
+
     private void read () throws Exception
     {
         ResponseEvent response = _node.getConnection ().sendGET ( _oid );
-        
+
         if ( response == null )
         {
             throw new Exception ( "No response" );
         }
-        
+
         PDU reply = response.getResponse ();
         if ( reply == null )
         {
             throw new Exception ( "No reply" );
         }
-        
+
         readComplete ( reply.get ( 0 ) );
     }
-    
+
     private void clearError ()
     {
         setError ( (String)null );
     }
-    
+
     private void setError ( Throwable t )
     {
         if ( t.getMessage () == null )
+        {
             setError ( t.toString () );
+        }
         else
+        {
             setError ( t.getMessage () );
+        }
     }
-    
     private void setError ( String text )
     {
         _log.info ( "Setting error: " + text );
-        
+
         if ( text == null )
         {
             _attributes.update ( "error", null );
@@ -217,7 +234,7 @@ public class SNMPItem extends DataItemBase implements Runnable, SuspendableItem
 
     public void suspend ()
     {
-       stop ();
+        stop ();
     }
 
     public void wakeup ()
