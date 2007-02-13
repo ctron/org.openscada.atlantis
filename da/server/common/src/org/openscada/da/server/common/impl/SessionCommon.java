@@ -19,10 +19,7 @@
 
 package org.openscada.da.server.common.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.openscada.core.Variant;
 import org.openscada.core.server.common.SessionCommonOperations;
@@ -31,7 +28,6 @@ import org.openscada.da.core.server.ItemChangeListener;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.FolderListener;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.ItemListener;
 
 
 public class SessionCommon implements Session, DataItemSubscriptionListener
@@ -43,7 +39,6 @@ public class SessionCommon implements Session, DataItemSubscriptionListener
     private SessionCommonOperations _operations = new SessionCommonOperations ();
 	
     private FolderListener _folderListener = null;
-    private Map<String, DataItemSubscriptionListener> itemListeners = new HashMap<String, DataItemSubscriptionListener> ();
     
 	public SessionCommon ( HiveCommon hive )
 	{
