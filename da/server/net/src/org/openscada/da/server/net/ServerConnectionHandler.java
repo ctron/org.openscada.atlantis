@@ -51,7 +51,7 @@ import org.openscada.net.utils.MessageCreator;
 public class ServerConnectionHandler extends ConnectionHandlerBase implements ItemChangeListener, FolderListener
 {
     
-    public final static String VERSION = "0.1.5";
+    public final static String VERSION = "0.1.6";
 
     private static Logger _log = Logger.getLogger ( ServerConnectionHandler.class );
 

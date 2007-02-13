@@ -20,23 +20,16 @@
 package org.openscada.da.server.net;
 
 import org.openscada.core.InvalidSessionException;
-import org.openscada.core.Variant;
 import org.openscada.core.net.OperationController;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.BrowseOperationListener;
 import org.openscada.da.core.server.Hive;
-import org.openscada.da.core.server.InvalidItemException;
 import org.openscada.da.core.server.Session;
-import org.openscada.da.core.server.WriteOperationListener;
 import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.net.base.ConnectionHandlerBase;
-import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
-import org.openscada.net.base.data.StringValue;
 import org.openscada.net.da.handler.ListBrowser;
-import org.openscada.net.da.handler.Messages;
-import org.openscada.utils.lang.Holder;
 
 public class BrowseController extends OperationController implements BrowseOperationListener
 {
