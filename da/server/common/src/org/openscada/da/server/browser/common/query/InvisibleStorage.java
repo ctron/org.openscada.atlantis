@@ -95,8 +95,14 @@ public class InvisibleStorage implements SubscribeableStorage
 
     public void clear ()
     {
-        // TODO Auto-generated method stub
-        
+        synchronized ( this )
+        {
+            for ( ItemDescriptor desc : _items )
+            {
+                notifyRemove ( desc );
+            }
+            _items.clear ();
+        }
     }
 
 }
