@@ -21,7 +21,6 @@ package org.openscada.da.client;
 
 import java.util.Map;
 
-import org.openscada.core.InvalidSessionException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
