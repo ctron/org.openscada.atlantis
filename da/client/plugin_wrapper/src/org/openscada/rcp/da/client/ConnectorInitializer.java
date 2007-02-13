@@ -26,8 +26,6 @@ public class ConnectorInitializer
             
             _initialized = true;
             
-            System.err.println ( "Loading..." );
-            
             IExtensionRegistry registry = Platform.getExtensionRegistry ();
             IExtensionPoint point = registry.getExtensionPoint ( "org.openscada.da.client.connector" );
 
@@ -38,7 +36,6 @@ public class ConnectorInitializer
                     ConnectorLoader loader = (ConnectorLoader)config.createExecutableExtension ( "class" );
                     if ( loader != null )
                     {
-                        System.err.println ( "Loading" );
                         loader.load ();
                     }
                 }
