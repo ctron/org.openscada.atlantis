@@ -35,13 +35,17 @@ import org.openscada.core.client.ConnectionFactory;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.DriverFactory;
 import org.openscada.core.client.DriverInformation;
+import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.core.client.net.DisconnectReason;
 import org.openscada.core.client.net.OperationTimedOutException;
 import org.openscada.core.net.MessageHelper;
+import org.openscada.da.client.BrowseOperationCallback;
 import org.openscada.da.client.FolderListener;
 import org.openscada.da.client.ItemUpdateListener;
+import org.openscada.da.client.WriteAttributeOperationCallback;
+import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.client.net.operations.BrowseOperationController;
 import org.openscada.da.client.net.operations.WriteAttributesOperationController;
 import org.openscada.da.client.net.operations.WriteOperationController;
@@ -60,30 +64,32 @@ import org.openscada.net.da.handler.Messages;
 import org.openscada.net.da.handler.WriteAttributesOperation;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
+import org.openscada.utils.exec.LongRunningState;
 import org.openscada.utils.lang.Holder;
 
 public class Connection extends ConnectionBase implements org.openscada.da.client.Connection
 {
     static
     {
-        ConnectionFactory.registerDriverFactory ( new DriverFactory ()  {
+        ConnectionFactory.registerDriverFactory ( new DriverFactory () {
 
             public DriverInformation getDriverInformation ( ConnectionInformation connectionInformation )
             {
                 if ( !connectionInformation.getInterface ().equalsIgnoreCase ( "da" ) )
                     return null;
-                if ( ! ( connectionInformation.getDriver ().equalsIgnoreCase ( "net" ) || 
-                        connectionInformation.getDriver ().equalsIgnoreCase ( "gmpp" ) ) )
+                if ( ! ( connectionInformation.getDriver ().equalsIgnoreCase ( "net" ) || connectionInformation.getDriver ().equalsIgnoreCase (
+                        "gmpp" ) ) )
                     return null;
-                
+
                 if ( connectionInformation.getSecondaryTarget () == null )
                     return null;
-                
+
                 return new org.openscada.da.client.net.DriverInformation ();
-            }} );
+            }
+        } );
     }
-    
-    public static final String VERSION = "0.1.5";
+
+    public static final String VERSION = "0.1.6";
 
     private static Logger _log = Logger.getLogger ( Connection.class );
 
@@ -100,41 +106,44 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
     public Connection ( ConnectionInfo connectionInfo )
     {
         super ( connectionInfo );
-        
+
         init ();
     }
-    
+
     private void init ()
     {
-       
-        _client.getMessageProcessor().setHandler(Messages.CC_NOTIFY_VALUE, new MessageListener(){
+
+        _client.getMessageProcessor ().setHandler ( Messages.CC_NOTIFY_VALUE, new MessageListener () {
 
             public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message )
             {
-                notifyValueChange(message);
-            }} );
+                notifyValueChange ( message );
+            }
+        } );
 
-        _client.getMessageProcessor().setHandler(Messages.CC_NOTIFY_ATTRIBUTES, new MessageListener(){
-
-            public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message )
-            {
-                notifyAttributesChange(message);
-            }});
-
-        _client.getMessageProcessor().setHandler(Messages.CC_BROWSER_EVENT, new MessageListener(){
+        _client.getMessageProcessor ().setHandler ( Messages.CC_NOTIFY_ATTRIBUTES, new MessageListener () {
 
             public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message )
             {
-                _log.debug("Browse event message from server");
+                notifyAttributesChange ( message );
+            }
+        } );
+
+        _client.getMessageProcessor ().setHandler ( Messages.CC_BROWSER_EVENT, new MessageListener () {
+
+            public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message )
+            {
+                _log.debug ( "Browse event message from server" );
                 performBrowseEvent ( message );
-            }});
+            }
+        } );
 
         _browseController = new BrowseOperationController ( _client );
         _browseController.register ( _client.getMessageProcessor () );
-        
+
         _writeController = new WriteOperationController ( _client );
         _writeController.register ( _client.getMessageProcessor () );
-        
+
         _writeAttributesController = new WriteAttributesOperationController ( _client );
         _writeAttributesController.register ( _client.getMessageProcessor () );
     }
@@ -144,10 +153,10 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         if ( _client == null )
             return;
 
-        Properties props = new Properties();
+        Properties props = new Properties ();
         props.setProperty ( "client-version", VERSION );
 
-        _client.getConnection().sendMessage ( Messages.createSession ( props ), new MessageStateListener(){
+        _client.getConnection ().sendMessage ( Messages.createSession ( props ), new MessageStateListener () {
 
             public void messageReply ( Message message )
             {
@@ -157,8 +166,9 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
             public void messageTimedOut ()
             {
                 //setState ( ConnectionState.CLOSED, new OperationTimedOutException().fillInStackTrace () );
-                disconnect (  new OperationTimedOutException().fillInStackTrace () );
-            }}, 10 * 1000 );
+                disconnect ( new OperationTimedOutException ().fillInStackTrace () );
+            }
+        }, 10 * 1000 );
     }
 
     private void processSessionReply ( Message message )
@@ -180,7 +190,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
         }
     }
-    
+
     private void fireBrowseEvent ( Location location, Collection<Entry> added, Collection<String> removed, boolean full )
     {
         synchronized ( _folderListeners )
@@ -192,7 +202,8 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                     _folderListeners.get ( location ).folderChanged ( added, removed, full );
                 }
                 catch ( Exception e )
-                {}
+                {
+                }
             }
         }
     }
@@ -209,7 +220,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         }
     }
 
-    private void fireAttributesChange ( String itemName, Map<String,Variant> attributes, boolean initial )
+    private void fireAttributesChange ( String itemName, Map<String, Variant> attributes, boolean initial )
     {
         synchronized ( _itemListeners )
         {
@@ -226,56 +237,53 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         Variant value = new Variant ();
 
         // extract initial bit
-        boolean initial = message.getValues().containsKey("cache-read");
+        boolean initial = message.getValues ().containsKey ( "cache-read" );
 
-
-        if ( message.getValues().containsKey("value") )
+        if ( message.getValues ().containsKey ( "value" ) )
         {
-            value = MessageHelper.valueToVariant ( message.getValues().get("value"), null );
+            value = MessageHelper.valueToVariant ( message.getValues ().get ( "value" ), null );
         }
 
-        String itemName = message.getValues().get("item-id").toString();
-        fireValueChange(itemName, value, initial);
+        String itemName = message.getValues ().get ( "item-id" ).toString ();
+        fireValueChange ( itemName, value, initial );
     }
-
-
 
     private void notifyAttributesChange ( Message message )
     {
-        Map<String,Variant> attributes = new HashMap<String,Variant>();
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         // extract initial bit
-        boolean initial = message.getValues().containsKey("cache-read");
-        
+        boolean initial = message.getValues ().containsKey ( "cache-read" );
+
         if ( message.getValues ().get ( "set" ) instanceof MapValue )
         {
             MapValue setEntries = (MapValue)message.getValues ().get ( "set" );
-            for ( Map.Entry<String,Value> entry : setEntries.getValues ().entrySet () )
+            for ( Map.Entry<String, Value> entry : setEntries.getValues ().entrySet () )
             {
                 Variant variant = Messages.valueToVariant ( entry.getValue (), null );
                 if ( variant != null )
                     attributes.put ( entry.getKey (), variant );
             }
         }
-        
+
         if ( message.getValues ().get ( "unset" ) instanceof ListValue )
         {
             ListValue unsetEntries = (ListValue)message.getValues ().get ( "unset" );
             for ( Value entry : unsetEntries.getValues () )
             {
                 if ( entry instanceof StringValue )
-                    attributes.put ( ((StringValue)entry).getValue (), null );
+                    attributes.put ( ( (StringValue)entry ).getValue (), null );
             }
         }
 
-        String itemName = message.getValues().get("item-id").toString();
+        String itemName = message.getValues ().get ( "item-id" ).toString ();
         fireAttributesChange ( itemName, attributes, initial );
     }
 
     private void performBrowseEvent ( Message message )
     {
         _log.debug ( "Performing browse event" );
-        
+
         List<Entry> added = new ArrayList<Entry> ();
         List<String> removed = new ArrayList<String> ();
         List<String> path = new ArrayList<String> ();
@@ -287,42 +295,77 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
         Location location = new Location ( path );
 
-        _log.debug ( String.format ( "Folder: %1$s Added: %2$d Removed: %3$d", location.toString (), added.size (), removed.size() ) );
+        _log.debug ( String.format ( "Folder: %1$s Added: %2$d Removed: %3$d", location.toString (), added.size (),
+                removed.size () ) );
 
         fireBrowseEvent ( location, added, removed, initial.value );
     }
 
     // write operation
-    
-    public void write ( String itemName, Variant value ) throws InterruptedException, OperationException
+
+    public void write ( String item, Variant value ) throws NoConnectionException, OperationException
     {
-        write ( itemName, value, null );
+        write ( item, value, null );
     }
-    
-    public void write ( String itemName, Variant value, LongRunningListener listener ) throws InterruptedException, OperationException
+
+    public void write ( String item, Variant value, int timeout ) throws NoConnectionException, OperationException
     {
-        LongRunningOperation op = startWrite ( itemName, value, listener );
-        op.waitForCompletion ();
+        LongRunningOperation op = _writeController.start ( item, value, null );
+        try
+        {
+            op.waitForCompletion ( timeout );
+        }
+        catch ( InterruptedException e )
+        {
+            throw new OperationException ( e );
+        }
         completeWrite ( op );
     }
-    
-    public LongRunningOperation startWrite ( String itemId, Variant value )
+
+    public void write ( String item, Variant value, final WriteOperationCallback callback )
     {
-        return startWrite ( itemId, value, null );
+        try
+        {
+            _writeController.start ( item, value, new LongRunningListener () {
+
+                public void stateChanged ( LongRunningOperation operation, LongRunningState state, Throwable error )
+                {
+                    switch ( state )
+                    {
+                    case FAILURE:
+                        callback.failed ( error.getMessage () );
+                        break;
+                    case SUCCESS:
+                        try
+                        {
+                            completeWrite ( operation );
+                            callback.complete ();
+                        }
+                        catch ( OperationException e )
+                        {
+                            callback.failed ( error.getMessage () );
+                        }
+
+                        break;
+                    }
+                }
+            } );
+        }
+        catch ( Exception e )
+        {
+            callback.error ( e );
+        }
     }
-    
-    public LongRunningOperation startWrite ( String itemName, Variant value, LongRunningListener listener )
+
+    protected void completeWrite ( LongRunningOperation operation ) throws OperationException
     {
-        return _writeController.start ( itemName, value, listener );   
-    }
-    
-    public void completeWrite ( LongRunningOperation operation ) throws OperationException
-    {
-        if ( !(operation instanceof org.openscada.net.base.LongRunningOperation ) )
+        if ( ! ( operation instanceof org.openscada.net.base.LongRunningOperation ) )
+        {
             throw new RuntimeException ( "Operation is not of type org.openscada.net.base.LongRunningOperation" );
-        
+        }
+
         org.openscada.net.base.LongRunningOperation op = (org.openscada.net.base.LongRunningOperation)operation;
-        
+
         if ( op.getError () != null )
         {
             throw new OperationException ( op.getError () );
@@ -336,32 +379,71 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
             }
         }
     }
-    
+
     // write attributes operation
-    public void writeAttributes ( String itemId, Map<String,Variant> attributes ) throws InterruptedException, OperationException
+    public WriteAttributeResults writeAttributes ( String itemId, Map<String, Variant> attributes ) throws NoConnectionException, OperationException
     {
-        writeAttributes ( itemId, attributes, null );
+        return writeAttributes ( itemId, attributes, 0 );
+    }
+
+    public WriteAttributeResults writeAttributes ( String itemId, Map<String, Variant> attributes, int timeout ) throws NoConnectionException, OperationException
+    {
+        LongRunningOperation op = _writeAttributesController.start ( itemId, attributes, null );
+        try
+        {
+            op.waitForCompletion ();
+        }
+        catch ( InterruptedException e )
+        {
+            throw new OperationException ( e );
+        }
+        return completeWriteAttributes ( op );
     }
     
-    public void writeAttributes ( String itemId, Map<String,Variant> attributes, LongRunningListener listener ) throws InterruptedException, OperationException
+    public void writeAttributes ( String item, Map<String, Variant> attributes, final WriteAttributeOperationCallback callback )
     {
-        LongRunningOperation op = startWriteAttributes ( itemId, attributes, listener );
-        op.waitForCompletion ();
-        completeWriteAttributes ( op );
+        try
+        {
+            _writeAttributesController.start ( item, attributes, new LongRunningListener () {
+
+                public void stateChanged ( LongRunningOperation operation, LongRunningState state, Throwable error )
+                {
+                    switch ( state )
+                    {
+                    case FAILURE:
+                        callback.failed ( error.getMessage () );
+                        break;
+                    case SUCCESS:
+                        try
+                        {
+                            WriteAttributeResults results = completeWriteAttributes ( operation );
+                            callback.complete ( results );
+                        }
+                        catch ( OperationException e )
+                        {
+                            callback.failed ( error.getMessage () );
+                        }
+
+                        break;
+                    }
+                }
+            } );
+        }
+        catch ( Exception e )
+        {
+            callback.error ( e );
+        }
     }
-    
-    public LongRunningOperation startWriteAttributes ( String itemId, Map<String,Variant> attributes, LongRunningListener listener )
-    {
-        return _writeAttributesController.start ( itemId, attributes, listener );   
-    }
-    
+
     public WriteAttributeResults completeWriteAttributes ( LongRunningOperation operation ) throws OperationException
     {
-        if ( !(operation instanceof org.openscada.net.base.LongRunningOperation ) )
+        if ( ! ( operation instanceof org.openscada.net.base.LongRunningOperation ) )
+        {
             throw new RuntimeException ( "Operation is not of type org.openscada.net.base.LongRunningOperation" );
-        
+        }
+
         org.openscada.net.base.LongRunningOperation op = (org.openscada.net.base.LongRunningOperation)operation;
-        
+
         if ( op.getError () != null )
         {
             throw new OperationException ( op.getError () );
@@ -380,18 +462,18 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         }
         return null;
     }
-    
-    public Entry[] browse ( String [] path ) throws OperationException
+
+    public Entry[] browse ( String[] path ) throws NoConnectionException, OperationException
     {
-        return browse ( path, null );
+        return browse ( path, 0 );
     }
-    
-    public Entry[] browse ( String[] path, LongRunningListener listener ) throws OperationException
+
+    public Entry[] browse ( String[] path, int timeout ) throws OperationException
     {
-        LongRunningOperation op = startBrowse ( path, listener );
+        LongRunningOperation op = _browseController.start ( path, null );
         try
         {
-            op.waitForCompletion ();
+            op.waitForCompletion ( timeout );
             return completeBrowse ( op );
         }
         catch ( InterruptedException e )
@@ -399,24 +481,50 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
             throw new OperationException ( e );
         }
     }
-
-    public LongRunningOperation startBrowse ( String [] path )
+    
+    public void browse ( String  [] path, final BrowseOperationCallback callback )
     {
-        return startBrowse ( path, null );
+        try
+        {
+            _browseController.start ( path, new LongRunningListener () {
+
+                public void stateChanged ( LongRunningOperation operation, LongRunningState state, Throwable error )
+                {
+                    switch ( state )
+                    {
+                    case FAILURE:
+                        callback.failed ( error.getMessage () );
+                        break;
+                    case SUCCESS:
+                        try
+                        {
+                            Entry[] result = completeBrowse ( operation );
+                            callback.complete ( result );
+                        }
+                        catch ( OperationException e )
+                        {
+                            callback.failed ( error.getMessage () );
+                        }
+                        break;
+                    }
+                }
+            } );
+        }
+        catch ( Exception e )
+        {
+            callback.error ( e );
+        }
     }
 
-    public LongRunningOperation startBrowse ( String [] path, LongRunningListener listener )
+    protected Entry[] completeBrowse ( LongRunningOperation operation ) throws OperationException
     {
-        return _browseController.start ( path, listener );
-    }
-
-    public Entry[] completeBrowse ( LongRunningOperation operation ) throws OperationException
-    {
-        if ( !(operation instanceof org.openscada.net.base.LongRunningOperation ) )
+        if ( ! ( operation instanceof org.openscada.net.base.LongRunningOperation ) )
+        {
             throw new RuntimeException ( "Operation is not of type org.openscada.net.base.LongRunningOperation" );
-        
+        }
+
         org.openscada.net.base.LongRunningOperation op = (org.openscada.net.base.LongRunningOperation)operation;
-        
+
         if ( op.getError () != null )
         {
             throw new OperationException ( op.getError () );
@@ -424,7 +532,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         if ( op.getReply () != null )
         {
             Message reply = op.getReply ();
-            
+
             if ( reply.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
             {
                 // in case of an error
@@ -442,11 +550,11 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                     throw new OperationException ( e );
                 }
             }
-            
+
         }
         return null;
     }
-    
+
     @Override
     protected void onConnectionBound ()
     {
@@ -460,19 +568,19 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
     @Override
     protected void onConnectionEstablished ()
     {
-       requestSession ();
+        requestSession ();
     }
-    
-    public void subscribeItem ( String itemId, boolean initial )
+
+    public void subscribeItem ( String item ) throws NoConnectionException
     {
-        sendMessage ( Messages.subscribeItem ( itemId, initial ) );
+        sendMessage ( Messages.subscribeItem ( item ) );
     }
-    
-    public void unsubscribeItem ( String itemId )
+
+    public void unsubscribeItem ( String itemId ) throws NoConnectionException
     {
         sendMessage ( Messages.unsubscribeItem ( itemId ) );
     }
-    
+
     public synchronized ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener )
     {
         return _itemListeners.put ( itemId, listener );
@@ -483,12 +591,12 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         return _folderListeners.put ( location, listener );
     }
 
-    public void subscribeFolder ( Location location ) throws InvalidSessionException, OperationException
+    public void subscribeFolder ( Location location ) throws NoConnectionException, OperationException
     {
         sendMessage ( ListBrowser.createSubscribe ( location.asArray () ) );
     }
 
-    public void unsubscribeFolder ( Location location ) throws InvalidSessionException, OperationException
+    public void unsubscribeFolder ( Location location ) throws NoConnectionException, OperationException
     {
         sendMessage ( ListBrowser.createUnsubscribe ( location.asArray () ) );
     }
