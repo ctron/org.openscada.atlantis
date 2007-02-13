@@ -34,6 +34,8 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
     private AttributeManager _attributes = null;
 
     private Variant _value = new Variant ();
+    
+    private ItemListener _listener = null;
 
     public OPCItem ( DataItemInformation information, OPCConnection connection, String itemId ) throws JIException, AddFailedException
     {
@@ -55,7 +57,6 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
         super.setListener ( listener );
         if ( listener != null )
         {
-            wakeup ();
             if ( !_value.isNull () )
             {
                 notifyValue ( _value );
@@ -65,10 +66,17 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
                 notifyAttributes ( _attributes.get () );
             }
         }
-        else
+        
+        if ( _listener == null && listener != null )
+        {
+            wakeup ();
+        }
+        if ( _listener != null && listener == null )
         {
             suspend ();
         }
+        
+        _listener = listener;
     }
 
     public synchronized Item getItem ()
@@ -116,18 +124,18 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
 
     public void suspend ()
     {
-        _log.debug ( "Suspend" );
+        _log.debug ( "Suspend: " + _itemId );
         _connection.getAccess ().removeItem ( _itemId );
-        _connection.setItemState ( this, false );
+        _connection.countItemState ( this, false );
     }
 
     public void wakeup ()
     {
-        _log.debug ( "Wakeup" );
+        _log.debug ( "Wakeup: " + _itemId );
         try
         {
             _connection.getAccess ().addItem ( _itemId, this );
-            _connection.setItemState ( this, true );
+            _connection.countItemState ( this, true );
         }
         catch ( JIException e )
         {
@@ -212,9 +220,6 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
 
     protected synchronized void updateValue ( Variant value )
     {
-        if ( value == null )
-            value = new Variant ();
-
         if ( !_value.equals ( value ) )
         {
             _value = value;

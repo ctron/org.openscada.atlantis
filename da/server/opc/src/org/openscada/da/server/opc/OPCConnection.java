@@ -26,6 +26,7 @@ import org.openscada.opc.lib.common.NotConnectedException;
 import org.openscada.opc.lib.da.AccessBase;
 import org.openscada.opc.lib.da.AccessStateListener;
 import org.openscada.opc.lib.da.Async20Access;
+import org.openscada.opc.lib.da.AutoReconnectController;
 import org.openscada.opc.lib.da.DuplicateGroupException;
 import org.openscada.opc.lib.da.Group;
 import org.openscada.opc.lib.da.Server;
@@ -47,6 +48,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
     private Server _server = null;
     private Group _group = null;
     private AccessBase _access = null;
+    private AutoReconnectController _reconnectController = null;
 
     private OPCItemManager _itemManager = null;
 
@@ -154,6 +156,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         }
 
         _server = new Server ( _connectionSetup.getConnectionInformation () );
+        _reconnectController = new AutoReconnectController ( _server );
 
         switch ( _connectionSetup.getAccessMethod () )
         {
@@ -237,10 +240,17 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         _server = null;
     }
 
-    public synchronized void triggerConnect ()
+    public void triggerConnect ()
+    {
+        _reconnectController.connect ();
+    }
+    
+    public synchronized void X_triggerConnect ()
     {
         if ( !_state.equals ( ConnectionState.DISCONNECTED ) )
+        {
             return;
+        }
 
         setConnectionState ( ConnectionState.CONNECTING );
         _connectThread = new Thread ( new Runnable () {
@@ -262,10 +272,21 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
                 }
             }
         } );
+        _connectThread.setDaemon ( true );
         _connectThread.start ();
     }
 
-    private void performConnect () throws IllegalArgumentException, UnknownHostException, JIException, NotConnectedException, DuplicateGroupException, AlreadyConnectedException
+    private void performConnect ()
+    {
+        _reconnectController.connect ();
+    }
+    
+    private void performDisconnect ()
+    {
+        _reconnectController.connect ();
+    }
+    
+    private void X_performConnect () throws IllegalArgumentException, UnknownHostException, JIException, NotConnectedException, DuplicateGroupException, AlreadyConnectedException
     {
         start ();
 
@@ -275,10 +296,17 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         setConnectionState ( ConnectionState.CONNECTED );
     }
 
-    public synchronized void triggerDisconnect ()
+    public void triggerDisconnect ()
+    {
+        _reconnectController.disconnect ();
+    }
+    
+    public synchronized void X_triggerDisconnect ()
     {
         if ( !_state.equals ( ConnectionState.CONNECTED ) )
+        {
             return;
+        }
 
         setConnectionState ( ConnectionState.DISCONNECTING );
         Runnable connectRunner = new Runnable () {
@@ -303,7 +331,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         _hive.getScheduler ().executeJobAsync ( connectRunner );
     }
 
-    public synchronized void performDisconnect ()
+    public synchronized void x_performDisconnect ()
     {
         try
         {
@@ -431,12 +459,15 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
 
     protected void disconnected ()
     {
+        setConnectionState ( ConnectionState.DISCONNECTED );
     }
 
     protected void connected ()
     {
         try
         {
+            setConnectionState ( ConnectionState.CONNECTED );
+            
             _group = _server.addGroup ();
             fillFlatItems ();
         }
@@ -487,7 +518,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         _stateItem.updateAttributes ( attributes );
     }
 
-    public void setItemState ( OPCItem item, boolean active )
+    public void countItemState ( OPCItem item, boolean active )
     {
         synchronized ( _activeItems )
         {
