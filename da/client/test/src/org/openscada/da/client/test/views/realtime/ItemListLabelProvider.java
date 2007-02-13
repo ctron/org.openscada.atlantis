@@ -28,9 +28,11 @@ public class ItemListLabelProvider  extends LabelProvider implements ITableLabel
             case 0:
                 return listEntry.getDataItem ().getId ();
             case 1:
+                return listEntry.getSubscriptionChange ().name ();
+            case 2:
                 if ( listEntry.getValue () != null )
                     return VariantHelper.toValueType ( listEntry.getValue () ).name ();
-            case 2:
+            case 3:
                 if ( listEntry.getValue () != null )
                     return listEntry.getValue ().asString ( "<null>" );
             default:

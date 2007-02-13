@@ -19,7 +19,6 @@
 
 package org.openscada.da.client.test.wizards;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
@@ -34,6 +33,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.core.Variant;
+import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.core.WriteAttributeResult;
@@ -44,20 +44,21 @@ import org.openscada.utils.exec.LongRunningState;
 
 public class WriteAttributesOperationWizard extends Wizard implements INewWizard
 {
-    
+
     private WriteAttributesOperationWizardValuePage _page = null;
-    
+
     private IStructuredSelection _selection = null;
-    
+    private boolean _complete = false;
+    private Throwable _error = null;
+
     @Override
     public boolean performFinish ()
     {
         final String item = _page.getItem ();
-        final Map<String,Variant> attributes = _page.getAttributes ();
+        final Map<String, Variant> attributes = _page.getAttributes ();
         final HiveConnection connection = _page.getConnection ();
-        
-        IRunnableWithProgress op = new IRunnableWithProgress()
-        {
+
+        IRunnableWithProgress op = new IRunnableWithProgress () {
             public void run ( IProgressMonitor monitor ) throws InvocationTargetException
             {
                 try
@@ -76,137 +77,148 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
         };
         try
         {
-            getContainer().run ( true, true, op );
+            getContainer ().run ( true, true, op );
         }
-        catch (InterruptedException e)
+        catch ( InterruptedException e )
         {
             return false;
         }
-        catch (InvocationTargetException e)
+        catch ( InvocationTargetException e )
         {
-            Throwable realException = e.getTargetException();
-            MessageDialog.openError ( getShell(), "Error writing to item", realException.getMessage () );
+            Throwable realException = e.getTargetException ();
+            MessageDialog.openError ( getShell (), "Error writing to item", realException.getMessage () );
             return false;
         }
         return true;
     }
-    
-    private void doFinish ( final IProgressMonitor monitor, HiveConnection hiveConnection, String item, Map<String,Variant> attributes ) throws Exception
-    {
-        monitor.beginTask ( "Writing attributes to item" , 4 );
-        
-        monitor.worked ( 1 );
-        LongRunningOperation op = hiveConnection.getConnection ().startWriteAttributes ( item, attributes, new LongRunningListener () {
 
-            public void stateChanged ( LongRunningState arg0, Throwable arg2 )
-            {
-                switch ( arg0 )
-                {
-                case REQUESTED:
-                    monitor.worked ( 1 );
-                    monitor.subTask ( "Requested operation" );
-                    break;
-                case RUNNING:
-                    monitor.worked ( 1 );
-                    monitor.subTask ( "Operation running" );
-                    break;
-                case SUCCESS:
-                    monitor.worked ( 1 );
-                    monitor.subTask ( "Operation complete" );
-                    break;
-                case FAILURE:
-                    monitor.worked ( 1 );
-                    monitor.subTask ( "Operation failed" );
-                default:
-                    break;
-                }
-            }} );
+    private void doFinish ( final IProgressMonitor monitor, HiveConnection hiveConnection, String item, final Map<String, Variant> attributes ) throws Exception
+    {
+        monitor.beginTask ( "Writing attributes to item", 2 );
+
+        monitor.worked ( 1 );
+
+        final WriteAttributesOperationWizard _this = this;
         
-        boolean waiting = true;
-        while ( waiting )
-        {
-            synchronized ( op )
+        _complete = false;
+        hiveConnection.getConnection ().writeAttributes ( item, attributes, new WriteAttributeOperationCallback () {
+
+            public void complete ( WriteAttributeResults results )
             {
-                if ( op.isComplete () )
+                if ( !results.isSuccess () )
                 {
-                    waiting = false;
+                    handleError ( attributes, results );
                 }
-                else
+                endWait ();
+            }
+
+            public void error ( Throwable e )
+            {
+                handleError ( e );
+                endWait ();
+            }
+
+            public void failed ( String message )
+            {
+                handleError ( new Exception ( message ) );
+                endWait ();
+            }
+
+            private void endWait ()
+            {
+                _complete = true;
+                synchronized ( _this )
                 {
-                    op.wait ( 100 );
+                    _this.notifyAll ();
                 }
-                
-                if ( monitor.isCanceled () && (!op.isComplete ()) )
+            }
+        } );
+        
+        synchronized ( this )
+        {
+            wait ( 100 );
+            
+            if ( _complete || monitor.isCanceled () )
+            {
+                if ( _error != null )
                 {
-                    op.cancel ();
-                    waiting = false;
-                }
-                else if ( op.isComplete () )
-                {
-                    waiting = false;
-                    WriteAttributeResults result = hiveConnection.getConnection ().completeWriteAttributes ( op );
-                   
-                    if ( ( attributes.size () != result.size () ) || (!result.isSuccess ()) )
-                    {
-                        handleError ( attributes, result );
-                    }
-                    
+                    throw new Exception ( _error );
                 }
             }
         }
+        monitor.worked ( 1 );
     }
-    
+
+    public void handleError ( Throwable e )
+    {
+        _error = e;
+    }
+
     public void handleError ( Map<String, Variant> attributes, WriteAttributeResults results )
     {
-        MultiStatus status = new MultiStatus ( Openscada_da_client_testPlugin.PLUGIN_ID, 0, "Failed to write attributes", null );
-        
+        MultiStatus status = new MultiStatus ( Openscada_da_client_testPlugin.PLUGIN_ID, 0,
+                "Failed to write attributes", null );
+
         if ( attributes.size () != results.size () )
         {
-            status.add ( new OperationStatus ( OperationStatus.WARNING, Openscada_da_client_testPlugin.PLUGIN_ID, 0, String.format ( "Only %1$d items out of %2$d where processed", results.size (), attributes.size () ), null ) );
+            status.add ( new OperationStatus (
+                    OperationStatus.WARNING,
+                    Openscada_da_client_testPlugin.PLUGIN_ID,
+                    0,
+                    String.format ( "Only %1$d items out of %2$d where processed", results.size (), attributes.size () ),
+                    null ) );
         }
-        
+
         for ( Map.Entry<String, WriteAttributeResult> entry : results.entrySet () )
         {
             if ( entry.getValue ().isError () )
             {
-                status.add ( new OperationStatus ( OperationStatus.ERROR, Openscada_da_client_testPlugin.PLUGIN_ID, 0, String.format ( "Failed to write attribute '%1$s': %2$s", entry.getKey (), entry.getValue ().getError ().getMessage () ), null ) );
+                status.add ( new OperationStatus ( OperationStatus.ERROR, Openscada_da_client_testPlugin.PLUGIN_ID, 0,
+                        String.format ( "Failed to write attribute '%1$s': %2$s", entry.getKey (),
+                                entry.getValue ().getError ().getMessage () ), null ) );
             }
         }
-        
+
         for ( String name : attributes.keySet () )
         {
             if ( !results.containsKey ( name ) )
             {
-                status.add ( new OperationStatus ( OperationStatus.WARNING, Openscada_da_client_testPlugin.PLUGIN_ID, 0, String.format ( "Attribute %s is missing in result list", name ), null ) );
+                status.add ( new OperationStatus ( OperationStatus.WARNING, Openscada_da_client_testPlugin.PLUGIN_ID,
+                        0, String.format ( "Attribute %s is missing in result list", name ), null ) );
             }
         }
-        
-        final ErrorDialog dialog = new ErrorDialog ( getShell (), "Failed write attributes", "The write attributes operation did not complete successfully. There may be one ore more attributes that could not be written. Check the status of each attribute operation using the detailed information.", status, OperationStatus.ERROR | OperationStatus.WARNING );
+
+        final ErrorDialog dialog = new ErrorDialog (
+                getShell (),
+                "Failed write attributes",
+                "The write attributes operation did not complete successfully. There may be one ore more attributes that could not be written. Check the status of each attribute operation using the detailed information.",
+                status, OperationStatus.ERROR | OperationStatus.WARNING );
 
         getShell ().getDisplay ().syncExec ( new Runnable () {
 
             public void run ()
             {
                 dialog.open ();
-            }} );
+            }
+        } );
     }
 
     public void init ( IWorkbench workbench, IStructuredSelection selection )
     {
         setNeedsProgressMonitor ( true );
         setWindowTitle ( "Write Attributes" );
-        
+
         _selection = selection;
     }
-    
+
     @Override
     public void addPages ()
     {
         super.addPages ();
-        
-        addPage ( _page = new WriteAttributesOperationWizardValuePage() );
-        
+
+        addPage ( _page = new WriteAttributesOperationWizardValuePage () );
+
         _page.setSelection ( _selection );
     }
-    
+
 }

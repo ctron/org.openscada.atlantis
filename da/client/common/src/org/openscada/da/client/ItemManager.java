@@ -41,7 +41,7 @@ public class ItemManager implements ConnectionStateListener
         _connection.addConnectionStateListener ( this );
     }
 
-    public synchronized void addItemUpdateListener ( String itemName, boolean initial, ItemUpdateListener listener )
+    public synchronized void addItemUpdateListener ( String itemName, ItemUpdateListener listener )
     {
         if ( !_itemListeners.containsKey ( itemName ) )
         {
@@ -49,7 +49,7 @@ public class ItemManager implements ConnectionStateListener
         }
 
         ItemSyncController controller = _itemListeners.get ( itemName );
-        controller.add ( listener, initial );
+        controller.add ( listener );
     }
 
     public synchronized void removeItemUpdateListener ( String itemName, ItemUpdateListener listener )

@@ -19,98 +19,38 @@
 
 package org.openscada.da.client.ice;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.openscada.core.Variant;
-import org.openscada.da.core.WriteAttributeResult;
-import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.utils.exec.LongRunningListener;
-import org.openscada.utils.exec.LongRunningOperation;
+import org.openscada.da.client.WriteAttributeOperationCallback;
 
 import Ice.LocalException;
 import Ice.UserException;
-import OpenSCADA.DA.AMI_Hive_write;
 import OpenSCADA.DA.AMI_Hive_writeAttributes;
+import OpenSCADA.DA.WriteAttributesResultEntry;
 
-public class AsyncWriteAttributesOperation extends AMI_Hive_writeAttributes implements LongRunningOperation 
+public class AsyncWriteAttributesOperation extends AMI_Hive_writeAttributes
 {
-    private AsyncBaseOperation _op;
-    private WriteAttributeResults _result;
+    private WriteAttributeOperationCallback _callback;
     
-    public AsyncWriteAttributesOperation ( LongRunningListener listener )
+    public AsyncWriteAttributesOperation ( WriteAttributeOperationCallback callback )
     {
         super ();
-        _op = new AsyncBaseOperation ( listener );
+        _callback = callback;
     }
-    
+
     @Override
     public void ice_exception ( LocalException ex )
     {
-        _op.failure ( ex );
+        _callback.error ( ex );
     }
 
     @Override
     public void ice_exception ( UserException ex )
     {
-        _op.failure ( ex );
+        _callback.failed ( ex.getMessage () );
     }
-    
+
     @Override
-    public void ice_response ( Map __ret )
+    public void ice_response ( WriteAttributesResultEntry[] result )
     {
-        try
-        {
-            _result = new WriteAttributeResults ();
-            for ( Object o : __ret.entrySet () )
-            {
-                Map.Entry e = (Map.Entry)o;
-                if ( e.getValue () != null )
-                {
-                    _result.put ( e.getKey ().toString (), new WriteAttributeResult ( new Exception ( e.getValue ().toString () ) ) );
-                }
-                else
-                {
-                    _result.put ( e.getKey ().toString (), new WriteAttributeResult () );
-                }
-            }
-            _op.success ();
-        }
-        catch ( Throwable e )
-        {
-            _op.failure ( e );
-        }
-    }
-    
-    public WriteAttributeResults getResult ()
-    {
-        return _result;
-    }
-
-    // Forward to AsyncBaseOperation
-    
-    public void cancel ()
-    {
-        _op.cancel ();
-    }
-
-    public Throwable getError ()
-    {
-        return _op.getError ();
-    }
-
-    public boolean isComplete ()
-    {
-        return _op.isComplete ();
-    }
-
-    public void waitForCompletion () throws InterruptedException
-    {
-        _op.waitForCompletion ();
-    }
-
-    public void waitForCompletion ( int timeout ) throws InterruptedException
-    {
-       _op.waitForCompletion ( timeout );
+        _callback.complete ( ConnectionHelper.fromIce ( result ) );
     }
 }

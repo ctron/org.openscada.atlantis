@@ -9,6 +9,7 @@ import java.util.Observer;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.test.impl.HiveItem;
@@ -76,6 +77,8 @@ public class ListEntry extends Observable implements ItemUpdateListener
 
     private boolean _subscribed = false;
 
+    private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
+
     public HiveItem getDataItem ()
     {
         return _dataItem;
@@ -100,6 +103,11 @@ public class ListEntry extends Observable implements ItemUpdateListener
     public Variant getValue ()
     {
         return _value;
+    }
+    
+    public SubscriptionState getSubscriptionChange ()
+    {
+        return _subscriptionState;
     }
 
     public synchronized List<AttributePair> getAttributes ()
@@ -130,13 +138,22 @@ public class ListEntry extends Observable implements ItemUpdateListener
         setChanged ();
         notifyObservers ();
     }
+    
+    public synchronized void notifySubscriptionChange ( SubscriptionState subscriptionState )
+    {
+        _log.debug ( "Subscription change: " + subscriptionState.name () );
+        
+        _subscriptionState = subscriptionState;
+        setChanged ();
+        notifyObservers ();
+    }
 
     protected synchronized void subscribe ()
     {
         if ( ( _dataItem != null ) && ( !_subscribed ) )
         {
             _log.debug ( "Subscribe: " + _dataItem.getId () );
-            _dataItem.getConnection ().getItemManager ().addItemUpdateListener ( _dataItem.getId (), true, this );
+            _dataItem.getConnection ().getItemManager ().addItemUpdateListener ( _dataItem.getId (), this );
             _subscribed = true;
         }
     }

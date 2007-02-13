@@ -45,6 +45,8 @@ public class RealTimeList extends ViewPart
         col = new TreeColumn ( _viewer.getTree (), SWT.NONE );
         col.setText ( "ID" );
         col = new TreeColumn ( _viewer.getTree (), SWT.NONE );
+        col.setText ( "State" );
+        col = new TreeColumn ( _viewer.getTree (), SWT.NONE );
         col.setText ( "Type" );
         col = new TreeColumn ( _viewer.getTree (), SWT.NONE );
         col.setText ( "Value" );
@@ -53,6 +55,7 @@ public class RealTimeList extends ViewPart
         
         TableLayout tableLayout = new TableLayout ();
         tableLayout.addColumnData ( new ColumnWeightData ( 100, 100, true ) );
+        tableLayout.addColumnData ( new ColumnWeightData ( 50, 50, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 50, 50, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 75, 75, true ) );
         _viewer.getTree ().setLayout ( tableLayout );

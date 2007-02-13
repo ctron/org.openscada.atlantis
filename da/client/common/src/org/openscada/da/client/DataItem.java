@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Observable;
 
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
 
 public class DataItem extends Observable
@@ -33,8 +34,9 @@ public class DataItem extends Observable
     private ItemManager _itemManager = null;
 
     private Variant _value = new Variant ();
-
     private Map<String, Variant> _attributes = new HashMap<String, Variant> ();
+
+    private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
 
     private ItemUpdateListener _listener = new ItemUpdateListener () {
 
@@ -46,6 +48,11 @@ public class DataItem extends Observable
         public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
         {
             performNotifyAttributeChange ( attributes, initial );
+        }
+
+        public void notifySubscriptionChange ( SubscriptionState subscriptionState )
+        {
+            performNotifySubscriptionChange ( subscriptionState );
         }
     };
 
@@ -67,7 +74,7 @@ public class DataItem extends Observable
             return;
 
         _itemManager = connection;
-        _itemManager.addItemUpdateListener ( _itemName, true, _listener );
+        _itemManager.addItemUpdateListener ( _itemName, _listener );
     }
 
     synchronized public void unregister ()
@@ -96,6 +103,14 @@ public class DataItem extends Observable
         notifyObservers ();
     }
 
+    private void performNotifySubscriptionChange ( SubscriptionState subscriptionState )
+    {
+        _subscriptionState = subscriptionState;
+
+        setChanged ();
+        notifyObservers ();
+    }
+
     /**
      * Fetch the current cached value.
      * 
@@ -118,6 +133,11 @@ public class DataItem extends Observable
     public Map<String, Variant> getAttributes ()
     {
         return _attributes;
+    }
+
+    public SubscriptionState getSubscriptionState ()
+    {
+        return _subscriptionState;
     }
 
 }

@@ -19,65 +19,37 @@
 
 package org.openscada.da.client.ice;
 
-import org.openscada.utils.exec.LongRunningListener;
-import org.openscada.utils.exec.LongRunningOperation;
+import org.openscada.da.client.WriteOperationCallback;
 
 import Ice.LocalException;
 import Ice.UserException;
 import OpenSCADA.DA.AMI_Hive_write;
 
-public class AsyncWriteOperation extends AMI_Hive_write implements LongRunningOperation 
+public class AsyncWriteOperation extends AMI_Hive_write 
 {
-    private AsyncBaseOperation _op;
+    private WriteOperationCallback _callback;
     
-    public AsyncWriteOperation ( LongRunningListener listener )
+    public AsyncWriteOperation ( WriteOperationCallback callback )
     {
         super ();
-        _op = new AsyncBaseOperation ( listener );
+        _callback = callback;
     }
     
     @Override
     public void ice_exception ( LocalException ex )
     {
-        _op.failure ( ex );
+        _callback.error ( ex );
     }
 
     @Override
     public void ice_exception ( UserException ex )
     {
-        _op.failure ( ex );
+        _callback.failed ( ex.getMessage () );
     }
 
     @Override
     public void ice_response ()
     {
-        _op.success ();
-    }
-
-    // Forward to AsyncBaseOperation
-    
-    public void cancel ()
-    {
-        _op.cancel ();
-    }
-
-    public Throwable getError ()
-    {
-        return _op.getError ();
-    }
-
-    public boolean isComplete ()
-    {
-        return _op.isComplete ();
-    }
-
-    public void waitForCompletion () throws InterruptedException
-    {
-        _op.waitForCompletion ();
-    }
-
-    public void waitForCompletion ( int timeout ) throws InterruptedException
-    {
-       _op.waitForCompletion ( timeout );
+        _callback.complete ();
     }
 }

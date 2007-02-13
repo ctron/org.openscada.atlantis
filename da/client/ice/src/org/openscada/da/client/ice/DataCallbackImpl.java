@@ -57,6 +57,22 @@ public class DataCallbackImpl extends _DataCallbackDisp
     public void subscriptionChange ( String item, SubscriptionState subscriptionState, Current __current )
     {
         _log.debug ( String.format ( "Subscription change: '%s' - '%s'", item, subscriptionState.value () ) );
+        
+        org.openscada.core.subscription.SubscriptionState ss = org.openscada.core.subscription.SubscriptionState.DISCONNECTED;
+        switch ( subscriptionState.value () )
+        {
+        case SubscriptionState._CONNECTED:
+            ss = org.openscada.core.subscription.SubscriptionState.CONNECTED;
+            break;
+        case SubscriptionState._DISCONNECTED:
+            ss = org.openscada.core.subscription.SubscriptionState.DISCONNECTED;
+            break;
+        case SubscriptionState._GRANTED:
+            ss = org.openscada.core.subscription.SubscriptionState.GRANTED;
+            break;
+        }
+        
+        _connection.subscriptionChange ( item, ss );
     }
 
 }

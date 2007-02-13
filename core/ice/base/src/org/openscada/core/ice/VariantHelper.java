@@ -14,6 +14,11 @@ public class VariantHelper
 {
     public static Variant fromIce ( VariantBase variantBase )
     {
+        if ( variantBase == null )
+        {
+            return null;
+        }
+        
         switch ( variantBase.vt.value () )
         {
         case VariantType._VTboolean:
@@ -51,6 +56,11 @@ public class VariantHelper
     {
         try
         {
+            if ( variant == null )
+            {
+                return null;
+            }
+            
             if ( variant.isNull () )
             {
                 return new VariantBase ( VariantType.VTnull );

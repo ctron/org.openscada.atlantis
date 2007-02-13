@@ -1,6 +1,7 @@
 package org.openscada.da.client.samples;
 
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.client.ConnectWaitController;
 import org.openscada.core.client.ConnectionFactory;
 import org.openscada.da.client.Connection;
 
@@ -30,16 +31,17 @@ public class SampleBase
         
         _connection = (Connection)ConnectionFactory.create ( ci );
         if ( _connection == null )
+        {
             throw new Exception ( "Unable to find a connection driver for specified URI" );
+        }
         
         // trigger the connection
-        _connection.connect ();
         try
         {
             // wait until the connection is established. If it already is the call
             // will return immediately.
             // If the connect attempt fails an exception is thrown.
-            _connection.waitForConnection ();
+            new ConnectWaitController ( _connection ).connect ();
         }
         catch ( Throwable e )
         {

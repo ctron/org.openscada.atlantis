@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.client.NoConnectionException;
 
 /**
  * Sample showing how to write to a data item
@@ -45,7 +46,7 @@ public class Sample2 extends SampleBase
         super ( uri, className );
     }
     
-    public void run () throws InterruptedException, OperationException
+    public void run () throws NoConnectionException, OperationException
     {
         // set the main value
         _connection.write ( "test-1", new Variant ( "Hello World" ) );

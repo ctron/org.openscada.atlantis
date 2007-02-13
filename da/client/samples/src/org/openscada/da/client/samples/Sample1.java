@@ -22,6 +22,7 @@ package org.openscada.da.client.samples;
 import java.util.Map;
 
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.ItemUpdateListener;
 
@@ -58,7 +59,7 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
         // since we subscribe with "initial=true" we will get the current value
         // before any other event. Setting to "false" would ignore the current
         // value of this item and wait for the first change.
-        _itemManager.addItemUpdateListener ( "time", true, this );
+        _itemManager.addItemUpdateListener ( "time", this );
     }
     
     public void unsubscribe ()
@@ -84,6 +85,11 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
         // The value has changed
         // If it is an initial transmission it is not a change but the last change that occurred.
         System.out.println ( "Value of item changed: " + value.toString () + ( initial ? " (cache read)" : "" ) );
+    }
+    
+    public void notifySubscriptionChange ( SubscriptionState state )
+    {
+        System.out.println ( "Subscription state: " + state.name () );
     }
     
     public static void main ( String[] args ) throws Exception

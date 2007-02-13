@@ -27,6 +27,13 @@ module OpenSCADA
 		};
 		sequence<IODirection> IODirections;
 		
+		enum SubscriptionState
+		{
+			CONNECTED,
+			DISCONNECTED,
+			GRANTED
+		};
+		
 		/**
 		 * The browser module contains all data structures and interfaces
 		 * needed by the item browser interface. The item browser is a
@@ -124,8 +131,20 @@ module OpenSCADA
 			 * Called when attributes of a subscribed data item changed.
 			 **/
 			idempotent void attributesChange ( string item, Core::Attributes attributes, bool full );
+			
+			/**
+			 * Called when a subscription state of an item changes
+			 **/
+			idempotent void subscriptionChange ( string item, SubscriptionState \subscriptionState );
 		};
-
+		 
+		struct WriteAttributesResultEntry
+		{
+			string item;
+			string result;
+		};
+		sequence<WriteAttributesResultEntry> WriteAttributesResultSequence;
+		
 		/**
 		 * The session object for DA interfaces
 		 **/
@@ -184,11 +203,11 @@ module OpenSCADA
 			/**
 			 * Subscribe the session to an item
 			 **/
-			void registerForItem ( Session * sessionP, string item, bool initialCacheRead ) throws Core::InvalidSessionException, InvalidItemException;
+			void subscribeItem ( Session * sessionP, string item ) throws Core::InvalidSessionException, InvalidItemException;
 			/**
 			 * Unsubscribe the session from an item
 			 */
-			void unregisterForItem ( Session * sessionP, string item ) throws Core::InvalidSessionException, InvalidItemException;
+			void unsubscribeItem ( Session * sessionP, string item ) throws Core::InvalidSessionException, InvalidItemException;
 			
 			/**
 			 * Write a value to an item. The call will be return once the value is written.
@@ -197,7 +216,7 @@ module OpenSCADA
 			/**
 			 * Write attributes to an item. The call will be return once all attributes are written.
 			 **/
-			["amd"] Core::Properties writeAttributes ( Session * sessionP, string item, Core::Attributes attributes ) throws Core::InvalidSessionException, InvalidItemException;
+			["amd"] WriteAttributesResultSequence writeAttributes ( Session * sessionP, string item, Core::Attributes attributes ) throws Core::InvalidSessionException, InvalidItemException;
 			
 			/**
 			 * Return all browser entries that are a the specified location.

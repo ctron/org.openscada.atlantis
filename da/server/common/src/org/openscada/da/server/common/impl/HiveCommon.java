@@ -19,8 +19,6 @@
 
 package org.openscada.da.server.common.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -38,7 +36,6 @@ import org.openscada.core.subscription.ValidationException;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
-import org.openscada.da.core.server.ItemChangeListener;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.WriteAttributesOperationListener;
 import org.openscada.da.core.server.WriteOperationListener;
@@ -46,7 +43,6 @@ import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.ItemListener;
 import org.openscada.da.server.common.configuration.ConfigurableHive;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.factory.DataItemFactory;
@@ -61,14 +57,12 @@ import org.openscada.utils.jobqueue.OperationProcessor;
 import org.openscada.utils.jobqueue.RunnableCancelOperation;
 import org.openscada.utils.jobqueue.OperationManager.Handle;
 
-public class HiveCommon implements Hive, ItemListener, ConfigurableHive
+public class HiveCommon implements Hive, ConfigurableHive
 {
 
     private static Logger _log = Logger.getLogger ( HiveCommon.class );
 
     private Set<SessionCommon> _sessions = new HashSet<SessionCommon> ();
-
-    private Map<DataItem, DataItemInfo> _items = new HashMap<DataItem, DataItemInfo> ();
 
     private Map<DataItemInformation, DataItem> _itemMap = new HashMap<DataItemInformation, DataItem> ();
 
@@ -199,21 +193,6 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
         return session;
     }
 
-    private void closeSessions ( Set<SessionCommon> sessions )
-    {
-        try
-        {
-            for ( SessionCommon session : sessions )
-            {
-                closeSession ( session );
-            }
-        }
-        catch ( InvalidSessionException e )
-        {
-            // this should never happen, only if session is already closed
-        }
-    }
-
     public void closeSession ( Session session ) throws InvalidSessionException
     {
         SessionCommon sessionCommon = validateSession ( session );
@@ -246,23 +225,6 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
         {
             throw new InvalidItemException ( itemId );
         }
-        
-        // old stuff
-
-        /*
-        // lookup the item first
-        DataItem item = retrieveItem ( itemId );
-
-        if ( item == null )
-        {
-            throw new InvalidItemException ( itemId );
-        }
-
-        sessionCommon.getData ().addItem ( item );
-        DataItemInfo info = _items.get ( item );
-
-        info.addSession ( sessionCommon );
-        */
     }
 
     public void unsubscribeItem ( Session session, String itemId ) throws InvalidSessionException, InvalidItemException
@@ -271,20 +233,6 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
         
         // unsubscribe using the new item subscription manager
         _itemSubscriptionManager.unsubscribe ( itemId, sessionCommon );
-        
-        // old stuff
-        /*
-        
-        DataItem item = retrieveItem ( itemId );
-
-        if ( item == null )
-        {
-            throw new InvalidItemException ( itemId );
-        }
-
-        sessionCommon.getData ().removeItem ( item );
-        _items.get ( item ).removeSession ( sessionCommon );
-        */
     }
 
     // data item
@@ -293,52 +241,33 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
      */
     public void registerItem ( DataItem item )
     {
-        synchronized ( _items )
+        synchronized ( _itemMap )
         {
-            if ( !_items.containsKey ( item ) )
+            String id = item.getInformation ().getName ();
+            
+            if ( !_itemMap.containsKey ( new DataItemInformationBase ( item.getInformation () ) ) )
             {
                 // first add internally ...
-                _items.put ( item, new DataItemInfo ( item ) );
                 _itemMap.put ( new DataItemInformationBase ( item.getInformation () ), item );
-
-                /*
-                // then hook up the listener since the item may
-                // flush its current state 
-                item.setListener ( this );
-                */
-                
-                // add new topic to the new item subscription manager
-                _itemSubscriptionManager.setSource ( item.getInformation ().getName (), new DataItemSubscriptionSource ( item ) );
             }
+            
+            // add new topic to the new item subscription manager
+            _itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( item ) );
         }
     }
 
     public void unregisterItem ( DataItem item )
     {
-        synchronized ( _items )
+        synchronized ( _itemMap )
         {
-            if ( _items.containsKey ( item ) )
+            String id = item.getInformation ().getName ();
+            if ( _itemMap.containsKey ( new DataItemInformationBase ( item.getInformation () ) ) )
             {
-                /*
-                item.setListener ( null );
-                */
-
-                DataItemInfo info = _items.get ( item );
-                info.dispose ();
-
-                _items.remove ( item );
-                _itemMap.remove ( new DataItemInformationBase ( item.getInformation ().getName () ) );
-                
-                _itemSubscriptionManager.setSource ( item.getInformation (), null );
+                _itemMap.remove ( new DataItemInformationBase ( item.getInformation () ) );
             }
-        }
-    }
-
-    private DataItemInfo getItemInfo ( DataItem item )
-    {
-        synchronized ( _items )
-        {
-            return _items.get ( item );
+            
+            // remove the source from the manager
+            _itemSubscriptionManager.setSource ( id, null );
         }
     }
 
@@ -385,7 +314,7 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
 
     public DataItem lookupItem ( String id )
     {
-        synchronized ( _items )
+        synchronized ( _itemMap )
         {
             return _itemMap.get ( new DataItemInformationBase ( id ) );
         }
@@ -429,7 +358,7 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
 
     public DataItem retrieveItem ( DataItemFactoryRequest request )
     {
-        synchronized ( _items )
+        synchronized ( _itemMap )
         {
             DataItem dataItem = lookupItem ( request.getId () );
             if ( dataItem == null )
@@ -438,82 +367,6 @@ public class HiveCommon implements Hive, ItemListener, ConfigurableHive
             }
             return dataItem;
         }
-    }
-
-    // ItemListener Interface
-    public void valueChanged ( DataItem item, Variant variant )
-    {
-        DataItemInfo info = getItemInfo ( item );
-        if ( info == null )
-            return; // ignore
-
-        // store the new value in the cache
-        info.setCachedValue ( variant );
-
-        Set<SessionCommon> sessionsToClose = new HashSet<SessionCommon> ();
-
-        Set<SessionCommon> sessions = new HashSet<SessionCommon> ( info.getSessions () );
-
-        for ( SessionCommon session : sessions )
-        {
-            ItemChangeListener listener = session.getListener ();
-
-            if ( listener == null )
-                continue; // if no listener is set simply ignore it
-
-            try
-            {
-                listener.valueChanged ( item.getInformation ().getName (), variant, false );
-            }
-            catch ( Exception e )
-            {
-                // mark session for closing later
-                sessionsToClose.add ( session );
-            }
-        }
-
-        // if we have broken sessions close them now
-        if ( !sessionsToClose.isEmpty () )
-        {
-            closeSessions ( sessionsToClose );
-        }
-
-    }
-
-    public void attributesChanged ( DataItem item, Map<String, Variant> attributes )
-    {
-        DataItemInfo info = getItemInfo ( item );
-        if ( info == null )
-            return; // ignore
-
-        info.mergeAttributes ( attributes );
-
-        Set<SessionCommon> sessionsToClose = new HashSet<SessionCommon> ();
-
-        Set<SessionCommon> sessions = new HashSet<SessionCommon> ( info.getSessions () );
-
-        for ( SessionCommon session : sessions )
-        {
-            ItemChangeListener listener = session.getListener ();
-
-            if ( listener == null )
-                continue; // if no listener is set simply ignore it
-
-            try
-            {
-                listener.attributesChanged ( item.getInformation ().getName (), attributes, false );
-            }
-            catch ( Exception e )
-            {
-                // mark session for closing later
-                sessionsToClose.add ( session );
-            }
-        }
-
-        // if we have broken sessions close them now
-        if ( sessionsToClose.size () > 0 )
-            closeSessions ( sessionsToClose );
-
     }
 
     public long startWriteAttributes ( Session session, String itemId, Map<String, Variant> attributes, WriteAttributesOperationListener listener ) throws InvalidSessionException, InvalidItemException

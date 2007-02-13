@@ -24,36 +24,30 @@ import java.util.Map;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.client.NoConnectionException;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.browser.Entry;
-import org.openscada.utils.exec.LongRunningListener;
-import org.openscada.utils.exec.LongRunningOperation;
 
 public interface Connection extends org.openscada.core.client.Connection
 {
-    public abstract Entry[] browse ( String [] path ) throws InvalidSessionException, OperationException;
-    public abstract Entry[] browse ( String [] path, LongRunningListener listener ) throws InvalidSessionException, OperationException;
-    public abstract LongRunningOperation startBrowse ( String [] path, LongRunningListener listener ) throws Exception;
-    public abstract LongRunningOperation startBrowse ( String [] path );
-    public abstract Entry[] completeBrowse ( LongRunningOperation op ) throws InvalidSessionException, OperationException;
-    
-    public abstract void write ( String itemName, Variant value ) throws InterruptedException, OperationException;
-    public abstract void write ( String itemName, Variant value, LongRunningListener listener ) throws InterruptedException, OperationException;
-    public abstract LongRunningOperation startWrite ( String itemName, Variant value );
-    public abstract LongRunningOperation startWrite ( String itemName, Variant value, LongRunningListener listener );
-    public abstract void completeWrite ( LongRunningOperation op ) throws OperationException;
-    
-    public abstract void writeAttributes ( String itemId, Map<String,Variant> attributes ) throws InterruptedException, OperationException;
-    public abstract void writeAttributes ( String itemId, Map<String,Variant> attributes, LongRunningListener listener ) throws InterruptedException, OperationException;
-    public abstract LongRunningOperation startWriteAttributes ( String itemId, Map<String,Variant> attributes, LongRunningListener listener );
-    public abstract WriteAttributeResults completeWriteAttributes ( LongRunningOperation operation ) throws OperationException;
-    
-    public abstract void subscribeFolder ( Location location ) throws InvalidSessionException, OperationException;
-    public abstract void unsubscribeFolder ( Location location ) throws InvalidSessionException, OperationException;
+    public abstract Entry[] browse ( String[] path ) throws NoConnectionException, OperationException;
+    public abstract Entry[] browse ( String[] path, int timeout ) throws NoConnectionException, OperationException;
+    public abstract void browse ( String[] path, BrowseOperationCallback callback ) throws NoConnectionException;
+
+    public abstract void write ( String itemName, Variant value ) throws NoConnectionException, OperationException;
+    public abstract void write ( String itemName, Variant value, int timeout ) throws NoConnectionException, OperationException;
+    public abstract void write ( String itemName, Variant value, WriteOperationCallback callback ) throws NoConnectionException;
+
+    public abstract WriteAttributeResults writeAttributes ( String itemId, Map<String, Variant> attributes ) throws NoConnectionException, OperationException;
+    public abstract WriteAttributeResults writeAttributes ( String itemId, Map<String, Variant> attributes, int timeout ) throws NoConnectionException, OperationException;
+    public abstract void writeAttributes ( String itemId, Map<String, Variant> attributes, WriteAttributeOperationCallback callback ) throws NoConnectionException;
+
+    public abstract void subscribeFolder ( Location location ) throws NoConnectionException, OperationException;
+    public abstract void unsubscribeFolder ( Location location ) throws NoConnectionException, OperationException;
     public abstract FolderListener setFolderListener ( Location location, FolderListener listener );
-    
-    public abstract void subscribeItem ( String itemId, boolean initial ) throws InvalidSessionException, OperationException;
-    public abstract void unsubscribeItem ( String itemId ) throws InvalidSessionException, OperationException;
+
+    public abstract void subscribeItem ( String itemId ) throws NoConnectionException, OperationException;
+    public abstract void unsubscribeItem ( String itemId ) throws NoConnectionException, OperationException;
     public abstract ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener );
 }

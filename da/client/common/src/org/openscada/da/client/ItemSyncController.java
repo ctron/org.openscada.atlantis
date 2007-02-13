@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
 
 /**
@@ -40,14 +41,10 @@ public class ItemSyncController implements ItemUpdateListener
 
     private String _itemName;
 
-    private boolean _subscribedInitial = false;
-
     private boolean _subscribed = false;
-
-    private Variant _cachedValue = new Variant ();
-
-    private Map<String, Variant> _cachedAttributes = new HashMap<String, Variant> ();
     
+    private Map<String, Variant> _cachedAttributes = new HashMap<String, Variant> ();
+    private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
     
     /**
      * Holds some additional listener information 
@@ -58,17 +55,9 @@ public class ItemSyncController implements ItemUpdateListener
     {
         private ItemUpdateListener _listener;
 
-        private boolean _initial;
-
-        public ListenerInfo ( ItemUpdateListener listener, boolean initial )
+        public ListenerInfo ( ItemUpdateListener listener )
         {
             _listener = listener;
-            _initial = initial;
-        }
-
-        public boolean isInitial ()
-        {
-            return _initial;
         }
 
         public ItemUpdateListener getListener ()
@@ -107,8 +96,6 @@ public class ItemSyncController implements ItemUpdateListener
 
     private Map<ItemUpdateListener, ListenerInfo> _listeners = new HashMap<ItemUpdateListener, ListenerInfo> ();
 
-    private long _initialListeners = 0;
-
     public ItemSyncController ( org.openscada.da.client.Connection connection, String itemName )
     {
         _connection = connection;
@@ -127,36 +114,22 @@ public class ItemSyncController implements ItemUpdateListener
         return _listeners.size ();
     }
 
-    public synchronized long getNumerOfListenersInitial ()
-    {
-        return _initialListeners;
-    }
-
-    public synchronized void add ( ItemUpdateListener listener, boolean initial )
+    public synchronized void add ( ItemUpdateListener listener )
     {
         if ( !_listeners.containsKey ( listener ) )
         {
-            _listeners.put ( listener, new ListenerInfo ( listener, initial ) );
-            if ( initial )
-            {
-                _initialListeners++;
-                listener.notifyValueChange ( _cachedValue, true );
-                listener.notifyAttributeChange ( _cachedAttributes, true );
-            }
-
+            _listeners.put ( listener, new ListenerInfo ( listener ) );
+            listener.notifySubscriptionChange ( _subscriptionState );
+            listener.notifyAttributeChange ( _cachedAttributes, true );
+            
             sync ();
         }
-
     }
 
     public synchronized void remove ( ItemUpdateListener listener )
     {
         if ( _listeners.containsKey ( listener ) )
         {
-            ListenerInfo info = _listeners.get ( listener );
-            if ( info.isInitial () )
-                _initialListeners--;
-
             _listeners.remove ( listener );
 
             sync ();
@@ -170,18 +143,17 @@ public class ItemSyncController implements ItemUpdateListener
 
     public synchronized void sync ( boolean force )
     {
-        boolean initial = getNumerOfListenersInitial () > 0;
         boolean subscribe = getNumberOfListeners () > 0;
 
-        if ( ( _subscribedInitial == initial ) && ( _subscribed == subscribe ) && !force )
-            return; // nothing to do
-
-        _subscribed = subscribe;
-        _subscribedInitial = initial;
-
+        if ( _subscribed == subscribe )
+        {
+            // nothing to do
+            return;
+        }
+        
         if ( subscribe )
         {
-            subscribe ( initial );
+            subscribe ();
         }
         else
         {
@@ -189,12 +161,18 @@ public class ItemSyncController implements ItemUpdateListener
         }
     }
 
-    protected void subscribe ( boolean initial )
+    protected void subscribe ()
     {
         try
         {
-            _log.debug ( "Syncing listen state: active " + initial );
-            _connection.subscribeItem ( _itemName, initial );
+            if ( _subscribed )
+            {
+                return;
+            }
+            
+            _log.debug ( "Syncing listen state: active");
+            _subscribed = true;
+            _connection.subscribeItem ( _itemName );
         }
         catch ( Throwable e )
         {
@@ -206,7 +184,13 @@ public class ItemSyncController implements ItemUpdateListener
     {
         try
         {
+            if ( !_subscribed )
+            {
+                return;
+            }
+            
             _log.debug ( "Syncing listen state: inactive " );
+            _subscribed = false;
             _connection.unsubscribeItem ( _itemName );
         }
         catch ( Throwable e )
@@ -217,28 +201,35 @@ public class ItemSyncController implements ItemUpdateListener
 
     private void handleError ( Throwable e )
     {
+        _log.warn ( "Failed to subscribe", e );
         // FIXME: solve problem when subscription fails
     }
 
     public synchronized void notifyValueChange ( Variant value, boolean initial )
     {
-        _cachedValue = new Variant ( value );
-
         for ( ListenerInfo listenerInfo : _listeners.values () )
         {
-            if ( !initial || listenerInfo.isInitial () )
-                listenerInfo.getListener ().notifyValueChange ( value, initial );
+            listenerInfo.getListener ().notifyValueChange ( value, initial );
         }
     }
 
-    public synchronized void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
+    public synchronized void notifyAttributeChange ( Map<String, Variant> attributes, boolean full )
     {
-        AttributesHelper.mergeAttributes ( _cachedAttributes, attributes, initial );
+        AttributesHelper.mergeAttributes ( _cachedAttributes, attributes, full );
 
         for ( ListenerInfo listenerInfo : _listeners.values () )
         {
-            if ( !initial || listenerInfo.isInitial () )
-                listenerInfo.getListener ().notifyAttributeChange ( attributes, initial );
+            listenerInfo.getListener ().notifyAttributeChange ( attributes, full );
+        }
+    }
+
+    public void notifySubscriptionChange ( SubscriptionState subscriptionState )
+    {
+        _subscriptionState = subscriptionState;
+        
+        for ( ListenerInfo listenerInfo : _listeners.values () )
+        {
+            listenerInfo.getListener ().notifySubscriptionChange ( subscriptionState );
         }
     }
 }

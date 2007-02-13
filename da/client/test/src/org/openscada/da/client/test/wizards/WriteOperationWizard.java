@@ -30,7 +30,10 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.core.Variant;
+import org.openscada.da.client.WriteAttributeOperationCallback;
+import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.client.test.impl.HiveConnection;
+import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
 import org.openscada.utils.exec.LongRunningState;
@@ -41,6 +44,9 @@ public class WriteOperationWizard extends Wizard implements INewWizard
     private WriteOperationWizardValuePage _page = null;
     
     private IStructuredSelection _selection = null;
+    
+    private boolean _complete = false;
+    private Throwable _error = null;
     
     @Override
     public boolean performFinish ()
@@ -86,61 +92,58 @@ public class WriteOperationWizard extends Wizard implements INewWizard
     
     private void doFinish ( final IProgressMonitor monitor, HiveConnection hiveConnection, String item, Variant value ) throws Exception
     {
-        monitor.beginTask ( "Writing value to item" , 4 );
+        monitor.beginTask ( "Writing value to item" , 2 );
         
         monitor.worked ( 1 );
-        LongRunningOperation op = hiveConnection.getConnection ().startWrite ( item, value, new LongRunningListener () {
-
-            public void stateChanged ( LongRunningState arg0, Throwable arg2 )
-            {
-                switch ( arg0 )
-                {
-                case REQUESTED:
-                    monitor.worked ( 1 );
-                    monitor.subTask ( "Requested operation" );
-                    break;
-                case RUNNING:
-                    monitor.worked ( 1 );
-                    monitor.subTask ( "Operation running" );
-                    break;
-                case SUCCESS:
-                    monitor.worked ( 1 );
-                    monitor.subTask ( "Operation complete" );
-                    break;
-                case FAILURE:
-                    monitor.worked ( 1 );
-                    monitor.subTask ( "Operation failed" );
-                default:
-                    break;
-                }
-            }} );
+        final WriteOperationWizard _this = this;
         
-        boolean waiting = true;
-        while ( waiting )
-        {
-            synchronized ( op )
+        _complete = false;
+        hiveConnection.getConnection ().write ( item, value, new WriteOperationCallback () {
+
+            public void complete ()
             {
-                if ( op.isComplete () )
+                endWait ();
+            }
+
+            public void error ( Throwable e )
+            {
+                handleError ( e );
+                endWait ();
+            }
+
+            public void failed ( String message )
+            {
+                handleError ( new Exception ( message ) );
+                endWait ();
+            }
+
+            private void endWait ()
+            {
+                _complete = true;
+                synchronized ( _this )
                 {
-                    waiting = false;
+                    _this.notifyAll ();
                 }
-                else
+            }
+        } );
+        
+        synchronized ( this )
+        {
+            wait ( 100 );
+            
+            if ( _complete || monitor.isCanceled () )
+            {
+                if ( _error != null )
                 {
-                    op.wait ( 100 );
-                }
-                
-                if ( monitor.isCanceled () && (!op.isComplete ()) )
-                {
-                    op.cancel ();
-                    waiting = false;
-                }
-                else if ( op.isComplete () )
-                {
-                    waiting = false;
-                    hiveConnection.getConnection ().completeWrite ( op );
+                    throw new Exception ( _error );
                 }
             }
         }
+        monitor.worked ( 1 );
+    }
+    public void handleError ( Throwable e )
+    {
+        _error = e;
     }
 
     public void init ( IWorkbench workbench, IStructuredSelection selection )

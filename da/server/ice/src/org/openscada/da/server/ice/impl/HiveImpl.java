@@ -20,6 +20,8 @@
 package org.openscada.da.server.ice.impl;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -32,7 +34,6 @@ import org.openscada.core.ice.VariantHelper;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.core.server.BrowseOperationListener;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
 import org.openscada.da.core.server.WriteAttributesOperationListener;
@@ -49,6 +50,7 @@ import OpenSCADA.DA.AMD_Hive_write;
 import OpenSCADA.DA.AMD_Hive_writeAttributes;
 import OpenSCADA.DA.SessionPrx;
 import OpenSCADA.DA.SessionPrxHelper;
+import OpenSCADA.DA.WriteAttributesResultEntry;
 import OpenSCADA.DA._HiveDisp;
 import OpenSCADA.DA.Browser.Entry;
 import OpenSCADA.DA.Browser.InvalidLocationException;
@@ -121,7 +123,7 @@ public class HiveImpl extends _HiveDisp implements Runnable
         }
     }
 
-    public void registerForItem ( OpenSCADA.DA.SessionPrx session, String item, boolean initialCacheRead, Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
+    public void subscribeItem ( OpenSCADA.DA.SessionPrx session, String item, Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
     {
         _log.debug ( String.format ( "Register for item '%s'", item ) );
         
@@ -140,7 +142,7 @@ public class HiveImpl extends _HiveDisp implements Runnable
         }
     }
 
-    public void unregisterForItem ( OpenSCADA.DA.SessionPrx session, String item, Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
+    public void unsubscribeItem ( OpenSCADA.DA.SessionPrx session, String item, Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
     {
         _log.debug ( String.format ( "Un-Register for item '%s'", item ) );
         
@@ -210,15 +212,20 @@ public class HiveImpl extends _HiveDisp implements Runnable
 
                 public void complete ( WriteAttributeResults writeAttributeResults )
                 {
-                    Map<String, String> result = new HashMap<String, String> ();
+                    List<WriteAttributesResultEntry> result = new LinkedList<WriteAttributesResultEntry> ();
                     for ( Map.Entry<String, WriteAttributeResult> entry : writeAttributeResults.entrySet () )
                     {
                         if ( entry.getValue ().isError () )
-                            result.put ( entry.getKey (), entry.getValue ().getError ().getMessage () );
+                        {
+                            _log.debug ( String.format ( "Failed to write attribute '%s': '%s'", entry.getKey (), entry.getValue ().getError ().getMessage () ) );
+                            result.add ( new WriteAttributesResultEntry ( entry.getKey (), entry.getValue ().getError ().getMessage () ) );                           
+                        }
                         else
-                            result.put ( entry.getKey (), null );
+                        {
+                            result.add ( new WriteAttributesResultEntry ( entry.getKey (), null ) );
+                        }
                     }
-                    cb.ice_response ( result );
+                    cb.ice_response ( result.toArray ( new WriteAttributesResultEntry[0] ) );
                 }
 
                 public void failed ( Throwable error )

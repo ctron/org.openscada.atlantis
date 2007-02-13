@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.test.impl.DataItemEntry;
@@ -376,7 +377,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
             _hiveItem = item;
 
             appendConsoleMessage ( "Subscribe to item: " + _hiveItem.getId () );
-            _hiveItem.getConnection ().getItemManager ().addItemUpdateListener ( _hiveItem.getId (), true, this );
+            _hiveItem.getConnection ().getItemManager ().addItemUpdateListener ( _hiveItem.getId (), this );
 
             viewer.setInput ( item );
         }
@@ -407,5 +408,10 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
             }
             i++;
         }
+    }
+    
+    public void notifySubscriptionChange ( SubscriptionState state )
+    {
+        appendConsoleMessage ( String.format ( "Subscription state changed: %s", state.name () ) );
     }
 }

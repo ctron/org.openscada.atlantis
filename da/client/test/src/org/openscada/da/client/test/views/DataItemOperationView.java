@@ -57,6 +57,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.test.impl.HiveItem;
@@ -467,7 +468,7 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
             _hiveItem = item;
 
             appendConsoleMessage ( "Subscribe to item: " + _hiveItem.getId () );
-            _hiveItem.getConnection ().getItemManager ().addItemUpdateListener ( _hiveItem.getId (), true, this );
+            _hiveItem.getConnection ().getItemManager ().addItemUpdateListener ( _hiveItem.getId (), this );
 
             viewer.setInput ( item );
         }
@@ -490,5 +491,10 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
             appendConsoleMessage ( "#" + i + ": " + entry.getKey () + "->" + q + entry.getValue ().asString ( "<null>" )
                     + q );
         }
+    }
+    
+    public void notifySubscriptionChange ( SubscriptionState state )
+    {
+        appendConsoleMessage ( String.format ( "Subscription state changed: %s", state.name () ) );
     }
 }

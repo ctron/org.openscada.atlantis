@@ -1,71 +1,38 @@
 package org.openscada.da.client.ice;
 
-import org.openscada.utils.exec.LongRunningListener;
-import org.openscada.utils.exec.LongRunningOperation;
+import org.openscada.da.client.BrowseOperationCallback;
+import org.openscada.da.ice.BrowserEntryHelper;
 
 import Ice.LocalException;
 import Ice.UserException;
 import OpenSCADA.DA.AMI_Hive_browse;
 import OpenSCADA.DA.Browser.Entry;
 
-public class AsyncBrowseOperation extends AMI_Hive_browse implements LongRunningOperation
+public class AsyncBrowseOperation extends AMI_Hive_browse
 {
-    private AsyncBaseOperation _op;
-    private Entry[] _result = null;
+    private BrowseOperationCallback _callback = null;
     
-    public AsyncBrowseOperation ( LongRunningListener listener )
+    public AsyncBrowseOperation ( BrowseOperationCallback callback )
     {
         super ();
-        _op = new AsyncBaseOperation ( listener );
+        _callback = callback;
     }
     
     @Override
     public void ice_exception ( LocalException ex )
     {
-        _op.failure ( ex );
+        _callback.error ( ex );
     }
 
     @Override
     public void ice_exception ( UserException ex )
     {
-        _op.failure ( ex );        
+        _callback.failed ( ex.getMessage () );    
     }
 
     @Override
     public void ice_response ( Entry[] __ret )
     {
-        _result = __ret;
-    }
-    
-    public Entry[] getResult ()
-    {
-        return _result;
-    }
-    
-    // Forward to AsyncBaseOperation
-    
-    public void cancel ()
-    {
-        _op.cancel ();
-    }
-
-    public Throwable getError ()
-    {
-        return _op.getError ();
-    }
-
-    public boolean isComplete ()
-    {
-        return _op.isComplete ();
-    }
-
-    public void waitForCompletion () throws InterruptedException
-    {
-        _op.waitForCompletion ();
-    }
-
-    public void waitForCompletion ( int timeout ) throws InterruptedException
-    {
-       _op.waitForCompletion ( timeout );
+        _callback.complete ( BrowserEntryHelper.fromIce ( __ret ) );
     }
 }

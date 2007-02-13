@@ -19,18 +19,19 @@
 
 package org.openscada.da.server.test.items;
 
-
 import org.openscada.core.Variant;
 import org.openscada.utils.timing.Scheduler;
 
-public class TimeDataItem extends ScheduledDataItem {
+public class TimeDataItem extends ScheduledDataItem
+{
 
-	public TimeDataItem(String name, Scheduler scheduler) {
-		super(name, scheduler, 1000);
-	}
+    public TimeDataItem ( String name, Scheduler scheduler )
+    {
+        super ( name, scheduler, 1000 );
+    }
 
-	public void run() {
-		updateValue(new Variant(System.currentTimeMillis()));
-	}
-
+    public void run ()
+    {
+        updateValue ( new Variant ( System.currentTimeMillis () ) );
+    }
 }

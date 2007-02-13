@@ -60,6 +60,10 @@ public class Hive extends HiveCommon {
     private List<ItemDescriptor> _changingItems = new LinkedList<ItemDescriptor> ();
     
     private QueryFolder _queryFolderFactory = null;
+    
+    private List<DataItem> _transientItems = new LinkedList<DataItem> ();
+    
+    private FolderCommon _testFolder = null;
 	
     public Hive () throws ConfigurationError, IOException, XmlException
     {
@@ -75,8 +79,8 @@ public class Hive extends HiveCommon {
         setRootFolder ( rootFolder );
 
         // create and register test folder
-        FolderCommon testFolder = new FolderCommon ();
-        rootFolder.add ( "test", testFolder, new MapBuilder<String, Variant> ()
+        _testFolder = new FolderCommon ();
+        rootFolder.add ( "test", _testFolder, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "This folder contains numerous test data items!" ) )
                 .getMap ()
         );
@@ -104,7 +108,7 @@ public class Hive extends HiveCommon {
                 .put ( "description", new Variant ( "contains items the have an 'e' in their id" ) )
                 .getMap ()
         );
-        testFolder.add ( "storage", queryFolderRoot, new MapBuilder<String, Variant> ()
+        _testFolder.add ( "storage", queryFolderRoot, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "storage based folder for grouping and query folders" ) )
                 .getMap ()
         );
@@ -116,7 +120,7 @@ public class Hive extends HiveCommon {
             {
                 return desc.getItem ().getInformation ().getName ().matches ( "memory\\.[a-z0-9]+" );
             }}, new IDNameProvider () );
-        testFolder.add ( "memory-factory", _queryFolderFactory, new MapBuilder<String, Variant> ()
+        _testFolder.add ( "memory-factory", _queryFolderFactory, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "storage folder for items automatically created by the memory cell factory" ) )
                 .getMap ()
         );
@@ -143,13 +147,13 @@ public class Hive extends HiveCommon {
         MapBuilder<String, Variant> builder = new MapBuilder<String, Variant> ();
         
 		registerItem ( item = new MemoryDataItem ( "memory" ) );
-		testFolder.add ( "memory", item, new MapBuilder<String, Variant> ()
+        _testFolder.add ( "memory", item, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "A memory cell that simply maps the output to its input." ) )
 		        .getMap ()
 		);
         
 		registerItem ( item = new TestItem1 ( "test-1" ) );
-		testFolder.add ( "test-1", item, new MapBuilder<String,Variant > ()
+        _testFolder.add ( "test-1", item, new MapBuilder<String,Variant > ()
 		        .getMap ()
 		);
         
@@ -194,7 +198,7 @@ public class Hive extends HiveCommon {
                 System.out.println ( "Command is: " + value.asString ( "<null>" ) );
             }});
         registerItem ( item = cmd );
-        testFolder.add ( "command", item, new MapBuilder<String, Variant> ()
+        _testFolder.add ( "command", item, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "Like the 'hello world' item it will print out something on the server. Instead of using a fixed string the value that was written to it is used." ) )
                 .getMap ()
         );
@@ -202,20 +206,20 @@ public class Hive extends HiveCommon {
 		registerItem ( item = new TimeDataItem ( "time", _scheduler ) );
         builder.clear ();
         builder.put ( "description", new Variant ( "Need the unix time in microseconds? You get it here!" ) );
-        testFolder.add ( "time", item, builder.getMap () );
+        _testFolder.add ( "time", item, builder.getMap () );
         _changingItems.add ( new ItemDescriptor ( item, builder.getMap () ) );
         
-        testFolder.add ( String.valueOf ( System.currentTimeMillis () ), item, new MapBuilder<String, Variant> ()
+        _testFolder.add ( String.valueOf ( System.currentTimeMillis () ), item, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "Alias to 'time' but with a name that will change every server startup." ) )
                 .getMap ()
         );
        
         MemoryChainedItem memoryChainedItem = new MemoryChainedItem ( "chained" );
         registerItem ( memoryChainedItem );
-        testFolder.add ( "chained", memoryChainedItem, new MapBuilder<String, Variant> ().getMap () );
+        _testFolder.add ( "chained", memoryChainedItem, new MapBuilder<String, Variant> ().getMap () );
         
         registerItem ( item = new WriteDelayItem ( "write-delay" ) );
-        testFolder.add ( "write delay", item, new MapBuilder<String, Variant> ()
+        _testFolder.add ( "write delay", item, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "Simulate a long running write operation here. The value written to the data item is used as microsecond delay that the write operation will take." ) )
                 .getMap ()
         );
@@ -223,7 +227,7 @@ public class Hive extends HiveCommon {
         registerItem ( item = new SuspendItem ( "suspendable" ) );
         builder.clear ();
         builder.put ( "description", new Variant ( "This item is suspendable and will print is suspend status when it changes. WriteAttributeResult can only be seen on the server itself." ) );
-        testFolder.add ( "suspendable", item, builder.getMap () );
+        _testFolder.add ( "suspendable", item, builder.getMap () );
         _changingItems.add ( new ItemDescriptor ( item, builder.getMap () ) );
         
         FolderCommon memoryFolder = new FolderCommon ();
@@ -245,6 +249,7 @@ public class Hive extends HiveCommon {
                     {
                         queryFolderRoot.added ( desc );
                     }
+                    addTransientItems ();
                     try
                     {
                         Thread.sleep ( 5 * 1000 );
@@ -257,6 +262,7 @@ public class Hive extends HiveCommon {
                     {
                         queryFolderRoot.removed ( desc );
                     }
+                    removeTransientItems ();
                     try
                     {
                         Thread.sleep ( 5 * 1000 );
@@ -299,5 +305,31 @@ public class Hive extends HiveCommon {
     {
         unregisterItem ( item );
         _queryFolderFactory.removeAllForItem ( item );
+    }
+    
+    protected void addTransientItems ()
+    {
+        DataItem transientItem;
+        
+        transientItem = new FactoryMemoryCell ( this, "transient-memory-cell-1" );
+        registerItem ( transientItem );
+        _testFolder.add ( "transient", transientItem, new HashMap<String,Variant> () );
+        _transientItems.add ( transientItem );
+        
+        transientItem = new TimeDataItem ( "transient-time", _scheduler );
+        registerItem ( transientItem );
+        _testFolder.add ( "transient-time", transientItem, new HashMap<String,Variant> () );
+        _transientItems.add ( transientItem );
+    }
+    
+    protected void removeTransientItems ()
+    {
+        for ( DataItem transientItem : _transientItems )
+        {
+            _testFolder.remove ( transientItem );
+            unregisterItem ( transientItem );
+            transientItem = null;
+        }
+        _transientItems.clear ();
     }
 }
