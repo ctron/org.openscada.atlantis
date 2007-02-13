@@ -340,6 +340,9 @@ public class Variant
 
         if ( obj == this )
             return true;
+        
+        if ( obj == null )
+            return false;
 
         Variant arg0 = (Variant)obj;
 
