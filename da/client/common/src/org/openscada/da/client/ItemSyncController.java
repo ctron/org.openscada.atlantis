@@ -202,6 +202,7 @@ public class ItemSyncController implements ItemUpdateListener
     private void handleError ( Throwable e )
     {
         _log.warn ( "Failed to subscribe", e );
+        _subscribed = false;
         // FIXME: solve problem when subscription fails
     }
 
