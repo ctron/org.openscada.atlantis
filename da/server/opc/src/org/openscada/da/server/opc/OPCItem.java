@@ -118,6 +118,7 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
     {
         _log.debug ( "Suspend" );
         _connection.getAccess ().removeItem ( _itemId );
+        _connection.setItemState ( this, false );
     }
 
     public void wakeup ()
@@ -126,6 +127,7 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
         try
         {
             _connection.getAccess ().addItem ( _itemId, this );
+            _connection.setItemState ( this, true );
         }
         catch ( JIException e )
         {

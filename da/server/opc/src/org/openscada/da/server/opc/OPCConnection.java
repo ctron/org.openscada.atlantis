@@ -59,10 +59,13 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
     private DataItemCommand _disconnectCommandItem = null;
     private DataItemCommand _suicideCommandItem = null;
     private DataItemInputChained _accessStateItem = null;
+    private DataItemInputChained _activeCountItem = null;
 
     private Thread _connectThread = null;
 
     private ServerStateReader _serverStateReader = null;
+
+    private Set<OPCItem> _activeItems = new HashSet<OPCItem> ();
 
     public OPCConnection ( Hive hive, ConnectionSetup connectionSetup )
     {
@@ -75,6 +78,10 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         // state item
         _stateItem = new DataItemInputChained ( new DataItemInformationBase ( getBaseId () + ".state",
                 EnumSet.of ( IODirection.INPUT ) ) );
+
+        _activeCountItem = new DataItemInputChained ( new DataItemInformationBase ( getBaseId () + ".active-count",
+                EnumSet.of ( IODirection.INPUT ) ) );
+        _activeCountItem.updateValue ( new Variant ( 0 ) );
 
         // command items
         _connectCommandItem = new DataItemCommand ( getBaseId () + ".connect" );
@@ -173,6 +180,9 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         // register state item
         _hive.registerItem ( _stateItem );
         _connectionFolder.add ( "state", _stateItem, new MapBuilder<String, Variant> ().getMap () );
+        
+        _hive.registerItem ( _activeCountItem );
+        _connectionFolder.add ( "active-count", _activeCountItem, new MapBuilder<String, Variant> ().getMap () );
 
         // register command items
         _hive.registerItem ( _connectCommandItem );
@@ -200,6 +210,9 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         // remove state item
         _connectionFolder.remove ( "state" );
         _hive.unregisterItem ( _stateItem );
+        
+        _connectionFolder.remove ( "active-count" );
+        _hive.unregisterItem ( _activeCountItem );
 
         // unregister command items
         _connectionFolder.remove ( "connect" );
@@ -472,5 +485,29 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         }
 
         _stateItem.updateAttributes ( attributes );
+    }
+
+    public void setItemState ( OPCItem item, boolean active )
+    {
+        synchronized ( _activeItems )
+        {
+            if ( active )
+            {
+                _activeItems.add ( item );
+            }
+            else
+            {
+                _activeItems.remove ( item );
+            }
+            _activeCountItem.updateValue ( new Variant ( _activeItems.size () ) );
+        }
+    }
+
+    public int getActiveItems ()
+    {
+        synchronized ( _activeItems )
+        {
+            return _activeItems.size ();
+        }
     }
 }
