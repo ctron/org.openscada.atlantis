@@ -46,10 +46,10 @@ public class ItemListLabelProvider  extends LabelProvider implements ITableLabel
             {
             case 0:
                 return ap.key;
-            case 1:
+            case 2:
                 if ( ap.value != null )
                     return VariantHelper.toValueType ( ap.value ).name ();
-            case 2:
+            case 3:
                 if ( ap.value != null )
                     return ap.value.asString ( "<null>" );
             default:
