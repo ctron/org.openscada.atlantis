@@ -31,6 +31,7 @@ import org.openscada.opc.lib.da.Group;
 import org.openscada.opc.lib.da.Server;
 import org.openscada.opc.lib.da.ServerStateListener;
 import org.openscada.opc.lib.da.ServerStateReader;
+import org.openscada.opc.lib.da.SyncAccess;
 import org.openscada.utils.collection.MapBuilder;
 
 public class OPCConnection implements AccessStateListener, ServerStateListener
@@ -44,9 +45,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
     private Hive _hive = null;
 
     private Server _server = null;
-
     private Group _group = null;
-
     private AccessBase _access = null;
 
     private OPCItemManager _itemManager = null;
@@ -56,13 +55,9 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
     private ConnectionState _state = ConnectionState.DISCONNECTED;
 
     private DataItemInputChained _stateItem = null;
-
     private DataItemCommand _connectCommandItem = null;
-
     private DataItemCommand _disconnectCommandItem = null;
-
     private DataItemCommand _suicideCommandItem = null;
-
     private DataItemInputChained _accessStateItem = null;
 
     private Thread _connectThread = null;
@@ -147,12 +142,22 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
     public synchronized void start () throws IllegalArgumentException, UnknownHostException, NotConnectedException, JIException, DuplicateGroupException
     {
         if ( _connectionFolder != null )
+        {
             return;
+        }
 
         _server = new Server ( _connectionSetup.getConnectionInformation () );
 
-        //_access = new SyncAccess ( _server, _connectionSetup.getRefreshTimeout () );
-        _access = new Async20Access ( _server, _connectionSetup.getRefreshTimeout (), _connectionSetup.isInitialConnect () );
+        switch ( _connectionSetup.getAccessMethod () )
+        {
+        case SYNC:
+            _access = new SyncAccess ( _server, _connectionSetup.getRefreshTimeout () );
+            break;
+        case ASYNC20:
+            _access = new Async20Access ( _server, _connectionSetup.getRefreshTimeout (),
+                    _connectionSetup.isInitialConnect () );
+            break;
+        }
         _access.addStateListener ( this );
         _access.bind ();
 

@@ -16,7 +16,6 @@ import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.server.common.AttributeManager;
 import org.openscada.da.server.common.DataItemBase;
 import org.openscada.da.server.common.ItemListener;
-import org.openscada.da.server.common.SuspendableItem;
 import org.openscada.da.server.common.WriteAttributesHelper;
 import org.openscada.opc.lib.da.AccessStateListener;
 import org.openscada.opc.lib.da.AddFailedException;
@@ -24,29 +23,29 @@ import org.openscada.opc.lib.da.DataCallback;
 import org.openscada.opc.lib.da.Item;
 import org.openscada.opc.lib.da.ItemState;
 
-public class OPCItem extends DataItemBase implements SuspendableItem, DataCallback, AccessStateListener
+public class OPCItem extends DataItemBase implements DataCallback, AccessStateListener
 {
     private static Logger _log = Logger.getLogger ( OPCItem.class );
-    
+
     private String _itemId = null;
     private Item _item = null;
     private OPCConnection _connection = null;
-    
+
     private AttributeManager _attributes = null;
-    
+
     private Variant _value = new Variant ();
-    
+
     public OPCItem ( DataItemInformation information, OPCConnection connection, String itemId ) throws JIException, AddFailedException
     {
         super ( information );
         _attributes = new AttributeManager ( this );
-        
+
         _itemId = itemId;
-        
+
         _connection = connection;
         _connection.getAccess ().addStateListener ( this );
     }
-    
+
     /**
      * We might already have data when the listener connects 
      */
@@ -56,13 +55,22 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
         super.setListener ( listener );
         if ( listener != null )
         {
+            wakeup ();
             if ( !_value.isNull () )
+            {
                 notifyValue ( _value );
+            }
             if ( _attributes.get ().size () > 0 )
+            {
                 notifyAttributes ( _attributes.get () );
+            }
+        }
+        else
+        {
+            suspend ();
         }
     }
-    
+
     public synchronized Item getItem ()
     {
         if ( _item == null )
@@ -72,14 +80,15 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
                 _item = _connection.getGroup ().addItem ( _itemId );
             }
             catch ( Throwable t )
-            {}
+            {
+            }
         }
         return _item;
     }
-    
+
     public String getId ()
     {
-        return _itemId; 
+        return _itemId;
     }
 
     public Map<String, Variant> getAttributes ()
@@ -101,7 +110,7 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
     {
         if ( !getInformation ().getIODirection ().contains ( IODirection.OUTPUT ) )
             throw new InvalidOperationException ();
-        
+
         write ( value );
     }
 
@@ -121,12 +130,12 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
         catch ( JIException e )
         {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.printStackTrace ();
         }
         catch ( AddFailedException e )
         {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.printStackTrace ();
         }
     }
 
@@ -137,11 +146,11 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
     {
         updateValue ( itemState );
     }
-    
+
     protected synchronized void updateValue ( ItemState itemState )
     {
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        
+
         attributes.put ( "opc.value-error.message", null );
         attributes.put ( "opc.quality", new Variant ( itemState.getQuality () ) );
         attributes.put ( "timestamp", new Variant ( itemState.getTimestamp ().getTimeInMillis () ) );
@@ -149,10 +158,10 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
         attributes.put ( "opc.update-error.message", null );
         attributes.put ( "opc.read-error.code", null );
         attributes.put ( "opc.read-error.message", null );
-        
+
         try
         {
-            attributes.put ( "opc.value-type", new Variant ( itemState.getValue().getType () ) );
+            attributes.put ( "opc.value-type", new Variant ( itemState.getValue ().getType () ) );
 
             Variant newValue = new Variant ();
 
@@ -160,13 +169,15 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
             {
                 int errorCode = itemState.getErrorCode ();
                 attributes.put ( "opc.read-error.code", new Variant ( errorCode ) );
-                attributes.put ( "opc.read-error.message", new Variant ( _connection.getServer ().getErrorMessage ( errorCode ) ) );
+                attributes.put ( "opc.read-error.message", new Variant ( _connection.getServer ().getErrorMessage (
+                        errorCode ) ) );
             }
             else if ( itemState.getValue ().getType () == JIVariant.VT_ERROR )
             {
-                int errorCode = itemState.getValue().getObjectAsSCODE ();
+                int errorCode = itemState.getValue ().getObjectAsSCODE ();
                 attributes.put ( "opc.read-error.code", new Variant ( errorCode ) );
-                attributes.put ( "opc.read-error.message", new Variant ( _connection.getServer ().getErrorMessage ( errorCode ) ) );
+                attributes.put ( "opc.read-error.message", new Variant ( _connection.getServer ().getErrorMessage (
+                        errorCode ) ) );
             }
             else
             {
@@ -174,7 +185,8 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
 
                 if ( newValue == null )
                 {
-                    attributes.put ( "opc.value-error.message", new Variant ( "Unable to convert value: " + itemState.getValue ().toString () ) );
+                    attributes.put ( "opc.value-error.message", new Variant ( "Unable to convert value: "
+                            + itemState.getValue ().toString () ) );
                 }
                 else
                 {
@@ -187,22 +199,27 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
             attributes.put ( "opc.update-error.code", new Variant ( e.getErrorCode () ) );
             attributes.put ( "opc.update-error.message", new Variant ( e.getMessage () ) );
         }
-        
+        catch ( Throwable e )
+        {
+            attributes.put ( "opc.update-error.code", new Variant ( 0xFFFFFFFF ) );
+            attributes.put ( "opc.update-error.message", new Variant ( e.getMessage () ) );
+        }
+
         _attributes.update ( attributes );
     }
-    
+
     protected synchronized void updateValue ( Variant value )
     {
         if ( value == null )
             value = new Variant ();
-        
+
         if ( !_value.equals ( value ) )
         {
             _value = value;
             notifyValue ( _value );
         }
     }
-    
+
     /**
      * perform a write request
      * @param value
@@ -212,13 +229,13 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
     protected void write ( Variant value ) throws NotConvertableException, InvalidOperationException
     {
         JIVariant variant = Helper.ours2theirs ( value );
-        
+
         if ( variant == null )
         {
             _log.warn ( "Unable to convert value to JIVariant: " + value.toString () );
             throw new NotConvertableException ();
         }
-        
+
         try
         {
             Item item = getItem ();
@@ -228,7 +245,8 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
                 _attributes.update ( "opc.write.last-error.code", new Variant ( errorCode ) );
                 if ( errorCode != 0 )
                 {
-                    _attributes.update ( "opc.write.last-error.message", new Variant ( _connection.getServer ().getErrorMessage ( errorCode ) ) );
+                    _attributes.update ( "opc.write.last-error.message", new Variant (
+                            _connection.getServer ().getErrorMessage ( errorCode ) ) );
                     throw new InvalidOperationException ();
                 }
                 else
@@ -254,19 +272,20 @@ public class OPCItem extends DataItemBase implements SuspendableItem, DataCallba
         {
             _attributes.update ( "opc.last-error", null );
         }
-        else {
-            _attributes.update ( "opc.last-error", new Variant ( t.getMessage () ) );        
+        else
+        {
+            _attributes.update ( "opc.last-error", new Variant ( t.getMessage () ) );
         }
 
     }
 
     public synchronized void stateChanged ( boolean state )
-    {   
+    {
         _attributes.update ( "connected", new Variant ( state ) );
-        
+
         if ( state )
         {
-            
+
         }
         else
         {

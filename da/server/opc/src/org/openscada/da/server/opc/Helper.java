@@ -35,6 +35,8 @@ public class Helper
                 return new Variant ( variant.getObjectAsInt () );
             case JIVariant.VT_INT:
                 return new Variant ( variant.getObjectAsInt () );
+            case JIVariant.VT_I8:
+                return new Variant ( variant.getObjectAsLong () );
             case JIVariant.VT_R4:
                 return new Variant ( variant.getObjectAsFloat () );
             case JIVariant.VT_R8:
@@ -48,11 +50,13 @@ public class Helper
                     return new Variant ( "" );
             }
             case JIVariant.VT_UI1:
-                return new Variant ( (int)variant.getObjectAsChar() );
+                return new Variant ( (int)variant.getObjectAsUnsigned ().getEncapsulatedUnsigned ().byteValue () );
             case JIVariant.VT_UI2:
-                return new Variant ( (int)variant.getObjectAsShort () );
+                return new Variant ( (int)variant.getObjectAsUnsigned ().getEncapsulatedUnsigned ().shortValue () );
             case JIVariant.VT_UI4:
-                return new Variant ( variant.getObjectAsInt () );
+                return new Variant ( variant.getObjectAsUnsigned ().getEncapsulatedUnsigned ().intValue ()  );
+            case JIVariant.VT_UINT:
+                return new Variant ( variant.getObjectAsUnsigned ().getEncapsulatedUnsigned ().intValue ()  );
             case JIVariant.VT_VARIANT:
                 return theirs2ours ( variant.getObjectAsVariant () );
             case JIVariant.VT_DATE:

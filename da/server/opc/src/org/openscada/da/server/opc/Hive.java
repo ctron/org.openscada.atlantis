@@ -128,7 +128,9 @@ public class Hive extends HiveCommon
         Matcher m = Pattern.compile ( "^opcda://(.*?)\\\\(.*?):(.*?)@(.*?)\\?(.*?)=(.*)$" ).matcher ( connectionString );
         
         if ( !m.matches () )
+        {
             return;
+        }
         
         ConnectionInformation ci = new ConnectionInformation ();
         ci.setDomain ( m.group ( 1 ) );
