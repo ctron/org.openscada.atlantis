@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
+import org.openscada.core.client.NoConnectionException;
 import org.openscada.net.base.ClientConnection;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
@@ -204,22 +205,30 @@ public abstract class ConnectionBase implements Connection
         }    
     }
     
-    public void sendMessage ( Message message )
+    public void sendMessage ( Message message ) throws NoConnectionException
     {
         if ( _client == null )
-            return;
+        {
+            throw new NoConnectionException ();
+        }
         if ( _client.getConnection () == null )
-            return;
+        {
+            throw new NoConnectionException ();
+        }
         
         _client.getConnection ().sendMessage ( message );
     }
     
-    public void sendMessage ( Message message, MessageStateListener listener, long timeout )
+    public void sendMessage ( Message message, MessageStateListener listener, long timeout ) throws NoConnectionException
     {
         if ( _client == null )
-            return;
+        {
+            throw new NoConnectionException ();
+        }
         if ( _client.getConnection () == null )
-            return;
+        {
+            throw new NoConnectionException ();
+        }
         
         _client.getConnection ().sendMessage ( message, listener, timeout );
     }

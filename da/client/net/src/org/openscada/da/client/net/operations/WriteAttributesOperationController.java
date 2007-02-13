@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,7 +37,7 @@ public class WriteAttributesOperationController
     
     public WriteAttributesOperationController ( ConnectionHandlerBase connection )
     {
-        _controller = new LongRunningController ( connection, Messages.CC_CANCEL_OPERATION, Messages.CC_WRITE_ATTRIBUTES_OPERATION_RESULT );
+        _controller = new LongRunningController ( connection, Messages.CC_WRITE_ATTRIBUTES_OPERATION_RESULT );
     }
 
     public void register ( MessageProcessor processor )

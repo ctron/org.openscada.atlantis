@@ -50,86 +50,91 @@ import org.openscada.net.utils.MessageCreator;
 
 public class ServerConnectionHandler extends ConnectionHandlerBase implements ItemChangeListener, FolderListener
 {
-    
+
     public final static String VERSION = "0.1.6";
 
     private static Logger _log = Logger.getLogger ( ServerConnectionHandler.class );
 
     private Hive _hive = null;
     private Session _session = null;
- 
-    public ServerConnectionHandler(Hive hive)
+
+    public ServerConnectionHandler ( Hive hive )
     {
-        super();
+        super ();
 
         _hive = hive;
 
-        getMessageProcessor().setHandler(Messages.CC_CREATE_SESSION, new MessageListener(){
+        getMessageProcessor ().setHandler ( Messages.CC_CREATE_SESSION, new MessageListener () {
 
-            public void messageReceived(Connection connection, Message message) {
+            public void messageReceived ( Connection connection, Message message )
+            {
                 createSession ( message );
-            }});
+            }
+        } );
 
-        getMessageProcessor().setHandler(Messages.CC_CLOSE_SESSION, new MessageListener(){
+        getMessageProcessor ().setHandler ( Messages.CC_CLOSE_SESSION, new MessageListener () {
 
-            public void messageReceived(Connection connection, Message message) {
+            public void messageReceived ( Connection connection, Message message )
+            {
                 closeSession ();
-            }});
+            }
+        } );
 
-        getMessageProcessor().setHandler(Messages.CC_SUBSCRIBE_ITEM, new MessageListener(){
+        getMessageProcessor ().setHandler ( Messages.CC_SUBSCRIBE_ITEM, new MessageListener () {
 
-            public void messageReceived(Connection connection, Message message) {
+            public void messageReceived ( Connection connection, Message message )
+            {
                 subscribe ( message );
-            }});
+            }
+        } );
 
-        getMessageProcessor().setHandler(Messages.CC_UNSUBSCRIBE_ITEM, new MessageListener(){
+        getMessageProcessor ().setHandler ( Messages.CC_UNSUBSCRIBE_ITEM, new MessageListener () {
 
-            public void messageReceived(Connection connection, Message message) {
+            public void messageReceived ( Connection connection, Message message )
+            {
                 unsubscribe ( message );
-            }});
-       
-        getMessageProcessor().setHandler(Messages.CC_WRITE_OPERATION, new MessageListener(){
+            }
+        } );
+
+        getMessageProcessor ().setHandler ( Messages.CC_WRITE_OPERATION, new MessageListener () {
 
             public void messageReceived ( Connection connection, Message message )
             {
                 performWrite ( message );
-            }});
-        
-        getMessageProcessor().setHandler(Messages.CC_WRITE_ATTRIBUTES_OPERATION, new MessageListener(){
+            }
+        } );
+
+        getMessageProcessor ().setHandler ( Messages.CC_WRITE_ATTRIBUTES_OPERATION, new MessageListener () {
 
             public void messageReceived ( Connection connection, Message message )
             {
                 performWriteAttributes ( message );
-            }});
-        
-        getMessageProcessor ().setHandler ( Messages.CC_BROWSER_LIST_REQ, new MessageListener(){
+            }
+        } );
+
+        getMessageProcessor ().setHandler ( Messages.CC_BROWSER_LIST_REQ, new MessageListener () {
 
             public void messageReceived ( Connection connection, Message message )
             {
                 performBrowse ( message );
-            }});
-        
-        getMessageProcessor ().setHandler ( Messages.CC_BROWSER_SUBSCRIBE, new MessageListener(){
+            }
+        } );
+
+        getMessageProcessor ().setHandler ( Messages.CC_BROWSER_SUBSCRIBE, new MessageListener () {
 
             public void messageReceived ( Connection connection, Message message )
             {
                 performBrowserSubscribe ( message );
-            }});
-        
-        getMessageProcessor ().setHandler ( Messages.CC_BROWSER_UNSUBSCRIBE, new MessageListener(){
+            }
+        } );
+
+        getMessageProcessor ().setHandler ( Messages.CC_BROWSER_UNSUBSCRIBE, new MessageListener () {
 
             public void messageReceived ( Connection connection, Message message )
             {
                 performBrowserUnsubscribe ( message );
-            }});
-        
-        getMessageProcessor ().setHandler ( Messages.CC_CANCEL_OPERATION, new MessageListener(){
-
-            public void messageReceived ( Connection connection, Message message )
-            {
-                performCancelOperation ( message );
-            }});
-                
+            }
+        } );
     }
 
     private void createSession ( Message message )
@@ -137,27 +142,32 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         // if session exists this is an error
         if ( _session != null )
         {
-            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Connection already bound to a session" ) );
+            getConnection ().sendMessage (
+                    MessageCreator.createFailedMessage ( message, "Connection already bound to a session" ) );
             return;
         }
 
-        Properties props = new Properties();
-        for ( Map.Entry<String,Value> entry : message.getValues ().getValues ().entrySet() )
+        Properties props = new Properties ();
+        for ( Map.Entry<String, Value> entry : message.getValues ().getValues ().entrySet () )
         {
-            props.put ( entry.getKey(), entry.getValue().toString() );
+            props.put ( entry.getKey (), entry.getValue ().toString () );
         }
-        
+
         // now check client version
         String clientVersion = props.getProperty ( "client-version", "" );
         if ( clientVersion.equals ( "" ) )
         {
-            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "client does not pass \"client-version\" property! You may need to upgrade your client!" ) );
+            getConnection ().sendMessage (
+                    MessageCreator.createFailedMessage ( message,
+                            "client does not pass \"client-version\" property! You may need to upgrade your client!" ) );
             return;
         }
         // client version does not match server version
         if ( !clientVersion.equals ( VERSION ) )
         {
-            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "protocol version mismatch: client '" + clientVersion + "' server: '" + VERSION + "'" ) );
+            getConnection ().sendMessage (
+                    MessageCreator.createFailedMessage ( message, "protocol version mismatch: client '" + clientVersion
+                            + "' server: '" + VERSION + "'" ) );
             return;
         }
 
@@ -180,7 +190,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 
         // we have a working session .. so connect listeners
         _session.setListener ( (ItemChangeListener)this );
-        _session.setListener ( (FolderListener) this );
+        _session.setListener ( (FolderListener)this );
 
         // send success
         getConnection ().sendMessage ( MessageCreator.createACK ( message ) );
@@ -195,18 +205,18 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
             {
                 _hive.closeSession ( _session );
             }
-            catch (InvalidSessionException e)
+            catch ( InvalidSessionException e )
             {
                 e.printStackTrace ();
             }
-        }	
+        }
     }
 
     private void closeSession ()
     {
         disposeSession ();
         // also shut down communcation connection
-        getConnection().close();
+        getConnection ().close ();
     }
 
     private void subscribe ( Message message )
@@ -228,11 +238,11 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         }
         catch ( InvalidSessionException e )
         {
-            getConnection ().sendMessage(MessageCreator.createFailedMessage ( message,"Invalid session" ) );
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Invalid session" ) );
         }
         catch ( InvalidItemException e )
         {
-            getConnection ().sendMessage(MessageCreator.createFailedMessage ( message,"Invalid item" ) );
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Invalid item" ) );
         }
 
     }
@@ -245,7 +255,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
             return;
         }
 
-        String itemName = message.getValues().get ( "item-id" ).toString ();
+        String itemName = message.getValues ().get ( "item-id" ).toString ();
 
         try
         {
@@ -253,17 +263,17 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         }
         catch ( InvalidSessionException e )
         {
-            getConnection ().sendMessage(MessageCreator.createFailedMessage ( message, "Invalid session" ) );
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Invalid session" ) );
         }
         catch ( InvalidItemException e )
         {
-            getConnection ().sendMessage(MessageCreator.createFailedMessage ( message, "Invalid item" ) );
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Invalid item" ) );
         }
     }
 
     private void cleanUp ()
     {
-        disposeSession();
+        disposeSession ();
     }
 
     @Override
@@ -275,12 +285,17 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
 
     public void valueChanged ( String name, Variant value, boolean initial )
     {
-        getConnection().sendMessage(Messages.notifyValue(name, value, initial));
+        getConnection ().sendMessage ( Messages.notifyValue ( name, value, initial ) );
     }
 
     public void attributesChanged ( String name, Map<String, Variant> attributes, boolean initial )
     {
-        getConnection().sendMessage(Messages.notifyAttributes(name, attributes, initial));
+        getConnection ().sendMessage ( Messages.notifyAttributes ( name, attributes, initial ) );
+    }
+
+    public void subscriptionChanged ( String item, SubscriptionState subscriptionState )
+    {
+        getConnection ().sendMessage ( Messages.notifySubscriptionChange ( item, subscriptionState ) );
     }
 
     private void performWrite ( final Message message )
@@ -288,13 +303,13 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         WriteValueController c = new WriteValueController ( _hive, _session, this );
         c.run ( message );
     }
-    
+
     private void performWriteAttributes ( final Message message )
     {
         WriteAttributesController c = new WriteAttributesController ( _hive, _session, this );
         c.run ( message );
     }
-    
+
     private void performBrowse ( final Message message )
     {
         BrowseController c = new BrowseController ( _hive, _session, this );
@@ -306,20 +321,20 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         _log.debug ( "Got folder change event from hive for folder: " + location.toString () );
         getConnection ().sendMessage ( ListBrowser.createEvent ( location.asArray (), added, removed, full ) );
     }
-    
+
     private void performBrowserSubscribe ( Message message )
     {
         HiveBrowser browser = _hive.getBrowser ();
-        
+
         if ( browser == null )
         {
             _log.warn ( "Unable to subscribe to folder: no hive browser set" );
             getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Interface not supported" ) );
             return;
         }
-        
+
         Location location = new Location ( ListBrowser.parseSubscribeMessage ( message ) );
-        
+
         try
         {
             _log.debug ( "Subscribe to folder: " + location.toString () );
@@ -339,25 +354,25 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         }
         catch ( Exception e )
         {
-            _log.warn ( "Browsing failed", e  );
+            _log.warn ( "Browsing failed", e );
             getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, e ) );
             return;
         }
     }
-    
+
     private void performBrowserUnsubscribe ( Message message )
     {
         HiveBrowser browser = _hive.getBrowser ();
-        
+
         if ( browser == null )
         {
             _log.warn ( "Unable to unsubscribe from folder: no hive browser set" );
             getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Interface not supported" ) );
             return;
         }
-        
+
         Location location = new Location ( ListBrowser.parseUnsubscribeMessage ( message ) );
-        
+
         try
         {
             _log.debug ( "Unsubscribe from folder: " + location.toString () );
@@ -374,40 +389,4 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
             return;
         }
     }
-    
-    private void performCancelOperation ( Message message )
-    {
-        Long id = null;
-        
-        if ( message.getValues ().containsKey ( "id" ) )
-            if ( message.getValues ().get ( "id" ) instanceof LongValue )
-                id = ((LongValue)message.getValues ().get ( "id" )).getValue ();
-        
-        if ( id == null )
-        {
-            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Unknown operation id" ) );
-            return;
-        }
-
-        _log.info ( String.format ( "Request to cancel operation %d", id ) );
-        
-        try
-        {
-            _hive.cancelOperation ( _session, id );
-        }
-        catch ( InvalidSessionException e1 )
-        {
-            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, e1 ) );
-        }
-        catch ( CancellationNotSupportedException e1 )
-        {
-            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, e1 ) );
-        }
-    }
-
-    public void subscriptionChanged ( String item, SubscriptionState subscriptionState )
-    {
-        
-    }
-    
 }

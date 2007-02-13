@@ -18,29 +18,25 @@ public class LongRunningController implements MessageListener
     private static Logger _log = Logger.getLogger ( LongRunningController.class );
 
     private Set<Integer> _commandCodes = new HashSet<Integer> ();
-    private int _stopCommandCode = 0;
     private ConnectionHandlerBase _connectionHandler = null;
 
     private Map<Long, LongRunningOperation> _opMap = new HashMap<Long, LongRunningOperation> ();
 
-    public LongRunningController ( ConnectionHandlerBase connectionHandler, int stopCommandCode, int commandCode )
+    public LongRunningController ( ConnectionHandlerBase connectionHandler, int commandCode )
     {
         _connectionHandler = connectionHandler;
-        _stopCommandCode = stopCommandCode;
         _commandCodes.add ( commandCode );
     }
 
-    public LongRunningController ( ConnectionHandlerBase connectionHandler, int stopCommandCode, Set<Integer> commandCodes )
+    public LongRunningController ( ConnectionHandlerBase connectionHandler, Set<Integer> commandCodes )
     {
         _connectionHandler = connectionHandler;
-        _stopCommandCode = stopCommandCode;
         _commandCodes.addAll ( commandCodes );
     }
 
-    public LongRunningController ( ConnectionHandlerBase connectionHandler, int stopCommandCode, Integer... commandCodes )
+    public LongRunningController ( ConnectionHandlerBase connectionHandler, Integer... commandCodes )
     {
         _connectionHandler = connectionHandler;
-        _stopCommandCode = stopCommandCode;
         _commandCodes.addAll ( Arrays.asList ( commandCodes ) );
     }
 
@@ -63,7 +59,9 @@ public class LongRunningController implements MessageListener
     synchronized public LongRunningOperation start ( Message message, LongRunningListener listener )
     {
         if ( message == null )
+        {
             return null;
+        }
 
         final LongRunningOperation op = new LongRunningOperation ( this, listener );
 
@@ -91,23 +89,13 @@ public class LongRunningController implements MessageListener
 
         if ( listener != null )
         {
-            listener.stateChanged ( LongRunningState.REQUESTED, null );
+            listener.stateChanged ( op, LongRunningState.REQUESTED, null );
         }
 
         return op;
     }
 
-    synchronized public void stop ( LongRunningOperation op )
-    {
-        if ( op == null )
-            return;
-
-        op.stop ();
-
-        _opMap.remove ( op.getId () );
-    }
-
-    synchronized private void assignOperation ( long id, LongRunningOperation op )
+    private synchronized void assignOperation ( long id, LongRunningOperation op )
     {
         _opMap.put ( id, op );
     }
@@ -140,13 +128,5 @@ public class LongRunningController implements MessageListener
                 _log.warn ( "Received long-op message for unregistered operation" );
             }
         }
-    }
-
-    public void sendStopCommand ( LongRunningOperation operation )
-    {
-        Message message = new Message ( _stopCommandCode );
-        message.getValues ().put ( "id", new LongValue ( operation.getId () ) );
-
-        _connectionHandler.getConnection ().sendMessage ( message );
     }
 }

@@ -28,7 +28,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
-import org.openscada.core.InvalidSessionException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionFactory;
@@ -41,6 +40,7 @@ import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.core.client.net.DisconnectReason;
 import org.openscada.core.client.net.OperationTimedOutException;
 import org.openscada.core.net.MessageHelper;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.BrowseOperationCallback;
 import org.openscada.da.client.FolderListener;
 import org.openscada.da.client.ItemUpdateListener;
@@ -135,6 +135,15 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
             {
                 _log.debug ( "Browse event message from server" );
                 performBrowseEvent ( message );
+            }
+        } );
+
+        _client.getMessageProcessor ().setHandler ( Messages.CC_SUBSCRIPTION_CHANGE, new MessageListener () {
+
+            public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message ) throws Exception
+            {
+                _log.debug ( "received subscription change" );
+                performSubscriptionChange ( message );
             }
         } );
 
@@ -399,7 +408,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         }
         return completeWriteAttributes ( op );
     }
-    
+
     public void writeAttributes ( String item, Map<String, Variant> attributes, final WriteAttributeOperationCallback callback )
     {
         try
@@ -481,8 +490,8 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
             throw new OperationException ( e );
         }
     }
-    
-    public void browse ( String  [] path, final BrowseOperationCallback callback )
+
+    public void browse ( String[] path, final BrowseOperationCallback callback )
     {
         try
         {
@@ -599,5 +608,27 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
     public void unsubscribeFolder ( Location location ) throws NoConnectionException, OperationException
     {
         sendMessage ( ListBrowser.createUnsubscribe ( location.asArray () ) );
+    }
+
+    protected void performSubscriptionChange ( Message message )
+    {
+        Holder<String> item = new Holder<String> ();
+        Holder<SubscriptionState> subscriptionState = new Holder<SubscriptionState> ();
+
+        Messages.parseSubscriptionChange ( message, item, subscriptionState );
+
+        fireSubscriptionChange ( item.value, subscriptionState.value );
+    }
+
+    private void fireSubscriptionChange ( String item, SubscriptionState subscriptionState )
+    {
+        synchronized ( _itemListeners )
+        {
+            ItemUpdateListener listener = _itemListeners.get ( item );
+            if ( listener != null )
+            {
+                listener.notifySubscriptionChange ( subscriptionState );
+            }
+        }
     }
 }

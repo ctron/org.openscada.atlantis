@@ -1,6 +1,22 @@
-/**
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package org.openscada.net.base;
 
 import org.apache.log4j.Logger;
@@ -16,8 +32,6 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
     private LongRunningListener _listener = null;
 
     private long _id = 0;
-    private boolean _stopped = false;
-    private boolean _stopSent = false;
 
     private LongRunningState _longRunningState = LongRunningState.REQUESTED;
     private Throwable _error = null;
@@ -45,35 +59,26 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
 
         if ( _listener != null )
         {
-            _listener.stateChanged ( state, error );
+            _listener.stateChanged ( this, state, error );
         }
     }
 
-    synchronized protected void fail ( Throwable error )
+    protected synchronized void fail ( Throwable error )
     {
-        if ( _stopped )
-            return;
-
         stateChange ( LongRunningState.FAILURE, null, error );
 
         notifyAll ();
     }
 
-    synchronized protected void granted ( long id )
+    protected synchronized void granted ( long id )
     {
         _log.debug ( String.format ( "Granted: %d", id ) );
         _id = id;
 
-        if ( _stopped )
-        {
-            sendStop ();
-            return;
-        }
-
         stateChange ( LongRunningState.RUNNING, null, null );
     }
 
-    synchronized protected void result ( Message message )
+    protected synchronized void result ( Message message )
     {
         _log.debug ( String.format ( "Result: %d", _id ) );
 
@@ -82,54 +87,13 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
         notifyAll ();
     }
 
-    synchronized protected void stop ()
-    {
-        switch ( _longRunningState )
-        {
-        case SUCCESS:
-        case FAILURE:
-            return;
-        default:
-            break;
-        }
-
-        if ( _stopped )
-            return;
-
-        _stopped = true;
-
-        if ( _id != 0 )
-            sendStop ();
-
-        stateChange ( LongRunningState.FAILURE, null, null );
-
-        notifyAll ();
-    }
-
-    synchronized private void sendStop ()
-    {
-        if ( _stopSent )
-            return;
-
-        _stopSent = true;
-
-        _controller.sendStopCommand ( this );
-    }
-
     /* (non-Javadoc)
      * @see org.openscada.net.base.ILongRunningOperation#isComplete()
      */
-    synchronized public boolean isComplete ()
+    public synchronized boolean isComplete ()
     {
-        return _longRunningState.equals ( LongRunningState.SUCCESS ) || _longRunningState.equals ( LongRunningState.FAILURE );
-    }
-
-    /* (non-Javadoc)
-     * @see org.openscada.net.base.ILongRunningOperation#cancel()
-     */
-    public void cancel ()
-    {
-        _controller.stop ( this );
+        return _longRunningState.equals ( LongRunningState.SUCCESS )
+                || _longRunningState.equals ( LongRunningState.FAILURE );
     }
 
     /* (non-Javadoc)
@@ -159,10 +123,12 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
     /* (non-Javadoc)
      * @see org.openscada.net.base.ILongRunningOperation#waitForCompletion()
      */
-    synchronized public void waitForCompletion () throws InterruptedException
+    public synchronized void waitForCompletion () throws InterruptedException
     {
         if ( isComplete () )
+        {
             return;
+        }
 
         wait ();
     }
@@ -170,10 +136,12 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
     /* (non-Javadoc)
      * @see org.openscada.net.base.ILongRunningOperation#waitForCompletion(int)
      */
-    synchronized public void waitForCompletion ( int timeout ) throws InterruptedException
+    public synchronized void waitForCompletion ( int timeout ) throws InterruptedException
     {
         if ( isComplete () )
+        {
             return;
+        }
 
         wait ( timeout );
     }

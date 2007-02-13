@@ -6,5 +6,5 @@ package org.openscada.utils.exec;
 
 public interface LongRunningListener
 {
-    void stateChanged ( LongRunningState state, Throwable error );
+    void stateChanged ( LongRunningOperation operation, LongRunningState state, Throwable error );
 }
