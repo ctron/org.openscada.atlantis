@@ -21,15 +21,29 @@ package org.openscada.da.server.test.items;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.server.common.DataItemInputCommon;
-import org.openscada.da.server.common.SuspendableItem;
+import org.openscada.da.server.common.ItemListener;
 
-public class SuspendItem extends DataItemInputCommon implements SuspendableItem
+public class SuspendItem extends DataItemInputCommon
 {
     private static Logger _log = Logger.getLogger ( SuspendItem.class );
     
     public SuspendItem ( String name )
     {
         super ( name );
+    }
+    
+    @Override
+    public void setListener ( ItemListener listener )
+    {
+        super.setListener ( listener );
+        if ( listener != null )
+        {
+            wakeup ();
+        }
+        else
+        {
+            suspend ();
+        }
     }
 
     public void suspend ()
