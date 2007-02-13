@@ -52,7 +52,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         }
         
         _bound = false;
-        _dataItem.setListener ( this );
+        _dataItem.setListener ( null );
     }
 
     public synchronized void addListener ( Collection<SubscriptionListener> listeners )
