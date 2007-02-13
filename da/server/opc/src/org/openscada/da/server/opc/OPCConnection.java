@@ -22,7 +22,6 @@ import org.openscada.opc.dcom.common.Result;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 import org.openscada.opc.lib.common.AlreadyConnectedException;
-import org.openscada.opc.lib.common.ConnectionInformation;
 import org.openscada.opc.lib.common.NotConnectedException;
 import org.openscada.opc.lib.da.AccessBase;
 import org.openscada.opc.lib.da.AccessStateListener;
@@ -32,7 +31,6 @@ import org.openscada.opc.lib.da.Group;
 import org.openscada.opc.lib.da.Server;
 import org.openscada.opc.lib.da.ServerStateListener;
 import org.openscada.opc.lib.da.ServerStateReader;
-import org.openscada.opc.lib.da.SyncAccess;
 import org.openscada.utils.collection.MapBuilder;
 
 public class OPCConnection implements AccessStateListener, ServerStateListener

@@ -18,11 +18,11 @@ import org.openscada.da.server.common.DataItemBase;
 import org.openscada.da.server.common.ItemListener;
 import org.openscada.da.server.common.SuspendableItem;
 import org.openscada.da.server.common.WriteAttributesHelper;
+import org.openscada.opc.lib.da.AccessStateListener;
 import org.openscada.opc.lib.da.AddFailedException;
 import org.openscada.opc.lib.da.DataCallback;
 import org.openscada.opc.lib.da.Item;
 import org.openscada.opc.lib.da.ItemState;
-import org.openscada.opc.lib.da.AccessStateListener;
 
 public class OPCItem extends DataItemBase implements SuspendableItem, DataCallback, AccessStateListener
 {

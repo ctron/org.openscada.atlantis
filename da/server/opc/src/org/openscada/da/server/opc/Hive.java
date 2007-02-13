@@ -15,23 +15,16 @@
 package org.openscada.da.server.opc;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
-import org.jinterop.dcom.common.JIException;
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.opc.lib.common.ConnectionInformation;
-import org.openscada.opc.lib.common.NotConnectedException;
-import org.openscada.opc.lib.da.DuplicateGroupException;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.timing.Scheduler;
 import org.w3c.dom.Node;
