@@ -208,7 +208,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
 
     public synchronized void stop ()
     {
-        performDisconnect ();
+        triggerDisconnect ();
 
         // remove state item
         _connectionFolder.remove ( "state" );
@@ -245,111 +245,12 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         _reconnectController.connect ();
     }
     
-    public synchronized void X_triggerConnect ()
-    {
-        if ( !_state.equals ( ConnectionState.DISCONNECTED ) )
-        {
-            return;
-        }
-
-        setConnectionState ( ConnectionState.CONNECTING );
-        _connectThread = new Thread ( new Runnable () {
-
-            public void run ()
-            {
-                try
-                {
-                    performConnect ();
-                }
-                catch ( Throwable e )
-                {
-                    _log.error ( "Failed to connect to OPC server", e );
-                    setConnectionState ( ConnectionState.DISCONNECTED );
-                }
-                finally
-                {
-                    _connectThread = null;
-                }
-            }
-        } );
-        _connectThread.setDaemon ( true );
-        _connectThread.start ();
-    }
-
-    private void performConnect ()
-    {
-        _reconnectController.connect ();
-    }
-    
-    private void performDisconnect ()
-    {
-        _reconnectController.connect ();
-    }
-    
-    private void X_performConnect () throws IllegalArgumentException, UnknownHostException, JIException, NotConnectedException, DuplicateGroupException, AlreadyConnectedException
-    {
-        start ();
-
-        _log.debug ( "Connecting...to " + getBaseId () );
-        _server.connect ();
-        _log.debug ( "Connecting...connected" );
-        setConnectionState ( ConnectionState.CONNECTED );
-    }
-
     public void triggerDisconnect ()
     {
         _reconnectController.disconnect ();
+        _itemManager.clear ();
     }
     
-    public synchronized void X_triggerDisconnect ()
-    {
-        if ( !_state.equals ( ConnectionState.CONNECTED ) )
-        {
-            return;
-        }
-
-        setConnectionState ( ConnectionState.DISCONNECTING );
-        Runnable connectRunner = new Runnable () {
-
-            public void run ()
-            {
-                try
-                {
-                    performDisconnect ();
-                }
-                finally
-                {
-                    _connectThread = null;
-                }
-            }
-        };
-
-        /*
-         _connectThread = new Thread ( connectRunner );
-         _connectThread.start ();
-         */
-        _hive.getScheduler ().executeJobAsync ( connectRunner );
-    }
-
-    public synchronized void x_performDisconnect ()
-    {
-        try
-        {
-            _server.disconnect ();
-            //_itemManager.clear ();
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace ();
-        }
-        finally
-        {
-            _group = null;
-            setConnectionState ( ConnectionState.DISCONNECTED );
-        }
-
-    }
-
     private void addFlatItem ( String itemId, EnumSet<IODirection> ioDirection )
     {
         try
