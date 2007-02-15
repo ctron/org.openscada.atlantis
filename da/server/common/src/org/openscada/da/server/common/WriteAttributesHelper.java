@@ -27,6 +27,13 @@ import org.openscada.da.core.WriteAttributeResults;
 
 public class WriteAttributesHelper
 {
+    /**
+     * This method sets all unprocessed attribute write requests to an <q>unsupported</q>
+     * error ({@link UnsupportedOperationException});
+     * @param initialResults The results genereted so far
+     * @param attributes The attributes to write
+     * @return the initial results including the unprocessed results
+     */
     public static WriteAttributeResults errorUnhandled ( WriteAttributeResults initialResults, Map<String, Variant> attributes )
     {
         WriteAttributeResults writeAttributeResults = initialResults;
@@ -39,7 +46,9 @@ public class WriteAttributesHelper
         for ( String name : attributes.keySet () )
         {
             if ( !writeAttributeResults.containsKey ( name ) )
+            {
                 writeAttributeResults.put ( name, new WriteAttributeResult ( new UnsupportedOperationException ( "Operation not supported" ) ) );
+            }
         }
         return writeAttributeResults;
     }
