@@ -157,12 +157,12 @@ public class ScaleChainTest
     
     public void setValue ( double value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        _item.setValue ( new Variant ( value ) );
+        _item.writeValue ( new Variant ( value ) );
     }
     
     public void testValue ( double value ) throws InvalidOperationException
     {
-        Assert.assertEquals ( new Variant ( value ), _item.getValue () );
+        Assert.assertEquals ( new Variant ( value ), _item.readValue () );
     }
     
     public void setAndTest ( double writeValue, double expectedValue ) throws InvalidOperationException, NullValueException, NotConvertableException

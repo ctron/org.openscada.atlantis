@@ -32,17 +32,32 @@ public interface DataItem
 {
     public DataItemInformation getInformation ();
 
-    public Variant getValue () throws InvalidOperationException;
-    public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException;
+    /**
+     * The read operation of a data item.
+     * @return The value read from the subsystem.
+     * @throws InvalidOperationException Raised if "read" is not a valid operation for this item
+     */
+    public Variant readValue () throws InvalidOperationException;
+    
+    /**
+     * The write operation of a data item.
+     * @param value The value to write to the subsystem
+     * @throws InvalidOperationException Raised if "write" is not a valid operation for htis item
+     * @throws NullValueException Raised if a null value was passed but the subsystem does not allow null values to be written
+     * @throws NotConvertableException Raised if a value was passed that cannot be converted in a variant type suitable for the subsystem
+     */
+    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException;
 
     public Map<String, Variant> getAttributes ();
     public WriteAttributeResults setAttributes ( Map<String, Variant> attributes );
 
-    /** Sets the listener for this item
-     * @param listener The listener to use or null to disable notification
+    /**
+     * Sets the listener for this item.
      * 
      * Set by the controller to which this item is registered. The item has to use the listener
      * provided.
+     * 
+     * @param listener The listener to use or null to disable notification
      * 
      */
     public void setListener ( ItemListener listener );

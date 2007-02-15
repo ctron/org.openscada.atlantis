@@ -30,66 +30,36 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.SuspendableDataItem;
 
-public abstract class DataItemOutputChained extends DataItemBaseChained implements SuspendableDataItem
+public abstract class DataItemInputOutputChained extends DataItemInputChained
 {
-
-    public DataItemOutputChained ( DataItemInformation dataItemInformation )
+    public DataItemInputOutputChained ( DataItemInformation di )
     {
-        super ( dataItemInformation );
+        super ( di );
     }
-
-    public DataItemOutputChained ( String id )
+    
+    public DataItemInputOutputChained ( String id )
     {
-        this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.OUTPUT ) ) );
-    }
-
-    public Variant readValue () throws InvalidOperationException
-    {
-        throw new InvalidOperationException ();
-    }
-
-    synchronized public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
-    {
-        process ( value );
-
-        writeCalculatedValue ( value );
+        this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
     }
 
     @Override
-    protected void process ()
-    {
-        process ( null );
-    }
-
-    protected void process ( Variant value )
+    synchronized public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
-
-        for ( ChainProcessEntry entry : getChainCopy () )
+        
+        for ( ChainProcessEntry entry: _chain )
         {
             if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
             {
                 entry.getWhat ().process ( value, primaryAttributes );
             }
         }
-
+        
         _secondaryAttributes.set ( primaryAttributes );
+        
+        writeCalculatedValue ( value );
     }
-
-    public void suspend ()
-    {
-    }
-
-    public void wakeup ()
-    {
-        if ( _secondaryAttributes.get ().size () > 0 )
-        {
-            notifyAttributes ( _secondaryAttributes.get () );
-        }
-    }
-
-    protected abstract void writeCalculatedValue ( Variant value ) throws NullValueException, NotConvertableException;
-
+    
+    protected abstract void writeCalculatedValue ( Variant value );
 }

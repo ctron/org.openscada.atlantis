@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,18 +20,13 @@
 package org.openscada.da.server.common.chain;
 
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.server.common.DataItemInformationBase;
 
-public class MemoryItemChained extends DataItemInputChained
+public class MemoryItemChained extends DataItemInputOutputChained
 {    
     public MemoryItemChained ( DataItemInformation di )
     {
@@ -44,22 +39,7 @@ public class MemoryItemChained extends DataItemInputChained
     }
 
     @Override
-    synchronized public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
-    {
-        Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
-        
-        for ( ChainProcessEntry entry: _chain )
-        {
-            if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
-                entry.getWhat ().process ( value, primaryAttributes );
-        }
-        
-        _secondaryAttributes.set ( primaryAttributes );
-        
-        writeValue ( value );
-    }
-
-    private void writeValue ( Variant value )
+    protected void writeCalculatedValue ( Variant value )
     {
         updateValue ( value );
     }

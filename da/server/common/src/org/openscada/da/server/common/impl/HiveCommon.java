@@ -410,7 +410,7 @@ public class HiveCommon implements Hive, ConfigurableHive
             {
                 try
                 {
-                    item.setValue ( value );
+                    item.writeValue ( value );
                     if ( !isCanceled () )
                         listener.success ();
                 }

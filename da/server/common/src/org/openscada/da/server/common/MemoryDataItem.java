@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,60 +30,63 @@ import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 
-public class MemoryDataItem extends DataItemBase {
+public class MemoryDataItem extends DataItemBase implements SuspendableDataItem
+{
+    private Variant _value = new Variant ();
+    private AttributeManager _attributes = null;
 
-	public MemoryDataItem ( String name )
+    public MemoryDataItem ( String name )
     {
-		super ( new DataItemInformationBase ( name, EnumSet.of(IODirection.INPUT, IODirection.OUTPUT) ) );
+        super ( new DataItemInformationBase ( name, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
         _attributes = new AttributeManager ( this );
-	}
+    }
 
-	private Variant _value = new Variant();
-	private AttributeManager _attributes = null;
-	
-	public Variant getValue () throws InvalidOperationException
+    public Variant readValue () throws InvalidOperationException
     {
-		return new Variant ( _value );
-	}
+        return new Variant ( _value );
+    }
 
-	public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
-		if ( !_value.equals ( value ) )
-		{
-			_value = new Variant ( value );
-			notifyValue ( value );
-		}
-	}
+        if ( !_value.equals ( value ) )
+        {
+            _value = new Variant ( value );
+            notifyValue ( value );
+        }
+    }
 
-	public Map<String, Variant> getAttributes()
-    {		
-		return _attributes.get ();
-	}
+    public Map<String, Variant> getAttributes ()
+    {
+        return _attributes.get ();
+    }
 
-	public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
+    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
     {
         WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
-        
+
         _attributes.update ( attributes );
-        
+
         for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
             writeAttributeResults.put ( entry.getKey (), new WriteAttributeResult () );
         }
-        
+
         return writeAttributeResults;
-	}
-    
-    @Override
-    public void setListener ( ItemListener listener )
+    }
+
+    public void suspend ()
     {
-        super.setListener ( listener );
-        if ( listener != null )
+    }
+
+    public void wakeup ()
+    {
+        if ( !_value.isNull () )
         {
-            if ( !_value.isNull () )
-                notifyValue ( _value );
-            if ( _attributes.get ().size () > 0 )
-                notifyAttributes ( _attributes.get () );
+            notifyValue ( _value );
+        }
+        if ( _attributes.get ().size () > 0 )
+        {
+            notifyAttributes ( _attributes.get () );
         }
     }
 

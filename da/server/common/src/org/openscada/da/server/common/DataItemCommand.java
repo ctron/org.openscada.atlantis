@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ public class DataItemCommand extends DataItemOutput {
 	
 	private List<Listener> _listeners = new ArrayList<Listener>();
 	
-	public void setValue(Variant value) throws InvalidOperationException,
+	public void writeValue(Variant value) throws InvalidOperationException,
 	NullValueException, NotConvertableException {
 		
 		List<Listener> listeners;

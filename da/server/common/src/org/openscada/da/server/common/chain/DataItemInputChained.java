@@ -30,73 +30,80 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.ItemListener;
+import org.openscada.da.server.common.SuspendableDataItem;
 
-public class DataItemInputChained extends DataItemBaseChained
+public class DataItemInputChained extends DataItemBaseChained implements SuspendableDataItem
 {
     protected Variant _primaryValue = new Variant ();
     protected Variant _secondaryValue = new Variant ();
-    
+
     public DataItemInputChained ( DataItemInformation dataItemInformation )
     {
         super ( dataItemInformation );
     }
-    
+
     public DataItemInputChained ( String id )
     {
         this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT ) ) );
     }
-    
-    synchronized public void updateValue ( Variant value )
+
+    public synchronized void updateValue ( Variant value )
     {
         if ( _primaryValue.equals ( value ) )
+        {
             return;
-        
+        }
+
         _primaryValue = new Variant ( value );
         process ();
     }
-    
+
     @Override
     protected void process ()
     {
-        Variant primaryValue = new Variant ( _primaryValue );
+        Variant newSecondaryValue = new Variant ( _primaryValue );
         Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
-        
-        for ( ChainProcessEntry entry : _chain )
+
+        for ( ChainProcessEntry entry : getChainCopy () )
         {
             if ( entry.getWhen ().contains ( IODirection.INPUT ) )
-                entry.getWhat ().process ( primaryValue, primaryAttributes );
+            {
+                entry.getWhat ().process ( newSecondaryValue, primaryAttributes );
+            }
         }
-        
-        if ( !_secondaryValue.equals ( primaryValue ) )
+
+        if ( !_secondaryValue.equals ( newSecondaryValue ) )
         {
-            _secondaryValue = new Variant ( primaryValue );
+            _secondaryValue = new Variant ( newSecondaryValue );
             notifyValue ( _secondaryValue );
         }
         _secondaryAttributes.set ( primaryAttributes );
     }
 
-    public Variant getValue () throws InvalidOperationException
+    public Variant readValue () throws InvalidOperationException
     {
         return new Variant ( _secondaryValue );
     }
 
-    public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         throw new InvalidOperationException ();
     }
-    
-    @Override
-    public void setListener ( ItemListener listener )
+
+    public void suspend ()
     {
-        super.setListener ( listener );
-        if ( listener != null )
+    }
+
+    public void wakeup ()
+    {
+        if ( !_secondaryValue.isNull () )
         {
-            if ( !_secondaryValue.isNull () )
-                notifyValue ( _secondaryValue );
-            if ( _secondaryAttributes.get ().size () > 0 )
-                notifyAttributes ( _secondaryAttributes.get () );
+            notifyValue ( _secondaryValue );
+        }
+        if ( _secondaryAttributes.get ().size () > 0 )
+        {
+            notifyAttributes ( _secondaryAttributes.get () );
         }
     }
-    
+
 }
