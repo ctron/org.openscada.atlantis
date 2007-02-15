@@ -34,19 +34,19 @@ import org.openscada.utils.str.StringHelper;
  */
 public abstract class SummarizeChainItem extends BaseChainItemCommon
 {
-    private String _errorStateName;
-    private String _errorCountName;
-    private String _errorListName;
+    private String _sumStateName;
+    private String _sumCountName;
+    private String _sumListName;
 
     public SummarizeChainItem ( String baseName )
     {
         super ();
         
-        _errorStateName = baseName;
-        _errorCountName = baseName + ".count";
-        _errorListName = baseName + ".items";
+        _sumStateName = baseName;
+        _sumCountName = baseName + ".count";
+        _sumListName = baseName + ".items";
 
-        setReservedAttributes ( _errorStateName, _errorCountName, _errorListName );
+        setReservedAttributes ( _sumStateName, _sumCountName, _sumListName );
     }
     
     /**
@@ -60,9 +60,9 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
 
     public void process ( Variant value, Map<String, Variant> attributes )
     {
-        attributes.put ( _errorStateName, null );
-        attributes.put ( _errorCountName, null );
-        attributes.put ( _errorListName, null );
+        attributes.put ( _sumStateName, null );
+        attributes.put ( _sumCountName, null );
+        attributes.put ( _sumListName, null );
 
         long count = 0;
         List<String> items = new LinkedList<String> ();
@@ -79,9 +79,9 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
             }
         }
 
-        attributes.put ( _errorStateName, new Variant ( count > 0 ) );
-        attributes.put ( _errorCountName, new Variant ( count ) );
-        attributes.put ( _errorListName, new Variant ( StringHelper.join ( items, ", " ) ) );
+        attributes.put ( _sumStateName, new Variant ( count > 0 ) );
+        attributes.put ( _sumCountName, new Variant ( count ) );
+        attributes.put ( _sumListName, new Variant ( StringHelper.join ( items, ", " ) ) );
 
         addAttributes ( attributes );
     }
