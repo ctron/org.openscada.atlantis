@@ -20,7 +20,6 @@
 package org.openscada.da.server.common.chain;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -132,7 +131,9 @@ public abstract class DataItemBaseChained extends DataItemBase
         }
         
         if ( n > 0 )
+        {
             process ();
+        }
     }
 
     protected synchronized Collection<ChainProcessEntry> getChainCopy ()
