@@ -24,6 +24,12 @@ import java.util.Map;
 import org.openscada.core.Variant;
 import org.openscada.da.core.server.DataItemInformation;
 
+/**
+ * This is an abstract base class for the {@link DataItem} interface. It also supports
+ * the {@link SuspendableDataItem} interface.
+ * @author Jens Reimann &lt;jens.reimann@inavare.net&gt;
+ * @see SuspendableDataItem
+ */
 public abstract class DataItemBase implements DataItem
 {
     protected ItemListener _listener;
