@@ -86,7 +86,9 @@ public abstract class DataItemOutputChained extends DataItemBaseChained
         if ( listener != null )
         {
             if ( _secondaryAttributes.get ().size () > 0 )
+            {
                 notifyAttributes ( _secondaryAttributes.get () );
+            }
         }
     }
     
