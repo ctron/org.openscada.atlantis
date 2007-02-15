@@ -35,9 +35,9 @@ import org.openscada.da.server.common.ItemListener;
 public abstract class DataItemOutputChained extends DataItemBaseChained
 {
 
-    public DataItemOutputChained ( DataItemInformation information )
+    public DataItemOutputChained ( DataItemInformation dataItemInformation )
     {
-        super ( information );
+        super ( dataItemInformation );
     }
     
     public DataItemOutputChained ( String id )

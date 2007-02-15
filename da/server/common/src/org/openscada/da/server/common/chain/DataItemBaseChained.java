@@ -45,9 +45,9 @@ public abstract class DataItemBaseChained extends DataItemBase
     protected AttributeManager _secondaryAttributes = null;
     protected List<ChainProcessEntry> _chain = new LinkedList<ChainProcessEntry> ();
 
-    public DataItemBaseChained ( DataItemInformation di )
+    public DataItemBaseChained ( DataItemInformation dataItemInformation )
     {
-        super ( di );
+        super ( dataItemInformation );
 
         _primaryAttributes = new HashMap<String, Variant> ();
         _secondaryAttributes = new AttributeManager ( this );

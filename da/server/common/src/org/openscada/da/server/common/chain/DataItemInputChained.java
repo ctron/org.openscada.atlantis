@@ -37,9 +37,9 @@ public class DataItemInputChained extends DataItemBaseChained
     protected Variant _primaryValue = new Variant ();
     protected Variant _secondaryValue = new Variant ();
     
-    public DataItemInputChained ( DataItemInformation di )
+    public DataItemInputChained ( DataItemInformation dataItemInformation )
     {
-        super ( di );
+        super ( dataItemInformation );
     }
     
     public DataItemInputChained ( String id )
