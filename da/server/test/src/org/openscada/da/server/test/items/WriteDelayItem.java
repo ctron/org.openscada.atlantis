@@ -48,7 +48,7 @@ public class WriteDelayItem extends DataItemOutput
         return WriteAttributesHelper.errorUnhandled ( null, attributes );
     }
 
-    public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
        int delay = value.asInteger ();
        

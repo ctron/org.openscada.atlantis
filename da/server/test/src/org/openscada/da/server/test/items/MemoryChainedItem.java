@@ -105,7 +105,7 @@ public class MemoryChainedItem extends MemoryItemChained
         {
             int i = 0;
             StringBuilder str = new StringBuilder ();
-            for ( ChainProcessEntry item : _item.getChainEntries () )
+            for ( ChainProcessEntry item : _item.getChainCopy () )
             {
                 if ( i > 0 )
                     str.append ( ", " );
@@ -138,7 +138,7 @@ public class MemoryChainedItem extends MemoryItemChained
     
     synchronized public void removeChainElement ( IODirection direction, String className ) throws Exception
     {
-        for ( ChainProcessEntry entry : getChainEntries () )
+        for ( ChainProcessEntry entry : getChainCopy () )
         {
             if ( entry.getWhat ().getClass ().getCanonicalName ().equals ( className ) )
             {

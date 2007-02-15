@@ -66,7 +66,7 @@ public class TestItem1 extends DataItemOutput
         return results;
     }
 
-    public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         _log.debug ( "set value: " + value.toString () );
         

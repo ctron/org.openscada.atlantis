@@ -108,7 +108,7 @@ public class SNMPItem extends DataItemBase implements Runnable
         return _attributes.get ();
     }
 
-    public Variant getValue () throws InvalidOperationException
+    public Variant readValue () throws InvalidOperationException
     {
         // sending cache value
         return _value;
@@ -119,7 +119,7 @@ public class SNMPItem extends DataItemBase implements Runnable
         return WriteAttributesHelper.errorUnhandled ( null, attributes );
     }
 
-    public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         // no op
     }

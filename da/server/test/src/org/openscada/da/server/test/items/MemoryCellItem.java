@@ -64,7 +64,7 @@ public class MemoryCellItem extends DataItemOutput
         return WriteAttributesHelper.errorUnhandled ( null, attributes );
     }
 
-    public void setValue ( Variant value ) throws InvalidOperationException,
+    public void writeValue ( Variant value ) throws InvalidOperationException,
             NullValueException, NotConvertableException
     {
         int num = value.asInteger ();
