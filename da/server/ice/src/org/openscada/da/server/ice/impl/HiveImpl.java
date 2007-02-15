@@ -361,7 +361,10 @@ public class HiveImpl extends _HiveDisp implements Runnable
         {
             SessionPrx sessionProxy = _sessionMapRev.get ( session );
             if ( sessionProxy == null )
+            {
+                _log.debug ( "No session proxy found" );
                 return;
+            }
             
             // remove the session object from ice
             _adapter.remove ( sessionProxy.ice_getIdentity () );
@@ -369,8 +372,9 @@ public class HiveImpl extends _HiveDisp implements Runnable
             _sessionMap.remove ( sessionProxy );
             _sessionMapRev.remove ( session );
             
-            session.destroy ();
             _hive.closeSession ( session.getSession () );
+            
+            session.destroy ();
         }
         catch ( InvalidSessionException e )
         {

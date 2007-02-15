@@ -130,14 +130,14 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
         _log.debug ( "destroy session" );
         
         if ( _session == null )
+        {
             return;
+        }
         
         _dataCallback = null;
         _folderCallback = null;
         _session.setListener ( (ItemChangeListener)null );
         _session.setListener ( (FolderListener)null );
-        
-        _session = null;
         
         try
         {
@@ -147,7 +147,8 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
         {
             // we don't care
         }
-        
+
+        _session = null;
         _hive = null;
     }
 
