@@ -31,7 +31,7 @@
 
     <complexType name="HiveConfigurationType">
     	<sequence>
-    		<any minOccurs="0" maxOccurs="1"></any>
+    		<any minOccurs="0" maxOccurs="1" processContents="lax"></any>
     	</sequence>
     </complexType>
 </schema>
