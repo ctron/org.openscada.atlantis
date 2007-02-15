@@ -48,7 +48,7 @@ public abstract class DataItemInputOutputChained extends DataItemInputChained
     {
         Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
         
-        for ( ChainProcessEntry entry: _chain )
+        for ( ChainProcessEntry entry: getChainCopy () )
         {
             if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
             {
