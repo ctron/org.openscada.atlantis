@@ -123,11 +123,13 @@ public abstract class DataItemBaseChained extends DataItemBase
             ChainProcessEntry entry = i.next ();
 
             if ( entry.getWhen ().equals ( when ) )
+            {
                 if ( entry.getWhat () == item )
                 {
                     i.remove ();
                     n++;
                 }
+            }
         }
         
         if ( n > 0 )
