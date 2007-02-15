@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,7 +61,9 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         try
         {
             if ( !_highLevel.getValue ().isNull () && !value.isNull () )
+            {
                 attributes.put ( HIGH_ALARM, new Variant ( value.asDouble () >= _highLevel.getValue ().asDouble () ) );
+            }
             
         }
         catch ( Exception e )
@@ -73,7 +75,9 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         try
         {
             if ( !_lowLevel.getValue().isNull () && !value.isNull () )
+            {
                 attributes.put ( LOW_ALARM, new Variant ( value.asDouble () <= _lowLevel.getValue ().asDouble () ) );
+            }
         }
         catch ( Exception e )
         {
