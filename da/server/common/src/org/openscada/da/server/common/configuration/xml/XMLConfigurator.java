@@ -41,6 +41,7 @@ import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.utils.str.StringHelper;
+import org.w3c.dom.Node;
 
 public class XMLConfigurator implements Configurator
 {   
@@ -70,6 +71,11 @@ public class XMLConfigurator implements Configurator
     public XMLConfigurator ( File file ) throws ConfigurationError, XmlException, IOException
     {
         this ( HiveDocument.Factory.parse ( file ) );
+    }
+    
+    public XMLConfigurator ( Node node ) throws ConfigurationError, XmlException 
+    {
+        this ( HiveDocument.Factory.parse ( node ) );
     }
     
     /* (non-Javadoc)
