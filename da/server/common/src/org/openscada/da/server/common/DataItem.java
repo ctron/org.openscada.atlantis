@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,22 +28,22 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.server.DataItemInformation;
 
-public interface DataItem {
-	
-	public DataItemInformation getInformation ();
-	
-	public Variant getValue () throws InvalidOperationException;
-	public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException;
-	
-	public Map<String, Variant> getAttributes ();
-	public WriteAttributeResults setAttributes ( Map<String,Variant> attributes );
-	
-	/** Sets the listener for this item
-	 * @param listener The listener to use or null to disable notification
-	 * 
-	 * Set by the controller to which this item is registered. The item has to use the listener
-	 * provided.
-	 * 
-	 */
-	public void setListener ( ItemListener listener );
+public interface DataItem
+{
+    public DataItemInformation getInformation ();
+
+    public Variant getValue () throws InvalidOperationException;
+    public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException;
+
+    public Map<String, Variant> getAttributes ();
+    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes );
+
+    /** Sets the listener for this item
+     * @param listener The listener to use or null to disable notification
+     * 
+     * Set by the controller to which this item is registered. The item has to use the listener
+     * provided.
+     * 
+     */
+    public void setListener ( ItemListener listener );
 }
