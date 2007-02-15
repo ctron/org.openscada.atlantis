@@ -2,9 +2,9 @@ package org.openscada.core.subscription;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * Manage subscriptions.
@@ -14,9 +14,9 @@ import java.util.Map;
  */
 public class SubscriptionManager
 {
-    private Map<Object,Subscription> _subscriptions = new HashMap<Object,Subscription> ();
+    private Map<Object, Subscription> _subscriptions = new HashMap<Object, Subscription> ();
     private SubscriptionValidator _validator = null;
-    
+
     /**
      * Unsibscribe from all subscriptions that the listener has subscribed to
      * @param listener the listener to unsubscribe
@@ -24,13 +24,13 @@ public class SubscriptionManager
     public synchronized void unsubscribeAll ( SubscriptionListener listener )
     {
         List<Subscription> subcriptionList = new ArrayList<Subscription> ( _subscriptions.values () );
-        
+
         for ( Subscription s : subcriptionList )
         {
             s.unsubscribe ( listener );
         }
     }
-    
+
     public synchronized void subscribe ( Object topic, SubscriptionListener listener ) throws ValidationException
     {
         SubscriptionValidator v;
@@ -41,17 +41,17 @@ public class SubscriptionManager
                 throw new ValidationException ();
             }
         }
-        
+
         Subscription s = _subscriptions.get ( topic );
         if ( s == null )
         {
             s = new Subscription ( topic );
             _subscriptions.put ( topic, s );
         }
-        
+
         s.subscribe ( listener );
     }
-    
+
     public synchronized void unsubscribe ( Object topic, SubscriptionListener listener )
     {
         Subscription s = _subscriptions.get ( topic );
@@ -59,9 +59,9 @@ public class SubscriptionManager
         {
             return;
         }
-        
+
         s.unsubscribe ( listener );
-        
+
         if ( s.isEmpty () )
         {
             _subscriptions.remove ( topic );
@@ -72,7 +72,7 @@ public class SubscriptionManager
     {
         _validator = validator;
     }
-    
+
     /**
      * Set a source for a topic
      * @param topic the topic
@@ -85,21 +85,21 @@ public class SubscriptionManager
         {
             return;
         }
-        
+
         if ( s == null )
         {
             s = new Subscription ( topic );
             _subscriptions.put ( topic, s );
         }
-        
+
         s.setSource ( source );
-        
+
         if ( s.isEmpty () )
         {
             _subscriptions.remove ( topic );
         }
     }
-    
+
     /**
      * Get the number of subscriptions currently registered
      * @return the number of subscriptions
@@ -107,5 +107,24 @@ public class SubscriptionManager
     public int getSubscriptionCount ()
     {
         return _subscriptions.size ();
+    }
+
+    /**
+     * Get all topic whose subscription is in granted state.
+     * @return The list of topics whose subscription is in granted state.
+     */
+    public synchronized List<Object> getAllGrantedTopics ()
+    {
+        List<Object> topicList = new LinkedList<Object> ();
+        
+        for ( Map.Entry<Object, Subscription> entry : _subscriptions.entrySet () )
+        {
+            if ( entry.getValue ().isGranted () )
+            {
+                topicList.add ( entry.getKey () );
+            }
+        }
+        
+        return topicList;
     }
 }
