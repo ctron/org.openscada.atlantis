@@ -59,7 +59,9 @@ public abstract class DataItemBaseChained extends DataItemBase
         AttributesHelper.mergeAttributes ( _primaryAttributes, attributes, diff );
         
         if ( diff.size () > 0 )
+        {
             process ();
+        }
     }
 
     public Map<String, Variant> getAttributes ()

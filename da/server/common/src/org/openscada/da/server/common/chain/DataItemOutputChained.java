@@ -70,7 +70,9 @@ public abstract class DataItemOutputChained extends DataItemBaseChained
         for ( ChainProcessEntry entry: _chain )
         {
             if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
+            {
                 entry.getWhat ().process ( value, primaryAttributes );
+            }
         }
         
         _secondaryAttributes.set ( primaryAttributes );
