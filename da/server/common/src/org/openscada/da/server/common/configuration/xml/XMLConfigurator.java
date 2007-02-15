@@ -44,56 +44,71 @@ import org.openscada.utils.str.StringHelper;
 import org.w3c.dom.Node;
 
 public class XMLConfigurator implements Configurator
-{   
+{
     private static Logger _log = Logger.getLogger ( XMLConfigurator.class );
-    
-    private HiveDocument _document = null;
-    
+
+    private FactoriesType _factoriesPart = null;
+    private ItemTemplatesType _itemTemplatesPart = null;
+    private ItemsType _itemsPart = null;
+    private BrowserType _browserPart = null;
+
     private Map<String, Factory> _factories = new HashMap<String, Factory> ();
     private Map<String, Template> _templates = new HashMap<String, Template> ();
     private Map<String, Item> _items = new HashMap<String, Item> ();
-    
+
+    public XMLConfigurator ( FactoriesType factoriesPart, ItemTemplatesType itemTemplatesPart, ItemsType itemsPart, BrowserType browserPart )
+    {
+        super ();
+        _factoriesPart = factoriesPart;
+        _itemTemplatesPart = itemTemplatesPart;
+        _itemsPart = itemsPart;
+        _browserPart = browserPart;
+    }
+
     public XMLConfigurator ( HiveDocument hiveDocument ) throws ConfigurationError
     {
-        _document = hiveDocument;
-        
-        if ( !_document.validate () )
+        if ( !hiveDocument.validate () )
         {
             throw new ConfigurationError ( "Document is not valid!" );
         }
+
+        _factoriesPart = hiveDocument.getHive ().getFactories ();
+        _itemTemplatesPart = hiveDocument.getHive ().getItemTemplates ();
+        _itemsPart = hiveDocument.getHive ().getItems ();
+        _browserPart = hiveDocument.getHive ().getBrowser ();
     }
-    
+
     public XMLConfigurator ( InputStream stream ) throws ConfigurationError, XmlException, IOException
     {
         this ( HiveDocument.Factory.parse ( stream ) );
     }
-    
+
     public XMLConfigurator ( File file ) throws ConfigurationError, XmlException, IOException
     {
         this ( HiveDocument.Factory.parse ( file ) );
     }
-    
-    public XMLConfigurator ( Node node ) throws ConfigurationError, XmlException 
+
+    public XMLConfigurator ( Node node ) throws ConfigurationError, XmlException
     {
         this ( HiveDocument.Factory.parse ( node ) );
     }
-    
+
     /* (non-Javadoc)
      * @see org.openscada.da.server.common.configuration.Configurator#configure()
      */
-    synchronized public void configure ( ConfigurableHive hive ) throws ConfigurationError
+    public synchronized void configure ( ConfigurableHive hive ) throws ConfigurationError
     {
         _factories.clear ();
         _items.clear ();
         _templates.clear ();
-        
-        configureFactories ( hive, _document.getHive ().getFactories () );
-        configureTemplates ( hive, _document.getHive ().getItemTemplates () );
-        configureItems ( hive, _document.getHive ().getItems () );
-        configureBrowser ( hive, _document.getHive ().getBrowser () );
+
+        configureFactories ( hive, _factoriesPart );
+        configureTemplates ( hive, _itemTemplatesPart );
+        configureItems ( hive, _itemsPart );
+        configureBrowser ( hive, _browserPart );
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings ( "unchecked" )
     private void configureFactories ( ConfigurableHive hive, FactoriesType factories ) throws ConfigurationError
     {
         for ( FactoryType factory : factories.getFactoryList () )
@@ -107,7 +122,7 @@ public class XMLConfigurator implements Configurator
             {
                 throw new ConfigurationError ( "Unable to find factory class: " + factory.getFactoryClass (), e );
             }
-            
+
             Object factoryObject = null;
             try
             {
@@ -131,22 +146,23 @@ public class XMLConfigurator implements Configurator
             {
                 throw new ConfigurationError ( "Unable to instantiate object for factory class: " + factory, e );
             }
-            if ( ! (factoryObject instanceof DataItemFactory) )
+            if ( ! ( factoryObject instanceof DataItemFactory ) )
             {
-                throw new ConfigurationError ( String.format ( "Factory class %s does not implement DataItemFactory interface", factory ) );
+                throw new ConfigurationError ( String.format (
+                        "Factory class %s does not implement DataItemFactory interface", factory ) );
             }
-            
+
             if ( factoryObject instanceof ConfigurableFactory )
             {
-                ((ConfigurableFactory)factoryObject).configure ( factory.newDomNode () );
+                ( (ConfigurableFactory)factoryObject ).configure ( factory.newDomNode () );
             }
-            
+
             hive.addItemFactory ( (DataItemFactory)factoryObject );
-            
+
             // remember factory for later use
             Factory factory2 = new Factory ();
             factory2.setFactory ( (DataItemFactory)factoryObject );
-            
+
             _factories.put ( factory.getId (), factory2 );
         }
     }
@@ -155,18 +171,18 @@ public class XMLConfigurator implements Configurator
     {
         if ( browser == null )
             return;
-        
+
         Folder folder = hive.getRootFolder ();
         if ( folder == null )
         {
             hive.setRootFolder ( folder = new FolderCommon () );
         }
-        
+
         if ( ! ( folder instanceof ConfigurableFolder ) )
         {
             throw new ConfigurationError ( "Root folder does not implement ConfigurableFolder" );
         }
-        
+
         Stack<String> folderStack = new Stack<String> ();
         configureFolder ( hive, (ConfigurableFolder)folder, browser.getFolder (), folderStack );
     }
@@ -179,13 +195,17 @@ public class XMLConfigurator implements Configurator
             String name = entry.getName ();
             FolderType subFolder = entry.getFolder ();
             DataItemReferenceType itemReference = entry.getDataItemReference ();
-            
+
             if ( ( subFolder != null ) && ( itemReference != null ) )
-                throw new ConfigurationError ( String.format ( "Item %s in folder %s has both folder and item reference set! Only one is allowed!", name, StringHelper.join ( folderStack, "/" ) ) );
-            
+                throw new ConfigurationError ( String.format (
+                        "Item %s in folder %s has both folder and item reference set! Only one is allowed!", name,
+                        StringHelper.join ( folderStack, "/" ) ) );
+
             if ( ( subFolder == null ) && ( itemReference == null ) )
-                throw new ConfigurationError ( String.format ( "Item %s in folder %s has neither folder nor item reference set!", name, StringHelper.join ( folderStack, "/" ) ) );
-            
+                throw new ConfigurationError ( String.format (
+                        "Item %s in folder %s has neither folder nor item reference set!", name, StringHelper.join (
+                                folderStack, "/" ) ) );
+
             if ( subFolder != null )
             {
                 ConfigurableFolder newSubFolder = new FolderCommon ();
@@ -203,14 +223,17 @@ public class XMLConfigurator implements Configurator
 
     private void configureItemEntry ( ConfigurableHive hive, ConfigurableFolder configurableFolder, DataItemReferenceType itemReference, String name, Map<String, Variant> attributes, Stack<String> folderStack ) throws ConfigurationError
     {
-        
+
         if ( itemReference.getRef () != null )
         {
             Item item = _items.get ( itemReference.getRef () );
-            
+
             if ( item == null )
-                throw new ConfigurationError ( String.format ( "Entry %s in folder %s is strict-referencing to item %s which is not configured. Either use weak-ref or configure item", name, StringHelper.join ( folderStack, "/" ), itemReference.getRef () ) );
-            
+                throw new ConfigurationError (
+                        String.format (
+                                "Entry %s in folder %s is strict-referencing to item %s which is not configured. Either use weak-ref or configure item",
+                                name, StringHelper.join ( folderStack, "/" ), itemReference.getRef () ) );
+
             // merge local browser attributes over item's browser attributes 
             Map<String, Variant> browserAttributes = new HashMap<String, Variant> ( item.getBrowserAttributes () );
             browserAttributes.putAll ( attributes );
@@ -223,21 +246,23 @@ public class XMLConfigurator implements Configurator
             request.setId ( itemReference.getWeakRef () );
             request.setBrowserAttributes ( attributes );
             DataItem dataItem = hive.retrieveItem ( request );
-            
+
             if ( dataItem != null )
                 configurableFolder.add ( name, dataItem, attributes );
             else
-                throw new ConfigurationError ( String.format ( "Entry %s in folder %s is weak-referencing to item %s which cannot be found", name, StringHelper.join ( folderStack, "/" ), itemReference.getRef () ) );
+                throw new ConfigurationError ( String.format (
+                        "Entry %s in folder %s is weak-referencing to item %s which cannot be found", name,
+                        StringHelper.join ( folderStack, "/" ), itemReference.getRef () ) );
         }
     }
-    
+
     private void configureItems ( ConfigurableHive hive, ItemsType items ) throws ConfigurationError
     {
         if ( items == null )
             return;
         if ( items.getDataItemList () == null )
             return;
-        
+
         for ( DataItemType dataItem : items.getDataItemList () )
         {
             String id = dataItem.getId ();
@@ -245,9 +270,10 @@ public class XMLConfigurator implements Configurator
             Template template = _templates.get ( dataItem.getTemplate () );
             if ( ( template == null ) && ( dataItem.getTemplate () != null ) )
             {
-                throw new ConfigurationError ( String.format ( "Item %s requires template %s which is not configured", id, dataItem.getTemplate () ) ); 
+                throw new ConfigurationError ( String.format ( "Item %s requires template %s which is not configured",
+                        id, dataItem.getTemplate () ) );
             }
-            
+
             Item item;
             if ( template != null )
             {
@@ -260,9 +286,9 @@ public class XMLConfigurator implements Configurator
 
             // expand local configuration to object
             overwriteWithLocal ( item, dataItem, "item", id );
-            
+
             instantiateItem ( hive, item );
-            
+
             _items.put ( id, item );
         }
     }
@@ -294,39 +320,43 @@ public class XMLConfigurator implements Configurator
             return;
 
         DataItem dataItem;
-        
+
         DataItemFactoryRequest request = new DataItemFactoryRequest ();
         request.setId ( item.getId () );
         request.setBrowserAttributes ( item.getBrowserAttributes () );
         request.setItemAttributes ( item.getItemAttributes () );
         request.setItemChain ( FactoryHelper.instantiateChainList ( item.getChainEntries () ) );
-        
+
         if ( item.getFactory () != null )
         {
             // explicit instatiation
             _log.debug ( String.format ( "Trying to create item %s using provided item factory", item.getId () ) );
-            
+
             if ( hive.lookupItem ( item.getId () ) != null )
             {
-                throw new ConfigurationError ( String.format ( "Data item %s was configured to be instiated explicitly but already exists in the hive. Unable to create it twice. Remove from configuration, change item id or change to implict creating using hive/factories", item.getId () ) );
+                throw new ConfigurationError (
+                        String.format (
+                                "Data item %s was configured to be instiated explicitly but already exists in the hive. Unable to create it twice. Remove from configuration, change item id or change to implict creating using hive/factories",
+                                item.getId () ) );
             }
-            
+
             dataItem = item.getFactory ().getFactory ().create ( request );
-            
+
             hive.registerItem ( dataItem );
         }
         else
         {
             // try using hive::retrieveItem
             _log.debug ( String.format ( "Trying to retrieve the item %s from the hive", item.getId () ) );
-            
+
             dataItem = hive.retrieveItem ( request );
             if ( dataItem == null )
             {
-                throw new ConfigurationError ( String.format ( "Unable to retrieve item %s from factory", item.getId () ) );
+                throw new ConfigurationError (
+                        String.format ( "Unable to retrieve item %s from factory", item.getId () ) );
             }
         }
-        
+
         item.setItem ( dataItem );
     }
 
@@ -336,20 +366,20 @@ public class XMLConfigurator implements Configurator
             return;
         if ( itemTemplates.getTemplateList () == null )
             return;
-        
+
         Map<String, ItemTemplateType> unexpandedTemplates = new HashMap<String, ItemTemplateType> ();
-        
+
         // Copy all with ID to be able to expand them easily
         for ( ItemTemplateType itemTemplate : itemTemplates.getTemplateList () )
         {
             unexpandedTemplates.put ( itemTemplate.getId (), itemTemplate );
         }
-        
+
         for ( ItemTemplateType itemTemplate : itemTemplates.getTemplateList () )
         {
             Stack<String> templateStack = new Stack<String> ();
             Template template = getExpandedTemplate ( templateStack, unexpandedTemplates, itemTemplate.getId () );
-            
+
             // only register with hive if a pattern is set
             if ( template.getPattern () != null )
             {
@@ -365,13 +395,14 @@ public class XMLConfigurator implements Configurator
 
     private void overwriteWithLocal ( ItemBase itemBase, DataItemBaseType dataItemBase, String objectType, String id ) throws ConfigurationError
     {
-        
+
         if ( dataItemBase.getItemFactory () != null )
         {
             Factory factory = _factories.get ( dataItemBase.getItemFactory () );
             if ( factory == null )
             {
-                throw new ConfigurationError ( String.format ( "%s %s requires factory %s which is not configured", objectType, id, dataItemBase.getItemFactory () ) );
+                throw new ConfigurationError ( String.format ( "%s %s requires factory %s which is not configured",
+                        objectType, id, dataItemBase.getItemFactory () ) );
             }
             itemBase.setFactory ( factory );
         }
@@ -383,9 +414,10 @@ public class XMLConfigurator implements Configurator
         }
         catch ( Exception e )
         {
-            throw new ConfigurationError ( String.format ( "Failed to merge browser attributes for %s %s", objectType, id ), e );
+            throw new ConfigurationError ( String.format ( "Failed to merge browser attributes for %s %s", objectType,
+                    id ), e );
         }
-        
+
         // merge item attributes
         try
         {
@@ -393,9 +425,10 @@ public class XMLConfigurator implements Configurator
         }
         catch ( Exception e )
         {
-            throw new ConfigurationError ( String.format ( "Failed to merge item attributes for %s %s", objectType, id ), e );
+            throw new ConfigurationError (
+                    String.format ( "Failed to merge item attributes for %s %s", objectType, id ), e );
         }
-        
+
         // merge item chains
         if ( dataItemBase.getChain () != null )
         {
@@ -408,48 +441,50 @@ public class XMLConfigurator implements Configurator
                 }
                 catch ( ClassNotFoundException e )
                 {
-                    throw new ConfigurationError ( String.format ( "Unable to create item element of class %s for item %s", chainItem.getClass1 (), id ), e );
+                    throw new ConfigurationError ( String.format (
+                            "Unable to create item element of class %s for item %s", chainItem.getClass1 (), id ), e );
                 }
-               
+
                 ChainEntry entry = new ChainEntry ();
                 entry.setWhat ( chainItemClass );
-                
-                if (  chainItem.getDirection ().toString ().equals ( "in" ) )
+
+                if ( chainItem.getDirection ().toString ().equals ( "in" ) )
                     entry.setWhen ( EnumSet.of ( IODirection.INPUT ) );
                 else if ( chainItem.getDirection ().toString ().equals ( "out" ) )
                     entry.setWhen ( EnumSet.of ( IODirection.OUTPUT ) );
                 else if ( chainItem.getDirection ().toString ().equals ( "inout" ) )
                     entry.setWhen ( EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) );
-                
+
                 itemBase.getChainEntries ().add ( entry );
             }
         }
 
     }
-    
+
     private Template getExpandedTemplate ( Stack<String> templateStack, Map<String, ItemTemplateType> unexpandedTemplates, String id ) throws ConfigurationError
     {
         if ( _templates.containsKey ( id ) )
             return _templates.get ( id );
-        
+
         if ( templateStack.contains ( id ) )
-            throw new ConfigurationError ( String.format ( "Infinite template recursion on template %s: path is: %s", id, StringHelper.join ( templateStack, "->" ) ) );
-        
+            throw new ConfigurationError ( String.format ( "Infinite template recursion on template %s: path is: %s",
+                    id, StringHelper.join ( templateStack, "->" ) ) );
+
         _log.debug ( "Expanding template: " + id );
-        
+
         templateStack.push ( id );
-        
+
         ItemTemplateType itemTemplate = unexpandedTemplates.get ( id );
         if ( itemTemplate == null )
             throw new ConfigurationError ( String.format ( "Template %s is not configured", id ) );
-        
+
         String extendsId = itemTemplate.getExtends ();
         Template template;
         if ( extendsId != null )
             template = new Template ( getExpandedTemplate ( templateStack, unexpandedTemplates, extendsId ) );
         else
             template = new Template ();
-       
+
         // set the item pattern
         try
         {
@@ -461,11 +496,12 @@ public class XMLConfigurator implements Configurator
         }
         catch ( Exception e )
         {
-            throw new ConfigurationError ( String.format ( "Template %s has an invalid item pattern: %s", id, itemTemplate.getItemPattern () ) );
+            throw new ConfigurationError ( String.format ( "Template %s has an invalid item pattern: %s", id,
+                    itemTemplate.getItemPattern () ) );
         }
-        
+
         overwriteWithLocal ( template, itemTemplate, "template", id );
-        
+
         _templates.put ( id, template );
         return template;
     }
