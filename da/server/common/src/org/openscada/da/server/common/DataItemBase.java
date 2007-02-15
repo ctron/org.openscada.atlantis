@@ -26,39 +26,61 @@ import org.openscada.da.core.server.DataItemInformation;
 
 public abstract class DataItemBase implements DataItem
 {
-	protected ItemListener _listener;
-	
-	private DataItemInformation _information;
-    
-	public DataItemBase ( DataItemInformation information )
-	{
-        _information = information;
-	}
-	
-	public DataItemInformation getInformation ()
-	{
-		return _information;
-	}
-	
-	public void setListener ( ItemListener listener )
+    protected ItemListener _listener;
+
+    private DataItemInformation _information;
+
+    public DataItemBase ( DataItemInformation information )
     {
-		synchronized ( this )
-		{
-			_listener = listener;
-		}
-	}
-	
-	public void notifyValue ( Variant value )
-	{
-		synchronized ( this )
-		{
-			if ( _listener != null )
-			{
-				_listener.valueChanged ( this, value );
-			}
-		}
-	}
-	
+        _information = information;
+    }
+
+    public DataItemInformation getInformation ()
+    {
+        return _information;
+    }
+
+    public void setListener ( ItemListener listener )
+    {
+        synchronized ( this )
+        {
+            if ( _listener != listener )
+            {
+                handleListenerChange ( listener );
+            }
+        }
+    }
+
+    protected void handleListenerChange ( ItemListener listener )
+    {
+        if ( listener == null )
+        {
+            if ( this instanceof SuspendableDataItem )
+            {
+                ( (SuspendableDataItem)this ).suspend ();
+            }
+        }
+        else if ( _listener == null )
+        {
+            if ( this instanceof SuspendableDataItem )
+            {
+                ( (SuspendableDataItem)this ).wakeup ();
+            }
+        }
+        _listener = listener;
+    }
+
+    public void notifyValue ( Variant value )
+    {
+        synchronized ( this )
+        {
+            if ( _listener != null )
+            {
+                _listener.valueChanged ( this, value );
+            }
+        }
+    }
+
     /**
      * Notify internal listeners ( most commonly the hive ) about
      * changes in the attribute set.
@@ -66,19 +88,19 @@ public abstract class DataItemBase implements DataItem
      * If the change set is empty the event will not be forwarded
      * @param attributes the list of changes made to the attributes
      */
-	public void notifyAttributes ( Map<String, Variant> attributes )
-	{
+    public void notifyAttributes ( Map<String, Variant> attributes )
+    {
         if ( attributes.size () <= 0 )
             return;
-        
-		synchronized ( this )
-		{
-			if ( _listener != null )
-			{
-				_listener.attributesChanged ( this, attributes );
-			}
-		}
-		
-	}
-    
+
+        synchronized ( this )
+        {
+            if ( _listener != null )
+            {
+                _listener.attributesChanged ( this, attributes );
+            }
+        }
+
+    }
+
 }
