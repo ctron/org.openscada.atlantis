@@ -24,11 +24,21 @@ public class Subscription
      * A subscription is empty if it neither has a subcription source set nor listeners
      * attached to it.
      * 
-     * @return <code>true</code> if the subscription is empty
+     * @return <code>true</code> if the subscription is empty, <code>false</code> otherwise
      */
     public synchronized boolean isEmpty ()
     {
         return ( _source == null ) && _listeners.isEmpty ();
+    }
+    
+    /**
+     * Check if the subscription is in granted state. This means that no source
+     * is connected but there are listeners attached.
+     * @return <code>true</code> if the subscription is in granted state, <code>false</code> otherwise
+     */
+    public synchronized boolean isGranted ()
+    {
+        return ( _source == null ) && !_listeners.isEmpty ();
     }
 
     public synchronized void subscribe ( SubscriptionListener listener )
