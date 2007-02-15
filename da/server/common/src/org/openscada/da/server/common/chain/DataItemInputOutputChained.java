@@ -61,5 +61,5 @@ public abstract class DataItemInputOutputChained extends DataItemInputChained
         writeCalculatedValue ( value );
     }
     
-    protected abstract void writeCalculatedValue ( Variant value );
+    protected abstract void writeCalculatedValue ( Variant value ) throws NotConvertableException, InvalidOperationException;
 }
