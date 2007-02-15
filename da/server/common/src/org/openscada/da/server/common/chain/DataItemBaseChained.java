@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.common.chain;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -73,7 +74,7 @@ public abstract class DataItemBaseChained extends DataItemBase
     {
         WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
         
-        for ( ChainProcessEntry chainEntry : getChainEntries () )
+        for ( ChainProcessEntry chainEntry : getChainCopy () )
         {
             ChainItem item = chainEntry.getWhat ();
             
@@ -95,7 +96,6 @@ public abstract class DataItemBaseChained extends DataItemBase
         
         return WriteAttributesHelper.errorUnhandled ( writeAttributeResults, attributes );
     }
-    
     
     protected abstract void process ();
     
@@ -135,9 +135,9 @@ public abstract class DataItemBaseChained extends DataItemBase
             process ();
     }
 
-    protected synchronized Collection<ChainProcessEntry> getChainEntries ()
+    protected synchronized Collection<ChainProcessEntry> getChainCopy ()
     {
-        return Arrays.asList ( _chain.toArray ( new ChainProcessEntry[0] ) );
+        return new ArrayList<ChainProcessEntry> ( _chain );
     }
 
 
