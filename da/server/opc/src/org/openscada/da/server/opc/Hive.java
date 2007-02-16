@@ -23,6 +23,7 @@ import org.apache.xmlbeans.XmlException;
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItemCommand;
+import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.opc.lib.common.ConnectionInformation;
 import org.openscada.utils.collection.MapBuilder;
@@ -41,18 +42,18 @@ public class Hive extends HiveCommon
     
     private DataItemCommand _gcCommand = null;
 
-    public Hive () throws XmlException, IOException 
+    public Hive () throws XmlException, IOException, ConfigurationError 
     {
         this ( (XMLConfigurator)null );
         configure ();
     }
     
-    public Hive ( Node node ) throws XmlException, IOException
+    public Hive ( Node node ) throws XmlException, IOException, ConfigurationError
     {
         this ( new XMLConfigurator ( node ) );
     }
     
-    public Hive ( XMLConfigurator configurator ) throws XmlException, IOException
+    public Hive ( XMLConfigurator configurator ) throws XmlException, IOException, ConfigurationError
     {
         super ();
 
@@ -94,7 +95,7 @@ public class Hive extends HiveCommon
         configure ( configurator );
     }
     
-    public void configure ( XMLConfigurator configurator )
+    public void configure ( XMLConfigurator configurator ) throws ConfigurationError
     {
         if ( configurator != null )
         {
@@ -102,7 +103,7 @@ public class Hive extends HiveCommon
         }
     }
     
-    public void configure () throws XmlException, IOException
+    public void configure () throws XmlException, IOException, ConfigurationError
     {
         configure ( new XMLConfigurator ( "configuration.xml" ) );
         

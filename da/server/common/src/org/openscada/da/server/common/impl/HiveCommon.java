@@ -199,6 +199,7 @@ public class HiveCommon implements Hive, ConfigurableHive
 
         synchronized ( _sessions )
         {
+            _log.debug ( "Close session: " + session );
             fireSessionDestroy ( (SessionCommon)session );
             
             // destroy all subscriptions for this session
@@ -319,9 +320,25 @@ public class HiveCommon implements Hive, ConfigurableHive
             return _itemMap.get ( new DataItemInformationBase ( id ) );
         }
     }
+    
+    public FactoryTemplate findFactoryTemplate ( String item )
+    {
+        synchronized ( _templates )
+        {
+            for ( FactoryTemplate template : _templates )
+            {
+                if ( template.getPattern ().matcher ( item ).matches () )
+                {
+                    return template;
+                }
+            }
+        }
+        return null;
+    }
 
     public DataItem retrieveItem ( String id )
     {
+        // if we already have the item we don't need to create it
         DataItem dataItem = lookupItem ( id );
         if ( dataItem != null )
         {
@@ -330,26 +347,20 @@ public class HiveCommon implements Hive, ConfigurableHive
 
         DataItemFactoryRequest request = new DataItemFactoryRequest ();
         request.setId ( id );
-
-        synchronized ( _templates )
+        
+        FactoryTemplate template = findFactoryTemplate ( id );
+        if ( template != null )
         {
-            for ( FactoryTemplate template : _templates )
+            request.setBrowserAttributes ( template.getBrowserAttributes () );
+            request.setItemAttributes ( template.getItemAttributes () );
+            try
             {
-                if ( template.getPattern ().matcher ( id ).matches () )
-                {
-                    request.setBrowserAttributes ( template.getBrowserAttributes () );
-                    request.setItemAttributes ( template.getItemAttributes () );
-                    try
-                    {
-                        request.setItemChain ( FactoryHelper.instantiateChainList ( template.getChainEntries () ) );
-                    }
-                    catch ( ConfigurationError e )
-                    {
-                        _log.warn ( String.format ( "Unable to create item %s", id ), e );
-                        return null;
-                    }
-                    break;
-                }
+                request.setItemChain ( FactoryHelper.instantiateChainList ( template.getChainEntries () ) );
+            }
+            catch ( ConfigurationError e )
+            {
+                _log.warn ( String.format ( "Unable to create item %s", id ), e );
+                return null;
             }
         }
 
@@ -554,6 +565,21 @@ public class HiveCommon implements Hive, ConfigurableHive
         synchronized ( _templates )
         {
             _templates.add ( template );
+        }
+    }
+    
+    /**
+     * Will re-check all items in granted state. Call when your list of known items
+     * has changed in order to give granted but not connected subscriptions a chance
+     * to be created by the factories.
+     */
+    public void recheckGrantedItems ()
+    {
+        List<Object> topics = _itemSubscriptionManager.getAllGrantedTopics ();
+        
+        for ( Object topic : topics )
+        {
+            retrieveItem ( topic.toString () );
         }
     }
 }

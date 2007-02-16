@@ -2,6 +2,7 @@ package org.openscada.core.subscription;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +24,15 @@ public class SubscriptionManager
      */
     public synchronized void unsubscribeAll ( SubscriptionListener listener )
     {
-        List<Subscription> subcriptionList = new ArrayList<Subscription> ( _subscriptions.values () );
-
-        for ( Subscription s : subcriptionList )
+        for ( Iterator<Map.Entry<Object, Subscription>> i = _subscriptions.entrySet ().iterator (); i.hasNext (); )
         {
-            s.unsubscribe ( listener );
+            Map.Entry<Object, Subscription> entry = i.next ();
+            entry.getValue ().unsubscribe ( listener );
+            
+            if ( entry.getValue ().isEmpty () )
+            {
+                i.remove ();
+            }
         }
     }
 

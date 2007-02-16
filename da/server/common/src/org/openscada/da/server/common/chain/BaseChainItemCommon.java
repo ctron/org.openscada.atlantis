@@ -77,6 +77,10 @@ public abstract class BaseChainItemCommon implements ChainItem
         _binders.remove ( name );
     }
     
+    /**
+     * Add the attributes from the value binders
+     * @param attributes the map to which the attributes should be bound
+     */
     public void addAttributes ( Map<String, Variant> attributes )
     {
         for ( Map.Entry<String, AttributeBinder> entry : _binders.entrySet () )

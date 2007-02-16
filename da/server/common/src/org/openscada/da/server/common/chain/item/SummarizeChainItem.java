@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.chain.BaseChainItemCommon;
 import org.openscada.utils.str.StringHelper;
@@ -34,6 +35,8 @@ import org.openscada.utils.str.StringHelper;
  */
 public abstract class SummarizeChainItem extends BaseChainItemCommon
 {
+    private static Logger _log = Logger.getLogger ( SummarizeChainItem.class );
+
     private String _sumStateName;
     private String _sumCountName;
     private String _sumListName;
@@ -41,14 +44,14 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
     public SummarizeChainItem ( String baseName )
     {
         super ();
-        
+
         _sumStateName = baseName;
         _sumCountName = baseName + ".count";
         _sumListName = baseName + ".items";
 
         setReservedAttributes ( _sumStateName, _sumCountName, _sumListName );
     }
-    
+
     /**
      * The method that will check if the attribute entry matches the condition.
      * @param value The current item value
@@ -66,15 +69,33 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
 
         long count = 0;
         List<String> items = new LinkedList<String> ();
+        
+        _log.debug ( "Summarizing attributes" );
 
         for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
-            if ( matches ( value, entry.getKey (), entry.getValue () ) )
+            String attributeName = entry.getKey ();
+
+            _log.debug ( String.format ( "Process attribute '%s'", attributeName ) );
+            
+            // ignore our own entries
+            if ( !attributeName.equals ( _sumStateName ) && !attributeName.equals ( _sumCountName )
+                    && !attributeName.equals ( _sumListName ) )
             {
-                if ( entry.getValue ().asBoolean () )
+                try
                 {
-                    count++;
-                    items.add ( entry.getKey () );
+                    if ( matches ( value, attributeName, entry.getValue () ) )
+                    {
+                        if ( entry.getValue ().asBoolean () )
+                        {
+                            count++;
+                            items.add ( entry.getKey () );
+                        }
+                    }
+                }
+                catch ( Exception e )
+                {
+                    _log.warn ( String.format ( "Failed to summarize item '%s'", attributeName ), e );
                 }
             }
         }

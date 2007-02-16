@@ -14,3 +14,6 @@ Require-Bundle: log4j_wrapper_plugin,
 Eclipse-LazyStart: true
 Bundle-Vendor: OpenSCADA
 Eclipse-RegisterBuddy: org.apache.log4j
+Export-Package: org.openscada.da.client.test,
+ org.openscada.da.client.test.impl,
+ org.openscada.da.client.test.views.realtime

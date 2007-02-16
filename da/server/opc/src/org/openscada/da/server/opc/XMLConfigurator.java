@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.apache.xmlbeans.XmlException;
 import org.openscada.da.opc.configuration.ConfigurationType;
 import org.openscada.da.opc.configuration.RootDocument;
+import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.opc.lib.common.ConnectionInformation;
 import org.w3c.dom.Node;
 
@@ -29,12 +30,18 @@ public class XMLConfigurator
         this ( RootDocument.Factory.parse ( new File ( filename ) ) );
     }
     
-    public void configure ( Hive hive )
+    public void configure ( Hive hive ) throws ConfigurationError
     {
+        // first configure the base hive
+        new org.openscada.da.server.common.configuration.xml.XMLConfigurator ( null, _rootDocument.getRoot ().getItemTemplates (), null, null ).configure ( hive );
+        
+        // now configure the opc hive
         for ( ConfigurationType configuration : _rootDocument.getRoot ().getConnections ().getConfigurationList () )
         {
             if ( !configuration.getEnabled () )
+            {
                 continue;
+            }
             
             ConnectionInformation ci = new ConnectionInformation ();
             ci.setUser ( configuration.getUser () );
@@ -48,11 +55,17 @@ public class XMLConfigurator
             
             String access = configuration.getAccess ();
             if ( access.equalsIgnoreCase ( "sync" ) )
+            {
                 setup.setAccessMethod ( AccessMethod.SYNC );
+            }
             else if ( access.equalsIgnoreCase ( "async" ) )
+            {
                 setup.setAccessMethod ( AccessMethod.ASYNC20 );
+            }
             else if ( access.equalsIgnoreCase ( "async20" ) )
+            {
                 setup.setAccessMethod ( AccessMethod.ASYNC20 );
+            }
             
             setup.setRefreshTimeout ( configuration.getRefresh () );
             setup.setInitialConnect ( configuration.getInitialRefresh () );

@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.query.AnyMatcher;
 import org.openscada.da.server.browser.common.query.AttributeNameProvider;
@@ -21,7 +22,6 @@ import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.opc.dcom.common.Result;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
-import org.openscada.opc.lib.common.AlreadyConnectedException;
 import org.openscada.opc.lib.common.NotConnectedException;
 import org.openscada.opc.lib.da.AccessBase;
 import org.openscada.opc.lib.da.AccessStateListener;
@@ -62,8 +62,6 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
     private DataItemCommand _suicideCommandItem = null;
     private DataItemInputChained _accessStateItem = null;
     private DataItemInputChained _activeCountItem = null;
-
-    private Thread _connectThread = null;
 
     private ServerStateReader _serverStateReader = null;
 
@@ -183,7 +181,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         // register state item
         _hive.registerItem ( _stateItem );
         _connectionFolder.add ( "state", _stateItem, new MapBuilder<String, Variant> ().getMap () );
-        
+
         _hive.registerItem ( _activeCountItem );
         _connectionFolder.add ( "active-count", _activeCountItem, new MapBuilder<String, Variant> ().getMap () );
 
@@ -213,7 +211,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         // remove state item
         _connectionFolder.remove ( "state" );
         _hive.unregisterItem ( _stateItem );
-        
+
         _connectionFolder.remove ( "active-count" );
         _hive.unregisterItem ( _activeCountItem );
 
@@ -244,23 +242,20 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
     {
         _reconnectController.connect ();
     }
-    
+
     public void triggerDisconnect ()
     {
         _reconnectController.disconnect ();
         _itemManager.clear ();
     }
-    
+
     private void addFlatItem ( String itemId, EnumSet<IODirection> ioDirection )
     {
         try
         {
             OPCItem opcItem = _itemManager.getItem ( itemId, ioDirection );
 
-            Map<String, Variant> desc = new HashMap<String, Variant> ();
-            desc.put ( "opc.item-id", new Variant ( itemId ) );
-
-            _itemManager.addItemDescription ( opcItem, desc );
+            _itemManager.addItemDescription ( opcItem, opcItem.getBrowserAttributes () );
         }
         catch ( Exception e )
         {
@@ -289,17 +284,21 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
                 }
             }
         }
-
-        // FIXME: should use "all in one" call ... but fails due to RPC stuff
+        
+        
         /*
-         * String [] items = itemSet.toArray ( new String[itemSet.size ()] );
-         * Map<String, WriteAttributeResult<OPCITEMRESULT>> itemResult =
-         * _group.validateItems ( items ); for ( Map.Entry<String,WriteAttributeResult<OPCITEMRESULT>>
-         * entry : itemResult.entrySet () ) { if ( entry.getValue
-         * ().getErrorCode () == 0 ) { int accessRights = entry.getValue
-         * ().getValue ().getAccessRights (); addFlatItem ( entry.getKey (),
-         * Helper.convertToAccessSet ( accessRights ) ); } }
-         */
+        itemSet = new HashSet<String> ( _server.getFlatBrowser ().browse ( "" ) );
+        String[] items = itemSet.toArray ( new String[itemSet.size ()] );
+        Map<String, Result<OPCITEMRESULT>> itemResult = _group.validateItems ( items );
+        for ( Map.Entry<String, Result<OPCITEMRESULT>> entry : itemResult.entrySet () )
+        {
+            if ( entry.getValue ().getErrorCode () == 0 )
+            {
+                int accessRights = entry.getValue ().getValue ().getAccessRights ();
+                addFlatItem ( entry.getKey (), Helper.convertToAccessSet ( accessRights ) );
+            }
+        }
+*/
     }
 
     public String getBaseId ()
@@ -368,9 +367,10 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         try
         {
             setConnectionState ( ConnectionState.CONNECTED );
-            
+
             _group = _server.addGroup ();
             fillFlatItems ();
+            _hive.recheckGrantedItems ();
         }
         catch ( Exception e )
         {

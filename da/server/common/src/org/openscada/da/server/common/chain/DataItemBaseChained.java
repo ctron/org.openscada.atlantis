@@ -40,9 +40,9 @@ import org.openscada.da.server.common.WriteAttributesHelper;
 
 public abstract class DataItemBaseChained extends DataItemBase
 {
-
     protected Map<String,Variant> _primaryAttributes = null;
     protected AttributeManager _secondaryAttributes = null;
+    
     protected List<ChainProcessEntry> _chain = new LinkedList<ChainProcessEntry> ();
 
     public DataItemBaseChained ( DataItemInformation dataItemInformation )
@@ -97,6 +97,19 @@ public abstract class DataItemBaseChained extends DataItemBase
     }
     
     protected abstract void process ();
+    
+    public synchronized void setChain ( List<ChainProcessEntry> chain )
+    {
+        if ( chain == null )
+        {
+            _chain = new LinkedList<ChainProcessEntry> ();
+        }
+        else
+        {
+            _chain = new LinkedList<ChainProcessEntry> ( chain );
+        }
+        process ();
+    }
     
     public synchronized void addChainElement ( EnumSet<IODirection> when, ChainItem item )
     {

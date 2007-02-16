@@ -11,19 +11,16 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
-import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.server.common.AttributeManager;
-import org.openscada.da.server.common.DataItemBase;
-import org.openscada.da.server.common.ItemListener;
-import org.openscada.da.server.common.WriteAttributesHelper;
+import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 import org.openscada.opc.lib.da.AccessStateListener;
 import org.openscada.opc.lib.da.AddFailedException;
 import org.openscada.opc.lib.da.DataCallback;
 import org.openscada.opc.lib.da.Item;
 import org.openscada.opc.lib.da.ItemState;
 
-public class OPCItem extends DataItemBase implements DataCallback, AccessStateListener
+public class OPCItem extends DataItemInputOutputChained implements DataCallback, AccessStateListener
 {
     private static Logger _log = Logger.getLogger ( OPCItem.class );
 
@@ -31,52 +28,18 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
     private Item _item = null;
     private OPCConnection _connection = null;
 
-    private AttributeManager _attributes = null;
+    private Map<String, Variant> _browserAttributes = new HashMap<String, Variant> ();
 
     private Variant _value = new Variant ();
-    
-    private ItemListener _listener = null;
 
     public OPCItem ( DataItemInformation information, OPCConnection connection, String itemId ) throws JIException, AddFailedException
     {
         super ( information );
-        _attributes = new AttributeManager ( this );
 
         _itemId = itemId;
 
         _connection = connection;
         _connection.getAccess ().addStateListener ( this );
-    }
-
-    /**
-     * We might already have data when the listener connects 
-     */
-    @Override
-    public void setListener ( ItemListener listener )
-    {
-        super.setListener ( listener );
-        if ( listener != null )
-        {
-            if ( !_value.isNull () )
-            {
-                notifyValue ( _value );
-            }
-            if ( _attributes.get ().size () > 0 )
-            {
-                notifyAttributes ( _attributes.get () );
-            }
-        }
-        
-        if ( _listener == null && listener != null )
-        {
-            wakeup ();
-        }
-        if ( _listener != null && listener == null )
-        {
-            suspend ();
-        }
-        
-        _listener = listener;
     }
 
     public synchronized Item getItem ()
@@ -99,38 +62,45 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
         return _itemId;
     }
 
-    public Map<String, Variant> getAttributes ()
+    /**
+     * This method intercepts the write operation call in order to handle the IO
+     * capabilities based on the OPC flags.
+     * <br/>
+     * If the item is capable of OUTPUT then the request will be passed on to the
+     * superclass ({@link super#writeValue}).
+     */
+    @Override
+    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        return _attributes.getCopy ();
-    }
-
-    public synchronized Variant getValue () throws InvalidOperationException
-    {
-        return _value;
-    }
-
-    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
-    {
-        return WriteAttributesHelper.errorUnhandled ( null, attributes );
-    }
-
-    public void setValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
-    {
+        /*
+         * We need to intercept this call since we handle IO flags seperately. Although
+         * we dereived from an IO item we may be reduced in functionality due to the 
+         * underlaying OPC item. So we check here if OUTPUT is possible and when 
+         * successfull we pass the request on to our superclass.
+         */
         if ( !getInformation ().getIODirection ().contains ( IODirection.OUTPUT ) )
+        {
             throw new InvalidOperationException ();
+        }
 
-        write ( value );
+        super.writeValue ( value );
     }
 
+    @Override
     public void suspend ()
     {
+        super.suspend ();
+
         _log.debug ( "Suspend: " + _itemId );
         _connection.getAccess ().removeItem ( _itemId );
         _connection.countItemState ( this, false );
     }
 
+    @Override
     public void wakeup ()
     {
+        super.wakeup ();
+
         _log.debug ( "Wakeup: " + _itemId );
         try
         {
@@ -139,13 +109,11 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
         }
         catch ( JIException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace ();
+            errorOccured ( e );
         }
         catch ( AddFailedException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace ();
+            errorOccured ( e );
         }
     }
 
@@ -215,16 +183,14 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
             attributes.put ( "opc.update-error.message", new Variant ( e.getMessage () ) );
         }
 
-        _attributes.update ( attributes );
+        updateAttributes ( attributes );
     }
 
-    protected synchronized void updateValue ( Variant value )
+    protected void updateAttribute ( String name, Variant value )
     {
-        if ( !_value.equals ( value ) )
-        {
-            _value = value;
-            notifyValue ( _value );
-        }
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        attributes.put ( name, value );
+        updateAttributes ( attributes );
     }
 
     /**
@@ -233,7 +199,7 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
      * @throws NotConvertableException
      * @throws InvalidOperationException
      */
-    protected void write ( Variant value ) throws NotConvertableException, InvalidOperationException
+    protected void writeCalculatedValue ( Variant value ) throws NotConvertableException, InvalidOperationException
     {
         JIVariant variant = Helper.ours2theirs ( value );
 
@@ -249,16 +215,16 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
             if ( item != null )
             {
                 int errorCode = _item.write ( variant );
-                _attributes.update ( "opc.write.last-error.code", new Variant ( errorCode ) );
+                updateAttribute ( "opc.write.last-error.code", new Variant ( errorCode ) );
                 if ( errorCode != 0 )
                 {
-                    _attributes.update ( "opc.write.last-error.message", new Variant (
+                    updateAttribute ( "opc.write.last-error.message", new Variant (
                             _connection.getServer ().getErrorMessage ( errorCode ) ) );
                     throw new InvalidOperationException ();
                 }
                 else
                 {
-                    _attributes.update ( "opc.write.last-error.message", null );
+                    updateAttribute ( "opc.write.last-error.message", null );
                 }
             }
             else
@@ -268,7 +234,7 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
         }
         catch ( JIException e )
         {
-            _attributes.update ( "opc.write.last-error-code", new Variant ( e.getErrorCode () ) );
+            updateAttribute ( "opc.write.last-error-code", new Variant ( e.getErrorCode () ) );
             throw new InvalidOperationException ();
         }
     }
@@ -277,26 +243,28 @@ public class OPCItem extends DataItemBase implements DataCallback, AccessStateLi
     {
         if ( t == null )
         {
-            _attributes.update ( "opc.last-error", null );
+            updateAttribute ( "opc.last-error", null );
         }
         else
         {
-            _attributes.update ( "opc.last-error", new Variant ( t.getMessage () ) );
+            updateAttribute ( "opc.last-error", new Variant ( t.getMessage () ) );
         }
 
     }
 
     public synchronized void stateChanged ( boolean state )
     {
-        _attributes.update ( "connected", new Variant ( state ) );
+        updateAttribute ( "connection.error", new Variant ( !state ) );
 
-        if ( state )
-        {
-
-        }
-        else
+        if ( !state )
         {
             _item = null;
         }
     }
+
+    public Map<String, Variant> getBrowserAttributes ()
+    {
+        return _browserAttributes;
+    }
+
 }

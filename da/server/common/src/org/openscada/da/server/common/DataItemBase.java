@@ -97,7 +97,9 @@ public abstract class DataItemBase implements DataItem
     public void notifyAttributes ( Map<String, Variant> attributes )
     {
         if ( attributes.size () <= 0 )
+        {
             return;
+        }
 
         synchronized ( this )
         {

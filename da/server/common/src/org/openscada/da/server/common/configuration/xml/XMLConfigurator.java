@@ -111,6 +111,11 @@ public class XMLConfigurator implements Configurator
     @SuppressWarnings ( "unchecked" )
     private void configureFactories ( ConfigurableHive hive, FactoriesType factories ) throws ConfigurationError
     {
+        if ( factories == null )
+        {
+            return;
+        }
+
         for ( FactoryType factory : factories.getFactoryList () )
         {
             Class factoryClass;
@@ -170,7 +175,9 @@ public class XMLConfigurator implements Configurator
     private void configureBrowser ( ConfigurableHive hive, BrowserType browser ) throws ConfigurationError
     {
         if ( browser == null )
+        {
             return;
+        }
 
         Folder folder = hive.getRootFolder ();
         if ( folder == null )
@@ -259,9 +266,13 @@ public class XMLConfigurator implements Configurator
     private void configureItems ( ConfigurableHive hive, ItemsType items ) throws ConfigurationError
     {
         if ( items == null )
+        {
             return;
+        }
         if ( items.getDataItemList () == null )
+        {
             return;
+        }
 
         for ( DataItemType dataItem : items.getDataItemList () )
         {
@@ -317,7 +328,9 @@ public class XMLConfigurator implements Configurator
     private void instantiateItem ( ConfigurableHive hive, Item item ) throws ConfigurationError
     {
         if ( item.getItem () != null )
+        {
             return;
+        }
 
         DataItem dataItem;
 
@@ -363,9 +376,13 @@ public class XMLConfigurator implements Configurator
     private void configureTemplates ( ConfigurableHive hive, ItemTemplatesType itemTemplates ) throws ConfigurationError
     {
         if ( itemTemplates == null )
+        {
             return;
+        }
         if ( itemTemplates.getTemplateList () == null )
+        {
             return;
+        }
 
         Map<String, ItemTemplateType> unexpandedTemplates = new HashMap<String, ItemTemplateType> ();
 
@@ -464,11 +481,15 @@ public class XMLConfigurator implements Configurator
     private Template getExpandedTemplate ( Stack<String> templateStack, Map<String, ItemTemplateType> unexpandedTemplates, String id ) throws ConfigurationError
     {
         if ( _templates.containsKey ( id ) )
+        {
             return _templates.get ( id );
+        }
 
         if ( templateStack.contains ( id ) )
+        {
             throw new ConfigurationError ( String.format ( "Infinite template recursion on template %s: path is: %s",
                     id, StringHelper.join ( templateStack, "->" ) ) );
+        }
 
         _log.debug ( "Expanding template: " + id );
 
