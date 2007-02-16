@@ -42,10 +42,10 @@ public class ItemSyncController implements ItemUpdateListener
     private String _itemName;
 
     private boolean _subscribed = false;
-    
+
     private Map<String, Variant> _cachedAttributes = new HashMap<String, Variant> ();
     private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
-    
+
     /**
      * Holds some additional listener information 
      * @author jens
@@ -121,7 +121,7 @@ public class ItemSyncController implements ItemUpdateListener
             _listeners.put ( listener, new ListenerInfo ( listener ) );
             listener.notifySubscriptionChange ( _subscriptionState );
             listener.notifyAttributeChange ( _cachedAttributes, true );
-            
+
             sync ();
         }
     }
@@ -145,12 +145,12 @@ public class ItemSyncController implements ItemUpdateListener
     {
         boolean subscribe = getNumberOfListeners () > 0;
 
-        if ( _subscribed == subscribe )
+        if ( ( _subscribed == subscribe ) && !force )
         {
             // nothing to do
             return;
         }
-        
+
         if ( subscribe )
         {
             subscribe ();
@@ -169,8 +169,8 @@ public class ItemSyncController implements ItemUpdateListener
             {
                 return;
             }
-            
-            _log.debug ( "Syncing listen state: active");
+
+            _log.debug ( "Syncing listen state: active" );
             _subscribed = true;
             _connection.subscribeItem ( _itemName );
         }
@@ -188,7 +188,7 @@ public class ItemSyncController implements ItemUpdateListener
             {
                 return;
             }
-            
+
             _log.debug ( "Syncing listen state: inactive " );
             _subscribed = false;
             _connection.unsubscribeItem ( _itemName );
@@ -227,7 +227,7 @@ public class ItemSyncController implements ItemUpdateListener
     public void notifySubscriptionChange ( SubscriptionState subscriptionState )
     {
         _subscriptionState = subscriptionState;
-        
+
         for ( ListenerInfo listenerInfo : _listeners.values () )
         {
             listenerInfo.getListener ().notifySubscriptionChange ( subscriptionState );
