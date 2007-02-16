@@ -96,10 +96,8 @@
  		<param name="todir" value="${buildDirectory}/plugins/ext_plugin_xmlbeans"/>
  		<param name="module" value="${svn.ext.base}/xmlbeans_plugin"/>
  	</antcall>
-  	<antcall target="checkoutSvn">
- 		<param name="todir" value="${buildDirectory}/plugins/ext_plugin_icej"/>
- 		<param name="module" value="${svn.ext.base}/plugins/icej"/>
- 	</antcall>
+  	<fetch-module src="${svn.ext.base}/plugins/icej" type="plugin" name="ext_plugin_icej"/>
+	<fetch-module src="${svn.ext.base}/plugins/jfreechart" type="plugin" name="ext_plugin_jfreechart"/>
   	<fetch-module src="${svn.base}/da/client/plugin_wrapper" type="plugin" name="org.openscada.da.client"/>
   	<fetch-module src="${svn.base}/da/client/ice_wrapper_plugin" type="plugin" name="org.openscada.da.ice.client"/>
 	<fetch-module src="${svn.base}/da/client/net_wrapper_plugin" type="plugin" name="org.openscada.da.net.client"/>
@@ -113,19 +111,11 @@
 		<param name="module" value="${svn.base}/rcp/client_feature"/>
 	</antcall>
 	<fetch-module src="${svn.base}/ae/client/net_wrapper_plugin" type="plugin" name="org.openscada.ae.net.client"/>
-	<antcall target="checkoutSvn">
- 		<param name="todir" value="${buildDirectory}/plugins/org.openscada.ae.client.test"/>
-		<param name="module" value="${svn.base}/ae/client/test"/>
-	</antcall>
-	<antcall target="checkoutSvn">
- 		<param name="todir" value="${buildDirectory}/features/org.openscada.ae.client.test"/>
-		<param name="module" value="${svn.base}/ae/client/net_feature"/>
-	</antcall>
+	<fetch-module src="${svn.base}/ae/client/net" type="plugin" name="org.openscada.ae.client.test"/>
+	<fetch-module src="${svn.base}/ae/client/net_feature" type="feature" name="org.openscada.ae.client.test"/>
 	<fetch-module src="${svn.base}/ae/rcp/local_test_server" type="plugin" name="org.openscada.ae.rcp.LocalTestServer"/>
-	<antcall target="checkoutSvn">
- 		<param name="todir" value="${buildDirectory}/plugins/org.openscada.da.client.viewer"/>
-		<param name="module" value="${svn.base}/da/client/viewer"/>
-	</antcall>
+	<fetch-module src="${svn.base}/da/client/viewer" type="plugin" name="org.openscada.da.client.viewer"/>
+	<fetch-module src="${svn.base}/da/client/chart" type="plugin" name="org.openscada.da.client.chart"/>
   </target>
 
   <!-- ===================================================================== -->
