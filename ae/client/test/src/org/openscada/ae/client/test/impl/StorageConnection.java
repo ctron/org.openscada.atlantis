@@ -206,9 +206,9 @@ public class StorageConnection extends Observable implements IActionFilter
         
         LongRunningOperation op = _connection.startList ( new LongRunningListener () {
 
-            public void stateChanged ( LongRunningState arg0, Throwable arg2 )
+            public void stateChanged ( LongRunningOperation operation, LongRunningState state, Throwable error )
             {
-                monitor.setTaskName ( arg0.toString () );
+                monitor.setTaskName ( state.toString () );
             }} );
         
         try
