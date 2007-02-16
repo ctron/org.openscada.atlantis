@@ -135,7 +135,7 @@ module OpenSCADA
 			/**
 			 * Called when a subscription state of an item changes
 			 **/
-			idempotent void subscriptionChange ( string item, SubscriptionState \subscriptionState );
+			idempotent void subscriptionChange ( string item, SubscriptionState subscriptionStateP );
 		};
 		 
 		struct WriteAttributesResultEntry
