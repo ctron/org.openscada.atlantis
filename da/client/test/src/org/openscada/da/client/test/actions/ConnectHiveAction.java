@@ -32,19 +32,19 @@ import org.openscada.da.client.test.impl.HiveConnection;
 public class ConnectHiveAction implements IObjectActionDelegate, IViewActionDelegate
 {
     private static Logger _log = Logger.getLogger ( ConnectHiveAction.class );
-    
+
     private HiveConnection _connection = null;
-   
+
     public void run ( IAction action )
     {
         if ( _connection == null )
         {
             return;
         }
-        
+
         try
         {
-            _connection.connect();
+            _connection.connect ();
         }
         catch ( Throwable e )
         {
@@ -55,24 +55,24 @@ public class ConnectHiveAction implements IObjectActionDelegate, IViewActionDele
     public void selectionChanged ( IAction action, ISelection selection )
     {
         _connection = null;
-        
+
         if ( selection == null )
         {
             return;
         }
-        if ( ! (selection instanceof IStructuredSelection) )
+        if ( ! ( selection instanceof IStructuredSelection ) )
         {
             return;
         }
-        
+
         IStructuredSelection sel = (IStructuredSelection)selection;
         Object obj = sel.getFirstElement ();
-        
+
         if ( obj == null )
             return;
-        if ( !(obj instanceof HiveConnection) )
+        if ( ! ( obj instanceof HiveConnection ) )
             return;
-        
+
         _connection = (HiveConnection)obj;
     }
 
