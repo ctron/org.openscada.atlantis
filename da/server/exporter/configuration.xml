@@ -30,7 +30,7 @@
 
 					<!-- Softing OPC Demo Server -->
 					<opc:configuration connected="false"
-						domain="localhost" host="192.168.98.128" access="sync" user="jens"
+						domain="localhost" host="192.168.98.128" access="async" user="jens"
 						password="test12">
 						<opc:clsid>
 							2E565242-B238-11D3-842D-0008C779D775
