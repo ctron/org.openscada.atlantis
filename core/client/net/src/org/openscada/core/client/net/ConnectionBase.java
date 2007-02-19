@@ -161,29 +161,6 @@ public abstract class ConnectionBase implements Connection
         }        
     }
     
-    public void waitForConnection () throws Throwable
-    {
-        WaitConnectionStateListener csl = new WaitConnectionStateListener ();
-        try
-        {
-            synchronized ( csl )
-            {
-                addConnectionStateListener ( csl );
-                
-                // Check if we are already connected and return then
-                if ( _connectionState == ConnectionState.BOUND )
-                    return;
-                
-                csl.wait ();
-                csl.complete ();
-            }
-        }
-        finally
-        {
-            removeConnectionStateListener ( csl );
-        }
-    }
-
     synchronized public void disconnect ()
     {
         disconnect ( null );
