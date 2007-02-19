@@ -31,6 +31,7 @@ import org.openscada.core.Variant;
  */
 public class SumPatternAttributesChainItem extends SummarizeChainItem
 {
+    @SuppressWarnings("unused")
     private static Logger _log = Logger.getLogger ( SumPatternAttributesChainItem.class );
     
     private Pattern _pattern;
