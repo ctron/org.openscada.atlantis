@@ -106,7 +106,7 @@ public class SocketConnection extends IOChannel implements IOChannelListener
                         e.printStackTrace ();
                     }
                 }
-            } );
+            }, false );
         }
         catch ( InterruptedException e )
         {
