@@ -76,8 +76,6 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
         {
             String attributeName = entry.getKey ();
 
-            _log.debug ( String.format ( "Process attribute '%s'", attributeName ) );
-            
             // ignore our own entries
             if ( !attributeName.equals ( _sumStateName ) && !attributeName.equals ( _sumCountName )
                     && !attributeName.equals ( _sumListName ) )

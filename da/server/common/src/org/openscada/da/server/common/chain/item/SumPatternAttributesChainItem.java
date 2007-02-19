@@ -50,7 +50,6 @@ public class SumPatternAttributesChainItem extends SummarizeChainItem
     @Override
     protected boolean matches ( Variant value, String attributeName, Variant attributeValue )
     {
-        _log.debug ( String.format ( "Matching '%s' against '%s'", attributeName, _pattern.pattern () ) );
         return _pattern.matcher ( attributeName ).matches ();
     }
 
