@@ -8,6 +8,7 @@ import org.openscada.ae.client.net.Connection;
 import org.openscada.ae.core.QueryDescription;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.client.ConnectWaitController;
 import org.openscada.core.client.net.ConnectionInfo;
 
 public class Application
@@ -37,9 +38,7 @@ public class Application
         
         Connection connection = new Connection ( ci );
         _log.debug ( "Initiating connection..." );
-        connection.connect ();
-        _log.debug ( "Wait for connection" );
-        connection.waitForConnection ();
+        new ConnectWaitController ( connection ).connect ();
         _log.debug ( "Connection established" );
         
         list ( connection );
