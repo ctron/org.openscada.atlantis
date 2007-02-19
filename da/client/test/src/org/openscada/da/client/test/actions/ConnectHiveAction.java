@@ -38,7 +38,9 @@ public class ConnectHiveAction implements IObjectActionDelegate, IViewActionDele
     public void run ( IAction action )
     {
         if ( _connection == null )
+        {
             return;
+        }
         
         try
         {
@@ -55,9 +57,13 @@ public class ConnectHiveAction implements IObjectActionDelegate, IViewActionDele
         _connection = null;
         
         if ( selection == null )
+        {
             return;
+        }
         if ( ! (selection instanceof IStructuredSelection) )
+        {
             return;
+        }
         
         IStructuredSelection sel = (IStructuredSelection)selection;
         Object obj = sel.getFirstElement ();
