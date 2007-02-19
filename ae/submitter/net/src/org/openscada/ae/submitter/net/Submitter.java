@@ -23,6 +23,7 @@ import java.util.Properties;
 
 import org.openscada.ae.core.Event;
 import org.openscada.ae.core.Submission;
+import org.openscada.core.client.ConnectWaitController;
 import org.openscada.core.client.net.ConnectionInfo;
 
 public class Submitter implements Submission
@@ -53,8 +54,7 @@ public class Submitter implements Submission
         if ( _connection == null )
         {
             _connection = new Connection ( _connectionInformation );
-            _connection.connect ();
-            _connection.waitForConnection ();
+            new ConnectWaitController ( _connection ).connect ();
         }
         return _connection;
     }
