@@ -476,7 +476,7 @@ public class XMLConfigurator implements Configurator
                 {
                     itemBase.getChainEntries ().add ( entry );
                 }
-                if ( chainItem.getLocation ().equals ( ItemType.Location.APPEND ) )
+                else if ( chainItem.getLocation ().equals ( ItemType.Location.APPEND ) )
                 {
                     itemBase.getChainEntries ().add ( entry );    
                 }
