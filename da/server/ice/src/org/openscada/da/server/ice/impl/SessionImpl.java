@@ -100,7 +100,9 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
         _log.debug ( String.format ( "Attributes changed for '%s'", name ) );
         
         if ( _dataCallback == null )
+        {
             return;
+        }
         
         AsyncAttributesChange cb = new AsyncAttributesChange ( this );
         
@@ -112,7 +114,9 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
         _log.debug ( String.format ( "Value changed for '%s'", name ) );
         
         if ( _dataCallback == null )
+        {
             return;
+        }
         
         AsyncValueChange cb = new AsyncValueChange ( this );
         
