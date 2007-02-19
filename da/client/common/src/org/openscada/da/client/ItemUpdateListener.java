@@ -26,7 +26,7 @@ import org.openscada.core.subscription.SubscriptionState;
 
 public interface ItemUpdateListener
 {
-    public void notifyValueChange ( Variant value, boolean initial );
-    public void notifyAttributeChange ( Map<String,Variant> attributes, boolean initial );
+    public void notifyValueChange ( Variant value, boolean cache );
+    public void notifyAttributeChange ( Map<String,Variant> attributes, boolean full );
     public void notifySubscriptionChange ( SubscriptionState subscriptionState );
 }
