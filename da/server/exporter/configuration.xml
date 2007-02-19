@@ -36,6 +36,17 @@
 							2E565242-B238-11D3-842D-0008C779D775
 						</opc:clsid>
 					</opc:configuration>
+					
+					<!-- Iconics Test Server -->
+					<opc:configuration connected="false"
+						domain="localhost" host="192.168.98.128" access="async" user="jens"
+						password="test12" refresh="100">
+						<opc:clsid>
+							A879768A-7387-11D4-B0D8-009027242C59
+						</opc:clsid>
+					</opc:configuration>
+					
+					
 				</opc:connections>
 				<!-- OPC Hive Configuration -->
 				<opc:item-templates>

@@ -43,6 +43,7 @@ public class ItemSyncController implements ItemUpdateListener
 
     private boolean _subscribed = false;
 
+    private Variant _cachedValue = new Variant ();
     private Map<String, Variant> _cachedAttributes = new HashMap<String, Variant> ();
     private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
 
@@ -120,9 +121,10 @@ public class ItemSyncController implements ItemUpdateListener
         {
             _listeners.put ( listener, new ListenerInfo ( listener ) );
             listener.notifySubscriptionChange ( _subscriptionState );
+            listener.notifyValueChange ( _cachedValue, true );
             listener.notifyAttributeChange ( _cachedAttributes, true );
 
-            sync ();
+            triggerSync ();
         }
     }
 
@@ -132,13 +134,20 @@ public class ItemSyncController implements ItemUpdateListener
         {
             _listeners.remove ( listener );
 
-            sync ();
+            triggerSync ();
         }
     }
 
-    public void sync ()
+    public void triggerSync ()
     {
-        sync ( false );
+        Thread t = new Thread ( new Runnable () {
+
+            public void run ()
+            {
+                sync ( false );
+            }} );
+        t.setDaemon ( true );
+        t.start ();
     }
 
     public synchronized void sync ( boolean force )
@@ -165,11 +174,6 @@ public class ItemSyncController implements ItemUpdateListener
     {
         try
         {
-            if ( _subscribed )
-            {
-                return;
-            }
-
             _log.debug ( "Syncing listen state: active" );
             _subscribed = true;
             _connection.subscribeItem ( _itemName );
@@ -184,14 +188,10 @@ public class ItemSyncController implements ItemUpdateListener
     {
         try
         {
-            if ( !_subscribed )
-            {
-                return;
-            }
-
             _log.debug ( "Syncing listen state: inactive " );
             _subscribed = false;
             _connection.unsubscribeItem ( _itemName );
+            notifySubscriptionChange ( SubscriptionState.DISCONNECTED );
         }
         catch ( Throwable e )
         {
@@ -208,6 +208,12 @@ public class ItemSyncController implements ItemUpdateListener
 
     public synchronized void notifyValueChange ( Variant value, boolean initial )
     {
+        if ( _cachedValue.equals ( value ) )
+        {
+            return;
+        }
+        
+        _cachedValue = value;
         for ( ListenerInfo listenerInfo : _listeners.values () )
         {
             listenerInfo.getListener ().notifyValueChange ( value, initial );
@@ -224,8 +230,13 @@ public class ItemSyncController implements ItemUpdateListener
         }
     }
 
-    public void notifySubscriptionChange ( SubscriptionState subscriptionState )
+    public synchronized void notifySubscriptionChange ( SubscriptionState subscriptionState )
     {
+        if ( _subscriptionState.equals ( subscriptionState ) )
+        {
+            return;
+        }
+        
         _subscriptionState = subscriptionState;
 
         for ( ListenerInfo listenerInfo : _listeners.values () )

@@ -44,13 +44,13 @@ public class DataCallbackImpl extends _DataCallbackDisp
    
     public void attributesChange ( String item, Map attributes, boolean full, Current __current )
     {
-        _log.debug ( String.format ( "Attribute change: '%s'", item ) );
+        _log.debug ( String.format ( "Attribute change: '%s' (%s)", full, item ) );
         _connection.attributesChange ( item, AttributesHelper.fromIce ( attributes ), full );
     }
 
     public void valueChange ( String item, VariantBase value, boolean cache, Current __current )
     {
-        _log.debug ( String.format ( "Value change: '%s'", item ) );
+        _log.debug ( String.format ( "Value change: '%s' (%s)", item, cache ) );
         _connection.valueChange ( item, VariantHelper.fromIce ( value ), cache );
     }
 

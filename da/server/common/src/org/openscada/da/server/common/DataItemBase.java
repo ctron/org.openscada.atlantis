@@ -68,6 +68,8 @@ public abstract class DataItemBase implements DataItem
         }
         else if ( _listener == null )
         {
+            // we might need the listener in the wakeup call 
+            _listener = listener;
             if ( this instanceof SuspendableDataItem )
             {
                 ( (SuspendableDataItem)this ).wakeup ();

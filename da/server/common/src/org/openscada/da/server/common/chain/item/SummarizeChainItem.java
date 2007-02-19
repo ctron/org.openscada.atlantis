@@ -82,7 +82,7 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
                 {
                     if ( matches ( value, attributeName, entry.getValue () ) )
                     {
-                        if ( entry.getValue ().asBoolean () )
+                        if ( ( entry.getValue () != null ) && entry.getValue ().asBoolean () )
                         {
                             count++;
                             items.add ( entry.getKey () );

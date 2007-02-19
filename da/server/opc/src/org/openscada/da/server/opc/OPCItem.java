@@ -12,7 +12,6 @@ import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.server.DataItemInformation;
-import org.openscada.da.server.common.AttributeManager;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 import org.openscada.opc.lib.da.AccessStateListener;
 import org.openscada.opc.lib.da.AddFailedException;
@@ -30,8 +29,6 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
 
     private Map<String, Variant> _browserAttributes = new HashMap<String, Variant> ();
 
-    private Variant _value = new Variant ();
-
     public OPCItem ( DataItemInformation information, OPCConnection connection, String itemId ) throws JIException, AddFailedException
     {
         super ( information );
@@ -39,7 +36,6 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         _itemId = itemId;
 
         _connection = connection;
-        _connection.getAccess ().addStateListener ( this );
     }
 
     public synchronized Item getItem ()
@@ -87,23 +83,28 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
     }
 
     @Override
-    public void suspend ()
+    public synchronized void suspend ()
     {
         super.suspend ();
 
         _log.debug ( "Suspend: " + _itemId );
         _connection.getAccess ().removeItem ( _itemId );
         _connection.countItemState ( this, false );
+        _connection.getAccess ().removeStateListener ( this );
+        stateChanged ( false );
+
+        updateValue ( (ItemState)null );
     }
 
     @Override
-    public void wakeup ()
+    public synchronized void wakeup ()
     {
         super.wakeup ();
 
         _log.debug ( "Wakeup: " + _itemId );
         try
         {
+            _connection.getAccess ().addStateListener ( this );
             _connection.getAccess ().addItem ( _itemId, this );
             _connection.countItemState ( this, true );
         }
@@ -129,58 +130,67 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
     {
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        attributes.put ( "opc.value-error.message", null );
-        attributes.put ( "opc.quality", new Variant ( itemState.getQuality () ) );
-        attributes.put ( "timestamp", new Variant ( itemState.getTimestamp ().getTimeInMillis () ) );
-        attributes.put ( "opc.update-error.code", null );
-        attributes.put ( "opc.update-error.message", null );
-        attributes.put ( "opc.read-error.code", null );
-        attributes.put ( "opc.read-error.message", null );
+        attributes.put ( "org.openscada.opc.value-error.message", null );
+        attributes.put ( "org.openscada.opc.update-error.code", null );
+        attributes.put ( "org.openscada.opc.update-error.message", null );
+        attributes.put ( "org.openscada.opc.read-error.code", null );
+        attributes.put ( "org.openscada.opc.read-error.message", null );
 
-        try
+        if ( itemState != null )
         {
-            attributes.put ( "opc.value-type", new Variant ( itemState.getValue ().getType () ) );
+            attributes.put ( "org.openscada.opc.quality", new Variant ( itemState.getQuality () ) );
+            attributes.put ( "timestamp", new Variant ( itemState.getTimestamp ().getTimeInMillis () ) );
 
-            Variant newValue = new Variant ();
+            try
+            {
+                attributes.put ( "org.openscada.opc.value-type", new Variant ( itemState.getValue ().getType () ) );
 
-            if ( itemState.getErrorCode () != 0 )
-            {
-                int errorCode = itemState.getErrorCode ();
-                attributes.put ( "opc.read-error.code", new Variant ( errorCode ) );
-                attributes.put ( "opc.read-error.message", new Variant ( _connection.getServer ().getErrorMessage (
-                        errorCode ) ) );
-            }
-            else if ( itemState.getValue ().getType () == JIVariant.VT_ERROR )
-            {
-                int errorCode = itemState.getValue ().getObjectAsSCODE ();
-                attributes.put ( "opc.read-error.code", new Variant ( errorCode ) );
-                attributes.put ( "opc.read-error.message", new Variant ( _connection.getServer ().getErrorMessage (
-                        errorCode ) ) );
-            }
-            else
-            {
-                newValue = Helper.theirs2ours ( itemState.getValue () );
+                Variant newValue = new Variant ();
 
-                if ( newValue == null )
+                if ( itemState.getErrorCode () != 0 )
                 {
-                    attributes.put ( "opc.value-error.message", new Variant ( "Unable to convert value: "
-                            + itemState.getValue ().toString () ) );
+                    int errorCode = itemState.getErrorCode ();
+                    attributes.put ( "org.openscada.opc.read-error.code", new Variant ( errorCode ) );
+                    attributes.put ( "org.openscada.opc.read-error.message", new Variant ( _connection.getServer ().getErrorMessage (
+                            errorCode ) ) );
+                }
+                else if ( itemState.getValue ().getType () == JIVariant.VT_ERROR )
+                {
+                    int errorCode = itemState.getValue ().getObjectAsSCODE ();
+                    attributes.put ( "org.openscada.opc.read-error.code", new Variant ( errorCode ) );
+                    attributes.put ( "org.openscada.opc.read-error.message", new Variant ( _connection.getServer ().getErrorMessage (
+                            errorCode ) ) );
                 }
                 else
                 {
+                    newValue = Helper.theirs2ours ( itemState.getValue () );
+
+                    if ( newValue == null )
+                    {
+                        attributes.put ( "org.openscada.opc.value-error.message", new Variant ( "Unable to convert value: "
+                                + itemState.getValue ().toString () ) );
+                    }
                 }
+                updateValue ( newValue );
             }
-            updateValue ( newValue );
+            catch ( JIException e )
+            {
+                attributes.put ( "org.openscada.opc.update-error.code", new Variant ( e.getErrorCode () ) );
+                attributes.put ( "org.openscada.opc.update-error.message", new Variant ( e.getMessage () ) );
+            }
+            catch ( Throwable e )
+            {
+                attributes.put ( "org.openscada.opc.update-error.code", new Variant ( 0xFFFFFFFF ) );
+                attributes.put ( "org.openscada.opc.update-error.message", new Variant ( e.getMessage () ) );
+            }
         }
-        catch ( JIException e )
+        else
         {
-            attributes.put ( "opc.update-error.code", new Variant ( e.getErrorCode () ) );
-            attributes.put ( "opc.update-error.message", new Variant ( e.getMessage () ) );
-        }
-        catch ( Throwable e )
-        {
-            attributes.put ( "opc.update-error.code", new Variant ( 0xFFFFFFFF ) );
-            attributes.put ( "opc.update-error.message", new Variant ( e.getMessage () ) );
+            attributes.put ( "org.openscada.opc.quality", null );
+            attributes.put ( "timestamp", null );
+            attributes.put ( "org.openscada.opc.value-type", null );
+            
+            updateValue ( new Variant () );
         }
 
         updateAttributes ( attributes );
@@ -214,17 +224,17 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
             Item item = getItem ();
             if ( item != null )
             {
-                int errorCode = _item.write ( variant );
-                updateAttribute ( "opc.write.last-error.code", new Variant ( errorCode ) );
+                int errorCode = item.write ( variant );
+                updateAttribute ( "org.openscada.opc.write.last-error.code", new Variant ( errorCode ) );
                 if ( errorCode != 0 )
                 {
-                    updateAttribute ( "opc.write.last-error.message", new Variant (
+                    updateAttribute ( "org.openscada.opc.write.last-error.message", new Variant (
                             _connection.getServer ().getErrorMessage ( errorCode ) ) );
                     throw new InvalidOperationException ();
                 }
                 else
                 {
-                    updateAttribute ( "opc.write.last-error.message", null );
+                    updateAttribute ( "org.openscada.opc.write.last-error.message", null );
                 }
             }
             else
@@ -234,7 +244,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         }
         catch ( JIException e )
         {
-            updateAttribute ( "opc.write.last-error-code", new Variant ( e.getErrorCode () ) );
+            updateAttribute ( "org.openscada.opc.write.last-error-code", new Variant ( e.getErrorCode () ) );
             throw new InvalidOperationException ();
         }
     }
@@ -243,17 +253,18 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
     {
         if ( t == null )
         {
-            updateAttribute ( "opc.last-error", null );
+            updateAttribute ( "org.openscada.opc.last-error", null );
         }
         else
         {
-            updateAttribute ( "opc.last-error", new Variant ( t.getMessage () ) );
+            updateAttribute ( "org.openscada.opc.last-error", new Variant ( t.getMessage () ) );
         }
 
     }
 
     public synchronized void stateChanged ( boolean state )
     {
+        _log.debug ( String.format ( "State changed: %s", state ) );
         updateAttribute ( "connection.error", new Variant ( !state ) );
 
         if ( !state )
