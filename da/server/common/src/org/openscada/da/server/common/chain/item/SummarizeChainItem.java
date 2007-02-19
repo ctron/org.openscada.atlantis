@@ -70,8 +70,6 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
         long count = 0;
         List<String> items = new LinkedList<String> ();
         
-        _log.debug ( "Summarizing attributes" );
-
         for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
             String attributeName = entry.getKey ();
