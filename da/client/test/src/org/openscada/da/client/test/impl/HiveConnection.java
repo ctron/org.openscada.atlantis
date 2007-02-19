@@ -44,64 +44,59 @@ import org.openscada.da.client.test.config.HiveConnectionInformation;
 public class HiveConnection extends Observable implements IActionFilter, IPropertySource
 {
     private static Logger _log = Logger.getLogger ( HiveConnection.class );
-    
+
     private boolean _connectionRequested = false;
     private ConnectionInformation _connectionInformation = null;
     private Connection _connection = null;
-    
-    private Map < String, HiveItem > _itemMap = new HashMap < String, HiveItem > ();
-    
+
+    private Map<String, HiveItem> _itemMap = new HashMap<String, HiveItem> ();
+
     private FolderEntry _rootFolder = null;
 
     private ItemManager _itemManager;
     private FolderManager _folderManager;
-    
+
     private enum Properties
     {
-        URI,
-        STATE
+        URI, STATE
     };
-    
+
     public HiveConnection ( HiveConnectionInformation connectionInfo )
     {
         super ();
-        
+
         _connectionInformation = ConnectionInformation.fromURI ( connectionInfo.getConnectionString () );
-        
+
         _connection = (Connection)ConnectionFactory.create ( _connectionInformation );
-        
+
         if ( _connection != null )
         {
-            _connection.addConnectionStateListener ( new ConnectionStateListener(){
+            _connection.addConnectionStateListener ( new ConnectionStateListener () {
 
                 public void stateChange ( org.openscada.core.client.Connection connection, ConnectionState state, Throwable error )
                 {
                     performStateChange ( state, error );
                 }
 
-            });
+            } );
             _itemManager = new ItemManager ( _connection );
             _folderManager = new FolderManager ( _connection );
         }
     }
-    
+
     public void connect ()
     {
         if ( _connection == null )
+        {
             return;
-        
-        //if ( _connectionRequested )
-        //    return;
-        
+        }
+
         _connectionRequested = true;
         setChanged ();
         notifyObservers ();
-        
-        //if ( _connection != null )
-        //    return;
-        
+
         _log.debug ( "Initiating connection..." );
-        
+
         try
         {
             _connection.connect ();
@@ -113,33 +108,35 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
         }
         _log.debug ( "Connection fired up..." );
     }
-    
+
     public void disconnect ()
     {
         if ( _connection == null )
+        {
             return;
-        
+        }
+
         _connectionRequested = false;
-        
+
         setChanged ();
         notifyObservers ();
-        
+
         _connection.disconnect ();
     }
-    
-    public ConnectionInformation getConnectionInformation()
+
+    public ConnectionInformation getConnectionInformation ()
     {
         return _connectionInformation;
     }
-    
+
     private synchronized void performStateChange ( ConnectionState state, Throwable error )
     {
         _log.debug ( String.format ( "State Change to %s (%s)", state, error ) );
-        
+
         switch ( state )
         {
         case BOUND:
-            _rootFolder = new FolderEntry ( "", new HashMap<String, Variant>(), null, this, true );
+            _rootFolder = new FolderEntry ( "", new HashMap<String, Variant> (), null, this, true );
             break;
         case CLOSED:
             if ( _rootFolder != null )
@@ -151,17 +148,17 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
         default:
             break;
         }
-        
+
         setChanged ();
         notifyObservers ();
-        
+
         if ( error != null )
         {
             _log.info ( "Connection failed with additional error", error );
             Openscada_da_client_testPlugin.getDefault ().notifyError ( "Connection failed", error );
         }
     }
-   
+
     public Connection getConnection ()
     {
         return _connection;
@@ -171,7 +168,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     {
         return _connectionRequested;
     }
-    
+
     synchronized public HiveItem lookupItem ( String itemName )
     {
         return _itemMap.get ( itemName );
@@ -190,13 +187,13 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     {
         return _rootFolder;
     }
-    
+
     public void notifyFolderChange ( FolderEntry folder )
     {
         setChanged ();
         notifyObservers ( folder );
     }
-    
+
     protected void fillPropertyDescriptors ( List<IPropertyDescriptor> list )
     {
         {
@@ -212,31 +209,31 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
             list.add ( pd );
         }
     }
-    
+
     public IPropertyDescriptor[] getPropertyDescriptors ()
     {
         List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor> ();
-        
+
         fillPropertyDescriptors ( list );
-        
-        return list.toArray ( new IPropertyDescriptor[list.size()] );
+
+        return list.toArray ( new IPropertyDescriptor[list.size ()] );
     }
-    
+
     public Object getPropertyValue ( Object id )
     {
         if ( id.equals ( Properties.URI ) )
             return _connectionInformation.toString ();
-        if ( id.equals ( Properties.STATE  ) )
+        if ( id.equals ( Properties.STATE ) )
             return _connection.getState ().name ();
-        
+
         return null;
     }
-    
+
     public Object getEditableValue ()
     {
         return _connectionInformation.toString ();
     }
-    
+
     public boolean isPropertySet ( Object id )
     {
         return false;
@@ -251,17 +248,17 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     {
         // no op
     }
-    
+
     public ItemManager getItemManager ()
     {
         return _itemManager;
     }
-    
+
     public FolderManager getFolderManager ()
     {
         return _folderManager;
     }
-    
+
     public boolean isValid ()
     {
         return _connection != null;
