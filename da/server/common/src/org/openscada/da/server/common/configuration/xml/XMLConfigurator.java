@@ -472,7 +472,15 @@ public class XMLConfigurator implements Configurator
                 else if ( chainItem.getDirection ().toString ().equals ( "inout" ) )
                     entry.setWhen ( EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) );
 
-                itemBase.getChainEntries ().add ( entry );
+                if ( chainItem.getLocation ().equals ( ItemType.Location.APPEND ) )
+                {
+                    itemBase.getChainEntries ().add ( entry );    
+                }
+                else if ( chainItem.getLocation ().equals ( ItemType.Location.PREPEND ) )
+                {
+                    itemBase.getChainEntries ().add ( 0, entry );
+                }
+                
             }
         }
 
@@ -497,14 +505,20 @@ public class XMLConfigurator implements Configurator
 
         ItemTemplateType itemTemplate = unexpandedTemplates.get ( id );
         if ( itemTemplate == null )
+        {
             throw new ConfigurationError ( String.format ( "Template %s is not configured", id ) );
+        }
 
         String extendsId = itemTemplate.getExtends ();
         Template template;
         if ( extendsId != null )
+        {
             template = new Template ( getExpandedTemplate ( templateStack, unexpandedTemplates, extendsId ) );
+        }
         else
+        {
             template = new Template ();
+        }
 
         // set the item pattern
         try

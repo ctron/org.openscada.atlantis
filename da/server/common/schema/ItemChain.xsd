@@ -15,13 +15,23 @@
     	</sequence></complexType>
 
     <complexType name="ItemType">
-    	<attribute name="class" type="common:ClassType" use="required"></attribute>
+    	<attribute name="class" type="common:ClassType"
+    		use="required">
+    	</attribute>
     	<attribute name="direction" use="required">
     		<simpleType>
     			<restriction base="string">
     				<enumeration value="in"></enumeration>
     				<enumeration value="out"></enumeration>
     				<enumeration value="inout"></enumeration>
+    			</restriction>
+    		</simpleType>
+    	</attribute>
+    	<attribute name="location" use="optional" default="append">
+    		<simpleType>
+    			<restriction base="string">
+    				<enumeration value="prepend"></enumeration>
+    				<enumeration value="append"></enumeration>
     			</restriction>
     		</simpleType>
     	</attribute>
