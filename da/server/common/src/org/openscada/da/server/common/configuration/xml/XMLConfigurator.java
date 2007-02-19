@@ -472,6 +472,10 @@ public class XMLConfigurator implements Configurator
                 else if ( chainItem.getDirection ().toString ().equals ( "inout" ) )
                     entry.setWhen ( EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) );
 
+                if ( chainItem.getLocation () == null )
+                {
+                    itemBase.getChainEntries ().add ( entry );
+                }
                 if ( chainItem.getLocation ().equals ( ItemType.Location.APPEND ) )
                 {
                     itemBase.getChainEntries ().add ( entry );    
