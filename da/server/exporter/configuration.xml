@@ -39,6 +39,7 @@
 					
 					<!-- Iconics Test Server -->
 					<opc:configuration connected="false"
+						initial-refresh="false"
 						domain="localhost" host="192.168.98.128" access="async" user="jens"
 						password="test12" refresh="100">
 						<opc:clsid>
@@ -72,9 +73,8 @@
 						</item-attributes>
 						<chain:chain>
 							<item direction="in"
+								location="prepend"
 								class="org.openscada.da.server.common.chain.item.LevelAlarmChainItem" />
-							<item direction="in" class="org.openscada.da.server.common.chain.item.SumAlarmChainItem"/>
-							<item direction="in" class="org.openscada.da.server.common.chain.item.SumErrorChainItem"/>
 						</chain:chain>
 					</template>
 					
