@@ -348,7 +348,10 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                         try
                         {
                             completeWrite ( operation );
-                            callback.complete ();
+                            if ( callback != null )
+                            {
+                                callback.complete ();
+                            }
                         }
                         catch ( OperationException e )
                         {
