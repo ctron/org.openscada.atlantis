@@ -25,7 +25,7 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.openscada.rcp.client.application"
-            name="SASS Client">
+            name="OpenSCADA Client">
          <property
                name="aboutImage"
                value="about.png"/>
