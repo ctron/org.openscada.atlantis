@@ -25,17 +25,17 @@ import java.util.Map;
 import org.openscada.utils.lang.Pair;
 
 /**
- * A map builder which can created 
- * @author jens
+ * A map builder which can create a HashMap by chained calls.
+ * @author Jens Reimann &lt;jens.reimann@inavare.net&gt;
  *
- * @param <Key>
- * @param <Value>
+ * @param <Key> The key type
+ * @param <Value> The value type
  */
 public class MapBuilder<Key, Value>
 {
     private Map<Key, Value> _map = null;
 
-    public MapBuilder ( Map<Key, Value> map )
+    public MapBuilder ( final Map<Key, Value> map )
     {
         _map = map;
     }
@@ -45,32 +45,64 @@ public class MapBuilder<Key, Value>
         _map = new HashMap<Key, Value> ();
     }
 
-    public MapBuilder<Key, Value> put ( Key key, Value value )
+    /**
+     * Put a pair into the map held by the map builder
+     * @param key The key
+     * @param value The value
+     * @return the current instance of the map builder
+     */
+    public final MapBuilder<Key, Value> put ( final Key key, final Value value )
     {
         _map.put ( key, value );
         return this;
     }
 
-    public MapBuilder<Key, Value> clear ()
+    /**
+     * Clean the map held by the map builder
+     * @return the current instance of the map builder
+     */
+    public final MapBuilder<Key, Value> clear ()
     {
         _map.clear ();
         return this;
     }
 
-    public Map<Key, Value> getMap ()
+    /**
+     * Get the map of the map builder.
+     * @return The map
+     */
+    public final Map<Key, Value> getMap ()
     {
         return _map;
     }
 
-    public static <Key, Value> Map<Key, Value> toMap ( Pair<Key, Value> pair )
+    /**
+     * Return a new map the containing only the provided value pair
+     * @param <Key> The key type
+     * @param <Value> The value type
+     * @param pair The pair to add
+     * @return the new map containing the pair
+     */
+    public static <Key, Value> Map<Key, Value> toMap ( final Pair<Key, Value> pair )
     {
         return toMap ( null, pair );
     }
 
-    public static <Key, Value> Map<Key, Value> toMap ( Map<Key, Value> map, Pair<Key, Value> pair )
+    /**
+     * Return a new map containing the provided pair, or add the pair to an already existing
+     * map.
+     * @param <Key> The key type
+     * @param <Value> The value type
+     * @param map The map to which the pair should be added (may be <code>null</code>)
+     * @param pair The pair to add (may <em>not</em> be <code>null</code>)
+     * @return The (new) map.
+     */
+    public static <Key, Value> Map<Key, Value> toMap ( Map<Key, Value> map, final Pair<Key, Value> pair )
     {
         if ( map == null )
+        {
             map = new HashMap<Key, Value> ();
+        }
 
         map.put ( pair.first, pair.second );
 
