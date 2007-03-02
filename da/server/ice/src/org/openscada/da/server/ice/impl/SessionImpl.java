@@ -70,19 +70,19 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
         super.finalize ();
     }
     
-    public synchronized void setDataCallback ( Identity ident, Current __current )
+    public void setDataCallback ( Identity ident, Current __current )
     {
-        _dataCallback = DataCallbackPrxHelper.uncheckedCast ( __current.con.createProxy ( ident ) );
+        _dataCallback = DataCallbackPrxHelper.uncheckedCast ( __current.con.createProxy ( ident ).ice_oneway () );
     }
     
-    public synchronized void unsetDataCallback ( Current __current )
+    public void unsetDataCallback ( Current __current )
     {
         _dataCallback = null;
     }
     
     public void setFolderCallback ( Identity ident, Current __current )
     {
-        _folderCallback = FolderCallbackPrxHelper.uncheckedCast ( __current.con.createProxy ( ident ) );
+        _folderCallback = FolderCallbackPrxHelper.uncheckedCast ( __current.con.createProxy ( ident ).ice_oneway () );
     }
 
     public void unsetFolderCallback ( Current __current )
@@ -95,35 +95,31 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
         return _session;
     }
 
-    public synchronized void attributesChanged ( String name, Map<String, Variant> attributes, boolean initial )
+    public void attributesChanged ( String name, Map<String, Variant> attributes, boolean initial )
     {
         _log.debug ( String.format ( "Attributes changed for '%s'", name ) );
         
-        if ( _dataCallback == null )
+        DataCallbackPrx dataCallback;
+        
+        if ( (dataCallback = _dataCallback) != null )
         {
-            return;
+            dataCallback.attributesChange ( name, AttributesHelper.toIce ( attributes ), initial );
         }
-        
-        AsyncAttributesChange cb = new AsyncAttributesChange ( this );
-        
-        _dataCallback.attributesChange_async ( cb, name, AttributesHelper.toIce ( attributes ), initial );
     }
 
-    public synchronized void valueChanged ( String name, Variant value, boolean initial )
+    public void valueChanged ( String name, Variant value, boolean initial )
     {
         _log.debug ( String.format ( "Value changed for '%s'", name ) );
         
-        if ( _dataCallback == null )
+        DataCallbackPrx dataCallback;
+        
+        if ( (dataCallback = _dataCallback) != null )
         {
-            return;
+            dataCallback.valueChange ( name, VariantHelper.toIce ( value ), initial );
         }
-        
-        AsyncValueChange cb = new AsyncValueChange ( this );
-        
-        _dataCallback.valueChange_async ( cb, name, VariantHelper.toIce ( value ), initial );
     }
 
-    public synchronized void handleListenerError ()
+    public void handleListenerError ()
     {
         _log.info ( "handleListenerError" );
         destroy ();
@@ -156,7 +152,7 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
         _hive = null;
     }
 
-    public synchronized void folderChanged ( Location location, Collection<Entry> added, Collection<String> removed, boolean full )
+    public void folderChanged ( Location location, Collection<Entry> added, Collection<String> removed, boolean full )
     {
        _log.debug ( String.format ( "Folder changed: %s", location.toString () ) );
        
@@ -165,22 +161,31 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
            _log.debug ( "Folder changed but no listener subscribed" );
            return;
        }
+
+       FolderCallbackPrx folderCallback;
        
-       AsyncFolderChange cb = new AsyncFolderChange ( this );
-       _folderCallback.folderChanged_async ( cb, location.asArray (), BrowserEntryHelper.toIce ( added.toArray ( new Entry[0] ) ), removed.toArray ( new String[0] ), full );
+       if ( (folderCallback = _folderCallback) != null )
+       {
+           folderCallback.folderChanged ( location.asArray (), BrowserEntryHelper.toIce ( added.toArray ( new Entry[0] ) ), removed.toArray ( new String[0] ), full );
+       }
     }
 
     public void ping ()
     {
         try
         {
-            if ( _dataCallback != null )
+            DataCallbackPrx dataCallback = _dataCallback;
+            if ( dataCallback != null )
             {
-                _dataCallback.ice_ping ();
+                dataCallback = DataCallbackPrxHelper.uncheckedCast ( dataCallback.ice_twoway () );
+                dataCallback.ice_ping ();
             }
-            if ( _folderCallback != null )
+            
+            FolderCallbackPrx folderCallback = _folderCallback;
+            if ( folderCallback != null )
             {
-                _folderCallback.ice_ping ();
+                folderCallback = FolderCallbackPrxHelper.uncheckedCast ( folderCallback.ice_twoway () );
+                folderCallback.ice_ping ();
             }
         }
         catch ( Throwable e )
@@ -190,12 +195,14 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
         }
     }
 
-    public synchronized void subscriptionChanged ( String item, SubscriptionState subscriptionState )
+    public void subscriptionChanged ( String item, SubscriptionState subscriptionState )
     {
         _log.debug ( String.format ( "Subscription changed: '%s' - '%s'", item, subscriptionState.name () ) );
-        if ( _dataCallback != null )
+        
+        DataCallbackPrx dataCallback;
+        
+        if ( (dataCallback = _dataCallback) != null )
         {
-            AsyncSubscriptionChange cb = new AsyncSubscriptionChange ( this );
             OpenSCADA.DA.SubscriptionState ss = OpenSCADA.DA.SubscriptionState.DISCONNECTED;
             
             switch ( subscriptionState )
@@ -211,7 +218,7 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
                 break;
             }
             
-            _dataCallback.subscriptionChange_async ( cb, item, ss );
+            dataCallback.subscriptionChange ( item, ss );
         }
     }
 }
