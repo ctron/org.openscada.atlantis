@@ -17,60 +17,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.utils.exec.test;
+package org.openscada.utils.exec;
 
 import org.junit.Assert;
-import org.junit.Test;
-import org.openscada.utils.exec.AsyncBasedOperation;
+import org.junit.Before;
 import org.openscada.utils.exec.Operation;
 import org.openscada.utils.exec.OperationResult;
+import org.openscada.utils.exec.SyncBasedOperation;
 
-public class AsyncOperationTests
+public class SyncOperationTests
 {
+    Operation<String, String> _opSyncSuccess = null;
 
-    Operation<String, String> _opAsyncSuccess = null;
-
-    @org.junit.Before
+    @Before
     public void setUp () throws Exception
     {
-        _opAsyncSuccess = new AsyncBasedOperation<String, String> () {
+        _opSyncSuccess = new SyncBasedOperation<String, String> () {
 
-            @Override
-            protected void startExecute ( final OperationResult<String> or, final String arg0 )
+            public String execute ( String arg0 ) throws Exception
             {
-                new Thread ( new Runnable () {
-
-                    public void run ()
-                    {
-                        try
-                        {
-                            Thread.sleep ( 1000 );
-                            System.out.println ( "Say hello: " + arg0 );
-                            Thread.sleep ( 1000 );
-
-                            or.notifySuccess ( "Hello to: " + arg0 );
-                        }
-                        catch ( Exception e )
-                        {
-                            or.notifyFailure ( e );
-                        }
-                    }
-                } ).start ();
+                Thread.sleep ( 1000 );
+                System.out.println ( "Say hello: " + arg0 );
+                Thread.sleep ( 1000 );
+                return "Hello to: " + arg0;
             }
-
         };
     }
 
-    @Test
     public void testSync () throws Exception
     {
-        Assert.assertEquals ( _opAsyncSuccess.execute ( "Alice" ), "Hello to: Alice" );
+        Assert.assertEquals ( _opSyncSuccess.execute ( "Alice" ), "Hello to: Alice" );
     }
 
-    @Test
     public void testAsync () throws Exception
     {
-        OperationResult<String> or = _opAsyncSuccess.startExecute ( "Bob" );
+        OperationResult<String> or = _opSyncSuccess.startExecute ( "Bob" );
         System.out.println ( "Started execution" );
 
         or.complete ();
@@ -79,12 +60,11 @@ public class AsyncOperationTests
         Assert.assertTrue ( or.isSuccess () );
     }
 
-    @Test
     public void testAsyncHandler () throws Exception
     {
         TestOperationHandler<String> handler = new TestOperationHandler<String> ();
 
-        OperationResult<String> or = _opAsyncSuccess.startExecute ( handler, "Bob" );
+        OperationResult<String> or = _opSyncSuccess.startExecute ( handler, "Bob" );
         System.out.println ( "Started execution" );
 
         or.complete ();

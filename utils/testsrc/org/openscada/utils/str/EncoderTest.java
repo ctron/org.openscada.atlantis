@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.utils.lang.test;
+package org.openscada.utils.str;
 
 import static org.junit.Assert.assertEquals;
 

@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.utils.exec.test;
+package org.openscada.utils.exec;
 
 import org.openscada.utils.exec.OperationResultHandler;
 
