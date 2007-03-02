@@ -20,7 +20,7 @@
 package org.openscada.utils.exec;
 
 /**
- * Implements an operation that is based on a asynchronous operation
+ * Implements an operation that is based on a asynchronous operation.
  * 
  * @author jens
  * @param <R>
@@ -39,9 +39,13 @@ public abstract class AsyncBasedOperation<R, T> implements Operation<R, T>
         result.complete ();
 
         if ( result.isSuccess () )
+        {
             return result.get ();
+        }
         else
+        {
             throw result.getException ();
+        }
     }
 
     protected abstract void startExecute ( OperationResult<R> or, T arg0 );
