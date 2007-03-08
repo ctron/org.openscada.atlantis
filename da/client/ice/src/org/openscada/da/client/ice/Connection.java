@@ -650,9 +650,13 @@ public class Connection implements org.openscada.da.client.Connection
         }
     }
 
-    protected synchronized void fireFolderChange ( Location location, Entry[] added, String[] removed, boolean full )
+    protected void fireFolderChange ( Location location, Entry[] added, String[] removed, boolean full )
     {
-        FolderListener listener = _folderListenerMap.get ( location );
+        FolderListener listener;
+        synchronized ( _folderListenerMap )
+        {
+            listener = _folderListenerMap.get ( location );
+        }
         if ( listener != null )
         {
             listener.folderChanged ( Arrays.asList ( added ), Arrays.asList ( removed ), full );
@@ -709,9 +713,12 @@ public class Connection implements org.openscada.da.client.Connection
         }
     }
 
-    public synchronized FolderListener setFolderListener ( Location location, FolderListener listener )
+    public FolderListener setFolderListener ( Location location, FolderListener listener )
     {
-        return _folderListenerMap.put ( location, listener );
+        synchronized ( _folderListenerMap )
+        {
+            return _folderListenerMap.put ( location, listener );
+        }
     }
 
     public void subscribeFolder ( Location location ) throws OperationException, NoConnectionException

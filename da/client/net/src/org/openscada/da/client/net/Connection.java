@@ -598,9 +598,12 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         return _itemListeners.put ( itemId, listener );
     }
 
-    public synchronized FolderListener setFolderListener ( Location location, FolderListener listener )
+    public FolderListener setFolderListener ( Location location, FolderListener listener )
     {
-        return _folderListeners.put ( location, listener );
+        synchronized ( _folderListeners )
+        {
+            return _folderListeners.put ( location, listener );
+        }
     }
 
     public void subscribeFolder ( Location location ) throws NoConnectionException, OperationException
