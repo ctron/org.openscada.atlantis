@@ -36,8 +36,6 @@ import org.openscada.opc.lib.da.ServerStateReader;
 import org.openscada.opc.lib.da.SyncAccess;
 import org.openscada.utils.collection.MapBuilder;
 
-import com.sun.corba.se.spi.orbutil.fsm.State;
-
 public class OPCConnection implements AccessStateListener, ServerStateListener, AutoReconnectListener
 {
     private static Logger _log = Logger.getLogger ( OPCConnection.class );
