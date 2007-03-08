@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
-import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.query.AnyMatcher;
 import org.openscada.da.server.browser.common.query.AttributeNameProvider;
@@ -27,6 +26,8 @@ import org.openscada.opc.lib.da.AccessBase;
 import org.openscada.opc.lib.da.AccessStateListener;
 import org.openscada.opc.lib.da.Async20Access;
 import org.openscada.opc.lib.da.AutoReconnectController;
+import org.openscada.opc.lib.da.AutoReconnectListener;
+import org.openscada.opc.lib.da.AutoReconnectState;
 import org.openscada.opc.lib.da.DuplicateGroupException;
 import org.openscada.opc.lib.da.Group;
 import org.openscada.opc.lib.da.Server;
@@ -35,7 +36,9 @@ import org.openscada.opc.lib.da.ServerStateReader;
 import org.openscada.opc.lib.da.SyncAccess;
 import org.openscada.utils.collection.MapBuilder;
 
-public class OPCConnection implements AccessStateListener, ServerStateListener
+import com.sun.corba.se.spi.orbutil.fsm.State;
+
+public class OPCConnection implements AccessStateListener, ServerStateListener, AutoReconnectListener
 {
     private static Logger _log = Logger.getLogger ( OPCConnection.class );
 
@@ -54,9 +57,10 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
 
     private FolderCommon _connectionFolder = null;
 
-    private ConnectionState _state = ConnectionState.DISCONNECTED;
+    private ConnectionState _state = null;
 
     private DataItemInputChained _stateItem = null;
+    private DataItemInputChained _autoReconnectStateItem = null;
     private DataItemCommand _connectCommandItem = null;
     private DataItemCommand _disconnectCommandItem = null;
     private DataItemCommand _suicideCommandItem = null;
@@ -78,6 +82,8 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         // state item
         _stateItem = new DataItemInputChained ( new DataItemInformationBase ( getBaseId () + ".state",
                 EnumSet.of ( IODirection.INPUT ) ) );
+        _autoReconnectStateItem = new DataItemInputChained ( new DataItemInformationBase ( getBaseId ()
+                + ".auto-reconnect-state", EnumSet.of ( IODirection.INPUT ) ) );
 
         _activeCountItem = new DataItemInputChained ( new DataItemInformationBase ( getBaseId () + ".active-count",
                 EnumSet.of ( IODirection.INPUT ) ) );
@@ -112,7 +118,6 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         // Access state
         _accessStateItem = new DataItemInputChained ( getBaseId () + ".access-state" );
     }
-
     @Override
     protected void finalize () throws Throwable
     {
@@ -153,8 +158,11 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
             return;
         }
 
+        setConnectionState ( ConnectionState.DISCONNECTED );
+
         _server = new Server ( _connectionSetup.getConnectionInformation () );
         _reconnectController = new AutoReconnectController ( _server );
+        _reconnectController.addListener ( this );
 
         switch ( _connectionSetup.getAccessMethod () )
         {
@@ -181,6 +189,8 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         // register state item
         _hive.registerItem ( _stateItem );
         _connectionFolder.add ( "state", _stateItem, new MapBuilder<String, Variant> ().getMap () );
+        _hive.registerItem ( _autoReconnectStateItem );
+        _connectionFolder.add ( "auto-reconnect-state", _autoReconnectStateItem, new MapBuilder<String, Variant>().getMap () );
 
         _hive.registerItem ( _activeCountItem );
         _connectionFolder.add ( "active-count", _activeCountItem, new MapBuilder<String, Variant> ().getMap () );
@@ -211,6 +221,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         // remove state item
         _connectionFolder.remove ( "state" );
         _hive.unregisterItem ( _stateItem );
+        _hive.unregisterItem ( _autoReconnectStateItem );
 
         _connectionFolder.remove ( "active-count" );
         _hive.unregisterItem ( _activeCountItem );
@@ -231,6 +242,9 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         _hive.getRootFolderCommon ().remove ( _connectionTag );
         _itemManager = null;
         _connectionFolder = null;
+        
+        _reconnectController.removeListener ( this );
+        _reconnectController = null;
 
         _serverStateReader.removeListener ( this );
         _serverStateReader.stop ();
@@ -284,21 +298,20 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
                 }
             }
         }
-        
-        
+
         /*
-        itemSet = new HashSet<String> ( _server.getFlatBrowser ().browse ( "" ) );
-        String[] items = itemSet.toArray ( new String[itemSet.size ()] );
-        Map<String, Result<OPCITEMRESULT>> itemResult = _group.validateItems ( items );
-        for ( Map.Entry<String, Result<OPCITEMRESULT>> entry : itemResult.entrySet () )
-        {
-            if ( entry.getValue ().getErrorCode () == 0 )
-            {
-                int accessRights = entry.getValue ().getValue ().getAccessRights ();
-                addFlatItem ( entry.getKey (), Helper.convertToAccessSet ( accessRights ) );
-            }
-        }
-*/
+         itemSet = new HashSet<String> ( _server.getFlatBrowser ().browse ( "" ) );
+         String[] items = itemSet.toArray ( new String[itemSet.size ()] );
+         Map<String, Result<OPCITEMRESULT>> itemResult = _group.validateItems ( items );
+         for ( Map.Entry<String, Result<OPCITEMRESULT>> entry : itemResult.entrySet () )
+         {
+         if ( entry.getValue ().getErrorCode () == 0 )
+         {
+         int accessRights = entry.getValue ().getValue ().getAccessRights ();
+         addFlatItem ( entry.getKey (), Helper.convertToAccessSet ( accessRights ) );
+         }
+         }
+         */
     }
 
     public String getBaseId ()
@@ -441,5 +454,10 @@ public class OPCConnection implements AccessStateListener, ServerStateListener
         {
             return _activeItems.size ();
         }
+    }
+    
+    public void stateChanged ( AutoReconnectState state )
+    {
+        _autoReconnectStateItem.updateValue ( new Variant ( state.name () ) );
     }
 }
