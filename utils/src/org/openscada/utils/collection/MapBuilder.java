@@ -35,9 +35,13 @@ public class MapBuilder<Key, Value>
 {
     private Map<Key, Value> _map = null;
 
+    /**
+     * Create a new map builder with the provided map as input
+     * @param map the content that should be used as initial content. The provided map will not be modified.
+     */
     public MapBuilder ( final Map<Key, Value> map )
     {
-        _map = map;
+        _map = new HashMap<Key, Value> ( map );
     }
 
     public MapBuilder ()
