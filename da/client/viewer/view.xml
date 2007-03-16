@@ -18,6 +18,8 @@
 		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.figures.Rectangle"/>
 		<object-factory id="triangle" class="org.openscada.da.client.viewer.model.impl.figures.Triangle"/>
 		<object-factory id="item" class="org.openscada.da.client.viewer.model.impl.items.DataItemObject"/>
+		<object-factory id="viewLink" class="org.openscada.da.client.viewer.model.impl.figures.ViewLink"/>
+		
 		
 		<object-factory id="colorcomposer" class="org.openscada.da.client.viewer.model.impl.converter.ColorComposer"/>
 		<object-factory id="modulo" class="org.openscada.da.client.viewer.model.impl.converter.ModuloCalculator"/>
@@ -34,6 +36,7 @@
 			<arg class="org.openscada.da.client.viewer.model.impl.converter.Double2IntegerConverter"/>
 		</object-factory>
 		
+		<object-factory id="if" class="org.openscada.da.client.viewer.model.impl.converter.If"/>
 		<object-factory id="boolean2matrix" class="org.openscada.da.client.viewer.model.impl.converter.Boolean2Matrix"/>
 
 		<object-factory id="mov-cmd" class="org.openscada.da.client.viewer.configurator.xml.XMLTemplateFactory">
@@ -131,11 +134,11 @@
 					</connector>
 					<connector type="default">
 						<output object="oc_matrix_1" name="value"/>
-						<input object="tri1" name="color"/>
+						<input object="tri1" name="backgroundColor"/>
 					</connector>
 					<connector type="default">
 						<output object="oc_matrix_1" name="value"/>
-						<input object="tri2" name="color"/>
+						<input object="tri2" name="backgroundColor"/>
 					</connector>
 					
 					<connector type="default">
@@ -220,7 +223,7 @@
 	</factories>
 	
 	<views>
-		<view id="view1" type="view">
+		<view id="mainView" type="view">
 			
 			<objects>
 				
@@ -290,6 +293,14 @@
 					<property name="width">200</property>
 					<property name="height">100</property>
 				</object>
+								
+				<object type="viewLink" id="view1">
+					<property name="text">View 1</property>
+					<property name="x">20</property>
+					<property name="y">150</property>
+					<property name="opaque">true</property>
+					<property name="viewId">scaleView</property>
+				</object>
 				
 			</objects>
 			
@@ -323,5 +334,94 @@
 				
 			</connectors>
 		</view>
+		
+		<view id="scaleView" type="view">
+		
+			<objects>
+			
+				<constant id="value_error_color"><color red="255" green="0" blue="255"/></constant>
+				<constant id="value_ok_color"><null/></constant>
+				
+				<constant id="active_color"><color red="0" green="255" blue="0"/></constant>
+				<constant id="inactive_color"><null/></constant>
+								
+				<object id="scale_1001_value" type="item">
+					<property name="item">scale.1001.value</property>
+					<property name="connection">da:net://localhost:1202?auto-reconnect=true</property>
+				</object>
+				
+				<object id="scale_1001_active" type="item">
+					<property name="item">scale.1001.active</property>
+					<property name="connection">da:net://localhost:1202?auto-reconnect=true</property>
+				</object>
+				
+				<object type="variantasinteger" id="vai_scale_value"/>
+			
+				<object type="label" id="weight_label">
+					<property name="format">%d</property>
+					<property name="x">10</property>
+					<property name="y">150</property>
+					<property name="opaque">true</property>
+				</object>
+
+				<object type="variantasboolean" id="vab_scale_active"/>
+				<object type="if" id="if_active_color"/>
+				<object type="if" id="if_error_value_color"/>
+			</objects>
+			
+			<connectors>
+				<connector type="default">
+					<output object="scale_1001_value" name="value"/>
+					<input object="vai_scale_value" name="value"/>
+				</connector>
+				<connector type="display">
+					<output object="vai_scale_value" name="value"/>
+					<input object="weight_label" name="object"/>
+				</connector>
+				
+				<!-- active color -->
+				<connector type="default">
+					<output object="active_color" name="value"/>
+					<input object="if_active_color" name="trueValue"/>
+				</connector>
+				<connector type="default">
+					<output object="inactive_color" name="value"/>
+					<input object="if_active_color" name="falseValue"/>
+				</connector>
+				
+				<connector type="default">
+					<output object="scale_1001_active" name="value"/>
+					<input object="vab_scale_active" name="value"/>
+				</connector>
+				<connector type="default">
+					<output object="vab_scale_active" name="value"/>
+					<input object="if_active_color" name="conditionValue"/>
+				</connector>
+				<connector type="display">
+					<output object="if_active_color" name="value"/>
+					<input object="weight_label" name="backgroundColor"/>
+				</connector>
+				
+				<!-- error color -->
+				<connector type="default">
+					<output object="value_error_color" name="value"/>
+					<input object="if_error_value_color" name="trueValue"/>
+				</connector>
+				<connector type="default">
+					<output object="value_ok_color" name="value"/>
+					<input object="if_error_value_color" name="falseValue"/>
+				</connector>
+				
+				<connector type="default">
+					<output object="vai_scale_value" name="error"/>
+					<input object="if_error_value_color" name="conditionValue"/>
+				</connector>
+				<connector type="display">
+					<output object="if_error_value_color" name="value"/>
+					<input object="weight_label" name="color"/>
+				</connector>
+			</connectors>
+		</view>
+		
 	</views>
 </viewer:root>

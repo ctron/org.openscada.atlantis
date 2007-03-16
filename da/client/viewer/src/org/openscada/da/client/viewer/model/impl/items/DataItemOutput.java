@@ -77,6 +77,7 @@ public class DataItemOutput extends BaseOutput implements OutputDefinition, Obse
 
     public void update ( Observable o, Object arg )
     {
+        _log.debug ( String.format ( "Update: %s", _dataItem.getValue () ) );
         fireEvent ( Type.VARIANT, _dataItem.getValue () );
     }
 

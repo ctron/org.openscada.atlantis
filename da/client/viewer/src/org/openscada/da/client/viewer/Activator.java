@@ -21,10 +21,21 @@ package org.openscada.da.client.viewer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
+import org.apache.xmlbeans.XmlException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.openscada.da.client.viewer.configurator.ConfigurationError;
+import org.openscada.da.client.viewer.configurator.Configurator;
+import org.openscada.da.client.viewer.configurator.xml.XMLConfigurator;
+import org.openscada.da.client.viewer.model.View;
+import org.openscada.da.client.viewer.views.ProcessView;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -78,9 +89,28 @@ public class Activator extends AbstractUIPlugin
         return plugin;
     }
     
-    public InputStream getSampleView () throws IOException
+    protected InputStream getSampleView () throws IOException
     {
         return FileLocator.openStream ( getBundle (), new Path ( "view.xml" ), true );
+    }
+    
+    public View configureView ( String viewId ) throws XmlException, IOException, ConfigurationError
+    {
+        Configurator cfg = new XMLConfigurator ( Activator.getDefault ().getSampleView () );
+        return cfg.configure ( viewId );
+    }
+    
+    public void openProcessView ( String viewId )
+    {
+        try
+        {
+            ProcessView processView = (ProcessView)getWorkbench ().getActiveWorkbenchWindow ().getActivePage ().showView ( ProcessView.VIEW_ID, viewId, IWorkbenchPage.VIEW_ACTIVATE );
+            processView.setView ( viewId );
+        }
+        catch ( Exception e )
+        {
+            ErrorDialog.openError ( getWorkbench ().getActiveWorkbenchWindow ().getShell (), "Error", "Failed to open process view", new Status ( Status.ERROR, Activator.PLUGIN_ID, 0, "Failed to open process view", e ) );
+        }
     }
 
 }

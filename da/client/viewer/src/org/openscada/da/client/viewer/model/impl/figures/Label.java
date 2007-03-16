@@ -19,18 +19,23 @@
 
 package org.openscada.da.client.viewer.model.impl.figures;
 
+import org.apache.log4j.Logger;
 import org.eclipse.draw2d.IFigure;
+import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
 public class Label extends BaseFigure
 {
+    private static Logger _log = Logger.getLogger ( Label.class );
+    
     private org.eclipse.draw2d.Label _label = null;
-    private String _text = null;
     private String _format = null;
     private String _displayText = null;
+    private Object _text = null;
     
     public Label ( String id )
     {
         super ( id );
+        addInput ( new PropertyInput ( this, "object" ) );
     }
 
     @Override
@@ -47,9 +52,20 @@ public class Label extends BaseFigure
         if ( _text == null )
             _displayText = null;
         else if ( _format == null )
-            _displayText = _text;
+            _displayText = _text.toString ();
         else
-            _displayText = String.format ( _format, _text );
+        {
+            try
+            {
+                _displayText = String.format ( _format, _text );
+            }
+            catch ( Exception e )
+            {
+                _displayText = e.getMessage ();
+            }
+        }
+        
+        update ();
     }
     
     protected synchronized String getDisplayText ()
@@ -81,14 +97,26 @@ public class Label extends BaseFigure
             update ();
         }
     }
-
-    public String getText ()
+    
+    @Override
+    public void dispose ()
     {
-        return _text;
+        if ( _label != null )
+        {
+            _label.getParent ().remove ( _label );
+            _label = null;
+        }
+        super.dispose ();
     }
 
     public synchronized void setText ( String text )
     {
+        setObject ( (Object)text );
+    }
+    
+    public synchronized void setObject ( Object text )
+    {
+        _log.debug ( "Set Object: " + text );
         _text = text;
         updateDisplayText ();
     }
@@ -101,7 +129,7 @@ public class Label extends BaseFigure
     public synchronized void setFormat ( String format )
     {
         _format = format;
-        updateDisplayText ();
+        setObject ( _text );
     }
 
 }

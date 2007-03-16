@@ -49,6 +49,7 @@ public class Triangle extends BaseFigure implements DynamicUIObject
             _triangle.getParent ().remove ( _triangle );
             _triangle = null;
         }
+        super.dispose ();
     }
     
     protected void update ()

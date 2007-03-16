@@ -34,17 +34,20 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
     private static Logger _log = Logger.getLogger ( BaseFigure.class );
     
     private Color _color = null;
+    private Color _backgroundColor = null;
+    private boolean _opaque = false;
     private org.eclipse.draw2d.geometry.Rectangle _bounds = new org.eclipse.draw2d.geometry.Rectangle ( 0, 0, -1, -1 );
 
     public BaseFigure ( String id )
     {
         super ( id );
         addInput ( new PropertyInput ( this, "color" ) );
+        addInput ( new PropertyInput ( this, "backgroundColor" ) );
         addInput ( new AliasedPropertyInput ( this, "width", "width" ) );
         addInput ( new AliasedPropertyInput ( this, "height", "height" ) );
         addInput ( new AliasedPropertyInput ( this, "x", "x" ) );
         addInput ( new AliasedPropertyInput ( this, "y", "y" ) );
-        
+        addInput ( new PropertyInput ( this, "opaque" ) );
         
     }
     
@@ -83,6 +86,14 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
         else
             return Helper.colorFromRGB ( _color.getRGB () );
     }
+    
+    public org.openscada.da.client.viewer.model.types.Color getBackgroundColor ()
+    {
+        if ( _backgroundColor == null )
+            return null;
+        else
+            return Helper.colorFromRGB ( _backgroundColor.getRGB () );
+    }
 
     public void setColor ( org.openscada.da.client.viewer.model.types.Color color )
     {
@@ -90,6 +101,15 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
             _color = null;
         else
             _color = new Color ( Display.getCurrent (), Helper.colorToRGB ( color ) );
+        update ();
+    }
+    
+    public void setBackgroundColor ( org.openscada.da.client.viewer.model.types.Color backgroundColor )
+    {
+        if ( backgroundColor == null )
+            _backgroundColor = null;
+        else
+            _backgroundColor = new Color ( Display.getCurrent (), Helper.colorToRGB ( backgroundColor ) );
         update ();
     }
 
@@ -106,7 +126,9 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
     protected void updateFigure ( IFigure figure )
     {
         if ( figure == null )
+        {
             return;
+        }
         
         //figure.setBounds ( _bounds );
         if ( figure.getParent () != null )
@@ -114,8 +136,20 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
             _log.debug ( String.format ( "Setting layout bounds: %d/%d/%d/%d", _bounds.x, _bounds.y, _bounds.width, _bounds.height ) );
             figure.getParent ().setConstraint ( figure, _bounds.getCopy () );
         }
-        figure.setBackgroundColor ( _color );
+        figure.setForegroundColor ( _color );
+        figure.setBackgroundColor ( _backgroundColor );
+        figure.setOpaque ( _opaque );
     }
     
     protected abstract void update ();
+
+    public boolean isOpaque ()
+    {
+        return _opaque;
+    }
+
+    public void setOpaque ( boolean opaque )
+    {
+        _opaque = opaque;
+    }
 }

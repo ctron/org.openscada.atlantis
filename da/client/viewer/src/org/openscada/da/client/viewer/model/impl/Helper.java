@@ -37,7 +37,7 @@ public class Helper
     {
         EnumSet<Type> set = EnumSet.noneOf ( Type.class );
         
-        _log.debug ( String.format ( "Class to type: %s", clazz ) );
+        //_log.debug ( String.format ( "Class to type: %s", clazz ) );
         
         if ( clazz.isAssignableFrom ( String.class ) )
         {
@@ -82,7 +82,7 @@ public class Helper
         {
             for ( Type type : set )
             {
-                _log.debug ( "Matches: " + type.name () );
+                //_log.debug ( "Matches: " + type.name () );
             }
         }
         

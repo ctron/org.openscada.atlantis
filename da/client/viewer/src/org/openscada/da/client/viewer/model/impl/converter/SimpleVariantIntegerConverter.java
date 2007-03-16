@@ -19,14 +19,20 @@
 
 package org.openscada.da.client.viewer.model.impl.converter;
 
+import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.client.viewer.model.impl.BaseDynamicObject;
+import org.openscada.da.client.viewer.model.impl.BooleanSetterOutput;
 import org.openscada.da.client.viewer.model.impl.IntegerSetterOutput;
 import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
 public class SimpleVariantIntegerConverter extends BaseDynamicObject
 {
+    private static Logger _log = Logger.getLogger ( SimpleVariantIntegerConverter.class );
+    
     private IntegerSetterOutput _output = new IntegerSetterOutput ( "value" );
+    private BooleanSetterOutput _errorOutput = new BooleanSetterOutput ( "error" );
+    
     private Variant _value = null;
     private long _defaultValue = 0;
     
@@ -35,6 +41,7 @@ public class SimpleVariantIntegerConverter extends BaseDynamicObject
         super ( id );
         
         addOutput ( _output );
+        addOutput ( _errorOutput );
         addInput ( new PropertyInput ( this, "value" ) );
         addInput ( new PropertyInput ( this, "defaultValue" ) );
     }
@@ -59,10 +66,13 @@ public class SimpleVariantIntegerConverter extends BaseDynamicObject
         try
         {
             _output.setValue ( _value.asLong () );
+            _errorOutput.setValue ( false );
         }
         catch ( Exception e )
         {
+            //_log.info ( String.format ( "Failed to convert value %s to integer", _value ), e );
             _output.setValue ( _defaultValue );
+            _errorOutput.setValue ( true );
         }
     }
 }

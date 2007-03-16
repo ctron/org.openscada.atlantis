@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
-         <viewShortcut id="org.openscada.da.client.viewer.ProcessView"/>
+         <actionSet id="org.openscada.da.client.viewer.ActionSet1"/>
       </perspectiveExtension>
    </extension>
    <extension
@@ -15,6 +15,25 @@
             class="org.openscada.da.client.viewer.views.ProcessView"
             id="org.openscada.da.client.viewer.ProcessView"
             name="Process Viewer"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.openscada.da.client.viewer.ActionSet1"
+            label="Action Set"
+            visible="false">
+         <action
+               class="org.openscada.da.client.viewer.OpenProcessViewAction"
+               id="org.openscada.da.client.viewer.OpenProcessViewAction"
+               label="Main Process View"
+               menubarPath="processViewMenu/processViewGroup"
+               style="push"/>
+         <menu
+               id="processViewMenu"
+               label="Process Views">
+            <separator name="processViewGroup"/>
+         </menu>
+      </actionSet>
    </extension>
 
 </plugin>

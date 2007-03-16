@@ -46,6 +46,7 @@ public class Rectangle extends BaseFigure implements DynamicUIObject
             _rectangle.getParent ().remove ( _rectangle );
             _rectangle = null;
         }
+        super.dispose ();
     }
 
     protected void update ()

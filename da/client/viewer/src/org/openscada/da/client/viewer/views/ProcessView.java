@@ -19,9 +19,11 @@
 
 package org.openscada.da.client.viewer.views;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.xmlbeans.XmlException;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.IFigure;
@@ -36,6 +38,7 @@ import org.openscada.core.client.ConnectionFactory;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.viewer.Activator;
+import org.openscada.da.client.viewer.configurator.ConfigurationError;
 import org.openscada.da.client.viewer.configurator.Configurator;
 import org.openscada.da.client.viewer.configurator.xml.XMLConfigurator;
 import org.openscada.da.client.viewer.model.AlreadyConnectedException;
@@ -59,138 +62,30 @@ import org.openscada.da.client.viewer.model.impl.items.DataItemOutput;
 
 public class ProcessView extends ViewPart
 {
+    public static final String VIEW_ID = "org.openscada.da.client.viewer.ProcessView";
+
     private static Logger _log = Logger.getLogger ( ProcessView.class );
-    
+
     private Canvas _canvas = null;
     private LightweightSystem _system = null;
 
     private IFigure _rootFigure = null;
-    
+
     private Container _container = null;
 
     public ProcessView ()
     {
-        try
-        {
-            test2 ();
-        }
-        catch ( Exception e )
-        {
-            _log.warn ( "failed to create test view", e );
-        }
     }
-    
-    private void test2 ()
-    {
-        try
-        {
-            Configurator cfg = new XMLConfigurator ( Activator.getDefault ().getSampleView () );
-            List<View> views = cfg.configure ();
-            
-            setView ( views.get ( 0 ) );
-        }
-        catch ( Exception e )
-        {
-            _log.warn ( "Failed to parse view", e );
-        }
-    }
-    
+
     protected void setView ( Container container )
     {
-        _container = container;   
+        if ( _container == null )
+        {
+            _container = container;
+            createObjects ();
+        }
     }
-    
-    @SuppressWarnings("unused")
-    private void test () throws AlreadyConnectedException
-    {
-        Container container = new FigureContainer ( "1" );
-        
-        Rectangle rect = new Rectangle ( "2" );
-        
-        IntegerSetterOutput boundsOutput = new IntegerSetterOutput ( "bounds" );
-        
-        Connector connector3 = new PassThroughConnector ();
-        connector3.setOutput ( boundsOutput );
-        connector3.setInput ( rect.getInputByName ( "height" ) );
-        
-        ConnectionInformation ci = ConnectionInformation.fromURI ( "da:net://localhost:1202?auto-reconnect=true" );
-        
-        Connection c = (Connection)ConnectionFactory.create ( ci );
-        c.connect ();
-        ItemManager i = new ItemManager ( c );
-        
-        OutputDefinition diOutput = new DataItemOutput ( i, "time", "time" );
-        OutputDefinition diOutput2 = new DataItemOutput ( i, "memory", "memory" );
-        
-        SimpleVariantIntegerConverter svic = new SimpleVariantIntegerConverter ( "3" );
-        svic.setDefaultValue ( 0L );
-        
-        Connector connector7 = new DisplaySynchronizedConnector ();
-        connector7.setOutput ( diOutput );
-        connector7.setInput ( svic.getInputByName ( "value" ) );
-        
-        SimpleVariantIntegerConverter svic2 = new SimpleVariantIntegerConverter ( "4" );
-        svic2.setDefaultValue ( 0L );
-        
-        Connector connector9 = new DisplaySynchronizedConnector ();
-        connector9.setOutput ( diOutput2 );
-        connector9.setInput ( svic2.getInputByName ( "value" ) );
 
-        FactorCalculator fc = new FactorCalculator ( "5" );
-        fc.setFactor ( 0.01 );
-        
-        ModuloCalculator mc = new ModuloCalculator ( "6" );
-        mc.setModulo ( 255L );
-        
-        Integer2DoubleConverter i2dc = new Integer2DoubleConverter ( "7" );
-        Connector connector12 = new PassThroughConnector ();
-        connector12.setOutput ( svic.getOutputByName ( "value" ) );
-        connector12.setInput ( i2dc.getInputByName ( "value" ) );
-        
-        Connector connector13 = new PassThroughConnector ();
-        connector13.setInput ( fc.getInputByName ( "value" ) );
-        connector13.setOutput ( i2dc.getOutputByName ( "value" ) );
-        
-        Double2IntegerConverter d2ic = new Double2IntegerConverter ( "8" );
-        
-        Connector connector11 = new PassThroughConnector ();
-        connector11.setOutput ( fc.getOutputByName ( "value" ) );
-        connector11.setInput ( d2ic.getInputByName ( "value" ) );
-        
-        Connector connector5 = new PassThroughConnector ();
-        connector5.setInput ( mc.getInputByName ( "value" ) );
-        connector5.setOutput ( d2ic.getOutputByName ( "value" ) );
-        
-        ModuloCalculator mc2 = new ModuloCalculator ( "9" );
-        mc2.setModulo ( 255L );
-        
-        Connector connector8 = new PassThroughConnector ();
-        connector8.setInput ( mc2.getInputByName ( "value" ) );
-        connector8.setOutput ( svic2.getOutputByName ( "value" ) );
-        
-        ColorComposer cc = new ColorComposer ( "10" );
-        
-        Connector connector4r = new PassThroughConnector ();
-        connector4r.setOutput ( mc.getOutputByName ( "value" ) );
-        connector4r.setInput ( cc.getInputByName ( "red" ) );
-        Connector connector4g = new PassThroughConnector ();
-        connector4g.setOutput ( mc2.getOutputByName ( "value" ) );
-        connector4g.setInput ( cc.getInputByName ( "green" ) );
-        
-        Connector connector10 = new PassThroughConnector ();
-        connector10.setOutput ( mc.getOutputByName ( "value" ) );
-        connector10.setInput ( rect.getInputByName ( "width" ) );
-        
-        Connector connector6 = new PassThroughConnector ();
-        connector6.setInput ( rect.getInputByName ( "color" ) );
-        connector6.setOutput ( cc.getOutputByName ( "color" ) );
-     
-        container.getObjects ().add ( rect );
-        setView ( container );
-        
-        boundsOutput.setValue ( 100 );
-    }
-    
     @Override
     public void createPartControl ( Composite parent )
     {
@@ -202,35 +97,20 @@ public class ProcessView extends ViewPart
         _rootFigure.setBackgroundColor ( ColorConstants.white );
         _rootFigure.setOpaque ( true );
         _system.setContents ( _rootFigure );
-        
-        /*
-        Figure f1 = new Figure ();
-        f1.setBackgroundColor ( ColorConstants.red );
-        f1.setOpaque ( true );
-        f1.setLayoutManager ( new XYLayout () );
-        Figure f2 = new Figure ();
-        f2.setBackgroundColor ( ColorConstants.green );
-        f2.setOpaque ( true );
-        
-        //f2.setBounds ( new org.eclipse.draw2d.geometry.Rectangle ( 0, 0, 50, 50 ) );
-        f1.setSize ( -1, -1 );
-        
-        f1.add ( f2 );
-        f1.setConstraint ( f2, new org.eclipse.draw2d.geometry.Rectangle ( 50, 50, 50, 50 ) );
-        _rootFigure.add ( f1 );
-        _rootFigure.setConstraint ( f1, new org.eclipse.draw2d.geometry.Rectangle ( 100, 100, -1, -1 ) );
-        */
+
         createObjects ();
     }
 
     protected void createObjects ()
     {
         if ( _container == null )
+        {
             return;
-        
+        }
+
         if ( _container instanceof DynamicUIObject )
         {
-            ((DynamicUIObject)_container).createFigure ( _rootFigure );
+            ( (DynamicUIObject)_container ).createFigure ( _rootFigure );
         }
     }
 
@@ -239,7 +119,7 @@ public class ProcessView extends ViewPart
     {
         _canvas.setFocus ();
     }
-    
+
     @Override
     public void dispose ()
     {
@@ -257,7 +137,13 @@ public class ProcessView extends ViewPart
             _canvas = null;
         }
         _system = null;
+        _container = null;
         super.dispose ();
+    }
+
+    public void setView ( String viewId ) throws XmlException, IOException, ConfigurationError
+    {
+        setView ( Activator.getDefault ().configureView ( viewId ));
     }
 
 }

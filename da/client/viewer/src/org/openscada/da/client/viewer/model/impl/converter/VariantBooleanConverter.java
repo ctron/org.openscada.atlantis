@@ -50,9 +50,15 @@ public class VariantBooleanConverter extends BaseDynamicObject
         try
         {
             if ( _value.isNull () )
+            {
                 _output.setValue ( null );
+            }
             else
+            {
                 _output.setValue ( _value.asBoolean () );
+            }
+            
+            _errorOutput.setValue ( false );
         }
         catch ( Exception e )
         {

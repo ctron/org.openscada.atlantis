@@ -86,17 +86,13 @@ public class XMLConfigurator implements Configurator
         this ( RootDocument.Factory.parse ( stream ) );
     }
     
-    public List<View> configure () throws ConfigurationError
+    public View configure ( String viewId ) throws ConfigurationError
     {
         XMLConfigurationContext ctx = new XMLConfigurationContext ();
         ctx.setDocument ( _document );
         
-        List<View> views = new LinkedList<View> ();
-        
         configureFactories ( ctx, _document.getRoot ().getFactories () );
-        configureViews ( ctx, _document.getRoot ().getViews (), views );
-        
-        return views;
+        return configureView ( ctx, _document.getRoot ().getViews (), viewId );
     }
 
     public static void configureFactories ( XMLConfigurationContext ctx, FactoriesType factories ) throws ConfigurationError
@@ -188,16 +184,21 @@ public class XMLConfigurator implements Configurator
         }
     }
 
-    public static void configureViews ( XMLConfigurationContext ctx, ViewsType views, List<View> viewList ) throws ConfigurationError
+    public static View configureView ( XMLConfigurationContext ctx, ViewsType views, String viewId) throws ConfigurationError
     {
         for ( ViewType view : views.getViewList () )
         {
-            Container container = createContainer ( new XMLContainerContext ( ctx ), view.getId (), view );
-            if ( container instanceof View )
+            if ( view.getId ().equals ( viewId ) )
             {
-                viewList.add ( (View)container );
+                Container container = createContainer ( new XMLContainerContext ( ctx ), view.getId (), view );
+                if ( container instanceof View )
+                {
+                    return (View)container;
+                }
+                return null;
             }
         }
+        return null;
     }
 
     public static Container createContainer ( XMLContainerContext ctx, String id, ContainerType container ) throws ConfigurationError
@@ -362,14 +363,24 @@ public class XMLConfigurator implements Configurator
                 if ( pd.getName ().equals ( name ) )
                 {
                     PropertyEditor pe = PropertyEditorManager.findEditor ( pd.getPropertyType () );
-                    pe.setAsText ( stringValue );
-                    pd.getWriteMethod ().invoke ( object, new Object[] { pe.getValue () } );
+                    if ( pe != null )
+                    {
+                        pe.setAsText ( stringValue );
+                        pd.getWriteMethod ().invoke ( object, new Object[] { pe.getValue () } );
+                        return;
+                    }
+                    if  ( pd.getPropertyType ().isAssignableFrom ( stringValue.getClass () ) )
+                    {
+                        pd.getWriteMethod ().invoke ( object, new Object[] { stringValue } );
+                        return;
+                    }
+                    throw new ConfigurationError ( String.format ( "No way to set value. Object: %s, Property: %s, String-Value: '%s'", object, name, stringValue ) );
                 }
             }
         }
         catch ( Exception e )
         {
-            throw new ConfigurationError ( "Unable to set property for dynamic object", e );
+            throw new ConfigurationError ( String.format ( "Unable to set property for dynamic object. Object: %s, Property: %s, String-Value: '%s'", object, name, stringValue ), e );
         }
     }
 

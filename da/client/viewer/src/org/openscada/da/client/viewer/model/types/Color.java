@@ -65,4 +65,10 @@ public class Color
     {
         _red = red;
     }
+    
+    @Override
+    public String toString ()
+    {
+        return String.format ( "#%02x%02x%02x", _red, _green, _blue );
+    }
 }
