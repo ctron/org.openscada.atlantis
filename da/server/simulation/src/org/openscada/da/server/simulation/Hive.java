@@ -33,6 +33,7 @@ import org.openscada.da.server.browser.common.query.SplitGroupProvider;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.simulation.modules.BaseModule;
 import org.openscada.da.server.simulation.modules.SimpleMOV;
+import org.openscada.da.server.simulation.modules.SimpleScale;
 import org.openscada.utils.timing.Scheduler;
 
 public class Hive extends HiveCommon
@@ -54,6 +55,7 @@ public class Hive extends HiveCommon
         setRootFolder ( rootFolder );
 
         addModule ( new SimpleMOV ( this, "1000" ) );
+        addModule ( new SimpleScale ( this, "1001" ) );
 
         QueryFolder queryFolder = new QueryFolder ( new Matcher () {
 

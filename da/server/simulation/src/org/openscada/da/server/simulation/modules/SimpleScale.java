@@ -9,7 +9,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.simulation.Hive;
-import org.openscada.utils.timing.Scheduler;
+import org.openscada.utils.collection.MapBuilder;
 
 public class SimpleScale extends BaseModule
 {
@@ -22,8 +22,14 @@ public class SimpleScale extends BaseModule
     
     private int _minWeight = 10000;
     private int _maxWeight = 30000;
+    
+    private double _errorRatio = 0.10;
 
     private DataItemInputChained _valueInput;
+
+    private DataItemInputChained _errorInput;
+
+    private DataItemInputChained _activeInput;
     
     private static Random _random = new Random ();
 
@@ -32,7 +38,7 @@ public class SimpleScale extends BaseModule
         super ( hive, "scale." + id );
 
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "tag", new Variant ( "mov." + id ) );
+        attributes.put ( "tag", new Variant ( "scale." + id ) );
 
         DataItemCommand startCommand = getOutput ( "start", attributes );
         startCommand.addListener ( new DataItemCommand.Listener () {
@@ -45,6 +51,9 @@ public class SimpleScale extends BaseModule
         
         _valueInput = getInput ( "value", attributes );
         _valueInput.setFilterNoChange ( false );
+        _errorInput = getInput ( "error", attributes );
+        _activeInput = getInput ( "active", new MapBuilder<String, Variant> ( attributes ).put ( "description", new Variant ( "An indicator if a weight process is active. True means: active, false: not active" ) ).getMap () );
+        _activeInput.updateValue ( new Variant ( false ) );
     }
 
     protected synchronized void startWeight ()
@@ -65,8 +74,11 @@ public class SimpleScale extends BaseModule
 
     protected void performWeight ()
     {
-        int delay = _random.nextInt ( _maxDelay - _minDelay );
+        int delay = _minDelay + _random.nextInt ( _maxDelay - _minDelay );
         _log.debug ( String.format ( "Weight delay: %d", delay ) );
+        
+        _activeInput.updateValue ( new Variant ( true ) );
+        _activeInput.updateAttributes ( new MapBuilder<String, Variant> ().put ( "sim.scale.last-delay", new Variant ( delay ) ).getMap () );
         
         try
         {
@@ -76,10 +88,34 @@ public class SimpleScale extends BaseModule
         {
         }
         
-        int weight = _random.nextInt ( _maxWeight - _minWeight );
-        _valueInput.updateValue ( new Variant ( weight ) );
+        boolean error = _random.nextDouble () < _errorRatio;
+        
+        if ( error )
+        {
+            int errorCode = _random.nextInt ( 255 );
+            finishWithError ( errorCode );
+        }
+        else
+        {
+            int weight = _minWeight + _random.nextInt ( _maxWeight - _minWeight );
+            finishWeight ( weight );    
+        }
+        
+        _activeInput.updateValue ( new Variant ( false ) );
         
         _thread = null;
+    }
+    
+    protected void finishWeight ( int value )
+    {
+        _valueInput.updateValue ( new Variant ( value ) );
+        _errorInput.updateValue ( new Variant () );
+    }
+    
+    protected void finishWithError ( int errorCode )
+    {
+        _valueInput.updateValue ( new Variant () );
+        _errorInput.updateValue ( new Variant ( errorCode ) );
     }
 
 }
