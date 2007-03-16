@@ -36,6 +36,8 @@ public class DataItemInputChained extends DataItemBaseChained implements Suspend
 {
     protected Variant _primaryValue = new Variant ();
     protected Variant _secondaryValue = new Variant ();
+    
+    protected boolean _filterNoChange = true;
 
     public DataItemInputChained ( DataItemInformation dataItemInformation )
     {
@@ -49,7 +51,7 @@ public class DataItemInputChained extends DataItemBaseChained implements Suspend
 
     public synchronized void updateValue ( Variant value )
     {
-        if ( _primaryValue.equals ( value ) )
+        if ( _filterNoChange && _primaryValue.equals ( value ) )
         {
             return;
         }
@@ -72,7 +74,7 @@ public class DataItemInputChained extends DataItemBaseChained implements Suspend
             }
         }
 
-        if ( !_secondaryValue.equals ( newSecondaryValue ) )
+        if ( (!_filterNoChange) || (!_secondaryValue.equals ( newSecondaryValue )) )
         {
             _secondaryValue = new Variant ( newSecondaryValue );
             notifyValue ( _secondaryValue );
@@ -104,6 +106,26 @@ public class DataItemInputChained extends DataItemBaseChained implements Suspend
         {
             notifyAttributes ( _secondaryAttributes.get () );
         }
+    }
+
+    public boolean isFilterNoChange ()
+    {
+        return _filterNoChange;
+    }
+
+    /**
+     * Set the state of the "no change" filter.
+     * 
+     * <br/>
+     * If the noChange filter it set to <code>true</code> (the default) update calls
+     * with the value already set will be ignored and do not generate a value event.
+     * If the noChange filter is set to <code>false</code> then each update call, also
+     * if the value did not change, will generate update events. 
+     * @param filterNoChange new state of the nochange filter
+     */
+    public void setFilterNoChange ( boolean filterNoChange )
+    {
+        _filterNoChange = filterNoChange;
     }
 
 }
