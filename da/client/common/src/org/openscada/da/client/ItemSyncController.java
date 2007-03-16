@@ -203,10 +203,10 @@ public class ItemSyncController implements ItemUpdateListener
     {
         _log.warn ( "Failed to subscribe", e );
         _subscribed = false;
-        // FIXME: solve problem when subscription fails
+        notifySubscriptionChange ( SubscriptionState.DISCONNECTED );
     }
 
-    public synchronized void notifyValueChange ( Variant value, boolean initial )
+    public synchronized void notifyValueChange ( Variant value, boolean cache )
     {
         if ( _cachedValue.equals ( value ) )
         {
@@ -216,7 +216,7 @@ public class ItemSyncController implements ItemUpdateListener
         _cachedValue = value;
         for ( ListenerInfo listenerInfo : _listeners.values () )
         {
-            listenerInfo.getListener ().notifyValueChange ( value, initial );
+            listenerInfo.getListener ().notifyValueChange ( value, cache );
         }
     }
 
@@ -243,5 +243,12 @@ public class ItemSyncController implements ItemUpdateListener
         {
             listenerInfo.getListener ().notifySubscriptionChange ( subscriptionState );
         }
+    }
+
+    public synchronized void disconnect ()
+    {
+        notifySubscriptionChange ( SubscriptionState.DISCONNECTED );
+        notifyValueChange ( new Variant (), true );
+        notifyAttributeChange ( new HashMap<String, Variant> (), true );
     }
 }

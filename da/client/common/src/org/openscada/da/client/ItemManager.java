@@ -33,6 +33,8 @@ public class ItemManager implements ConnectionStateListener
     protected org.openscada.da.client.Connection _connection = null;
 
     private Map<String, ItemSyncController> _itemListeners = new HashMap<String, ItemSyncController> ();
+    
+    private boolean _connected = false;
 
     public ItemManager ( org.openscada.da.client.Connection connection )
     {
@@ -67,7 +69,7 @@ public class ItemManager implements ConnectionStateListener
      * Synchronized all items that are currently known
      *
      */
-    private synchronized void resyncAllItems ()
+    protected synchronized void resyncAllItems ()
     {
         _log.debug ( "Syncing all items" );
 
@@ -78,15 +80,36 @@ public class ItemManager implements ConnectionStateListener
 
         _log.debug ( "re-sync complete" );
     }
+    
+    protected synchronized void disconnectAllItems ()
+    {
+        _log.debug ( "Disconnecting all items" );
+        
+        for ( Map.Entry<String, ItemSyncController> entry : _itemListeners.entrySet () )
+        {
+            entry.getValue ().disconnect ();
+        }
+        
+        _log.debug ( "Disconnecting all items: complete" );
+    }
 
-    public void stateChange ( org.openscada.core.client.Connection connection, ConnectionState state, Throwable error )
+    public synchronized void stateChange ( org.openscada.core.client.Connection connection, ConnectionState state, Throwable error )
     {
         switch ( state )
         {
         case BOUND:
-            resyncAllItems ();
+            if ( !_connected )
+            {
+                resyncAllItems ();
+                _connected = true;
+            }
             break;
         default:
+            if ( _connected )
+            {
+                disconnectAllItems ();
+                _connected = false;
+            }
             break;
         }
     }
