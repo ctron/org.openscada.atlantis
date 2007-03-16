@@ -87,7 +87,8 @@ public class DataItem extends Observable
 
     private void performNotifyValueChange ( Variant value, boolean initial )
     {
-        _value = value;
+        _value = new Variant ( value );
+        
         setChanged ();
         notifyObservers ();
     }
