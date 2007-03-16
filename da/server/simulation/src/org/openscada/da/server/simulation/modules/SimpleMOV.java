@@ -7,7 +7,6 @@ import org.openscada.core.Variant;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.simulation.Hive;
-import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.timing.Scheduler;
 
 public class SimpleMOV extends BaseModule implements MOV, Runnable

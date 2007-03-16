@@ -42,9 +42,13 @@ public class BaseModule
         if ( dataItem != null )
         {
             if ( dataItem instanceof DataItemInputChained )
+            {
                 return (DataItemInputChained)dataItem;
+            }
             else
-                return null;
+            {
+                throw new ItemAlreadyRegisteredException ( name );
+            }
         }
 
         DataItemInputChained item = new DataItemInputChained ( id );
@@ -64,9 +68,13 @@ public class BaseModule
         if ( dataItem != null )
         {
             if ( dataItem instanceof DataItemCommand )
+            {
                 return (DataItemCommand)dataItem;
+            }
             else
-                return null;
+            {
+                throw new ItemAlreadyRegisteredException ( name );
+            }
         }
 
         DataItemCommand item = new DataItemCommand ( id );
@@ -77,7 +85,7 @@ public class BaseModule
         _hive.getStorage ().added ( idesc );
         return item;
     }
-
+    
     private String getItemId ( String name )
     {
         return _base + "." + name;
