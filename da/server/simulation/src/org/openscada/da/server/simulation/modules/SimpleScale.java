@@ -15,8 +15,6 @@ public class SimpleScale extends BaseModule
 {
     private static Logger _log = Logger.getLogger ( SimpleScale.class );
     
-    private Scheduler _scheduler;
-
     private Thread _thread = null;
     
     private int _minDelay = 2 * 1000;
