@@ -222,7 +222,7 @@ public class Variant
             if ( _value instanceof Long )
                 return ((Long)_value).longValue ();
             if ( _value instanceof String )
-                return Integer.parseInt ((String)_value);
+                return Long.parseLong ((String)_value);
         }
         catch ( NumberFormatException e )
         {
