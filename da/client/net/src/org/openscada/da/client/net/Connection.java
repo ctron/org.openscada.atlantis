@@ -365,7 +365,11 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         }
         catch ( Exception e )
         {
-            callback.error ( e );
+            _log.debug ( "Failed to write", e );
+            if ( callback != null )
+            {
+                callback.error ( e );
+            }
         }
     }
 
