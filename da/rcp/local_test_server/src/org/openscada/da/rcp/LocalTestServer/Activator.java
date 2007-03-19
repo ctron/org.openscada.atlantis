@@ -46,6 +46,9 @@ public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.openscada.da.rcp.LocalTestServer";
+    
+    public static final short SIM_PORT = 1202;
+    public static final short TEST_PORT = 1203;
 
 	// The shared instance
 	private static Activator plugin;
@@ -111,7 +114,7 @@ public class Activator extends AbstractUIPlugin {
     {
         synchronized ( this )
         {
-            checkRunning ( 1202 );
+            checkRunning ( TEST_PORT );
             
             Path path = new Path ( "hive.xml" );
             
@@ -119,7 +122,7 @@ public class Activator extends AbstractUIPlugin {
             org.openscada.da.server.test.Hive testHive = new org.openscada.da.server.test.Hive ();
             configurator.configure ( testHive );
             
-            exportServer ( testHive, 1202 );
+            exportServer ( testHive, TEST_PORT );
         }
     }
     
@@ -127,16 +130,18 @@ public class Activator extends AbstractUIPlugin {
     {
         synchronized ( this )
         {
-            checkRunning ( 1203 );
+            checkRunning ( SIM_PORT );
             org.openscada.da.core.server.Hive hive = new org.openscada.da.server.simulation.Hive ();
-            exportServer ( hive, 1203 );
+            exportServer ( hive, SIM_PORT );
         }
     }
     
-    private void checkRunning ( Integer port ) throws AlreadyStartedException
+    private void checkRunning ( int port ) throws AlreadyStartedException
     {
         if ( _exportMap.containsKey ( port ) )
+        {
             throw new AlreadyStartedException ();
+        }
     }
     
     private void exportServer ( Hive hive, final int port ) throws IOException
