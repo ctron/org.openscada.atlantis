@@ -95,7 +95,7 @@ public class PropertyInput implements InputDefinition
        }
        catch ( Exception e )
        {
-           _log.warn ( String.format ( "Failed to set value of property %s", _name ), e );
+           _log.warn ( String.format ( "Failed to set value of property '%s'", _name ), e );
        }
     }
     
