@@ -26,19 +26,11 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.eclipse.draw2d.ActionEvent;
-import org.eclipse.draw2d.ActionListener;
-import org.eclipse.draw2d.Cursors;
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.XYLayout;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.openscada.da.client.viewer.model.impl.BooleanSetterOutput;
 
-public class CommandContainer extends FigureContainer
+public class CommandContainer extends ClickableContainer
 {
     private static Logger _log = Logger.getLogger ( CommandContainer.class );
-    
-    private IFigure _figure = null;
-    private org.eclipse.draw2d.Clickable _clickable = null;
     
     private Map<String, CommandInformation> _commands = new HashMap<String, CommandInformation> ();
     
@@ -48,37 +40,6 @@ public class CommandContainer extends FigureContainer
     }
 
     @Override
-    protected void update ()
-    {
-        if ( _clickable != null )
-        {
-            _clickable.getParent ().setConstraint ( _clickable, new Rectangle ( 0, 0, -1, -1 ) );
-        }
-        super.update ();
-    }
-
-    @Override
-    public void createFigure ( IFigure parent )
-    {
-        if ( _figure == null )
-        {
-            _clickable = new org.eclipse.draw2d.Clickable ();
-            _clickable.setCursor ( Cursors.CROSS );
-            _clickable.setRolloverEnabled ( true );
-            _clickable.setSelected ( false );
-            _clickable.setLayoutManager ( new XYLayout () );
-            _clickable.getModel ().addActionListener ( new ActionListener () {
-
-                public void actionPerformed ( ActionEvent event )
-                {
-                    clicked ( event );
-                }} );
-            
-            parent.add ( _clickable );
-            super.createFigure ( _clickable );
-        }
-    }
-
     protected void clicked ( ActionEvent event )
     {
         _log.debug ( "Clicked" );
