@@ -1,6 +1,5 @@
 package org.openscada.da.client.viewer.model.impl.containers;
 
-import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;

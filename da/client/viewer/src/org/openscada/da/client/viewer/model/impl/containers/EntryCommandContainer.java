@@ -3,7 +3,6 @@ package org.openscada.da.client.viewer.model.impl.containers;
 import org.apache.log4j.Logger;
 import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.swt.widgets.Shell;
 import org.openscada.da.client.viewer.model.impl.VariantSetterOutput;
 
 /**

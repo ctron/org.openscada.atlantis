@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.eclipse.draw2d.ActionEvent;
-import org.eclipse.draw2d.ButtonModel;
 import org.eclipse.draw2d.geometry.Point;
 import org.openscada.da.client.viewer.model.impl.BooleanSetterOutput;
 
