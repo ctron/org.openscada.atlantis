@@ -3,7 +3,7 @@ package org.openscada.da.client.viewer.model.impl.figures;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.swt.widgets.Canvas;
 
-public abstract class Button extends BaseFigure
+public abstract class Button extends BoundsFigure
 {
     private org.eclipse.draw2d.Button _button = null;
     private String _text = "";

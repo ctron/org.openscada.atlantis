@@ -15,13 +15,15 @@
 		<container-factory id="command" class="org.openscada.da.client.viewer.model.impl.containers.CommandContainer"/>
 		<container-factory id="entryCommand" class="org.openscada.da.client.viewer.model.impl.containers.EntryCommandContainer"/>
 		
+		<object-factory id="line" class="org.openscada.da.client.viewer.model.impl.figures.Line"/>
+		<object-factory id="polyline" class="org.openscada.da.client.viewer.model.impl.figures.Polyline"/>
 		<object-factory id="label" class="org.openscada.da.client.viewer.model.impl.figures.Label"/>
 		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.figures.Rectangle"/>
+		<object-factory id="ellipse" class="org.openscada.da.client.viewer.model.impl.figures.Ellipse"/>
 		<object-factory id="triangle" class="org.openscada.da.client.viewer.model.impl.figures.Triangle"/>
 		<object-factory id="item" class="org.openscada.da.client.viewer.model.impl.items.DataItemObject"/>
 		<object-factory id="viewLink" class="org.openscada.da.client.viewer.model.impl.figures.ViewLink"/>
 		<object-factory id="commandButton" class="org.openscada.da.client.viewer.model.impl.figures.CommandButton"/>
-		
 		
 		<object-factory id="colorcomposer" class="org.openscada.da.client.viewer.model.impl.converter.ColorComposer"/>
 		<object-factory id="modulo" class="org.openscada.da.client.viewer.model.impl.converter.ModuloCalculator"/>
@@ -309,6 +311,15 @@
 					<property name="backgroundColor">#BBBBBB</property>
 				</object>
 				
+				<object type="viewLink" id="view2">
+					<property name="text">View 2</property>
+					<property name="x">80</property>
+					<property name="y">150</property>
+					<property name="opaque">true</property>
+					<property name="viewId">figureView</property>
+					<property name="backgroundColor">#BBBBBB</property>
+				</object>
+				
 			</objects>
 			
 			<connectors>
@@ -484,6 +495,53 @@
 					<input object="id_label" name="object"/>
 				</connector>
 			</connectors>
+		</view>
+		
+		<view type="view" id="figureView">
+			<property name="backgroundColor">#FFFFFF</property>
+			<property name="opaque">true</property>
+			
+			<objects>
+
+				<object type="ellipse" id="ellipse1">
+					<property name="x">10</property>
+					<property name="y">10</property>
+					<property name="width">50</property>
+					<property name="height">50</property>
+					<property name="outline">true</property>
+					<property name="fill">true</property>
+					<property name="color">#FF0000</property>
+					<property name="backgroundColor">#00FF00</property>
+				</object>
+
+				<object type="ellipse" id="ellipse2">
+					<property name="x">25</property>
+					<property name="y">10</property>
+					<property name="width">75</property>
+					<property name="height">50</property>
+					<property name="outline">false</property>
+					<property name="fill">true</property>
+					<property name="fillXOR">true</property>
+					<property name="color">#00FF00</property>
+					<property name="backgroundColor">#0000FF</property>
+				</object>
+				
+				<object type="line" id="line1">
+					<property name="x1">10</property>
+					<property name="y1">40</property>
+					<property name="x2">200</property>
+					<property name="y2">40</property>
+					<property name="lineWidth">5</property>
+					<property name="color">#FF0000</property>
+					<property name="opaque">true</property>
+				</object>
+
+				<object type="polyline" id="polyline1">
+					<property name="pointList">(10,100),(15,100),(10,110)</property>
+					<property name="color">#FFFFFF</property>
+				</object>
+				
+			</objects>
 		</view>
 		
 	</views>

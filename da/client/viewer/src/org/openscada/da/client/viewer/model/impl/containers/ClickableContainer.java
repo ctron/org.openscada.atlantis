@@ -43,7 +43,7 @@ public abstract class ClickableContainer extends FigureContainer
             
             parent.add ( _clickable );
             _figure = _clickable;
-            createChildren ();
+            createChildren ( _figure );
             update ();
         }
     }

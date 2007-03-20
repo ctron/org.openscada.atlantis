@@ -22,6 +22,7 @@ package org.openscada.da.client.viewer.model.impl.containers;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LightweightSystem;
+import org.eclipse.draw2d.ScrollPane;
 import org.eclipse.draw2d.XYLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.openscada.da.client.viewer.model.View;
@@ -29,6 +30,8 @@ import org.openscada.da.client.viewer.model.View;
 public class BasicView extends FigureContainer implements View
 {
     private LightweightSystem _system = null;
+    private IFigure _childPane = null;
+    private ScrollPane _scrollPane = null;
 
     public BasicView ( String id )
     {
@@ -47,10 +50,16 @@ public class BasicView extends FigureContainer implements View
         {
             _system = system;
             _canvas = canvas;
-            _figure = new Figure ();
-            _figure.setLayoutManager ( new XYLayout () );
+            _figure = _scrollPane = new ScrollPane ();
             system.setContents ( _figure );
-            createChildren ();
+            
+            _childPane = new Figure ();
+            _childPane.setLayoutManager ( new XYLayout () );
+            _childPane.setOpaque ( false );
+            
+            _scrollPane.setContents ( _childPane );
+            
+            createChildren ( _childPane );
             update ();
         }
         return _figure;
@@ -62,7 +71,11 @@ public class BasicView extends FigureContainer implements View
         if ( _system != null )
         {
             // dispose figure here so it will be ignored in the superclass
+            _figure.remove ( _childPane );
             _figure = null;
+            
+            _childPane = null;
+            
             _system.setContents ( null );
             _system = null;
         }

@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.openscada.da.client.viewer.model.DynamicUIObject;
 import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
-public class Triangle extends BaseFigure implements DynamicUIObject
+public class Triangle extends BoundsFigure implements DynamicUIObject
 {    
     private org.eclipse.draw2d.Triangle _triangle = null;
     private int _direction = 0;

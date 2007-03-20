@@ -24,7 +24,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.swt.widgets.Canvas;
 import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
-public class Label extends BaseFigure
+public class Label extends BoundsFigure
 {
     private static Logger _log = Logger.getLogger ( Label.class );
     

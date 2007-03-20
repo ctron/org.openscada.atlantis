@@ -234,9 +234,12 @@ public class XMLConfigurator implements Configurator
             createContainer ( ctx, containerType, containerObject );
         }
         
-        for ( ConnectorType connector : container.getConnectors ().getConnectorList () )
+        if ( container.getConnectors () != null )
         {
-            createConnector ( ctx, connector, containerObject );
+            for ( ConnectorType connector : container.getConnectors ().getConnectorList () )
+            {
+                createConnector ( ctx, connector, containerObject );
+            }
         }
        
         if ( container.getInputs () != null )
@@ -378,10 +381,12 @@ public class XMLConfigurator implements Configurator
         }
         catch ( ConfigurationError e )
         {
+            _log.debug ( "Failed to set property", e );
             throw e;
         }
-        catch ( Exception e )
+        catch ( Throwable e )
         {
+            _log.debug ( "Failed to set property", e );
             throw new ConfigurationError ( String.format ( "Unable to set property for dynamic object. Object: %s, Property: %s, String-Value: '%s'", object, name, stringValue ), e );
         }
     }

@@ -51,8 +51,6 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
     private Color _color = null;
     private Color _backgroundColor = null;
     private boolean _opaque = false;
-    private org.eclipse.draw2d.geometry.Rectangle _bounds = new org.eclipse.draw2d.geometry.Rectangle ( 0, 0, -1, -1 );
-
     private Integer _fontSize = null;
 
     private Font _font = null;
@@ -62,10 +60,6 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
         super ( id );
         addInput ( new PropertyInput ( this, "color" ) );
         addInput ( new PropertyInput ( this, "backgroundColor" ) );
-        addInput ( new PropertyInput ( this, "width" ) );
-        addInput ( new PropertyInput ( this, "height" ) );
-        addInput ( new PropertyInput ( this, "x" ) );
-        addInput ( new PropertyInput ( this, "y" ) );
         addInput ( new PropertyInput ( this, "opaque" ) );
     }
 
@@ -83,34 +77,6 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
             _font.dispose ();
             _font = null;
         }
-    }
-
-    public void setHeight ( Long height )
-    {
-        if ( height != null )
-            _bounds.height = height.intValue ();
-        update ();
-    }
-
-    public void setWidth ( Long width )
-    {
-        if ( width != null )
-            _bounds.width = width.intValue ();
-        update ();
-    }
-
-    public void setX ( Long x )
-    {
-        if ( x != null )
-            _bounds.x = x.intValue ();
-        update ();
-    }
-
-    public void setY ( Long y )
-    {
-        if ( y != null )
-            _bounds.y = y.intValue ();
-        update ();
     }
 
     public org.openscada.da.client.viewer.model.types.Color getColor ()
@@ -147,16 +113,6 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
         update ();
     }
 
-    public org.eclipse.draw2d.geometry.Rectangle getBounds ()
-    {
-        return _bounds;
-    }
-
-    public void setBounds ( org.eclipse.draw2d.geometry.Rectangle bounds )
-    {
-        _bounds = bounds;
-    }
-
     protected void updateFigure ( IFigure figure )
     {
         if ( figure == null )
@@ -164,13 +120,6 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
             return;
         }
 
-        //figure.setBounds ( _bounds );
-        if ( figure.getParent () != null )
-        {
-            _log.debug ( String.format ( getId () + ": Setting layout bounds: %d/%d/%d/%d", _bounds.x, _bounds.y, _bounds.width,
-                    _bounds.height ) );
-            figure.getParent ().setConstraint ( figure, _bounds.getCopy () );
-        }
         figure.setForegroundColor ( _color );
         figure.setBackgroundColor ( _backgroundColor );
         figure.setOpaque ( _opaque );

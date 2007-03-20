@@ -106,6 +106,7 @@ public class Activator extends AbstractUIPlugin
         {
             ProcessView processView = (ProcessView)getWorkbench ().getActiveWorkbenchWindow ().getActivePage ().showView ( ProcessView.VIEW_ID, viewId, IWorkbenchPage.VIEW_ACTIVATE );
             processView.setView ( viewId );
+            _log.debug ( "View open: " + viewId );
         }
         catch ( Exception e )
         {

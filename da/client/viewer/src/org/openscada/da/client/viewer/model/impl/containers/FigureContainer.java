@@ -39,9 +39,9 @@ import org.openscada.da.client.viewer.model.InputDefinition;
 import org.openscada.da.client.viewer.model.OutputDefinition;
 import org.openscada.da.client.viewer.model.impl.InputExport;
 import org.openscada.da.client.viewer.model.impl.OutputExport;
-import org.openscada.da.client.viewer.model.impl.figures.BaseFigure;
+import org.openscada.da.client.viewer.model.impl.figures.BoundsFigure;
 
-public class FigureContainer extends BaseFigure implements Container
+public class FigureContainer extends BoundsFigure implements Container
 {
     protected Canvas _canvas = null;
     protected Figure _figure = null;
@@ -65,17 +65,17 @@ public class FigureContainer extends BaseFigure implements Container
         
         parent.add ( _figure );
         
-        createChildren ();
+        createChildren ( _figure );
         update ();
     }
     
-    protected void createChildren ()
+    protected void createChildren ( IFigure figure )
     {
         for ( DynamicObject object : _objects.values () )
         {
             if ( object instanceof DynamicUIObject )
             {
-                ((DynamicUIObject)object).createFigure ( _canvas, _figure );
+                ((DynamicUIObject)object).createFigure ( _canvas, figure );
             }
         }        
     }

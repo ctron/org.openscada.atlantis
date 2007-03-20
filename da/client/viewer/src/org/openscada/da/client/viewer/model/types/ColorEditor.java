@@ -32,7 +32,9 @@ public class ColorEditor extends PropertyEditorSupport
     {
         Matcher m = p.matcher ( text );
         if ( !m.matches () )
+        {
             throw new IllegalArgumentException ( "Color must be in HTML style e.g. #AABBEE" );
+        }
         
         Color c = new Color ();
         c.setRed ( Integer.decode ( "#" + m.group ( 1 ) ) );

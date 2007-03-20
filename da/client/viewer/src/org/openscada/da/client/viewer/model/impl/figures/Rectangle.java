@@ -24,7 +24,7 @@ import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.swt.widgets.Canvas;
 import org.openscada.da.client.viewer.model.DynamicUIObject;
 
-public class Rectangle extends BaseFigure implements DynamicUIObject
+public class Rectangle extends Shape implements DynamicUIObject
 {
     private RectangleFigure _rectangle = null;
     
@@ -52,7 +52,10 @@ public class Rectangle extends BaseFigure implements DynamicUIObject
 
     protected void update ()
     {
-        updateFigure ( _rectangle );
+        if ( _rectangle != null )
+        {
+            updateFigure ( _rectangle );
+        }
     }
 
 }
