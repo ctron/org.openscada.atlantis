@@ -1,5 +1,6 @@
 package org.openscada.net.base;
 
+import java.nio.channels.NoConnectionPendingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,8 +63,15 @@ public class LongRunningController implements MessageListener
         {
             return null;
         }
-
+        
         final LongRunningOperation op = new LongRunningOperation ( this, listener );
+
+        Connection connection = _connectionHandler.getConnection ();
+        if ( connection == null )
+        {
+            op.fail ( new NoConnectionException () );
+            return op;
+        }
 
         _connectionHandler.getConnection ().sendMessage ( message, new MessageStateListener () {
 
