@@ -342,7 +342,10 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                     switch ( state )
                     {
                     case FAILURE:
-                        callback.failed ( error.getMessage () );
+                        if ( callback != null )
+                        {
+                            callback.failed ( error.getMessage () );
+                        }
                         break;
                     case SUCCESS:
                         try
@@ -355,7 +358,10 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                         }
                         catch ( OperationException e )
                         {
-                            callback.failed ( error.getMessage () );
+                            if ( callback != null )
+                            {
+                                callback.failed ( error.getMessage () );
+                            }
                         }
 
                         break;
@@ -427,17 +433,26 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                     switch ( state )
                     {
                     case FAILURE:
-                        callback.failed ( error.getMessage () );
+                        if ( callback != null )
+                        {
+                            callback.failed ( error.getMessage () );
+                        }
                         break;
                     case SUCCESS:
                         try
                         {
                             WriteAttributeResults results = completeWriteAttributes ( operation );
-                            callback.complete ( results );
+                            if ( callback != null )
+                            {
+                                callback.complete ( results );
+                            }
                         }
                         catch ( OperationException e )
                         {
-                            callback.failed ( error.getMessage () );
+                            if ( callback != null )
+                            {
+                                callback.failed ( error.getMessage () );
+                            }
                         }
 
                         break;
@@ -509,17 +524,26 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                     switch ( state )
                     {
                     case FAILURE:
-                        callback.failed ( error.getMessage () );
+                        if ( callback != null )
+                        {
+                            callback.failed ( error.getMessage () );
+                        }
                         break;
                     case SUCCESS:
                         try
                         {
                             Entry[] result = completeBrowse ( operation );
-                            callback.complete ( result );
+                            if ( callback != null )
+                            {
+                                callback.complete ( result );
+                            }
                         }
                         catch ( OperationException e )
                         {
-                            callback.failed ( error.getMessage () );
+                            if ( callback != null )
+                            {
+                                callback.failed ( error.getMessage () );
+                            }
                         }
                         break;
                     }
