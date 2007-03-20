@@ -13,12 +13,14 @@
 		<container-factory id="view" class="org.openscada.da.client.viewer.model.impl.containers.BasicViewFactory"/>
 		<container-factory id="hidden" class="org.openscada.da.client.viewer.model.impl.containers.HiddenContainerFactory"/>
 		<container-factory id="command" class="org.openscada.da.client.viewer.model.impl.containers.CommandContainer"/>
+		<container-factory id="entryCommand" class="org.openscada.da.client.viewer.model.impl.containers.EntryCommandContainer"/>
 		
 		<object-factory id="label" class="org.openscada.da.client.viewer.model.impl.figures.Label"/>
 		<object-factory id="rectangle" class="org.openscada.da.client.viewer.model.impl.figures.Rectangle"/>
 		<object-factory id="triangle" class="org.openscada.da.client.viewer.model.impl.figures.Triangle"/>
 		<object-factory id="item" class="org.openscada.da.client.viewer.model.impl.items.DataItemObject"/>
 		<object-factory id="viewLink" class="org.openscada.da.client.viewer.model.impl.figures.ViewLink"/>
+		<object-factory id="commandButton" class="org.openscada.da.client.viewer.model.impl.figures.CommandButton"/>
 		
 		
 		<object-factory id="colorcomposer" class="org.openscada.da.client.viewer.model.impl.converter.ColorComposer"/>
@@ -218,12 +220,16 @@
 				</inputs>
 			</template:template>
 		</object-factory>
+		
 		<connector-factory id="default" class="org.openscada.da.client.viewer.model.impl.PassThroughConnectorFactory"/>
 		<connector-factory id="display" class="org.openscada.da.client.viewer.model.impl.DisplaySynchronizedConnectorFactory"/>
 	</factories>
 	
 	<views>
 		<view id="mainView" type="view">
+			
+			<property name="backgroundColor">#FFFFFF</property>
+			<property name="opaque">true</property>
 			
 			<objects>
 				
@@ -300,6 +306,7 @@
 					<property name="y">150</property>
 					<property name="opaque">true</property>
 					<property name="viewId">scaleView</property>
+					<property name="backgroundColor">#BBBBBB</property>
 				</object>
 				
 			</objects>
@@ -336,9 +343,13 @@
 		</view>
 		
 		<view id="scaleView" type="view">
+			
+			<property name="backgroundColor">#FFFFFF</property>
+			<property name="opaque">true</property>
 		
 			<objects>
 			
+				<constant id="null_variant"><variant><null/></variant></constant>
 				<constant id="value_error_color"><color red="255" green="0" blue="255"/></constant>
 				<constant id="value_ok_color"><null/></constant>
 				
@@ -355,13 +366,44 @@
 					<property name="connection">da:net://localhost:1202?auto-reconnect=true</property>
 				</object>
 				
+				<object id="id_sim" type="item">
+					<property name="item">memory</property>
+					<property name="connection">da:net://localhost:1203?auto-reconnect=true</property>
+				</object>
+				
 				<object type="variantasinteger" id="vai_scale_value"/>
 			
-				<object type="label" id="weight_label">
-					<property name="format">%d</property>
+				<object type="label" id="id_label">
+					<property name="format">Identification: %s</property>
+				</object>
+			
+				<container type="entryCommand" id="weight_container">
 					<property name="x">10</property>
 					<property name="y">150</property>
-					<property name="opaque">true</property>
+					<objects>
+						<object type="label" id="weight_label">
+							<property name="format">%d kg</property>
+							<property name="opaque">true</property>
+							<property name="fontSize">20</property>
+						</object>
+					</objects>
+					<connectors/>
+					<inputs>
+						<input-export object="weight_label" name="object" export-name="weightValue"/>
+					</inputs>
+				</container>
+				
+				<object type="commandButton" id="start_weight_button">
+					<property name="text">Start</property>
+					<property name="x">10</property>
+					<property name="y">190</property>
+					<property name="fontSize">20</property>
+					<property name="backgroundColor">#BBBBBB</property>
+ 					<property name="opaque">true</property>
+				</object>
+				<object id="start_weight_command_item" type="item">
+					<property name="item">scale.1001.start</property>
+					<property name="connection">da:net://localhost:1202?auto-reconnect=true</property>
 				</object>
 
 				<object type="variantasboolean" id="vab_scale_active"/>
@@ -376,7 +418,7 @@
 				</connector>
 				<connector type="display">
 					<output object="vai_scale_value" name="value"/>
-					<input object="weight_label" name="object"/>
+					<input object="weight_container" name="weightValue"/>
 				</connector>
 				
 				<!-- active color -->
@@ -399,7 +441,7 @@
 				</connector>
 				<connector type="display">
 					<output object="if_active_color" name="value"/>
-					<input object="weight_label" name="backgroundColor"/>
+					<input object="weight_container" name="backgroundColor"/>
 				</connector>
 				
 				<!-- error color -->
@@ -418,7 +460,28 @@
 				</connector>
 				<connector type="display">
 					<output object="if_error_value_color" name="value"/>
-					<input object="weight_label" name="color"/>
+					<input object="weight_container" name="color"/>
+				</connector>
+				
+				<connector type="default">
+					<output object="null_variant" name="value"/>
+					<input object="start_weight_button" name="value"/>
+				</connector>
+				<connector type="default">
+					<output object="start_weight_button" name="value"/>
+					<input object="start_weight_command_item" name="value"/>
+				</connector>
+				
+				<!-- connection id-sim to entryCommand -->
+				<connector type="default">
+					<output object="weight_container" name="value"/>
+					<input object="id_sim" name="value"/>
+				</connector>
+				
+				<!-- connection from the memory cell to the memory label -->
+				<connector type="display">
+					<output object="id_sim" name="value"/>
+					<input object="id_label" name="object"/>
 				</connector>
 			</connectors>
 		</view>

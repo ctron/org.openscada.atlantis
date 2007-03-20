@@ -20,6 +20,7 @@
 package org.openscada.da.client.viewer.model.impl.figures;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.swt.widgets.Canvas;
 import org.openscada.da.client.viewer.model.DynamicUIObject;
 import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
@@ -34,7 +35,7 @@ public class Triangle extends BaseFigure implements DynamicUIObject
         addInput ( new PropertyInput ( this, "direction" ) );
     }
     
-    public void createFigure ( IFigure parent )
+    public void createFigure ( Canvas canvas, IFigure parent )
     {
         _triangle = new org.eclipse.draw2d.Triangle ();
         parent.add ( _triangle );

@@ -378,6 +378,10 @@ public class XMLConfigurator implements Configurator
                 }
             }
         }
+        catch ( ConfigurationError e )
+        {
+            throw e;
+        }
         catch ( Exception e )
         {
             throw new ConfigurationError ( String.format ( "Unable to set property for dynamic object. Object: %s, Property: %s, String-Value: '%s'", object, name, stringValue ), e );

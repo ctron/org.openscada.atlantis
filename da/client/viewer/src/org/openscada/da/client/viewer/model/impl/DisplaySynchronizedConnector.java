@@ -23,6 +23,11 @@ import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Display;
 import org.openscada.da.client.viewer.model.Type;
 
+/**
+ * A passthrough connector which will set the input side from inside the GUI loop
+ * @author Jens Reimann
+ *
+ */
 public class DisplaySynchronizedConnector extends PassThroughConnector
 {
     private static Logger _log = Logger.getLogger ( DisplaySynchronizedConnector.class );
@@ -60,6 +65,7 @@ public class DisplaySynchronizedConnector extends PassThroughConnector
     {
         try
         {
+            _log.debug ( "Perform synchronized update" );
             super.update ( type, value );    
         }
         catch ( Exception e ) 

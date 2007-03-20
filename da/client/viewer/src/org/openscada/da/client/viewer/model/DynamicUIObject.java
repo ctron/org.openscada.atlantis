@@ -20,9 +20,10 @@
 package org.openscada.da.client.viewer.model;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.swt.widgets.Canvas;
 
 public interface DynamicUIObject extends DynamicObject
 {
-    public abstract void createFigure ( IFigure parent );
+    public abstract void createFigure ( Canvas canvas, IFigure parent );
     public abstract void dispose ();
 }

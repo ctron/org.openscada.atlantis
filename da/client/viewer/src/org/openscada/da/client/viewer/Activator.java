@@ -21,15 +21,14 @@ package org.openscada.da.client.viewer;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.openscada.da.client.viewer.configurator.ConfigurationError;
 import org.openscada.da.client.viewer.configurator.Configurator;
@@ -43,6 +42,7 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends AbstractUIPlugin
 {
+    private static Logger _log = Logger.getLogger ( Activator.class );
 
     // The plug-in ID
     public static final String PLUGIN_ID = "org.openscada.da.client.viewer";
@@ -109,6 +109,7 @@ public class Activator extends AbstractUIPlugin
         }
         catch ( Exception e )
         {
+            _log.debug ( "Failed to open view", e );
             ErrorDialog.openError ( getWorkbench ().getActiveWorkbenchWindow ().getShell (), "Error", "Failed to open process view", new Status ( Status.ERROR, Activator.PLUGIN_ID, 0, "Failed to open process view", e ) );
         }
     }

@@ -17,42 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.client.viewer.model.impl.figures;
+package org.openscada.da.client.viewer.model.impl;
 
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.RectangleFigure;
-import org.eclipse.swt.widgets.Canvas;
-import org.openscada.da.client.viewer.model.DynamicUIObject;
+import java.util.EnumSet;
 
-public class Rectangle extends BaseFigure implements DynamicUIObject
+import org.openscada.core.Variant;
+import org.openscada.da.client.viewer.model.OutputDefinition;
+import org.openscada.da.client.viewer.model.Type;
+
+public class VariantSetterOutput extends BaseOutput implements OutputDefinition
 {
-    private RectangleFigure _rectangle = null;
-    
-    public Rectangle ( String id )
+    public VariantSetterOutput ( String name )
     {
-        super ( id );
+        super ( name );
     }
     
-    public void createFigure ( Canvas canvas, IFigure parent )
+    public EnumSet<Type> getSupportedTypes ()
     {
-        _rectangle = new RectangleFigure ();
-        parent.add ( _rectangle );
-        update ();
+        return EnumSet.of ( Type.VARIANT );
     }
 
-    public void dispose ()
+    public void setValue ( Variant value )
     {
-        if ( _rectangle != null )
-        {
-            _rectangle.getParent ().remove ( _rectangle );
-            _rectangle = null;
-        }
-        super.dispose ();
+        fireEvent ( Type.VARIANT, value );
     }
-
-    protected void update ()
-    {
-        updateFigure ( _rectangle );
-    }
-
 }

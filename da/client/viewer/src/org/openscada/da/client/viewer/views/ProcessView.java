@@ -20,45 +20,26 @@
 package org.openscada.da.client.viewer.views;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.XYLayout;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
-import org.openscada.core.ConnectionInformation;
-import org.openscada.core.client.ConnectionFactory;
-import org.openscada.da.client.Connection;
-import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.viewer.Activator;
 import org.openscada.da.client.viewer.configurator.ConfigurationError;
-import org.openscada.da.client.viewer.configurator.Configurator;
-import org.openscada.da.client.viewer.configurator.xml.XMLConfigurator;
-import org.openscada.da.client.viewer.model.AlreadyConnectedException;
-import org.openscada.da.client.viewer.model.Connector;
 import org.openscada.da.client.viewer.model.Container;
 import org.openscada.da.client.viewer.model.DynamicUIObject;
-import org.openscada.da.client.viewer.model.OutputDefinition;
 import org.openscada.da.client.viewer.model.View;
-import org.openscada.da.client.viewer.model.impl.DisplaySynchronizedConnector;
-import org.openscada.da.client.viewer.model.impl.IntegerSetterOutput;
-import org.openscada.da.client.viewer.model.impl.PassThroughConnector;
-import org.openscada.da.client.viewer.model.impl.containers.FigureContainer;
-import org.openscada.da.client.viewer.model.impl.converter.ColorComposer;
-import org.openscada.da.client.viewer.model.impl.converter.Double2IntegerConverter;
-import org.openscada.da.client.viewer.model.impl.converter.FactorCalculator;
-import org.openscada.da.client.viewer.model.impl.converter.Integer2DoubleConverter;
-import org.openscada.da.client.viewer.model.impl.converter.ModuloCalculator;
-import org.openscada.da.client.viewer.model.impl.converter.SimpleVariantIntegerConverter;
-import org.openscada.da.client.viewer.model.impl.figures.Rectangle;
-import org.openscada.da.client.viewer.model.impl.items.DataItemOutput;
+import org.openscada.da.client.viewer.model.impl.containers.BasicView;
 
 public class ProcessView extends ViewPart
 {
@@ -68,21 +49,27 @@ public class ProcessView extends ViewPart
 
     private Canvas _canvas = null;
     private LightweightSystem _system = null;
-
-    private IFigure _rootFigure = null;
-
-    private Container _container = null;
+    private BasicView _view = null;
 
     public ProcessView ()
     {
     }
 
-    protected void setView ( Container container )
+    protected void setView ( View view )
     {
-        if ( _container == null )
+        if ( _view == null )
         {
-            _container = container;
-            createObjects ();
+            if ( view instanceof BasicView )
+            {
+                BasicView basicView = (BasicView)view;
+                basicView.createRootFigure ( _canvas, _system );
+                _view = basicView;
+            }
+            else
+            {
+                String message = String.format ( "View '%s' is not a main view that is of type '%s' (view is of type '%s')", view.getId (), BasicView.class, view.getClass () );
+                ErrorDialog.openError ( _canvas.getShell (), "Error", message, new Status ( Status.ERROR, Activator.PLUGIN_ID, 0, message, null ) );
+            }
         }
     }
 
@@ -91,27 +78,6 @@ public class ProcessView extends ViewPart
     {
         _canvas = new Canvas ( parent, SWT.NONE );
         _system = new LightweightSystem ( _canvas );
-
-        _rootFigure = new Figure ();
-        _rootFigure.setLayoutManager ( new XYLayout () );
-        _rootFigure.setBackgroundColor ( ColorConstants.white );
-        _rootFigure.setOpaque ( true );
-        _system.setContents ( _rootFigure );
-
-        createObjects ();
-    }
-
-    protected void createObjects ()
-    {
-        if ( _container == null )
-        {
-            return;
-        }
-
-        if ( _container instanceof DynamicUIObject )
-        {
-            ( (DynamicUIObject)_container ).createFigure ( _rootFigure );
-        }
     }
 
     @Override
@@ -124,26 +90,18 @@ public class ProcessView extends ViewPart
     public void dispose ()
     {
         _log.debug ( "Disposing..." );
-        if ( _container != null )
+        if ( _view != null )
         {
-            _log.debug ( "Disposing...container" );
-            _container.dispose ();
-            _container = null;
-        }
-        if ( _canvas != null )
-        {
-            _log.debug ( "Disposing...canvas" );
-            _canvas.dispose ();
-            _canvas = null;
+            _view.dispose ();
+            _view = null;
         }
         _system = null;
-        _container = null;
         super.dispose ();
     }
 
     public void setView ( String viewId ) throws XmlException, IOException, ConfigurationError
     {
-        setView ( Activator.getDefault ().configureView ( viewId ));
+        setView ( Activator.getDefault ().configureView ( viewId ) );
     }
 
 }

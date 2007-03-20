@@ -19,21 +19,21 @@
 
 package org.openscada.da.client.viewer.model.impl.containers;
 
-import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-public class CommandMessageDialog extends PopupDialog
+public class CommandMessageDialog extends PopupCommandDialog
 {
-    public CommandMessageDialog ( Shell parent, CommandInformation[] commands )
+    public CommandMessageDialog ( Shell parent, Point initialLocation, CommandInformation[] commands )
     {
-        super ( parent, PopupDialog.INFOPOPUP_SHELLSTYLE, true, false, true, false, "Commands", "Choose a command" );
+        super ( parent, initialLocation, "Commands", "Choose a command" );
         _commands = commands;
     }
 

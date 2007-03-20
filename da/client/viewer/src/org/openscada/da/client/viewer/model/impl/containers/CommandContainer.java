@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.eclipse.draw2d.ActionEvent;
+import org.eclipse.draw2d.ButtonModel;
+import org.eclipse.draw2d.geometry.Point;
 import org.openscada.da.client.viewer.model.impl.BooleanSetterOutput;
 
 public class CommandContainer extends ClickableContainer
@@ -44,7 +46,10 @@ public class CommandContainer extends ClickableContainer
     {
         _log.debug ( "Clicked" );
         
-        CommandMessageDialog cmd = new CommandMessageDialog ( null, _commands.values ().toArray ( new CommandInformation [0] ) );
+        Point p = getBounds ().getCenter ();
+        _figure.translateToAbsolute ( p );
+        
+        CommandMessageDialog cmd = new CommandMessageDialog ( _canvas.getShell (), _canvas.toDisplay ( p.getSWTPoint () ), _commands.values ().toArray ( new CommandInformation [0] ) );
         cmd.open ();
     }
     

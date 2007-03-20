@@ -2,58 +2,30 @@ package org.openscada.da.client.viewer.model.impl.figures;
 
 import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.ActionListener;
-import org.eclipse.draw2d.Button;
-import org.eclipse.draw2d.IFigure;
 import org.openscada.da.client.viewer.Activator;
 
-public class ViewLink extends BaseFigure
+public class ViewLink extends Button
 {
-    private IFigure _parent = null;
-    private Button _button = null;
-    
     private String _viewId = "";
-    private String _text = "";
     
     public ViewLink ( String id )
     {
         super ( id );
     }
-    
-    @Override
-    protected void update ()
-    {
-        if ( _button != null )
-        {
-            updateFigure ( _button );
-        }
-    }
 
-    public void createFigure ( IFigure parent )
-    {
-        if ( _button == null )
-        {
-            _button = new Button ( _text );
-            _button.addActionListener ( new ActionListener () {
-
-                public void actionPerformed ( ActionEvent event )
-                {
-                    openLink ();
-                }} );
-            _parent = parent;
-            _parent.add ( _button );
-            update ();
-        }
-    }
-    
+    /**
+     * Set up the button to open a view link
+     * @param button the button to set up
+     */
     @Override
-    public void dispose ()
+    protected void setupButton ( org.eclipse.draw2d.Button button )
     {
-        if ( _button != null )
-        {
-            _parent.remove ( _button );
-            _button = null;
-        }
-        super.dispose ();
+        button.addActionListener ( new ActionListener () {
+
+            public void actionPerformed ( ActionEvent event )
+            {
+                openLink ();
+            }} );
     }
     
     protected void openLink ()
@@ -73,16 +45,6 @@ public class ViewLink extends BaseFigure
     public void setViewId ( String viewId )
     {
         _viewId = viewId;
-    }
-
-    public String getText ()
-    {
-        return _text;
-    }
-
-    public void setText ( String text )
-    {
-        _text = text;
     }
 
 }

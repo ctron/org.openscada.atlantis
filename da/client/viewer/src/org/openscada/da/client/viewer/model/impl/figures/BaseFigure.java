@@ -19,12 +19,15 @@
 
 package org.openscada.da.client.viewer.model.impl.figures;
 
+import java.beans.PropertyEditorManager;
+
 import org.apache.log4j.Logger;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 import org.openscada.da.client.viewer.model.DynamicUIObject;
-import org.openscada.da.client.viewer.model.impl.AliasedPropertyInput;
 import org.openscada.da.client.viewer.model.impl.BaseDynamicObject;
 import org.openscada.da.client.viewer.model.impl.Helper;
 import org.openscada.da.client.viewer.model.impl.PropertyInput;
@@ -32,39 +35,70 @@ import org.openscada.da.client.viewer.model.impl.PropertyInput;
 public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIObject
 {
     private static Logger _log = Logger.getLogger ( BaseFigure.class );
-    
+
+    static
+    {
+
+        try
+        {
+            PropertyEditorManager.registerEditor ( Integer.class, Class.forName ( "sun.beans.editors.IntEditor" ) );
+        }
+        catch ( Exception e )
+        {
+        }
+    }
+
     private Color _color = null;
     private Color _backgroundColor = null;
     private boolean _opaque = false;
     private org.eclipse.draw2d.geometry.Rectangle _bounds = new org.eclipse.draw2d.geometry.Rectangle ( 0, 0, -1, -1 );
+
+    private Integer _fontSize = null;
+
+    private Font _font = null;
 
     public BaseFigure ( String id )
     {
         super ( id );
         addInput ( new PropertyInput ( this, "color" ) );
         addInput ( new PropertyInput ( this, "backgroundColor" ) );
-        addInput ( new AliasedPropertyInput ( this, "width", "width" ) );
-        addInput ( new AliasedPropertyInput ( this, "height", "height" ) );
-        addInput ( new AliasedPropertyInput ( this, "x", "x" ) );
-        addInput ( new AliasedPropertyInput ( this, "y", "y" ) );
+        addInput ( new PropertyInput ( this, "width" ) );
+        addInput ( new PropertyInput ( this, "height" ) );
+        addInput ( new PropertyInput ( this, "x" ) );
+        addInput ( new PropertyInput ( this, "y" ) );
         addInput ( new PropertyInput ( this, "opaque" ) );
-        
     }
-    
+
+    @Override
+    public void dispose ()
+    {
+        disposeFont ();
+        super.dispose ();
+    }
+
+    private void disposeFont ()
+    {
+        if ( _font != null )
+        {
+            _font.dispose ();
+            _font = null;
+        }
+    }
+
     public void setHeight ( Long height )
     {
         if ( height != null )
             _bounds.height = height.intValue ();
         update ();
     }
-    
+
     public void setWidth ( Long width )
     {
         if ( width != null )
             _bounds.width = width.intValue ();
         update ();
     }
-    
+
     public void setX ( Long x )
     {
         if ( x != null )
@@ -86,7 +120,7 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
         else
             return Helper.colorFromRGB ( _color.getRGB () );
     }
-    
+
     public org.openscada.da.client.viewer.model.types.Color getBackgroundColor ()
     {
         if ( _backgroundColor == null )
@@ -103,7 +137,7 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
             _color = new Color ( Display.getCurrent (), Helper.colorToRGB ( color ) );
         update ();
     }
-    
+
     public void setBackgroundColor ( org.openscada.da.client.viewer.model.types.Color backgroundColor )
     {
         if ( backgroundColor == null )
@@ -122,25 +156,29 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
     {
         _bounds = bounds;
     }
-    
+
     protected void updateFigure ( IFigure figure )
     {
         if ( figure == null )
         {
             return;
         }
-        
+
         //figure.setBounds ( _bounds );
         if ( figure.getParent () != null )
         {
-            _log.debug ( String.format ( "Setting layout bounds: %d/%d/%d/%d", _bounds.x, _bounds.y, _bounds.width, _bounds.height ) );
+            _log.debug ( String.format ( getId () + ": Setting layout bounds: %d/%d/%d/%d", _bounds.x, _bounds.y, _bounds.width,
+                    _bounds.height ) );
             figure.getParent ().setConstraint ( figure, _bounds.getCopy () );
         }
         figure.setForegroundColor ( _color );
         figure.setBackgroundColor ( _backgroundColor );
         figure.setOpaque ( _opaque );
+
+        updateFont ( figure );
+        figure.setFont ( _font );
     }
-    
+
     protected abstract void update ();
 
     public boolean isOpaque ()
@@ -151,5 +189,40 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
     public void setOpaque ( boolean opaque )
     {
         _opaque = opaque;
+        update ();
+    }
+
+    protected void updateFont ( IFigure figure )
+    {
+        if ( _font != null )
+        {
+            return;
+        }
+
+        if ( _fontSize == null )
+        {
+            return;
+        }
+
+        // build our font
+        Font parentFont = figure.getParent ().getFont ();
+        FontData[] fds = parentFont.getFontData ();
+
+        for ( FontData fontData : fds )
+        {
+            if ( _fontSize != null )
+            {
+                fontData.setHeight ( _fontSize );
+            }
+        }
+
+        _font = new Font ( parentFont.getDevice (), fds );
+    }
+
+    public void setFontSize ( Integer fontSize )
+    {
+        _fontSize = fontSize;
+        disposeFont ();
+        update ();
     }
 }

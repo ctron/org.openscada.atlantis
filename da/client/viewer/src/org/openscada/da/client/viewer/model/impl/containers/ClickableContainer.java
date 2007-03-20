@@ -5,13 +5,14 @@ import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.XYLayout;
-import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
 
 public abstract class ClickableContainer extends FigureContainer
 {
-
-    private IFigure _figure = null;
-
+    /**
+     * Called by the {@link ClickableContainer} when a click event occurs.
+     * @param event The action event
+     */
     protected abstract void clicked ( ActionEvent event );
 
     private org.eclipse.draw2d.Clickable _clickable = null;
@@ -22,25 +23,17 @@ public abstract class ClickableContainer extends FigureContainer
     }
 
     @Override
-    protected void update ()
+    public void createFigure ( Canvas canvas, IFigure parent )
     {
-        if ( _clickable != null )
+        if ( _clickable == null )
         {
-            _clickable.getParent ().setConstraint ( _clickable, new Rectangle ( 0, 0, -1, -1 ) );
-        }
-        this.update ();
-    }
-
-    @Override
-    public void createFigure ( IFigure parent )
-    {
-        if ( _figure == null )
-        {
+            _canvas = canvas;
             _clickable = new org.eclipse.draw2d.Clickable ();
             _clickable.setCursor ( Cursors.CROSS );
             _clickable.setRolloverEnabled ( true );
             _clickable.setSelected ( false );
             _clickable.setLayoutManager ( new XYLayout () );
+            _clickable.setRequestFocusEnabled ( false );
             _clickable.getModel ().addActionListener ( new ActionListener () {
     
                 public void actionPerformed ( ActionEvent event )
@@ -49,7 +42,9 @@ public abstract class ClickableContainer extends FigureContainer
                 }} );
             
             parent.add ( _clickable );
-            this.createFigure ( _clickable );
+            _figure = _clickable;
+            createChildren ();
+            update ();
         }
     }
 

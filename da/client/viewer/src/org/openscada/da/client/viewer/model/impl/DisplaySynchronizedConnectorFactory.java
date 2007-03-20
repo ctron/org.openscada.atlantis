@@ -27,7 +27,7 @@ public class DisplaySynchronizedConnectorFactory implements ConnectorFactory
 
     public Connector create ()
     {
-        return new PassThroughConnector ();
+        return new DisplaySynchronizedConnector ();
     }
 
 }

@@ -28,6 +28,12 @@ import org.openscada.da.client.viewer.model.OutputDefinition;
 import org.openscada.da.client.viewer.model.OutputListener;
 import org.openscada.da.client.viewer.model.Type;
 
+/**
+ * A simple pass-through connector that will set the input with the value of
+ * the output.
+ * @author Jens Reimann &lt;jens.reimann@inavare.net&gt;
+ *
+ */
 public class PassThroughConnector implements Connector, OutputListener
 {
     private static Logger _log = Logger.getLogger ( PassThroughConnector.class );
@@ -88,7 +94,7 @@ public class PassThroughConnector implements Connector, OutputListener
 
     public void update ( Type type, Object value )
     {
-        _log.debug ( String.format ( "Passing on value: %s/%s", type.name (), value ) );
+        _log.debug ( String.format ( "Passing on value ('%s'->'%s'): %s/%s (%s)", _output.getName (), _input.getName (), type.name (), value, this.getClass () ) );
         
         _lastType = type;
         _lastValue = value;

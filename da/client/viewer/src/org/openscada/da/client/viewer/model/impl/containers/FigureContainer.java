@@ -29,6 +29,7 @@ import java.util.Map;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.XYLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.openscada.da.client.viewer.configurator.ConfigurationError;
 import org.openscada.da.client.viewer.model.Connector;
 import org.openscada.da.client.viewer.model.Container;
@@ -42,7 +43,8 @@ import org.openscada.da.client.viewer.model.impl.figures.BaseFigure;
 
 public class FigureContainer extends BaseFigure implements Container
 {
-    private Figure _figure = null;
+    protected Canvas _canvas = null;
+    protected Figure _figure = null;
     private List<Connector> _connectors = new LinkedList<Connector> ();
     private Map<String, DynamicObject> _objects = new HashMap<String, DynamicObject> ();
     
@@ -54,22 +56,28 @@ public class FigureContainer extends BaseFigure implements Container
         super ( id );
     }
     
-    public void createFigure ( IFigure parent )
+    public void createFigure ( Canvas canvas, IFigure parent )
     {
+        _canvas = canvas;
+        
         _figure = new Figure ();
         _figure.setLayoutManager ( new XYLayout () );
         
         parent.add ( _figure );
         
+        createChildren ();
         update ();
-        
+    }
+    
+    protected void createChildren ()
+    {
         for ( DynamicObject object : _objects.values () )
         {
             if ( object instanceof DynamicUIObject )
             {
-                ((DynamicUIObject)object).createFigure ( _figure );
+                ((DynamicUIObject)object).createFigure ( _canvas, _figure );
             }
-        }
+        }        
     }
 
     public void dispose ()
@@ -101,14 +109,13 @@ public class FigureContainer extends BaseFigure implements Container
         {
             if ( object instanceof DynamicUIObject )
             {
-                ((DynamicUIObject)object).createFigure ( _figure );
+                ((DynamicUIObject)object).createFigure ( _canvas, _figure );
             }
         }
     }
 
     public void remove ( DynamicObject object )
     {
-        // FIXME: cannot use getFigure anymore!!
         _objects.remove ( object.getId () );
         if ( _figure != null )
         {
@@ -127,7 +134,9 @@ public class FigureContainer extends BaseFigure implements Container
     protected void update ()
     {
         if ( _figure == null )
+        {
             return;
+        }
         
         updateFigure ( _figure );
     }

@@ -21,6 +21,7 @@ package org.openscada.da.client.viewer.model.impl.figures;
 
 import org.apache.log4j.Logger;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.swt.widgets.Canvas;
 import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
 public class Label extends BaseFigure
@@ -36,6 +37,7 @@ public class Label extends BaseFigure
     {
         super ( id );
         addInput ( new PropertyInput ( this, "object" ) );
+        addInput ( new PropertyInput ( this, "text" ) );
     }
 
     @Override
@@ -88,7 +90,7 @@ public class Label extends BaseFigure
         }
     }
 
-    public void createFigure ( IFigure parent )
+    public void createFigure ( Canvas canvas, IFigure parent )
     {
         if ( _label == null )
         {
