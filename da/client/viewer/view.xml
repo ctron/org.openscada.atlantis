@@ -25,6 +25,8 @@
 		<object-factory id="viewLink" class="org.openscada.da.client.viewer.model.impl.figures.ViewLink"/>
 		<object-factory id="commandButton" class="org.openscada.da.client.viewer.model.impl.figures.CommandButton"/>
 		
+		<object-factory id="percentBar" class="org.openscada.da.client.viewer.model.impl.widgets.PercentBar"/>
+		
 		<object-factory id="colorcomposer" class="org.openscada.da.client.viewer.model.impl.converter.ColorComposer"/>
 		<object-factory id="modulo" class="org.openscada.da.client.viewer.model.impl.converter.ModuloCalculator"/>
 		<object-factory id="factor" class="org.openscada.da.client.viewer.model.impl.converter.FactorCalculator"/>
@@ -537,11 +539,61 @@
 				</object>
 
 				<object type="polyline" id="polyline1">
-					<property name="pointList">(10,100),(15,100),(10,110)</property>
-					<property name="color">#FFFFFF</property>
+					<property name="pointList">(10,100),(50,100),(10,150),(50,150)</property>
+					<property name="color">#000000</property>
 				</object>
 				
+				<object type="percentBar" id="percentbar1">
+					<property name="x">10</property>
+					<property name="y">200</property>
+					<property name="width">200</property>
+					<property name="height">70</property>
+					<property name="min">0</property>
+					<property name="max">255</property>
+					<property name="label">NXT Ultrasonic Sensor (Port 4)</property>
+					
+					<property name="valueColor">#0000FF</property>
+					<property name="invalidColor">#FF00FF</property>
+				</object>
+
+				<object id="nxt_ultrasonic" type="item">
+					<property name="item">usb.sensor.3.value</property>
+					<property name="connection">da:net://localhost:1202?auto-reconnect=true</property>
+				</object>
+				
+				<object type="percentBar" id="percentbar2">
+					<property name="x">250</property>
+					<property name="y">200</property>
+					<property name="width">200</property>
+					<property name="height">70</property>
+					<property name="min">0</property>
+					<property name="max">255</property>
+					<property name="label">Memory Item</property>
+					
+					<property name="valueColor">#00FF00</property>
+					<property name="invalidColor">#FF00FF</property>
+				</object>
+
+				<object id="memory" type="item">
+					<property name="item">memory</property>
+					<property name="connection">da:net://localhost:1203?auto-reconnect=true</property>
+				</object>
+								
 			</objects>
+			
+			<connectors>
+			
+				<connector type="display">
+					<output object="nxt_ultrasonic" name="value"/>
+					<input object="percentbar1" name="value"/>
+				</connector>
+				
+				<connector type="display">
+					<output object="memory" name="value"/>
+					<input object="percentbar2" name="value"/>
+				</connector>
+				
+			</connectors>
 		</view>
 		
 	</views>

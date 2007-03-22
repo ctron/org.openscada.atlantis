@@ -66,6 +66,14 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
     @Override
     public void dispose ()
     {
+        if ( _color != null )
+        {
+            _color.dispose ();
+        }
+        if ( _backgroundColor != null )
+        {
+            _backgroundColor.dispose ();
+        }
         disposeFont ();
         super.dispose ();
     }
@@ -97,6 +105,11 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
 
     public void setColor ( org.openscada.da.client.viewer.model.types.Color color )
     {
+        if ( _color != null )
+        {
+            _color.dispose ();
+        }
+        
         if ( color == null )
             _color = null;
         else
@@ -106,6 +119,11 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
 
     public void setBackgroundColor ( org.openscada.da.client.viewer.model.types.Color backgroundColor )
     {
+        if ( _backgroundColor != null )
+        {
+            _backgroundColor.dispose ();
+        }
+        
         if ( backgroundColor == null )
             _backgroundColor = null;
         else
