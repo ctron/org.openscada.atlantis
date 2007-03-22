@@ -567,16 +567,16 @@
 					<property name="width">200</property>
 					<property name="height">70</property>
 					<property name="min">0</property>
-					<property name="max">255</property>
+					<property name="max">1024</property>
 					<property name="label">Memory Item</property>
 					
 					<property name="valueColor">#00FF00</property>
 					<property name="invalidColor">#FF00FF</property>
 				</object>
 
-				<object id="memory" type="item">
-					<property name="item">memory</property>
-					<property name="connection">da:net://localhost:1203?auto-reconnect=true</property>
+				<object id="nxt_light" type="item">
+					<property name="item">usb.sensor.2.value</property>
+					<property name="connection">da:net://localhost:1202?auto-reconnect=true</property>
 				</object>
 								
 			</objects>
@@ -589,7 +589,7 @@
 				</connector>
 				
 				<connector type="display">
-					<output object="memory" name="value"/>
+					<output object="nxt_light" name="value"/>
 					<input object="percentbar2" name="value"/>
 				</connector>
 				
