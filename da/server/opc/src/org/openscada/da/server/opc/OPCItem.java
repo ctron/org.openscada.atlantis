@@ -40,6 +40,21 @@ import org.openscada.opc.lib.da.ItemState;
 
 public class OPCItem extends DataItemInputOutputChained implements DataCallback, AccessStateListener
 {
+    private static final String OPC_ATTRIBUTE_PREFIX = "org.openscada.opc";
+    private static final String OPC_ATTRIBUTE_VALUE_ERROR = OPC_ATTRIBUTE_PREFIX + ".value.error";
+    private static final String OPC_ATTRIBUTE_VALUE_ERROR_MESSAGE = OPC_ATTRIBUTE_PREFIX + ".value.error.message";
+    
+    private static final String OPC_ATTRIBUTE_READ_ERROR = OPC_ATTRIBUTE_PREFIX + ".read.error";
+    private static final String OPC_ATTRIBUTE_READ_ERROR_CODE = OPC_ATTRIBUTE_READ_ERROR + ".code";
+    private static final String OPC_ATTRIBUTE_READ_ERROR_MESSAGE = OPC_ATTRIBUTE_READ_ERROR + ".message";
+    
+    private static final String OPC_ATTRIBUTE_UPDATE_ERROR = OPC_ATTRIBUTE_PREFIX + ".update.error";
+    private static final String OPC_ATTRIBUTE_UPDATE_ERROR_CODE = OPC_ATTRIBUTE_UPDATE_ERROR + ".code";
+    private static final String OPC_ATTRIBUTE_UPDATE_ERROR_MESSAGE = OPC_ATTRIBUTE_UPDATE_ERROR + ".message";
+
+    private static final String OPC_ATTRIBUTE_QUALITY = OPC_ATTRIBUTE_PREFIX + ".quality";
+    private static final String OPC_ATTRIBUTE_VALUE_TYPE = OPC_ATTRIBUTE_PREFIX + ".value-type";
+    
     private static Logger _log = Logger.getLogger ( OPCItem.class );
 
     private String _itemId = null;
@@ -149,36 +164,41 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
     {
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        attributes.put ( "org.openscada.opc.value-error.message", null );
-        attributes.put ( "org.openscada.opc.update-error.code", null );
-        attributes.put ( "org.openscada.opc.update-error.message", null );
-        attributes.put ( "org.openscada.opc.read-error.code", null );
-        attributes.put ( "org.openscada.opc.read-error.message", null );
+        attributes.put ( OPC_ATTRIBUTE_VALUE_ERROR, null );
+        attributes.put ( OPC_ATTRIBUTE_VALUE_ERROR_MESSAGE, null );
+        attributes.put ( OPC_ATTRIBUTE_UPDATE_ERROR, null );
+        attributes.put ( OPC_ATTRIBUTE_UPDATE_ERROR_CODE, null );
+        attributes.put ( OPC_ATTRIBUTE_UPDATE_ERROR_MESSAGE, null );
+        attributes.put ( OPC_ATTRIBUTE_READ_ERROR_CODE, null );
+        attributes.put ( OPC_ATTRIBUTE_READ_ERROR_MESSAGE, null );
+        attributes.put ( OPC_ATTRIBUTE_READ_ERROR, null );
+        attributes.put ( OPC_ATTRIBUTE_VALUE_TYPE, null );
 
         if ( itemState != null )
         {
-            attributes.put ( "org.openscada.opc.quality", new Variant ( itemState.getQuality () ) );
+            attributes.put ( OPC_ATTRIBUTE_QUALITY, new Variant ( itemState.getQuality () ) );
             attributes.put ( "timestamp", new Variant ( itemState.getTimestamp ().getTimeInMillis () ) );
 
             try
             {
-                attributes.put ( "org.openscada.opc.value-type", new Variant ( itemState.getValue ().getType () ) );
+                attributes.put ( OPC_ATTRIBUTE_VALUE_TYPE, new Variant ( itemState.getValue ().getType () ) );
 
                 Variant newValue = new Variant ();
 
                 if ( itemState.getErrorCode () != 0 )
                 {
                     int errorCode = itemState.getErrorCode ();
-                    attributes.put ( "org.openscada.opc.read-error.code", new Variant ( errorCode ) );
-                    attributes.put ( "org.openscada.opc.read-error.message", new Variant ( _connection.getServer ().getErrorMessage (
+                    attributes.put ( OPC_ATTRIBUTE_READ_ERROR_CODE, new Variant ( errorCode ) );
+                    attributes.put ( OPC_ATTRIBUTE_READ_ERROR_MESSAGE, new Variant ( _connection.getServer ().getErrorMessage (
                             errorCode ) ) );
                 }
                 else if ( itemState.getValue ().getType () == JIVariant.VT_ERROR )
                 {
                     int errorCode = itemState.getValue ().getObjectAsSCODE ();
-                    attributes.put ( "org.openscada.opc.read-error.code", new Variant ( errorCode ) );
-                    attributes.put ( "org.openscada.opc.read-error.message", new Variant ( _connection.getServer ().getErrorMessage (
+                    attributes.put ( OPC_ATTRIBUTE_READ_ERROR_CODE, new Variant ( errorCode ) );
+                    attributes.put ( OPC_ATTRIBUTE_READ_ERROR_MESSAGE, new Variant ( _connection.getServer ().getErrorMessage (
                             errorCode ) ) );
+                    attributes.put ( OPC_ATTRIBUTE_READ_ERROR, new Variant ( true ) );
                 }
                 else
                 {
@@ -186,28 +206,31 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
 
                     if ( newValue == null )
                     {
-                        attributes.put ( "org.openscada.opc.value-error.message", new Variant ( "Unable to convert value: "
+                        attributes.put ( OPC_ATTRIBUTE_VALUE_ERROR_MESSAGE, new Variant ( "Unable to convert value: "
                                 + itemState.getValue ().toString () ) );
+                        attributes.put ( OPC_ATTRIBUTE_VALUE_ERROR, new Variant ( true ) );
                     }
                 }
                 updateValue ( newValue );
             }
             catch ( JIException e )
             {
-                attributes.put ( "org.openscada.opc.update-error.code", new Variant ( e.getErrorCode () ) );
-                attributes.put ( "org.openscada.opc.update-error.message", new Variant ( e.getMessage () ) );
+                attributes.put ( OPC_ATTRIBUTE_UPDATE_ERROR, new Variant ( true ) );
+                attributes.put ( OPC_ATTRIBUTE_UPDATE_ERROR_CODE, new Variant ( e.getErrorCode () ) );
+                attributes.put ( OPC_ATTRIBUTE_UPDATE_ERROR_MESSAGE, new Variant ( e.getMessage () ) );
             }
             catch ( Throwable e )
             {
-                attributes.put ( "org.openscada.opc.update-error.code", new Variant ( 0xFFFFFFFF ) );
-                attributes.put ( "org.openscada.opc.update-error.message", new Variant ( e.getMessage () ) );
+                attributes.put ( OPC_ATTRIBUTE_UPDATE_ERROR, new Variant ( true ) );
+                attributes.put ( OPC_ATTRIBUTE_UPDATE_ERROR_CODE, new Variant ( 0xFFFFFFFF ) );
+                attributes.put ( OPC_ATTRIBUTE_UPDATE_ERROR_MESSAGE, new Variant ( e.getMessage () ) );
             }
         }
         else
         {
-            attributes.put ( "org.openscada.opc.quality", null );
+            attributes.put ( OPC_ATTRIBUTE_QUALITY, null );
             attributes.put ( "timestamp", null );
-            attributes.put ( "org.openscada.opc.value-type", null );
+            attributes.put ( OPC_ATTRIBUTE_VALUE_TYPE, null );
             
             updateValue ( new Variant () );
         }
