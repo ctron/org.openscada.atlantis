@@ -130,7 +130,7 @@
 			<param name="dir" value="${source.base}/build"/>
 		</antcall>
 		<antcall target="export-project">
-			<param naem="dir" value="${source.base}/interface/ice"/>
+			<param name="dir" value="${source.base}/interface/ice"/>
 		</antcall>
 	</target>
 	
