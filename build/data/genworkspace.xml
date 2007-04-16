@@ -17,6 +17,9 @@
 	<target name="export" depends="export-list">
 	</target>
 	
+	<target name="export-svn" depends="export-list">
+	</target>
+	
 	<macrodef name="fetch-and-unpack">
 		<attribute name="location"/>
 		<sequential>
@@ -28,4 +31,5 @@
 	</macrodef>
 	
 	<target name="export-list"/>
+	<target name="export-list-svn"/>
 </project>
