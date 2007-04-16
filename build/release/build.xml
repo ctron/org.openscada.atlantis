@@ -58,73 +58,79 @@
     	<xmltask source="${file.genworkspace}" dest="${file.genworkspace}" outputter="simple:2"/>
     </target>
 	
-	<target name="export-one-pde">
+	<target name="export-project">
 		<openscada.export.project dir="${dir}"/>
 	</target>
 	
-	<target name="export-all-pde">
-		<antcall target="export-one-pde">
+	<target name="export-other-projects">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/external/plugins/icej"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/external/log4j_wrapper_plugin"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/external/xmlbeans_plugin"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/external/plugins/jfreechart"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/rcp/client"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/rcp/client_feature"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/rcp/update_plugin"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/da/rcp/local_test_server"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/da/client/net_feature"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/da/client/ice_feature"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/da/client/test"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/da/client/test_feature"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/da/client/viewer"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/da/client/plugin_wrapper"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/da/client/net_wrapper_plugin"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/da/client/ice_wrapper_plugin"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/da/client/chart"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/ae/rcp/local_test_server"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/ae/client/net_feature"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/ae/client/net_wrapper_plugin"/>
 		</antcall>
-		<antcall target="export-one-pde">
+		<antcall target="export-project">
 			<param name="dir" value="${source.base}/ae/client/test"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/build"/>
+		</antcall>
+		<antcall target="export-project">
+			<param naem="dir" value="${source.base}/interface/ice"/>
 		</antcall>
 	</target>
 	
@@ -144,7 +150,8 @@
 	
 		<!-- now add all plugins projects that are build using the PDE builder -->
 		<!-- due to a bug in xmltask we need to put the export stuff in a seperate task each -->
-		<antcall target="export-all-pde"/>
+		<antcall target="export-other-projects"/>
+		
     	
     	<ant dir="${source.base}/external/log4j"/>
     	<ant dir="${source.base}/external/icej"/>

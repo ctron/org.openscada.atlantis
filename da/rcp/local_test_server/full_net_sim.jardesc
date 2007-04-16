@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jardesc>
-<jar path="/home/jens/workspace/openscada_da_rcp_localtestserver/openscada_net_server_sim.jar"/>
+<jar path="openscada_da_rcp_localtestserver/openscada_net_server_sim.jar"/>
 <options buildIfNeeded="true" compress="true" descriptionLocation="/openscada_da_rcp_localtestserver/full_net_sim.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
 <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
 <selectedProjects/>

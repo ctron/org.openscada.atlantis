@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jardesc>
-<jar path="/home/jens/deploy/openscada_ae_test_server_net.jar"/>
+<jar path="openscada_ae_rcp_localtestserver/openscada_ae_test_server_net.jar"/>
 <options buildIfNeeded="true" compress="true" descriptionLocation="/openscada_ae_rcp_localtestserver/full_test_server.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
 <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
 <selectedProjects/>

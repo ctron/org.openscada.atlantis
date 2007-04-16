@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jardesc>
-<jar path="/home/jens/workspace/openscada_da_client_net_plugin_wrapper/lib.jar"/>
+<jar path="openscada_da_client_net_plugin_wrapper/lib.jar"/>
 <options buildIfNeeded="true" compress="true" descriptionLocation="/openscada_da_client_net_plugin_wrapper/full_lib.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
 <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
 <selectedProjects/>
