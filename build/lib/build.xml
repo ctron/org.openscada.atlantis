@@ -310,15 +310,15 @@
 	
 			<!-- now include svn stuff -->
 			<copy todir="${temp.dir}/export-project/${project.name}">
-				<fileset dir="@{dir}">
+				<fileset dir="@{dir}" defaultexcludes="false">
 				</fileset>
 			</copy>
-			<zip basedir="${temp.dir}/export-project" destfile="${deploy.dist.project}/${project.name}-project-svn-${tag}.zip">
+			<zip basedir="${temp.dir}/export-project" destfile="${deploy.dist.project}/svn/${project.name}-project-svn-${tag}.zip">
 			</zip>
 	
 			<xmltask source="${file.genworkspace}" dest="${file.genworkspace}">
 				<insert path="project/target[@name='export-list']" xml="&lt;fetch-and-unpack location=&quot;${url.dist.project}/${project.name}-project-${tag}.zip&quot;/&gt;"/>
-				<insert path="project/target[@name='export-list-svn']" xml="&lt;fetch-and-unpack location=&quot;${url.dist.project}/${project.name}-project-svn-${tag}.zip&quot;/&gt;"/>
+				<insert path="project/target[@name='export-list-svn']" xml="&lt;fetch-and-unpack location=&quot;${url.dist.project}/svn/${project.name}-project-svn-${tag}.zip&quot;/&gt;"/>
 			</xmltask>
 	
         </sequential>
