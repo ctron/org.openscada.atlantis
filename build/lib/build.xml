@@ -308,7 +308,10 @@
 			<zip basedir="${temp.dir}/export-project" destfile="${deploy.dist.project}/${project.name}-project-${tag}.zip">
 			</zip>
 	
-			<exec command="svn status @{dir} | grep URL | sed &quot;s/URL: //&quot;" outputproperty="svn-base"/>
+			<!-- get the project SVN url -->
+			<shellscript shell="bash" dir="@{dir}" outputproperty="svn-base">
+				svn status . | grep URL | sed -e "s/URL: //"
+			</shellscript>
 	
 			<xmltask source="${file.genworkspace}" dest="${file.genworkspace}">
 				<insert path="project/target[@name='export-list']" xml="&lt;fetch-and-unpack location=&quot;${url.dist.project}/${project.name}-project-${tag}.zip&quot;/&gt;"/>
