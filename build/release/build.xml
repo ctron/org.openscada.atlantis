@@ -76,60 +76,56 @@
 			<param name="dir" value="${source.base}/external/plugins/jfreechart"/>
 		</antcall>
 		<antcall target="export-one-pde">
-			<param name="dir" value="${source.base}/modules/atlantis/rcp/client"/>
+			<param name="dir" value="${source.base}/rcp/client"/>
 		</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/rcp/client_feature"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/rcp/update_plugin"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/da/rcp/local_test_server"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/da/client/net_feature"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/da/client/ice_feature"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/da/client/test"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/da/client/test_feature"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/da/client/viewer"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/da/client/plugin_wrapper"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/da/client/net_wrapper_plugin"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/da/client/ice_wrapper_plugin"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/da/client/chart"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/ae/rcp/local_test_server"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/ae/client/net_feature"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/ae/client/net_wrapper_plugin"/>
-	</antcall>
-	<antcall target="export-one-pde">
-		<param name="dir" value="${source.base}/modules/atlantis/ae/client/test"/>
-	</antcall>
-
-
-
-
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/rcp/client_feature"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/rcp/update_plugin"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/da/rcp/local_test_server"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/da/client/net_feature"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/da/client/ice_feature"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/da/client/test"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/da/client/test_feature"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/da/client/viewer"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/da/client/plugin_wrapper"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/da/client/net_wrapper_plugin"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/da/client/ice_wrapper_plugin"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/da/client/chart"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/ae/rcp/local_test_server"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/ae/client/net_feature"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/ae/client/net_wrapper_plugin"/>
+		</antcall>
+		<antcall target="export-one-pde">
+			<param name="dir" value="${source.base}/ae/client/test"/>
+		</antcall>
 	</target>
 	
 	<!-- ================================= 
