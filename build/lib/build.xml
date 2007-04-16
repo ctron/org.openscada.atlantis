@@ -308,19 +308,11 @@
 			<zip basedir="${temp.dir}/export-project" destfile="${deploy.dist.project}/${project.name}-project-${tag}.zip">
 			</zip>
 	
-			<!-- now include svn stuff -->
-			<copy todir="${temp.dir}/export-project/${project.name}">
-				<fileset dir="@{dir}" defaultexcludes="false">
-					<include name="**/.svn"/>
-				</fileset>
-			</copy>
-			<mkdir dir="${deploy.dist.project}/svn"/>
-			<zip basedir="${temp.dir}/export-project" destfile="${deploy.dist.project}/svn/${project.name}-project-svn-${tag}.zip" defaultexcludes="false">
-			</zip>
+			<exec command="svn status @{dir} | grep URL | sed &quot;s/URL: //&quot;" outputproperty="svn-base"/>
 	
 			<xmltask source="${file.genworkspace}" dest="${file.genworkspace}">
 				<insert path="project/target[@name='export-list']" xml="&lt;fetch-and-unpack location=&quot;${url.dist.project}/${project.name}-project-${tag}.zip&quot;/&gt;"/>
-				<insert path="project/target[@name='export-list-svn']" xml="&lt;fetch-and-unpack location=&quot;${url.dist.project}/svn/${project.name}-project-svn-${tag}.zip&quot;/&gt;"/>
+				<insert path="project/target[@name='export-list-svn']" xml="&lt;checkout url=&quot;${svn-base}&quot; project=&quot;${url.dist.project}&quot;/&gt;"/>
 			</xmltask>
 	
         </sequential>

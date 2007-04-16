@@ -13,11 +13,12 @@
     </description>
     
     <property name="import.dir" value="/tmp/import.atlantis"/>
+	<property name="import.svn.bin" value="svn"/>
 	
 	<target name="export" depends="export-list">
 	</target>
 	
-	<target name="export-svn" depends="export-list">
+	<target name="export-svn" depends="export-list-svn">
 	</target>
 	
 	<macrodef name="fetch-and-unpack">
@@ -27,6 +28,19 @@
 			<get src="@{location}" dest="${tempfile}"/>
 			<unzip src="${tempfile}" dest="${import.dir}"/>
 			<delete file="${tempfile}"/>
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="checkout">
+		<attribute name="url"/>
+		<attribute name="location"/>
+		<sequential>
+			<mkdir dir="@{location}"/>
+			<exec failonerror="true" executable="${import.svn.bin}">
+				<arg value="co"/>
+				<arg value="@{url}"/>
+				<arg value="@{location}"/>
+			</exec>
 		</sequential>
 	</macrodef>
 	
