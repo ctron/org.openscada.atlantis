@@ -309,7 +309,9 @@
 			</zip>
 	
 			<!-- get the project SVN url -->
-			<shellscript shell="bash" dir="@{dir}" inputstring="svn status . | grep URL | sed -e 's/URL: //'" outputproperty="svn-base"/>
+			<shellscript shell="bash" dir="@{dir}" outputproperty="svn-base">
+				svn info . | grep URL | sed -e "s/URL: //"
+			</shellscript>
 	
 			<xmltask source="${file.genworkspace}" dest="${file.genworkspace}">
 				<insert path="project/target[@name='export-list']" xml="&lt;fetch-and-unpack location=&quot;${url.dist.project}/${project.name}-project-${tag}.zip&quot;/&gt;"/>
