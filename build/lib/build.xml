@@ -310,12 +310,12 @@
 	
 			<!-- now include svn stuff -->
 			<copy todir="${temp.dir}/export-project/${project.name}">
-				<fileset dir="@{dir}">
+				<fileset dir="@{dir}" defaultexcludes="false">
 					<include name="**/.svn"/>
 				</fileset>
 			</copy>
 			<mkdir dir="${deploy.dist.project}/svn"/>
-			<zip basedir="${temp.dir}/export-project" destfile="${deploy.dist.project}/svn/${project.name}-project-svn-${tag}.zip">
+			<zip basedir="${temp.dir}/export-project" destfile="${deploy.dist.project}/svn/${project.name}-project-svn-${tag}.zip" defaultexcludes="false">
 			</zip>
 	
 			<xmltask source="${file.genworkspace}" dest="${file.genworkspace}">
