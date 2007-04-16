@@ -313,6 +313,7 @@
 				<fileset dir="@{dir}" defaultexcludes="false">
 				</fileset>
 			</copy>
+			<mkdir dir="${deploy.dist.project}/svn"/>
 			<zip basedir="${temp.dir}/export-project" destfile="${deploy.dist.project}/svn/${project.name}-project-svn-${tag}.zip">
 			</zip>
 	
