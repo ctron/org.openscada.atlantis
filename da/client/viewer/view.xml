@@ -568,7 +568,7 @@
 					<property name="height">70</property>
 					<property name="min">0</property>
 					<property name="max">1024</property>
-					<property name="label">Memory Item</property>
+					<property name="label">NXT Light Sensor (Port 3)</property>
 					
 					<property name="valueColor">#00FF00</property>
 					<property name="invalidColor">#FF00FF</property>
