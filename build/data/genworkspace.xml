@@ -33,13 +33,13 @@
 	
 	<macrodef name="checkout">
 		<attribute name="url"/>
-		<attribute name="location"/>
+		<attribute name="project"/>
 		<sequential>
-			<mkdir dir="@{location}"/>
+			<mkdir dir="@{project}"/>
 			<exec failonerror="true" executable="${import.svn.bin}">
 				<arg value="co"/>
 				<arg value="@{url}"/>
-				<arg value="@{location}"/>
+				<arg value="@{project}"/>
 			</exec>
 		</sequential>
 	</macrodef>
