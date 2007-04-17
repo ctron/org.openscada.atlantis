@@ -21,7 +21,6 @@ package org.openscada.da.client.viewer.model.impl;
 
 import java.util.EnumSet;
 
-import org.apache.log4j.Logger;
 import org.eclipse.swt.graphics.RGB;
 import org.openscada.common.VariantType;
 import org.openscada.core.Variant;
@@ -30,9 +29,7 @@ import org.openscada.da.client.viewer.model.types.Color;
 
 public class Helper
 {
-    private static Logger _log = Logger.getLogger ( Helper.class );
-    
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
     public static EnumSet<Type> classToType ( Class clazz )
     {
         EnumSet<Type> set = EnumSet.noneOf ( Type.class );
