@@ -77,15 +77,7 @@ public class Helper
         {
             set.addAll ( EnumSet.allOf ( Type.class ) );
         }
-        
-        if ( _log.isDebugEnabled () )
-        {
-            for ( Type type : set )
-            {
-                //_log.debug ( "Matches: " + type.name () );
-            }
-        }
-        
+       
         return set;
     }
     
