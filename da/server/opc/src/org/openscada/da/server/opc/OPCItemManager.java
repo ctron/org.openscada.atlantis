@@ -135,7 +135,7 @@ public class OPCItemManager
         item = new OPCItem ( di, _connection, opcItemId );
 
         FactoryTemplate ft = _hive.findFactoryTemplate ( itemId );
-        _log.debug ( String.format ( "Find tempate for item '%s' : %s", itemId, ft ) );
+        _log.debug ( String.format ( "Find template for item '%s' : %s", itemId, ft ) );
         if ( ft != null )
         {
             item.setChain ( FactoryHelper.instantiateChainList ( ft.getChainEntries () ) );
