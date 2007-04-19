@@ -34,7 +34,9 @@ public class InvisibleStorage implements SubscribeableStorage
         synchronized ( this )
         {
             if ( _items.contains ( descriptor ) )
+            {
                 return;
+            }
 
             _items.add ( descriptor );
             notifyAdd ( descriptor );
@@ -46,7 +48,9 @@ public class InvisibleStorage implements SubscribeableStorage
         synchronized ( this )
         {
             if ( !_items.contains ( descriptor ) )
+            {
                 return;
+            }
 
             _items.remove ( descriptor );
             notifyRemove ( descriptor );
