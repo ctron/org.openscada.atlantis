@@ -55,6 +55,8 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
     private static final String OPC_ATTRIBUTE_QUALITY = OPC_ATTRIBUTE_PREFIX + ".quality";
     private static final String OPC_ATTRIBUTE_VALUE_TYPE = OPC_ATTRIBUTE_PREFIX + ".value-type";
     
+    private static final String OPC_ATTRIBUTE_TIMESTAMP = OPC_ATTRIBUTE_PREFIX + ".timestamp"; 
+    
     private static Logger _log = Logger.getLogger ( OPCItem.class );
 
     private String _itemId = null;
@@ -127,6 +129,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         _connection.getAccess ().removeStateListener ( this );
         stateChanged ( false );
 
+        clearAttributes ();
         updateValue ( (ItemState)null );
     }
 
@@ -173,6 +176,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         attributes.put ( OPC_ATTRIBUTE_READ_ERROR_MESSAGE, null );
         attributes.put ( OPC_ATTRIBUTE_READ_ERROR, null );
         attributes.put ( OPC_ATTRIBUTE_VALUE_TYPE, null );
+        attributes.put ( OPC_ATTRIBUTE_TIMESTAMP, null );
         
         Variant newValue = null;
 
@@ -205,6 +209,10 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
                 else
                 {
                     newValue = Helper.theirs2ours ( itemState.getValue () );
+                    if ( newValue != null )
+                    {
+                        attributes.put ( OPC_ATTRIBUTE_TIMESTAMP, new Variant ( System.currentTimeMillis () ) );
+                    }
                 }
             }
             catch ( JIException e )
@@ -229,16 +237,17 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
             newValue = new Variant ();
         }
 
-        updateAttributes ( attributes );
-        if ( newValue != null )
-        {
-            updateValue ( newValue );
-        }
-        else
+        if ( newValue == null )
         {
             attributes.put ( OPC_ATTRIBUTE_VALUE_ERROR_MESSAGE, new Variant ( "Unable to convert value: "
                     + itemState.getValue ().toString () ) );
             attributes.put ( OPC_ATTRIBUTE_VALUE_ERROR, new Variant ( true ) );
+        }
+        
+        updateAttributes ( attributes );
+        if ( newValue != null )
+        {
+            updateValue ( newValue );
         }
     }
 

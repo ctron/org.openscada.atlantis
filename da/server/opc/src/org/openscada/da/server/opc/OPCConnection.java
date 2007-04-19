@@ -207,7 +207,8 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         _hive.registerItem ( _stateItem );
         _connectionFolder.add ( "state", _stateItem, new MapBuilder<String, Variant> ().getMap () );
         _hive.registerItem ( _autoReconnectStateItem );
-        _connectionFolder.add ( "auto-reconnect-state", _autoReconnectStateItem, new MapBuilder<String, Variant>().getMap () );
+        _connectionFolder.add ( "auto-reconnect-state", _autoReconnectStateItem,
+                new MapBuilder<String, Variant> ().getMap () );
 
         _hive.registerItem ( _activeCountItem );
         _connectionFolder.add ( "active-count", _activeCountItem, new MapBuilder<String, Variant> ().getMap () );
@@ -259,7 +260,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         _hive.getRootFolderCommon ().remove ( _connectionTag );
         _itemManager = null;
         _connectionFolder = null;
-        
+
         _reconnectController.removeListener ( this );
         _reconnectController = null;
 
@@ -276,8 +277,16 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
 
     public void triggerDisconnect ()
     {
-        _reconnectController.disconnect ();
-        _itemManager.clear ();
+        try
+        {
+            _reconnectController.disconnect ();
+            _itemManager.clear ();
+            _log.info ( "Connection terminated" );
+        }
+        catch ( Throwable e )
+        {
+            _log.warn ( "Failed to disconnect", e );
+        }
     }
 
     private void addFlatItem ( String itemId, EnumSet<IODirection> ioDirection )
@@ -472,7 +481,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
             return _activeItems.size ();
         }
     }
-    
+
     public void stateChanged ( AutoReconnectState state )
     {
         _autoReconnectStateItem.updateValue ( new Variant ( state.name () ) );

@@ -62,7 +62,6 @@ public class OPCItemManager
         _itemMap.put ( item.getId (), item );
         _descriptionMap.put ( item, new LinkedList<OPCItemDescription> () );
         _hive.registerItem ( item );
-
     }
 
     public synchronized void removeItem ( OPCItem item )
