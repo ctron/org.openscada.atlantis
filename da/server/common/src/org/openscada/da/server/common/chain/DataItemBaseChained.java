@@ -63,6 +63,19 @@ public abstract class DataItemBaseChained extends DataItemBase
             process ();
         }
     }
+    
+    /**
+     * Remove all attributes
+     *
+     */
+    public synchronized void clearAttributes ()
+    {
+        if ( _primaryAttributes.size () > 0 )
+        {
+            _primaryAttributes.clear ();
+            process ();
+        }
+    }
 
     public Map<String, Variant> getAttributes ()
     {
