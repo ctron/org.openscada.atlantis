@@ -32,7 +32,7 @@ import org.openscada.core.client.NoConnectionException;
  * The example shows how to create a new connection, connect, and write the main value
  * and some attributes.
  * <br>
- * Since we are using the <em>test</em> item of the test server it is no problem
+ * Since we are using the <em>test-1</em> item of the test server it is no problem
  * writing any value and any attribute to it. If the item is an "input onyl"
  * item you cannot write the main value. And attributes might be restricted
  * to data item specific attributes that are available.
