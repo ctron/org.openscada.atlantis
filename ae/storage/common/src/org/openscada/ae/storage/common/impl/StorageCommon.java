@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.ae.storage.common;
+package org.openscada.ae.storage.common.impl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +31,10 @@ import org.openscada.ae.core.NoSuchQueryException;
 import org.openscada.ae.core.QueryDescription;
 import org.openscada.ae.core.Session;
 import org.openscada.ae.core.Storage;
+import org.openscada.ae.storage.common.Query;
+import org.openscada.ae.storage.common.Reader;
+import org.openscada.ae.storage.common.SubscriptionManager;
+import org.openscada.ae.storage.common.data.QueryEntry;
 import org.openscada.ae.storage.common.operations.ListOperation;
 import org.openscada.core.CancellationNotSupportedException;
 import org.openscada.core.InvalidSessionException;

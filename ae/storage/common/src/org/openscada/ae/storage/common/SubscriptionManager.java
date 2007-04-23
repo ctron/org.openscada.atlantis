@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.openscada.ae.core.EventInformation;
 import org.openscada.ae.core.Listener;
+import org.openscada.ae.storage.common.impl.SessionCommon;
 
 public class SubscriptionManager implements SubscriptionObserver
 {

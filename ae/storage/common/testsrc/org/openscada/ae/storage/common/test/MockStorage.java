@@ -21,7 +21,7 @@ package org.openscada.ae.storage.common.test;
 
 import org.openscada.ae.core.QueryDescription;
 import org.openscada.ae.storage.common.Query;
-import org.openscada.ae.storage.common.StorageCommon;
+import org.openscada.ae.storage.common.impl.StorageCommon;
 
 public class MockStorage extends StorageCommon
 {

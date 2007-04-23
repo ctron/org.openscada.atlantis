@@ -17,11 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.ae.storage.common;
+package org.openscada.ae.storage.common.data;
 
 import org.openscada.ae.core.QueryDescription;
+import org.openscada.ae.storage.common.Query;
 
-class QueryEntry
+public class QueryEntry
 {
     private Query _query = null;
     private QueryDescription _description = null;

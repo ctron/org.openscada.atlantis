@@ -17,12 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.ae.storage.common;
+package org.openscada.ae.storage.common.impl;
 
 import java.util.List;
 
 import org.openscada.ae.core.Listener;
 import org.openscada.ae.core.Session;
+import org.openscada.ae.storage.common.Query;
+import org.openscada.ae.storage.common.Subscription;
 import org.openscada.core.server.common.SessionCommonOperations;
 
 public class SessionCommon implements Session

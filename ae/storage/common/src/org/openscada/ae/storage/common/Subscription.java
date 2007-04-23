@@ -20,6 +20,7 @@
 package org.openscada.ae.storage.common;
 
 import org.openscada.ae.core.Listener;
+import org.openscada.ae.storage.common.impl.SessionCommon;
 
 public class Subscription
 {

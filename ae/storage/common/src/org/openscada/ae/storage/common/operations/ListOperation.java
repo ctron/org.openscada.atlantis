@@ -21,7 +21,7 @@ package org.openscada.ae.storage.common.operations;
 
 import org.openscada.ae.core.ListOperationListener;
 import org.openscada.ae.core.QueryDescription;
-import org.openscada.ae.storage.common.StorageCommon;
+import org.openscada.ae.storage.common.impl.StorageCommon;
 import org.openscada.utils.jobqueue.RunnableCancelOperation;
 
 public class ListOperation extends RunnableCancelOperation
