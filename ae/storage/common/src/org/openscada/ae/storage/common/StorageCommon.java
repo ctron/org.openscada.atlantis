@@ -66,16 +66,22 @@ public class StorageCommon implements Storage
     protected SessionCommon validateSession ( Session session ) throws InvalidSessionException
     {
         if ( session == null )
+        {
             throw new InvalidSessionException ();
+        }
         
         synchronized ( session )
         {
             if ( ! ( session instanceof SessionCommon ) )
+            {
                 throw new InvalidSessionException ();
+            }
 
             SessionCommon sessionCommon = (SessionCommon)session;
             if ( sessionCommon.getStorage () != this )
+            {
                 throw new InvalidSessionException ();
+            }
 
             return (SessionCommon)session;
         }
@@ -101,7 +107,6 @@ public class StorageCommon implements Storage
 
     synchronized public long startList ( Session session, ListOperationListener listener ) throws InvalidSessionException
     {
-        @SuppressWarnings("unused")
         SessionCommon sessionCommon = validateSession ( session );
         
         Handle handle = _opManager.schedule ( new ListOperation ( this, listener ) );
@@ -131,7 +136,9 @@ public class StorageCommon implements Storage
         QueryEntry queryEntry = _queries.get ( queryID );
         
         if ( queryEntry == null )
+        {
             throw new NoSuchQueryException ();
+        }
         
         Reader reader = queryEntry.getQuery ().createReader ();
         Event[] events = reader.fetchNext ( 0 );
