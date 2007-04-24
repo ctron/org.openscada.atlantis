@@ -2,9 +2,6 @@ package org.openscada.core.subscription;
 
 import java.util.Collection;
 
-import org.openscada.core.subscription.SubscriptionListener;
-import org.openscada.core.subscription.SubscriptionSource;
-
 public class TestSubscriptionSource implements SubscriptionSource
 {
 
