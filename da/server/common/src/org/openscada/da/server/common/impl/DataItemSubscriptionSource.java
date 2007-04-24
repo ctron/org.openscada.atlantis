@@ -9,7 +9,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionInformation;
-import org.openscada.core.subscription.SubscriptionListener;
 import org.openscada.core.subscription.SubscriptionSource;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.server.common.DataItem;
