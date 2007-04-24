@@ -1,6 +1,5 @@
 package org.openscada.core.subscription;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -38,6 +37,12 @@ public class SubscriptionManager
 
     public synchronized void subscribe ( Object topic, SubscriptionListener listener ) throws ValidationException
     {
+        subscribe ( topic, listener, null );
+    }
+    
+    public synchronized void subscribe ( Object topic, SubscriptionListener listener, Object hint ) throws ValidationException
+    {
+        // If we have a validator then do validate
         SubscriptionValidator v;
         if ( ( v = _validator ) != null )
         {
@@ -47,6 +52,7 @@ public class SubscriptionManager
             }
         }
 
+        // Get subscription or create one if there is none
         Subscription s = _subscriptions.get ( topic );
         if ( s == null )
         {
@@ -54,7 +60,7 @@ public class SubscriptionManager
             _subscriptions.put ( topic, s );
         }
 
-        s.subscribe ( listener );
+        s.subscribe ( listener, hint );
     }
 
     public synchronized void unsubscribe ( Object topic, SubscriptionListener listener )
@@ -67,6 +73,7 @@ public class SubscriptionManager
 
         s.unsubscribe ( listener );
 
+        // if the subscription is empty we can erase it
         if ( s.isEmpty () )
         {
             _subscriptions.remove ( topic );
@@ -79,7 +86,9 @@ public class SubscriptionManager
     }
 
     /**
-     * Set a source for a topic
+     * Set a source for a topic.
+     * 
+     * This will cause all granted subscriptions to switch to connected for this source
      * @param topic the topic
      * @param source the source to set
      */

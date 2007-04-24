@@ -35,11 +35,4 @@ public class SubscriptionRecorder implements SubscriptionListener
     {
         _list = list;
     }
-
-    public Object getSubscriptionHint ()
-    {
-        return null;
-    }
-    
-    
 }

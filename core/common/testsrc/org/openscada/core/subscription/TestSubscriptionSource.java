@@ -8,27 +8,27 @@ import org.openscada.core.subscription.SubscriptionSource;
 public class TestSubscriptionSource implements SubscriptionSource
 {
 
-    public void addListener ( Collection<SubscriptionListener> listeners )
+    public void addListener ( Collection<SubscriptionInformation> listeners )
     {
-        for ( SubscriptionListener listener : listeners)
+        for ( SubscriptionInformation information : listeners)
         {
-            SubscriptionRecorder recorder = (SubscriptionRecorder)listener;
+            SubscriptionRecorder recorder = (SubscriptionRecorder)information.getListener ();
             recorder.added ( this );
         }
     }
 
-    public void removeListener ( Collection<SubscriptionListener> listeners )
+    public void removeListener ( Collection<SubscriptionInformation> listeners )
     {
-        for ( SubscriptionListener listener : listeners)
+        for ( SubscriptionInformation information : listeners)
         {
-            SubscriptionRecorder recorder = (SubscriptionRecorder)listener;
+            SubscriptionRecorder recorder = (SubscriptionRecorder)information.getListener ();
             recorder.removed ( this );
         }
     }
 
-    public boolean supportsListener ( SubscriptionListener listener )
+    public boolean supportsListener ( SubscriptionInformation information )
     {
-        return listener instanceof SubscriptionRecorder;
+        return information.getListener () instanceof SubscriptionRecorder;
     }
 
 }

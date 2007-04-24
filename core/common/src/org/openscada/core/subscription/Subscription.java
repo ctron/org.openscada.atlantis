@@ -1,23 +1,23 @@
 package org.openscada.core.subscription;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
-
 
 public class Subscription
 {
-    private Set<SubscriptionListener> _listeners = new HashSet<SubscriptionListener> ();
+    private Map<SubscriptionInformation, Object> _listeners = new HashMap<SubscriptionInformation, Object> ();
 
     private SubscriptionSource _source = null;
     private Object _topic = null;
-    
+
     public Subscription ( Object topic )
     {
         super ();
         _topic = topic;
     }
-    
+
     /**
      * Check if the subscription is empty or nor.
      * 
@@ -30,7 +30,7 @@ public class Subscription
     {
         return ( _source == null ) && _listeners.isEmpty ();
     }
-    
+
     /**
      * Check if the subscription is in granted state. This means that no source
      * is connected but there are listeners attached.
@@ -41,32 +41,42 @@ public class Subscription
         return ( _source == null ) && !_listeners.isEmpty ();
     }
 
-    public synchronized void subscribe ( SubscriptionListener listener )
+    public synchronized void subscribe ( SubscriptionListener listener, Object hint )
     {
-        if ( _listeners.add ( listener ) )
+        SubscriptionInformation subscriptionInformation = new SubscriptionInformation ( listener, hint );
+
+        if ( _listeners.containsKey ( subscriptionInformation ) )
         {
-            if ( _source == null )
-            {
-                listener.updateStatus ( _topic, SubscriptionState.GRANTED );
-            }
-            else
-            {
-                listener.updateStatus ( _topic, SubscriptionState.CONNECTED );
-                _source.addListener ( Arrays.asList ( new SubscriptionListener[] { listener } ) );
-            }
+            return;
+        }
+        _listeners.put ( subscriptionInformation, hint );
+
+        if ( _source == null )
+        {
+            listener.updateStatus ( _topic, SubscriptionState.GRANTED );
+        }
+        else
+        {
+            listener.updateStatus ( _topic, SubscriptionState.CONNECTED );
+            _source.addListener ( Arrays.asList ( new SubscriptionInformation[] { subscriptionInformation } ) );
         }
     }
 
     public synchronized void unsubscribe ( SubscriptionListener listener )
     {
-        if ( _listeners.remove ( listener ) )
+        SubscriptionInformation subscriptionInformation = new SubscriptionInformation ( listener, null );
+        if ( _listeners.containsKey ( subscriptionInformation ) )
         {
+            Object hint = _listeners.remove ( subscriptionInformation );
+            subscriptionInformation.setHint ( hint );
+
             if ( _source != null )
             {
-                _source.removeListener ( Arrays.asList ( new SubscriptionListener[] { listener } ) );
+                _source.removeListener ( Arrays.asList ( new SubscriptionInformation[] { subscriptionInformation } ) );
             }
+            
+            listener.updateStatus ( _topic, SubscriptionState.DISCONNECTED );
         }
-        listener.updateStatus ( _topic, SubscriptionState.DISCONNECTED );
     }
 
     public synchronized void setSource ( SubscriptionSource source )
@@ -76,28 +86,29 @@ public class Subscription
         {
             return;
         }
-        
+
         if ( _source != null )
         {
-            _source.removeListener ( _listeners );
+            _source.removeListener ( _listeners.keySet () );
         }
 
+        Set<SubscriptionInformation> keys = _listeners.keySet ();
         if ( source != null )
         {
-            for ( SubscriptionListener listener : _listeners )
+            for ( SubscriptionInformation information : keys )
             {
-                listener.updateStatus ( _topic, SubscriptionState.CONNECTED );
+                information.getListener ().updateStatus ( _topic, SubscriptionState.CONNECTED );
             }
-            source.addListener ( _listeners );
+            source.addListener ( keys );
         }
         else
         {
-            for ( SubscriptionListener listener : _listeners )
+            for ( SubscriptionInformation information : keys )
             {
-                listener.updateStatus ( _topic, SubscriptionState.GRANTED );
+                information.getListener ().updateStatus ( _topic, SubscriptionState.GRANTED );
             }
         }
-        
+
         _source = source;
     }
 }
