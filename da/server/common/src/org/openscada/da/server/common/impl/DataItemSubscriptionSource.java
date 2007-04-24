@@ -82,12 +82,12 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
             if ( _cacheValue != null )
             {
                 _log.debug ( "Sending initial value:" + _cacheValue );
-                ((DataItemSubscriptionListener)listener).valueChanged ( _dataItem, _cacheValue, true );
+                ((DataItemSubscriptionListener)listener.getListener ()).valueChanged ( _dataItem, _cacheValue, true );
             }
             if ( !_cacheAttributes.isEmpty () )
             {
                 _log.debug ( "Sending initial attributes: " + _cacheAttributes.size () );
-                ((DataItemSubscriptionListener)listener).attributesChanged ( _dataItem, _cacheAttributes, true );
+                ((DataItemSubscriptionListener)listener.getListener ()).attributesChanged ( _dataItem, _cacheAttributes, true );
             }
         }
 
