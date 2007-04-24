@@ -111,4 +111,9 @@ public class SessionCommon implements Session, DataItemSubscriptionListener
             listener.valueChanged ( item.getInformation ().getName (), value, cache );
         }
     }
+
+    public Object getSubscriptionHint ()
+    {
+        return null;
+    }
 }

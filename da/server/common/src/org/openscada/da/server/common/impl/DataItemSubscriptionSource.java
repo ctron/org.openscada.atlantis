@@ -14,6 +14,13 @@ import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.ItemListener;
 
+/**
+ * A subscription source for data items.
+ * 
+ * This SubscriptionSource does not use a hint object.
+ * @author Jens Reimann
+ *
+ */
 public class DataItemSubscriptionSource implements SubscriptionSource, ItemListener
 {
     private static Logger _log = Logger.getLogger ( DataItemSubscriptionSource.class );
