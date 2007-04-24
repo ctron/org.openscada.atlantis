@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionInformation;
 import org.openscada.core.subscription.SubscriptionListener;
 import org.openscada.core.subscription.SubscriptionSource;
 import org.openscada.core.utils.AttributesHelper;
@@ -72,11 +73,11 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         _dataItem.setListener ( null );
     }
 
-    public synchronized void addListener ( Collection<SubscriptionListener> listeners )
+    public synchronized void addListener ( Collection<SubscriptionInformation> listeners )
     {
-        for ( SubscriptionListener listener : listeners )
+        for ( SubscriptionInformation listener : listeners )
         {
-            _listeners.add ( (DataItemSubscriptionListener)listener );
+            _listeners.add ( (DataItemSubscriptionListener)listener.getListener () );
             // send current state
             if ( _cacheValue != null )
             {
@@ -96,11 +97,11 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         }
     }
 
-    public synchronized void removeListener ( Collection<SubscriptionListener> listeners )
+    public synchronized void removeListener ( Collection<SubscriptionInformation> listeners )
     {
-        for ( SubscriptionListener listener : listeners )
+        for ( SubscriptionInformation listener : listeners )
         {
-            _listeners.remove ( (DataItemSubscriptionListener)listener );
+            _listeners.remove ( (DataItemSubscriptionListener)listener.getListener () );
         }
 
         if ( _listeners.isEmpty () )
@@ -109,9 +110,9 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         }
     }
 
-    public boolean supportsListener ( SubscriptionListener listener )
+    public boolean supportsListener ( SubscriptionInformation subscriptionInformation )
     {
-        return listener instanceof DataItemSubscriptionListener;
+        return subscriptionInformation.getListener () instanceof DataItemSubscriptionListener;
     }
 
     public synchronized void attributesChanged ( DataItem item, Map<String, Variant> attributes )
