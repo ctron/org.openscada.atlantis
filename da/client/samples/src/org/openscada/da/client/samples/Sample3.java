@@ -55,7 +55,7 @@ public class Sample3 extends SampleBase
     {
         try
         {
-            for ( Entry entry : _connection.browse ( new String [] { "Bla" } ) )
+            for ( Entry entry : _connection.browse ( new String [] { "test" } ) )
             {
                 showEntry ( entry );
             }
