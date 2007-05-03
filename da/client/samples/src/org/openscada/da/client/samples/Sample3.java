@@ -49,7 +49,7 @@ public class Sample3 extends SampleBase
         }
         else if ( entry instanceof DataItemEntry )
         {
-            System.out.print ( "[Item]" );
+            System.out.print ( "[Item]: " + ((DataItemEntry)entry).getId () );
         }
             
         System.out.println ();
