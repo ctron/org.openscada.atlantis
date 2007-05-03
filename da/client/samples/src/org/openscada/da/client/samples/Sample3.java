@@ -36,6 +36,10 @@ public class Sample3 extends SampleBase
         super ( uri, className );
     }
     
+    /**
+     * Show one folder entry. 
+     * @param entry A folder entry which can be an item or a sub-folder
+     */
     protected void showEntry ( Entry entry )
     {
         System.out.print ( "'" + entry.getName () + "' " );
@@ -50,7 +54,12 @@ public class Sample3 extends SampleBase
             
         System.out.println ();
     }
-    
+
+    /**
+     * browse once through a predefined folder named "test"
+     * @throws InterruptedException
+     * @throws OperationException
+     */
     public void run () throws InterruptedException, OperationException
     {
         try
