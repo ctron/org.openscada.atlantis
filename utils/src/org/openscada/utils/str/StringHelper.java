@@ -19,12 +19,22 @@
 
 package org.openscada.utils.str;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 public class StringHelper
 {
-    public static String join ( List items, String delimiter )
+    /**
+     * Join a collection of objects to a string using a delimiter.
+     * 
+     * The method will take the {@link Object#toString()} result of each collection
+     * member and add it to the result string. Delimiters are only placed between
+     * elements
+     * @param items The items to convert
+     * @param delimiter the delimiter to use
+     * @return the result string
+     */
+    public static String join ( Collection<? extends Object> items, String delimiter )
     {
         StringBuffer buffer = new StringBuffer ();
         Iterator iter = items.iterator ();
@@ -41,6 +51,16 @@ public class StringHelper
         return buffer.toString ();
     }
 
+    /**
+     * Join a collection of objects to a string using a delimiter.
+     * 
+     * The method will take the {@link Object#toString()} result of each collection
+     * member and add it to the result string. Delimiters are only placed between
+     * elements
+     * @param items The items to convert
+     * @param delimiter the delimiter to use
+     * @return the result string
+     */
     public static String join ( Object[] items, String delimiter )
     {
         StringBuffer buffer = new StringBuffer ();
