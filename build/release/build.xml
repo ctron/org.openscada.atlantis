@@ -10,7 +10,7 @@
             Master build file for OpenSCADA Atlantis
     </description>
 
-	<property name="version" value="0.6.0"/>
+	<property name="version" value="0.8.0"/>
 	<property name="release" value=""/>
 	<property name="buildType" value="R"/>
 	<property name="buildId" value="Release-${version}"/>
