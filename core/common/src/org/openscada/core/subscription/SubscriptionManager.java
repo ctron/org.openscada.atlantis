@@ -35,11 +35,24 @@ public class SubscriptionManager
         }
     }
 
+    /**
+     * Subscribe to a topic.
+     * @param topic The topic to which the subscription should be made
+     * @param listener The listener which will receive the events
+     * @throws ValidationException thrown if the subscription cannot be establed (e.g. the topic is invalid)
+     */
     public synchronized void subscribe ( Object topic, SubscriptionListener listener ) throws ValidationException
     {
         subscribe ( topic, listener, null );
     }
     
+    /**
+     * Subscribe to a topic with a hint
+     * @param topic The topic to which the subscription should be made
+     * @param listener The listener which will receive the events
+     * @param hint The hint is specific to the topic
+     * @throws ValidationException thrown if the subscription cannot be establed (e.g. the topic is invalid)
+     */
     public synchronized void subscribe ( Object topic, SubscriptionListener listener, Object hint ) throws ValidationException
     {
         // If we have a validator then do validate
