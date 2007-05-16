@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.openscada.ae.core.Event;
 import org.openscada.ae.core.QueryDescription;
-import org.openscada.ae.storage.common.StorageCommon;
+import org.openscada.ae.storage.common.impl.StorageCommon;
 import org.openscada.ae.storage.common.memory.MemoryQuery;
 import org.openscada.ae.storage.syslog.provider.SyslogDaemonProvider;
 import org.openscada.ae.storage.syslog.provider.SyslogFileProvider;

@@ -24,7 +24,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.openscada.ae.core.Event;
 import org.openscada.ae.core.QueryDescription;
-import org.openscada.ae.storage.common.StorageCommon;
+import org.openscada.ae.storage.common.impl.StorageCommon;
 import org.openscada.ae.storage.common.memory.MemoryQuery;
 import org.openscada.core.Variant;
 import org.openscada.utils.collection.MapBuilder;
