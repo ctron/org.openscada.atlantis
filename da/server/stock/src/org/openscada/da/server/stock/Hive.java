@@ -30,7 +30,6 @@ import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.configuration.Configurator;
 import org.openscada.da.server.common.configuration.xml.XMLConfigurator;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.stock.business.MockStockQuoteService;
 import org.openscada.da.server.stock.business.YahooStockQuoteService;
 import org.openscada.da.server.stock.items.StockQuoteItem;
 import org.openscada.da.server.stock.items.UpdateManager;
