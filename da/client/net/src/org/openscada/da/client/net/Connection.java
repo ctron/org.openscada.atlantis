@@ -661,7 +661,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
             ItemUpdateListener listener = _itemListeners.get ( item );
             if ( listener != null )
             {
-                listener.notifySubscriptionChange ( subscriptionState );
+                listener.notifySubscriptionChange ( subscriptionState, null );
             }
         }
     }

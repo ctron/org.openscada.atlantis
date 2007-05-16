@@ -141,7 +141,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
         }
     }
 
-    public void notifySubscriptionChange ( SubscriptionState state )
+    public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
     {
     }
 

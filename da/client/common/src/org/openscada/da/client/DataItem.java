@@ -37,6 +37,7 @@ public class DataItem extends Observable
     private Map<String, Variant> _attributes = new HashMap<String, Variant> ();
 
     private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
+    private Throwable _subscriptionError = null;
 
     private ItemUpdateListener _listener = new ItemUpdateListener () {
 
@@ -50,9 +51,9 @@ public class DataItem extends Observable
             performNotifyAttributeChange ( attributes, initial );
         }
 
-        public void notifySubscriptionChange ( SubscriptionState subscriptionState )
+        public void notifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
         {
-            performNotifySubscriptionChange ( subscriptionState );
+            performNotifySubscriptionChange ( subscriptionState, subscriptionError );
         }
     };
 
@@ -104,9 +105,10 @@ public class DataItem extends Observable
         notifyObservers ();
     }
 
-    private void performNotifySubscriptionChange ( SubscriptionState subscriptionState )
+    private void performNotifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
     {
         _subscriptionState = subscriptionState;
+        _subscriptionError = subscriptionError;
 
         setChanged ();
         notifyObservers ();

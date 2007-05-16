@@ -410,8 +410,9 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         }
     }
     
-    public void notifySubscriptionChange ( SubscriptionState state )
+    public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
     {
-        appendConsoleMessage ( String.format ( "Subscription state changed: %s", state.name () ) );
+        String error = subscriptionError == null ? "<none>" : subscriptionError.getMessage ();
+        appendConsoleMessage ( String.format ( "Subscription state changed: %s (Error: %s)", state.name (), error ) );
     }
 }

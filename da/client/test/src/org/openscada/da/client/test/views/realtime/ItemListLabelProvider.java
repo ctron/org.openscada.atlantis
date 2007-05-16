@@ -9,7 +9,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.openscada.da.client.test.impl.VariantHelper;
 
-public class ItemListLabelProvider  extends LabelProvider implements ITableLabelProvider, ITableFontProvider, ITableColorProvider
+public class ItemListLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider, ITableColorProvider
 {
 
     public Image getColumnImage ( Object element, int columnIndex )
@@ -28,7 +28,15 @@ public class ItemListLabelProvider  extends LabelProvider implements ITableLabel
             case 0:
                 return listEntry.getDataItem ().getId ();
             case 1:
-                return listEntry.getSubscriptionChange ().name ();
+                if ( listEntry.getSubscriptionError () != null )
+                {
+                    return String.format ( "%s (%s)", listEntry.getSubscriptionChange (),
+                            listEntry.getSubscriptionError ().getMessage () );
+                }
+                else
+                {
+                    return listEntry.getSubscriptionChange ().name ();
+                }
             case 2:
                 if ( listEntry.getValue () != null )
                     return VariantHelper.toValueType ( listEntry.getValue () ).name ();
@@ -76,5 +84,5 @@ public class ItemListLabelProvider  extends LabelProvider implements ITableLabel
         // TODO Auto-generated method stub
         return null;
     }
-    
+
 }

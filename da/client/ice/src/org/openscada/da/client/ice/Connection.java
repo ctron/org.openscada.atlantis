@@ -646,7 +646,7 @@ public class Connection implements org.openscada.da.client.Connection
         ItemUpdateListener listener = _itemListenerMap.get ( itemId );
         if ( listener != null )
         {
-            listener.notifySubscriptionChange ( subscriptionState );
+            listener.notifySubscriptionChange ( subscriptionState, null );
         }
     }
 

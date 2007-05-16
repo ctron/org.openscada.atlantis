@@ -87,9 +87,9 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
         System.out.println ( "Value of item changed: " + value.toString () + ( initial ? " (cache read)" : "" ) );
     }
     
-    public void notifySubscriptionChange ( SubscriptionState state )
+    public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
     {
-        System.out.println ( "Subscription state: " + state.name () );
+        System.out.println ( "Subscription state: " + state.name () + "Error: " + subscriptionError == null ? "<none>" : subscriptionError.getMessage () );
     }
     
     public static void main ( String[] args ) throws Exception

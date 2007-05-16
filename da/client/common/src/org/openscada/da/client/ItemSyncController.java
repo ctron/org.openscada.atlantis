@@ -46,6 +46,7 @@ public class ItemSyncController implements ItemUpdateListener
     private Variant _cachedValue = new Variant ();
     private Map<String, Variant> _cachedAttributes = new HashMap<String, Variant> ();
     private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
+    private Throwable _subscriptionError = null;
 
     /**
      * Holds some additional listener information 
@@ -120,7 +121,7 @@ public class ItemSyncController implements ItemUpdateListener
         if ( !_listeners.containsKey ( listener ) )
         {
             _listeners.put ( listener, new ListenerInfo ( listener ) );
-            listener.notifySubscriptionChange ( _subscriptionState );
+            listener.notifySubscriptionChange ( _subscriptionState, _subscriptionError );
             listener.notifyValueChange ( _cachedValue, true );
             listener.notifyAttributeChange ( _cachedAttributes, true );
 
@@ -191,7 +192,7 @@ public class ItemSyncController implements ItemUpdateListener
             _log.debug ( "Syncing listen state: inactive " );
             _subscribed = false;
             _connection.unsubscribeItem ( _itemName );
-            notifySubscriptionChange ( SubscriptionState.DISCONNECTED );
+            notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
         }
         catch ( Throwable e )
         {
@@ -203,7 +204,7 @@ public class ItemSyncController implements ItemUpdateListener
     {
         _log.warn ( "Failed to subscribe", e );
         _subscribed = false;
-        notifySubscriptionChange ( SubscriptionState.DISCONNECTED );
+        notifySubscriptionChange ( SubscriptionState.DISCONNECTED, e );
     }
 
     public synchronized void notifyValueChange ( Variant value, boolean cache )
@@ -230,24 +231,25 @@ public class ItemSyncController implements ItemUpdateListener
         }
     }
 
-    public synchronized void notifySubscriptionChange ( SubscriptionState subscriptionState )
+    public synchronized void notifySubscriptionChange ( SubscriptionState subscriptionState, Throwable e )
     {
-        if ( _subscriptionState.equals ( subscriptionState ) )
+        if ( _subscriptionState.equals ( subscriptionState ) && _subscriptionError == e )
         {
             return;
         }
         
         _subscriptionState = subscriptionState;
+        _subscriptionError = e;
 
         for ( ListenerInfo listenerInfo : _listeners.values () )
         {
-            listenerInfo.getListener ().notifySubscriptionChange ( subscriptionState );
+            listenerInfo.getListener ().notifySubscriptionChange ( subscriptionState, e );
         }
     }
 
     public synchronized void disconnect ()
     {
-        notifySubscriptionChange ( SubscriptionState.DISCONNECTED );
+        notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
         notifyValueChange ( new Variant (), true );
         notifyAttributeChange ( new HashMap<String, Variant> (), true );
     }

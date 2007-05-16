@@ -79,6 +79,8 @@ public class ListEntry extends Observable implements ItemUpdateListener
 
     private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
 
+    private Throwable _subscriptionError = null;
+
     public HiveItem getDataItem ()
     {
         return _dataItem;
@@ -139,11 +141,12 @@ public class ListEntry extends Observable implements ItemUpdateListener
         notifyObservers ();
     }
     
-    public synchronized void notifySubscriptionChange ( SubscriptionState subscriptionState )
+    public synchronized void notifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
     {
         _log.debug ( "Subscription change: " + subscriptionState.name () );
         
         _subscriptionState = subscriptionState;
+        _subscriptionError = subscriptionError;
         setChanged ();
         notifyObservers ();
     }
@@ -205,5 +208,10 @@ public class ListEntry extends Observable implements ItemUpdateListener
     public synchronized boolean hasAttributes ()
     {
         return !_attributes.isEmpty ();
+    }
+
+    public Throwable getSubscriptionError ()
+    {
+        return _subscriptionError;
     }
 }

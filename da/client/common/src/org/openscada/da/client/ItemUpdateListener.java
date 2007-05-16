@@ -28,5 +28,11 @@ public interface ItemUpdateListener
 {
     public void notifyValueChange ( Variant value, boolean cache );
     public void notifyAttributeChange ( Map<String,Variant> attributes, boolean full );
-    public void notifySubscriptionChange ( SubscriptionState subscriptionState );
+    
+    /**
+     * Notify a change in the subscription change
+     * @param subscriptionState the new subscription change
+     * @param subscriptionError the new subscription error or <code>null</code> if everything is ok
+     */
+    public void notifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError );
 }
