@@ -26,12 +26,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.CancellationNotSupportedException;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionListener;
 import org.openscada.core.subscription.SubscriptionManager;
+import org.openscada.core.subscription.SubscriptionValidator;
 import org.openscada.core.subscription.ValidationException;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.core.server.Hive;
@@ -43,11 +46,13 @@ import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.configuration.ConfigurableHive;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.common.factory.DataItemFactoryListener;
 import org.openscada.da.server.common.factory.DataItemFactoryRequest;
+import org.openscada.da.server.common.factory.DataItemValidator;
 import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.utils.jobqueue.CancelNotSupportedException;
@@ -70,7 +75,7 @@ public class HiveCommon implements Hive, ConfigurableHive
 
     private Folder _rootFolder = null;
 
-    private Set<SessionListener> _sessionListeners = new HashSet<SessionListener> ();
+    private Set<SessionListener> _sessionListeners = new CopyOnWriteArraySet<SessionListener> ();
 
     private OperationManager _opManager = new OperationManager ();
 
@@ -83,8 +88,12 @@ public class HiveCommon implements Hive, ConfigurableHive
     private Set<DataItemFactoryListener> _factoryListeners = new HashSet<DataItemFactoryListener> ();
 
     private List<FactoryTemplate> _templates = new LinkedList<FactoryTemplate> ();
-    
+
     private SubscriptionManager _itemSubscriptionManager = new SubscriptionManager ();
+    
+    private Set<DataItemValidator> _itemValidators = new CopyOnWriteArraySet<DataItemValidator> ();
+    
+    private ValidationStrategy _validatonStrategy = ValidationStrategy.FULL_CHECK;
 
     public HiveCommon ()
     {
@@ -92,6 +101,14 @@ public class HiveCommon implements Hive, ConfigurableHive
 
         _jobQueueThread = new Thread ( _opProcessor );
         _jobQueueThread.start ();
+        
+        // set the validator of the subscription manager
+        _itemSubscriptionManager.setValidator ( new SubscriptionValidator () {
+
+            public boolean validate ( SubscriptionListener listener, Object topic )
+            {
+                return validateItem ( topic.toString () );
+            }} );
     }
 
     @Override
@@ -103,35 +120,27 @@ public class HiveCommon implements Hive, ConfigurableHive
 
     public void addSessionListener ( SessionListener listener )
     {
-        synchronized ( _sessionListeners )
-        {
-            _sessionListeners.add ( listener );
-        }
+        _sessionListeners.add ( listener );
     }
 
     public void removeSessionListener ( SessionListener listener )
     {
-        synchronized ( _sessionListeners )
-        {
-            _sessionListeners.remove ( listener );
-        }
+        _sessionListeners.remove ( listener );
     }
 
     private void fireSessionCreate ( SessionCommon session )
     {
-        synchronized ( _sessionListeners )
+        for ( SessionListener listener : _sessionListeners )
         {
-            for ( SessionListener listener : _sessionListeners )
+            try
             {
-                try
-                {
-                    listener.create ( session );
-                }
-                catch ( Exception e )
-                {
-                }
+                listener.create ( session );
+            }
+            catch ( Exception e )
+            {
             }
         }
+
     }
 
     private void fireSessionDestroy ( SessionCommon session )
@@ -151,11 +160,19 @@ public class HiveCommon implements Hive, ConfigurableHive
         }
     }
 
+    /**
+     * Get the root folder
+     * @return the root folder or <code>null</code> if browsing is not supported
+     */
     public Folder getRootFolder ()
     {
         return _rootFolder;
     }
 
+    /**
+     * Set the root folder. The root folder can only be set once. All
+     * further set requests are ignored.
+     */
     public synchronized void setRootFolder ( Folder rootFolder )
     {
         if ( _rootFolder == null )
@@ -164,6 +181,12 @@ public class HiveCommon implements Hive, ConfigurableHive
         }
     }
 
+    /**
+     * Validate a session and return the session common instance if the session is valid
+     * @param session the session to validate
+     * @return the session common instance
+     * @throws InvalidSessionException in the case of an invalid session
+     */
     public SessionCommon validateSession ( Session session ) throws InvalidSessionException
     {
         if ( ! ( session instanceof SessionCommon ) )
@@ -193,6 +216,12 @@ public class HiveCommon implements Hive, ConfigurableHive
         return session;
     }
 
+    /**
+     * Close a session.
+     * 
+     * The session will be invalid after it has been closed. All subscriptions
+     * will become invalid. All pending operation will get canceled. 
+     */
     public void closeSession ( Session session ) throws InvalidSessionException
     {
         SessionCommon sessionCommon = validateSession ( session );
@@ -201,7 +230,7 @@ public class HiveCommon implements Hive, ConfigurableHive
         {
             _log.debug ( "Close session: " + session );
             fireSessionDestroy ( (SessionCommon)session );
-            
+
             // destroy all subscriptions for this session
             _itemSubscriptionManager.unsubscribeAll ( sessionCommon );
 
@@ -216,7 +245,7 @@ public class HiveCommon implements Hive, ConfigurableHive
     {
         // validate the session first
         SessionCommon sessionCommon = validateSession ( session );
-        
+
         // subscribe using the new item subscription manager
         try
         {
@@ -231,7 +260,7 @@ public class HiveCommon implements Hive, ConfigurableHive
     public void unsubscribeItem ( Session session, String itemId ) throws InvalidSessionException, InvalidItemException
     {
         SessionCommon sessionCommon = validateSession ( session );
-        
+
         // unsubscribe using the new item subscription manager
         _itemSubscriptionManager.unsubscribe ( itemId, sessionCommon );
     }
@@ -245,13 +274,13 @@ public class HiveCommon implements Hive, ConfigurableHive
         synchronized ( _itemMap )
         {
             String id = item.getInformation ().getName ();
-            
+
             if ( !_itemMap.containsKey ( new DataItemInformationBase ( item.getInformation () ) ) )
             {
                 // first add internally ...
                 _itemMap.put ( new DataItemInformationBase ( item.getInformation () ), item );
             }
-            
+
             // add new topic to the new item subscription manager
             _itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( item ) );
         }
@@ -266,7 +295,7 @@ public class HiveCommon implements Hive, ConfigurableHive
             {
                 _itemMap.remove ( new DataItemInformationBase ( item.getInformation () ) );
             }
-            
+
             // remove the source from the manager
             _itemSubscriptionManager.setSource ( id, null );
         }
@@ -292,11 +321,26 @@ public class HiveCommon implements Hive, ConfigurableHive
 
     public boolean validateItem ( String id )
     {
+        if ( _validatonStrategy == ValidationStrategy.GRANT_ALL )
+        {
+            return true;
+        }
+        
+        // First check if the item already exists
         if ( lookupItem ( id ) != null )
         {
             return true;
         }
 
+        // now check if the item passes the validators
+        for ( DataItemValidator dataItemValidator : _itemValidators )
+        {
+            if ( dataItemValidator.isValid ( id ) )
+            {
+                return true;
+            }
+        }
+        
         DataItemFactoryRequest request = new DataItemFactoryRequest ();
         request.setId ( id );
 
@@ -320,7 +364,7 @@ public class HiveCommon implements Hive, ConfigurableHive
             return _itemMap.get ( new DataItemInformationBase ( id ) );
         }
     }
-    
+
     public FactoryTemplate findFactoryTemplate ( String item )
     {
         synchronized ( _templates )
@@ -347,7 +391,7 @@ public class HiveCommon implements Hive, ConfigurableHive
 
         DataItemFactoryRequest request = new DataItemFactoryRequest ();
         request.setId ( id );
-        
+
         FactoryTemplate template = findFactoryTemplate ( id );
         if ( template != null )
         {
@@ -567,7 +611,7 @@ public class HiveCommon implements Hive, ConfigurableHive
             _templates.add ( template );
         }
     }
-    
+
     /**
      * Will re-check all items in granted state. Call when your list of known items
      * has changed in order to give granted but not connected subscriptions a chance
@@ -576,10 +620,30 @@ public class HiveCommon implements Hive, ConfigurableHive
     public void recheckGrantedItems ()
     {
         List<Object> topics = _itemSubscriptionManager.getAllGrantedTopics ();
-        
+
         for ( Object topic : topics )
         {
             retrieveItem ( topic.toString () );
         }
+    }
+    
+    public void addDataItemValidator ( DataItemValidator dataItemValidator )
+    {
+        _itemValidators.add ( dataItemValidator );
+    }
+    
+    public void removeItemValidator ( DataItemValidator dataItemValidator )
+    {
+        _itemValidators.remove ( dataItemValidator );
+    }
+
+    protected ValidationStrategy getValidatonStrategy ()
+    {
+        return _validatonStrategy;
+    }
+
+    protected void setValidatonStrategy ( ValidationStrategy validatonStrategy )
+    {
+        _validatonStrategy = validatonStrategy;
     }
 }
