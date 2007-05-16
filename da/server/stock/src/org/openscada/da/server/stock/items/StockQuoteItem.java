@@ -17,19 +17,29 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.server.test.items;
+package org.openscada.da.server.stock.items;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.Variant;
 import org.openscada.da.server.common.DataItemInputCommon;
 import org.openscada.da.server.common.ItemListener;
+import org.openscada.da.server.stock.domain.StockQuote;
 
-public class SuspendItem extends DataItemInputCommon
+public class StockQuoteItem extends DataItemInputCommon implements StockQuoteListener
 {
-    private static Logger _log = Logger.getLogger ( SuspendItem.class );
+    private static Logger _log = Logger.getLogger ( StockQuoteItem.class );
     
-    public SuspendItem ( String name )
+    private String _symbol = null;
+    private UpdateManager _updateManager = null;
+    
+    public StockQuoteItem ( String symbol, UpdateManager updateManager )
     {
-        super ( name );
+        super ( symbol );
+        _symbol = symbol;
+        _updateManager = updateManager;
     }
     
     @Override
@@ -49,11 +59,33 @@ public class SuspendItem extends DataItemInputCommon
     public void suspend ()
     {
        _log.warn ( String.format ( "Item %1$s suspended", getInformation ().getName () ) );
+       _updateManager.remove ( _symbol );
     }
 
     public void wakeup ()
     {
         _log.warn ( String.format ( "Item %1$s woken up", getInformation ().getName () ) );
+        _updateManager.add ( _symbol, this );
+    }
+
+    public void update ( StockQuote stockQuote )
+    {
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        Variant value = new Variant ();
+        
+        if ( stockQuote.getValue () != null )
+        {
+            value = new Variant ( stockQuote.getValue () );
+            attributes.put ( "stock.error", null );
+        }
+        else
+        {
+            attributes.put ( "stock.error", new Variant ( stockQuote.getError () ) );
+        }
+        attributes.put ( "timestamp", new Variant ( stockQuote.getTimestamp ().getTimeInMillis () ) );
+        
+        getAttributeManager ().update ( attributes );
+        updateValue ( value );
     }
 
 }
