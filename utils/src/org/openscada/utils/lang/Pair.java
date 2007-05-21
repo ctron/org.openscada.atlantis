@@ -25,10 +25,10 @@ public class Pair<T1, T2>
 
     public T2 second = null;
 
-    public Pair ( T1 first, T2 second )
+    public Pair ( T1 first_, T2 second_ )
     {
-        this.first = first;
-        this.second = second;
+        this.first = first_;
+        this.second = second_;
     }
 
     @Override
