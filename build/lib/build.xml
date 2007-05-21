@@ -15,6 +15,7 @@
 	<import file="append-line.xml"/>
 	<dirname property="datadir1" file="${ant.file.tools}"/>
 	<property name="datadir" location="${datadir1}/../data"/>
+	<property name="xmlbeansdir" location="${datadir1}/../xmlbeans"/>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
           macrodef: openscada.unpack-module
@@ -244,8 +245,8 @@
 	<!-- included here to use the same version as used in the build -->
 	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
 		 <classpath id="xmlbeanspath">
-            <pathelement location="../xmlbeans/xbean.jar"/>
-            <pathelement location="../xmlbeans/jsr173_1.0_api.jar"/>
+            <pathelement location="${xmlbeansdir}/xbean.jar"/>
+            <pathelement location="${xmlbeansdir}/jsr173_1.0_api.jar"/>
          </classpath>
 	</taskdef>
 	
