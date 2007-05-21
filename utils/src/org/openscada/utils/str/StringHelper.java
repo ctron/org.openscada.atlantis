@@ -22,6 +22,11 @@ package org.openscada.utils.str;
 import java.util.Collection;
 import java.util.Iterator;
 
+/**
+ * A helper class for string operations
+ * @author Jens Reimann
+ *
+ */
 public class StringHelper
 {
     /**
@@ -68,7 +73,9 @@ public class StringHelper
         for ( int i = 0; i < items.length; i++ )
         {
             if ( i != 0 )
+            {
                 buffer.append ( delimiter );
+            }
 
             buffer.append ( items[i] );
         }

@@ -46,7 +46,7 @@ public class OperationManager
             _id = id;
         }
 
-        synchronized public void cancel () throws CancelNotSupportedException
+        public synchronized void cancel () throws CancelNotSupportedException
         {
             if ( _started )
             {
@@ -56,7 +56,7 @@ public class OperationManager
             }
         }
 
-        synchronized public void start ()
+        public synchronized void start ()
         {
             if ( ( !_started ) && ( !_canceled ) )
             {
@@ -65,7 +65,7 @@ public class OperationManager
             }
         }
 
-        synchronized public void completed ()
+        public synchronized void completed ()
         {
             remove ();
         }
