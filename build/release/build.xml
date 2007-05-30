@@ -178,6 +178,7 @@
       	<ant dir="${source.base}/da/server/sysinfo"/>
       	<ant dir="${source.base}/da/server/test"/>
 	  	<ant dir="${source.base}/da/server/opc"/>
+    	<ant dir="${source.base}/da/server/stock"/>
 
 	   	<ant dir="${source.base}/core/client/common"/>
        	<ant dir="${source.base}/core/client/net"/>
@@ -395,6 +396,7 @@
 		<openscada.unpack-module name="da-server-test" todir="${temp.dir}/dist-exporter"/>
 		<openscada.unpack-module name="da-server-simulation" todir="${temp.dir}/dist-exporter"/>
 		<openscada.unpack-module name="da-server-opc" todir="${temp.dir}/dist-exporter"/>
+		<openscada.unpack-module name="da-server-stock" todir="${temp.dir}/dist-exporter"/>
 		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-exporter"/>
 		<copy file="${source.base}/da/server/exporter/configuration.xml" todir="${temp.dir}/dist-exporter"/>
 
