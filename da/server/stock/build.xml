@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <!-- ====================================================================== 
-     da-server-test
+     da-server-stock
      OpenSCADA Atlantis
                    
 	 Jens Reimann <jens.reimann@inavare.net>
      ====================================================================== -->
-<project name="da-server-test" default="default">
+<project name="da-server-stock" default="default">
     <description>
             OpenSCADA Atlantis Project
     </description>
 	
 	<import file="${libfile}"/>
-	<property name="package" value="da-server-test"/>
+	<property name="package" value="da-server-stock"/>
 
     <!-- ================================= 
           target: default              
@@ -41,7 +41,6 @@
 		<openscada.prepare-local-libs/>
 		<openscada.pull-in-external-lib name="log4j"/>
 		<openscada.pull-in-external-lib name="junit4"/>
-		<openscada.pull-in-external-lib name="xmlbeans"/>
     	<openscada.pull-in-module name="utils"/>
     	<openscada.pull-in-module name="da-server-common"/>
     </target>
