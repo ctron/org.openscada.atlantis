@@ -397,13 +397,15 @@ POSSIBILITY OF SUCH DAMAGES.
          id="org.openscada.da.ice.client"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.openscada.da.net.client"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="ext_plugin_icej"
