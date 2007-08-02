@@ -21,7 +21,7 @@
 				<opc:connections>
 					<!-- Matrikon OPC Simulation Server -->
 					<opc:configuration domain="localhost"
-						host="192.168.98.128" user="jens" access="sync"
+						host="172.16.148.128" user="jens" access="sync"
 						password="test12">
 						<opc:clsid>
 							F8582CF2-88FB-11D0-B850-00C0F0104305
@@ -30,7 +30,7 @@
 
 					<!-- Softing OPC Demo Server -->
 					<opc:configuration connected="false"
-						domain="localhost" host="192.168.98.128" access="async" user="jens"
+						domain="localhost" host="172.16.148.128" access="async" user="jens"
 						password="test12">
 						<opc:clsid>
 							2E565242-B238-11D3-842D-0008C779D775
@@ -40,7 +40,7 @@
 					<!-- Iconics Test Server -->
 					<opc:configuration connected="false"
 						initial-refresh="false"
-						domain="localhost" host="192.168.98.128" access="async" user="jens"
+						domain="localhost" host="172.16.148.128" access="async" user="jens"
 						password="test12" refresh="100">
 						<opc:clsid>
 							A879768A-7387-11D4-B0D8-009027242C59
