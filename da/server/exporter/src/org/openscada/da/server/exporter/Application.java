@@ -24,6 +24,12 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 
+/**
+ * The server exporter application starts a {@link Controller} with a specified configuration
+ * file and lets it run 
+ * @author Jens Reimann
+ *
+ */
 public class Application
 {
     private static Logger _log = Logger.getLogger ( Application.class );
@@ -32,6 +38,7 @@ public class Application
     {
         String configurationFile = "configuration.xml";
         
+        // use the provided config file name if we have one
         if ( args.length > 0 )
         {
             configurationFile = args[0];
@@ -44,6 +51,7 @@ public class Application
         
         _log.info ( "Exporter running..." );
         
+        // Loop forever
         while ( true )
         {
             try
