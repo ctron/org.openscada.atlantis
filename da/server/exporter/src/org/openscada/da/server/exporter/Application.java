@@ -32,6 +32,13 @@ public class Application
     {
         String configurationFile = "configuration.xml";
         
+        if ( args.length > 0 )
+        {
+            configurationFile = args[0];
+        }
+        
+        _log.info ( "Loading configuration file: " + configurationFile );
+        
         Controller controller = new Controller ( configurationFile );
         controller.start ();
         
