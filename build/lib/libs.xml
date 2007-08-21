@@ -49,4 +49,8 @@
 			<pathelement location="${builddir}/AntelopeTasks_3.2.19.jar"/>
 		</classpath>
 	</taskdef>
+	
+	<path id="saxon.classpath">
+		<pathelement location="${builddir}/saxon8.jar"/>
+	</path>
 </project>

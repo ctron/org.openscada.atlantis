@@ -330,17 +330,8 @@
 		<attribute name="dir"/>
 		<sequential>
 			<parallel>
-				<style in="@{dir}/runfile.xml" out="@{dir}/run.sh" style="${datadir}/runfile2sh.xsl">
-					<classpath>
-						<pathelement location="${source.base}/build/lib/saxon8.jar"/>
-					</classpath>
-				</style>
-					
-				<style in="@{dir}/runfile.xml" out="@{dir}/run.bat" style="${datadir}/runfile2bat.xsl">
-					<classpath>
-						<pathelement location="${source.base}/build/lib/saxon8.jar"/>
-					</classpath>
-				</style>
+				<style classpathref="saxon.classpath" in="@{dir}/runfile.xml" out="@{dir}/run.sh" style="${datadir}/runfile2sh.xsl"/>					
+				<style classpathref="saxon.classpath" in="@{dir}/runfile.xml" out="@{dir}/run.bat" style="${datadir}/runfile2bat.xsl"/>
 			</parallel>
 		</sequential>
 	</macrodef>
