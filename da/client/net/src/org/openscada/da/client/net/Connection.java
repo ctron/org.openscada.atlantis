@@ -623,7 +623,10 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
     public synchronized ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener )
     {
-        return _itemListeners.put ( itemId, listener );
+        synchronized ( _itemListeners )
+        {
+            return _itemListeners.put ( itemId, listener );
+        }
     }
 
     public FolderListener setFolderListener ( Location location, FolderListener listener )
