@@ -621,7 +621,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         sendMessage ( Messages.unsubscribeItem ( itemId ) );
     }
 
-    public synchronized ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener )
+    public ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener )
     {
         synchronized ( _itemListeners )
         {
