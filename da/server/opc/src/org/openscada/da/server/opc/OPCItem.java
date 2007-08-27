@@ -31,6 +31,7 @@ import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.server.DataItemInformation;
+import org.openscada.da.server.common.SuspendableDataItem;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 import org.openscada.opc.lib.da.AccessStateListener;
 import org.openscada.opc.lib.da.AddFailedException;
@@ -38,7 +39,7 @@ import org.openscada.opc.lib.da.DataCallback;
 import org.openscada.opc.lib.da.Item;
 import org.openscada.opc.lib.da.ItemState;
 
-public class OPCItem extends DataItemInputOutputChained implements DataCallback, AccessStateListener
+public class OPCItem extends DataItemInputOutputChained implements DataCallback, AccessStateListener, SuspendableDataItem
 {
     private static final String OPC_ATTRIBUTE_PREFIX = "org.openscada.opc";
     private static final String OPC_ATTRIBUTE_VALUE_ERROR = OPC_ATTRIBUTE_PREFIX + ".value.error";
@@ -118,11 +119,8 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         super.writeValue ( value );
     }
 
-    @Override
     public synchronized void suspend ()
     {
-        super.suspend ();
-
         _log.debug ( "Suspend: " + _itemId );
         _connection.getAccess ().removeItem ( _itemId );
         _connection.countItemState ( this, false );
@@ -133,11 +131,8 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         updateValue ( (ItemState)null );
     }
 
-    @Override
     public synchronized void wakeup ()
     {
-        super.wakeup ();
-
         _log.debug ( "Wakeup: " + _itemId );
         try
         {
