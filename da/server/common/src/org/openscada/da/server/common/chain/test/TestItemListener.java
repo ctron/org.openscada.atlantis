@@ -36,13 +36,13 @@ public class TestItemListener implements ItemListener
     
     private List<EventEntry> _events = new LinkedList<EventEntry> ();
     
-    public void attributesChanged ( DataItem item, Map<String, Variant> attributes )
+    public void attributesChanged ( DataItem item, Map<String, Variant> attributes, boolean cache )
     {
         _log.debug ( String.format ( "Attributes changed for %s: size %d", item.getInformation ().getName (), attributes.size () ) );
         _events.add ( new EventEntry ( item, null, attributes ) );
     }
 
-    public void valueChanged ( DataItem item, Variant variant )
+    public void valueChanged ( DataItem item, Variant variant, boolean cache )
     {
         _log.debug ( String.format ( "Value changed for %s: %s", item.getInformation ().getName (), variant.asString ( "<null>" ) ) );
         _events.add ( new EventEntry ( item, variant, null ) );

@@ -114,21 +114,21 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         return subscriptionInformation.getListener () instanceof DataItemSubscriptionListener;
     }
 
-    public synchronized void attributesChanged ( DataItem item, Map<String, Variant> attributes )
+    public synchronized void attributesChanged ( DataItem item, Map<String, Variant> attributes, boolean cache )
     {
         AttributesHelper.mergeAttributes ( _cacheAttributes, attributes );
         for ( DataItemSubscriptionListener listener : _listeners )
         {
-            listener.attributesChanged ( item, attributes, false );
+            listener.attributesChanged ( item, attributes, cache );
         }
     }
 
-    public synchronized void valueChanged ( DataItem item, Variant variant )
+    public synchronized void valueChanged ( DataItem item, Variant variant, boolean cache )
     {
         _cacheValue = variant;
         for ( DataItemSubscriptionListener listener : _listeners )
         {
-            listener.valueChanged ( item, variant, false );
+            listener.valueChanged ( item, variant, cache );
         }
     }
 }

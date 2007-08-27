@@ -46,18 +46,15 @@ public abstract class DataItemBase implements DataItem
         return _information;
     }
 
-    public void setListener ( ItemListener listener )
+    public synchronized void setListener ( ItemListener listener )
     {
-        synchronized ( this )
+        if ( _listener != listener )
         {
-            if ( _listener != listener )
-            {
-                handleListenerChange ( listener );
-            }
+            handleListenerChange ( listener );
         }
     }
 
-    protected void handleListenerChange ( ItemListener listener )
+    protected synchronized void handleListenerChange ( ItemListener listener )
     {
         if ( listener == null )
         {
@@ -76,15 +73,44 @@ public abstract class DataItemBase implements DataItem
             }
         }
         _listener = listener;
+
+        if ( _listener != null )
+        {
+            Variant cacheValue = getCacheValue ();
+            if ( cacheValue != null && !cacheValue.isNull () )
+            {
+                notifyValue ( cacheValue, true );
+            }
+            Map<String,Variant> cacheAttributes = getCacheAttributes ();
+            if ( cacheAttributes != null && cacheAttributes.size () > 0 )
+            {
+                notifyAttributes ( cacheAttributes, true );
+            }
+        }
+    }
+    
+    protected Variant getCacheValue ()
+    {
+        return null;
+    }
+    
+    protected Map<String, Variant> getCacheAttributes ()
+    {
+        return null;
     }
 
-    public void notifyValue ( Variant value )
+    protected void notifyValue ( Variant value )
+    {
+        notifyValue ( value, false );
+    }
+    
+    public void notifyValue ( Variant value, boolean cache )
     {
         synchronized ( this )
         {
             if ( _listener != null )
             {
-                _listener.valueChanged ( this, value );
+                _listener.valueChanged ( this, value, cache );
             }
         }
     }
@@ -98,6 +124,11 @@ public abstract class DataItemBase implements DataItem
      */
     public void notifyAttributes ( Map<String, Variant> attributes )
     {
+        notifyAttributes ( attributes, false );
+    }
+    
+    protected void notifyAttributes ( Map<String, Variant> attributes, boolean cache )
+    {
         if ( attributes.size () <= 0 )
         {
             return;
@@ -107,10 +138,9 @@ public abstract class DataItemBase implements DataItem
         {
             if ( _listener != null )
             {
-                _listener.attributesChanged ( this, attributes );
+                _listener.attributesChanged ( this, attributes, cache );
             }
         }
-
     }
 
 }

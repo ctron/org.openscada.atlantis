@@ -25,7 +25,7 @@ import org.openscada.core.Variant;
 
 public interface ItemListener
 {
-    public void valueChanged ( DataItem item, Variant variant );
+    public void valueChanged ( DataItem item, Variant variant, boolean cache );
 
-    public void attributesChanged ( DataItem item, Map<String, Variant> attributes );
+    public void attributesChanged ( DataItem item, Map<String, Variant> attributes, boolean cache );
 }

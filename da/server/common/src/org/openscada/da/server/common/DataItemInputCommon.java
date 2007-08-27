@@ -86,15 +86,14 @@ public class DataItemInputCommon extends DataItemInput
     }
     
     @Override
-    public void setListener ( ItemListener listener )
+    protected Map<String, Variant> getCacheAttributes ()
     {
-        super.setListener ( listener );
-        if ( listener != null )
-        {
-            if ( !_value.isNull () )
-                notifyValue ( _value );
-            if ( _attributes.get ().size () > 0 )
-                notifyAttributes ( _attributes.get () );
-        }
+        return _attributes.get ();
+    }
+    
+    @Override
+    protected Variant getCacheValue ()
+    {
+        return _value;
     }
 }
