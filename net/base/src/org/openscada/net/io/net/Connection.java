@@ -303,7 +303,7 @@ public class Connection implements ConnectionListener, MessageListener
 
     public void messageReceived ( Connection connection, Message message )
     {
-        _log.info ( "Message received: Seq: " + message.getSequence () + " Reply: " + message.getReplySequence () );
+        _log.debug ( "Message received: Seq: " + message.getSequence () + " Reply: " + message.getReplySequence () );
 
         Long seq = Long.valueOf ( message.getReplySequence () );
 
@@ -364,6 +364,7 @@ public class Connection implements ConnectionListener, MessageListener
             }
             catch ( Exception e )
             {
+                _log.info ( "Failed to handle messageTimedOut", e );
             }
         }
     }
