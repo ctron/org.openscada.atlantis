@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA AE Test Client
 Bundle-SymbolicName: org.openscada.ae.client.test;singleton:=true
-Bundle-Version: 0.4.0
+Bundle-Version: 0.8.1
 Bundle-Activator: org.openscada.ae.client.test.Activator
 Bundle-Vendor: OpenSCADA
 Bundle-Localization: plugin

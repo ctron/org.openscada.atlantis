@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.ae.client.test"
       label="OpenSCADA AE Test Client Feature"
-      version="0.4.0"
+      version="0.8.1"
       provider-name="OpenSCADA">
 
    <description>

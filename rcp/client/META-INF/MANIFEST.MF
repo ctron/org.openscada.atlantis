@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA RCP Client
 Bundle-SymbolicName: org.openscada.rcp.client; singleton:=true
-Bundle-Version: 0.6.0
+Bundle-Version: 0.8.1
 Bundle-Activator: org.openscada.rcp.client.Activator
 Bundle-Vendor: OpenSCADA.org
 Bundle-Localization: plugin
