@@ -627,6 +627,23 @@ public class HiveCommon implements Hive, ConfigurableHive
         }
     }
     
+    /**
+     * Gets a set of all items in granted state.
+     * @return The list of granted items.
+     */
+    public Set<String> getGrantedItems ()
+    {
+        List<Object> topics = _itemSubscriptionManager.getAllGrantedTopics ();
+        
+        Set<String> items = new HashSet<String> ();
+        
+        for ( Object topic : topics )
+        {
+            items.add ( topic.toString () );
+        }
+        return items;
+    }
+    
     public void addDataItemValidator ( DataItemValidator dataItemValidator )
     {
         _itemValidators.add ( dataItemValidator );
