@@ -14,7 +14,7 @@ public class ExporterBase
         _hive = hive;
     }
     
-    public ExporterBase ( Class hiveClass ) throws InstantiationException, IllegalAccessException, IOException
+    public ExporterBase ( Class<?> hiveClass ) throws InstantiationException, IllegalAccessException, IOException
     {
         this ( createInstance ( hiveClass ) );
     }
@@ -24,12 +24,12 @@ public class ExporterBase
         this ( createInstance ( Class.forName ( hiveClassName ) ) );
     }
     
-    private static Hive createInstance ( Class hiveClass ) throws InstantiationException, IllegalAccessException
+    private static Hive createInstance ( Class<?> hiveClass ) throws InstantiationException, IllegalAccessException
     {
         return (Hive)hiveClass.newInstance ();
     }
     
-    public Class getHiveClass ()
+    public Class<?> getHiveClass ()
     {
         return _hive.getClass ();
     }
