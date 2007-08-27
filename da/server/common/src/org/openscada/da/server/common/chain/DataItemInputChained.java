@@ -30,9 +30,8 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.SuspendableDataItem;
 
-public class DataItemInputChained extends DataItemBaseChained implements SuspendableDataItem
+public class DataItemInputChained extends DataItemBaseChained
 {
     protected Variant _primaryValue = new Variant ();
     protected Variant _secondaryValue = new Variant ();
@@ -92,22 +91,18 @@ public class DataItemInputChained extends DataItemBaseChained implements Suspend
         throw new InvalidOperationException ();
     }
 
-    public void suspend ()
+    @Override
+    protected Map<String, Variant> getCacheAttributes ()
     {
+        return _secondaryAttributes.get ();
     }
-
-    public void wakeup ()
+    
+    @Override
+    protected Variant getCacheValue ()
     {
-        if ( !_secondaryValue.isNull () )
-        {
-            notifyValue ( _secondaryValue );
-        }
-        if ( _secondaryAttributes.get ().size () > 0 )
-        {
-            notifyAttributes ( _secondaryAttributes.get () );
-        }
+        return _secondaryValue;
     }
-
+    
     public boolean isFilterNoChange ()
     {
         return _filterNoChange;

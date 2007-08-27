@@ -30,7 +30,7 @@ import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 
-public class MemoryDataItem extends DataItemBase implements SuspendableDataItem
+public class MemoryDataItem extends DataItemBase
 {
     private Variant _value = new Variant ();
     private AttributeManager _attributes = null;
@@ -60,6 +60,18 @@ public class MemoryDataItem extends DataItemBase implements SuspendableDataItem
         return _attributes.get ();
     }
 
+    @Override
+    protected Map<String, Variant> getCacheAttributes ()
+    {
+        return _attributes.get ();
+    }
+    
+    @Override
+    protected Variant getCacheValue ()
+    {
+        return _value;
+    }
+    
     public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
     {
         WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
@@ -72,22 +84,6 @@ public class MemoryDataItem extends DataItemBase implements SuspendableDataItem
         }
 
         return writeAttributeResults;
-    }
-
-    public void suspend ()
-    {
-    }
-
-    public void wakeup ()
-    {
-        if ( !_value.isNull () )
-        {
-            notifyValue ( _value );
-        }
-        if ( _attributes.get ().size () > 0 )
-        {
-            notifyAttributes ( _attributes.get () );
-        }
     }
 
 }

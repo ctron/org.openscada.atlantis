@@ -21,9 +21,9 @@ package org.openscada.da.server.test.items;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.server.common.DataItemInputCommon;
-import org.openscada.da.server.common.ItemListener;
+import org.openscada.da.server.common.SuspendableDataItem;
 
-public class SuspendItem extends DataItemInputCommon
+public class SuspendItem extends DataItemInputCommon implements SuspendableDataItem
 {
     private static Logger _log = Logger.getLogger ( SuspendItem.class );
     
@@ -32,28 +32,16 @@ public class SuspendItem extends DataItemInputCommon
         super ( name );
     }
     
-    @Override
-    public void setListener ( ItemListener listener )
-    {
-        super.setListener ( listener );
-        if ( listener != null )
-        {
-            wakeup ();
-        }
-        else
-        {
-            suspend ();
-        }
-    }
-
     public void suspend ()
     {
        _log.warn ( String.format ( "Item %1$s suspended", getInformation ().getName () ) );
+       System.out.println ( String.format ( "Item %1$s suspended", getInformation ().getName () ) );
     }
 
     public void wakeup ()
     {
         _log.warn ( String.format ( "Item %1$s woken up", getInformation ().getName () ) );
+        System.out.println ( String.format ( "Item %1$s woken up", getInformation ().getName () ) );
     }
 
 }
