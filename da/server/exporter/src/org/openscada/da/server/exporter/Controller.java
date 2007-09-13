@@ -21,37 +21,60 @@ package org.openscada.da.server.exporter;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
+import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.configuration.ConfigurationError;
-import org.openscada.da.server.exporter.ConfigurationDocument;
-import org.openscada.da.server.exporter.ConfigurationType;
-import org.openscada.da.server.exporter.HiveType;
-import org.w3c.dom.Node;
 
 public class Controller
 {
     private static Logger _log = Logger.getLogger ( Controller.class );
     private List<HiveExport> _hives = new LinkedList<HiveExport> ();
     
-    public Controller ( ConfigurationDocument configurationDocument )
+    public Controller ( ConfigurationDocument configurationDocument ) throws ConfigurationException
     {
         super ();
         configure ( configurationDocument );
     }
     
-    public Controller ( String file ) throws XmlException, IOException
+    public Controller ( String file ) throws XmlException, IOException, ConfigurationException
     {
         this ( new File ( file ) );
     }
     
-    public Controller ( File file ) throws XmlException, IOException
+    public Controller ( File file ) throws XmlException, IOException, ConfigurationException
     {
         this ( ConfigurationDocument.Factory.parse ( file ) );
+    }
+    
+    /**
+     * Create the hive factory 
+     * @param factoryClass the class to instantiate
+     * @return the factory
+     * @throws ConfigurationException an error occurred
+     */
+    protected HiveFactory createHiveFactory ( String factoryClass ) throws ConfigurationException
+    {
+        HiveFactory factory;
+        if ( factoryClass == null )
+        {
+            factory = new NewInstanceHiveFactory ();
+        }
+        else
+        {
+            try
+            {
+                factory = (HiveFactory)Class.forName ( factoryClass ).newInstance ();
+            }
+            catch ( Throwable e )
+            {
+                throw new ConfigurationException ( "Failed to create factory", e );
+            }
+        }
+        return factory;
     }
     
     public void configure ( ConfigurationDocument configurationDocument )
@@ -60,48 +83,18 @@ public class Controller
         
         for ( HiveType hive : configuration.getHiveList () )
         {
-            HiveExport hiveExport = null;
+            String ref = hive.getRef ();
             try
             {
-                HiveConfigurationType hc = hive.getConfiguration ();
-                Node subNode = null;
-                if ( hc != null )
-                {
-                    for ( int i = 0; i < hc.getDomNode ().getChildNodes ().getLength (); i++ )
-                    {
-                        Node node = hc.getDomNode ().getChildNodes ().item ( i ); 
-                        if ( node.getNodeType () == Node.ELEMENT_NODE )
-                        {
-                            subNode = node;
-                        }
-                    }
-                }
-                hiveExport = new HiveExport ( hive.getClass1 (), subNode );
-            }
-            catch ( ClassNotFoundException e )
-            {
-                _log.error ( String.format ( "Unable to find hive class: %s", hive.getClass1 () ), e );
-            }
-            catch ( InstantiationException e )
-            {
-                _log.error ( String.format ( "Unable to create hive instance" ), e );
-            }
-            catch ( IllegalAccessException e )
-            {
-                _log.error ( String.format ( "Unable to create hive instance" ), e );
-            }
-            catch ( IllegalArgumentException e )
-            {
-                _log.error ( String.format ( "Unable to create hive instance" ), e );
-            }
-            catch ( InvocationTargetException e )
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            
-            if ( hiveExport != null )
-            {
+                HiveFactory factory = createHiveFactory ( hive.getFactory () );
+                
+                //create the factory and the hive
+                Hive hiveInstance = factory.createHive ( ref, hive.getConfiguration () );
+                
+                // create the hive export object
+                HiveExport hiveExport = new HiveExport ( hiveInstance );
+                
+                // export the hive
                 for ( ExportType export : hive.getExportList () )
                 {
                     try
@@ -112,10 +105,14 @@ public class Controller
                     }
                     catch ( ConfigurationError e )
                     {
-                        _log.error ( String.format ( "Unable to configure export (%s) for hive (%s)", hive.getClass1 (), export.getUri () ) );
+                        _log.error ( String.format ( "Unable to configure export (%s) for hive (%s)", hive.getRef (), export.getUri () ) );
                     }
                 }
                 _hives.add ( hiveExport );
+            }
+            catch ( Throwable e )
+            {
+                _log.error ( String.format ( "Failed to create hive instance '%s' using factory '%s'", ref, hive.getFactory () ), e );
             }
         }
     }

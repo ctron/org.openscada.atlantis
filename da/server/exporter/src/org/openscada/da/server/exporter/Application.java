@@ -34,7 +34,7 @@ public class Application
 {
     private static Logger _log = Logger.getLogger ( Application.class );
     
-    public static void main ( String[] args ) throws XmlException, IOException
+    public static void main ( String[] args ) throws XmlException, IOException, ConfigurationException
     {
         String configurationFile = "configuration.xml";
         

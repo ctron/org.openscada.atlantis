@@ -21,12 +21,31 @@
 
     <complexType name="HiveType">
     	<sequence>
-            <element name="configuration" type="exporter:HiveConfigurationType" maxOccurs="1" minOccurs="0"></element>
-            <element name="export" type="exporter:ExportType"
-            	maxOccurs="unbounded" minOccurs="0">
-            </element>
-        </sequence>
-    	<attribute name="class" type="string" use="required"></attribute>
+    		<element name="configuration"
+    			type="exporter:HiveConfigurationType" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="export" type="exporter:ExportType"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    	</sequence>
+    	<attribute name="ref" type="string" use="required">
+    		<annotation>
+    			<documentation>
+    				The reference to the hive to export. By default the
+    				class factory is used so this is a class name to
+    				instatiate and export.
+    			</documentation>
+    		</annotation>
+    	</attribute>
+    	<attribute name="factory" type="string">
+    		<annotation>
+    			<documentation>
+    				A factory class which should be used to create the
+    				referenced hive. If omitted this is the default
+    				object instatiation factory.
+    			</documentation>
+    		</annotation></attribute>
     </complexType>
 
     <complexType name="HiveConfigurationType">

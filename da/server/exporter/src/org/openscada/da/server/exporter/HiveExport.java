@@ -19,8 +19,6 @@
 
 package org.openscada.da.server.exporter;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,7 +26,6 @@ import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.configuration.ConfigurationError;
-import org.w3c.dom.Node;
 
 public class HiveExport
 {
@@ -37,36 +34,10 @@ public class HiveExport
     private Hive _hive = null;
     private List<Export> _exports = new LinkedList<Export> ();
     
-    public HiveExport ( String hiveClass, Node node ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public HiveExport ( Hive hive )
     {
         super ();
-        _hive = createInstance ( hiveClass, node );
-    }
-    
-    protected static Hive createInstance ( String hiveClassName, Node node ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
-    {
-        Class hiveClass = Class.forName ( hiveClassName );
-       
-        Constructor ctor = null;
-        
-        if ( node != null )
-        {
-            try
-            {
-                ctor = hiveClass.getConstructor ( new Class[]{ Node.class } );
-            }
-            catch ( Exception e )
-            {
-            }
-        }
-
-        if ( ctor != null)
-        {
-            _log.debug ( "Using XML-Node constructor" );
-            return (Hive)ctor.newInstance ( new Object [] { node } );
-        }
-        
-        return (Hive)hiveClass.newInstance ();
+        _hive = hive;
     }
     
     public synchronized void start ()
