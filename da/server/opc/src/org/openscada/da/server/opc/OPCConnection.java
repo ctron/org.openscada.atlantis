@@ -20,6 +20,7 @@
 package org.openscada.da.server.opc;
 
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,14 +32,9 @@ import org.jinterop.dcom.common.JIException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.browser.common.query.AnyMatcher;
-import org.openscada.da.server.browser.common.query.AttributeNameProvider;
-import org.openscada.da.server.browser.common.query.QueryFolder;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.opc.dcom.common.Result;
-import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 import org.openscada.opc.lib.common.NotConnectedException;
 import org.openscada.opc.lib.da.AccessBase;
@@ -53,6 +49,7 @@ import org.openscada.opc.lib.da.Server;
 import org.openscada.opc.lib.da.ServerStateListener;
 import org.openscada.opc.lib.da.ServerStateReader;
 import org.openscada.opc.lib.da.SyncAccess;
+import org.openscada.opc.lib.da.browser.Branch;
 import org.openscada.utils.collection.MapBuilder;
 
 public class OPCConnection implements AccessStateListener, ServerStateListener, AutoReconnectListener
@@ -88,10 +85,20 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
 
     private Set<OPCItem> _activeItems = new HashSet<OPCItem> ();
 
-    public OPCConnection ( Hive hive, ConnectionSetup connectionSetup )
+    private Collection<String> _initialItems = null;
+
+    private OPCTreeFolder _treeFolder;
+
+    private OPCFlatFolder _flatFolder;
+
+    private FolderCommon _initialFolder;
+
+    public OPCConnection ( Hive hive, ConnectionSetup connectionSetup, Collection<String> initialItems )
     {
         _hive = hive;
         _connectionSetup = connectionSetup;
+
+        _initialItems = initialItems;
 
         _connectionTag = _connectionSetup.getConnectionInformation ().getHost () + ":"
                 + _connectionSetup.getConnectionInformation ().getClsOrProgId ();
@@ -135,6 +142,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         // Access state
         _accessStateItem = new DataItemInputChained ( getBaseId () + ".access-state" );
     }
+
     @Override
     protected void finalize () throws Throwable
     {
@@ -199,9 +207,9 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
                 new MapBuilder<String, Variant> ().getMap () );
         _itemManager = new OPCItemManager ( this, _hive );
 
-        QueryFolder queryFolder1 = new QueryFolder ( new AnyMatcher (), new AttributeNameProvider ( "opc.item-id" ) );
-        _itemManager.getStorage ().addChild ( queryFolder1 );
-        _connectionFolder.add ( "flat", queryFolder1, new MapBuilder<String, Variant> ().getMap () );
+        //QueryFolder queryFolder1 = new QueryFolder ( new AnyMatcher (), new AttributeNameProvider ( "opc.item-id" ) );
+        //_itemManager.getStorage ().addChild ( queryFolder1 );
+        //_connectionFolder.add ( "flat", queryFolder1, new MapBuilder<String, Variant> ().getMap () );
 
         // register state item
         _hive.registerItem ( _stateItem );
@@ -227,7 +235,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         _connectionFolder.add ( "access-state", _accessStateItem, new MapBuilder<String, Variant> ().getMap () );
 
         // server state reader
-        _serverStateReader = new ServerStateReader ( _server, _server.getScheduler () );
+        _serverStateReader = new ServerStateReader ( _server );
         _serverStateReader.addListener ( this );
         _serverStateReader.start ();
     }
@@ -289,57 +297,6 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         }
     }
 
-    private void addFlatItem ( String itemId, EnumSet<IODirection> ioDirection )
-    {
-        try
-        {
-            OPCItem opcItem = _itemManager.getItem ( itemId, ioDirection );
-
-            _itemManager.addItemDescription ( opcItem, opcItem.getBrowserAttributes () );
-        }
-        catch ( Exception e )
-        {
-            _log.warn ( "Unable to add item: " + itemId, e );
-        }
-    }
-
-    private void fillFlatItems () throws IllegalArgumentException, UnknownHostException, JIException
-    {
-        _log.debug ( "Browse flat address space" );
-
-        Set<String> itemSet = new HashSet<String> ();
-
-        for ( String itemId : _server.getFlatBrowser ().browse ( "" ) )
-        {
-            itemSet.add ( itemId );
-
-            Map<String, Result<OPCITEMRESULT>> itemResult = _group.validateItems ( itemId );
-
-            for ( Map.Entry<String, Result<OPCITEMRESULT>> entry : itemResult.entrySet () )
-            {
-                if ( entry.getValue ().getErrorCode () == 0 )
-                {
-                    int accessRights = entry.getValue ().getValue ().getAccessRights ();
-                    addFlatItem ( entry.getKey (), Helper.convertToAccessSet ( accessRights ) );
-                }
-            }
-        }
-
-        /*
-         itemSet = new HashSet<String> ( _server.getFlatBrowser ().browse ( "" ) );
-         String[] items = itemSet.toArray ( new String[itemSet.size ()] );
-         Map<String, Result<OPCITEMRESULT>> itemResult = _group.validateItems ( items );
-         for ( Map.Entry<String, Result<OPCITEMRESULT>> entry : itemResult.entrySet () )
-         {
-         if ( entry.getValue ().getErrorCode () == 0 )
-         {
-         int accessRights = entry.getValue ().getValue ().getAccessRights ();
-         addFlatItem ( entry.getKey (), Helper.convertToAccessSet ( accessRights ) );
-         }
-         }
-         */
-    }
-
     public String getBaseId ()
     {
         return _connectionTag;
@@ -382,38 +339,145 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
 
     public synchronized void stateChanged ( boolean state )
     {
+        _log.debug ( "State changed to: " + state );
+
         if ( _accessStateItem != null )
         {
             _accessStateItem.updateValue ( new Variant ( state ) );
         }
         if ( state )
         {
-            connected ();
+            handleConnected ();
         }
         else
         {
-            disconnected ();
+            handleDisconnected ();
         }
     }
 
-    protected void disconnected ()
+    protected void handleDisconnected ()
     {
         setConnectionState ( ConnectionState.DISCONNECTED );
+        removeTreeFolder ();
+        removeFlatFolder ();
+        removeInitialFolder ();
     }
 
-    protected void connected ()
+    protected void handleConnected ()
     {
         try
         {
             setConnectionState ( ConnectionState.CONNECTED );
 
             _group = _server.addGroup ();
-            fillFlatItems ();
+
+            // adding pre-configured known items
+            if ( _initialItems != null )
+            {
+                addInitialFolder ();
+            }
+
+            // if flat browsing is enabled ...
+            if ( _connectionSetup.isFlatBrowser () )
+            {
+                addFlatFolder ();
+            }
+            // if tree browsing is enabled ... 
+            if ( _connectionSetup.isTreeBrowser () )
+            {
+                addTreeFolder ();
+            }
+
+            // add granted items
+            String prefix = getBaseId () + ".";
+            for ( String item : _hive.getGrantedItems () )
+            {
+                if ( item.startsWith ( prefix ) )
+                {
+                    String opcItem = item.substring ( prefix.length () );
+                    _log.debug ( String.format ( "Trying to late bind granted opc item: '%s'", opcItem ) );
+                    _itemManager.createItem ( opcItem );
+                }
+            }
+            
+            // recheck all granted items
             _hive.recheckGrantedItems ();
         }
-        catch ( Exception e )
+        catch ( Throwable e )
         {
+            _log.error ( "Failed to connect", e );
         }
+    }
+
+    private void addInitialFolder ()
+    {
+        _log.debug ( "Add initial folder" );
+        
+        _initialFolder = new FolderCommon ();
+
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        attributes.put ( "description", new Variant ( "The folder with pre-configured items" ) );
+
+        _connectionFolder.add ( "initial", _initialFolder, attributes );
+        
+        attributes.clear ();
+        for ( String opcItemId : _initialItems )
+        {
+            OPCItem item = _itemManager.getItem ( opcItemId );
+            if ( item != null )
+            {
+                attributes.put ( "opc.item-id", new Variant ( opcItemId ) );
+                _initialFolder.add ( opcItemId, item, attributes );
+            }
+        }
+    }
+
+    private void addFlatFolder ()
+    {
+        _log.debug ( "Add flat folder" );
+        _flatFolder = new OPCFlatFolder ( _itemManager, _server.getFlatBrowser () );
+
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        attributes.put ( "description", new Variant ( "The flat browser root folder" ) );
+
+        _connectionFolder.add ( "flat", _flatFolder, attributes );
+    }
+
+    private void addTreeFolder () throws JIException
+    {
+        _log.debug ( "Adding tree root folder" );
+        _treeFolder = new OPCTreeFolder ( _itemManager, _server.getTreeBrowser (), new Branch () );
+
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        attributes.put ( "description", new Variant ( "The tree browser root folder" ) );
+        _connectionFolder.add ( "tree", _treeFolder, attributes );
+    }
+
+    private void removeTreeFolder ()
+    {
+        if ( _connectionFolder != null )
+        {
+            _connectionFolder.remove ( "tree" );
+        }
+        _treeFolder = null;
+    }
+    
+    private void removeFlatFolder ()
+    {
+        if ( _connectionFolder != null )
+        {
+            _connectionFolder.remove ( "flat" );
+        }
+        _flatFolder = null;
+    }
+    
+    private void removeInitialFolder ()
+    {
+        if ( _connectionFolder != null )
+        {
+            _connectionFolder.remove ( "initial" );
+        }
+        _initialFolder = null;
     }
 
     public void stateUpdate ( OPCSERVERSTATUS state )

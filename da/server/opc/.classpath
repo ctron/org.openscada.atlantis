@@ -6,15 +6,15 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_utils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ext_log4j"/>
 	<classpathentry exported="true" kind="lib" path="schemasrc"/>
+	<classpathentry exported="true" kind="lib" path="lib/j-interop-openscada.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/iwombat.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jarapac.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jcifs-1.2.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jcifs-ntlm-auth.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/j-interop.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ncacn_ip_tcp.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ncacn_np.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ntlm-security.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/openscada-opc-dcom-0.1.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/openscada-opc-lib-0.1.7.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openscada_opc_dcom"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openscada_opc_lib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

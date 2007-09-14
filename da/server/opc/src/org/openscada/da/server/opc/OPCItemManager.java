@@ -35,12 +35,14 @@ import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
+import org.openscada.opc.dcom.common.Result;
+import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.lib.da.AddFailedException;
 
 public class OPCItemManager
 {
     private static Logger _log = Logger.getLogger ( OPCItemManager.class );
-    
+
     private Hive _hive = null;
 
     private Map<String, OPCItem> _itemMap = new HashMap<String, OPCItem> ();
@@ -57,17 +59,88 @@ public class OPCItemManager
         _connection = connection;
     }
 
-    public synchronized void addItem ( OPCItem item )
+    /**
+     * Get an OPC item ... might get created if it does not exists
+     * @param opcItemId the opc item ID
+     * @return the OPC item or <code>null</code> if it cannot be created
+     */
+    public synchronized OPCItem getItem ( String opcItemId )
+    {
+        OPCItem item = _itemMap.get ( opcItemId );
+        if ( item != null )
+        {
+            // return what we already have
+            return item;
+        }
+
+        try
+        {
+            item = createItem ( opcItemId );
+            if ( item != null )
+            {
+                addItem ( item );
+            }
+            return item;
+        }
+        catch ( Throwable e )
+        {
+            _log.warn ( "Failed to create item on the fly", e );
+            return null;
+        }
+    }
+
+    public OPCItem createItem ( String opcItemId ) throws JIException, AddFailedException, ConfigurationError
+    {
+        OPCItem item = null;
+
+        String itemId = _connection.getBaseId () + "." + opcItemId;
+
+        Map<String, Result<OPCITEMRESULT>> itemResult = _connection.getGroup ().validateItems ( opcItemId );
+
+        Result<OPCITEMRESULT> entry = itemResult.get ( opcItemId );
+        if ( entry == null )
+        {
+            _log.warn ( String.format ( "Failed to create item: '%s'", opcItemId ) );
+            return null;
+        }
+
+        EnumSet<IODirection> ioDirection = EnumSet.noneOf ( IODirection.class );
+        if ( entry.getErrorCode () == 0 )
+        {
+            int accessRights = entry.getValue ().getAccessRights ();
+            ioDirection = Helper.convertToAccessSet ( accessRights );
+        }
+
+        DataItemInformationBase di = new DataItemInformationBase ( itemId, ioDirection );
+
+        item = new OPCItem ( di, _connection, opcItemId );
+
+        FactoryTemplate ft = _hive.findFactoryTemplate ( itemId );
+        _log.debug ( String.format ( "Find template for item '%s' : %s", itemId, ft ) );
+
+        if ( ft != null )
+        {
+            item.setChain ( FactoryHelper.instantiateChainList ( ft.getChainEntries () ) );
+            item.getBrowserAttributes ().putAll ( ft.getBrowserAttributes () );
+            item.setAttributes ( ft.getItemAttributes () );
+        }
+
+        item.getBrowserAttributes ().put ( "opc.item-id", new Variant ( opcItemId ) );
+
+        return item;
+    }
+
+    protected synchronized void addItem ( OPCItem item )
     {
         _itemMap.put ( item.getId (), item );
         _descriptionMap.put ( item, new LinkedList<OPCItemDescription> () );
         _hive.registerItem ( item );
     }
 
-    public synchronized void removeItem ( OPCItem item )
+    protected synchronized void removeItem ( OPCItem item )
     {
         // first remove all item descriptions
-        removeDescriptions ( item );
+        // removeDescriptions ( item );
 
         // now remove the item itself
         _hive.unregisterItem ( item );
@@ -75,6 +148,7 @@ public class OPCItemManager
         _descriptionMap.remove ( item );
     }
 
+    /*
     protected synchronized void removeDescriptions ( OPCItem item )
     {
         List<OPCItemDescription> descriptions = _descriptionMap.get ( item );
@@ -114,6 +188,7 @@ public class OPCItemManager
             return null;
         }
     }
+    */
 
     /**
      * Create a new OPC item

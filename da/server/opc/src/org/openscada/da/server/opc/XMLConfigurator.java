@@ -86,10 +86,13 @@ public class XMLConfigurator
                 setup.setAccessMethod ( AccessMethod.ASYNC20 );
             }
             
+            setup.setFlatBrowser ( configuration.getFlatBrowser () );
+            setup.setTreeBrowser ( configuration.getTreeBrowser () );
+            
             setup.setRefreshTimeout ( configuration.getRefresh () );
             setup.setInitialConnect ( configuration.getInitialRefresh () );
             
-            hive.addConnection ( setup, configuration.getConnected () );
+            hive.addConnection ( setup, configuration.getConnected (), configuration.getInitialItemList () );
         }
     }
 }

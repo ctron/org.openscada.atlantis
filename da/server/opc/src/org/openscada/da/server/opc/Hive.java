@@ -19,6 +19,8 @@
 package org.openscada.da.server.opc;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +29,7 @@ import org.apache.xmlbeans.XmlException;
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItemCommand;
+import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.opc.lib.common.ConnectionInformation;
@@ -96,6 +99,8 @@ public class Hive extends HiveCommon
         registerItem ( _gcCommand );
         _rootFolderCommon.add ( "gc", _gcCommand, new MapBuilder<String,Variant> ().put ( "description", new Variant ( "Run the garbage collector once." ) ).getMap () );
         
+        setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
+        
         configure ( configurator );
     }
     
@@ -148,12 +153,13 @@ public class Hive extends HiveCommon
             ci.setProgId ( m.group ( 6 ) );
         else
             return;
-        addConnection ( new ConnectionSetup ( ci ), true );
+        ConnectionSetup cs = new ConnectionSetup ( ci );
+        addConnection ( cs, true, new LinkedList<String> () );
     }
     
-    public void addConnection ( ConnectionSetup setup, boolean connect )
+    public void addConnection ( ConnectionSetup setup, boolean connect, Collection<String> initialOpcItems )
     {
-        OPCConnection connection = new OPCConnection ( this, setup );
+        OPCConnection connection = new OPCConnection ( this, setup, initialOpcItems );
         
         try
         {
@@ -164,9 +170,9 @@ public class Hive extends HiveCommon
                 connection.triggerConnect ();
             }
         }
-        catch (Exception e )
+        catch (Throwable e )
         {
-            _log.warn ( "Failed to add connection", e );
+            _log.error ( "Failed to add connection", e );
         }
         
         

@@ -37,7 +37,8 @@
 			<element name="progid" type="components:ProgIdType"
 				maxOccurs="1" minOccurs="1">
 			</element>
-		</choice>
+            <element name="initialItem" type="string" maxOccurs="unbounded" minOccurs="0"></element>
+        </choice>
 		<attribute name="host" type="string" use="required"></attribute>
 		<attribute name="domain" type="string" use="required"></attribute>
 		<attribute name="user" type="string" use="required"></attribute>
@@ -55,6 +56,8 @@
 			default="500">
 		</attribute>
 		<attribute name="initial-refresh" type="boolean"></attribute>
+		<attribute name="flat-browser" type="boolean" default="true"></attribute>
+		<attribute name="tree-browser" type="boolean" default="true"></attribute>
 	</complexType>
 
 	<simpleType name="ProgIdType">
