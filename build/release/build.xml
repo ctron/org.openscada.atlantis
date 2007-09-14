@@ -153,13 +153,15 @@
 		<antcall target="export-other-projects"/>
 		
     	
-    	<ant dir="${source.base}/external/spring"/>
-    	<ant dir="${source.base}/external/log4j"/>
-    	<ant dir="${source.base}/external/icej"/>
-       	<ant dir="${source.base}/external/xmlbeans"/>
-       	<ant dir="${source.base}/external/junit4"/>
-       	<ant dir="${source.base}/external/mibble"/>
-       	<ant dir="${source.base}/external/SNMP4J"/>
+    	<parallel>
+	    	<ant dir="${source.base}/external/spring"/>
+	    	<ant dir="${source.base}/external/log4j"/>
+	    	<ant dir="${source.base}/external/icej"/>
+	       	<ant dir="${source.base}/external/xmlbeans"/>
+	       	<ant dir="${source.base}/external/junit4"/>
+	       	<ant dir="${source.base}/external/mibble"/>
+	       	<ant dir="${source.base}/external/SNMP4J"/>
+    	</parallel>
        		
     	<ant dir="${source.base}/utils"/>
     	<ant dir="${source.base}/core/common"/>
@@ -174,13 +176,16 @@
        	<ant dir="${source.base}/da/net/base"/>
       	<ant dir="${source.base}/da/server/net"/>
 	  	<ant dir="${source.base}/da/server/ice"/>
-       	<ant dir="${source.base}/da/server/simulation"/>
-       	<ant dir="${source.base}/da/server/snmp"/>
-      	<ant dir="${source.base}/da/server/sysinfo"/>
-      	<ant dir="${source.base}/da/server/test"/>
-	  	<ant dir="${source.base}/da/server/opc"/>
-    	<ant dir="${source.base}/da/server/stock"/>
-    	<ant dir="${source.base}/da/server/spring"/>
+    	
+    	<parallel>
+	       	<ant dir="${source.base}/da/server/simulation"/>
+	       	<ant dir="${source.base}/da/server/snmp"/>
+	      	<ant dir="${source.base}/da/server/sysinfo"/>
+	      	<ant dir="${source.base}/da/server/test"/>
+		  	<ant dir="${source.base}/da/server/opc"/>
+	    	<ant dir="${source.base}/da/server/stock"/>
+	    	<ant dir="${source.base}/da/server/spring"/>
+    	</parallel>
 
 	   	<ant dir="${source.base}/core/client/common"/>
        	<ant dir="${source.base}/core/client/net"/>
