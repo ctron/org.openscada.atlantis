@@ -295,18 +295,20 @@
             <xmltask source="@{dir}/.project">
 				<copy path="projectDescription/name/text()" property="project.name"/>
 			</xmltask>
+        	
+        	<property name="pack.dir" location="${temp.dir}/export-project-${project.name}"/>
 	
 			<!-- copy project files to temp dir -->
-			<delete dir="${temp.dir}/export-project"/>
-			<mkdir dir="${temp.dir}/export-project/${project.name}"/>
-			<copy todir="${temp.dir}/export-project/${project.name}">
+			<delete dir="${pack.dir}/${project.name}"/>
+			<mkdir dir="${pack.dir}/${project.name}"/>
+			<copy todir="${pack.dir}/${project.name}">
 				<fileset dir="@{dir}">
 					<exclude name="**/.svn"/>
 				</fileset>
 			</copy>
 
 			<mkdir dir="${deploy.dist.project}"/>
-			<zip basedir="${temp.dir}/export-project" destfile="${deploy.dist.project}/${project.name}-project-${tag}.zip">
+			<zip basedir="${pack.dir}" destfile="${deploy.dist.project}/${project.name}-project-${tag}.zip">
 			</zip>
 	
 			<!-- get the project SVN url -->
