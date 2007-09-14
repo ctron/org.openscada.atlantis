@@ -10,6 +10,7 @@
             OpenSCADA Atlantis Project
     </description>
 	
+	<property name="libfile" location="../atlantis_build/lib/build.xml"/>
 	<import file="${libfile}"/>
 	<property name="package" value="da-ice-base"/>
 
