@@ -344,7 +344,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                     case FAILURE:
                         if ( callback != null )
                         {
-                            callback.failed ( error.getMessage () );
+                            callback.failed ( error != null ? error.getMessage () : "" );
                         }
                         break;
                     case SUCCESS:
