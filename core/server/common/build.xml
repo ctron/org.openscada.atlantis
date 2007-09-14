@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 <!-- ====================================================================== 
-     Dec 13, 2006 11:38:26 AM                                                        
-
      openscada_core_server_common
      OpenSCADA Atlantis
                    
@@ -12,6 +10,7 @@
             OpenSCADA Atlantis Project
     </description>
 	
+	<property name="libfile" location="../atlantis_build/lib/build.xml"/>
 	<import file="${libfile}"/>
 	<property name="package" value="core-server-common"/>
 
