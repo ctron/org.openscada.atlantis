@@ -19,9 +19,10 @@
 
 package org.openscada.da.server.browser.common.query;
 
+
 public class IDNameProvider implements NameProvider
 {
-
+   
     public String getName ( ItemDescriptor descriptor )
     {
         try

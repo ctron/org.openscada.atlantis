@@ -23,26 +23,31 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.server.browser.common.query.ItemStorage;
 import org.openscada.da.server.spring.Loader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
 import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
-import au.com.bytecode.opencsv.bean.CsvToBean;
 
 public class CSVLoader extends Loader implements InitializingBean
 {
     private Resource _resource;
     private String _data;
     private String [] _mapping = new String[] { "id", "readable", "writeable", "description" };
+    private int _skipLines = 0;
+    
+    private Collection<ItemStorage> _controllerStorages = new LinkedList<ItemStorage> ();
 
     public void setResource ( Resource resource )
     {
@@ -52,6 +57,16 @@ public class CSVLoader extends Loader implements InitializingBean
     public void setData ( String data )
     {
         _data = data;
+    }
+    
+    public void setSkipLines ( int skipLines )
+    {
+        _skipLines = skipLines;
+    }
+    
+    public void setControllerStorages ( Collection<ItemStorage> controllerStorages )
+    {
+        _controllerStorages = controllerStorages;
     }
 
     public void afterPropertiesSet () throws Exception
@@ -68,14 +83,13 @@ public class CSVLoader extends Loader implements InitializingBean
         ColumnPositionMappingStrategy strat = new ColumnPositionMappingStrategy ();
         strat.setColumnMapping ( _mapping );
         strat.setType ( ItemEntry.class );
-
-        CsvToBean bean = new CsvToBean ();
-        List<?> beans = bean.parse ( strat, reader );
-        for ( Object row : beans )
+        
+        CsvToBean<ItemEntry> bean = new CsvToBean<ItemEntry> ();
+        Collection<ItemEntry> beans = bean.parse ( _skipLines, strat, reader );
+        for ( ItemEntry entry : beans )
         {
-            ItemEntry entry = (ItemEntry)row;
             entry.setId ( entry.getId ().trim () );
-            if ( entry.getId ().length () > 0 )
+            if ( entry.getId ().length () > 0)
             {
                 createItem ( entry, sourceName );
             }
@@ -118,7 +132,7 @@ public class CSVLoader extends Loader implements InitializingBean
         injectItem ( item, attributes );
 
         attributes.put ( "loader.csv.controllerFor", new Variant ( _itemPrefix + entry.getId () ) );
-        injectItem ( new CSVControllerDataItem ( item ), attributes );
+        Loader.injectItem ( _hive, _controllerStorages, new CSVControllerDataItem ( item ), attributes );
     }
 
     public void setMapping ( String[] mapping )

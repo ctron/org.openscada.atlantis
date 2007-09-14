@@ -51,20 +51,21 @@ public class Loader
     
     public void injectItem ( DataItem item )
     {
-        _hive.registerItem ( item );
-        for ( ItemStorage storage : _storages )
-        {
-            storage.added ( new ItemDescriptor ( item, new HashMap<String, Variant> () ) );
-        }
+        injectItem ( item, new HashMap<String, Variant> () );
     }
     
     public void injectItem ( DataItem item, Map<String, Variant> attributes )
     {
-        _hive.registerItem ( item );
-        for ( ItemStorage storage : _storages )
+        injectItem ( _hive, _storages, item, attributes );
+    }
+    
+    protected static void injectItem ( Hive hive, Collection<ItemStorage> storages, DataItem item, Map<String, Variant> attributes )
+    {
+        hive.registerItem ( item );
+        for ( ItemStorage storage : storages )
         {
             storage.added ( new ItemDescriptor ( item, attributes ) );
-        }
+        }        
     }
 
 }

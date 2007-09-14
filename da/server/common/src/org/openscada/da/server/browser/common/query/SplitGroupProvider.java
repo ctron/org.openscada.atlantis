@@ -23,31 +23,71 @@ public class SplitGroupProvider implements GroupProvider
 {
     private NameProvider _nameProvider = null;
     private String _regex = "";
-    
+    private int _skipPrefix = 0;
+    private int _skipSuffix = 0;
+
     public SplitGroupProvider ( NameProvider nameProvider, String regex )
     {
         _nameProvider = nameProvider;
         _regex = regex;
     }
-    
+
+    public SplitGroupProvider ()
+    {
+    }
+
     public String[] getGrouping ( ItemDescriptor descriptor )
     {
         if ( _nameProvider == null )
+        {
             return null;
-        
+        }
+
         String name = _nameProvider.getName ( descriptor );
-        
+
         if ( name == null )
+        {
             return null;
-        
+        }
+
         try
         {
-            return name.split ( _regex );
+            String[] tok = name.split ( _regex );
+            if ( _skipPrefix + _skipSuffix >= tok.length )
+            {
+                return null;
+            }
+            String[] result = new String[tok.length - ( _skipPrefix + _skipSuffix )];
+            for ( int i = _skipPrefix; i < tok.length - _skipSuffix; i++ )
+            {
+                result[i - _skipPrefix] = tok[i];
+            }
+            return result;
         }
         catch ( Exception e )
         {
             return null;
         }
+    }
+
+    public void setNameProvider ( NameProvider nameProvider )
+    {
+        _nameProvider = nameProvider;
+    }
+
+    public void setRegex ( String regex )
+    {
+        _regex = regex;
+    }
+
+    public void setSkipPrefix ( int skipPrefix )
+    {
+        _skipPrefix = skipPrefix;
+    }
+
+    public void setSkipSuffix ( int skipSuffix )
+    {
+        _skipSuffix = skipSuffix;
     }
 
 }
