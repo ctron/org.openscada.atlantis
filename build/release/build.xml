@@ -10,7 +10,7 @@
             Master build file for OpenSCADA Atlantis
     </description>
 
-	<property name="version" value="0.8.1"/>
+	<property name="version" value="0.8.2"/>
 	<property name="release" value=""/>
 	<property name="buildType" value="R"/>
 	<property name="buildId" value="Release-${version}"/>
@@ -153,6 +153,7 @@
 		<antcall target="export-other-projects"/>
 		
     	
+    	<ant dir="${source.base}/external/spring"/>
     	<ant dir="${source.base}/external/log4j"/>
     	<ant dir="${source.base}/external/icej"/>
        	<ant dir="${source.base}/external/xmlbeans"/>
@@ -179,6 +180,7 @@
       	<ant dir="${source.base}/da/server/test"/>
 	  	<ant dir="${source.base}/da/server/opc"/>
     	<ant dir="${source.base}/da/server/stock"/>
+    	<ant dir="${source.base}/da/server/spring"/>
 
 	   	<ant dir="${source.base}/core/client/common"/>
        	<ant dir="${source.base}/core/client/net"/>
