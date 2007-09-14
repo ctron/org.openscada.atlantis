@@ -50,12 +50,12 @@ public class TestItemListener implements ItemListener
     
     public void assertEquals ( EventEntry [] events )
     {
-        Assert.assertArrayEquals ( "Events are not the same", events, _events.toArray ( new EventEntry[_events.size ()] ) );
+        Assert.assertEquals ( "Events are not the same", events, _events.toArray ( new EventEntry[_events.size ()] ) );
     }
     
     public void assertEquals ( Collection<EventEntry> events )
     {
-        Assert.assertArrayEquals ( "Events are not the same", events.toArray ( new EventEntry[events.size ()] ), _events.toArray ( new EventEntry[_events.size ()] ) );
+        Assert.assertEquals ( "Events are not the same", events.toArray ( new EventEntry[events.size ()] ), _events.toArray ( new EventEntry[_events.size ()] ) );
     }
 
 }
