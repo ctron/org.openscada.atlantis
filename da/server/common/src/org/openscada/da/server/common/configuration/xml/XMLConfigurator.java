@@ -451,7 +451,7 @@ public class XMLConfigurator implements Configurator
         {
             for ( ItemType chainItem : dataItemBase.getChain ().getItemList () )
             {
-                Class chainItemClass;
+                Class<?> chainItemClass;
                 try
                 {
                     chainItemClass = Class.forName ( chainItem.getClass1 () );

@@ -19,7 +19,7 @@ public class XMLConfiguratorTest
 {
     private HiveDocument _document = null;
     private static final String _testFileBase = "test/";
-    private Collection _errors = new LinkedList ();
+    private Collection<?> _errors = new LinkedList<Object> ();
     private boolean _valid = false;
     
     @After
