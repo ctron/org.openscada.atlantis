@@ -177,15 +177,13 @@
       	<ant dir="${source.base}/da/server/net"/>
 	  	<ant dir="${source.base}/da/server/ice"/>
     	
-    	<parallel>
-	       	<ant dir="${source.base}/da/server/simulation"/>
-	       	<ant dir="${source.base}/da/server/snmp"/>
-	      	<ant dir="${source.base}/da/server/sysinfo"/>
-	      	<ant dir="${source.base}/da/server/test"/>
-		  	<ant dir="${source.base}/da/server/opc"/>
-	    	<ant dir="${source.base}/da/server/stock"/>
-	    	<ant dir="${source.base}/da/server/spring"/>
-    	</parallel>
+	    <ant dir="${source.base}/da/server/simulation"/>
+	    <ant dir="${source.base}/da/server/snmp"/>
+	    <ant dir="${source.base}/da/server/sysinfo"/>
+	    <ant dir="${source.base}/da/server/test"/>
+		<ant dir="${source.base}/da/server/opc"/>
+	    <ant dir="${source.base}/da/server/stock"/>
+	    <ant dir="${source.base}/da/server/spring"/>
 
 	   	<ant dir="${source.base}/core/client/common"/>
        	<ant dir="${source.base}/core/client/net"/>
