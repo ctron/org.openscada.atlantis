@@ -153,15 +153,13 @@
 		<antcall target="export-other-projects"/>
 		
     	
-    	<parallel>
-	    	<ant dir="${source.base}/external/spring"/>
-	    	<ant dir="${source.base}/external/log4j"/>
-	    	<ant dir="${source.base}/external/icej"/>
-	       	<ant dir="${source.base}/external/xmlbeans"/>
-	       	<ant dir="${source.base}/external/junit4"/>
-	       	<ant dir="${source.base}/external/mibble"/>
-	       	<ant dir="${source.base}/external/SNMP4J"/>
-    	</parallel>
+	    <ant dir="${source.base}/external/spring"/>
+	    <ant dir="${source.base}/external/log4j"/>
+    	<ant dir="${source.base}/external/icej"/>
+       	<ant dir="${source.base}/external/xmlbeans"/>
+       	<ant dir="${source.base}/external/junit4"/>
+       	<ant dir="${source.base}/external/mibble"/>
+       	<ant dir="${source.base}/external/SNMP4J"/>
        		
     	<ant dir="${source.base}/utils"/>
     	<ant dir="${source.base}/core/common"/>
