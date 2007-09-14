@@ -37,7 +37,12 @@ public class MemoryDataItem extends DataItemBase
 
     public MemoryDataItem ( String name )
     {
-        super ( new DataItemInformationBase ( name, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
+        this ( name, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) );
+    }
+    
+    protected MemoryDataItem ( String name, EnumSet<IODirection> ioDirection )
+    {
+        super ( new DataItemInformationBase ( name, ioDirection ) );
         _attributes = new AttributeManager ( this );
     }
 

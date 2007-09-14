@@ -90,9 +90,9 @@ public class HiveCommon implements Hive, ConfigurableHive
     private List<FactoryTemplate> _templates = new LinkedList<FactoryTemplate> ();
 
     private SubscriptionManager _itemSubscriptionManager = new SubscriptionManager ();
-    
+
     private Set<DataItemValidator> _itemValidators = new CopyOnWriteArraySet<DataItemValidator> ();
-    
+
     private ValidationStrategy _validatonStrategy = ValidationStrategy.FULL_CHECK;
 
     public HiveCommon ()
@@ -101,14 +101,15 @@ public class HiveCommon implements Hive, ConfigurableHive
 
         _jobQueueThread = new Thread ( _opProcessor );
         _jobQueueThread.start ();
-        
+
         // set the validator of the subscription manager
         _itemSubscriptionManager.setValidator ( new SubscriptionValidator () {
 
             public boolean validate ( SubscriptionListener listener, Object topic )
             {
                 return validateItem ( topic.toString () );
-            }} );
+            }
+        } );
     }
 
     @Override
@@ -301,6 +302,19 @@ public class HiveCommon implements Hive, ConfigurableHive
         }
     }
 
+    /**
+     * Get an item from the list of registered items.
+     * @param itemId the item to find
+     * @return the data item or <code>null</code> if no item with that ID is registered
+     */
+    protected DataItem findRegisteredDataItem ( String itemId )
+    {
+        synchronized ( _itemMap )
+        {
+            return _itemMap.get ( itemId );
+        }
+    }
+
     private DataItem factoryCreate ( DataItemFactoryRequest request )
     {
         synchronized ( _factoryList )
@@ -325,7 +339,7 @@ public class HiveCommon implements Hive, ConfigurableHive
         {
             return true;
         }
-        
+
         // First check if the item already exists
         if ( lookupItem ( id ) != null )
         {
@@ -340,7 +354,7 @@ public class HiveCommon implements Hive, ConfigurableHive
                 return true;
             }
         }
-        
+
         DataItemFactoryRequest request = new DataItemFactoryRequest ();
         request.setId ( id );
 
@@ -626,7 +640,7 @@ public class HiveCommon implements Hive, ConfigurableHive
             retrieveItem ( topic.toString () );
         }
     }
-    
+
     /**
      * Gets a set of all items in granted state.
      * @return The list of granted items.
@@ -634,21 +648,21 @@ public class HiveCommon implements Hive, ConfigurableHive
     public Set<String> getGrantedItems ()
     {
         List<Object> topics = _itemSubscriptionManager.getAllGrantedTopics ();
-        
+
         Set<String> items = new HashSet<String> ();
-        
+
         for ( Object topic : topics )
         {
             items.add ( topic.toString () );
         }
         return items;
     }
-    
+
     public void addDataItemValidator ( DataItemValidator dataItemValidator )
     {
         _itemValidators.add ( dataItemValidator );
     }
-    
+
     public void removeItemValidator ( DataItemValidator dataItemValidator )
     {
         _itemValidators.remove ( dataItemValidator );
