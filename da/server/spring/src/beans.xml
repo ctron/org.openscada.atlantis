@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+<bean id="idNameProvider" class="org.openscada.da.server.browser.common.query.IDNameProvider">
+</bean>
+
+<bean id="csvFolder1" class="org.openscada.da.server.browser.common.query.GroupFolder">
+	<constructor-arg>
+		<bean class="org.openscada.da.server.browser.common.query.SplitGroupProvider">
+			<constructor-arg ref="idNameProvider"/>
+			<constructor-arg value="\."/>
+		</bean>								
+	</constructor-arg>
+	<constructor-arg ref="idNameProvider"/>
+</bean>
+
+<bean class="org.openscada.da.server.spring.tools.csv.CSVLoader">
+	<property name="hive" ref="hive"/>
+	<property name="itemPrefix" value="csv1."/>
+	<property name="mapping" value="id,readable,writeable,description"/>
+	<!-- <property name="resource" value="classpath:test.csv"/> -->
+	<property name="data">
+		<value>
+<![CDATA["testRead",true,false,"Test Read Item"
+"testWrite",false,true,"Test Write Item"
+"testReadWrite",true,true,"Test Read/Write Item"]]></value>
+	</property>
+	<property name="storages">
+		<list>
+			<ref bean="csvFolder1"/>
+		</list>
+	</property>
+</bean>
+  
+  
+  <bean id="hive" class="org.openscada.da.server.spring.Hive">
+  	<property name="rootFolder">
+		<bean class="org.openscada.da.server.spring.Folder">
+			<property name="folders">
+				<map>
+					<entry key="test">
+						<bean class="org.openscada.da.server.spring.FolderEntry">
+							<property name="folder">
+								<bean class="org.openscada.da.server.spring.Folder">
+									<property name="folders">
+										<map>
+											<entry key="Memory Cell #1">
+												<bean class="org.openscada.da.server.spring.DataItemEntry">
+													<property name="item" ref="memoryCell1"/>
+												</bean>
+											</entry>
+										</map>
+									</property>
+								</bean>
+							</property>
+						</bean>
+					</entry>
+					<entry key="blubb">
+						<bean class="org.openscada.da.server.spring.FolderEntry">
+							<property name="folder" ref="csvFolder1"/>
+							<property name="attributes">
+								<map>
+									<entry key="description" value="The folder with csv1 items"/>
+								</map>
+							</property>
+						</bean>
+					</entry>
+				</map>
+			</property>
+		</bean>
+  	</property>
+  </bean>
+  
+  <bean id="memoryCell1" class="org.openscada.da.server.common.MemoryDataItem">
+  	<constructor-arg><value>memory1</value></constructor-arg>
+  </bean>
+  
+</beans>
