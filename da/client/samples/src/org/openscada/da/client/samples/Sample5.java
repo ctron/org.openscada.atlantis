@@ -84,6 +84,7 @@ public class Sample5 extends SampleBase implements Observer
     {
         // you can either use the _dataItem field or the observable
         // passed on the method call
+        System.out.println ( "Item: " + _dataItem.getItemId () );
         System.out.println ( "Subscription state: " + _dataItem.getSubscriptionState ().name () );
         System.out.println ( "Value of item changed: " + _dataItem.getValue ().toString () );
         System.out.println ( String.format ( "Attributes for item: " ) );
