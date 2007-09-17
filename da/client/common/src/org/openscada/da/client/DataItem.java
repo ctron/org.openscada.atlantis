@@ -29,7 +29,7 @@ import org.openscada.core.utils.AttributesHelper;
 
 public class DataItem extends Observable
 {
-    private String _itemName;
+    private String _itemId;
 
     private ItemManager _itemManager = null;
 
@@ -57,14 +57,14 @@ public class DataItem extends Observable
         }
     };
 
-    public DataItem ( String itemName )
+    public DataItem ( String itemId )
     {
-        _itemName = new String ( itemName );
+        _itemId = itemId;
     }
 
-    public DataItem ( String itemName, ItemManager connection )
+    public DataItem ( String itemId, ItemManager connection )
     {
-        this ( itemName );
+        this ( itemId );
 
         register ( connection );
     }
@@ -72,21 +72,26 @@ public class DataItem extends Observable
     synchronized public void register ( ItemManager connection )
     {
         if ( _itemManager == connection )
+        {
             return;
+        }
+        unregister ();
 
         _itemManager = connection;
-        _itemManager.addItemUpdateListener ( _itemName, _listener );
+        _itemManager.addItemUpdateListener ( _itemId, _listener );
     }
 
     synchronized public void unregister ()
     {
         if ( _itemManager == null )
+        {
             return;
+        }
 
-        _itemManager.removeItemUpdateListener ( _itemName, _listener );
+        _itemManager.removeItemUpdateListener ( _itemId, _listener );
     }
 
-    private void performNotifyValueChange ( Variant value, boolean initial )
+    private synchronized void performNotifyValueChange ( Variant value, boolean initial )
     {
         _value = new Variant ( value );
         
@@ -94,7 +99,7 @@ public class DataItem extends Observable
         notifyObservers ();
     }
 
-    private void performNotifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
+    private synchronized void performNotifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
     {
         if ( initial )
             _attributes = new HashMap<String, Variant> ( attributes );
@@ -105,7 +110,7 @@ public class DataItem extends Observable
         notifyObservers ();
     }
 
-    private void performNotifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
+    private synchronized void performNotifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
     {
         _subscriptionState = subscriptionState;
         _subscriptionError = subscriptionError;
@@ -138,9 +143,31 @@ public class DataItem extends Observable
         return _attributes;
     }
 
+    /**
+     * Get the subscription state
+     * @return the subscription state
+     */
     public SubscriptionState getSubscriptionState ()
     {
         return _subscriptionState;
+    }
+    
+    /**
+     * Get the item ID
+     * @return the item Id
+     */
+    public String getItemId ()
+    {
+        return _itemId;
+    }
+    
+    /**
+     * Get the subscription error or <code>null</code> if there was none
+     * @return the subscription error
+     */
+    public Throwable getSubscriptionError ()
+    {
+        return _subscriptionError;
     }
 
 }
