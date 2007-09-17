@@ -20,28 +20,40 @@
 package org.openscada.da.client.samples;
 
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.da.client.DataItem;
 import org.openscada.da.client.ItemManager;
-import org.openscada.da.client.ItemUpdateListener;
 
 /**
- * Sample showing how to subscribe for events only
- * <br>
- * The example shows how to create a new connection, connect, and listen for events coming
- * in for a period of 10 seconds.
- * <br>
- * We will listen to the <em>time</em> data item of the test server. The item is an input
- * item and will provided the current unix timestamp every second.
+ * Sample showing how to subscribe for events using the {@link DataItem} class.
+ * <p>
+ * The example shows how to create a new connection, connect, and listen for events
+ * coming using the {@link DataItem} class which simplifies some parts of receiving
+ * events from OpenSCADA. The DataItem class performs all the merging and cache value
+ * handling for us. It extends the common {@link Observable} class and therefore
+ * simplifies that handling a little bit. You do not get the
+ * much more detailed event information since you only get the information
+ * <q>object changed</q>. On the other side you have an instance which always
+ * has the latest value merged up for you. So you can access it using {@link DataItem#getValue()},
+ * {@link DataItem#getAttributes()} and {@link DataItem#getSubscriptionState()} at any
+ * time.
+ * </p> 
+ * <p>
+ * We will listen to the <q>time</q> data item of the test server. The item
+ * is an input item and will provided the current unix timestamp every second.
+ * </p>
  * 
  * @author Jens Reimann <jens.reimann@inavare.net>
  */
-public class Sample1 extends SampleBase implements ItemUpdateListener
+public class Sample5 extends SampleBase implements Observer
 {
     private ItemManager _itemManager;
+    private DataItem _dataItem;
 
-    public Sample1 ( String uri, String className ) throws Exception
+    public Sample5 ( String uri, String className ) throws Exception
     {
         super ( uri, className );
     }
@@ -55,41 +67,30 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
     
     public void subscribe ()
     {
-        // add us as item update listener
-        // since we subscribe with "initial=true" we will get the current value
-        // before any other event. Setting to "false" would ignore the current
-        // value of this item and wait for the first change.
-        _itemManager.addItemUpdateListener ( "time", this );
+        // we use a DataItem here which does all the update handling for
+        // us and can be accessed using the Observable interface
+        _dataItem = new DataItem("time",_itemManager);
+        _dataItem.addObserver ( this );
     }
     
     public void unsubscribe ()
     {
         // now remove the update listener
-        _itemManager.removeItemUpdateListener ( "time", this );
+        _dataItem.deleteObservers ();
+        _dataItem.unregister ();
     }
     
-    public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
+    public void update ( Observable o, Object arg )
     {
-        // Attributes have changed
-        // If it is an "initial" transmission it is a complete set. Otherwise it is only
-        // the set of changed attributes.
-        System.out.println ( String.format ( "Attributes changed for item: %d update(s)%s", attributes.size (), ( initial ? " (cache read)" : "" ) ) );
-        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+        // you can either use the _dataItem field or the observable
+        // passed on the method call
+        System.out.println ( "Subscription state: " + _dataItem.getSubscriptionState ().name () );
+        System.out.println ( "Value of item changed: " + _dataItem.getValue ().toString () );
+        System.out.println ( String.format ( "Attributes for item: " ) );
+        for ( Map.Entry<String, Variant> entry : _dataItem.getAttributes ().entrySet () )
         {
             System.out.println ( String.format ( "'%s' => '%s'", entry.getKey (), entry.getValue ().toString () ) );
         }
-    }
-
-    public void notifyValueChange ( Variant value, boolean initial )
-    {
-        // The value has changed
-        // If it is an initial transmission it is not a change but the last change that occurred.
-        System.out.println ( "Value of item changed: " + value.toString () + ( initial ? " (cache read)" : "" ) );
-    }
-    
-    public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
-    {
-        System.out.println ( "Subscription state: " + state.name () + "Error: " + subscriptionError == null ? "<none>" : subscriptionError.getMessage () );
     }
     
     public static void main ( String[] args ) throws Exception
@@ -102,10 +103,10 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
         if ( args.length > 1 )
             className = args[1];
         
-        Sample1 s = null;
+        Sample5 s = null;
         try
         {
-            s = new Sample1 ( uri, className );
+            s = new Sample5 ( uri, className );
             s.connect ();
             s.subscribe ();
             Thread.sleep ( 10 * 1000 );
