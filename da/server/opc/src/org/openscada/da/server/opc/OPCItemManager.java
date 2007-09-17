@@ -94,7 +94,7 @@ public class OPCItemManager
         OPCItem item = null;
 
         String itemId = _connection.getBaseId () + "." + opcItemId;
-
+        
         Map<String, Result<OPCITEMRESULT>> itemResult = _connection.getGroup ().validateItems ( opcItemId );
 
         Result<OPCITEMRESULT> entry = itemResult.get ( opcItemId );
