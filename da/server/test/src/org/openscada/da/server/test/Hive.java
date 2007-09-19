@@ -48,6 +48,7 @@ import org.openscada.da.server.test.items.MemoryCellItem;
 import org.openscada.da.server.test.items.MemoryChainedItem;
 import org.openscada.da.server.test.items.SuspendItem;
 import org.openscada.da.server.test.items.TestItem1;
+import org.openscada.da.server.test.items.TestItem2;
 import org.openscada.da.server.test.items.TimeDataItem;
 import org.openscada.da.server.test.items.WriteDelayItem;
 import org.openscada.utils.collection.MapBuilder;
@@ -152,7 +153,7 @@ public class Hive extends HiveCommon {
 		        .getMap ()
 		);
         
-        registerItem ( item = new MemoryChainedItem ( "memory-chained" ) );
+        registerItem ( item = new TestItem2 ( "memory-chained" ) );
         _testFolder.add ( "memory-chained", item, new MapBuilder<String, Variant> ()
                 .put ( "description", new Variant ( "A memory cell that simply maps the output to its input using a chain." ) )
                 .getMap ()
