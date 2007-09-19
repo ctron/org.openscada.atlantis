@@ -30,6 +30,7 @@ import org.openscada.da.server.common.chain.BaseChainItemCommon;
 import org.openscada.da.server.common.chain.ChainItem;
 import org.openscada.da.server.common.chain.ChainProcessEntry;
 import org.openscada.da.server.common.chain.MemoryItemChained;
+import org.openscada.da.server.common.chain.item.SumErrorChainItem;
 
 public class MemoryChainedItem extends MemoryItemChained
 {
@@ -126,11 +127,12 @@ public class MemoryChainedItem extends MemoryItemChained
     {
         super ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
         addChainElement ( IODirection.INPUT, new InjectChainItem ( this ) );
+        addChainElement ( IODirection.INPUT, new SumErrorChainItem () );
     }
    
     public void addChainElement ( IODirection direction, String className ) throws Exception
     {
-        Class itemClass = Class.forName ( className );
+        Class<?> itemClass = Class.forName ( className );
         Object o = itemClass.newInstance ();
 
         addChainElement ( direction, (ChainItem )o );
