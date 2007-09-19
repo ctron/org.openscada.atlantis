@@ -30,7 +30,6 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.server.common.DataItemOutput;
-import org.openscada.da.server.common.WriteAttributesHelper;
 
 public class TestItem1 extends DataItemOutput
 {
