@@ -30,7 +30,7 @@ public class StringBinder implements AttributeBinder
         if ( value == null )
             _value = null;
         else
-            _value = value.toString ();
+            _value = value.asString ( null );
     }
 
     public String getValue ()
