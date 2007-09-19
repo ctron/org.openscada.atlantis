@@ -23,6 +23,6 @@ import org.openscada.core.Variant;
 
 public interface AttributeBinder
 {
-    void bind ( Variant value ) throws Exception;
-    Variant getAttributeValue ();
+    public abstract void bind ( Variant value ) throws Exception;
+    public abstract Variant getAttributeValue ();
 }
