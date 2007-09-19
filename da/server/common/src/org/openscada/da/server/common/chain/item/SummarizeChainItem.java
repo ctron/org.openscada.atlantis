@@ -19,13 +19,18 @@
 
 package org.openscada.da.server.common.chain.item;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.chain.BaseChainItemCommon;
+import org.openscada.da.server.common.chain.StringBinder;
 import org.openscada.utils.str.StringHelper;
 
 /**
@@ -40,6 +45,9 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
     private String _sumStateName;
     private String _sumCountName;
     private String _sumListName;
+    private String _sumIgnoreName;
+
+    private StringBinder _ignoreBinder;
 
     public SummarizeChainItem ( String baseName )
     {
@@ -48,8 +56,12 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
         _sumStateName = baseName;
         _sumCountName = baseName + ".count";
         _sumListName = baseName + ".items";
+        _sumIgnoreName = baseName + ".ignore";
 
         setReservedAttributes ( _sumStateName, _sumCountName, _sumListName );
+        
+        _ignoreBinder = new StringBinder ();
+        addBinder ( _sumIgnoreName, _ignoreBinder );
     }
 
     /**
@@ -69,6 +81,7 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
 
         long count = 0;
         List<String> items = new LinkedList<String> ();
+        Set<String> ignoreItems = getIgnoreItems ();
         
         for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
@@ -76,7 +89,7 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
 
             // ignore our own entries
             if ( !attributeName.equals ( _sumStateName ) && !attributeName.equals ( _sumCountName )
-                    && !attributeName.equals ( _sumListName ) )
+                    && !attributeName.equals ( _sumListName ) && !ignoreItems.contains ( attributeName ) )
             {
                 try
                 {
@@ -101,5 +114,15 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
         attributes.put ( _sumListName, new Variant ( StringHelper.join ( items, ", " ) ) );
 
         addAttributes ( attributes );
+    }
+    
+    protected Set<String> getIgnoreItems ()
+    {
+        String txt = _ignoreBinder.getValue ();
+        if ( txt != null )
+        {
+            return new HashSet<String> ( Arrays.asList ( txt.split ( ",\\s" ) ) );
+        }
+        return Collections.emptySet ();
     }
 }
