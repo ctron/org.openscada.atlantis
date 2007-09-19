@@ -152,6 +152,12 @@ public class Hive extends HiveCommon {
 		        .getMap ()
 		);
         
+        registerItem ( item = new MemoryChainedItem ( "memory-chained" ) );
+        _testFolder.add ( "memory-chained", item, new MapBuilder<String, Variant> ()
+                .put ( "description", new Variant ( "A memory cell that simply maps the output to its input using a chain." ) )
+                .getMap ()
+        );
+        
 		registerItem ( item = new TestItem1 ( "test-1" ) );
         _testFolder.add ( "test-1", item, new MapBuilder<String,Variant > ()
 		        .getMap ()
