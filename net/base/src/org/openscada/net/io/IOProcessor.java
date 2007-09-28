@@ -20,6 +20,7 @@
 package org.openscada.net.io;
 
 import java.io.IOException;
+import java.nio.channels.CancelledKeyException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -169,6 +170,9 @@ public class IOProcessor implements Runnable
                     {
                         IOChannelListener listener = _connections.get ( key ).getIOChannelListener ();
 
+                        if ( !key.isValid () )
+                            continue;
+                        
                         // check state and check if connection was closed during processing
                         if ( key.isConnectable () )
                             listener.handleConnect ();
@@ -205,7 +209,7 @@ public class IOProcessor implements Runnable
             }
             catch ( IOException e )
             {
-                e.printStackTrace ();
+                _log.info ( "IO Exception", e );
             }
             catch ( NotBoundException e )
             {
@@ -216,6 +220,10 @@ public class IOProcessor implements Runnable
             {
                 e.printStackTrace ();
                 _running = false;
+            }
+            catch ( CancelledKeyException e )
+            {
+                _log.info ( "Key cancelled", e );
             }
         }
     }
