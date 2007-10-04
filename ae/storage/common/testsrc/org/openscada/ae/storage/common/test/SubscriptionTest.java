@@ -28,6 +28,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openscada.ae.core.Event;
+import org.openscada.ae.core.EventAction;
 import org.openscada.ae.core.EventInformation;
 import org.openscada.ae.core.Listener;
 import org.openscada.ae.core.NoSuchQueryException;
@@ -73,7 +74,7 @@ public class SubscriptionTest extends BaseTest implements Listener
         Assert.assertEquals ( _unsubscribeEvents, 1 );
         
         EventInformation [] eventInformation = {
-                new EventInformation ( new Event ( "ev1" ), EventInformation.ACTION_ADDED ),
+                new EventInformation ( new Event ( "ev1" ), EventAction.ADDED ),
         };
         assertData ( eventInformation );
     }

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.openscada.ae.core.Event;
+import org.openscada.ae.core.EventAction;
 import org.openscada.ae.core.EventInformation;
 import org.openscada.ae.storage.common.Query;
 import org.openscada.ae.storage.common.Reader;
@@ -59,7 +60,7 @@ public class MemoryQuery implements Query, ListeningQuery, InitialEventsProvider
 
     synchronized public void submitEvent ( Event event )
     {
-        EventInformation eventInformation = new EventInformation ( event, EventInformation.ACTION_ADDED );
+        EventInformation eventInformation = new EventInformation ( event, EventAction.ADDED );
         
         fireEvent ( eventInformation );
         _events.add ( event );
@@ -69,7 +70,7 @@ public class MemoryQuery implements Query, ListeningQuery, InitialEventsProvider
     {
         if ( _events.remove ( event ) )
         {
-            EventInformation eventInformation = new EventInformation ( event, EventInformation.ACTION_REMOVED );
+            EventInformation eventInformation = new EventInformation ( event, EventAction.REMOVED );
             fireEvent ( eventInformation );
         }
     }

@@ -23,36 +23,31 @@ import java.util.Calendar;
 
 public class EventInformation
 {
-    public final static int ACTION_NONE = 0;
-    public final static int ACTION_ADDED = 1;
-    public final static int ACTION_REMOVED = 2;
-    public final static int ACTION_MODIFIED = 3;
-    
     private Event _event = null;
     private Calendar _timestamp = null;
-    private int _action = 0;
-    
+    private EventAction _action = null;
+
     public EventInformation ()
     {
         super ();
     }
-    
-    public EventInformation ( Event event, int action )
+
+    public EventInformation ( Event event, EventAction action )
     {
         _event = event;
         _action = action;
         _timestamp = Calendar.getInstance ();
     }
-    
-    public int getAction ()
+
+    public EventAction getAction ()
     {
         return _action;
     }
-    public void setAction ( int action )
+    public void setAction ( EventAction action )
     {
         _action = action;
     }
-    
+
     public Event getEvent ()
     {
         return _event;
@@ -61,7 +56,7 @@ public class EventInformation
     {
         _event = event;
     }
-    
+
     public Calendar getTimestamp ()
     {
         return _timestamp;

@@ -22,6 +22,7 @@ package org.openscada.ae.net;
 import java.util.Calendar;
 
 import org.openscada.ae.core.Event;
+import org.openscada.ae.core.EventAction;
 import org.openscada.ae.core.EventInformation;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.net.base.data.IntegerValue;
@@ -55,7 +56,7 @@ public class Messages
     {
         MapValue value = new MapValue ();
         
-        value.put ( "action", new IntegerValue ( eventInformation.getAction () ) );
+        value.put ( "action", new IntegerValue ( eventInformation.getAction ().getId () ) );
         value.put ( "timestamp", new LongValue ( eventInformation.getTimestamp ().getTimeInMillis () ) );
         
         value.put ( "event", eventToValue ( eventInformation.getEvent () ) );
@@ -80,7 +81,7 @@ public class Messages
         EventInformation eventInformation = new EventInformation ();
         
         MapValue mapValue = (MapValue)value;
-        eventInformation.setAction ( ((IntegerValue)mapValue.get ( "action" )).getValue () );
+        eventInformation.setAction ( EventAction.asAction ( ((IntegerValue)mapValue.get ( "action" )).getValue () ) );
         
         Calendar timestamp = Calendar.getInstance ();
         timestamp.setTimeInMillis ( ((LongValue)mapValue.get ( "timestamp" )).getValue () );

@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.openscada.ae.core.Event;
+import org.openscada.ae.core.EventAction;
 import org.openscada.ae.core.EventInformation;
 import org.openscada.ae.storage.common.Subscription;
 import org.openscada.ae.storage.common.SubscriptionObserver;
@@ -101,7 +102,7 @@ public class QueueSubscriptionReader implements SubscriptionReader, PushEventRea
         
         for ( int i = initial.length - _archiveSet; i<initial.length; i++ )
         {
-            _events.add ( new EventInformation ( initial[i], EventInformation.ACTION_ADDED ) );
+            _events.add ( new EventInformation ( initial[i], EventAction.ADDED ) );
         }
         
         _log.debug ( _events.size () + " initial event(s)" );

@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.openscada.ae.core.Event;
+import org.openscada.ae.core.EventAction;
 import org.openscada.ae.core.EventInformation;
 import org.openscada.ae.storage.common.Query;
 import org.openscada.ae.storage.common.Reader;
@@ -63,7 +64,7 @@ public class TimedGeneratorMemoryQuery implements Query, ListeningQuery, Initial
 
     synchronized public void submitEvent ( Event event )
     {
-        EventInformation eventInformation = new EventInformation ( event, EventInformation.ACTION_ADDED );
+        EventInformation eventInformation = new EventInformation ( event, EventAction.ADDED );
         
         for ( PushEventReader reader : _subscriptionReaders )
         {

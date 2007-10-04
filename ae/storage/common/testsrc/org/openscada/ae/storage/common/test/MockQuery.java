@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openscada.ae.core.Event;
+import org.openscada.ae.core.EventAction;
 import org.openscada.ae.core.EventInformation;
 import org.openscada.ae.storage.common.Query;
 import org.openscada.ae.storage.common.Reader;
@@ -53,7 +54,7 @@ public class MockQuery implements Query
         List<EventInformation> events = null;
         
         events = new LinkedList<EventInformation> ();
-        events.add ( new EventInformation ( new Event ( "ev1" ), EventInformation.ACTION_ADDED ) );
+        events.add ( new EventInformation ( new Event ( "ev1" ), EventAction.ADDED) );
         steps.add ( reader.new Step ( 0, events.toArray ( new EventInformation[0] ), 0 ) );
         
         reader.setInitialSteps ( steps );
