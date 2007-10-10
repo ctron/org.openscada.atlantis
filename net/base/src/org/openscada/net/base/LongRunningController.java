@@ -116,7 +116,7 @@ public class LongRunningController implements MessageListener
             if ( message.getValues ().get ( "id" ) instanceof LongValue )
                 id = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
 
-        _log.info ( String.format ( "Received long-op reply with id %d", id ) );
+        _log.debug ( String.format ( "Received long-op reply with id %d", id ) );
 
         if ( id != 0 )
         {
