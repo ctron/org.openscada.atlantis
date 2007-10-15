@@ -43,7 +43,7 @@ public class QueryDataController implements Listener
             {
                 switch ( eventInformation.getAction () )
                 {
-                case EventInformation.ACTION_ADDED:
+                case ADDED:
                     {
                         EventData eventData = new EventData ( eventInformation.getEvent (), _model );
                         addEvent ( eventData );
@@ -51,7 +51,7 @@ public class QueryDataController implements Listener
                         updateData.removed.remove ( eventData );
                         break;
                     }
-                case EventInformation.ACTION_REMOVED:
+                case REMOVED:
                     {
                         EventData eventData = new EventData ( eventInformation.getEvent (), _model );
                         removeEvent ( eventData );
