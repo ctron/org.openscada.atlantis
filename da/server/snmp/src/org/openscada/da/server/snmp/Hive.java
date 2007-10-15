@@ -30,22 +30,23 @@ import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.snmp.ConfigurationDocument.Configuration;
 import org.openscada.da.server.snmp.ConfigurationDocument.Configuration.Connection;
+import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
 {
-    @SuppressWarnings("unused")
+    @SuppressWarnings ( "unused" )
     private static Logger _log = Logger.getLogger ( Hive.class );
-    
+
     private Map<String, SNMPNode> _nodeMap = new HashMap<String, SNMPNode> ();
-    
+
     private FolderCommon _rootFolder = null;
-    
-	public Hive ()
-	{
-		super();
-		
+
+    public Hive ()
+    {
+        super ();
+
         // create root folder
-		_rootFolder = new FolderCommon ();
+        _rootFolder = new FolderCommon ();
         setRootFolder ( _rootFolder );
 
         new Thread ( new Runnable () {
@@ -53,10 +54,44 @@ public class Hive extends HiveCommon
             public void run ()
             {
                 configure ();
-            }} ).start ();
-	}
+            }
+        } ).start ();
+    }
+
+    public Hive ( final Node node )
+    {
+        super ();
+
+        // create root folder
+        _rootFolder = new FolderCommon ();
+        setRootFolder ( _rootFolder );
+        
+        new Thread ( new Runnable () {
+
+            public void run ()
+            {
+                configure ( node );
+            }
+        } ).start ();
+    }
+
+    protected void configure ( Node node )
+    {
+        try
+        {
+            ConfigurationDocument doc = ConfigurationDocument.Factory.parse ( node );
+            for ( Configuration.Connection connection : doc.getConfiguration ().getConnectionList () )
+            {
+                configure ( connection );
+            }
+        }
+        catch ( XmlException e )
+        {
+            _log.warn ( "Unable to configure hive", e );
+        }
+    }
     
-    private void configure ()
+    protected void configure ()
     {
         File configurationFile = new File ( "configuration.xml" );
         try
@@ -64,7 +99,7 @@ public class Hive extends HiveCommon
             ConfigurationDocument doc = ConfigurationDocument.Factory.parse ( configurationFile );
             for ( Configuration.Connection connection : doc.getConfiguration ().getConnectionList () )
             {
-                configureConnection ( connection );
+                configure ( connection );
             }
         }
         catch ( XmlException e )
@@ -77,11 +112,11 @@ public class Hive extends HiveCommon
         }
     }
 
-    private void configureConnection ( Connection connection )
+    protected void configure ( Connection connection )
     {
         _log.debug ( String.format ( "New Connection: %1$s - %2$s", connection.getName (), connection.getAddress () ) );
         ConnectionInformation ci;
-        
+
         switch ( connection.getVersion () )
         {
         case 1:
@@ -96,7 +131,7 @@ public class Hive extends HiveCommon
 
         ci.setAddress ( connection.getAddress () );
         ci.setCommunity ( connection.getCommunity () );
-        
+
         SNMPNode node = new SNMPNode ( this, _rootFolder, ci );
         node.register ();
         _nodeMap.put ( connection.getName (), node );
