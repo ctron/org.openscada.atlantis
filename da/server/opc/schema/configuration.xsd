@@ -30,15 +30,18 @@
 	</complexType>
 
 	<complexType name="ConfigurationType">
-		<choice maxOccurs="1" minOccurs="1">
-			<element name="clsid" type="components:UUIDType"
-				maxOccurs="1" minOccurs="1">
-			</element>
-			<element name="progid" type="components:ProgIdType"
-				maxOccurs="1" minOccurs="1">
-			</element>
-            <element name="initialItem" type="string" maxOccurs="unbounded" minOccurs="0"></element>
-        </choice>
+		<sequence>
+			<choice>
+				<element name="progid" type="components:ProgIdType"
+					maxOccurs="1" minOccurs="1">
+				</element>
+				<element name="clsid" type="components:UUIDType"
+					maxOccurs="1" minOccurs="1">
+				</element>
+			</choice>
+            <element name="initialItem" type="string" maxOccurs="unbounded" minOccurs="0">
+				</element>
+        </sequence>
 		<attribute name="host" type="string" use="required"></attribute>
 		<attribute name="domain" type="string" use="required"></attribute>
 		<attribute name="user" type="string" use="required"></attribute>

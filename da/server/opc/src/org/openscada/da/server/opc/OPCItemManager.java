@@ -82,6 +82,12 @@ public class OPCItemManager
             }
             return item;
         }
+        catch ( JIException e )
+        {
+            String errorMessage = this._connection.getServer ().getErrorMessage ( e.getErrorCode () );
+            _log.warn ( String.format ( "Failed to create item on the fly: %s", errorMessage ), e );
+            return null;
+        }
         catch ( Throwable e )
         {
             _log.warn ( "Failed to create item on the fly", e );

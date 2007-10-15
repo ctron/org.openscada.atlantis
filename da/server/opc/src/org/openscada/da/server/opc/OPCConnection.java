@@ -44,6 +44,7 @@ import org.openscada.opc.lib.da.AutoReconnectController;
 import org.openscada.opc.lib.da.AutoReconnectListener;
 import org.openscada.opc.lib.da.AutoReconnectState;
 import org.openscada.opc.lib.da.DuplicateGroupException;
+import org.openscada.opc.lib.da.ErrorMessageResolver;
 import org.openscada.opc.lib.da.Group;
 import org.openscada.opc.lib.da.Server;
 import org.openscada.opc.lib.da.ServerStateListener;
@@ -66,7 +67,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
     private Group _group = null;
     private AccessBase _access = null;
     private AutoReconnectController _reconnectController = null;
-
+    
     private OPCItemManager _itemManager = null;
 
     private FolderCommon _connectionFolder = null;
