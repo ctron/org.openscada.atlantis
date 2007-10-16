@@ -51,8 +51,7 @@ public class Hive extends HiveCommon
 
     public Hive () throws XmlException, IOException, ConfigurationError 
     {
-        this ( (XMLConfigurator)null );
-        configure ();
+        this ( new XMLConfigurator ( "configuration.xml" ) );
     }
     
     public Hive ( Node node ) throws XmlException, IOException, ConfigurationError
@@ -112,17 +111,6 @@ public class Hive extends HiveCommon
         }
     }
     
-    public void configure () throws XmlException, IOException, ConfigurationError
-    {
-        configure ( new XMLConfigurator ( "configuration.xml" ) );
-        
-        //addConnection ( "opcda://localhost\\jens:test12@172.16.15.128?clsid=F8582CF2-88FB-11D0-B850-00C0F0104305" );
-        //addConnection ( "opcda://localhost\\jens:test12@172.16.15.128?clsid=2E565242-B238-11D3-842D-0008C779D775" );
-        
-        //addConnection ( "opcda://localhost\\jens:test12@172.16.15.128?progid=Softing.OPCToolboxDemo_ServerDA.1" );
-        //addConnection ( "opcda://localhost\\jens:test12@172.16.15.128?progid=Matrikon.OPC.Simulation.1" );
-    }
-
     public Scheduler getScheduler ()
     {
         return _scheduler;
