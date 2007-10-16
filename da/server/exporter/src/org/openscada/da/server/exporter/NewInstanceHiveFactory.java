@@ -7,6 +7,11 @@ import org.apache.log4j.Logger;
 import org.openscada.da.core.server.Hive;
 import org.w3c.dom.Node;
 
+/**
+ * Create a new hive by creating a new object.
+ * @author Jens Reimann
+ *
+ */
 public class NewInstanceHiveFactory implements HiveFactory
 {
     private static Logger _log = Logger.getLogger ( NewInstanceHiveFactory.class );
@@ -44,6 +49,7 @@ public class NewInstanceHiveFactory implements HiveFactory
         
         if ( node != null )
         {
+            // if we have an xml configuration node try to use the XML ctor
             try
             {
                 ctor = hiveClass.getConstructor ( Node.class );
@@ -52,6 +58,7 @@ public class NewInstanceHiveFactory implements HiveFactory
                     _log.debug ( "Using XML-Node constructor" );
                     return (Hive)ctor.newInstance ( new Object [] { node } );
                 }
+                // fall back to standard ctor
             }
             catch ( Exception e )
             {
