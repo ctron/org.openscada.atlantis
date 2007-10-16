@@ -62,6 +62,11 @@ public class NewInstanceHiveFactory implements HiveFactory
                 // fall back to standard ctor
                 _log.debug ( "No XML-Node ctor found .. fall back to default" );
             }
+            catch ( InvocationTargetException e )
+            {
+                _log.info ( "Failed to create new instance", e.getTargetException () );
+                throw e;
+            }
             catch ( Exception e )
             {
                 _log.info ( String.format ( "No XML node constructor found (%s)", e.getMessage () ) );
