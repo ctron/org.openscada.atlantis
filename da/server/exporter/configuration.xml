@@ -21,37 +21,62 @@
 				<opc:connections>
 
 					<!-- ABB 800XA OPC Server -->
-					<!-- 
-					<opc:configuration user=""
-						domain="localhost" password="" host="127.0.0.1"
+					<opc:configuration user="abbadmin"
+						domain="demo" password="abb" host="172.16.4.1"
 						access="sync"
-						dont-browse="true"
+						enabled="false"
+						tree-browser="false"
+						flat-browser="false"
 						>
 						<opc:clsid>56ac0c8e-a857-4196-958b-d8aceb5f2c16</opc:clsid>
 						
+						<opc:initialItem>Root/Melody Navigation/RootArea/LS16/631HS1603AE:I1/SIG</opc:initialItem>
+						<opc:initialItem>Root/Melody Navigation/RootArea/LS16/631HS1603AE:O1/SIG</opc:initialItem>
+						
+						<opc:initialItem>Root/Melody Navigation/RootArea/LS16/631HS1603A:CMD1/SIG</opc:initialItem>
+						<opc:initialItem>Root/Melody Navigation/RootArea/LS16/631HS1603A:E1/SIG</opc:initialItem>
+						
+						<opc:initialItem>Root/Melody Navigation/RootArea/LS16/631HS1603A:AUT/SIG</opc:initialItem>
+						<opc:initialItem>Root/Melody Navigation/RootArea/LS16/631HS1603A:MAN/SIG</opc:initialItem>
+						
+						<opc:initialItem>Root/Melody Navigation/RootArea/LS16/631HS1603A:IC1/SIG</opc:initialItem>
+						<opc:initialItem>Root/Melody Navigation/RootArea/LS16/631HS1603A:OC1/SIG</opc:initialItem>
+						
+						<opc:initialItem>LadeSpur16:631_16_1_ResultRequest</opc:initialItem>
+						<opc:initialItem>LadeSpur16:631_16_OrderState</opc:initialItem>
+						<opc:initialItem>LadeSpur16:631_16_ResultRequest</opc:initialItem>
+						
+						<!-- 
 						<opc:initialItem>Pump:Flow</opc:initialItem>
 						<opc:initialItem>Root/WorkFlowTest/WorkFlowTest:TInteger</opc:initialItem>
 						<opc:initialItem>Root/WorkFlowTest/WorkFlowTest:TBoolean</opc:initialItem>
 						<opc:initialItem>Root/WorkFlowTest/WorkFlowTest:TString</opc:initialItem>
 						<opc:initialItem>Root/WorkFlowTest/WorkFlowTest:TFloat</opc:initialItem>
 						<opc:initialItem>Root/WorkFlowTest/WorkFlowTest:TReal</opc:initialItem>
+						-->
 						
 					</opc:configuration>
- 					-->
  
 					<!-- Matrikon OPC Simulation Server -->
 					<opc:configuration domain="localhost"
-						host="172.16.148.128" user="jens" access="sync"
-						password="test12" connected="false">
+						host="172.16.4.111" user="jens" access="sync"
+						password="test12" connected="true"
+						tree-browser="true"
+						flat-browser="true"
+						enabled="false"
+						>
 						<opc:clsid>
 							F8582CF2-88FB-11D0-B850-00C0F0104305
 						</opc:clsid>
 					</opc:configuration>
+					 
 
 					<!-- Softing OPC Demo Server -->
 					<opc:configuration connected="false"
 						domain="localhost" host="172.16.148.128" access="async"
-						user="jens" password="test12">
+						user="jens" password="test12"
+						enabled="false"
+						>
 						<opc:clsid>
 							2E565242-B238-11D3-842D-0008C779D775
 						</opc:clsid>
@@ -60,7 +85,8 @@
 					<!-- Iconics Test Server -->
 					<opc:configuration connected="false"
 						initial-refresh="false" domain="localhost" host="172.16.148.128"
-						access="async" user="jens" password="test12" refresh="100">
+						access="async" user="jens" password="test12" refresh="100"
+						enabled="false">
 						<opc:clsid>
 							A879768A-7387-11D4-B0D8-009027242C59
 						</opc:clsid>
@@ -112,5 +138,17 @@
 	
 	<exporter:hive ref="classpath:beans.xml#hive" factory="org.openscada.da.server.exporter.SpringHiveFactory">
 		<exporter:export uri="da:net://0.0.0.0:1205"/>
+	</exporter:hive>
+	
+	<exporter:hive ref="org.openscada.da.server.snmp.Hive">
+		<exporter:configuration>
+			<opc:root
+				xmlns:opc="http://openscada.org/DA/OPC/Configuration"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xmlns:chain="http://openscada.org/DA/Hive/ItemChain"
+				xsi:schemaLocation="http://openscada.org/DA/OPC/Configuration ../openscada_da_opcserver/schema/configuration.xsd ">
+			</opc:root>
+		</exporter:configuration>
+		<exporter:export uri="da:net://0.0.0.0:1206"/>
 	</exporter:hive>
 </exporter:configuration>

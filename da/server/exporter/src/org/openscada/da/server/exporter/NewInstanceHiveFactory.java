@@ -49,6 +49,7 @@ public class NewInstanceHiveFactory implements HiveFactory
         
         if ( node != null )
         {
+            _log.debug ( "We have an xml configuration node. try XML-Node ctor" );
             // if we have an xml configuration node try to use the XML ctor
             try
             {
@@ -59,10 +60,11 @@ public class NewInstanceHiveFactory implements HiveFactory
                     return (Hive)ctor.newInstance ( new Object [] { node } );
                 }
                 // fall back to standard ctor
+                _log.debug ( "No XML-Node ctor found .. fall back to default" );
             }
             catch ( Exception e )
             {
-                _log.info ( "No XML node constructor found" );
+                _log.info ( String.format ( "No XML node constructor found (%s)", e.getMessage () ) );
             }
         }
         return (Hive)hiveClass.newInstance ();
