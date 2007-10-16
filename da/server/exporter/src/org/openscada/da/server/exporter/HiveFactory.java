@@ -2,6 +2,11 @@ package org.openscada.da.server.exporter;
 
 import org.openscada.da.core.server.Hive;
 
+/**
+ * A hive factory which needs to create a new hive based on its implementation. 
+ * @author Jens Reimann
+ *
+ */
 public interface HiveFactory
 {
     /**
