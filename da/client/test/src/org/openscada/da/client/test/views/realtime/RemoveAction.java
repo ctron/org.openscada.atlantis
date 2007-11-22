@@ -26,7 +26,7 @@ public class RemoveAction extends Action implements ISelectionChangedListener
         if ( _selection instanceof IStructuredSelection )
         {
             IStructuredSelection selection = (IStructuredSelection)_selection;
-            Iterator i = selection.iterator ();
+            Iterator<?> i = selection.iterator ();
             while ( i.hasNext () )
             {
                 Object o = i.next ();

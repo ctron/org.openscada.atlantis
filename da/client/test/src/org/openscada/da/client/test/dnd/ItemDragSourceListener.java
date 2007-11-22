@@ -73,7 +73,7 @@ public class ItemDragSourceListener implements DragSourceListener
         if ( selection.isEmpty () )
             return;
         
-        for ( Iterator i = selection.iterator (); i.hasNext (); )
+        for ( Iterator<?> i = selection.iterator (); i.hasNext (); )
         {
             Object o = i.next ();
             if ( !(o instanceof DataItemEntry ) )
