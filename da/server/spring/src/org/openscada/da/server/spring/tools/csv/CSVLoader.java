@@ -43,7 +43,7 @@ public class CSVLoader extends Loader implements InitializingBean
 {
     private Resource _resource;
     private String _data;
-    private String [] _mapping = new String[] { "id", "readable", "writeable", "description" };
+    private String [] _mapping = new String[] { "id", "readable", "writable", "description" };
     private int _skipLines = 0;
     
     private Collection<ItemStorage> _controllerStorages = new LinkedList<ItemStorage> ();
