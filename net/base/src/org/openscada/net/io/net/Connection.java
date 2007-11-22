@@ -388,7 +388,7 @@ public class Connection implements ConnectionListener, MessageListener
      */
     public void setTimeout ( long timeout )
     {
-        _log.info ( String.format ( "Setting timeout to %s", timeout ) );
+        _log.debug ( String.format ( "Setting timeout to %s", timeout ) );
         _connection.setTimeout ( timeout );
     }
 }
