@@ -30,13 +30,8 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.core.Variant;
-import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.client.test.impl.HiveConnection;
-import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.utils.exec.LongRunningListener;
-import org.openscada.utils.exec.LongRunningOperation;
-import org.openscada.utils.exec.LongRunningState;
 
 public class WriteOperationWizard extends Wizard implements INewWizard
 {

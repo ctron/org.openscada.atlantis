@@ -39,9 +39,6 @@ import org.openscada.da.client.test.Openscada_da_client_testPlugin;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.utils.exec.LongRunningListener;
-import org.openscada.utils.exec.LongRunningOperation;
-import org.openscada.utils.exec.LongRunningState;
 
 public class WriteAttributesOperationWizard extends Wizard implements INewWizard
 {
