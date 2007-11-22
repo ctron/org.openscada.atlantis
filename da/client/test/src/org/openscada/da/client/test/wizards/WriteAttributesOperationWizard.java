@@ -30,6 +30,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.core.Variant;
@@ -194,7 +195,7 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
                 "The write attributes operation did not complete successfully. There may be one ore more attributes that could not be written. Check the status of each attribute operation using the detailed information.",
                 status, OperationStatus.ERROR | OperationStatus.WARNING );
 
-        getShell ().getDisplay ().syncExec ( new Runnable () {
+        Display.getDefault ().syncExec ( new Runnable () {
 
             public void run ()
             {
