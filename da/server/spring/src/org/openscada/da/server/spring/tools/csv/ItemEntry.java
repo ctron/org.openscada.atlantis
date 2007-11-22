@@ -23,7 +23,7 @@ public class ItemEntry
 {
     private String _id;
     private boolean _readable = false;
-    private boolean _writeable = false;
+    private boolean _writable = false;
     private String _description = "";
 
     public String getId ()
@@ -46,14 +46,14 @@ public class ItemEntry
         _readable = readable;
     }
 
-    public boolean isWriteable ()
+    public boolean isWritable ()
     {
-        return _writeable;
+        return _writable;
     }
 
-    public void setWriteable ( boolean writeable )
+    public void setWritable ( boolean writeable )
     {
-        _writeable = writeable;
+        _writable = writeable;
     }
 
     public String getDescription ()

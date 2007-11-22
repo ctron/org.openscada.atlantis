@@ -118,7 +118,7 @@ public class CSVLoader extends Loader implements InitializingBean
         {
             io.add ( IODirection.INPUT );
         }
-        if ( entry.isWriteable () )
+        if ( entry.isWritable () )
         {
             io.add ( IODirection.OUTPUT );
         }
