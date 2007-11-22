@@ -43,7 +43,7 @@ public class CSVLoader extends Loader implements InitializingBean
 {
     private Resource _resource;
     private String _data;
-    private String [] _mapping = new String[] { "id", "readable", "writable", "description" };
+    private String [] _mapping = new String[] { "id", "readable", "writable", "description", "initialValue" };
     private int _skipLines = 0;
     
     private Collection<ItemStorage> _controllerStorages = new LinkedList<ItemStorage> ();
@@ -126,9 +126,11 @@ public class CSVLoader extends Loader implements InitializingBean
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "description", new Variant ( entry.getDescription () ) );
         attributes.put ( "loader.csv.source", new Variant ( sourceName ) );
+        attributes.put ( "initialValue", new Variant ( entry.getInitialValue () ) );
 
         CSVDataItem item = new CSVDataItem ( _itemPrefix + entry.getId (), io );
         injectItem ( item, attributes );
+        item.updateValue ( entry.getInitialValue () );
 
         attributes.put ( "loader.csv.controllerFor", new Variant ( _itemPrefix + entry.getId () ) );
         Loader.injectItem ( _hive, _controllerStorages, new CSVControllerDataItem ( item ), attributes );

@@ -19,12 +19,15 @@
 
 package org.openscada.da.server.spring.tools.csv;
 
+import org.openscada.core.Variant;
+
 public class ItemEntry
 {
     private String _id;
     private boolean _readable = false;
     private boolean _writable = false;
     private String _description = "";
+    private Variant _initialValue = new Variant ();
 
     public String getId ()
     {
@@ -64,5 +67,15 @@ public class ItemEntry
     public void setDescription ( String description )
     {
         _description = description;
+    }
+
+    public Variant getInitialValue ()
+    {
+        return _initialValue;
+    }
+
+    public void setInitialValue ( Variant initialValue )
+    {
+        _initialValue = initialValue;
     }
 }

@@ -33,15 +33,16 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 <bean class="org.openscada.da.server.spring.tools.csv.CSVLoader">
 	<property name="hive" ref="hive"/>
 	<property name="itemPrefix" value="csv1."/>
-	<property name="mapping" value="id,readable,writeable,description"/>
+	<property name="mapping" value="id,readable,writeable,description,initialValue"/>
 	<!-- <property name="resource" value="classpath:test.csv"/> -->
 	<property name="skipLines" value="2"/>
 	<property name="data">
 		<value><![CDATA[
-"id","readable","writeable","description"
-"testRead",true,false,"Test Read Item"
-"testWrite",false,true,"Test Write Item"
-"testReadWrite",true,true,"Test Read/Write Item"
+"id","readable","writeable","description","initialValue"
+"testRead",true,false,"Test Read Item","str"
+"testWrite",false,true,"Test Write Item",""
+"testReadWrite",true,true,"Test Read/Write Item","BOOLEAN#true"
+"testReadWrite2",true,true,"Test Read/Write Item","INTEGER#123"
 		]]></value>
 	</property>
 	<property name="storages">
