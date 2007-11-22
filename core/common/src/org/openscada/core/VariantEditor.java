@@ -29,7 +29,7 @@ public class VariantEditor extends PropertyEditorSupport
         String[] toks = text.split ( "#", 2 );
         if ( toks.length > 1 )
         {
-            if ( toks[0].equalsIgnoreCase ( "INT" ) || toks[0].equalsIgnoreCase ( "INT32" ) )
+            if ( toks[0].equalsIgnoreCase ( "INT" ) || toks[0].equalsIgnoreCase ( "INT32" ) || toks[0].equalsIgnoreCase ( "INTEGER" ) )
             {
                 setValue ( new Variant ( Integer.parseInt ( toks[1] ) ) );
             }
