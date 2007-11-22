@@ -65,6 +65,7 @@ public class Application
 
     public static void main ( String[] args )
     {
+        _log.info ( "Start test run..." );
         try
         {
             IOProcessor processor = new IOProcessor ();
@@ -78,6 +79,7 @@ public class Application
                         public void opened ()
                         {
                             super.opened ();
+                            this.disablePing ();
                             sendTestMessage ( getConnection () );
                         }
                     };
@@ -87,10 +89,12 @@ public class Application
 
             AutoReconnectClientConnection client = new AutoReconnectClientConnection ( processor,
                     new InetSocketAddress ( InetAddress.getLocalHost (), 1202 ) );
-
+            client.start ();
+            client.disablePing ();
+            
             processor.run ();
         }
-        catch ( Exception e )
+        catch ( Throwable e )
         {
             e.printStackTrace ();
         }

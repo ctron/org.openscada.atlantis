@@ -47,7 +47,8 @@ public class Connection implements ConnectionListener, MessageListener
     private static final long MAX_SEQUENCE = 0x7FFFFFFF;
     private static final long INIT_SEQUENCE = 1;
 
-    private int _timeoutLimit = Integer.getInteger ( "org.openscada.net.message_timeout", 10 * 1000 );
+    private int _timeoutLimit = Integer.getInteger ( "org.openscada.net.messageTimeout", 10 * 1000 );
+    private int _connectionTimeout = Integer.getInteger ( "org.openscada.net.connectionTimeout", 10 * 1000 );
     private static Scheduler _scheduler = new Scheduler ();
 
     private Protocol _protocolGMPP = null;
@@ -133,6 +134,8 @@ public class Connection implements ConnectionListener, MessageListener
         _connected = true;
 
         addTimeOutJob ();
+        
+        setTimeout ( _connectionTimeout );
     }
 
     public Connection ( MessageListener listener, SocketConnection connection )
@@ -144,6 +147,8 @@ public class Connection implements ConnectionListener, MessageListener
         _connected = true;
 
         addTimeOutJob ();
+        
+        setTimeout ( _connectionTimeout );
     }
 
     private void addTimeOutJob ()
@@ -375,5 +380,15 @@ public class Connection implements ConnectionListener, MessageListener
         if ( _sequence >= MAX_SEQUENCE )
             _sequence = INIT_SEQUENCE;
         return seq;
+    }
+    
+    /**
+     * Set the connection timeout
+     * @param timeout
+     */
+    public void setTimeout ( long timeout )
+    {
+        _log.info ( String.format ( "Setting timeout to %s", timeout ) );
+        _connection.setTimeout ( timeout );
     }
 }

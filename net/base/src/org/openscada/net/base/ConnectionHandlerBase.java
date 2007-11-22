@@ -40,6 +40,7 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
     private Scheduler.Job _pingJob = null;
     protected Scheduler _scheduler = null;
     private Connection _connection = null;
+    private boolean _pingDisabled = false;
 
     private List<ConnectionStateListener> _csListeners = new ArrayList<ConnectionStateListener> ();
 
@@ -79,10 +80,9 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
 
     private void removePingJob ()
     {
-        _log.debug ( "removing ping job" );
-
         if ( _pingJob != null )
         {
+            _log.debug ( "removing ping job" );
             _scheduler.removeJob ( _pingJob );
             _pingJob = null;
         }
@@ -92,6 +92,12 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
     {
         removePingJob ();
 
+        if ( _pingDisabled )
+        {
+            _log.debug ( "Request to disable ping. Not enabling!" );
+            return;
+        }
+        
         _log.debug ( "adding ping job" );
 
         _pingJob = _scheduler.addJob ( new Runnable () {
@@ -148,6 +154,24 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
     public void setConnection ( Connection connection )
     {
         _connection = connection;
+    }
+
+    public synchronized void disablePing ()
+    {
+        if ( !_pingDisabled )
+        {
+            _pingDisabled = true;
+            removePingJob ();
+        }
+    }
+
+    public synchronized void enablePing ()
+    {
+        if ( _pingJob == null || _pingDisabled )
+        {
+            _pingDisabled = false;
+            addPingJob ();
+        }
     }
 
 }
