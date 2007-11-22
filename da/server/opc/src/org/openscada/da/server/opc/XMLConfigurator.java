@@ -92,7 +92,7 @@ public class XMLConfigurator
             setup.setRefreshTimeout ( configuration.getRefresh () );
             setup.setInitialConnect ( configuration.getInitialRefresh () );
             
-            hive.addConnection ( setup, configuration.getConnected (), configuration.getInitialItemList () );
+            hive.addConnection ( setup, configuration.getAlias (), configuration.getConnected (), configuration.getInitialItemList () );
         }
     }
 }

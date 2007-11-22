@@ -39,9 +39,10 @@
 					maxOccurs="1" minOccurs="1">
 				</element>
 			</choice>
-            <element name="initialItem" type="string" maxOccurs="unbounded" minOccurs="0">
-				</element>
-        </sequence>
+			<element name="initialItem" type="string"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+		</sequence>
 		<attribute name="host" type="string" use="required"></attribute>
 		<attribute name="domain" type="string" use="required"></attribute>
 		<attribute name="user" type="string" use="required"></attribute>
@@ -61,6 +62,7 @@
 		<attribute name="initial-refresh" type="boolean"></attribute>
 		<attribute name="flat-browser" type="boolean" default="true"></attribute>
 		<attribute name="tree-browser" type="boolean" default="true"></attribute>
+		<attribute name="alias" type="string"></attribute>
 	</complexType>
 
 	<simpleType name="ProgIdType">

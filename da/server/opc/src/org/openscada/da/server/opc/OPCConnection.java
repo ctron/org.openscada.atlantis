@@ -66,7 +66,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
     private Group _group = null;
     private AccessBase _access = null;
     private AutoReconnectController _reconnectController = null;
-    
+
     private OPCItemManager _itemManager = null;
 
     private FolderCommon _connectionFolder = null;
@@ -93,15 +93,22 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
 
     private FolderCommon _initialFolder;
 
-    public OPCConnection ( Hive hive, ConnectionSetup connectionSetup, Collection<String> initialItems )
+    public OPCConnection ( Hive hive, String alias, ConnectionSetup connectionSetup, Collection<String> initialItems )
     {
         _hive = hive;
         _connectionSetup = connectionSetup;
 
         _initialItems = initialItems;
 
-        _connectionTag = _connectionSetup.getConnectionInformation ().getHost () + ":"
-                + _connectionSetup.getConnectionInformation ().getClsOrProgId ();
+        if ( alias == null )
+        {
+            _connectionTag = _connectionSetup.getConnectionInformation ().getHost () + ":"
+                    + _connectionSetup.getConnectionInformation ().getClsOrProgId ();
+        }
+        else
+        {
+            _connectionTag = alias;
+        }
 
         // state item
         _stateItem = new DataItemInputChained ( new DataItemInformationBase ( getBaseId () + ".state",
@@ -399,7 +406,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
                     _itemManager.createItem ( opcItem );
                 }
             }
-            
+
             // recheck all granted items
             _hive.recheckGrantedItems ();
         }
@@ -412,14 +419,14 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
     private void addInitialFolder ()
     {
         _log.debug ( "Add initial folder" );
-        
+
         _initialFolder = new FolderCommon ();
 
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "description", new Variant ( "The folder with pre-configured items" ) );
 
         _connectionFolder.add ( "initial", _initialFolder, attributes );
-        
+
         attributes.clear ();
         for ( String opcItemId : _initialItems )
         {
@@ -461,7 +468,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         }
         _treeFolder = null;
     }
-    
+
     private void removeFlatFolder ()
     {
         if ( _connectionFolder != null )
@@ -470,7 +477,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         }
         _flatFolder = null;
     }
-    
+
     private void removeInitialFolder ()
     {
         if ( _connectionFolder != null )

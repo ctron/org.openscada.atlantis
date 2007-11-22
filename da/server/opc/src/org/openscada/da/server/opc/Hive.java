@@ -142,12 +142,12 @@ public class Hive extends HiveCommon
         else
             return;
         ConnectionSetup cs = new ConnectionSetup ( ci );
-        addConnection ( cs, true, new LinkedList<String> () );
+        addConnection ( cs, null, true, new LinkedList<String> () );
     }
     
-    public void addConnection ( ConnectionSetup setup, boolean connect, Collection<String> initialOpcItems )
+    public void addConnection ( ConnectionSetup setup, String alias, boolean connect, Collection<String> initialOpcItems )
     {
-        OPCConnection connection = new OPCConnection ( this, setup, initialOpcItems );
+        OPCConnection connection = new OPCConnection ( this, alias, setup, initialOpcItems );
         
         try
         {
