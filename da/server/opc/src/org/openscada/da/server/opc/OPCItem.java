@@ -241,7 +241,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         else
         {
             // only change the timestamp if the primary values changed
-            if ( !newValue.equals ( _primaryValue ) )
+            if ( !newValue.equals ( _primaryValue ) && itemState != null )
             {
                 attributes.put ( "timestamp", new Variant ( itemState.getTimestamp ().getTimeInMillis () ) );
             }
