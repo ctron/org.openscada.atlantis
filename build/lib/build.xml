@@ -237,6 +237,9 @@
     		<zip basedir="${build.dir}/${package}" destfile="${deploy.dist.module}/openscada-${package}-${tag}.zip">
     			<include name="**/*"/>
     		</zip>
+        	
+        	<mkdir dir="${deploy.dist.lib}"/>
+        	<copy file="${build.dir}/${package}/bin/openscada-${package}-${tag}.jar" todir="${deploy.dist.lib}"/>
 	
 			<openscada.export.project/>
         </sequential>
