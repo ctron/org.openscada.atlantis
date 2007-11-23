@@ -226,6 +226,9 @@
         <delete dir="${deploy.dir}"/>
     	<delete dir="${build.dir}"/>
     	<delete dir="${temp.dir}"/>
+    	<delete dir="../rcp/eclipse.build"/>
+    	<delete dir="../rcp/nsis.build"/>
+    	<delete dir="../rcp/nsis.out"/>
     </target>
 
 	
