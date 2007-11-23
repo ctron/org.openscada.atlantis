@@ -178,7 +178,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         if ( itemState != null )
         {
             attributes.put ( OPC_ATTRIBUTE_QUALITY, new Variant ( itemState.getQuality () ) );
-            // attributes.put ( "timestamp", new Variant ( itemState.getTimestamp ().getTimeInMillis () ) );
+            attributes.put ( "timestamp", new Variant ( itemState.getTimestamp ().getTimeInMillis () ) );
 
             try
             {
@@ -204,8 +204,9 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
                 else
                 {
                     newValue = Helper.theirs2ours ( itemState.getValue () );
-                    if ( newValue != null )
+                    if ( newValue != null && !newValue.equals ( _primaryValue ))
                     {
+                        // only update timestamp when we detected a change
                         attributes.put ( OPC_ATTRIBUTE_TIMESTAMP, new Variant ( System.currentTimeMillis () ) );
                     }
                 }
@@ -237,14 +238,6 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
             attributes.put ( OPC_ATTRIBUTE_VALUE_ERROR_MESSAGE, new Variant ( "Unable to convert value: "
                     + itemState.getValue ().toString () ) );
             attributes.put ( OPC_ATTRIBUTE_VALUE_ERROR, new Variant ( true ) );
-        }
-        else
-        {
-            // only change the timestamp if the primary values changed
-            if ( !newValue.equals ( _primaryValue ) && itemState != null )
-            {
-                attributes.put ( "timestamp", new Variant ( itemState.getTimestamp ().getTimeInMillis () ) );
-            }
         }
         
         // definition is to first write the attributes and then the value
