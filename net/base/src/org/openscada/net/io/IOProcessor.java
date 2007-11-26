@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
 import org.openscada.utils.timing.AlreadyBoundException;
@@ -42,7 +43,7 @@ public class IOProcessor implements Runnable
     private static Logger _log = Logger.getLogger ( IOProcessor.class );
 
     private Map<SelectionKey, IOChannel> _connections = new HashMap<SelectionKey, IOChannel> ();
-    private Set<IOChannel> _timeoutConnections = new HashSet<IOChannel> ();
+    private Set<IOChannel> _timeoutConnections = new CopyOnWriteArraySet<IOChannel> ();
 
     private Selector _selector = null;
     private Thread _thread = null;
@@ -96,28 +97,19 @@ public class IOProcessor implements Runnable
 
     public void enableConnectionTimeout ( IOChannel connection )
     {
-        synchronized ( _timeoutConnections )
-        {
-            _timeoutConnections.add ( connection );
-        }
+        _timeoutConnections.add ( connection );
     }
 
     public void disableConnectionTimeout ( IOChannel connection )
     {
-        synchronized ( _timeoutConnections )
-        {
-            _timeoutConnections.remove ( connection );
-        }
+        _timeoutConnections.remove ( connection );
     }
 
     private void checkTimeouts ()
     {
         Set<IOChannel> connections = null;
 
-        synchronized ( _timeoutConnections )
-        {
-            connections = new HashSet<IOChannel> ( _timeoutConnections );
-        }
+        connections = new HashSet<IOChannel> ( _timeoutConnections );
 
         for ( IOChannel channel : connections )
         {
@@ -152,7 +144,7 @@ public class IOProcessor implements Runnable
         }
         catch ( AlreadyBoundException e )
         {
-            e.printStackTrace ();
+            _log.info ( "Failed to run selector loop", e );
             return;
         }
 
@@ -166,40 +158,7 @@ public class IOProcessor implements Runnable
 
                 if ( rc > 0 )
                 {
-                    for ( SelectionKey key : _selector.selectedKeys () )
-                    {
-                        IOChannelListener listener = _connections.get ( key ).getIOChannelListener ();
-
-                        if ( !key.isValid () )
-                            continue;
-                        
-                        // check state and check if connection was closed during processing
-                        if ( key.isConnectable () )
-                            listener.handleConnect ();
-                        if ( !key.isValid () )
-                            continue;
-
-                        // check state and check if connection was closed during processing
-                        if ( key.isAcceptable () )
-                            listener.handleAccept ();
-                        if ( !key.isValid () )
-                            continue;
-
-                        // check state and check if connection was closed during processing
-                        if ( key.isReadable () )
-                            listener.handleRead ();
-                        if ( !key.isValid () )
-                            continue;
-
-                        // check state and check if connection was closed during processing
-                        if ( key.isWritable () )
-                            listener.handleWrite ();
-                        if ( !key.isValid () )
-                            continue;
-                    }
-
-                    // clear the selected list
-                    _selector.selectedKeys ().clear ();
+                    handleSelectedKeys ();
                 }
 
                 checkTimeouts ();
@@ -213,19 +172,63 @@ public class IOProcessor implements Runnable
             }
             catch ( NotBoundException e )
             {
-                e.printStackTrace ();
+                _log.info ( "While evaluation selector set", e );
                 _running = false;
             }
             catch ( WrongThreadException e )
             {
-                e.printStackTrace ();
+                _log.info ( "While evaluation selector set", e );
                 _running = false;
             }
-            catch ( CancelledKeyException e )
+        }
+    }
+
+    protected void handleKey ( SelectionKey key )
+    {
+        IOChannelListener listener = _connections.get ( key ).getIOChannelListener ();
+
+        if ( !key.isValid () )
+            return;
+
+        // check state and check if connection was closed during processing
+        if ( key.isConnectable () )
+            listener.handleConnect ();
+        if ( !key.isValid () )
+            return;
+
+        // check state and check if connection was closed during processing
+        if ( key.isAcceptable () )
+            listener.handleAccept ();
+        if ( !key.isValid () )
+            return;
+
+        // check state and check if connection was closed during processing
+        if ( key.isReadable () )
+            listener.handleRead ();
+        if ( !key.isValid () )
+            return;
+
+        // check state and check if connection was closed during processing
+        if ( key.isWritable () )
+            listener.handleWrite ();
+        if ( !key.isValid () )
+            return;
+    }
+
+    protected void handleSelectedKeys ()
+    {
+        for ( SelectionKey key : _selector.selectedKeys () )
+        {
+            try
             {
-                _log.info ( "Key cancelled", e );
+                handleKey ( key );
+            }
+            catch ( Throwable e )
+            {
+                _log.warn ( "Failed to process selector" );
             }
         }
+        _selector.selectedKeys ().clear ();
     }
 
     public Selector getSelector ()
