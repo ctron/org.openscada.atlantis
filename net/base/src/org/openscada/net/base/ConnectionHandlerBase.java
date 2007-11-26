@@ -56,7 +56,7 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
 
     private void doPing ()
     {
-        if ( _connection != null )
+        if ( _connection != null && !_pingDisabled )
         {
             _log.debug ( "Sending ping" );
             _connection.sendMessage ( MessageCreator.createPing () );
@@ -91,12 +91,6 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
     private void addPingJob ()
     {
         removePingJob ();
-
-        if ( _pingDisabled )
-        {
-            _log.debug ( "Request to disable ping. Not enabling!" );
-            return;
-        }
         
         _log.debug ( "adding ping job" );
 
@@ -158,20 +152,12 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
 
     public synchronized void disablePing ()
     {
-        if ( !_pingDisabled )
-        {
-            _pingDisabled = true;
-            removePingJob ();
-        }
+        _pingDisabled = true;
     }
 
     public synchronized void enablePing ()
     {
-        if ( _pingJob == null || _pingDisabled )
-        {
-            _pingDisabled = false;
-            addPingJob ();
-        }
+        _pingDisabled = false;
     }
 
 }
