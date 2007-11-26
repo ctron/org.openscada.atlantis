@@ -106,7 +106,7 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
             {
                 doPing ();
             }
-        }, Integer.getInteger ( "openscada.net.ping_period", 10 * 1000 ) );
+        }, Integer.getInteger ( "openscada.net.ping_period", 7 * 1000 ) );
     }
 
     public void closed ( Exception error )
