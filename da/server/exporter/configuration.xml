@@ -142,12 +142,12 @@
 	
 	<exporter:hive ref="org.openscada.da.server.snmp.Hive">
 		<exporter:configuration>
-			<opc:root
-				xmlns:opc="http://openscada.org/DA/OPC/Configuration"
+			<snmp:configuration
+				xmlns:snmp="http://openscada.org/DA/Server/SNMP"
 				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 				xmlns:chain="http://openscada.org/DA/Hive/ItemChain"
-				xsi:schemaLocation="http://openscada.org/DA/OPC/Configuration ../openscada_da_opcserver/schema/configuration.xsd ">
-			</opc:root>
+				xsi:schemaLocation="http://openscada.org/DA/Server/SNMP ../openscada_da_snmpserver/schema/SNMPServerSchema.xsd ">
+			</snmp:configuration>
 		</exporter:configuration>
 		<exporter:export uri="da:net://0.0.0.0:1206"/>
 	</exporter:hive>
