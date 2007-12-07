@@ -51,6 +51,7 @@ import org.openscada.opc.lib.da.ServerStateReader;
 import org.openscada.opc.lib.da.SyncAccess;
 import org.openscada.opc.lib.da.browser.Branch;
 import org.openscada.utils.collection.MapBuilder;
+import org.openscada.utils.timing.Scheduler;
 
 public class OPCConnection implements AccessStateListener, ServerStateListener, AutoReconnectListener
 {
@@ -92,11 +93,14 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
     private OPCFlatFolder _flatFolder;
 
     private FolderCommon _initialFolder;
+    
+    private Scheduler _scheduler;
 
-    public OPCConnection ( Hive hive, String alias, ConnectionSetup connectionSetup, Collection<String> initialItems )
+    public OPCConnection ( Hive hive, Scheduler scheduler, String alias, ConnectionSetup connectionSetup, Collection<String> initialItems )
     {
         _hive = hive;
         _connectionSetup = connectionSetup;
+        _scheduler = scheduler;
 
         _initialItems = initialItems;
 
@@ -192,7 +196,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
 
         setConnectionState ( ConnectionState.DISCONNECTED );
 
-        _server = new Server ( _connectionSetup.getConnectionInformation () );
+        _server = new Server ( _connectionSetup.getConnectionInformation (), _scheduler );
         _reconnectController = new AutoReconnectController ( _server );
         _reconnectController.addListener ( this );
 
