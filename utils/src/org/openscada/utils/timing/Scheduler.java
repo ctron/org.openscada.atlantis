@@ -165,6 +165,17 @@ public class Scheduler implements Runnable
             _thread.start ();
         }
     }
+    
+    public Scheduler ( boolean async, String threadName )
+    {
+        if ( async )
+        {
+            _thread = new Thread ( this, threadName );
+            rebindToThread ( _thread );
+            _thread.setDaemon ( true );
+            _thread.start ();
+        }
+    }
 
     public Scheduler ( Thread thread )
     {
