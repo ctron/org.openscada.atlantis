@@ -44,23 +44,24 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
     private static final String OPC_ATTRIBUTE_PREFIX = "org.openscada.opc";
     private static final String OPC_ATTRIBUTE_VALUE_ERROR = OPC_ATTRIBUTE_PREFIX + ".value.error";
     private static final String OPC_ATTRIBUTE_VALUE_ERROR_MESSAGE = OPC_ATTRIBUTE_PREFIX + ".value.error.message";
-    
+
     private static final String OPC_ATTRIBUTE_READ_ERROR = OPC_ATTRIBUTE_PREFIX + ".read.error";
     private static final String OPC_ATTRIBUTE_READ_ERROR_CODE = OPC_ATTRIBUTE_READ_ERROR + ".code";
     private static final String OPC_ATTRIBUTE_READ_ERROR_MESSAGE = OPC_ATTRIBUTE_READ_ERROR + ".message";
-    
+
     private static final String OPC_ATTRIBUTE_UPDATE_ERROR = OPC_ATTRIBUTE_PREFIX + ".update.error";
     private static final String OPC_ATTRIBUTE_UPDATE_ERROR_CODE = OPC_ATTRIBUTE_UPDATE_ERROR + ".code";
     private static final String OPC_ATTRIBUTE_UPDATE_ERROR_MESSAGE = OPC_ATTRIBUTE_UPDATE_ERROR + ".message";
 
     private static final String OPC_ATTRIBUTE_QUALITY = OPC_ATTRIBUTE_PREFIX + ".quality";
     private static final String OPC_ATTRIBUTE_VALUE_TYPE = OPC_ATTRIBUTE_PREFIX + ".value-type";
-    
-    private static final String OPC_ATTRIBUTE_TIMESTAMP = OPC_ATTRIBUTE_PREFIX + ".timestamp"; 
-    
+
+    private static final String OPC_ATTRIBUTE_TIMESTAMP = OPC_ATTRIBUTE_PREFIX + ".timestamp";
+
     private static Logger _log = Logger.getLogger ( OPCItem.class );
 
     private String _itemId = null;
+    private Object _itemLock = new Object ();
     private Item _item = null;
     private OPCConnection _connection = null;
 
@@ -75,19 +76,22 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         _connection = connection;
     }
 
-    public synchronized Item getItem ()
+    public Item getItem ()
     {
-        if ( _item == null )
+        synchronized ( _itemLock )
         {
-            try
+            if ( _item == null )
             {
-                _item = _connection.getGroup ().addItem ( _itemId );
+                try
+                {
+                    _item = _connection.getGroup ().addItem ( _itemId );
+                }
+                catch ( Throwable t )
+                {
+                }
             }
-            catch ( Throwable t )
-            {
-            }
+            return _item;
         }
-        return _item;
     }
 
     public String getId ()
@@ -171,8 +175,8 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         attributes.put ( OPC_ATTRIBUTE_READ_ERROR_MESSAGE, null );
         attributes.put ( OPC_ATTRIBUTE_READ_ERROR, null );
         attributes.put ( OPC_ATTRIBUTE_VALUE_TYPE, null );
-        attributes.put ( OPC_ATTRIBUTE_TIMESTAMP, null );
-        
+        // attributes.put ( OPC_ATTRIBUTE_TIMESTAMP, null );
+
         Variant newValue = null;
 
         if ( itemState != null )
@@ -185,26 +189,26 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
                 attributes.put ( OPC_ATTRIBUTE_VALUE_TYPE, new Variant ( itemState.getValue ().getType () ) );
 
                 newValue = new Variant ();
-                
+
                 if ( itemState.getErrorCode () != 0 )
                 {
                     int errorCode = itemState.getErrorCode ();
                     attributes.put ( OPC_ATTRIBUTE_READ_ERROR_CODE, new Variant ( errorCode ) );
-                    attributes.put ( OPC_ATTRIBUTE_READ_ERROR_MESSAGE, new Variant ( _connection.getServer ().getErrorMessage (
-                            errorCode ) ) );
+                    attributes.put ( OPC_ATTRIBUTE_READ_ERROR_MESSAGE, new Variant (
+                            _connection.getServer ().getErrorMessage ( errorCode ) ) );
                 }
                 else if ( itemState.getValue ().getType () == JIVariant.VT_ERROR )
                 {
                     int errorCode = itemState.getValue ().getObjectAsSCODE ();
                     attributes.put ( OPC_ATTRIBUTE_READ_ERROR_CODE, new Variant ( errorCode ) );
-                    attributes.put ( OPC_ATTRIBUTE_READ_ERROR_MESSAGE, new Variant ( _connection.getServer ().getErrorMessage (
-                            errorCode ) ) );
+                    attributes.put ( OPC_ATTRIBUTE_READ_ERROR_MESSAGE, new Variant (
+                            _connection.getServer ().getErrorMessage ( errorCode ) ) );
                     attributes.put ( OPC_ATTRIBUTE_READ_ERROR, new Variant ( true ) );
                 }
                 else
                 {
                     newValue = Helper.theirs2ours ( itemState.getValue () );
-                    if ( newValue != null && !newValue.equals ( _primaryValue ))
+                    if ( newValue != null && !newValue.equals ( _primaryValue ) )
                     {
                         // only update timestamp when we detected a change
                         attributes.put ( OPC_ATTRIBUTE_TIMESTAMP, new Variant ( System.currentTimeMillis () ) );
@@ -229,7 +233,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
             attributes.put ( OPC_ATTRIBUTE_QUALITY, null );
             attributes.put ( "timestamp", null );
             attributes.put ( OPC_ATTRIBUTE_VALUE_TYPE, null );
-            
+
             newValue = new Variant ();
         }
 
@@ -239,7 +243,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
                     + itemState.getValue ().toString () ) );
             attributes.put ( OPC_ATTRIBUTE_VALUE_ERROR, new Variant ( true ) );
         }
-        
+
         // definition is to first write the attributes and then the value
         updateAttributes ( attributes );
         if ( newValue != null )
@@ -314,14 +318,17 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
 
     }
 
-    public synchronized void stateChanged ( boolean state )
+    public void stateChanged ( boolean state )
     {
         _log.debug ( String.format ( "State changed: %s", state ) );
         updateAttribute ( "connection.error", new Variant ( !state ) );
 
         if ( !state )
         {
-            _item = null;
+            synchronized ( _itemLock )
+            {
+                _item = null;
+            }
         }
     }
 
