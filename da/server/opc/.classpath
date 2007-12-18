@@ -14,7 +14,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/ncacn_ip_tcp.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ncacn_np.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ntlm-security.jar"/>
-	<classpathentry kind="lib" path="lib/openscada-opc-dcom-0.2.1-20071207-nightly.jar"/>
-	<classpathentry kind="lib" path="lib/openscada-opc-lib-0.2.1-20071207-nightly.jar"/>
+	<classpathentry kind="lib" path="lib/openscada-opc-dcom-0.2.1-20071218-nightly.jar"/>
+	<classpathentry kind="lib" path="lib/openscada-opc-lib-0.2.1-20071218-nightly.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
