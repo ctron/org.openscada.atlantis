@@ -20,11 +20,9 @@
 package org.openscada.da.server.common.chain;
 
 import java.util.EnumSet;
-import java.util.Map;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
-import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.server.common.DataItemInformationBase;
 
