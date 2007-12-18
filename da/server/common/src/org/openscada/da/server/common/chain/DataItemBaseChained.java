@@ -24,9 +24,9 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
@@ -40,10 +40,10 @@ import org.openscada.da.server.common.WriteAttributesHelper;
 
 public abstract class DataItemBaseChained extends DataItemBase
 {
-    protected Map<String,Variant> _primaryAttributes = null;
+    protected Map<String, Variant> _primaryAttributes = null;
     protected AttributeManager _secondaryAttributes = null;
-    
-    protected List<ChainProcessEntry> _chain = new LinkedList<ChainProcessEntry> ();
+
+    protected List<ChainProcessEntry> _chain = new CopyOnWriteArrayList<ChainProcessEntry> ();
 
     public DataItemBaseChained ( DataItemInformation dataItemInformation )
     {
@@ -53,27 +53,32 @@ public abstract class DataItemBaseChained extends DataItemBase
         _secondaryAttributes = new AttributeManager ( this );
     }
 
-    public synchronized void updateAttributes ( Map<String, Variant> attributes )
+    public void updateAttributes ( Map<String, Variant> attributes )
     {
-        Map<String, Variant> diff = new HashMap <String, Variant> ();
-        AttributesHelper.mergeAttributes ( _primaryAttributes, attributes, diff );
-        
-        if ( diff.size () > 0 )
+        synchronized ( _primaryAttributes )
         {
-            process ();
+            Map<String, Variant> diff = new HashMap<String, Variant> ();
+            AttributesHelper.mergeAttributes ( _primaryAttributes, attributes, diff );
+
+            if ( diff.size () > 0 )
+            {
+                process ();
+            }
         }
     }
-    
     /**
      * Remove all attributes
      *
      */
-    public synchronized void clearAttributes ()
+    public void clearAttributes ()
     {
-        if ( _primaryAttributes.size () > 0 )
+        synchronized ( _primaryAttributes )
         {
-            _primaryAttributes.clear ();
-            process ();
+            if ( _primaryAttributes.size () > 0 )
+            {
+                _primaryAttributes.clear ();
+                process ();
+            }
         }
     }
 
@@ -81,15 +86,15 @@ public abstract class DataItemBaseChained extends DataItemBase
     {
         return _secondaryAttributes.get ();
     }
-  
-    public synchronized WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
+
+    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
     {
         WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
-        
+
         for ( ChainProcessEntry chainEntry : getChainCopy () )
         {
             ChainItem item = chainEntry.getWhat ();
-            
+
             WriteAttributeResults partialResult = item.setAttributes ( attributes );
             if ( partialResult != null )
             {
@@ -103,36 +108,36 @@ public abstract class DataItemBaseChained extends DataItemBase
                 }
             }
         }
-        
+
         process ();
-        
+
         return WriteAttributesHelper.errorUnhandled ( writeAttributeResults, attributes );
     }
-    
+
     protected abstract void process ();
-    
-    public synchronized void setChain ( List<ChainProcessEntry> chain )
+
+    public void setChain ( List<ChainProcessEntry> chain )
     {
         if ( chain == null )
         {
-            _chain = new LinkedList<ChainProcessEntry> ();
+            _chain = new CopyOnWriteArrayList<ChainProcessEntry> ();
         }
         else
         {
-            _chain = new LinkedList<ChainProcessEntry> ( chain );
+            _chain = new CopyOnWriteArrayList<ChainProcessEntry> ( chain );
         }
         process ();
     }
-    
-    public synchronized void addChainElement ( EnumSet<IODirection> when, ChainItem item )
+
+    public void addChainElement ( EnumSet<IODirection> when, ChainItem item )
     {
         if ( _chain.add ( new ChainProcessEntry ( when, item ) ) )
         {
             process ();
         }
     }
-    
-    public synchronized void addChainElement ( IODirection when, ChainItem item )
+
+    public void addChainElement ( IODirection when, ChainItem item )
     {
         if ( _chain.add ( new ChainProcessEntry ( EnumSet.of ( when ), item ) ) )
         {
@@ -140,11 +145,11 @@ public abstract class DataItemBaseChained extends DataItemBase
         }
     }
 
-    public synchronized void removeChainElement ( EnumSet<IODirection> when, ChainItem item )
+    public void removeChainElement ( EnumSet<IODirection> when, ChainItem item )
     {
         int n = 0;
-        
-        for ( Iterator<ChainProcessEntry> i = _chain.iterator ();  i.hasNext ();  )
+
+        for ( Iterator<ChainProcessEntry> i = _chain.iterator (); i.hasNext (); )
         {
             ChainProcessEntry entry = i.next ();
 
@@ -157,17 +162,16 @@ public abstract class DataItemBaseChained extends DataItemBase
                 }
             }
         }
-        
+
         if ( n > 0 )
         {
             process ();
         }
     }
 
-    protected synchronized Collection<ChainProcessEntry> getChainCopy ()
+    protected Collection<ChainProcessEntry> getChainCopy ()
     {
         return new ArrayList<ChainProcessEntry> ( _chain );
     }
-
 
 }

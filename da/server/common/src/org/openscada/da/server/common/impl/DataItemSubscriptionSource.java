@@ -2,9 +2,9 @@ package org.openscada.da.server.common.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
@@ -24,10 +24,10 @@ import org.openscada.da.server.common.ItemListener;
 public class DataItemSubscriptionSource implements SubscriptionSource, ItemListener
 {
     private static Logger _log = Logger.getLogger ( DataItemSubscriptionSource.class );
-    
+
     private DataItem _dataItem = null;
 
-    private Set<DataItemSubscriptionListener> _listeners = new HashSet<DataItemSubscriptionListener> ();
+    private Set<DataItemSubscriptionListener> _listeners = new CopyOnWriteArraySet<DataItemSubscriptionListener> ();
 
     private boolean _bound = false;
 
@@ -81,12 +81,13 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
             if ( _cacheValue != null )
             {
                 _log.debug ( "Sending initial value:" + _cacheValue );
-                ((DataItemSubscriptionListener)listener.getListener ()).valueChanged ( _dataItem, _cacheValue, true );
+                ( (DataItemSubscriptionListener)listener.getListener () ).valueChanged ( _dataItem, _cacheValue, true );
             }
             if ( !_cacheAttributes.isEmpty () )
             {
                 _log.debug ( "Sending initial attributes: " + _cacheAttributes.size () );
-                ((DataItemSubscriptionListener)listener.getListener ()).attributesChanged ( _dataItem, _cacheAttributes, true );
+                ( (DataItemSubscriptionListener)listener.getListener () ).attributesChanged ( _dataItem,
+                        _cacheAttributes, true );
             }
         }
 
@@ -114,16 +115,20 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         return subscriptionInformation.getListener () instanceof DataItemSubscriptionListener;
     }
 
-    public synchronized void attributesChanged ( DataItem item, Map<String, Variant> attributes, boolean cache )
+    public void attributesChanged ( DataItem item, Map<String, Variant> attributes, boolean cache )
     {
-        AttributesHelper.mergeAttributes ( _cacheAttributes, attributes );
+        synchronized ( _cacheAttributes )
+        {
+            AttributesHelper.mergeAttributes ( _cacheAttributes, attributes );
+        }
+        
         for ( DataItemSubscriptionListener listener : _listeners )
         {
             listener.attributesChanged ( item, attributes, cache );
         }
     }
 
-    public synchronized void valueChanged ( DataItem item, Variant variant, boolean cache )
+    public void valueChanged ( DataItem item, Variant variant, boolean cache )
     {
         _cacheValue = variant;
         for ( DataItemSubscriptionListener listener : _listeners )

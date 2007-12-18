@@ -134,12 +134,10 @@ public abstract class DataItemBase implements DataItem
             return;
         }
 
-        synchronized ( this )
+        ItemListener listener = _listener;
+        if ( listener != null )
         {
-            if ( _listener != null )
-            {
-                _listener.attributesChanged ( this, attributes, cache );
-            }
+            listener.attributesChanged ( this, attributes, cache );
         }
     }
 
