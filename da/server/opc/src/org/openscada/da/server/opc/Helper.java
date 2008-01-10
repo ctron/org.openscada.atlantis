@@ -115,6 +115,10 @@ public class Helper
             {
                 return new JIVariant ( value.asInteger () );
             }
+            else if ( value.isLong () )
+            {
+                return new JIVariant ( value.asLong () );
+            }
             else if ( value.isString () )
             {
                 return new JIVariant ( new JIString ( value.asString () ) );
