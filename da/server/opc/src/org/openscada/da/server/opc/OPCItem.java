@@ -110,13 +110,14 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
     public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         /*
-         * We need to intercept this call since we handle IO flags seperately. Although
-         * we dereived from an IO item we may be reduced in functionality due to the 
-         * underlaying OPC item. So we check here if OUTPUT is possible and when 
-         * successfull we pass the request on to our superclass.
+         * We need to intercept this call since we handle IO flags separately. Although
+         * we derived from an IO item we may be reduced in functionality due to the 
+         * underlying OPC item. So we check here if OUTPUT is possible and when 
+         * successful we pass the request on to our superclass.
          */
         if ( !getInformation ().getIODirection ().contains ( IODirection.OUTPUT ) )
         {
+            _log.warn ( String.format ( "Tried to write to item %s which is read-only", _itemId ) );
             throw new InvalidOperationException ();
         }
 
