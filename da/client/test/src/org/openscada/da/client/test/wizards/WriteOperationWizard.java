@@ -19,7 +19,6 @@
 
 package org.openscada.da.client.test.wizards;
 
-
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,23 +34,22 @@ import org.openscada.da.client.test.impl.HiveConnection;
 
 public class WriteOperationWizard extends Wizard implements INewWizard
 {
-    
+
     private WriteOperationWizardValuePage _page = null;
-    
+
     private IStructuredSelection _selection = null;
-    
+
     private boolean _complete = false;
     private Throwable _error = null;
-    
+
     @Override
     public boolean performFinish ()
     {
         final String item = _page.getItem ();
         final Variant value = _page.getValue ();
         final HiveConnection connection = _page.getConnection ();
-        
-        IRunnableWithProgress op = new IRunnableWithProgress()
-        {
+
+        IRunnableWithProgress op = new IRunnableWithProgress () {
             public void run ( IProgressMonitor monitor ) throws InvocationTargetException
             {
                 try
@@ -70,28 +68,28 @@ public class WriteOperationWizard extends Wizard implements INewWizard
         };
         try
         {
-            getContainer().run ( true, true, op );
+            getContainer ().run ( true, true, op );
         }
-        catch (InterruptedException e)
+        catch ( InterruptedException e )
         {
             return false;
         }
-        catch (InvocationTargetException e)
+        catch ( InvocationTargetException e )
         {
-            Throwable realException = e.getTargetException();
-            MessageDialog.openError ( getShell(), "Error writing to item", realException.getMessage () );
+            Throwable realException = e.getTargetException ();
+            MessageDialog.openError ( getShell (), "Error writing to item", realException.getMessage () );
             return false;
         }
         return true;
     }
-    
+
     private void doFinish ( final IProgressMonitor monitor, HiveConnection hiveConnection, String item, Variant value ) throws Exception
     {
-        monitor.beginTask ( "Writing value to item" , 2 );
-        
+        monitor.beginTask ( "Writing value to item", 2 );
+
         monitor.worked ( 1 );
         final WriteOperationWizard _this = this;
-        
+
         _complete = false;
         hiveConnection.getConnection ().write ( item, value, new WriteOperationCallback () {
 
@@ -121,17 +119,16 @@ public class WriteOperationWizard extends Wizard implements INewWizard
                 }
             }
         } );
-        
+
         synchronized ( this )
         {
-            wait ( 100 );
-            
-            if ( _complete || monitor.isCanceled () )
+            while ( !(_complete || monitor.isCanceled ()) )
             {
-                if ( _error != null )
-                {
-                    throw new Exception ( _error );
-                }
+                wait ( 100 );
+            }
+            if ( _error != null )
+            {
+                throw new Exception ( _error );
             }
         }
         monitor.worked ( 1 );
@@ -144,19 +141,18 @@ public class WriteOperationWizard extends Wizard implements INewWizard
     public void init ( IWorkbench workbench, IStructuredSelection selection )
     {
         setNeedsProgressMonitor ( true );
-        
+
         _selection = selection;
     }
-    
+
     @Override
     public void addPages ()
     {
         super.addPages ();
-        
-        addPage ( _page = new WriteOperationWizardValuePage() );
-        
+
+        addPage ( _page = new WriteOperationWizardValuePage () );
+
         _page.setSelection ( _selection );
     }
-    
 
 }
