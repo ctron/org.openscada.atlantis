@@ -293,7 +293,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
                     String errorMessage = _connection.getServer ().getErrorMessage ( errorCode ); 
                     updateAttribute ( OPC_ATTRIBUTE_WRITE_ERROR_MESSAGE, new Variant (
                             errorMessage ) );
-                    _log.warn ( String.format ( "Failed to write to item %s: %s - %s", _itemId, errorCode, errorMessage ) );
+                    _log.warn ( String.format ( "Failed to write to item %s: 0x%08X - %s", _itemId, errorCode, errorMessage ) );
                     throw new InvalidOperationException ();
                 }
                 else
