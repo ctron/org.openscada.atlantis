@@ -58,7 +58,7 @@ public class WriteOperationWizard extends Wizard implements INewWizard
                 {
                     doFinish ( monitor, connection, item, value );
                 }
-                catch ( Exception e )
+                catch ( Throwable e )
                 {
                     throw new InvocationTargetException ( e );
                 }
