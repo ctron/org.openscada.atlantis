@@ -48,6 +48,10 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
     private static final String OPC_ATTRIBUTE_READ_ERROR = OPC_ATTRIBUTE_PREFIX + ".read.error";
     private static final String OPC_ATTRIBUTE_READ_ERROR_CODE = OPC_ATTRIBUTE_READ_ERROR + ".code";
     private static final String OPC_ATTRIBUTE_READ_ERROR_MESSAGE = OPC_ATTRIBUTE_READ_ERROR + ".message";
+    
+    private static final String OPC_ATTRIBUTE_WRITE_ERROR = OPC_ATTRIBUTE_PREFIX + ".write.error";
+    private static final String OPC_ATTRIBUTE_WRITE_ERROR_CODE = OPC_ATTRIBUTE_WRITE_ERROR + ".code";
+    private static final String OPC_ATTRIBUTE_WRITE_ERROR_MESSAGE = OPC_ATTRIBUTE_WRITE_ERROR + ".message";
 
     private static final String OPC_ATTRIBUTE_UPDATE_ERROR = OPC_ATTRIBUTE_PREFIX + ".update.error";
     private static final String OPC_ATTRIBUTE_UPDATE_ERROR_CODE = OPC_ATTRIBUTE_UPDATE_ERROR + ".code";
@@ -72,7 +76,6 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         super ( information );
 
         _itemId = itemId;
-
         _connection = connection;
     }
 
@@ -283,19 +286,19 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
             if ( item != null )
             {
                 int errorCode = item.write ( variant );
-                updateAttribute ( "org.openscada.opc.write.last-error.code", new Variant ( errorCode ) );
+                updateAttribute ( OPC_ATTRIBUTE_WRITE_ERROR_CODE, new Variant ( errorCode ) );
                 if ( errorCode != 0 )
                 {
                     
                     String errorMessage = _connection.getServer ().getErrorMessage ( errorCode ); 
-                    updateAttribute ( "org.openscada.opc.write.last-error.message", new Variant (
+                    updateAttribute ( OPC_ATTRIBUTE_WRITE_ERROR_MESSAGE, new Variant (
                             errorMessage ) );
                     _log.warn ( String.format ( "Failed to write to item %s: %s - %s", _itemId, errorCode, errorMessage ) );
                     throw new InvalidOperationException ();
                 }
                 else
                 {
-                    updateAttribute ( "org.openscada.opc.write.last-error.message", null );
+                    updateAttribute ( OPC_ATTRIBUTE_WRITE_ERROR_MESSAGE, null );
                 }
             }
             else
@@ -305,7 +308,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         }
         catch ( JIException e )
         {
-            updateAttribute ( "org.openscada.opc.write.last-error-code", new Variant ( e.getErrorCode () ) );
+            updateAttribute ( OPC_ATTRIBUTE_WRITE_ERROR_CODE, new Variant ( e.getErrorCode () ) );
             _log.warn ( String.format ( "Failed to write to item %s: %s", _itemId, e.getErrorCode () ) );
             throw new InvalidOperationException ();
         }
