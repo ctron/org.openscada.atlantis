@@ -270,6 +270,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
     {
         JIVariant variant = Helper.ours2theirs ( value );
 
+        // we cannot write nothing
         if ( variant == null )
         {
             _log.warn ( "Unable to convert value to JIVariant: " + value.toString () );
@@ -285,8 +286,11 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
                 updateAttribute ( "org.openscada.opc.write.last-error.code", new Variant ( errorCode ) );
                 if ( errorCode != 0 )
                 {
+                    
+                    String errorMessage = _connection.getServer ().getErrorMessage ( errorCode ); 
                     updateAttribute ( "org.openscada.opc.write.last-error.message", new Variant (
-                            _connection.getServer ().getErrorMessage ( errorCode ) ) );
+                            errorMessage ) );
+                    _log.warn ( String.format ( "Failed to write to item %s: %s - %s", _itemId, errorCode, errorMessage ) );
                     throw new InvalidOperationException ();
                 }
                 else
@@ -302,6 +306,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         catch ( JIException e )
         {
             updateAttribute ( "org.openscada.opc.write.last-error-code", new Variant ( e.getErrorCode () ) );
+            _log.warn ( String.format ( "Failed to write to item %s: %s", _itemId, e.getErrorCode () ) );
             throw new InvalidOperationException ();
         }
     }
