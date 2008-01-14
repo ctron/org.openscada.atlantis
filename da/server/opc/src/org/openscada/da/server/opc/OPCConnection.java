@@ -77,6 +77,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
     private DataItemInputChained _stateItem = null;
     private DataItemInputChained _autoReconnectStateItem = null;
     private DataItemCommand _connectCommandItem = null;
+    private DataItemCommand _reconnectCommandItem = null;
     private DataItemCommand _disconnectCommandItem = null;
     private DataItemCommand _suicideCommandItem = null;
     private DataItemInputChained _accessStateItem = null;
@@ -93,8 +94,10 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
     private OPCFlatFolder _flatFolder;
 
     private FolderCommon _initialFolder;
-    
+
     private Scheduler _scheduler;
+
+    private boolean _reconnectPhase;
 
     public OPCConnection ( Hive hive, Scheduler scheduler, String alias, ConnectionSetup connectionSetup, Collection<String> initialItems )
     {
@@ -131,6 +134,14 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
             public void command ( Variant value )
             {
                 triggerConnect ();
+            }
+        } );
+        _reconnectCommandItem = new DataItemCommand ( getBaseId () + ".reconnect" );
+        _reconnectCommandItem.addListener ( new DataItemCommand.Listener () {
+
+            public void command ( Variant value )
+            {
+                triggerReconnect ();
             }
         } );
         _disconnectCommandItem = new DataItemCommand ( getBaseId () + ".disconnect" );
@@ -237,6 +248,10 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         _connectionFolder.add ( "connect", _connectCommandItem, new MapBuilder<String, Variant> ().getMap () );
         _hive.registerItem ( _disconnectCommandItem );
         _connectionFolder.add ( "disconnect", _disconnectCommandItem, new MapBuilder<String, Variant> ().getMap () );
+        _hive.registerItem ( _reconnectCommandItem );
+        _connectionFolder.add ( "reconnect", _reconnectCommandItem,
+                new MapBuilder<String, Variant> ().put ( "description",
+                        new Variant ( "Command item to disconnect and reconnect the OPC connection" ) ).getMap () );
         _hive.registerItem ( _suicideCommandItem );
         _connectionFolder.add ( "suicide", _suicideCommandItem, new MapBuilder<String, Variant> ().getMap () );
 
@@ -287,6 +302,12 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         _serverStateReader.stop ();
         _serverStateReader = null;
         _server = null;
+    }
+
+    public void triggerReconnect ()
+    {
+        _reconnectPhase = true;
+        triggerDisconnect ();
     }
 
     public void triggerConnect ()
@@ -372,6 +393,12 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         removeTreeFolder ();
         removeFlatFolder ();
         removeInitialFolder ();
+        
+        if ( _reconnectPhase )
+        {
+            _reconnectPhase = false;
+            triggerConnect ();
+        }
     }
 
     protected void handleConnected ()
