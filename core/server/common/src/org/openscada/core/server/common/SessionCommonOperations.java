@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006 to 2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ package org.openscada.core.server.common;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
 import org.openscada.utils.jobqueue.CancelNotSupportedException;
@@ -31,19 +32,19 @@ public class SessionCommonOperations implements OperationManager.Listener
 {
     private static Logger _log = Logger.getLogger ( SessionCommonOperations.class );
     
-    private Set<Handle> _operations = new HashSet<Handle> (); 
+    private Set<Handle> _operations = new CopyOnWriteArraySet<Handle> (); 
     
-    synchronized public boolean addOperation ( Handle handle )
+    public boolean addOperation ( Handle handle )
     {
         return _operations.add ( handle );
     }
     
-    synchronized public boolean removeOperation ( Handle handle )
+    public boolean removeOperation ( Handle handle )
     {
         return _operations.remove ( handle );
     }
     
-    synchronized public boolean containsOperation ( Handle handle )
+    public boolean containsOperation ( Handle handle )
     {
         return _operations.contains ( handle );
     }
@@ -53,20 +54,23 @@ public class SessionCommonOperations implements OperationManager.Listener
         removeOperation ( handle );
     }
 
-    synchronized public Set<Handle> getOperations ()
+    public Set<Handle> getOperations ()
     {
         return new HashSet<Handle> ( _operations );
     }
 
-    synchronized public void clear ()
+    public void clear ()
     {
         _operations.clear ();
     }
     
-    synchronized public void cancelAll ()
+    public void cancelAll ()
     {
+        Set<Handle> operations = new HashSet<Handle> ( _operations );
+        _operations.clear ();
+        
         // cancel all pending operations
-        for ( Handle handle : _operations )
+        for ( Handle handle : operations )
         {
             try
             {
@@ -79,6 +83,5 @@ public class SessionCommonOperations implements OperationManager.Listener
                 // ignore it .. we can't do anything
             }
         }
-        clear ();
     }
 }
