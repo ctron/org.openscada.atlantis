@@ -306,6 +306,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
 
     public void triggerReconnect ()
     {
+        _log.warn ( "Triggering reconnect" );
         _reconnectPhase = true;
         triggerDisconnect ();
     }
