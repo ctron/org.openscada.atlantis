@@ -62,6 +62,8 @@ public class Hive extends HiveCommon
     public Hive ( XMLConfigurator configurator ) throws XmlException, IOException, ConfigurationError
     {
         super ();
+        
+        _log.warn ( String.format ( "rcp.socketTimeout = %s", System.getProperty ( "rcp.socketTimeout" ) ) );
 
         _scheduler = new Scheduler ( true );
 
