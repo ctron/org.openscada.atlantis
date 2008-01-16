@@ -166,6 +166,7 @@
 						encoding="utf-8"
 						source="1.5"
 						target="1.5"
+						debug="on"
 						destdir="${build.dir}/${package}-build/bin"
 						>
 						<src path="${build.dir}/${package}-build/gensrc"/>
@@ -186,6 +187,7 @@
     			encoding="utf-8"
     			source="1.5"
     			target="1.5"
+    			debug="on"
     			destdir="${build.dir}/${package}-build/bin"
     			>
 				<src path="src"/>
