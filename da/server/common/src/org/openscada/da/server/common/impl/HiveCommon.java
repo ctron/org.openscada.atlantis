@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
@@ -83,7 +84,7 @@ public class HiveCommon implements Hive, ConfigurableHive
 
     private Thread _jobQueueThread = null;
 
-    private List<DataItemFactory> _factoryList = new LinkedList<DataItemFactory> ();
+    private List<DataItemFactory> _factoryList = new CopyOnWriteArrayList<DataItemFactory> ();
 
     private Set<DataItemFactoryListener> _factoryListeners = new HashSet<DataItemFactoryListener> ();
 
@@ -557,7 +558,7 @@ public class HiveCommon implements Hive, ConfigurableHive
 
         synchronized ( sessionCommon )
         {
-            _log.info ( String.format ( "Thawing operation %d", id ) );
+            _log.debug ( String.format ( "Thawing operation %d", id ) );
 
             Handle handle = _opManager.get ( id );
             if ( handle != null )
@@ -577,44 +578,29 @@ public class HiveCommon implements Hive, ConfigurableHive
      */
     public void addItemFactory ( DataItemFactory factory )
     {
-        synchronized ( _factoryList )
-        {
-            _factoryList.add ( factory );
-        }
+        _factoryList.add ( factory );
     }
 
     public void removeItemFactory ( DataItemFactory factory )
     {
-        synchronized ( _factoryList )
-        {
-            _factoryList.remove ( factory );
-        }
+        _factoryList.remove ( factory );
     }
 
     public void addItemFactoryListener ( DataItemFactoryListener listener )
     {
-        synchronized ( _factoryListeners )
-        {
-            _factoryListeners.add ( listener );
-        }
+        _factoryListeners.add ( listener );
     }
 
     public void removeItemFactoryListener ( DataItemFactoryListener listener )
     {
-        synchronized ( _factoryListeners )
-        {
-            _factoryListeners.remove ( listener );
-        }
+        _factoryListeners.remove ( listener );
     }
 
     private void fireDataItemCreated ( DataItem dataItem )
     {
-        synchronized ( _factoryListeners )
+        for ( DataItemFactoryListener listener : _factoryListeners )
         {
-            for ( DataItemFactoryListener listener : _factoryListeners )
-            {
-                listener.created ( dataItem );
-            }
+            listener.created ( dataItem );
         }
     }
 
