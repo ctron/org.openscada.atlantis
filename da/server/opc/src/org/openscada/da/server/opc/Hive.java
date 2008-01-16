@@ -63,7 +63,7 @@ public class Hive extends HiveCommon
     {
         super ();
         
-        _log.warn ( String.format ( "rcp.socketTimeout = %s", System.getProperty ( "rcp.socketTimeout" ) ) );
+        _log.warn ( String.format ( "rpc.socketTimeout = %s", System.getProperty ( "rpc.socketTimeout" ) ) );
 
         _scheduler = new Scheduler ( true );
 
