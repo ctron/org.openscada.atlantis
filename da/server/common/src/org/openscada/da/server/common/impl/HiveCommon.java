@@ -484,7 +484,7 @@ public class HiveCommon implements Hive, ConfigurableHive
                     if ( !isCanceled () )
                         listener.success ();
                 }
-                catch ( Exception e )
+                catch ( Throwable e )
                 {
                     if ( !isCanceled () )
                         listener.failure ( e );
