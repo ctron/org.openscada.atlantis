@@ -20,10 +20,10 @@
 package org.openscada.utils.jobqueue;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class OperationManager
 {
@@ -46,31 +46,39 @@ public class OperationManager
             _id = id;
         }
 
-        public synchronized void cancel () throws CancelNotSupportedException
+        public void cancel () throws CancelNotSupportedException
         {
-            if ( _started )
+            synchronized ( this )
             {
-                _operation.cancel ();
+                if ( !_started )
+                {
+                    return;
+                }
                 _canceled = true;
-                remove ();
             }
+            _operation.cancel ();
+            remove ();
         }
 
-        public synchronized void start ()
+        public void start ()
         {
-            if ( ( !_started ) && ( !_canceled ) )
+            synchronized ( this )
             {
-                _operation.start ( this );
+                if ( _started || _canceled )
+                {
+                    return;
+                }
                 _started = true;
             }
+            _operation.start ( this );
         }
 
-        public synchronized void completed ()
+        public void completed ()
         {
             remove ();
         }
 
-        private void remove ()
+        private synchronized void remove ()
         {
             _manager.remove ( this );
             notifyAll ();
@@ -87,25 +95,22 @@ public class OperationManager
         void removedHandle ( Handle handle );
     }
 
-    private Set<Listener> _listeners = new HashSet<Listener> ();
+    private Set<Listener> _listeners = new CopyOnWriteArraySet<Listener> ();
 
     private Map<Long, Handle> _operationMap = new HashMap<Long, Handle> ();
 
-    public Handle schedule ( Operation operation )
+    public synchronized Handle schedule ( Operation operation )
     {
-        synchronized ( this )
+        Random r = new Random ();
+        Long id;
+        do
         {
-            Random r = new Random ();
-            Long id;
-            do
-            {
-                id = r.nextLong ();
-            } while ( _operationMap.containsKey ( id ) );
+            id = r.nextLong ();
+        } while ( _operationMap.containsKey ( id ) );
 
-            Handle handle = new Handle ( operation, this, id );
-            _operationMap.put ( id, handle );
-            return handle;
-        }
+        Handle handle = new Handle ( operation, this, id );
+        _operationMap.put ( id, handle );
+        return handle;
     }
 
     public void remove ( Handle handle )
@@ -127,28 +132,19 @@ public class OperationManager
 
     public void addListener ( Listener listener )
     {
-        synchronized ( this )
-        {
             _listeners.add ( listener );
-        }
     }
 
     public void removeListener ( Listener listener )
     {
-        synchronized ( this )
-        {
-            _listeners.remove ( listener );
-        }
+        _listeners.remove ( listener );
     }
 
     private void fireRemoved ( Handle handle )
     {
-        synchronized ( this )
+        for ( Listener listener : _listeners )
         {
-            for ( Listener listener : _listeners )
-            {
-                listener.removedHandle ( handle );
-            }
+            listener.removedHandle ( handle );
         }
     }
 
