@@ -259,6 +259,9 @@ public class HiveCommon implements Hive, ConfigurableHive
         }
     }
 
+    /**
+     * Unsubscribe a session from an item
+     */
     public void unsubscribeItem ( Session session, String itemId ) throws InvalidSessionException, InvalidItemException
     {
         SessionCommon sessionCommon = validateSession ( session );
@@ -318,17 +321,14 @@ public class HiveCommon implements Hive, ConfigurableHive
 
     private DataItem factoryCreate ( DataItemFactoryRequest request )
     {
-        synchronized ( _factoryList )
+        for ( DataItemFactory factory : _factoryList )
         {
-            for ( DataItemFactory factory : _factoryList )
+            if ( factory.canCreate ( request ) )
             {
-                if ( factory.canCreate ( request ) )
-                {
-                    DataItem dataItem = factory.create ( request );
-                    registerItem ( dataItem );
-                    fireDataItemCreated ( dataItem );
-                    return dataItem;
-                }
+                DataItem dataItem = factory.create ( request );
+                registerItem ( dataItem );
+                fireDataItemCreated ( dataItem );
+                return dataItem;
             }
         }
         return null;
