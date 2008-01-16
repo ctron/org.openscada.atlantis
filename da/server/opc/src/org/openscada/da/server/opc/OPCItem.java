@@ -123,8 +123,18 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
             _log.warn ( String.format ( "Tried to write to item %s which is read-only", _itemId ) );
             throw new InvalidOperationException ();
         }
+        
+        if ( this._connection.getState () == ConnectionState.CONNECTED )
+        {
+            super.writeValue ( value );    
+        }
+        else
+        {
+            _log.info ( String.format ( "Failed to write to disconnected item (%s)", _itemId ) );
+            throw new InvalidOperationException ();
+        }
 
-        super.writeValue ( value );
+        
     }
 
     public synchronized void suspend ()
@@ -308,8 +318,12 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         }
         catch ( JIException e )
         {
+            if ( e.getErrorCode () == 0x8001FFFF )
+            {
+                // internal error .. socket closed?
+            }
             updateAttribute ( OPC_ATTRIBUTE_WRITE_ERROR_CODE, new Variant ( e.getErrorCode () ) );
-            _log.warn ( String.format ( "Failed to write to item %s: %s", _itemId, e.getErrorCode () ) );
+            _log.warn ( String.format ( "Failed to write to item (call) %s: %0x%08X", _itemId, e.getErrorCode () ), e );
             throw new InvalidOperationException ();
         }
     }
