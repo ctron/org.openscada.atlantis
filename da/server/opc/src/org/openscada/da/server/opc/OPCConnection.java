@@ -35,10 +35,12 @@ import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 import org.openscada.opc.lib.common.NotConnectedException;
 import org.openscada.opc.lib.da.AccessBase;
 import org.openscada.opc.lib.da.AccessStateListener;
+import org.openscada.opc.lib.da.AddFailedException;
 import org.openscada.opc.lib.da.Async20Access;
 import org.openscada.opc.lib.da.AutoReconnectController;
 import org.openscada.opc.lib.da.AutoReconnectListener;
@@ -394,12 +396,53 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         removeTreeFolder ();
         removeFlatFolder ();
         removeInitialFolder ();
-        
+
         if ( _reconnectPhase )
         {
             _reconnectPhase = false;
             triggerConnect ();
         }
+    }
+
+    /**
+     * fill our initial items
+     * @throws JIException
+     * @throws AddFailedException
+     * @throws ConfigurationError
+     */
+    protected void fillInitialItems () throws JIException, AddFailedException, ConfigurationError
+    {
+        // adding pre-configured known items
+        if ( _initialItems != null )
+        {
+            addInitialFolder ();
+        }
+
+        // if flat browsing is enabled ...
+        if ( _connectionSetup.isFlatBrowser () )
+        {
+            addFlatFolder ();
+        }
+        // if tree browsing is enabled ... 
+        if ( _connectionSetup.isTreeBrowser () )
+        {
+            addTreeFolder ();
+        }
+
+        // add granted items
+        String prefix = getBaseId () + ".";
+        for ( String item : _hive.getGrantedItems () )
+        {
+            if ( item.startsWith ( prefix ) )
+            {
+                String opcItem = item.substring ( prefix.length () );
+                _log.debug ( String.format ( "Trying to late bind granted opc item: '%s'", opcItem ) );
+                _itemManager.createItem ( opcItem );
+            }
+        }
+
+        // recheck all granted items
+        _hive.recheckGrantedItems ();
     }
 
     protected void handleConnected ()
@@ -410,37 +453,21 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
 
             _group = _server.addGroup ();
 
-            // adding pre-configured known items
-            if ( _initialItems != null )
-            {
-                addInitialFolder ();
-            }
+            Thread t = new Thread ( new Runnable () {
 
-            // if flat browsing is enabled ...
-            if ( _connectionSetup.isFlatBrowser () )
-            {
-                addFlatFolder ();
-            }
-            // if tree browsing is enabled ... 
-            if ( _connectionSetup.isTreeBrowser () )
-            {
-                addTreeFolder ();
-            }
-
-            // add granted items
-            String prefix = getBaseId () + ".";
-            for ( String item : _hive.getGrantedItems () )
-            {
-                if ( item.startsWith ( prefix ) )
+                public void run ()
                 {
-                    String opcItem = item.substring ( prefix.length () );
-                    _log.debug ( String.format ( "Trying to late bind granted opc item: '%s'", opcItem ) );
-                    _itemManager.createItem ( opcItem );
-                }
-            }
-
-            // recheck all granted items
-            _hive.recheckGrantedItems ();
+                    try
+                    {
+                        fillInitialItems ();
+                    }
+                    catch ( Throwable e )
+                    {
+                        _log.warn ( "Failed to fill initial items", e );
+                    }
+                }}, "OPCItemFiller" );
+            t.setDaemon ( true );
+            t.start ();
         }
         catch ( Throwable e )
         {
