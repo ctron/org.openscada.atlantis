@@ -31,36 +31,32 @@ import org.openscada.da.server.sysinfo.items.TimeDataItem;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.timing.Scheduler;
 
-public class Hive extends HiveCommon {
-	
-	private Scheduler _scheduler = new Scheduler();
-	
-	public Hive ()
-	{
-		super();
-        
+public class Hive extends HiveCommon
+{
+
+    private Scheduler _scheduler = new Scheduler ( "SysInfoHiveScheduler" );
+
+    public Hive ()
+    {
+        super ();
+
         FolderCommon rootFolder = new FolderCommon ();
         setRootFolder ( rootFolder );
-        
+
         DataItem item;
-		registerItem ( item = new TimeDataItem ( "time", _scheduler ) );
-        rootFolder.add ( "time", item, new MapBuilder<String, Variant> ()
-                .put ( "description", new Variant ( "Time since the epoc in milliseconds!" ) )
-                .getMap ()
-        );
-        
-		registerItem ( item = new PlainFileDataItem ( "hostname", new File ( "/proc/sys/kernel/hostname" ), _scheduler, 1000 * 10 ) );
-        rootFolder.add ( "hostname", item, new MapBuilder<String, Variant> ()
-                .put ( "description", new Variant ( "Hostname of the computer the server is running on." ) )
-                .getMap ()
-        );
-		
+        registerItem ( item = new TimeDataItem ( "time", _scheduler ) );
+        rootFolder.add ( "time", item, new MapBuilder<String, Variant> ().put ( "description",
+                new Variant ( "Time since the epoc in milliseconds!" ) ).getMap () );
+
+        registerItem ( item = new PlainFileDataItem ( "hostname", new File ( "/proc/sys/kernel/hostname" ), _scheduler,
+                1000 * 10 ) );
+        rootFolder.add ( "hostname", item, new MapBuilder<String, Variant> ().put ( "description",
+                new Variant ( "Hostname of the computer the server is running on." ) ).getMap () );
+
         FolderCommon loadFolder = new FolderCommon ();
-        rootFolder.add ( "loadavg", loadFolder, new MapBuilder<String, Variant> ()
-                .put ( "description", new Variant ( "Load avarage information" ) )
-                .getMap ()
-        );
-		_scheduler.addJob ( new LoadAverageJob ( this, loadFolder ), 1000 );
-        
-	}
+        rootFolder.add ( "loadavg", loadFolder, new MapBuilder<String, Variant> ().put ( "description",
+                new Variant ( "Load avarage information" ) ).getMap () );
+        _scheduler.addJob ( new LoadAverageJob ( this, loadFolder ), 1000 );
+
+    }
 }

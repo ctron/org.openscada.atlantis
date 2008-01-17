@@ -65,7 +65,7 @@ public class Hive extends HiveCommon
         
         _log.warn ( String.format ( "rpc.socketTimeout = %s", System.getProperty ( "rpc.socketTimeout" ) ) );
 
-        _scheduler = new Scheduler ( true );
+        _scheduler = new Scheduler ( true, "OPCHiveScheduler" );
 
         // create root folder
         _rootFolderCommon = new FolderCommon ();

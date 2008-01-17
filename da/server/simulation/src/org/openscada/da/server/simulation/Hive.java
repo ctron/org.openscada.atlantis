@@ -27,7 +27,6 @@ import org.openscada.da.server.browser.common.query.InvisibleStorage;
 import org.openscada.da.server.browser.common.query.ItemDescriptor;
 import org.openscada.da.server.browser.common.query.ItemStorage;
 import org.openscada.da.server.browser.common.query.Matcher;
-import org.openscada.da.server.browser.common.query.NameProvider;
 import org.openscada.da.server.browser.common.query.QueryFolder;
 import org.openscada.da.server.browser.common.query.SplitGroupProvider;
 import org.openscada.da.server.common.impl.HiveCommon;
@@ -48,7 +47,7 @@ public class Hive extends HiveCommon
     {
         super ();
 
-        _scheduler = new Scheduler ( true );
+        _scheduler = new Scheduler ( true, "SimHiveScheduler" );
 
         // create root folder
         FolderCommon rootFolder = new FolderCommon ();

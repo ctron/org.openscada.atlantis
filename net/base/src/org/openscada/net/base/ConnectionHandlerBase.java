@@ -46,7 +46,7 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
 
     public ConnectionHandlerBase ()
     {
-        _scheduler = new Scheduler ();
+        _scheduler = new Scheduler ( "ConnectionHandlerBase" );
         _messageProcessor = new MessageProcessor ();
 
         _messageProcessor.setHandler ( Message.CC_PING, new PingHandler () );
@@ -100,7 +100,7 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
             {
                 doPing ();
             }
-        }, Integer.getInteger ( "openscada.net.ping_period", 7 * 1000 ) );
+        }, Integer.getInteger ( "openscada.net.pingPeriod", 7 * 1000 ) );
     }
 
     public void closed ( Exception error )

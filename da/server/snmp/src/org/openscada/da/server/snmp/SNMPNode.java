@@ -83,7 +83,7 @@ public class SNMPNode
         _hive = hive;
         _rootFolder = rootFolder;
         
-        _scheduler = new Scheduler ( true );
+        _scheduler = new Scheduler ( true, "SNMPScheduler" );
         _connectionInformation = connectionInformation;
         
         _connectionInfoItem = new DataItemInputCommon ( getItemIDPrefix () + ".connection" );

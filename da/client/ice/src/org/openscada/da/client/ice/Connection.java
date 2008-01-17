@@ -72,7 +72,7 @@ public class Connection implements org.openscada.da.client.Connection
         ConnectionFactory.registerDriverFactory ( new DriverFactory () );
     }
 
-    private Scheduler _scheduler = new Scheduler ( true );
+    private Scheduler _scheduler = new Scheduler ( true, "IceConnectionScheduler" );
 
     protected ConnectionState _state = ConnectionState.CLOSED;
 

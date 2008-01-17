@@ -53,7 +53,7 @@ public class IOProcessor implements Runnable
     {
         super ();
 
-        _scheduler = new Scheduler ( false );
+        _scheduler = new Scheduler ( false, "IOProcessorScheduler" );
 
         _selector = Selector.open ();
     }

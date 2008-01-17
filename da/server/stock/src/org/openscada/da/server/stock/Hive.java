@@ -41,7 +41,7 @@ public class Hive extends HiveCommon
 
     private static final int UPDATE_PERIOD = 30 * 1000;
 
-    private Scheduler _scheduler = new Scheduler ( true );
+    private Scheduler _scheduler = new Scheduler ( true, "StockHiveScheduler" );
     
     private FolderCommon _symbolsFolder = null;
 

@@ -49,7 +49,7 @@ public class Connection implements ConnectionListener, MessageListener
 
     private int _timeoutLimit = Integer.getInteger ( "org.openscada.net.messageTimeout", 10 * 1000 );
     private int _connectionTimeout = Integer.getInteger ( "org.openscada.net.connectionTimeout", 10 * 1000 );
-    private static Scheduler _scheduler = new Scheduler ();
+    private static Scheduler _scheduler = new Scheduler ( "GlobalConnectionScheduler" );
 
     private Protocol _protocolGMPP = null;
     protected SocketConnection _connection = null;
