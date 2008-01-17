@@ -145,27 +145,16 @@ public class Scheduler implements Runnable
         }
     }
 
-    public Scheduler ()
+    public Scheduler ( String name )
     {
-        this ( true );
+        this ( true, name );
     }
 
     /**
      * Create a new scheduler. If it is asynchronous a new start will be started to process
      * things.
      * @param async flag if this scheduler is asynchronous or not
-     */
-    public Scheduler ( boolean async )
-    {
-        if ( async )
-        {
-            _thread = new Thread ( this );
-            rebindToThread ( _thread );
-            _thread.setDaemon ( true );
-            _thread.start ();
-        }
-    }
-    
+     */    
     public Scheduler ( boolean async, String threadName )
     {
         if ( async )
