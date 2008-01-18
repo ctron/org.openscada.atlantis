@@ -35,6 +35,7 @@ public class AutoReconnectClientConnection extends ConnectionHandlerBase
 
     public AutoReconnectClientConnection ( IOProcessor processor, SocketAddress remote )
     {
+        super ( processor.getScheduler () );
         _processor = processor;
         _remote = remote;
     }

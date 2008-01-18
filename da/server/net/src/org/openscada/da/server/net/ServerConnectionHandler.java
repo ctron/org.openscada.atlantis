@@ -47,6 +47,7 @@ import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
 import org.openscada.net.io.net.Connection;
 import org.openscada.net.utils.MessageCreator;
+import org.openscada.utils.timing.Scheduler;
 
 public class ServerConnectionHandler extends ConnectionHandlerBase implements ItemChangeListener, FolderListener
 {
@@ -58,9 +59,9 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
     private Hive _hive = null;
     private Session _session = null;
 
-    public ServerConnectionHandler ( Hive hive )
+    public ServerConnectionHandler ( Scheduler scheduler, Hive hive )
     {
-        super ();
+        super ( scheduler );
 
         _hive = hive;
 

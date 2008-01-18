@@ -34,6 +34,7 @@ public class ClientConnection extends ConnectionHandlerBase
 
     public ClientConnection ( IOProcessor processor )
     {
+        super ( processor.getScheduler () );
         _processor = processor;
 
         _client = new Client ( _processor, getMessageProcessor (), this, false );

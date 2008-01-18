@@ -68,13 +68,13 @@ public class Application
         _log.info ( "Start test run..." );
         try
         {
-            IOProcessor processor = new IOProcessor ();
+            final IOProcessor processor = new IOProcessor ();
 
             Server server = new Server ( new ConnectionHandlerFactory () {
 
                 public ConnectionHandler createConnectionHandler ()
                 {
-                    return new ConnectionHandlerBase () {
+                    return new ConnectionHandlerBase ( processor.getScheduler () ) {
                         @Override
                         public void opened ()
                         {

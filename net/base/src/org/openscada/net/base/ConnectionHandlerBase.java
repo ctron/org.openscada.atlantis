@@ -44,7 +44,7 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
 
     private List<ConnectionStateListener> _csListeners = new ArrayList<ConnectionStateListener> ();
 
-    public ConnectionHandlerBase ()
+    public ConnectionHandlerBase ( Scheduler scheduler )
     {
         _scheduler = new Scheduler ( "ConnectionHandlerBase" );
         _messageProcessor = new MessageProcessor ();

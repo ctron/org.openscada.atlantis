@@ -22,17 +22,21 @@ package org.openscada.da.server.net;
 import org.openscada.da.core.server.Hive;
 import org.openscada.net.base.ConnectionHandler;
 import org.openscada.net.base.ConnectionHandlerFactory;
+import org.openscada.utils.timing.Scheduler;
 
 public class ConnectionHandlerServerFactory implements ConnectionHandlerFactory {
 
 	private Hive _hive = null;
 	
-	public ConnectionHandlerServerFactory ( Hive hive )
+	private Scheduler _scheduler;
+	
+	public ConnectionHandlerServerFactory ( Hive hive, Scheduler scheduler )
 	{
 		_hive = hive;
+		_scheduler = scheduler;
 	}
 
 	public ConnectionHandler createConnectionHandler() {
-			return new ServerConnectionHandler(_hive);
+			return new ServerConnectionHandler(_scheduler, _hive);
 	}
 }

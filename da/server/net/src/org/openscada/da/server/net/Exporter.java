@@ -24,10 +24,13 @@ import java.io.IOException;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.impl.ExporterBase;
 import org.openscada.net.io.net.Server;
+import org.openscada.utils.timing.Scheduler;
 
 public class Exporter extends ExporterBase implements Runnable
 {
     private Server _server;
+    
+    private static Scheduler scheduler = new Scheduler ( true, "ExporterScheduler" );
     
     public Exporter ( Hive hive, Integer port ) throws IOException
     {
@@ -71,7 +74,7 @@ public class Exporter extends ExporterBase implements Runnable
             port = Integer.getInteger ( "openscada.da.net.server.port", 1202 );
         
         _server = new Server (
-                new ConnectionHandlerServerFactory ( _hive ),
+                new ConnectionHandlerServerFactory ( _hive, scheduler ),
                 port
         );
     }
