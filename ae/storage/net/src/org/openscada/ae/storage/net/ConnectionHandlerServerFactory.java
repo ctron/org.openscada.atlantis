@@ -22,18 +22,20 @@ package org.openscada.ae.storage.net;
 import org.openscada.ae.core.Storage;
 import org.openscada.net.base.ConnectionHandler;
 import org.openscada.net.base.ConnectionHandlerFactory;
+import org.openscada.utils.timing.Scheduler;
 
 public class ConnectionHandlerServerFactory implements ConnectionHandlerFactory {
 
 	private Storage _storage = null;
+	private Scheduler _scheduler = null;
 	
-	public ConnectionHandlerServerFactory ( Storage storage )
+	public ConnectionHandlerServerFactory ( Scheduler scheduler, Storage storage )
 	{
         _storage = storage;
 	}
 
 	public ConnectionHandler createConnectionHandler ()
     {
-	    return new ServerConnectionHandler ( _storage );
+	    return new ServerConnectionHandler ( _scheduler, _storage );
 	}
 }

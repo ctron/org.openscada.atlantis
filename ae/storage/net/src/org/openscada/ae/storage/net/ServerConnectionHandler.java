@@ -45,6 +45,7 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.io.net.Connection;
 import org.openscada.net.utils.MessageCreator;
+import org.openscada.utils.timing.Scheduler;
 
 public class ServerConnectionHandler extends ConnectionHandlerBase implements QueryListener
 {
@@ -59,9 +60,9 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements Qu
     
     private Map<Long, EventListener> _listenerMap = new HashMap<Long,EventListener> ();
  
-    public ServerConnectionHandler ( Storage storage )
+    public ServerConnectionHandler ( Scheduler scheduler, Storage storage )
     {
-        super();
+        super( scheduler );
 
         _storage = storage;
 

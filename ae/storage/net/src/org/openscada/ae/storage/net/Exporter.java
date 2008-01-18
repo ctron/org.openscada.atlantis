@@ -23,11 +23,13 @@ import java.io.IOException;
 
 import org.openscada.ae.core.Storage;
 import org.openscada.net.io.net.Server;
+import org.openscada.utils.timing.Scheduler;
 
 public class Exporter implements Runnable
 {
     private Storage _storage;
     private Server _server;
+    private static Scheduler _scheduler = new Scheduler ( true, "AEExporterScheduler" );
     
     public Exporter ( Storage storage ) throws IOException
     {
@@ -58,7 +60,7 @@ public class Exporter implements Runnable
     private void createServer () throws IOException
     {
         _server = new Server (
-                new ConnectionHandlerServerFactory ( _storage ),
+                new ConnectionHandlerServerFactory ( _scheduler, _storage ),
                 Integer.getInteger ( "openscada.ae.net.server.port", 1302 )
         );
     }
