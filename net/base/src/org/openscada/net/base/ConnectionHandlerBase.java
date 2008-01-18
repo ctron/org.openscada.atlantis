@@ -46,7 +46,7 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
 
     public ConnectionHandlerBase ( Scheduler scheduler )
     {
-        _scheduler = new Scheduler ( "ConnectionHandlerBase" );
+        _scheduler = scheduler;
         _messageProcessor = new MessageProcessor ();
 
         _messageProcessor.setHandler ( Message.CC_PING, new PingHandler () );
