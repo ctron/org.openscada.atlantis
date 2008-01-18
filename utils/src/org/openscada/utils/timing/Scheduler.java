@@ -33,6 +33,12 @@ public class Scheduler implements Runnable
 
     private List<Job> _jobs = new ArrayList<Job> ();
 
+    private int _logJobs = Integer.getInteger ( "openscada.utils.logJobs", 0 );
+
+    private long _lastJobLog = 0;
+
+    private String _schedulerName = "Scheduler";
+
     public class Job
     {
         private Runnable _runnable;
@@ -154,9 +160,11 @@ public class Scheduler implements Runnable
      * Create a new scheduler. If it is asynchronous a new start will be started to process
      * things.
      * @param async flag if this scheduler is asynchronous or not
-     */    
+     */
     public Scheduler ( boolean async, String threadName )
     {
+        this._schedulerName = threadName;
+
         if ( async )
         {
             _thread = new Thread ( this, threadName );
@@ -310,7 +318,9 @@ public class Scheduler implements Runnable
     {
         synchronized ( _jobs )
         {
+            _log.debug ( "Pre remove: " + _jobs.size () );
             _jobs.remove ( new Job ( job, 0 ) );
+            _log.debug ( "Post remove: " + _jobs.size () );
         }
     }
 
@@ -333,6 +343,14 @@ public class Scheduler implements Runnable
          * if ( _jobs.size() > 0 ) _log.debug("Running once: " + _jobs.size() + "
          * job(s)");
          */
+        if ( _logJobs > 0 )
+        {
+            if ( ( System.currentTimeMillis () - _lastJobLog ) > _logJobs )
+            {
+                _log.debug ( String.format ( "%s: %d jobs", _schedulerName, _jobs.size () ) );
+                _lastJobLog = System.currentTimeMillis ();
+            }
+        }
 
         // make a working copy
         List<Job> processList;
@@ -354,7 +372,9 @@ public class Scheduler implements Runnable
                         job.notifyAll ();
                     }
                     if ( job.isOnce () )
+                    {
                         removeJob ( job );
+                    }
                 }
             }
             catch ( Exception e )
