@@ -270,7 +270,11 @@ public class Connection implements ConnectionListener, MessageListener
 
     public void connectionFailed ( IOException e )
     {
+        _log.debug ( "connection failed" );
+        
         _connected = false;
+        
+        removeTimeOutJob ();
 
         if ( _connectionStateListener != null )
             _connectionStateListener.closed ( e );
@@ -278,6 +282,8 @@ public class Connection implements ConnectionListener, MessageListener
 
     public void closed ()
     {
+        _log.debug ( "connection closed" );
+        
         _connected = false;
 
         removeTimeOutJob ();
