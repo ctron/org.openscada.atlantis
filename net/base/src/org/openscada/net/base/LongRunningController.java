@@ -1,6 +1,5 @@
 package org.openscada.net.base;
 
-import java.nio.channels.NoConnectionPendingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,7 +62,7 @@ public class LongRunningController implements MessageListener
         {
             return null;
         }
-        
+
         final LongRunningOperation op = new LongRunningOperation ( this, listener );
 
         Connection connection = _connectionHandler.getConnection ();
@@ -78,6 +77,7 @@ public class LongRunningController implements MessageListener
             public void messageReply ( Message message )
             {
                 if ( message.getValues ().containsKey ( "id" ) )
+                {
                     if ( message.getValues ().get ( "id" ) instanceof LongValue )
                     {
                         long id = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
@@ -85,8 +85,15 @@ public class LongRunningController implements MessageListener
                         assignOperation ( id, op );
                         return;
                     }
+                }
+                else if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
+                {
+                    String errorInfo = message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString ();
+                    op.fail ( new InvalidMessageReplyException ( errorInfo ).fillInStackTrace () );
+                    return;
+                }
                 // else
-                op.fail ( new InvalidMessageReplyException ().fillInStackTrace () );
+                op.fail ( new InvalidMessageReplyException ( "Message did not contain 'id' field" ).fillInStackTrace () );
             }
 
             public void messageTimedOut ()
