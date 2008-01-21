@@ -115,6 +115,7 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
             }
             catch ( Exception e )
             {
+                _log.warn ( "Failed not notify", e );
             }
         }
     }
