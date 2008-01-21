@@ -59,7 +59,7 @@ public interface Connection extends org.openscada.core.client.Connection
     /**
      * Browse a server folder for items. The operation will return immediately.
      * @param path The path to browse
-     * @param callback The callback the shall received notifications of the operation
+     * @param callback The callback that shall receive notifications of the operation
      */
     public abstract void browse ( String[] path, BrowseOperationCallback callback );
 
