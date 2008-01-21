@@ -43,81 +43,93 @@ import org.snmp4j.util.DefaultPDUFactory;
 public class Connection
 {
     private ConnectionInformation _connectionInformation = null;
+
     private Snmp _snmp = null;
+
     private TransportMapping _transport = null;
+
     private Address _address = null;
-    
+
     public Connection ( ConnectionInformation connectionInformation )
     {
-        _connectionInformation = new ConnectionInformation ( connectionInformation );
+        this._connectionInformation = new ConnectionInformation ( connectionInformation );
     }
-    
+
     public void start () throws IOException
     {
-        _address = GenericAddress.parse ( _connectionInformation.getAddress () );
-        
-        _transport = new DefaultUdpTransportMapping ();
-        _snmp = new Snmp ( _transport );
-        
+        this._address = GenericAddress.parse ( this._connectionInformation.getAddress () );
+
+        this._transport = new DefaultUdpTransportMapping ();
+        this._snmp = new Snmp ( this._transport );
+
         //MPv3 mpv3 = (MPv3)_snmp.getMessageProcessingModel ( MessageProcessingModel.MPv3 );
-        USM usm = new USM ( SecurityProtocols.getInstance (), new OctetString ( MPv3.createLocalEngineID() ), 0 );
+        USM usm = new USM ( SecurityProtocols.getInstance (), new OctetString ( MPv3.createLocalEngineID () ), 0 );
         SecurityModels.getInstance ().addSecurityModel ( usm );
-        
-        _snmp.listen ();
+
+        this._snmp.listen ();
     }
-    
+
+    public void stop () throws IOException
+    {
+        if ( this._snmp != null )
+        {
+            this._snmp.close ();
+            this._snmp = null;
+        }
+    }
+
     public Target createTarget ()
     {
-        switch ( _connectionInformation.getVersion () )
+        switch ( this._connectionInformation.getVersion () )
         {
         case V1:
-            if ( _connectionInformation.getCommunity () != null )
+            if ( this._connectionInformation.getCommunity () != null )
             {
-                CommunityTarget target = new CommunityTarget ( _address, new OctetString ( _connectionInformation.getCommunity () ) );
+                CommunityTarget target = new CommunityTarget ( this._address, new OctetString ( this._connectionInformation.getCommunity () ) );
                 target.setRetries ( 1 );
                 target.setVersion ( SnmpConstants.version1 );
                 target.setTimeout ( 5 * 1000 );
                 return target;
-            }    
+            }
             break;
         case V2C:
-            if ( _connectionInformation.getCommunity () != null )
+            if ( this._connectionInformation.getCommunity () != null )
             {
-                CommunityTarget target = new CommunityTarget ( _address, new OctetString ( _connectionInformation.getCommunity () ) );
+                CommunityTarget target = new CommunityTarget ( this._address, new OctetString ( this._connectionInformation.getCommunity () ) );
                 target.setRetries ( 1 );
                 target.setVersion ( SnmpConstants.version2c );
                 target.setTimeout ( 5 * 1000 );
                 return target;
-            }    
+            }
             break;
         }
-        
+
         return null;
     }
-    
+
     public PDU createPDU ( Target target, int pduType )
     {
         return DefaultPDUFactory.createPDU ( target, pduType );
     }
-   
+
     public ResponseEvent send ( Target target, PDU pdu ) throws IOException
     {
-        return _snmp.send ( pdu, target );
+        return this._snmp.send ( pdu, target );
     }
-    
+
     public ResponseEvent sendGET ( OID oid ) throws IOException
     {
-        Target target = createTarget ();
-        PDU pdu = createPDU ( target, PDU.GET );
+        Target target = this.createTarget ();
+        PDU pdu = this.createPDU ( target, PDU.GET );
         pdu.add ( new VariableBinding ( oid ) );
-        return send ( target, pdu );
+        return this.send ( target, pdu );
     }
-    
+
     public ResponseEvent sendGETNEXT ( OID oid ) throws IOException
     {
-        Target target = createTarget ();
-        PDU pdu = createPDU ( target, PDU.GETNEXT );
+        Target target = this.createTarget ();
+        PDU pdu = this.createPDU ( target, PDU.GETNEXT );
         pdu.add ( new VariableBinding ( oid ) );
-        return send ( target, pdu );
+        return this.send ( target, pdu );
     }
 }
