@@ -96,8 +96,9 @@ public class MessageProcessor implements MessageListener
         {
             _listeners.get ( cc ).messageReceived ( connection, message );
         }
-        catch ( Exception e )
+        catch ( Throwable e )
         {
+            // reply to other peer if message processing failed
             _log.warn ( "Message processing failed: ", e );
             connection.sendMessage ( MessageCreator.createFailedMessage ( message, e ) );
         }
