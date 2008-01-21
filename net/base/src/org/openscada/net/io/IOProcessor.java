@@ -48,6 +48,7 @@ public class IOProcessor implements Runnable
     private Thread _thread = null;
     private boolean _running = false;
     private Scheduler _scheduler = null;
+    private Object _threadLock = new Object ();
 
     public IOProcessor () throws IOException
     {
@@ -76,6 +77,45 @@ public class IOProcessor implements Runnable
         _thread = new Thread ( this );
         _thread.setDaemon ( true );
         _thread.start ();
+    }
+
+    public synchronized void stop ()
+    {
+        if ( !_running )
+            return;
+
+        _running = false;
+
+        synchronized ( _threadLock )
+        {
+            try
+            {
+                _threadLock.wait ();
+            }
+            catch ( InterruptedException e )
+            {
+                _log.warn ( "Failed to wait for runner", e );
+            }
+        }
+
+        closeAllConnections ();
+    }
+
+    private void closeAllConnections ()
+    {
+        for ( SelectionKey key : _selector.keys () )
+        {
+            try
+            {
+                key.channel ().close ();
+            }
+            catch ( IOException e )
+            {
+                _log.warn ( "Failed to close channel", e );
+            }
+        }
+        _connections.clear ();
+        _timeoutConnections.clear ();
     }
 
     public void registerConnection ( IOChannel connection, int ops ) throws ClosedChannelException
@@ -147,37 +187,48 @@ public class IOProcessor implements Runnable
             return;
         }
 
-        _running = true;
-        while ( _running )
+        try
         {
-            try
+            _running = true;
+            while ( _running )
             {
-                int rc = 0;
-                rc = _selector.select ( 100 );
-
-                if ( rc > 0 )
+                try
                 {
-                    handleSelectedKeys ();
+                    int rc = 0;
+                    rc = _selector.select ( 100 );
+
+                    if ( rc > 0 )
+                    {
+                        handleSelectedKeys ();
+                    }
+
+                    checkTimeouts ();
+
+                    _scheduler.runOnce ();
+
                 }
-
-                checkTimeouts ();
-
-                _scheduler.runOnce ();
-
+                catch ( IOException e )
+                {
+                    _log.info ( "IO Exception", e );
+                }
+                catch ( NotBoundException e )
+                {
+                    _log.info ( "While evaluation selector set", e );
+                    _running = false;
+                }
+                catch ( WrongThreadException e )
+                {
+                    _log.info ( "While evaluation selector set", e );
+                    _running = false;
+                }
             }
-            catch ( IOException e )
+        }
+        finally
+        {
+            _running = false;
+            synchronized ( _threadLock )
             {
-                _log.info ( "IO Exception", e );
-            }
-            catch ( NotBoundException e )
-            {
-                _log.info ( "While evaluation selector set", e );
-                _running = false;
-            }
-            catch ( WrongThreadException e )
-            {
-                _log.info ( "While evaluation selector set", e );
-                _running = false;
+                _threadLock.notifyAll ();
             }
         }
     }
