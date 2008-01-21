@@ -13,6 +13,7 @@ import org.openscada.core.subscription.SubscriptionSource;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.ItemListener;
+import org.openscada.da.server.common.impl.stats.HiveEventListener;
 
 /**
  * A subscription source for data items.
@@ -33,11 +34,14 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
 
     private Variant _cacheValue = null;
     private Map<String, Variant> _cacheAttributes = new HashMap<String, Variant> ();
+    
+    private HiveEventListener _hiveEventListener;
 
-    public DataItemSubscriptionSource ( DataItem dataItem )
+    public DataItemSubscriptionSource ( DataItem dataItem, HiveEventListener hiveEventListener )
     {
         super ();
         _dataItem = dataItem;
+        _hiveEventListener = hiveEventListener;
     }
 
     /**
@@ -80,7 +84,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
             // send current state
             if ( _cacheValue != null )
             {
-                _log.debug ( "Sending initial value:" + _cacheValue );
+                _log.debug ( "Sending initial value: " + _cacheValue );
                 ( (DataItemSubscriptionListener)listener.getListener () ).valueChanged ( _dataItem, _cacheValue, true );
             }
             if ( !_cacheAttributes.isEmpty () )
@@ -126,6 +130,8 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         {
             listener.attributesChanged ( item, attributes, cache );
         }
+        
+        _hiveEventListener.attributesChanged ( item, attributes.size () );
     }
 
     public void valueChanged ( DataItem item, Variant variant, boolean cache )
@@ -135,5 +141,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         {
             listener.valueChanged ( item, variant, cache );
         }
+        
+        _hiveEventListener.valueChanged ( item, variant, cache );
     }
 }

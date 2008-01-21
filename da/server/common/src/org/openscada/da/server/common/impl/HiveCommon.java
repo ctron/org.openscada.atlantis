@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006, 2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,6 +45,7 @@ import org.openscada.da.core.server.WriteAttributesOperationListener;
 import org.openscada.da.core.server.WriteOperationListener;
 import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.server.browser.common.Folder;
+import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.ValidationStrategy;
@@ -56,6 +57,8 @@ import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 import org.openscada.da.server.common.factory.DataItemValidator;
 import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
+import org.openscada.da.server.common.impl.stats.HiveCommonStatisticsGenerator;
+import org.openscada.da.server.common.impl.stats.HiveEventListener;
 import org.openscada.utils.jobqueue.CancelNotSupportedException;
 import org.openscada.utils.jobqueue.Operation;
 import org.openscada.utils.jobqueue.OperationManager;
@@ -96,11 +99,17 @@ public class HiveCommon implements Hive, ConfigurableHive
 
     private ValidationStrategy _validatonStrategy = ValidationStrategy.FULL_CHECK;
 
+    private HiveEventListener _hiveEventListener;
+
+    private boolean autoEnableStats = true;
+
     public HiveCommon ()
     {
         super ();
 
         _jobQueueThread = new Thread ( _opProcessor );
+        _jobQueueThread.setName ( "HiveOpProcessor" );
+        _jobQueueThread.setDaemon ( true );
         _jobQueueThread.start ();
 
         // set the validator of the subscription manager
@@ -132,13 +141,18 @@ public class HiveCommon implements Hive, ConfigurableHive
 
     private void fireSessionCreate ( SessionCommon session )
     {
+        if ( _hiveEventListener != null )
+        {
+            _hiveEventListener.sessionCreated ( session );
+        }
+
         for ( SessionListener listener : _sessionListeners )
         {
             try
             {
                 listener.create ( session );
             }
-            catch ( Exception e )
+            catch ( Throwable e )
             {
             }
         }
@@ -147,6 +161,11 @@ public class HiveCommon implements Hive, ConfigurableHive
 
     private void fireSessionDestroy ( SessionCommon session )
     {
+        if ( _hiveEventListener != null )
+        {
+            _hiveEventListener.sessionDestroyed ( session );
+        }
+
         synchronized ( _sessionListeners )
         {
             for ( SessionListener listener : _sessionListeners )
@@ -180,7 +199,22 @@ public class HiveCommon implements Hive, ConfigurableHive
         if ( _rootFolder == null )
         {
             _rootFolder = rootFolder;
+            if ( rootFolder instanceof FolderCommon && autoEnableStats  )
+            {
+                enableStats ( (FolderCommon)_rootFolder );
+            }
         }
+    }
+
+    private void enableStats ( FolderCommon rootFolder )
+    {
+        HiveCommonStatisticsGenerator stats = new HiveCommonStatisticsGenerator ( "statistics" );
+        _hiveEventListener = stats;
+        
+        FolderCommon statsFolder = new FolderCommon ();
+        rootFolder.add ( "statistics", statsFolder, new HashMap<String, Variant> () );
+        
+        stats.register ( this, statsFolder );
     }
 
     /**
@@ -284,10 +318,15 @@ public class HiveCommon implements Hive, ConfigurableHive
             {
                 // first add internally ...
                 _itemMap.put ( new DataItemInformationBase ( item.getInformation () ), item );
+
+                if ( _hiveEventListener != null )
+                {
+                    _hiveEventListener.itemRegistered ( item );
+                }
             }
 
             // add new topic to the new item subscription manager
-            _itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( item ) );
+            _itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( item, _hiveEventListener ) );
         }
     }
 
@@ -299,6 +338,10 @@ public class HiveCommon implements Hive, ConfigurableHive
             if ( _itemMap.containsKey ( new DataItemInformationBase ( item.getInformation () ) ) )
             {
                 _itemMap.remove ( new DataItemInformationBase ( item.getInformation () ) );
+                if ( _hiveEventListener != null )
+                {
+                    _hiveEventListener.itemUnregistered ( item );
+                }
             }
 
             // remove the source from the manager
@@ -458,6 +501,11 @@ public class HiveCommon implements Hive, ConfigurableHive
         {
             sessionCommon.getOperations ().addOperation ( handle );
         }
+        
+        if ( _hiveEventListener != null )
+        {
+            _hiveEventListener.startWriteAttributes ( session, itemId, attributes.size () );
+        }
 
         return handle.getId ();
     }
@@ -491,6 +539,11 @@ public class HiveCommon implements Hive, ConfigurableHive
                 }
             }
         } );
+        
+        if ( _hiveEventListener != null )
+        {
+            _hiveEventListener.startWrite ( session, itemName, value );
+        }
 
         return handle.getId ();
     }
@@ -662,5 +715,20 @@ public class HiveCommon implements Hive, ConfigurableHive
     protected void setValidatonStrategy ( ValidationStrategy validatonStrategy )
     {
         _validatonStrategy = validatonStrategy;
+    }
+
+    public boolean isAutoEnableStats ()
+    {
+        return autoEnableStats;
+    }
+
+    /**
+     * This will disable the automatic generation of the stats module when setting
+     * the root folder. Must be called before {@link #setRootFolder(Folder)}
+     * @param autoEnableStats
+     */
+    public void setAutoEnableStats ( boolean autoEnableStats )
+    {
+        this.autoEnableStats = autoEnableStats;
     }
 }
