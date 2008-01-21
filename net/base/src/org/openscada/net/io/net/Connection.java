@@ -134,7 +134,7 @@ public class Connection implements ConnectionListener, MessageListener
         _connected = true;
 
         addTimeOutJob ();
-        
+
         setTimeout ( _connectionTimeout );
     }
 
@@ -147,7 +147,7 @@ public class Connection implements ConnectionListener, MessageListener
         _connected = true;
 
         addTimeOutJob ();
-        
+
         setTimeout ( _connectionTimeout );
     }
 
@@ -300,7 +300,14 @@ public class Connection implements ConnectionListener, MessageListener
         {
             for ( Map.Entry<Long, MessageTag> tag : _tagList.entrySet () )
             {
-                tag.getValue ().getListener ().messageTimedOut ();
+                try
+                {
+                    tag.getValue ().getListener ().messageTimedOut ();
+                }
+                catch ( Throwable e )
+                {
+                    _log.warn ( "Failed to handle message timeout", e );
+                }
             }
             _tagList.clear ();
         }
@@ -318,10 +325,15 @@ public class Connection implements ConnectionListener, MessageListener
             if ( _tagList.containsKey ( seq ) )
             {
                 tag = _tagList.get ( seq );
+                // if the tag is timed out then we don't process it here and let processTimeOuts () do the job
                 if ( !tag.isTimedOut () )
+                {
                     _tagList.remove ( seq );
+                }
                 else
+                {
                     tag = null;
+                }
             }
         }
 
@@ -336,7 +348,7 @@ public class Connection implements ConnectionListener, MessageListener
                 _listener.messageReceived ( connection, message );
             }
         }
-        catch ( Exception e )
+        catch ( Throwable e )
         {
             _log.warn ( "Custom message failed", e );
         }
@@ -367,7 +379,7 @@ public class Connection implements ConnectionListener, MessageListener
             {
                 tag.getListener ().messageTimedOut ();
             }
-            catch ( Exception e )
+            catch ( Throwable e )
             {
                 _log.info ( "Failed to handle messageTimedOut", e );
             }
@@ -381,7 +393,7 @@ public class Connection implements ConnectionListener, MessageListener
             _sequence = INIT_SEQUENCE;
         return seq;
     }
-    
+
     /**
      * Set the connection timeout
      * @param timeout
