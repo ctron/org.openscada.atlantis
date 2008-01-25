@@ -45,29 +45,29 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
     {
         super ( uri, className );
     }
-    
+
     @Override
     public void connect () throws Exception
     {
         super.connect ();
-        _itemManager = new ItemManager ( _connection );
+        this._itemManager = new ItemManager ( this._connection );
     }
-    
+
     public void subscribe ()
     {
         // add us as item update listener
         // since we subscribe with "initial=true" we will get the current value
         // before any other event. Setting to "false" would ignore the current
         // value of this item and wait for the first change.
-        _itemManager.addItemUpdateListener ( "time", this );
+        this._itemManager.addItemUpdateListener ( "time", this );
     }
-    
+
     public void unsubscribe ()
     {
         // now remove the update listener
-        _itemManager.removeItemUpdateListener ( "time", this );
+        this._itemManager.removeItemUpdateListener ( "time", this );
     }
-    
+
     public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
     {
         // Attributes have changed
@@ -86,22 +86,22 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
         // If it is an initial transmission it is not a change but the last change that occurred.
         System.out.println ( "Value of item changed: " + value.toString () + ( initial ? " (cache read)" : "" ) );
     }
-    
+
     public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
     {
-        System.out.println ( "Subscription state: " + state.name () + "Error: " + subscriptionError == null ? "<none>" : subscriptionError.getMessage () );
+        System.out.println ( "Subscription state: " + state.name () + " Error: " + subscriptionError == null ? "<none>" : subscriptionError.getMessage () );
     }
-    
+
     public static void main ( String[] args ) throws Exception
     {
         String uri = null;
         String className = null;
-        
+
         if ( args.length > 0 )
             uri = args[0];
         if ( args.length > 1 )
             className = args[1];
-        
+
         Sample1 s = null;
         try
         {
