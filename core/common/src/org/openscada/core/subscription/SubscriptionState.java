@@ -7,7 +7,7 @@ public enum SubscriptionState
      */
     DISCONNECTED,
     /**
-     * The subscription is possible but currently not conncted to a subscription source. 
+     * The subscription is possible but currently not connected to a subscription source. 
      */
     GRANTED,
     /**
