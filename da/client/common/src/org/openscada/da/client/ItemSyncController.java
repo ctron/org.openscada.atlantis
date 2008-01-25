@@ -148,6 +148,7 @@ public class ItemSyncController implements ItemUpdateListener
                 sync ( false );
             }} );
         t.setDaemon ( true );
+        t.setName ( "TriggerSync" );
         t.start ();
     }
 
