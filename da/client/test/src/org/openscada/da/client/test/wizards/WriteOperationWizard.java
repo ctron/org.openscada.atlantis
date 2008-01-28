@@ -90,6 +90,7 @@ public class WriteOperationWizard extends Wizard implements INewWizard
         monitor.worked ( 1 );
         final WriteOperationWizard _this = this;
 
+        _error = null;
         _complete = false;
         hiveConnection.getConnection ().write ( item, value, new WriteOperationCallback () {
 
