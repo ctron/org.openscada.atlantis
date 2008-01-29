@@ -1,16 +1,21 @@
 package org.openscada.da.server.common.impl.stats;
 
+import org.apache.log4j.Logger;
+
 public class CounterValue implements Tickable
 {
+    private static Logger _log = Logger.getLogger ( CounterValue.class );
+    
     private long _total = 0;
-    private long _lastTick = 0;
+    private long _lastTickValue = 0;
     private long _lastTimestamp = 0;
     private CounterOutput _output;
     
     public synchronized void add ( long value )
     {
         _total += value;
-        _lastTick += Math.abs ( value );
+        _lastTickValue = _lastTickValue + Math.abs ( value );
+        _log.debug ( String.format ( "Adding: %s, LastTickValue: %s", value, _lastTickValue ) );
     }
     
     public synchronized void tick ()
@@ -28,11 +33,16 @@ public class CounterValue implements Tickable
             diff = 1;
         }
         
-        // calculate the average
-        double avg = _lastTick / ((double)diff);
-        _output.setTickValue ( avg, _total );
+        // we need to do this here ... since otherwise the update call later will
+        // increment the counter and setting the tickValue to null will discard
+        // this information
+        long lastTickValue = _lastTickValue;
+        _lastTickValue = 0;
         
-        _lastTick = 0;
+        // calculate the average
+        double avg = ((double)lastTickValue) / ((double)diff);
+        _log.debug ( String.format ( "LastTickValue: %s, Diff: %s, Avg: %s", lastTickValue, diff, avg ) );
+        _output.setTickValue ( avg, _total );
     }
 
     public void setOutput ( CounterOutput output )
