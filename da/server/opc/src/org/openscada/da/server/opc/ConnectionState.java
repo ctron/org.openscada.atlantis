@@ -22,5 +22,6 @@ package org.openscada.da.server.opc;
 public enum ConnectionState
 {
     DISCONNECTED,
+    BINDING,
     CONNECTED
 }

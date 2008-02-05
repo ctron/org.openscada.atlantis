@@ -38,6 +38,7 @@ import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.opc.dcom.common.Result;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.lib.da.AddFailedException;
+import org.openscada.opc.lib.da.Group;
 
 public class OPCItemManager
 {
@@ -99,9 +100,16 @@ public class OPCItemManager
     {
         OPCItem item = null;
 
+        Group group = _connection.getGroup ();
+        if ( group == null )
+        {
+            _log.warn ( String.format ( "Failed to create item for item manager", opcItemId ) );
+            return null;
+        }
+        
         String itemId = _connection.getBaseId () + "." + opcItemId;
         
-        Map<String, Result<OPCITEMRESULT>> itemResult = _connection.getGroup ().validateItems ( opcItemId );
+        Map<String, Result<OPCITEMRESULT>> itemResult = group.validateItems ( opcItemId );
 
         Result<OPCITEMRESULT> entry = itemResult.get ( opcItemId );
         if ( entry == null )
@@ -153,48 +161,6 @@ public class OPCItemManager
         _itemMap.remove ( item.getId () );
         _descriptionMap.remove ( item );
     }
-
-    /*
-    protected synchronized void removeDescriptions ( OPCItem item )
-    {
-        List<OPCItemDescription> descriptions = _descriptionMap.get ( item );
-        for ( OPCItemDescription desc : descriptions )
-        {
-            _storage.removed ( desc.getItemDescriptor () );
-        }
-    }
-
-    public synchronized void addItemDescription ( OPCItem item, Map<String, Variant> description )
-    {
-        if ( !_descriptionMap.containsKey ( item ) )
-        {
-            return;
-        }
-
-        OPCItemDescription desc = new OPCItemDescription ( item, description );
-        _descriptionMap.get ( item ).add ( desc );
-
-        _storage.added ( desc.getItemDescriptor () );
-    }
-
-    public synchronized OPCItem getItem ( String opcItemId, EnumSet<IODirection> ioDirection )
-    {
-        OPCItem item = _itemMap.get ( opcItemId );
-        if ( item != null )
-        {
-            return item;
-        }
-
-        try
-        {
-            return createItem ( opcItemId, ioDirection );
-        }
-        catch ( Exception e )
-        {
-            return null;
-        }
-    }
-    */
 
     /**
      * Create a new OPC item

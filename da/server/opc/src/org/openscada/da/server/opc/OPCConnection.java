@@ -99,8 +99,6 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
 
     private Scheduler _scheduler;
 
-    private boolean _reconnectPhase;
-
     public OPCConnection ( Hive hive, Scheduler scheduler, String alias, ConnectionSetup connectionSetup, Collection<String> initialItems )
     {
         _hive = hive;
@@ -309,7 +307,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
     public void triggerReconnect ()
     {
         _log.warn ( "Triggering reconnect" );
-        triggerDisconnect ();
+        triggerDisconnect ();    
         triggerConnect ();
     }
 
@@ -380,6 +378,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         {
             _accessStateItem.updateValue ( new Variant ( state ) );
         }
+        
         if ( state )
         {
             handleConnected ();
@@ -396,12 +395,9 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         removeTreeFolder ();
         removeFlatFolder ();
         removeInitialFolder ();
-
-        if ( _reconnectPhase )
-        {
-            _reconnectPhase = false;
-            triggerConnect ();
-        }
+        
+        // set the group to null .. it is useless anyway
+        _group = null;
     }
 
     /**
@@ -436,7 +432,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
             if ( item.startsWith ( prefix ) )
             {
                 String opcItem = item.substring ( prefix.length () );
-                _log.debug ( String.format ( "Trying to late bind granted opc item: '%s'", opcItem ) );
+                _log.info ( String.format ( "Trying to late bind granted opc item: '%s'", opcItem ) );
                 _itemManager.createItem ( opcItem );
             }
         }
@@ -449,7 +445,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
     {
         try
         {
-            setConnectionState ( ConnectionState.CONNECTED );
+            setConnectionState ( ConnectionState.BINDING );
 
             _group = _server.addGroup ();
 
@@ -459,13 +455,22 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
                 {
                     try
                     {
+                        if ( Boolean.getBoolean ( "opcDebug" ) )
+                        {
+                            Thread.sleep ( 10 * 1000 );
+                        }
                         fillInitialItems ();
                     }
                     catch ( Throwable e )
                     {
                         _log.warn ( "Failed to fill initial items", e );
                     }
-                }}, "OPCItemFiller" );
+                    finally
+                    { 
+                        setConnectionState ( ConnectionState.CONNECTED );
+                    }
+                }
+            }, "OPCItemFiller" );
             t.setDaemon ( true );
             t.start ();
         }

@@ -36,6 +36,7 @@ import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 import org.openscada.opc.lib.da.AccessStateListener;
 import org.openscada.opc.lib.da.AddFailedException;
 import org.openscada.opc.lib.da.DataCallback;
+import org.openscada.opc.lib.da.Group;
 import org.openscada.opc.lib.da.Item;
 import org.openscada.opc.lib.da.ItemState;
 
@@ -48,7 +49,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
     private static final String OPC_ATTRIBUTE_READ_ERROR = OPC_ATTRIBUTE_PREFIX + ".read.error";
     private static final String OPC_ATTRIBUTE_READ_ERROR_CODE = OPC_ATTRIBUTE_READ_ERROR + ".code";
     private static final String OPC_ATTRIBUTE_READ_ERROR_MESSAGE = OPC_ATTRIBUTE_READ_ERROR + ".message";
-    
+
     private static final String OPC_ATTRIBUTE_WRITE_ERROR = OPC_ATTRIBUTE_PREFIX + ".write.error";
     private static final String OPC_ATTRIBUTE_WRITE_ERROR_CODE = OPC_ATTRIBUTE_WRITE_ERROR + ".code";
     private static final String OPC_ATTRIBUTE_WRITE_ERROR_MESSAGE = OPC_ATTRIBUTE_WRITE_ERROR + ".message";
@@ -81,20 +82,36 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
 
     public Item getItem ()
     {
-        synchronized ( _itemLock )
+        Item item = _item;
+        if ( item == null )
         {
-            if ( _item == null )
+            try
             {
-                try
+                _log.info ( String.format ( "Binding write item (%s) to OPC", _itemId ) );
+                Group group = _connection.getGroup ();
+                if ( group == null )
                 {
-                    _item = _connection.getGroup ().addItem ( _itemId );
+                    _item = null; // we are not allowed to have an item here
+                    _log.warn ( String.format ( "Failed to bind write item since we are disconnected (%s)", _itemId ) );
+                    return null;
                 }
-                catch ( Throwable t )
+                
+                item = group.addItem ( _itemId );
+                synchronized ( _itemLock )
                 {
+                    if ( _item == null )
+                    {
+                        _item = item;
+                    }
+                    item = _item;
                 }
             }
-            return _item;
+            catch ( Throwable e )
+            {
+                _log.info ( "Failed to bind write item", e );
+            }
         }
+        return item;
     }
 
     public String getId ()
@@ -123,10 +140,10 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
             _log.warn ( String.format ( "Tried to write to item %s which is read-only", _itemId ) );
             throw new InvalidOperationException ();
         }
-        
+
         if ( this._connection.getState () == ConnectionState.CONNECTED )
         {
-            super.writeValue ( value );    
+            super.writeValue ( value );
         }
         else
         {
@@ -134,7 +151,6 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
             throw new InvalidOperationException ();
         }
 
-        
     }
 
     public synchronized void suspend ()
@@ -299,11 +315,11 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
                 updateAttribute ( OPC_ATTRIBUTE_WRITE_ERROR_CODE, new Variant ( errorCode ) );
                 if ( errorCode != 0 )
                 {
-                    
-                    String errorMessage = _connection.getServer ().getErrorMessage ( errorCode ); 
-                    updateAttribute ( OPC_ATTRIBUTE_WRITE_ERROR_MESSAGE, new Variant (
+
+                    String errorMessage = _connection.getServer ().getErrorMessage ( errorCode );
+                    updateAttribute ( OPC_ATTRIBUTE_WRITE_ERROR_MESSAGE, new Variant ( errorMessage ) );
+                    _log.warn ( String.format ( "Failed to write to item %s: 0x%08X - %s", _itemId, errorCode,
                             errorMessage ) );
-                    _log.warn ( String.format ( "Failed to write to item %s: 0x%08X - %s", _itemId, errorCode, errorMessage ) );
                     throw new InvalidOperationException ();
                 }
                 else
@@ -313,6 +329,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
             }
             else
             {
+                _log.warn ( "Failed to write item: currently item is not bound to OPC" );
                 throw new InvalidOperationException ();
             }
         }
@@ -350,6 +367,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         {
             synchronized ( _itemLock )
             {
+                _log.info ( String.format ( "Scraping OPC write item (%s)", _itemId ) );
                 _item = null;
             }
         }
