@@ -85,7 +85,7 @@ public abstract class OPCBaseFolder implements org.openscada.da.server.browser.c
                         _readThread = null;
                     }
                 }
-            } );
+            }, "OPCFolderFiller" );
             _readThread.start ();
         }
     }
