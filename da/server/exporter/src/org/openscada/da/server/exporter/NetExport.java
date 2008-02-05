@@ -52,7 +52,7 @@ public class NetExport implements Export
         
         _exporter = new Exporter ( _hive, _port );
         
-        _thread = new Thread ( _exporter );
+        _thread = new Thread ( _exporter, "NetExport-" + _port );
         _thread.setDaemon ( true );
         _thread.start ();
     }
