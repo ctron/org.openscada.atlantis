@@ -56,7 +56,7 @@ public class RunnableOperation implements Operation
                     handle.completed ();
                 }
             }
-        } );
+        }, "RunableOperationThread" );
         _thread.start ();
     }
 

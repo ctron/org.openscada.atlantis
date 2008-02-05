@@ -53,7 +53,7 @@ public abstract class RunnableCancelOperation implements Operation, Runnable
                     handle.completed ();
                 }
             }
-        } );
+        }, "RunnableCancelOperationThread" );
 
         _thread.start ();
     }
