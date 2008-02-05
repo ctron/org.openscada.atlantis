@@ -21,7 +21,7 @@ package org.openscada.utils.jobqueue;
 
 public interface Operation
 {
-    void cancel () throws CancelNotSupportedException;
+    public abstract void cancel () throws CancelNotSupportedException;
 
-    void start ( OperationManager.Handle handle );
+    public abstract void start ( OperationManager.Handle handle );
 }
