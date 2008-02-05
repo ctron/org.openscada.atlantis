@@ -17,8 +17,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.client.test.views;
+package org.openscada.da.client.test.views.watch;
 
+import java.util.Calendar;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -26,24 +27,18 @@ import java.util.Observer;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
@@ -51,7 +46,6 @@ import org.openscada.da.client.DataItem;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.VariantHelper;
-import org.openscada.da.client.test.impl.VariantHelper.ValueType;
 
 /**
  * This sample class demonstrates how to plug-in a new
@@ -85,30 +79,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 
     private StyledText _console;
 
-    /*
-     * The content provider class is responsible for
-     * providing objects to the view. It can wrap
-     * existing objects in adapters or simply return
-     * objects as-is. These objects may be sensitive
-     * to the current input of the view, or ignore
-     * it and always show the same content 
-     * (like Task List, for example).
-     */
-
-    class Entry
-    {
-        public String name;
-
-        public Variant value;
-
-        public Entry ( String name, Variant value )
-        {
-            this.name = name;
-            this.value = value;
-        }
-    }
-
-    class ViewContentProvider implements IStructuredContentProvider, Observer
+    class WatchViewContentProvider implements IStructuredContentProvider, Observer
     {
         private Viewer _viewer = null;
 
@@ -152,12 +123,12 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
                 return new Object[0];
 
             Map<String, Variant> attrs = _item.getAttributes ();
-            Entry[] entries = new Entry[attrs.size ()];
+            WatchAttributeEntry[] entries = new WatchAttributeEntry[attrs.size ()];
             int i = 0;
 
             for ( Map.Entry<String, Variant> entry : attrs.entrySet () )
             {
-                entries[i++] = new Entry ( entry.getKey (), entry.getValue () );
+                entries[i++] = new WatchAttributeEntry ( entry.getKey (), entry.getValue () );
             }
             return entries;
         }
@@ -192,57 +163,6 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         }
     }
 
-    class ViewLabelProvider extends LabelProvider implements ITableLabelProvider
-    {
-        public String getColumnText ( Object obj, int index )
-        {
-            if ( ! ( obj instanceof Entry ) )
-                return "";
-
-            Entry entry = (Entry)obj;
-
-            switch ( index )
-            {
-            case 0:
-                return entry.name;
-            case 1:
-                ValueType vt = VariantHelper.toValueType ( entry.value );
-                if ( vt != null )
-                    return vt.toString ();
-                else
-                    return "VT_UNKNOWN";
-            case 2:
-                return entry.value.asString ( "null" );
-            }
-            return getText ( obj );
-        }
-
-        public Image getColumnImage ( Object obj, int index )
-        {
-            if ( index == 0 )
-                return getImage ( obj );
-            else
-                return null;
-        }
-
-        public Image getImage ( Object obj )
-        {
-            return PlatformUI.getWorkbench ().getSharedImages ().getImage ( ISharedImages.IMG_OBJ_ELEMENT );
-        }
-    }
-
-    class NameSorter extends ViewerSorter
-    {
-    }
-
-    /**
-     * The constructor.
-     */
-    public DataItemWatchView ()
-    {
-
-    }
-
     /**
      * This is a callback that will allow us
      * to create the viewer and initialize it.
@@ -273,8 +193,8 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 
         viewer = new TableViewer ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
         viewer.getControl ().setLayoutData ( gd );
-        viewer.setContentProvider ( new ViewContentProvider () );
-        viewer.setLabelProvider ( new ViewLabelProvider () );
+        viewer.setContentProvider ( new WatchViewContentProvider () );
+        viewer.setLabelProvider ( new WatchViewLabelProvider () );
 
         TableColumn col;
 
@@ -286,7 +206,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         col.setText ( "Value" );
 
         viewer.getTable ().setHeaderVisible ( true );
-        viewer.setSorter ( new NameSorter () );
+        viewer.setSorter ( new WatchEntryNameSorter () );
 
         // set table layout
         TableLayout tableLayout = new TableLayout ();
@@ -315,6 +235,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
                 {
                     if ( !_console.isDisposed () )
                     {
+                        _console.append ( String.format ( "%tc > ", Calendar.getInstance () ) );
                         _console.append ( message + "\n" );
                         _console.setSelection ( _console.getCharCount () );
                         _console.showSelection ();
