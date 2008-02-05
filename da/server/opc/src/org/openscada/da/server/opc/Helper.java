@@ -91,6 +91,7 @@ public class Helper
         }
         catch ( JIException e )
         {
+            _log.warn ( "Failed to convert", e );
             return null;
         }
     }
