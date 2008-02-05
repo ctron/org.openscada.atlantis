@@ -74,7 +74,7 @@ public class IOProcessor implements Runnable
         if ( _thread != null )
             return;
 
-        _thread = new Thread ( this );
+        _thread = new Thread ( this, "IOProcessor" );
         _thread.setDaemon ( true );
         _thread.start ();
     }
