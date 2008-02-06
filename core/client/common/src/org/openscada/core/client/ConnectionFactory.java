@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 
 import sun.misc.Service;
@@ -30,6 +31,8 @@ import sun.misc.Service;
 
 public class ConnectionFactory
 {
+    private static Logger _log = Logger.getLogger ( ConnectionFactory.class );
+    
     protected static List<DriverFactory> _registeredDrivers = new LinkedList<DriverFactory> ();
     
     public static void registerDriverFactory ( DriverFactory driverFactory )
@@ -58,7 +61,7 @@ public class ConnectionFactory
         // now try using the service framework
         try
         {
-            Iterator i = Service.providers ( DriverFactory.class );
+            Iterator<?> i = Service.providers ( DriverFactory.class );
             while ( i.hasNext () )
             {
                 DriverFactory factory = (DriverFactory)i.next ();
@@ -85,6 +88,32 @@ public class ConnectionFactory
         
         if ( di == null )
             return null;
+        
+        return di.create ( connectionInformation );
+    }
+    
+    /**
+     * Find a driver and create a new connection
+     * @param className the connection class name to pre-load
+     * @param connectionInformation The connection information
+     * @return The new connection or <code>null</code> if no driver can be found 
+     * @throws ClassNotFoundException the provided connection class cannot be found
+     */
+    public static Connection create ( String className, ConnectionInformation connectionInformation ) throws ClassNotFoundException
+    {
+        if ( className != null )
+        {
+            _log.info ( "Pre-loading connection class: " + className );
+            Class.forName ( className );
+        }
+        
+        DriverInformation di = findDriver ( connectionInformation );
+        
+        if ( di == null )
+        {
+            _log.info ( "Driver not found: " + connectionInformation.getDriver () );
+            return null;
+        }
         
         return di.create ( connectionInformation );
     }
