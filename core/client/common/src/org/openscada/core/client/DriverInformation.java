@@ -23,7 +23,7 @@ import org.openscada.core.ConnectionInformation;
 
 public interface DriverInformation
 {
-    public abstract Class getConnectionClass ();
+    public abstract Class<?> getConnectionClass ();
     public abstract Connection create ( ConnectionInformation connectionInformation );
     public abstract void validate ( ConnectionInformation connectionInformation ) throws Throwable;
 }
