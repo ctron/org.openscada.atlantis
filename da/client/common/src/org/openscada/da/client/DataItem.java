@@ -91,7 +91,7 @@ public class DataItem extends Observable
         _itemManager.removeItemUpdateListener ( _itemId, _listener );
     }
 
-    private synchronized void performNotifyValueChange ( Variant value, boolean initial )
+    private void performNotifyValueChange ( Variant value, boolean initial )
     {
         _value = new Variant ( value );
         
@@ -99,18 +99,18 @@ public class DataItem extends Observable
         notifyObservers ();
     }
 
-    private synchronized void performNotifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
+    private void performNotifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
     {
         if ( initial )
             _attributes = new HashMap<String, Variant> ( attributes );
         else
             AttributesHelper.mergeAttributes ( _attributes, attributes );
-
+        
         setChanged ();
         notifyObservers ();
     }
 
-    private synchronized void performNotifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
+    private void performNotifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
     {
         _subscriptionState = subscriptionState;
         _subscriptionError = subscriptionError;
@@ -151,7 +151,7 @@ public class DataItem extends Observable
     {
         return _subscriptionState;
     }
-    
+
     /**
      * Get the item ID
      * @return the item Id
@@ -160,7 +160,7 @@ public class DataItem extends Observable
     {
         return _itemId;
     }
-    
+
     /**
      * Get the subscription error or <code>null</code> if there was none
      * @return the subscription error
