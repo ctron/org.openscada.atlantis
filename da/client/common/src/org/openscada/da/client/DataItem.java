@@ -39,23 +39,7 @@ public class DataItem extends Observable
     private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
     private Throwable _subscriptionError = null;
 
-    private ItemUpdateListener _listener = new ItemUpdateListener () {
-
-        public void notifyValueChange ( Variant value, boolean initial )
-        {
-            performNotifyValueChange ( value, initial );
-        }
-
-        public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
-        {
-            performNotifyAttributeChange ( attributes, initial );
-        }
-
-        public void notifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
-        {
-            performNotifySubscriptionChange ( subscriptionState, subscriptionError );
-        }
-    };
+    private ItemUpdateListener _listener = null;
 
     public DataItem ( String itemId )
     {
@@ -77,24 +61,53 @@ public class DataItem extends Observable
         }
         unregister ();
 
+        _listener = new ItemUpdateListener () {
+
+            public void notifyValueChange ( Variant value, boolean initial )
+            {
+                performNotifyValueChange ( value, initial );
+            }
+
+            public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
+            {
+                performNotifyAttributeChange ( attributes, initial );
+            }
+
+            public void notifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
+            {
+                performNotifySubscriptionChange ( subscriptionState, subscriptionError );
+            }
+        };
+
         _itemManager = connection;
         _itemManager.addItemUpdateListener ( _itemId, _listener );
     }
 
-    synchronized public void unregister ()
+    public void unregister ()
     {
-        if ( _itemManager == null )
+        ItemManager manager;
+        ItemUpdateListener listener;
+        
+        synchronized ( this )
         {
-            return;
+            if ( _itemManager == null )
+            {
+                return;
+            }
+            manager = _itemManager;
+            listener = _listener;
+            
+            _itemManager = null;
+            _listener = null;
         }
 
-        _itemManager.removeItemUpdateListener ( _itemId, _listener );
+        manager.removeItemUpdateListener ( _itemId, listener );
     }
 
     private void performNotifyValueChange ( Variant value, boolean initial )
     {
         _value = new Variant ( value );
-        
+
         setChanged ();
         notifyObservers ();
     }
@@ -105,7 +118,7 @@ public class DataItem extends Observable
             _attributes = new HashMap<String, Variant> ( attributes );
         else
             AttributesHelper.mergeAttributes ( _attributes, attributes );
-        
+
         setChanged ();
         notifyObservers ();
     }

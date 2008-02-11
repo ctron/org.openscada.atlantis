@@ -146,7 +146,8 @@ public class ItemSyncController implements ItemUpdateListener
             public void run ()
             {
                 sync ( false );
-            }} );
+            }
+        } );
         t.setDaemon ( true );
         t.setName ( "TriggerSync" );
         t.start ();
@@ -208,23 +209,35 @@ public class ItemSyncController implements ItemUpdateListener
         notifySubscriptionChange ( SubscriptionState.DISCONNECTED, e );
     }
 
-    public synchronized void notifyValueChange ( Variant value, boolean cache )
+    public void notifyValueChange ( Variant value, boolean cache )
     {
-        if ( _cachedValue.equals ( value ) )
+        synchronized ( this )
         {
-            return;
+            if ( _cachedValue.equals ( value ) )
+            {
+                return;
+            }
+
+            _cachedValue = value;
         }
         
-        _cachedValue = value;
         for ( ListenerInfo listenerInfo : _listeners.values () )
         {
             listenerInfo.getListener ().notifyValueChange ( value, cache );
         }
     }
 
-    public synchronized void notifyAttributeChange ( Map<String, Variant> attributes, boolean full )
+    public void notifyAttributeChange ( Map<String, Variant> attributes, boolean full )
     {
-        AttributesHelper.mergeAttributes ( _cachedAttributes, attributes, full );
+        synchronized ( this )
+        {
+            AttributesHelper.mergeAttributes ( _cachedAttributes, attributes, full );
+        }
+
+		if ( attributes.isEmpty () )
+		{
+			return;
+		}
 
         for ( ListenerInfo listenerInfo : _listeners.values () )
         {
@@ -232,15 +245,18 @@ public class ItemSyncController implements ItemUpdateListener
         }
     }
 
-    public synchronized void notifySubscriptionChange ( SubscriptionState subscriptionState, Throwable e )
+    public void notifySubscriptionChange ( SubscriptionState subscriptionState, Throwable e )
     {
-        if ( _subscriptionState.equals ( subscriptionState ) && _subscriptionError == e )
+        synchronized ( this )
         {
-            return;
+            if ( _subscriptionState.equals ( subscriptionState ) && _subscriptionError == e )
+            {
+                return;
+            }
+
+            _subscriptionState = subscriptionState;
+            _subscriptionError = e;
         }
-        
-        _subscriptionState = subscriptionState;
-        _subscriptionError = e;
 
         for ( ListenerInfo listenerInfo : _listeners.values () )
         {
@@ -253,5 +269,12 @@ public class ItemSyncController implements ItemUpdateListener
         notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
         notifyValueChange ( new Variant (), true );
         notifyAttributeChange ( new HashMap<String, Variant> (), true );
+    }
+    
+    @Override
+    protected void finalize () throws Throwable
+    {
+        _log.debug ( "Finalizing..." );
+        super.finalize ();
     }
 }
