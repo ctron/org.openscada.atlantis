@@ -63,7 +63,7 @@ public class DriverInformation implements org.openscada.core.client.DriverInform
         return new org.openscada.da.client.net.Connection ( ci );
     }
 
-    public Class getConnectionClass ()
+    public Class<?> getConnectionClass ()
     {
         return org.openscada.da.client.net.Connection.class;
     }
