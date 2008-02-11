@@ -94,13 +94,14 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
         
         _log.debug ( "adding ping job" );
 
+        // adding the ping job with half the period time of the timeout
         _pingJob = _scheduler.addJob ( new Runnable () {
 
             public void run ()
             {
                 doPing ();
             }
-        }, Integer.getInteger ( "openscada.net.pingPeriod", 7 * 1000 ) );
+        }, Integer.getInteger ( "openscada.net.pingPeriod", 7 * 1000 ) / 2 );
     }
 
     public void closed ( Exception error )

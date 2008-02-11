@@ -101,7 +101,7 @@ public abstract class IOChannel
                 {
                     performUnregister ( processor_ );
                 }
-            } );
+            }, false );
         }
         catch ( InterruptedException e )
         {

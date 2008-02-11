@@ -42,6 +42,8 @@ public class IOProcessor implements Runnable
     private static Logger _log = Logger.getLogger ( IOProcessor.class );
 
     private Map<SelectionKey, IOChannel> _connections = new HashMap<SelectionKey, IOChannel> ();
+    private Map<IOChannel, SelectionKey> _keys = new HashMap<IOChannel, SelectionKey> ();
+    
     private Set<IOChannel> _timeoutConnections = new CopyOnWriteArraySet<IOChannel> ();
 
     private Selector _selector = null;
@@ -103,6 +105,7 @@ public class IOProcessor implements Runnable
 
     private void closeAllConnections ()
     {
+        _log.info ( "Closing all connections" );
         for ( SelectionKey key : _selector.keys () )
         {
             try
@@ -120,11 +123,15 @@ public class IOProcessor implements Runnable
 
     public void registerConnection ( IOChannel connection, int ops ) throws ClosedChannelException
     {
+        _log.debug ( "Register socket: " + connection + " for " + ops );
+        
         SelectionKey key = connection.getSelectableChannel ().keyFor ( _selector );
         if ( key == null )
         {
+            _log.debug ( "Create key for channel: " + connection );
             key = connection.getSelectableChannel ().register ( _selector, ops );
             _connections.put ( key, connection );
+            _keys.put ( connection, key );
         }
         else
         {
@@ -164,12 +171,23 @@ public class IOProcessor implements Runnable
 
     public void unregisterConnection ( IOChannel connection )
     {
-        SelectionKey key = connection.getSelectableChannel ().keyFor ( _selector );
+        _log.debug ( "UnRegister socket: " + connection );
+        
+        // SelectionKey key = connection.getSelectableChannel ().keyFor ( _selector );
+        SelectionKey key = _keys.remove ( connection );
 
         if ( key != null )
         {
-            _connections.remove ( key );
+            IOChannel channel = _connections.remove ( key );
+            if ( channel == null )
+            {
+                _log.info ( "Channel not registered " + connection );
+            }
             key.cancel ();
+        }
+        else
+        {
+            _log.info ( "Key not found for socket" + connection );
         }
     }
 
@@ -197,15 +215,16 @@ public class IOProcessor implements Runnable
                     int rc = 0;
                     rc = _selector.select ( 100 );
 
+                    checkTimeouts ();
+
+                    _scheduler.runOnce ();
+
                     if ( rc > 0 )
                     {
                         handleSelectedKeys ();
                     }
 
-                    checkTimeouts ();
-
-                    _scheduler.runOnce ();
-
+                    
                 }
                 catch ( IOException e )
                 {
@@ -238,31 +257,47 @@ public class IOProcessor implements Runnable
         IOChannelListener listener = _connections.get ( key ).getIOChannelListener ();
 
         if ( !key.isValid () )
+        {
+            _log.debug ( "Key got invalid: " + listener );
+            _connections.remove ( key );
             return;
+        }
 
         // check state and check if connection was closed during processing
         if ( key.isConnectable () )
             listener.handleConnect ();
         if ( !key.isValid () )
+        {
+            _connections.remove ( key );
             return;
+        }
 
         // check state and check if connection was closed during processing
         if ( key.isAcceptable () )
             listener.handleAccept ();
         if ( !key.isValid () )
+        {
+            _connections.remove ( key );
             return;
+        }
 
         // check state and check if connection was closed during processing
         if ( key.isReadable () )
             listener.handleRead ();
         if ( !key.isValid () )
+        {
+            _connections.remove ( key );
             return;
+        }
 
         // check state and check if connection was closed during processing
         if ( key.isWritable () )
             listener.handleWrite ();
         if ( !key.isValid () )
+        {
+            _connections.remove ( key );
             return;
+        }
     }
 
     protected void handleSelectedKeys ()

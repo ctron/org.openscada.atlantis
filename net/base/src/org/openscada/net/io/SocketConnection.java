@@ -148,7 +148,7 @@ public class SocketConnection extends IOChannel implements IOChannelListener
             _log.debug ( "Socket unregistered" );
             return;
         }
-
+        
         int ops = 0;
 
         if ( _channel.isConnectionPending () )
@@ -163,7 +163,7 @@ public class SocketConnection extends IOChannel implements IOChannelListener
                 ops += SelectionKey.OP_WRITE;
         }
 
-        if ( ops > 0 )
+        if ( ops > 0 && !_closing )
         {
             _log.debug ( "Setting ops = " + ops );
             register ( _processor, ops );
@@ -267,6 +267,7 @@ public class SocketConnection extends IOChannel implements IOChannelListener
 
         try
         {
+            unregister ( _processor );
             if ( _channel.isOpen () )
             {
                 _log.debug ( "Closing connection" );
@@ -275,7 +276,7 @@ public class SocketConnection extends IOChannel implements IOChannelListener
                 if ( _listener != null )
                     _listener.closed ();
             }
-            updateOps ();
+            // updateOps ();
         }
         catch ( IOException e )
         {
