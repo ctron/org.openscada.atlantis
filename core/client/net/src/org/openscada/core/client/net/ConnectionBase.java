@@ -39,42 +39,6 @@ import org.openscada.net.io.IOProcessor;
 
 public abstract class ConnectionBase implements Connection
 {
-    private class WaitConnectionStateListener implements ConnectionStateListener
-    {
-        private Logger _log = Logger.getLogger ( WaitConnectionStateListener.class );
-        
-        public void stateChange ( Connection connection, ConnectionState connectionState, Throwable error )
-        {
-            _log.debug ( "ConnectionState change: " + connectionState );
-            switch ( connectionState )
-            {
-            case BOUND:
-                notifyComplete ();
-            case CLOSED:
-                notifyError ( error );
-            }
-        }
-
-        synchronized private void notifyComplete ()
-        {
-            notifyAll ();
-        }
-        
-        private Throwable _error = null;
-        
-        synchronized private void notifyError ( Throwable error )
-        {
-            _error = error;
-            notifyAll ();
-        }
-
-        synchronized public void complete () throws Throwable
-        {
-            if ( _error != null )
-                throw _error;
-        }
-    }
-    
     private static Logger _log = Logger.getLogger ( ConnectionBase.class );
 
     private ConnectionInfo _connectionInfo = null;
@@ -87,6 +51,7 @@ public abstract class ConnectionBase implements Connection
     
     //private boolean _connected = false;
     private ConnectionState _connectionState = ConnectionState.CLOSED;
+    private boolean _requestConnection = false;
 
     private static Object _defaultProcessorLock = new Object ();
     private static IOProcessor _defaultProcessor = null;
@@ -153,6 +118,12 @@ public abstract class ConnectionBase implements Connection
 
     synchronized public void connect ()
     {
+        _requestConnection = true;
+        connectInternal ();
+    }
+    
+    synchronized protected void connectInternal ()
+    {
         switch ( _connectionState )
         {
         case CLOSED:
@@ -163,6 +134,8 @@ public abstract class ConnectionBase implements Connection
     
     synchronized public void disconnect ()
     {
+        _log.info ( "Requesting disconnect: " + _connectionInfo.toUri () );
+        _requestConnection = false;
         disconnect ( null );
     }
 
@@ -292,13 +265,13 @@ public abstract class ConnectionBase implements Connection
             // maybe clean up
             onConnectionClosed ();
             // if we got the close and are auto-reconnect ... schedule the job
-            if ( _connectionInfo.isAutoReconnect () )
+            if ( _connectionInfo.isAutoReconnect () && _requestConnection )
             {
                 _processor.getScheduler ().scheduleJob ( new Runnable() {
 
                     public void run ()
                     {
-                        connect ();
+                        connectInternal ();
                     }}, _connectionInfo.getReconnectDelay () );
             }
             break;
