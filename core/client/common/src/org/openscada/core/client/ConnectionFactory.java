@@ -104,7 +104,7 @@ public class ConnectionFactory
         if ( className != null )
         {
             _log.info ( "Pre-loading connection class: " + className );
-            Class.forName ( className );
+            Class.forName ( className, true, Thread.currentThread ().getContextClassLoader () );
         }
         
         DriverInformation di = findDriver ( connectionInformation );
