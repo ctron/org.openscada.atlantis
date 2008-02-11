@@ -114,4 +114,10 @@ public class ItemManager implements ConnectionStateListener
         }
     }
 
+    @Override
+    protected void finalize () throws Throwable
+    {
+        _log.debug ( "Finalized" );
+        super.finalize ();
+    }
 }
