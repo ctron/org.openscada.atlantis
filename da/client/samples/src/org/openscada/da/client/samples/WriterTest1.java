@@ -13,12 +13,13 @@ import org.openscada.da.client.WriteOperationCallback;
 public class WriterTest1
 {
     private static Logger logger = Logger.getLogger ( WriterTest1.class );
-    
+
     public static void main ( String[] args ) throws ClassNotFoundException
     {
         final String className = "org.openscada.da.client.net.Connection";
         final String uri = "da:net://127.0.0.1:1202?auto-reconnect=true";
         final String itemName = "172.16.148.128:F8582CF2-88FB-11D0-B850-00C0F0104305.Bucket Brigade.Int4";
+        // final String itemName = "memory";
 
         if ( className != null )
         {
@@ -56,27 +57,61 @@ public class WriterTest1
     }
 
     private static Random random = new Random ();
-    
+
     public static void doWrite ( Connection connection, String itemName )
     {
         final Variant value = new Variant ( random.nextInt () );
         logger.info ( "Start write: " + value );
         final Calendar c = Calendar.getInstance ();
-        connection.write ( itemName, value, new WriteOperationCallback () {
+        final Object lock = new Object ();
+        synchronized ( lock )
+        {
+            connection.write ( itemName, value, new WriteOperationCallback () {
 
-            public void complete ()
+                public void complete ()
+                {
+                    logger.info ( String.format ( "Wrote: %s, Started: %tc", value, c ) );
+                    synchronized ( lock )
+                    {
+                        lock.notify ();
+                    }
+                }
+
+                public void error ( Throwable e )
+                {
+                    logger.info ( "Error", e );
+                    synchronized ( lock )
+                    {
+                        lock.notify ();
+                    }
+                }
+
+                public void failed ( String error )
+                {
+                    logger.info ( "Failed: " + error );
+                    // async call since it might called inline
+                    new Thread ( new Runnable () {
+
+                        public void run ()
+                        {
+                            synchronized ( lock )
+                            {
+                                lock.notify ();
+                            }        
+                        }} ).start ();
+                    
+                }
+            } );
+            
+            /*
+            try
             {
-                logger.info ( String.format ( "Wrote: %s, Started: %tc", value, c ) );
+                lock.wait ();
             }
-
-            public void error ( Throwable e )
+            catch ( InterruptedException e1 )
             {
-                logger.info ( "Error", e );
             }
-
-            public void failed ( String error )
-            {
-                logger.info ( "Failed: " + error );
-            }} );
+            */
+        }
     }
 }
