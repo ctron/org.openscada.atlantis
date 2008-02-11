@@ -668,4 +668,11 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
             }
         }
     }
+    
+    @Override
+    protected void finalize () throws Throwable
+    {
+        _log.debug ( "Finalizing connection" );
+        super.finalize ();
+    }
 }
