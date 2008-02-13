@@ -45,6 +45,12 @@ public class WriteOperationWizard extends Wizard implements INewWizard
     private boolean _complete = false;
     private Throwable _error = null;
 
+    public WriteOperationWizard ()
+    {
+        setWindowTitle ( "Write to data item" );
+        setNeedsProgressMonitor ( true );
+    }
+    
     @Override
     public boolean performFinish ()
     {
