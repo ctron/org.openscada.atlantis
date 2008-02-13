@@ -340,7 +340,16 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
                 // internal error .. socket closed?
             }
             updateAttribute ( OPC_ATTRIBUTE_WRITE_ERROR_CODE, new Variant ( e.getErrorCode () ) );
-            _log.warn ( String.format ( "Failed to write to item (call) %s: %0x%08X", _itemId, e.getErrorCode () ), e );
+            _log.warn ( String.format ( "Failed to write to item (call) %s: 0x%08X", _itemId, e.getErrorCode () ), e );
+            throw new InvalidOperationException ();
+        }
+        catch ( InvalidOperationException e )
+        {
+            throw new InvalidOperationException ();
+        }
+        catch ( Throwable e )
+        {
+            _log.warn ( "Failed to write due to unknown error", e );
             throw new InvalidOperationException ();
         }
     }
