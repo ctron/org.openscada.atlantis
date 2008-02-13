@@ -360,7 +360,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                         {
                             if ( callback != null )
                             {
-                                callback.failed ( (error != null ) ? error.getMessage () : "<unknown error>" );
+                                callback.failed ( e.getMessage () );
                             }
                         }
 
@@ -451,7 +451,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                         {
                             if ( callback != null )
                             {
-                                callback.failed ( error.getMessage () );
+                                callback.failed ( e.getMessage () );
                             }
                         }
 
@@ -542,7 +542,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                         {
                             if ( callback != null )
                             {
-                                callback.failed ( error.getMessage () );
+                                callback.failed ( e.getMessage () );
                             }
                         }
                         break;
