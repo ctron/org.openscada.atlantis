@@ -113,8 +113,11 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
             {
                 if ( _item == null )
                 {
-                    _log.warn ( String.format ( "Item '%s' already has a write item", _itemId ) );
                     _item = item;
+                }
+                else
+                {
+                    _log.warn ( String.format ( "Item '%s' already has a write item", _itemId ) );
                 }
                 // always return the current item
                 item = _item;
