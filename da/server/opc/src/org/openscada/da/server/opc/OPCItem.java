@@ -367,8 +367,11 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         {
             synchronized ( _itemLock )
             {
-                _log.info ( String.format ( "Scraping OPC write item (%s)", _itemId ) );
-                _item = null;
+                if ( _item != null )
+                {
+                    _log.info ( String.format ( "Scraping OPC write item (%s)", _itemId ) );
+                    _item = null;
+                }
             }
         }
     }
