@@ -360,14 +360,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                         {
                             if ( callback != null )
                             {
-                                if ( e != null )
-                                {
-                                    callback.failed ( e.getMessage () );
-                                }
-                                else
-                                {
-                                    callback.failed ( "<unknown reason>" );
-                                }
+                                callback.failed ( (error != null ) ? error.getMessage () : "<unknown error>" );
                             }
                         }
 
