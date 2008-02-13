@@ -83,33 +83,46 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
     public Item getItem ()
     {
         Item item = _item;
-        if ( item == null )
+        Group group = _connection.getGroup ();
+        
+        // first check if we really have the right item
+        if ( item != null )
         {
-            try
+            if ( group == item.getGroup () )
             {
-                _log.info ( String.format ( "Binding write item (%s) to OPC", _itemId ) );
-                Group group = _connection.getGroup ();
-                if ( group == null )
-                {
-                    _item = null; // we are not allowed to have an item here
-                    _log.warn ( String.format ( "Failed to bind write item since we are disconnected (%s)", _itemId ) );
-                    return null;
-                }
-                
-                item = group.addItem ( _itemId );
-                synchronized ( _itemLock )
-                {
-                    if ( _item == null )
-                    {
-                        _item = item;
-                    }
-                    item = _item;
-                }
+                // it is our group and our item
+                return item;
             }
-            catch ( Throwable e )
+            // scrap item! wrong group
+            _log.warn ( String.format ( "OPC write item '%s' has wrong group attached! Scraping item!!", _itemId ) );
+            item = _item = null;
+        }
+
+        try
+        {
+            _log.info ( String.format ( "Binding write item (%s) to OPC", _itemId ) );
+            if ( group == null )
             {
-                _log.info ( "Failed to bind write item", e );
+                _item = null; // we are not allowed to have an item here
+                _log.warn ( String.format ( "Failed to bind write item since we are disconnected (%s)", _itemId ) );
+                return null;
             }
+
+            item = group.addItem ( _itemId );
+            synchronized ( _itemLock )
+            {
+                if ( _item == null )
+                {
+                    _log.warn ( String.format ( "Item '%s' already has a write item", _itemId ) );
+                    _item = item;
+                }
+                // always return the current item
+                item = _item;
+            }
+        }
+        catch ( Throwable e )
+        {
+            _log.info ( "Failed to bind write item", e );
         }
         return item;
     }
