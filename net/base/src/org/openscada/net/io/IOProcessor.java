@@ -310,7 +310,7 @@ public class IOProcessor implements Runnable
             }
             catch ( Throwable e )
             {
-                _log.warn ( "Failed to process selector" );
+                _log.warn ( "Failed to process selector", e );
             }
         }
         _selector.selectedKeys ().clear ();
