@@ -9,7 +9,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/j-interop-openscada.jar" sourcepath="/openscada_opc_lib/src"/>
 	<classpathentry exported="true" kind="lib" path="lib/jcifs-1.2.9.jar"/>
 	<classpathentry kind="lib" path="lib/j-interopdeps.jar"/>
-	<classpathentry kind="lib" path="lib/openscada-opc-dcom-0.3.0-20080208-nightly.jar"/>
-	<classpathentry kind="lib" path="lib/openscada-opc-lib-0.3.0-20080208-nightly.jar"/>
+	<classpathentry kind="lib" path="lib/openscada-opc-dcom-0.3.0-20080228-nightly.jar"/>
+	<classpathentry kind="lib" path="lib/openscada-opc-lib-0.3.0-20080228-nightly.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
