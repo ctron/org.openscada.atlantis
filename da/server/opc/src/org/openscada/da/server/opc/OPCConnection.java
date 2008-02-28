@@ -214,11 +214,11 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         switch ( _connectionSetup.getAccessMethod () )
         {
         case SYNC:
-            _access = new SyncAccess ( _server, _connectionSetup.getRefreshTimeout () );
+            _access = new SyncAccess ( _server, _connectionSetup.getRefreshTimeout (), getConnectionTag () );
             break;
         case ASYNC20:
             _access = new Async20Access ( _server, _connectionSetup.getRefreshTimeout (),
-                    _connectionSetup.isInitialConnect () );
+                    _connectionSetup.isInitialConnect (), getConnectionTag () );
             break;
         }
         _access.addStateListener ( this );
