@@ -356,7 +356,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         return _server;
     }
 
-    public synchronized void errorOccured ( Throwable t )
+    public void errorOccured ( Throwable t )
     {
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
         if ( t != null )
