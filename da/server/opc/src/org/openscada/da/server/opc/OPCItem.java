@@ -378,9 +378,9 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         }
         else
         {
+            _log.info ( String.format ( "Item (%s) failed", _itemId ), t );
             updateAttribute ( "org.openscada.opc.last-error", new Variant ( t.getMessage () ) );
         }
-
     }
 
     public void stateChanged ( boolean state )

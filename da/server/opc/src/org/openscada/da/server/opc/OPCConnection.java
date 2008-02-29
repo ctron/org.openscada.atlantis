@@ -365,6 +365,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         }
         else
         {
+            _log.info ( "Connection failed", t );
             attributes.put ( "opc.last-error", new Variant ( t.getMessage () ) );
         }
         _accessStateItem.updateAttributes ( attributes );
