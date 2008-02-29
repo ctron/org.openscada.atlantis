@@ -347,7 +347,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
 
     protected void suicide ()
     {
-        _log.info ( "Perfom suicide" );
+        _log.error ( "Perfom suicide" );
         stop ();
     }
 
