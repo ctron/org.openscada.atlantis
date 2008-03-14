@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<project name="da_opc_server2_schema" default="main" basedir=".">
+
+	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
+		 <classpath id="xmlbeanspath">
+            <pathelement location="../ext_plugin_xmlbeans/xbean.jar"/>
+            <pathelement location="../ext_plugin_xmlbeans/jsr173_1.0_api.jar"/>
+         </classpath>
+	</taskdef>
+
+	<target name="clean">
+		<delete failonerror="false">
+			<fileset dir="schemasrc" >
+				<include name="**"/>
+			</fileset>
+        </delete>
+
+	</target>
+	
+	<target name="main" depends="clean">
+		<xmlbean
+			failonerror="true"
+			download="true"
+			classgendir="schemasrc"
+			schema="schema/configuration.xsd"
+			javasource="1.5"
+            classpathref="xmlbeanspath"
+			>
+				<fileset dir="schema" includes="*.xsd"/>
+        </xmlbean>
+
+
+  	</target>
+  
+</project>
