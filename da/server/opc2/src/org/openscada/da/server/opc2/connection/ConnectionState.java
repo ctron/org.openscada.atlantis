@@ -19,7 +19,30 @@
 
 package org.openscada.da.server.opc2.connection;
 
+/**
+ * The connection state
+ * @author jens
+ *
+ */
 public enum ConnectionState
 {
-    DISCONNECTED, CONNECTING, CONNECTED, DISCONNECTING,
+    /**
+     * No connection is established
+     */
+    DISCONNECTED,
+
+    /**
+     * The connection is being established
+     */
+    CONNECTING,
+
+    /**
+     * the connection is established
+     */
+    CONNECTED,
+
+    /**
+     * the connection is being disconnected
+     */
+    DISCONNECTING,
 }
