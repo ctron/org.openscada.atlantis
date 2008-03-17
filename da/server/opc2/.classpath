@@ -9,8 +9,8 @@
 	<classpathentry kind="lib" path="lib/j-interop-openscada.jar"/>
 	<classpathentry kind="lib" path="lib/openscada-opc-dcom-0.3.0-20080208-nightly.jar"/>
 	<classpathentry kind="lib" path="lib/openscada-opc-lib-0.3.0-20080208-nightly.jar"/>
-	<classpathentry kind="lib" path="schemasrc"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ext_log4j"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_core_server"/>
+	<classpathentry kind="lib" path="schemasrc"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
