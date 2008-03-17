@@ -22,6 +22,8 @@ package org.openscada.da.server.opc2.connection;
 public class OPCConfiguration
 {
     private String deviceTag;
+    
+    private String itemIdPrefix;
 
     public String getDeviceTag ()
     {
@@ -31,5 +33,15 @@ public class OPCConfiguration
     public void setDeviceTag ( String deviceTag )
     {
         this.deviceTag = deviceTag;
+    }
+
+    public String getItemIdPrefix ()
+    {
+        return itemIdPrefix;
+    }
+
+    public void setItemIdPrefix ( String itemIdPrefix )
+    {
+        this.itemIdPrefix = itemIdPrefix;
     }
 }

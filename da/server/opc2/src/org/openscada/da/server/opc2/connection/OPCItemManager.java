@@ -75,7 +75,7 @@ public class OPCItemManager
 
     private Queue<WriteRequest> writeRequests = new LinkedList<WriteRequest> ();
 
-    private String itemIdPrefix = "items";
+    private String itemIdPrefix;
 
     private Worker worker;
     private Hive hive;
@@ -91,14 +91,13 @@ public class OPCItemManager
         this.hive = hive;
         this.connectionFolder = connectionFolder;
         this.configuration = configuration;
-
+        
+        this.itemIdPrefix = this.configuration.getItemIdPrefix ();
+        
         this.flatItemFolder = new FolderCommon ();
         this.connectionFolder.add ( "allItems", flatItemFolder, new HashMap<String, Variant> () );
     }
 
-    /**
-     * Unregister everything from the hive
-     */
     public void shutdown ()
     {
         handleDisconnected ();
@@ -106,6 +105,9 @@ public class OPCItemManager
         this.connectionFolder.remove ( this.flatItemFolder );
     }
 
+    /**
+     * Unregister everything from the hive
+     */
     protected void unregisterAllItems ()
     {
         for ( Map.Entry<String, OPCItem> entry : this.itemMap.entrySet () )
@@ -209,6 +211,10 @@ public class OPCItemManager
 
     }
 
+    /**
+     * register all requested items with the OPC server
+     * @throws InvocationTargetException
+     */
     private void registerAllItems () throws InvocationTargetException
     {
         realizeItems ( this.requestedMap.values () );
@@ -290,6 +296,11 @@ public class OPCItemManager
         return item;
     }
 
+    /**
+     * create an item id from the opc item definition for this item manager
+     * @param itemDef the opc item definition
+     * @return the item id
+     */
     private String createItemId ( OPCITEMDEF itemDef )
     {
         return getItemPrefix () + "." + itemDef.getItemID ();
@@ -297,13 +308,13 @@ public class OPCItemManager
 
     private String getItemPrefix ()
     {
-        if ( itemIdPrefix != null )
+        if ( this.itemIdPrefix != null )
         {
-            return configuration.getDeviceTag ();
+            return this.configuration.getDeviceTag ();
         }
         else
         {
-            return configuration.getDeviceTag () + "." + this.itemIdPrefix;
+            return this.configuration.getDeviceTag () + "." + this.itemIdPrefix;
         }
     }
 
