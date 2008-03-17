@@ -308,7 +308,7 @@ public class OPCItemManager
 
     private String getItemPrefix ()
     {
-        if ( this.itemIdPrefix != null )
+        if ( this.itemIdPrefix == null )
         {
             return this.configuration.getDeviceTag ();
         }
