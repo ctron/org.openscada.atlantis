@@ -91,9 +91,9 @@ public class OPCItemManager
         this.hive = hive;
         this.connectionFolder = connectionFolder;
         this.configuration = configuration;
-        
+
         this.itemIdPrefix = this.configuration.getItemIdPrefix ();
-        
+
         this.flatItemFolder = new FolderCommon ();
         this.connectionFolder.add ( "allItems", flatItemFolder, new HashMap<String, Variant> () );
     }
@@ -535,6 +535,12 @@ public class OPCItemManager
         }
     }
 
+    /**
+     * Perform all queued write requests
+     * <p>
+     * May only be called by the controller
+     * @throws InvocationTargetException
+     */
     public void processWriteRequests () throws InvocationTargetException
     {
         if ( writeRequests.isEmpty () )
@@ -556,12 +562,45 @@ public class OPCItemManager
         for ( WriteRequest request : requests )
         {
             SyncWriteJob job = new SyncWriteJob ( this.model, new WriteRequest[] { request } );
-            ResultSet<WriteRequest> result = worker.execute ( job, job );
-            processWriteResult ( result.get ( 0 ) );
+
+            try
+            {
+                ResultSet<WriteRequest> result = worker.execute ( job, job );
+                handleWriteResult ( result.get ( 0 ) );
+            }
+            catch ( InvocationTargetException e )
+            {
+                handleWriteException ( e, request );
+                throw e;
+            }
         }
     }
 
-    private void processWriteResult ( Result<WriteRequest> result )
+    /**
+     * handle the case a critical write error occurred
+     * @param e the exception
+     * @param request the request that caused the error
+     */
+    private void handleWriteException ( InvocationTargetException e, WriteRequest request )
+    {
+        String itemId = this.serverHandleMapRev.get ( request.getServerHandle () );
+        logger.warn ( String.format ( "Failed to perform write request for item %s (%s) => %s", itemId, request.getServerHandle (), request.getValue () ), e );
+        
+        if ( itemId == null )
+        {
+            return;
+        }
+
+        OPCItem item = this.itemMap.get ( itemId );
+        if ( item == null )
+        {
+            return;
+        }
+        
+        item.setLastWriteError ( null );
+    }
+
+    private void handleWriteResult ( Result<WriteRequest> result )
     {
         String itemId = this.serverHandleMapRev.get ( result.getValue ().getServerHandle () );
         if ( itemId == null )

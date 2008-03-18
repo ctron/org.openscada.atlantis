@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.opc2.connection;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -165,10 +166,28 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         }
     }
 
+    /**
+     * Setting the last write error information
+     * @param result the write result that caused the error or <code>null</code> in case the reason is unknown
+     */
     public void setLastWriteError ( Result<WriteRequest> result )
     {
-        // TODO Auto-generated method stub
+        Calendar c = Calendar.getInstance ();
 
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        if ( result != null )
+        {
+            attributes.put ( "opc.lastWriteError.code", new Variant ( result.getErrorCode () ) );
+            attributes.put ( "opc.lastWriteError.message", new Variant ( String.format ( "0x%08x", result.getErrorCode () ) ) );
+        }
+        else
+        {
+            attributes.put ( "opc.lastWriteError.code", new Variant ( -1 ) );
+            attributes.put ( "opc.lastWriteError.message", new Variant ( "unknown error" ) );
+        }
+        attributes.put ( "opc.lastWriteError.timestamp", new Variant ( c.getTimeInMillis () ) );
+        attributes.put ( "opc.lastWriteError.timestamp.message", new Variant ( String.format ( "%tc", c ) ) );
+        updateAttributes ( attributes );
     }
 
 }
