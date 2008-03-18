@@ -34,7 +34,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
 
     private Variant _cacheValue = null;
     private Map<String, Variant> _cacheAttributes = new HashMap<String, Variant> ();
-    
+
     private HiveEventListener _hiveEventListener;
 
     public DataItemSubscriptionSource ( DataItem dataItem, HiveEventListener hiveEventListener )
@@ -125,13 +125,16 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         {
             AttributesHelper.mergeAttributes ( _cacheAttributes, attributes );
         }
-        
+
         for ( DataItemSubscriptionListener listener : _listeners )
         {
             listener.attributesChanged ( item, attributes, cache );
         }
-        
-        _hiveEventListener.attributesChanged ( item, attributes.size () );
+
+        if ( _hiveEventListener != null )
+        {
+            _hiveEventListener.attributesChanged ( item, attributes.size () );
+        }
     }
 
     public void valueChanged ( DataItem item, Variant variant, boolean cache )
@@ -141,7 +144,10 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         {
             listener.valueChanged ( item, variant, cache );
         }
-        
-        _hiveEventListener.valueChanged ( item, variant, cache );
+
+        if ( _hiveEventListener != null )
+        {
+            _hiveEventListener.valueChanged ( item, variant, cache );
+        }
     }
 }
