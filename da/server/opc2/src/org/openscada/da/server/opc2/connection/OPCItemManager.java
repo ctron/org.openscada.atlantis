@@ -507,7 +507,7 @@ public class OPCItemManager
         if ( !this.model.isConnected () )
         {
             // discard write request
-            logger.warn ( String.format ( "Failed to convert %s to variant", value ) );
+            logger.warn ( String.format ( "OPC is not connected", value ) );
             return;
         }
 
@@ -522,6 +522,7 @@ public class OPCItemManager
         if ( serverHandle == null )
         {
             logger.warn ( String.format ( "Server handle not found for item %s", itemId ) );
+            return;
         }
 
         addWriteRequest ( new WriteRequest ( serverHandle, variant ) );

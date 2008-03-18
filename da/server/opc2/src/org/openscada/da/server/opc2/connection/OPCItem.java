@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.jinterop.dcom.core.JIVariant;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
@@ -72,6 +73,17 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             throw new InvalidOperationException ();
         }
 
+        // check if the conversion works ... will be performed again by the addWriteRequest call
+        JIVariant variant = Helper.ours2theirs ( value );
+        logger.debug ( String.format ( "Converting write request from %s to %s", value, variant ) );
+        if ( variant == null )
+        {
+            // unable to convert write request
+            logger.info ( "Unable to convert write request" );
+            throw new NotConvertableException ();
+        }
+        
+        this.manager.addWriteRequest ( this.opcDefinition.getItemID (), value );
     }
 
     public void suspend ()
