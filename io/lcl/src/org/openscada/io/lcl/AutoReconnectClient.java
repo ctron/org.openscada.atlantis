@@ -61,8 +61,8 @@ public class AutoReconnectClient extends Client
 
             public void run ()
             {
-                processReconnect ();
                 _scheduled = false;
+                processReconnect ();
             }},
             delay );
     }

@@ -80,6 +80,8 @@ public class Client implements LineHandler
     
     private Job _currentJob = null;
     
+    private Integer _timeout = null;
+    
     public Client ( IOProcessor processor, ClientHandler handler ) throws IOException
     {
         _handler = handler;
@@ -197,6 +199,24 @@ public class Client implements LineHandler
     public void connected ()
     {
         _handler.connected ();
+        
+        applyTimeout ();
+    }
+    
+    protected void applyTimeout ()
+    {
+        LineBasedConnection connection = _connection;
+        if ( connection == null )
+        {
+            return;
+        }
+        
+        Integer timeout = _timeout;
+        if ( timeout == null )
+        {
+            timeout = 0;
+        }
+        connection.setTimeout ( timeout );
     }
 
     public void connectionFailed ( Throwable throwable )
@@ -207,5 +227,16 @@ public class Client implements LineHandler
     public void connect ( SocketAddress address )
     {
         _client.connect ( address );
+    }
+
+    public Integer getTimeout ()
+    {
+        return _timeout;
+    }
+
+    public void setTimeout ( Integer timeout )
+    {
+        _timeout = timeout;
+        applyTimeout ();
     }
 }
