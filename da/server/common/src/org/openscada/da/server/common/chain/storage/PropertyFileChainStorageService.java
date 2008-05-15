@@ -1,8 +1,8 @@
 package org.openscada.da.server.common.chain.storage;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class PropertyFileChainStorageService implements ChainStorageService
         Properties p = new Properties ();
         try
         {
-            p.load ( new FileReader ( itemFile ) );
+            p.load ( new FileInputStream ( itemFile ) );
 
             Map<String, Variant> result = new HashMap<String, Variant> ();
             VariantEditor ed = new VariantEditor ();
@@ -95,7 +95,7 @@ public class PropertyFileChainStorageService implements ChainStorageService
 
         try
         {
-            p.store ( new FileWriter ( file ), "" );
+            p.store ( new FileOutputStream ( file ), "" );
         }
         catch ( IOException e )
         {
