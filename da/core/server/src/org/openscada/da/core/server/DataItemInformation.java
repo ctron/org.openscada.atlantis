@@ -33,6 +33,14 @@ import org.openscada.da.core.IODirection;
  */
 public interface DataItemInformation
 {
-    public EnumSet<IODirection> getIODirection ();
-    public String getName ();
+    public abstract EnumSet<IODirection> getIODirection ();
+    
+    /**
+     * Get the ID of the data item
+     * <p>
+     * Although the getter is called <em>name</em> it returns the <em>id</em> since
+     * somewhere in the past "name" was renamed to "id".
+     * @return the id of the data item
+     */
+    public abstract String getName ();
 }
