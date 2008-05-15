@@ -12,14 +12,15 @@ import org.openscada.da.core.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.MemoryItemChained;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
+import org.openscada.da.server.common.impl.HiveCommon;
 
 public class TestItem2 extends MemoryItemChained
 {
 
-    public TestItem2 ( String id )
+    public TestItem2 ( HiveCommon hive, String id )
     {
         super ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT )) );
-        addChainElement ( IODirection.INPUT, new SumErrorChainItem () );
+        addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
     }
     
     @Override

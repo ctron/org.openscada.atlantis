@@ -25,12 +25,15 @@ import java.util.Map;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.chain.AttributeBinder;
 import org.openscada.da.server.common.chain.BaseChainItemCommon;
 import org.openscada.da.server.common.chain.ChainItem;
 import org.openscada.da.server.common.chain.ChainProcessEntry;
 import org.openscada.da.server.common.chain.MemoryItemChained;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
+import org.openscada.da.server.common.factory.FactoryHelper;
+import org.openscada.da.server.common.impl.HiveCommon;
 
 public class MemoryChainedItem extends MemoryItemChained
 {
@@ -84,15 +87,15 @@ public class MemoryChainedItem extends MemoryItemChained
         {
             return null;
         }
-        
     }
     
     private class InjectChainItem extends BaseChainItemCommon
     {
         private MemoryChainedItem _item = null;
         
-        public InjectChainItem ( MemoryChainedItem item )
+        public InjectChainItem ( HiveServiceRegistry serviceRegistry, MemoryChainedItem item )
         {
+            super ( serviceRegistry );
             _item = item;
             
             addBinder ( "org.openscada.da.test.chain.input.add", new AddClassAttributeBinder ( item, IODirection.INPUT ) );
@@ -100,6 +103,12 @@ public class MemoryChainedItem extends MemoryItemChained
             addBinder ( "org.openscada.da.test.chain.outpt.add", new AddClassAttributeBinder ( item, IODirection.OUTPUT ) );
             addBinder ( "org.openscada.da.test.chain.output.remove", new RemoveClassAttributeBinder ( item, IODirection.OUTPUT ) );
             setReservedAttributes ( "org.openscada.da.test.chain.value" );
+        }
+        
+        @Override
+        public boolean isPersistent ()
+        {
+            return false;
         }
         
         public void process ( Variant value, Map<String, Variant> attributes )
@@ -122,18 +131,23 @@ public class MemoryChainedItem extends MemoryItemChained
         }
         
     }
+
+    private HiveCommon hive;
     
-    public MemoryChainedItem ( String id )
+    public MemoryChainedItem ( HiveCommon hive, String id )
     {
         super ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
-        addChainElement ( IODirection.INPUT, new InjectChainItem ( this ) );
-        addChainElement ( IODirection.INPUT, new SumErrorChainItem () );
+        this.hive = hive;
+        addChainElement ( IODirection.INPUT, new InjectChainItem ( hive, this ) );
+        addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
     }
    
     public void addChainElement ( IODirection direction, String className ) throws Exception
     {
         Class<?> itemClass = Class.forName ( className );
         Object o = itemClass.newInstance ();
+        
+       FactoryHelper.createChainItem ( this.hive, Class.forName ( className ) );
 
         addChainElement ( direction, (ChainItem )o );
     }
