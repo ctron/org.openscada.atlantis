@@ -24,11 +24,8 @@ import org.openscada.da.server.test.Hive;
 
 public class FactoryMemoryCell extends MemoryItemChained
 {
-    private Hive _hive = null;
-    
     public FactoryMemoryCell ( Hive hive, String id )
     {
         super ( id );
-        _hive = hive;
     }
 }
