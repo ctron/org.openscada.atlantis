@@ -103,7 +103,7 @@ public class SocketConnection extends IOChannel implements IOChannelListener
                     }
                     catch ( IOException e )
                     {
-                        e.printStackTrace ();
+                        _listener.connectionFailed ( e );
                     }
                 }
             }, false );
