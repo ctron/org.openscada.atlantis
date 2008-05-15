@@ -52,7 +52,7 @@ public class FactoryHelper
         return (ChainItem)whatObject;
     }
 
-    static public List<ChainProcessEntry> instantiateChainList ( HiveServiceRegistry serviceRegistry, List<ChainEntry> chainEntries ) throws ConfigurationError
+    public static List<ChainProcessEntry> instantiateChainList ( HiveServiceRegistry serviceRegistry, List<ChainEntry> chainEntries ) throws ConfigurationError
     {
         List<ChainProcessEntry> list = new ArrayList<ChainProcessEntry> ();
 
