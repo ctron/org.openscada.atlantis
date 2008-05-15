@@ -338,7 +338,7 @@ public class XMLConfigurator implements Configurator
         request.setId ( item.getId () );
         request.setBrowserAttributes ( item.getBrowserAttributes () );
         request.setItemAttributes ( item.getItemAttributes () );
-        request.setItemChain ( FactoryHelper.instantiateChainList ( item.getChainEntries () ) );
+        request.setItemChain ( FactoryHelper.instantiateChainList ( hive, item.getChainEntries () ) );
 
         if ( item.getFactory () != null )
         {

@@ -19,6 +19,8 @@
 
 package org.openscada.da.server.common.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -48,6 +50,8 @@ import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.da.server.common.HiveService;
+import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.configuration.ConfigurableHive;
 import org.openscada.da.server.common.configuration.ConfigurationError;
@@ -66,7 +70,7 @@ import org.openscada.utils.jobqueue.OperationProcessor;
 import org.openscada.utils.jobqueue.RunnableCancelOperation;
 import org.openscada.utils.jobqueue.OperationManager.Handle;
 
-public class HiveCommon implements Hive, ConfigurableHive
+public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 {
 
     private static Logger _log = Logger.getLogger ( HiveCommon.class );
@@ -103,6 +107,11 @@ public class HiveCommon implements Hive, ConfigurableHive
 
     private boolean autoEnableStats = true;
 
+    /**
+     * Services that are provided by this hive for internal use
+     */
+    private Map<String, HiveService> services = new HashMap<String, HiveService> ();
+
     public HiveCommon ()
     {
         super ();
@@ -127,6 +136,11 @@ public class HiveCommon implements Hive, ConfigurableHive
     {
         _jobQueueThread.interrupt ();
         super.finalize ();
+    }
+    
+    public void dispose ()
+    {
+        unregisterAllServices ();
     }
 
     public void addSessionListener ( SessionListener listener )
@@ -199,7 +213,7 @@ public class HiveCommon implements Hive, ConfigurableHive
         if ( _rootFolder == null )
         {
             _rootFolder = rootFolder;
-            if ( rootFolder instanceof FolderCommon && autoEnableStats  )
+            if ( rootFolder instanceof FolderCommon && autoEnableStats )
             {
                 enableStats ( (FolderCommon)_rootFolder );
             }
@@ -210,10 +224,10 @@ public class HiveCommon implements Hive, ConfigurableHive
     {
         HiveCommonStatisticsGenerator stats = new HiveCommonStatisticsGenerator ( "statistics" );
         _hiveEventListener = stats;
-        
+
         FolderCommon statsFolder = new FolderCommon ();
         rootFolder.add ( "statistics", statsFolder, new HashMap<String, Variant> () );
-        
+
         stats.register ( this, statsFolder );
     }
 
@@ -457,7 +471,7 @@ public class HiveCommon implements Hive, ConfigurableHive
             request.setItemAttributes ( template.getItemAttributes () );
             try
             {
-                request.setItemChain ( FactoryHelper.instantiateChainList ( template.getChainEntries () ) );
+                request.setItemChain ( FactoryHelper.instantiateChainList ( this, template.getChainEntries () ) );
             }
             catch ( ConfigurationError e )
             {
@@ -501,7 +515,7 @@ public class HiveCommon implements Hive, ConfigurableHive
         {
             sessionCommon.getOperations ().addOperation ( handle );
         }
-        
+
         if ( _hiveEventListener != null )
         {
             _hiveEventListener.startWriteAttributes ( session, itemId, attributes.size () );
@@ -539,7 +553,7 @@ public class HiveCommon implements Hive, ConfigurableHive
                 }
             }
         } );
-        
+
         if ( _hiveEventListener != null )
         {
             _hiveEventListener.startWrite ( session, itemName, value );
@@ -730,5 +744,74 @@ public class HiveCommon implements Hive, ConfigurableHive
     public void setAutoEnableStats ( boolean autoEnableStats )
     {
         this.autoEnableStats = autoEnableStats;
+    }
+
+    /* (non-Javadoc)
+     * @see org.openscada.da.server.common.impl.HiveServiceRegistry#registerService(java.lang.String, org.openscada.da.server.common.HiveService)
+     */
+    public HiveService registerService ( String serviceName, HiveService service )
+    {
+        HiveService oldService = null;
+        synchronized ( this.services )
+        {
+            oldService = this.services.put ( serviceName, service );
+        }
+
+        if ( oldService != null )
+        {
+            oldService.dispose ();
+        }
+        if ( service != null )
+        {
+            service.init ();
+        }
+        
+        return oldService;
+    }
+
+    /* (non-Javadoc)
+     * @see org.openscada.da.server.common.impl.HiveServiceRegistry#unregisterService(java.lang.String)
+     */
+    public HiveService unregisterService ( String serviceName )
+    {
+        HiveService service = null;
+        synchronized ( this.services )
+        {
+            service = this.services.remove ( serviceName );
+        }
+
+        if ( service != null )
+        {
+            service.dispose ();
+        }
+        
+        return service;
+    }
+
+    /**
+     * Unregister all the services at once
+     */
+    protected void unregisterAllServices ()
+    {
+        Collection<HiveService> services;
+        synchronized ( this.services )
+        {
+            services = new ArrayList<HiveService> ( this.services.values () );
+            this.services.clear ();
+        }
+        
+        // now dispose all
+        for ( HiveService service : services )
+        {
+            service.dispose ();
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.openscada.da.server.common.impl.HiveServiceRegistry#getService(java.lang.String)
+     */
+    public HiveService getService ( String serviceName )
+    {
+        return this.services.get ( serviceName );
     }
 }

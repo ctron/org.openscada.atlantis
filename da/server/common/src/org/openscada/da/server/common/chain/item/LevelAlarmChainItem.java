@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,58 +23,60 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.chain.BaseChainItemCommon;
 import org.openscada.da.server.common.chain.VariantBinder;
 
 public class LevelAlarmChainItem extends BaseChainItemCommon
 {
     private static Logger _log = Logger.getLogger ( LevelAlarmChainItem.class );
-    
+
     public static final String HIGH_PRESET = "org.openscada.da.level.high.preset";
     public static final String LOW_PRESET = "org.openscada.da.level.low.preset";
-    
+
     public static final String HIGH_ALARM = "org.openscada.da.level.high.alarm";
     public static final String LOW_ALARM = "org.openscada.da.level.low.alarm";
-    
+
     public static final String HIGH_ERROR = "org.openscada.da.level.high.error";
     public static final String LOW_ERROR = "org.openscada.da.level.low.error";
-    
+
     private VariantBinder _highLevel = new VariantBinder ( new Variant () );
     private VariantBinder _lowLevel = new VariantBinder ( new Variant () );
-    
-    public LevelAlarmChainItem ()
+
+    public LevelAlarmChainItem ( HiveServiceRegistry serviceRegistry )
     {
-        super ();
+        super ( serviceRegistry );
+
         addBinder ( HIGH_PRESET, _highLevel );
         addBinder ( LOW_PRESET, _lowLevel );
-        
+
         setReservedAttributes ( HIGH_ALARM, LOW_ALARM );
     }
-    
+
     public void process ( Variant value, Map<String, Variant> attributes )
     {
         attributes.put ( HIGH_ALARM, null );
         attributes.put ( LOW_ALARM, null );
         attributes.put ( HIGH_ERROR, null );
         attributes.put ( LOW_ERROR, null );
-        
+
         try
         {
             if ( !_highLevel.getValue ().isNull () && !value.isNull () )
             {
                 attributes.put ( HIGH_ALARM, new Variant ( value.asDouble () >= _highLevel.getValue ().asDouble () ) );
             }
-            
+
         }
         catch ( Exception e )
         {
             _log.info ( "Failed to evaluate high level alarm", e );
             attributes.put ( HIGH_ERROR, new Variant ( e.getMessage () ) );
         }
-        
+
         try
         {
-            if ( !_lowLevel.getValue().isNull () && !value.isNull () )
+            if ( !_lowLevel.getValue ().isNull () && !value.isNull () )
             {
                 attributes.put ( LOW_ALARM, new Variant ( value.asDouble () <= _lowLevel.getValue ().asDouble () ) );
             }
@@ -84,7 +86,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
             _log.info ( "Failed to evaluate low level alarm", e );
             attributes.put ( LOW_ERROR, new Variant ( e.getMessage () ) );
         }
-        
+
         addAttributes ( attributes );
     }
 }

@@ -2,11 +2,12 @@ package org.openscada.da.server.common.configuration;
 
 import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.common.DataItem;
+import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 
-public interface ConfigurableHive
+public interface ConfigurableHive extends HiveServiceRegistry
 {
 
     // data item

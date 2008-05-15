@@ -24,9 +24,9 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
@@ -43,7 +43,10 @@ public abstract class DataItemBaseChained extends DataItemBase
     protected Map<String, Variant> _primaryAttributes = null;
     protected AttributeManager _secondaryAttributes = null;
 
-    protected List<ChainProcessEntry> _chain = new CopyOnWriteArrayList<ChainProcessEntry> ();
+    /**
+     * The chain if items used for calculation
+     */
+    protected Set<ChainProcessEntry> _chain = new CopyOnWriteArraySet<ChainProcessEntry> ();
 
     public DataItemBaseChained ( DataItemInformation dataItemInformation )
     {
@@ -66,6 +69,7 @@ public abstract class DataItemBaseChained extends DataItemBase
             }
         }
     }
+    
     /**
      * Remove all attributes
      *
@@ -116,15 +120,15 @@ public abstract class DataItemBaseChained extends DataItemBase
 
     protected abstract void process ();
 
-    public void setChain ( List<ChainProcessEntry> chain )
+    public void setChain ( Collection<ChainProcessEntry> chain )
     {
         if ( chain == null )
         {
-            _chain = new CopyOnWriteArrayList<ChainProcessEntry> ();
+            _chain = new CopyOnWriteArraySet<ChainProcessEntry> ();
         }
         else
         {
-            _chain = new CopyOnWriteArrayList<ChainProcessEntry> ( chain );
+            _chain = new CopyOnWriteArraySet<ChainProcessEntry> ( chain );
         }
         process ();
     }
@@ -133,6 +137,7 @@ public abstract class DataItemBaseChained extends DataItemBase
     {
         if ( _chain.add ( new ChainProcessEntry ( when, item ) ) )
         {
+            item.dataItemChanged ( this );
             process ();
         }
     }
@@ -141,6 +146,7 @@ public abstract class DataItemBaseChained extends DataItemBase
     {
         if ( _chain.add ( new ChainProcessEntry ( EnumSet.of ( when ), item ) ) )
         {
+            item.dataItemChanged ( this );
             process ();
         }
     }
@@ -166,6 +172,7 @@ public abstract class DataItemBaseChained extends DataItemBase
         if ( n > 0 )
         {
             process ();
+            item.dataItemChanged ( null );
         }
     }
 

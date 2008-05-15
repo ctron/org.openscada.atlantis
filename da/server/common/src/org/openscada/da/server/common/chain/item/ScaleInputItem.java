@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,9 +19,16 @@
 
 package org.openscada.da.server.common.chain.item;
 
+import org.openscada.da.server.common.HiveServiceRegistry;
+
+
 
 public class ScaleInputItem extends ScaleBaseItem
 {
+    public ScaleInputItem ( HiveServiceRegistry serviceRegistry )
+    {
+        super ( serviceRegistry );
+    }
 
     @Override
     protected String getBase ()

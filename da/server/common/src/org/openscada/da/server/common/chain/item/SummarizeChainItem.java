@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.chain.BaseChainItemCommon;
 import org.openscada.da.server.common.chain.StringBinder;
 import org.openscada.utils.str.StringHelper;
@@ -49,9 +50,9 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
 
     private StringBinder _ignoreBinder;
 
-    public SummarizeChainItem ( String baseName )
+    public SummarizeChainItem ( HiveServiceRegistry serviceRegistry, String baseName )
     {
-        super ();
+        super ( serviceRegistry );
 
         _sumStateName = baseName;
         _sumCountName = baseName + ".count";
@@ -59,7 +60,7 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
         _sumIgnoreName = baseName + ".ignore";
 
         setReservedAttributes ( _sumStateName, _sumCountName, _sumListName );
-        
+
         _ignoreBinder = new StringBinder ();
         addBinder ( _sumIgnoreName, _ignoreBinder );
     }
@@ -82,7 +83,7 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
         long count = 0;
         List<String> items = new LinkedList<String> ();
         Set<String> ignoreItems = getIgnoreItems ();
-        
+
         for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
             String attributeName = entry.getKey ();
@@ -115,7 +116,7 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
 
         addAttributes ( attributes );
     }
-    
+
     protected Set<String> getIgnoreItems ()
     {
         String txt = _ignoreBinder.getValue ();

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,15 @@ import java.util.Map;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.server.common.DataItem;
 
+/**
+ * A chain element
+ * <p>
+ * An instance of chain element may only be added to one data item 
+ * @author Jens Reimann
+ *
+ */
 public interface ChainItem
 {
     /**
@@ -31,12 +39,24 @@ public interface ChainItem
      * @param attributes the attributes update set
      * @return result for processed attributes
      */
-    WriteAttributeResults setAttributes ( Map<String, Variant> attributes );
+    public abstract WriteAttributeResults setAttributes ( Map<String, Variant> attributes );
     
     /**
      * Process the chain item
      * @param value the value to process or <code>null</code> if a output item changed only the attributes 
      * @param attributes The current primary attributes
      */
-    void process ( Variant value, Map<String, Variant> attributes );
+    public abstract void process ( Variant value, Map<String, Variant> attributes );
+    
+    /**
+     * Called when the chain item is set to a data item
+     * @param item The data item itself or <code>null</code> if the chain element is removed from the data item
+     */
+    public abstract void dataItemChanged ( DataItem item );
+    
+    /**
+     * If this method returns true its binders are persisted when added to the {@link BaseChainItemCommon}
+     * @return
+     */
+    public abstract boolean isPersistent ();
 }

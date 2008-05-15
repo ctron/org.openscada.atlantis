@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,9 @@
 
 package org.openscada.da.server.common.chain.item;
 
+import org.openscada.da.server.common.HiveServiceRegistry;
+
+
 
 /**
  * A chain item that sums up error attributes and generates an error state
@@ -27,8 +30,8 @@ package org.openscada.da.server.common.chain.item;
  */
 public class SumErrorChainItem extends SumPatternAttributesChainItem
 {
-    public SumErrorChainItem ()
+    public SumErrorChainItem ( HiveServiceRegistry serviceRegistry )
     {
-        super ( "error", ".*\\.error$" );
+        super ( serviceRegistry, "error", ".*\\.error$" );
     }
 }

@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
@@ -32,6 +33,8 @@ import org.openscada.da.core.WriteAttributeResults;
 
 public class DataItemCommand extends DataItemOutput {
 
+    private static Logger _log = Logger.getLogger ( DataItemCommand.class );
+    
 	public DataItemCommand(String name)
     {
 		super(name);
@@ -61,6 +64,8 @@ public class DataItemCommand extends DataItemOutput {
 			}
 			catch ( Exception e )
 			{
+			    _log.warn ( "Failed to run listener", e );
+			    
 			}
 		}
 	}
