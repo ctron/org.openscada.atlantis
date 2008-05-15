@@ -8,8 +8,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
@@ -64,6 +62,7 @@ public class RealTimeList extends ViewPart
         
         _viewer.setLabelProvider ( new ItemListLabelProvider () );
         _viewer.setContentProvider ( new ItemListContentProvider () );
+        _viewer.setComparator ( new RealTimeListComparator () );
         _viewer.setInput ( _list );
         
         getViewSite ().setSelectionProvider ( _viewer );
