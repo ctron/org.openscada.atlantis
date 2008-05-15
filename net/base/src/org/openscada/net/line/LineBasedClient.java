@@ -49,7 +49,7 @@ public class LineBasedClient implements LineHandler
                 setConnection ( new LineBasedConnection ( new SocketConnection ( _processor ), this ) );
                 _connection.getConnection ().connect ( remote );
             }
-            catch ( IOException e )
+            catch ( Throwable e )
             {
                 connectionFailed ( e );
             }
