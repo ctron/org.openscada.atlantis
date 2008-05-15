@@ -42,6 +42,9 @@
 			<element name="initialItem" type="string"
 				maxOccurs="unbounded" minOccurs="0">
 			</element>
+			<element name="initialItemResource" type="anyURI"
+				maxOccurs="1" minOccurs="0">
+			</element>
 		</sequence>
 		<attribute name="host" type="string" use="required"></attribute>
 		<attribute name="domain" type="string" use="required"></attribute>
@@ -63,6 +66,12 @@
 		<attribute name="flat-browser" type="boolean" default="true"></attribute>
 		<attribute name="tree-browser" type="boolean" default="true"></attribute>
 		<attribute name="alias" type="string"></attribute>
+		<attribute name="itemIdPrefix" type="string" use="optional">
+			<annotation>
+				<documentation>
+					The prefix for item IDs of the OpenSCADA items
+				</documentation>
+			</annotation></attribute>
 	</complexType>
 
 	<simpleType name="ProgIdType">
@@ -79,4 +88,18 @@
 			</pattern>
 		</restriction>
 	</simpleType>
+
+	<element name="items" type="components:InitialItemsType"></element>
+
+	<complexType name="InitialItemsType">
+		<sequence>
+			<element name="item" type="components:InitialItemType" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="InitialItemType">
+		<attribute name="id" type="string" use="required"></attribute>
+		<attribute name="description" type="string" use="optional"></attribute>
+		<attribute name="accessPath" type="string" use="optional"></attribute>
+	</complexType>
 </schema>
