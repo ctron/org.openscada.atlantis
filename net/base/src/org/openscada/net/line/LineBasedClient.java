@@ -19,7 +19,6 @@
 
 package org.openscada.net.line;
 
-import java.io.IOException;
 import java.net.SocketAddress;
 
 import org.openscada.net.io.IOProcessor;
