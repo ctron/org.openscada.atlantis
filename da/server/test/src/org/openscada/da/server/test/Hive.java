@@ -44,7 +44,6 @@ import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.configuration.Configurator;
 import org.openscada.da.server.common.configuration.xml.XMLConfigurator;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.common.item.exporter.ObjectExporter;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.test.items.FactoryMemoryCell;
 import org.openscada.da.server.test.items.MemoryCellItem;
@@ -72,7 +71,7 @@ public class Hive extends HiveCommon
 
     private FolderItemFactory itemFactory;
 
-    private ObjectExporter objectExporter;
+    // private ObjectExporter objectExporter;
 
     public Hive () throws ConfigurationError, IOException, XmlException
     {
