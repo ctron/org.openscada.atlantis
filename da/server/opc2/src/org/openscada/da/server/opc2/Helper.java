@@ -179,6 +179,11 @@ public class Helper
             // the client handle is only valid for valid items 
             attributes.put ( "opc.clientHandle", new Variant ( def.getClientHandle () ) );
         }
+        
+        if ( def.getAccessPath () != null )
+        {
+            attributes.put ( "opc.accessPath", new Variant ( def.getAccessPath () ) );
+        }
 
         return attributes;
     }
