@@ -48,21 +48,19 @@ public abstract class DataItemInputOutputChained extends DataItemInputChained
     synchronized public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         Collection<ChainProcessEntry> chain = getChainCopy ();
+        
+        Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
 
-        if ( !chain.isEmpty () )
+        for ( ChainProcessEntry entry : chain )
         {
-            Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
-
-            for ( ChainProcessEntry entry : chain )
+            if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
             {
-                if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
-                {
-                    entry.getWhat ().process ( value, primaryAttributes );
-                }
+                entry.getWhat ().process ( value, primaryAttributes );
             }
-
-            _secondaryAttributes.set ( primaryAttributes );
         }
+
+        // FIXME: for the moment output chain item don't show up in the attribute list
+        // _secondaryAttributes.set ( primaryAttributes );
 
         writeCalculatedValue ( value );
     }
