@@ -89,7 +89,7 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
 
     public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
     {
-        System.out.println ( "Subscription state: " + state.name () + " Error: " + subscriptionError == null ? "<none>" : subscriptionError.getMessage () );
+        System.out.println ( "Subscription state: " + state.name () + " Error: " + ( ( subscriptionError == null ) ? "<none>" : subscriptionError.getMessage () ) );
     }
 
     public static void main ( String[] args ) throws Exception
