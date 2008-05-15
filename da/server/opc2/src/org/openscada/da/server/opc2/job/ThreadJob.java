@@ -70,6 +70,19 @@ public abstract class ThreadJob extends Job
             {
                 this.runningThread = null;
             }
+
+            if ( Thread.currentThread ().isInterrupted () )
+            {
+                // catch up interrupted state 
+                try
+                {
+                    Thread.sleep ( 0 );
+                }
+                catch ( InterruptedException e )
+                {
+                    // we expected that
+                }
+            }
         }
     }
 
