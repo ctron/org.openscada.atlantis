@@ -21,9 +21,15 @@ package org.openscada.da.server.opc;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.xmlbeans.XmlException;
 import org.openscada.da.opc.configuration.ConfigurationType;
+import org.openscada.da.opc.configuration.InitialItemType;
+import org.openscada.da.opc.configuration.InitialItemsType;
+import org.openscada.da.opc.configuration.ItemsDocument;
 import org.openscada.da.opc.configuration.RootDocument;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.opc.lib.common.ConnectionInformation;
@@ -92,7 +98,44 @@ public class XMLConfigurator
             setup.setRefreshTimeout ( configuration.getRefresh () );
             setup.setInitialConnect ( configuration.getInitialRefresh () );
             
-            hive.addConnection ( setup, configuration.getAlias (), configuration.getConnected (), configuration.getInitialItemList () );
+
+            Set<String> initialItemSet = new HashSet<String> ();
+            
+            // load the item source file if it is set
+            if ( configuration.isSetInitialItemResource () )
+            {
+                initialItemSet.addAll ( loadInitialItemResource ( configuration.getInitialItemResource () ) );
+            }
+            
+            // add all initial items anyway
+            initialItemSet.addAll ( configuration.getInitialItemList () );
+            
+            hive.addConnection ( setup, configuration.getAlias (), configuration.getConnected (), initialItemSet );
         }
+    }
+
+    /**
+     * Emulate the xml item source
+     * @param initialItemResource the item source file name
+     * @return the list of initial items
+     */
+    private Collection<String> loadInitialItemResource ( String initialItemResource )
+    {
+        Set<String> result = new HashSet<String> ();
+        
+        try
+        {
+            File file = new File ( initialItemResource );
+            InitialItemsType items = ItemsDocument.Factory.parse ( file ).getItems ();
+            for ( InitialItemType item : items.getItemList () )
+            {
+                result.add ( item.getId () );
+            }
+        }
+        catch ( Throwable e )
+        {
+        }
+        
+        return result;
     }
 }

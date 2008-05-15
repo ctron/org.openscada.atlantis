@@ -134,7 +134,7 @@ public class OPCItemManager
 
         if ( ft != null )
         {
-            item.setChain ( FactoryHelper.instantiateChainList ( ft.getChainEntries () ) );
+            item.setChain ( FactoryHelper.instantiateChainList ( this._hive, ft.getChainEntries () ) );
             item.getBrowserAttributes ().putAll ( ft.getBrowserAttributes () );
             item.setAttributes ( ft.getItemAttributes () );
         }
@@ -184,7 +184,7 @@ public class OPCItemManager
         _log.debug ( String.format ( "Find template for item '%s' : %s", itemId, ft ) );
         if ( ft != null )
         {
-            item.setChain ( FactoryHelper.instantiateChainList ( ft.getChainEntries () ) );
+            item.setChain ( FactoryHelper.instantiateChainList ( this._hive, ft.getChainEntries () ) );
             item.getBrowserAttributes ().putAll ( ft.getBrowserAttributes () );
             item.setAttributes ( ft.getItemAttributes () );
         }
