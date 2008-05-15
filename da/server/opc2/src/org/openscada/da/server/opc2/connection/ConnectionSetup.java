@@ -29,6 +29,9 @@ public class ConnectionSetup
     private int _refreshTimeout = 500;
     private boolean _flatBrowser = true;
     private boolean _treeBrowser = true;
+    private String deviceTag = null;
+    private String itemIdPrefix = null;
+    private String fileSourceUri = null;
 
     public ConnectionSetup ()
     {
@@ -99,6 +102,36 @@ public class ConnectionSetup
     public void setTreeBrowser ( boolean treeBrowser )
     {
         _treeBrowser = treeBrowser;
+    }
+
+    public String getDeviceTag ()
+    {
+        return deviceTag;
+    }
+
+    public void setDeviceTag ( String deviceTag )
+    {
+        this.deviceTag = deviceTag;
+    }
+
+    public String getItemIdPrefix ()
+    {
+        return itemIdPrefix;
+    }
+
+    public void setItemIdPrefix ( String itemIdPrefix )
+    {
+        this.itemIdPrefix = itemIdPrefix;
+    }
+
+    public String getFileSourceUri ()
+    {
+        return fileSourceUri;
+    }
+
+    public void setFileSourceUri ( String fileSourceUri )
+    {
+        this.fileSourceUri = fileSourceUri;
     }
 
 }

@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.log4j.Logger;
 import org.jinterop.dcom.core.JISession;
-import org.openscada.da.server.browser.common.FolderCommon;
+import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc2.Hive;
 import org.openscada.da.server.opc2.job.Worker;
 import org.openscada.da.server.opc2.job.impl.ConnectJob;
@@ -34,6 +34,9 @@ import org.openscada.opc.lib.common.ConnectionInformation;
 
 public class OPCController implements Runnable
 {
+    private static final long LOOP_DELAY_MIN = 50;
+    private static final long LOOP_DELAY_MAX = 10 * 1000;
+
     private ConnectionInformation connectionInformation;
 
     private static Logger logger = Logger.getLogger ( OPCController.class );
@@ -46,15 +49,15 @@ public class OPCController implements Runnable
 
     private OPCItemManager itemManager;
 
-    private OPCConfiguration configuration;
+    private ConnectionSetup configuration;
 
-    public OPCController ( OPCConfiguration config, Hive hive, FolderCommon connectionFolder )
+    public OPCController ( ConnectionSetup config, Hive hive, FolderItemFactory itemFactory )
     {
         this.configuration = config;
         worker = new Worker ();
         model = new OPCModel ();
 
-        itemManager = new OPCItemManager ( worker, configuration, model, hive, connectionFolder );
+        itemManager = new OPCItemManager ( worker, configuration, model, hive, itemFactory );
     }
 
     public void connect ( ConnectionInformation connectionInformation )
@@ -75,7 +78,7 @@ public class OPCController implements Runnable
         {
             try
             {
-                Thread.sleep ( 250 );
+                Thread.sleep ( this.getModel ().getLoopDelay () );
             }
             catch ( InterruptedException e )
             {
@@ -92,6 +95,11 @@ public class OPCController implements Runnable
         }
     }
 
+    protected void setControllerState ( ControllerState state )
+    {
+        this.model.setControllerState ( state );
+    }
+    
     protected void runOnce ()
     {
         try
@@ -99,6 +107,7 @@ public class OPCController implements Runnable
             if ( this.model.isConnectionRequested () && ! ( this.model.isConnected () || this.model.isConnecting () )
                     && model.mayConnect () )
             {
+                setControllerState ( ControllerState.CONNECTING );
                 if ( performConnect () )
                 {
                     this.itemManager.handleConnected ();
@@ -106,17 +115,29 @@ public class OPCController implements Runnable
             }
             else if ( !this.model.isConnectionRequested () && this.model.isConnected () )
             {
+                setControllerState ( ControllerState.DISCONNECTING );
                 performDisconnect ();
             }
 
             if ( model.isConnected () )
             {
+                setControllerState ( ControllerState.READING_STATUS );
                 updateStatus ();
+                
+                setControllerState ( ControllerState.REGISTERING );
                 itemManager.processRequests ();
+                
+                setControllerState ( ControllerState.ACTIVATING );
                 itemManager.processActivations ();
+                
+                setControllerState ( ControllerState.WRITING);
                 itemManager.processWriteRequests ();
+                
+                setControllerState ( ControllerState.READING );
                 itemManager.read ( OPCDATASOURCE.OPC_DS_CACHE );
             }
+            
+            setControllerState ( ControllerState.IDLE );
         }
         catch ( Throwable e )
         {
@@ -125,6 +146,9 @@ public class OPCController implements Runnable
         }
     }
 
+    /**
+     * Request the status from the OPC server
+     */
     private void updateStatus ()
     {
         final ServerStatusJob job = new ServerStatusJob ( this.model );
@@ -148,6 +172,7 @@ public class OPCController implements Runnable
     {
         model.setLastConnectNow ();
         model.setConnecting ( true );
+        model.setConnectionState ( ConnectionState.CONNECTING );
 
         final ConnectJob job = new ConnectJob ( this.connectionInformation, 5000 );
         final OPCModel model = this.model;
@@ -164,6 +189,8 @@ public class OPCController implements Runnable
                     model.setGroup ( job.getGroup () );
                     model.setSyncIo ( job.getSyncIo () );
                     model.setItemMgt ( job.getItemMgt () );
+                    
+                    model.setConnectionState ( ConnectionState.CONNECTED );
                 }
             } );
         }
@@ -171,6 +198,7 @@ public class OPCController implements Runnable
         {
             logger.info ( "Failed to connect", e );
             this.model.setLastConnectionError ( e.getCause () );
+            model.setConnectionState ( ConnectionState.DISCONNECTED );
             disposeSession ( job.getSession () );
             return false;
         }
@@ -193,6 +221,7 @@ public class OPCController implements Runnable
 
             public void run ()
             {
+                model.addDisposerRunning ( Thread.currentThread () );
                 long ts = System.currentTimeMillis ();
                 try
                 {
@@ -207,9 +236,11 @@ public class OPCController implements Runnable
                 finally
                 {
                     logger.info ( String.format ( "Session destruction took %s ms", System.currentTimeMillis () - ts ) );
+                    model.removeDisposerRunning ( Thread.currentThread () );
                 }
             }
         }, "OPCSessionDestructor" );
+
         destructor.setDaemon ( true );
         destructor.start ();
         logger.info ( "Destroying DCOM session... forked" );
@@ -221,6 +252,8 @@ public class OPCController implements Runnable
         {
             return;
         }
+        
+        this.model.setConnectionState ( ConnectionState.DISCONNECTING );
 
         disposeSession ( model.getSession () );
 
@@ -234,6 +267,8 @@ public class OPCController implements Runnable
         model.setItemMgt ( null );
         model.setSyncIo ( null );
         model.setCommon ( null );
+        
+        this.model.setConnectionState ( ConnectionState.DISCONNECTED );
     }
 
     public void shutdown ()
@@ -250,5 +285,18 @@ public class OPCController implements Runnable
     public OPCItemManager getItemManager ()
     {
         return itemManager;
+    }
+
+    public void setLoopDelay ( long loopDelay )
+    {
+        if ( loopDelay < LOOP_DELAY_MIN )
+        {
+            loopDelay = LOOP_DELAY_MIN;
+        }
+        if ( loopDelay > LOOP_DELAY_MAX )
+        {
+            loopDelay = LOOP_DELAY_MAX;
+        }
+        this.model.setLoopDelay ( loopDelay );
     }
 }

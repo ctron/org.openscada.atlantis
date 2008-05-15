@@ -33,6 +33,7 @@ import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.server.common.SuspendableDataItem;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 import org.openscada.da.server.opc2.Helper;
+import org.openscada.da.server.opc2.Hive;
 import org.openscada.opc.dcom.common.KeyedResult;
 import org.openscada.opc.dcom.common.Result;
 import org.openscada.opc.dcom.da.OPCITEMDEF;
@@ -49,13 +50,12 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
     private Variant lastValue;
 
-    public OPCItem ( OPCItemManager manager, DataItemInformation di, KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
+    public OPCItem ( Hive hive, OPCItemManager manager, DataItemInformation di, KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
     {
         super ( di );
         this.manager = manager;
-
-        opcDefinition = entry.getKey ();
-
+        this.opcDefinition = entry.getKey ();
+        
         intialData ( entry );
     }
 

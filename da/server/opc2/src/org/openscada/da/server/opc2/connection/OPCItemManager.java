@@ -39,8 +39,14 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.da.server.common.configuration.ConfigurationError;
+import org.openscada.da.server.common.factory.FactoryHelper;
+import org.openscada.da.server.common.factory.FactoryTemplate;
+import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc2.Helper;
 import org.openscada.da.server.opc2.Hive;
+import org.openscada.da.server.opc2.configuration.ItemDescription;
+import org.openscada.da.server.opc2.configuration.ItemSourceListener;
 import org.openscada.da.server.opc2.job.Worker;
 import org.openscada.da.server.opc2.job.impl.ErrorMessageJob;
 import org.openscada.da.server.opc2.job.impl.ItemActivationJob;
@@ -57,12 +63,12 @@ import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.OPCITEMSTATE;
 import org.openscada.opc.dcom.da.WriteRequest;
 
-public class OPCItemManager
+public class OPCItemManager implements ItemSourceListener
 {
     private static Logger logger = Logger.getLogger ( OPCItemManager.class );
 
-    private Map<String, OPCITEMDEF> requestMap = new HashMap<String, OPCITEMDEF> ();
-    private Map<String, OPCITEMDEF> requestedMap = new HashMap<String, OPCITEMDEF> ();
+    private Map<String, ItemRequest> requestMap = new HashMap<String, ItemRequest> ();
+    private Map<String, ItemRequest> requestedMap = new HashMap<String, ItemRequest> ();
     private Map<String, OPCItem> itemMap = new HashMap<String, OPCItem> ();
 
     private Map<String, Integer> clientHandleMap = new HashMap<String, Integer> ();
@@ -79,30 +85,35 @@ public class OPCItemManager
 
     private Worker worker;
     private Hive hive;
-    private FolderCommon connectionFolder;
     private FolderCommon flatItemFolder;
     private OPCModel model;
-    private OPCConfiguration configuration;
+    private ConnectionSetup configuration;
 
-    public OPCItemManager ( Worker worker, OPCConfiguration configuration, OPCModel model, Hive hive, FolderCommon connectionFolder )
+    private FolderItemFactory parentItemFactory;
+
+    public OPCItemManager ( Worker worker, ConnectionSetup configuration, OPCModel model, Hive hive, FolderItemFactory parentItemFactory )
     {
         this.worker = worker;
         this.model = model;
         this.hive = hive;
-        this.connectionFolder = connectionFolder;
         this.configuration = configuration;
+        this.parentItemFactory = parentItemFactory;
 
         this.itemIdPrefix = this.configuration.getItemIdPrefix ();
 
         this.flatItemFolder = new FolderCommon ();
-        this.connectionFolder.add ( "allItems", flatItemFolder, new HashMap<String, Variant> () );
+        this.parentItemFactory.getFolder ().add ( "allItems", flatItemFolder, new HashMap<String, Variant> () );
     }
 
     public void shutdown ()
     {
         handleDisconnected ();
 
-        this.connectionFolder.remove ( this.flatItemFolder );
+        FolderCommon folder = this.parentItemFactory.getFolder ();
+        if ( folder != null )
+        {
+            folder.remove ( this.flatItemFolder );
+        }
     }
 
     /**
@@ -125,37 +136,38 @@ public class OPCItemManager
 
     public void requestItemsById ( Collection<String> initialItems )
     {
-        List<OPCITEMDEF> defs = new ArrayList<OPCITEMDEF> ( initialItems.size () );
+        List<ItemRequest> reqs = new ArrayList<ItemRequest> ( initialItems.size () );
         for ( String itemId : initialItems )
         {
+            ItemRequest req = new ItemRequest ();
             OPCITEMDEF def = new OPCITEMDEF ();
             def.setItemID ( itemId );
             def.setActive ( false );
-            requestItem ( def );
+            req.setItemDefinition ( def );
 
-            defs.add ( def );
+            reqs.add ( req );
         }
-        requestItems ( defs );
+        requestItems ( reqs );
     }
 
-    public void requestItems ( Collection<OPCITEMDEF> items )
+    public void requestItems ( Collection<ItemRequest> items )
     {
         synchronized ( requestMap )
         {
-            for ( OPCITEMDEF itemDef : items )
+            for ( ItemRequest itemDef : items )
             {
-                String itemId = itemDef.getItemID ();
+                String itemId = itemDef.getItemDefinition ().getItemID ();
                 if ( itemMap.containsKey ( itemId ) || requestMap.containsKey ( itemId )
                         || requestedMap.containsKey ( itemId ) )
                 {
                     continue;
                 }
-                requestMap.put ( itemDef.getItemID (), itemDef );
+                requestMap.put ( itemDef.getItemDefinition ().getItemID (), itemDef );
             }
         }
     }
 
-    public void requestItem ( OPCITEMDEF itemDef )
+    public void requestItem ( ItemRequest itemDef )
     {
         requestItems ( Arrays.asList ( itemDef ) );
     }
@@ -194,12 +206,12 @@ public class OPCItemManager
             return;
         }
 
-        List<OPCITEMDEF> newItems = null;
+        List<ItemRequest> newItems = null;
 
         synchronized ( requestMap )
         {
-            newItems = new ArrayList<OPCITEMDEF> ( requestMap.size () );
-            for ( Map.Entry<String, OPCITEMDEF> def : requestMap.entrySet () )
+            newItems = new ArrayList<ItemRequest> ( requestMap.size () );
+            for ( Map.Entry<String, ItemRequest> def : requestMap.entrySet () )
             {
                 newItems.add ( def.getValue () );
                 requestedMap.put ( def.getKey (), def.getValue () );
@@ -221,7 +233,7 @@ public class OPCItemManager
         setActive ( true, activeSet );
     }
 
-    private void realizeItems ( Collection<OPCITEMDEF> newItems ) throws InvocationTargetException
+    private void realizeItems ( Collection<ItemRequest> newItems ) throws InvocationTargetException
     {
         if ( newItems.isEmpty () )
         {
@@ -231,24 +243,25 @@ public class OPCItemManager
         Random r = new Random ();
         synchronized ( this.clientHandleMap )
         {
-            for ( OPCITEMDEF def : newItems )
+            for ( ItemRequest def : newItems )
             {
                 Integer i = r.nextInt ();
                 while ( this.clientHandleMapRev.containsKey ( i ) )
                 {
                     i = r.nextInt ();
                 }
-                this.clientHandleMap.put ( def.getItemID (), i );
-                this.clientHandleMapRev.put ( i, def.getItemID () );
-                def.setClientHandle ( i );
+                this.clientHandleMap.put ( def.getItemDefinition ().getItemID (), i );
+                this.clientHandleMapRev.put ( i, def.getItemDefinition ().getItemID () );
+                def.getItemDefinition ().setClientHandle ( i );
             }
         }
 
         // for now do it one by one .. since packages that get too big cause an error
-        for ( OPCITEMDEF def : newItems )
+        for ( ItemRequest def : newItems )
         {
             //RealizeItemsJob job = new RealizeItemsJob ( this.model.getItemMgt (), newItems.toArray ( new OPCITEMDEF[0] ) );
-            RealizeItemsJob job = new RealizeItemsJob ( this.model.getItemMgt (), new OPCITEMDEF[] { def } );
+            RealizeItemsJob job = new RealizeItemsJob ( this.model.getItemMgt (),
+                    new OPCITEMDEF[] { def.getItemDefinition () } );
             KeyedResultSet<OPCITEMDEF, OPCITEMRESULT> result = worker.execute ( job, job );
 
             for ( KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry : result )
@@ -268,32 +281,59 @@ public class OPCItemManager
                     serverHandleMap.put ( itemId, serverHandle );
                     serverHandleMapRev.put ( serverHandle, itemId );
                 }
-                createItem ( entry );
+                createItem ( def, entry );
             }
         }
     }
+
     /**
      * Create a new item based on the result information from the group add call
      * @param entry the result from the group add operation
      * @return the new item
      */
-    private OPCItem createItem ( KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
+    private OPCItem createItem ( ItemRequest req, KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
     {
         OPCITEMDEF def = entry.getKey ();
         OPCITEMRESULT result = entry.getValue ();
 
         DataItemInformation di = new DataItemInformationBase ( createItemId ( def ),
                 Helper.convertToAccessSet ( result.getAccessRights () ) );
-        OPCItem item = new OPCItem ( this, di, entry );
+        OPCItem item = new OPCItem ( this.hive, this, di, entry );
+
+        applyTemplate ( item );
 
         this.itemMap.put ( def.getItemID (), item );
         this.hive.registerItem ( item );
 
         Map<String, Variant> browserMap = Helper.convertToAttributes ( entry );
+        browserMap.putAll ( req.getAttributes () );
 
         this.flatItemFolder.add ( def.getItemID (), item, browserMap );
 
         return item;
+    }
+
+    /**
+     * Apply the item template as configured in the hive
+     * @param item the item to which a template should by applied
+     */
+    private void applyTemplate ( OPCItem item )
+    {
+        String itemId = item.getInformation ().getName ();
+        FactoryTemplate ft = this.hive.findFactoryTemplate ( itemId );
+        logger.debug ( String.format ( "Find template for item '%s' : %s", itemId, ft ) );
+        if ( ft != null )
+        {
+            try
+            {
+                item.setChain ( FactoryHelper.instantiateChainList ( this.hive, ft.getChainEntries () ) );
+            }
+            catch ( ConfigurationError e )
+            {
+                logger.warn ( "Failed to apply item template", e );
+            }
+            item.setAttributes ( ft.getItemAttributes () );
+        }
     }
 
     /**
@@ -308,7 +348,7 @@ public class OPCItemManager
 
     private String getItemPrefix ()
     {
-        if ( this.itemIdPrefix == null )
+        if ( this.itemIdPrefix == null || this.itemIdPrefix.length () == 0 )
         {
             return this.configuration.getDeviceTag ();
         }
@@ -585,8 +625,9 @@ public class OPCItemManager
     private void handleWriteException ( InvocationTargetException e, WriteRequest request )
     {
         String itemId = this.serverHandleMapRev.get ( request.getServerHandle () );
-        logger.warn ( String.format ( "Failed to perform write request for item %s (%s) => %s", itemId, request.getServerHandle (), request.getValue () ), e );
-        
+        logger.warn ( String.format ( "Failed to perform write request for item %s (%s) => %s", itemId,
+                request.getServerHandle (), request.getValue () ), e );
+
         if ( itemId == null )
         {
             return;
@@ -597,7 +638,7 @@ public class OPCItemManager
         {
             return;
         }
-        
+
         item.setLastWriteError ( null );
     }
 
@@ -616,5 +657,27 @@ public class OPCItemManager
         }
 
         item.setLastWriteError ( result );
+    }
+
+    public void availableItemsChanged ( Set<ItemDescription> availableItems )
+    {
+        List<ItemRequest> requests = new ArrayList<ItemRequest> ( availableItems.size () );
+
+        for ( ItemDescription item : availableItems )
+        {
+            ItemRequest req = new ItemRequest ();
+
+            OPCITEMDEF def = new OPCITEMDEF ();
+            def.setItemID ( item.getId () );
+            req.setItemDefinition ( def );
+
+            Map<String, Variant> attributes = new HashMap<String, Variant> ();
+            attributes.put ( "description", new Variant ( item.getDescription () ) );
+            req.setAttributes ( attributes );
+
+            requests.add ( req );
+        }
+
+        requestItems ( requests );
     }
 }

@@ -21,21 +21,20 @@ package org.openscada.da.server.opc2;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.jinterop.dcom.common.JISystem;
-import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
+import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.opc2.configuration.XMLConfigurator;
 import org.openscada.da.server.opc2.connection.ConnectionSetup;
 import org.openscada.da.server.opc2.connection.OPCConnection;
-import org.openscada.da.server.opc2.configuration.XMLConfigurator;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
@@ -60,6 +59,9 @@ public class Hive extends HiveCommon
         super ();
 
         initJInterop ();
+        
+        // enable chain storage for this hive
+        ChainStorageServiceHelper.registerDefaultPropertyService ( this );
 
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
 
@@ -80,19 +82,9 @@ public class Hive extends HiveCommon
 
     }
 
-    public void addConnection ( ConnectionSetup setup, String alias, boolean connect, Collection<String> initialOpcItems )
+    public void addConnection ( ConnectionSetup setup, boolean connect, Collection<String> initialOpcItems )
     {
-        FolderCommon connectionFolder = new FolderCommon ();
-
-        String deviceTag = alias;
-        if ( deviceTag == null )
-        {
-            deviceTag = setup.getConnectionInformation ().getHost () + ":"
-                    + setup.getConnectionInformation ().getClsOrProgId ();
-        }
-        rootFolder.add ( deviceTag, connectionFolder, new HashMap<String, Variant> () );
-
-        OPCConnection connection = new OPCConnection ( this, connectionFolder, setup, alias, initialOpcItems );
+        OPCConnection connection = new OPCConnection ( this, rootFolder, setup, initialOpcItems );
 
         connections.add ( connection );
 
@@ -100,6 +92,14 @@ public class Hive extends HiveCommon
         if ( connect )
         {
             connection.connect ();
+        }
+    }
+    
+    public void removeConnection ( OPCConnection connection )
+    {
+        if ( this.connections.remove ( connection ) )
+        {
+            connection.dispose ();
         }
     }
 

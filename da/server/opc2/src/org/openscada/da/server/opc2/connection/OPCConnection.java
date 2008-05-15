@@ -21,6 +21,7 @@ package org.openscada.da.server.opc2.connection;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +32,12 @@ import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.openscada.da.server.common.chain.DataItemInputOutputChained;
+import org.openscada.da.server.common.chain.WriteHandler;
+import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc2.Hive;
+import org.openscada.da.server.opc2.configuration.AbstractXMLItemSource;
+import org.openscada.da.server.opc2.configuration.FileXMLItemSource;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 
 public class OPCConnection implements PropertyChangeListener
@@ -42,15 +48,13 @@ public class OPCConnection implements PropertyChangeListener
 
     private ConnectionSetup connectionSetup;
 
-    private String alias;
-
     private Collection<String> initialItems;
 
     private long socketTimeout = 5000L;
 
     private OPCController controller;
 
-    private FolderCommon connectionFolder;
+    private FolderCommon rootFolder;
 
     private DataItemInputChained serverStateItem;
 
@@ -60,15 +64,39 @@ public class OPCConnection implements PropertyChangeListener
 
     private DataItemCommand addItemCommandItem;
 
+    private DataItemCommand connectDataItem;
+
+    private DataItemCommand disconnectDataItem;
+
+    private DataItemCommand reconnectDataItem;
+
+    private DataItemCommand suicideCommandDataItem;
+
+    private DataItemInputOutputChained loopDelayDataItem;
+
+    private DataItemInputChained lastConnectDataItem;
+
     private DataItemInputChained lastConnectionError;
 
-    public OPCConnection ( Hive hive, FolderCommon connectionFolder, ConnectionSetup setup, String alias, Collection<String> initialOpcItems )
+    private DataItemInputChained numDisposersRunningDataItem;
+
+    private DataItemInputChained controllerStateDataItem;
+
+    private AbstractXMLItemSource xmlItemSource;
+
+    private FolderItemFactory itemFactory;
+
+    /**
+     * Control items of the connection
+     */
+    private FolderItemFactory connectionItemFactory;
+
+    public OPCConnection ( Hive hive, FolderCommon rootFolder, ConnectionSetup setup, Collection<String> initialOpcItems )
     {
         this.hive = hive;
         this.connectionSetup = setup;
-        this.alias = alias;
         this.initialItems = initialOpcItems;
-        this.connectionFolder = connectionFolder;
+        this.rootFolder = rootFolder;
     }
 
     /**
@@ -80,37 +108,7 @@ public class OPCConnection implements PropertyChangeListener
      */
     protected String getDeviceTag ()
     {
-        if ( alias != null )
-        {
-            return alias;
-        }
-        return connectionSetup.getConnectionInformation ().getHost () + ":"
-                + connectionSetup.getConnectionInformation ().getClsOrProgId ();
-    }
-
-    /**
-     * Create a new input item for this connection
-     * @param itemId the item id to use. will be prefixed with the device tag
-     * @return the created item
-     */
-    protected DataItemInputChained createInput ( String itemId )
-    {
-        String globalItemId = getDeviceTag () + "." + itemId;
-        DataItemInputChained item = new DataItemInputChained ( globalItemId );
-
-        this.hive.registerItem ( item );
-
-        return item;
-    }
-
-    protected DataItemCommand createCommand ( String itemId )
-    {
-        String globalItemId = getDeviceTag () + "." + itemId;
-        DataItemCommand item = new DataItemCommand ( globalItemId );
-
-        this.hive.registerItem ( item );
-
-        return item;
+        return this.connectionSetup.getDeviceTag ();
     }
 
     /**
@@ -125,24 +123,25 @@ public class OPCConnection implements PropertyChangeListener
             throw new RuntimeException ( "OPC connection is already started" );
         }
 
+        this.itemFactory = new FolderItemFactory ( this.hive, this.rootFolder, getDeviceTag (), getDeviceTag () );
+        this.connectionItemFactory = this.itemFactory.createSubFolderFactory ( "connection" );
+
         logger.info ( "User: " + this.connectionSetup.getConnectionInformation ().getUser () );
-        logger.info ( "Password: " + this.connectionSetup.getConnectionInformation ().getPassword () );
         logger.info ( "Domain: " + this.connectionSetup.getConnectionInformation ().getDomain () );
 
-        this.serverStateItem = createInput ( "serverState" );
-        this.connectionFolder.add ( "serverState", serverStateItem, new HashMap<String, Variant> () );
+        this.serverStateItem = connectionItemFactory.createInput ( "serverState" );
 
-        this.connectedItem = createInput ( "connected" );
-        this.connectionFolder.add ( "connected", connectedItem, new HashMap<String, Variant> () );
+        this.connectedItem = connectionItemFactory.createInput ( "connected" );
 
-        this.connectingItem = createInput ( "connecting" );
-        this.connectionFolder.add ( "connecting", connectingItem, new HashMap<String, Variant> () );
+        this.connectingItem = connectionItemFactory.createInput ( "connecting" );
 
-        this.lastConnectionError = createInput ( "lastConnectionError" );
-        this.connectionFolder.add ( "lastConnectionError", lastConnectionError, new HashMap<String, Variant> () );
+        this.lastConnectionError = connectionItemFactory.createInput ( "lastConnectionError" );
 
-        this.addItemCommandItem = createCommand ( "addItem" );
-        this.connectionFolder.add ( "addItem", addItemCommandItem, new HashMap<String, Variant> () );
+        this.numDisposersRunningDataItem = connectionItemFactory.createInput ( "numDisposersRunning" );
+
+        this.controllerStateDataItem = connectionItemFactory.createInput ( "controllerStateDataItem" );
+
+        this.addItemCommandItem = connectionItemFactory.createCommand ( "addItem" );
         addItemCommandItem.addListener ( new DataItemCommand.Listener () {
 
             public void command ( Variant value )
@@ -151,10 +150,55 @@ public class OPCConnection implements PropertyChangeListener
             }
         } );
 
-        OPCConfiguration cfg = new OPCConfiguration ();
-        cfg.setDeviceTag ( getDeviceTag () );
+        this.connectDataItem = connectionItemFactory.createCommand ( "connect" );
+        this.connectDataItem.addListener ( new DataItemCommand.Listener () {
 
-        controller = new OPCController ( cfg, this.hive, this.connectionFolder );
+            public void command ( Variant value )
+            {
+                connect ();
+            }
+        } );
+
+        this.disconnectDataItem = connectionItemFactory.createCommand ( "disconnect" );
+        this.disconnectDataItem.addListener ( new DataItemCommand.Listener () {
+
+            public void command ( Variant value )
+            {
+                disconnect ();
+            }
+        } );
+
+        this.reconnectDataItem = connectionItemFactory.createCommand ( "reconnect" );
+        this.reconnectDataItem.addListener ( new DataItemCommand.Listener () {
+
+            public void command ( Variant value )
+            {
+                OPCConnection.this.reconnect ();
+            }
+        } );
+
+        this.lastConnectDataItem = connectionItemFactory.createInput ( "lastConnect" );
+
+        this.loopDelayDataItem = connectionItemFactory.createInputOutput ( "loopDelay", new WriteHandler () {
+
+            public void handleWrite ( Variant value ) throws Exception
+            {
+                setLoopDelay ( value );
+            }
+        } );
+
+        this.suicideCommandDataItem = connectionItemFactory.createCommand ( "suicide" );
+        this.suicideCommandDataItem.addListener ( new DataItemCommand.Listener () {
+
+            public void command ( Variant value )
+            {
+                suicide ();
+            }
+        } );
+
+        // setting up the controller
+
+        controller = new OPCController ( this.connectionSetup, this.hive, this.itemFactory );
         controller.getModel ().addListener ( this );
 
         Thread t = new Thread ( controller, "OPCController/" + getDeviceTag () );
@@ -162,6 +206,58 @@ public class OPCConnection implements PropertyChangeListener
         t.start ();
 
         controller.getItemManager ().requestItemsById ( this.initialItems );
+
+        // Hook up item source if we have one
+        if ( this.connectionSetup.getFileSourceUri () != null )
+        {
+            try
+            {
+                // this.xmlItemSourceFolder = new FolderCommon ();
+                this.xmlItemSource = new FileXMLItemSource ( this.connectionSetup.getFileSourceUri (),
+                        this.itemFactory, getDeviceTag () + ".itemSource.file" );
+                this.xmlItemSource.addListener ( this.controller.getItemManager () );
+                // this.connectionFolder.add ( "fileItemSource", this.xmlItemSourceFolder, new HashMap<String, Variant> () );
+                this.xmlItemSource.activate ();
+            }
+            catch ( Throwable e )
+            {
+                logger.warn ( "Failed to initialized XML file item source", e );
+            }
+
+        }
+
+        // fill initial values
+        updateBaseModel ();
+        updateLastConnect ();
+        this.loopDelayDataItem.updateValue ( new Variant ( this.controller.getModel ().getLoopDelay () ) );
+    }
+
+    protected void reconnect ()
+    {
+        // FIXME: not implemented
+        logger.warn ( "Somebody triggered a reconnect ... which is a no-op" );
+    }
+
+    protected void setLoopDelay ( Variant value )
+    {
+        try
+        {
+            long loopDelay = value.asLong ();
+            this.controller.setLoopDelay ( loopDelay );
+        }
+        catch ( Throwable e )
+        {
+            logger.warn ( "Failed to set loop delay", e );
+        }
+    }
+
+    /**
+     * request suicide from our master
+     */
+    protected void suicide ()
+    {
+        logger.error ( "Performing suicide" );
+        this.hive.removeConnection ( this );
     }
 
     /**
@@ -193,14 +289,20 @@ public class OPCConnection implements PropertyChangeListener
 
         disconnect ();
 
-        this.hive.unregisterItem ( this.serverStateItem );
-        this.hive.unregisterItem ( this.connectedItem );
-        this.hive.unregisterItem ( this.connectingItem );
+        this.itemFactory.dispose ();
+        this.itemFactory = null;
+        this.connectionItemFactory = null;
 
-        controller.getModel ().removeListener ( this );
+        if ( this.xmlItemSource != null )
+        {
+            this.xmlItemSource.deactivate ();
+            this.xmlItemSource = null;
+        }
 
-        controller.shutdown ();
-        controller = null;
+        this.controller.getModel ().removeListener ( this );
+
+        this.controller.shutdown ();
+        this.controller = null;
     }
 
     /**
@@ -238,9 +340,31 @@ public class OPCConnection implements PropertyChangeListener
         {
             updateBaseModel ();
         }
+        else if ( "connectionState".equals ( propertyName ) )
+        {
+            updateBaseModel ();
+        }
+        else if ( "lastConnect".equals ( propertyName ) )
+        {
+            updateLastConnect ();
+        }
         else if ( "lastConnectionError".equals ( propertyName ) )
         {
             setLastConnectionError ( (Throwable)evt.getNewValue () );
+        }
+        else if ( "numDisposersRunning".equals ( propertyName ) )
+        {
+            this.numDisposersRunningDataItem.updateValue ( new Variant (
+                    this.controller.getModel ().getNumDisposersRunning () ) );
+        }
+        else if ( "controllerState".equals ( propertyName ) )
+        {
+            this.controllerStateDataItem.updateValue ( new Variant (
+                    this.controller.getModel ().getControllerState ().toString () ) );
+        }
+        else if ( "loopDelay".equals ( propertyName ) )
+        {
+            this.loopDelayDataItem.updateValue ( new Variant ( this.controller.getModel ().getLoopDelay () ) );
         }
     }
 
@@ -267,6 +391,17 @@ public class OPCConnection implements PropertyChangeListener
     {
         this.connectedItem.updateValue ( new Variant ( this.controller.getModel ().isConnected () ) );
         this.connectingItem.updateValue ( new Variant ( this.controller.getModel ().isConnecting () ) );
+        this.serverStateItem.updateValue ( new Variant ( this.controller.getModel ().getConnectionState ().toString () ) );
+    }
+
+    private void updateLastConnect ()
+    {
+        Calendar c = Calendar.getInstance ();
+        c.setTimeInMillis ( this.controller.getModel ().getLastConnect () );
+        this.lastConnectDataItem.updateValue ( new Variant ( String.format ( "%tc", c ) ) );
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        attributes.put ( "milliseconds", new Variant ( c.getTimeInMillis () ) );
+        this.lastConnectDataItem.updateAttributes ( attributes );
     }
 
     private void updateStatus ( OPCSERVERSTATUS state )

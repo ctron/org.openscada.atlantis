@@ -21,6 +21,8 @@ package org.openscada.da.server.opc2.connection;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.jinterop.dcom.core.JISession;
 import org.openscada.opc.dcom.common.impl.OPCCommon;
@@ -44,6 +46,10 @@ public class OPCModel
     private OPCSyncIO syncIo;
     private OPCCommon common;
     private Throwable lastConnectionError;
+    private ConnectionState connectionState = ConnectionState.DISCONNECTED;
+    private Set<Thread> disposersRunning = new CopyOnWriteArraySet<Thread> ();
+    private ControllerState controllerState = ControllerState.IDLE;
+    private long loopDelay = 250;
 
     private PropertyChangeSupport listeners = new PropertyChangeSupport ( this );
 
@@ -69,7 +75,19 @@ public class OPCModel
 
     public void setLastConnectNow ()
     {
-        lastConnect = System.currentTimeMillis ();
+        setLastConnect ( System.currentTimeMillis () );
+    }
+
+    public void setLastConnect ( long lastConnect )
+    {
+        long oldLastConnect = this.lastConnect;
+        this.lastConnect = lastConnect;
+        this.listeners.firePropertyChange ( "lastConnect", oldLastConnect, lastConnect );
+    }
+
+    public long getLastConnect ()
+    {
+        return this.lastConnect;
     }
 
     public boolean mayConnect ()
@@ -86,6 +104,7 @@ public class OPCModel
     {
         return session;
     }
+
     public void setSession ( JISession session )
     {
         JISession oldSession = this.session;
@@ -96,10 +115,12 @@ public class OPCModel
         this.listeners.firePropertyChange ( "session", oldSession, session );
         this.listeners.firePropertyChange ( "connected", oldConnected, isConnected () );
     }
+
     public OPCServer getServer ()
     {
         return server;
     }
+
     public void setServer ( OPCServer server )
     {
         OPCServer oldServer = this.server;
@@ -110,18 +131,22 @@ public class OPCModel
         this.listeners.firePropertyChange ( "session", oldServer, session );
         this.listeners.firePropertyChange ( "connected", oldConnected, isConnected () );
     }
+
     public boolean isConnectionRequested ()
     {
         return connectionRequested;
     }
+
     public void setConnectionRequested ( boolean connectionRequested )
     {
         this.connectionRequested = connectionRequested;
     }
+
     public boolean isConnecting ()
     {
         return connecting;
     }
+
     public void setConnecting ( boolean connecting )
     {
         boolean oldConnecting = this.connecting;
@@ -203,4 +228,72 @@ public class OPCModel
         this.listeners.firePropertyChange ( "lastConnectionError", oldLastConnectionError, lastConnectionError );
     }
 
+    public ConnectionState getConnectionState ()
+    {
+        return this.connectionState;
+    }
+
+    public void setConnectionState ( ConnectionState connectionState )
+    {
+        ConnectionState oldConnectionState = this.connectionState;
+        this.connectionState = connectionState;
+        this.listeners.firePropertyChange ( "connectionState", oldConnectionState, connectionState );
+    }
+
+    public long getNumDisposersRunning ()
+    {
+        return this.disposersRunning.size ();
+    }
+
+    public void addDisposerRunning ( Thread disposer )
+    {
+        long oldDisposersRunning;
+        long disposersRunning;
+
+        synchronized ( this.disposersRunning )
+        {
+            oldDisposersRunning = this.disposersRunning.size ();
+            this.disposersRunning.add ( disposer );
+            disposersRunning = this.disposersRunning.size ();
+        }
+        this.listeners.firePropertyChange ( "numDisposersRunning", oldDisposersRunning, disposersRunning );
+    }
+
+    public void removeDisposerRunning ( Thread disposer )
+    {
+        long oldDisposersRunning;
+        long disposersRunning;
+
+        synchronized ( this.disposersRunning )
+        {
+            oldDisposersRunning = this.disposersRunning.size ();
+            this.disposersRunning.remove ( disposer );
+            disposersRunning = this.disposersRunning.size ();
+        }
+        this.listeners.firePropertyChange ( "numDisposersRunning", oldDisposersRunning, disposersRunning );
+    }
+
+    public ControllerState getControllerState ()
+    {
+        return controllerState;
+    }
+
+    public void setControllerState ( ControllerState controllerState )
+    {
+        ControllerState oldControllerState = this.controllerState;
+        this.controllerState = controllerState;
+        this.listeners.firePropertyChange ( "controllerState", oldControllerState, controllerState );
+    }
+
+    public long getLoopDelay ()
+    {
+        return loopDelay;
+    }
+
+    public void setLoopDelay ( long loopDelay )
+    {
+        long oldLoopDelay = this.loopDelay;
+        this.loopDelay = loopDelay;
+        this.listeners.firePropertyChange ( "loopDelay", oldLoopDelay, loopDelay );
+    }
 }

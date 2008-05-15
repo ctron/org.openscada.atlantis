@@ -35,11 +35,11 @@ import org.w3c.dom.Node;
 public class XMLConfigurator
 {
 
-    private RootDocument _rootDocument = null;
+    private RootDocument rootDocument = null;
 
     public XMLConfigurator ( RootDocument rootDocument )
     {
-        _rootDocument = rootDocument;
+        this.rootDocument = rootDocument;
     }
 
     public XMLConfigurator ( Node node ) throws XmlException
@@ -56,10 +56,10 @@ public class XMLConfigurator
     {
         // first configure the base hive
         new org.openscada.da.server.common.configuration.xml.XMLConfigurator ( null,
-                _rootDocument.getRoot ().getItemTemplates (), null, null ).configure ( hive );
+                rootDocument.getRoot ().getItemTemplates (), null, null ).configure ( hive );
 
         // now configure the opc hive
-        for ( ConfigurationType configuration : _rootDocument.getRoot ().getConnections ().getConfigurationList () )
+        for ( ConfigurationType configuration : rootDocument.getRoot ().getConnections ().getConfigurationList () )
         {
             if ( !configuration.getEnabled () )
             {
@@ -95,9 +95,21 @@ public class XMLConfigurator
 
             setup.setRefreshTimeout ( configuration.getRefresh () );
             setup.setInitialConnect ( configuration.getInitialRefresh () );
+            setup.setDeviceTag ( configuration.getAlias () );
 
-            hive.addConnection ( setup, configuration.getAlias (), configuration.getConnected (),
-                    configuration.getInitialItemList () );
+            setup.setItemIdPrefix ( configuration.getItemIdPrefix () );
+            if ( configuration.isSetInitialItemResource () )
+            {
+                setup.setFileSourceUri ( configuration.getInitialItemResource () );
+            }
+
+            if ( setup.getDeviceTag () == null )
+            {
+                setup.setDeviceTag ( setup.getConnectionInformation ().getHost () + ":"
+                        + setup.getConnectionInformation ().getClsOrProgId () );
+            }
+
+            hive.addConnection ( setup, configuration.getConnected (), configuration.getInitialItemList () );
         }
     }
 }
