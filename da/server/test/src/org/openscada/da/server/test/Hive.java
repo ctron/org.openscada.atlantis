@@ -39,10 +39,13 @@ import org.openscada.da.server.browser.common.query.QueryFolder;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.MemoryDataItem;
+import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.configuration.Configurator;
 import org.openscada.da.server.common.configuration.xml.XMLConfigurator;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.common.item.exporter.ObjectExporter;
+import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.test.items.FactoryMemoryCell;
 import org.openscada.da.server.test.items.MemoryCellItem;
 import org.openscada.da.server.test.items.MemoryChainedItem;
@@ -67,6 +70,10 @@ public class Hive extends HiveCommon
 
     private FolderCommon _testFolder = null;
 
+    private FolderItemFactory itemFactory;
+
+    private ObjectExporter objectExporter;
+
     public Hive () throws ConfigurationError, IOException, XmlException
     {
         this ( null );
@@ -76,6 +83,8 @@ public class Hive extends HiveCommon
     {
         super ();
 
+        ChainStorageServiceHelper.registerDefaultPropertyService ( this );
+        
         // create root folder
         FolderCommon rootFolder = new FolderCommon ();
         setRootFolder ( rootFolder );
@@ -153,7 +162,7 @@ public class Hive extends HiveCommon
         _testFolder.add ( "memory", item, new MapBuilder<String, Variant> ().put ( "description",
                 new Variant ( "A memory cell that simply maps the output to its input." ) ).getMap () );
 
-        registerItem ( item = new TestItem2 ( "memory-chained" ) );
+        registerItem ( item = new TestItem2 ( this, "memory-chained" ) );
         _testFolder.add ( "memory-chained", item, new MapBuilder<String, Variant> ().put ( "description",
                 new Variant ( "A memory cell that simply maps the output to its input using a chain." ) ).getMap () );
 
@@ -240,7 +249,7 @@ public class Hive extends HiveCommon
                 new MapBuilder<String, Variant> ().put ( "description",
                         new Variant ( "Alias to 'time' but with a name that will change every server startup." ) ).getMap () );
 
-        MemoryChainedItem memoryChainedItem = new MemoryChainedItem ( "chained" );
+        MemoryChainedItem memoryChainedItem = new MemoryChainedItem ( this, "chained" );
         registerItem ( memoryChainedItem );
         _testFolder.add ( "chained", memoryChainedItem, new MapBuilder<String, Variant> ().getMap () );
 
@@ -312,6 +321,12 @@ public class Hive extends HiveCommon
         changeThread.setDaemon ( true );
         changeThread.start ();
 
+		/*
+        this.itemFactory = new FolderItemFactory ( this, rootFolder, "itemFactory", "itemFactory");
+        this.objectExporter = new ObjectExporter ( itemFactory );
+        this.objectExporter.setInput ( new TestModelObject () );
+        */
+        
         if ( configurator == null )
             xmlConfigure ();
         else
@@ -327,6 +342,7 @@ public class Hive extends HiveCommon
             xmlConfigure ( file );
         }
     }
+    
     private void xmlConfigure ( File file ) throws ConfigurationError, XmlException, IOException
     {
         new XMLConfigurator ( file ).configure ( this );
