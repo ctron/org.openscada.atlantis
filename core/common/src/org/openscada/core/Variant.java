@@ -86,6 +86,12 @@ public class Variant
         return _value == null;
     }
 
+    /**
+     * Set the value based on a known object type
+     * <p>
+     * If the value object is not know it is converted to a string
+     * @param value the value to set
+     */
     public void setValue ( Object value )
     {
         if ( value == null )
@@ -464,18 +470,18 @@ public class Variant
     public String toString ()
     {
         if ( _value == null )
-            return "[VT_NULL]";
+            return "NULL#";
         else if ( _value instanceof Double )
-            return "[VT_DOUBLE](" + _value.toString () + ")";
+            return "DOUBLE#" + _value.toString ();
         else if ( _value instanceof Integer )
-            return "[VT_INT32](" + _value.toString () + ")";
+            return "INT32#" + _value.toString ();
         else if ( _value instanceof Long )
-            return "[VT_INT64](" + _value.toString () + ")";
+            return "INT64#" + _value.toString ();
         else if ( _value instanceof String )
-            return "[VT_STRING](" + _value.toString () + ")";
+            return "STRING#" + _value.toString ();
         else if ( _value instanceof Boolean )
-            return "[VT_BOOLEAN](" + _value.toString () + ")";
+            return "BOOLEAN#" + _value.toString ();
         else
-            return "[VT_UNKNOWN](" + _value.toString () + ")";
+            return "UNKNOWN#" + _value.toString ();
     }
 }

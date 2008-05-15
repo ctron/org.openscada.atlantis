@@ -45,7 +45,7 @@ public class VariantEditor extends PropertyEditorSupport
             {
                 setValue ( new Variant ( Long.parseLong ( toks[1] ) ) );
             }
-            else if ( toks[0].equalsIgnoreCase ( "STRING" ) )
+            else if ( toks[0].equalsIgnoreCase ( "STRING" ) || toks[0].equalsIgnoreCase ( "UNKNOWN" ) )
             {
                 setValue ( new Variant ( toks[1] ) );
             }
