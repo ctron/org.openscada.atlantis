@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.common.chain;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +38,7 @@ public abstract class DataItemInputOutputChained extends DataItemInputChained
     {
         super ( di );
     }
-    
+
     public DataItemInputOutputChained ( String id )
     {
         this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
@@ -46,20 +47,25 @@ public abstract class DataItemInputOutputChained extends DataItemInputChained
     @Override
     synchronized public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
-        
-        for ( ChainProcessEntry entry: getChainCopy () )
+        Collection<ChainProcessEntry> chain = getChainCopy ();
+
+        if ( !chain.isEmpty () )
         {
-            if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
+            Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
+
+            for ( ChainProcessEntry entry : chain )
             {
-                entry.getWhat ().process ( value, primaryAttributes );
+                if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
+                {
+                    entry.getWhat ().process ( value, primaryAttributes );
+                }
             }
+
+            _secondaryAttributes.set ( primaryAttributes );
         }
-        
-        _secondaryAttributes.set ( primaryAttributes );
-        
+
         writeCalculatedValue ( value );
     }
-    
+
     protected abstract void writeCalculatedValue ( Variant value ) throws NotConvertableException, InvalidOperationException;
 }
