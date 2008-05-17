@@ -306,7 +306,10 @@ public class OPCItemManager implements ItemSourceListener
         this.hive.registerItem ( item );
 
         Map<String, Variant> browserMap = Helper.convertToAttributes ( entry );
-        browserMap.putAll ( req.getAttributes () );
+        if ( req.getAttributes () != null  )
+        {
+            browserMap.putAll ( req.getAttributes () );
+        }
 
         this.flatItemFolder.add ( def.getItemID (), item, browserMap );
 
