@@ -126,6 +126,11 @@ public abstract class DataItemBaseChained extends DataItemBase
      */
     public void setChain ( Collection<ChainProcessEntry> chain )
     {
+        for ( ChainProcessEntry entry : _chain )
+        {
+            entry.getWhat ().dataItemChanged ( null );
+        }
+        
         if ( chain == null )
         {
             _chain = new CopyOnWriteArraySet<ChainProcessEntry> ();
