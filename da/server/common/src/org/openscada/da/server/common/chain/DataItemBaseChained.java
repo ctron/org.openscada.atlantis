@@ -120,6 +120,10 @@ public abstract class DataItemBaseChained extends DataItemBase
 
     protected abstract void process ();
 
+    /**
+     * Replace the current chain with the new one
+     * @param chain the new chain
+     */
     public void setChain ( Collection<ChainProcessEntry> chain )
     {
         if ( chain == null )
@@ -128,7 +132,12 @@ public abstract class DataItemBaseChained extends DataItemBase
         }
         else
         {
-            _chain = new CopyOnWriteArraySet<ChainProcessEntry> ( chain );
+            Set<ChainProcessEntry> newChain = new CopyOnWriteArraySet<ChainProcessEntry> ( chain );
+            for ( ChainProcessEntry entry : newChain )
+            {
+                entry.getWhat ().dataItemChanged ( this );
+            }
+            _chain = newChain;
         }
         process ();
     }
