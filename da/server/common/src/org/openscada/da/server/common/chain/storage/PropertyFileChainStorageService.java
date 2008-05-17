@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -32,6 +34,16 @@ public class PropertyFileChainStorageService implements ChainStorageService
     protected File getItemFile ( String itemId )
     {
         String itemFileName = itemId;
+
+        try
+        {
+            itemFileName = URLEncoder.encode ( itemId, "UTF-8" );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            log.warn ( "Failed to convert to filename", e );
+        }
+
         return new File ( this.storageRoot, itemFileName );
     }
 
@@ -46,7 +58,15 @@ public class PropertyFileChainStorageService implements ChainStorageService
         Properties p = new Properties ();
         try
         {
-            p.load ( new FileInputStream ( itemFile ) );
+            FileInputStream stream = new FileInputStream ( itemFile );
+            try
+            {
+                p.load ( stream );
+            }
+            finally
+            {
+                stream.close ();
+            }
 
             Map<String, Variant> result = new HashMap<String, Variant> ();
             VariantEditor ed = new VariantEditor ();
@@ -95,7 +115,15 @@ public class PropertyFileChainStorageService implements ChainStorageService
 
         try
         {
-            p.store ( new FileOutputStream ( file ), "" );
+            FileOutputStream stream = new FileOutputStream ( file );
+            try
+            {
+                p.store ( stream, "" );
+            }
+            finally
+            {
+                stream.close ();
+            }
         }
         catch ( IOException e )
         {
