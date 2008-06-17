@@ -1,6 +1,6 @@
-package org.openscada.da.server.stock.items;
+package org.openscada.da.server.exec.items;
 
-import org.openscada.da.server.stock.domain.StockQuote;
+import org.openscada.da.server.exec.domain.StockQuote;
 
 public interface StockQuoteListener
 {

@@ -1,4 +1,4 @@
-package org.openscada.da.server.stock.business;
+package org.openscada.da.server.exec.business;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openscada.da.server.stock.domain.StockQuote;
+import org.openscada.da.server.exec.domain.StockQuote;
 import org.openscada.utils.str.StringHelper;
 
 public class YahooStockQuoteService implements StockQuoteService

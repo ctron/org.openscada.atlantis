@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.server.stock.items;
+package org.openscada.da.server.exec.items;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.DataItemInputCommon;
 import org.openscada.da.server.common.ItemListener;
-import org.openscada.da.server.stock.domain.StockQuote;
+import org.openscada.da.server.exec.domain.StockQuote;
 
 public class StockQuoteItem extends DataItemInputCommon implements StockQuoteListener
 {

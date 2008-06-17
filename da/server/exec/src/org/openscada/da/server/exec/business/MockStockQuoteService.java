@@ -1,4 +1,4 @@
-package org.openscada.da.server.stock.business;
+package org.openscada.da.server.exec.business;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import org.openscada.da.server.stock.domain.StockQuote;
+import org.openscada.da.server.exec.domain.StockQuote;
 
 public class MockStockQuoteService implements StockQuoteService
 {

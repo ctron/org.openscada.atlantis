@@ -1,4 +1,4 @@
-package org.openscada.da.server.stock.domain;
+package org.openscada.da.server.exec.domain;
 
 import java.util.Calendar;
 

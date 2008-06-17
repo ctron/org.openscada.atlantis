@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.server.stock;
+package org.openscada.da.server.exec;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,9 +30,9 @@ import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.configuration.Configurator;
 import org.openscada.da.server.common.configuration.xml.XMLConfigurator;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.stock.business.YahooStockQuoteService;
-import org.openscada.da.server.stock.items.StockQuoteItem;
-import org.openscada.da.server.stock.items.UpdateManager;
+import org.openscada.da.server.exec.business.YahooStockQuoteService;
+import org.openscada.da.server.exec.items.StockQuoteItem;
+import org.openscada.da.server.exec.items.UpdateManager;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.timing.Scheduler;
 

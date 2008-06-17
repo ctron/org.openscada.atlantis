@@ -1,12 +1,12 @@
-package org.openscada.da.server.stock.items;
+package org.openscada.da.server.exec.items;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.da.server.stock.business.StockQuoteService;
-import org.openscada.da.server.stock.domain.StockQuote;
+import org.openscada.da.server.exec.business.StockQuoteService;
+import org.openscada.da.server.exec.domain.StockQuote;
 
 public class UpdateManager
 {
