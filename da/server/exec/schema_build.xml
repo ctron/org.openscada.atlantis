@@ -23,7 +23,7 @@
 			failonerror="true"
 			download="true"
 			classgendir="schemasrc"
-			schema="schema/execserver.xsd"
+			schema="schema/commands.xsd"
 			javasource="1.5"
             classpathref="xmlbeanspath"
 			>
