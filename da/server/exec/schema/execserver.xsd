@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://openscada.org/DA/ExecServer/Commands"
+	xmlns:components="http://openscada.org/DA/ExecServer/Commands"
+	elementFormDefault="qualified" xmlns:hive="http://openscada.org/DA/Hive" xmlns:Q1="http://openscada.org/Common">
+
+    <import schemaLocation="da_server_common/Hive.xsd" namespace="http://openscada.org/DA/Hive"/>
+	
+	<element name="root" type="components:RootType"></element>
+
+	<complexType name="RootType">
+		<sequence>
+		</sequence>
+	</complexType>
+
+</schema>
