@@ -6,11 +6,60 @@
 
     <import schemaLocation="da_server_common/Hive.xsd" namespace="http://openscada.org/DA/Hive"/>
 	
-	<element name="root" type="components:RootType"></element>
+    <element name="root" type="components:RootType"></element>
+    
+    <complexType name="RootType">
+    	<sequence>
+    		<element name="devices" type="components:DevicesType"
+    			maxOccurs="1" minOccurs="1">
+    		</element>
+    	</sequence>
+    </complexType>
 
-	<complexType name="RootType">
-		<sequence>
-		</sequence>
-	</complexType>
+    <complexType name="DevicesType">
+    	<sequence>
+    		<element name="device" type="components:DeviceType"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    	</sequence>
+    </complexType>
 
+    <complexType name="DeviceType">
+    	<attribute name="host" use="required">
+    		<annotation>
+    			<documentation>
+    				The hostname or IP address of the device
+    			</documentation>
+    		</annotation>
+    		<simpleType>
+    			<restriction base="string">
+    				<whiteSpace value="collapse"></whiteSpace>
+    				<pattern value="([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+)*"></pattern>
+    			</restriction>
+    		</simpleType>
+    	</attribute>
+    	<attribute name="port" type="short" use="required">
+    		<annotation>
+    			<documentation>
+    				The port number of the device
+    			</documentation>
+    		</annotation>
+    	</attribute>
+    	<attribute name="id" use="required">
+    		<annotation>
+    			<documentation>The ID of the device</documentation>
+    		</annotation>
+    		<simpleType>
+    			<restriction base="string">
+    				<pattern value="[a-zA-Z0-9]+"></pattern>
+    			</restriction>
+    		</simpleType>
+    	</attribute>
+    	<attribute name="community" type="string" use="required">
+    		<annotation>
+    			<documentation>
+    				The SNMP community name. Usually &quot;public&quot;.
+    			</documentation>
+    		</annotation></attribute>
+    </complexType>
 </schema>
