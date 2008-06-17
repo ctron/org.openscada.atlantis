@@ -10,56 +10,24 @@
     
     <complexType name="RootType">
     	<sequence>
-    		<element name="devices" type="components:DevicesType"
-    			maxOccurs="1" minOccurs="1">
+    		<element name="command_queues" type="components:CommandQueueType"
+    			minOccurs="1" maxOccurs="unbounded">
     		</element>
     	</sequence>
     </complexType>
 
-    <complexType name="DevicesType">
+    <complexType name="CommandQueueType">
     	<sequence>
-    		<element name="device" type="components:DeviceType"
-    			maxOccurs="unbounded" minOccurs="0">
+    		<element name="command" type="components:CommandType"
+    			maxOccurs="unbounded" minOccurs="1">
     		</element>
+    		<element name="command_queue_class" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="command_queue_name" type="string" maxOccurs="1" minOccurs="1"></element>
     	</sequence>
     </complexType>
 
-    <complexType name="DeviceType">
-    	<attribute name="host" use="required">
-    		<annotation>
-    			<documentation>
-    				The hostname or IP address of the device
-    			</documentation>
-    		</annotation>
-    		<simpleType>
-    			<restriction base="string">
-    				<whiteSpace value="collapse"></whiteSpace>
-    				<pattern value="([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+)*"></pattern>
-    			</restriction>
-    		</simpleType>
-    	</attribute>
-    	<attribute name="port" type="short" use="required">
-    		<annotation>
-    			<documentation>
-    				The port number of the device
-    			</documentation>
-    		</annotation>
-    	</attribute>
-    	<attribute name="id" use="required">
-    		<annotation>
-    			<documentation>The ID of the device</documentation>
-    		</annotation>
-    		<simpleType>
-    			<restriction base="string">
-    				<pattern value="[a-zA-Z0-9]+"></pattern>
-    			</restriction>
-    		</simpleType>
-    	</attribute>
-    	<attribute name="community" type="string" use="required">
-    		<annotation>
-    			<documentation>
-    				The SNMP community name. Usually &quot;public&quot;.
-    			</documentation>
-    		</annotation></attribute>
+    <complexType name="CommandType">
+    	<attribute name="command_class" type="string"></attribute>
+    	<attribute name="commandline" type="string"></attribute>
     </complexType>
 </schema>
