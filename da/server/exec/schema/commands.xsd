@@ -4,7 +4,7 @@
 	xmlns:components="http://openscada.org/DA/ExecServer/Commands"
 	elementFormDefault="qualified" xmlns:hive="http://openscada.org/DA/Hive" xmlns:Q1="http://openscada.org/Common">
 
-    <import schemaLocation="da_server_common/Hive.xsd" namespace="http://openscada.org/DA/Hive"/>
+    <import schemaLocation="openscada/Hive.xsd" namespace="http://openscada.org/DA/Hive"/>
 	
     <element name="root" type="components:RootType"></element>
     
@@ -27,7 +27,9 @@
     </complexType>
 
     <complexType name="CommandType">
-    	<attribute name="command_class" type="string"></attribute>
-    	<attribute name="commandline" type="string"></attribute>
+    	<sequence>
+    		<element name="command_class" type="string"></element>
+    		<element name="commandline" type="string"></element>
+    	</sequence>    	
     </complexType>
 </schema>
