@@ -31,18 +31,16 @@ public class StandardCommandQueue extends CommandQueueBase
      */
     private static Logger logger = Logger.getLogger ( StandardCommandQueue.class );
 
-    @Override
-    public void addCommand ()
-    {
-
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Runnable#run()
+    /**
+     * Execute the queue. Will be called automatically from TaskExecutor
      */
     @Override
     public void run ()
     {
-        logger.error ( "Tick" );
+        for ( Command command : this.getCommands () )
+        {
+            logger.info ( "Tick: " + command.getCommandline () );
+        }
     }
+
 }

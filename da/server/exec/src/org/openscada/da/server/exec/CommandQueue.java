@@ -22,11 +22,46 @@
  */
 package org.openscada.da.server.exec;
 
+import java.util.List;
+
+import org.openscada.da.server.common.impl.HiveCommon;
+
 public interface CommandQueue extends Runnable
 {
+    /**
+     * Give the queue a name
+     * @param queueName
+     */
     public void setQueueName ( String queueName );
 
+    /**
+     * Get the queue name
+     * @return
+     */
     public String getQueueName ();
 
-    public void addCommand ();
+    /**
+     * Add a command to the queue
+     * @param command
+     */
+    public void addCommand ( Command command );
+
+    /**
+     * Set the hive where the command queue should add all items to
+     * @param hive
+     */
+    public void setHive ( HiveCommon hive );
+
+    /**
+     * Get the connected hive
+     * @return
+     */
+    public HiveCommon getHive ();
+
+    /**
+     * Get a list with all registered commands
+     * @return
+     */
+    public List<Command> getCommands ();
+
 }

@@ -17,7 +17,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.server.exec;
+package org.openscada.da.server.exec.factory;
+
+import org.openscada.da.server.exec.Command;
 
 public class CommandFactory
 {

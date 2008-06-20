@@ -22,6 +22,13 @@
  */
 package org.openscada.da.server.exec;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openscada.da.server.browser.common.FolderCommon;
+import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.exec.factory.ErrorStateHandlerFolderItemFactory;
+
 public abstract class CommandQueueBase implements CommandQueue
 {
     /**
@@ -29,8 +36,23 @@ public abstract class CommandQueueBase implements CommandQueue
      */
     private String queueName;
 
-    /* (non-Javadoc)
-     * @see org.openscada.da.server.exec.CommandQueue#setQueueName(java.lang.String)
+    /**
+     * The hive where the queue registers all items in
+     */
+    private HiveCommon hive = null;
+
+    /**
+     * With this factory all the items for OpenSCADA will be created
+     */
+    private ErrorStateHandlerFolderItemFactory itemFactory;
+
+    /**
+     * List with all command
+     */
+    private final List<Command> commands = new ArrayList<Command> ();
+
+    /**
+     * setQueueName
      */
     @Override
     public void setQueueName ( String queueName )
@@ -45,4 +67,48 @@ public abstract class CommandQueueBase implements CommandQueue
     {
         return this.queueName;
     }
+
+    /**
+     * Set the hive where the command queue should add all items to
+     * @param hive
+     */
+    @Override
+    public void setHive ( HiveCommon hive )
+    {
+        this.hive = hive;
+
+        // Create a factory for creating new OpenSCADA items
+        this.itemFactory = new ErrorStateHandlerFolderItemFactory ( hive, (FolderCommon)hive.getRootFolder (), this.getQueueName (), this.getQueueName () );
+    }
+
+    /**
+     * getHive
+     */
+    @Override
+    public HiveCommon getHive ()
+    {
+        return this.hive;
+    }
+
+    /**
+     * Add a command to the queue
+     * @param command
+     */
+    @Override
+    public void addCommand ( Command command )
+    {
+        // Add the new command to the list of commands
+        this.commands.add ( command );
+    }
+
+    /**
+     * getCommands
+     */
+    @Override
+    public List<Command> getCommands ()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

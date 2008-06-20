@@ -22,7 +22,20 @@
  */
 package org.openscada.da.server.exec;
 
+
 public class StandardCommand extends CommandBase
-{
+{/*
+    // Create a factory for creating new OpenSCADA items
+    this.itemFactory = new ErrorStateHandlerFolderItemFactory ( this, this.rootFolder, "bla", "bla2" );
+    this.commandQueueItemFactory = this.itemFactory.createSubFolderFactory ( "connection" );
+
+    this.disconnectDataItem = this.commandQueueItemFactory.createCommand ( "disconnect" );
+    this.disconnectDataItem.addListener ( new DataItemCommand.Listener () {
+
+        public void command ( Variant value )
+        {
+        }
+    } );
+*/
 
 }

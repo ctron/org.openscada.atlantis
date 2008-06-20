@@ -17,19 +17,81 @@
     </complexType>
 
     <complexType name="CommandQueueType">
-    	<sequence>
+        <annotation>
+        	<documentation>
+        		A definition of a command queue, containing several
+        		commands to be executed
+        	</documentation>
+        </annotation>
+        <sequence>
     		<element name="command" type="components:CommandType"
     			maxOccurs="unbounded" minOccurs="1">
+                <annotation>
+                	<documentation>
+                		A list of commands for this command queue
+                	</documentation>
+                </annotation>
     		</element>
-    		<element name="command_queue_class" type="string" maxOccurs="1" minOccurs="1"></element>
-    		<element name="command_queue_name" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="command_queue_class" type="string"
+    			maxOccurs="1" minOccurs="1">
+    			<annotation>
+    				<documentation>
+    					Class name of the command queue implementation.
+    					Use
+    					org.openscada.da.server.exec.StandardCommandQueue
+    					if unclear
+    				</documentation>
+    			</annotation>
+    		</element>
+    		<element name="command_queue_name" type="string"
+    			maxOccurs="1" minOccurs="1">
+    			<annotation>
+    				<documentation>
+    					A name identifiying this queue
+    				</documentation>
+    			</annotation>
+    		</element>
+    		<element name="delay" type="int" maxOccurs="1"
+    			minOccurs="1">
+    			<annotation>
+    				<documentation>
+    					Delay to wait after all commands of this queue
+    					have been executed (ms)
+    				</documentation>
+    			</annotation>
+    		</element>
+    		<element name="initialDelay" type="int" maxOccurs="1" minOccurs="1">
+    			<annotation>
+    				<documentation>
+    					Delay to wait before the queue is started (ms)
+    				</documentation>
+    			</annotation></element>
     	</sequence>
     </complexType>
 
     <complexType name="CommandType">
-    	<sequence>
-    		<element name="command_class" type="string"></element>
-    		<element name="commandline" type="string"></element>
+        <annotation>
+        	<documentation>
+        		The definition of a command that will be executed from a
+        		command queue
+        	</documentation>
+        </annotation>
+        <sequence>
+    		<element name="command_class" type="string" maxOccurs="1" minOccurs="1">
+    			<annotation>
+    				<documentation>
+    					Class name of the command implementation. Use
+    					org.openscada.da.server.exec.StandardCommand if
+    					unclear
+    				</documentation>
+    			</annotation></element>
+    		<element name="commandline" type="string" maxOccurs="1" minOccurs="1">
+    			<annotation>
+    				<documentation>
+    					The command line to call from the OS to execute
+    					this command
+    				</documentation>
+    			</annotation></element>
     	</sequence>    	
     </complexType>
 </schema>

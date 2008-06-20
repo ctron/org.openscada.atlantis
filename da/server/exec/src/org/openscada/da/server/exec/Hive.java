@@ -33,6 +33,8 @@ import org.openscada.da.execServer.commands.CommandType;
 import org.openscada.da.execServer.commands.RootDocument;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.exec.factory.CommandFactory;
+import org.openscada.da.server.exec.factory.CommandQueueFactory;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
@@ -56,11 +58,6 @@ public class Hive extends HiveCommon
      * List with all running command queues
      */
     private final List<ScheduledThreadPoolExecutor> threads = new ArrayList<ScheduledThreadPoolExecutor> ();
-
-    /**
-     * Maximum timeout, e.g. by waiting for the threads to end
-     */
-    private final long MAX_TIMEOUT = 10 * 1000;
 
     /**
      * Default Constructor
@@ -90,6 +87,7 @@ public class Hive extends HiveCommon
     {
         super ();
 
+        // Init root folder
         this.document = document;
         this.setRootFolder ( this.rootFolder );
 
@@ -104,18 +102,22 @@ public class Hive extends HiveCommon
         // Iterate through all configured command queues and initialize them
         for ( CommandQueueType commandQueueConfig : this.document.getRoot ().getCommandQueuesList () )
         {
+            // Create the queue
             CommandQueue commandQueue = null;
             try
             {
                 commandQueue = CommandQueueFactory.createCommandQueue ( commandQueueConfig.getCommandQueueClass () );
-                logger.error ( "Created command queue " + commandQueueConfig.getCommandQueueName () );
+                logger.info ( "Created command queue " + commandQueueConfig.getCommandQueueName () );
                 commandQueue.setQueueName ( commandQueueConfig.getCommandQueueName () );
             }
             catch ( Exception e )
             {
-                logger.equals ( "Error creating command queue from class name: " + commandQueueConfig.getCommandQueueClass () + ". Reason: " + e.getMessage () );
+                logger.error ( "Error creating command queue from class name: " + commandQueueConfig.getCommandQueueClass () + ". Reason: " + e.getMessage () );
                 break;
             }
+
+            // Initialize the queue
+            commandQueue.setHive ( this );
 
             // Iterate through all commands of the command queue and initialize them
             for ( CommandType commandConfig : commandQueueConfig.getCommandList () )
@@ -123,22 +125,23 @@ public class Hive extends HiveCommon
                 Command command = null;
                 try
                 {
-                    logger.error ( commandConfig.getCommandline () );
-                    logger.error ( commandConfig.getCommandClass () );
                     command = CommandFactory.createCommand ( commandConfig.getCommandClass () );
                     logger.info ( "Created command " + commandConfig.getCommandline () );
                     command.setCommandline ( commandConfig.getCommandline () );
                 }
                 catch ( Exception e )
                 {
-                    logger.equals ( "Error creating command from class name: " + commandConfig.getCommandClass () + ". Reason: " + e.getMessage () );
+                    logger.error ( "Error creating command from class name: " + commandConfig.getCommandClass () + ". Reason: " + e.getMessage () );
                     break;
                 }
+
+                // Add the command to the queue
+                commandQueue.addCommand ( command );
             }
 
             // Start the queue
             ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor ( 1 );
-            executor.scheduleWithFixedDelay ( commandQueue, 0, 1, TimeUnit.SECONDS );
+            executor.scheduleWithFixedDelay ( commandQueue, commandQueueConfig.getInitialDelay (), commandQueueConfig.getDelay (), TimeUnit.MILLISECONDS );
             this.threads.add ( executor );
         }
     }
@@ -146,7 +149,8 @@ public class Hive extends HiveCommon
     /**
      * Stops all running command queues
      */
-    protected void stopQueues ()
+    @Override
+    public void dispose ()
     {
         // Send stop request
         for ( ScheduledThreadPoolExecutor executor : this.threads )
