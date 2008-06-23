@@ -20,7 +20,7 @@
 /**
  * 
  */
-package org.openscada.da.server.exec.nagios;
+package org.openscada.da.server.exec.util;
 
 public class NagiosCommandState
 {
