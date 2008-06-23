@@ -22,12 +22,17 @@
  */
 package org.openscada.da.server.exec.nagios;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.exec.base.CommandBase;
 import org.openscada.da.server.exec.base.CommandQueue;
+import org.openscada.da.server.exec.util.CommandExecutor;
+import org.openscada.da.server.exec.util.CommandResult;
 import org.openscada.utils.collection.MapBuilder;
 
 public class NagiosCommand extends CommandBase
@@ -64,17 +69,19 @@ public class NagiosCommand extends CommandBase
     @Override
     public void execute ()
     {
-        try
-        {
-            Thread.sleep ( 50 );
-        }
-        catch ( Throwable ch )
-        {
+        // Execute
+        CommandResult result = CommandExecutor.executeCommand ( this.getCommandline () );
 
-        }
+        // Place result attributes
+        Map<String, Variant> map = new HashMap<String, Variant> ();
+        map.put ( "execution.error", new Variant ( result.isError () ) );
+        map.put ( "exit_code", new Variant ( result.getExitValue () ) );
+        map.put ( "output", new Variant ( result.getOutput () ) );
+        map.put ( "error_output", new Variant ( result.getErrorOutput () ) );
+        map.put ( "message", new Variant ( result.getMessage () ) );
+        this.stateItem.updateAttributes ( map );
 
-        this.stateItem.updateValue ( new Variant ( true ) );
-        this.stateItem.updateAttributes ( new MapBuilder<String, Variant> ().put ( "execution.error", new Variant ( true ) ).getMap () );
+        // Evaluate result
+        this.stateItem.updateValue ( new Variant ( this.getParser ().parse ( result.getOutput () ) ) );
     }
-
 }

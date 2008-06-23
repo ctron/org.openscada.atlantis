@@ -103,6 +103,11 @@ public abstract class CommandBase implements Command
     private final DataItemInputChained minDelayItem;
 
     /**
+     * the parser for the result
+     */
+    private CommandResultParser parser;
+
+    /**
      * Constructor
      * @param hive
      */
@@ -170,8 +175,15 @@ public abstract class CommandBase implements Command
     @Override
     public Calendar getLastExecutionTime ()
     {
-        // TODO Auto-generated method stub
         return this.lastExecutionTime;
+    }
+
+    /**
+     * @return the parser
+     */
+    public CommandResultParser getParser ()
+    {
+        return this.parser;
     }
 
     /**
@@ -191,6 +203,15 @@ public abstract class CommandBase implements Command
     public ErrorStateHandlerFolderItemFactory getCommandItemFactory ()
     {
         return this.commandItemFactory;
+    }
+
+    /**
+     * sets a parser to the command
+     */
+    @Override
+    public void setParser ( CommandResultParser parser )
+    {
+        this.parser = parser;
     }
 
     /**
@@ -218,4 +239,5 @@ public abstract class CommandBase implements Command
             logger.debug ( this.getCommandName () + ": tick!" );
         }
     }
+
 }

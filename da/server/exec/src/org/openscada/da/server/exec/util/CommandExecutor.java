@@ -22,10 +22,12 @@
  */
 package org.openscada.da.server.exec.util;
 
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.apache.log4j.Logger;
-import org.openscada.utils.str.StringHelper;
 
 public class CommandExecutor
 {
@@ -38,43 +40,60 @@ public class CommandExecutor
      * This method executes the specified command on the shell using the passed objects as information provider.
      * @param cmd command string including arguments
      * @param formatArguments objects that will be parsed into the command string
-     * @throws Exception in case of any error
      */
-    public static void executeCommand ( List<String> cmd, Object[] formatArguments ) throws Exception
+    public static CommandResult executeCommand ( String cmd )
     {
-        String[] cmdArguments = new String[cmd.size ()];
+        // Prepare a result
+        CommandResult result = new CommandResult ();
+        result.setError ( true );
+        result.setMessage ( "OK" );
+
+        // Execute the command
         try
         {
-            for ( int i = 0; i < cmdArguments.length; i++ )
-            {
-                cmdArguments[i] = String.format ( cmd.get ( i ), formatArguments );
-            }
-        }
-        catch ( Exception e )
-        {
-            String message = String.format ( "Unable to create command line arguments! Detailed message: %1$s", e.getMessage () );
-            logger.error ( message, e );
-            throw new Exception ( message, e );
-        }
-        logger.info ( "Executing shell command: " + StringHelper.join ( cmdArguments, " " ) );
-        try
-        {
-            Process p = Runtime.getRuntime ().exec ( cmdArguments );
+            // Execute and wait
+            Process p = Runtime.getRuntime ().exec ( cmd );
             p.waitFor ();
+
+            // Get exit value
             int exitValue = p.exitValue ();
+            result.setExitValue ( exitValue );
             if ( exitValue != 0 )
             {
-                String message = String.format ( "Process did not finish properly. Error code: %1$s", +exitValue );
-                logger.error ( message );
-                throw new Exception ( message );
+                result.setMessage ( String.format ( "Process did not finish properly. Error code: %1$s", +exitValue ) );
+                return result;
             }
+
+            // Get result
+            result.setOutput ( inputStreamToString ( p.getInputStream () ) );
+            result.setErrorOutput ( inputStreamToString ( p.getErrorStream () ) );
         }
         catch ( Exception e )
         {
-            String message = String.format ( "Unable to execute command line arguments for printing! Detailed message: %1$s", e.getMessage () );
-            logger.error ( message, e );
-            throw new Exception ( message, e );
+            result.setMessage ( String.format ( "Unable to execute command! Detailed message: %1$s", e.getMessage () ) );
+            return result;
         }
+
+        result.setError ( false );
+        return result;
     }
 
+    /**
+     * Read from an inputStream and place the output in a string
+     * @param inputStream
+     * @return
+     */
+    private static String inputStreamToString ( InputStream inputStream ) throws IOException
+    {
+        InputStreamReader inputStreamReader = new InputStreamReader ( inputStream );
+        BufferedReader br = new BufferedReader ( inputStreamReader );
+
+        String output = "";
+        String line = "";
+        while ( ( line = br.readLine () ) != null )
+        {
+            output += line;
+        }
+        return output;
+    }
 }

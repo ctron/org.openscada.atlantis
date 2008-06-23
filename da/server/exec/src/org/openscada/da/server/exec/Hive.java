@@ -37,6 +37,7 @@ import org.openscada.da.server.exec.base.Command;
 import org.openscada.da.server.exec.base.CommandQueue;
 import org.openscada.da.server.exec.factory.CommandFactory;
 import org.openscada.da.server.exec.factory.CommandQueueFactory;
+import org.openscada.da.server.exec.factory.CommandResultParserFactory;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
@@ -134,6 +135,17 @@ public class Hive extends HiveCommon
                 catch ( Exception e )
                 {
                     logger.error ( "Error creating command from class name: " + commandConfig.getCommandClass () + ". Reason: " + e.getMessage () );
+                    break;
+                }
+
+                // Create a parser for the command
+                try
+                {
+                    command.setParser ( CommandResultParserFactory.createParser ( commandConfig.getParserClass () ) );
+                }
+                catch ( Exception e )
+                {
+                    logger.error ( "Error creating parser from class name: " + commandConfig.getParserClass () + ". Reason: " + e.getMessage () );
                     break;
                 }
 

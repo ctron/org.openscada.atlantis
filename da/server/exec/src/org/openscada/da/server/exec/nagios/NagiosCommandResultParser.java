@@ -20,9 +20,20 @@
 /**
  * 
  */
-package org.openscada.da.server.exec.util;
+package org.openscada.da.server.exec.nagios;
 
-public class NagiosCommandState
+import org.openscada.da.server.exec.base.CommandResultParser;
+
+public class NagiosCommandResultParser implements CommandResultParser
 {
+    /**
+     * Analyse the output from nagios and return true when the result is ok
+     */
+    @Override
+    public boolean parse ( String output )
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

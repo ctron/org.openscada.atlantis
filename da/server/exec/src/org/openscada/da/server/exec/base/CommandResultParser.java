@@ -22,52 +22,12 @@
  */
 package org.openscada.da.server.exec.base;
 
-import java.util.Calendar;
-
-public interface Command
+public interface CommandResultParser
 {
     /**
-     * setCommandline
-     * @param commandline
-     */
-    public void setCommandline ( String commandline );
-
-    /**
-     * getCommandline
+     * Analyse output and indicate, whether it means good or bad result
+     * @param output
      * @return
      */
-    public String getCommandline ();
-
-    /**
-     * getCommandName
-     * @return
-     */
-    public String getCommandName ();
-
-    /**
-     * periodically called and checks, whether the command has to be executed or not
-     */
-    public void tick ();
-
-    /**
-     * run the command task
-     */
-    public void execute ();
-
-    /**
-     * Sets the minimum time delay (ms) between executions
-     * @param delay
-     */
-    public void setMinDelay ( int delay );
-
-    /**
-     * Returns the time of the last execution
-     * @return
-     */
-    public Calendar getLastExecutionTime ();
-
-    /**
-     * sets a parser to the command
-     */
-    public void setParser ( CommandResultParser parser );
+    public boolean parse ( String output );
 }
