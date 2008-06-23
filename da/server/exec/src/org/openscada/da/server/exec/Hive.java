@@ -33,6 +33,8 @@ import org.openscada.da.execServer.commands.CommandType;
 import org.openscada.da.execServer.commands.RootDocument;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.exec.base.Command;
+import org.openscada.da.server.exec.base.CommandQueue;
 import org.openscada.da.server.exec.factory.CommandFactory;
 import org.openscada.da.server.exec.factory.CommandQueueFactory;
 import org.w3c.dom.Node;

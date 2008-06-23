@@ -20,26 +20,9 @@
 /**
  * 
  */
-package org.openscada.da.server.exec;
+package org.openscada.da.server.exec.nagios;
 
-import org.apache.log4j.Logger;
-import org.openscada.da.server.common.impl.HiveCommon;
-
-public class StandardCommandQueue extends CommandQueueBase
+public class NagiosCommandState
 {
-    /**
-     * Logger
-     */
-    private static Logger logger = Logger.getLogger ( StandardCommandQueue.class );
-
-    /**
-     * Constructor
-     * @param hive
-     * @param queueName
-     */
-    public StandardCommandQueue ( HiveCommon hive, String queueName )
-    {
-        super ( hive, queueName );
-    }
 
 }

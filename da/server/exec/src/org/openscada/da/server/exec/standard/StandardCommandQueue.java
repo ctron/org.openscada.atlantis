@@ -20,49 +20,27 @@
 /**
  * 
  */
-package org.openscada.da.server.exec;
+package org.openscada.da.server.exec.standard;
 
-import java.util.Calendar;
+import org.apache.log4j.Logger;
+import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.exec.base.CommandQueueBase;
 
-public interface Command
+public class StandardCommandQueue extends CommandQueueBase
 {
     /**
-     * setCommandline
-     * @param commandline
+     * Logger
      */
-    public void setCommandline ( String commandline );
+    private static Logger logger = Logger.getLogger ( StandardCommandQueue.class );
 
     /**
-     * getCommandline
-     * @return
+     * Constructor
+     * @param hive
+     * @param queueName
      */
-    public String getCommandline ();
+    public StandardCommandQueue ( HiveCommon hive, String queueName )
+    {
+        super ( hive, queueName );
+    }
 
-    /**
-     * getCommandName
-     * @return
-     */
-    public String getCommandName ();
-
-    /**
-     * periodically called and checks, whether the command has to be executed or not
-     */
-    public void tick ();
-
-    /**
-     * run the command task
-     */
-    public void execute ();
-
-    /**
-     * Sets the minimum time delay (ms) between executions
-     * @param delay
-     */
-    public void setMinDelay ( int delay );
-
-    /**
-     * Returns the time of the last execution
-     * @return
-     */
-    public Calendar getLastExecutionTime ();
 }

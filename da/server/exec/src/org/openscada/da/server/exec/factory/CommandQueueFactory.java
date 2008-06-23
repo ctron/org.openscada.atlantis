@@ -23,7 +23,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.exec.CommandQueue;
+import org.openscada.da.server.exec.base.CommandQueue;
 
 public class CommandQueueFactory
 {

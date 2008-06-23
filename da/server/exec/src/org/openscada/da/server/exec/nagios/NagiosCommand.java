@@ -20,12 +20,14 @@
 /**
  * 
  */
-package org.openscada.da.server.exec;
+package org.openscada.da.server.exec.nagios;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.exec.base.CommandBase;
+import org.openscada.da.server.exec.base.CommandQueue;
 import org.openscada.utils.collection.MapBuilder;
 
 public class NagiosCommand extends CommandBase
@@ -65,13 +67,14 @@ public class NagiosCommand extends CommandBase
         try
         {
             Thread.sleep ( 50 );
-            this.stateItem.updateValue ( new Variant ( true ) );
-            this.stateItem.updateAttributes ( new MapBuilder<String, Variant> ().put ( "execution.error", new Variant ( true ) ).getMap () );
         }
         catch ( Throwable ch )
         {
 
         }
+
+        this.stateItem.updateValue ( new Variant ( true ) );
+        this.stateItem.updateAttributes ( new MapBuilder<String, Variant> ().put ( "execution.error", new Variant ( true ) ).getMap () );
     }
 
 }
