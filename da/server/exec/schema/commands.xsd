@@ -77,21 +77,26 @@
         	</documentation>
         </annotation>
         <sequence>
-    		<element name="command_class" type="string" maxOccurs="1" minOccurs="1">
-    			<annotation>
-    				<documentation>
-    					Class name of the command implementation. Use
-    					org.openscada.da.server.exec.StandardCommand if
-    					unclear
-    				</documentation>
-    			</annotation></element>
-    		<element name="commandline" type="string" maxOccurs="1" minOccurs="1">
-    			<annotation>
-    				<documentation>
-    					The command line to call from the OS to execute
-    					this command
-    				</documentation>
-    			</annotation></element>
-    	</sequence>    	
+        	<element name="command_class" type="string" maxOccurs="1"
+        		minOccurs="1">
+        		<annotation>
+        			<documentation>
+        				Class name of the command implementation. Use
+        				org.openscada.da.server.exec.StandardCommand if
+        				unclear
+        			</documentation>
+        		</annotation>
+        	</element>
+        	<element name="commandline" type="string" maxOccurs="1"
+        		minOccurs="1">
+        		<annotation>
+        			<documentation>
+        				The command line to call from the OS to execute
+        				this command
+        			</documentation>
+        		</annotation>
+        	</element>
+        	<element name="commandName" type="string" maxOccurs="1" minOccurs="1"></element>
+        </sequence>
     </complexType>
 </schema>

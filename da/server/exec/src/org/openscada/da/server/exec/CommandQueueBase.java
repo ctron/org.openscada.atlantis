@@ -17,14 +17,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * 
- */
 package org.openscada.da.server.exec;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.exec.factory.ErrorStateHandlerFolderItemFactory;
@@ -32,19 +30,24 @@ import org.openscada.da.server.exec.factory.ErrorStateHandlerFolderItemFactory;
 public abstract class CommandQueueBase implements CommandQueue
 {
     /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger ( CommandQueueBase.class );
+
+    /**
      * Queue name
      */
-    private String queueName;
+    private String queueName = null;
 
     /**
      * The hive where the queue registers all items in
      */
-    private HiveCommon hive = null;
+    private final HiveCommon hive = null;
 
     /**
      * With this factory all the items for OpenSCADA will be created
      */
-    private ErrorStateHandlerFolderItemFactory itemFactory;
+    private ErrorStateHandlerFolderItemFactory itemFactory = null;
 
     /**
      * List with all command
@@ -52,12 +55,13 @@ public abstract class CommandQueueBase implements CommandQueue
     private final List<Command> commands = new ArrayList<Command> ();
 
     /**
-     * setQueueName
+     * Constructor
+     * @param hive
      */
-    @Override
-    public void setQueueName ( String queueName )
+    public CommandQueueBase ( HiveCommon hive, String queueName )
     {
         this.queueName = queueName;
+        this.itemFactory = new ErrorStateHandlerFolderItemFactory ( hive, (FolderCommon)hive.getRootFolder (), this.queueName, this.queueName );
     }
 
     /**
@@ -66,19 +70,6 @@ public abstract class CommandQueueBase implements CommandQueue
     public String getQueueName ()
     {
         return this.queueName;
-    }
-
-    /**
-     * Set the hive where the command queue should add all items to
-     * @param hive
-     */
-    @Override
-    public void setHive ( HiveCommon hive )
-    {
-        this.hive = hive;
-
-        // Create a factory for creating new OpenSCADA items
-        this.itemFactory = new ErrorStateHandlerFolderItemFactory ( hive, (FolderCommon)hive.getRootFolder (), this.getQueueName (), this.getQueueName () );
     }
 
     /**
@@ -107,8 +98,26 @@ public abstract class CommandQueueBase implements CommandQueue
     @Override
     public List<Command> getCommands ()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return this.commands;
     }
 
+    /**
+     * @return the itemFactory
+     */
+    public ErrorStateHandlerFolderItemFactory getItemFactory ()
+    {
+        return this.itemFactory;
+    }
+
+    /**
+     * Execute the queue. Will be called automatically from TaskExecutor
+     */
+    @Override
+    public void run ()
+    {
+        for ( Command command : this.getCommands () )
+        {
+            command.tick ();
+        }
+    }
 }

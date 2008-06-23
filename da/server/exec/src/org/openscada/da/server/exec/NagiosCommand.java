@@ -22,20 +22,34 @@
  */
 package org.openscada.da.server.exec;
 
+import org.apache.log4j.Logger;
+import org.openscada.da.server.common.impl.HiveCommon;
 
-public class StandardCommand extends CommandBase
-{/*
-    // Create a factory for creating new OpenSCADA items
-    this.itemFactory = new ErrorStateHandlerFolderItemFactory ( this, this.rootFolder, "bla", "bla2" );
-    this.commandQueueItemFactory = this.itemFactory.createSubFolderFactory ( "connection" );
+public class NagiosCommand extends CommandBase
+{
+    /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger ( NagiosCommand.class );
 
-    this.disconnectDataItem = this.commandQueueItemFactory.createCommand ( "disconnect" );
-    this.disconnectDataItem.addListener ( new DataItemCommand.Listener () {
+    /**
+    * Constructor
+    * @param hive
+    * @param queue
+    * @param commandName
+    */
+    public NagiosCommand ( HiveCommon hive, String commandName, CommandQueue queue )
+    {
+        super ( hive, commandName, queue );
+    }
 
-        public void command ( Variant value )
-        {
-        }
-    } );
-*/
+    /**
+     * run the command task
+     */
+    @Override
+    public void tick ()
+    {
+        logger.debug ( this.getCommandName () + ": tick!" );
+    }
 
 }

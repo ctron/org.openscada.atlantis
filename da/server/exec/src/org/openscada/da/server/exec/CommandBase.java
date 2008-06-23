@@ -22,27 +22,86 @@
  */
 package org.openscada.da.server.exec;
 
-public class CommandBase implements Command
+import org.openscada.core.Variant;
+import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.common.item.factory.FolderItemFactory;
+
+public abstract class CommandBase implements Command
 {
     /**
      * Command line call
      */
     private String commandline;
 
-    /* (non-Javadoc)
-     * @see org.openscada.da.server.exec.Command#setCommandline(java.lang.String)
+    /**
+     * The hive where the queue registers all items in
+     */
+    private final HiveCommon hive = null;
+
+    /**
+     * The factory to create the items of this command
+     */
+    private final FolderItemFactory commandItemFactory;
+
+    /**
+     * A name for this command
+     */
+    private final String commandName;
+
+    /**
+     * The command queue where this command is to be registered in
+     */
+    private final CommandQueue queue;
+
+    /**
+     * The command line name as item
+     */
+    private final DataItemInputChained commandLineItem;
+
+    private final DataItemInputChained commandTypeItem;
+
+    /**
+     * Constructor
+     * @param hive
+     */
+    public CommandBase ( HiveCommon hive, String commandName, CommandQueue queue )
+    {
+        this.commandName = commandName;
+        this.queue = queue;
+        this.commandItemFactory = queue.getItemFactory ().createSubFolderFactory ( commandName );
+        this.commandLineItem = this.commandItemFactory.createInput ( "commandline" );
+
+        this.commandTypeItem = this.commandItemFactory.createInput ( "commandtype" );
+        this.commandTypeItem.updateValue ( new Variant ( this.toString () ) );
+    }
+
+    /**
+     * setCommandline
      */
     @Override
     public void setCommandline ( String commandline )
     {
         this.commandline = commandline;
+        this.commandLineItem.updateValue ( new Variant ( commandline ) );
     }
 
     /**
+     * getCommandline
      * @return the commandline
      */
     public String getCommandline ()
     {
         return this.commandline;
     }
+
+    /**
+     * getCommandName
+     */
+    @Override
+    public String getCommandName ()
+    {
+        return this.commandName;
+    }
+
 }

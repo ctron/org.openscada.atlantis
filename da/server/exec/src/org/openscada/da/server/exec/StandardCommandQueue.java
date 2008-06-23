@@ -23,6 +23,7 @@
 package org.openscada.da.server.exec;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.server.common.impl.HiveCommon;
 
 public class StandardCommandQueue extends CommandQueueBase
 {
@@ -32,15 +33,13 @@ public class StandardCommandQueue extends CommandQueueBase
     private static Logger logger = Logger.getLogger ( StandardCommandQueue.class );
 
     /**
-     * Execute the queue. Will be called automatically from TaskExecutor
+     * Constructor
+     * @param hive
+     * @param queueName
      */
-    @Override
-    public void run ()
+    public StandardCommandQueue ( HiveCommon hive, String queueName )
     {
-        for ( Command command : this.getCommands () )
-        {
-            logger.info ( "Tick: " + command.getCommandline () );
-        }
+        super ( hive, queueName );
     }
 
 }

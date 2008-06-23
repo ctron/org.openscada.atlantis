@@ -19,13 +19,39 @@
 
 package org.openscada.da.server.exec.factory;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.exec.Command;
+import org.openscada.da.server.exec.CommandQueue;
 
 public class CommandFactory
 {
-    public static Command createCommand ( String commandClassName ) throws ClassNotFoundException, InstantiationException, IllegalAccessException
+    /**
+     * Create a new command
+     * @param commandClassName
+     * @param hive
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    public static Command createCommand ( String commandClassName, HiveCommon hive, String commandName, CommandQueue queue ) throws NoSuchMethodException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
     {
+        if ( hive == null || commandClassName == null || commandName == null || queue == null )
+        {
+            throw new InstantiationException ( "Arguments cannot be null" );
+        }
+
         Class<?> commandClass = Class.forName ( commandClassName );
-        return (Command)commandClass.newInstance ();
+        Constructor<?> ctor = commandClass.getConstructor ( HiveCommon.class, String.class, CommandQueue.class );
+        if ( ctor == null )
+        {
+            throw new InstantiationException ( "Unable to find suitable constructor" );
+        }
+
+        return (Command)ctor.newInstance ( new Object[] { hive, commandName, queue } );
     }
 }

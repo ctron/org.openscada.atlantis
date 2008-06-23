@@ -25,32 +25,15 @@ package org.openscada.da.server.exec;
 import java.util.List;
 
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.exec.factory.ErrorStateHandlerFolderItemFactory;
 
 public interface CommandQueue extends Runnable
 {
-    /**
-     * Give the queue a name
-     * @param queueName
-     */
-    public void setQueueName ( String queueName );
-
     /**
      * Get the queue name
      * @return
      */
     public String getQueueName ();
-
-    /**
-     * Add a command to the queue
-     * @param command
-     */
-    public void addCommand ( Command command );
-
-    /**
-     * Set the hive where the command queue should add all items to
-     * @param hive
-     */
-    public void setHive ( HiveCommon hive );
 
     /**
      * Get the connected hive
@@ -64,4 +47,15 @@ public interface CommandQueue extends Runnable
      */
     public List<Command> getCommands ();
 
+    /**
+     * Retrieve the item factory
+     * @return
+     */
+    public ErrorStateHandlerFolderItemFactory getItemFactory ();
+
+    /**
+     * Add a command to the queue
+     * @param command
+     */
+    public void addCommand ( Command command );
 }

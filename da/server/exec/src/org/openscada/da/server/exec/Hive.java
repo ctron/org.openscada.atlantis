@@ -91,6 +91,7 @@ public class Hive extends HiveCommon
         this.document = document;
         this.setRootFolder ( this.rootFolder );
 
+        // Setup and start the queues
         this.startQueues ();
     }
 
@@ -106,9 +107,8 @@ public class Hive extends HiveCommon
             CommandQueue commandQueue = null;
             try
             {
-                commandQueue = CommandQueueFactory.createCommandQueue ( commandQueueConfig.getCommandQueueClass () );
+                commandQueue = CommandQueueFactory.createCommandQueue ( commandQueueConfig.getCommandQueueClass (), this, commandQueueConfig.getCommandQueueName () );
                 logger.info ( "Created command queue " + commandQueueConfig.getCommandQueueName () );
-                commandQueue.setQueueName ( commandQueueConfig.getCommandQueueName () );
             }
             catch ( Exception e )
             {
@@ -116,17 +116,16 @@ public class Hive extends HiveCommon
                 break;
             }
 
-            // Initialize the queue
-            commandQueue.setHive ( this );
-
             // Iterate through all commands of the command queue and initialize them
             for ( CommandType commandConfig : commandQueueConfig.getCommandList () )
             {
                 Command command = null;
                 try
                 {
-                    command = CommandFactory.createCommand ( commandConfig.getCommandClass () );
-                    logger.info ( "Created command " + commandConfig.getCommandline () );
+                    command = CommandFactory.createCommand ( commandConfig.getCommandClass (), this, commandConfig.getCommandName (), commandQueue );
+                    logger.info ( "Created command " + commandConfig.getCommandName () );
+
+                    // Set command properties
                     command.setCommandline ( commandConfig.getCommandline () );
                 }
                 catch ( Exception e )

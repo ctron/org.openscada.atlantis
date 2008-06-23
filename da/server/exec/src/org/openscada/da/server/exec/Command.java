@@ -24,7 +24,26 @@ package org.openscada.da.server.exec;
 
 public interface Command
 {
+    /**
+     * setCommandline
+     * @param commandline
+     */
     public void setCommandline ( String commandline );
 
+    /**
+     * getCommandline
+     * @return
+     */
     public String getCommandline ();
+
+    /**
+     * getCommandName
+     * @return
+     */
+    public String getCommandName ();
+
+    /**
+     * run the command task
+     */
+    public void tick ();
 }
