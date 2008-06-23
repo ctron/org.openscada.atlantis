@@ -47,7 +47,7 @@ public abstract class CommandQueueBase implements CommandQueue
     /**
      * With this factory all the items for OpenSCADA will be created
      */
-    private ErrorStateHandlerFolderItemFactory itemFactory = null;
+    private ErrorStateHandlerFolderItemFactory folderItemFactory = null;
 
     /**
      * List with all command
@@ -61,7 +61,7 @@ public abstract class CommandQueueBase implements CommandQueue
     public CommandQueueBase ( HiveCommon hive, String queueName )
     {
         this.queueName = queueName;
-        this.itemFactory = new ErrorStateHandlerFolderItemFactory ( hive, (FolderCommon)hive.getRootFolder (), this.queueName, this.queueName );
+        this.folderItemFactory = new ErrorStateHandlerFolderItemFactory ( hive, (FolderCommon)hive.getRootFolder (), this.queueName, this.queueName );
     }
 
     /**
@@ -102,11 +102,11 @@ public abstract class CommandQueueBase implements CommandQueue
     }
 
     /**
-     * @return the itemFactory
+     * @return the folderItemFactory
      */
-    public ErrorStateHandlerFolderItemFactory getItemFactory ()
+    public ErrorStateHandlerFolderItemFactory getFolderItemFactory ()
     {
-        return this.itemFactory;
+        return this.folderItemFactory;
     }
 
     /**

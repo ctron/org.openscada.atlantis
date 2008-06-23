@@ -51,7 +51,7 @@ public interface CommandQueue extends Runnable
      * Retrieve the item factory
      * @return
      */
-    public ErrorStateHandlerFolderItemFactory getItemFactory ();
+    public ErrorStateHandlerFolderItemFactory getFolderItemFactory ();
 
     /**
      * Add a command to the queue

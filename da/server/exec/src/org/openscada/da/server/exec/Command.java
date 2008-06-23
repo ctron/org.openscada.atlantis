@@ -22,6 +22,8 @@
  */
 package org.openscada.da.server.exec;
 
+import java.util.Calendar;
+
 public interface Command
 {
     /**
@@ -43,7 +45,24 @@ public interface Command
     public String getCommandName ();
 
     /**
-     * run the command task
+     * periodically called and checks, whether the command has to be executed or not
      */
     public void tick ();
+
+    /**
+     * run the command task
+     */
+    public void execute ();
+
+    /**
+     * Sets the minimum time delay (ms) between executions
+     * @param delay
+     */
+    public void setMinDelay ( int delay );
+
+    /**
+     * Returns the time of the last execution
+     * @return
+     */
+    public Calendar getLastExecutionTime ();
 }

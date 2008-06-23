@@ -127,6 +127,7 @@ public class Hive extends HiveCommon
 
                     // Set command properties
                     command.setCommandline ( commandConfig.getCommandline () );
+                    command.setMinDelay ( commandConfig.getMinDelay () );
                 }
                 catch ( Exception e )
                 {

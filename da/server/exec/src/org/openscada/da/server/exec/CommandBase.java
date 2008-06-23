@@ -22,13 +22,21 @@
  */
 package org.openscada.da.server.exec;
 
+import java.util.Calendar;
+
+import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
+import org.openscada.da.server.exec.factory.ErrorStateHandlerFolderItemFactory;
 
 public abstract class CommandBase implements Command
 {
+    /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger ( CommandBase.class );
+
     /**
      * Command line call
      */
@@ -42,7 +50,7 @@ public abstract class CommandBase implements Command
     /**
      * The factory to create the items of this command
      */
-    private final FolderItemFactory commandItemFactory;
+    private final ErrorStateHandlerFolderItemFactory commandItemFactory;
 
     /**
      * A name for this command
@@ -59,7 +67,40 @@ public abstract class CommandBase implements Command
      */
     private final DataItemInputChained commandLineItem;
 
+    /**
+     * The class name of the command as item
+     */
     private final DataItemInputChained commandTypeItem;
+
+    /**
+     * The time of the last execution of this command
+     */
+    private Calendar lastExecutionTime = null;
+
+    /**
+     * the minimum delay between executions
+     */
+    private int minDelay = 0;
+
+    /** 
+     * Item to store whether the command is currently active or not
+     */
+    private final DataItemInputChained busyItem;
+
+    /**
+     * Item to store the last execution time
+     */
+    private final DataItemInputChained lastExecutionTimeItem;
+
+    /**
+     * The period it took to execute the command in ms and as item
+     */
+    private final DataItemInputChained executionTimeItem;
+
+    /** 
+     * the minimum delay between executions as item
+     */
+    private final DataItemInputChained minDelayItem;
 
     /**
      * Constructor
@@ -69,11 +110,29 @@ public abstract class CommandBase implements Command
     {
         this.commandName = commandName;
         this.queue = queue;
-        this.commandItemFactory = queue.getItemFactory ().createSubFolderFactory ( commandName );
+
+        // Create the factory to create other items
+        this.commandItemFactory = queue.getFolderItemFactory ().createSubFolderFactory ( commandName );
+
+        // prepare the commandline as item
         this.commandLineItem = this.commandItemFactory.createInput ( "commandline" );
 
+        // prepare the last execution time as item
+        this.lastExecutionTimeItem = this.commandItemFactory.createInput ( "last_execution" );
+
+        // prepare the execution time as item
+        this.executionTimeItem = this.commandItemFactory.createInput ( "execution_time" );
+
+        // show the class name as item
         this.commandTypeItem = this.commandItemFactory.createInput ( "commandtype" );
         this.commandTypeItem.updateValue ( new Variant ( this.toString () ) );
+
+        // show whether the command is currently active or not
+        this.busyItem = this.commandItemFactory.createInput ( "busy" );
+        this.busyItem.updateValue ( new Variant ( false ) );
+
+        // show whether the command is currently active or not
+        this.minDelayItem = this.commandItemFactory.createInput ( "min_delay" );
     }
 
     /**
@@ -104,4 +163,59 @@ public abstract class CommandBase implements Command
         return this.commandName;
     }
 
+    /**
+     * Returns the time of the last execution
+     * @return
+     */
+    @Override
+    public Calendar getLastExecutionTime ()
+    {
+        // TODO Auto-generated method stub
+        return this.lastExecutionTime;
+    }
+
+    /**
+     * Sets the minimum time delay (ms) between executions
+     * @param delay
+     */
+    @Override
+    public void setMinDelay ( int delay )
+    {
+        this.minDelay = delay;
+        this.minDelayItem.updateValue ( new Variant ( this.minDelay ) );
+    }
+
+    /**
+     * @return the commandItemFactory
+     */
+    public ErrorStateHandlerFolderItemFactory getCommandItemFactory ()
+    {
+        return this.commandItemFactory;
+    }
+
+    /**
+     * run the command task
+     */
+    @Override
+    public void tick ()
+    {
+        Calendar check = Calendar.getInstance ();
+        check.add ( Calendar.MILLISECOND, -1 * this.minDelay );
+
+        if ( this.getLastExecutionTime () == null || check.after ( this.getLastExecutionTime () ) )
+        {
+            // Execute the command
+            this.busyItem.updateValue ( new Variant ( true ) );
+            Calendar start = Calendar.getInstance ();
+            this.execute ();
+            Calendar stop = Calendar.getInstance ();
+            this.busyItem.updateValue ( new Variant ( false ) );
+
+            // Set the time of the finished execution
+            this.lastExecutionTime = Calendar.getInstance ();
+            this.lastExecutionTimeItem.updateValue ( new Variant ( this.lastExecutionTime.getTime ().toString () ) );
+            this.executionTimeItem.updateValue ( new Variant ( stop.getTimeInMillis () - start.getTimeInMillis () ) );
+            logger.debug ( this.getCommandName () + ": tick!" );
+        }
+    }
 }

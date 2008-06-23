@@ -23,7 +23,10 @@
 package org.openscada.da.server.exec;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.Variant;
+import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.utils.collection.MapBuilder;
 
 public class NagiosCommand extends CommandBase
 {
@@ -31,6 +34,11 @@ public class NagiosCommand extends CommandBase
      * Logger
      */
     private static Logger logger = Logger.getLogger ( NagiosCommand.class );
+
+    /**
+     * The nagios test result state
+     */
+    private final DataItemInputChained stateItem;
 
     /**
     * Constructor
@@ -41,15 +49,29 @@ public class NagiosCommand extends CommandBase
     public NagiosCommand ( HiveCommon hive, String commandName, CommandQueue queue )
     {
         super ( hive, commandName, queue );
+
+        // show whether the command is currently active or not
+        this.stateItem = this.getCommandItemFactory ().constructErrorChainInput ( "state" );
+        this.stateItem.updateValue ( new Variant ( false ) );
+        this.stateItem.updateAttributes ( new MapBuilder<String, Variant> ().put ( "execution.error", new Variant ( true ) ).getMap () );
     }
 
     /**
      * run the command task
      */
     @Override
-    public void tick ()
+    public void execute ()
     {
-        logger.debug ( this.getCommandName () + ": tick!" );
+        try
+        {
+            Thread.sleep ( 50 );
+            this.stateItem.updateValue ( new Variant ( true ) );
+            this.stateItem.updateAttributes ( new MapBuilder<String, Variant> ().put ( "execution.error", new Variant ( true ) ).getMap () );
+        }
+        catch ( Throwable ch )
+        {
+
+        }
     }
 
 }

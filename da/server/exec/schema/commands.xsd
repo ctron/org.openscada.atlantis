@@ -96,7 +96,10 @@
         			</documentation>
         		</annotation>
         	</element>
-        	<element name="commandName" type="string" maxOccurs="1" minOccurs="1"></element>
+        	<element name="commandName" type="string" maxOccurs="1"
+        		minOccurs="1">
+        	</element>
+        	<element name="minDelay" type="int" maxOccurs="1" minOccurs="1"></element>
         </sequence>
     </complexType>
 </schema>
