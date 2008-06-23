@@ -24,7 +24,7 @@ package org.openscada.da.server.exec.nagios;
 
 import org.openscada.da.server.exec.base.CommandResultParser;
 
-public class NagiosCommandResultParser implements CommandResultParser
+public class NagiosPingCommandResultParser implements CommandResultParser
 {
     /**
      * Analyse the output from nagios and return true when the result is ok
@@ -32,8 +32,7 @@ public class NagiosCommandResultParser implements CommandResultParser
     @Override
     public boolean parse ( String output )
     {
-        // TODO Auto-generated method stub
-        return false;
+        return output.startsWith ( "PING OK" );
     }
 
 }

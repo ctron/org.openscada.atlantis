@@ -58,11 +58,6 @@ public class CommandExecutor
             // Get exit value
             int exitValue = p.exitValue ();
             result.setExitValue ( exitValue );
-            if ( exitValue != 0 )
-            {
-                result.setMessage ( String.format ( "Process did not finish properly. Error code: %1$s", +exitValue ) );
-                return result;
-            }
 
             // Get result
             result.setOutput ( inputStreamToString ( p.getInputStream () ) );

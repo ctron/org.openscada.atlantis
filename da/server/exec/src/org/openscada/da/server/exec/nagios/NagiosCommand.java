@@ -82,6 +82,13 @@ public class NagiosCommand extends CommandBase
         this.stateItem.updateAttributes ( map );
 
         // Evaluate result
-        this.stateItem.updateValue ( new Variant ( this.getParser ().parse ( result.getOutput () ) ) );
+        if ( result.getExitValue () != 0 )
+        {
+            this.stateItem.updateValue ( new Variant ( false ) );
+        }
+        else
+        {
+            this.stateItem.updateValue ( new Variant ( this.getParser ().parse ( result.getOutput () ) ) );
+        }
     }
 }
