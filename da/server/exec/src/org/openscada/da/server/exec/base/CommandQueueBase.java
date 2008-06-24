@@ -25,7 +25,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.exec.factory.ErrorStateHandlerFolderItemFactory;
+import org.openscada.da.server.common.item.factory.FolderItemFactory;
 
 public abstract class CommandQueueBase implements CommandQueue
 {
@@ -47,7 +47,7 @@ public abstract class CommandQueueBase implements CommandQueue
     /**
      * With this factory all the items for OpenSCADA will be created
      */
-    private ErrorStateHandlerFolderItemFactory folderItemFactory = null;
+    private FolderItemFactory folderItemFactory = null;
 
     /**
      * List with all command
@@ -61,7 +61,7 @@ public abstract class CommandQueueBase implements CommandQueue
     public CommandQueueBase ( HiveCommon hive, String queueName )
     {
         this.queueName = queueName;
-        this.folderItemFactory = new ErrorStateHandlerFolderItemFactory ( hive, (FolderCommon)hive.getRootFolder (), this.queueName, this.queueName );
+        this.folderItemFactory = new FolderItemFactory ( hive, (FolderCommon)hive.getRootFolder (), this.queueName, this.queueName );
     }
 
     /**
@@ -104,7 +104,7 @@ public abstract class CommandQueueBase implements CommandQueue
     /**
      * @return the folderItemFactory
      */
-    public ErrorStateHandlerFolderItemFactory getFolderItemFactory ()
+    public FolderItemFactory getFolderItemFactory ()
     {
         return this.folderItemFactory;
     }

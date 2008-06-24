@@ -25,7 +25,7 @@ package org.openscada.da.server.exec.base;
 import java.util.List;
 
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.exec.factory.ErrorStateHandlerFolderItemFactory;
+import org.openscada.da.server.common.item.factory.FolderItemFactory;
 
 public interface CommandQueue extends Runnable
 {
@@ -51,7 +51,7 @@ public interface CommandQueue extends Runnable
      * Retrieve the item factory
      * @return
      */
-    public ErrorStateHandlerFolderItemFactory getFolderItemFactory ();
+    public FolderItemFactory getFolderItemFactory ();
 
     /**
      * Add a command to the queue

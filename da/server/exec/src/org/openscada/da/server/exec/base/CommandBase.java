@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.exec.factory.ErrorStateHandlerFolderItemFactory;
+import org.openscada.da.server.common.item.factory.FolderItemFactory;
 
 public abstract class CommandBase implements Command
 {
@@ -50,7 +50,7 @@ public abstract class CommandBase implements Command
     /**
      * The factory to create the items of this command
      */
-    private final ErrorStateHandlerFolderItemFactory commandItemFactory;
+    private final FolderItemFactory commandItemFactory;
 
     /**
      * A name for this command
@@ -200,7 +200,7 @@ public abstract class CommandBase implements Command
     /**
      * @return the commandItemFactory
      */
-    public ErrorStateHandlerFolderItemFactory getCommandItemFactory ()
+    public FolderItemFactory getCommandItemFactory ()
     {
         return this.commandItemFactory;
     }
