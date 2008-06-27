@@ -62,7 +62,7 @@ public class NagiosCommand extends CommandBase
         // show whether the command is currently active or not
         this.stateItem = this.getCommandItemFactory ().createInput ( "state" );
         this.stateItem.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
-        this.stateItem.updateValue ( new Variant ( false ) );
+        //this.stateItem.updateValue ( new Variant ( false ) );
         this.stateItem.updateAttributes ( new MapBuilder<String, Variant> ().put ( "execution.error", new Variant ( true ) ).getMap () );
     }
 
@@ -85,11 +85,7 @@ public class NagiosCommand extends CommandBase
         this.stateItem.updateAttributes ( map );
 
         // Evaluate result
-        if ( result.getExitValue () != 0 )
-        {
-            this.stateItem.updateValue ( new Variant ( false ) );
-        }
-        else
+        if ( result.getExitValue () >= 0 )
         {
             this.stateItem.updateValue ( new Variant ( this.getParser ().parse ( result.getOutput () ) ) );
         }

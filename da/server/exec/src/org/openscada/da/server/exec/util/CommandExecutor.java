@@ -60,8 +60,13 @@ public class CommandExecutor
             result.setExitValue ( exitValue );
 
             // Get result
-            result.setOutput ( inputStreamToString ( p.getInputStream () ) );
-            result.setErrorOutput ( inputStreamToString ( p.getErrorStream () ) );
+            InputStream input = p.getInputStream ();
+            result.setOutput ( inputStreamToString ( input ) );
+            input.close ();
+
+            InputStream error = p.getErrorStream ();
+            result.setErrorOutput ( inputStreamToString ( error ) );
+            error.close ();
         }
         catch ( Exception e )
         {
