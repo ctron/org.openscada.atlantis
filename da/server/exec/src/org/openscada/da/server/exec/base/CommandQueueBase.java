@@ -23,9 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
 
 public abstract class CommandQueueBase implements CommandQueue
 {
@@ -40,16 +37,6 @@ public abstract class CommandQueueBase implements CommandQueue
     private String queueName = null;
 
     /**
-     * The hive where the queue registers all items in
-     */
-    private final HiveCommon hive = null;
-
-    /**
-     * With this factory all the items for OpenSCADA will be created
-     */
-    private FolderItemFactory folderItemFactory = null;
-
-    /**
      * List with all command
      */
     private final List<Command> commands = new ArrayList<Command> ();
@@ -58,10 +45,9 @@ public abstract class CommandQueueBase implements CommandQueue
      * Constructor
      * @param hive
      */
-    public CommandQueueBase ( HiveCommon hive, String queueName )
+    public CommandQueueBase ( String queueName )
     {
         this.queueName = queueName;
-        this.folderItemFactory = new FolderItemFactory ( hive, (FolderCommon)hive.getRootFolder (), this.queueName, this.queueName );
     }
 
     /**
@@ -70,15 +56,6 @@ public abstract class CommandQueueBase implements CommandQueue
     public String getQueueName ()
     {
         return this.queueName;
-    }
-
-    /**
-     * getHive
-     */
-    @Override
-    public HiveCommon getHive ()
-    {
-        return this.hive;
     }
 
     /**
@@ -99,14 +76,6 @@ public abstract class CommandQueueBase implements CommandQueue
     public List<Command> getCommands ()
     {
         return this.commands;
-    }
-
-    /**
-     * @return the folderItemFactory
-     */
-    public FolderItemFactory getFolderItemFactory ()
-    {
-        return this.folderItemFactory;
     }
 
     /**

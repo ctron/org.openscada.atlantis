@@ -22,16 +22,35 @@
  */
 package org.openscada.da.server.exec.nagios;
 
-import org.openscada.da.server.exec.base.CommandResultParser;
+import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.exec.base.Command;
+import org.openscada.da.server.exec.base.CommandResultParserBase;
 
-public class NagiosPingCommandResultParser implements CommandResultParser
+public class NagiosPingCommandResultParser extends CommandResultParserBase
 {
+    /**
+     * Constructor
+     * @param hive
+     * @param command
+     * @return 
+     */
+    public NagiosPingCommandResultParser ( HiveCommon hive, Command command )
+    {
+        super ( hive, command );
+    }
+
     /**
      * Analyse the output from nagios and return true when the result is ok
      */
     @Override
     public boolean parse ( String output )
     {
+        // show the class name as item
+        // DataItemInputChained commandTypeItem = this.getCommand ().getCommandItemFactory ().createInput ( "output.output" );
+        // commandTypeItem.updateValue ( new Variant ( output ) );
+
+        // "/usr/local/nagios/libexec/check_ping -H 192.168.1.115 -w 5,50% -c 5,80% -p 10 -t 2"
+
         return output.startsWith ( "PING OK" );
     }
 

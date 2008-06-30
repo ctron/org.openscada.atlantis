@@ -22,7 +22,6 @@ package org.openscada.da.server.exec.factory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.exec.base.CommandQueue;
 
 public class CommandQueueFactory
@@ -36,20 +35,20 @@ public class CommandQueueFactory
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public static CommandQueue createCommandQueue ( String commandQueueClassName, HiveCommon hive, String commandQueueName ) throws NoSuchMethodException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
+    public static CommandQueue createCommandQueue ( String commandQueueClassName, String commandQueueName ) throws NoSuchMethodException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
     {
-        if ( hive == null || commandQueueClassName == null || commandQueueName == null )
+        if ( commandQueueClassName == null || commandQueueName == null )
         {
             throw new InstantiationException ( "Arguments cannot be null" );
         }
 
         Class<?> commandQueueClass = Class.forName ( commandQueueClassName );
-        Constructor<?> ctor = commandQueueClass.getConstructor ( HiveCommon.class, String.class );
+        Constructor<?> ctor = commandQueueClass.getConstructor ( String.class );
         if ( ctor == null )
         {
             throw new InstantiationException ( "Unable to find suitable constructor" );
         }
 
-        return (CommandQueue)ctor.newInstance ( new Object[] { hive, commandQueueName } );
+        return (CommandQueue)ctor.newInstance ( new Object[] { commandQueueName } );
     }
 }

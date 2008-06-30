@@ -24,6 +24,8 @@ package org.openscada.da.server.exec.base;
 
 import java.util.Calendar;
 
+import org.openscada.da.server.common.item.factory.FolderItemFactory;
+
 public interface Command
 {
     /**
@@ -70,4 +72,11 @@ public interface Command
      * sets a parser to the command
      */
     public void setParser ( CommandResultParser parser );
+
+    /**
+     * Retrieve the item factory for OpenScada item creation
+     * @return
+     */
+    public FolderItemFactory getCommandItemFactory ();
+
 }

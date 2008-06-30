@@ -104,13 +104,13 @@ public class Hive extends HiveCommon
     protected void startQueues ()
     {
         // Iterate through all configured command queues and initialize them
-        for ( CommandQueueType commandQueueConfig : this.document.getRoot ().getCommandQueuesList () )
+        for ( CommandQueueType commandQueueConfig : this.document.getRoot ().getCommandQueueList () )
         {
             // Create the queue
             CommandQueue commandQueue = null;
             try
             {
-                commandQueue = CommandQueueFactory.createCommandQueue ( commandQueueConfig.getCommandQueueClass (), this, commandQueueConfig.getCommandQueueName () );
+                commandQueue = CommandQueueFactory.createCommandQueue ( commandQueueConfig.getCommandQueueClass (), commandQueueConfig.getCommandQueueName () );
                 logger.info ( "Created command queue " + commandQueueConfig.getCommandQueueName () );
             }
             catch ( Exception e )
@@ -129,8 +129,8 @@ public class Hive extends HiveCommon
                     logger.info ( "Created command " + commandConfig.getCommandName () );
 
                     // Set command properties
-                    command.setCommandline ( commandConfig.getCommandline () );
-                    command.setMinDelay ( commandConfig.getMinDelay () );
+                    command.setCommandline ( commandConfig.getCommandLine () );
+                    command.setMinDelay ( commandConfig.getMinPeriod () );
                 }
                 catch ( Exception e )
                 {
@@ -141,7 +141,7 @@ public class Hive extends HiveCommon
                 // Create a parser for the command
                 try
                 {
-                    command.setParser ( CommandResultParserFactory.createParser ( commandConfig.getParserClass () ) );
+                    command.setParser ( CommandResultParserFactory.createParser ( commandConfig.getParserClass (), this, command ) );
                 }
                 catch ( Exception e )
                 {

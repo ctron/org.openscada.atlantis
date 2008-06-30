@@ -19,8 +19,11 @@
 
 package org.openscada.da.server.exec.factory;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.exec.base.Command;
 import org.openscada.da.server.exec.base.CommandResultParser;
 
 public class CommandResultParserFactory
@@ -34,9 +37,20 @@ public class CommandResultParserFactory
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public static CommandResultParser createParser ( String commandResultParserClassName ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
+    public static CommandResultParser createParser ( String commandResultParserClassName, HiveCommon hive, Command command ) throws NoSuchMethodException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
     {
-        Class<?> commandQueueClass = Class.forName ( commandResultParserClassName );
-        return (CommandResultParser)commandQueueClass.newInstance ();
+        if ( hive == null || commandResultParserClassName == null || command == null )
+        {
+            throw new InstantiationException ( "Arguments cannot be null" );
+        }
+
+        Class<?> commandResultParserClass = Class.forName ( commandResultParserClassName );
+        Constructor<?> ctor = commandResultParserClass.getConstructor ( HiveCommon.class, Command.class );
+        if ( ctor == null )
+        {
+            throw new InstantiationException ( "Unable to find suitable constructor" );
+        }
+
+        return (CommandResultParser)ctor.newInstance ( new Object[] { hive, command } );
     }
 }

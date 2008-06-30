@@ -20,26 +20,56 @@
 /**
  * 
  */
-package org.openscada.da.server.exec.standard;
+package org.openscada.da.server.exec.base;
 
-import org.apache.log4j.Logger;
-import org.openscada.da.server.exec.base.CommandQueueBase;
+import org.openscada.da.server.common.impl.HiveCommon;
 
-public class StandardCommandQueue extends CommandQueueBase
+public class CommandResultParserBase implements CommandResultParser
 {
     /**
-     * Logger
+     * The hive where to write the Items to
      */
-    private static Logger logger = Logger.getLogger ( StandardCommandQueue.class );
+    private final HiveCommon hive;
+
+    /**
+     * The associated command object that calls this parser
+     */
+    private final Command command;
 
     /**
      * Constructor
      * @param hive
-     * @param queueName
+     * @param command
      */
-    public StandardCommandQueue ( String queueName )
+    public CommandResultParserBase ( HiveCommon hive, Command command )
     {
-        super ( queueName );
+        this.hive = hive;
+        this.command = command;
+    }
+
+    /**
+     * Analyse the output from nagios and return true when the result is ok
+     */
+    @Override
+    public boolean parse ( String output )
+    {
+        return false;
+    }
+
+    /**
+     * @return the hive
+     */
+    public HiveCommon getHive ()
+    {
+        return this.hive;
+    }
+
+    /**
+     * @return the command
+     */
+    public Command getCommand ()
+    {
+        return this.command;
     }
 
 }

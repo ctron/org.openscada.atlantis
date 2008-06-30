@@ -24,9 +24,6 @@ package org.openscada.da.server.exec.base;
 
 import java.util.List;
 
-import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
-
 public interface CommandQueue extends Runnable
 {
     /**
@@ -36,22 +33,10 @@ public interface CommandQueue extends Runnable
     public String getQueueName ();
 
     /**
-     * Get the connected hive
-     * @return
-     */
-    public HiveCommon getHive ();
-
-    /**
      * Get a list with all registered commands
      * @return
      */
     public List<Command> getCommands ();
-
-    /**
-     * Retrieve the item factory
-     * @return
-     */
-    public FolderItemFactory getFolderItemFactory ();
 
     /**
      * Add a command to the queue

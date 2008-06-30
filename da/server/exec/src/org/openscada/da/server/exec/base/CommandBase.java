@@ -26,6 +26,7 @@ import java.util.Calendar;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
@@ -41,11 +42,6 @@ public abstract class CommandBase implements Command
      * Command line call
      */
     private String commandline;
-
-    /**
-     * The hive where the queue registers all items in
-     */
-    private final HiveCommon hive = null;
 
     /**
      * The factory to create the items of this command
@@ -108,6 +104,11 @@ public abstract class CommandBase implements Command
     private CommandResultParser parser;
 
     /**
+     * Item to store the queue name in
+     */
+    private final DataItemInputChained queueItem;
+
+    /**
      * Constructor
      * @param hive
      */
@@ -117,27 +118,33 @@ public abstract class CommandBase implements Command
         this.queue = queue;
 
         // Create the factory to create other items
-        this.commandItemFactory = queue.getFolderItemFactory ().createSubFolderFactory ( commandName );
+        //this.commandItemFactory = queue.getFolderItemFactory ().createSubFolderFactory ( commandName );
+        this.commandItemFactory = new FolderItemFactory ( hive, (FolderCommon)hive.getRootFolder (), this.commandName, this.commandName );
 
         // prepare the commandline as item
-        this.commandLineItem = this.commandItemFactory.createInput ( "commandline" );
+        this.commandLineItem = this.commandItemFactory.createInput ( "command.commandLine" );
 
         // prepare the last execution time as item
-        this.lastExecutionTimeItem = this.commandItemFactory.createInput ( "last_execution" );
+        this.lastExecutionTimeItem = this.commandItemFactory.createInput ( "execution.date" );
 
         // prepare the execution time as item
-        this.executionTimeItem = this.commandItemFactory.createInput ( "execution_time" );
+        this.executionTimeItem = this.commandItemFactory.createInput ( "execution.time" );
 
         // show the class name as item
-        this.commandTypeItem = this.commandItemFactory.createInput ( "commandtype" );
+        this.commandTypeItem = this.commandItemFactory.createInput ( "command.type" );
         this.commandTypeItem.updateValue ( new Variant ( this.toString () ) );
 
         // show whether the command is currently active or not
-        this.busyItem = this.commandItemFactory.createInput ( "busy" );
+        this.busyItem = this.commandItemFactory.createInput ( "command.busy" );
         this.busyItem.updateValue ( new Variant ( false ) );
 
         // show whether the command is currently active or not
-        this.minDelayItem = this.commandItemFactory.createInput ( "min_delay" );
+        this.minDelayItem = this.commandItemFactory.createInput ( "command.minPeriod" );
+
+        // print the queue this command is in
+        this.queueItem = this.commandItemFactory.createInput ( "command.queue" );
+        this.queueItem.updateValue ( new Variant ( this.queue.getQueueName () ) );
+
     }
 
     /**
