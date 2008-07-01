@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ package org.openscada.da.server.exec.nagios;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.server.common.chain.DataItemInputChained;
@@ -39,11 +38,6 @@ import org.openscada.utils.collection.MapBuilder;
 
 public class NagiosCommand extends CommandBase
 {
-    /**
-     * Logger
-     */
-    private static Logger logger = Logger.getLogger ( NagiosCommand.class );
-
     /**
      * The nagios test result state
      */

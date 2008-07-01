@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,10 @@
  */
 package org.openscada.da.server.exec.standard;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.exec.base.CommandQueueBase;
 
 public class StandardCommandQueue extends CommandQueueBase
 {
-    /**
-     * Logger
-     */
-    private static Logger logger = Logger.getLogger ( StandardCommandQueue.class );
-
     /**
      * Constructor
      * @param hive

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,15 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.apache.log4j.Logger;
-
 public class CommandExecutor
 {
-    /**
-     * Logger
-     */
-    private static Logger logger = Logger.getLogger ( CommandExecutor.class );
-
     /**
      * This method executes the specified command on the shell using the passed objects as information provider.
      * @param cmd command string including arguments
