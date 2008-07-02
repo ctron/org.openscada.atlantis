@@ -29,6 +29,11 @@ import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.exec.base.Command;
 import org.openscada.da.server.exec.base.CommandResultParserBase;
 
+/**
+ * this form of the result parser is actually useless since nagios reports
+ * the current state using the return code.
+ *
+ */
 public class NagiosCommandResultParser extends CommandResultParserBase
 {
     /**
@@ -42,7 +47,7 @@ public class NagiosCommandResultParser extends CommandResultParserBase
         super ( hive, command );
     }
 
-    private static Pattern resultPattern = Pattern.compile ( "(.*?) - " );
+    private static Pattern resultPattern = Pattern.compile ( "(.*?)( - |: )" );
     
     /**
      * Analyse the output from nagios and return true when the result is ok
