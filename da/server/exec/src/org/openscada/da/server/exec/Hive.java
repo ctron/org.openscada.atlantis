@@ -42,6 +42,7 @@ import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
 {
+	private static final int DEFAULT_QUEUE_PERIOD = 250;
     /**
      * Logger
      */
@@ -129,7 +130,7 @@ public class Hive extends HiveCommon
                     logger.info ( "Created command " + commandConfig.getCommandName () );
 
                     // Set command properties
-                    command.setCommandline ( commandConfig.getCommandLine () );
+                    command.setCommandLine ( commandConfig.getCommandLine () );
                     command.setMinDelay ( commandConfig.getMinPeriod () );
                 }
                 catch ( Exception e )
@@ -155,7 +156,12 @@ public class Hive extends HiveCommon
 
             // Start the queue
             ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor ( 1 );
-            executor.scheduleWithFixedDelay ( commandQueue, commandQueueConfig.getInitialDelay (), commandQueueConfig.getDelay (), TimeUnit.MILLISECONDS );
+            int period = commandQueueConfig.getDelay();
+            if ( period <= 0 )
+            {
+            	period = DEFAULT_QUEUE_PERIOD;
+            }
+            executor.scheduleWithFixedDelay ( commandQueue, commandQueueConfig.getInitialDelay (), period, TimeUnit.MILLISECONDS );
             this.threads.add ( executor );
         }
     }
