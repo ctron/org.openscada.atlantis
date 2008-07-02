@@ -44,11 +44,12 @@ public class NagiosCommand extends CommandBase
     private final DataItemInputChained stateItem;
 
     /**
-    * Constructor
-    * @param hive
-    * @param queue
-    * @param commandName
-    */
+     * Constructor
+     * 
+     * @param hive
+     * @param queue
+     * @param commandName
+     */
     public NagiosCommand ( HiveCommon hive, String commandName, CommandQueue queue )
     {
         super ( hive, commandName, queue );
@@ -56,7 +57,7 @@ public class NagiosCommand extends CommandBase
         // show whether the command is currently active or not
         this.stateItem = this.getCommandItemFactory ().createInput ( "state" );
         this.stateItem.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
-        //this.stateItem.updateValue ( new Variant ( false ) );
+        // this.stateItem.updateValue ( new Variant ( false ) );
         this.stateItem.updateAttributes ( new MapBuilder<String, Variant> ().put ( "execution.error", new Variant ( true ) ).getMap () );
     }
 
@@ -67,7 +68,7 @@ public class NagiosCommand extends CommandBase
     public void execute ()
     {
         // Execute
-        CommandResult result = CommandExecutor.executeCommand ( this.getCommandline () );
+        CommandResult result = CommandExecutor.executeCommand ( this.getCommandLine () );
 
         // Place result attributes
         Map<String, Variant> map = new HashMap<String, Variant> ();
@@ -83,5 +84,11 @@ public class NagiosCommand extends CommandBase
         {
             this.stateItem.updateValue ( new Variant ( this.getParser ().parse ( result.getOutput () ) ) );
         }
+    }
+
+    @Override
+    public String toString ()
+    {
+        return "nagios";
     }
 }
