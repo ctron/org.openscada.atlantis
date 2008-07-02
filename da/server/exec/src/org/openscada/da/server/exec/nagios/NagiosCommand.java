@@ -72,9 +72,9 @@ public class NagiosCommand extends CommandBase
         // Place result attributes
         Map<String, Variant> map = new HashMap<String, Variant> ();
         map.put ( "execution.error", new Variant ( result.isError () ) );
-        map.put ( "exit_code", new Variant ( result.getExitValue () ) );
+        map.put ( "exitCode", new Variant ( result.getExitValue () ) );
         map.put ( "output", new Variant ( result.getOutput () ) );
-        map.put ( "error_output", new Variant ( result.getErrorOutput () ) );
+        map.put ( "errorOutput", new Variant ( result.getErrorOutput () ) );
         map.put ( "message", new Variant ( result.getMessage () ) );
         this.stateItem.updateAttributes ( map );
 
