@@ -23,8 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
@@ -62,7 +62,7 @@ public class Hive extends HiveCommon
     /**
      * List with all running command queues
      */
-    private final List<ScheduledThreadPoolExecutor> threads = new ArrayList<ScheduledThreadPoolExecutor> ();
+    private final List<Timer> threads = new ArrayList<Timer> ();
 
     /**
      * Default Constructor
@@ -160,17 +160,25 @@ public class Hive extends HiveCommon
             }
 
             // Create the queue
-            ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor ( 1 );
-            
+            Timer executor = new Timer ( commandQueue.getQueueName () + "-timer", true );
+
             // get the queue period time .. use a default it none specified
             int period = commandQueueConfig.getDelay ();
             if ( period <= 0 )
             {
                 period = DEFAULT_QUEUE_PERIOD;
             }
-            
+
             // Start the queue
-            executor.scheduleWithFixedDelay ( commandQueue, commandQueueConfig.getInitialDelay (), period, TimeUnit.MILLISECONDS );
+            final CommandQueue commandQueueRef = commandQueue;
+            executor.scheduleAtFixedRate ( new TimerTask () {
+
+                @Override
+                public void run ()
+                {
+                    commandQueueRef.run ();
+                }
+            }, commandQueueConfig.getInitialDelay (), period );
             this.threads.add ( executor );
         }
     }
@@ -182,9 +190,9 @@ public class Hive extends HiveCommon
     public void dispose ()
     {
         // Send stop request
-        for ( ScheduledThreadPoolExecutor executor : this.threads )
+        for ( Timer executor : this.threads )
         {
-            executor.shutdown ();
+            executor.cancel ();
         }
 
         // Remove all threads from the list
