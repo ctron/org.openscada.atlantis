@@ -41,7 +41,7 @@ public abstract class CommandBase implements Command
     /**
      * Command line call
      */
-    private String commandline;
+    private String commandLine;
 
     /**
      * The factory to create the items of this command
@@ -151,19 +151,19 @@ public abstract class CommandBase implements Command
      * setCommandline
      */
     @Override
-    public void setCommandline ( String commandline )
+    public void setCommandLine ( String commandLine )
     {
-        this.commandline = commandline;
-        this.commandLineItem.updateValue ( new Variant ( commandline ) );
+        this.commandLine = commandLine;
+        this.commandLineItem.updateValue ( new Variant ( commandLine ) );
     }
 
     /**
      * getCommandline
      * @return the commandline
      */
-    public String getCommandline ()
+    public String getCommandLine ()
     {
-        return this.commandline;
+        return this.commandLine;
     }
 
     /**

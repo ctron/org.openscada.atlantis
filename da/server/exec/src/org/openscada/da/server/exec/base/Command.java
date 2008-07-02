@@ -32,13 +32,13 @@ public interface Command
      * setCommandline
      * @param commandline
      */
-    public void setCommandline ( String commandline );
+    public void setCommandLine ( String commandline );
 
     /**
      * getCommandline
      * @return
      */
-    public String getCommandline ();
+    public String getCommandLine ();
 
     /**
      * getCommandName
