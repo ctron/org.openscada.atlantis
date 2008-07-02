@@ -36,12 +36,23 @@ import org.openscada.da.server.exec.util.CommandExecutor;
 import org.openscada.da.server.exec.util.CommandResult;
 import org.openscada.utils.collection.MapBuilder;
 
+/**
+ * Execute a nagios command script
+ * <p>
+ * Command result is based on the return code of the script: 0 = OK, 1 = WARNING, 2 = CRITICAL
+ *
+ */
 public class NagiosCommand extends CommandBase
 {
     /**
      * The nagios test result state
      */
     private final DataItemInputChained stateItem;
+
+    /**
+     * last known state
+     */
+    private Boolean lastState = null;
 
     /**
      * Constructor
@@ -77,13 +88,19 @@ public class NagiosCommand extends CommandBase
         map.put ( "output", new Variant ( result.getOutput () ) );
         map.put ( "errorOutput", new Variant ( result.getErrorOutput () ) );
         map.put ( "message", new Variant ( result.getMessage () ) );
-        this.stateItem.updateAttributes ( map );
 
-        // Evaluate result
-        if ( result.getExitValue () >= 0 )
+        Boolean state = result.getExitValue () == 0;
+
+        // check result
+        if ( this.lastState == null || !this.lastState.equals ( state ) )
         {
-            this.stateItem.updateValue ( new Variant ( this.getParser ().parse ( result.getOutput () ) ) );
+            map.put ( "timestamp", new Variant ( System.currentTimeMillis () ) );
+            this.lastState = state;
         }
+
+        // now update the data item
+        this.stateItem.updateAttributes ( map );
+        this.stateItem.updateValue ( new Variant ( this.lastState ) );
     }
 
     @Override
