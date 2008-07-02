@@ -11,7 +11,7 @@
     <complexType name="RootType">
     	<sequence>
     		<element name="commandQueue" type="components:CommandQueueType"
-    			minOccurs="1" maxOccurs="unbounded">
+    			minOccurs="0" maxOccurs="unbounded">
     		</element>
     	</sequence>
     </complexType>
@@ -25,7 +25,7 @@
     	</annotation>
     	<sequence>
     		<element name="command" type="components:CommandType"
-    			maxOccurs="unbounded" minOccurs="1">
+    			maxOccurs="unbounded" minOccurs="0">
     			<annotation>
     				<documentation>
     					A list of commands for this command queue
