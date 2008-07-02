@@ -232,7 +232,7 @@ public abstract class CommandBase implements Command
 
         if ( this.getLastExecutionTime () == null || check.after ( this.getLastExecutionTime () ) )
         {
-            // remember the last execution time before calling the command. Otherwise we will have unecessary delays
+            // remember the last execution time before calling the command. Otherwise we will have unnecessary delays
             this.lastExecutionTime = Calendar.getInstance ();
             
             // Execute the command
