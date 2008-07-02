@@ -76,7 +76,7 @@ public abstract class CommandBase implements Command
     /**
      * the minimum delay between executions
      */
-    private int minDelay = 0;
+    private int minPeriod = 0;
 
     /** 
      * Item to store whether the command is currently active or not
@@ -200,8 +200,8 @@ public abstract class CommandBase implements Command
     @Override
     public void setMinDelay ( int delay )
     {
-        this.minDelay = delay;
-        this.minPeriodItem.updateValue ( new Variant ( this.minDelay ) );
+        this.minPeriod = delay;
+        this.minPeriodItem.updateValue ( new Variant ( this.minPeriod ) );
     }
 
     /**
@@ -228,21 +228,23 @@ public abstract class CommandBase implements Command
     public void tick ()
     {
         Calendar check = Calendar.getInstance ();
-        check.add ( Calendar.MILLISECOND, -1 * this.minDelay );
+        check.add ( Calendar.MILLISECOND, -this.minPeriod );
 
         if ( this.getLastExecutionTime () == null || check.after ( this.getLastExecutionTime () ) )
         {
+            // remember the last execution time before calling the command. Otherwise we will have unecessary delays
+            this.lastExecutionTime = Calendar.getInstance ();
+            
             // Execute the command
             this.busyItem.updateValue ( new Variant ( true ) );
-            Calendar start = Calendar.getInstance ();
-            this.execute ();
-            Calendar stop = Calendar.getInstance ();
+            long start = System.currentTimeMillis ();
+            execute ();
+            long stop = System.currentTimeMillis ();
             this.busyItem.updateValue ( new Variant ( false ) );
 
             // Set the time of the finished execution
-            this.lastExecutionTime = Calendar.getInstance ();
             this.lastExecutionTimeItem.updateValue ( new Variant ( this.lastExecutionTime.getTime ().toString () ) );
-            this.executionTimeItem.updateValue ( new Variant ( stop.getTimeInMillis () - start.getTimeInMillis () ) );
+            this.executionTimeItem.updateValue ( new Variant ( stop - start ) );
             logger.debug ( this.getCommandName () + ": tick!" );
         }
     }
