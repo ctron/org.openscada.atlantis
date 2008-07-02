@@ -39,7 +39,7 @@ public abstract class CommandBase implements Command
     private static Logger logger = Logger.getLogger ( CommandBase.class );
 
     /**
-     * Command line call
+     * Command line of the call
      */
     private String commandLine;
 
@@ -96,7 +96,7 @@ public abstract class CommandBase implements Command
     /** 
      * the minimum delay between executions as item
      */
-    private final DataItemInputChained minDelayItem;
+    private final DataItemInputChained minPeriodItem;
 
     /**
      * the parser for the result
@@ -122,27 +122,27 @@ public abstract class CommandBase implements Command
         this.commandItemFactory = new FolderItemFactory ( hive, (FolderCommon)hive.getRootFolder (), this.commandName, this.commandName );
 
         // prepare the commandline as item
-        this.commandLineItem = this.commandItemFactory.createInput ( "command.commandLine" );
+        this.commandLineItem = this.commandItemFactory.createInput ( "commandLine" );
 
         // prepare the last execution time as item
-        this.lastExecutionTimeItem = this.commandItemFactory.createInput ( "execution.date" );
+        this.lastExecutionTimeItem = this.commandItemFactory.createInput ( "lastExecutionTime" );
 
         // prepare the execution time as item
-        this.executionTimeItem = this.commandItemFactory.createInput ( "execution.time" );
+        this.executionTimeItem = this.commandItemFactory.createInput ( "executionTime" );
 
         // show the class name as item
-        this.commandTypeItem = this.commandItemFactory.createInput ( "command.type" );
+        this.commandTypeItem = this.commandItemFactory.createInput ( "commandType" );
         this.commandTypeItem.updateValue ( new Variant ( this.toString () ) );
 
         // show whether the command is currently active or not
-        this.busyItem = this.commandItemFactory.createInput ( "command.busy" );
+        this.busyItem = this.commandItemFactory.createInput ( "busy" );
         this.busyItem.updateValue ( new Variant ( false ) );
 
         // show whether the command is currently active or not
-        this.minDelayItem = this.commandItemFactory.createInput ( "command.minPeriod" );
+        this.minPeriodItem = this.commandItemFactory.createInput ( "minPeriod" );
 
         // print the queue this command is in
-        this.queueItem = this.commandItemFactory.createInput ( "command.queue" );
+        this.queueItem = this.commandItemFactory.createInput ( "queueName" );
         this.queueItem.updateValue ( new Variant ( this.queue.getQueueName () ) );
 
     }
@@ -201,7 +201,7 @@ public abstract class CommandBase implements Command
     public void setMinDelay ( int delay )
     {
         this.minDelay = delay;
-        this.minDelayItem.updateValue ( new Variant ( this.minDelay ) );
+        this.minPeriodItem.updateValue ( new Variant ( this.minDelay ) );
     }
 
     /**
@@ -247,4 +247,9 @@ public abstract class CommandBase implements Command
         }
     }
 
+    public void dispose ()
+    {
+        this.commandItemFactory.dispose ();
+    }
+    
 }
