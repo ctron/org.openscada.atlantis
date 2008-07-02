@@ -22,11 +22,14 @@
  */
 package org.openscada.da.server.exec.nagios;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.exec.base.Command;
 import org.openscada.da.server.exec.base.CommandResultParserBase;
 
-public class NagiosPingCommandResultParser extends CommandResultParserBase
+public class NagiosCommandResultParser extends CommandResultParserBase
 {
     /**
      * Constructor
@@ -34,11 +37,13 @@ public class NagiosPingCommandResultParser extends CommandResultParserBase
      * @param command
      * @return 
      */
-    public NagiosPingCommandResultParser ( HiveCommon hive, Command command )
+    public NagiosCommandResultParser ( HiveCommon hive, Command command )
     {
         super ( hive, command );
     }
 
+    private static Pattern resultPattern = Pattern.compile ( "(.*?) - " );
+    
     /**
      * Analyse the output from nagios and return true when the result is ok
      */
@@ -51,7 +56,16 @@ public class NagiosPingCommandResultParser extends CommandResultParserBase
 
         // "/usr/local/nagios/libexec/check_ping -H 192.168.1.115 -w 5,50% -c 5,80% -p 10 -t 2"
 
-        return output.startsWith ( "PING OK" );
+        Matcher m = resultPattern.matcher ( output );
+        
+        if ( !m.find () )
+        {
+            // we did not expect that format
+            return false;
+        }
+        
+        String resultTag = m.group ( 1 );
+        return resultTag.endsWith ( "OK" );
     }
 
 }
