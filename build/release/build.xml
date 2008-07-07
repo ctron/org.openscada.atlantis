@@ -183,6 +183,7 @@
     	<ant dir="${source.base}/da/server/opc2"/>
 	    <ant dir="${source.base}/da/server/stock"/>
 	    <ant dir="${source.base}/da/server/spring"/>
+    	<ant dir="${source.base}/da/server/exec"/>
 
 	   	<ant dir="${source.base}/core/client/common"/>
        	<ant dir="${source.base}/core/client/net"/>
