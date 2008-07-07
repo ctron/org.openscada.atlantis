@@ -179,7 +179,6 @@
 	    <ant dir="${source.base}/da/server/snmp"/>
 	    <ant dir="${source.base}/da/server/sysinfo"/>
 	    <ant dir="${source.base}/da/server/test"/>
-		<ant dir="${source.base}/da/server/opc"/>
     	<ant dir="${source.base}/da/server/opc2"/>
 	    <ant dir="${source.base}/da/server/stock"/>
 	    <ant dir="${source.base}/da/server/spring"/>
