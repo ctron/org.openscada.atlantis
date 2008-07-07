@@ -322,7 +322,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: apps                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="apps" depends="make-sim-server-dist, make-test-server-dist, make-opc-server-dist, make-exporter-dist">
+    <target name="apps" depends="make-sim-server-dist, make-test-server-dist, make-exporter-dist">
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
