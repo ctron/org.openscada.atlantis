@@ -150,7 +150,6 @@ public abstract class CommandBase implements Command
     /**
      * setCommandline
      */
-    @Override
     public void setCommandLine ( String commandLine )
     {
         this.commandLine = commandLine;
@@ -169,7 +168,6 @@ public abstract class CommandBase implements Command
     /**
      * getCommandName
      */
-    @Override
     public String getCommandName ()
     {
         return this.commandName;
@@ -179,7 +177,6 @@ public abstract class CommandBase implements Command
      * Returns the time of the last execution
      * @return
      */
-    @Override
     public Calendar getLastExecutionTime ()
     {
         return this.lastExecutionTime;
@@ -197,7 +194,6 @@ public abstract class CommandBase implements Command
      * Sets the minimum time delay (ms) between executions
      * @param delay
      */
-    @Override
     public void setMinDelay ( int delay )
     {
         this.minPeriod = delay;
@@ -215,7 +211,6 @@ public abstract class CommandBase implements Command
     /**
      * sets a parser to the command
      */
-    @Override
     public void setParser ( CommandResultParser parser )
     {
         this.parser = parser;
@@ -224,7 +219,6 @@ public abstract class CommandBase implements Command
     /**
      * run the command task
      */
-    @Override
     public void tick ()
     {
         Calendar check = Calendar.getInstance ();

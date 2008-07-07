@@ -50,7 +50,6 @@ public class CommandResultParserBase implements CommandResultParser
     /**
      * Analyse the output from nagios and return true when the result is ok
      */
-    @Override
     public boolean parse ( String output )
     {
         return false;

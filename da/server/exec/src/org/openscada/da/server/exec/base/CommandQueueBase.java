@@ -55,7 +55,6 @@ public abstract class CommandQueueBase implements CommandQueue
      * Add a command to the queue
      * @param command
      */
-    @Override
     public void addCommand ( Command command )
     {
         // Add the new command to the list of commands
@@ -65,7 +64,6 @@ public abstract class CommandQueueBase implements CommandQueue
     /**
      * getCommands
      */
-    @Override
     public List<Command> getCommands ()
     {
         return this.commands;
@@ -74,7 +72,6 @@ public abstract class CommandQueueBase implements CommandQueue
     /**
      * Execute the queue. Will be called automatically from TaskExecutor
      */
-    @Override
     public void run ()
     {
         for ( Command command : this.getCommands () )

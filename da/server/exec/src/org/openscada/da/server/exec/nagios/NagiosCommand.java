@@ -75,7 +75,6 @@ public class NagiosCommand extends CommandBase
     /**
      * run the command task
      */
-    @Override
     public void execute ()
     {
         // Execute
