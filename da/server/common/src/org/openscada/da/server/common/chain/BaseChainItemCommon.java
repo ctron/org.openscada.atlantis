@@ -49,13 +49,16 @@ public abstract class BaseChainItemCommon implements ChainItem
         this.serviceRegistry = serviceRegistry;
     }
 
+    /**
+     * called when the chain item is assigned to a new data item
+     */
     public void dataItemChanged ( DataItem item )
     {
         this.itemId = item.getInformation ().getName ();
-        loadAllValues ();
+        loadInitialProperties ();
     }
 
-    private void loadAllValues ()
+    protected void loadInitialProperties ()
     {
         if ( !isPersistent () )
         {
@@ -79,7 +82,8 @@ public abstract class BaseChainItemCommon implements ChainItem
                 }
                 catch ( Exception e )
                 {
-                    log.error ( String.format ( "Failed to apply binder value to %s item %s, value %s", entry.getKey (), this.itemId, entry.getValue () ) );
+                    log.error ( String.format ( "Failed to apply binder value to %s item %s, value %s",
+                            entry.getKey (), this.itemId, entry.getValue () ) );
                 }
             }
         }
@@ -115,7 +119,7 @@ public abstract class BaseChainItemCommon implements ChainItem
         return writeAttributeResults;
     }
 
-    private void writeBinders ()
+    protected void writeBinders ()
     {
         if ( !isPersistent () )
         {
@@ -135,11 +139,18 @@ public abstract class BaseChainItemCommon implements ChainItem
         }
 
         ChainStorageService storageService = (ChainStorageService)service;
-
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        addAttributes ( attributes );
-
+        performWriteBinders ( attributes );
         storageService.storeValues ( this.itemId, attributes );
+    }
+
+    /**
+     * Perform the write operation
+     * @param attributes add your attributes to this map to persist them
+     */
+    protected void performWriteBinders ( Map<String, Variant> attributes )
+    {
+        addAttributes ( attributes );
     }
 
     public void setReservedAttributes ( String... reservedAttributes )
@@ -176,7 +187,7 @@ public abstract class BaseChainItemCommon implements ChainItem
         return loadStoredValues ( values ).get ( name );
     }
 
-    private Map<String, Variant> loadStoredValues ( Set<String> values )
+    protected Map<String, Variant> loadStoredValues ( Set<String> values )
     {
         if ( serviceRegistry == null )
         {
