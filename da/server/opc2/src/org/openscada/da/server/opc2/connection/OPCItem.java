@@ -117,8 +117,8 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
                     entry.getErrorCode (), errorMessage ) ) );
 
             attributes.put ( "opc.quality", null );
-            attributes.put ( "opc.timestamp", null );
-            attributes.put ( "opc.timestamp.message", null );
+            attributes.put ( "timestamp", null );
+            attributes.put ( "timestamp.message", null );
             attributes.put ( "opc.value.type", null );
 
             attributes.put ( "opc.value.conversion.error", null );
@@ -159,9 +159,9 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
                 if ( lastValue == null || ( !lastValue.equals ( value ) ) )
                 {
-                    attributes.put ( "opc.timestamp", new Variant (
+                    attributes.put ( "timestamp", new Variant (
                             state.getTimestamp ().asCalendar ().getTimeInMillis () ) );
-                    attributes.put ( "opc.timestamp.message", new Variant ( String.format ( "%tc",
+                    attributes.put ( "timestamp.message", new Variant ( String.format ( "%tc",
                             state.getTimestamp ().asCalendar () ) ) );
                 }
 
