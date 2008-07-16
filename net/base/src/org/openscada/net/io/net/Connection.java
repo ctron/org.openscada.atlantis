@@ -64,7 +64,7 @@ public class Connection implements ConnectionListener, MessageListener
 
     private boolean _connected = false;
 
-    private class MessageTag
+    private static class MessageTag
     {
         private MessageStateListener _listener;
         private long _timestamp = 0;
