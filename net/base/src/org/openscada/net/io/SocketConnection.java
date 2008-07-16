@@ -42,7 +42,7 @@ public class SocketConnection extends IOChannel implements IOChannelListener
     private boolean _reading = false;
     private boolean _closing = false;
 
-    private ByteBuffer _inputBuffer = ByteBuffer.allocate ( 4096 );
+    private ByteBuffer _inputBuffer = ByteBuffer.allocate ( Integer.getInteger ( "openscada.net.inputBufferSize", 4096 ) );
     private List<ByteBuffer> _outputBuffers = new ArrayList<ByteBuffer> ();
 
     public SocketConnection ( IOProcessor processor ) throws IOException
