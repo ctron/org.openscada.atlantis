@@ -34,7 +34,7 @@ public class Client implements ConnectionStateListener
 
     private static Logger _log = Logger.getLogger ( Client.class );
 
-    private int RECONNECT_TIMEOUT = Integer.getInteger ( "openscada.net.reconnect_period", 10000 );
+    private int reconnectDelay = Integer.getInteger ( "openscada.net.reconnectDelay", 10000 );
 
     private IOProcessor _processor = null;
     private MessageListener _listener;
@@ -71,7 +71,7 @@ public class Client implements ConnectionStateListener
     public void connect ( SocketAddress remote, boolean wait )
     {
         _lastRemote = remote;
-        scheduleConnectJob ( remote, RECONNECT_TIMEOUT );
+        scheduleConnectJob ( remote, reconnectDelay );
     }
 
     private void performConnect ( SocketAddress remote )
