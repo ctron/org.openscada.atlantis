@@ -94,6 +94,10 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
         
         _log.debug ( "adding ping job" );
 
+        // The ping job period is either directly defined or calculated from the amount of ping
+        // that have to be sent in the connection timeout timespan 
+        int pingJobPeriod = Long.getLong ( "openscada.net.ping.period", _connection.getTimeout () / Integer.getInteger ( "openscada.net.ping.frequency", 3 ) ).intValue ();
+        
         // adding the ping job with half the period time of the timeout
         _pingJob = _scheduler.addJob ( new Runnable () {
 
@@ -101,7 +105,7 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
             {
                 doPing ();
             }
-        }, Integer.getInteger ( "openscada.net.pingPeriod", 7 * 1000 ) / 2 );
+        }, pingJobPeriod );
     }
 
     public void closed ( Exception error )

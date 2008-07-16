@@ -133,6 +133,11 @@ public abstract class IOChannel
             }
         }
     }
+    
+    public long getTimeout ()
+    {
+        return _timeout;
+    }
 
     public boolean isTimeOut ()
     {

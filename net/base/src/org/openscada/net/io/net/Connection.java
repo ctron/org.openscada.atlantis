@@ -45,13 +45,15 @@ public class Connection implements ConnectionListener, MessageListener
     private static Logger _log = Logger.getLogger ( Connection.class );
 
     private static final long MAX_SEQUENCE = 0x7FFFFFFF;
+
     private static final long INIT_SEQUENCE = 1;
 
-    private int _timeoutLimit = Integer.getInteger ( "org.openscada.net.messageTimeout", 10 * 1000 );
-    private int _connectionTimeout = Integer.getInteger ( "org.openscada.net.connectionTimeout", 10 * 1000 );
+    private static final int DEFAULT_CONNECTION_TIMEOUT = Integer.getInteger ( "openscada.net.connection.timeout", 10 * 1000 );
+
     private static Scheduler _scheduler = new Scheduler ( "GlobalConnectionScheduler" );
 
     private Protocol _protocolGMPP = null;
+
     protected SocketConnection _connection = null;
 
     private ConnectionStateListener _connectionStateListener = null;
@@ -67,8 +69,11 @@ public class Connection implements ConnectionListener, MessageListener
     private static class MessageTag
     {
         private MessageStateListener _listener;
+
         private long _timestamp = 0;
+
         private long _timeout = 0;
+
         private boolean _canceled = false;
 
         public MessageStateListener getListener ()
@@ -135,7 +140,7 @@ public class Connection implements ConnectionListener, MessageListener
 
         addTimeOutJob ();
 
-        setTimeout ( _connectionTimeout );
+        setTimeout ( DEFAULT_CONNECTION_TIMEOUT );
     }
 
     public Connection ( MessageListener listener, SocketConnection connection )
@@ -148,7 +153,7 @@ public class Connection implements ConnectionListener, MessageListener
 
         addTimeOutJob ();
 
-        setTimeout ( _connectionTimeout );
+        setTimeout ( DEFAULT_CONNECTION_TIMEOUT );
     }
 
     private void addTimeOutJob ()
@@ -271,9 +276,9 @@ public class Connection implements ConnectionListener, MessageListener
     public void connectionFailed ( IOException e )
     {
         _log.debug ( "connection failed" );
-        
+
         _connected = false;
-        
+
         removeTimeOutJob ();
 
         if ( _connectionStateListener != null )
@@ -283,7 +288,7 @@ public class Connection implements ConnectionListener, MessageListener
     public void closed ()
     {
         _log.debug ( "connection closed" );
-        
+
         _connected = false;
 
         removeTimeOutJob ();
@@ -404,9 +409,15 @@ public class Connection implements ConnectionListener, MessageListener
      * Set the connection timeout
      * @param timeout
      */
-    public void setTimeout ( long timeout )
+    protected void setTimeout ( long timeout )
     {
         _log.debug ( String.format ( "Setting timeout to %s", timeout ) );
+
         _connection.setTimeout ( timeout );
+    }
+
+    public long getTimeout ()
+    {
+        return _connection.getTimeout ();
     }
 }
