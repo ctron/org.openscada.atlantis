@@ -128,7 +128,7 @@ public class CSVLoader extends Loader implements InitializingBean
         attributes.put ( "loader.csv.source", new Variant ( sourceName ) );
         attributes.put ( "initialValue", new Variant ( entry.getInitialValue () ) );
 
-        CSVDataItem item = new CSVDataItem ( _itemPrefix + entry.getId (), io );
+        CSVDataItem item = new CSVDataItem ( _hive, _itemPrefix + entry.getId (), io );
         injectItem ( item, attributes );
         item.updateValue ( entry.getInitialValue () );
 
