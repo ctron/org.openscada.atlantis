@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.server.browser.common.query.ItemStorage;
@@ -41,6 +42,8 @@ import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
 
 public class CSVLoader extends Loader implements InitializingBean
 {
+    private static Logger logger = Logger.getLogger ( CSVLoader.class );
+    
     private Resource _resource;
     private String _data;
     private String [] _mapping = new String[] { "id", "readable", "writable", "description", "initialValue" };
@@ -130,10 +133,21 @@ public class CSVLoader extends Loader implements InitializingBean
 
         CSVDataItem item = new CSVDataItem ( _hive, _itemPrefix + entry.getId (), io );
         injectItem ( item, attributes );
-        item.updateValue ( entry.getInitialValue () );
 
+        // create and inject the controller item
         attributes.put ( "loader.csv.controllerFor", new Variant ( _itemPrefix + entry.getId () ) );
-        Loader.injectItem ( _hive, _controllerStorages, new CSVControllerDataItem ( item ), attributes );
+        CSVControllerDataItem controllerItem = new CSVControllerDataItem ( item );
+        Loader.injectItem ( _hive, _controllerStorages, controllerItem, attributes );
+        
+        // set the initial value
+        try
+        {
+            controllerItem.writeValue ( entry.getInitialValue () );
+        }
+        catch ( Throwable e )
+        {
+            logger.warn ( "Failed to set initial value: " + entry.getInitialValue (), e );
+        }
     }
 
     public void setMapping ( String[] mapping )
