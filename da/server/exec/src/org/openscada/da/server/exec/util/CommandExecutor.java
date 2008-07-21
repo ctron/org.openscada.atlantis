@@ -26,9 +26,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+
+import org.apache.log4j.Logger;
 
 public class CommandExecutor
 {
+    private static Logger logger = Logger.getLogger ( CommandExecutor.class );
+    
     /**
      * This method executes the specified command on the shell using the passed objects as information provider.
      * @param cmd command string including arguments
@@ -41,11 +46,12 @@ public class CommandExecutor
         result.setError ( true );
         result.setMessage ( "OK" );
 
+        Process p = null;
         // Execute the command
         try
         {
             // Execute and wait
-            Process p = Runtime.getRuntime ().exec ( cmd );
+            p = Runtime.getRuntime ().exec ( cmd );
             p.waitFor ();
 
             // Get exit value
@@ -55,20 +61,50 @@ public class CommandExecutor
             // Get result
             InputStream input = p.getInputStream ();
             result.setOutput ( inputStreamToString ( input ) );
-            input.close ();
 
             InputStream error = p.getErrorStream ();
             result.setErrorOutput ( inputStreamToString ( error ) );
-            error.close ();
         }
         catch ( Exception e )
         {
             result.setMessage ( String.format ( "Unable to execute command! Detailed message: %1$s", e.getMessage () ) );
             return result;
         }
+        finally
+        {
+            if ( p != null )
+            {
+                closeStream ( p.getErrorStream () );
+                closeStream ( p.getInputStream () );
+                closeStream ( p.getOutputStream () );
+            }
+        }
 
         result.setError ( false );
         return result;
+    }
+
+    protected static void closeStream ( Object stream )
+    {
+        if ( stream == null )
+        {
+            return;
+        }
+        try
+        {
+            if ( stream instanceof InputStream )
+            {
+                ( (InputStream)stream ).close ();
+            }
+            else if ( stream instanceof OutputStream )
+            {
+                ( (OutputStream)stream ).close ();
+            }
+        }
+        catch ( IOException e )
+        {
+            logger.warn ( "Failed to close stream", e );
+        }
     }
 
     /**
