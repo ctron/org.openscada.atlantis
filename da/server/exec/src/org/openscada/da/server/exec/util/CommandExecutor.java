@@ -65,7 +65,7 @@ public class CommandExecutor
             InputStream error = p.getErrorStream ();
             result.setErrorOutput ( inputStreamToString ( error ) );
         }
-        catch ( Exception e )
+        catch ( Throwable e )
         {
             result.setMessage ( String.format ( "Unable to execute command! Detailed message: %1$s", e.getMessage () ) );
             return result;
