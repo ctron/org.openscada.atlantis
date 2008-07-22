@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionInformation;
 import org.openscada.core.subscription.SubscriptionSource;
@@ -24,8 +23,6 @@ import org.openscada.da.server.common.impl.stats.HiveEventListener;
  */
 public class DataItemSubscriptionSource implements SubscriptionSource, ItemListener
 {
-    private static Logger _log = Logger.getLogger ( DataItemSubscriptionSource.class );
-
     private DataItem _dataItem = null;
 
     private Set<DataItemSubscriptionListener> _listeners = new CopyOnWriteArraySet<DataItemSubscriptionListener> ();
@@ -33,6 +30,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
     private boolean _bound = false;
 
     private Variant _cacheValue = null;
+
     private Map<String, Variant> _cacheAttributes = new HashMap<String, Variant> ();
 
     private HiveEventListener _hiveEventListener;
@@ -82,17 +80,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         {
             _listeners.add ( (DataItemSubscriptionListener)listener.getListener () );
             // send current state
-            if ( _cacheValue != null )
-            {
-                _log.debug ( "Sending initial value: " + _cacheValue );
-                ( (DataItemSubscriptionListener)listener.getListener () ).valueChanged ( _dataItem, _cacheValue, true );
-            }
-            if ( !_cacheAttributes.isEmpty () )
-            {
-                _log.debug ( "Sending initial attributes: " + _cacheAttributes.size () );
-                ( (DataItemSubscriptionListener)listener.getListener () ).attributesChanged ( _dataItem,
-                        _cacheAttributes, true );
-            }
+            ( (DataItemSubscriptionListener)listener.getListener () ).dataChanged ( _dataItem, _cacheValue, _cacheAttributes, true );
         }
 
         if ( !_listeners.isEmpty () )
@@ -119,35 +107,32 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         return subscriptionInformation.getListener () instanceof DataItemSubscriptionListener;
     }
 
-    public void attributesChanged ( DataItem item, Map<String, Variant> attributes, boolean cache )
+    public void dataChanged ( DataItem item, Variant variant, Map<String, Variant> attributes, boolean cache )
     {
+        // update cache
         synchronized ( _cacheAttributes )
         {
             AttributesHelper.mergeAttributes ( _cacheAttributes, attributes );
         }
-
-        for ( DataItemSubscriptionListener listener : _listeners )
-        {
-            listener.attributesChanged ( item, attributes, cache );
-        }
-
-        if ( _hiveEventListener != null )
-        {
-            _hiveEventListener.attributesChanged ( item, attributes.size () );
-        }
-    }
-
-    public void valueChanged ( DataItem item, Variant variant, boolean cache )
-    {
         _cacheValue = variant;
+
+        // send out the events
         for ( DataItemSubscriptionListener listener : _listeners )
         {
-            listener.valueChanged ( item, variant, cache );
+            listener.dataChanged ( item, variant, attributes, cache );
         }
 
+        // send out the hive events
         if ( _hiveEventListener != null )
         {
-            _hiveEventListener.valueChanged ( item, variant, cache );
+            if ( variant != null )
+            {
+                _hiveEventListener.valueChanged ( item, variant, cache );
+            }
+            if ( attributes != null )
+            {
+                _hiveEventListener.attributesChanged ( item, attributes.size () );
+            }
         }
     }
 }

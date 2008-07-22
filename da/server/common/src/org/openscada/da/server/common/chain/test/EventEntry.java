@@ -30,9 +30,11 @@ public class EventEntry
      * 
      */
     private DataItem _item = null;
+
     private Variant _value = null;
+
     private Map<String, Variant> _attributes = null;
-    
+
     public EventEntry ( DataItem item, Variant value, Map<String, Variant> attributes )
     {
         _item = item;
@@ -64,25 +66,40 @@ public class EventEntry
             if ( other._attributes != null )
                 return false;
         }
-        else
-            if ( !_attributes.equals ( other._attributes ) )
-                return false;
+        else if ( !_attributes.equals ( other._attributes ) )
+            return false;
         if ( _item == null )
         {
             if ( other._item != null )
                 return false;
         }
-        else
-            if ( !_item.equals ( other._item ) )
-                return false;
+        else if ( !_item.equals ( other._item ) )
+            return false;
         if ( _value == null )
         {
             if ( other._value != null )
                 return false;
         }
-        else
-            if ( !_value.equals ( other._value ) )
-                return false;
+        else if ( !_value.equals ( other._value ) )
+            return false;
         return true;
+    }
+
+    @Override
+    public String toString ()
+    {
+        StringBuilder sb = new StringBuilder ();
+
+        sb.append ( String.format ( "Value: %s, ", _value ) );
+
+        if ( _attributes != null )
+        {
+            for ( Map.Entry<String, Variant> entry : _attributes.entrySet () )
+            {
+                sb.append ( String.format ( "'%s'=>'%s', ", entry.getKey (), entry.getValue () ) );
+            }
+        }
+
+        return sb.toString ();
     }
 }

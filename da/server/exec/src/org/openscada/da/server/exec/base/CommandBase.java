@@ -132,18 +132,18 @@ public abstract class CommandBase implements Command
 
         // show the class name as item
         this.commandTypeItem = this.commandItemFactory.createInput ( "commandType" );
-        this.commandTypeItem.updateValue ( new Variant ( this.toString () ) );
+        this.commandTypeItem.updateData ( new Variant ( this.toString () ), null, null );
 
         // show whether the command is currently active or not
         this.busyItem = this.commandItemFactory.createInput ( "busy" );
-        this.busyItem.updateValue ( new Variant ( false ) );
+        this.busyItem.updateData ( new Variant ( false ), null, null );
 
         // show whether the command is currently active or not
         this.minPeriodItem = this.commandItemFactory.createInput ( "minPeriod" );
 
         // print the queue this command is in
         this.queueItem = this.commandItemFactory.createInput ( "queueName" );
-        this.queueItem.updateValue ( new Variant ( this.queue.getQueueName () ) );
+        this.queueItem.updateData ( new Variant ( this.queue.getQueueName () ), null, null );
 
     }
 
@@ -153,7 +153,7 @@ public abstract class CommandBase implements Command
     public void setCommandLine ( String commandLine )
     {
         this.commandLine = commandLine;
-        this.commandLineItem.updateValue ( new Variant ( commandLine ) );
+        this.commandLineItem.updateData ( new Variant ( commandLine ), null, null );
     }
 
     /**
@@ -197,7 +197,7 @@ public abstract class CommandBase implements Command
     public void setMinDelay ( int delay )
     {
         this.minPeriod = delay;
-        this.minPeriodItem.updateValue ( new Variant ( this.minPeriod ) );
+        this.minPeriodItem.updateData ( new Variant ( this.minPeriod ), null, null );
     }
 
     /**
@@ -230,15 +230,15 @@ public abstract class CommandBase implements Command
             this.lastExecutionTime = Calendar.getInstance ();
             
             // Execute the command
-            this.busyItem.updateValue ( new Variant ( true ) );
+            this.busyItem.updateData ( new Variant ( true ), null, null );
             long start = System.currentTimeMillis ();
             execute ();
             long stop = System.currentTimeMillis ();
-            this.busyItem.updateValue ( new Variant ( false ) );
+            this.busyItem.updateData ( new Variant ( false ), null, null );
 
             // Set the time of the finished execution
-            this.lastExecutionTimeItem.updateValue ( new Variant ( this.lastExecutionTime.getTime ().toString () ) );
-            this.executionTimeItem.updateValue ( new Variant ( stop - start ) );
+            this.lastExecutionTimeItem.updateData ( new Variant ( this.lastExecutionTime.getTime ().toString () ), null, null );
+            this.executionTimeItem.updateData ( new Variant ( stop - start ), null, null );
             logger.debug ( this.getCommandName () + ": tick!" );
         }
     }

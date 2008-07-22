@@ -46,8 +46,8 @@ public class DataItemCounterOutput implements CounterOutput
     
     public void setTickValue ( double average , long total )
     {
-        _valueItem.updateValue ( new Variant ( average ) );
-        _totalItem.updateValue ( new Variant ( total ) );
+        _valueItem.updateData ( new Variant ( average ), null, null );
+        _totalItem.updateData ( new Variant ( total ), null, null );
     }
 
 }

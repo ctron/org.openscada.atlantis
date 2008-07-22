@@ -125,7 +125,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
 
         _activeCountItem = new DataItemInputChained ( new DataItemInformationBase ( getBaseId () + ".active-count",
                 EnumSet.of ( IODirection.INPUT ) ) );
-        _activeCountItem.updateValue ( new Variant ( 0 ) );
+        _activeCountItem.updateData ( new Variant ( 0 ), null, null );
 
         // command items
         _connectCommandItem = new DataItemCommand ( getBaseId () + ".connect" );
@@ -189,7 +189,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
     {
         if ( _stateItem != null )
         {
-            _stateItem.updateValue ( new Variant ( state.name () ) );
+            _stateItem.updateData ( new Variant ( state.name () ), null, null );
         }
     }
 
@@ -256,7 +256,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
         _connectionFolder.add ( "suicide", _suicideCommandItem, new MapBuilder<String, Variant> ().getMap () );
 
         // register access state
-        _accessStateItem.updateValue ( new Variant ( false ) );
+        _accessStateItem.updateData ( new Variant ( false ), null, null );
         _hive.registerItem ( _accessStateItem );
         _connectionFolder.add ( "access-state", _accessStateItem, new MapBuilder<String, Variant> ().getMap () );
 
@@ -368,7 +368,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
             _log.info ( "Connection failed", t );
             attributes.put ( "opc.last-error", new Variant ( t.getMessage () ) );
         }
-        _accessStateItem.updateAttributes ( attributes );
+        _accessStateItem.updateData ( null, attributes, null );
     }
 
     public synchronized void stateChanged ( boolean state )
@@ -377,7 +377,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
 
         if ( _accessStateItem != null )
         {
-            _accessStateItem.updateValue ( new Variant ( state ) );
+            _accessStateItem.updateData ( new Variant ( state ), null, null );
         }
         
         if ( state )
@@ -591,7 +591,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
             attributes.put ( "opc.server.vendor-info", null );
         }
 
-        _stateItem.updateAttributes ( attributes );
+        _stateItem.updateData ( null, attributes, null );
     }
 
     public void countItemState ( OPCItem item, boolean active )
@@ -606,7 +606,7 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
             {
                 _activeItems.remove ( item );
             }
-            _activeCountItem.updateValue ( new Variant ( _activeItems.size () ) );
+            _activeCountItem.updateData ( new Variant ( _activeItems.size () ), null, null );
         }
     }
 
@@ -620,6 +620,6 @@ public class OPCConnection implements AccessStateListener, ServerStateListener, 
 
     public void stateChanged ( AutoReconnectState state )
     {
-        _autoReconnectStateItem.updateValue ( new Variant ( state.name () ) );
+        _autoReconnectStateItem.updateData ( new Variant ( state.name () ), null, null );
     }
 }

@@ -99,7 +99,7 @@ public class SNMPItem extends DataItemBase implements Runnable
         if ( !_value.equals ( value ) )
         {
             _value = value;
-            notifyValue ( _value );
+            notifyData ( _value, null );
         }
     }
 

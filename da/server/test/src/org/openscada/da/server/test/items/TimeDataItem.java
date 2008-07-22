@@ -32,6 +32,6 @@ public class TimeDataItem extends ScheduledDataItem
 
     public void run ()
     {
-        updateValue ( new Variant ( System.currentTimeMillis () ) );
+        updateData ( new Variant ( System.currentTimeMillis () ), null, null );
     }
 }

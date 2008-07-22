@@ -95,27 +95,16 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
         return _session;
     }
 
-    public void attributesChanged ( String name, Map<String, Variant> attributes, boolean initial )
+    @SuppressWarnings("unchecked")
+    public void dataChanged ( String itemId, Variant value, Map<String, Variant> attributes, boolean cache )
     {
-        _log.debug ( String.format ( "Attributes changed for '%s'", name ) );
-        
-        DataCallbackPrx dataCallback;
-        
-        if ( (dataCallback = _dataCallback) != null )
-        {
-            dataCallback.attributesChange ( name, AttributesHelper.toIce ( attributes ), initial );
-        }
-    }
+        _log.debug ( String.format ( "Data changed for '%s'", itemId ) );
 
-    public void valueChanged ( String name, Variant value, boolean initial )
-    {
-        _log.debug ( String.format ( "Value changed for '%s'", name ) );
-        
         DataCallbackPrx dataCallback;
         
         if ( (dataCallback = _dataCallback) != null )
         {
-            dataCallback.valueChange ( name, VariantHelper.toIce ( value ), initial );
+            dataCallback.dataChange ( itemId, VariantHelper.toIce ( value ), AttributesHelper.toIce ( attributes ), cache );
         }
     }
 

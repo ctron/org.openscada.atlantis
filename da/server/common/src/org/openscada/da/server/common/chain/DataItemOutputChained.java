@@ -75,7 +75,7 @@ public abstract class DataItemOutputChained extends DataItemBaseChained implemen
             }
         }
 
-        _secondaryAttributes.set ( primaryAttributes );
+        _secondaryAttributes.set ( null, primaryAttributes );
     }
 
     public void suspend ()
@@ -86,7 +86,7 @@ public abstract class DataItemOutputChained extends DataItemBaseChained implemen
     {
         if ( _secondaryAttributes.get ().size () > 0 )
         {
-            notifyAttributes ( _secondaryAttributes.get () );
+            notifyData ( null, _secondaryAttributes.get () );
         }
     }
 

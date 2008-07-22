@@ -24,10 +24,24 @@ import java.util.Map;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 
+/**
+ * Notifies a item on the client that data changed.
+ * <p>
+ * @author jens
+ *
+ */
 public interface ItemUpdateListener
 {
-    public void notifyValueChange ( Variant value, boolean cache );
-    public void notifyAttributeChange ( Map<String,Variant> attributes, boolean full );
+    /**
+     * A change on the data item occurred.
+     * @param value The new value, or <code>null</code> if the value did not change
+     * @param attributes The attributes that changed, may be <code>null</code> if no
+     * attribute change at all
+     * @param cache Indicating that the change came from the cache, this means
+     * that the change was not triggered by a device and that <em>all</em>
+     * attribute where sent, not only the changed ones
+     */
+    public void notifyDataChange ( Variant value, Map<String,Variant> attributes, boolean cache );
     
     /**
      * Notify a change in the subscription change

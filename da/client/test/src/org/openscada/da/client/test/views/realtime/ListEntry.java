@@ -106,7 +106,7 @@ public class ListEntry extends Observable implements ItemUpdateListener
     {
         return _value;
     }
-    
+
     public SubscriptionState getSubscriptionChange ()
     {
         return _subscriptionState;
@@ -124,27 +124,34 @@ public class ListEntry extends Observable implements ItemUpdateListener
 
     public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
     {
-        _log.debug ( "Attribute change: " + attributes.size () );
-
-        AttributesHelper.mergeAttributes ( _attributes, attributes, initial );
 
         setChanged ();
         notifyObservers ();
     }
 
-    public synchronized void notifyValueChange ( Variant value, boolean cache )
+    public synchronized void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
     {
-        _log.debug ( "Value change: " + value );
+        if ( value != null )
+        {
+            setChanged ();
+            _log.debug ( "Value change: " + value );
+            _value = value;
+        }
 
-        _value = value;
-        setChanged ();
+        if ( attributes != null )
+        {
+            setChanged ();
+            _log.debug ( "Attribute change: " + attributes.size () );
+            AttributesHelper.mergeAttributes ( _attributes, attributes, cache );
+        }
+
         notifyObservers ();
     }
-    
+
     public synchronized void notifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
     {
         _log.debug ( "Subscription change: " + subscriptionState.name () );
-        
+
         _subscriptionState = subscriptionState;
         _subscriptionError = subscriptionError;
         setChanged ();

@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
+import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
@@ -213,8 +214,7 @@ public class OPCConnection implements PropertyChangeListener
             try
             {
                 // this.xmlItemSourceFolder = new FolderCommon ();
-                this.xmlItemSource = new FileXMLItemSource ( this.connectionSetup.getFileSourceUri (),
-                        this.itemFactory, getDeviceTag () + ".itemSource.file" );
+                this.xmlItemSource = new FileXMLItemSource ( this.connectionSetup.getFileSourceUri (), this.itemFactory, getDeviceTag () + ".itemSource.file" );
                 this.xmlItemSource.addListener ( this.controller.getItemManager () );
                 // this.connectionFolder.add ( "fileItemSource", this.xmlItemSourceFolder, new HashMap<String, Variant> () );
                 this.xmlItemSource.activate ();
@@ -229,7 +229,7 @@ public class OPCConnection implements PropertyChangeListener
         // fill initial values
         updateBaseModel ();
         updateLastConnect ();
-        this.loopDelayDataItem.updateValue ( new Variant ( this.controller.getModel ().getLoopDelay () ) );
+        this.loopDelayDataItem.updateData ( new Variant ( this.controller.getModel ().getLoopDelay () ), null, null );
     }
 
     protected void reconnect ()
@@ -354,17 +354,15 @@ public class OPCConnection implements PropertyChangeListener
         }
         else if ( "numDisposersRunning".equals ( propertyName ) )
         {
-            this.numDisposersRunningDataItem.updateValue ( new Variant (
-                    this.controller.getModel ().getNumDisposersRunning () ) );
+            this.numDisposersRunningDataItem.updateData ( new Variant ( this.controller.getModel ().getNumDisposersRunning () ), null, null );
         }
         else if ( "controllerState".equals ( propertyName ) )
         {
-            this.controllerStateDataItem.updateValue ( new Variant (
-                    this.controller.getModel ().getControllerState ().toString () ) );
+            this.controllerStateDataItem.updateData ( new Variant ( this.controller.getModel ().getControllerState ().toString () ), null, null );
         }
         else if ( "loopDelay".equals ( propertyName ) )
         {
-            this.loopDelayDataItem.updateValue ( new Variant ( this.controller.getModel ().getLoopDelay () ) );
+            this.loopDelayDataItem.updateData ( new Variant ( this.controller.getModel ().getLoopDelay () ), null, null );
         }
     }
 
@@ -372,36 +370,35 @@ public class OPCConnection implements PropertyChangeListener
     {
         if ( newValue == null )
         {
-            this.lastConnectionError.updateValue ( new Variant () );
+            this.lastConnectionError.updateData ( new Variant (), null, null );
             return;
         }
         if ( newValue instanceof JIException )
         {
-            this.lastConnectionError.updateValue ( new Variant ( String.format ( "0x%08X",
-                    ( (JIException)newValue ).getErrorCode () ) ) );
+            this.lastConnectionError.updateData ( new Variant ( String.format ( "0x%08X", ( (JIException)newValue ).getErrorCode () ) ), null, null );
         }
         else
         {
-            this.lastConnectionError.updateValue ( new Variant ( newValue.getMessage () ) );
+            this.lastConnectionError.updateData ( new Variant ( newValue.getMessage () ), null, null );
         }
 
     }
 
     private void updateBaseModel ()
     {
-        this.connectedItem.updateValue ( new Variant ( this.controller.getModel ().isConnected () ) );
-        this.connectingItem.updateValue ( new Variant ( this.controller.getModel ().isConnecting () ) );
-        this.serverStateItem.updateValue ( new Variant ( this.controller.getModel ().getConnectionState ().toString () ) );
+        this.connectedItem.updateData ( new Variant ( this.controller.getModel ().isConnected () ), null, null );
+        this.connectingItem.updateData ( new Variant ( this.controller.getModel ().isConnecting () ), null, null );
+        this.serverStateItem.updateData ( new Variant ( this.controller.getModel ().getConnectionState ().toString () ), null, null );
     }
 
     private void updateLastConnect ()
     {
         Calendar c = Calendar.getInstance ();
         c.setTimeInMillis ( this.controller.getModel ().getLastConnect () );
-        this.lastConnectDataItem.updateValue ( new Variant ( String.format ( "%tc", c ) ) );
+        
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "milliseconds", new Variant ( c.getTimeInMillis () ) );
-        this.lastConnectDataItem.updateAttributes ( attributes );
+        this.lastConnectDataItem.updateData ( new Variant ( String.format ( "%tc", c ) ), attributes, AttributeMode.SET );
     }
 
     private void updateStatus ( OPCSERVERSTATUS state )
@@ -414,14 +411,10 @@ public class OPCConnection implements PropertyChangeListener
             attributes.put ( "opc.server.build-number", new Variant ( state.getBuildNumber () ) );
             attributes.put ( "opc.server.minor-version", new Variant ( state.getMinorVersion () ) );
             attributes.put ( "opc.server.major-version", new Variant ( state.getMajorVersion () ) );
-            attributes.put ( "opc.server.version", new Variant ( String.format ( "%d.%d.%d", state.getMajorVersion (),
-                    state.getMinorVersion (), state.getBuildNumber () ) ) );
-            attributes.put ( "opc.server.current-time", new Variant (
-                    state.getCurrentTime ().asCalendar ().getTimeInMillis () ) );
-            attributes.put ( "opc.server.last-update-time", new Variant (
-                    state.getLastUpdateTime ().asCalendar ().getTimeInMillis () ) );
-            attributes.put ( "opc.server.start-time", new Variant (
-                    state.getStartTime ().asCalendar ().getTimeInMillis () ) );
+            attributes.put ( "opc.server.version", new Variant ( String.format ( "%d.%d.%d", state.getMajorVersion (), state.getMinorVersion (), state.getBuildNumber () ) ) );
+            attributes.put ( "opc.server.current-time", new Variant ( state.getCurrentTime ().asCalendar ().getTimeInMillis () ) );
+            attributes.put ( "opc.server.last-update-time", new Variant ( state.getLastUpdateTime ().asCalendar ().getTimeInMillis () ) );
+            attributes.put ( "opc.server.start-time", new Variant ( state.getStartTime ().asCalendar ().getTimeInMillis () ) );
             attributes.put ( "opc.server.group-count", new Variant ( state.getGroupCount () ) );
             attributes.put ( "opc.server.server-state.name", new Variant ( state.getServerState ().name () ) );
             attributes.put ( "opc.server.server-state.id", new Variant ( state.getServerState ().id () ) );
@@ -443,7 +436,7 @@ public class OPCConnection implements PropertyChangeListener
             attributes.put ( "opc.server.vendor-info", null );
         }
 
-        this.serverStateItem.updateAttributes ( attributes );
+        this.serverStateItem.updateData ( null, attributes, AttributeMode.UPDATE );
     }
 
     protected void addItem ( String itemId )

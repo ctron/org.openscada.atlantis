@@ -58,12 +58,10 @@ public class TestLevelChainItem extends TestInputChain
 
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 3 ) );
         _dataItem.setAttributes ( attributes );
-        addEvent ( attributes );
+        addEvent ( null, attributes );
 
-        _dataItem.updateValue ( new Variant ( 4 ) );
-        addEvent ( new Variant ( 4 ) );
-
-        addEvent ( new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( true ) ).getMap () );
+        _dataItem.updateData ( new Variant ( 4 ), null, null );
+        addEvent ( new Variant ( 4 ), new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( true ) ).getMap () );
 
         assertEvents ();
     }
@@ -75,14 +73,14 @@ public class TestLevelChainItem extends TestInputChain
 
         _dataItem.addChainElement ( IODirection.INPUT, _levelAlarm );
 
-        _dataItem.updateValue ( new Variant ( 4 ) );
-        addEvent ( new Variant ( 4 ) );
+        _dataItem.updateData ( new Variant ( 4 ), null, null );
+        addEvent ( new Variant ( 4 ), null );
 
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 3 ) );
         _dataItem.setAttributes ( attributes );
 
         // both changes come in the same event
-        addEvent ( new MapBuilder<String, Variant> ( attributes ).put ( LevelAlarmChainItem.HIGH_ALARM,
+        addEvent ( null, new MapBuilder<String, Variant> ( attributes ).put ( LevelAlarmChainItem.HIGH_ALARM,
                 new Variant ( true ) ).getMap () );
 
         assertEvents ();
@@ -100,8 +98,8 @@ public class TestLevelChainItem extends TestInputChain
         Assert.assertFalse ( "WriteAttributeResult is ok although it should not", writeAttributeResults.isSuccess () );
         Assert.assertFalse ( writeAttributeResults.get ( LevelAlarmChainItem.HIGH_PRESET ).isSuccess () );
 
-        _dataItem.updateValue ( new Variant ( 4 ) );
-        addEvent ( new Variant ( 4 ) );
+        _dataItem.updateData ( new Variant ( 4 ), null, null );
+        addEvent ( new Variant ( 4 ), null );
 
         // no alarm must be present since chain item is not present 
         assertEvents ();
@@ -117,19 +115,17 @@ public class TestLevelChainItem extends TestInputChain
 
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 3 ) );
         _dataItem.setAttributes ( attributes );
-        addEvent ( attributes );
+        addEvent ( null, attributes );
 
-        _dataItem.updateValue ( new Variant ( 4 ) );
-        addEvent ( new Variant ( 4 ) );
-
-        addEvent ( new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( true ) ).getMap () );
+        _dataItem.updateData ( new Variant ( 4 ), null, null );
+        addEvent ( new Variant ( 4 ), new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( true ) ).getMap () );
 
         assertEvents ();
 
         attributes = new HashMap<String, Variant> ();
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 5 ) );
         _dataItem.setAttributes ( attributes );
-        addEvent ( new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( false ) ).put (
+        addEvent ( null, new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( false ) ).put (
                 LevelAlarmChainItem.HIGH_PRESET, new Variant ( 5 ) ).getMap () );
 
         assertEvents ();
@@ -149,19 +145,17 @@ public class TestLevelChainItem extends TestInputChain
 
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 3 ) );
         _dataItem.setAttributes ( attributes );
-        addEvent ( attributes );
+        addEvent ( null, attributes );
 
-        _dataItem.updateValue ( new Variant ( 4 ) );
-        addEvent ( new Variant ( 4 ) );
-
-        addEvent ( new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( true ) ).getMap () );
+        _dataItem.updateData ( new Variant ( 4 ), null, null );
+        addEvent ( new Variant ( 4 ), new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( true ) ).getMap () );
 
         assertEvents ();
 
         attributes = new HashMap<String, Variant> ();
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, null );
         _dataItem.setAttributes ( attributes );
-        addEvent ( new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_PRESET, null ).put (
+        addEvent ( null, new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_PRESET, null ).put (
                 LevelAlarmChainItem.HIGH_ALARM, null ).getMap () );
 
         assertEvents ();

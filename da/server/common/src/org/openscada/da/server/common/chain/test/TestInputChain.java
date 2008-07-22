@@ -34,15 +34,17 @@ import org.openscada.da.server.common.chain.DataItemInputChained;
 public class TestInputChain
 {
     protected TestItemListener _listener = null;
+
     protected DataItemInputChained _dataItem = null;
+
     protected List<EventEntry> _expectedEvents = new LinkedList<EventEntry> ();
-    
+
     @BeforeClass
     public static void setupLog4j ()
     {
         BasicConfigurator.configure ();
     }
-    
+
     @Before
     public void init ()
     {
@@ -50,74 +52,72 @@ public class TestInputChain
         _dataItem = new DataItemInputChained ( "test-id" );
         _dataItem.setListener ( _listener );
     }
-    
+
     @Test
     public void testValueEvent () throws Exception
     {
-        _dataItem.updateValue ( new Variant ( 1 ) );
-        addEvent ( new Variant ( 1 ) );
+        _dataItem.updateData ( new Variant ( 1 ), null, null );
+        addEvent ( new Variant ( 1 ), null );
         assertEvents ();
     }
-    
+
     @Test
     public void testAttributeEvent () throws Exception
     {
-        Map<String,Variant> attributes = new HashMap<String,Variant> ();
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "name", new Variant ( "value" ) );
-        
-        _dataItem.updateAttributes ( attributes );
-        addEvent ( attributes );
+
+        _dataItem.updateData ( null, attributes, null );
+        addEvent ( null, attributes );
 
         assertEvents ();
     }
-    
+
     @Test
-    public void testPreSetValue () throws Exception 
+    public void testPreSetValue () throws Exception
     {
         _dataItem.setListener ( null );
-        _dataItem.updateValue ( new Variant ( true ) );
+        _dataItem.updateData ( new Variant ( true ), null, null );
         assertEvents ();
-        
-        addEvent ( new Variant ( true ) );
+
+        addEvent ( new Variant ( true ), null );
         _dataItem.setListener ( _listener );
         assertEvents ();
     }
-    
+
     @Test
-    public void testPreSetAttributes () throws Exception 
+    public void testPreSetAttributes () throws Exception
     {
-        Map<String,Variant> attributes = new HashMap<String,Variant> ();
-        attributes.put ( "test", new Variant ( "test") );
-        
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        attributes.put ( "test", new Variant ( "test" ) );
+
         _dataItem.setListener ( null );
-        _dataItem.updateAttributes ( attributes );
+        _dataItem.updateData ( null, attributes, null );
         assertEvents ();
-        
-        addEvent ( attributes );
+
+        addEvent ( null, attributes );
         _dataItem.setListener ( _listener );
         assertEvents ();
     }
-    
+
     protected void assertEvents ()
     {
         _listener.assertEquals ( _expectedEvents );
     }
-    
-    protected void addEvent ( Variant value )
+
+    protected void addEvent ( Variant value, Map<String, Variant> attributes )
     {
-        _expectedEvents.add ( new EventEntry ( _dataItem, new Variant ( value ), null ) );
+        Variant copyValue = null;
+        if ( value != null )
+        {
+            copyValue = new Variant ( value );
+        }
+        HashMap<String, Variant> copyAttributes = null;
+        if ( attributes != null )
+        {
+            copyAttributes = new HashMap<String, Variant> ( attributes );
+        }
+        _expectedEvents.add ( new EventEntry ( _dataItem, copyValue, copyAttributes ) );
     }
-    
-    protected void addEvent ( Map<String, Variant> attributes )
-    {
-        if ( attributes.size () > 0 )
-            _expectedEvents.add ( new EventEntry ( _dataItem, null, new HashMap<String, Variant> ( attributes ) ) );
-    }
-    
-    protected void addEvent ( String name, Variant value )
-    {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( name, value );
-        addEvent ( attributes );
-    }
+
 }

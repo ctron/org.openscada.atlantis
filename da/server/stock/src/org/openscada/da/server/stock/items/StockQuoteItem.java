@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInputCommon;
 import org.openscada.da.server.common.ItemListener;
 import org.openscada.da.server.stock.domain.StockQuote;
@@ -84,8 +85,7 @@ public class StockQuoteItem extends DataItemInputCommon implements StockQuoteLis
         }
         attributes.put ( "timestamp", new Variant ( stockQuote.getTimestamp ().getTimeInMillis () ) );
         
-        getAttributeManager ().update ( attributes );
-        updateValue ( value );
+        updateData ( value, attributes, AttributeMode.UPDATE );
     }
 
 }

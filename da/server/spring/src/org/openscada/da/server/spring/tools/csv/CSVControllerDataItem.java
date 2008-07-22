@@ -19,9 +19,6 @@
 
 package org.openscada.da.server.spring.tools.csv;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
@@ -30,8 +27,6 @@ import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 public class CSVControllerDataItem extends DataItemInputOutputChained
 {
     private CSVDataItem _item;
-
-    private Variant lastValue = new Variant ();
 
     public CSVControllerDataItem ( CSVDataItem item )
     {
@@ -42,20 +37,12 @@ public class CSVControllerDataItem extends DataItemInputOutputChained
 
     public void handleWrite ( Variant value )
     {
-        updateValue ( value );
+        updateData ( value, null, null );
     }
 
     @Override
     protected void writeCalculatedValue ( Variant value ) throws NotConvertableException, InvalidOperationException
     {
-        _item.updateValue ( value );
-
-        if ( !lastValue.equals ( value ) )
-        {
-            Map<String, Variant> attributes = new HashMap<String, Variant> ();
-            attributes.put ( "timestamp", new Variant ( System.currentTimeMillis () ) );
-            _item.updateAttributes ( attributes );
-            lastValue = new Variant ( value );
-        }
+        _item.updateData ( value, null, null );
     }
 }

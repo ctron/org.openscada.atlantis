@@ -41,6 +41,6 @@ public class MemoryItemChained extends DataItemInputOutputChained
     @Override
     protected void writeCalculatedValue ( Variant value )
     {
-        updateValue ( value );
+        updateData ( value, null, null );
     }
 }

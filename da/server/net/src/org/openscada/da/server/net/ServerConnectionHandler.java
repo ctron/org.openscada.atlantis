@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.openscada.core.CancellationNotSupportedException;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
@@ -40,7 +39,6 @@ import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.MessageListener;
-import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.da.handler.ListBrowser;
@@ -52,11 +50,12 @@ import org.openscada.utils.timing.Scheduler;
 public class ServerConnectionHandler extends ConnectionHandlerBase implements ItemChangeListener, FolderListener
 {
 
-    public final static String VERSION = "0.1.6";
+    public final static String VERSION = "0.1.7";
 
     private static Logger _log = Logger.getLogger ( ServerConnectionHandler.class );
 
     private Hive _hive = null;
+
     private Session _session = null;
 
     public ServerConnectionHandler ( Scheduler scheduler, Hive hive )
@@ -143,8 +142,7 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         // if session exists this is an error
         if ( _session != null )
         {
-            getConnection ().sendMessage (
-                    MessageCreator.createFailedMessage ( message, "Connection already bound to a session" ) );
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "Connection already bound to a session" ) );
             return;
         }
 
@@ -158,17 +156,13 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         String clientVersion = props.getProperty ( "client-version", "" );
         if ( clientVersion.equals ( "" ) )
         {
-            getConnection ().sendMessage (
-                    MessageCreator.createFailedMessage ( message,
-                            "client does not pass \"client-version\" property! You may need to upgrade your client!" ) );
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "client does not pass \"client-version\" property! You may need to upgrade your client!" ) );
             return;
         }
         // client version does not match server version
         if ( !clientVersion.equals ( VERSION ) )
         {
-            getConnection ().sendMessage (
-                    MessageCreator.createFailedMessage ( message, "protocol version mismatch: client '" + clientVersion
-                            + "' server: '" + VERSION + "'" ) );
+            getConnection ().sendMessage ( MessageCreator.createFailedMessage ( message, "protocol version mismatch: client '" + clientVersion + "' server: '" + VERSION + "'" ) );
             return;
         }
 
@@ -284,14 +278,9 @@ public class ServerConnectionHandler extends ConnectionHandlerBase implements It
         super.closed ( error );
     }
 
-    public void valueChanged ( String name, Variant value, boolean initial )
+    public void dataChanged ( String itemId, Variant value, Map<String, Variant> attributes, boolean cache )
     {
-        getConnection ().sendMessage ( Messages.notifyValue ( name, value, initial ) );
-    }
-
-    public void attributesChanged ( String name, Map<String, Variant> attributes, boolean initial )
-    {
-        getConnection ().sendMessage ( Messages.notifyAttributes ( name, attributes, initial ) );
+        getConnection ().sendMessage ( Messages.notifyData ( itemId, value, attributes, cache ) );
     }
 
     public void subscriptionChanged ( String item, SubscriptionState subscriptionState )

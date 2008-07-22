@@ -38,6 +38,7 @@ import org.openscada.da.server.browser.common.query.InvisibleStorage;
 import org.openscada.da.server.browser.common.query.ItemDescriptor;
 import org.openscada.da.server.browser.common.query.NameProvider;
 import org.openscada.da.server.browser.common.query.SplitGroupProvider;
+import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.DataItemInputCommon;
 import org.openscada.da.server.common.impl.HiveCommon;
@@ -146,13 +147,12 @@ public class SNMPNode
                 .getMap ()
         );
         
-        _connectionInfoItem.updateValue ( new Variant ( 0 ) );
+        _connectionInfoItem.updateData ( new Variant ( 0 ), null, AttributeMode.UPDATE );
         try
         {
             _connection = new Connection ( _connectionInformation );
             _connection.start ();
             _registered = true;
-            _connectionInfoItem.updateValue ( new Variant ( 1 ) );
             
             _bulkReaderJob = _scheduler.addJob ( new Runnable () {
 
@@ -161,9 +161,10 @@ public class SNMPNode
                     _bulkReader.read ();
                 }}, 1000 );
             
-            _connectionInfoItem.getAttributeManager ().update ( new MapBuilder<String, Variant> ()
+            _connectionInfoItem.updateData ( new Variant ( 1 ), new MapBuilder<String, Variant> ()
                     .put ( "address", new Variant ( _connectionInformation.getAddress () ) )
-                    .getMap ()
+                    .getMap (),
+                    AttributeMode.UPDATE
             );
             
             _mibFolder = new FolderCommon ();
@@ -178,7 +179,7 @@ public class SNMPNode
         }
         catch ( IOException e )
         {
-            _connectionInfoItem.getAttributeManager ().update ( "error", new Variant ( e.getMessage () ) );
+            _connectionInfoItem.updateData ( null, new MapBuilder<String, Variant> ().put ( "error", new Variant ( e.getMessage () ) ).getMap (), AttributeMode.UPDATE );
             _connection = null;
         }
     }

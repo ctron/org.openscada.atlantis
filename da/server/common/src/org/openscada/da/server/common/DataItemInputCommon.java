@@ -28,23 +28,24 @@ import org.openscada.da.core.WriteAttributeResults;
 public class DataItemInputCommon extends DataItemInput
 {
     private Variant _value = new Variant ();
-    private AttributeManager _attributes = null;
-    
-	public DataItemInputCommon ( String name )
-    {
-		super ( name );
-        _attributes = new AttributeManager ( this );
-	}
-	
-	synchronized public Variant readValue () throws InvalidOperationException
-    {
-		return _value;
-	}
 
-	public Map<String, Variant> getAttributes ()
-    {		
-		return _attributes.get ();
-	}
+    private AttributeManager _attributes = null;
+
+    public DataItemInputCommon ( String name )
+    {
+        super ( name );
+        _attributes = new AttributeManager ( this );
+    }
+
+    synchronized public Variant readValue () throws InvalidOperationException
+    {
+        return _value;
+    }
+
+    public Map<String, Variant> getAttributes ()
+    {
+        return _attributes.get ();
+    }
 
     /**
      * Perform requests from the hive to update the items attributes
@@ -62,35 +63,36 @@ public class DataItemInputCommon extends DataItemInput
      * to get the attribute manager which allows you so tweak the
      * items attributes from the side of the item implementation.
      */
-    public WriteAttributeResults setAttributes(Map<String, Variant> attributes)
+    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
     {
         return WriteAttributesHelper.errorUnhandled ( null, attributes );
     }
-	
-	/** Update the value of this data item
-	 * 
-	 * @param value the new value
-	 */
-	synchronized public void updateValue ( Variant value )
-	{
-		if ( !_value.equals ( value ) )
-		{
-			_value = new Variant(value);
-			notifyValue ( value );
-		}
-	}
-	
-    public AttributeManager getAttributeManager ()
+
+    /**
+     * Update the value of this data item
+     * 
+     * @param value the new value
+     */
+    synchronized public void updateData ( Variant value, Map<String, Variant> attributes, AttributeMode mode )
     {
-        return _attributes;
+        if ( !_value.equals ( value ) )
+        {
+            _value = new Variant ( value );
+        }
+        else
+        {
+            value = null;
+        }
+
+        _attributes.update ( value, attributes, mode );
     }
-    
+
     @Override
     protected Map<String, Variant> getCacheAttributes ()
     {
         return _attributes.get ();
     }
-    
+
     @Override
     protected Variant getCacheValue ()
     {

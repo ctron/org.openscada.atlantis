@@ -304,33 +304,32 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         }
     }
 
-    public void notifyValueChange ( Variant value, boolean initial )
+    public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
     {
-        appendConsoleMessage ( "Value change event: " + VariantHelper.toString ( value ) + " "
-                + ( initial ? "initial" : "" ) );
-        setValue ( value );
-    }
-
-    public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
-    {
-        appendConsoleMessage ( "Attribute change set " + ( initial ? "(initial)" : "" ) + " " + attributes.size ()
-                + " item(s) follow:" );
-        int i = 0;
-        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+        if ( value != null )
         {
-            if ( entry.getValue () != null )
+            appendConsoleMessage ( "Value change event: " + VariantHelper.toString ( value ) + " " + ( cache ? "cache" : "" ) );
+            setValue ( value );
+        }
+        if ( attributes != null )
+        {
+            appendConsoleMessage ( "Attribute change set " + ( cache ? "(initial)" : "" ) + " " + attributes.size () + " item(s) follow:" );
+            int i = 0;
+            for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
             {
-                appendConsoleMessage ( "#" + i + ": " + entry.getKey () + "->"
-                        + VariantHelper.toString ( entry.getValue () ) );
+                if ( entry.getValue () != null )
+                {
+                    appendConsoleMessage ( "#" + i + ": " + entry.getKey () + "->" + VariantHelper.toString ( entry.getValue () ) );
+                }
+                else
+                {
+                    appendConsoleMessage ( "#" + i + ":" + entry.getKey () + " <null>" );
+                }
+                i++;
             }
-            else
-            {
-                appendConsoleMessage ( "#" + i + ":" + entry.getKey () + " <null>" );
-            }
-            i++;
         }
     }
-    
+
     public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
     {
         String error = subscriptionError == null ? "<none>" : subscriptionError.getMessage ();

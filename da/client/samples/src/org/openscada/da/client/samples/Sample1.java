@@ -70,21 +70,28 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
 
     public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
     {
-        // Attributes have changed
-        // If it is an "initial" transmission it is a complete set. Otherwise it is only
-        // the set of changed attributes.
-        System.out.println ( String.format ( "Attributes changed for item: %d update(s)%s", attributes.size (), ( initial ? " (cache read)" : "" ) ) );
-        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
-        {
-            System.out.println ( String.format ( "'%s' => '%s'", entry.getKey (), entry.getValue ().toString () ) );
-        }
     }
 
-    public void notifyValueChange ( Variant value, boolean initial )
+    public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
     {
-        // The value has changed
-        // If it is an initial transmission it is not a change but the last change that occurred.
-        System.out.println ( "Value of item changed: " + value.toString () + ( initial ? " (cache read)" : "" ) );
+        if ( value != null )
+        {
+            // The value has changed
+            // If it is an initial transmission it is not a change but the last change that occurred.
+            System.out.println ( "Value of item changed: " + value.toString () + ( cache ? " (cache read)" : "" ) );
+        }
+        if ( attributes != null )
+        {
+            // Attributes have changed
+            // If it is an "initial" transmission it is a complete set. Otherwise it is only
+            // the set of changed attributes.
+            System.out.println ( String.format ( "Attributes changed for item: %d update(s)%s", attributes.size (), ( cache ? " (cache read)" : "" ) ) );
+            for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+            {
+                System.out.println ( String.format ( "'%s' => '%s'", entry.getKey (), entry.getValue ().toString () ) );
+            }
+
+        }
     }
 
     public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )

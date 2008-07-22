@@ -77,68 +77,54 @@ public abstract class DataItemBase implements DataItem
         if ( _listener != null )
         {
             Variant cacheValue = getCacheValue ();
-            if ( cacheValue != null && !cacheValue.isNull () )
+            if ( cacheValue != null && cacheValue.isNull () )
             {
-                notifyValue ( cacheValue, true );
+                cacheValue = null;
             }
-            Map<String,Variant> cacheAttributes = getCacheAttributes ();
-            if ( cacheAttributes != null && cacheAttributes.size () > 0 )
+            Map<String, Variant> cacheAttributes = getCacheAttributes ();
+            if ( cacheAttributes != null && cacheAttributes.isEmpty () )
             {
-                notifyAttributes ( cacheAttributes, true );
+                cacheAttributes = null;
+            }
+            if ( cacheValue != null || cacheAttributes != null )
+            {
+                notifyData ( cacheValue, cacheAttributes, true );
             }
         }
     }
-    
+
     protected Variant getCacheValue ()
     {
         return null;
     }
-    
+
     protected Map<String, Variant> getCacheAttributes ()
     {
         return null;
     }
 
-    protected void notifyValue ( Variant value )
+    /**
+     * Notify a data change without checking for a real change
+     * @param value the value to send
+     * @param attributes the attributes to send
+     */
+    protected void notifyData ( Variant value, Map<String, Variant> attributes )
     {
-        notifyValue ( value, false );
-    }
-    
-    public void notifyValue ( Variant value, boolean cache )
-    {
-        synchronized ( this )
-        {
-            if ( _listener != null )
-            {
-                _listener.valueChanged ( this, value, cache );
-            }
-        }
+        notifyData ( value, attributes, false );
     }
 
     /**
-     * Notify internal listeners ( most commonly the hive ) about
-     * changes in the attribute set.
-     * <p>
-     * If the change set is empty the event will not be forwarded
-     * @param attributes the list of changes made to the attributes
+     * Notify a data change without checking for a real change
+     * @param value the value to send
+     * @param attributes the attributes to send
+     * @param cache cache bit
      */
-    public void notifyAttributes ( Map<String, Variant> attributes )
+    public void notifyData ( Variant value, Map<String, Variant> attributes, boolean cache )
     {
-        notifyAttributes ( attributes, false );
-    }
-    
-    protected void notifyAttributes ( Map<String, Variant> attributes, boolean cache )
-    {
-        if ( attributes.size () <= 0 )
-        {
-            return;
-        }
-
         ItemListener listener = _listener;
         if ( listener != null )
         {
-            listener.attributesChanged ( this, attributes, cache );
+            listener.dataChanged ( this, value, attributes, cache );
         }
     }
-
 }

@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
 import org.openscada.da.server.common.impl.HiveCommon;
@@ -69,7 +70,7 @@ public class NagiosCommand extends CommandBase
         this.stateItem = this.getCommandItemFactory ().createInput ( "state" );
         this.stateItem.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
         // this.stateItem.updateValue ( new Variant ( false ) );
-        this.stateItem.updateAttributes ( new MapBuilder<String, Variant> ().put ( "execution.error", new Variant ( true ) ).getMap () );
+        this.stateItem.updateData ( null, new MapBuilder<String, Variant> ().put ( "execution.error", new Variant ( true ) ).getMap (), AttributeMode.SET );
     }
 
     /**
@@ -98,8 +99,7 @@ public class NagiosCommand extends CommandBase
         }
 
         // now update the data item
-        this.stateItem.updateAttributes ( map );
-        this.stateItem.updateValue ( new Variant ( this.lastState ) );
+        this.stateItem.updateData ( new Variant ( this.lastState ), map, AttributeMode.UPDATE );
     }
 
     @Override

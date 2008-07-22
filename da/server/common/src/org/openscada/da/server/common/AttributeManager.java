@@ -28,55 +28,91 @@ import org.openscada.core.utils.AttributesHelper;
 public class AttributeManager
 {
     private DataItemBase _item = null;
-    private Map < String, Variant > _attributes = null;
-    
+
+    private Map<String, Variant> _attributes = null;
+
     public AttributeManager ( DataItemBase item )
     {
         _item = item;
-        _attributes = new HashMap < String, Variant > ();
+        _attributes = new HashMap<String, Variant> ();
     }
-    
-    public Map < String, Variant > getCopy ()
+
+    public Map<String, Variant> getCopy ()
     {
         synchronized ( _attributes )
         {
-            return new HashMap < String, Variant > ( _attributes );
+            return new HashMap<String, Variant> ( _attributes );
         }
     }
-    
-    public Map < String, Variant > get ()
+
+    public Map<String, Variant> get ()
     {
         synchronized ( _attributes )
         {
             return _attributes;
         }
     }
-    
-    public void update ( Map < String, Variant > updates )
+
+    public void update ( Variant value, Map<String, Variant> updates, AttributeMode mode )
     {
-        Map<String, Variant> diff = new HashMap<String, Variant>();
+        // defaults to "update"
+        if ( mode == null )
+        {
+            mode = AttributeMode.UPDATE;
+        }
+        
+        switch ( mode )
+        {
+        case SET:
+            set ( value, updates );
+            break;
+        case UPDATE:
+            update ( value, updates );
+            break;
+        }
+    }
+
+    public void update ( Variant value, Map<String, Variant> updates )
+    {
+        Map<String, Variant> diff = new HashMap<String, Variant> ();
         synchronized ( _attributes )
         {
             AttributesHelper.mergeAttributes ( _attributes, updates, diff );
-            _item.notifyAttributes ( diff );
+            if ( value != null || !diff.isEmpty () )
+            {
+                if ( diff.isEmpty () )
+                {
+                    // don't send attribute diff if we don't have one
+                    diff = null;
+                }
+                _item.notifyData ( value, diff );
+            }
         }
     }
-    
-    public void set ( Map < String, Variant > values )
+
+    public void set ( Variant value, Map<String, Variant> values )
     {
-        Map<String, Variant> diff = new HashMap<String, Variant>();
+        Map<String, Variant> diff = new HashMap<String, Variant> ();
         synchronized ( _attributes )
         {
             AttributesHelper.set ( _attributes, values, diff );
-            _item.notifyAttributes ( diff );
+            if ( value != null || !diff.isEmpty () )
+            {
+                if ( diff.isEmpty () )
+                {
+                    // don't send attribute diff if we don't have one
+                    diff = null;
+                }
+                _item.notifyData ( value, diff );
+            }
         }
     }
-    
+
     public void update ( String name, Variant value )
     {
-        Map<String, Variant> updates = new HashMap<String,Variant>();
+        Map<String, Variant> updates = new HashMap<String, Variant> ();
         updates.put ( name, value );
-        
-        update ( updates );
+
+        update ( null, updates );
     }
 }

@@ -44,8 +44,11 @@ public class ItemSyncController implements ItemUpdateListener
     private boolean _subscribed = false;
 
     private Variant _cachedValue = new Variant ();
+
     private Map<String, Variant> _cachedAttributes = new HashMap<String, Variant> ();
+
     private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
+
     private Throwable _subscriptionError = null;
 
     /**
@@ -122,8 +125,7 @@ public class ItemSyncController implements ItemUpdateListener
         {
             _listeners.put ( listener, new ListenerInfo ( listener ) );
             listener.notifySubscriptionChange ( _subscriptionState, _subscriptionError );
-            listener.notifyValueChange ( _cachedValue, true );
-            listener.notifyAttributeChange ( _cachedAttributes, true );
+            listener.notifyDataChange ( _cachedValue, _cachedAttributes, true );
 
             triggerSync ();
         }
@@ -209,39 +211,36 @@ public class ItemSyncController implements ItemUpdateListener
         notifySubscriptionChange ( SubscriptionState.DISCONNECTED, e );
     }
 
-    public void notifyValueChange ( Variant value, boolean cache )
+    public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
     {
+        boolean change = false;
+
         synchronized ( this )
         {
-            if ( _cachedValue.equals ( value ) )
+            // update value
+            if ( _cachedValue == null || !_cachedValue.equals ( value ) )
             {
-                return;
+                change = true;
+                _cachedValue = value;
             }
 
-            _cachedValue = value;
-        }
-        
-        for ( ListenerInfo listenerInfo : _listeners.values () )
-        {
-            listenerInfo.getListener ().notifyValueChange ( value, cache );
-        }
-    }
-
-    public void notifyAttributeChange ( Map<String, Variant> attributes, boolean full )
-    {
-        synchronized ( this )
-        {
-            AttributesHelper.mergeAttributes ( _cachedAttributes, attributes, full );
+            // update attributes
+            if ( attributes != null )
+            {
+                if ( !attributes.isEmpty () || cache )
+                {
+                    AttributesHelper.mergeAttributes ( _cachedAttributes, attributes, cache );
+                    change = true;
+                }
+            }
         }
 
-		if ( attributes.isEmpty () )
-		{
-			return;
-		}
-
-        for ( ListenerInfo listenerInfo : _listeners.values () )
+        if ( change )
         {
-            listenerInfo.getListener ().notifyAttributeChange ( attributes, full );
+            for ( ListenerInfo listenerInfo : _listeners.values () )
+            {
+                listenerInfo.getListener ().notifyDataChange ( value, attributes, cache );
+            }
         }
     }
 
@@ -267,10 +266,9 @@ public class ItemSyncController implements ItemUpdateListener
     public synchronized void disconnect ()
     {
         notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
-        notifyValueChange ( new Variant (), true );
-        notifyAttributeChange ( new HashMap<String, Variant> (), true );
+        notifyDataChange ( new Variant (), new HashMap<String, Variant> (), true );
     }
-    
+
     @Override
     protected void finalize () throws Throwable
     {

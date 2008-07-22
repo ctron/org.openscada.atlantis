@@ -82,8 +82,8 @@ public class LoadAverageJob implements Runnable {
 		
 		StringTokenizer tok = new StringTokenizer ( data[0] );
 		
-		_avg1.updateValue ( new Variant ( Double.parseDouble ( tok.nextToken() ) ) );
-		_avg5.updateValue ( new Variant ( Double.parseDouble ( tok.nextToken() ) ) );
-		_avg15.updateValue ( new Variant ( Double.parseDouble ( tok.nextToken() ) ) );
+		_avg1.updateData ( new Variant ( Double.parseDouble ( tok.nextToken() ) ), null, null );
+		_avg5.updateData ( new Variant ( Double.parseDouble ( tok.nextToken() ) ), null, null );
+		_avg15.updateData ( new Variant ( Double.parseDouble ( tok.nextToken() ) ), null, null );
 	}
 }

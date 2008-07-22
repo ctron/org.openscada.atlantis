@@ -9,6 +9,7 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.MemoryItemChained;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
@@ -36,7 +37,7 @@ public class TestItem2 extends MemoryItemChained
         {
             attr.put ( "test.error", new Variant ( value ) );
         }
-        updateAttributes ( attr );
+        updateData ( null, attr, AttributeMode.UPDATE );
     }
 
 }

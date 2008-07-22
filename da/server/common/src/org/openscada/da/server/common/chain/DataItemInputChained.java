@@ -27,36 +27,78 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
+import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.server.DataItemInformation;
+import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
 
 public class DataItemInputChained extends DataItemBaseChained
 {
     protected Variant _primaryValue = new Variant ();
+
     protected Variant _secondaryValue = new Variant ();
-    
-    protected boolean _filterNoChange = true;
 
     public DataItemInputChained ( DataItemInformation dataItemInformation )
     {
+        this ( dataItemInformation, true );
+    }
+    
+    public DataItemInputChained ( DataItemInformation dataItemInformation, boolean autoTimestamp )
+    {
         super ( dataItemInformation );
+        if ( autoTimestamp )
+        {
+            addChainElement ( IODirection.INPUT, new AutoTimestampChainItem () );
+        }
     }
 
     public DataItemInputChained ( String id )
     {
-        this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT ) ) );
+        this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT ) ), true );
     }
 
-    public synchronized void updateValue ( Variant value )
+    /**
+     * Update the item data
+     * @param value the new value, or <code>null</code> if the value did not change
+     * @param attributes the new attributes, <code>null</code> if no attribute have changed
+     * @param mode The attribute change mode, <code>null</code> will use the default ( {@link AttributeMode#UPDATE} )
+     */
+    public synchronized void updateData ( Variant value, Map<String, Variant> attributes, AttributeMode mode )
     {
-        if ( _filterNoChange && _primaryValue.equals ( value ) )
+        boolean changed = false;
+
+        // handle value change
+        if ( value != null && !_primaryValue.equals ( value ) )
         {
-            return;
+            _primaryValue = new Variant ( value );
+            changed = true;
         }
 
-        _primaryValue = new Variant ( value );
-        process ();
+        // change attribute change
+        if ( attributes != null )
+        {
+            if ( mode == null )
+            {
+                mode = AttributeMode.UPDATE;
+            }
+
+            Map<String, Variant> diff = new HashMap<String, Variant> ();
+            if ( mode == AttributeMode.SET )
+            {
+                AttributesHelper.set ( _primaryAttributes, attributes, diff );
+            }
+            else
+            {
+                AttributesHelper.mergeAttributes ( _primaryAttributes, attributes, diff );
+            }
+            changed = changed || !diff.isEmpty ();
+        }
+
+        if ( changed )
+        {
+            process ();
+        }
     }
 
     @Override
@@ -73,12 +115,13 @@ public class DataItemInputChained extends DataItemBaseChained
             }
         }
 
-        if ( (!_filterNoChange) || (!_secondaryValue.equals ( newSecondaryValue )) )
+        Variant newValue = null;
+        if ( !_secondaryValue.equals ( newSecondaryValue ) )
         {
-            _secondaryValue = new Variant ( newSecondaryValue );
-            notifyValue ( _secondaryValue );
+            newValue = _secondaryValue = new Variant ( newSecondaryValue );
         }
-        _secondaryAttributes.set ( primaryAttributes );
+
+        _secondaryAttributes.set ( newValue, primaryAttributes );
     }
 
     public Variant readValue () throws InvalidOperationException
@@ -96,31 +139,11 @@ public class DataItemInputChained extends DataItemBaseChained
     {
         return _secondaryAttributes.get ();
     }
-    
+
     @Override
     protected Variant getCacheValue ()
     {
         return _secondaryValue;
-    }
-    
-    public boolean isFilterNoChange ()
-    {
-        return _filterNoChange;
-    }
-
-    /**
-     * Set the state of the "no change" filter.
-     * 
-     * <br/>
-     * If the noChange filter it set to <code>true</code> (the default) update calls
-     * with the value already set will be ignored and do not generate a value event.
-     * If the noChange filter is set to <code>false</code> then each update call, also
-     * if the value did not change, will generate update events. 
-     * @param filterNoChange new state of the nochange filter
-     */
-    public void setFilterNoChange ( boolean filterNoChange )
-    {
-        _filterNoChange = filterNoChange;
     }
 
 }

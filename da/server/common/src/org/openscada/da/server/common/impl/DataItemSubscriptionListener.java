@@ -5,11 +5,18 @@ import java.util.Map;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionListener;
 import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.da.core.server.ItemChangeListener;
 import org.openscada.da.server.common.DataItem;
 
+/**
+ * A subscription listener for data items
+ * <p>
+ * Interface is analogues to {@link ItemChangeListener}
+ * @author Jens Reimann
+ *
+ */
 public interface DataItemSubscriptionListener extends SubscriptionListener
 {
     public void updateStatus ( Object topic, SubscriptionState subscriptionState );
-    public void attributesChanged ( DataItem item, Map<String, Variant> attributes, boolean full );
-    public void valueChanged ( DataItem item, Variant value, boolean cache );
+    public void dataChanged ( DataItem item, Variant value, Map<String, Variant> attributes, boolean cache );
 }

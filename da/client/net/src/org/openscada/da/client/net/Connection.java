@@ -89,7 +89,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         } );
     }
 
-    public static final String VERSION = "0.1.6";
+    public static final String VERSION = "0.1.7";
 
     private static Logger _log = Logger.getLogger ( Connection.class );
 
@@ -113,19 +113,11 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
     private void init ()
     {
 
-        _client.getMessageProcessor ().setHandler ( Messages.CC_NOTIFY_VALUE, new MessageListener () {
+        _client.getMessageProcessor ().setHandler ( Messages.CC_NOTIFY_DATA, new MessageListener () {
 
             public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message )
             {
-                notifyValueChange ( message );
-            }
-        } );
-
-        _client.getMessageProcessor ().setHandler ( Messages.CC_NOTIFY_ATTRIBUTES, new MessageListener () {
-
-            public void messageReceived ( org.openscada.net.io.net.Connection connection, Message message )
-            {
-                notifyAttributesChange ( message );
+                notifyDataChange ( message );
             }
         } );
 
@@ -217,56 +209,65 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         }
     }
 
-    private void fireValueChange ( String itemName, Variant value, boolean initial )
+    private void fireDataChange ( String itemName, Variant value, Map<String, Variant> attributes, boolean cache )
     {
-        synchronized ( _itemListeners )
+        ItemUpdateListener listener = _itemListeners.get ( itemName );
+        if ( listener != null )
         {
-            ItemUpdateListener listener = _itemListeners.get ( itemName );
-            if ( listener != null )
-            {
-                listener.notifyValueChange ( value, initial );
-            }
+            listener.notifyDataChange ( value, attributes, cache );
         }
     }
-
-    private void fireAttributesChange ( String itemName, Map<String, Variant> attributes, boolean initial )
+    
+    private void notifyDataChange ( Message message )
     {
-        synchronized ( _itemListeners )
+        boolean cache = message.getValues ().containsKey ( "cache-read" );
+        String itemId = message.getValues ().get ( "item-id" ).toString ();
+        
+        Variant value = decodeValueChange ( message );
+        Map<String, Variant> attributes = decodeAttributeChange ( message );
+        
+        if ( cache && value == null )
         {
-            ItemUpdateListener listener = _itemListeners.get ( itemName );
-            if ( listener != null )
-            {
-                listener.notifyAttributeChange ( attributes, initial );
-            }
+            // we need a value if we read from cache
+            value = new Variant ();
         }
+        if ( cache && attributes == null )
+        {
+            // we need attributes if we read from cache
+            attributes = new HashMap<String, Variant> ();
+        }
+        
+        fireDataChange ( itemId, value, attributes, cache );
+        // fireValueChange ( itemName, value, initial );
+        // fireAttributesChange ( itemName, attributes, initial );
     }
 
-    private void notifyValueChange ( Message message )
+    /**
+     * Decode the value change information from a "notify data" message 
+     * @param message the message 
+     * @return the decoded value or <code>null</code> if no value was encoded
+     */
+    private Variant decodeValueChange ( Message message )
     {
-        Variant value = new Variant ();
-
-        // extract initial bit
-        boolean initial = message.getValues ().containsKey ( "cache-read" );
-
         if ( message.getValues ().containsKey ( "value" ) )
         {
-            value = MessageHelper.valueToVariant ( message.getValues ().get ( "value" ), null );
+            return MessageHelper.valueToVariant ( message.getValues ().get ( "value" ), null );
         }
-
-        String itemName = message.getValues ().get ( "item-id" ).toString ();
-        fireValueChange ( itemName, value, initial );
+        return null;
     }
 
-    private void notifyAttributesChange ( Message message )
+    /**
+     * Decode the attributes from a "notify data" message
+     * @param message the message
+     * @return the decoded attributes or <code>null</code> if no attribute changed 
+     */
+    private Map<String, Variant> decodeAttributeChange ( Message message )
     {
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        // extract initial bit
-        boolean initial = message.getValues ().containsKey ( "cache-read" );
-
-        if ( message.getValues ().get ( "set" ) instanceof MapValue )
+        if ( message.getValues ().get ( "attributes-set" ) instanceof MapValue )
         {
-            MapValue setEntries = (MapValue)message.getValues ().get ( "set" );
+            MapValue setEntries = (MapValue)message.getValues ().get ( "attributes-set" );
             for ( Map.Entry<String, Value> entry : setEntries.getValues ().entrySet () )
             {
                 Variant variant = Messages.valueToVariant ( entry.getValue (), null );
@@ -275,9 +276,9 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
             }
         }
 
-        if ( message.getValues ().get ( "unset" ) instanceof ListValue )
+        if ( message.getValues ().get ( "attributes-unset" ) instanceof ListValue )
         {
-            ListValue unsetEntries = (ListValue)message.getValues ().get ( "unset" );
+            ListValue unsetEntries = (ListValue)message.getValues ().get ( "attributes-unset" );
             for ( Value entry : unsetEntries.getValues () )
             {
                 if ( entry instanceof StringValue )
@@ -285,8 +286,11 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
             }
         }
 
-        String itemName = message.getValues ().get ( "item-id" ).toString ();
-        fireAttributesChange ( itemName, attributes, initial );
+        if ( attributes.isEmpty () )
+        {
+            return null;
+        }
+        return attributes;
     }
 
     private void performBrowseEvent ( Message message )

@@ -363,25 +363,26 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
         }
     }
 
-    public void notifyValueChange ( Variant value, boolean initial )
+    public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean initial )
     {
-        appendConsoleMessage ( "Value change event: " + value.asString ( "<null>" ) + " " + ( initial ? "initial" : "" ) );
-        setValue ( value );
-    }
-
-    public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
-    {
-        appendConsoleMessage ( "Attribute change set " + ( initial ? "(initial)" : "" ) + " " + attributes.size ()
-                + " item(s) follow:" );
-        int i = 0;
-        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+        if ( value != null )
         {
-            String q = entry.getValue ().isNull () ? "" : "'";
-            appendConsoleMessage ( "#" + i + ": " + entry.getKey () + "->" + q + entry.getValue ().asString ( "<null>" )
-                    + q );
+            appendConsoleMessage ( "Value change event: " + value.asString ( "<null>" ) + " " + ( initial ? "initial" : "" ) );
+            setValue ( value );
+
+        }
+        if ( attributes != null )
+        {
+            appendConsoleMessage ( "Attribute change set " + ( initial ? "(initial)" : "" ) + " " + attributes.size () + " item(s) follow:" );
+            int i = 0;
+            for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+            {
+                String q = entry.getValue ().isNull () ? "" : "'";
+                appendConsoleMessage ( "#" + i + ": " + entry.getKey () + "->" + q + entry.getValue ().asString ( "<null>" ) + q );
+            }
         }
     }
-    
+
     public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
     {
         String error = subscriptionError == null ? "<none>" : subscriptionError.getMessage ();

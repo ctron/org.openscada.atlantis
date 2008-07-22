@@ -134,9 +134,9 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
 
     protected void setOpenStates ( boolean open, boolean close )
     {
-        _openInput.updateValue ( new Variant ( open ) );
-        _closeInput.updateValue ( new Variant ( close ) );
-        _transitInput.updateValue ( new Variant ( isTransit () ) );
+        _openInput.updateData ( new Variant ( open ), null, null );
+        _closeInput.updateData ( new Variant ( close ), null, null );
+        _transitInput.updateData ( new Variant ( isTransit () ), null, null );
     }
 
     protected synchronized void update ()
@@ -151,24 +151,24 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
             {
             case CLOSED:
                 setOpenStates ( false, true );
-                _percentInput.updateValue ( new Variant ( 0.0 ) );
+                _percentInput.updateData ( new Variant ( 0.0 ), null, null );
                 break;
             case OPENED:
                 setOpenStates ( true, false );
-                _percentInput.updateValue ( new Variant ( 1.0 ) );
+                _percentInput.updateData ( new Variant ( 1.0 ), null, null );
                 break;
             case TRANSIT_CLOSE:
                 setOpenStates ( false, false );
-                _percentInput.updateValue ( new Variant ( ( (double)_switchRunning / (double)_switchTime ) ) );
+                _percentInput.updateData ( new Variant ( ( (double)_switchRunning / (double)_switchTime ) ), null, null );
                 break;
             case TRANSIT_OPEN:
                 setOpenStates ( false, false );
-                _percentInput.updateValue ( new Variant ( 1 - ( (double)_switchRunning / (double)_switchTime ) ) );
+                _percentInput.updateData ( new Variant ( 1 - ( (double)_switchRunning / (double)_switchTime ) ), null, null );
                 break;
             }
         }
-        _errorInput.updateValue ( new Variant ( _error ) );
-        _runtimeInput.updateValue ( new Variant ( _switchRunning ) );
+        _errorInput.updateData ( new Variant ( _error ), null, null );
+        _runtimeInput.updateData ( new Variant ( _switchRunning ), null, null );
 
     }
 

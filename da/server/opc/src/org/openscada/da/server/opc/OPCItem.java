@@ -31,6 +31,7 @@ import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.server.DataItemInformation;
+import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.SuspendableDataItem;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 import org.openscada.opc.lib.da.AccessStateListener;
@@ -177,8 +178,7 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
         _connection.getAccess ().removeStateListener ( this );
         stateChanged ( false );
 
-        clearAttributes ();
-        updateValue ( (ItemState)null );
+        updateData ( new Variant (), new HashMap<String, Variant> (), AttributeMode.SET );
     }
 
     public synchronized void wakeup ()
@@ -290,19 +290,14 @@ public class OPCItem extends DataItemInputOutputChained implements DataCallback,
             attributes.put ( OPC_ATTRIBUTE_VALUE_ERROR, new Variant ( true ) );
         }
 
-        // definition is to first write the attributes and then the value
-        updateAttributes ( attributes );
-        if ( newValue != null )
-        {
-            updateValue ( newValue );
-        }
+        updateData ( newValue, attributes, AttributeMode.UPDATE );
     }
 
     protected void updateAttribute ( String name, Variant value )
     {
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( name, value );
-        updateAttributes ( attributes );
+        updateData ( null, attributes, AttributeMode.UPDATE );
     }
 
     /**

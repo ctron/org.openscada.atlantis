@@ -81,17 +81,6 @@ public class SessionCommon implements Session, DataItemSubscriptionListener
     }
     
     // Data item listener stuff
-
-    public void attributesChanged ( DataItem item, Map<String, Variant> attributes, boolean full )
-    {
-        ItemChangeListener listener;
-        
-        if ( ( listener = _listener ) != null )
-        {
-            listener.attributesChanged ( item.getInformation ().getName (), attributes, full );
-        }
-    }
-
     public void updateStatus ( Object topic, SubscriptionState subscriptionState )
     {
         ItemChangeListener listener;
@@ -102,13 +91,13 @@ public class SessionCommon implements Session, DataItemSubscriptionListener
         }
     }
 
-    public void valueChanged ( DataItem item, Variant value, boolean cache )
+    public void dataChanged ( DataItem item, Variant value, Map<String, Variant> attributes, boolean cache )
     {
         ItemChangeListener listener;
         
         if ( ( listener = _listener ) != null )
         {
-            listener.valueChanged ( item.getInformation ().getName (), value, cache );
+            listener.dataChanged ( item.getInformation ().getName (), value, attributes, cache );
         }
     }
 

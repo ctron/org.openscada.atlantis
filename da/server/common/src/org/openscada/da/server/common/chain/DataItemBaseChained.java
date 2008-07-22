@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.openscada.core.Variant;
-import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
@@ -56,6 +55,7 @@ public abstract class DataItemBaseChained extends DataItemBase
         _secondaryAttributes = new AttributeManager ( this );
     }
 
+    /*
     public void updateAttributes ( Map<String, Variant> attributes )
     {
         synchronized ( _primaryAttributes )
@@ -69,11 +69,13 @@ public abstract class DataItemBaseChained extends DataItemBase
             }
         }
     }
+    */
     
     /**
      * Remove all attributes
      *
      */
+    /*
     public void clearAttributes ()
     {
         synchronized ( _primaryAttributes )
@@ -85,6 +87,7 @@ public abstract class DataItemBaseChained extends DataItemBase
             }
         }
     }
+    */
 
     public Map<String, Variant> getAttributes ()
     {

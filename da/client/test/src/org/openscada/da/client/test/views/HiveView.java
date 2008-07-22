@@ -46,7 +46,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.openscada.da.client.test.Openscada_da_client_testPlugin;
@@ -56,7 +55,6 @@ import org.openscada.da.client.test.dnd.ItemTransfer;
 import org.openscada.da.client.test.impl.FolderEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.client.test.impl.HiveRepository;
-
 
 /**
  * This sample class demonstrates how to plug-in a new
@@ -79,31 +77,31 @@ import org.openscada.da.client.test.impl.HiveRepository;
 public class HiveView extends ViewPart implements Observer
 {
     public static final String VIEW_ID = "org.openscada.da.client.test.views.HiveView";
-    
+
     private static Logger _log = Logger.getLogger ( HiveView.class );
-    
+
     private TreeViewer _viewer;
-    private DrillDownAdapter drillDownAdapter;
-    
+
     private IViewActionDelegate connectAction;
+
     private Action propertiesAction;
-    
+
     private HiveRepository _repository;
-    
+
     class NameSorter extends ViewerSorter
     {
     }
-    
+
     /**
      * The constructor.
      */
-    public HiveView()
+    public HiveView ()
     {
         _repository = Openscada_da_client_testPlugin.getRepository ();
         _repository.addObserver ( this );
         registerAllConnections ();
     }
-    
+
     @Override
     public void dispose ()
     {
@@ -111,7 +109,7 @@ public class HiveView extends ViewPart implements Observer
         _repository.deleteObserver ( this );
         super.dispose ();
     }
-    
+
     public void update ( Observable o, Object arg )
     {
         _log.debug ( "Update: " + o + " / " + arg );
@@ -123,38 +121,39 @@ public class HiveView extends ViewPart implements Observer
         {
             if ( arg instanceof FolderEntry )
             {
-                refreshForFolder ( (FolderEntry)arg  );
+                refreshForFolder ( (FolderEntry)arg );
             }
             else
                 triggerUpdateRepository ( o );
         }
     }
-    
+
     private void refreshForFolder ( FolderEntry folder )
     {
         if ( folder == null )
             return;
-        
+
         if ( folder.getParent () == null )
             triggerUpdateRepository ( folder.getConnection () );
         else
             triggerUpdateRepository ( folder );
     }
-    
+
     public void triggerUpdateRepository ( final Object arg0 )
     {
         if ( !_viewer.getControl ().isDisposed () )
         {
-            _viewer.getControl().getDisplay().asyncExec(new Runnable(){
+            _viewer.getControl ().getDisplay ().asyncExec ( new Runnable () {
 
                 public void run ()
                 {
-                    if ( !_viewer.getControl().isDisposed() )
+                    if ( !_viewer.getControl ().isDisposed () )
                         performUpdateRepository ( arg0 );
-                }});
+                }
+            } );
         }
     }
-    
+
     private void performUpdateRepository ( Object arg0 )
     {
         _log.debug ( "Perform update on: " + arg0 );
@@ -169,7 +168,7 @@ public class HiveView extends ViewPart implements Observer
             _viewer.refresh ( arg0, true );
         }
     }
-    
+
     /**
      * This is a callback that will allow us
      * to create the viewer and initialize it.
@@ -177,74 +176,74 @@ public class HiveView extends ViewPart implements Observer
     public void createPartControl ( Composite parent )
     {
         _viewer = new TreeViewer ( parent, SWT.H_SCROLL | SWT.V_SCROLL );
-        drillDownAdapter = new DrillDownAdapter(_viewer);
         _viewer.setContentProvider ( new HiveViewContentProvider () );
         _viewer.setLabelProvider ( new HiveViewLabelProvider () );
-        _viewer.setSorter ( new NameSorter() );
+        _viewer.setSorter ( new NameSorter () );
         _viewer.setInput ( _repository );
-        
+
         addDragSupport ();
-        
+
         makeActions ();
         hookContextMenu ();
         hookDoubleClickAction ();
         contributeToActionBars ();
-        
+
         getViewSite ().setSelectionProvider ( _viewer );
     }
-    
+
     private void addDragSupport ()
     {
         _viewer.addDragSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance () }, new ItemDragSourceListener ( _viewer ) );
     }
-    
-    private void hookContextMenu()
+
+    private void hookContextMenu ()
     {
         MenuManager menuMgr = new MenuManager ( "#PopupMenu" );
-        menuMgr.setRemoveAllWhenShown(true);
-        menuMgr.addMenuListener(new IMenuListener() {
-            public void menuAboutToShow(IMenuManager manager) {
-                HiveView.this.fillContextMenu(manager);
+        menuMgr.setRemoveAllWhenShown ( true );
+        menuMgr.addMenuListener ( new IMenuListener () {
+            public void menuAboutToShow ( IMenuManager manager )
+            {
+                HiveView.this.fillContextMenu ( manager );
             }
-        });
-        Menu menu = menuMgr.createContextMenu(_viewer.getControl());
-        _viewer.getControl().setMenu(menu);
-        getSite().registerContextMenu(menuMgr, _viewer);
+        } );
+        Menu menu = menuMgr.createContextMenu ( _viewer.getControl () );
+        _viewer.getControl ().setMenu ( menu );
+        getSite ().registerContextMenu ( menuMgr, _viewer );
     }
-    
-    private void contributeToActionBars()
+
+    private void contributeToActionBars ()
     {
-        IActionBars bars = getViewSite().getActionBars();
-        fillLocalPullDown(bars.getMenuManager());
-        fillLocalToolBar(bars.getToolBarManager());
+        IActionBars bars = getViewSite ().getActionBars ();
+        fillLocalPullDown ( bars.getMenuManager () );
+        fillLocalToolBar ( bars.getToolBarManager () );
     }
-    
-    private void fillLocalPullDown(IMenuManager manager)
+
+    private void fillLocalPullDown ( IMenuManager manager )
     {
         //manager.add(connectAction);
         //manager.add(new Separator());
     }
-    
-    private void fillContextMenu(IMenuManager manager)
+
+    private void fillContextMenu ( IMenuManager manager )
     {
         //manager.add(connectAction);
         //manager.add(new Separator());
         //drillDownAdapter.addNavigationActions ( manager );
         // Other plug-ins can contribute there actions here
-        
+
         manager.add ( new Separator ( IWorkbenchActionConstants.MB_ADDITIONS ) );
         manager.add ( new Separator () );
         manager.add ( propertiesAction );
     }
-    
-    private void fillLocalToolBar(IToolBarManager manager)
+
+    private void fillLocalToolBar ( IToolBarManager manager )
     {
         //manager.add(connectAction);
         //manager.add(new Separator());
         //drillDownAdapter.addNavigationActions ( manager );
     }
-    
-    private void makeActions()
+
+    private void makeActions ()
     {
         // Connect Action
 
@@ -259,9 +258,9 @@ public class HiveView extends ViewPart implements Observer
         connectAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
                 getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
         */
-        connectAction = new ConnectHiveAction();
+        connectAction = new ConnectHiveAction ();
         propertiesAction = new PropertyDialogAction ( new SameShellProvider ( getViewSite ().getShell () ), _viewer );
-        _viewer.addSelectionChangedListener ( new ISelectionChangedListener() {
+        _viewer.addSelectionChangedListener ( new ISelectionChangedListener () {
 
             public void selectionChanged ( SelectionChangedEvent event )
             {
@@ -274,47 +273,48 @@ public class HiveView extends ViewPart implements Observer
                 {
                     propertiesAction.setEnabled ( false );
                 }
-            }} );
+            }
+        } );
     }
-    
-    private void hookDoubleClickAction()
+
+    private void hookDoubleClickAction ()
     {
-        _viewer.addDoubleClickListener ( new IDoubleClickListener()
-        {
+        _viewer.addDoubleClickListener ( new IDoubleClickListener () {
             public void doubleClick ( DoubleClickEvent event )
             {
                 connectAction.selectionChanged ( null, event.getSelection () );
                 connectAction.run ( null );
             }
-        });
+        } );
     }
-   
+
     /**
      * Passing the focus request to the viewer's control.
      */
-    public void setFocus()
+    public void setFocus ()
     {
         _viewer.getControl ().setFocus ();
     }
-    
+
     synchronized private void unregisterAllConnections ()
     {
-        for ( HiveConnection connection : _repository.getConnections() )
+        for ( HiveConnection connection : _repository.getConnections () )
         {
             connection.deleteObserver ( this );
         }
     }
-    
+
     synchronized private void registerAllConnections ()
     {
-        unregisterAllConnections();
-        
-        for ( HiveConnection connection : _repository.getConnections() )
+        unregisterAllConnections ();
+
+        for ( HiveConnection connection : _repository.getConnections () )
         {
             connection.addObserver ( this );
         }
     }
-    
+
+    @SuppressWarnings("unchecked")
     @Override
     public Object getAdapter ( Class adapter )
     {

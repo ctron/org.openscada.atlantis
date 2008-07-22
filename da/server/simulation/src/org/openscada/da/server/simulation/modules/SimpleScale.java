@@ -50,10 +50,9 @@ public class SimpleScale extends BaseModule
         } );
         
         _valueInput = getInput ( "value", attributes );
-        _valueInput.setFilterNoChange ( false );
         _errorInput = getInput ( "error", attributes );
         _activeInput = getInput ( "active", new MapBuilder<String, Variant> ( attributes ).put ( "description", new Variant ( "An indicator if a weight process is active. True means: active, false: not active" ) ).getMap () );
-        _activeInput.updateValue ( new Variant ( false ) );
+        _activeInput.updateData ( new Variant ( false ), null, null );
     }
 
     protected synchronized void startWeight ()
@@ -77,8 +76,7 @@ public class SimpleScale extends BaseModule
         int delay = _minDelay + _random.nextInt ( _maxDelay - _minDelay );
         _log.debug ( String.format ( "Weight delay: %d", delay ) );
         
-        _activeInput.updateValue ( new Variant ( true ) );
-        _activeInput.updateAttributes ( new MapBuilder<String, Variant> ().put ( "sim.scale.last-delay", new Variant ( delay ) ).getMap () );
+        _activeInput.updateData ( new Variant ( true ), new MapBuilder<String, Variant> ().put ( "sim.scale.last-delay", new Variant ( delay ) ).getMap (), null );
         
         try
         {
@@ -101,21 +99,21 @@ public class SimpleScale extends BaseModule
             finishWeight ( weight );    
         }
         
-        _activeInput.updateValue ( new Variant ( false ) );
+        _activeInput.updateData ( new Variant ( false ), null, null );
         
         _thread = null;
     }
     
     protected void finishWeight ( int value )
     {
-        _valueInput.updateValue ( new Variant ( value ) );
-        _errorInput.updateValue ( new Variant () );
+        _valueInput.updateData ( new Variant ( value ), null, null );
+        _errorInput.updateData ( new Variant (), null, null );
     }
     
     protected void finishWithError ( int errorCode )
     {
-        _valueInput.updateValue ( new Variant () );
-        _errorInput.updateValue ( new Variant ( errorCode ) );
+        _valueInput.updateData ( new Variant (), null, null );
+        _errorInput.updateData ( new Variant ( errorCode ), null, null );
     }
 
 }

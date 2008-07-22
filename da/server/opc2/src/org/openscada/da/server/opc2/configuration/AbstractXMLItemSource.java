@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.opc.configuration.InitialItemType;
 import org.openscada.da.opc.configuration.InitialItemsType;
+import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.DataItemCommand.Listener;
 import org.openscada.da.server.common.chain.DataItemInputChained;
@@ -127,8 +128,7 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
         attributes.put ( "error", new Variant ( true ) );
         attributes.put ( "error.message", new Variant ( e.getMessage () ) );
         
-        this.stateItem.updateValue ( new Variant ( "ERROR" ) );
-        this.stateItem.updateAttributes ( attributes );
+        this.stateItem.updateData ( new Variant ( "ERROR" ), attributes, AttributeMode.UPDATE );
     }
     
     private void setSuccessState ( String state )
@@ -137,8 +137,7 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
         attributes.put ( "error", null );
         attributes.put ( "error.message", null );
         
-        this.stateItem.updateValue ( new Variant ( state ) );
-        this.stateItem.updateAttributes ( attributes );
+        this.stateItem.updateData ( new Variant ( state ), attributes, AttributeMode.UPDATE );
     }
 
 }

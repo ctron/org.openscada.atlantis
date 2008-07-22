@@ -578,7 +578,7 @@ public class Connection implements org.openscada.da.client.Connection
         }
     }
 
-    public void attributesChange ( final String itemId, final Map<String, Variant> attributes, final boolean full )
+    public void dataChange ( final String itemId, final Variant value, final Map<String, Variant> attributes, final boolean full )
     {
         synchronized ( _eventQueue )
         {
@@ -586,22 +586,7 @@ public class Connection implements org.openscada.da.client.Connection
 
                 public void run ()
                 {
-                    fireAttributesChange ( itemId, attributes, full );
-                }
-            } );
-            _eventQueue.notify ();
-        }
-    }
-
-    public void valueChange ( final String itemId, final Variant variant, final boolean cache )
-    {
-        synchronized ( _eventQueue )
-        {
-            _eventQueue.add ( new Runnable () {
-
-                public void run ()
-                {
-                    fireValueChange ( itemId, variant, cache );
+                    fireDataChange ( itemId, value, attributes, full );
                 }
             } );
             _eventQueue.notify ();
@@ -623,21 +608,12 @@ public class Connection implements org.openscada.da.client.Connection
         }
     }
 
-    protected synchronized void fireAttributesChange ( String itemId, Map<String, Variant> attributes, boolean full )
+    protected synchronized void fireDataChange ( String itemId, Variant variant, Map<String, Variant> attributes, boolean cache )
     {
         ItemUpdateListener listener = _itemListenerMap.get ( itemId );
         if ( listener != null )
         {
-            listener.notifyAttributeChange ( attributes, full );
-        }
-    }
-
-    protected synchronized void fireValueChange ( String itemId, Variant variant, boolean cache )
-    {
-        ItemUpdateListener listener = _itemListenerMap.get ( itemId );
-        if ( listener != null )
-        {
-            listener.notifyValueChange ( variant, cache );
+            listener.notifyDataChange ( variant, attributes, cache );
         }
     }
 

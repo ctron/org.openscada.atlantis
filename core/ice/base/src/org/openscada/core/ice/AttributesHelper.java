@@ -10,11 +10,12 @@ import OpenSCADA.Core.VariantBase;
 
 public class AttributesHelper
 {
+    @SuppressWarnings("unchecked")
     public static Map<String, Variant> fromIce ( Map attributes )
     {
         Map<String, Variant> values = new HashMap<String, Variant> ();
         
-        Iterator i = attributes.entrySet ().iterator ();
+        Iterator<?> i = attributes.entrySet ().iterator ();
         while ( i.hasNext () )
         {
             Map.Entry entry = (Map.Entry)i.next ();

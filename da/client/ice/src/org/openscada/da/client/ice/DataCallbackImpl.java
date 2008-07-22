@@ -42,16 +42,11 @@ public class DataCallbackImpl extends _DataCallbackDisp
         _connection = connection;
     } 
    
-    public void attributesChange ( String item, Map attributes, boolean full, Current __current )
+    @SuppressWarnings("unchecked")
+    public void dataChange ( String item, VariantBase value, Map attributes, boolean cache, Current __current )
     {
-        _log.debug ( String.format ( "Attribute change: '%s' (%s)", full, item ) );
-        _connection.attributesChange ( item, AttributesHelper.fromIce ( attributes ), full );
-    }
-
-    public void valueChange ( String item, VariantBase value, boolean cache, Current __current )
-    {
-        _log.debug ( String.format ( "Value change: '%s' (%s)", item, cache ) );
-        _connection.valueChange ( item, VariantHelper.fromIce ( value ), cache );
+        _log.debug ( String.format ( "Data change: '%s' (%s)", cache, item ) );
+        _connection.dataChange ( item, VariantHelper.fromIce ( value ), AttributesHelper.fromIce ( attributes ), cache );
     }
 
     public void subscriptionChange ( String item, SubscriptionState subscriptionState, Current __current )

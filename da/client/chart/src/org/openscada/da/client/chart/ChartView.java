@@ -33,6 +33,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
     public final static String VIEW_ID = "org.openscada.da.client.chart.ChartView";
 
     private ChartComposite _frame = null;
+
     private JFreeChart _chart = null;
 
     private HiveConnection _connection = null;
@@ -40,9 +41,11 @@ public class ChartView extends ViewPart implements ItemUpdateListener
     private String _item;
 
     private TimeSeriesCollection _dataset;
+
     private TimeSeries _series;
 
     private RegularTimePeriod _lastTimestamp = null;
+
     private IntervalMarker _errorMarker = null;
 
     public ChartView ()
@@ -60,8 +63,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
             _series = new TimeSeries ( "Values", FixedMillisecond.class );
             _dataset.addSeries ( _series );
 
-            _chart = ChartFactory.createTimeSeriesChart ( "Data Item Chart", "Time", "Value", _dataset, false, true,
-                    false );
+            _chart = ChartFactory.createTimeSeriesChart ( "Data Item Chart", "Time", "Value", _dataset, false, true, false );
 
             _lastTimestamp = new FixedMillisecond ( Calendar.getInstance ().getTime () );
 
@@ -125,29 +127,32 @@ public class ChartView extends ViewPart implements ItemUpdateListener
         _connection.getItemManager ().addItemUpdateListener ( _item, this );
     }
 
-    public void notifyAttributeChange ( Map<String, Variant> attributes, boolean full )
-    {
-        if ( attributes.containsKey ( "error" ) )
-        {
-            RegularTimePeriod time = new FixedMillisecond ( Calendar.getInstance ().getTime () );
-            if ( attributes.get ( "error" ) == null )
-            {
-                triggerError ( false, time );
-            }
-            else
-            {
-                triggerError ( attributes.get ( "error" ).asBoolean (), time );
-            }
-        }
-    }
-
     public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
     {
     }
-
-    public void notifyValueChange ( Variant value, boolean cache )
+    
+    public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
     {
-        triggerUpdate ( value );
+        if ( value != null )
+        {
+            triggerUpdate ( value );
+        }
+        if ( attributes != null )
+        {
+            if ( attributes.containsKey ( "error" ) )
+            {
+                RegularTimePeriod time = new FixedMillisecond ( Calendar.getInstance ().getTime () );
+                if ( attributes.get ( "error" ) == null )
+                {
+                    triggerError ( false, time );
+                }
+                else
+                {
+                    triggerError ( attributes.get ( "error" ).asBoolean (), time );
+                }
+            }
+
+        }
     }
 
     protected void triggerError ( final boolean state, final RegularTimePeriod time )
@@ -249,8 +254,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
             }
             else
             {
-                _errorMarker = new IntervalMarker ( _lastTimestamp.getFirstMillisecond (), time.getLastMillisecond (),
-                        ChartColor.BLUE, new BasicStroke ( 2 ), null, null, 0.5F );
+                _errorMarker = new IntervalMarker ( _lastTimestamp.getFirstMillisecond (), time.getLastMillisecond (), ChartColor.BLUE, new BasicStroke ( 2 ), null, null, 0.5F );
                 _chart.getXYPlot ().addDomainMarker ( _errorMarker, Layer.BACKGROUND );
             }
         }

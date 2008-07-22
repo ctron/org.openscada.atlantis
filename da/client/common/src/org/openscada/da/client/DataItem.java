@@ -63,14 +63,9 @@ public class DataItem extends Observable
 
         _listener = new ItemUpdateListener () {
 
-            public void notifyValueChange ( Variant value, boolean initial )
+            public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
             {
-                performNotifyValueChange ( value, initial );
-            }
-
-            public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
-            {
-                performNotifyAttributeChange ( attributes, initial );
+                performNotifyDataChange ( value, attributes, cache );
             }
 
             public void notifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
@@ -104,25 +99,32 @@ public class DataItem extends Observable
         manager.removeItemUpdateListener ( _itemId, listener );
     }
 
-    private void performNotifyValueChange ( Variant value, boolean initial )
+    private void performNotifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
     {
-        _value = new Variant ( value );
-
-        setChanged ();
-        notifyObservers ();
-    }
-
-    private void performNotifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
-    {
-        if ( initial )
+        if ( cache )
+        {
+            setChanged ();
             _attributes = new HashMap<String, Variant> ( attributes );
+        }
         else
+        {
             AttributesHelper.mergeAttributes ( _attributes, attributes );
-
-        setChanged ();
+        }
+        
+        if ( attributes != null )
+        {
+            setChanged ();
+        }
+        
+        if ( value != null )
+        {
+            setChanged ();
+            _value = new Variant ( value );
+        }
+        
         notifyObservers ();
     }
-
+    
     private void performNotifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
     {
         _subscriptionState = subscriptionState;

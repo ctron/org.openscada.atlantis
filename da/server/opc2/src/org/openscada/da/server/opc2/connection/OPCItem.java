@@ -30,6 +30,7 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.server.DataItemInformation;
+import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.SuspendableDataItem;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 import org.openscada.da.server.opc2.Helper;
@@ -61,7 +62,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
     private void intialData ( KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
     {
-        this.updateAttributes ( Helper.convertToAttributes ( entry ) );
+        this.updateData ( null, Helper.convertToAttributes ( entry ), AttributeMode.SET );
     }
 
     @Override
@@ -126,7 +127,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
             lastValue = null;
 
-            updateAttributes ( attributes );
+            updateData ( new Variant (), attributes, AttributeMode.UPDATE );
         }
         else
         {
@@ -167,12 +168,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
             }
 
-            updateAttributes ( attributes );
-
-            if ( value != null )
-            {
-                updateValue ( value );
-            }
+            updateData ( value, attributes, AttributeMode.UPDATE );
 
             lastValue = value;
         }
@@ -199,7 +195,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         }
         attributes.put ( "opc.lastWriteError.timestamp", new Variant ( c.getTimeInMillis () ) );
         attributes.put ( "opc.lastWriteError.timestamp.message", new Variant ( String.format ( "%tc", c ) ) );
-        updateAttributes ( attributes );
+        updateData ( null, attributes, AttributeMode.UPDATE );
     }
 
 }

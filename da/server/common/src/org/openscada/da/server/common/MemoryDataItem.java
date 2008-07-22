@@ -56,7 +56,7 @@ public class MemoryDataItem extends DataItemBase
         if ( !_value.equals ( value ) )
         {
             _value = new Variant ( value );
-            notifyValue ( value );
+            notifyData ( value, null );
         }
     }
 
@@ -81,7 +81,7 @@ public class MemoryDataItem extends DataItemBase
     {
         WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
 
-        _attributes.update ( attributes );
+        _attributes.update ( null, attributes );
 
         for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
@@ -90,5 +90,5 @@ public class MemoryDataItem extends DataItemBase
 
         return writeAttributeResults;
     }
-
+    
 }

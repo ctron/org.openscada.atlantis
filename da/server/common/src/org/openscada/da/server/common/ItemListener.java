@@ -22,10 +22,16 @@ package org.openscada.da.server.common;
 import java.util.Map;
 
 import org.openscada.core.Variant;
+import org.openscada.da.core.server.ItemChangeListener;
 
+/**
+ * A listener for internal data item changes
+ * <p>
+ * Analogues interface to {@link ItemChangeListener}
+ * @author Jens Reimann
+ *
+ */
 public interface ItemListener
 {
-    public void valueChanged ( DataItem item, Variant variant, boolean cache );
-
-    public void attributesChanged ( DataItem item, Map<String, Variant> attributes, boolean cache );
+    public void dataChanged ( DataItem item, Variant variant, Map<String, Variant> attributes, boolean cache );
 }

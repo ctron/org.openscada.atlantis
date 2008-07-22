@@ -44,14 +44,14 @@ public class Exporter extends ExporterBase implements Runnable
         this ( hive, null );
     }
     
-    public Exporter ( Class hiveClass, Integer port ) throws InstantiationException, IllegalAccessException, IOException
+    public Exporter ( Class<?> hiveClass, Integer port ) throws InstantiationException, IllegalAccessException, IOException
     {
         super ( hiveClass );
         
         createServer ( port );
     }
     
-    public Exporter ( Class hiveClass ) throws InstantiationException, IllegalAccessException, IOException
+    public Exporter ( Class<?> hiveClass ) throws InstantiationException, IllegalAccessException, IOException
     {
         this ( hiveClass, null );
     }
@@ -71,7 +71,9 @@ public class Exporter extends ExporterBase implements Runnable
     private void createServer ( Integer port ) throws IOException
     {
         if ( port == null )
+        {
             port = Integer.getInteger ( "openscada.da.net.server.port", 1202 );
+        }
         
         _server = new Server (
                 new ConnectionHandlerServerFactory ( _hive, scheduler ),

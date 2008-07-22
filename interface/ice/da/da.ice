@@ -125,12 +125,7 @@ module OpenSCADA
 			/**
 			 * Called when a value of a subscribed data item changed.
 			 **/
-			idempotent void valueChange ( string item, Core::VariantBase value, bool cache );
-			
-			/**
-			 * Called when attributes of a subscribed data item changed.
-			 **/
-			idempotent void attributesChange ( string item, Core::Attributes attributes, bool full );
+			idempotent void dataChange ( string item, Core::VariantBase value, Core::Attributes attributes, bool cache );
 			
 			/**
 			 * Called when a subscription state of an item changes
