@@ -44,6 +44,12 @@
             class="org.openscada.da.client.test.views.realtime.RealTimeList"
             id="org.openscada.da.test.views.RealTimeList"
             name="Real Time List"/>
+      <view
+            allowMultiple="true"
+            class="org.openscada.da.client.test.generator.GeneratorView"
+            id="org.openscada.da.client.test.GeneratorView"
+            name="Signal Generator">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -275,6 +281,13 @@
                id="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
                label="Write Attributes Operation"
                menubarPath="additions"/>
+         <action
+               class="org.openscada.da.client.test.actions.ShowGenerator"
+               enablesFor="1"
+               id="org.openscada.da.client.test.actions.ShowGenerator"
+               label="Generator"
+               menubarPath="additions">
+         </action>
       </objectContribution>
       <objectContribution
             adaptable="false"
