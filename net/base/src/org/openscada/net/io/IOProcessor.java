@@ -254,7 +254,12 @@ public class IOProcessor implements Runnable
 
     protected void handleKey ( SelectionKey key )
     {
-        IOChannelListener listener = _connections.get ( key ).getIOChannelListener ();
+        IOChannel channel = _connections.get ( key );
+        if ( channel == null )
+        {
+            return;
+        }
+        IOChannelListener listener = channel.getIOChannelListener ();
 
         if ( !key.isValid () )
         {
