@@ -31,6 +31,7 @@ import org.openscada.da.server.common.chain.MemoryItemChained;
 import org.openscada.da.server.common.chain.item.ManualOverrideChainItem;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
 import org.openscada.da.server.spring.Hive;
+import org.openscada.da.server.spring.TestErrorChainItem;
 
 public class CSVDataItem extends MemoryItemChained
 {
@@ -42,6 +43,7 @@ public class CSVDataItem extends MemoryItemChained
         super ( new DataItemInformationBase ( name, ioDirection ) );
         this.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( hive ) );
         this.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
+        this.addChainElement ( IODirection.INPUT, new TestErrorChainItem () );
     }
 
     @Override
@@ -63,14 +65,14 @@ public class CSVDataItem extends MemoryItemChained
             super.writeCalculatedValue ( value );
         }
     }
-    
+
     @Override
     public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         if ( !isWriteable () )
         {
             throw new InvalidOperationException ();
-        }   
+        }
         super.writeValue ( value );
     }
 
@@ -97,5 +99,5 @@ public class CSVDataItem extends MemoryItemChained
     {
         return this.getInformation ().getIODirection ().contains ( IODirection.OUTPUT );
     }
-    
+
 }
