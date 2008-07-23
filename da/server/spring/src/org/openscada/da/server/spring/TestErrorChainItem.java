@@ -27,5 +27,8 @@ public class TestErrorChainItem extends BaseChainItemCommon
     public void process ( Variant value, Map<String, Variant> attributes )
     {
         // do nothing
+        
+        // add my attributes
+        addAttributes ( attributes );
     }
 }

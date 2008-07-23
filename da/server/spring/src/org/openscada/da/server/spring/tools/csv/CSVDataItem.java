@@ -41,9 +41,9 @@ public class CSVDataItem extends MemoryItemChained
     public CSVDataItem ( Hive hive, String name, EnumSet<IODirection> ioDirection )
     {
         super ( new DataItemInformationBase ( name, ioDirection ) );
+        this.addChainElement ( IODirection.INPUT, new TestErrorChainItem () );
         this.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( hive ) );
         this.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
-        this.addChainElement ( IODirection.INPUT, new TestErrorChainItem () );
     }
 
     @Override
