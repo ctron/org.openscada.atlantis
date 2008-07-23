@@ -32,16 +32,24 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
     private static Logger _log = Logger.getLogger ( LevelAlarmChainItem.class );
 
     public static final String HIGH_PRESET = "org.openscada.da.level.high.preset";
+    public static final String HIGHHIGH_PRESET = "org.openscada.da.level.highhigh.preset";
     public static final String LOW_PRESET = "org.openscada.da.level.low.preset";
+    public static final String LOWLOW_PRESET = "org.openscada.da.level.lowlow.preset";
 
     public static final String HIGH_ALARM = "org.openscada.da.level.high.alarm";
+    public static final String HIGHHIGH_ALARM = "org.openscada.da.level.highhigh.alarm";
+    public static final String LOWLOW_ALARM = "org.openscada.da.level.lowlow.alarm";
     public static final String LOW_ALARM = "org.openscada.da.level.low.alarm";
 
     public static final String HIGH_ERROR = "org.openscada.da.level.high.error";
+    public static final String HIGHHIGH_ERROR = "org.openscada.da.level.highhigh.error";
     public static final String LOW_ERROR = "org.openscada.da.level.low.error";
+    public static final String LOWLOW_ERROR = "org.openscada.da.level.lowlow.error";
 
     private VariantBinder _highLevel = new VariantBinder ( new Variant () );
     private VariantBinder _lowLevel = new VariantBinder ( new Variant () );
+    private VariantBinder _highHighLevel = new VariantBinder ( new Variant () );
+    private VariantBinder _lowLowLevel = new VariantBinder ( new Variant () );
 
     public LevelAlarmChainItem ( HiveServiceRegistry serviceRegistry )
     {
@@ -49,8 +57,10 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
 
         addBinder ( HIGH_PRESET, _highLevel );
         addBinder ( LOW_PRESET, _lowLevel );
+        addBinder ( HIGHHIGH_PRESET, _highHighLevel );
+        addBinder ( LOWLOW_PRESET, _lowLowLevel );
 
-        setReservedAttributes ( HIGH_ALARM, LOW_ALARM );
+        setReservedAttributes ( HIGH_ALARM, LOW_ALARM, HIGHHIGH_ALARM, LOWLOW_ALARM );
     }
 
     public void process ( Variant value, Map<String, Variant> attributes )
@@ -59,7 +69,13 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         attributes.put ( LOW_ALARM, null );
         attributes.put ( HIGH_ERROR, null );
         attributes.put ( LOW_ERROR, null );
+        
+        attributes.put ( HIGHHIGH_ALARM, null );
+        attributes.put ( LOWLOW_ALARM, null );
+        attributes.put ( HIGHHIGH_ERROR, null );
+        attributes.put ( LOWLOW_ERROR, null );
 
+        // high alarm
         try
         {
             if ( !_highLevel.getValue ().isNull () && !value.isNull () )
@@ -68,12 +84,13 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
             }
 
         }
-        catch ( Exception e )
+        catch ( Throwable e )
         {
             _log.info ( "Failed to evaluate high level alarm", e );
             attributes.put ( HIGH_ERROR, new Variant ( e.getMessage () ) );
         }
-
+        
+        // low alarm
         try
         {
             if ( !_lowLevel.getValue ().isNull () && !value.isNull () )
@@ -81,12 +98,42 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
                 attributes.put ( LOW_ALARM, new Variant ( value.asDouble () <= _lowLevel.getValue ().asDouble () ) );
             }
         }
-        catch ( Exception e )
+        catch ( Throwable e )
         {
             _log.info ( "Failed to evaluate low level alarm", e );
             attributes.put ( LOW_ERROR, new Variant ( e.getMessage () ) );
         }
+        
+        // high high alarm
+        try
+        {
+            if ( !_highHighLevel.getValue ().isNull () && !value.isNull () )
+            {
+                attributes.put ( HIGHHIGH_ALARM, new Variant ( value.asDouble () >= _highHighLevel.getValue ().asDouble () ) );
+            }
 
+        }
+        catch ( Throwable e )
+        {
+            _log.info ( "Failed to evaluate high high level alarm", e );
+            attributes.put ( HIGHHIGH_ERROR, new Variant ( e.getMessage () ) );
+        }
+        
+        // low low alarm
+        try
+        {
+            if ( !_lowLowLevel.getValue ().isNull () && !value.isNull () )
+            {
+                attributes.put ( LOWLOW_ALARM, new Variant ( value.asDouble () <= _lowLowLevel.getValue ().asDouble () ) );
+            }
+        }
+        catch ( Throwable e )
+        {
+            _log.info ( "Failed to evaluate low low level alarm", e );
+            attributes.put ( LOWLOW_ERROR, new Variant ( e.getMessage () ) );
+        }
+
+        // add our attributes
         addAttributes ( attributes );
     }
 }
