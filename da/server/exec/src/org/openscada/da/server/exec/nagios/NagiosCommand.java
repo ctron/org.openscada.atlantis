@@ -26,10 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.IODirection;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.common.chain.item.SumErrorChainItem;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.exec.base.CommandBase;
 import org.openscada.da.server.exec.base.CommandQueue;
@@ -68,8 +66,6 @@ public class NagiosCommand extends CommandBase
 
         // show whether the command is currently active or not
         this.stateItem = this.getCommandItemFactory ().createInput ( "state" );
-        this.stateItem.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
-        // this.stateItem.updateValue ( new Variant ( false ) );
         this.stateItem.updateData ( null, new MapBuilder<String, Variant> ().put ( "execution.error", new Variant ( true ) ).getMap (), AttributeMode.SET );
     }
 
