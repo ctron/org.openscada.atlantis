@@ -26,8 +26,13 @@ import java.util.Calendar;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.da.core.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.openscada.da.server.common.chain.item.LevelAlarmChainItem;
+import org.openscada.da.server.common.chain.item.ManualErrorOverrideChainItem;
+import org.openscada.da.server.common.chain.item.ManualOverrideChainItem;
+import org.openscada.da.server.common.chain.item.SumErrorChainItem;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 
@@ -119,7 +124,18 @@ public abstract class CommandBase implements Command
 
         // Create the factory to create other items
         //this.commandItemFactory = queue.getFolderItemFactory ().createSubFolderFactory ( commandName );
-        this.commandItemFactory = new FolderItemFactory ( hive, (FolderCommon)hive.getRootFolder (), this.commandName, this.commandName );
+        this.commandItemFactory = new FolderItemFactory ( hive, (FolderCommon)hive.getRootFolder (), this.commandName, this.commandName ) {
+            @Override
+            protected DataItemInputChained constructInput ( String localId )
+            {          
+                DataItemInputChained item = super.constructInput ( localId );
+                item.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
+                item.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( hive ) );
+                item.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
+                item.addChainElement ( IODirection.INPUT, new LevelAlarmChainItem ( hive ) );
+                return item;
+            }
+        };
 
         // prepare the commandline as item
         this.commandLineItem = this.commandItemFactory.createInput ( "commandLine" );
