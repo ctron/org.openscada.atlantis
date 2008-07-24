@@ -32,6 +32,7 @@ import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.item.LevelAlarmChainItem;
 import org.openscada.da.server.common.chain.item.ManualErrorOverrideChainItem;
 import org.openscada.da.server.common.chain.item.ManualOverrideChainItem;
+import org.openscada.da.server.common.chain.item.SumAlarmChainItem;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
@@ -133,6 +134,7 @@ public abstract class CommandBase implements Command
                 item.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( hive ) );
                 item.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
                 item.addChainElement ( IODirection.INPUT, new LevelAlarmChainItem ( hive ) );
+                item.addChainElement ( IODirection.INPUT, new SumAlarmChainItem ( hive ) );
                 return item;
             }
         };
