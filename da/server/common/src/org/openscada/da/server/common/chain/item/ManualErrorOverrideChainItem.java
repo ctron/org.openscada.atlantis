@@ -40,15 +40,16 @@ public class ManualErrorOverrideChainItem extends BaseChainItemCommon
     {
         if ( attributes.containsKey ( name ) )
         {
-            Variant errorFlag = attributes.get ( name );
-            attributes.put ( ManualOverrideChainItem.MANUAL_BASE + "." + name + ".original", errorFlag );
+            Variant originalValue = attributes.get ( name );
+            attributes.put ( ManualOverrideChainItem.MANUAL_BASE + "." + name + ".original", originalValue );
             attributes.put ( name, replacement );
         }
     }
 
     public void process ( Variant value, Map<String, Variant> attributes )
     {
-        if ( attributes.containsKey ( ManualOverrideChainItem.MANUAL_ACTIVE ) )
+        Variant active = attributes.get ( ManualOverrideChainItem.MANUAL_ACTIVE );
+        if ( active != null && active.asBoolean () )
         {
             checkAndReplace ( attributes, "error", new Variant ( false ) );
             checkAndReplace ( attributes, "error.count", new Variant ( 0 ) );
