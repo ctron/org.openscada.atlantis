@@ -30,15 +30,21 @@ import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.chain.BaseChainItemCommon;
 import org.openscada.da.server.common.chain.VariantBinder;
 
+/**
+ * This class 
+ * @author jens
+ *
+ */
 public class ManualOverrideChainItem extends BaseChainItemCommon
 {
-    public static final String ORIGINAL_VALUE = "org.openscada.da.manual.original.value";
-    public static final String ORIGINAL_TIMESTAMP = "org.openscada.da.manual.original.timestamp";
-    public static final String MANUAL_ACTIVE = "org.openscada.da.manual.active";
-    public static final String MANUAL_VALUE = "org.openscada.da.manual.value";
-    public static final String MANUAL_TIMESTAMP = "org.openscada.da.manual.timestamp";
-    public static final String MANUAL_USER = "org.openscada.da.manual.user";
-    public static final String MANUAL_REASON = "org.openscada.da.manual.reason";
+    public static final String MANUAL_BASE = "org.openscada.da.manual";
+    public static final String ORIGINAL_VALUE = MANUAL_BASE + ".value.original";
+    public static final String ORIGINAL_TIMESTAMP = MANUAL_BASE + ".timestamp.original";
+    public static final String MANUAL_ACTIVE = MANUAL_BASE + ".active";
+    public static final String MANUAL_VALUE = MANUAL_BASE + ".value";
+    public static final String MANUAL_TIMESTAMP = MANUAL_BASE + ".timestamp";
+    public static final String MANUAL_USER = MANUAL_BASE + ".user";
+    public static final String MANUAL_REASON = MANUAL_BASE + ".reason";
 
     private VariantBinder manualValue = new VariantBinder ( new Variant () );
     private VariantBinder manualReason = new VariantBinder ( new Variant () );
