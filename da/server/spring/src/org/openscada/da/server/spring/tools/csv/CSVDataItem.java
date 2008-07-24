@@ -44,10 +44,10 @@ public class CSVDataItem extends MemoryItemChained
     {
         super ( new DataItemInformationBase ( name, ioDirection ) );
         this.addChainElement ( IODirection.INPUT, new TestErrorChainItem () );
+        this.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
         this.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( hive ) );
         this.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
         this.addChainElement ( IODirection.INPUT, new LevelAlarmChainItem ( hive ) );
-        this.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
     }
 
     @Override
