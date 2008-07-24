@@ -231,6 +231,6 @@ public abstract class BaseChainItemCommon implements ChainItem
 
     public boolean isPersistent ()
     {
-        return true;
+        return serviceRegistry != null;
     }
 }
