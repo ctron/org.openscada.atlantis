@@ -29,6 +29,7 @@ import org.openscada.da.core.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.MemoryItemChained;
 import org.openscada.da.server.common.chain.item.LevelAlarmChainItem;
+import org.openscada.da.server.common.chain.item.ManualErrorOverrideChainItem;
 import org.openscada.da.server.common.chain.item.ManualOverrideChainItem;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
 import org.openscada.da.server.spring.Hive;
@@ -38,12 +39,13 @@ public class CSVDataItem extends MemoryItemChained
 {
 
     protected CSVControllerDataItem _controllerItem;
-
+    
     public CSVDataItem ( Hive hive, String name, EnumSet<IODirection> ioDirection )
     {
         super ( new DataItemInformationBase ( name, ioDirection ) );
         this.addChainElement ( IODirection.INPUT, new TestErrorChainItem () );
         this.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( hive ) );
+        this.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
         this.addChainElement ( IODirection.INPUT, new LevelAlarmChainItem ( hive ) );
         this.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
     }
