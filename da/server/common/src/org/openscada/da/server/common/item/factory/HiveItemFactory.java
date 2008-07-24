@@ -14,7 +14,7 @@ import org.openscada.da.server.common.impl.HiveCommon;
  */
 public class HiveItemFactory extends CommonItemFactory
 {
-    private HiveCommon hive;
+    protected HiveCommon hive;
 
     public HiveItemFactory ( HiveCommon hive )
     {

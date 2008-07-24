@@ -14,7 +14,6 @@ import org.openscada.da.server.common.impl.HiveCommon;
 
 public class FolderItemFactory extends HiveItemFactory
 {
-    private HiveCommon hive;
     private String folderName;
     private FolderCommon folder;
     private FolderCommon parentFolder;
@@ -32,7 +31,6 @@ public class FolderItemFactory extends HiveItemFactory
     public FolderItemFactory ( ItemFactory parentFactory, HiveCommon hive, FolderCommon parentFolder, String baseId, String folderName, String idDelimiter )
     {
         super ( parentFactory, hive, baseId, idDelimiter );
-        this.hive = hive;
         this.parentFolder = parentFolder;
         this.folderName = folderName;
 
