@@ -26,8 +26,7 @@ public class PropertyFileChainStorageService implements ChainStorageService
         this.storageRoot = storageRoot;
         if ( !this.storageRoot.isDirectory () )
         {
-            throw new RuntimeException (
-                    String.format ( "The provided storage root %s is not a directory", storageRoot ) );
+            throw new RuntimeException ( String.format ( "The provided storage root %s is not a directory", storageRoot ) );
         }
     }
 
@@ -47,15 +46,10 @@ public class PropertyFileChainStorageService implements ChainStorageService
         return new File ( this.storageRoot, itemFileName );
     }
 
-    public Map<String, Variant> loadValues ( String itemId, Set<String> valueNames )
+    protected Properties loadProperties ( File itemFile )
     {
-        File itemFile = getItemFile ( itemId );
-        if ( !itemFile.exists () )
-        {
-            return new HashMap<String, Variant> ();
-        }
-
         Properties p = new Properties ();
+
         try
         {
             FileInputStream stream = new FileInputStream ( itemFile );
@@ -67,6 +61,27 @@ public class PropertyFileChainStorageService implements ChainStorageService
             {
                 stream.close ();
             }
+        }
+        catch ( Throwable e )
+        {
+            log.warn ( "Failed to load properties from: " + itemFile.getName (), e );
+        }
+
+        return p;
+    }
+
+    public Map<String, Variant> loadValues ( String itemId, Set<String> valueNames )
+    {
+        File itemFile = getItemFile ( itemId );
+        if ( !itemFile.exists () )
+        {
+            return new HashMap<String, Variant> ();
+        }
+
+        Properties p = new Properties ();
+        try
+        {
+            p = loadProperties ( itemFile );
 
             Map<String, Variant> result = new HashMap<String, Variant> ();
             VariantEditor ed = new VariantEditor ();
@@ -101,20 +116,20 @@ public class PropertyFileChainStorageService implements ChainStorageService
 
     public void storeValues ( String itemId, Map<String, Variant> values )
     {
-        Properties p = new Properties ();
-        VariantEditor ed = new VariantEditor ();
-
         File file = getItemFile ( itemId );
-
-        // convert values
-        for ( Map.Entry<String, Variant> entry : values.entrySet () )
-        {
-            ed.setValue ( entry.getValue () );
-            p.setProperty ( entry.getKey (), ed.getAsText () );
-        }
 
         try
         {
+            Properties p = loadProperties ( file );
+
+            VariantEditor ed = new VariantEditor ();
+
+            // convert values
+            for ( Map.Entry<String, Variant> entry : values.entrySet () )
+            {
+                ed.setValue ( entry.getValue () );
+                p.setProperty ( entry.getKey (), ed.getAsText () );
+            }
             FileOutputStream stream = new FileOutputStream ( file );
             try
             {
