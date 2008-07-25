@@ -21,6 +21,8 @@ package org.openscada.da.server.spring;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.server.common.DataItem;
+import org.openscada.da.server.common.chain.storage.ChainStorageService;
+import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.common.factory.DataItemValidator;
 import org.openscada.da.server.common.factory.FactoryTemplate;
@@ -35,6 +37,8 @@ public class Hive extends HiveCommon implements InitializingBean, ApplicationCon
     @SuppressWarnings("unused")
     private static Logger _log = Logger.getLogger ( Hive.class );
     private ApplicationContext ctx;
+    private boolean enableChainPersistenceService = true;
+    private ChainStorageService chainPersistenceService;
     
 	protected void setup ()
 	{	    
@@ -57,6 +61,15 @@ public class Hive extends HiveCommon implements InitializingBean, ApplicationCon
 	    {
 	        registerItem ( (DataItem )ctx.getBean ( beanName ) );
 	    }
+	    
+	    if ( enableChainPersistenceService )
+	    {
+	        ChainStorageServiceHelper.registerDefaultPropertyService ( this );
+	    }
+	    else if ( this.chainPersistenceService != null )
+	    {
+	        ChainStorageServiceHelper.registerService ( this, this.chainPersistenceService );
+	    }
 	}
 
     public void afterPropertiesSet () throws Exception
@@ -72,5 +85,15 @@ public class Hive extends HiveCommon implements InitializingBean, ApplicationCon
     public void setApplicationContext ( ApplicationContext ctx ) throws BeansException
     {
         this.ctx = ctx;
+    }
+
+    public void setEnableChainPersistenceService ( boolean enableChainPersistenceService )
+    {
+        this.enableChainPersistenceService = enableChainPersistenceService;
+    }
+
+    public void setChainPersistenceService ( ChainStorageService chainPersistenceService )
+    {
+        this.chainPersistenceService = chainPersistenceService;
     }
 }
