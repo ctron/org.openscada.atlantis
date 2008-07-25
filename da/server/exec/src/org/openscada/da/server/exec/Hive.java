@@ -32,6 +32,7 @@ import org.openscada.da.execServer.commands.CommandQueueType;
 import org.openscada.da.execServer.commands.CommandType;
 import org.openscada.da.execServer.commands.RootDocument;
 import org.openscada.da.server.browser.common.FolderCommon;
+import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.exec.base.Command;
 import org.openscada.da.server.exec.base.CommandQueue;
@@ -91,6 +92,8 @@ public class Hive extends HiveCommon
     public Hive ( final RootDocument document )
     {
         super ();
+        
+        ChainStorageServiceHelper.registerDefaultPropertyService ( this );
 
         // Init root folder
         this.document = document;
