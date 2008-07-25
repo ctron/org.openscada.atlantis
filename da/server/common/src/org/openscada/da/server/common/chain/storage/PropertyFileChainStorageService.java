@@ -46,25 +46,18 @@ public class PropertyFileChainStorageService implements ChainStorageService
         return new File ( this.storageRoot, itemFileName );
     }
 
-    protected Properties loadProperties ( File itemFile )
+    protected Properties loadProperties ( File itemFile ) throws IOException
     {
         Properties p = new Properties ();
 
+        FileInputStream stream = new FileInputStream ( itemFile );
         try
         {
-            FileInputStream stream = new FileInputStream ( itemFile );
-            try
-            {
-                p.load ( stream );
-            }
-            finally
-            {
-                stream.close ();
-            }
+            p.load ( stream );
         }
-        catch ( Throwable e )
+        finally
         {
-            log.warn ( "Failed to load properties from: " + itemFile.getName (), e );
+            stream.close ();
         }
 
         return p;
@@ -120,7 +113,15 @@ public class PropertyFileChainStorageService implements ChainStorageService
 
         try
         {
-            Properties p = loadProperties ( file );
+            Properties p = new Properties ();
+            try
+            {
+                p = loadProperties ( file );
+            }
+            catch ( Throwable e )
+            {
+                log.debug ( "Unable to find initial properties", e );
+            }
 
             VariantEditor ed = new VariantEditor ();
 
