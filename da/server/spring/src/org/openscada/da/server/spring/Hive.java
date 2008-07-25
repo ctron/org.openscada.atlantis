@@ -34,43 +34,46 @@ import org.springframework.context.ApplicationContextAware;
 
 public class Hive extends HiveCommon implements InitializingBean, ApplicationContextAware
 {
-    @SuppressWarnings("unused")
+    @SuppressWarnings ( "unused" )
     private static Logger _log = Logger.getLogger ( Hive.class );
+
     private ApplicationContext ctx;
+
     private boolean enableChainPersistenceService = true;
+
     private ChainStorageService chainPersistenceService;
-    
-	protected void setup ()
-	{	    
-	    for ( String beanName : ctx.getBeanNamesForType ( DataItemValidator.class ) )
-	    {
-	        addDataItemValidator ( (DataItemValidator)ctx.getBean ( beanName ) );
-	    }
-	    
-	    for ( String beanName : ctx.getBeanNamesForType ( DataItemFactory.class  ) )
-	    {
-	        addItemFactory ( (DataItemFactory )ctx.getBean ( beanName ) );
-	    }
-	    
-	    for ( String beanName : ctx.getBeanNamesForType ( FactoryTemplate.class ))
-	    {
-	        registerTemplate ( (FactoryTemplate)ctx.getBean ( beanName ) );
-	    }
-	    
-	    for ( String beanName : ctx.getBeanNamesForType ( DataItem.class ) )
-	    {
-	        registerItem ( (DataItem )ctx.getBean ( beanName ) );
-	    }
-	    
-	    if ( enableChainPersistenceService )
-	    {
-	        ChainStorageServiceHelper.registerDefaultPropertyService ( this );
-	    }
-	    else if ( this.chainPersistenceService != null )
-	    {
-	        ChainStorageServiceHelper.registerService ( this, this.chainPersistenceService );
-	    }
-	}
+
+    protected void setup ()
+    {
+        if ( enableChainPersistenceService )
+        {
+            ChainStorageServiceHelper.registerDefaultPropertyService ( this );
+        }
+        else if ( this.chainPersistenceService != null )
+        {
+            ChainStorageServiceHelper.registerService ( this, this.chainPersistenceService );
+        }
+
+        for ( String beanName : ctx.getBeanNamesForType ( DataItemValidator.class ) )
+        {
+            addDataItemValidator ( (DataItemValidator)ctx.getBean ( beanName ) );
+        }
+
+        for ( String beanName : ctx.getBeanNamesForType ( DataItemFactory.class ) )
+        {
+            addItemFactory ( (DataItemFactory)ctx.getBean ( beanName ) );
+        }
+
+        for ( String beanName : ctx.getBeanNamesForType ( FactoryTemplate.class ) )
+        {
+            registerTemplate ( (FactoryTemplate)ctx.getBean ( beanName ) );
+        }
+
+        for ( String beanName : ctx.getBeanNamesForType ( DataItem.class ) )
+        {
+            registerItem ( (DataItem)ctx.getBean ( beanName ) );
+        }
+    }
 
     public void afterPropertiesSet () throws Exception
     {
