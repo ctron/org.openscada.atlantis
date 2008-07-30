@@ -119,7 +119,7 @@ public abstract class DataItemBase implements DataItem
      * @param attributes the attributes to send
      * @param cache cache bit
      */
-    public void notifyData ( Variant value, Map<String, Variant> attributes, boolean cache )
+    public synchronized void notifyData ( Variant value, Map<String, Variant> attributes, boolean cache )
     {
         ItemListener listener = _listener;
         if ( listener != null )
