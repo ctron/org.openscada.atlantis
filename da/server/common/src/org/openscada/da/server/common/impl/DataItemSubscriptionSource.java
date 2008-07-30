@@ -80,7 +80,8 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         {
             _listeners.add ( (DataItemSubscriptionListener)listener.getListener () );
             // send current state
-            ( (DataItemSubscriptionListener)listener.getListener () ).dataChanged ( _dataItem, _cacheValue, _cacheAttributes, true );
+            ( (DataItemSubscriptionListener)listener.getListener () ).dataChanged ( _dataItem, _cacheValue,
+                    _cacheAttributes, true );
         }
 
         if ( !_listeners.isEmpty () )
@@ -110,11 +111,17 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
     public void dataChanged ( DataItem item, Variant variant, Map<String, Variant> attributes, boolean cache )
     {
         // update cache
-        synchronized ( _cacheAttributes )
+        if ( attributes != null )
         {
-            AttributesHelper.mergeAttributes ( _cacheAttributes, attributes );
+            synchronized ( _cacheAttributes )
+            {
+                AttributesHelper.mergeAttributes ( _cacheAttributes, attributes );
+            }
         }
-        _cacheValue = variant;
+        if ( variant != null )
+        {
+            _cacheValue = variant;
+        }
 
         // send out the events
         for ( DataItemSubscriptionListener listener : _listeners )
