@@ -131,7 +131,7 @@ public abstract class DataItemBaseChained extends DataItemBase
     {
         for ( ChainProcessEntry entry : _chain )
         {
-            entry.getWhat ().dataItemChanged ( null );
+            entry.getWhat ().dataItemChanged ( this );
         }
         
         if ( chain == null )
