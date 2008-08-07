@@ -41,11 +41,25 @@ public class DataItem extends Observable
 
     private ItemUpdateListener _listener = null;
 
+    /**
+     * create a new data item structure.
+     * <p>
+     * Note that the item is initially unconnected
+     * @param itemId the id of the item to register later
+     */
     public DataItem ( String itemId )
     {
         _itemId = itemId;
     }
 
+    /**
+     * create a new data item structure.
+     * <p>
+     * Note that the item is initially connected to the item manager provided. You must call {@link #unregister()}
+     * when you want to clear the subscription with the item on the server.
+     * @param itemId the id of the item to register
+     * @param connection the item manager to which the item will register
+     */
     public DataItem ( String itemId, ItemManager connection )
     {
         this ( itemId );
