@@ -25,6 +25,7 @@ import org.openscada.da.server.opc2.job.JobResult;
 import org.openscada.da.server.opc2.job.ThreadJob;
 import org.openscada.opc.dcom.common.ResultSet;
 import org.openscada.opc.dcom.da.WriteRequest;
+import org.openscada.opc.dcom.da.impl.OPCSyncIO;
 
 /**
  * This method performs a sync write operation
@@ -33,6 +34,8 @@ import org.openscada.opc.dcom.da.WriteRequest;
  */
 public class SyncWriteJob extends ThreadJob implements JobResult<ResultSet<WriteRequest>>
 {
+    public static final long DEFAULT_TIMEOUT = 5000L;
+
     private static Logger log = Logger.getLogger ( SyncWriteJob.class );
 
     private OPCModel model;
@@ -41,9 +44,9 @@ public class SyncWriteJob extends ThreadJob implements JobResult<ResultSet<Write
 
     private ResultSet<WriteRequest> result;
 
-    public SyncWriteJob ( OPCModel model, WriteRequest[] writeRequests )
+    public SyncWriteJob ( long timeout, OPCModel model, WriteRequest[] writeRequests )
     {
-        super ( 5000 );
+        super ( timeout );
         this.model = model;
         this.writeRequests = writeRequests;
     }
@@ -51,8 +54,13 @@ public class SyncWriteJob extends ThreadJob implements JobResult<ResultSet<Write
     @Override
     protected void perform () throws Exception
     {
-        log.debug ( "Request server status" );
-        this.result = this.model.getSyncIo ().write ( this.writeRequests );
+        log.debug ( "Perform sync write" );
+
+        OPCSyncIO syncIo = this.model.getSyncIo ();
+        if ( syncIo != null )
+        {
+            this.result = syncIo.write ( this.writeRequests );
+        }
     }
 
     public ResultSet<WriteRequest> getResult ()
