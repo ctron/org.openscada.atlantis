@@ -39,7 +39,7 @@ public class OPCModel
     private JISession session;
     private OPCServer server;
     private long lastConnect;
-    private long reconnectDelay = 5000;
+    private long reconnectDelay = 5000L;
     private OPCSERVERSTATUS serverState;
     private OPCGroupStateMgt group;
     private OPCItemMgt itemMgt;
@@ -50,7 +50,16 @@ public class OPCModel
     private Set<Thread> disposersRunning = new CopyOnWriteArraySet<Thread> ();
     private ControllerState controllerState = ControllerState.IDLE;
     private long loopDelay = 250;
-
+    private long defaultTimeout = Long.getLong ( "rpc.socketTimeout", 5000L );
+    
+    private Long globalTimeout = null;
+    private Long connectJobTimeout = null;
+    private Long statusJobTimeout = null;
+    private Long writeJobTimeout = null;
+    private Long readJobTimeout = null;
+    
+    private int updateRate = 250;
+    
     private PropertyChangeSupport listeners = new PropertyChangeSupport ( this );
 
     public void addListener ( PropertyChangeListener listener )
@@ -295,5 +304,102 @@ public class OPCModel
         long oldLoopDelay = this.loopDelay;
         this.loopDelay = loopDelay;
         this.listeners.firePropertyChange ( "loopDelay", oldLoopDelay, loopDelay );
+    }
+
+    public long getDefaultTimeout ()
+    {
+        return defaultTimeout;
+    }
+
+    public void setDefaultTimeout ( long defaultTimeout )
+    {
+        this.defaultTimeout = defaultTimeout;
+    }
+    
+    public long getGlobalTimeout ()
+    {
+        Long globalTimeout = this.globalTimeout;
+        if ( globalTimeout == null )
+        {
+            return this.defaultTimeout;
+        }
+        return globalTimeout;
+    }
+    
+    public void setGlobalTimeout ( Long globalTimeout )
+    {
+        this.globalTimeout = globalTimeout;
+    }
+
+    public int getUpdateRate ()
+    {
+        return updateRate;
+    }
+
+    public void setUpdateRate ( int updateRate )
+    {
+        int oldUpdateRate = this.updateRate;
+        this.updateRate = updateRate;
+        this.listeners.firePropertyChange ( "updateRate", oldUpdateRate, updateRate );
+    }
+    
+    public long getConnectJobTimeout ()
+    {
+        Long connectJobTimeout = this.connectJobTimeout;
+        if ( connectJobTimeout == null )
+        {
+            return this.defaultTimeout;
+        }
+        return connectJobTimeout;
+    }
+    
+    public void setConnectJobTimeout ( Long connectJobTimeout )
+    {
+        this.connectJobTimeout = connectJobTimeout;
+    }
+    
+    public long getStatusJobTimeout ()
+    {
+        Long statusJobTimeout = this.statusJobTimeout;
+        if ( statusJobTimeout == null )
+        {
+            return this.defaultTimeout;
+        }
+        return statusJobTimeout;
+    }
+    
+    public void setStatusJobTimeout ( Long statusJobTimeout )
+    {
+        this.statusJobTimeout = statusJobTimeout;
+    }
+    
+    public long getReadJobTimeout ()
+    {
+        Long readJobTimeout = this.readJobTimeout;
+        if ( readJobTimeout == null )
+        {
+            return this.defaultTimeout;
+        }
+        return readJobTimeout;
+    }
+    
+    public void setReadJobTimeout ( Long readJobTimeout )
+    {
+        this.readJobTimeout = readJobTimeout;
+    }
+    
+    public long getWriteJobTimeout ()
+    {
+        Long writeJobTimeout = this.writeJobTimeout;
+        if ( writeJobTimeout == null )
+        {
+            return this.defaultTimeout;
+        }
+        return writeJobTimeout;
+    }
+    
+    public void setWriteJobTimeout ( Long writeJobTimeout )
+    {
+        this.writeJobTimeout = writeJobTimeout;
     }
 }

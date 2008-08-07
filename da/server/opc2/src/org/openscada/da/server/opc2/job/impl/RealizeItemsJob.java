@@ -34,6 +34,8 @@ import org.openscada.opc.dcom.da.impl.OPCItemMgt;
  */
 public class RealizeItemsJob extends ThreadJob implements JobResult<KeyedResultSet<OPCITEMDEF, OPCITEMRESULT>>
 {
+    public static final long DEFAULT_TIMEOUT = 5000L;
+    
     private static Logger log = Logger.getLogger ( RealizeItemsJob.class );
 
     private OPCItemMgt itemMgt;
@@ -42,9 +44,9 @@ public class RealizeItemsJob extends ThreadJob implements JobResult<KeyedResultS
 
     private KeyedResultSet<OPCITEMDEF, OPCITEMRESULT> result;
 
-    public RealizeItemsJob ( OPCItemMgt itemMgt, OPCITEMDEF[] itemDefs )
+    public RealizeItemsJob ( long timeout, OPCItemMgt itemMgt, OPCITEMDEF[] itemDefs )
     {
-        super ( 5000 );
+        super ( timeout );
         this.itemMgt = itemMgt;
         this.itemDefs = itemDefs;
     }

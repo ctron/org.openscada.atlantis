@@ -32,6 +32,8 @@ import org.openscada.opc.dcom.common.ResultSet;
  */
 public class ItemActivationJob extends ThreadJob implements JobResult<ResultSet<Integer>>
 {
+    public static final long DEFAULT_TIMEOUT = 5000L;
+    
     private static Logger log = Logger.getLogger ( ItemActivationJob.class );
 
     private OPCModel model;
@@ -42,9 +44,9 @@ public class ItemActivationJob extends ThreadJob implements JobResult<ResultSet<
 
     private ResultSet<Integer> result;
 
-    public ItemActivationJob ( OPCModel model, boolean state, Integer[] clientHandles )
+    public ItemActivationJob ( long timeout, OPCModel model, boolean state, Integer[] clientHandles )
     {
-        super ( 5000 );
+        super ( timeout );
         this.model = model;
         this.clientHandles = clientHandles;
         this.state = state;

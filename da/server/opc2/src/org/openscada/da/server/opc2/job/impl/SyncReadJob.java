@@ -34,6 +34,8 @@ import org.openscada.opc.dcom.da.OPCITEMSTATE;
  */
 public class SyncReadJob extends ThreadJob implements JobResult<KeyedResultSet<Integer, OPCITEMSTATE>>
 {
+    public static final long DEFAULT_TIMEOUT = 5000L;
+    
     private static Logger log = Logger.getLogger ( SyncReadJob.class );
 
     private OPCModel model;
@@ -44,9 +46,9 @@ public class SyncReadJob extends ThreadJob implements JobResult<KeyedResultSet<I
 
     private KeyedResultSet<Integer, OPCITEMSTATE> result;
 
-    public SyncReadJob ( OPCModel model, OPCDATASOURCE dataSource, Integer[] clientHandles )
+    public SyncReadJob ( long timeout, OPCModel model, OPCDATASOURCE dataSource, Integer[] clientHandles )
     {
-        super ( 5000 );
+        super ( timeout );
         this.model = model;
         this.clientHandles = clientHandles;
         this.dataSource = dataSource;

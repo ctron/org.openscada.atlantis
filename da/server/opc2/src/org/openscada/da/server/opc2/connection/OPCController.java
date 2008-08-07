@@ -151,7 +151,7 @@ public class OPCController implements Runnable
      */
     private void updateStatus ()
     {
-        final ServerStatusJob job = new ServerStatusJob ( this.model );
+        final ServerStatusJob job = new ServerStatusJob ( this.model.getStatusJobTimeout (), this.model );
 
         try
         {
@@ -174,7 +174,7 @@ public class OPCController implements Runnable
         model.setConnecting ( true );
         model.setConnectionState ( ConnectionState.CONNECTING );
 
-        final ConnectJob job = new ConnectJob ( this.connectionInformation, 5000 );
+        final ConnectJob job = new ConnectJob ( this.model.getConnectJobTimeout (), this.connectionInformation, model.getGlobalTimeout (), model.getUpdateRate () );
         final OPCModel model = this.model;
 
         try

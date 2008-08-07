@@ -42,6 +42,8 @@ import org.openscada.opc.lib.da.ErrorMessageResolver;
  */
 public class ConnectJob extends ThreadJob
 {
+    public static final long DEFAULT_TIMEOUT = 5000L;
+    
     private static Logger log = Logger.getLogger ( ConnectJob.class );
 
     private ConnectionInformation connectionInformation;
@@ -61,11 +63,14 @@ public class ConnectJob extends ThreadJob
 
     private OPCCommon common;
 
-    public ConnectJob ( ConnectionInformation connectionInformation, long globalSocketTimeout )
+    private int updateRate;
+
+    public ConnectJob ( long timeout, ConnectionInformation connectionInformation, long globalSocketTimeout, int updateRate )
     {
-        super ( 5000 );
+        super ( timeout );
         this.connectionInformation = connectionInformation;
         this.globalSocketTimeout = globalSocketTimeout;
+        this.updateRate = updateRate;
     }
 
     @Override
@@ -102,7 +107,7 @@ public class ConnectJob extends ThreadJob
         server = new OPCServer ( comServer.createInstance () );
         this.common = server.getCommon ();
 
-        group = server.addGroup ( null, true, 250, 0, null, null, 0 );
+        group = server.addGroup ( null, true, updateRate, 0, null, null, 0 );
         this.itemMgt = group.getItemManagement ();
         this.syncIo = group.getSyncIO ();
 

@@ -188,6 +188,21 @@ public class OPCConnection implements PropertyChangeListener
             }
         } );
 
+        this.loopDelayDataItem = connectionItemFactory.createInputOutput ( "defaultTimeout", new WriteHandler () {
+
+            public void handleWrite ( Variant value ) throws Exception
+            {
+                try
+                {
+                    OPCConnection.this.controller.getModel ().setDefaultTimeout ( value.asLong () );
+                }
+                catch ( Throwable e )
+                {
+                    logger.warn ( "Failed to set default timeout to: " + value, e );
+                }
+            }
+        } );
+
         this.suicideCommandDataItem = connectionItemFactory.createCommand ( "suicide" );
         this.suicideCommandDataItem.addListener ( new DataItemCommand.Listener () {
 
@@ -395,7 +410,7 @@ public class OPCConnection implements PropertyChangeListener
     {
         Calendar c = Calendar.getInstance ();
         c.setTimeInMillis ( this.controller.getModel ().getLastConnect () );
-        
+
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "milliseconds", new Variant ( c.getTimeInMillis () ) );
         this.lastConnectDataItem.updateData ( new Variant ( String.format ( "%tc", c ) ), attributes, AttributeMode.SET );

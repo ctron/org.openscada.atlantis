@@ -260,7 +260,7 @@ public class OPCItemManager implements ItemSourceListener
         for ( ItemRequest def : newItems )
         {
             //RealizeItemsJob job = new RealizeItemsJob ( this.model.getItemMgt (), newItems.toArray ( new OPCITEMDEF[0] ) );
-            RealizeItemsJob job = new RealizeItemsJob ( this.model.getItemMgt (),
+            RealizeItemsJob job = new RealizeItemsJob ( this.model.getConnectJobTimeout (), this.model.getItemMgt (),
                     new OPCITEMDEF[] { def.getItemDefinition () } );
             KeyedResultSet<OPCITEMDEF, OPCITEMRESULT> result = worker.execute ( job, job );
 
@@ -460,7 +460,7 @@ public class OPCItemManager implements ItemSourceListener
             return;
         }
 
-        ItemActivationJob job = new ItemActivationJob ( this.model, state, handles.toArray ( new Integer[0] ) );
+        ItemActivationJob job = new ItemActivationJob ( this.model.getConnectJobTimeout (), this.model, state, handles.toArray ( new Integer[0] ) );
         this.worker.execute ( job, job );
     }
 
@@ -499,7 +499,7 @@ public class OPCItemManager implements ItemSourceListener
             return;
         }
 
-        SyncReadJob job = new SyncReadJob ( this.model, dataSource, handles.toArray ( new Integer[0] ) );
+        SyncReadJob job = new SyncReadJob ( this.model.getReadJobTimeout (), this.model, dataSource, handles.toArray ( new Integer[0] ) );
         KeyedResultSet<Integer, OPCITEMSTATE> result = this.worker.execute ( job, job );
 
         // we have the read result, so now we distribute the result to the items
@@ -541,7 +541,7 @@ public class OPCItemManager implements ItemSourceListener
 
     private String getErrorMessage ( int errorCode ) throws InvocationTargetException
     {
-        ErrorMessageJob job = new ErrorMessageJob ( this.model, errorCode );
+        ErrorMessageJob job = new ErrorMessageJob ( this.model.getConnectJobTimeout (), this.model, errorCode );
         return worker.execute ( job, job );
     }
 
@@ -605,7 +605,7 @@ public class OPCItemManager implements ItemSourceListener
         // specific item write errors are handled specifically using the result value
         for ( WriteRequest request : requests )
         {
-            SyncWriteJob job = new SyncWriteJob ( this.model, new WriteRequest[] { request } );
+            SyncWriteJob job = new SyncWriteJob ( this.model.getWriteJobTimeout (), this.model, new WriteRequest[] { request } );
 
             try
             {
