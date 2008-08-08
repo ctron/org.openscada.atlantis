@@ -610,7 +610,17 @@ public class OPCItemManager implements ItemSourceListener
             try
             {
                 ResultSet<WriteRequest> result = worker.execute ( job, job );
-                handleWriteResult ( result.get ( 0 ) );
+                // if we have a result...
+                if ( result != null )
+                {
+                    // ... process it
+                    handleWriteResult ( result.get ( 0 ) );
+                }
+                else
+                {
+                    // ... otherwise we don't have a connection
+                    handleWriteException ( new RuntimeException ( "No connection to OPC server" ), request );
+                }
             }
             catch ( InvocationTargetException e )
             {
@@ -625,7 +635,7 @@ public class OPCItemManager implements ItemSourceListener
      * @param e the exception
      * @param request the request that caused the error
      */
-    private void handleWriteException ( InvocationTargetException e, WriteRequest request )
+    private void handleWriteException ( Throwable e, WriteRequest request )
     {
         String itemId = this.serverHandleMapRev.get ( request.getServerHandle () );
         logger.warn ( String.format ( "Failed to perform write request for item %s (%s) => %s", itemId,
