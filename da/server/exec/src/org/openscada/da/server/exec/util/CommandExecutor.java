@@ -39,19 +39,19 @@ public class CommandExecutor
      * @param cmd command string including arguments
      * @param formatArguments objects that will be parsed into the command string
      */
-    public static CommandResult executeCommand ( String cmd )
+    public static CommandResult executeCommand ( ProcessBuilder processBuilder )
     {
         // Prepare a result
         CommandResult result = new CommandResult ();
         result.setError ( true );
         result.setMessage ( "OK" );
-
+        
         Process p = null;
         // Execute the command
         try
         {
             // Execute and wait
-            p = Runtime.getRuntime ().exec ( cmd );
+            p = processBuilder.start ();
             p.waitFor ();
 
             // Get exit value

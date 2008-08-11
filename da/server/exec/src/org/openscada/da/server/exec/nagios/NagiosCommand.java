@@ -53,6 +53,8 @@ public class NagiosCommand extends CommandBase
      */
     private Boolean lastState = null;
 
+    private ProcessBuilder processBuilder;
+
     /**
      * Constructor
      * 
@@ -67,6 +69,8 @@ public class NagiosCommand extends CommandBase
         // show whether the command is currently active or not
         this.stateItem = this.getCommandItemFactory ().createInput ( "state" );
         this.stateItem.updateData ( null, new MapBuilder<String, Variant> ().put ( "execution.error", new Variant ( true ) ).getMap (), AttributeMode.SET );
+        
+        this.processBuilder = new ProcessBuilder ( this.getCommandLine () );
     }
 
     /**
@@ -75,7 +79,7 @@ public class NagiosCommand extends CommandBase
     public void execute ()
     {
         // Execute
-        CommandResult result = CommandExecutor.executeCommand ( this.getCommandLine () );
+        CommandResult result = CommandExecutor.executeCommand ( this.processBuilder );
 
         // Place result attributes
         Map<String, Variant> map = new HashMap<String, Variant> ();
