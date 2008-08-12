@@ -75,7 +75,7 @@ public class NagiosCommand extends CommandBase
     public void setCommandLine ( String commandLine )
     {
         super.setCommandLine ( commandLine );
-        this.processBuilder = new ProcessBuilder ( this.getCommandLine () );
+        this.processBuilder = new ProcessBuilder ( commandLine );
     }
     
     /**
