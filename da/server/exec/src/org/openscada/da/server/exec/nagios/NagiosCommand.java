@@ -69,10 +69,15 @@ public class NagiosCommand extends CommandBase
         // show whether the command is currently active or not
         this.stateItem = this.getCommandItemFactory ().createInput ( "state" );
         this.stateItem.updateData ( null, new MapBuilder<String, Variant> ().put ( "execution.error", new Variant ( true ) ).getMap (), AttributeMode.SET );
-        
-        this.processBuilder = new ProcessBuilder ( this.getCommandLine () );
     }
 
+    @Override
+    public void setCommandLine ( String commandLine )
+    {
+        super.setCommandLine ( commandLine );
+        this.processBuilder = new ProcessBuilder ( this.getCommandLine () );
+    }
+    
     /**
      * run the command task
      */
