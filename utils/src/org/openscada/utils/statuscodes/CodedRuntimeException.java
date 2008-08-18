@@ -56,7 +56,6 @@ public class CodedRuntimeException extends RuntimeException implements CodedExce
         return message;
     }
 
-    @Override
     public StatusCode getStatus ()
     {
         return this.statusCode;
