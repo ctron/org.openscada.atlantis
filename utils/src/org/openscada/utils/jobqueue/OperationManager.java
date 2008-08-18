@@ -132,7 +132,7 @@ public class OperationManager
 
     public void addListener ( Listener listener )
     {
-            _listeners.add ( listener );
+        _listeners.add ( listener );
     }
 
     public void removeListener ( Listener listener )

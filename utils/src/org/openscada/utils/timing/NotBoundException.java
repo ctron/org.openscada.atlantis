@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,21 @@
 
 package org.openscada.utils.timing;
 
-public class NotBoundException extends Exception
+import org.openscada.utils.statuscodes.CodedException;
+import org.openscada.utils.statuscodes.StatusCode;
+
+public class NotBoundException extends CodedException
 {
+
+    public NotBoundException ( StatusCode statusCode )
+    {
+        super ( statusCode );
+    }
+
+    public NotBoundException ( StatusCode statusCode, String message, Throwable cause )
+    {
+        super ( statusCode, message, cause );
+    }
 
     /**
      * 

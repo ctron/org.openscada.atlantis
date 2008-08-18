@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -431,9 +431,10 @@ public class Scheduler implements Runnable
 
     public synchronized void bindToThread ( Thread thread ) throws AlreadyBoundException
     {
-        if ( ( _thread != null ) && !_thread.equals ( thread ) )
-            throw new AlreadyBoundException ();
-
+        if ( ( _thread != null ) && !_thread.equals ( thread ) ) 
+        {
+            throw new AlreadyBoundException ( StatusCodes.ALREADY_BOUND );
+        }
         _thread = thread;
     }
 
@@ -480,7 +481,7 @@ public class Scheduler implements Runnable
     {
         if ( !isBound () )
         {
-            throw new NotBoundException ();
+            throw new NotBoundException ( StatusCodes.NOT_BOUND );
         }
 
         if ( !_thread.equals ( Thread.currentThread () ) )
