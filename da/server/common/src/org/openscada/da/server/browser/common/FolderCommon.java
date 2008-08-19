@@ -117,7 +117,9 @@ public class FolderCommon implements Folder, ConfigurableFolder
                 return true;
             }
             else
+            {
                 return false;
+            }
         }
     }
     
