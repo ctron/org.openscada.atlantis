@@ -6,6 +6,9 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -17,6 +20,8 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
+import org.openscada.core.Variant;
+import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.client.test.dnd.ItemTransfer;
 
 public class RealTimeList extends ViewPart
@@ -68,6 +73,12 @@ public class RealTimeList extends ViewPart
         getViewSite ().setSelectionProvider ( _viewer );
         
         _viewer.addSelectionChangedListener ( _removeAction );
+        _viewer.addDoubleClickListener ( new IDoubleClickListener () {
+
+            public void doubleClick ( DoubleClickEvent event )
+            {
+                RealTimeList.this.handleDoubleClick ( event );
+            }} );
         
         hookContextMenu ();
         contributeToActionBars ();
@@ -75,6 +86,54 @@ public class RealTimeList extends ViewPart
         addDropSupport ();
     }
     
+    protected void handleDoubleClick ( DoubleClickEvent event )
+    {
+        if ( !(event.getSelection () instanceof IStructuredSelection ) )
+        {
+            return;
+        }
+        
+        Object o = ((IStructuredSelection)event.getSelection ()).getFirstElement ();
+        if ( !(o instanceof ListEntry) )
+        {
+            return;
+        }
+        
+        ListEntry entry = (ListEntry)o;
+        
+        Variant value = entry.getValue ();
+        if ( value == null )
+        {
+            return;
+        }
+        if ( !value.isBoolean ())
+        {
+            return;
+        }
+        
+        value = new Variant ( !value.asBoolean () );
+        
+        entry.getDataItem ().getConnection ().getConnection ().write ( entry.getDataItem ().getId (), value, new WriteOperationCallback () {
+
+            public void complete ()
+            {
+                // TODO Auto-generated method stub
+                
+            }
+
+            public void error ( Throwable e )
+            {
+                // TODO Auto-generated method stub
+                
+            }
+
+            public void failed ( String error )
+            {
+                // TODO Auto-generated method stub
+                
+            }} );
+    }
+
     private void hookContextMenu ()
     {
         MenuManager menuMgr = new MenuManager ( "#PopupMenu" );
