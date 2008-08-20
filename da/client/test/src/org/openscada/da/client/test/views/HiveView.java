@@ -175,7 +175,7 @@ public class HiveView extends ViewPart implements Observer
      */
     public void createPartControl ( Composite parent )
     {
-        _viewer = new TreeViewer ( parent, SWT.H_SCROLL | SWT.V_SCROLL );
+        _viewer = new TreeViewer ( parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI );
         _viewer.setContentProvider ( new HiveViewContentProvider () );
         _viewer.setLabelProvider ( new HiveViewLabelProvider () );
         _viewer.setSorter ( new NameSorter () );
