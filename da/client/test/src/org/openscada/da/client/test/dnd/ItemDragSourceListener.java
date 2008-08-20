@@ -41,7 +41,7 @@ public class ItemDragSourceListener implements DragSourceListener
                     return;
 
                 List<Item> items = new ArrayList<Item> ();
-                for ( Iterator i = selection.iterator (); i.hasNext (); )
+                for ( Iterator<?> i = selection.iterator (); i.hasNext (); )
                 {
                     DataItemEntry entry = (DataItemEntry)i.next ();
 
