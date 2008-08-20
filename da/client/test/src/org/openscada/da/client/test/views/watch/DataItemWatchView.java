@@ -45,7 +45,6 @@ import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.test.impl.DataItemEntry;
-import org.openscada.da.client.test.impl.VariantHelper;
 
 /**
  * This sample class demonstrates how to plug-in a new
@@ -255,7 +254,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
                 {
                     if ( !_valueLabel.isDisposed () )
                     {
-                        _valueLabel.setText ( VariantHelper.toString ( variant ) );
+                        _valueLabel.setText ( variant.toString () );
                     }
                 }
             } );
@@ -308,7 +307,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
     {
         if ( value != null )
         {
-            appendConsoleMessage ( "Value change event: " + VariantHelper.toString ( value ) + " " + ( cache ? "cache" : "" ) );
+            appendConsoleMessage ( "Value change event: " + value + " " + ( cache ? "cache" : "" ) );
             setValue ( value );
         }
         if ( attributes != null )
@@ -319,7 +318,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
             {
                 if ( entry.getValue () != null )
                 {
-                    appendConsoleMessage ( "#" + i + ": " + entry.getKey () + "->" + VariantHelper.toString ( entry.getValue () ) );
+                    appendConsoleMessage ( "#" + i + ": " + entry.getKey () + "->" + entry.getValue () );
                 }
                 else
                 {

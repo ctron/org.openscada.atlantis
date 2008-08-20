@@ -111,7 +111,7 @@ public class VariantHelper
         public abstract Variant convertTo ( String value ) throws NotConvertableException;
     }
     
-    public static String toString ( Variant variant )
+    protected static String toString ( Variant variant )
     {
         ValueType vt = toValueType ( variant );
         try
