@@ -40,7 +40,7 @@ import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.HiveConnection;
-import org.openscada.da.client.test.impl.VariantHelper.ValueType;
+import org.openscada.da.client.test.impl.ValueType;
 import org.openscada.da.client.test.views.realtime.ListEntry;
 
 class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
@@ -112,7 +112,7 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         _valueTypeSelect = new Combo ( container, SWT.DROP_DOWN | SWT.READ_ONLY );
         for ( ValueType vt : ValueType.values () )
         {
-            _valueTypeSelect.add ( vt.label (), vt.index () );
+            _valueTypeSelect.add ( vt.label (), vt.ordinal () );
         }
         _valueTypeSelect.addSelectionListener ( new SelectionAdapter () {
             @Override
@@ -121,7 +121,7 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
                 dialogChanged ();
             }
         } );
-        _valueTypeSelect.select ( ValueType.STRING.index () );
+        _valueTypeSelect.select ( ValueType.STRING.ordinal () );
         _valueTypeSelect.setLayoutData ( new GridData ( SWT.BEGINNING, SWT.BEGINNING, false, false ) );
 
         // row 3
@@ -193,7 +193,7 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         {
             for ( ValueType vt : ValueType.values () )
             {
-                if ( vt.index () == idx )
+                if ( vt.ordinal () == idx )
                 {
                     _value = vt.convertTo ( _valueText.getText () );
                 }

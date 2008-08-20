@@ -8,8 +8,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.openscada.da.client.test.impl.ValueType;
 import org.openscada.da.client.test.impl.VariantHelper;
-import org.openscada.da.client.test.impl.VariantHelper.ValueType;
 
 class WatchViewLabelProvider extends LabelProvider implements ITableLabelProvider
 {

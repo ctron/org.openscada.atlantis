@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.openscada.da.client.test.Openscada_da_client_testPlugin;
+import org.openscada.da.client.test.Activator;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 import org.openscada.da.client.test.impl.HiveConnection;
 
@@ -85,19 +85,19 @@ public class NewHiveWizard extends Wizard implements INewWizard
         HiveConnectionInformation info = new HiveConnectionInformation ( connectionString );
 
         HiveConnection connection = new HiveConnection ( info );
-        Openscada_da_client_testPlugin.getRepository ().addConnection ( connection );
+        Activator.getRepository ().addConnection ( connection );
         monitor.worked ( 1 );
 
         // store all
         monitor.subTask ( "Saving hive configuration" );
-        Openscada_da_client_testPlugin.getRepository ().save ( Openscada_da_client_testPlugin.getRepostoryFile () );
+        Activator.getRepository ().save ( Activator.getRepostoryFile () );
         monitor.worked ( 1 );
     }
 
     public void init ( IWorkbench workbench, IStructuredSelection selection )
     {
         setNeedsProgressMonitor ( true );
-        setDefaultPageImageDescriptor ( Openscada_da_client_testPlugin.getImageDescriptor ( "icons/48x48/stock_channel.png" ) );
+        setDefaultPageImageDescriptor ( Activator.getImageDescriptor ( "icons/48x48/stock_channel.png" ) );
     }
 
     @Override

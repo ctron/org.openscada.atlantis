@@ -9,7 +9,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.openscada.da.client.test.ISharedImages;
-import org.openscada.da.client.test.Openscada_da_client_testPlugin;
+import org.openscada.da.client.test.Activator;
 import org.openscada.da.client.test.impl.BrowserEntry;
 import org.openscada.da.client.test.impl.DataItemEntry;
 import org.openscada.da.client.test.impl.FolderEntry;
@@ -99,6 +99,6 @@ class HiveViewLabelProvider extends LabelProvider
             return PlatformUI.getWorkbench ().getSharedImages ().getImage (
                     org.eclipse.ui.ISharedImages.IMG_OBJ_ELEMENT );
 
-        return Openscada_da_client_testPlugin.getDefault ().getImageRegistry ().get ( imageKey );
+        return Activator.getDefault ().getImageRegistry ().get ( imageKey );
     }
 }

@@ -27,7 +27,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
-import org.openscada.da.client.test.Openscada_da_client_testPlugin;
+import org.openscada.da.client.test.Activator;
 import org.openscada.da.client.test.impl.HiveConnection;
 
 public class DeleteHiveAction implements IObjectActionDelegate, IViewActionDelegate
@@ -43,12 +43,12 @@ public class DeleteHiveAction implements IObjectActionDelegate, IViewActionDeleg
         
         try
         {
-            Openscada_da_client_testPlugin.getRepository ().removeConnection ( _connection );
-            Openscada_da_client_testPlugin.getRepository ().save ( Openscada_da_client_testPlugin.getRepostoryFile () );
+            Activator.getRepository ().removeConnection ( _connection );
+            Activator.getRepository ().save ( Activator.getRepostoryFile () );
         }
         catch ( Throwable e )
         {
-            Openscada_da_client_testPlugin.logError ( 0, "Failed to delete connection", e );
+            Activator.logError ( 0, "Failed to delete connection", e );
             _log.error ( "Delete failed", e );
         }
     }

@@ -48,7 +48,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.PropertySheetPage;
-import org.openscada.da.client.test.Openscada_da_client_testPlugin;
+import org.openscada.da.client.test.Activator;
 import org.openscada.da.client.test.actions.ConnectHiveAction;
 import org.openscada.da.client.test.dnd.ItemDragSourceListener;
 import org.openscada.da.client.test.dnd.ItemTransfer;
@@ -97,7 +97,7 @@ public class HiveView extends ViewPart implements Observer
      */
     public HiveView ()
     {
-        _repository = Openscada_da_client_testPlugin.getRepository ();
+        _repository = Activator.getRepository ();
         _repository.addObserver ( this );
         registerAllConnections ();
     }

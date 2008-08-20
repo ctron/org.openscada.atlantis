@@ -7,7 +7,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.TransferData;
 import org.openscada.core.ConnectionInformation;
-import org.openscada.da.client.test.Openscada_da_client_testPlugin;
+import org.openscada.da.client.test.Activator;
 import org.openscada.da.client.test.dnd.Item;
 import org.openscada.da.client.test.dnd.ItemTransfer;
 import org.openscada.da.client.test.impl.HiveConnection;
@@ -50,7 +50,7 @@ public class ItemDropAdapter extends ViewerDropAdapter
     {
         ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( item.getConnectionString () );
         
-        HiveConnection connection = Openscada_da_client_testPlugin.getRepository ().findConnection ( connectionInformation );
+        HiveConnection connection = Activator.getRepository ().findConnection ( connectionInformation );
         if ( connection != null )
         {
             HiveItem hiveItem = new HiveItem ( connection, item.getId () );

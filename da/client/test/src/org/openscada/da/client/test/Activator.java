@@ -40,19 +40,20 @@ import org.osgi.framework.BundleContext;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class Openscada_da_client_testPlugin extends AbstractUIPlugin
+public class Activator extends AbstractUIPlugin
 {
     private static Logger _log = Logger.getLogger ( "org.openscada.da.client.test.Plugin" );
     
     public static final String PLUGIN_ID = "org.openscada.da.client.test";
+    public static final String NATIVE_LS = System.getProperty ( "line.separator", "\n" );
 
     //The shared instance.
-    private static Openscada_da_client_testPlugin plugin = null;
+    private static Activator plugin = null;
 
     /**
      * The constructor.
      */
-    public Openscada_da_client_testPlugin ()
+    public Activator ()
     {
         plugin = this;
     }
@@ -98,7 +99,7 @@ public class Openscada_da_client_testPlugin extends AbstractUIPlugin
     /**
      * Returns the shared instance.
      */
-    public static Openscada_da_client_testPlugin getDefault ()
+    public static Activator getDefault ()
     {
         return plugin;
     }

@@ -27,7 +27,7 @@ import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
-import org.openscada.da.client.test.Openscada_da_client_testPlugin;
+import org.openscada.da.client.test.Activator;
 import org.openscada.da.core.browser.Entry;
 
 public class RefreshFolderUpdater extends FolderUpdater
@@ -53,11 +53,11 @@ public class RefreshFolderUpdater extends FolderUpdater
                 try
                 {
                     performRefresh ( monitor );
-                    return new OperationStatus ( OperationStatus.OK, Openscada_da_client_testPlugin.PLUGIN_ID, 0, "", null );
+                    return new OperationStatus ( OperationStatus.OK, Activator.PLUGIN_ID, 0, "", null );
                 }
                 catch ( Exception e )
                 {
-                    return new OperationStatus ( OperationStatus.ERROR, Openscada_da_client_testPlugin.PLUGIN_ID, 0, "Failed to refresh", e );
+                    return new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, "Failed to refresh", e );
                 }
                 finally
                 {

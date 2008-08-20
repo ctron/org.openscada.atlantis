@@ -35,7 +35,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.core.Variant;
 import org.openscada.da.client.WriteAttributeOperationCallback;
-import org.openscada.da.client.test.Openscada_da_client_testPlugin;
+import org.openscada.da.client.test.Activator;
 import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
@@ -154,14 +154,14 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
 
     public void handleError ( Map<String, Variant> attributes, WriteAttributeResults results )
     {
-        MultiStatus status = new MultiStatus ( Openscada_da_client_testPlugin.PLUGIN_ID, 0,
+        MultiStatus status = new MultiStatus ( Activator.PLUGIN_ID, 0,
                 "Failed to write attributes", null );
 
         if ( attributes.size () != results.size () )
         {
             status.add ( new OperationStatus (
                     OperationStatus.WARNING,
-                    Openscada_da_client_testPlugin.PLUGIN_ID,
+                    Activator.PLUGIN_ID,
                     0,
                     String.format ( "Only %1$d items out of %2$d where processed", results.size (), attributes.size () ),
                     null ) );
@@ -171,7 +171,7 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
         {
             if ( entry.getValue ().isError () )
             {
-                status.add ( new OperationStatus ( OperationStatus.ERROR, Openscada_da_client_testPlugin.PLUGIN_ID, 0,
+                status.add ( new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0,
                         String.format ( "Failed to write attribute '%1$s': %2$s", entry.getKey (),
                                 entry.getValue ().getError ().getMessage () ), null ) );
             }
@@ -181,7 +181,7 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
         {
             if ( !results.containsKey ( name ) )
             {
-                status.add ( new OperationStatus ( OperationStatus.WARNING, Openscada_da_client_testPlugin.PLUGIN_ID,
+                status.add ( new OperationStatus ( OperationStatus.WARNING, Activator.PLUGIN_ID,
                         0, String.format ( "Attribute %s is missing in result list", name ), null ) );
             }
         }

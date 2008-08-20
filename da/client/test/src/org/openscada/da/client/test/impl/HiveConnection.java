@@ -38,7 +38,7 @@ import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;
-import org.openscada.da.client.test.Openscada_da_client_testPlugin;
+import org.openscada.da.client.test.Activator;
 import org.openscada.da.client.test.config.HiveConnectionInformation;
 
 public class HiveConnection extends Observable implements IActionFilter, IPropertySource
@@ -104,7 +104,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
         catch ( Exception e )
         {
             _log.error ( "Failed to start connection", e );
-            Openscada_da_client_testPlugin.logError ( 1, "Unable to connect", e );
+            Activator.logError ( 1, "Unable to connect", e );
         }
         _log.debug ( "Connection fired up..." );
     }
@@ -155,7 +155,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
         if ( error != null )
         {
             _log.info ( "Connection failed with additional error", error );
-            Openscada_da_client_testPlugin.getDefault ().notifyError ( "Connection failed", error );
+            Activator.getDefault ().notifyError ( "Connection failed", error );
         }
     }
 
