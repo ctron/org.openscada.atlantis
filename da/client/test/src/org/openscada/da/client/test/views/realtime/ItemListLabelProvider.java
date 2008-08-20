@@ -18,9 +18,9 @@ import org.openscada.da.client.test.views.realtime.ListEntry.AttributePair;
 
 public class ItemListLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider, ITableColorProvider
 {
-    
+
     private ResourceManager resourceManager = new LocalResourceManager ( JFaceResources.getResources () );
-    
+
     public Image getColumnImage ( Object element, int columnIndex )
     {
         if ( columnIndex == 0 && element instanceof ListEntry )
@@ -28,7 +28,14 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
             ListEntry entry = (ListEntry)element;
             if ( isError ( entry ) )
             {
-                return resourceManager.createImage ( ImageDescriptor.createFromFile ( ItemListLabelProvider.class, "icons/alarm.png" ) );
+                try
+                {
+                    return resourceManager.createImage ( ImageDescriptor.createFromFile ( ItemListLabelProvider.class, "icons/alarm.png" ) );
+                }
+                catch ( Throwable e )
+                {
+                    return null;
+                }
             }
         }
         return null;
@@ -98,56 +105,69 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
         }
         return defaultValue;
     }
-    
+
     public Color getBackground ( Object element, int columnIndex )
     {
-        if ( element instanceof ListEntry )
+        try
         {
-            ListEntry entry = (ListEntry)element;
-            if ( isError ( entry ) )
+            if ( element instanceof ListEntry )
             {
-                return resourceManager.createColor ( ColorDescriptor.createFrom ( new RGB ( 255, 255, 0 ) ) );
-            }
-            else if ( isAlarm ( entry ) )
-            {
-                return resourceManager.createColor ( ColorDescriptor.createFrom ( new RGB ( 255, 0, 0 ) ) );
+                ListEntry entry = (ListEntry)element;
+                if ( isError ( entry ) )
+                {
+                    return resourceManager.createColor ( ColorDescriptor.createFrom ( new RGB ( 255, 255, 0 ) ) );
+                }
+                else if ( isAlarm ( entry ) )
+                {
+                    return resourceManager.createColor ( ColorDescriptor.createFrom ( new RGB ( 255, 0, 0 ) ) );
+                }
             }
         }
+        catch ( Throwable e )
+        {
+        }
+
         return null;
     }
 
     public Color getForeground ( Object element, int columnIndex )
     {
-        if ( element instanceof ListEntry )
+        try
         {
-            ListEntry entry = (ListEntry)element;
-            if ( isError ( entry ) )
+            if ( element instanceof ListEntry )
             {
-                return null;
+                ListEntry entry = (ListEntry)element;
+                if ( isError ( entry ) )
+                {
+                    return null;
+                }
+                else if ( isManual ( entry ) )
+                {
+                    return resourceManager.createColor ( ColorDescriptor.createFrom ( new RGB ( 0, 0, 255 ) ) );
+                }
             }
-            else if ( isManual ( entry )  )
-            {
-                return resourceManager.createColor ( ColorDescriptor.createFrom ( new RGB ( 0, 0, 255 ) ) );
-            }
+        }
+        catch ( Throwable e )
+        {
         }
         return null;
     }
-    
+
     private boolean isManual ( ListEntry entry )
     {
         return isAttribute ( entry, "org.openscada.da.manual.active", false );
     }
-    
+
     private boolean isAlarm ( ListEntry entry )
     {
         return isAttribute ( entry, "alarm", false );
     }
-    
+
     private boolean isError ( ListEntry entry )
     {
         return isAttribute ( entry, "error", false );
     }
-    
+
     @Override
     public void dispose ()
     {
