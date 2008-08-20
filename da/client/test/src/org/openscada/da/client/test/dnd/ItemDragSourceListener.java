@@ -26,7 +26,6 @@ public class ItemDragSourceListener implements DragSourceListener
     
     public void dragFinished ( DragSourceEvent event )
     {
-        // TODO Auto-generated method stub
     }
 
     public void dragSetData ( DragSourceEvent event )
