@@ -60,10 +60,12 @@ public class FolderWatcher extends Observable implements FolderListener
         for ( String name : removed )
         {
             if ( _cache.remove ( name ) != null )
+            {
                 changed++;
+            }
         }
         
-        if ( changed > 0 )
+        if ( changed > 0 || full )
         {
             setChanged ();
             notifyObservers ();
