@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,22 +25,23 @@ public class Pair<T1, T2>
 
     public T2 second = null;
 
-    public Pair ( T1 first_, T2 second_ )
+    public Pair ( T1 first, T2 second )
     {
-        this.first = first_;
-        this.second = second_;
+        this.first = first;
+        this.second = second;
     }
 
     @Override
     public int hashCode ()
     {
-        final int PRIME = 31;
+        final int prime = 31;
         int result = 1;
-        result = PRIME * result + ( ( first == null ) ? 0 : first.hashCode () );
-        result = PRIME * result + ( ( second == null ) ? 0 : second.hashCode () );
+        result = prime * result + ( ( first == null ) ? 0 : first.hashCode () );
+        result = prime * result + ( ( second == null ) ? 0 : second.hashCode () );
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean equals ( Object obj )
     {
@@ -50,8 +51,7 @@ public class Pair<T1, T2>
             return false;
         if ( getClass () != obj.getClass () )
             return false;
-
-        final Pair other = (Pair)obj;
+        Pair other = (Pair)obj;
         if ( first == null )
         {
             if ( other.first != null )
