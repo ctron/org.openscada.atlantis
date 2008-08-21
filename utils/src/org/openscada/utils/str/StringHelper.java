@@ -39,10 +39,10 @@ public class StringHelper
      * @param delimiter the delimiter to use
      * @return the result string
      */
-    public static String join ( Collection<? extends Object> items, String delimiter )
+    public static String join ( Collection<?> items, String delimiter )
     {
         StringBuffer buffer = new StringBuffer ();
-        Iterator iter = items.iterator ();
+        Iterator<?> iter = items.iterator ();
 
         while ( iter.hasNext () )
         {
