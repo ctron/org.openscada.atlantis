@@ -27,10 +27,9 @@ public class AttributesHelper
         return values;
     }
     
-    @SuppressWarnings("unchecked")
-    public static Map toIce ( Map<String, Variant> attribues )
+    public static Map<String,VariantBase> toIce ( Map<String, Variant> attribues )
     {
-        Map values = new HashMap ();
+        Map<String, VariantBase> values = new HashMap<String, VariantBase> ();
         
         for ( Map.Entry<String, Variant> entry : attribues.entrySet () )
         {
