@@ -25,12 +25,12 @@ public class FolderItemFactory extends HiveItemFactory
 
     public FolderItemFactory ( ItemFactory parentFactory, HiveCommon hive, FolderCommon parentFolder, String baseId, String folderName )
     {
-        this ( parentFactory, hive, parentFolder, baseId, folderName, null );
+        this ( parentFactory, hive, parentFolder, parentFactory.getBaseId () + "." + baseId, folderName, null );
     }
 
     public FolderItemFactory ( ItemFactory parentFactory, HiveCommon hive, FolderCommon parentFolder, String baseId, String folderName, String idDelimiter )
     {
-        super ( parentFactory, hive, baseId, idDelimiter );
+        super ( parentFactory, hive, parentFactory.getBaseId () + idDelimiter + baseId, idDelimiter );
         this.parentFolder = parentFolder;
         this.folderName = folderName;
 

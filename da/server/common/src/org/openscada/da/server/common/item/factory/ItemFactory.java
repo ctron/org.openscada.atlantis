@@ -36,4 +36,6 @@ public interface ItemFactory
      * @param itemFactory
      */
     public abstract boolean removeSubFactory ( ItemFactory itemFactory );
+    
+    public abstract String getBaseId ();
 }
