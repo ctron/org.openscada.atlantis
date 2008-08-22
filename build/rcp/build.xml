@@ -11,6 +11,8 @@
     <description>
             The OpenSCADA RCP Client
     </description>
+	
+	<property file="../../config/local.properties"/>
 
 	<property name="eclipse.home" value="/home/user/eclipse"/>
 	<property name="eclipse.builder.version" value="_3.2.0.v20060603"/>
@@ -85,7 +87,6 @@
     			<include name="**/*"/>
     		</fileset>
     	</copy>
-    	<move tofile="${upload.base.ostc}/${buildId}-macosx.carbon.tar.gz" file="${upload.base.ostc}/${buildId}-macosx.carbon.ppc.tar.gz"/>
     </target>
 
 	<target name="win32installer">
