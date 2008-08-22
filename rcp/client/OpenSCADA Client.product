@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?pde version="3.1"?>
+<?pde version="3.4"?>
 
 <product name="OpenSCADA Client" id="org.openscada.rcp.client.product" application="org.openscada.rcp.client.application" useFeatures="true">
 
@@ -10,7 +10,8 @@
       </text>
    </aboutInfo>
 
-   <configIni use="default"/>
+   <configIni use="default">
+   </configIni>
 
    <launcherArgs>
    </launcherArgs>
@@ -29,15 +30,19 @@
 
    <intro introId="org.eclipse.ui.intro.universal"/>
 
+   <vm>
+   </vm>
+
    <plugins>
    </plugins>
 
    <features>
-      <feature id="org.eclipse.rcp" version="3.2.0.v20060609m-SVDNgVrNoh-MeGG"/>
-      <feature id="org.openscada.ae.client.test" version="0.4.0"/>
-      <feature id="org.openscada.da.client.test" version="0.2.2"/>
-      <feature id="org.openscada.da.net.client" version="0.2.2"/>
-      <feature id="org.openscada.rcp.client" version="0.4.0"/>
+      <feature id="org.eclipse.rcp" version="3.4.0.v20080324a-989JERhEk-jWncbGXKK6sjxB"/>
+      <feature id="org.openscada.ae.client.test" version="0.8.1"/>
+      <feature id="org.openscada.da.client.test" version="0.8.1"/>
+      <feature id="org.openscada.da.ice.client" version="0.8.1"/>
+      <feature id="org.openscada.da.net.client" version="0.8.1"/>
+      <feature id="org.openscada.rcp.client" version="0.8.1"/>
    </features>
 
 </product>
