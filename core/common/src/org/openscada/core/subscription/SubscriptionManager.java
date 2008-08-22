@@ -51,7 +51,7 @@ public class SubscriptionManager
      * @param topic The topic to which the subscription should be made
      * @param listener The listener which will receive the events
      * @param hint The hint is specific to the topic
-     * @throws ValidationException thrown if the subscription cannot be establed (e.g. the topic is invalid)
+     * @throws ValidationException thrown if the subscription cannot be established (e.g. the topic is invalid)
      */
     public synchronized void subscribe ( Object topic, SubscriptionListener listener, Object hint ) throws ValidationException
     {
