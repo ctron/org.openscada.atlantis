@@ -44,6 +44,10 @@
          <property
        	       name="introBrandingImageText"
                value="OpenSCADA Project"/>
+         <property
+               name="appName"
+               value="OpenSCADA Client">
+         </property>
       </product>
    </extension>
    <extension
