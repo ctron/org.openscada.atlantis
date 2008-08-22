@@ -211,7 +211,7 @@
     	</concat>
 	
 		<!-- Create dot graph from deps file -->
-		<exec executable="dot" dir="${deploy.additional}">
+		<exec executable="dot" dir="${deploy.additional}" failifexecutionfails="no">
 			<arg line="-Tps"/>
 			<arg line="module.deps"/>
 			<arg line="-omodule.ps"/>
