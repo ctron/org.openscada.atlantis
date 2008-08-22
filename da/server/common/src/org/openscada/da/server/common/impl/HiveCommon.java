@@ -299,6 +299,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         // subscribe using the new item subscription manager
         try
         {
+            retrieveItem ( itemId );
             _itemSubscriptionManager.subscribe ( itemId, sessionCommon );
         }
         catch ( ValidationException e )
@@ -431,10 +432,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 
     public DataItem lookupItem ( String id )
     {
-        synchronized ( _itemMap )
-        {
-            return _itemMap.get ( new DataItemInformationBase ( id ) );
-        }
+        return _itemMap.get ( new DataItemInformationBase ( id ) );
     }
 
     public FactoryTemplate findFactoryTemplate ( String item )
