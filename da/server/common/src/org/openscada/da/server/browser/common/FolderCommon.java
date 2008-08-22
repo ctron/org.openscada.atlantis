@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,8 +37,9 @@ public class FolderCommon implements Folder, ConfigurableFolder
 {
 
     private Map<String, Entry> _entryMap = new HashMap<String, Entry> ();
+
     private Map<Object, FolderListener> _listeners = new HashMap<Object, FolderListener> ();
-    
+
     public Entry[] list ( Stack<String> path ) throws NoSuchFolderException
     {
         if ( path.isEmpty () )
@@ -47,14 +48,14 @@ public class FolderCommon implements Folder, ConfigurableFolder
             return getFolderEntry ( path.pop () ).list ( path );
     }
 
-    private Entry [] getAllEntries ()
+    private Entry[] getAllEntries ()
     {
         synchronized ( this )
         {
-            return _entryMap.values ().toArray ( new Entry[_entryMap.size()] );
+            return _entryMap.values ().toArray ( new Entry[_entryMap.size ()] );
         }
     }
-    
+
     private Entry getEntry ( String name )
     {
         synchronized ( this )
@@ -62,25 +63,25 @@ public class FolderCommon implements Folder, ConfigurableFolder
             return _entryMap.get ( name );
         }
     }
-    
+
     private Folder getFolderEntry ( String name ) throws NoSuchFolderException
     {
         Entry entry = getEntry ( name );
         if ( entry instanceof FolderEntryCommon )
         {
-            return ((FolderEntryCommon)entry).getFolder ();
+            return ( (FolderEntryCommon)entry ).getFolder ();
         }
         else
         {
             throw new NoSuchFolderException ();
         }
-            
+
     }
-    
+
     /* (non-Javadoc)
      * @see org.openscada.da.server.browser.common.ConfigurableFolder#add(java.lang.String, org.openscada.da.server.browser.common.Folder, java.util.Map)
      */
-    public boolean add ( String name, Folder folder, Map < String, Variant > attributes )
+    public boolean add ( String name, Folder folder, Map<String, Variant> attributes )
     {
         synchronized ( this )
         {
@@ -96,17 +97,17 @@ public class FolderCommon implements Folder, ConfigurableFolder
                 return false;
         }
     }
-    
+
     /* (non-Javadoc)
      * @see org.openscada.da.server.browser.common.ConfigurableFolder#add(java.lang.String, org.openscada.da.server.common.DataItem, java.util.Map)
      */
-    public boolean add ( String name, DataItem item, Map < String, Variant > attributes )
+    public boolean add ( String name, DataItem item, Map<String, Variant> attributes )
     {
         if ( item.getInformation ().getName () == null )
         {
             throw new NullPointerException ( "Item must have an id" );
         }
-        
+
         synchronized ( this )
         {
             if ( !_entryMap.containsKey ( name ) )
@@ -122,170 +123,145 @@ public class FolderCommon implements Folder, ConfigurableFolder
             }
         }
     }
-    
-    public boolean remove ( String name )
+
+    public synchronized boolean remove ( String name )
     {
-        synchronized ( this )
+        if ( _entryMap.containsKey ( name ) )
         {
-            if ( _entryMap.containsKey ( name ) )
-            {
-                Entry entry = _entryMap.remove ( name );
-                if ( entry instanceof FolderEntryCommon )
-                    ((FolderEntryCommon)entry).getFolder ().removed ();
-                
-                notifyRemove ( name );
-                return true;
-            }
-            else
-                return false;
+            Entry entry = _entryMap.remove ( name );
+            if ( entry instanceof FolderEntryCommon )
+                ( (FolderEntryCommon)entry ).getFolder ().removed ();
+
+            notifyRemove ( name );
+            return true;
         }
-    }
-    
-    public String findEntry ( DataItem item )
-    {
-        synchronized ( this )
-        {
-            for ( Iterator<Map.Entry<String, Entry>> i = _entryMap.entrySet ().iterator () ; i.hasNext () ; )
-            {
-                Map.Entry<String, Entry> entry = i.next ();
-                if ( entry.getValue() instanceof DataItemEntryCommon )
-                    if ( ((DataItemEntryCommon)entry.getValue()).getItem () == item )
-                    {
-                        return entry.getKey ();
-                    }
-            }
-            return null;
-        }
-    }
-    
-    public String findEntry ( Folder folder )
-    {
-        synchronized ( this )
-        {
-            for ( Iterator<Map.Entry<String, Entry>> i = _entryMap.entrySet ().iterator () ; i.hasNext () ; )
-            {
-                Map.Entry<String, Entry> entry = i.next ();
-                if ( entry.getValue() instanceof FolderEntryCommon )
-                    if ( ((FolderEntryCommon)entry.getValue()).getFolder () == folder )
-                    {
-                        return entry.getKey ();
-                    }
-            }
-            return null;
-        }
-    }
-    
-    public boolean remove ( Folder folder )
-    {
-        synchronized ( this )
-        {
-            for ( Iterator<Map.Entry<String, Entry>> i = _entryMap.entrySet ().iterator () ; i.hasNext () ; )
-            {
-                Map.Entry<String, Entry> entry = i.next ();
-                if ( entry.getValue() instanceof FolderEntryCommon )
-                    if ( ((FolderEntryCommon)entry.getValue()).getFolder () == folder )
-                    {
-                        i.remove ();
-                        folder.removed ();
-                        notifyRemove ( entry.getKey () );
-                        return true;
-                    }
-            }
+        else
             return false;
-        }
     }
-    
-    public boolean remove ( DataItem item )
+
+    public synchronized String findEntry ( DataItem item )
     {
-        synchronized ( this )
+        for ( Iterator<Map.Entry<String, Entry>> i = _entryMap.entrySet ().iterator (); i.hasNext (); )
         {
-            for ( Iterator<Map.Entry<String, Entry>> i = _entryMap.entrySet ().iterator () ; i.hasNext () ; )
-            {
-                Map.Entry<String, Entry> entry = i.next ();
-                if ( entry.getValue() instanceof DataItemEntryCommon )
-                    if ( ((DataItemEntryCommon)entry.getValue()).getItem () == item )
-                    {
-                        i.remove ();
-                        notifyRemove ( entry.getKey () );
-                        return true;
-                    }
-            }
-            return false;
+            Map.Entry<String, Entry> entry = i.next ();
+            if ( entry.getValue () instanceof DataItemEntryCommon )
+                if ( ( (DataItemEntryCommon)entry.getValue () ).getItem () == item )
+                {
+                    return entry.getKey ();
+                }
         }
+        return null;
+    }
+
+    public synchronized String findEntry ( Folder folder )
+    {
+        for ( Iterator<Map.Entry<String, Entry>> i = _entryMap.entrySet ().iterator (); i.hasNext (); )
+        {
+            Map.Entry<String, Entry> entry = i.next ();
+            if ( entry.getValue () instanceof FolderEntryCommon )
+                if ( ( (FolderEntryCommon)entry.getValue () ).getFolder () == folder )
+                {
+                    return entry.getKey ();
+                }
+        }
+        return null;
+    }
+
+    public synchronized boolean remove ( Folder folder )
+    {
+        for ( Iterator<Map.Entry<String, Entry>> i = _entryMap.entrySet ().iterator (); i.hasNext (); )
+        {
+            Map.Entry<String, Entry> entry = i.next ();
+            if ( entry.getValue () instanceof FolderEntryCommon )
+                if ( ( (FolderEntryCommon)entry.getValue () ).getFolder () == folder )
+                {
+                    i.remove ();
+                    folder.removed ();
+                    notifyRemove ( entry.getKey () );
+                    return true;
+                }
+        }
+        return false;
+    }
+
+    public synchronized boolean remove ( DataItem item )
+    {
+        for ( Iterator<Map.Entry<String, Entry>> i = _entryMap.entrySet ().iterator (); i.hasNext (); )
+        {
+            Map.Entry<String, Entry> entry = i.next ();
+            if ( entry.getValue () instanceof DataItemEntryCommon )
+                if ( ( (DataItemEntryCommon)entry.getValue () ).getItem () == item )
+                {
+                    i.remove ();
+                    notifyRemove ( entry.getKey () );
+                    return true;
+                }
+        }
+        return false;
     }
 
     public void subscribe ( Stack<String> path, FolderListener listener, Object tag ) throws NoSuchFolderException
     {
         if ( path.isEmpty () )
+        {
             addListener ( listener, tag );
+        }
         else
+        {
             getFolderEntry ( path.pop () ).subscribe ( path, listener, tag );
+        }
     }
 
     public void unsubscribe ( Stack<String> path, Object tag ) throws NoSuchFolderException
     {
         if ( path.isEmpty () )
+        {
             removeListener ( tag );
+        }
         else
+        {
             getFolderEntry ( path.pop () ).unsubscribe ( path, tag );
-    }
-    
-    private void addListener ( FolderListener listener, Object tag )
-    {
-        synchronized ( this )
-        {
-            _listeners.put ( tag, listener );
-            sendCurrentList ( listener, tag );
         }
     }
-    
-    private void removeListener ( Object tag )
+
+    private synchronized void addListener ( FolderListener listener, Object tag )
     {
-        synchronized ( this )
-        {
-            _listeners.remove ( tag );
-        } 
+        _listeners.put ( tag, listener );
+        sendCurrentList ( listener, tag );
     }
-    
-    public void clearListeners ()
+
+    private synchronized void removeListener ( Object tag )
     {
-        synchronized ( _listeners )
+        _listeners.remove ( tag );
+    }
+
+    public synchronized void clearListeners ()
+    {
+        _listeners.clear ();
+    }
+
+    private synchronized void sendCurrentList ( FolderListener listener, Object tag )
+    {
+        listener.changed ( tag, new ArrayList<Entry> ( _entryMap.values () ), new LinkedList<String> (), true );
+    }
+
+    private synchronized void notifyAdd ( Entry added )
+    {
+        List<Entry> list = new LinkedList<Entry> ();
+        list.add ( added );
+        for ( Map.Entry<Object, FolderListener> entry : _listeners.entrySet () )
         {
-            _listeners.clear ();
+            entry.getValue ().changed ( entry.getKey (), list, new LinkedList<String> (), false );
         }
     }
-    
-    private void sendCurrentList ( FolderListener listener, Object tag )
+
+    private synchronized void notifyRemove ( String removed )
     {
-        synchronized ( this )
+        List<String> list = new LinkedList<String> ();
+        list.add ( removed );
+        for ( Map.Entry<Object, FolderListener> entry : _listeners.entrySet () )
         {
-            listener.changed ( tag, new ArrayList<Entry> ( _entryMap.values () ), new LinkedList<String> (), true );            
-        }
-    }
-    
-    private void notifyAdd ( Entry added )
-    {
-        synchronized ( this )
-        {
-            List<Entry> list = new LinkedList<Entry> ();
-            list.add ( added );
-            for ( Map.Entry<Object, FolderListener> entry: _listeners.entrySet () )
-            {
-                entry.getValue ().changed ( entry.getKey(), list, new LinkedList<String> (), false );
-            }
-        }
-    }
-    
-    private void notifyRemove ( String removed )
-    {
-        synchronized ( this )
-        {
-            List<String> list = new LinkedList<String> ();
-            list.add ( removed );
-            for ( Map.Entry<Object, FolderListener> entry: _listeners.entrySet () )
-            {
-                entry.getValue ().changed ( entry.getKey(), new LinkedList<Entry> (), list , false );
-            }
+            entry.getValue ().changed ( entry.getKey (), new LinkedList<Entry> (), list, false );
         }
     }
 
@@ -300,12 +276,20 @@ public class FolderCommon implements Folder, ConfigurableFolder
 
     public void added ()
     {
-       
+
     }
 
     public void removed ()
     {
-       clearListeners ();   
+        clearListeners ();
     }
-    
+
+    public synchronized void clear ()
+    {
+        for ( Map.Entry<Object, FolderListener> entry : _listeners.entrySet () )
+        {
+            entry.getValue ().changed ( entry.getKey (), new LinkedList<Entry> (), new LinkedList<String> (), true );
+        }
+        _entryMap.clear ();
+    }
 }
