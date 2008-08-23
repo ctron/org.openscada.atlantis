@@ -74,28 +74,12 @@
     <antcall target="getBaseComponents" />
 	
 	<fetch-module src="${svn.base}/rcp/update_plugin" type="plugin" name="org.openscada.rcp.update"/>
-	
-  	<antcall target="checkoutSvn">
- 		<param name="todir" value="${buildDirectory}/plugins/org.openscada.da.client.test"/>
- 		<param name="module" value="${svn.base}/da/client/test"/>
- 	</antcall>
-  	<antcall target="checkoutSvn">
- 		<param name="todir" value="${buildDirectory}/features/org.openscada.da.client.test"/>
- 		<param name="module" value="${svn.base}/da/client/test_feature"/>
- 	</antcall>
-  	<antcall target="checkoutSvn">
- 		<param name="todir" value="${buildDirectory}/features/org.openscada.da.net.client"/>
- 		<param name="module" value="${svn.base}/da/client/net_feature"/>
- 	</antcall>
-	<fetch-module src="${svn.base}/da/client/net_feature" type="feature" name="org.openscada.da.ice.client"/>
-  	<antcall target="checkoutSvn">
- 		<param name="todir" value="${buildDirectory}/plugins/log4j_wrapper_plugin"/>
- 		<param name="module" value="${svn.ext.base}/log4j_wrapper_plugin"/>
- 	</antcall>
-  	<antcall target="checkoutSvn">
- 		<param name="todir" value="${buildDirectory}/plugins/ext_plugin_xmlbeans"/>
- 		<param name="module" value="${svn.ext.base}/xmlbeans_plugin"/>
- 	</antcall>
+  	<fetch-modele src="${svn.base}/da/client/test" type="plugin" name="org.openscada.da.client.test"/>
+  	<fetch-modele src="${svn.base}/da/client/test_feature" type="feature" name="org.openscada.da.client.test"/>
+  	<fetch-modele src="${svn.base}/da/client/net_feature" type="feature" name="org.openscada.da.net.client"/>
+	<fetch-module src="${svn.base}/da/client/ice_feature" type="feature" name="org.openscada.da.ice.client"/>
+  	<fetch-modele src="${svn.ext.base}/log4j_wrapper_plugin" type="plugin" name="log4j_wrapper_plugin"/>
+  	<fetch-modele src="${svn.ext.base}/xmlbeans_plugin" type="plugin" name="ext_plugin_xmlbeans"/>  	
   	<fetch-module src="${svn.ext.base}/plugins/icej" type="plugin" name="ext_plugin_icej"/>
 	<fetch-module src="${svn.ext.base}/plugins/jfreechart" type="plugin" name="ext_plugin_jfreechart"/>
   	<fetch-module src="${svn.base}/da/client/plugin_wrapper" type="plugin" name="org.openscada.da.client"/>
