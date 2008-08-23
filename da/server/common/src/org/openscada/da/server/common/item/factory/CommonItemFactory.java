@@ -20,14 +20,16 @@ import org.openscada.da.server.common.chain.WriteHandlerItem;
  */
 public class CommonItemFactory implements ItemFactory
 {
-    private static final String DEFAULT_ID_DELIMITER = ".";
+    protected static final String DEFAULT_ID_DELIMITER = ".";
 
     private String baseId = null;
+
     private String idDelimiter = DEFAULT_ID_DELIMITER;
 
     private Map<String, DataItem> itemMap = new HashMap<String, DataItem> ();
+
     private Set<ItemFactory> factoryMap = new HashSet<ItemFactory> ();
-    
+
     private boolean disposed = false;
 
     private ItemFactory parentItemFactory;
@@ -44,16 +46,24 @@ public class CommonItemFactory implements ItemFactory
         {
             parentItemFactory.addSubFactory ( this );
         }
-        
-        this.baseId = baseId;
+
         this.idDelimiter = idDelimiter;
 
         if ( this.idDelimiter == null )
         {
             this.idDelimiter = DEFAULT_ID_DELIMITER;
         }
+
+        if ( parentItemFactory != null )
+        {
+            this.baseId = parentItemFactory.getBaseId () + this.idDelimiter + baseId;
+        }
+        else
+        {
+            this.baseId = baseId;
+        }
     }
-    
+
     public boolean isDisposed ()
     {
         return this.disposed;
@@ -75,7 +85,7 @@ public class CommonItemFactory implements ItemFactory
             return this.baseId + idDelimiter + localId;
         }
     }
-    
+
     private void registerItem ( DataItem newItem )
     {
         DataItem oldItem = this.itemMap.put ( newItem.getInformation ().getName (), newItem );
@@ -112,14 +122,14 @@ public class CommonItemFactory implements ItemFactory
         {
             return;
         }
-        
+
         this.disposed = true;
-        
+
         if ( this.parentItemFactory != null )
         {
             this.parentItemFactory.removeSubFactory ( this );
         }
-    
+
         Collection<DataItem> items = new ArrayList<DataItem> ( this.itemMap.values () );
         for ( DataItem item : items )
         {
@@ -127,7 +137,7 @@ public class CommonItemFactory implements ItemFactory
         }
         // should be clear anyways
         this.itemMap.clear ();
-        
+
         for ( ItemFactory factory : this.factoryMap )
         {
             factory.dispose ();
@@ -154,7 +164,7 @@ public class CommonItemFactory implements ItemFactory
     {
         return constructInputOutput ( localId, writeHandler );
     }
-    
+
     public String getBaseId ()
     {
         return this.baseId;
