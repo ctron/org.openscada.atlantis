@@ -78,8 +78,8 @@
   	<fetch-module src="${svn.base}/da/client/test_feature" type="feature" name="org.openscada.da.client.test"/>
   	<fetch-module src="${svn.base}/da/client/net_feature" type="feature" name="org.openscada.da.net.client"/>
 	<fetch-module src="${svn.base}/da/client/ice_feature" type="feature" name="org.openscada.da.ice.client"/>
-  	<fetch-modele src="${svn.ext.base}/log4j_wrapper_plugin" type="plugin" name="log4j_wrapper_plugin"/>
-  	<fetch-modele src="${svn.ext.base}/xmlbeans_plugin" type="plugin" name="ext_plugin_xmlbeans"/>  	
+  	<fetch-module src="${svn.ext.base}/log4j_wrapper_plugin" type="plugin" name="log4j_wrapper_plugin"/>
+  	<fetch-module src="${svn.ext.base}/xmlbeans_plugin" type="plugin" name="ext_plugin_xmlbeans"/>  	
   	<fetch-module src="${svn.ext.base}/plugins/icej" type="plugin" name="ext_plugin_icej"/>
 	<fetch-module src="${svn.ext.base}/plugins/jfreechart" type="plugin" name="ext_plugin_jfreechart"/>
   	<fetch-module src="${svn.base}/da/client/plugin_wrapper" type="plugin" name="org.openscada.da.client"/>
