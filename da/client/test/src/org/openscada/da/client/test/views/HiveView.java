@@ -23,7 +23,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -31,12 +30,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
@@ -45,7 +40,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.openscada.da.client.test.Activator;
@@ -83,8 +77,6 @@ public class HiveView extends ViewPart implements Observer
     private TreeViewer _viewer;
 
     private IViewActionDelegate connectAction;
-
-    private Action propertiesAction;
 
     private HiveRepository _repository;
 
@@ -230,10 +222,9 @@ public class HiveView extends ViewPart implements Observer
         //manager.add(new Separator());
         //drillDownAdapter.addNavigationActions ( manager );
         // Other plug-ins can contribute there actions here
-
+    
         manager.add ( new Separator ( IWorkbenchActionConstants.MB_ADDITIONS ) );
         manager.add ( new Separator () );
-        manager.add ( propertiesAction );
     }
 
     private void fillLocalToolBar ( IToolBarManager manager )
@@ -245,36 +236,7 @@ public class HiveView extends ViewPart implements Observer
 
     private void makeActions ()
     {
-        // Connect Action
-
-        /*
-        connectAction = new Action() {
-            public void run() {
-                performConnect();
-            }
-        };
-        connectAction.setText("Connect");
-        connectAction.setToolTipText("Establish connection to hive");
-        connectAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-                getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-        */
         connectAction = new ConnectHiveAction ();
-        propertiesAction = new PropertyDialogAction ( new SameShellProvider ( getViewSite ().getShell () ), _viewer );
-        _viewer.addSelectionChangedListener ( new ISelectionChangedListener () {
-
-            public void selectionChanged ( SelectionChangedEvent event )
-            {
-                IStructuredSelection ss = (IStructuredSelection)event.getSelection ();
-                if ( ss.size () == 1 )
-                {
-                    propertiesAction.setEnabled ( true );
-                }
-                else
-                {
-                    propertiesAction.setEnabled ( false );
-                }
-            }
-        } );
     }
 
     private void hookDoubleClickAction ()
