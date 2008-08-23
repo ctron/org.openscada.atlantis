@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -32,12 +33,9 @@ public class ItemDragSourceListener implements DragSourceListener
     {
         try
         {
-
             if ( ItemTransfer.getInstance ().isSupportedType ( event.dataType ) )
             {
-                IStructuredSelection selection = (IStructuredSelection)_viewer.getSelection ();
-                if ( selection.isEmpty () )
-                    return;
+                IStructuredSelection selection = (IStructuredSelection)LocalSelectionTransfer.getTransfer ().getSelection ();
 
                 List<Item> items = new ArrayList<Item> ();
                 for ( Iterator<?> i = selection.iterator (); i.hasNext (); )
@@ -54,7 +52,7 @@ public class ItemDragSourceListener implements DragSourceListener
         }
         catch ( Exception e )
         {
-            e.printStackTrace ( System.err );
+            event.doit = false;
         }
          
     }
@@ -70,14 +68,20 @@ public class ItemDragSourceListener implements DragSourceListener
         
         IStructuredSelection selection = (IStructuredSelection)_viewer.getSelection ();
         if ( selection.isEmpty () )
+        {
             return;
+        }
         
         for ( Iterator<?> i = selection.iterator (); i.hasNext (); )
         {
             Object o = i.next ();
             if ( !(o instanceof DataItemEntry ) )
+            {
                 return;
+            }
         }
+        
+        LocalSelectionTransfer.getTransfer ().setSelection ( _viewer.getSelection () );
         
         event.doit = true;
     }
