@@ -107,7 +107,7 @@ public class FolderItemFactory extends HiveItemFactory
 
     public FolderItemFactory createSubFolderFactory ( String name )
     {
-        final FolderItemFactory factory = new FolderItemFactory ( this, this.hive, this.folder, generateId ( name ),
+        final FolderItemFactory factory = new FolderItemFactory ( this, this.hive, this.folder, name,
                 name );
         addSubFactory ( factory );
         return factory;
