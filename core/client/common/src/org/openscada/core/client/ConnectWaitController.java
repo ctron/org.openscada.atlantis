@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,24 +19,29 @@
 
 package org.openscada.core.client;
 
+import org.apache.log4j.Logger;
+
 public class ConnectWaitController implements ConnectionStateListener
 {
+    private static Logger logger = Logger.getLogger ( ConnectWaitController.class );
+
     private Connection _connection;
-    
+
     private ConnectionState _state = null;
+
     private Throwable _error = null;
-    
+
     public ConnectWaitController ( Connection connection )
     {
         super ();
         _connection = connection;
     }
-    
+
     public synchronized void connect () throws Exception
     {
         connect ( 0 );
     }
-    
+
     public synchronized void connect ( int timeout ) throws Exception
     {
         try
@@ -57,8 +62,12 @@ public class ConnectWaitController implements ConnectionStateListener
                     throw new Exception ( _error );
                 }
             }
-            
+
             wait ( timeout );
+            if ( _error != null )
+            {
+                throw new Exception ( _error );
+            }
         }
         finally
         {
@@ -68,9 +77,10 @@ public class ConnectWaitController implements ConnectionStateListener
 
     public synchronized void stateChange ( Connection connection, ConnectionState state, Throwable error )
     {
+        logger.info ( String.format ( "New connection state: %s", state ) );
         _state = state;
         _error = error;
-        
+
         switch ( state )
         {
         case BOUND:
