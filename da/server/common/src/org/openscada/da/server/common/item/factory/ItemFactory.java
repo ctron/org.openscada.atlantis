@@ -15,14 +15,18 @@ public interface ItemFactory
     /**
      * Dispose a data item
      * @param item a data item created by this data item factory
-     * @return <code>true</code> if the item was from this factory and has been remove, <code>false</code> otherwise
      */
-    public abstract boolean disposeItem ( DataItem item );
+    public abstract void disposeItem ( DataItem item );
     
     /**
      * Dispose all items that where created by this factory and where not disposed up to now
      */
     public abstract void dispose ();
+    
+    /**
+     * Dispose all items at once
+     */
+    public abstract void disposeAllItems ();
     
     /**
      * Add a factory that will get disposed when this factory gets disposed

@@ -15,7 +15,9 @@ import org.openscada.da.server.common.impl.HiveCommon;
 public class FolderItemFactory extends HiveItemFactory
 {
     private String folderName;
+
     private FolderCommon folder;
+
     private FolderCommon parentFolder;
 
     public FolderItemFactory ( HiveCommon hive, FolderCommon parentFolder, String baseId, String folderName )
@@ -57,14 +59,13 @@ public class FolderItemFactory extends HiveItemFactory
     }
 
     @Override
-    public boolean disposeItem ( DataItem item )
+    public void disposeItem ( DataItem item )
     {
-        boolean removed = super.disposeItem ( item );
-        if ( folder != null && removed )
+        super.disposeItem ( item );
+        if ( folder != null )
         {
             folder.remove ( item );
         }
-        return removed;
     }
 
     @Override
@@ -107,10 +108,16 @@ public class FolderItemFactory extends HiveItemFactory
 
     public FolderItemFactory createSubFolderFactory ( String name )
     {
-        final FolderItemFactory factory = new FolderItemFactory ( this, this.hive, this.folder, name,
-                name );
+        final FolderItemFactory factory = new FolderItemFactory ( this, this.hive, this.folder, name, name );
         addSubFactory ( factory );
         return factory;
+    }
+
+    @Override
+    public void disposeAllItems ()
+    {
+        this.folder.clear ();
+        super.disposeAllItems ();
     }
 
 }

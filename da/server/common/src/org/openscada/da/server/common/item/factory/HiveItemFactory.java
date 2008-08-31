@@ -1,5 +1,7 @@
 package org.openscada.da.server.common.item.factory;
 
+import java.util.ArrayList;
+
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
@@ -20,7 +22,7 @@ public class HiveItemFactory extends CommonItemFactory
     {
         this.hive = hive;
     }
-    
+
     public HiveItemFactory ( ItemFactory parentItemFactory, HiveCommon hive, String baseId, String idDelimiter )
     {
         super ( parentItemFactory, baseId, idDelimiter );
@@ -52,16 +54,19 @@ public class HiveItemFactory extends CommonItemFactory
     }
 
     @Override
-    public boolean disposeItem ( DataItem item )
+    public void disposeItem ( DataItem item )
     {
-        if ( super.disposeItem ( item ) )
+        super.disposeItem ( item );
+        this.hive.unregisterItem ( item );
+    }
+    
+    @Override
+    public void disposeAllItems ()
+    {
+        for ( DataItem item : new ArrayList<DataItem> ( this.itemMap.values () ) )
         {
             this.hive.unregisterItem ( item );
-            return true;
         }
-        else
-        {
-            return false;
-        }
+        super.disposeAllItems ();
     }
 }

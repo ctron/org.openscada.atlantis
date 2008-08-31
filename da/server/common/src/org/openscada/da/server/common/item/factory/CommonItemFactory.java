@@ -1,7 +1,5 @@
 package org.openscada.da.server.common.item.factory;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,7 +24,7 @@ public class CommonItemFactory implements ItemFactory
 
     private String idDelimiter = DEFAULT_ID_DELIMITER;
 
-    private Map<String, DataItem> itemMap = new HashMap<String, DataItem> ();
+    protected Map<String, DataItem> itemMap = new HashMap<String, DataItem> ();
 
     private Set<ItemFactory> factoryMap = new HashSet<ItemFactory> ();
 
@@ -130,13 +128,7 @@ public class CommonItemFactory implements ItemFactory
             this.parentItemFactory.removeSubFactory ( this );
         }
 
-        Collection<DataItem> items = new ArrayList<DataItem> ( this.itemMap.values () );
-        for ( DataItem item : items )
-        {
-            disposeItem ( item );
-        }
-        // should be clear anyways
-        this.itemMap.clear ();
+        disposeAllItems ();
 
         for ( ItemFactory factory : this.factoryMap )
         {
@@ -144,10 +136,17 @@ public class CommonItemFactory implements ItemFactory
         }
     }
 
-    public boolean disposeItem ( DataItem item )
+    /**
+     * Dispose all items but not the factory itself
+     */
+    public void disposeAllItems ()
     {
-        final DataItem removedItem = this.itemMap.remove ( item.getInformation ().getName () );
-        return removedItem != null;
+        this.itemMap.clear ();
+    }
+
+    public void disposeItem ( DataItem item )
+    {
+        this.itemMap.remove ( item.getInformation ().getName () );
     }
 
     public DataItemCommand createCommand ( String localId )
