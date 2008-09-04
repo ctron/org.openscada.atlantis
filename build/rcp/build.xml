@@ -16,7 +16,7 @@
 
 	<property name="eclipse.home" value="/home/user/eclipse"/>
 	<property name="eclipse.builder.version" value="_3.4.0.v20080604"/>
-	<property name="eclipse.launcher.version" value="_1.0.1.R33x_v20070828"/>
+	<property name="eclipse.launcher.version" value="_1.0.100.v20080509-1800"/>
 	<property name="startup" value="${eclipse.home}/plugins/org.eclipse.equinox.launcher${eclipse.launcher.version}.jar"/>
 	
 	<property name="buildDirectory" value="${basedir}/eclipse.build"/>
