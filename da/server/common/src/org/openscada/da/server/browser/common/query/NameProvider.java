@@ -21,5 +21,5 @@ package org.openscada.da.server.browser.common.query;
 
 public interface NameProvider
 {
-    String getName ( ItemDescriptor descriptor );
+    public abstract String getName ( final ItemDescriptor descriptor );
 }
