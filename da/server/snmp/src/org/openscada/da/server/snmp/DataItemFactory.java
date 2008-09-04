@@ -17,7 +17,6 @@ public class DataItemFactory implements org.openscada.da.server.common.factory.D
         this.connectionPrefix = connectionName + ".";
     }
 
-    @Override
     public boolean canCreate ( final DataItemFactoryRequest request )
     {
         final String itemId = request.getId ();
@@ -34,7 +33,6 @@ public class DataItemFactory implements org.openscada.da.server.common.factory.D
     /**
      * create the item based on the request
      */
-    @Override
     public DataItem create ( final DataItemFactoryRequest request )
     {
         // get the item id
