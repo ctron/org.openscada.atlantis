@@ -316,7 +316,7 @@
     <target name="rcp" depends="" description="--> Build RCP Application">
 		<ant antfile="build.xml" dir="../rcp">
 			<property name="eclipse.home" value="/home/user/eclipse"/>
-			<property name="eclipse.builder.version" value="_3.2.0.v20060603"/>
+			<property name="eclipse.builder.version" value="_3.3.2.R331_v20071019"/>
 			<property name="upload.base.ostc" value="${deploy.dir}/ostc"/>
     	</ant>
     </target>
