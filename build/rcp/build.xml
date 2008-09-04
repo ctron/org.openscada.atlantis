@@ -67,7 +67,7 @@
           target: package                      
          - - - - - - - - - - - - - - - - - -->
     <target name="package" depends="build">
-    	<java jar="${eclipse.home}/startup.jar" failonerror="true" fork="true">
+    	<java jar="${startup}" failonerror="true" fork="true">
     		<arg value="-application" />
     	    <arg value="org.eclipse.ant.core.antRunner" />
     	    <arg value="-buildfile" />
