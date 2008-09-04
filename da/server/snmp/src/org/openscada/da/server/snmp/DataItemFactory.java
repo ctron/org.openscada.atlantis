@@ -33,6 +33,7 @@ public class DataItemFactory implements org.openscada.da.server.common.factory.D
     /**
      * create the item based on the request
      */
+
     public DataItem create ( final DataItemFactoryRequest request )
     {
         // get the item id
