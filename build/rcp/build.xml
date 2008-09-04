@@ -15,7 +15,7 @@
 	<property file="../config/local.properties"/>
 
 	<property name="eclipse.home" value="/home/user/eclipse"/>
-	<property name="eclipse.builder.version" value="_3.3.2.R331_v20071019"/>
+	<property name="eclipse.builder.version" value="_3.4.0.v20080604"/>
 	<property name="eclipse.launcher.version" value="_1.0.1.R33x_v20070828"/>
 	<property name="startup" value="{eclipse.home}/plugins/org.eclipse.equinox.launcher${eclipse.launcher.version}.jar"/>
 	
