@@ -19,9 +19,9 @@
 
 package org.openscada.da.server.snmp.utils;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.server.snmp.Connection;
@@ -35,112 +35,108 @@ import org.snmp4j.smi.VariableBinding;
 
 public class SNMPBulkReader
 {
-    private static Logger _log = Logger.getLogger ( SNMPBulkReader.class );
-    
-    private SNMPNode _node = null;
-    
-    private Map<OID, SNMPItem> _list = new HashMap<OID, SNMPItem> ();
-    
-    public SNMPBulkReader ( SNMPNode node )
+    private static Logger logger = Logger.getLogger ( SNMPBulkReader.class );
+
+    private SNMPNode node = null;
+
+    private final Map<OID, SNMPItem> list = new ConcurrentHashMap<OID, SNMPItem> ();
+
+    public SNMPBulkReader ( final SNMPNode node )
     {
-        _node = node;
+        this.node = node;
     }
-    
-    public void add ( SNMPItem item )
+
+    public void add ( final SNMPItem item )
     {
-        synchronized ( _list )
-        {
-            _list.put ( item.getOID (), item );
-        }
+        this.list.put ( item.getOID (), item );
     }
-    
-    public void remove ( SNMPItem item )
+
+    public void remove ( final SNMPItem item )
     {
-        synchronized ( _list )
-        {
-            _list.remove ( item.getOID () );    
-        }
+        this.list.remove ( item.getOID () );
     }
-    
+
     public void read ()
     {
         try
         {
             performRead ();
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
-          _log.warn ( "GETBULK failed: ", e );
-          setError ( e );
+            logger.warn ( "GETBULK failed: ", e );
+            setError ( e );
         }
     }
-    
-    @SuppressWarnings("unchecked")
+
+    /**
+     * Perform a read of all stored items
+     * @throws Exception
+     */
+    @SuppressWarnings ( "unchecked" )
     private void performRead () throws Exception
     {
-        Connection connection = _node.getConnection ();
-        
-        Target target = connection.createTarget ();
-        PDU pdu = connection.createPDU ( target, PDU.GET );
-        
-        synchronized ( _list )
+        final Connection connection = this.node.getConnection ();
+
+        final Target target = connection.createTarget ();
+        final PDU pdu = connection.createPDU ( target, PDU.GET );
+
+        for ( final OID oid : this.list.keySet () )
         {
-            if ( _list.size () == 0 )
-                return;
-            
-            for ( OID oid : _list.keySet () )
-            {
-                pdu.add ( new VariableBinding ( oid ) );
-            }
+            pdu.add ( new VariableBinding ( oid ) );
         }
-        
-        _log.debug ( "Sending PDU..." );
-        ResponseEvent response = connection.send ( target, pdu );
-        _log.debug ( "Sending PDU...response!" );
-        
+
+        if ( pdu.size () <= 0 )
+        {
+            return;
+        }
+
+        logger.debug ( "Sending PDU..." );
+        final ResponseEvent response = connection.send ( target, pdu );
+        logger.debug ( "Sending PDU...response!" );
+
         if ( response == null )
         {
             throw new Exception ( "No response" );
         }
-        
-        PDU reply = response.getResponse ();
+
+        final PDU reply = response.getResponse ();
         if ( reply == null )
         {
             throw new Exception ( "No reply" );
         }
-        
-        _log.debug ( "VB size: " + reply.size () );
-        
-        Vector<VariableBinding> vbs = reply.getVariableBindings ();
-        
-        synchronized ( _list )
+
+        logger.debug ( "VB size: " + reply.size () );
+
+        final Vector<VariableBinding> vbs = reply.getVariableBindings ();
+
+        for ( final VariableBinding vb : vbs )
         {
-            for ( VariableBinding vb : vbs )
+            logger.debug ( "Variable: " + vb );
+
+            final OID oid = vb.getOid ();
+
+            final SNMPItem item = this.list.get ( oid );
+
+            if ( item == null )
             {
-                _log.debug ( "Variable: " + vb );
-                
-                OID oid = vb.getOid ();
-
-                if ( !_list.containsKey ( oid ) )
-                {
-                    _log.info ( "Skipping unknown item: " + oid.toString() );
-                    continue;
-                }
-
-                SNMPItem item = _list.get ( oid );
-                item.readComplete ( vb );
+                logger.info ( "Skipping unknown item: " + oid.toString () );
+                continue;
             }
+
+            item.readComplete ( vb );
         }
     }
-    
-    private void setError ( Throwable t )
+
+    /**
+     * set an error for all items
+     * @param t
+     */
+    private void setError ( final Throwable t )
     {
-        synchronized ( _list )
+        for ( final SNMPItem item : this.list.values () )
         {
-            for ( SNMPItem item : _list.values () )
-            {
-                item.readFailed ( t );
-            }
+            item.readFailed ( t );
         }
     }
 }

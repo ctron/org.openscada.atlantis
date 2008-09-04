@@ -8,6 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ext_SNMP4J"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ext_mibble"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ext_xmlbeans"/>
-	<classpathentry kind="lib" path="SNMPServerSchema.jar"/>
+	<classpathentry kind="lib" path="schemasrc"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

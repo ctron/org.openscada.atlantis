@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.snmp.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -32,6 +33,7 @@ import net.percederberg.mibble.snmp.SnmpObjectType;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.da.server.snmp.MibsType;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.str.StringHelper;
 import org.snmp4j.smi.OID;
@@ -39,71 +41,87 @@ import org.snmp4j.smi.OID;
 public class MIBManager
 {
     private static Logger _log = Logger.getLogger ( MIBManager.class );
-    
-    private static final MIBManager instance = new MIBManager ();
-    public static MIBManager getInstance ()
-    {
-        return instance;
-    }
-    
-    private MibLoader _loader = new MibLoader ();
-    private Collection<Mib> _mibs = new LinkedList<Mib> ();
-    
-    public MIBManager ()
+
+    private final MibLoader _loader = new MibLoader ();
+
+    private final Collection<Mib> _mibs = new LinkedList<Mib> ();
+
+    public MIBManager ( final MibsType mibs )
     {
         _log.debug ( "Loading MIBs..." );
-        
-        for ( String mib : getMIBs () )
+
+        if ( mibs.getMibDirList () != null )
         {
-            try
+            for ( final String dir : mibs.getMibDirList () )
             {
-                _log.debug ( "Loading '" + mib + "'" );
-                _mibs.add ( _loader.load ( mib ) );
+                this._loader.addDir ( new File ( dir ) );
             }
-            catch ( IOException e )
+        }
+
+        if ( mibs.getRecursiveMibDirList () != null )
+        {
+            for ( final String dir : mibs.getRecursiveMibDirList () )
             {
-                e.printStackTrace();
+                this._loader.addAllDirs ( new File ( dir ) );
             }
-            catch ( MibLoaderException e )
+        }
+
+        if ( mibs.getStaticMibNameList () != null )
+        {
+            for ( final String mib : mibs.getStaticMibNameList () )
             {
-                e.printStackTrace();
+                try
+                {
+                    _log.debug ( "Loading '" + mib + "'" );
+                    this._mibs.add ( this._loader.load ( mib ) );
+                }
+                catch ( final IOException e )
+                {
+                    _log.warn ( String.format ( "Failed to load mib '%s'", mib ), e );
+                }
+                catch ( final MibLoaderException e )
+                {
+                    _log.warn ( String.format ( "Failed to load mib '%s'", mib ), e );
+                }
             }
         }
     }
-    
-    private String [] getMIBs ()
-    {
-        return new String [] { "SNMPv2-MIB", "IP-MIB", "TCP-MIB" };
-    }
-    
+
+    /**
+     * get all loaded mibs
+     * @return all loaded mibs
+     */
     public Collection<Mib> getAllMIBs ()
     {
-        return _mibs;
+        return this._mibs;
     }
-    
-    private MibValueSymbol findBestMVS ( OID oid )
+
+    private MibValueSymbol findBestMVS ( final OID oid )
     {
         int bestLen = 0;
-        MibValueSymbol bestMVS  = null;
-        for ( Mib mib : _mibs )
+        MibValueSymbol bestMVS = null;
+        for ( final Mib mib : this._mibs )
         {
-            MibValueSymbol mvs = mib.getSymbolByOid ( oid.toString () );
-            
+            final MibValueSymbol mvs = mib.getSymbolByOid ( oid.toString () );
+
             if ( mvs == null )
+            {
                 continue;
-            
-            int len = mvs.getValue ().toString ().length ();
+            }
+
+            final int len = mvs.getValue ().toString ().length ();
             if ( len > bestLen )
             {
                 bestMVS = mvs;
+                bestLen = len;
             }
         }
         return bestMVS;
     }
-    
-    public void fillAttributes ( OID oid, MapBuilder<String, Variant> attributes )
+
+    public void fillAttributes ( final OID oid, final MapBuilder<String, Variant> attributes )
     {
-        MibValueSymbol mvs = findBestMVS ( oid );
+        final MibValueSymbol mvs = findBestMVS ( oid );
         if ( mvs == null )
         {
             attributes.put ( "snmp.oid.symbolic", new Variant ( oid.toString () ) );
@@ -115,15 +133,17 @@ public class MIBManager
             attributes.put ( "snmp.mib.description", new Variant ( mvs.toString () ) );
             if ( mvs.getType () instanceof SnmpObjectType )
             {
-                SnmpObjectType snmpObjectType = (SnmpObjectType)mvs.getType ();
+                final SnmpObjectType snmpObjectType = (SnmpObjectType)mvs.getType ();
                 attributes.put ( "unit", new Variant ( snmpObjectType.getUnits () ) );
                 if ( snmpObjectType.getStatus () != null )
+                {
                     attributes.put ( "snmp.mib.status", new Variant ( snmpObjectType.getStatus ().toString () ) );
+                }
             }
         }
-        
-        List<String> symbolic = new LinkedList<String> ();
-        
+
+        final List<String> symbolic = new LinkedList<String> ();
+
         int pos = 0;
         MibValueSymbol currentMVS = mvs;
         while ( currentMVS != null )
@@ -132,14 +152,14 @@ public class MIBManager
             currentMVS = currentMVS.getParent ();
             pos++;
         }
-        int [] oidValue = oid.getValue ();
+        final int[] oidValue = oid.getValue ();
         for ( int i = pos; i < oidValue.length; i++ )
         {
             symbolic.add ( String.valueOf ( oidValue[i] ) );
         }
-        
-        String symbolicName = StringHelper.join ( symbolic, "." );
+
+        final String symbolicName = StringHelper.join ( symbolic, "." );
         attributes.put ( "snmp.oid.symbolic", new Variant ( symbolicName ) );
-        
+
     }
 }

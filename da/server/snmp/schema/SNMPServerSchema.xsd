@@ -8,19 +8,27 @@
     
     <xs:complexType>
     <xs:sequence>
-    <xs:element name="connection" maxOccurs="unbounded" minOccurs="0">
-      <xs:complexType>
-        <xs:attribute name="name" use="required" type="xs:NMTOKEN"></xs:attribute>
-        <xs:attribute name="community" use="required"
-          type="xs:NMTOKEN">
-        </xs:attribute>
-        <xs:attribute name="address" use="required" type="os:address"></xs:attribute>
-        <xs:attribute name="version" default="2" type="os:snmpVersion"></xs:attribute>
-      </xs:complexType>
-    </xs:element>
-    
+                <xs:element name="mibs" type="os:mibsType" maxOccurs="1" minOccurs="1"></xs:element>
+                <xs:element name="connection" maxOccurs="unbounded"
+    		minOccurs="0">
+    		<xs:complexType>
+    			<xs:attribute name="name" use="required"
+    				type="xs:NMTOKEN">
+    			</xs:attribute>
+    			<xs:attribute name="community" use="required"
+    				type="xs:NMTOKEN">
+    			</xs:attribute>
+    			<xs:attribute name="address" use="required"
+    				type="os:address">
+    			</xs:attribute>
+    			<xs:attribute name="version" default="2"
+    				type="os:snmpVersion">
+    			</xs:attribute>
+    		</xs:complexType>
+    	</xs:element>
+
     </xs:sequence>
-    
+
     </xs:complexType>
     
     </xs:element>
@@ -41,4 +49,13 @@
         <xs:enumeration value="3"></xs:enumeration>
       </xs:restriction>
     </xs:simpleType>
+
+    <xs:complexType name="mibsType">
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
+    		<xs:element name="staticMibName" type="xs:string">
+    		</xs:element>
+    		<xs:element name="mibDir" type="xs:string"></xs:element>
+    		<xs:element name="recursiveMibDir" type="xs:string"></xs:element>
+    	</xs:choice>
+    </xs:complexType>
 </xs:schema>

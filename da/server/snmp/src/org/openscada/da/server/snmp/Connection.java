@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,50 +42,50 @@ import org.snmp4j.util.DefaultPDUFactory;
 
 public class Connection
 {
-    private ConnectionInformation _connectionInformation = null;
+    private ConnectionInformation connectionInformation = null;
 
-    private Snmp _snmp = null;
+    private Snmp snmp = null;
 
-    private TransportMapping _transport = null;
+    private TransportMapping transport = null;
 
-    private Address _address = null;
+    private Address address = null;
 
-    public Connection ( ConnectionInformation connectionInformation )
+    public Connection ( final ConnectionInformation connectionInformation )
     {
-        this._connectionInformation = new ConnectionInformation ( connectionInformation );
+        this.connectionInformation = new ConnectionInformation ( connectionInformation );
     }
 
     public void start () throws IOException
     {
-        this._address = GenericAddress.parse ( this._connectionInformation.getAddress () );
+        this.address = GenericAddress.parse ( this.connectionInformation.getAddress () );
 
-        this._transport = new DefaultUdpTransportMapping ();
-        this._snmp = new Snmp ( this._transport );
+        this.transport = new DefaultUdpTransportMapping ();
+        this.snmp = new Snmp ( this.transport );
 
         //MPv3 mpv3 = (MPv3)_snmp.getMessageProcessingModel ( MessageProcessingModel.MPv3 );
-        USM usm = new USM ( SecurityProtocols.getInstance (), new OctetString ( MPv3.createLocalEngineID () ), 0 );
+        final USM usm = new USM ( SecurityProtocols.getInstance (), new OctetString ( MPv3.createLocalEngineID () ), 0 );
         SecurityModels.getInstance ().addSecurityModel ( usm );
 
-        this._snmp.listen ();
+        this.snmp.listen ();
     }
 
     public void stop () throws IOException
     {
-        if ( this._snmp != null )
+        if ( this.snmp != null )
         {
-            this._snmp.close ();
-            this._snmp = null;
+            this.snmp.close ();
+            this.snmp = null;
         }
     }
 
     public Target createTarget ()
     {
-        switch ( this._connectionInformation.getVersion () )
+        switch ( this.connectionInformation.getVersion () )
         {
         case V1:
-            if ( this._connectionInformation.getCommunity () != null )
+            if ( this.connectionInformation.getCommunity () != null )
             {
-                CommunityTarget target = new CommunityTarget ( this._address, new OctetString ( this._connectionInformation.getCommunity () ) );
+                final CommunityTarget target = new CommunityTarget ( this.address, new OctetString ( this.connectionInformation.getCommunity () ) );
                 target.setRetries ( 1 );
                 target.setVersion ( SnmpConstants.version1 );
                 target.setTimeout ( 5 * 1000 );
@@ -93,9 +93,9 @@ public class Connection
             }
             break;
         case V2C:
-            if ( this._connectionInformation.getCommunity () != null )
+            if ( this.connectionInformation.getCommunity () != null )
             {
-                CommunityTarget target = new CommunityTarget ( this._address, new OctetString ( this._connectionInformation.getCommunity () ) );
+                final CommunityTarget target = new CommunityTarget ( this.address, new OctetString ( this.connectionInformation.getCommunity () ) );
                 target.setRetries ( 1 );
                 target.setVersion ( SnmpConstants.version2c );
                 target.setTimeout ( 5 * 1000 );
@@ -107,28 +107,28 @@ public class Connection
         return null;
     }
 
-    public PDU createPDU ( Target target, int pduType )
+    public PDU createPDU ( final Target target, final int pduType )
     {
         return DefaultPDUFactory.createPDU ( target, pduType );
     }
 
-    public ResponseEvent send ( Target target, PDU pdu ) throws IOException
+    public ResponseEvent send ( final Target target, final PDU pdu ) throws IOException
     {
-        return this._snmp.send ( pdu, target );
+        return this.snmp.send ( pdu, target );
     }
 
-    public ResponseEvent sendGET ( OID oid ) throws IOException
+    public ResponseEvent sendGET ( final OID oid ) throws IOException
     {
-        Target target = this.createTarget ();
-        PDU pdu = this.createPDU ( target, PDU.GET );
+        final Target target = this.createTarget ();
+        final PDU pdu = this.createPDU ( target, PDU.GET );
         pdu.add ( new VariableBinding ( oid ) );
         return this.send ( target, pdu );
     }
 
-    public ResponseEvent sendGETNEXT ( OID oid ) throws IOException
+    public ResponseEvent sendGETNEXT ( final OID oid ) throws IOException
     {
-        Target target = this.createTarget ();
-        PDU pdu = this.createPDU ( target, PDU.GETNEXT );
+        final Target target = this.createTarget ();
+        final PDU pdu = this.createPDU ( target, PDU.GETNEXT );
         pdu.add ( new VariableBinding ( oid ) );
         return this.send ( target, pdu );
     }

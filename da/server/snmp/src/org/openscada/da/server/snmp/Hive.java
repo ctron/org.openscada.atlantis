@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,27 +27,30 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.openscada.da.server.browser.common.FolderCommon;
+import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.snmp.ConfigurationDocument.Configuration;
 import org.openscada.da.server.snmp.ConfigurationDocument.Configuration.Connection;
+import org.openscada.da.server.snmp.utils.MIBManager;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
 {
-    @SuppressWarnings ( "unused" )
-    private static Logger _log = Logger.getLogger ( Hive.class );
+    private static Logger logger = Logger.getLogger ( Hive.class );
 
-    private Map<String, SNMPNode> _nodeMap = new HashMap<String, SNMPNode> ();
+    private final Map<String, SNMPNode> nodeMap = new HashMap<String, SNMPNode> ();
 
-    private FolderCommon _rootFolder = null;
+    private FolderCommon rootFolder = null;
+
+    private MIBManager mibManager;
 
     public Hive ()
     {
         super ();
 
         // create root folder
-        _rootFolder = new FolderCommon ();
-        setRootFolder ( _rootFolder );
+        this.rootFolder = new FolderCommon ();
+        setRootFolder ( this.rootFolder );
 
         new Thread ( new Runnable () {
 
@@ -56,6 +59,8 @@ public class Hive extends HiveCommon
                 configure ();
             }
         } ).start ();
+
+        setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
     }
 
     public Hive ( final Node node )
@@ -63,9 +68,9 @@ public class Hive extends HiveCommon
         super ();
 
         // create root folder
-        _rootFolder = new FolderCommon ();
-        setRootFolder ( _rootFolder );
-        
+        this.rootFolder = new FolderCommon ();
+        setRootFolder ( this.rootFolder );
+
         new Thread ( new Runnable () {
 
             public void run ()
@@ -73,48 +78,62 @@ public class Hive extends HiveCommon
                 configure ( node );
             }
         } ).start ();
+
+        setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
     }
 
-    protected void configure ( Node node )
+    /**
+     * configure the hive based on a configuration document
+     * @param doc
+     */
+    protected void configure ( final ConfigurationDocument doc )
+    {
+        this.mibManager = new MIBManager ( doc.getConfiguration ().getMibs () );
+
+        for ( final Configuration.Connection connection : doc.getConfiguration ().getConnectionList () )
+        {
+            configure ( connection );
+        }
+    }
+
+    /**
+     * configure the hive based on a anonymous xml node
+     * @param node the xml node which must contain an xml tree of the configuration schema
+     */
+    protected void configure ( final Node node )
     {
         try
         {
-            ConfigurationDocument doc = ConfigurationDocument.Factory.parse ( node );
-            for ( Configuration.Connection connection : doc.getConfiguration ().getConnectionList () )
-            {
-                configure ( connection );
-            }
+            configure ( ConfigurationDocument.Factory.parse ( node ) );
         }
-        catch ( XmlException e )
+        catch ( final XmlException e )
         {
-            _log.warn ( "Unable to configure hive", e );
+            logger.warn ( "Unable to configure hive", e );
         }
     }
-    
+
+    /**
+     * configure the hive based on the default config file in the local path
+     */
     protected void configure ()
     {
-        File configurationFile = new File ( "configuration.xml" );
         try
         {
-            ConfigurationDocument doc = ConfigurationDocument.Factory.parse ( configurationFile );
-            for ( Configuration.Connection connection : doc.getConfiguration ().getConnectionList () )
-            {
-                configure ( connection );
-            }
+            configure ( ConfigurationDocument.Factory.parse ( new File ( "configuration.xml" ) ) );
         }
-        catch ( XmlException e )
+        catch ( final XmlException e )
         {
-            _log.warn ( "Unable to configure hive", e );
+            logger.warn ( "Unable to configure hive", e );
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
-            _log.warn ( "Unable to configure hive", e );
+            logger.warn ( "Unable to configure hive", e );
         }
     }
 
-    protected void configure ( Connection connection )
+    protected void configure ( final Connection connection )
     {
-        _log.debug ( String.format ( "New Connection: %1$s - %2$s", connection.getName (), connection.getAddress () ) );
+        logger.debug ( String.format ( "New Connection: %1$s - %2$s", connection.getName (), connection.getAddress () ) );
         ConnectionInformation ci;
 
         switch ( connection.getVersion () )
@@ -132,8 +151,8 @@ public class Hive extends HiveCommon
         ci.setAddress ( connection.getAddress () );
         ci.setCommunity ( connection.getCommunity () );
 
-        SNMPNode node = new SNMPNode ( this, _rootFolder, ci );
+        final SNMPNode node = new SNMPNode ( this, this.rootFolder, this.mibManager, ci );
         node.register ();
-        _nodeMap.put ( connection.getName (), node );
+        this.nodeMap.put ( connection.getName (), node );
     }
 }

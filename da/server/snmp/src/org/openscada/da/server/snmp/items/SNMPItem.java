@@ -20,21 +20,19 @@
 package org.openscada.da.server.snmp.items;
 
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
-import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.server.common.AttributeManager;
-import org.openscada.da.server.common.DataItemBase;
+import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.ItemListener;
-import org.openscada.da.server.common.WriteAttributesHelper;
+import org.openscada.da.server.common.SuspendableDataItem;
+import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.snmp.SNMPNode;
+import org.openscada.utils.collection.MapBuilder;
 import org.snmp4j.PDU;
 import org.snmp4j.event.ResponseEvent;
 import org.snmp4j.smi.Null;
@@ -42,28 +40,35 @@ import org.snmp4j.smi.OID;
 import org.snmp4j.smi.Variable;
 import org.snmp4j.smi.VariableBinding;
 
-public class SNMPItem extends DataItemBase implements Runnable
+/**
+ * An SNMP data item
+ * @author Jens Reimann
+ *
+ */
+public class SNMPItem extends DataItemInputChained implements Runnable, SuspendableDataItem
 {
+    private static final String ATTR_NO_INITIAL_DATA_ERROR = "noInitialData.error";
+
+    private static final String ATTR_READ_ERROR = "read.error";
+
     private static Logger _log = Logger.getLogger ( SNMPItem.class );
-    private AttributeManager _attributes = null;
 
     private SNMPNode _node = null;
+
     private OID _oid = null;
 
-    private Variant _value = new Variant ();
-
-    public SNMPItem ( SNMPNode node, String id, OID oid )
+    public SNMPItem ( final SNMPNode node, final String id, final OID oid )
     {
         super ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
 
-        _node = node;
-        _oid = oid;
+        this._node = node;
+        this._oid = oid;
 
-        _attributes = new AttributeManager ( this );
+        updateData ( new Variant (), new MapBuilder<String, Variant> ().put ( ATTR_NO_INITIAL_DATA_ERROR, new Variant ( true ) ).getMap (), AttributeMode.SET );
     }
 
     @Override
-    public void setListener ( ItemListener listener )
+    public void setListener ( final ItemListener listener )
     {
         super.setListener ( listener );
         if ( listener != null )
@@ -75,24 +80,23 @@ public class SNMPItem extends DataItemBase implements Runnable
             suspend ();
         }
     }
-    
+
     public void start ()
     {
-        _log.debug ( "Starting item: " + _oid );
-        //_node.getScheduler ().addJob ( this, 1000, true );
-        _node.getBulkReader ().add ( this );
+        _log.debug ( "Starting item: " + this._oid );
+        this._node.getBulkReader ().add ( this );
     }
 
     public void stop ()
     {
-        _log.debug ( "Stopping item: " + _oid );
+        _log.debug ( "Stopping item: " + this._oid );
 
-        //_node.getScheduler ().removeJob ( this );
-        _node.getBulkReader ().remove ( this );
+        this._node.getBulkReader ().remove ( this );
 
-        updateValue ( new Variant () );
+        updateData ( new Variant (), new HashMap<String, Variant> (), AttributeMode.SET );
     }
 
+    /*
     synchronized private void updateValue ( Variant value )
     {
         _log.debug ( "Value update: " + value.asString ( "<null>" ) );
@@ -102,27 +106,7 @@ public class SNMPItem extends DataItemBase implements Runnable
             notifyData ( _value, null );
         }
     }
-
-    public Map<String, Variant> getAttributes ()
-    {
-        return _attributes.get ();
-    }
-
-    public Variant readValue () throws InvalidOperationException
-    {
-        // sending cache value
-        return _value;
-    }
-
-    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
-    {
-        return WriteAttributesHelper.errorUnhandled ( null, attributes );
-    }
-
-    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
-    {
-        // no op
-    }
+    */
 
     public void run ()
     {
@@ -132,7 +116,7 @@ public class SNMPItem extends DataItemBase implements Runnable
         {
             read ();
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             readFailed ( e );
         }
@@ -140,7 +124,7 @@ public class SNMPItem extends DataItemBase implements Runnable
         _log.debug ( "Update complete" );
     }
 
-    private Variant convertValue ( VariableBinding vb ) throws Exception
+    private Variant convertValue ( final VariableBinding vb ) throws Exception
     {
         if ( vb == null )
         {
@@ -152,27 +136,34 @@ public class SNMPItem extends DataItemBase implements Runnable
             throw new Exception ( vb.toString () );
         }
 
-        Variable v = vb.getVariable ();
+        final Variable v = vb.getVariable ();
         _log.debug ( "Variable is: " + v );
         if ( v instanceof Null )
+        {
             return new Variant ();
+        }
         else
+        {
             return new Variant ( v.toString () );
+        }
     }
 
-    public void readFailed ( Throwable t )
+    public void readFailed ( final Throwable t )
     {
         setError ( t.getMessage () );
     }
 
-    public void readComplete ( VariableBinding vb )
+    public void readComplete ( final VariableBinding vb )
     {
         try
         {
-            updateValue ( convertValue ( vb ) );
+            final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+            attributes.put ( ATTR_READ_ERROR, new Variant ( false ) );
+            attributes.put ( ATTR_NO_INITIAL_DATA_ERROR, null );
+            updateData ( convertValue ( vb ), attributes, AttributeMode.UPDATE );
             clearError ();
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             _log.error ( "Item read failed: ", e );
             setError ( e );
@@ -181,14 +172,14 @@ public class SNMPItem extends DataItemBase implements Runnable
 
     private void read () throws Exception
     {
-        ResponseEvent response = _node.getConnection ().sendGET ( _oid );
+        final ResponseEvent response = this._node.getConnection ().sendGET ( this._oid );
 
         if ( response == null )
         {
             throw new Exception ( "No response" );
         }
 
-        PDU reply = response.getResponse ();
+        final PDU reply = response.getResponse ();
         if ( reply == null )
         {
             throw new Exception ( "No reply" );
@@ -202,7 +193,7 @@ public class SNMPItem extends DataItemBase implements Runnable
         setError ( (String)null );
     }
 
-    private void setError ( Throwable t )
+    private void setError ( final Throwable t )
     {
         if ( t.getMessage () == null )
         {
@@ -213,23 +204,26 @@ public class SNMPItem extends DataItemBase implements Runnable
             setError ( t.getMessage () );
         }
     }
-    private void setError ( String text )
-    {
-        _log.info ( "Setting error: " + text );
 
-        if ( text == null )
+    private void setError ( final String text )
+    {
+        if ( text != null )
         {
-            _attributes.update ( "error", null );
+            _log.info ( "Setting error: " + text );
         }
-        else
-        {
-            _attributes.update ( "error", new Variant ( text ) );
-        }
+
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+
+        attributes.put ( ATTR_READ_ERROR, new Variant ( text != null ) );
+        attributes.put ( "lastReadError.message", new Variant ( text ) );
+        attributes.put ( ATTR_NO_INITIAL_DATA_ERROR, null );
+
+        updateData ( null, attributes, AttributeMode.UPDATE );
     }
 
     public OID getOID ()
     {
-        return _oid;
+        return this._oid;
     }
 
     public void suspend ()
