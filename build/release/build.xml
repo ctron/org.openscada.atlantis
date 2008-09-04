@@ -12,7 +12,7 @@
 
 	<property file="../config/local.properties" />
 	
-	<property name="version" value="0.9.0"/>
+	<property name="version" value="0.9.1"/>
 	<property name="release" value=""/>
 	<property name="buildType" value="R"/>
 	<property name="buildId" value="Release-${version}"/>
