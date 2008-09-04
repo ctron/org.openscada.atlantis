@@ -31,6 +31,16 @@
     		<arg line="latest"/>
     	</exec>
     </target>
+	
+	<target name="rcp_only">
+        <ant dir="../release" antfile="build.xml" target="rcp">
+        	<property name="deploy.dir" value="${deploy.base}/${DSTAMP}"/>
+        	<property name="url.dir" value="${url.base}/${DSTAMP}"/>
+        	<property name="release" value="-${DSTAMP}-integration"/>
+       		<property name="buildType" value="I"/>
+       		<property name="buildId" value="Integration-${DSTAMP}"/>
+    	</ant>
+	</target>
 
     <!-- - - - - - - - - - - - - - - - - - 
           target: init                      
