@@ -34,7 +34,7 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
     protected Display display;
 
     protected DataItem item;
-    
+
     protected Connection connection;
 
     public AbstractBaseDetailsPart ()
@@ -42,16 +42,16 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
         super ();
     }
 
-    public void createPart ( Composite parent )
+    public void createPart ( final Composite parent )
     {
-        display = parent.getDisplay ();
+        this.display = parent.getDisplay ();
 
     }
 
-    public void setDataItem ( Connection connection, DataItem item )
+    public void setDataItem ( final Connection connection, final DataItem item )
     {
         this.connection = connection;
-        
+
         if ( this.item != null )
         {
             this.item.deleteObserver ( this );
@@ -61,6 +61,7 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
         if ( this.item != null )
         {
             this.item.addObserver ( this );
+            update ();
         }
     }
 
@@ -75,14 +76,14 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
     /**
      * called by DataItem
      */
-    public void update ( Observable o, Object arg )
+    public void update ( final Observable o, final Object arg )
     {
         // trigger async update in display thread
         this.display.asyncExec ( new Runnable () {
 
             public void run ()
             {
-                if ( !display.isDisposed () )
+                if ( !AbstractBaseDetailsPart.this.display.isDisposed () )
                 {
                     AbstractBaseDetailsPart.this.update ();
                 }
@@ -100,22 +101,22 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
     {
         return getBooleanAttribute ( "error" ) || !this.item.getSubscriptionState ().equals ( SubscriptionState.CONNECTED );
     }
-    
+
     protected boolean isAlarm ()
     {
         return getBooleanAttribute ( "alarm" );
     }
-    
+
     protected boolean isManual ()
     {
         return getBooleanAttribute ( "org.openscada.da.manual.active" );
     }
 
-    protected boolean getBooleanAttribute ( String name )
+    protected boolean getBooleanAttribute ( final String name )
     {
-        if ( item.getAttributes ().containsKey ( name ) )
+        if ( this.item.getAttributes ().containsKey ( name ) )
         {
-            return item.getAttributes ().get ( name ).asBoolean ();
+            return this.item.getAttributes ().get ( name ).asBoolean ();
         }
         return false;
     }
