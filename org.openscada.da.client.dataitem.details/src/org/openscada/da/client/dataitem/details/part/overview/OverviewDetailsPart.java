@@ -50,7 +50,7 @@ public class OverviewDetailsPart extends AbstractBaseDetailsPart implements Deta
     private Text timestampText;
 
     @Override
-    public void createPart ( Composite parent )
+    public void createPart ( final Composite parent )
     {
         super.createPart ( parent );
         parent.setLayout ( new GridLayout ( 2, false ) );
@@ -98,13 +98,12 @@ public class OverviewDetailsPart extends AbstractBaseDetailsPart implements Deta
     }
 
     @Override
-    public void setDataItem ( Connection connection, DataItem item )
+    public void setDataItem ( final Connection connection, final DataItem item )
     {
         super.setDataItem ( connection, item );
 
         if ( item != null )
         {
-            
             this.connectionUriText.setText ( "??" );
             this.itemIdText.setText ( item.getItemId () );
         }
@@ -123,7 +122,7 @@ public class OverviewDetailsPart extends AbstractBaseDetailsPart implements Deta
     @Override
     protected void update ()
     {
-        this.stateText.setText ( item.getSubscriptionState ().name () );
+        this.stateText.setText ( this.item.getSubscriptionState ().name () );
 
         this.alarmText.setText ( isAlarm () ? "alarm active" : "no alarm" );
         this.errorText.setText ( isUnsafe () ? "error" : "ok" );
@@ -131,13 +130,13 @@ public class OverviewDetailsPart extends AbstractBaseDetailsPart implements Deta
         this.valueText.setText ( this.item.getValue () != null ? this.item.getValue ().toString () : "<null>" );
         if ( this.item.getAttributes ().containsKey ( "timestamp" ) )
         {
-            Calendar c = Calendar.getInstance ();
+            final Calendar c = Calendar.getInstance ();
             try
             {
                 c.setTimeInMillis ( this.item.getAttributes ().get ( "timestamp" ).asLong () );
                 this.timestampText.setText ( String.format ( "%1$tF %1$tT,%1$tL", c ) );
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
                 this.timestampText.setText ( "Failed to convert timestamp: " + e.getMessage () );
             }
