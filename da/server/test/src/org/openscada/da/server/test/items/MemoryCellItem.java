@@ -30,91 +30,94 @@ import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeManager;
 import org.openscada.da.server.common.DataItemOutput;
-import org.openscada.da.server.common.MemoryDataItem;
 import org.openscada.da.server.common.WriteAttributesHelper;
+import org.openscada.da.server.common.chain.MemoryItemChained;
 import org.openscada.da.server.test.Hive;
 import org.openscada.utils.collection.MapBuilder;
 
 public class MemoryCellItem extends DataItemOutput
 {
-    private Hive _hive;
-    
-    private Map<Integer,MemoryDataItem> _items = new HashMap<Integer,MemoryDataItem> ();
+    private final Hive _hive;
+
+    private Map<Integer, MemoryItemChained> _items = new HashMap<Integer, MemoryItemChained> ();
+
     private AttributeManager _attributes = null;
+
     private FolderCommon _folder = null;
-    
-    public MemoryCellItem ( Hive hive, String name, FolderCommon folder )
+
+    public MemoryCellItem ( final Hive hive, final String name, final FolderCommon folder )
     {
         super ( name );
-        _hive = hive;
-        _folder = folder;
-        
-        _attributes = new AttributeManager ( this );
-        
+        this._hive = hive;
+        this._folder = folder;
+
+        this._attributes = new AttributeManager ( this );
+
         updateCells ( 0 );
     }
 
     public Map<String, Variant> getAttributes ()
     {
-        return _attributes.getCopy();
+        return this._attributes.getCopy ();
     }
 
-    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
+    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
     {
         return WriteAttributesHelper.errorUnhandled ( null, attributes );
     }
 
-    public void writeValue ( Variant value ) throws InvalidOperationException,
-            NullValueException, NotConvertableException
+    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        int num = value.asInteger ();
-        
+        final int num = value.asInteger ();
+
         updateCells ( num );
     }
-    
-    private void setSizeAttribute ( int num )
+
+    private void setSizeAttribute ( final int num )
     {
-        _attributes.update ( "size", new Variant(num) );
+        this._attributes.update ( "size", new Variant ( num ) );
     }
 
     private void updateCells ( int num )
     {
         if ( num < 0 )
-            num = 0;
-        
-        synchronized ( _items )
         {
-            Map<Integer,MemoryDataItem> newItems = new HashMap<Integer,MemoryDataItem> ( num );
-            
+            num = 0;
+        }
+
+        synchronized ( this._items )
+        {
+            final Map<Integer, MemoryItemChained> newItems = new HashMap<Integer, MemoryItemChained> ( num );
+
             int pos;
-            for ( pos = 0; pos < num && pos < _items.size (); pos++ )
+            for ( pos = 0; pos < num && pos < this._items.size (); pos++ )
             {
-                if ( _items.containsKey ( pos ) )
+                if ( this._items.containsKey ( pos ) )
                 {
-                    newItems.put ( pos, _items.get ( pos ) );
-                    _items.remove ( pos );
+                    newItems.put ( pos, this._items.get ( pos ) );
+                    this._items.remove ( pos );
                 }
             }
-            
-            for ( Map.Entry<Integer, MemoryDataItem> entry : _items.entrySet () )
+
+            for ( final Map.Entry<Integer, MemoryItemChained> entry : this._items.entrySet () )
             {
-                _folder.remove ( entry.getKey ().toString () );
-                _hive.unregisterItem ( entry.getValue () );
+                this._folder.remove ( entry.getKey ().toString () );
+                this._hive.unregisterItem ( entry.getValue () );
             }
-            
-            for ( int i = pos ; i < num ; i++ )
+
+            for ( int i = pos; i < num; i++ )
             {
-                MemoryDataItem item = new MemoryDataItem ( getInformation ().getName () + "-" + i );
-                _hive.registerItem ( item );
-                _folder.add ( String.valueOf ( i ), item, new MapBuilder<String, Variant>()
-                        .put ( "description", new Variant ( "Cell #" + i + " of " + num + " automaticall provided memory cells." ) )
-                        .getMap ()
-                    );
+                final MemoryItemChained item = new MemoryItemChained ( getInformation ().getName () + "-" + i );
+
+                MemoryChainedItem.applyDefaultInputChain ( this._hive, item );
+
+                this._hive.registerItem ( item );
+                this._folder.add ( String.valueOf ( i ), item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Cell #" + i + " of " + num + " automaticall provided memory cells." ) ).getMap () );
                 newItems.put ( i, item );
             }
-            
-            _items = newItems;
-            
+
+            this._items = newItems;
+
             setSizeAttribute ( num );
         }
     }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,57 +30,73 @@ import org.openscada.da.server.common.chain.AttributeBinder;
 import org.openscada.da.server.common.chain.BaseChainItemCommon;
 import org.openscada.da.server.common.chain.ChainItem;
 import org.openscada.da.server.common.chain.ChainProcessEntry;
+import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.MemoryItemChained;
+import org.openscada.da.server.common.chain.item.LevelAlarmChainItem;
+import org.openscada.da.server.common.chain.item.ManualErrorOverrideChainItem;
+import org.openscada.da.server.common.chain.item.ManualOverrideChainItem;
+import org.openscada.da.server.common.chain.item.ScaleInputItem;
+import org.openscada.da.server.common.chain.item.SumAlarmChainItem;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
 import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.impl.HiveCommon;
 
 public class MemoryChainedItem extends MemoryItemChained
 {
-    
+
     private class AddClassAttributeBinder implements AttributeBinder
     {
         private MemoryChainedItem _item = null;
+
         private IODirection _direction = null;
-        
-        public AddClassAttributeBinder ( MemoryChainedItem item, IODirection direction )
+
+        public AddClassAttributeBinder ( final MemoryChainedItem item, final IODirection direction )
         {
             super ();
-            _item = item;
-            _direction = direction;
+            this._item = item;
+            this._direction = direction;
         }
-        
-        public void bind ( Variant value ) throws Exception
+
+        public void bind ( final Variant value ) throws Exception
         {
-           if ( value != null )
-               if ( !value.isNull () )
-                   _item.addChainElement ( _direction, value.asString () );
+            if ( value != null )
+            {
+                if ( !value.isNull () )
+                {
+                    this._item.addChainElement ( this._direction, value.asString () );
+                }
+            }
         }
 
         public Variant getAttributeValue ()
         {
             return null;
         }
-        
+
     }
-    
+
     private class RemoveClassAttributeBinder implements AttributeBinder
     {
         private MemoryChainedItem _item = null;
+
         private IODirection _direction = null;
-        
-        public RemoveClassAttributeBinder ( MemoryChainedItem item, IODirection direction )
+
+        public RemoveClassAttributeBinder ( final MemoryChainedItem item, final IODirection direction )
         {
             super ();
-            _item = item;
-            _direction = direction;
+            this._item = item;
+            this._direction = direction;
         }
-        
-        public void bind ( Variant value ) throws Exception
+
+        public void bind ( final Variant value ) throws Exception
         {
             if ( value != null )
+            {
                 if ( !value.isNull () )
-                    _item.removeChainElement ( _direction, value.asString () );
+                {
+                    this._item.removeChainElement ( this._direction, value.asString () );
+                }
+            }
         }
 
         public Variant getAttributeValue ()
@@ -88,78 +104,93 @@ public class MemoryChainedItem extends MemoryItemChained
             return null;
         }
     }
-    
+
     private class InjectChainItem extends BaseChainItemCommon
     {
         private MemoryChainedItem _item = null;
-        
-        public InjectChainItem ( HiveServiceRegistry serviceRegistry, MemoryChainedItem item )
+
+        public InjectChainItem ( final HiveServiceRegistry serviceRegistry, final MemoryChainedItem item )
         {
             super ( serviceRegistry );
-            _item = item;
-            
+            this._item = item;
+
             addBinder ( "org.openscada.da.test.chain.input.add", new AddClassAttributeBinder ( item, IODirection.INPUT ) );
             addBinder ( "org.openscada.da.test.chain.input.remove", new RemoveClassAttributeBinder ( item, IODirection.INPUT ) );
             addBinder ( "org.openscada.da.test.chain.outpt.add", new AddClassAttributeBinder ( item, IODirection.OUTPUT ) );
             addBinder ( "org.openscada.da.test.chain.output.remove", new RemoveClassAttributeBinder ( item, IODirection.OUTPUT ) );
             setReservedAttributes ( "org.openscada.da.test.chain.value" );
         }
-        
+
         @Override
         public boolean isPersistent ()
         {
             return false;
         }
-        
-        public void process ( Variant value, Map<String, Variant> attributes )
+
+        public void process ( final Variant value, final Map<String, Variant> attributes )
         {
             int i = 0;
-            StringBuilder str = new StringBuilder ();
-            for ( ChainProcessEntry item : _item.getChainCopy () )
+            final StringBuilder str = new StringBuilder ();
+            for ( final ChainProcessEntry item : this._item.getChainCopy () )
             {
                 if ( i > 0 )
+                {
                     str.append ( ", " );
-                
+                }
+
                 str.append ( item.getWhat ().getClass ().getCanonicalName () );
                 str.append ( "(" );
                 str.append ( item.getWhen ().toString () );
                 str.append ( ")" );
-                
+
                 i++;
             }
             attributes.put ( "org.openscada.da.test.chain.value", new Variant ( str.toString () ) );
         }
-        
+
     }
 
-    private HiveCommon hive;
-    
-    public MemoryChainedItem ( HiveCommon hive, String id )
+    private final HiveCommon hive;
+
+    public static void applyDefaultInputChain ( final HiveCommon hive, final DataItemInputChained item )
+    {
+        item.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
+        item.addChainElement ( IODirection.INPUT, new ScaleInputItem ( hive ) );
+        item.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( hive ) );
+        item.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
+        item.addChainElement ( IODirection.INPUT, new LevelAlarmChainItem ( hive ) );
+        item.addChainElement ( IODirection.INPUT, new SumAlarmChainItem ( hive ) );
+    }
+
+    public MemoryChainedItem ( final HiveCommon hive, final String id )
     {
         super ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
         this.hive = hive;
         addChainElement ( IODirection.INPUT, new InjectChainItem ( hive, this ) );
-        addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
-    }
-   
-    public void addChainElement ( IODirection direction, String className ) throws Exception
-    {
-        Class<?> itemClass = Class.forName ( className );
-        Object o = itemClass.newInstance ();
-        
-       FactoryHelper.createChainItem ( this.hive, Class.forName ( className ) );
 
-        addChainElement ( direction, (ChainItem )o );
+        applyDefaultInputChain ( hive, this );
     }
-    
-    synchronized public void removeChainElement ( IODirection direction, String className ) throws Exception
+
+    public void addChainElement ( final IODirection direction, final String className ) throws Exception
     {
-        for ( ChainProcessEntry entry : getChainCopy () )
+        final Class<?> itemClass = Class.forName ( className );
+        final Object o = itemClass.newInstance ();
+
+        FactoryHelper.createChainItem ( this.hive, Class.forName ( className ) );
+
+        addChainElement ( direction, (ChainItem)o );
+    }
+
+    synchronized public void removeChainElement ( final IODirection direction, final String className ) throws Exception
+    {
+        for ( final ChainProcessEntry entry : getChainCopy () )
         {
             if ( entry.getWhat ().getClass ().getCanonicalName ().equals ( className ) )
             {
                 if ( entry.getWhen ().equals ( EnumSet.of ( direction ) ) )
+                {
                     removeChainElement ( entry.getWhen (), entry.getWhat () );
+                }
                 return;
             }
         }
