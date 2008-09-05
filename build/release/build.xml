@@ -46,7 +46,7 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="clean, init, build, dist-source, dist-binary, rcp, apps, make-ice-documentation, dist-doc" description="--> Master build file for OpenSCADA Atlabtis">
+    <target name="default" depends="clean, init, build, dist-source, dist-binary, apps, rcp, make-ice-documentation, dist-doc" description="--> Master build file for OpenSCADA Atlabtis">
     </target>
     
     <target name="init.genworkspace">
@@ -324,7 +324,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: apps                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="apps" depends="make-sim-server-dist, make-test-server-dist, make-opc-server-dist, make-exporter-dist">
+    <target name="apps" depends="make-sim-server-dist, make-test-server-dist, make-opc-server-dist, make-exporter-dist, make-snmp-server-dist">
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
