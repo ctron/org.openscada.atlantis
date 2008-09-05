@@ -211,7 +211,7 @@
     	</concat>
 	
 		<!-- Create dot graph from deps file -->
-		<exec executable="dot" dir="${deploy.additional}" failifexecutionfails="no">
+		<exec executable="dot" dir="${deploy.additional}" failifexecutionfails="no" failonerror="false">
 			<arg line="-Tps"/>
 			<arg line="module.deps"/>
 			<arg line="-omodule.ps"/>
@@ -353,7 +353,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: make-snmp-server-dist                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="make-snmp-server-dist" depends="build">
+    <target name="make-snmp-server-dist" depends="">
 		<delete dir="${temp.dir}/dist-snmp-server"/>
 	
 		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-snmp-server"/>
