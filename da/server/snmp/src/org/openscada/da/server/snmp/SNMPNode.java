@@ -281,6 +281,11 @@ public class SNMPNode
     {
         for ( final MibValueSymbol child : vs.getChildren () )
         {
+            if ( child == null )
+            {
+                continue;
+            }
+
             final MapBuilder<String, Variant> attributes = new MapBuilder<String, Variant> ();
 
             if ( child.getComment () != null )
