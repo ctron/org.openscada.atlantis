@@ -35,8 +35,11 @@ import org.openscada.da.server.snmp.SNMPNode;
 import org.openscada.utils.collection.MapBuilder;
 import org.snmp4j.PDU;
 import org.snmp4j.event.ResponseEvent;
+import org.snmp4j.smi.Counter64;
+import org.snmp4j.smi.Integer32;
 import org.snmp4j.smi.Null;
 import org.snmp4j.smi.OID;
+import org.snmp4j.smi.UnsignedInteger32;
 import org.snmp4j.smi.Variable;
 import org.snmp4j.smi.VariableBinding;
 
@@ -141,6 +144,18 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
         if ( v instanceof Null )
         {
             return new Variant ();
+        }
+        else if ( v instanceof Counter64 )
+        {
+            return new Variant ( ( (Counter64)v ).getValue () );
+        }
+        else if ( v instanceof UnsignedInteger32 )
+        {
+            return new Variant ( ( (UnsignedInteger32)v ).getValue () );
+        }
+        else if ( v instanceof Integer32 )
+        {
+            return new Variant ( ( (Integer32)v ).getValue () );
         }
         else
         {
