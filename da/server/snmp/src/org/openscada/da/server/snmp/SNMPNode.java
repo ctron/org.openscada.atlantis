@@ -384,7 +384,7 @@ public class SNMPNode
         }
         finally
         {
-            //flag off
+            // flag off
             this.itemRewalkState.updateData ( new Variant ( false ), null, null );
         }
     }
