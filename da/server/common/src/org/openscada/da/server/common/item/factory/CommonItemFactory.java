@@ -109,7 +109,7 @@ public class CommonItemFactory implements ItemFactory
 
     protected WriteHandlerItem constructInputOutput ( String localId, WriteHandler writeHandler )
     {
-        final WriteHandlerItem ioItem = new WriteHandlerItem ( localId, writeHandler );
+        final WriteHandlerItem ioItem = new WriteHandlerItem ( generateId ( localId ), writeHandler );
         registerItem ( ioItem );
         return ioItem;
     }
