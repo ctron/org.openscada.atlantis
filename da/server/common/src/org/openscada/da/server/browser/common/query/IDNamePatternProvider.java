@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.da.server.browser.common.query;
 
 import java.util.regex.Matcher;
@@ -10,31 +29,32 @@ public class IDNamePatternProvider extends IDNameProvider
      * match of this pattern.
      */
     private Pattern _namePattern;
+
     private int _matchGroup = 0;
 
-    public void setNamePattern ( Pattern namePattern )
+    public void setNamePattern ( final Pattern namePattern )
     {
-        _namePattern = namePattern;
+        this._namePattern = namePattern;
     }
-    
-    public void setMatchGroup ( int matchGroup )
+
+    public void setMatchGroup ( final int matchGroup )
     {
-        _matchGroup = matchGroup;
+        this._matchGroup = matchGroup;
     }
-    
+
     @Override
-    public String getName ( ItemDescriptor descriptor )
+    public String getName ( final ItemDescriptor descriptor )
     {
-        String name = super.getName ( descriptor );
+        final String name = super.getName ( descriptor );
         if ( name == null )
         {
             return null;
         }
-        
-        Matcher m = _namePattern.matcher ( name );
+
+        final Matcher m = this._namePattern.matcher ( name );
         if ( m.matches () )
         {
-            return m.group ( _matchGroup );
+            return m.group ( this._matchGroup );
         }
         else
         {

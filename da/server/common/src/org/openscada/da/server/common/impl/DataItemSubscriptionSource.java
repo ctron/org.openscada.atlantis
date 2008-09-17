@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.da.server.common.impl;
 
 import java.util.Collection;
@@ -25,21 +44,21 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
 {
     private DataItem _dataItem = null;
 
-    private Set<DataItemSubscriptionListener> _listeners = new CopyOnWriteArraySet<DataItemSubscriptionListener> ();
+    private final Set<DataItemSubscriptionListener> _listeners = new CopyOnWriteArraySet<DataItemSubscriptionListener> ();
 
     private boolean _bound = false;
 
     private Variant _cacheValue = null;
 
-    private Map<String, Variant> _cacheAttributes = new HashMap<String, Variant> ();
+    private final Map<String, Variant> _cacheAttributes = new HashMap<String, Variant> ();
 
-    private HiveEventListener _hiveEventListener;
+    private final HiveEventListener _hiveEventListener;
 
-    public DataItemSubscriptionSource ( DataItem dataItem, HiveEventListener hiveEventListener )
+    public DataItemSubscriptionSource ( final DataItem dataItem, final HiveEventListener hiveEventListener )
     {
         super ();
-        _dataItem = dataItem;
-        _hiveEventListener = hiveEventListener;
+        this._dataItem = dataItem;
+        this._hiveEventListener = hiveEventListener;
     }
 
     /**
@@ -48,13 +67,13 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
      */
     private synchronized void bind ()
     {
-        if ( _bound )
+        if ( this._bound )
         {
             return;
         }
 
-        _bound = true;
-        _dataItem.setListener ( this );
+        this._bound = true;
+        this._dataItem.setListener ( this );
     }
 
     /**
@@ -63,82 +82,81 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
      */
     private synchronized void unbind ()
     {
-        if ( !_bound )
+        if ( !this._bound )
         {
             return;
         }
 
-        _cacheValue = null;
-        _cacheAttributes.clear ();
-        _bound = false;
-        _dataItem.setListener ( null );
+        this._cacheValue = null;
+        this._cacheAttributes.clear ();
+        this._bound = false;
+        this._dataItem.setListener ( null );
     }
 
-    public synchronized void addListener ( Collection<SubscriptionInformation> listeners )
+    public synchronized void addListener ( final Collection<SubscriptionInformation> listeners )
     {
-        for ( SubscriptionInformation listener : listeners )
+        for ( final SubscriptionInformation listener : listeners )
         {
-            _listeners.add ( (DataItemSubscriptionListener)listener.getListener () );
+            this._listeners.add ( (DataItemSubscriptionListener)listener.getListener () );
             // send current state
-            ( (DataItemSubscriptionListener)listener.getListener () ).dataChanged ( _dataItem, _cacheValue,
-                    _cacheAttributes, true );
+            ( (DataItemSubscriptionListener)listener.getListener () ).dataChanged ( this._dataItem, this._cacheValue, this._cacheAttributes, true );
         }
 
-        if ( !_listeners.isEmpty () )
+        if ( !this._listeners.isEmpty () )
         {
             bind ();
         }
     }
 
-    public synchronized void removeListener ( Collection<SubscriptionInformation> listeners )
+    public synchronized void removeListener ( final Collection<SubscriptionInformation> listeners )
     {
-        for ( SubscriptionInformation listener : listeners )
+        for ( final SubscriptionInformation listener : listeners )
         {
-            _listeners.remove ( (DataItemSubscriptionListener)listener.getListener () );
+            this._listeners.remove ( listener.getListener () );
         }
 
-        if ( _listeners.isEmpty () )
+        if ( this._listeners.isEmpty () )
         {
             unbind ();
         }
     }
 
-    public boolean supportsListener ( SubscriptionInformation subscriptionInformation )
+    public boolean supportsListener ( final SubscriptionInformation subscriptionInformation )
     {
         return subscriptionInformation.getListener () instanceof DataItemSubscriptionListener;
     }
 
-    public void dataChanged ( DataItem item, Variant variant, Map<String, Variant> attributes, boolean cache )
+    public void dataChanged ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache )
     {
         // update cache
         if ( attributes != null )
         {
-            synchronized ( _cacheAttributes )
+            synchronized ( this._cacheAttributes )
             {
-                AttributesHelper.mergeAttributes ( _cacheAttributes, attributes );
+                AttributesHelper.mergeAttributes ( this._cacheAttributes, attributes );
             }
         }
         if ( variant != null )
         {
-            _cacheValue = variant;
+            this._cacheValue = variant;
         }
 
         // send out the events
-        for ( DataItemSubscriptionListener listener : _listeners )
+        for ( final DataItemSubscriptionListener listener : this._listeners )
         {
             listener.dataChanged ( item, variant, attributes, cache );
         }
 
         // send out the hive events
-        if ( _hiveEventListener != null )
+        if ( this._hiveEventListener != null )
         {
             if ( variant != null )
             {
-                _hiveEventListener.valueChanged ( item, variant, cache );
+                this._hiveEventListener.valueChanged ( item, variant, cache );
             }
             if ( attributes != null )
             {
-                _hiveEventListener.attributesChanged ( item, attributes.size () );
+                this._hiveEventListener.attributesChanged ( item, attributes.size () );
             }
         }
     }

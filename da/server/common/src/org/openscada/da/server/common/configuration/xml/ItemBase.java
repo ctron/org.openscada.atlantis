@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.da.server.common.configuration.xml;
 
 import java.util.HashMap;
@@ -12,8 +31,11 @@ public class ItemBase
 {
 
     private Factory _factory = null;
+
     private Map<String, Variant> _itemAttributes = new HashMap<String, Variant> ();
+
     private Map<String, Variant> _browserAttributes = new HashMap<String, Variant> ();
+
     private List<ChainEntry> _chainEntries = new LinkedList<ChainEntry> ();
 
     public ItemBase ()
@@ -21,55 +43,55 @@ public class ItemBase
         super ();
     }
 
-    public ItemBase ( ItemBase arg0 )
+    public ItemBase ( final ItemBase arg0 )
     {
         super ();
-        
-        _factory = arg0._factory;
-        _chainEntries = new LinkedList<ChainEntry> ( arg0._chainEntries );
-        
-        _itemAttributes = new HashMap<String, Variant> ( arg0._itemAttributes );
-        _browserAttributes = new HashMap<String, Variant> ( arg0._browserAttributes );
-    }
-    
-    public Map<String, Variant> getBrowserAttributes ()
-    {
-        return _browserAttributes;
+
+        this._factory = arg0._factory;
+        this._chainEntries = new LinkedList<ChainEntry> ( arg0._chainEntries );
+
+        this._itemAttributes = new HashMap<String, Variant> ( arg0._itemAttributes );
+        this._browserAttributes = new HashMap<String, Variant> ( arg0._browserAttributes );
     }
 
-    public void setBrowserAttributes ( Map<String, Variant> browserAttributes )
+    public Map<String, Variant> getBrowserAttributes ()
     {
-        _browserAttributes = browserAttributes;
+        return this._browserAttributes;
+    }
+
+    public void setBrowserAttributes ( final Map<String, Variant> browserAttributes )
+    {
+        this._browserAttributes = browserAttributes;
     }
 
     public Map<String, Variant> getItemAttributes ()
     {
-        return _itemAttributes;
+        return this._itemAttributes;
     }
 
-    public void setItemAttributes ( Map<String, Variant> itemAttributes )
+    public void setItemAttributes ( final Map<String, Variant> itemAttributes )
     {
-        _itemAttributes = itemAttributes;
+        this._itemAttributes = itemAttributes;
     }
 
     public Factory getFactory ()
     {
-        return _factory;
+        return this._factory;
     }
 
-    public void setFactory ( Factory factory )
+    public void setFactory ( final Factory factory )
     {
-        _factory = factory;
+        this._factory = factory;
     }
 
     public List<ChainEntry> getChainEntries ()
     {
-        return _chainEntries;
+        return this._chainEntries;
     }
 
-    public void setChainEntries ( List<ChainEntry> chainItems )
+    public void setChainEntries ( final List<ChainEntry> chainItems )
     {
-        _chainEntries = chainItems;
+        this._chainEntries = chainItems;
     }
 
 }

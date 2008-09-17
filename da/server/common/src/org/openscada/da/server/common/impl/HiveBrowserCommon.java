@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,24 +40,24 @@ import org.openscada.utils.jobqueue.OperationManager.Handle;
 public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, SessionListener
 {
     private static Logger _log = Logger.getLogger ( HiveBrowserCommon.class );
-    
+
     private HiveCommon _hive = null;
-    
-    private Map<Object, SessionCommon> _subscriberMap = new HashMap<Object, SessionCommon> ();
-    
-    public HiveBrowserCommon ( HiveCommon hive )
+
+    private final Map<Object, SessionCommon> _subscriberMap = new HashMap<Object, SessionCommon> ();
+
+    public HiveBrowserCommon ( final HiveCommon hive )
     {
-        _hive = hive;
-        _hive.addSessionListener ( this );
+        this._hive = hive;
+        this._hive.addSessionListener ( this );
     }
-   
-    public long startBrowse ( Session session, final Location location, final BrowseOperationListener listener ) throws InvalidSessionException
+
+    public long startBrowse ( final Session session, final Location location, final BrowseOperationListener listener ) throws InvalidSessionException
     {
         _log.debug ( "List request for: " + location.toString () );
-        
-        SessionCommon sessionCommon = _hive.validateSession ( session );
 
-        Handle handle = _hive.scheduleOperation ( sessionCommon, new RunnableCancelOperation () {
+        final SessionCommon sessionCommon = this._hive.validateSession ( session );
+
+        final Handle handle = this._hive.scheduleOperation ( sessionCommon, new RunnableCancelOperation () {
 
             public void run ()
             {
@@ -67,44 +67,45 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
                     {
                         throw new NoSuchFolderException ();
                     }
-                    Entry [] entry = getRootFolder ().list ( location.getPathStack () );
+                    final Entry[] entry = getRootFolder ().list ( location.getPathStack () );
                     if ( !isCanceled () )
                     {
                         listener.success ( entry );
                     }
                 }
-                catch ( NoSuchFolderException e )
+                catch ( final NoSuchFolderException e )
                 {
                     if ( !isCanceled () )
                     {
                         listener.failure ( e );
                     }
                 }
-            }});
-        
+            }
+        } );
+
         return handle.getId ();
     }
-    
-    public void subscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException
+
+    public void subscribe ( final Session session, final Location location ) throws NoSuchFolderException, InvalidSessionException
     {
-        _hive.validateSession ( session );
-        
-        if ( getRootFolder() == null )
+        this._hive.validateSession ( session );
+
+        if ( getRootFolder () == null )
         {
             _log.warn ( "Having a brower interface without root folder" );
             throw new NoSuchFolderException ();
         }
-        
-        Stack<String> pathStack = location.getPathStack ();
-        
-        synchronized ( _subscriberMap )
+
+        final Stack<String> pathStack = location.getPathStack ();
+
+        synchronized ( this._subscriberMap )
         {
             _log.debug ( "Adding path: " + location.toString () );
-            
-            SessionCommon sessionCommon = (SessionCommon)session;
-            Object tag = new Object ();
+
+            final SessionCommon sessionCommon = (SessionCommon)session;
+            final Object tag = new Object ();
             sessionCommon.getData ().addPath ( tag, new Location ( location ) );
-            _subscriberMap.put ( tag, sessionCommon );
+            this._subscriberMap.put ( tag, sessionCommon );
 
             boolean success = false;
             try
@@ -117,96 +118,97 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
                 if ( !success )
                 {
                     sessionCommon.getData ().removePath ( new Location ( location ) );
-                    _subscriberMap.remove ( tag );
+                    this._subscriberMap.remove ( tag );
                 }
             }
         }
-        
+
     }
-    
-    public void unsubscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException
+
+    public void unsubscribe ( final Session session, final Location location ) throws NoSuchFolderException, InvalidSessionException
     {
-        _hive.validateSession ( session );
-        
-        if ( getRootFolder() == null )
+        this._hive.validateSession ( session );
+
+        if ( getRootFolder () == null )
         {
             _log.warn ( "Having a brower interface without root folder" );
             throw new NoSuchFolderException ();
         }
-        
+
         unsubscribePath ( (SessionCommon)session, location );
     }
-    
-    private void unsubscribePath ( SessionCommon session, Location location ) throws NoSuchFolderException
+
+    private void unsubscribePath ( final SessionCommon session, final Location location ) throws NoSuchFolderException
     {
-        Object tag = session.getData ().getTag ( new Location ( location ) );
+        final Object tag = session.getData ().getTag ( new Location ( location ) );
         if ( tag != null )
         {
             session.getData ().removePath ( location );
-            synchronized ( _subscriberMap )
+            synchronized ( this._subscriberMap )
             {
-                _subscriberMap.remove ( tag );
+                this._subscriberMap.remove ( tag );
             }
-            
-            Stack<String> pathStack = location.getPathStack ();
-            
+
+            final Stack<String> pathStack = location.getPathStack ();
+
             getRootFolder ().unsubscribe ( pathStack, tag );
         }
     }
-    
-    public void changed ( Object tag, Collection<Entry> added, Collection<String> removed, boolean full )
+
+    public void changed ( final Object tag, final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
-        synchronized ( _subscriberMap )
+        synchronized ( this._subscriberMap )
         {
-            if ( _subscriberMap.containsKey ( tag ) )
+            if ( this._subscriberMap.containsKey ( tag ) )
             {
-                SessionCommon session = _subscriberMap.get ( tag );
-                Location location = session.getData ().getPaths ().get ( tag );
+                final SessionCommon session = this._subscriberMap.get ( tag );
+                final Location location = session.getData ().getPaths ().get ( tag );
                 if ( location != null )
                 {
                     try
                     {
                         session.getFolderListener ().folderChanged ( location, added, removed, full );
                     }
-                    catch ( Exception e )
-                    {}
+                    catch ( final Exception e )
+                    {
+                    }
                 }
-                
+
             }
         }
     }
-    
-    public void create ( SessionCommon session )
+
+    public void create ( final SessionCommon session )
     {
     }
-    
-    public void destroy ( SessionCommon session )
+
+    public void destroy ( final SessionCommon session )
     {
         _log.debug ( String.format ( "Session destroy: %d entries", session.getData ().getPaths ().size () ) );
-        
-        Map<Object,Location> entries;
-        
+
+        Map<Object, Location> entries;
+
         synchronized ( session.getData ().getPaths () )
         {
-            entries = new HashMap<Object,Location> ( session.getData ().getPaths () );
+            entries = new HashMap<Object, Location> ( session.getData ().getPaths () );
         }
-        
-        for ( Map.Entry<Object, Location> entry : entries.entrySet () )
+
+        for ( final Map.Entry<Object, Location> entry : entries.entrySet () )
         {
             try
             {
                 _log.debug ( "Unsubscribe path: " + entry.getValue ().toString () );
-                unsubscribePath ( session, entry.getValue() );
+                unsubscribePath ( session, entry.getValue () );
             }
-            catch ( NoSuchFolderException e )
+            catch ( final NoSuchFolderException e )
             {
                 _log.warn ( "Unable to unsubscribe form path", e );
             }
         }
-        
+
         session.getData ().clearPaths ();
         _log.debug ( "Destruction of session ok" );
     }
-    
+
     public abstract Folder getRootFolder ();
 }

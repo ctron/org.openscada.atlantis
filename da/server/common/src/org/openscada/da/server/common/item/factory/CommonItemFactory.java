@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.da.server.common.item.factory;
 
 import java.util.HashMap;
@@ -26,18 +45,18 @@ public class CommonItemFactory implements ItemFactory
 
     protected Map<String, DataItem> itemMap = new HashMap<String, DataItem> ();
 
-    private Set<ItemFactory> factoryMap = new HashSet<ItemFactory> ();
+    private final Set<ItemFactory> factoryMap = new HashSet<ItemFactory> ();
 
     private boolean disposed = false;
 
-    private ItemFactory parentItemFactory;
+    private final ItemFactory parentItemFactory;
 
     public CommonItemFactory ()
     {
         this ( null, null, DEFAULT_ID_DELIMITER );
     }
 
-    public CommonItemFactory ( ItemFactory parentItemFactory, String baseId, String idDelimiter )
+    public CommonItemFactory ( final ItemFactory parentItemFactory, final String baseId, final String idDelimiter )
     {
         this.parentItemFactory = parentItemFactory;
         if ( parentItemFactory != null )
@@ -72,7 +91,7 @@ public class CommonItemFactory implements ItemFactory
      * @param localId the local id
      * @return the global id
      */
-    protected String generateId ( String localId )
+    protected String generateId ( final String localId )
     {
         if ( this.baseId == null )
         {
@@ -80,34 +99,34 @@ public class CommonItemFactory implements ItemFactory
         }
         else
         {
-            return this.baseId + idDelimiter + localId;
+            return this.baseId + this.idDelimiter + localId;
         }
     }
 
-    private void registerItem ( DataItem newItem )
+    private void registerItem ( final DataItem newItem )
     {
-        DataItem oldItem = this.itemMap.put ( newItem.getInformation ().getName (), newItem );
+        final DataItem oldItem = this.itemMap.put ( newItem.getInformation ().getName (), newItem );
         if ( oldItem != null )
         {
             disposeItem ( oldItem );
         }
     }
 
-    protected DataItemCommand constructCommand ( String localId )
+    protected DataItemCommand constructCommand ( final String localId )
     {
         final DataItemCommand commandItem = new DataItemCommand ( generateId ( localId ) );
         registerItem ( commandItem );
         return commandItem;
     }
 
-    protected DataItemInputChained constructInput ( String localId )
+    protected DataItemInputChained constructInput ( final String localId )
     {
         final DataItemInputChained inputItem = new DataItemInputChained ( generateId ( localId ) );
         registerItem ( inputItem );
         return inputItem;
     }
 
-    protected WriteHandlerItem constructInputOutput ( String localId, WriteHandler writeHandler )
+    protected WriteHandlerItem constructInputOutput ( final String localId, final WriteHandler writeHandler )
     {
         final WriteHandlerItem ioItem = new WriteHandlerItem ( generateId ( localId ), writeHandler );
         registerItem ( ioItem );
@@ -130,7 +149,7 @@ public class CommonItemFactory implements ItemFactory
 
         disposeAllItems ();
 
-        for ( ItemFactory factory : this.factoryMap )
+        for ( final ItemFactory factory : this.factoryMap )
         {
             factory.dispose ();
         }
@@ -144,22 +163,22 @@ public class CommonItemFactory implements ItemFactory
         this.itemMap.clear ();
     }
 
-    public void disposeItem ( DataItem item )
+    public void disposeItem ( final DataItem item )
     {
         this.itemMap.remove ( item.getInformation ().getName () );
     }
 
-    public DataItemCommand createCommand ( String localId )
+    public DataItemCommand createCommand ( final String localId )
     {
         return constructCommand ( localId );
     }
 
-    public DataItemInputChained createInput ( String localId )
+    public DataItemInputChained createInput ( final String localId )
     {
         return constructInput ( localId );
     }
 
-    public WriteHandlerItem createInputOutput ( String localId, WriteHandler writeHandler )
+    public WriteHandlerItem createInputOutput ( final String localId, final WriteHandler writeHandler )
     {
         return constructInputOutput ( localId, writeHandler );
     }
@@ -169,13 +188,13 @@ public class CommonItemFactory implements ItemFactory
         return this.baseId;
     }
 
-    public boolean addSubFactory ( ItemFactory itemFactory )
+    public boolean addSubFactory ( final ItemFactory itemFactory )
     {
-        return factoryMap.add ( itemFactory );
+        return this.factoryMap.add ( itemFactory );
     }
 
-    public boolean removeSubFactory ( ItemFactory itemFactory )
+    public boolean removeSubFactory ( final ItemFactory itemFactory )
     {
-        return factoryMap.remove ( itemFactory );
+        return this.factoryMap.remove ( itemFactory );
     }
 }

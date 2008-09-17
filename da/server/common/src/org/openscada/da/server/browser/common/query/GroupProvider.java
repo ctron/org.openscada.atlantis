@@ -21,5 +21,5 @@ package org.openscada.da.server.browser.common.query;
 
 public interface GroupProvider
 {
-    String [] getGrouping ( ItemDescriptor descriptor );
+    public abstract String[] getGrouping ( ItemDescriptor descriptor );
 }

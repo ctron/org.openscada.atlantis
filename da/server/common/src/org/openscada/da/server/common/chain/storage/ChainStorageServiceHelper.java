@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.da.server.common.chain.storage;
 
 import java.io.File;
@@ -9,16 +28,16 @@ public class ChainStorageServiceHelper
 {
     private static Logger log = Logger.getLogger ( ChainStorageServiceHelper.class );
 
-    public static void registerService ( HiveCommon hive, ChainStorageService service )
+    public static void registerService ( final HiveCommon hive, final ChainStorageService service )
     {
         hive.registerService ( ChainStorageService.SERVICE_ID, service );
     }
 
-    public static void registerDefaultPropertyService ( HiveCommon hive )
+    public static void registerDefaultPropertyService ( final HiveCommon hive )
     {
         // add property file chain item storage
-        String propName = ChainStorageService.SERVICE_ID + ".path";
-        String dirName = System.getProperty ( propName, null );
+        final String propName = ChainStorageService.SERVICE_ID + ".path";
+        final String dirName = System.getProperty ( propName, null );
 
         if ( dirName == null )
         {
@@ -26,11 +45,10 @@ public class ChainStorageServiceHelper
             return;
         }
 
-        File dir = new File ( dirName );
+        final File dir = new File ( dirName );
         if ( dir.exists () && dir.isDirectory () )
         {
-            hive.registerService ( ChainStorageService.SERVICE_ID, new PropertyFileChainStorageService ( new File (
-                    dirName ) ) );
+            hive.registerService ( ChainStorageService.SERVICE_ID, new PropertyFileChainStorageService ( new File ( dirName ) ) );
         }
     }
 }
