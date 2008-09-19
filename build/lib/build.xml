@@ -17,6 +17,10 @@
 	<property name="datadir" location="${datadir1}/../data"/>
 	<property name="xmlbeansdir" location="${datadir1}/../xmlbeans"/>
 	
+	<property name="build.java.source.version" value="1.6"/>
+	<property name="build.java.target.version" value="1.6"/>
+	<property name="build.java.source.encoding" value="utf-8"/>
+	
 	<!-- - - - - - - - - - - - - - - - - - 
           macrodef: openscada.unpack-module
           Unpack a deployed module
@@ -131,7 +135,7 @@
     	       	author="true"
     	       	version="true"
     	       	use="true"
-    	       	encoding="utf-8"
+    	       	encoding="${build.java.source.encoding}"
     	       	>
     	       	<tag name="note" description="Note" scope="all"/>
     	       	<tag name="warning" description="Warning" scope="all"/>
@@ -163,9 +167,9 @@
 				<then>
 					<echo message="Building gensrc"/>
 					<javac
-						encoding="utf-8"
-						source="1.5"
-						target="1.5"
+						encoding="${build.java.source.encoding}"
+						source="${build.java.source.version}"
+						target="${build.java.target.version}"
 						debug="on"
 						destdir="${build.dir}/${package}-build/bin"
 						>
@@ -184,9 +188,9 @@
 			</if>
     		
     		<javac
-    			encoding="utf-8"
-    			source="1.5"
-    			target="1.5"
+    			encoding="${build.java.source.encoding}"
+				source="${build.java.source.version}"
+				target="${build.java.target.version}"
     			debug="on"
     			destdir="${build.dir}/${package}-build/bin"
     			>

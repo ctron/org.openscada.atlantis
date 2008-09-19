@@ -239,6 +239,7 @@
           target: init                      
          - - - - - - - - - - - - - - - - - -->
     <target name="init">
+    	<echo>Java Version: ${java.runtime.version}</echo>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
