@@ -46,6 +46,7 @@
             name="Real Time List"/>
       <view
             allowMultiple="true"
+            category="org.openscada.da.client.test"
             class="org.openscada.da.client.test.generator.GeneratorView"
             id="org.openscada.da.client.test.GeneratorView"
             name="Signal Generator">
@@ -53,6 +54,17 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.openscada.da.client.test"
+            defaultHandler="org.openscada.da.client.test.commands.OpenNewRealtimeList"
+            description="Open a new Realtime List"
+            id="org.openscada.da.client.test.NewRealtimeList"
+            name="New Realtime List">
+      </command>
+      <category
+            id="org.openscada.da.client.test"
+            name="OpenSCADA DA">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -335,9 +347,6 @@
             />
    </extension>
    <extension
-         point="org.eclipse.ui.actionSets">
-   </extension>
-   <extension
          point="org.eclipse.ui.propertyPages">
       <page
             class="org.openscada.da.client.test.pages.DataItemEntryPage"
@@ -354,6 +363,18 @@
    </extension>
    <extension
          point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="org.openscada.da.client.test.toolbar">
+            <command
+                  commandId="org.openscada.da.client.test.NewRealtimeList"
+                  id="org.openscada.da.test.actions.OpenNewRealtimeView"
+                  label="New realtime list"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
    </extension>
    
   
