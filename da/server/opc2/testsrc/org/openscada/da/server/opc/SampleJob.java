@@ -8,6 +8,7 @@ public class SampleJob extends ThreadJob
     private static Logger logger = Logger.getLogger ( SampleJob.class );
 
     private long sleep;
+
     private boolean fails;
 
     public SampleJob ( long timeout, long sleep, boolean fails )
