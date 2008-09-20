@@ -17,11 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.server;
+package org.openscada.da.core;
 
 import java.util.EnumSet;
 
-import org.openscada.da.core.IODirection;
 
 
 /**

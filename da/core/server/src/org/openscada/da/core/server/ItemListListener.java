@@ -21,6 +21,8 @@ package org.openscada.da.core.server;
 
 import java.util.Collection;
 
+import org.openscada.da.core.DataItemInformation;
+
 public interface ItemListListener
 {
     void changed ( Collection<DataItemInformation> added, Collection<String> removed, boolean initial );
