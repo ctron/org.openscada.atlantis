@@ -22,7 +22,7 @@ package org.openscada.da.server.common.chain;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.DataItemInformation;
+import org.openscada.da.core.DataItemInformation;
 
 public class WriteHandlerItem extends DataItemInputOutputChained
 {

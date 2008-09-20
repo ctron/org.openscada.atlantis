@@ -28,8 +28,8 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
+import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
-import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
 

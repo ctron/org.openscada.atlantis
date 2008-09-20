@@ -22,7 +22,7 @@ package org.openscada.da.server.common;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.DataItemInformation;
+import org.openscada.da.core.DataItemInformation;
 
 /**
  * This is an abstract base class for the {@link DataItem} interface. It also supports

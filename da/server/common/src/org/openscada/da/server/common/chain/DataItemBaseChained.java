@@ -29,10 +29,10 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.openscada.core.Variant;
+import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.server.common.AttributeManager;
 import org.openscada.da.server.common.DataItemBase;
 import org.openscada.da.server.common.WriteAttributesHelper;

@@ -39,7 +39,7 @@ import org.openscada.core.subscription.SubscriptionListener;
 import org.openscada.core.subscription.SubscriptionManager;
 import org.openscada.core.subscription.SubscriptionValidator;
 import org.openscada.core.subscription.ValidationException;
-import org.openscada.da.core.server.DataItemInformation;
+import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
 import org.openscada.da.core.server.Session;
