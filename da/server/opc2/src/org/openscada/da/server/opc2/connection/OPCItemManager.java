@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.core.Variant;
-import org.openscada.da.core.server.DataItemInformation;
+import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.configuration.ConfigurationError;
