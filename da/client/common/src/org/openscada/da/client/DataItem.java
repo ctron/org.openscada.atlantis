@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,14 +29,16 @@ import org.openscada.core.utils.AttributesHelper;
 
 public class DataItem extends Observable
 {
-    private String _itemId;
+    private final String _itemId;
 
     private ItemManager _itemManager = null;
 
     private Variant _value = new Variant ();
+
     private Map<String, Variant> _attributes = new HashMap<String, Variant> ();
 
     private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
+
     private Throwable _subscriptionError = null;
 
     private ItemUpdateListener _listener = null;
@@ -47,9 +49,9 @@ public class DataItem extends Observable
      * Note that the item is initially unconnected
      * @param itemId the id of the item to register later
      */
-    public DataItem ( String itemId )
+    public DataItem ( final String itemId )
     {
-        _itemId = itemId;
+        this._itemId = itemId;
     }
 
     /**
@@ -60,89 +62,95 @@ public class DataItem extends Observable
      * @param itemId the id of the item to register
      * @param connection the item manager to which the item will register
      */
-    public DataItem ( String itemId, ItemManager connection )
+    public DataItem ( final String itemId, final ItemManager connection )
     {
         this ( itemId );
 
         register ( connection );
     }
 
-    synchronized public void register ( ItemManager connection )
+    synchronized public void register ( final ItemManager connection )
     {
-        if ( _itemManager == connection )
+        if ( this._itemManager == connection )
         {
             return;
         }
         unregister ();
 
-        _listener = new ItemUpdateListener () {
+        this._listener = new ItemUpdateListener () {
 
-            public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
+            public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
             {
                 performNotifyDataChange ( value, attributes, cache );
             }
 
-            public void notifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
+            public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
             {
                 performNotifySubscriptionChange ( subscriptionState, subscriptionError );
             }
         };
 
-        _itemManager = connection;
-        _itemManager.addItemUpdateListener ( _itemId, _listener );
+        this._itemManager = connection;
+        this._itemManager.addItemUpdateListener ( this._itemId, this._listener );
     }
 
     public void unregister ()
     {
         ItemManager manager;
         ItemUpdateListener listener;
-        
+
         synchronized ( this )
         {
-            if ( _itemManager == null )
+            if ( this._itemManager == null )
             {
                 return;
             }
-            manager = _itemManager;
-            listener = _listener;
-            
-            _itemManager = null;
-            _listener = null;
+            manager = this._itemManager;
+            listener = this._listener;
+
+            this._itemManager = null;
+            this._listener = null;
         }
 
-        manager.removeItemUpdateListener ( _itemId, listener );
+        manager.removeItemUpdateListener ( this._itemId, listener );
     }
 
-    private void performNotifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
+    private void performNotifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        if ( cache )
+        synchronized ( this )
         {
-            setChanged ();
-            _attributes = new HashMap<String, Variant> ( attributes );
+            if ( cache )
+            {
+                setChanged ();
+                this._attributes = new HashMap<String, Variant> ( attributes );
+            }
+            else
+            {
+                AttributesHelper.mergeAttributes ( this._attributes, attributes );
+            }
+
+            if ( attributes != null )
+            {
+                setChanged ();
+            }
+
+            if ( value != null )
+            {
+                setChanged ();
+                this._value = new Variant ( value );
+            }
         }
-        else
-        {
-            AttributesHelper.mergeAttributes ( _attributes, attributes );
-        }
-        
-        if ( attributes != null )
-        {
-            setChanged ();
-        }
-        
-        if ( value != null )
-        {
-            setChanged ();
-            _value = new Variant ( value );
-        }
-        
+
         notifyObservers ();
     }
-    
-    private void performNotifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
+
+    private void performNotifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
     {
-        _subscriptionState = subscriptionState;
-        _subscriptionError = subscriptionError;
+        synchronized ( this )
+        {
+            this._subscriptionState = subscriptionState;
+            this._subscriptionError = subscriptionError;
+        }
 
         setChanged ();
         notifyObservers ();
@@ -157,7 +165,16 @@ public class DataItem extends Observable
      */
     public Variant getValue ()
     {
-        return _value;
+        return this._value;
+    }
+
+    /**
+     * Get the complete state of the current data item in an atomic operation
+     * @return the current state of the data item 
+     */
+    public synchronized DataItemValue getSnapshotValue ()
+    {
+        return new DataItemValue ( this._value, this._attributes, this._subscriptionState );
     }
 
     /**
@@ -169,7 +186,7 @@ public class DataItem extends Observable
      */
     public Map<String, Variant> getAttributes ()
     {
-        return _attributes;
+        return this._attributes;
     }
 
     /**
@@ -178,7 +195,7 @@ public class DataItem extends Observable
      */
     public SubscriptionState getSubscriptionState ()
     {
-        return _subscriptionState;
+        return this._subscriptionState;
     }
 
     /**
@@ -187,7 +204,7 @@ public class DataItem extends Observable
      */
     public String getItemId ()
     {
-        return _itemId;
+        return this._itemId;
     }
 
     /**
@@ -196,7 +213,6 @@ public class DataItem extends Observable
      */
     public Throwable getSubscriptionError ()
     {
-        return _subscriptionError;
+        return this._subscriptionError;
     }
-
 }
