@@ -19,6 +19,7 @@
 
 package org.openscada.da.client;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -140,5 +141,34 @@ public class DataItemValue
             return isAttribute ( "error", false );
         }
         return false;
+    }
+
+    /**
+     * get the timestamp of the value
+     * @return the timestamp or <code>null</code> if the timestamp property is not set
+     */
+    public Calendar getTimestamp ()
+    {
+        final Variant value = this.attributes.get ( "timestamp" );
+        if ( value == null )
+        {
+            return null;
+        }
+
+        if ( !value.isLong () )
+        {
+            return null;
+        }
+
+        final Calendar c = Calendar.getInstance ();
+        try
+        {
+            c.setTimeInMillis ( value.asLong () );
+        }
+        catch ( final Throwable e )
+        {
+            return null;
+        }
+        return c;
     }
 }
