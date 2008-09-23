@@ -17,7 +17,7 @@
 	<property name="datadir" location="${datadir1}/../data"/>
 	<property name="xmlbeansdir" location="${datadir1}/../xmlbeans"/>
 	
-	<property name="build.java.source.version" value="1.6"/>
+	<property name="build.java.source.version" value="1.5"/>
 	<property name="build.java.target.version" value="1.5"/>
 	<property name="build.java.source.encoding" value="utf-8"/>
 	
