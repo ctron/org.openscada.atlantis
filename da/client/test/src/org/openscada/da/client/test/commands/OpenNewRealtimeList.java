@@ -21,7 +21,7 @@ public class OpenNewRealtimeList extends AbstractHandler
         }
         catch ( final PartInitException e )
         {
-            throw new ExecutionException ( "Failed to cretae new realtime list", e );
+            throw new ExecutionException ( "Failed to create new realtime list", e );
         }
     }
 
