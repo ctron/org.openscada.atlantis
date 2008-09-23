@@ -13,7 +13,6 @@ import org.openscada.da.client.test.views.realtime.RealTimeList;
 public class OpenNewRealtimeList extends AbstractHandler
 {
 
-    @Override
     public Object execute ( final ExecutionEvent event ) throws ExecutionException
     {
         try
