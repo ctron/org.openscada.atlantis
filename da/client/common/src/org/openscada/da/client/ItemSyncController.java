@@ -21,6 +21,7 @@ package org.openscada.da.client;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
@@ -37,15 +38,15 @@ public class ItemSyncController implements ItemUpdateListener
 {
     private static Logger _log = Logger.getLogger ( ItemSyncController.class );
 
-    private org.openscada.da.client.Connection _connection;
+    private final org.openscada.da.client.Connection _connection;
 
-    private String _itemName;
+    private final String _itemName;
 
     private boolean _subscribed = false;
 
     private Variant _cachedValue = new Variant ();
 
-    private Map<String, Variant> _cachedAttributes = new HashMap<String, Variant> ();
+    private final Map<String, Variant> _cachedAttributes = new ConcurrentHashMap<String, Variant> ();
 
     private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
 
@@ -58,33 +59,37 @@ public class ItemSyncController implements ItemUpdateListener
      */
     private class ListenerInfo
     {
-        private ItemUpdateListener _listener;
+        private final ItemUpdateListener _listener;
 
-        public ListenerInfo ( ItemUpdateListener listener )
+        public ListenerInfo ( final ItemUpdateListener listener )
         {
-            _listener = listener;
+            this._listener = listener;
         }
 
         public ItemUpdateListener getListener ()
         {
-            return _listener;
+            return this._listener;
         }
 
         @Override
-        public boolean equals ( Object obj )
+        public boolean equals ( final Object obj )
         {
             if ( obj == null )
+            {
                 return false;
+            }
             if ( obj == this )
+            {
                 return true;
+            }
 
             if ( obj instanceof ItemUpdateListener )
             {
-                return obj == _listener;
+                return obj == this._listener;
             }
             else if ( obj instanceof ListenerInfo )
             {
-                return ( (ListenerInfo)obj )._listener == _listener;
+                return ( (ListenerInfo)obj )._listener == this._listener;
             }
             else
             {
@@ -95,47 +100,47 @@ public class ItemSyncController implements ItemUpdateListener
         @Override
         public int hashCode ()
         {
-            return _listener.hashCode ();
+            return this._listener.hashCode ();
         }
     }
 
-    private Map<ItemUpdateListener, ListenerInfo> _listeners = new HashMap<ItemUpdateListener, ListenerInfo> ();
+    private final Map<ItemUpdateListener, ListenerInfo> _listeners = new HashMap<ItemUpdateListener, ListenerInfo> ();
 
-    public ItemSyncController ( org.openscada.da.client.Connection connection, String itemName )
+    public ItemSyncController ( final org.openscada.da.client.Connection connection, final String itemName )
     {
-        _connection = connection;
-        _itemName = itemName;
+        this._connection = connection;
+        this._itemName = itemName;
 
-        _connection.setItemUpdateListener ( _itemName, this );
+        this._connection.setItemUpdateListener ( this._itemName, this );
     }
 
     public String getItemName ()
     {
-        return _itemName;
+        return this._itemName;
     }
 
     public synchronized int getNumberOfListeners ()
     {
-        return _listeners.size ();
+        return this._listeners.size ();
     }
 
-    public synchronized void add ( ItemUpdateListener listener )
+    public synchronized void add ( final ItemUpdateListener listener )
     {
-        if ( !_listeners.containsKey ( listener ) )
+        if ( !this._listeners.containsKey ( listener ) )
         {
-            _listeners.put ( listener, new ListenerInfo ( listener ) );
-            listener.notifySubscriptionChange ( _subscriptionState, _subscriptionError );
-            listener.notifyDataChange ( _cachedValue, _cachedAttributes, true );
+            this._listeners.put ( listener, new ListenerInfo ( listener ) );
+            listener.notifySubscriptionChange ( this._subscriptionState, this._subscriptionError );
+            listener.notifyDataChange ( this._cachedValue, this._cachedAttributes, true );
 
             triggerSync ();
         }
     }
 
-    public synchronized void remove ( ItemUpdateListener listener )
+    public synchronized void remove ( final ItemUpdateListener listener )
     {
-        if ( _listeners.containsKey ( listener ) )
+        if ( this._listeners.containsKey ( listener ) )
         {
-            _listeners.remove ( listener );
+            this._listeners.remove ( listener );
 
             triggerSync ();
         }
@@ -143,7 +148,7 @@ public class ItemSyncController implements ItemUpdateListener
 
     public void triggerSync ()
     {
-        Thread t = new Thread ( new Runnable () {
+        final Thread t = new Thread ( new Runnable () {
 
             public void run ()
             {
@@ -155,11 +160,11 @@ public class ItemSyncController implements ItemUpdateListener
         t.start ();
     }
 
-    public synchronized void sync ( boolean force )
+    public synchronized void sync ( final boolean force )
     {
-        boolean subscribe = getNumberOfListeners () > 0;
+        final boolean subscribe = getNumberOfListeners () > 0;
 
-        if ( ( _subscribed == subscribe ) && !force )
+        if ( this._subscribed == subscribe && !force )
         {
             // nothing to do
             return;
@@ -180,10 +185,10 @@ public class ItemSyncController implements ItemUpdateListener
         try
         {
             _log.debug ( "Syncing listen state: active" );
-            _subscribed = true;
-            _connection.subscribeItem ( _itemName );
+            this._subscribed = true;
+            this._connection.subscribeItem ( this._itemName );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             handleError ( e );
         }
@@ -194,34 +199,34 @@ public class ItemSyncController implements ItemUpdateListener
         try
         {
             _log.debug ( "Syncing listen state: inactive " );
-            _subscribed = false;
-            _connection.unsubscribeItem ( _itemName );
+            this._subscribed = false;
+            this._connection.unsubscribeItem ( this._itemName );
             notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             handleError ( e );
         }
     }
 
-    private void handleError ( Throwable e )
+    private void handleError ( final Throwable e )
     {
         _log.warn ( "Failed to subscribe", e );
-        _subscribed = false;
+        this._subscribed = false;
         notifySubscriptionChange ( SubscriptionState.DISCONNECTED, e );
     }
 
-    public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
+    public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         boolean change = false;
 
         synchronized ( this )
         {
             // update value
-            if ( _cachedValue == null || !_cachedValue.equals ( value ) )
+            if ( this._cachedValue == null || !this._cachedValue.equals ( value ) )
             {
                 change = true;
-                _cachedValue = value;
+                this._cachedValue = value;
             }
 
             // update attributes
@@ -229,7 +234,7 @@ public class ItemSyncController implements ItemUpdateListener
             {
                 if ( !attributes.isEmpty () || cache )
                 {
-                    AttributesHelper.mergeAttributes ( _cachedAttributes, attributes, cache );
+                    AttributesHelper.mergeAttributes ( this._cachedAttributes, attributes, cache );
                     change = true;
                 }
             }
@@ -237,27 +242,27 @@ public class ItemSyncController implements ItemUpdateListener
 
         if ( change )
         {
-            for ( ListenerInfo listenerInfo : _listeners.values () )
+            for ( final ListenerInfo listenerInfo : this._listeners.values () )
             {
                 listenerInfo.getListener ().notifyDataChange ( value, attributes, cache );
             }
         }
     }
 
-    public void notifySubscriptionChange ( SubscriptionState subscriptionState, Throwable e )
+    public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable e )
     {
         synchronized ( this )
         {
-            if ( _subscriptionState.equals ( subscriptionState ) && _subscriptionError == e )
+            if ( this._subscriptionState.equals ( subscriptionState ) && this._subscriptionError == e )
             {
                 return;
             }
 
-            _subscriptionState = subscriptionState;
-            _subscriptionError = e;
+            this._subscriptionState = subscriptionState;
+            this._subscriptionError = e;
         }
 
-        for ( ListenerInfo listenerInfo : _listeners.values () )
+        for ( final ListenerInfo listenerInfo : this._listeners.values () )
         {
             listenerInfo.getListener ().notifySubscriptionChange ( subscriptionState, e );
         }
