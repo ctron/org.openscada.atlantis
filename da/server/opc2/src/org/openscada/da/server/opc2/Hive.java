@@ -42,6 +42,7 @@ public class Hive extends HiveCommon
     private static Logger logger = Logger.getLogger ( Hive.class );
 
     private Collection<OPCConnection> connections = new LinkedList<OPCConnection> ();
+
     private FolderCommon rootFolder = new FolderCommon ();
 
     public Hive () throws XmlException, IOException, ConfigurationError
@@ -59,7 +60,7 @@ public class Hive extends HiveCommon
         super ();
 
         initJInterop ();
-        
+
         // enable chain storage for this hive
         ChainStorageServiceHelper.registerDefaultPropertyService ( this );
 
@@ -94,7 +95,7 @@ public class Hive extends HiveCommon
             connection.connect ();
         }
     }
-    
+
     public void removeConnection ( OPCConnection connection )
     {
         if ( this.connections.remove ( connection ) )

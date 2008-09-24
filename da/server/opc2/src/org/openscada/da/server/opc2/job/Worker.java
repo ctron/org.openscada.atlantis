@@ -35,12 +35,15 @@ public class Worker implements GuardianHandler
     private WorkUnit currentWorkUnit;
 
     private Guardian guardian;
+
     private Thread guardianThread;
 
     protected static class OPCResultJobHandler<T> implements JobHandler
     {
         private Throwable error;
+
         private T result;
+
         private JobResult<T> jobResult;
 
         public OPCResultJobHandler ( JobResult<T> jobResult )
@@ -80,6 +83,7 @@ public class Worker implements GuardianHandler
     {
 
         private Throwable error;
+
         private Runnable runnable;
 
         public OPCRunnableJobHandler ( Runnable runnable )

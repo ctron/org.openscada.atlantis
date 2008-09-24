@@ -20,11 +20,14 @@
 package org.openscada.da.server.opc2.connection;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
 import org.jinterop.dcom.core.JISession;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc2.Hive;
+import org.openscada.da.server.opc2.browser.OPCBrowserManager;
 import org.openscada.da.server.opc2.job.Worker;
 import org.openscada.da.server.opc2.job.impl.ConnectJob;
 import org.openscada.da.server.opc2.job.impl.ServerStatusJob;
@@ -35,6 +38,7 @@ import org.openscada.opc.lib.common.ConnectionInformation;
 public class OPCController implements Runnable
 {
     private static final long LOOP_DELAY_MIN = 50;
+
     private static final long LOOP_DELAY_MAX = 10 * 1000;
 
     private ConnectionInformation connectionInformation;
@@ -49,15 +53,24 @@ public class OPCController implements Runnable
 
     private OPCItemManager itemManager;
 
+    private OPCIoManager ioManager;
+
+    private OPCBrowserManager browserManager;
+
     private ConnectionSetup configuration;
+    
+    private Collection<OPCStateListener> stateListener = new CopyOnWriteArraySet<OPCStateListener> ();
 
     public OPCController ( ConnectionSetup config, Hive hive, FolderItemFactory itemFactory )
     {
         this.configuration = config;
         worker = new Worker ();
         model = new OPCModel ();
+        model.setIgnoreTimestampOnlyChange ( config.isIgnoreTimestampOnlyChange () );
 
-        itemManager = new OPCItemManager ( worker, configuration, model, hive, itemFactory );
+        ioManager = new OPCIoManager ( worker, model, this );
+        itemManager = new OPCItemManager ( worker, configuration, model, this, hive, itemFactory );
+        browserManager = new OPCBrowserManager ( worker, configuration, model, hive );
     }
 
     public void connect ( ConnectionInformation connectionInformation )
@@ -99,18 +112,19 @@ public class OPCController implements Runnable
     {
         this.model.setControllerState ( state );
     }
-    
+
     protected void runOnce ()
     {
         try
         {
-            if ( this.model.isConnectionRequested () && ! ( this.model.isConnected () || this.model.isConnecting () )
-                    && model.mayConnect () )
+            if ( this.model.isConnectionRequested () && ! ( this.model.isConnected () || this.model.isConnecting () ) && model.mayConnect () )
             {
                 setControllerState ( ControllerState.CONNECTING );
                 if ( performConnect () )
                 {
-                    this.itemManager.handleConnected ();
+                    itemManager.handleConnected ();
+                    ioManager.handleConnected ();
+                    fireConnected ();
                 }
             }
             else if ( !this.model.isConnectionRequested () && this.model.isConnected () )
@@ -123,20 +137,27 @@ public class OPCController implements Runnable
             {
                 setControllerState ( ControllerState.READING_STATUS );
                 updateStatus ();
-                
-                setControllerState ( ControllerState.REGISTERING );
-                itemManager.processRequests ();
-                
+
+                OPCIoContext ctx = ioManager.prepareProcessing ();
+                ioManager.performProcessing ( ctx, OPCDATASOURCE.OPC_DS_CACHE );
+
+                /*
+                ioManager.processRequests ();
+
                 setControllerState ( ControllerState.ACTIVATING );
-                itemManager.processActivations ();
-                
-                setControllerState ( ControllerState.WRITING);
-                itemManager.processWriteRequests ();
-                
+                ioManager.processActivations ();
+
+                setControllerState ( ControllerState.WRITING );
+                ioManager.processWriteRequests ();
+
                 setControllerState ( ControllerState.READING );
-                itemManager.read ( OPCDATASOURCE.OPC_DS_CACHE );
+                ioManager.read ( OPCDATASOURCE.OPC_DS_CACHE );
+                */
+
+                setControllerState ( ControllerState.BROWSING );
+                browserManager.performBrowse ();
             }
-            
+
             setControllerState ( ControllerState.IDLE );
         }
         catch ( Throwable e )
@@ -189,7 +210,7 @@ public class OPCController implements Runnable
                     model.setGroup ( job.getGroup () );
                     model.setSyncIo ( job.getSyncIo () );
                     model.setItemMgt ( job.getItemMgt () );
-                    
+
                     model.setConnectionState ( ConnectionState.CONNECTED );
                 }
             } );
@@ -239,8 +260,9 @@ public class OPCController implements Runnable
                     model.removeDisposerRunning ( Thread.currentThread () );
                 }
             }
-        }, "OPCSessionDestructor" );
+        } );
 
+        destructor.setName ( "OPCSessionDestructor/" + this.configuration.getDeviceTag () );
         destructor.setDaemon ( true );
         destructor.start ();
         logger.info ( "Destroying DCOM session... forked" );
@@ -252,12 +274,14 @@ public class OPCController implements Runnable
         {
             return;
         }
-        
+
         this.model.setConnectionState ( ConnectionState.DISCONNECTING );
 
         disposeSession ( model.getSession () );
 
         this.itemManager.handleDisconnected ();
+        this.ioManager.handleDisconnected ();
+        fireDisconnected ();
 
         model.setServerState ( null );
         model.setConnecting ( false );
@@ -267,13 +291,14 @@ public class OPCController implements Runnable
         model.setItemMgt ( null );
         model.setSyncIo ( null );
         model.setCommon ( null );
-        
+
         this.model.setConnectionState ( ConnectionState.DISCONNECTED );
     }
 
     public void shutdown ()
     {
         this.itemManager.shutdown ();
+        this.ioManager.shutdown ();
         this.running = false;
     }
 
@@ -287,6 +312,16 @@ public class OPCController implements Runnable
         return itemManager;
     }
 
+    public OPCIoManager getIoManager ()
+    {
+        return ioManager;
+    }
+
+    public OPCBrowserManager getBrowserManager ()
+    {
+        return browserManager;
+    }
+
     public void setLoopDelay ( long loopDelay )
     {
         if ( loopDelay < LOOP_DELAY_MIN )
@@ -298,5 +333,31 @@ public class OPCController implements Runnable
             loopDelay = LOOP_DELAY_MAX;
         }
         this.model.setLoopDelay ( loopDelay );
+    }
+    
+    public void addStateListener ( OPCStateListener stateListener )
+    {
+        this.stateListener.add ( stateListener );
+    }
+    
+    public void removeStateListener ( OPCStateListener stateListener )
+    {
+        this.stateListener.remove ( stateListener );
+    }
+    
+    protected void fireConnected ()
+    {
+        for ( OPCStateListener listener : this.stateListener )
+        {
+            listener.connectionEstablished ();
+        }
+    }
+    
+    protected void fireDisconnected ()
+    {
+        for ( OPCStateListener listener : this.stateListener )
+        {
+            listener.connectionLost ();
+        }
     }
 }

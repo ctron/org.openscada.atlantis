@@ -37,7 +37,7 @@ public abstract class AbstractItemSource implements ItemSource
     }
 
     public abstract void activate ();
-    
+
     public void deactivate ()
     {
         this.listeners.clear ();

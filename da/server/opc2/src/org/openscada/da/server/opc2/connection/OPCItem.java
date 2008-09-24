@@ -28,8 +28,8 @@ import org.jinterop.dcom.core.JIVariant;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
-import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.server.DataItemInformation;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.SuspendableDataItem;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
@@ -41,41 +41,44 @@ import org.openscada.opc.dcom.da.OPCITEMDEF;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.OPCITEMSTATE;
 import org.openscada.opc.dcom.da.WriteRequest;
+import org.openscada.utils.collection.MapBuilder;
 
 public class OPCItem extends DataItemInputOutputChained implements SuspendableDataItem
 {
     private static Logger logger = Logger.getLogger ( OPCItem.class );
-    private OPCITEMDEF opcDefinition;
-    private OPCItemManager manager;
+
     private boolean suspended = true;
 
     private Variant lastValue;
 
-    public OPCItem ( Hive hive, OPCItemManager manager, DataItemInformation di, KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
+    private final OPCController controller;
+
+    private final String opcItemId;
+
+    private boolean ignoreTimestampOnlyChange = false;
+
+    public OPCItem ( final Hive hive, final OPCController controller, final DataItemInformation di, final String opcItemId )
     {
         super ( di );
-        this.manager = manager;
-        this.opcDefinition = entry.getKey ();
-        
-        intialData ( entry );
-    }
+        this.controller = controller;
+        this.opcItemId = opcItemId;
 
-    private void intialData ( KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
-    {
-        this.updateData ( null, Helper.convertToAttributes ( entry ), AttributeMode.SET );
+        this.ignoreTimestampOnlyChange = controller.getModel ().isIgnoreTimestampOnlyChange ();
+
+        this.updateData ( null, new MapBuilder<String, Variant> ().put ( "opc.connection.error", new Variant ( true ) ).put ( "opc.itemId", new Variant ( opcItemId ) ).getMap (), AttributeMode.SET );
     }
 
     @Override
-    protected void writeCalculatedValue ( Variant value ) throws NotConvertableException, InvalidOperationException
+    protected void writeCalculatedValue ( final Variant value ) throws NotConvertableException, InvalidOperationException
     {
         if ( !this.getInformation ().getIODirection ().contains ( IODirection.OUTPUT ) )
         {
-            logger.warn ( String.format ( "Failed to write to read-only item ()", opcDefinition.getItemID () ) );
+            logger.warn ( String.format ( "Failed to write to read-only item ()", this.opcItemId ) );
             throw new InvalidOperationException ();
         }
 
         // check if the conversion works ... will be performed again by the addWriteRequest call
-        JIVariant variant = Helper.ours2theirs ( value );
+        final JIVariant variant = Helper.ours2theirs ( value );
         logger.debug ( String.format ( "Converting write request from %s to %s", value, variant ) );
         if ( variant == null )
         {
@@ -83,39 +86,39 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             logger.info ( "Unable to convert write request" );
             throw new NotConvertableException ();
         }
-        
-        this.manager.addWriteRequest ( this.opcDefinition.getItemID (), value );
+
+        this.controller.getIoManager ().addWriteRequest ( this.opcItemId, value );
     }
 
     public void suspend ()
     {
-        suspended = true;
-        this.manager.suspendItem ( this.opcDefinition.getItemID () );
+        this.suspended = true;
+        this.controller.getIoManager ().suspendItem ( this.opcItemId );
     }
 
     public void wakeup ()
     {
-        suspended = false;
-        this.manager.wakeupItem ( this.opcDefinition.getItemID () );
+        this.suspended = false;
+        this.controller.getIoManager ().wakeupItem ( this.opcItemId );
     }
 
-    public void updateStatus ( KeyedResult<Integer, OPCITEMSTATE> entry, String errorMessage )
+    public void updateStatus ( final KeyedResult<Integer, OPCITEMSTATE> entry, final String errorMessage )
     {
-        if ( suspended )
+        if ( this.suspended )
         {
             return;
         }
 
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        OPCITEMSTATE state = entry.getValue ();
+        final OPCITEMSTATE state = entry.getValue ();
+        attributes.put ( "opc.connection.error", null );
 
         if ( entry.isFailed () )
         {
             attributes.put ( "opc.read.error", new Variant ( true ) );
             attributes.put ( "opc.read.error.code", new Variant ( entry.getErrorCode () ) );
-            attributes.put ( "opc.read.error.message", new Variant ( String.format ( "0x%08x: %s",
-                    entry.getErrorCode (), errorMessage ) ) );
+            attributes.put ( "opc.read.error.message", new Variant ( String.format ( "0x%08x: %s", entry.getErrorCode (), errorMessage ) ) );
 
             attributes.put ( "opc.quality", null );
             attributes.put ( "timestamp", null );
@@ -125,7 +128,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             attributes.put ( "opc.value.conversion.error", null );
             attributes.put ( "opc.value.conversion.source", null );
 
-            lastValue = null;
+            this.lastValue = null;
 
             updateData ( new Variant (), attributes, AttributeMode.UPDATE );
         }
@@ -135,13 +138,19 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             attributes.put ( "opc.read.error.code", null );
             attributes.put ( "opc.read.error.message", null );
 
-            attributes.put ( "opc.quality", new Variant ( state.getQuality () ) );
+            final short quality = state.getQuality ();
+            attributes.put ( "opc.quality", new Variant ( quality ) );
+
+            attributes.put ( "opc.quality.error", new Variant ( quality < 192 ) );
+            attributes.put ( "opc.quality.manual", new Variant ( quality == 216 ) );
+            attributes.put ( "org.openscada.da.manual.active", new Variant ( quality == 216 ) );
+
             attributes.put ( "opc.value.type", null );
             try
             {
                 attributes.put ( "opc.value.type", new Variant ( state.getValue ().getType () ) );
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
             }
 
@@ -158,19 +167,17 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
                 attributes.put ( "opc.value.conversion.error", null );
                 attributes.put ( "opc.value.conversion.source", null );
 
-                if ( lastValue == null || ( !lastValue.equals ( value ) ) )
+                if ( !this.ignoreTimestampOnlyChange || this.lastValue == null || !this.lastValue.equals ( value ) )
                 {
-                    attributes.put ( "timestamp", new Variant (
-                            state.getTimestamp ().asCalendar ().getTimeInMillis () ) );
-                    attributes.put ( "timestamp.message", new Variant ( String.format ( "%tc",
-                            state.getTimestamp ().asCalendar () ) ) );
+                    attributes.put ( "timestamp", new Variant ( state.getTimestamp ().asCalendar ().getTimeInMillis () ) );
+                    attributes.put ( "timestamp.message", new Variant ( String.format ( "%tc", state.getTimestamp ().asCalendar () ) ) );
                 }
 
             }
 
             updateData ( value, attributes, AttributeMode.UPDATE );
 
-            lastValue = value;
+            this.lastValue = value;
         }
     }
 
@@ -178,11 +185,11 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
      * Setting the last write error information
      * @param result the write result that caused the error or <code>null</code> in case the reason is unknown
      */
-    public void setLastWriteError ( Result<WriteRequest> result )
+    public void setLastWriteResult ( final Result<WriteRequest> result )
     {
-        Calendar c = Calendar.getInstance ();
+        final Calendar c = Calendar.getInstance ();
 
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         if ( result != null )
         {
             attributes.put ( "opc.lastWriteError.code", new Variant ( result.getErrorCode () ) );
@@ -196,6 +203,24 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         attributes.put ( "opc.lastWriteError.timestamp", new Variant ( c.getTimeInMillis () ) );
         attributes.put ( "opc.lastWriteError.timestamp.message", new Variant ( String.format ( "%tc", c ) ) );
         updateData ( null, attributes, AttributeMode.UPDATE );
+    }
+
+    public void itemRealized ( final KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
+    {
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+
+        attributes.putAll ( Helper.convertToAttributes ( entry ) );
+        attributes.putAll ( Helper.convertToAttributes ( entry.getKey () ) );
+        attributes.putAll ( Helper.convertToAttributes ( entry.getValue () ) );
+
+        this.updateData ( null, attributes, AttributeMode.UPDATE );
+    }
+
+    public void itemUnrealized ()
+    {
+        final Map<String, Variant> attributes = Helper.clearAttributes ();
+        attributes.put ( "opc.connection.error", new Variant ( true ) );
+        this.updateData ( null, attributes, AttributeMode.UPDATE );
     }
 
 }

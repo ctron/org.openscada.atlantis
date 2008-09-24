@@ -19,12 +19,11 @@
 
 package org.openscada.da.server.opc2.connection;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.jinterop.dcom.core.JISession;
+import org.openscada.da.server.common.exporter.AbstractPropertyChange;
 import org.openscada.opc.dcom.common.impl.OPCCommon;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 import org.openscada.opc.dcom.da.impl.OPCGroupStateMgt;
@@ -32,54 +31,69 @@ import org.openscada.opc.dcom.da.impl.OPCItemMgt;
 import org.openscada.opc.dcom.da.impl.OPCServer;
 import org.openscada.opc.dcom.da.impl.OPCSyncIO;
 
-public class OPCModel
+public class OPCModel extends AbstractPropertyChange
 {
     private boolean connectionRequested;
+
     private boolean connecting;
+
     private JISession session;
+
     private OPCServer server;
+
     private long lastConnect;
+
     private long reconnectDelay = 5000L;
+
     private OPCSERVERSTATUS serverState;
+
     private OPCGroupStateMgt group;
+
     private OPCItemMgt itemMgt;
+
     private OPCSyncIO syncIo;
+
     private OPCCommon common;
+
     private Throwable lastConnectionError;
+
     private ConnectionState connectionState = ConnectionState.DISCONNECTED;
-    private Set<Thread> disposersRunning = new CopyOnWriteArraySet<Thread> ();
+
+    private final Set<Thread> disposersRunning = new CopyOnWriteArraySet<Thread> ();
+
     private ControllerState controllerState = ControllerState.IDLE;
+
     private long loopDelay = 250;
+
     private long defaultTimeout = Long.getLong ( "rpc.socketTimeout", 5000L );
-    
+
     private Long globalTimeout = null;
+
     private Long connectJobTimeout = null;
+
     private Long statusJobTimeout = null;
+
     private Long writeJobTimeout = null;
+
     private Long readJobTimeout = null;
-    
+
     private int updateRate = 250;
-    
-    private PropertyChangeSupport listeners = new PropertyChangeSupport ( this );
 
-    public void addListener ( PropertyChangeListener listener )
+    /**
+     * Flag that indicates if the driver should ignore timestamp only changes completly
+     */
+    private boolean ignoreTimestampOnlyChange = false;
+
+    public boolean isIgnoreTimestampOnlyChange ()
     {
-        listeners.addPropertyChangeListener ( listener );
+        return this.ignoreTimestampOnlyChange;
     }
 
-    public void removeListener ( PropertyChangeListener listener )
+    public void setIgnoreTimestampOnlyChange ( final boolean ignoreTimestampOnlyChange )
     {
-        listeners.removePropertyChangeListener ( listener );
-    }
-
-    public void addListener ( String propertyName, PropertyChangeListener listener )
-    {
-        listeners.addPropertyChangeListener ( propertyName, listener );
-    }
-
-    public void removeListener ( String propertyName, PropertyChangeListener listener )
-    {
-        listeners.removePropertyChangeListener ( propertyName, listener );
+        final boolean oldIgnoreTimestampOnlyChange = this.ignoreTimestampOnlyChange;
+        this.ignoreTimestampOnlyChange = ignoreTimestampOnlyChange;
+        this.listeners.firePropertyChange ( "ignoreTimestampOnlyChange", oldIgnoreTimestampOnlyChange, ignoreTimestampOnlyChange );
     }
 
     public void setLastConnectNow ()
@@ -87,9 +101,9 @@ public class OPCModel
         setLastConnect ( System.currentTimeMillis () );
     }
 
-    public void setLastConnect ( long lastConnect )
+    public void setLastConnect ( final long lastConnect )
     {
-        long oldLastConnect = this.lastConnect;
+        final long oldLastConnect = this.lastConnect;
         this.lastConnect = lastConnect;
         this.listeners.firePropertyChange ( "lastConnect", oldLastConnect, lastConnect );
     }
@@ -101,23 +115,23 @@ public class OPCModel
 
     public boolean mayConnect ()
     {
-        return System.currentTimeMillis () - lastConnect > reconnectDelay;
+        return System.currentTimeMillis () - this.lastConnect > this.reconnectDelay;
     }
 
     public boolean isConnected ()
     {
-        return session != null && server != null;
+        return this.session != null && this.server != null;
     }
 
     public JISession getSession ()
     {
-        return session;
+        return this.session;
     }
 
-    public void setSession ( JISession session )
+    public void setSession ( final JISession session )
     {
-        JISession oldSession = this.session;
-        boolean oldConnected = isConnected ();
+        final JISession oldSession = this.session;
+        final boolean oldConnected = isConnected ();
 
         this.session = session;
 
@@ -127,112 +141,112 @@ public class OPCModel
 
     public OPCServer getServer ()
     {
-        return server;
+        return this.server;
     }
 
-    public void setServer ( OPCServer server )
+    public void setServer ( final OPCServer server )
     {
-        OPCServer oldServer = this.server;
-        boolean oldConnected = isConnected ();
+        final OPCServer oldServer = this.server;
+        final boolean oldConnected = isConnected ();
 
         this.server = server;
 
-        this.listeners.firePropertyChange ( "session", oldServer, session );
+        this.listeners.firePropertyChange ( "session", oldServer, this.session );
         this.listeners.firePropertyChange ( "connected", oldConnected, isConnected () );
     }
 
     public boolean isConnectionRequested ()
     {
-        return connectionRequested;
+        return this.connectionRequested;
     }
 
-    public void setConnectionRequested ( boolean connectionRequested )
+    public void setConnectionRequested ( final boolean connectionRequested )
     {
         this.connectionRequested = connectionRequested;
     }
 
     public boolean isConnecting ()
     {
-        return connecting;
+        return this.connecting;
     }
 
-    public void setConnecting ( boolean connecting )
+    public void setConnecting ( final boolean connecting )
     {
-        boolean oldConnecting = this.connecting;
+        final boolean oldConnecting = this.connecting;
         this.connecting = connecting;
         this.listeners.firePropertyChange ( "connecting", oldConnecting, connecting );
     }
 
     public long getReconnectDelay ()
     {
-        return reconnectDelay;
+        return this.reconnectDelay;
     }
 
-    public void setReconnectDelay ( long reconnectDelay )
+    public void setReconnectDelay ( final long reconnectDelay )
     {
         this.reconnectDelay = reconnectDelay;
     }
 
     public OPCSERVERSTATUS getServerState ()
     {
-        return serverState;
+        return this.serverState;
     }
 
-    public void setServerState ( OPCSERVERSTATUS serverState )
+    public void setServerState ( final OPCSERVERSTATUS serverState )
     {
-        OPCSERVERSTATUS oldServerState = this.serverState;
+        final OPCSERVERSTATUS oldServerState = this.serverState;
         this.serverState = serverState;
-        listeners.firePropertyChange ( "serverState", oldServerState, serverState );
+        this.listeners.firePropertyChange ( "serverState", oldServerState, serverState );
     }
 
     public OPCGroupStateMgt getGroup ()
     {
-        return group;
+        return this.group;
     }
 
-    public void setGroup ( OPCGroupStateMgt group )
+    public void setGroup ( final OPCGroupStateMgt group )
     {
         this.group = group;
     }
 
     public OPCItemMgt getItemMgt ()
     {
-        return itemMgt;
+        return this.itemMgt;
     }
 
-    public void setItemMgt ( OPCItemMgt itemMgt )
+    public void setItemMgt ( final OPCItemMgt itemMgt )
     {
         this.itemMgt = itemMgt;
     }
 
     public OPCSyncIO getSyncIo ()
     {
-        return syncIo;
+        return this.syncIo;
     }
 
-    public void setSyncIo ( OPCSyncIO syncIo )
+    public void setSyncIo ( final OPCSyncIO syncIo )
     {
         this.syncIo = syncIo;
     }
 
     public OPCCommon getCommon ()
     {
-        return common;
+        return this.common;
     }
 
-    public void setCommon ( OPCCommon common )
+    public void setCommon ( final OPCCommon common )
     {
         this.common = common;
     }
 
     public Throwable getLastConnectionError ()
     {
-        return lastConnectionError;
+        return this.lastConnectionError;
     }
 
-    public void setLastConnectionError ( Throwable lastConnectionError )
+    public void setLastConnectionError ( final Throwable lastConnectionError )
     {
-        Throwable oldLastConnectionError = this.lastConnectionError;
+        final Throwable oldLastConnectionError = this.lastConnectionError;
         this.lastConnectionError = lastConnectionError;
         this.listeners.firePropertyChange ( "lastConnectionError", oldLastConnectionError, lastConnectionError );
     }
@@ -242,9 +256,9 @@ public class OPCModel
         return this.connectionState;
     }
 
-    public void setConnectionState ( ConnectionState connectionState )
+    public void setConnectionState ( final ConnectionState connectionState )
     {
-        ConnectionState oldConnectionState = this.connectionState;
+        final ConnectionState oldConnectionState = this.connectionState;
         this.connectionState = connectionState;
         this.listeners.firePropertyChange ( "connectionState", oldConnectionState, connectionState );
     }
@@ -254,7 +268,7 @@ public class OPCModel
         return this.disposersRunning.size ();
     }
 
-    public void addDisposerRunning ( Thread disposer )
+    public void addDisposerRunning ( final Thread disposer )
     {
         long oldDisposersRunning;
         long disposersRunning;
@@ -268,7 +282,7 @@ public class OPCModel
         this.listeners.firePropertyChange ( "numDisposersRunning", oldDisposersRunning, disposersRunning );
     }
 
-    public void removeDisposerRunning ( Thread disposer )
+    public void removeDisposerRunning ( final Thread disposer )
     {
         long oldDisposersRunning;
         long disposersRunning;
@@ -284,121 +298,121 @@ public class OPCModel
 
     public ControllerState getControllerState ()
     {
-        return controllerState;
+        return this.controllerState;
     }
 
-    public void setControllerState ( ControllerState controllerState )
+    public void setControllerState ( final ControllerState controllerState )
     {
-        ControllerState oldControllerState = this.controllerState;
+        final ControllerState oldControllerState = this.controllerState;
         this.controllerState = controllerState;
         this.listeners.firePropertyChange ( "controllerState", oldControllerState, controllerState );
     }
 
     public long getLoopDelay ()
     {
-        return loopDelay;
+        return this.loopDelay;
     }
 
-    public void setLoopDelay ( long loopDelay )
+    public void setLoopDelay ( final long loopDelay )
     {
-        long oldLoopDelay = this.loopDelay;
+        final long oldLoopDelay = this.loopDelay;
         this.loopDelay = loopDelay;
         this.listeners.firePropertyChange ( "loopDelay", oldLoopDelay, loopDelay );
     }
 
     public long getDefaultTimeout ()
     {
-        return defaultTimeout;
+        return this.defaultTimeout;
     }
 
-    public void setDefaultTimeout ( long defaultTimeout )
+    public void setDefaultTimeout ( final long defaultTimeout )
     {
         this.defaultTimeout = defaultTimeout;
     }
-    
+
     public long getGlobalTimeout ()
     {
-        Long globalTimeout = this.globalTimeout;
+        final Long globalTimeout = this.globalTimeout;
         if ( globalTimeout == null )
         {
             return this.defaultTimeout;
         }
         return globalTimeout;
     }
-    
-    public void setGlobalTimeout ( Long globalTimeout )
+
+    public void setGlobalTimeout ( final Long globalTimeout )
     {
         this.globalTimeout = globalTimeout;
     }
 
     public int getUpdateRate ()
     {
-        return updateRate;
+        return this.updateRate;
     }
 
-    public void setUpdateRate ( int updateRate )
+    public void setUpdateRate ( final int updateRate )
     {
-        int oldUpdateRate = this.updateRate;
+        final int oldUpdateRate = this.updateRate;
         this.updateRate = updateRate;
         this.listeners.firePropertyChange ( "updateRate", oldUpdateRate, updateRate );
     }
-    
+
     public long getConnectJobTimeout ()
     {
-        Long connectJobTimeout = this.connectJobTimeout;
+        final Long connectJobTimeout = this.connectJobTimeout;
         if ( connectJobTimeout == null )
         {
             return this.defaultTimeout;
         }
         return connectJobTimeout;
     }
-    
-    public void setConnectJobTimeout ( Long connectJobTimeout )
+
+    public void setConnectJobTimeout ( final Long connectJobTimeout )
     {
         this.connectJobTimeout = connectJobTimeout;
     }
-    
+
     public long getStatusJobTimeout ()
     {
-        Long statusJobTimeout = this.statusJobTimeout;
+        final Long statusJobTimeout = this.statusJobTimeout;
         if ( statusJobTimeout == null )
         {
             return this.defaultTimeout;
         }
         return statusJobTimeout;
     }
-    
-    public void setStatusJobTimeout ( Long statusJobTimeout )
+
+    public void setStatusJobTimeout ( final Long statusJobTimeout )
     {
         this.statusJobTimeout = statusJobTimeout;
     }
-    
+
     public long getReadJobTimeout ()
     {
-        Long readJobTimeout = this.readJobTimeout;
+        final Long readJobTimeout = this.readJobTimeout;
         if ( readJobTimeout == null )
         {
             return this.defaultTimeout;
         }
         return readJobTimeout;
     }
-    
-    public void setReadJobTimeout ( Long readJobTimeout )
+
+    public void setReadJobTimeout ( final Long readJobTimeout )
     {
         this.readJobTimeout = readJobTimeout;
     }
-    
+
     public long getWriteJobTimeout ()
     {
-        Long writeJobTimeout = this.writeJobTimeout;
+        final Long writeJobTimeout = this.writeJobTimeout;
         if ( writeJobTimeout == null )
         {
             return this.defaultTimeout;
         }
         return writeJobTimeout;
     }
-    
-    public void setWriteJobTimeout ( Long writeJobTimeout )
+
+    public void setWriteJobTimeout ( final Long writeJobTimeout )
     {
         this.writeJobTimeout = writeJobTimeout;
     }

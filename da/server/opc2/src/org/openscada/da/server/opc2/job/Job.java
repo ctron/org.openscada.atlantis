@@ -29,10 +29,13 @@ package org.openscada.da.server.opc2.job;
 public abstract class Job
 {
     protected long timeout;
+
     protected boolean canceled = false;
+
     protected Throwable error = null;
 
     protected abstract void run () throws Exception;
+
     protected abstract void interrupt ();
 
     public Job ( long timeout )

@@ -94,8 +94,7 @@ public class Guardian implements Runnable
             this.wait ( 10 );
         }
 
-        log.debug ( String.format ( "Stopped waiting: completed: %s, diff: %d", completed, System.currentTimeMillis ()
-                - start ) );
+        log.debug ( String.format ( "Stopped waiting: completed: %s, diff: %d", completed, System.currentTimeMillis () - start ) );
 
         if ( !completed )
         {

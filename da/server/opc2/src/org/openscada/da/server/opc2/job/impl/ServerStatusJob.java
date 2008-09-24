@@ -33,7 +33,7 @@ import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 public class ServerStatusJob extends ThreadJob implements JobResult<OPCSERVERSTATUS>
 {
     public static final long DEFAULT_TIMEOUT = 5000L;
-    
+
     private static Logger log = Logger.getLogger ( ServerStatusJob.class );
 
     private OPCModel model;

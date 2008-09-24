@@ -21,5 +21,6 @@ package org.openscada.da.server.opc2.connection;
 
 public enum AccessMethod
 {
-    SYNC, ASYNC20
+    SYNC,
+    ASYNC20
 }

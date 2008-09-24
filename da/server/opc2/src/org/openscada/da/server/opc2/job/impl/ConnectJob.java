@@ -20,7 +20,6 @@
 package org.openscada.da.server.opc2.job.impl;
 
 import org.apache.log4j.Logger;
-import org.jinterop.dcom.core.IJIBindingSelector;
 import org.jinterop.dcom.core.JIClsid;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIProgId;
@@ -32,7 +31,6 @@ import org.openscada.opc.dcom.da.impl.OPCItemMgt;
 import org.openscada.opc.dcom.da.impl.OPCServer;
 import org.openscada.opc.dcom.da.impl.OPCSyncIO;
 import org.openscada.opc.lib.common.ConnectionInformation;
-import org.openscada.opc.lib.common.OPC;
 import org.openscada.opc.lib.da.ErrorMessageResolver;
 
 /**
@@ -43,17 +41,20 @@ import org.openscada.opc.lib.da.ErrorMessageResolver;
 public class ConnectJob extends ThreadJob
 {
     public static final long DEFAULT_TIMEOUT = 5000L;
-    
+
     private static Logger log = Logger.getLogger ( ConnectJob.class );
 
-    private ConnectionInformation connectionInformation;
+    private final ConnectionInformation connectionInformation;
 
-    private long globalSocketTimeout;
+    private final long globalSocketTimeout;
 
     private JISession session = null;
+
     private JIComServer comServer = null;
+
     private OPCServer server = null;
-    private ErrorMessageResolver errorMessageResolver = null;
+
+    private final ErrorMessageResolver errorMessageResolver = null;
 
     private OPCGroupStateMgt group;
 
@@ -63,9 +64,9 @@ public class ConnectJob extends ThreadJob
 
     private OPCCommon common;
 
-    private int updateRate;
+    private final int updateRate;
 
-    public ConnectJob ( long timeout, ConnectionInformation connectionInformation, long globalSocketTimeout, int updateRate )
+    public ConnectJob ( final long timeout, final ConnectionInformation connectionInformation, final long globalSocketTimeout, final int updateRate )
     {
         super ( timeout );
         this.connectionInformation = connectionInformation;
@@ -77,79 +78,77 @@ public class ConnectJob extends ThreadJob
     protected void perform () throws Exception
     {
 
+        /*
         IJIBindingSelector selector = OPC.createBindingSelector ( connectionInformation.getPreferredHosts () );
+         */
 
-        log.info ( String.format ( "Socket timeout: %s ", globalSocketTimeout ) );
+        log.info ( String.format ( "Socket timeout: %s ", this.globalSocketTimeout ) );
 
-        if ( connectionInformation.getClsid () != null )
+        if ( this.connectionInformation.getClsid () != null )
         {
-            session = JISession.createSession ( connectionInformation.getDomain (), connectionInformation.getUser (),
-                    connectionInformation.getPassword () );
-            session.setGlobalSocketTimeout ( (int)globalSocketTimeout );
-            session.setBindingSelector ( selector );
-            comServer = new JIComServer ( JIClsid.valueOf ( connectionInformation.getClsid () ),
-                    connectionInformation.getHost (), session );
+            this.session = JISession.createSession ( this.connectionInformation.getDomain (), this.connectionInformation.getUser (), this.connectionInformation.getPassword () );
+            this.session.setGlobalSocketTimeout ( (int)this.globalSocketTimeout );
+            // session.setBindingSelector ( selector );
+            this.comServer = new JIComServer ( JIClsid.valueOf ( this.connectionInformation.getClsid () ), this.connectionInformation.getHost (), this.session );
         }
-        else if ( connectionInformation.getProgId () != null )
+        else if ( this.connectionInformation.getProgId () != null )
         {
-            session = JISession.createSession ( connectionInformation.getDomain (), connectionInformation.getUser (),
-                    connectionInformation.getPassword () );
-            session.setGlobalSocketTimeout ( (int)globalSocketTimeout );
-            session.setBindingSelector ( selector );
-            comServer = new JIComServer ( JIProgId.valueOf ( session, connectionInformation.getClsid () ),
-                    connectionInformation.getHost (), session );
+            this.session = JISession.createSession ( this.connectionInformation.getDomain (), this.connectionInformation.getUser (), this.connectionInformation.getPassword () );
+            this.session.setGlobalSocketTimeout ( (int)this.globalSocketTimeout );
+            // session.setBindingSelector ( selector );
+            this.comServer = new JIComServer ( JIProgId.valueOf ( this.connectionInformation.getClsid () ), this.connectionInformation.getHost (), this.session );
         }
         else
         {
             throw new IllegalArgumentException ( "Neither clsid nor progid is valid!" );
         }
 
-        server = new OPCServer ( comServer.createInstance () );
-        this.common = server.getCommon ();
+        this.server = new OPCServer ( this.comServer.createInstance () );
+        this.common = this.server.getCommon ();
 
-        group = server.addGroup ( null, true, updateRate, 0, null, null, 0 );
-        this.itemMgt = group.getItemManagement ();
-        this.syncIo = group.getSyncIO ();
+        this.group = this.server.addGroup ( null, true, this.updateRate, 0, null, null, 0 );
+        this.itemMgt = this.group.getItemManagement ();
+        this.syncIo = this.group.getSyncIO ();
 
     }
 
     public JISession getSession ()
     {
-        return session;
+        return this.session;
     }
 
     public JIComServer getComServer ()
     {
-        return comServer;
+        return this.comServer;
     }
 
     public OPCServer getServer ()
     {
-        return server;
+        return this.server;
     }
 
     public ErrorMessageResolver getErrorMessageResolver ()
     {
-        return errorMessageResolver;
+        return this.errorMessageResolver;
     }
 
     public OPCGroupStateMgt getGroup ()
     {
-        return group;
+        return this.group;
     }
 
     public OPCItemMgt getItemMgt ()
     {
-        return itemMgt;
+        return this.itemMgt;
     }
 
     public OPCSyncIO getSyncIo ()
     {
-        return syncIo;
+        return this.syncIo;
     }
 
     public OPCCommon getCommon ()
     {
-        return common;
+        return this.common;
     }
 }

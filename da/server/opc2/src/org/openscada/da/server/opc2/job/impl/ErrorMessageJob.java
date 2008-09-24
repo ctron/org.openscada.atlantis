@@ -32,9 +32,11 @@ import org.openscada.da.server.opc2.job.ThreadJob;
 public class ErrorMessageJob extends ThreadJob implements JobResult<String>
 {
     public static final long DEFAULT_TIMEOUT = 1000L;
+
     private static Logger log = Logger.getLogger ( ErrorMessageJob.class );
 
     private OPCModel model;
+
     private String result;
 
     private int errorCode;

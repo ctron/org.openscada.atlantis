@@ -71,7 +71,9 @@
 				<documentation>
 					The prefix for item IDs of the OpenSCADA items
 				</documentation>
-			</annotation></attribute>
+			</annotation>
+		</attribute>
+		<attribute name="ignoreTimestampOnlyChange" type="boolean"></attribute>
 	</complexType>
 
 	<simpleType name="ProgIdType">

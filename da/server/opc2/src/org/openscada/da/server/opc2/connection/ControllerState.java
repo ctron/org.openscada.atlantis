@@ -7,7 +7,8 @@ public enum ControllerState
     READING_STATUS,
     READING,
     WRITING,
-    ACTIVATING, 
+    ACTIVATING,
     DISCONNECTING,
     REGISTERING,
+    BROWSING,
 }

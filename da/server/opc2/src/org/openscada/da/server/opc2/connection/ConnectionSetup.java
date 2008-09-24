@@ -24,14 +24,24 @@ import org.openscada.opc.lib.common.ConnectionInformation;
 public class ConnectionSetup
 {
     private ConnectionInformation _connectionInformation = null;
+
     private boolean _initialConnect = true;
+
     private AccessMethod _accessMethod = AccessMethod.ASYNC20;
+
     private int _refreshTimeout = 500;
+
     private boolean _flatBrowser = true;
+
     private boolean _treeBrowser = true;
+
     private String deviceTag = null;
+
     private String itemIdPrefix = null;
+
     private String fileSourceUri = null;
+    
+    private boolean ignoreTimestampOnlyChange = false;
 
     public ConnectionSetup ()
     {
@@ -44,6 +54,16 @@ public class ConnectionSetup
         _connectionInformation = connectionInformation;
     }
 
+    public boolean isIgnoreTimestampOnlyChange ()
+    {
+        return ignoreTimestampOnlyChange;
+    }
+
+    public void setIgnoreTimestampOnlyChange ( boolean ignoreTimestampOnlyChange )
+    {
+        this.ignoreTimestampOnlyChange = ignoreTimestampOnlyChange;
+    }
+    
     public AccessMethod getAccessMethod ()
     {
         return _accessMethod;

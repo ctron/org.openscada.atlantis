@@ -13,23 +13,24 @@ import org.openscada.opc.dcom.da.OPCITEMDEF;
 public class ItemRequest
 {
     private OPCITEMDEF itemDefinition;
+
     private Map<String, Variant> attributes;
 
     public OPCITEMDEF getItemDefinition ()
     {
         return itemDefinition;
     }
-    
+
     public void setItemDefinition ( OPCITEMDEF itemDefinition )
     {
         this.itemDefinition = itemDefinition;
     }
-    
+
     public Map<String, Variant> getAttributes ()
     {
         return attributes;
     }
-    
+
     public void setAttributes ( Map<String, Variant> attributes )
     {
         this.attributes = attributes;

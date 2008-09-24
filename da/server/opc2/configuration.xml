@@ -8,14 +8,26 @@
 	xsi:schemaLocation="http://openscada.org/DA/OPC/Configuration schema/configuration.xsd http://openscada.org/DA/Hive da_server_common/Hive.xsd">
 
 	<components:connections>
+		<!-- M+F OPC Server -->
+		<components:configuration domain=""
+			host="192.168.130.129" user="jens" password="test12"
+			access="sync"
+			refresh="250"
+			connected="true"
+			alias="MFX1"
+			enabled="true"
+			>
+			<components:clsid>AEDE6AB0-95F9-11d4-BF93-0050BAC23960</components:clsid>
+		</components:configuration>
+		
 		<!-- Matrikon OPC Simulation Server -->
 		<components:configuration domain=""
-			host="172.16.148.128" user="jens" password="test12"
+			host="192.168.1.107" user="jens" password="test12"
 			access="sync"
 			refresh="250"
 			connected="true"
 			alias="TEST1"
-			enabled="true"
+			enabled="false"
 			>
 			<components:clsid>
 				F8582CF2-88FB-11D0-B850-00C0F0104305
@@ -37,7 +49,7 @@
     password="ABBSrv000" host="10.63.240.210"
     user="800xAService" domain="SCS800xASV" 
     access="sync"
-    enabled="true"
+    enabled="false"
     tree-browser="false"
     flat-browser="false"
     refresh="500"
@@ -129,7 +141,7 @@
 <opc:configuration user="800xAService"
         domain="SCS800xASV" password="ABBSrv000" host="10.63.240.210"
         access="sync"
-        enabled="true"
+        enabled="false"
         tree-browser="false"
         flat-browser="false"
         refresh="500"
@@ -264,7 +276,7 @@
 <opc:configuration user="800xAService"
         domain="SCS800xASV" password="ABBSrv000" host="10.63.240.210"
         access="sync"
-        enabled="true"
+        enabled="false"
         tree-browser="false"
         flat-browser="false"
         refresh="500"
@@ -431,7 +443,7 @@
 <opc:configuration user="800xAService"
         domain="SCS800xASV" password="ABBSrv000" host="10.63.240.211"
         access="sync"
-        enabled="true"
+        enabled="false"
         tree-browser="false"
         flat-browser="false"
         refresh="500"
@@ -471,7 +483,7 @@
 <opc:configuration user="800xAService"
         domain="SCS800xASV" password="ABBSrv000" host="10.63.240.212"
         access="sync"
-        enabled="true"
+        enabled="false"
         tree-browser="false"
         flat-browser="false"
         refresh="500"
@@ -508,21 +520,18 @@
 		
 		
 	</components:connections>
-
 	<components:item-templates>
-		<template id="int1-limit" item-pattern=".*Int1.*">
-			<item-attributes>
-				<attribute name="org.openscada.da.level.high.preset">
-					<int32>100</int32>
-				</attribute>
-				<attribute name="org.openscada.da.level.low.preset">
-					<int32>20</int32>
-				</attribute>
-			</item-attributes>
-			<chain:chain>
-				<item direction="in" class="org.openscada.da.server.common.chain.item.LevelAlarmChainItem" />
-			</chain:chain>
-		</template>
-	</components:item-templates>
+        <template id="all-default" item-pattern=".*">
+            <chain:chain>
+                <item direction="in" class="org.openscada.da.server.common.chain.item.NegateInputItem" />
+                <item direction="in" class="org.openscada.da.server.common.chain.item.SumErrorChainItem" />
+                <item direction="in" class="org.openscada.da.server.common.chain.item.ManualOverrideChainItem"/>
+                <item direction="in" class="org.openscada.da.server.common.chain.item.ManualErrorOverrideChainItem"/>
+                <item direction="in" class="org.openscada.da.server.common.chain.item.LevelAlarmChainItem" />
+                <item direction="in" class="org.openscada.da.server.common.chain.item.SumAlarmChainItem" />
+            </chain:chain>
+        </template>
+    </components:item-templates>
+
 
 </components:root>

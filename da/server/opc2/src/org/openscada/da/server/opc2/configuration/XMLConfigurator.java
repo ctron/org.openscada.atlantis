@@ -26,9 +26,9 @@ import org.apache.xmlbeans.XmlException;
 import org.openscada.da.opc.configuration.ConfigurationType;
 import org.openscada.da.opc.configuration.RootDocument;
 import org.openscada.da.server.common.configuration.ConfigurationError;
+import org.openscada.da.server.opc2.Hive;
 import org.openscada.da.server.opc2.connection.AccessMethod;
 import org.openscada.da.server.opc2.connection.ConnectionSetup;
-import org.openscada.da.server.opc2.Hive;
 import org.openscada.opc.lib.common.ConnectionInformation;
 import org.w3c.dom.Node;
 
@@ -55,8 +55,7 @@ public class XMLConfigurator
     public void configure ( Hive hive ) throws ConfigurationError
     {
         // first configure the base hive
-        new org.openscada.da.server.common.configuration.xml.XMLConfigurator ( null,
-                rootDocument.getRoot ().getItemTemplates (), null, null ).configure ( hive );
+        new org.openscada.da.server.common.configuration.xml.XMLConfigurator ( null, rootDocument.getRoot ().getItemTemplates (), null, null ).configure ( hive );
 
         // now configure the opc hive
         for ( ConfigurationType configuration : rootDocument.getRoot ().getConnections ().getConfigurationList () )
@@ -75,6 +74,11 @@ public class XMLConfigurator
             ci.setProgId ( configuration.getProgid () );
 
             ConnectionSetup setup = new ConnectionSetup ( ci );
+
+            if ( configuration.isSetIgnoreTimestampOnlyChange () )
+            {
+                setup.setIgnoreTimestampOnlyChange ( configuration.getIgnoreTimestampOnlyChange () );
+            }
 
             String access = configuration.getAccess ();
             if ( access.equalsIgnoreCase ( "sync" ) )
@@ -105,8 +109,7 @@ public class XMLConfigurator
 
             if ( setup.getDeviceTag () == null )
             {
-                setup.setDeviceTag ( setup.getConnectionInformation ().getHost () + ":"
-                        + setup.getConnectionInformation ().getClsOrProgId () );
+                setup.setDeviceTag ( setup.getConnectionInformation ().getHost () + ":" + setup.getConnectionInformation ().getClsOrProgId () );
             }
 
             hive.addConnection ( setup, configuration.getConnected (), configuration.getInitialItemList () );

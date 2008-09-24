@@ -27,6 +27,7 @@ package org.openscada.da.server.opc2.job;
 public class WorkUnit
 {
     private Job job;
+
     private JobHandler jobHandler;
 
     public WorkUnit ( Job job, JobHandler jobHandler )

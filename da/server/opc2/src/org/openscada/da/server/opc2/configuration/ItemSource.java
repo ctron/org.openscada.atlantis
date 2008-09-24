@@ -1,6 +1,5 @@
 package org.openscada.da.server.opc2.configuration;
 
-
 public interface ItemSource
 {
     /**
@@ -12,8 +11,9 @@ public interface ItemSource
      * events from the beginning. 
      */
     public void activate ();
+
     public void deactivate ();
-    
+
     /**
      * Add a listener to the item source.
      * <p>
@@ -21,5 +21,6 @@ public interface ItemSource
      * @param listener the listener to add
      */
     public void addListener ( ItemSourceListener listener );
+
     public void removeListener ( ItemSourceListener listener );
 }
