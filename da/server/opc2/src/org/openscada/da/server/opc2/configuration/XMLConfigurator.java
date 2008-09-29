@@ -37,35 +37,35 @@ public class XMLConfigurator
 
     private RootDocument rootDocument = null;
 
-    public XMLConfigurator ( RootDocument rootDocument )
+    public XMLConfigurator ( final RootDocument rootDocument )
     {
         this.rootDocument = rootDocument;
     }
 
-    public XMLConfigurator ( Node node ) throws XmlException
+    public XMLConfigurator ( final Node node ) throws XmlException
     {
         this ( RootDocument.Factory.parse ( node ) );
     }
 
-    public XMLConfigurator ( String filename ) throws XmlException, IOException
+    public XMLConfigurator ( final String filename ) throws XmlException, IOException
     {
         this ( RootDocument.Factory.parse ( new File ( filename ) ) );
     }
 
-    public void configure ( Hive hive ) throws ConfigurationError
+    public void configure ( final Hive hive ) throws ConfigurationError
     {
         // first configure the base hive
-        new org.openscada.da.server.common.configuration.xml.XMLConfigurator ( null, rootDocument.getRoot ().getItemTemplates (), null, null ).configure ( hive );
+        new org.openscada.da.server.common.configuration.xml.XMLConfigurator ( null, this.rootDocument.getRoot ().getItemTemplates (), null, null ).configure ( hive );
 
         // now configure the opc hive
-        for ( ConfigurationType configuration : rootDocument.getRoot ().getConnections ().getConfigurationList () )
+        for ( final ConfigurationType configuration : this.rootDocument.getRoot ().getConnections ().getConfigurationList () )
         {
             if ( !configuration.getEnabled () )
             {
                 continue;
             }
 
-            ConnectionInformation ci = new ConnectionInformation ();
+            final ConnectionInformation ci = new ConnectionInformation ();
             ci.setUser ( configuration.getUser () );
             ci.setPassword ( configuration.getPassword () );
             ci.setDomain ( configuration.getDomain () );
@@ -73,14 +73,23 @@ public class XMLConfigurator
             ci.setClsid ( configuration.getClsid () );
             ci.setProgId ( configuration.getProgid () );
 
-            ConnectionSetup setup = new ConnectionSetup ( ci );
+            final ConnectionSetup setup = new ConnectionSetup ( ci );
 
             if ( configuration.isSetIgnoreTimestampOnlyChange () )
             {
                 setup.setIgnoreTimestampOnlyChange ( configuration.getIgnoreTimestampOnlyChange () );
             }
 
-            String access = configuration.getAccess ();
+            if ( configuration.isSetReconnectDelay () )
+            {
+                setup.setReconnectDelay ( configuration.getReconnectDelay () );
+            }
+            else
+            {
+                setup.setReconnectDelay ( 5000 );
+            }
+
+            final String access = configuration.getAccess ();
             if ( access.equalsIgnoreCase ( "sync" ) )
             {
                 setup.setAccessMethod ( AccessMethod.SYNC );

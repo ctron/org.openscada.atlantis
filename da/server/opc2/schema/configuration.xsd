@@ -74,6 +74,7 @@
 			</annotation>
 		</attribute>
 		<attribute name="ignoreTimestampOnlyChange" type="boolean"></attribute>
+		<attribute name="reconnectDelay" type="int"></attribute>
 	</complexType>
 
 	<simpleType name="ProgIdType">

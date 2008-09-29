@@ -233,6 +233,7 @@ public class OPCConnection implements PropertyChangeListener
 
         this.controller = new OPCController ( this.connectionSetup, this.hive, this.itemFactory );
         this.controller.getModel ().addPropertyChangeListener ( this );
+        this.controller.getModel ().setReconnectDelay ( this.connectionSetup.getReconnectDelay () );
 
         final Thread t = new Thread ( this.controller, "OPCController/" + getDeviceTag () );
         t.setDaemon ( true );

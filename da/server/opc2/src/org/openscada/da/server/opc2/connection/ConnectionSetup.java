@@ -40,116 +40,128 @@ public class ConnectionSetup
     private String itemIdPrefix = null;
 
     private String fileSourceUri = null;
-    
+
     private boolean ignoreTimestampOnlyChange = false;
+
+    private int reconnectDelay;
 
     public ConnectionSetup ()
     {
         super ();
     }
 
-    public ConnectionSetup ( ConnectionInformation connectionInformation )
+    public ConnectionSetup ( final ConnectionInformation connectionInformation )
     {
         super ();
-        _connectionInformation = connectionInformation;
+        this._connectionInformation = connectionInformation;
+    }
+
+    public int getReconnectDelay ()
+    {
+        return this.reconnectDelay;
+    }
+
+    public void setReconnectDelay ( final int reconnectDelay )
+    {
+        this.reconnectDelay = reconnectDelay;
     }
 
     public boolean isIgnoreTimestampOnlyChange ()
     {
-        return ignoreTimestampOnlyChange;
+        return this.ignoreTimestampOnlyChange;
     }
 
-    public void setIgnoreTimestampOnlyChange ( boolean ignoreTimestampOnlyChange )
+    public void setIgnoreTimestampOnlyChange ( final boolean ignoreTimestampOnlyChange )
     {
         this.ignoreTimestampOnlyChange = ignoreTimestampOnlyChange;
     }
-    
+
     public AccessMethod getAccessMethod ()
     {
-        return _accessMethod;
+        return this._accessMethod;
     }
 
-    public void setAccessMethod ( AccessMethod accessMethod )
+    public void setAccessMethod ( final AccessMethod accessMethod )
     {
-        _accessMethod = accessMethod;
+        this._accessMethod = accessMethod;
     }
 
     public ConnectionInformation getConnectionInformation ()
     {
-        return _connectionInformation;
+        return this._connectionInformation;
     }
 
-    public void setConnectionInformation ( ConnectionInformation connectionInformation )
+    public void setConnectionInformation ( final ConnectionInformation connectionInformation )
     {
-        _connectionInformation = connectionInformation;
+        this._connectionInformation = connectionInformation;
     }
 
     public boolean isInitialConnect ()
     {
-        return _initialConnect;
+        return this._initialConnect;
     }
 
-    public void setInitialConnect ( boolean initialConnect )
+    public void setInitialConnect ( final boolean initialConnect )
     {
-        _initialConnect = initialConnect;
+        this._initialConnect = initialConnect;
     }
 
     public int getRefreshTimeout ()
     {
-        return _refreshTimeout;
+        return this._refreshTimeout;
     }
 
-    public void setRefreshTimeout ( int refreshTimeout )
+    public void setRefreshTimeout ( final int refreshTimeout )
     {
-        _refreshTimeout = refreshTimeout;
+        this._refreshTimeout = refreshTimeout;
     }
 
     public boolean isFlatBrowser ()
     {
-        return _flatBrowser;
+        return this._flatBrowser;
     }
 
-    public void setFlatBrowser ( boolean flatBrowser )
+    public void setFlatBrowser ( final boolean flatBrowser )
     {
-        _flatBrowser = flatBrowser;
+        this._flatBrowser = flatBrowser;
     }
 
     public boolean isTreeBrowser ()
     {
-        return _treeBrowser;
+        return this._treeBrowser;
     }
 
-    public void setTreeBrowser ( boolean treeBrowser )
+    public void setTreeBrowser ( final boolean treeBrowser )
     {
-        _treeBrowser = treeBrowser;
+        this._treeBrowser = treeBrowser;
     }
 
     public String getDeviceTag ()
     {
-        return deviceTag;
+        return this.deviceTag;
     }
 
-    public void setDeviceTag ( String deviceTag )
+    public void setDeviceTag ( final String deviceTag )
     {
         this.deviceTag = deviceTag;
     }
 
     public String getItemIdPrefix ()
     {
-        return itemIdPrefix;
+        return this.itemIdPrefix;
     }
 
-    public void setItemIdPrefix ( String itemIdPrefix )
+    public void setItemIdPrefix ( final String itemIdPrefix )
     {
         this.itemIdPrefix = itemIdPrefix;
     }
 
     public String getFileSourceUri ()
     {
-        return fileSourceUri;
+        return this.fileSourceUri;
     }
 
-    public void setFileSourceUri ( String fileSourceUri )
+    public void setFileSourceUri ( final String fileSourceUri )
     {
         this.fileSourceUri = fileSourceUri;
     }
