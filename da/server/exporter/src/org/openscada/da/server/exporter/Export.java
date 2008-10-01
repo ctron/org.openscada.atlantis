@@ -19,8 +19,14 @@
 
 package org.openscada.da.server.exporter;
 
+/**
+ * A service that can be exported
+ * @author Jens Reimann
+ *
+ */
 public interface Export
 {
-    void start () throws Exception;
-    void stop () throws Exception;
+    public void start () throws Exception;
+
+    public void stop () throws Exception;
 }
