@@ -29,23 +29,23 @@ import org.openscada.da.server.common.configuration.ConfigurationError;
 
 public class HiveExport
 {
-    private static Logger _log = Logger.getLogger ( HiveExport.class );
+    private static Logger log = Logger.getLogger ( HiveExport.class );
 
-    private Hive _hive = null;
+    private Hive hive = null;
 
-    private final List<Export> _exports = new LinkedList<Export> ();
+    private final List<Export> exports = new LinkedList<Export> ();
 
     public HiveExport ( final Hive hive )
     {
         super ();
-        this._hive = hive;
+        this.hive = hive;
     }
 
     public synchronized void start ()
     {
-        _log.info ( String.format ( "Starting hive: %s", this._hive ) );
+        log.info ( String.format ( "Starting hive: %s", this.hive ) );
 
-        for ( final Export export : this._exports )
+        for ( final Export export : this.exports )
         {
             try
             {
@@ -53,16 +53,16 @@ public class HiveExport
             }
             catch ( final Exception e )
             {
-                _log.error ( "Failed to start export", e );
+                log.error ( "Failed to start export", e );
             }
         }
     }
 
     public synchronized void stop ()
     {
-        _log.info ( String.format ( "Stopping hive: %s", this._hive ) );
+        log.info ( String.format ( "Stopping hive: %s", this.hive ) );
 
-        for ( final Export export : this._exports )
+        for ( final Export export : this.exports )
         {
             try
             {
@@ -70,7 +70,7 @@ public class HiveExport
             }
             catch ( final Exception e )
             {
-                _log.error ( "Failed to stop export", e );
+                log.error ( "Failed to stop export", e );
             }
         }
     }
@@ -82,7 +82,7 @@ public class HiveExport
 
         if ( export != null )
         {
-            this._exports.add ( export );
+            this.exports.add ( export );
         }
 
         return export;
@@ -97,11 +97,11 @@ public class HiveExport
 
         if ( ci.getDriver ().equalsIgnoreCase ( "net" ) || ci.getDriver ().equalsIgnoreCase ( "gmpp" ) )
         {
-            return new NetExport ( this._hive, ci );
+            return new NetExport ( this.hive, ci );
         }
         else if ( ci.getDriver ().equalsIgnoreCase ( "ice" ) )
         {
-            return new IceExport ( this._hive, ci );
+            return new IceExport ( this.hive, ci );
         }
         else
         {
