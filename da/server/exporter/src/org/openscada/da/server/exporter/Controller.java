@@ -31,32 +31,33 @@ import org.openscada.da.server.common.configuration.ConfigurationError;
 
 public class Controller
 {
-    private static Logger _log = Logger.getLogger ( Controller.class );
-    private List<HiveExport> _hives = new LinkedList<HiveExport> ();
-    
-    public Controller ( ConfigurationDocument configurationDocument ) throws ConfigurationException
+    private static Logger log = Logger.getLogger ( Controller.class );
+
+    private final List<HiveExport> hives = new LinkedList<HiveExport> ();
+
+    public Controller ( final ConfigurationDocument configurationDocument ) throws ConfigurationException
     {
         super ();
         configure ( configurationDocument );
     }
-    
-    public Controller ( String file ) throws XmlException, IOException, ConfigurationException
+
+    public Controller ( final String file ) throws XmlException, IOException, ConfigurationException
     {
         this ( new File ( file ) );
     }
-    
-    public Controller ( File file ) throws XmlException, IOException, ConfigurationException
+
+    public Controller ( final File file ) throws XmlException, IOException, ConfigurationException
     {
         this ( ConfigurationDocument.Factory.parse ( file ) );
     }
-    
+
     /**
      * Create the hive factory 
      * @param factoryClass the class to instantiate
      * @return the factory
      * @throws ConfigurationException an error occurred
      */
-    protected HiveFactory createHiveFactory ( String factoryClass ) throws ConfigurationException
+    protected HiveFactory createHiveFactory ( final String factoryClass ) throws ConfigurationException
     {
         HiveFactory factory;
         if ( factoryClass == null )
@@ -69,65 +70,71 @@ public class Controller
             {
                 factory = (HiveFactory)Class.forName ( factoryClass ).newInstance ();
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
                 throw new ConfigurationException ( "Failed to create factory", e );
             }
         }
         return factory;
     }
-    
-    public void configure ( ConfigurationDocument configurationDocument )
+
+    public void configure ( final ConfigurationDocument configurationDocument )
     {
-        ConfigurationType configuration = configurationDocument.getConfiguration ();
-        
-        for ( HiveType hive : configuration.getHiveList () )
+        final ConfigurationType configuration = configurationDocument.getConfiguration ();
+
+        for ( final HiveType hive : configuration.getHiveList () )
         {
-            String ref = hive.getRef ();
+            final String ref = hive.getRef ();
             try
             {
-                HiveFactory factory = createHiveFactory ( hive.getFactory () );
-                
+                final HiveFactory factory = createHiveFactory ( hive.getFactory () );
+
                 //create the factory and the hive
-                Hive hiveInstance = factory.createHive ( ref, hive.getConfiguration () );
-                
+                final Hive hiveInstance = factory.createHive ( ref, hive.getConfiguration () );
+
                 // create the hive export object
-                HiveExport hiveExport = new HiveExport ( hiveInstance );
-                
+                final HiveExport hiveExport = new HiveExport ( hiveInstance );
+
                 // export the hive
-                for ( ExportType export : hive.getExportList () )
+                for ( final ExportType export : hive.getExportList () )
                 {
                     try
                     {
-                        _log.debug ( String.format ( "Adding export: %s", export.getUri () ) );
-                        
-                        hiveExport.addExport ( export );
+                        log.debug ( String.format ( "Adding export: %s", export.getUri () ) );
+
+                        hiveExport.addExport ( export.getUri () );
                     }
-                    catch ( ConfigurationError e )
+                    catch ( final ConfigurationError e )
                     {
-                        _log.error ( String.format ( "Unable to configure export (%s) for hive (%s)", hive.getRef (), export.getUri () ) );
+                        log.error ( String.format ( "Unable to configure export (%s) for hive (%s)", hive.getRef (), export.getUri () ) );
                     }
                 }
-                _hives.add ( hiveExport );
+                this.hives.add ( hiveExport );
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
-                _log.error ( String.format ( "Failed to create hive instance '%s' using factory '%s'", ref, hive.getFactory () ), e );
+                log.error ( String.format ( "Failed to create hive instance '%s' using factory '%s'", ref, hive.getFactory () ), e );
             }
         }
     }
-    
+
+    /**
+     * Export all hives
+     */
     public synchronized void start ()
     {
-        for ( HiveExport hive : _hives )
+        for ( final HiveExport hive : this.hives )
         {
             hive.start ();
         }
     }
-    
+
+    /**
+     * Stop exporting all hives
+     */
     public synchronized void stop ()
     {
-        for ( HiveExport hive : _hives )
+        for ( final HiveExport hive : this.hives )
         {
             hive.stop ();
         }
