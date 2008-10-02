@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,16 +19,15 @@
 
 package org.openscada.core;
 
-
 /**
  * A variant data type that can hold any scalar value type.
- * @author Jens Reimann <jens.reimann@inavare.net>
+ * @author Jens Reimann &lt;jens.reimann@inavare.net&gt;
  *
  */
 public class Variant
 {
 
-    private Object _value = null;
+    private Object value = null;
 
     /**
      * Create a variant of type <code>null</code>
@@ -37,37 +36,37 @@ public class Variant
     public Variant ()
     {
     }
-    
+
     /**
      * Convert the object to the best matching variant type
      * @param object the object to convert
      */
-    public Variant ( Object object )
+    public Variant ( final Object object )
     {
         setValue ( object );
     }
 
-    public Variant ( boolean value )
-    {
-        setValue ( value );
-    }
-    
-    public Variant ( double value )
+    public Variant ( final boolean value )
     {
         setValue ( value );
     }
 
-    public Variant ( int value )
+    public Variant ( final double value )
     {
         setValue ( value );
     }
 
-    public Variant ( long value )
+    public Variant ( final int value )
     {
         setValue ( value );
     }
 
-    public Variant ( String value )
+    public Variant ( final long value )
+    {
+        setValue ( value );
+    }
+
+    public Variant ( final String value )
     {
         setValue ( value );
     }
@@ -76,14 +75,14 @@ public class Variant
      * Clones a variant
      * @param arg0 the value to clone
      */
-    public Variant ( Variant arg0 )
+    public Variant ( final Variant arg0 )
     {
-        this ( arg0._value );
+        this ( arg0.value );
     }
 
     public boolean isNull ()
     {
-        return _value == null;
+        return this.value == null;
     }
 
     /**
@@ -92,93 +91,133 @@ public class Variant
      * If the value object is not know it is converted to a string
      * @param value the value to set
      */
-    public void setValue ( Object value )
+    public void setValue ( final Object value )
     {
         if ( value == null )
-            _value = null;
+        {
+            this.value = null;
+        }
         else if ( value instanceof Variant )
-            setValue ( ((Variant)value)._value );
+        {
+            setValue ( ( (Variant)value ).value );
+        }
         else if ( value instanceof Short )
-            setValue ( ((Short)value).intValue () );
+        {
+            setValue ( ( (Short)value ).intValue () );
+        }
         else if ( value instanceof Long )
-            setValue ( ((Long)value).longValue () );
+        {
+            setValue ( ( (Long)value ).longValue () );
+        }
         else if ( value instanceof Integer )
-            setValue ( ((Integer)value).intValue () );
+        {
+            setValue ( ( (Integer)value ).intValue () );
+        }
         else if ( value instanceof String )
+        {
             setValue ( (String)value );
+        }
         else if ( value instanceof Boolean )
-            setValue ( ((Boolean)value).booleanValue () );
+        {
+            setValue ( ( (Boolean)value ).booleanValue () );
+        }
         else if ( value instanceof Double )
-            setValue ( ((Double)value).doubleValue () );
+        {
+            setValue ( ( (Double)value ).doubleValue () );
+        }
         else if ( value instanceof Float )
-            setValue ( ((Float)value).doubleValue () );
+        {
+            setValue ( ( (Float)value ).doubleValue () );
+        }
         else
+        {
             setValue ( value.toString () );
-    }
-    
-    public void setValue ( boolean value )
-    {
-        _value = new Boolean ( value );
-    }
-    
-    public void setValue ( int value )
-    {
-        _value = new Integer ( value );
+        }
     }
 
-    public void setValue ( long value )
+    public void setValue ( final boolean value )
     {
-        _value = new Long ( value );
+        this.value = new Boolean ( value );
     }
 
-    public void setValue ( String value )
+    public void setValue ( final int value )
+    {
+        this.value = new Integer ( value );
+    }
+
+    public void setValue ( final long value )
+    {
+        this.value = new Long ( value );
+    }
+
+    public void setValue ( final String value )
     {
         if ( value != null )
-            _value = new String ( value );
+        {
+            this.value = new String ( value );
+        }
         else
-            _value = null;
+        {
+            this.value = null;
+        }
     }
 
-    public void setValue ( double value )
+    public void setValue ( final double value )
     {
-        _value = new Double ( value );
+        this.value = new Double ( value );
     }
-    
+
     public String asString () throws NullValueException
     {
         if ( isNull () )
-            throw new NullValueException();
+        {
+            throw new NullValueException ();
+        }
 
-        return _value.toString();
+        return this.value.toString ();
     }
 
-    public String asString ( String defaultValue )
+    public String asString ( final String defaultValue )
     {
         if ( isNull () )
+        {
             return defaultValue;
+        }
 
-        return _value.toString ();
+        return this.value.toString ();
     }
 
     public double asDouble () throws NullValueException, NotConvertableException
     {
         if ( isNull () )
-            throw new NullValueException();
+        {
+            throw new NullValueException ();
+        }
 
         try
         {
-            if ( _value instanceof Boolean )
-                return ((Boolean)_value).booleanValue () ? 1 : 0;
-            if ( _value instanceof Double )
-                return ((Double)_value).doubleValue();
-            if ( _value instanceof Integer )
-                return ((Integer)_value).doubleValue();
-            if ( _value instanceof Long )
-                return ((Long)_value).doubleValue();
-            if ( _value instanceof String )
-                return Double.parseDouble((String)_value);
+            if ( this.value instanceof Boolean )
+            {
+                return ( (Boolean)this.value ).booleanValue () ? 1 : 0;
+            }
+            if ( this.value instanceof Double )
+            {
+                return ( (Double)this.value ).doubleValue ();
+            }
+            if ( this.value instanceof Integer )
+            {
+                return ( (Integer)this.value ).doubleValue ();
+            }
+            if ( this.value instanceof Long )
+            {
+                return ( (Long)this.value ).doubleValue ();
+            }
+            if ( this.value instanceof String )
+            {
+                return Double.parseDouble ( (String)this.value );
+            }
         }
-        catch ( NumberFormatException e )
+        catch ( final NumberFormatException e )
         {
             throw new NotConvertableException ();
         }
@@ -189,55 +228,79 @@ public class Variant
     public int asInteger () throws NullValueException, NotConvertableException
     {
         if ( isNull () )
+        {
             throw new NullValueException ();
+        }
 
         try
         {
-            if ( _value instanceof Boolean )
-                return ((Boolean)_value).booleanValue () ? 1 : 0;
-            if ( _value instanceof Double )
-                return ((Double)_value).intValue();
-            if ( _value instanceof Integer )
-                return ((Integer)_value).intValue();
-            if ( _value instanceof Long )
-                return ((Long)_value).intValue();
-            if ( _value instanceof String )
-                return Integer.parseInt((String)_value);
+            if ( this.value instanceof Boolean )
+            {
+                return ( (Boolean)this.value ).booleanValue () ? 1 : 0;
+            }
+            if ( this.value instanceof Double )
+            {
+                return ( (Double)this.value ).intValue ();
+            }
+            if ( this.value instanceof Integer )
+            {
+                return ( (Integer)this.value ).intValue ();
+            }
+            if ( this.value instanceof Long )
+            {
+                return ( (Long)this.value ).intValue ();
+            }
+            if ( this.value instanceof String )
+            {
+                return Integer.parseInt ( (String)this.value );
+            }
         }
-        catch ( NumberFormatException e )
+        catch ( final NumberFormatException e )
         {
             throw new NotConvertableException ();
         }
 
-        throw new NotConvertableException();
+        throw new NotConvertableException ();
     }
 
     public long asLong () throws NullValueException, NotConvertableException
     {
         if ( isNull () )
+        {
             throw new NullValueException ();
+        }
 
         try
         {
-            if ( _value instanceof Boolean )
-                return ((Boolean)_value).booleanValue () ? 1 : 0;
-            if ( _value instanceof Double )
-                return ((Double)_value).intValue ();
-            if ( _value instanceof Integer )
-                return ((Integer)_value).intValue ();
-            if ( _value instanceof Long )
-                return ((Long)_value).longValue ();
-            if ( _value instanceof String )
-                return Long.parseLong ((String)_value);
+            if ( this.value instanceof Boolean )
+            {
+                return ( (Boolean)this.value ).booleanValue () ? 1 : 0;
+            }
+            if ( this.value instanceof Double )
+            {
+                return ( (Double)this.value ).intValue ();
+            }
+            if ( this.value instanceof Integer )
+            {
+                return ( (Integer)this.value ).intValue ();
+            }
+            if ( this.value instanceof Long )
+            {
+                return ( (Long)this.value ).longValue ();
+            }
+            if ( this.value instanceof String )
+            {
+                return Long.parseLong ( (String)this.value );
+            }
         }
-        catch ( NumberFormatException e )
+        catch ( final NumberFormatException e )
         {
             throw new NotConvertableException ();
         }
 
-        throw new NotConvertableException();
+        throw new NotConvertableException ();
     }
-    
+
     /**
      * Get the value as boolean value
      * 
@@ -260,39 +323,49 @@ public class Variant
     {
         try
         {
-            if ( _value instanceof Boolean )
-                return ((Boolean)_value).booleanValue ();
-            if ( _value instanceof Double )
-                return ((Double)_value).doubleValue () != 0;
-            if ( _value instanceof Integer )
-                return ((Integer)_value).intValue () != 0;
-            if ( _value instanceof Long )
-                return ((Long)_value).longValue () != 0;
-            if ( _value instanceof String )
+            if ( this.value instanceof Boolean )
             {
-                String str = (String)_value;
+                return ( (Boolean)this.value ).booleanValue ();
+            }
+            if ( this.value instanceof Double )
+            {
+                return ( (Double)this.value ).doubleValue () != 0;
+            }
+            if ( this.value instanceof Integer )
+            {
+                return ( (Integer)this.value ).intValue () != 0;
+            }
+            if ( this.value instanceof Long )
+            {
+                return ( (Long)this.value ).longValue () != 0;
+            }
+            if ( this.value instanceof String )
+            {
+                final String str = (String)this.value;
                 if ( str.length () == 0 )
+                {
                     return false;
-                try
-                {
-                    long i = Long.parseLong ( str );
-                    return i != 0;
-                }
-                catch ( NumberFormatException e )
-                {
                 }
                 try
                 {
-                    double i = Double.parseDouble ( str );
+                    final long i = Long.parseLong ( str );
                     return i != 0;
                 }
-                catch ( NumberFormatException e )
+                catch ( final NumberFormatException e )
+                {
+                }
+                try
+                {
+                    final double i = Double.parseDouble ( str );
+                    return i != 0;
+                }
+                catch ( final NumberFormatException e )
                 {
                 }
                 return Boolean.parseBoolean ( str );
             }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
         }
         return false;
@@ -301,187 +374,263 @@ public class Variant
     public boolean isBoolean ()
     {
         if ( isNull () )
+        {
             return false;
-        
-        return _value instanceof Boolean;
+        }
+
+        return this.value instanceof Boolean;
     }
-    
+
     public boolean isString ()
     {
         if ( isNull () )
+        {
             return false;
+        }
 
-        return _value instanceof String;
+        return this.value instanceof String;
     }
 
     public boolean isDouble ()
     {
         if ( isNull () )
+        {
             return false;
+        }
 
-        return _value instanceof Double;
+        return this.value instanceof Double;
     }
 
     public boolean isInteger ()
     {
         if ( isNull () )
+        {
             return false;
+        }
 
-        return _value instanceof Integer;
+        return this.value instanceof Integer;
     }
 
     public boolean isLong ()
     {
         if ( isNull () )
+        {
             return false;
+        }
 
-        return _value instanceof Long;
+        return this.value instanceof Long;
     }
 
     @Override
-    public boolean equals ( Object obj )
+    public boolean equals ( final Object obj )
     {
-        if ( !(obj instanceof Variant) )
+        if ( ! ( obj instanceof Variant ) )
+        {
             return false;
+        }
 
         if ( obj == this )
+        {
             return true;
-        
+        }
+
         if ( obj == null )
+        {
             return false;
+        }
 
-        Variant arg0 = (Variant)obj;
+        final Variant arg0 = (Variant)obj;
 
-        try {
+        try
+        {
             if ( arg0.isNull () )
+            {
                 return isNull ();
+            }
             else if ( isNull () )
+            {
                 return arg0.isNull ();
+            }
             else if ( arg0.isBoolean () )
+            {
                 return compareToBoolean ( arg0.asBoolean () );
+            }
             else if ( arg0.isDouble () )
-                return compareToDouble ( arg0.asDouble() );
+            {
+                return compareToDouble ( arg0.asDouble () );
+            }
             else if ( arg0.isLong () )
-                return compareToLong ( arg0.asLong() );
+            {
+                return compareToLong ( arg0.asLong () );
+            }
             else if ( arg0.isInteger () )
-                return compareToInteger ( arg0.asInteger() );
+            {
+                return compareToInteger ( arg0.asInteger () );
+            }
             else if ( arg0.isString () )
-                return compareToString ( arg0.asString() );
+            {
+                return compareToString ( arg0.asString () );
+            }
 
             return false;
         }
-        catch ( NullValueException e )
+        catch ( final NullValueException e )
         {
             // should never happen since we check using isNull()
             return false;
         }
-        catch (NotConvertableException e)
+        catch ( final NotConvertableException e )
         {
             // if it cannot be converted it should not be equal
             return false;
         }
     }
 
-    private boolean compareToString ( String s )
+    private boolean compareToString ( final String s )
     {
         if ( isNull () )
+        {
             return false;
+        }
 
-        try {
+        try
+        {
             if ( isDouble () )
-                return asDouble () == Double.parseDouble(s);
+            {
+                return asDouble () == Double.parseDouble ( s );
+            }
             else if ( isBoolean () )
+            {
                 return asBoolean () == new Variant ( s ).asBoolean ();
+            }
             else if ( isLong () )
-                return asLong () == Long.parseLong(s);
+            {
+                return asLong () == Long.parseLong ( s );
+            }
             else if ( isInteger () )
-                return asInteger () == Integer.parseInt(s);
+            {
+                return asInteger () == Integer.parseInt ( s );
+            }
             else
-                return asString ().equals(s);
+            {
+                return asString ().equals ( s );
+            }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             return false;
         }
     }
 
-    private boolean compareToInteger ( int i )
+    private boolean compareToInteger ( final int i )
     {
         if ( isNull () )
+        {
             return false;
+        }
 
-        try {
+        try
+        {
             if ( isDouble () )
+            {
                 return asDouble () == i;
+            }
             else if ( isBoolean () )
-                return asBoolean () ? (i != 0) : (i == 0);
+            {
+                return asBoolean () ? ( i != 0 ) : ( i == 0 );
+            }
             else if ( isLong () )
+            {
                 return asLong () == i;
+            }
             else
+            {
                 return asInteger () == i;
+            }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             return false;
         }
     }
 
-    private boolean compareToLong ( long l )
+    private boolean compareToLong ( final long l )
     {
         if ( isNull () )
+        {
             return false;
+        }
 
-        try {
+        try
+        {
             if ( isDouble () )
+            {
                 return asDouble () == l;
+            }
             else if ( isBoolean () )
-                return asBoolean () ? (l != 0) : (l == 0);
+            {
+                return asBoolean () ? ( l != 0 ) : ( l == 0 );
+            }
             else
+            {
                 return asLong () == l;
+            }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             return false;
         }
     }
 
-    private boolean compareToDouble ( double d )
+    private boolean compareToDouble ( final double d )
     {
         if ( isNull () )
+        {
             return false;
+        }
 
-        try {
+        try
+        {
             if ( isBoolean () )
-                return asBoolean () ? (d != 0) : (d == 0);
+            {
+                return asBoolean () ? ( d != 0 ) : ( d == 0 );
+            }
             return asDouble () == d;
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             return false;
         }
     }
-    
-    private boolean compareToBoolean ( boolean b )
+
+    private boolean compareToBoolean ( final boolean b )
     {
         return asBoolean () == b;
     }
-    
+
+    public String toLabel ()
+    {
+        if ( this.value == null )
+        {
+            return "";
+        }
+        else
+        {
+            return this.value.toString ();
+        }
+    }
+
     @Override
     public String toString ()
     {
-        if ( _value == null )
-            return "NULL#";
-        else if ( _value instanceof Double )
-            return "DOUBLE#" + _value.toString ();
-        else if ( _value instanceof Integer )
-            return "INT32#" + _value.toString ();
-        else if ( _value instanceof Long )
-            return "INT64#" + _value.toString ();
-        else if ( _value instanceof String )
-            return "STRING#" + _value.toString ();
-        else if ( _value instanceof Boolean )
-            return "BOOLEAN#" + _value.toString ();
-        else
-            return "UNKNOWN#" + _value.toString ();
+        return VariantType.fromJavaObject ( this.value ) + "#" + toLabel ();
+    }
+
+    /**
+     * @return type from Type enumeration fitting for current value
+     */
+    public VariantType getType ()
+    {
+        return VariantType.fromJavaObject ( this.value );
     }
 }
