@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,40 +28,49 @@ import org.openscada.core.client.ConnectionStateListener;
 
 public class ItemManager implements ConnectionStateListener
 {
-    private static Logger _log = Logger.getLogger ( ItemManager.class );
+    private static Logger log = Logger.getLogger ( ItemManager.class );
 
-    protected org.openscada.da.client.Connection _connection = null;
+    protected org.openscada.da.client.Connection connection = null;
 
-    private Map<String, ItemSyncController> _itemListeners = new HashMap<String, ItemSyncController> ();
-    
-    private boolean _connected = false;
+    private final Map<String, ItemSyncController> itemListeners = new HashMap<String, ItemSyncController> ();
 
-    public ItemManager ( org.openscada.da.client.Connection connection )
+    private boolean connected = false;
+
+    public ItemManager ( final org.openscada.da.client.Connection connection )
     {
         super ();
-        _connection = connection;
-        _connection.addConnectionStateListener ( this );
+        this.connection = connection;
+        this.connection.addConnectionStateListener ( this );
     }
 
-    public synchronized void addItemUpdateListener ( String itemName, ItemUpdateListener listener )
+    /**
+     * Get the current assigned connection
+     * @return the current connection or <code>null</code> if none is assigned.
+     */
+    public Connection getConnection ()
     {
-        if ( !_itemListeners.containsKey ( itemName ) )
+        return this.connection;
+    }
+
+    public synchronized void addItemUpdateListener ( final String itemName, final ItemUpdateListener listener )
+    {
+        if ( !this.itemListeners.containsKey ( itemName ) )
         {
-            _itemListeners.put ( itemName, new ItemSyncController ( _connection, new String ( itemName ) ) );
+            this.itemListeners.put ( itemName, new ItemSyncController ( this.connection, new String ( itemName ) ) );
         }
 
-        ItemSyncController controller = _itemListeners.get ( itemName );
+        final ItemSyncController controller = this.itemListeners.get ( itemName );
         controller.add ( listener );
     }
 
-    public synchronized void removeItemUpdateListener ( String itemName, ItemUpdateListener listener )
+    public synchronized void removeItemUpdateListener ( final String itemName, final ItemUpdateListener listener )
     {
-        if ( !_itemListeners.containsKey ( itemName ) )
+        if ( !this.itemListeners.containsKey ( itemName ) )
         {
             return;
         }
 
-        ItemSyncController controller = _itemListeners.get ( itemName );
+        final ItemSyncController controller = this.itemListeners.get ( itemName );
         controller.remove ( listener );
     }
 
@@ -71,44 +80,44 @@ public class ItemManager implements ConnectionStateListener
      */
     protected synchronized void resyncAllItems ()
     {
-        _log.debug ( "Syncing all items" );
+        log.debug ( "Syncing all items" );
 
-        for ( Map.Entry<String, ItemSyncController> entry : _itemListeners.entrySet () )
+        for ( final Map.Entry<String, ItemSyncController> entry : this.itemListeners.entrySet () )
         {
             entry.getValue ().sync ( true );
         }
 
-        _log.debug ( "re-sync complete" );
+        log.debug ( "re-sync complete" );
     }
-    
+
     protected synchronized void disconnectAllItems ()
     {
-        _log.debug ( "Disconnecting all items" );
-        
-        for ( Map.Entry<String, ItemSyncController> entry : _itemListeners.entrySet () )
+        log.debug ( "Disconnecting all items" );
+
+        for ( final Map.Entry<String, ItemSyncController> entry : this.itemListeners.entrySet () )
         {
             entry.getValue ().disconnect ();
         }
-        
-        _log.debug ( "Disconnecting all items: complete" );
+
+        log.debug ( "Disconnecting all items: complete" );
     }
 
-    public synchronized void stateChange ( org.openscada.core.client.Connection connection, ConnectionState state, Throwable error )
+    public synchronized void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
     {
         switch ( state )
         {
         case BOUND:
-            if ( !_connected )
+            if ( !this.connected )
             {
                 resyncAllItems ();
-                _connected = true;
+                this.connected = true;
             }
             break;
         default:
-            if ( _connected )
+            if ( this.connected )
             {
                 disconnectAllItems ();
-                _connected = false;
+                this.connected = false;
             }
             break;
         }
@@ -117,7 +126,7 @@ public class ItemManager implements ConnectionStateListener
     @Override
     protected void finalize () throws Throwable
     {
-        _log.debug ( "Finalized" );
+        log.debug ( "Finalized" );
         super.finalize ();
     }
 }
