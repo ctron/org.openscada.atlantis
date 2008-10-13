@@ -28,4 +28,6 @@ public class StatusCodes
     public static final StatusCode ALREADY_BOUND = new StatusCode ( ProjectCode.CODE, "TIM", 1, SeverityLevel.ERROR );
 
     public static final StatusCode NOT_BOUND = new StatusCode ( ProjectCode.CODE, "TIM", 2, SeverityLevel.ERROR );
+
+    public static final StatusCode WRONG_THREAD = new StatusCode ( ProjectCode.CODE, "TIM", 3, SeverityLevel.ERROR );
 }

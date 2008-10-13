@@ -27,21 +27,21 @@ import org.apache.log4j.Logger;
 
 public class Scheduler implements Runnable
 {
-    private static Logger _log = Logger.getLogger ( Scheduler.class );
+    private static Logger log = Logger.getLogger ( Scheduler.class );
 
-    private Thread _thread;
+    private Thread thread;
 
-    private List<Job> _jobs = new ArrayList<Job> ();
+    private final List<Job> jobs = new ArrayList<Job> ();
 
-    private int _logJobs = Integer.getInteger ( "openscada.utils.logJobs", 0 );
+    private final int logJobs = Integer.getInteger ( "openscada.utils.logJobs", 0 );
 
-    private long _lastJobLog = 0;
+    private long lastJobLog = 0;
 
-    private String _schedulerName = "Scheduler";
+    private String schedulerName = "Scheduler";
 
     public class Job
     {
-        private Runnable _runnable;
+        private final Runnable _runnable;
 
         private int _period;
 
@@ -49,72 +49,82 @@ public class Scheduler implements Runnable
 
         private boolean _once = false;
 
-        public Job ( Runnable runnable, int period )
+        public Job ( final Runnable runnable, final int period )
         {
-            _runnable = runnable;
-            _period = period;
-            _nextTime = System.currentTimeMillis () + period;
+            this._runnable = runnable;
+            this._period = period;
+            this._nextTime = System.currentTimeMillis () + period;
         }
 
-        public Job ( Runnable runnable, int period, boolean once )
+        public Job ( final Runnable runnable, final int period, final boolean once )
         {
-            _runnable = runnable;
-            _period = period;
-            _nextTime = System.currentTimeMillis () + period;
-            _once = once;
+            this._runnable = runnable;
+            this._period = period;
+            this._nextTime = System.currentTimeMillis () + period;
+            this._once = once;
         }
 
         public boolean isTimeOut ()
         {
-            return System.currentTimeMillis () >= _nextTime;
+            return System.currentTimeMillis () >= this._nextTime;
         }
 
         public void run ()
         {
-            if ( _period != 0 )
-                _nextTime = ( ( System.currentTimeMillis () / _period ) + 1 ) * _period;
+            if ( this._period != 0 )
+            {
+                this._nextTime = ( System.currentTimeMillis () / this._period + 1 ) * this._period;
+            }
             else
-                _nextTime = System.currentTimeMillis ();
+            {
+                this._nextTime = System.currentTimeMillis ();
+            }
 
-            if ( _runnable != null )
+            if ( this._runnable != null )
             {
                 try
                 {
-                    _runnable.run ();
+                    this._runnable.run ();
                 }
-                catch ( Throwable t )
+                catch ( final Throwable t )
                 {
-                    _log.warn ( "Job failed", t );
+                    log.warn ( "Job failed", t );
                 }
             }
         }
 
         @Override
-        public boolean equals ( Object obj )
+        public boolean equals ( final Object obj )
         {
             if ( obj == null )
+            {
                 return false;
+            }
 
             if ( obj == this )
+            {
                 return true;
+            }
 
             if ( ! ( obj instanceof Job ) )
+            {
                 return false;
+            }
 
-            Job job = (Job)obj;
+            final Job job = (Job)obj;
 
-            return _runnable.equals ( job._runnable );
+            return this._runnable.equals ( job._runnable );
         }
 
         @Override
         public int hashCode ()
         {
-            return _runnable.hashCode ();
+            return this._runnable.hashCode ();
         }
 
         public int getPeriod ()
         {
-            return _period;
+            return this._period;
         }
 
         /**
@@ -123,14 +133,14 @@ public class Scheduler implements Runnable
          * @param period
          *            the new period
          */
-        public void setPeriod ( int period )
+        public void setPeriod ( final int period )
         {
-            _period = period;
+            this._period = period;
         }
 
         public boolean isOnce ()
         {
-            return _once;
+            return this._once;
         }
 
         /**
@@ -139,7 +149,7 @@ public class Scheduler implements Runnable
          */
         public void trigger ()
         {
-            _nextTime = System.currentTimeMillis ();
+            this._nextTime = System.currentTimeMillis ();
         }
 
         /**
@@ -147,11 +157,11 @@ public class Scheduler implements Runnable
          */
         public void bump ()
         {
-            _nextTime = System.currentTimeMillis () + _period;
+            this._nextTime = System.currentTimeMillis () + this._period;
         }
     }
 
-    public Scheduler ( String name )
+    public Scheduler ( final String name )
     {
         this ( true, name );
     }
@@ -161,20 +171,20 @@ public class Scheduler implements Runnable
      * things.
      * @param async flag if this scheduler is asynchronous or not
      */
-    public Scheduler ( boolean async, String threadName )
+    public Scheduler ( final boolean async, final String threadName )
     {
-        this._schedulerName = threadName;
+        this.schedulerName = threadName;
 
         if ( async )
         {
-            _thread = new Thread ( this, threadName );
-            rebindToThread ( _thread );
-            _thread.setDaemon ( true );
-            _thread.start ();
+            this.thread = new Thread ( this, threadName );
+            rebindToThread ( this.thread );
+            this.thread.setDaemon ( true );
+            this.thread.start ();
         }
     }
 
-    public Scheduler ( Thread thread )
+    public Scheduler ( final Thread thread )
     {
         rebindToThread ( thread );
     }
@@ -189,7 +199,7 @@ public class Scheduler implements Runnable
      *            the period in milliseconds
      * @return a job handle that can be used to modify the new job
      */
-    public Job addJob ( Runnable runnable, int period )
+    public Job addJob ( final Runnable runnable, final int period )
     {
         return addJob ( runnable, period, true );
     }
@@ -206,16 +216,18 @@ public class Scheduler implements Runnable
      *            will be executed first as soon as possible
      * @return a job handle that can be used to modify the new job
      */
-    public Job addJob ( Runnable runnable, int period, boolean initialDelay )
+    public Job addJob ( final Runnable runnable, final int period, final boolean initialDelay )
     {
-        Job job = new Job ( runnable, period );
+        final Job job = new Job ( runnable, period );
 
         if ( !initialDelay )
+        {
             job.trigger ();
+        }
 
         synchronized ( job )
         {
-            _jobs.add ( job );
+            this.jobs.add ( job );
         }
         return job;
     }
@@ -229,12 +241,12 @@ public class Scheduler implements Runnable
      *            the period in milliseconds
      * @return a job handle that can be used to modify the new job
      */
-    public Job scheduleJob ( Runnable runnable, int period )
+    public Job scheduleJob ( final Runnable runnable, final int period )
     {
-        Job job = new Job ( runnable, period, true );
-        synchronized ( _jobs )
+        final Job job = new Job ( runnable, period, true );
+        synchronized ( this.jobs )
         {
-            _jobs.add ( job );
+            this.jobs.add ( job );
         }
         return job;
     }
@@ -253,20 +265,20 @@ public class Scheduler implements Runnable
      * @throws InterruptedException
      *             if the wait fails
      */
-    public void executeJob ( Runnable runnable, boolean wait ) throws InterruptedException
+    public void executeJob ( final Runnable runnable, final boolean wait ) throws InterruptedException
     {
-        if ( Thread.currentThread ().equals ( _thread ) )
+        if ( Thread.currentThread ().equals ( this.thread ) )
         {
             runnable.run ();
             return;
         }
 
-        Job job = new Job ( runnable, 0, true );
+        final Job job = new Job ( runnable, 0, true );
         synchronized ( job )
         {
-            synchronized ( _jobs )
+            synchronized ( this.jobs )
             {
-                _jobs.add ( job );
+                this.jobs.add ( job );
             }
 
             if ( wait )
@@ -288,7 +300,7 @@ public class Scheduler implements Runnable
      * @throws InterruptedException
      *             if the wait fails
      */
-    public void executeJob ( Runnable runnable ) throws InterruptedException
+    public void executeJob ( final Runnable runnable ) throws InterruptedException
     {
         executeJob ( runnable, true );
     }
@@ -302,35 +314,35 @@ public class Scheduler implements Runnable
      * @param runnable
      *            The runnable to execute
      */
-    public void executeJobAsync ( Runnable runnable )
+    public void executeJobAsync ( final Runnable runnable )
     {
         try
         {
             executeJob ( runnable, false );
         }
-        catch ( InterruptedException e )
+        catch ( final InterruptedException e )
         {
             // may not be thrown since wait is not called
         }
     }
 
-    public void removeJob ( Runnable job )
+    public void removeJob ( final Runnable job )
     {
-        synchronized ( _jobs )
+        synchronized ( this.jobs )
         {
-            _log.debug ( "Pre remove: " + _jobs.size () );
-            _jobs.remove ( new Job ( job, 0 ) );
-            _log.debug ( "Post remove: " + _jobs.size () );
+            log.debug ( "Pre remove: " + this.jobs.size () );
+            this.jobs.remove ( new Job ( job, 0 ) );
+            log.debug ( "Post remove: " + this.jobs.size () );
         }
     }
 
-    public void removeJob ( Job job )
+    public void removeJob ( final Job job )
     {
-        synchronized ( _jobs )
+        synchronized ( this.jobs )
         {
-            _log.debug ( "Pre remove: " + _jobs.size () );
-            _jobs.remove ( job );
-            _log.debug ( "Post remove: " + _jobs.size () );
+            log.debug ( "Pre remove: " + this.jobs.size () );
+            this.jobs.remove ( job );
+            log.debug ( "Post remove: " + this.jobs.size () );
         }
     }
 
@@ -343,25 +355,25 @@ public class Scheduler implements Runnable
          * if ( _jobs.size() > 0 ) _log.debug("Running once: " + _jobs.size() + "
          * job(s)");
          */
-        if ( _logJobs > 0 )
+        if ( this.logJobs > 0 )
         {
-            if ( ( System.currentTimeMillis () - _lastJobLog ) > _logJobs )
+            if ( System.currentTimeMillis () - this.lastJobLog > this.logJobs )
             {
-                _log.debug ( String.format ( "%s: %d jobs", _schedulerName, _jobs.size () ) );
-                _lastJobLog = System.currentTimeMillis ();
+                log.debug ( String.format ( "%s: %d jobs", this.schedulerName, this.jobs.size () ) );
+                this.lastJobLog = System.currentTimeMillis ();
             }
         }
 
         // make a working copy
         List<Job> processList;
-        synchronized ( _jobs )
+        synchronized ( this.jobs )
         {
-            processList = new ArrayList<Job> ( _jobs );
+            processList = new ArrayList<Job> ( this.jobs );
         }
 
-        for ( Iterator<Job> i = processList.iterator (); i.hasNext (); )
+        for ( final Iterator<Job> i = processList.iterator (); i.hasNext (); )
         {
-            Job job = i.next ();
+            final Job job = i.next ();
             try
             {
                 if ( job.isTimeOut () )
@@ -377,9 +389,9 @@ public class Scheduler implements Runnable
                     }
                 }
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
-                _log.warn ( "Error during job execution: ", e );
+                log.warn ( "Error during job execution: ", e );
             }
         }
 
@@ -395,7 +407,7 @@ public class Scheduler implements Runnable
             {
                 Thread.sleep ( 100 );
             }
-            catch ( InterruptedException e )
+            catch ( final InterruptedException e )
             {
                 // TODO Auto-generated catch block
             }
@@ -404,16 +416,16 @@ public class Scheduler implements Runnable
             {
                 runOnce ();
             }
-            catch ( NotBoundException e )
+            catch ( final NotBoundException e )
             {
-                _log.error ( "scheduler failed", e );
-                _thread = null;
+                log.error ( "scheduler failed", e );
+                this.thread = null;
                 return;
             }
-            catch ( WrongThreadException e )
+            catch ( final WrongThreadException e )
             {
-                _log.error ( "scheduler failed", e );
-                _thread = null;
+                log.error ( "scheduler failed", e );
+                this.thread = null;
                 return;
             }
         }
@@ -421,21 +433,21 @@ public class Scheduler implements Runnable
 
     public synchronized boolean isBound ()
     {
-        return _thread != null;
+        return this.thread != null;
     }
 
     public synchronized void unbindFromThread ()
     {
-        _thread = null;
+        this.thread = null;
     }
 
-    public synchronized void bindToThread ( Thread thread ) throws AlreadyBoundException
+    public synchronized void bindToThread ( final Thread thread ) throws AlreadyBoundException
     {
-        if ( ( _thread != null ) && !_thread.equals ( thread ) ) 
+        if ( this.thread != null && !this.thread.equals ( thread ) )
         {
-            throw new AlreadyBoundException ( StatusCodes.ALREADY_BOUND );
+            throw new AlreadyBoundException ();
         }
-        _thread = thread;
+        this.thread = thread;
     }
 
     public synchronized void bindToCurrentThread () throws AlreadyBoundException
@@ -451,14 +463,14 @@ public class Scheduler implements Runnable
      * @param thread
      *            The thread to bind to
      */
-    public synchronized void rebindToThread ( Thread thread )
+    public synchronized void rebindToThread ( final Thread thread )
     {
         unbindFromThread ();
         try
         {
             bindToThread ( thread );
         }
-        catch ( AlreadyBoundException e )
+        catch ( final AlreadyBoundException e )
         {
             // this should never happen since we previously unbound
         }
@@ -481,10 +493,10 @@ public class Scheduler implements Runnable
     {
         if ( !isBound () )
         {
-            throw new NotBoundException ( StatusCodes.NOT_BOUND );
+            throw new NotBoundException ();
         }
 
-        if ( !_thread.equals ( Thread.currentThread () ) )
+        if ( !this.thread.equals ( Thread.currentThread () ) )
         {
             throw new WrongThreadException ();
         }

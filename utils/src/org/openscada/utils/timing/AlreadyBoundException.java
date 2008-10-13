@@ -20,19 +20,13 @@
 package org.openscada.utils.timing;
 
 import org.openscada.utils.statuscodes.CodedException;
-import org.openscada.utils.statuscodes.StatusCode;
 
 public class AlreadyBoundException extends CodedException
 {
-
-    public AlreadyBoundException ( StatusCode statusCode )
-    {
-        super ( statusCode );
-    }
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 4789775918855858040L;
 
+    public AlreadyBoundException ()
+    {
+        super ( StatusCodes.ALREADY_BOUND );
+    }
 }

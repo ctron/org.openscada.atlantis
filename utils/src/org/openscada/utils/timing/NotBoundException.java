@@ -20,24 +20,19 @@
 package org.openscada.utils.timing;
 
 import org.openscada.utils.statuscodes.CodedException;
-import org.openscada.utils.statuscodes.StatusCode;
 
 public class NotBoundException extends CodedException
 {
+    private static final long serialVersionUID = 7122214308315776385L;
 
-    public NotBoundException ( StatusCode statusCode )
+    public NotBoundException ()
     {
-        super ( statusCode );
+        super ( StatusCodes.NOT_BOUND );
     }
 
-    public NotBoundException ( StatusCode statusCode, String message, Throwable cause )
+    public NotBoundException ( final String message, final Throwable cause )
     {
-        super ( statusCode, message, cause );
+        super ( StatusCodes.NOT_BOUND, message, cause );
     }
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 2159670539641487163L;
 
 }

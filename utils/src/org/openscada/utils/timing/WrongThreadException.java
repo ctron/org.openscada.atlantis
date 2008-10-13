@@ -19,12 +19,14 @@
 
 package org.openscada.utils.timing;
 
-public class WrongThreadException extends Exception
-{
+import org.openscada.utils.statuscodes.CodedException;
 
-    /**
-     * 
-     */
+public class WrongThreadException extends CodedException
+{
     private static final long serialVersionUID = 4311175198442629691L;
 
+    public WrongThreadException ()
+    {
+        super ( StatusCodes.WRONG_THREAD );
+    }
 }
