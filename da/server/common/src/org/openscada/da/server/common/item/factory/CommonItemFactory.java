@@ -81,6 +81,24 @@ public class CommonItemFactory implements ItemFactory
         }
     }
 
+    /**
+     * Change the ID delimiter.
+     * <p>
+     * Note that items which have already been created will not but updated to use the new delimiter
+     * @param idDelimiter the new delimiter to use
+     */
+    public void setIdDelimiter ( final String idDelimiter )
+    {
+        if ( idDelimiter == null )
+        {
+            this.idDelimiter = DEFAULT_ID_DELIMITER;
+        }
+        else
+        {
+            this.idDelimiter = idDelimiter;
+        }
+    }
+
     public boolean isDisposed ()
     {
         return this.disposed;
