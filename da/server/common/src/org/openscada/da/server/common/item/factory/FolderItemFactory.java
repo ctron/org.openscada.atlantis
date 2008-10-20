@@ -35,7 +35,7 @@ public class FolderItemFactory extends HiveItemFactory
 {
     private final String folderName;
 
-    private FolderCommon folder;
+    protected FolderCommon folder;
 
     private final FolderCommon parentFolder;
 
