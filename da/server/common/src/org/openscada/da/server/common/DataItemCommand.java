@@ -31,68 +31,70 @@ import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResults;
 
-public class DataItemCommand extends DataItemOutput {
+public class DataItemCommand extends DataItemOutput
+{
 
     private static Logger _log = Logger.getLogger ( DataItemCommand.class );
-    
-	public DataItemCommand(String name)
-    {
-		super(name);
-	}
 
-	public interface Listener
-	{
-		public void command ( Variant value );
-	}	
-	
-	private List<Listener> _listeners = new ArrayList<Listener>();
-	
-	public void writeValue(Variant value) throws InvalidOperationException,
-	NullValueException, NotConvertableException {
-		
-		List<Listener> listeners;
-		synchronized ( _listeners )
-		{
-			listeners = new ArrayList<Listener>(_listeners);
-		}
-		
-		for ( Listener listener : listeners )
-		{
-			try
-			{
-				listener.command(value);
-			}
-			catch ( Exception e )
-			{
-			    _log.warn ( "Failed to run listener", e );
-			    
-			}
-		}
-	}
-	
-	public void addListener ( Listener listener )
-	{
-		synchronized ( _listeners )
-		{
-			_listeners.add(listener);
-		}
-	}
-	public void removeListener ( Listener listener )
-	{
-		synchronized ( _listeners )
-		{
-			_listeners.remove(listener);
-		}
-	}
-	
-	public Map<String, Variant> getAttributes()
+    public DataItemCommand ( final String name )
     {
-		return new HashMap<String,Variant>();
-	}
-	
-	public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
+        super ( name );
+    }
+
+    public static interface Listener
+    {
+        public void command ( Variant value );
+    }
+
+    private final List<Listener> _listeners = new ArrayList<Listener> ();
+
+    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    {
+
+        List<Listener> listeners;
+        synchronized ( this._listeners )
+        {
+            listeners = new ArrayList<Listener> ( this._listeners );
+        }
+
+        for ( final Listener listener : listeners )
+        {
+            try
+            {
+                listener.command ( value );
+            }
+            catch ( final Exception e )
+            {
+                _log.warn ( "Failed to run listener", e );
+
+            }
+        }
+    }
+
+    public void addListener ( final Listener listener )
+    {
+        synchronized ( this._listeners )
+        {
+            this._listeners.add ( listener );
+        }
+    }
+
+    public void removeListener ( final Listener listener )
+    {
+        synchronized ( this._listeners )
+        {
+            this._listeners.remove ( listener );
+        }
+    }
+
+    public Map<String, Variant> getAttributes ()
+    {
+        return new HashMap<String, Variant> ();
+    }
+
+    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
     {
         return WriteAttributesHelper.errorUnhandled ( null, attributes );
-	}
-	
+    }
+
 }
