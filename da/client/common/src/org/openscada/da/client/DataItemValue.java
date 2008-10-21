@@ -171,4 +171,41 @@ public class DataItemValue
         }
         return c;
     }
+
+    @Override
+    public String toString ()
+    {
+        final StringBuilder sb = new StringBuilder ();
+
+        if ( this.value != null )
+        {
+            sb.append ( this.value.toString () );
+        }
+        sb.append ( "[" );
+        if ( isAlarm () )
+        {
+            sb.append ( "A" );
+        }
+        if ( isError () )
+        {
+            sb.append ( "E" );
+        }
+        if ( isManual () )
+        {
+            sb.append ( "M" );
+        }
+        sb.append ( "]" );
+
+        final Calendar c = getTimestamp ();
+        if ( c != null )
+        {
+            sb.append ( String.format ( "[%1$tF %1$tT,%1$tL]", c ) );
+        }
+        else
+        {
+            sb.append ( "[none]" );
+        }
+
+        return sb.toString ();
+    }
 }
