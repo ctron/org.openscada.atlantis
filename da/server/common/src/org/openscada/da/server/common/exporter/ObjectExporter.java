@@ -171,7 +171,6 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
         {
             return this.factory.createInputOutput ( pd.getName (), new WriteHandler () {
 
-                @Override
                 public void handleWrite ( final Variant value ) throws Exception
                 {
                     ObjectExporter.this.writeAttribute ( pd, value );
@@ -187,7 +186,6 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
             final DataItemCommand item = this.factory.createCommand ( pd.getName () );
             item.addListener ( new DataItemCommand.Listener () {
 
-                @Override
                 public void command ( final Variant value )
                 {
                     ObjectExporter.this.writeAttribute ( pd, value );
@@ -249,7 +247,6 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
         }
     }
 
-    @Override
     public synchronized void propertyChange ( final PropertyChangeEvent evt )
     {
         updateAttribute ( evt.getPropertyName (), evt.getNewValue (), null, null );
