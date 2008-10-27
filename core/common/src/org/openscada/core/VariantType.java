@@ -44,13 +44,18 @@ public enum VariantType
 
     private Class<?> clazz;
 
-    private static final Map<Byte, VariantType> values = new HashMap<Byte, VariantType> ( 10 );
+    private static final int approximateNumberOfTypes = 10;
+
+    private static final Map<Byte, VariantType> values = new HashMap<Byte, VariantType> ( approximateNumberOfTypes );
+
+    private static final Map<Class<?>, VariantType> valuesByClass = new HashMap<Class<?>, VariantType> ( approximateNumberOfTypes );
 
     static
     {
         for ( final VariantType t : VariantType.values () )
         {
             values.put ( t.toValue (), t );
+            valuesByClass.put ( t.toJavaType (), t );
         }
     }
 
@@ -80,18 +85,7 @@ public enum VariantType
      */
     public static VariantType fromJavaType ( final Class<?> clazz )
     {
-        if ( clazz == null )
-        {
-            return NULL;
-        }
-        for ( final VariantType t : VariantType.values () )
-        {
-            if ( t.clazz == clazz )
-            {
-                return t;
-            }
-        }
-        return UNKNOWN;
+        return valuesByClass.get ( clazz );
     }
 
     /**
