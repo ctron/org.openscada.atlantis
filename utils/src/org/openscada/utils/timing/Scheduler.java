@@ -330,9 +330,15 @@ public class Scheduler implements Runnable
     {
         synchronized ( this.jobs )
         {
-            log.debug ( "Pre remove: " + this.jobs.size () );
+            if ( log.isDebugEnabled () )
+            {
+                log.debug ( "Pre remove: " + this.jobs.size () );
+            }
             this.jobs.remove ( new Job ( job, 0 ) );
-            log.debug ( "Post remove: " + this.jobs.size () );
+            if ( log.isDebugEnabled () )
+            {
+                log.debug ( "Post remove: " + this.jobs.size () );
+            }
         }
     }
 
@@ -340,9 +346,15 @@ public class Scheduler implements Runnable
     {
         synchronized ( this.jobs )
         {
-            log.debug ( "Pre remove: " + this.jobs.size () );
+            if ( log.isDebugEnabled () )
+            {
+                log.debug ( "Pre remove: " + this.jobs.size () );
+            }
             this.jobs.remove ( job );
-            log.debug ( "Post remove: " + this.jobs.size () );
+            if ( log.isDebugEnabled () )
+            {
+                log.debug ( "Post remove: " + this.jobs.size () );
+            }
         }
     }
 
