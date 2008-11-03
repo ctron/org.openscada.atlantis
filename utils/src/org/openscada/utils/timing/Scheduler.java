@@ -41,50 +41,50 @@ public class Scheduler implements Runnable
 
     public class Job
     {
-        private final Runnable _runnable;
+        private final Runnable runnable;
 
-        private int _period;
+        private int period;
 
-        private long _nextTime;
+        private long nextTime;
 
-        private boolean _once = false;
+        private boolean once = false;
 
         public Job ( final Runnable runnable, final int period )
         {
-            this._runnable = runnable;
-            this._period = period;
-            this._nextTime = System.currentTimeMillis () + period;
+            this.runnable = runnable;
+            this.period = period;
+            this.nextTime = System.currentTimeMillis () + period;
         }
 
         public Job ( final Runnable runnable, final int period, final boolean once )
         {
-            this._runnable = runnable;
-            this._period = period;
-            this._nextTime = System.currentTimeMillis () + period;
-            this._once = once;
+            this.runnable = runnable;
+            this.period = period;
+            this.nextTime = System.currentTimeMillis () + period;
+            this.once = once;
         }
 
         public boolean isTimeOut ()
         {
-            return System.currentTimeMillis () >= this._nextTime;
+            return System.currentTimeMillis () >= this.nextTime;
         }
 
         public void run ()
         {
-            if ( this._period != 0 )
+            if ( this.period != 0 )
             {
-                this._nextTime = ( System.currentTimeMillis () / this._period + 1 ) * this._period;
+                this.nextTime = ( System.currentTimeMillis () / this.period + 1 ) * this.period;
             }
             else
             {
-                this._nextTime = System.currentTimeMillis ();
+                this.nextTime = System.currentTimeMillis ();
             }
 
-            if ( this._runnable != null )
+            if ( this.runnable != null )
             {
                 try
                 {
-                    this._runnable.run ();
+                    this.runnable.run ();
                 }
                 catch ( final Throwable t )
                 {
@@ -113,18 +113,18 @@ public class Scheduler implements Runnable
 
             final Job job = (Job)obj;
 
-            return this._runnable.equals ( job._runnable );
+            return this.runnable.equals ( job.runnable );
         }
 
         @Override
         public int hashCode ()
         {
-            return this._runnable.hashCode ();
+            return this.runnable.hashCode ();
         }
 
         public int getPeriod ()
         {
-            return this._period;
+            return this.period;
         }
 
         /**
@@ -135,12 +135,12 @@ public class Scheduler implements Runnable
          */
         public void setPeriod ( final int period )
         {
-            this._period = period;
+            this.period = period;
         }
 
         public boolean isOnce ()
         {
-            return this._once;
+            return this.once;
         }
 
         /**
@@ -149,7 +149,7 @@ public class Scheduler implements Runnable
          */
         public void trigger ()
         {
-            this._nextTime = System.currentTimeMillis ();
+            this.nextTime = System.currentTimeMillis ();
         }
 
         /**
@@ -157,7 +157,7 @@ public class Scheduler implements Runnable
          */
         public void bump ()
         {
-            this._nextTime = System.currentTimeMillis () + this._period;
+            this.nextTime = System.currentTimeMillis () + this.period;
         }
     }
 
