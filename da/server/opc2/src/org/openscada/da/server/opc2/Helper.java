@@ -52,7 +52,7 @@ public class Helper
             case JIVariant.VT_NULL:
                 return new Variant ();
             case JIVariant.VT_I1:
-                return new Variant ( (int)(Byte)variant.getObject () );
+                return new Variant ( ( (Character)variant.getObject () ).charValue () );
             case JIVariant.VT_I2:
                 return new Variant ( variant.getObjectAsShort () );
             case JIVariant.VT_I4:
