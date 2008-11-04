@@ -77,7 +77,7 @@ public class Variant
      */
     public Variant ( final Variant arg0 )
     {
-        this ( arg0.value );
+        this ( arg0 != null ? arg0.value : null );
     }
 
     public boolean isNull ()
@@ -537,7 +537,7 @@ public class Variant
             }
             else if ( isBoolean () )
             {
-                return asBoolean () ? ( i != 0 ) : ( i == 0 );
+                return asBoolean () ? i != 0 : i == 0;
             }
             else if ( isLong () )
             {
@@ -569,7 +569,7 @@ public class Variant
             }
             else if ( isBoolean () )
             {
-                return asBoolean () ? ( l != 0 ) : ( l == 0 );
+                return asBoolean () ? l != 0 : l == 0;
             }
             else
             {
@@ -593,7 +593,7 @@ public class Variant
         {
             if ( isBoolean () )
             {
-                return asBoolean () ? ( d != 0 ) : ( d == 0 );
+                return asBoolean () ? d != 0 : d == 0;
             }
             return asDouble () == d;
         }
