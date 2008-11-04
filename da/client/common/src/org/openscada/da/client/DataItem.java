@@ -33,13 +33,7 @@ public class DataItem extends Observable
 
     private ItemManager _itemManager = null;
 
-    private Variant _value = new Variant ();
-
-    private Map<String, Variant> _attributes = new HashMap<String, Variant> ();
-
-    private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
-
-    private Throwable _subscriptionError = null;
+    private DataItemValue _value = new DataItemValue ();
 
     private ItemUpdateListener _listener = null;
 
@@ -69,9 +63,9 @@ public class DataItem extends Observable
         register ( connection );
     }
 
-    synchronized public void register ( final ItemManager connection )
+    public void register ( final ItemManager itemManager )
     {
-        if ( this._itemManager == connection )
+        if ( this._itemManager == itemManager )
         {
             return;
         }
@@ -90,7 +84,7 @@ public class DataItem extends Observable
             }
         };
 
-        this._itemManager = connection;
+        this._itemManager = itemManager;
         this._itemManager.addItemUpdateListener ( this._itemId, this._listener );
     }
 
@@ -99,58 +93,54 @@ public class DataItem extends Observable
         ItemManager manager;
         ItemUpdateListener listener;
 
-        synchronized ( this )
+        manager = this._itemManager;
+        listener = this._listener;
+
+        this._itemManager = null;
+        this._listener = null;
+
+        if ( manager != null )
         {
-            if ( this._itemManager == null )
-            {
-                return;
-            }
-            manager = this._itemManager;
-            listener = this._listener;
-
-            this._itemManager = null;
-            this._listener = null;
+            manager.removeItemUpdateListener ( this._itemId, listener );
         }
-
-        manager.removeItemUpdateListener ( this._itemId, listener );
     }
 
     private void performNotifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        synchronized ( this )
+
+        final DataItemValue newValue = new DataItemValue ( this._value );
+
+        if ( cache )
         {
-            if ( cache )
-            {
-                setChanged ();
-                this._attributes = new HashMap<String, Variant> ( attributes );
-            }
-            else
-            {
-                AttributesHelper.mergeAttributes ( this._attributes, attributes );
-            }
-
-            if ( attributes != null )
-            {
-                setChanged ();
-            }
-
-            if ( value != null )
-            {
-                setChanged ();
-                this._value = new Variant ( value );
-            }
+            setChanged ();
+            newValue.setAttributes ( new HashMap<String, Variant> ( attributes ) );
+        }
+        else
+        {
+            AttributesHelper.mergeAttributes ( newValue.getAttributes (), attributes );
         }
 
+        if ( attributes != null )
+        {
+            setChanged ();
+        }
+
+        if ( value != null )
+        {
+            setChanged ();
+            newValue.setValue ( new Variant ( value ) );
+        }
+
+        this._value = newValue;
         notifyObservers ();
     }
 
     private void performNotifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
     {
-        synchronized ( this )
-        {
-            this._subscriptionState = subscriptionState;
-            this._subscriptionError = subscriptionError;
-        }
+        final DataItemValue newValue = new DataItemValue ( this._value );
+        newValue.setSubscriptionState ( subscriptionState );
+        newValue.setSubscriptionError ( subscriptionError );
+        this._value = newValue;
 
         setChanged ();
         notifyObservers ();
@@ -162,19 +152,21 @@ public class DataItem extends Observable
      * <b>Note:</b> The returned object may not be modified!
      *  
      * @return the current value
+     * @deprecated You should use {@link #getSnapshotValue()} instead to get a consistent value
      */
+    @Deprecated
     public Variant getValue ()
     {
-        return this._value;
+        return this._value.getValue ();
     }
 
     /**
      * Get the complete state of the current data item in an atomic operation
      * @return the current state of the data item 
      */
-    public synchronized DataItemValue getSnapshotValue ()
+    public DataItemValue getSnapshotValue ()
     {
-        return new DataItemValue ( this._value, this._attributes, this._subscriptionState );
+        return new DataItemValue ( this._value );
     }
 
     /**
@@ -183,19 +175,23 @@ public class DataItem extends Observable
      * <b>Note:</b> The returned object may not be modified!
      *  
      * @return the current attributes
+     * @deprecated You should use {@link #getSnapshotValue()} instead to get a consistent value
      */
+    @Deprecated
     public Map<String, Variant> getAttributes ()
     {
-        return this._attributes;
+        return this._value.getAttributes ();
     }
 
     /**
      * Get the subscription state
      * @return the subscription state
+     * @deprecated You should use {@link #getSnapshotValue()} instead to get a consistent value
      */
+    @Deprecated
     public SubscriptionState getSubscriptionState ()
     {
-        return this._subscriptionState;
+        return this._value.getSubscriptionState ();
     }
 
     /**
@@ -210,9 +206,11 @@ public class DataItem extends Observable
     /**
      * Get the subscription error or <code>null</code> if there was none
      * @return the subscription error
+     * @deprecated You should use {@link #getSnapshotValue()} instead to get a consistent value
      */
+    @Deprecated
     public Throwable getSubscriptionError ()
     {
-        return this._subscriptionError;
+        return this._value.getSubscriptionError ();
     }
 }

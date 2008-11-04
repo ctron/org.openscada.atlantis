@@ -39,6 +39,8 @@ public class DataItemValue
 
     private SubscriptionState subscriptionState = SubscriptionState.DISCONNECTED;
 
+    private Throwable subscriptionError = null;
+
     public DataItemValue ()
     {
         super ();
@@ -50,6 +52,23 @@ public class DataItemValue
         this.attributes = attributes;
         this.subscriptionState = subscriptionState;
         this.value = value;
+    }
+
+    public DataItemValue ( final Variant value, final Map<String, Variant> attributes, final SubscriptionState subscriptionState, final Throwable subscriptionError )
+    {
+        super ();
+        this.attributes = attributes;
+        this.subscriptionState = subscriptionState;
+        this.value = value;
+        this.subscriptionError = subscriptionError;
+    }
+
+    public DataItemValue ( final DataItemValue arg0 )
+    {
+        this.attributes = new HashMap<String, Variant> ( arg0.attributes );
+        this.value = new Variant ( arg0.value );
+        this.subscriptionError = arg0.subscriptionError;
+        this.subscriptionState = arg0.subscriptionState;
     }
 
     public Variant getValue ()
@@ -80,6 +99,16 @@ public class DataItemValue
     public void setSubscriptionState ( final SubscriptionState subscriptionState )
     {
         this.subscriptionState = subscriptionState;
+    }
+
+    public Throwable getSubscriptionError ()
+    {
+        return this.subscriptionError;
+    }
+
+    public void setSubscriptionError ( final Throwable subscriptionError )
+    {
+        this.subscriptionError = subscriptionError;
     }
 
     /**
