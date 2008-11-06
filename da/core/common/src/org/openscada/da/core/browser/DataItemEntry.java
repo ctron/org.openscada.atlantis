@@ -26,5 +26,6 @@ import org.openscada.da.core.IODirection;
 public interface DataItemEntry extends Entry
 {
     public String getId ();
+
     public EnumSet<IODirection> getIODirections ();
 }

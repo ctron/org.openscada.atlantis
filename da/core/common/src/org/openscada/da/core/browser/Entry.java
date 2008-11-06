@@ -25,6 +25,7 @@ import org.openscada.core.Variant;
 
 public interface Entry
 {
-    String getName ();
-    Map < String, Variant > getAttributes ();
+    public String getName ();
+
+    public Map<String, Variant> getAttributes ();
 }
