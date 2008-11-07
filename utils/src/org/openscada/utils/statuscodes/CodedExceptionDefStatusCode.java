@@ -33,19 +33,19 @@ public abstract class CodedExceptionDefStatusCode extends Exception implements C
         setStatusCode ( generateStatusCode () );
     }
 
-    public CodedExceptionDefStatusCode ( String message )
+    public CodedExceptionDefStatusCode ( final String message )
     {
         super ( message );
         setStatusCode ( generateStatusCode () );
     }
 
-    public CodedExceptionDefStatusCode ( Throwable cause )
+    public CodedExceptionDefStatusCode ( final Throwable cause )
     {
         super ( cause );
         setStatusCode ( generateStatusCode () );
     }
 
-    public CodedExceptionDefStatusCode ( String message, Throwable cause )
+    public CodedExceptionDefStatusCode ( final String message, final Throwable cause )
     {
         super ( message, cause );
         setStatusCode ( generateStatusCode () );
@@ -57,21 +57,26 @@ public abstract class CodedExceptionDefStatusCode extends Exception implements C
      */
     protected abstract StatusCode generateStatusCode ();
 
-    private void setStatusCode ( StatusCode status )
+    private void setStatusCode ( final StatusCode status )
     {
-        statusCode = status;
+        this.statusCode = status;
     }
 
     public StatusCode getStatus ()
     {
-        return statusCode;
+        return this.statusCode;
     }
 
     @Override
     public String getMessage ()
     {
-        String message = getStatus () + " : " + super.getMessage ();
+        final String message = this.statusCode + ": " + super.getMessage ();
         return message;
+    }
+
+    public String getOriginalMessage ()
+    {
+        return super.getMessage ();
     }
 
 }

@@ -26,4 +26,10 @@ public interface CodedExceptionBase
      * @return String of StatusCode
      */
     public StatusCode getStatus ();
+
+    /**
+     * Return the original message without the status code prefix
+     * @return the original message
+     */
+    public String getOriginalMessage ();
 }

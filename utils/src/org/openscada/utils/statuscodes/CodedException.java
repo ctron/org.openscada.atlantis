@@ -22,45 +22,51 @@ package org.openscada.utils.statuscodes;
 public class CodedException extends Exception implements CodedExceptionBase
 {
     private static final long serialVersionUID = 2962144070439177464L;
-    
+
     protected StatusCode status;
 
-    public CodedException ( StatusCode statusCode )
+    public CodedException ( final StatusCode statusCode )
     {
         super ();
-        status = statusCode;
+        this.status = statusCode;
     }
 
-    public CodedException ( StatusCode statusCode, String message )
+    public CodedException ( final StatusCode statusCode, final String message )
     {
         super ( message );
-        status = statusCode;
+        this.status = statusCode;
     }
 
-    public CodedException ( StatusCode statusCode, Throwable cause )
+    public CodedException ( final StatusCode statusCode, final Throwable cause )
     {
         super ( cause );
-        status = statusCode;
+        this.status = statusCode;
     }
 
-    public CodedException ( StatusCode statusCode, String message, Throwable cause )
+    public CodedException ( final StatusCode statusCode, final String message, final Throwable cause )
     {
         super ( message, cause );
-        status = statusCode;
+        this.status = statusCode;
     }
 
     public StatusCode getStatus ()
     {
-        return status;
+        return this.status;
     }
 
     /**
      * overrides getMessage to produce a message bearing the assigned statusCode and the 
      * the default Message of this exception type
      */
+    @Override
     public String getMessage ()
     {
-        String message = getStatus () + " : " + super.getMessage ();
+        final String message = getStatus () + ": " + super.getMessage ();
         return message;
+    }
+
+    public String getOriginalMessage ()
+    {
+        return super.getMessage ();
     }
 }

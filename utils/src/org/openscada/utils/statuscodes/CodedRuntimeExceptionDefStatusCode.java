@@ -32,19 +32,19 @@ public abstract class CodedRuntimeExceptionDefStatusCode extends Exception imple
         setStatusCode ( generateStatusCode () );
     }
 
-    public CodedRuntimeExceptionDefStatusCode ( String message )
+    public CodedRuntimeExceptionDefStatusCode ( final String message )
     {
         super ( message );
         setStatusCode ( generateStatusCode () );
     }
 
-    public CodedRuntimeExceptionDefStatusCode ( Throwable cause )
+    public CodedRuntimeExceptionDefStatusCode ( final Throwable cause )
     {
         super ( cause );
         setStatusCode ( generateStatusCode () );
     }
 
-    public CodedRuntimeExceptionDefStatusCode ( String message, Throwable cause )
+    public CodedRuntimeExceptionDefStatusCode ( final String message, final Throwable cause )
     {
         super ( message, cause );
         setStatusCode ( generateStatusCode () );
@@ -56,20 +56,20 @@ public abstract class CodedRuntimeExceptionDefStatusCode extends Exception imple
      */
     protected abstract StatusCode generateStatusCode ();
 
-    private void setStatusCode ( StatusCode status )
+    private void setStatusCode ( final StatusCode status )
     {
-        statusCode = status;
+        this.statusCode = status;
     }
 
     public StatusCode getStatus ()
     {
-        return statusCode;
+        return this.statusCode;
     }
 
     @Override
     public String getMessage ()
     {
-        String message = getStatus () + " : " + super.getMessage ();
+        final String message = getStatus () + ": " + super.getMessage ();
         return message;
     }
 }

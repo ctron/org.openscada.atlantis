@@ -21,43 +21,49 @@ package org.openscada.utils.statuscodes;
 
 public class CodedRuntimeException extends RuntimeException implements CodedExceptionBase
 {
-    
-    private static final long serialVersionUID = -1075738726086251513L;
-    
-    private StatusCode statusCode;
 
-    public CodedRuntimeException ( StatusCode statusCode )
+    private static final long serialVersionUID = -1075738726086251513L;
+
+    private final StatusCode statusCode;
+
+    public CodedRuntimeException ( final StatusCode statusCode )
     {
         super ();
         this.statusCode = statusCode;
     }
 
-    public CodedRuntimeException ( StatusCode statusCode, String message )
+    public CodedRuntimeException ( final StatusCode statusCode, final String message )
     {
         super ( message );
         this.statusCode = statusCode;
     }
 
-    public CodedRuntimeException ( StatusCode statusCode, String message, Throwable cause )
+    public CodedRuntimeException ( final StatusCode statusCode, final String message, final Throwable cause )
     {
         super ( message, cause );
         this.statusCode = statusCode;
     }
 
-    public CodedRuntimeException ( StatusCode statusCode, Throwable cause )
+    public CodedRuntimeException ( final StatusCode statusCode, final Throwable cause )
     {
         super ( cause );
         this.statusCode = statusCode;
     }
 
+    @Override
     public String getMessage ()
     {
-        String message = statusCode + " : " + super.getMessage ();
+        final String message = this.statusCode + ": " + super.getMessage ();
         return message;
     }
 
     public StatusCode getStatus ()
     {
         return this.statusCode;
+    }
+
+    public String getOriginalMessage ()
+    {
+        return super.getMessage ();
     }
 }
