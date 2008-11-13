@@ -341,14 +341,31 @@
 	
 		<openscada.runfile.init file="${temp.dir}/dist-sim-server/runfile.xml"/>
     	<openscada.runfile.gather-jars file="${temp.dir}/dist-sim-server/runfile.xml" dir="${temp.dir}/dist-sim-server"/>
-		<openscada.runfile.arg.add file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.simulation.Hive"/>
+		<openscada.runfile.arg.add file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.simulation.component.Hive"/>
 		<openscada.runfile.set-main file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.net.Application"/>
 		<openscada.runfile.transform dir="${temp.dir}/dist-sim-server"/>
 
 		<mkdir dir="${deploy.dist.binary}/"/>
-		<zip basedir="${temp.dir}/dist-sim-server" destfile="${deploy.dist.binary}/openscada-atlantis-simserver-net-${tag}.zip">
+		<zip basedir="${temp.dir}/dist-sim-server" destfile="${deploy.dist.binary}/openscada-atlantis-simserver-component-net-${tag}.zip">
 		</zip>
 		
+    	
+    	<delete dir="${temp.dir}/dist-sim-server"/>
+    		
+		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-sim-server"/>
+		<openscada.unpack-module name="da-server-simulation" todir="${temp.dir}/dist-sim-server"/>
+
+		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-sim-server"/>
+	
+		<openscada.runfile.init file="${temp.dir}/dist-sim-server/runfile.xml"/>
+    	<openscada.runfile.gather-jars file="${temp.dir}/dist-sim-server/runfile.xml" dir="${temp.dir}/dist-sim-server"/>
+		<openscada.runfile.arg.add file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.simulation.filesource.Hive"/>
+		<openscada.runfile.set-main file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.net.Application"/>
+		<openscada.runfile.transform dir="${temp.dir}/dist-sim-server"/>
+
+		<mkdir dir="${deploy.dist.binary}/"/>
+		<zip basedir="${temp.dir}/dist-sim-server" destfile="${deploy.dist.binary}/openscada-atlantis-simserver-filesource-net-${tag}.zip">
+		</zip>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
