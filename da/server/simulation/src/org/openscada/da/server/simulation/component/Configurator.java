@@ -1,6 +1,6 @@
-package org.openscada.da.server.simulation;
+package org.openscada.da.server.simulation.component;
 
-import org.openscada.da.server.simulation.modules.SimpleMOV;
+import org.openscada.da.server.simulation.component.modules.SimpleMOV;
 
 public class Configurator
 {

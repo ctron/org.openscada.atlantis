@@ -133,7 +133,7 @@ public class Activator extends AbstractUIPlugin
         synchronized ( this )
         {
             checkRunning ( SIM_PORT );
-            final org.openscada.da.core.server.Hive hive = new org.openscada.da.server.simulation.Hive ();
+            final org.openscada.da.core.server.Hive hive = new org.openscada.da.server.simulation.component.Hive ();
             exportServer ( hive, SIM_PORT );
         }
     }

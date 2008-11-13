@@ -1,4 +1,4 @@
-package org.openscada.da.server.simulation.modules;
+package org.openscada.da.server.simulation.component.modules;
 
 public class ItemAlreadyRegisteredException extends RuntimeException
 {

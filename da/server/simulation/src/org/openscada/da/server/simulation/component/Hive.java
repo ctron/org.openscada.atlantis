@@ -12,7 +12,7 @@
  * Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.server.simulation;
+package org.openscada.da.server.simulation.component;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,9 +30,9 @@ import org.openscada.da.server.browser.common.query.Matcher;
 import org.openscada.da.server.browser.common.query.QueryFolder;
 import org.openscada.da.server.browser.common.query.SplitGroupProvider;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.simulation.modules.BaseModule;
-import org.openscada.da.server.simulation.modules.SimpleMOV;
-import org.openscada.da.server.simulation.modules.SimpleScale;
+import org.openscada.da.server.simulation.component.modules.BaseModule;
+import org.openscada.da.server.simulation.component.modules.SimpleMOV;
+import org.openscada.da.server.simulation.component.modules.SimpleScale;
 import org.openscada.utils.timing.Scheduler;
 
 public class Hive extends HiveCommon

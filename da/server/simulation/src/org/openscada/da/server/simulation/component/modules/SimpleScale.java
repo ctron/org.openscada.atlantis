@@ -1,4 +1,4 @@
-package org.openscada.da.server.simulation.modules;
+package org.openscada.da.server.simulation.component.modules;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.simulation.Hive;
+import org.openscada.da.server.simulation.component.Hive;
 import org.openscada.utils.collection.MapBuilder;
 
 public class SimpleScale extends BaseModule
