@@ -6,5 +6,12 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/openscada_utils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ext_log4j"/>
 	<classpathentry kind="lib" path="schemasrc"/>
+	<classpathentry kind="lib" path="lib/jOpenDocument-1.1b3-jdk5.jar"/>
+	<classpathentry kind="lib" path="lib/js-engine.jar"/>
+	<classpathentry kind="lib" path="lib/js.jar"/>
+	<classpathentry kind="lib" path="lib/jxl.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ext_junit"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_server_net"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openscada_net_base"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

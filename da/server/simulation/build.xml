@@ -47,6 +47,8 @@
 		<openscada.pull-in-external-lib name="xmlbeans"/>
     	<openscada.pull-in-module name="utils"/>
     	<openscada.pull-in-module name="da-server-common"/>
+		<openscada.pull-in-module name="net-base"/>
+    	<openscada.pull-in-module name="da-server-net"/>
     </target>
 
 	<!-- ================================= 
