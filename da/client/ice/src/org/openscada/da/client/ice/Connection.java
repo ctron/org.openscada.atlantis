@@ -65,80 +65,82 @@ import OpenSCADA.DA.Browser.InvalidLocationException;
 
 public class Connection implements org.openscada.da.client.Connection
 {
-    private static Logger _log = Logger.getLogger ( Connection.class );
+    private static Logger log = Logger.getLogger ( Connection.class );
 
     static
     {
         ConnectionFactory.registerDriverFactory ( new DriverFactory () );
     }
 
-    private Scheduler _scheduler = new Scheduler ( true, "IceConnectionScheduler" );
+    private final Scheduler scheduler = new Scheduler ( true, "IceConnectionScheduler" );
 
     protected ConnectionState _state = ConnectionState.CLOSED;
 
     protected Communicator _communicator = null;
 
-    private HivePrx _hive = null;
+    private HivePrx hive = null;
 
-    private ConnectionInformation _connectionInformation = null;
+    private ConnectionInformation connectionInformation = null;
 
-    private String _args[] = null;
+    private String args[] = null;
 
-    private InitializationData _initData = null;
+    private InitializationData initData = null;
 
-    private SessionPrx _session = null;
+    private SessionPrx session = null;
 
-    private Map<String, ItemUpdateListener> _itemListenerMap = new HashMap<String, ItemUpdateListener> ();
+    private final Map<String, ItemUpdateListener> itemListenerMap = new HashMap<String, ItemUpdateListener> ();
 
-    private Map<Location, FolderListener> _folderListenerMap = new HashMap<Location, FolderListener> ();
+    private final Map<Location, FolderListener> folderListenerMap = new HashMap<Location, FolderListener> ();
 
-    private Set<ConnectionStateListener> _listeners = new HashSet<ConnectionStateListener> ();
+    private final Set<ConnectionStateListener> listeners = new HashSet<ConnectionStateListener> ();
 
-    private ObjectAdapter _adapter;
+    private ObjectAdapter adapter;
 
-    private DataCallbackImpl _dataCallback;
+    private DataCallbackImpl dataCallback;
 
-    private FolderCallbackImpl _folderCallback;
+    private FolderCallbackImpl folderCallback;
 
-    private Queue<Runnable> _eventQueue = new LinkedList<Runnable> ();
+    private final Queue<Runnable> eventQueue = new LinkedList<Runnable> ();
 
-    private Thread _eventPusher = null;
+    private Thread eventPusher = null;
 
-    private boolean _connectionRequested = false;
+    private boolean connectionRequested = false;
 
-    public Connection ( ConnectionInformation connectionInformation )
+    public Connection ( final ConnectionInformation connectionInformation )
     {
         super ();
-        _connectionInformation = connectionInformation;
+        this.connectionInformation = connectionInformation;
 
-        _args = new String[0];
+        this.args = new String[0];
         if ( connectionInformation.getSubtargets () != null )
-            _args = connectionInformation.getSubtargets ().toArray ( new String[0] );
-
-        _initData = new InitializationData ();
-
-        if ( _initData.properties == null )
         {
-            _initData.properties = Util.createProperties ();
+            this.args = connectionInformation.getSubtargets ().toArray ( new String[0] );
         }
 
-        for ( Map.Entry<String, String> entry : connectionInformation.getProperties ().entrySet () )
+        this.initData = new InitializationData ();
+
+        if ( this.initData.properties == null )
         {
-            _initData.properties.setProperty ( entry.getKey (), entry.getValue () );
+            this.initData.properties = Util.createProperties ();
         }
 
-        _eventPusher = new Thread ( new Runnable () {
+        for ( final Map.Entry<String, String> entry : connectionInformation.getProperties ().entrySet () )
+        {
+            this.initData.properties.setProperty ( entry.getKey (), entry.getValue () );
+        }
+
+        this.eventPusher = new Thread ( new Runnable () {
 
             public void run ()
             {
                 pushEvents ();
             }
         } );
-        _eventPusher.setDaemon ( true );
-        _eventPusher.start ();
+        this.eventPusher.setDaemon ( true );
+        this.eventPusher.start ();
 
         // add the connection checker
-        _scheduler.addJob ( new Runnable () {
+        this.scheduler.addJob ( new Runnable () {
 
             public void run ()
             {
@@ -154,23 +156,25 @@ public class Connection implements org.openscada.da.client.Connection
      */
     protected Runnable pollEvent ()
     {
-        synchronized ( _eventQueue )
+        synchronized ( this.eventQueue )
         {
-            if ( !_eventQueue.isEmpty () )
-                return _eventQueue.poll ();
+            if ( !this.eventQueue.isEmpty () )
+            {
+                return this.eventQueue.poll ();
+            }
 
-            while ( _eventQueue.isEmpty () )
+            while ( this.eventQueue.isEmpty () )
             {
                 try
                 {
-                    _eventQueue.wait ();
+                    this.eventQueue.wait ();
                 }
-                catch ( InterruptedException e )
+                catch ( final InterruptedException e )
                 {
                 }
             }
 
-            return _eventQueue.poll ();
+            return this.eventQueue.poll ();
         }
     }
 
@@ -178,14 +182,14 @@ public class Connection implements org.openscada.da.client.Connection
     {
         while ( true )
         {
-            Runnable r = pollEvent ();
+            final Runnable r = pollEvent ();
 
             // ignore errors in event handling
             try
             {
                 r.run ();
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
             }
         }
@@ -197,7 +201,7 @@ public class Connection implements org.openscada.da.client.Connection
      */
     protected void scheduleReconnect ()
     {
-        _scheduler.scheduleJob ( new Runnable () {
+        this.scheduler.scheduleJob ( new Runnable () {
 
             public void run ()
             {
@@ -213,44 +217,46 @@ public class Connection implements org.openscada.da.client.Connection
 
     public String getTarget ()
     {
-        return _connectionInformation.getProperties ().get ( _connectionInformation.getTarget () );
+        return this.connectionInformation.getProperties ().get ( this.connectionInformation.getTarget () );
     }
 
     public boolean isSecure ()
     {
-        if ( !_connectionInformation.getProperties ().containsKey ( "secure" ) )
+        if ( !this.connectionInformation.getProperties ().containsKey ( "secure" ) )
+        {
             return true;
+        }
 
         try
         {
-            return Boolean.valueOf ( _connectionInformation.getProperties ().get ( "secure" ) );
+            return Boolean.valueOf ( this.connectionInformation.getProperties ().get ( "secure" ) );
         }
-        catch ( Throwable t )
+        catch ( final Throwable t )
         {
-            _log.warn ( "Unable to get property 'secure'. Defaulting to 'true'", t );
+            log.warn ( "Unable to get property 'secure'. Defaulting to 'true'", t );
         }
         return true;
     }
 
     public boolean isAutoReconnect ()
     {
-        return _connectionInformation.getProperties ().containsKey ( "auto-reconnect" );
+        return this.connectionInformation.getProperties ().containsKey ( "auto-reconnect" );
     }
 
     public int getTimeout ()
     {
-        if ( !_connectionInformation.getProperties ().containsKey ( "timeout" ) )
+        if ( !this.connectionInformation.getProperties ().containsKey ( "timeout" ) )
         {
             return -1;
         }
 
         try
         {
-            return Integer.valueOf ( _connectionInformation.getProperties ().get ( "timeout" ) );
+            return Integer.valueOf ( this.connectionInformation.getProperties ().get ( "timeout" ) );
         }
-        catch ( Throwable t )
+        catch ( final Throwable t )
         {
-            _log.warn ( "Unable to get property 'timeout'. Defaulting to -1 (none)", t );
+            log.warn ( "Unable to get property 'timeout'. Defaulting to -1 (none)", t );
         }
         return -1;
     }
@@ -258,101 +264,94 @@ public class Connection implements org.openscada.da.client.Connection
     protected HivePrx getHive () throws NoConnectionException
     {
         HivePrx hive;
-        if ( ( hive = _hive ) != null )
+        if ( ( hive = this.hive ) != null )
         {
             return hive;
         }
         throw new NoConnectionException ();
     }
 
-    protected Entry[] browse ( HivePrx hive, String[] path ) throws OperationException, NoConnectionException
+    protected Entry[] browse ( final HivePrx hive, final String[] path ) throws OperationException, NoConnectionException
     {
         try
         {
-            return BrowserEntryHelper.fromIce ( hive.browse ( _session, path ) );
+            return BrowserEntryHelper.fromIce ( hive.browse ( this.session, path ) );
         }
-        catch ( Ice.LocalException e )
+        catch ( final Ice.LocalException e )
         {
             handleDisconnect ( e );
             throw new OperationException ( e );
         }
-        catch ( InvalidSessionException e )
+        catch ( final InvalidSessionException e )
         {
             handleDisconnect ( e );
             throw new NoConnectionException ();
         }
-        catch ( OperationNotSupportedException e )
+        catch ( final OperationNotSupportedException e )
         {
             throw new org.openscada.core.OperationException ( e.message );
         }
-        catch ( InvalidLocationException e )
+        catch ( final InvalidLocationException e )
         {
             throw new org.openscada.core.OperationException ( e );
         }
     }
 
-    public Entry[] browse ( String[] path ) throws NoConnectionException, OperationException
+    public Entry[] browse ( final String[] path ) throws NoConnectionException, OperationException
     {
-        return browse ( getHive (), path );
+        return browse ( new Location ( path ) );
     }
 
-    public Entry[] browse ( String[] path, int timeout ) throws NoConnectionException, OperationException
+    public Entry[] browse ( final String[] path, final int timeout ) throws NoConnectionException, OperationException
     {
-        return browse ( HivePrxHelper.uncheckedCast ( getHive ().ice_timeout ( timeout ) ), path );
+        return browse ( new Location ( path ), timeout );
     }
 
-    public void browse ( String[] path, BrowseOperationCallback callback )
+    public void browse ( final String[] path, final BrowseOperationCallback callback )
     {
-        try
-        {
-            getHive ().browse_async ( new AsyncBrowseOperation ( callback ), _session, path );
-        }
-        catch ( NoConnectionException e )
-        {
-            callback.error ( e );
-        }
+        browse ( new Location ( path ), callback );
     }
 
     // write operation
-    protected void write ( HivePrx hive, String itemName, Variant value ) throws OperationException
+    protected void write ( final HivePrx hive, final String itemName, final Variant value ) throws OperationException
     {
         try
         {
-            hive.write ( _session, itemName, VariantHelper.toIce ( value ) );
+            hive.write ( this.session, itemName, VariantHelper.toIce ( value ) );
         }
-        catch ( Ice.LocalException e )
+        catch ( final Ice.LocalException e )
         {
             handleDisconnect ( e );
             throw new OperationException ( e );
         }
-        catch ( InvalidSessionException e )
+        catch ( final InvalidSessionException e )
         {
             handleDisconnect ( e );
             throw new OperationException ( new org.openscada.core.InvalidSessionException ().fillInStackTrace () );
         }
-        catch ( InvalidItemException e )
+        catch ( final InvalidItemException e )
         {
             throw new OperationException ( e );
         }
     }
 
-    public void write ( String item, Variant value ) throws OperationException, NoConnectionException
+    public void write ( final String item, final Variant value ) throws OperationException, NoConnectionException
     {
         write ( getHive (), item, value );
     }
 
-    public void write ( String item, Variant value, int timeout ) throws NoConnectionException, OperationException
+    public void write ( final String item, final Variant value, final int timeout ) throws NoConnectionException, OperationException
     {
         write ( HivePrxHelper.uncheckedCast ( getHive ().ice_timeout ( timeout ) ), item, value );
     }
 
-    public void write ( String item, Variant value, WriteOperationCallback callback )
+    public void write ( final String item, final Variant value, final WriteOperationCallback callback )
     {
         try
         {
-            getHive ().write_async ( new AsyncWriteOperation ( callback ), _session, item, VariantHelper.toIce ( value ) );
+            getHive ().write_async ( new AsyncWriteOperation ( callback ), this.session, item, VariantHelper.toIce ( value ) );
         }
-        catch ( NoConnectionException e )
+        catch ( final NoConnectionException e )
         {
             callback.error ( e );
         }
@@ -360,70 +359,68 @@ public class Connection implements org.openscada.da.client.Connection
 
     // write attributes operation
 
-    public WriteAttributeResults writeAttributes ( String item, Map<String, Variant> attributes ) throws OperationException, NoConnectionException
+    public WriteAttributeResults writeAttributes ( final String item, final Map<String, Variant> attributes ) throws OperationException, NoConnectionException
     {
         return writeAttributes ( getHive (), item, attributes );
     }
 
-    public WriteAttributeResults writeAttributes ( String item, Map<String, Variant> attributes, int timeout ) throws OperationException, NoConnectionException
+    public WriteAttributeResults writeAttributes ( final String item, final Map<String, Variant> attributes, final int timeout ) throws OperationException, NoConnectionException
     {
         return writeAttributes ( HivePrxHelper.uncheckedCast ( getHive ().ice_timeout ( timeout ) ), item, attributes );
     }
 
-    protected WriteAttributeResults writeAttributes ( HivePrx hive, String itemId, Map<String, Variant> attributes ) throws OperationException
+    protected WriteAttributeResults writeAttributes ( final HivePrx hive, final String itemId, final Map<String, Variant> attributes ) throws OperationException
     {
         try
         {
-            WriteAttributesResultEntry[] result = hive.writeAttributes ( _session, itemId,
-                    AttributesHelper.toIce ( attributes ) );
+            final WriteAttributesResultEntry[] result = hive.writeAttributes ( this.session, itemId, AttributesHelper.toIce ( attributes ) );
             return ConnectionHelper.fromIce ( result );
         }
-        catch ( Ice.LocalException e )
+        catch ( final Ice.LocalException e )
         {
             handleDisconnect ( e );
             throw new OperationException ( e );
         }
-        catch ( InvalidSessionException e )
+        catch ( final InvalidSessionException e )
         {
             handleDisconnect ( e );
             throw new OperationException ( e );
         }
-        catch ( InvalidItemException e )
+        catch ( final InvalidItemException e )
         {
             throw new OperationException ( e );
         }
     }
 
-    public void writeAttributes ( String item, Map<String, Variant> attributes, WriteAttributeOperationCallback callback )
+    public void writeAttributes ( final String item, final Map<String, Variant> attributes, final WriteAttributeOperationCallback callback )
     {
         try
         {
-            getHive ().writeAttributes_async ( new AsyncWriteAttributesOperation ( callback ), _session, item,
-                    AttributesHelper.toIce ( attributes ) );
+            getHive ().writeAttributes_async ( new AsyncWriteAttributesOperation ( callback ), this.session, item, AttributesHelper.toIce ( attributes ) );
         }
-        catch ( NoConnectionException e )
+        catch ( final NoConnectionException e )
         {
             callback.error ( e );
         }
     }
 
-    public synchronized void addConnectionStateListener ( ConnectionStateListener connectionStateListener )
+    public synchronized void addConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
-        _listeners.add ( connectionStateListener );
+        this.listeners.add ( connectionStateListener );
     }
 
-    protected synchronized void setState ( ConnectionState state, Throwable error )
+    protected synchronized void setState ( final ConnectionState state, final Throwable error )
     {
-        if ( !_state.equals ( state ) )
+        if ( !this._state.equals ( state ) )
         {
-            _state = state;
+            this._state = state;
             notifyStateChange ( state, error );
         }
     }
 
-    private synchronized void notifyStateChange ( ConnectionState state, Throwable error )
+    private synchronized void notifyStateChange ( final ConnectionState state, final Throwable error )
     {
-        for ( ConnectionStateListener listener : _listeners.toArray ( new ConnectionStateListener[0] ) )
+        for ( final ConnectionStateListener listener : this.listeners.toArray ( new ConnectionStateListener[0] ) )
         {
             listener.stateChange ( this, state, error );
         }
@@ -431,7 +428,7 @@ public class Connection implements org.openscada.da.client.Connection
 
     public void checkConnection ()
     {
-        SessionPrx session = _session;
+        final SessionPrx session = this.session;
 
         if ( session == null )
         {
@@ -442,7 +439,7 @@ public class Connection implements org.openscada.da.client.Connection
         {
             session.ice_ping ();
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             handleDisconnect ( e );
         }
@@ -450,7 +447,7 @@ public class Connection implements org.openscada.da.client.Connection
 
     public synchronized void connect ()
     {
-        switch ( _state )
+        switch ( this._state )
         {
         case CLOSED:
             break;
@@ -458,44 +455,43 @@ public class Connection implements org.openscada.da.client.Connection
             return;
         }
 
-        _connectionRequested = true;
+        this.connectionRequested = true;
         setState ( ConnectionState.CONNECTING, null );
 
-        _communicator = Util.initialize ( _args, _initData );
-        _adapter = _communicator.createObjectAdapter ( "Client" );
-        _adapter.activate ();
+        this._communicator = Util.initialize ( this.args, this.initData );
+        this.adapter = this._communicator.createObjectAdapter ( "Client" );
+        this.adapter.activate ();
 
         try
         {
-            ObjectPrx prx = _communicator.stringToProxy ( getTarget () ).ice_secure ( isSecure () ).ice_timeout (
-                    getTimeout () ).ice_twoway ();
-            _hive = HivePrxHelper.checkedCast ( prx );
+            final ObjectPrx prx = this._communicator.stringToProxy ( getTarget () ).ice_secure ( isSecure () ).ice_timeout ( getTimeout () ).ice_twoway ();
+            this.hive = HivePrxHelper.checkedCast ( prx );
 
             setState ( ConnectionState.CONNECTED, null );
 
-            _session = _hive.createSession ( _connectionInformation.getProperties () );
+            this.session = this.hive.createSession ( this.connectionInformation.getProperties () );
 
             // register data callback
-            _dataCallback = new DataCallbackImpl ( this );
+            this.dataCallback = new DataCallbackImpl ( this );
             Ice.Identity ident = new Ice.Identity ();
             ident.name = Ice.Util.generateUUID ();
             ident.category = "";
-            _adapter.add ( _dataCallback, ident );
-            _session.ice_getConnection ().setAdapter ( _adapter );
-            _session.setDataCallback ( ident );
+            this.adapter.add ( this.dataCallback, ident );
+            this.session.ice_getConnection ().setAdapter ( this.adapter );
+            this.session.setDataCallback ( ident );
 
             // register folder callback
-            _folderCallback = new FolderCallbackImpl ( this );
+            this.folderCallback = new FolderCallbackImpl ( this );
             ident = new Ice.Identity ();
             ident.name = Ice.Util.generateUUID ();
             ident.category = "";
-            _adapter.add ( _folderCallback, ident );
-            _session.ice_getConnection ().setAdapter ( _adapter );
-            _session.setFolderCallback ( ident );
+            this.adapter.add ( this.folderCallback, ident );
+            this.session.ice_getConnection ().setAdapter ( this.adapter );
+            this.session.setFolderCallback ( ident );
 
             setState ( ConnectionState.BOUND, null );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             handleDisconnect ( e );
         }
@@ -505,24 +501,24 @@ public class Connection implements org.openscada.da.client.Connection
      * Schedule a reconnect if a connection is currently requested
      * @param e the error that caused the disconnect
      */
-    protected synchronized void handleDisconnect ( Throwable e )
+    protected synchronized void handleDisconnect ( final Throwable e )
     {
-        _log.info ( "handleDisconnect", e );
+        log.info ( "handleDisconnect", e );
 
-        _hive = null;
-        _session = null;
-        _adapter.deactivate ();
-        _communicator.destroy ();
+        this.hive = null;
+        this.session = null;
+        this.adapter.deactivate ();
+        this._communicator.destroy ();
 
-        _dataCallback = null;
-        _folderCallback = null;
+        this.dataCallback = null;
+        this.folderCallback = null;
 
-        _adapter = null;
-        _communicator = null;
+        this.adapter = null;
+        this._communicator = null;
 
         setState ( ConnectionState.CLOSED, e );
 
-        if ( isAutoReconnect () && _connectionRequested )
+        if ( isAutoReconnect () && this.connectionRequested )
         {
             scheduleReconnect ();
         }
@@ -530,7 +526,7 @@ public class Connection implements org.openscada.da.client.Connection
 
     public synchronized void disconnect ()
     {
-        switch ( _state )
+        switch ( this._state )
         {
         case BOUND:
             break;
@@ -538,13 +534,13 @@ public class Connection implements org.openscada.da.client.Connection
             return;
         }
 
-        _log.debug ( "Shutting down connection" );
-        _connectionRequested = false;
+        log.debug ( "Shutting down connection" );
+        this.connectionRequested = false;
         try
         {
-            _hive.closeSession ( _session );
+            this.hive.closeSession ( this.session );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             // don't care about this here
         }
@@ -555,83 +551,83 @@ public class Connection implements org.openscada.da.client.Connection
 
     public ConnectionState getState ()
     {
-        return _state;
+        return this._state;
     }
 
-    public synchronized void removeConnectionStateListener ( ConnectionStateListener connectionStateListener )
+    public synchronized void removeConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
-        _listeners.remove ( connectionStateListener );
+        this.listeners.remove ( connectionStateListener );
     }
 
     public void subscriptionChange ( final String item, final SubscriptionState subscriptionState )
     {
-        synchronized ( _eventQueue )
+        synchronized ( this.eventQueue )
         {
-            _eventQueue.add ( new Runnable () {
+            this.eventQueue.add ( new Runnable () {
 
                 public void run ()
                 {
                     fireSubscriptionChange ( item, subscriptionState );
                 }
             } );
-            _eventQueue.notify ();
+            this.eventQueue.notify ();
         }
     }
 
     public void dataChange ( final String itemId, final Variant value, final Map<String, Variant> attributes, final boolean full )
     {
-        synchronized ( _eventQueue )
+        synchronized ( this.eventQueue )
         {
-            _eventQueue.add ( new Runnable () {
+            this.eventQueue.add ( new Runnable () {
 
                 public void run ()
                 {
                     fireDataChange ( itemId, value, attributes, full );
                 }
             } );
-            _eventQueue.notify ();
+            this.eventQueue.notify ();
         }
     }
 
     public void folderChanged ( final Location location, final Entry[] entries, final String[] removed, final boolean full )
     {
-        synchronized ( _eventQueue )
+        synchronized ( this.eventQueue )
         {
-            _eventQueue.add ( new Runnable () {
+            this.eventQueue.add ( new Runnable () {
 
                 public void run ()
                 {
                     fireFolderChange ( location, entries, removed, full );
                 }
             } );
-            _eventQueue.notify ();
+            this.eventQueue.notify ();
         }
     }
 
-    protected synchronized void fireDataChange ( String itemId, Variant variant, Map<String, Variant> attributes, boolean cache )
+    protected synchronized void fireDataChange ( final String itemId, final Variant variant, final Map<String, Variant> attributes, final boolean cache )
     {
-        ItemUpdateListener listener = _itemListenerMap.get ( itemId );
+        final ItemUpdateListener listener = this.itemListenerMap.get ( itemId );
         if ( listener != null )
         {
             listener.notifyDataChange ( variant, attributes, cache );
         }
     }
 
-    protected synchronized void fireSubscriptionChange ( String itemId, SubscriptionState subscriptionState )
+    protected synchronized void fireSubscriptionChange ( final String itemId, final SubscriptionState subscriptionState )
     {
-        ItemUpdateListener listener = _itemListenerMap.get ( itemId );
+        final ItemUpdateListener listener = this.itemListenerMap.get ( itemId );
         if ( listener != null )
         {
             listener.notifySubscriptionChange ( subscriptionState, null );
         }
     }
 
-    protected void fireFolderChange ( Location location, Entry[] added, String[] removed, boolean full )
+    protected void fireFolderChange ( final Location location, final Entry[] added, final String[] removed, final boolean full )
     {
         FolderListener listener;
-        synchronized ( _folderListenerMap )
+        synchronized ( this.folderListenerMap )
         {
-            listener = _folderListenerMap.get ( location );
+            listener = this.folderListenerMap.get ( location );
         }
         if ( listener != null )
         {
@@ -639,114 +635,138 @@ public class Connection implements org.openscada.da.client.Connection
         }
     }
 
-    public synchronized ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener )
+    public synchronized ItemUpdateListener setItemUpdateListener ( final String itemId, final ItemUpdateListener listener )
     {
-        _log.debug ( String.format ( "Setting listener for item '%s' to %s", itemId, "" + listener ) );
-        return _itemListenerMap.put ( itemId, listener );
+        log.debug ( String.format ( "Setting listener for item '%s' to %s", itemId, "" + listener ) );
+        return this.itemListenerMap.put ( itemId, listener );
     }
 
-    public void subscribeItem ( String itemId ) throws OperationException, NoConnectionException
+    public void subscribeItem ( final String itemId ) throws OperationException, NoConnectionException
     {
         try
         {
-            getHive ().subscribeItem ( _session, itemId );
+            getHive ().subscribeItem ( this.session, itemId );
         }
-        catch ( Ice.LocalException e )
+        catch ( final Ice.LocalException e )
         {
             handleDisconnect ( e );
             throw new OperationException ( e );
         }
-        catch ( InvalidSessionException e )
+        catch ( final InvalidSessionException e )
         {
             handleDisconnect ( e );
             throw new NoConnectionException ();
         }
-        catch ( InvalidItemException e )
+        catch ( final InvalidItemException e )
         {
             throw new OperationException ( e );
         }
     }
 
-    public void unsubscribeItem ( String itemId ) throws OperationException, NoConnectionException
+    public void unsubscribeItem ( final String itemId ) throws OperationException, NoConnectionException
     {
         try
         {
-            getHive ().unsubscribeItem ( _session, itemId );
+            getHive ().unsubscribeItem ( this.session, itemId );
         }
-        catch ( Ice.LocalException e )
+        catch ( final Ice.LocalException e )
         {
             handleDisconnect ( e );
             throw new OperationException ( e );
         }
-        catch ( InvalidSessionException e )
+        catch ( final InvalidSessionException e )
         {
             handleDisconnect ( e );
             throw new NoConnectionException ();
         }
-        catch ( InvalidItemException e )
+        catch ( final InvalidItemException e )
         {
             throw new OperationException ( e );
         }
     }
 
-    public FolderListener setFolderListener ( Location location, FolderListener listener )
+    public FolderListener setFolderListener ( final Location location, final FolderListener listener )
     {
-        synchronized ( _folderListenerMap )
+        synchronized ( this.folderListenerMap )
         {
-            return _folderListenerMap.put ( location, listener );
+            return this.folderListenerMap.put ( location, listener );
         }
     }
 
-    public void subscribeFolder ( Location location ) throws OperationException, NoConnectionException
+    public void subscribeFolder ( final Location location ) throws OperationException, NoConnectionException
     {
         try
         {
-            getHive ().subscribeFolder ( _session, location.asArray () );
+            getHive ().subscribeFolder ( this.session, location.asArray () );
         }
-        catch ( Ice.LocalException e )
+        catch ( final Ice.LocalException e )
         {
             handleDisconnect ( e );
             throw new OperationException ( e );
         }
-        catch ( InvalidSessionException e )
+        catch ( final InvalidSessionException e )
         {
             handleDisconnect ( e );
             throw new NoConnectionException ();
         }
-        catch ( OperationNotSupportedException e )
+        catch ( final OperationNotSupportedException e )
         {
             throw new OperationException ( e );
         }
-        catch ( InvalidLocationException e )
+        catch ( final InvalidLocationException e )
         {
             throw new OperationException ( e );
         }
     }
 
-    public void unsubscribeFolder ( Location location ) throws OperationException, NoConnectionException
+    public void unsubscribeFolder ( final Location location ) throws OperationException, NoConnectionException
     {
         try
         {
-            getHive ().unsubscribeFolder ( _session, location.asArray () );
+            getHive ().unsubscribeFolder ( this.session, location.asArray () );
         }
-        catch ( Ice.LocalException e )
+        catch ( final Ice.LocalException e )
         {
             handleDisconnect ( e );
             throw new OperationException ( e );
         }
-        catch ( InvalidSessionException e )
+        catch ( final InvalidSessionException e )
         {
             handleDisconnect ( e );
             throw new NoConnectionException ();
         }
-        catch ( OperationNotSupportedException e )
+        catch ( final OperationNotSupportedException e )
         {
             throw new OperationException ( e );
         }
-        catch ( InvalidLocationException e )
+        catch ( final InvalidLocationException e )
         {
             throw new OperationException ( e );
         }
     }
 
+    @Override
+    public Entry[] browse ( final Location location ) throws NoConnectionException, OperationException
+    {
+        return browse ( getHive (), location.asArray () );
+    }
+
+    @Override
+    public Entry[] browse ( final Location location, final int timeout ) throws NoConnectionException, OperationException
+    {
+        return browse ( HivePrxHelper.uncheckedCast ( getHive ().ice_timeout ( timeout ) ), location.asArray () );
+    }
+
+    @Override
+    public void browse ( final Location location, final BrowseOperationCallback callback )
+    {
+        try
+        {
+            getHive ().browse_async ( new AsyncBrowseOperation ( callback ), this.session, location.asArray () );
+        }
+        catch ( final NoConnectionException e )
+        {
+            callback.error ( e );
+        }
+    }
 }
