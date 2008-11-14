@@ -28,9 +28,9 @@
     			maxOccurs="unbounded" minOccurs="0">
     		</element>
     	</sequence>
-        <attribute name="id" type="string"></attribute>
+        <attribute name="id" type="string" use="required"></attribute>
         <attribute name="connectionClass" type="string"></attribute>
-    	<attribute name="uri" type="string"></attribute>
+    	<attribute name="uri" type="string" use="required"></attribute>
     	<attribute name="username" type="string"></attribute>
     	<attribute name="password" type="string"></attribute>
     </complexType>

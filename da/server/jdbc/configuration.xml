@@ -2,10 +2,12 @@
 <jdbc:root xmlns:jdbc="http://openscada.org/DA/JDBC/Configuration"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://openscada.org/DA/JDBC/Configuration schema/configuration.xsd ">
-	<jdbc:query connectionClass="com.oracle.SomeClassToPutHere"
-		uri="jdbc:oci:thin:@127.0.0.1:1521:db" period="10000" id="QUERY1">
-		<jdbc:sql>
-		<![CDATA[select * from some_table where text_field='blubbern']]>
-		</jdbc:sql>
-	</jdbc:query>
+	<jdbc:connection id="CON1" connectionClass="com.oracle.SomeClassToPutHere"
+		uri="jdbc:oci:thin:@127.0.0.1:1521:db">
+		<jdbc:query period="10000" id="QUERY1">
+			<jdbc:sql>
+<![CDATA[select * from some_table where text_field='blubbern']]>
+			</jdbc:sql>
+		</jdbc:query>
+	</jdbc:connection>
 </jdbc:root>
