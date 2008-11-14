@@ -186,6 +186,7 @@
 	    <ant dir="${source.base}/da/server/spring"/>
     	<ant dir="${source.base}/da/server/exec"/>
     	<ant dir="${source.base}/da/server/jdbc"/>
+    	<ant dir="${source.base}/da/server/proxy"/>
 
 	   	<ant dir="${source.base}/core/client/common"/>
        	<ant dir="${source.base}/core/client/net"/>
