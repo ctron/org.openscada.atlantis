@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy:root xmlns:proxy="http://openscada.org/DA/Proxy/Configuration"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://openscada.org/DA/Proxy/Configuration schema/configuration.xsd ">
+	<proxy:proxy prefix="PROXY01">
+		<proxy:connection uri="da:net://localhost:12003?auto-reconnect=true"
+			className="org.openscada.da.client.net.Connection" />
+	</proxy:proxy>
+	<proxy:redundant prefix="RRR">
+		<proxy:connection id="con1.1" prefix="Server1.A1"
+			uri="da:net://localhost:12001?auto-reconnect=true" className="org.openscada.da.client.net.Connection" />
+		<proxy:connection id="con1.2" prefix="Server1.A2"
+			uri="da:net://localhost:12001?auto-reconnect=true" className="org.openscada.da.client.net.Connection" />
+		<proxy:connection id="con2" prefix="Server2.B1"
+			uri="da:net://localhost:12002?auto-reconnect=true" className="org.openscada.da.client.net.Connection" />
+	</proxy:redundant>
+</proxy:root>
