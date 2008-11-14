@@ -19,8 +19,12 @@
 
 package org.openscada.da.server.jdbc;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
+import org.openscada.da.jdbc.configuration.ConnectionType;
 import org.openscada.da.jdbc.configuration.QueryType;
 import org.openscada.da.jdbc.configuration.RootDocument;
 import org.openscada.da.server.browser.common.FolderCommon;
@@ -33,6 +37,8 @@ public class Hive extends HiveCommon
     private static Logger logger = Logger.getLogger ( Hive.class );
 
     private FolderCommon rootFolder = null;
+
+    private final Collection<Connection> connections = new LinkedList<Connection> ();
 
     public Hive ()
     {
@@ -52,15 +58,43 @@ public class Hive extends HiveCommon
         configure ( RootDocument.Factory.parse ( node ) );
     }
 
-    private void configure ( final RootDocument doc )
+    public void register ()
     {
-        for ( final QueryType queryType : doc.getRoot ().getQueryList () )
+        for ( final Connection connection : this.connections )
         {
-            createQuery ( queryType );
+            connection.register ();
         }
     }
 
-    private void createQuery ( final QueryType queryType )
+    public void unregister ()
+    {
+        for ( final Connection connection : this.connections )
+        {
+            connection.unregister ();
+        }
+    }
+
+    private void configure ( final RootDocument doc )
+    {
+        for ( final ConnectionType connectionType : doc.getRoot ().getConnectionList () )
+        {
+            createConnection ( connectionType );
+        }
+    }
+
+    private void createConnection ( final ConnectionType connectionType )
+    {
+        final Connection connection = new Connection ( connectionType.getConnectionClass (), connectionType.getUri (), connectionType.getUsername (), connectionType.getPassword () );
+
+        for ( final QueryType queryType : connectionType.getQueryList () )
+        {
+            createQuery ( connection, queryType );
+        }
+
+        this.connections.add ( connection );
+    }
+
+    private void createQuery ( final Connection connection, final QueryType queryType )
     {
         String sql = queryType.getSql ();
         if ( sql == null || sql.isEmpty () )
@@ -68,12 +102,6 @@ public class Hive extends HiveCommon
             sql = queryType.getSql2 ();
         }
 
-        addQuery ( new Query ( queryType.getId (), queryType.getPeriod (), queryType.getConnectionClass (), queryType.getUri (), sql ) );
-    }
-
-    private void addQuery ( final Query query )
-    {
-        // TODO Auto-generated method stub
-
+        connection.add ( new Query ( queryType.getId (), queryType.getPeriod (), sql, connection ) );
     }
 }

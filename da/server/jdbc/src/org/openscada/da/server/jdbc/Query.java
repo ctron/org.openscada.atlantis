@@ -8,22 +8,19 @@ public class Query
 
     private final int period;
 
-    private final String connectionClass;
-
-    private final String uri;
-
     private final String sql;
 
     private QueryProcessor processor;
 
-    public Query ( final String id, final int period, final String connectionClass, final String uri, final String sql )
+    private final Connection connection;
+
+    public Query ( final String id, final int period, final String sql, final Connection connection )
     {
         super ();
         this.id = id;
         this.period = period;
-        this.connectionClass = connectionClass;
-        this.uri = uri;
         this.sql = sql;
+        this.connection = connection;
 
         init ();
     }
@@ -32,7 +29,7 @@ public class Query
     {
         try
         {
-            this.processor = new QueryProcessor ( this.uri, this.sql );
+            this.processor = new QueryProcessor ( this.connection, this.sql );
         }
         catch ( final Throwable e )
         {

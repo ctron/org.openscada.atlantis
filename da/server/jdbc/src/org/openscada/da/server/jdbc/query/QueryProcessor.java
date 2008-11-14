@@ -2,15 +2,17 @@ package org.openscada.da.server.jdbc.query;
 
 import java.util.Map;
 
+import org.openscada.da.server.jdbc.Connection;
+
 public class QueryProcessor
 {
-    private final String uri;
-
     private final String sql;
 
-    public QueryProcessor ( final String uri, final String sql )
+    private final Connection connection;
+
+    public QueryProcessor ( final Connection connection, final String sql )
     {
-        this.uri = uri;
+        this.connection = connection;
         this.sql = sql;
     }
 
