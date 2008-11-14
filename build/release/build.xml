@@ -186,7 +186,6 @@
 	    <ant dir="${source.base}/da/server/spring"/>
     	<ant dir="${source.base}/da/server/exec"/>
     	<ant dir="${source.base}/da/server/jdbc"/>
-    	<ant dir="${source.base}/da/server/proxy"/>
 
 	   	<ant dir="${source.base}/core/client/common"/>
        	<ant dir="${source.base}/core/client/net"/>
@@ -197,6 +196,9 @@
 		<ant dir="${source.base}/da/client/samples"/>
 		<ant dir="${source.base}/da/server/exporter"/>
     	<ant dir="${source.base}/da/server/exporter_spring"/>
+
+    	<!-- the following module needs the client -->
+    	<ant dir="${source.base}/da/server/proxy"/>
     	
     	<ant dir="${source.base}/ae/core/common"/>
     	<ant dir="${source.base}/ae/net/base"/>
