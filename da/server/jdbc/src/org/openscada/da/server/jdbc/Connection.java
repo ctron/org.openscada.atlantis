@@ -1,7 +1,11 @@
 package org.openscada.da.server.jdbc;
 
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
+
+import org.openscada.utils.timing.Scheduler;
 
 public class Connection
 {
@@ -14,6 +18,8 @@ public class Connection
     private final String password;
 
     private final String uri;
+
+    private java.sql.Connection connection;
 
     public Connection ( final String connectionClass, final String uri, final String username, final String password )
     {
@@ -38,19 +44,34 @@ public class Connection
         this.queries.add ( query );
     }
 
-    public void register ()
+    public void register ( final Hive hive, final Scheduler scheduler )
     {
         for ( final Query query : this.queries )
         {
-            query.register ();
+            query.register ( scheduler );
         }
     }
 
-    public void unregister ()
+    public void unregister ( final Hive hive )
     {
         for ( final Query query : this.queries )
         {
             query.unregister ();
         }
+    }
+
+    protected java.sql.Connection createConnection () throws SQLException
+    {
+        return DriverManager.getConnection ( this.uri, this.username, this.password );
+    }
+
+    public java.sql.Connection getConnection () throws SQLException
+    {
+        if ( this.connection == null )
+        {
+            this.connection = createConnection ();
+        }
+
+        return this.connection;
     }
 }

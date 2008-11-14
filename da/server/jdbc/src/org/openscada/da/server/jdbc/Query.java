@@ -1,6 +1,7 @@
 package org.openscada.da.server.jdbc;
 
 import org.openscada.da.server.jdbc.query.QueryProcessor;
+import org.openscada.utils.timing.Scheduler;
 
 public class Query
 {
@@ -13,6 +14,10 @@ public class Query
     private QueryProcessor processor;
 
     private final Connection connection;
+
+    private Scheduler.Job job;
+
+    private Scheduler scheduler;
 
     public Query ( final String id, final int period, final String sql, final Connection connection )
     {
@@ -36,14 +41,37 @@ public class Query
         }
     }
 
-    public void register ()
+    public void register ( final Scheduler scheduler )
     {
         this.processor.activate ();
+
+        this.scheduler = scheduler;
+        this.job = scheduler.scheduleJob ( new Runnable () {
+
+            @Override
+            public void run ()
+            {
+                Query.this.tick ();
+            }
+        }, this.period );
     }
 
     public void unregister ()
     {
         this.processor.deactivate ();
+
+        this.scheduler.removeJob ( this.job );
+        this.scheduler = null;
+    }
+
+    public void tick ()
+    {
+        // doQuery ();
+    }
+
+    private void doQuery () throws Exception
+    {
+        this.processor.doQuery ();
     }
 
 }

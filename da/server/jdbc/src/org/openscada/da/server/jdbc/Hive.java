@@ -30,6 +30,7 @@ import org.openscada.da.jdbc.configuration.RootDocument;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.utils.timing.Scheduler;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
@@ -40,6 +41,8 @@ public class Hive extends HiveCommon
 
     private final Collection<Connection> connections = new LinkedList<Connection> ();
 
+    private final Scheduler scheduler;
+
     public Hive ()
     {
         super ();
@@ -49,6 +52,8 @@ public class Hive extends HiveCommon
         setRootFolder ( this.rootFolder );
 
         setValidatonStrategy ( ValidationStrategy.FULL_CHECK );
+
+        this.scheduler = new Scheduler ( true, "JdbcServersRunner" );
     }
 
     public Hive ( final Node node ) throws XmlException
@@ -62,7 +67,7 @@ public class Hive extends HiveCommon
     {
         for ( final Connection connection : this.connections )
         {
-            connection.register ();
+            connection.register ( this, this.scheduler );
         }
     }
 
@@ -70,7 +75,7 @@ public class Hive extends HiveCommon
     {
         for ( final Connection connection : this.connections )
         {
-            connection.unregister ();
+            connection.unregister ( this );
         }
     }
 
