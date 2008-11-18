@@ -653,13 +653,11 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         super.finalize ();
     }
 
-    @Override
     public Entry[] browse ( final Location location ) throws NoConnectionException, OperationException
     {
         return browse ( location, 0 );
     }
 
-    @Override
     public Entry[] browse ( final Location location, final int timeout ) throws NoConnectionException, OperationException
     {
         final LongRunningOperation op = this._browseController.start ( location.asArray (), null );
@@ -674,7 +672,6 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         }
     }
 
-    @Override
     public void browse ( final Location location, final BrowseOperationCallback callback )
     {
         try
