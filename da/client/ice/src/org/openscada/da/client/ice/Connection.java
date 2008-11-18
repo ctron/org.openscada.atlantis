@@ -745,19 +745,16 @@ public class Connection implements org.openscada.da.client.Connection
         }
     }
 
-    @Override
     public Entry[] browse ( final Location location ) throws NoConnectionException, OperationException
     {
         return browse ( getHive (), location.asArray () );
     }
 
-    @Override
     public Entry[] browse ( final Location location, final int timeout ) throws NoConnectionException, OperationException
     {
         return browse ( HivePrxHelper.uncheckedCast ( getHive ().ice_timeout ( timeout ) ), location.asArray () );
     }
 
-    @Override
     public void browse ( final Location location, final BrowseOperationCallback callback )
     {
         try
