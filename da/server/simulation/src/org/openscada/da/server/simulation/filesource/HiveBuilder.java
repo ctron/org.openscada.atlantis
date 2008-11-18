@@ -198,7 +198,6 @@ public class HiveBuilder
                 hive.getScriptEngine ().put ( "item", item );
                 final int i = ( (Double)hive.getScriptEngine ().eval ( "registerItem(server, item, " + itemDefinition.getCallback () + ", " + itemDefinition.getWriteHandler () + ");" ) ).intValue ();
                 item.setWriteHandler ( new WriteHandler () {
-                    @Override
                     public void handleWrite ( final Variant value ) throws Exception
                     {
                         hive.getScriptEngine ().put ( "value", value );
