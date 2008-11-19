@@ -19,6 +19,8 @@
 
 package org.openscada.da.server.jdbc;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -43,10 +45,18 @@ public class Hive extends HiveCommon
 
     private final Scheduler scheduler;
 
-    public Hive ()
+    public Hive () throws XmlException, IOException
     {
-        super ();
+        this ( RootDocument.Factory.parse ( new File ( "configuration.xml" ) ) );
+    }
 
+    public Hive ( final Node node ) throws XmlException
+    {
+        this ( RootDocument.Factory.parse ( node ) );
+    }
+
+    protected Hive ( final RootDocument doc )
+    {
         // create root folder
         this.rootFolder = new FolderCommon ();
         setRootFolder ( this.rootFolder );
@@ -54,13 +64,8 @@ public class Hive extends HiveCommon
         setValidatonStrategy ( ValidationStrategy.FULL_CHECK );
 
         this.scheduler = new Scheduler ( true, "JdbcServersRunner" );
-    }
 
-    public Hive ( final Node node ) throws XmlException
-    {
-        this ();
-
-        configure ( RootDocument.Factory.parse ( node ) );
+        configure ( doc );
     }
 
     public void register ()

@@ -5,10 +5,13 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.apache.log4j.Logger;
 import org.openscada.utils.timing.Scheduler;
 
 public class Connection
 {
+    private static Logger logger = Logger.getLogger ( Connection.class );
+
     private final Collection<Query> queries = new LinkedList<Query> ();
 
     private Throwable globalError = null;
@@ -35,6 +38,7 @@ public class Connection
         }
         catch ( final Throwable e )
         {
+            logger.error ( "Failed to initialize connection", e );
             this.globalError = e;
         }
     }

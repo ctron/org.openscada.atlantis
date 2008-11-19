@@ -1,10 +1,21 @@
 package org.openscada.da.server.jdbc;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.openscada.core.Variant;
+import org.openscada.da.server.common.AttributeMode;
+import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.jdbc.query.QueryProcessor;
 import org.openscada.utils.timing.Scheduler;
 
 public class Query
 {
+    private static Logger logger = Logger.getLogger ( Query.class );
+
     private final String id;
 
     private final int period;
@@ -19,6 +30,8 @@ public class Query
 
     private Scheduler scheduler;
 
+    private String[] fields = new String[] {};
+
     public Query ( final String id, final int period, final String sql, final Connection connection )
     {
         super ();
@@ -27,18 +40,17 @@ public class Query
         this.sql = sql;
         this.connection = connection;
 
-        init ();
-    }
-
-    private void init ()
-    {
         try
         {
             this.processor = new QueryProcessor ( this.connection, this.sql );
         }
         catch ( final Throwable e )
         {
+            setError ( e );
         }
+
+        logger.info ( "Created new query: " + this.id );
+
     }
 
     public void register ( final Scheduler scheduler )
@@ -48,7 +60,6 @@ public class Query
         this.scheduler = scheduler;
         this.job = scheduler.scheduleJob ( new Runnable () {
 
-            @Override
             public void run ()
             {
                 Query.this.tick ();
@@ -66,12 +77,95 @@ public class Query
 
     public void tick ()
     {
-        // doQuery ();
+        try
+        {
+            if ( this.processor != null )
+            {
+                doQuery ();
+            }
+        }
+        catch ( Throwable e )
+        {
+            setError ( e );
+        }
+    }
+
+    private void setError ( Throwable e )
+    {
+        logger.error ( "Failed to query", e );
+        // TODO Auto-generated method stub
+
     }
 
     private void doQuery () throws Exception
     {
-        this.processor.doQuery ();
+        java.sql.Connection connection = this.connection.getConnection ();
+        try
+        {
+            PreparedStatement stmt = connection.prepareStatement ( this.sql );
+            try
+            {
+                ResultSet result = stmt.executeQuery ();
+                if ( result.next () )
+                {
+                    for ( String field : this.fields )
+                    {
+                        updateField ( field, result );
+                    }
+                }
+                result.close ();
+            }
+            finally
+            {
+                stmt.close ();
+            }
+        }
+        finally
+        {
+            if ( connection != null )
+            {
+                connection.close ();
+            }
+        }
+    }
+
+    private void updateField ( String key, ResultSet result )
+    {
+        try
+        {
+            setValue ( key, new Variant ( result.getObject ( key ) ) );
+        }
+        catch ( Throwable e )
+        {
+            setError ( key, e );
+        }
+    }
+
+    private DataItemInputChained getItem ( String key )
+    {
+        return null;
+    }
+
+    private void setValue ( String key, Variant value )
+    {
+        // TODO Auto-generated method stub
+        logger.info ( "Setting value: " + key + "=" + value );
+
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        attributes.put ( "jdbc.error", null );
+
+        getItem ( key ).updateData ( value, attributes, AttributeMode.UPDATE );
+    }
+
+    private void setError ( String key, Throwable e )
+    {
+        logger.info ( "Setting error: " + key + " = " + e.getMessage () );
+
+        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        attributes.put ( "jdbc.error", new Variant ( true ) );
+        attributes.put ( "jdbc.error.message", new Variant ( e.getMessage () ) );
+
+        getItem ( key ).updateData ( null, attributes, AttributeMode.UPDATE );
     }
 
 }
