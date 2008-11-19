@@ -105,7 +105,7 @@ public class Hive extends HiveCommon
             if ( RedundantConnection.class.isInstance ( con.getConnection () ) )
             {
                 final RedundantConnection redundantConnection = (RedundantConnection)con.getConnection ();
-                final WriteHandlerItem connectionIdItem = new WriteHandlerItem ( "redundant.connection.id", new WriteHandler () {
+                final WriteHandlerItem connectionIdItem = new WriteHandlerItem ( con.getPrefix () + ".redundant.connection.id", new WriteHandler () {
                     @Override
                     public void handleWrite ( final Variant value ) throws Exception
                     {
