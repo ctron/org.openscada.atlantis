@@ -40,7 +40,11 @@ public class ProxyItem extends DataItemInputOutputChained implements ItemUpdateL
     {
         try
         {
-            this.connection.write ( prepareItemName (), value );
+        	if (this.connection.getClass() == RedundantConnection.class) {
+        		this.connection.write ( this.getInformation ().getName (), value );
+        	} else {
+        		this.connection.write ( prepareItemName (), value );
+        	}
         }
         catch ( final NoConnectionException e )
         {
