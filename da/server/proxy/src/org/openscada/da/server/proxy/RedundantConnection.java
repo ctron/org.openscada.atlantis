@@ -18,6 +18,7 @@ import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.BrowseOperationCallback;
 import org.openscada.da.client.Connection;
+import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.FolderListener;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.WriteAttributeOperationCallback;
@@ -53,6 +54,8 @@ public class RedundantConnection implements Connection
 
     private final List<RedundantConnectionChangedListener> redundantConnectionChangedListeners = Collections.synchronizedList ( new ArrayList<RedundantConnectionChangedListener> () );
 
+    private final Map<String, Map<String, DataItemValue>> lastDataItemValues = Collections.synchronizedMap ( new HashMap<String, Map<String, DataItemValue>> () );
+
     /**
      * @param separator
      * @param exposeAs
@@ -75,6 +78,7 @@ public class RedundantConnection implements Connection
         {
             this.currentConnectionId = id;
         }
+        this.lastDataItemValues.put ( id, new HashMap<String, DataItemValue> () );
     }
 
     /**
@@ -83,9 +87,9 @@ public class RedundantConnection implements Connection
      * @param prefix
      * @throws ClassNotFoundException
      */
-    public void addConnection ( final String connectionUri, final String id, final String prefix ) throws ClassNotFoundException
+    public void addConnection ( final String connectionUri, final String className, final String id, final String prefix ) throws ClassNotFoundException
     {
-        Class.forName ( "org.openscada.da.client.net.Connection" );
+        Class.forName ( className );
         final Connection connection = (Connection)ConnectionFactory.create ( ConnectionInformation.fromURI ( connectionUri ) );
         addConnection ( connection, id, prefix );
     }
@@ -127,6 +131,15 @@ public class RedundantConnection implements Connection
         for ( final RedundantConnectionChangedListener listener : this.redundantConnectionChangedListeners )
         {
             listener.connectionChanged ( idOld, conOld, id, getCurrentConnection ().getConnection () );
+        }
+        // return last values from current connection
+        for ( final java.util.Map.Entry<String, ItemUpdateListener> entry : this.itemListeners.entrySet () )
+        {
+            final DataItemValue div = this.lastDataItemValues.get ( id ).get ( prepareItemId ( entry.getKey () ) );
+            if ( div != null )
+            {
+                entry.getValue ().notifyDataChange ( div.getValue (), div.getAttributes (), true );
+            }
         }
     }
 
@@ -242,6 +255,10 @@ public class RedundantConnection implements Connection
                 @Override
                 public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
                 {
+                    // cache value
+                    final DataItemValue div = new DataItemValue ( value, attributes, SubscriptionState.CONNECTED );
+                    RedundantConnection.this.lastDataItemValues.get ( connection.getId () ).put ( prepareItemId ( itemId, connection ), div );
+                    // propagate
                     if ( getCurrentConnection ().equals ( connection ) )
                     {
                         listener.notifyDataChange ( value, attributes, cache );
@@ -251,6 +268,15 @@ public class RedundantConnection implements Connection
                 @Override
                 public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
                 {
+                    // cache value
+                    DataItemValue div = RedundantConnection.this.lastDataItemValues.get ( connection.getId () ).get ( prepareItemId ( itemId, connection ) );
+                    if ( div == null )
+                    {
+                        div = new DataItemValue ();
+                    }
+                    div.setSubscriptionState ( subscriptionState );
+                    div.setSubscriptionError ( subscriptionError );
+                    // propagate
                     if ( getCurrentConnection ().equals ( connection ) )
                     {
                         listener.notifySubscriptionChange ( subscriptionState, subscriptionError );
