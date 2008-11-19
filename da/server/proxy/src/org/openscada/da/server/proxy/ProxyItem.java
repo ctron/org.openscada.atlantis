@@ -61,13 +61,11 @@ public class ProxyItem extends DataItemInputOutputChained implements ItemUpdateL
         return this.getInformation ().getName ().replaceFirst ( Pattern.quote ( this.prefix ), "" );
     }
 
-    @Override
     public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         updateData ( value, attributes, AttributeMode.UPDATE );
     }
 
-    @Override
     public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
     {
     }

@@ -106,7 +106,6 @@ public class Hive extends HiveCommon
             {
                 final RedundantConnection redundantConnection = (RedundantConnection)con.getConnection ();
                 final WriteHandlerItem connectionIdItem = new WriteHandlerItem ( con.getPrefix () + ".redundant.connection.id", new WriteHandler () {
-                    @Override
                     public void handleWrite ( final Variant value ) throws Exception
                     {
                         if ( redundantConnection.isValidConnection ( value.asString () ) )
@@ -128,7 +127,6 @@ public class Hive extends HiveCommon
                 connectionFolder.add ( connectionIdItem.getInformation ().getName (), connectionIdItem, new HashMap<String, Variant> () );
                 connectionIdItem.updateData ( new Variant ( redundantConnection.getCurrentConnection ().getId () ), attr, AttributeMode.UPDATE );
                 redundantConnection.addConnectionChangedListener ( new RedundantConnectionChangedListener () {
-                    @Override
                     public void connectionChanged ( final String idOld, final Connection connectionOld, final String idNew, final Connection connectionNew )
                     {
                         connectionIdItem.updateData ( new Variant ( idNew ), null, AttributeMode.UPDATE );

@@ -187,37 +187,31 @@ public class RedundantConnection implements Connection
 
     // actual Connection Implementation
 
-    @Override
     public Entry[] browse ( final String[] path ) throws NoConnectionException, OperationException
     {
         return browse ( new Location ( path ) );
     }
 
-    @Override
     public Entry[] browse ( final String[] path, final int timeout ) throws NoConnectionException, OperationException
     {
         return browse ( new Location ( path ), timeout );
     }
 
-    @Override
     public void browse ( final String[] path, final BrowseOperationCallback callback )
     {
         browse ( new Location ( path ), callback );
     }
 
-    @Override
     public Entry[] browse ( final Location location ) throws NoConnectionException, OperationException
     {
         return prepareEntries ( getCurrentConnection ().getConnection ().browse ( prepareLocation ( location ) ) );
     }
 
-    @Override
     public Entry[] browse ( final Location location, final int timeout ) throws NoConnectionException, OperationException
     {
         return prepareEntries ( getCurrentConnection ().getConnection ().browse ( prepareLocation ( location ), timeout ) );
     }
 
-    @Override
     public void browse ( final Location location, final BrowseOperationCallback callback )
     {
         getCurrentConnection ().getConnection ().browse ( prepareLocation ( location ), callback );
@@ -225,14 +219,12 @@ public class RedundantConnection implements Connection
 
     // Listener and subscriptions
 
-    @Override
     public FolderListener setFolderListener ( final Location location, final FolderListener listener )
     {
         final FolderListener oldListener = this.folderListeners.put ( location, listener );
         for ( final SubConnection connection : this.subConnections.values () )
         {
             connection.getConnection ().setFolderListener ( prepareLocation ( location, connection ), new FolderListener () {
-                @Override
                 public void folderChanged ( final Collection<Entry> added, final Collection<String> removed, final boolean full )
                 {
                     if ( getCurrentConnection ().equals ( connection ) )
@@ -245,14 +237,12 @@ public class RedundantConnection implements Connection
         return oldListener;
     }
 
-    @Override
     public ItemUpdateListener setItemUpdateListener ( final String itemId, final ItemUpdateListener listener )
     {
         final ItemUpdateListener oldListener = this.itemListeners.put ( itemId, listener );
         for ( final SubConnection connection : this.subConnections.values () )
         {
             connection.getConnection ().setItemUpdateListener ( prepareItemId ( itemId, connection ), new ItemUpdateListener () {
-                @Override
                 public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
                 {
                     // cache value
@@ -265,7 +255,6 @@ public class RedundantConnection implements Connection
                     }
                 }
 
-                @Override
                 public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
                 {
                     // cache value
@@ -287,7 +276,6 @@ public class RedundantConnection implements Connection
         return oldListener;
     }
 
-    @Override
     public void subscribeFolder ( final Location location ) throws NoConnectionException, OperationException
     {
         this.folderSubscriptions.add ( location );
@@ -297,7 +285,6 @@ public class RedundantConnection implements Connection
         }
     }
 
-    @Override
     public void subscribeItem ( final String itemId ) throws NoConnectionException, OperationException
     {
         this.itemSubscriptions.add ( itemId );
@@ -307,7 +294,6 @@ public class RedundantConnection implements Connection
         }
     }
 
-    @Override
     public void unsubscribeFolder ( final Location location ) throws NoConnectionException, OperationException
     {
         this.folderSubscriptions.remove ( location );
@@ -317,7 +303,6 @@ public class RedundantConnection implements Connection
         }
     }
 
-    @Override
     public void unsubscribeItem ( final String itemId ) throws NoConnectionException, OperationException
     {
         this.itemSubscriptions.add ( itemId );
@@ -329,37 +314,31 @@ public class RedundantConnection implements Connection
 
     // write operations, always acting on current connection
 
-    @Override
     public void write ( final String itemName, final Variant value ) throws NoConnectionException, OperationException
     {
         getCurrentConnection ().getConnection ().write ( prepareItemId ( itemName ), value );
     }
 
-    @Override
     public void write ( final String itemName, final Variant value, final int timeout ) throws NoConnectionException, OperationException
     {
         getCurrentConnection ().getConnection ().write ( prepareItemId ( itemName ), value, timeout );
     }
 
-    @Override
     public void write ( final String itemName, final Variant value, final WriteOperationCallback callback )
     {
         getCurrentConnection ().getConnection ().write ( prepareItemId ( itemName ), value, callback );
     }
 
-    @Override
     public WriteAttributeResults writeAttributes ( final String itemId, final Map<String, Variant> attributes ) throws NoConnectionException, OperationException
     {
         return getCurrentConnection ().getConnection ().writeAttributes ( prepareItemId ( itemId ), attributes );
     }
 
-    @Override
     public WriteAttributeResults writeAttributes ( final String itemId, final Map<String, Variant> attributes, final int timeout ) throws NoConnectionException, OperationException
     {
         return getCurrentConnection ().getConnection ().writeAttributes ( prepareItemId ( itemId ), attributes, timeout );
     }
 
-    @Override
     public void writeAttributes ( final String itemId, final Map<String, Variant> attributes, final WriteAttributeOperationCallback callback )
     {
         getCurrentConnection ().getConnection ().writeAttributes ( prepareItemId ( itemId ), attributes, callback );
@@ -370,7 +349,6 @@ public class RedundantConnection implements Connection
      * to new connection when switched
      * @see org.openscada.core.client.Connection#addConnectionStateListener(org.openscada.core.client.ConnectionStateListener)
      */
-    @Override
     public void addConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
         this.connectionStateListeners.add ( connectionStateListener );
@@ -381,7 +359,6 @@ public class RedundantConnection implements Connection
      * removes connection listener from current connection
      * @see org.openscada.core.client.Connection#removeConnectionStateListener(org.openscada.core.client.ConnectionStateListener)
      */
-    @Override
     public void removeConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
         this.connectionStateListeners.remove ( connectionStateListener );
@@ -393,7 +370,6 @@ public class RedundantConnection implements Connection
      * only listening on active connection 
      * @see org.openscada.core.client.Connection#connect()
      */
-    @Override
     public void connect ()
     {
         for ( final SubConnection connection : this.subConnections.values () )
@@ -407,7 +383,6 @@ public class RedundantConnection implements Connection
      * only listening on active connection 
      * @see org.openscada.core.client.Connection#disconnect()
      */
-    @Override
     public void disconnect ()
     {
         for ( final SubConnection connection : this.subConnections.values () )
@@ -420,7 +395,6 @@ public class RedundantConnection implements Connection
      * returns state of current connection
      * @see org.openscada.core.client.Connection#getState()
      */
-    @Override
     public ConnectionState getState ()
     {
         return getCurrentConnection ().getConnection ().getState ();

@@ -34,7 +34,6 @@ public class ProxyDataItemFactory implements DataItemFactory
         }
     }
 
-    @Override
     public boolean canCreate ( final DataItemFactoryRequest request )
     {
         for ( final String prefix : this.connections.keySet () )
@@ -47,7 +46,6 @@ public class ProxyDataItemFactory implements DataItemFactory
         return false;
     }
 
-    @Override
     public DataItem create ( final DataItemFactoryRequest request )
     {
         if ( request == null )

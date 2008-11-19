@@ -6,12 +6,11 @@
 		<proxy:connection uri="da:net://localhost:12003?auto-reconnect=true"
 			className="org.openscada.da.client.net.Connection" />
 	</proxy:proxy>
-	<proxy:redundant prefix="RRR">
-		<proxy:connection id="con1.1" prefix="Server1.A1"
-			uri="da:net://localhost:12001?auto-reconnect=true" className="org.openscada.da.client.net.Connection" />
-		<proxy:connection id="con1.2" prefix="Server1.A2"
-			uri="da:net://localhost:12001?auto-reconnect=true" className="org.openscada.da.client.net.Connection" />
-		<proxy:connection id="con2" prefix="Server2.B1"
-			uri="da:net://localhost:12002?auto-reconnect=true" className="org.openscada.da.client.net.Connection" />
+	
+	<proxy:redundant prefix="PLS">
+		<proxy:connection id="pls01" prefix="PLS01"
+			uri="da:net://10.54.240.22:12027?auto-reconnect=true" className="org.openscada.da.client.net.Connection" />
+		<proxy:connection id="pls02" prefix="PLS02"
+			uri="da:net://10.54.240.22:12027?auto-reconnect=true" className="org.openscada.da.client.net.Connection" />
 	</proxy:redundant>
 </proxy:root>
