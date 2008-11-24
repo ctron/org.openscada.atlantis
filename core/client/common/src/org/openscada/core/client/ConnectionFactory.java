@@ -28,70 +28,77 @@ import org.openscada.core.ConnectionInformation;
 
 import sun.misc.Service;
 
-
 public class ConnectionFactory
 {
-    private static Logger _log = Logger.getLogger ( ConnectionFactory.class );
-    
+    private static Logger logger = Logger.getLogger ( ConnectionFactory.class );
+
     protected static List<DriverFactory> _registeredDrivers = new LinkedList<DriverFactory> ();
-    
-    public static void registerDriverFactory ( DriverFactory driverFactory )
+
+    public static void registerDriverFactory ( final DriverFactory driverFactory )
     {
         synchronized ( _registeredDrivers )
         {
             _registeredDrivers.add ( driverFactory );
         }
     }
-    
-    public static DriverInformation findDriver ( ConnectionInformation connectionInformation )
+
+    public static DriverInformation findDriver ( final ConnectionInformation connectionInformation )
     {
         if ( !connectionInformation.isValid () )
+        {
             throw new IllegalArgumentException ( "Connection information is not valid" );
-        
+        }
+
         synchronized ( _registeredDrivers )
         {
-            for ( DriverFactory factory : _registeredDrivers )
+            for ( final DriverFactory factory : _registeredDrivers )
             {
-                DriverInformation di = factory.getDriverInformation ( connectionInformation );
+                final DriverInformation di = factory.getDriverInformation ( connectionInformation );
                 if ( di != null )
+                {
                     return di;
+                }
             }
         }
-        
+
         // now try using the service framework
         try
         {
-            Iterator<?> i = Service.providers ( DriverFactory.class );
+            final Iterator<?> i = Service.providers ( DriverFactory.class );
             while ( i.hasNext () )
             {
-                DriverFactory factory = (DriverFactory)i.next ();
-                DriverInformation di = factory.getDriverInformation ( connectionInformation );
+                final DriverFactory factory = (DriverFactory)i.next ();
+                final DriverInformation di = factory.getDriverInformation ( connectionInformation );
                 if ( di != null )
+                {
                     return di;
+                }
             }
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
         }
-        
+
         return null;
     }
-    
+
     /**
      * Find a driver and create a new connection
      * @param connectionInformation The connection information
      * @return The new connection or <code>null</code> if no driver can be found 
      */
-    public static Connection create ( ConnectionInformation connectionInformation )
+    public static Connection create ( final ConnectionInformation connectionInformation )
     {
-        DriverInformation di = findDriver ( connectionInformation );
-        
+        final DriverInformation di = findDriver ( connectionInformation );
+
         if ( di == null )
+        {
             return null;
-        
+        }
+
         return di.create ( connectionInformation );
     }
-    
+
     /**
      * Find a driver and create a new connection
      * @param className the connection class name to pre-load
@@ -99,22 +106,22 @@ public class ConnectionFactory
      * @return The new connection or <code>null</code> if no driver can be found 
      * @throws ClassNotFoundException the provided connection class cannot be found
      */
-    public static Connection create ( String className, ConnectionInformation connectionInformation ) throws ClassNotFoundException
+    public static Connection create ( final String className, final ConnectionInformation connectionInformation ) throws ClassNotFoundException
     {
         if ( className != null )
         {
-            _log.info ( "Pre-loading connection class: " + className );
+            logger.info ( "Pre-loading connection class: " + className );
             Class.forName ( className, true, Thread.currentThread ().getContextClassLoader () );
         }
-        
-        DriverInformation di = findDriver ( connectionInformation );
-        
+
+        final DriverInformation di = findDriver ( connectionInformation );
+
         if ( di == null )
         {
-            _log.info ( "Driver not found: " + connectionInformation.getDriver () );
+            logger.info ( "Driver not found: " + connectionInformation.getDriver () );
             return null;
         }
-        
+
         return di.create ( connectionInformation );
     }
 }
