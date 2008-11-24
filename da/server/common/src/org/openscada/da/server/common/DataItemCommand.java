@@ -43,7 +43,7 @@ public class DataItemCommand extends DataItemOutput
      */
     public static interface Listener
     {
-        public void command ( Variant value );
+        public void command ( Variant value ) throws Exception;
     }
 
     public DataItemCommand ( final String name )
