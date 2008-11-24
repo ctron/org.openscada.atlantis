@@ -63,10 +63,10 @@ public class DataItemCommand extends DataItemOutput
             {
                 listener.command ( value );
             }
-            catch ( final Exception e )
+            catch ( final Throwable e )
             {
                 _log.warn ( "Failed to run listener", e );
-
+                throw new InvalidOperationException ();
             }
         }
     }
