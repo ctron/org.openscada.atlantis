@@ -25,11 +25,15 @@ import java.beans.Introspector;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.NotConvertableException;
+import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeMode;
@@ -186,7 +190,7 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
             final DataItemCommand item = this.factory.createCommand ( pd.getName () );
             item.addListener ( new DataItemCommand.Listener () {
 
-                public void command ( final Variant value )
+                public void command ( final Variant value ) throws Exception
                 {
                     ObjectExporter.this.writeAttribute ( pd, value );
                 }
@@ -196,9 +200,77 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
         return null;
     }
 
-    protected void writeAttribute ( final PropertyDescriptor pd, final Variant value )
+    protected void writeAttribute ( final PropertyDescriptor pd, final Variant value ) throws Exception
     {
-        // FIXME: to be implemented
+        final Method m = pd.getWriteMethod ();
+        if ( m == null )
+        {
+            throw new RuntimeException ( "Failed to write since write method cannot be found" );
+        }
+
+        final Object target = this.target;
+
+        final Class<?> targetType = pd.getPropertyType ();
+        final Object o = convertWriteType ( targetType, value );
+
+        if ( o != null )
+        {
+            // try the direct approach
+            m.invoke ( target, o );
+        }
+        else
+        {
+            // try a "by string" approach
+            final PropertyEditor pe = PropertyEditorManager.findEditor ( targetType );
+            pe.setAsText ( value.asString () );
+        }
+
+    }
+
+    /**
+     * Convert the value to the target type if possible.
+     * @param targetType The expected target type
+     * @param value the source value
+     * @param pd 
+     * @param target2 
+     * @return an instance of the source value in the target type (if possible)
+     * or <code>null</code> otherwise 
+     * @throws NotConvertableException 
+     * @throws NullValueException 
+     */
+    private Object convertWriteType ( final Class<?> targetType, final Variant value ) throws NullValueException, NotConvertableException
+    {
+        if ( targetType.isAssignableFrom ( Variant.class ) )
+        {
+            return value;
+        }
+        if ( value == null || value.isNull () )
+        {
+            return null;
+        }
+
+        if ( targetType.isAssignableFrom ( Long.class ) || targetType.isAssignableFrom ( long.class ) )
+        {
+            return value.asLong ();
+        }
+        if ( targetType.isAssignableFrom ( Integer.class ) || targetType.isAssignableFrom ( int.class ) )
+        {
+            return value.asInteger ();
+        }
+        if ( targetType.isAssignableFrom ( Double.class ) || targetType.isAssignableFrom ( double.class ) )
+        {
+            return value.asDouble ();
+        }
+        if ( targetType.isAssignableFrom ( Boolean.class ) || targetType.isAssignableFrom ( boolean.class ) )
+        {
+            return value.asBoolean ();
+        }
+        if ( targetType.isAssignableFrom ( String.class ) )
+        {
+            return value.asString ();
+        }
+
+        return null;
     }
 
     /**
