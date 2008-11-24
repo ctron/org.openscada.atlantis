@@ -237,6 +237,11 @@
     				<include name="**/*.class"/>
     			</fileset>
     			<fileset dir="${build.dir}/${package}-build/schemabin"/>
+    			<manifest>
+    		    	<attribute name="Implementation-Vendor" value="inavare GmbH"/>
+    				<attribute name="Implementation-Title" value="OpenSCADA Atlantis"/>
+    				<attribute name="Implementation-Version" value="${tag}"/>
+				</manifest>
     		</jar>
 
     		<mkdir dir="${deploy.dist.module}"/>
