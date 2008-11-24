@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,10 +21,28 @@ package org.openscada.core.client;
 
 public enum ConnectionState
 {
+    /**
+     * The connection is closed.
+     */
     CLOSED,
+    /**
+     * The connection is in progress of looking up the target endpoint (e.g. hostname)
+     */
     LOOKUP,
+    /**
+     * An attempt was made to contact the remote endpoint. The attempt is still in progress.
+     */
     CONNECTING,
+    /**
+     * The connection is established but not set up for data transmission.
+     */
     CONNECTED,
+    /**
+     * The connection is established and set up for transmitting data. 
+     */
     BOUND,
+    /**
+     * The connection is being closed and will not allow further data transmission. 
+     */
     CLOSING,
 }
