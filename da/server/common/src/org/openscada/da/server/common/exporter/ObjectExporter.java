@@ -231,8 +231,6 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
      * Convert the value to the target type if possible.
      * @param targetType The expected target type
      * @param value the source value
-     * @param pd 
-     * @param target2 
      * @return an instance of the source value in the target type (if possible)
      * or <code>null</code> otherwise 
      * @throws NotConvertableException 
