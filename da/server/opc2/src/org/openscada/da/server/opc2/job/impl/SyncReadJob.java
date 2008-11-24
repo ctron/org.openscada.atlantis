@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
  * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 package org.openscada.da.server.opc2.job.impl;
@@ -38,15 +38,15 @@ public class SyncReadJob extends ThreadJob implements JobResult<KeyedResultSet<I
 
     private static Logger log = Logger.getLogger ( SyncReadJob.class );
 
-    private OPCModel model;
+    private final OPCModel model;
 
-    private Integer[] clientHandles;
+    private final Integer[] clientHandles;
 
-    private OPCDATASOURCE dataSource;
+    private final OPCDATASOURCE dataSource;
 
     private KeyedResultSet<Integer, OPCITEMSTATE> result;
 
-    public SyncReadJob ( long timeout, OPCModel model, OPCDATASOURCE dataSource, Integer[] clientHandles )
+    public SyncReadJob ( final long timeout, final OPCModel model, final OPCDATASOURCE dataSource, final Integer[] clientHandles )
     {
         super ( timeout );
         this.model = model;
@@ -58,11 +58,11 @@ public class SyncReadJob extends ThreadJob implements JobResult<KeyedResultSet<I
     protected void perform () throws Exception
     {
         log.debug ( "Request server status" );
-        this.result = this.model.getSyncIo ().read ( dataSource, clientHandles );
+        this.result = this.model.getSyncIo ().read ( this.dataSource, this.clientHandles );
     }
 
     public KeyedResultSet<Integer, OPCITEMSTATE> getResult ()
     {
-        return result;
+        return this.result;
     }
 }

@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
  * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 package org.openscada.da.server.opc2.job;
@@ -34,7 +34,7 @@ public class Worker implements GuardianHandler
 
     private WorkUnit currentWorkUnit;
 
-    private Guardian guardian;
+    private final Guardian guardian;
 
     private Thread guardianThread;
 
@@ -44,16 +44,16 @@ public class Worker implements GuardianHandler
 
         private T result;
 
-        private JobResult<T> jobResult;
+        private final JobResult<T> jobResult;
 
-        public OPCResultJobHandler ( JobResult<T> jobResult )
+        public OPCResultJobHandler ( final JobResult<T> jobResult )
         {
             this.jobResult = jobResult;
         }
 
-        public void handleFailure ( Throwable e )
+        public void handleFailure ( final Throwable e )
         {
-            error = e;
+            this.error = e;
         }
 
         public void handleInterrupted ()
@@ -64,17 +64,17 @@ public class Worker implements GuardianHandler
 
         public void handleSuccess ()
         {
-            result = jobResult.getResult ();
+            this.result = this.jobResult.getResult ();
         }
 
         public Throwable getError ()
         {
-            return error;
+            return this.error;
         }
 
         public T getResult ()
         {
-            return result;
+            return this.result;
         }
 
     }
@@ -84,14 +84,14 @@ public class Worker implements GuardianHandler
 
         private Throwable error;
 
-        private Runnable runnable;
+        private final Runnable runnable;
 
-        public OPCRunnableJobHandler ( Runnable runnable )
+        public OPCRunnableJobHandler ( final Runnable runnable )
         {
             this.runnable = runnable;
         }
 
-        public void handleFailure ( Throwable e )
+        public void handleFailure ( final Throwable e )
         {
             this.error = e;
         }
@@ -109,7 +109,7 @@ public class Worker implements GuardianHandler
 
         public Throwable getError ()
         {
-            return error;
+            return this.error;
         }
 
     }
@@ -118,19 +118,19 @@ public class Worker implements GuardianHandler
     {
         this.guardian = new Guardian ();
 
-        synchronized ( guardian )
+        synchronized ( this.guardian )
         {
-            guardianThread = new Thread ( guardian, "OPCGuardian" );
-            guardianThread.setDaemon ( true );
-            guardianThread.start ();
+            this.guardianThread = new Thread ( this.guardian, "OPCGuardian" );
+            this.guardianThread.setDaemon ( true );
+            this.guardianThread.start ();
 
             try
             {
                 log.info ( "Waiting for guardian..." );
-                guardian.wait ();
+                this.guardian.wait ();
                 log.info ( "Guardian is up..." );
             }
-            catch ( InterruptedException e )
+            catch ( final InterruptedException e )
             {
                 throw new RuntimeException ( "Failed to initialize OPC guardian", e );
             }
@@ -140,14 +140,14 @@ public class Worker implements GuardianHandler
     @Override
     protected void finalize () throws Throwable
     {
-        guardian.shutdown ();
+        this.guardian.shutdown ();
         super.finalize ();
     }
 
-    public <T> T execute ( Job job, JobResult<T> result ) throws InvocationTargetException
+    public <T> T execute ( final Job job, final JobResult<T> result ) throws InvocationTargetException
     {
-        OPCResultJobHandler<T> handler = new OPCResultJobHandler<T> ( result );
-        WorkUnit workUnit = new WorkUnit ( job, handler );
+        final OPCResultJobHandler<T> handler = new OPCResultJobHandler<T> ( result );
+        final WorkUnit workUnit = new WorkUnit ( job, handler );
         execute ( workUnit );
         if ( handler.getError () != null )
         {
@@ -156,10 +156,10 @@ public class Worker implements GuardianHandler
         return handler.getResult ();
     }
 
-    public void execute ( Job job, Runnable runnable ) throws InvocationTargetException
+    public void execute ( final Job job, final Runnable runnable ) throws InvocationTargetException
     {
-        OPCRunnableJobHandler handler = new OPCRunnableJobHandler ( runnable );
-        WorkUnit workUnit = new WorkUnit ( job, handler );
+        final OPCRunnableJobHandler handler = new OPCRunnableJobHandler ( runnable );
+        final WorkUnit workUnit = new WorkUnit ( job, handler );
         execute ( workUnit );
         if ( handler.getError () != null )
         {
@@ -167,7 +167,7 @@ public class Worker implements GuardianHandler
         }
     }
 
-    public void execute ( WorkUnit currentWorkUnit )
+    public void execute ( final WorkUnit currentWorkUnit )
     {
         if ( currentWorkUnit == null )
         {
@@ -199,12 +199,12 @@ public class Worker implements GuardianHandler
         try
         {
             log.debug ( "Start guardian" );
-            guardian.startJob ( this.currentWorkUnit.getJob (), this );
+            this.guardian.startJob ( this.currentWorkUnit.getJob (), this );
             log.debug ( "Run job" );
             this.currentWorkUnit.getJob ().run ();
             log.debug ( "Run job finished" );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             log.warn ( "Job failed", e );
             return e;
@@ -212,7 +212,7 @@ public class Worker implements GuardianHandler
         finally
         {
             log.debug ( "Notify guardian that job is complete" );
-            guardian.jobCompleted ();
+            this.guardian.jobCompleted ();
             log.debug ( "guardian knows now" );
         }
         return null;
@@ -226,7 +226,7 @@ public class Worker implements GuardianHandler
             performCancelable ();
             log.debug ( "Job completed" );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             log.warn ( "Failed to process", e );
         }
@@ -249,12 +249,12 @@ public class Worker implements GuardianHandler
         }
 
         // we are clear again
-        currentWorkUnit = null;
+        this.currentWorkUnit = null;
     }
 
     public void performCancel ()
     {
-        WorkUnit workUnit = this.currentWorkUnit;
+        final WorkUnit workUnit = this.currentWorkUnit;
         if ( workUnit != null )
         {
             workUnit.getJob ().interrupt ();

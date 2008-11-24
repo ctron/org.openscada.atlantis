@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.server.opc;
 
 import java.util.Random;
@@ -20,7 +39,7 @@ public class JobApp implements JobHandler
             {
                 worker.execute ( new WorkUnit ( new SampleJob ( 100, 5000, false ), this ) );
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
                 logger.warn ( String.format ( "Failed in iteration #%d", i ), e );
                 return;
@@ -39,7 +58,7 @@ public class JobApp implements JobHandler
             {
                 worker.execute ( new WorkUnit ( new SampleJob ( 100, 5000, true ), this ) );
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
                 logger.warn ( String.format ( "Failed in iteration #%d", i ), e );
                 return;
@@ -51,14 +70,14 @@ public class JobApp implements JobHandler
 
     public void test3 ()
     {
-        Random r = new Random ();
+        final Random r = new Random ();
 
         Worker worker = new Worker ();
         for ( int i = 0; i < 1000; i++ )
         {
             try
             {
-                boolean peakJob = r.nextInt ( 100 ) > 90;
+                final boolean peakJob = r.nextInt ( 100 ) > 90;
                 long sleep = r.nextInt ( 100 );
                 if ( peakJob )
                 {
@@ -66,7 +85,7 @@ public class JobApp implements JobHandler
                 }
                 worker.execute ( new WorkUnit ( new SampleJob ( r.nextInt ( 100 ), sleep, r.nextBoolean () ), this ) );
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
                 logger.warn ( String.format ( "Failed in iteration #%d", i ), e );
                 return;
@@ -76,13 +95,13 @@ public class JobApp implements JobHandler
         System.gc ();
     }
 
-    public static void main ( String[] args )
+    public static void main ( final String[] args )
     {
-        JobApp app = new JobApp ();
+        final JobApp app = new JobApp ();
         app.test1 ();
     }
 
-    public void handleFailure ( Throwable e )
+    public void handleFailure ( final Throwable e )
     {
         logger.warn ( "Job failed", e );
     }

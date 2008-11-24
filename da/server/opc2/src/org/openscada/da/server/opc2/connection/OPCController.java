@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
  * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 package org.openscada.da.server.opc2.connection;
@@ -47,33 +47,33 @@ public class OPCController implements Runnable
 
     private boolean running = true;
 
-    private Worker worker;
+    private final Worker worker;
 
-    private OPCModel model;
+    private final OPCModel model;
 
-    private OPCItemManager itemManager;
+    private final OPCItemManager itemManager;
 
-    private OPCIoManager ioManager;
+    private final OPCIoManager ioManager;
 
-    private OPCBrowserManager browserManager;
+    private final OPCBrowserManager browserManager;
 
-    private ConnectionSetup configuration;
-    
-    private Collection<OPCStateListener> stateListener = new CopyOnWriteArraySet<OPCStateListener> ();
+    private final ConnectionSetup configuration;
 
-    public OPCController ( ConnectionSetup config, Hive hive, FolderItemFactory itemFactory )
+    private final Collection<OPCStateListener> stateListener = new CopyOnWriteArraySet<OPCStateListener> ();
+
+    public OPCController ( final ConnectionSetup config, final Hive hive, final FolderItemFactory itemFactory )
     {
         this.configuration = config;
-        worker = new Worker ();
-        model = new OPCModel ();
-        model.setIgnoreTimestampOnlyChange ( config.isIgnoreTimestampOnlyChange () );
+        this.worker = new Worker ();
+        this.model = new OPCModel ();
+        this.model.setIgnoreTimestampOnlyChange ( config.isIgnoreTimestampOnlyChange () );
 
-        ioManager = new OPCIoManager ( worker, model, this );
-        itemManager = new OPCItemManager ( worker, configuration, model, this, hive, itemFactory );
-        browserManager = new OPCBrowserManager ( worker, configuration, model, hive );
+        this.ioManager = new OPCIoManager ( this.worker, this.model, this );
+        this.itemManager = new OPCItemManager ( this.worker, this.configuration, this.model, this, hive, itemFactory );
+        this.browserManager = new OPCBrowserManager ( this.worker, this.configuration, this.model, hive );
     }
 
-    public void connect ( ConnectionInformation connectionInformation )
+    public void connect ( final ConnectionInformation connectionInformation )
     {
         this.connectionInformation = connectionInformation;
         this.model.setConnectionRequested ( true );
@@ -87,18 +87,18 @@ public class OPCController implements Runnable
 
     public void run ()
     {
-        while ( running )
+        while ( this.running )
         {
             try
             {
                 Thread.sleep ( this.getModel ().getLoopDelay () );
             }
-            catch ( InterruptedException e )
+            catch ( final InterruptedException e )
             {
                 logger.warn ( "Sleep failed", e );
             }
 
-            if ( !running )
+            if ( !this.running )
             {
                 // check after sleep
                 return;
@@ -108,7 +108,7 @@ public class OPCController implements Runnable
         }
     }
 
-    protected void setControllerState ( ControllerState state )
+    protected void setControllerState ( final ControllerState state )
     {
         this.model.setControllerState ( state );
     }
@@ -117,13 +117,13 @@ public class OPCController implements Runnable
     {
         try
         {
-            if ( this.model.isConnectionRequested () && ! ( this.model.isConnected () || this.model.isConnecting () ) && model.mayConnect () )
+            if ( this.model.isConnectionRequested () && ! ( this.model.isConnected () || this.model.isConnecting () ) && this.model.mayConnect () )
             {
                 setControllerState ( ControllerState.CONNECTING );
                 if ( performConnect () )
                 {
-                    itemManager.handleConnected ();
-                    ioManager.handleConnected ();
+                    this.itemManager.handleConnected ();
+                    this.ioManager.handleConnected ();
                     fireConnected ();
                 }
             }
@@ -133,13 +133,13 @@ public class OPCController implements Runnable
                 performDisconnect ();
             }
 
-            if ( model.isConnected () )
+            if ( this.model.isConnected () )
             {
                 setControllerState ( ControllerState.READING_STATUS );
                 updateStatus ();
 
-                OPCIoContext ctx = ioManager.prepareProcessing ();
-                ioManager.performProcessing ( ctx, OPCDATASOURCE.OPC_DS_CACHE );
+                final OPCIoContext ctx = this.ioManager.prepareProcessing ();
+                this.ioManager.performProcessing ( ctx, OPCDATASOURCE.OPC_DS_CACHE );
 
                 /*
                 ioManager.processRequests ();
@@ -155,12 +155,12 @@ public class OPCController implements Runnable
                 */
 
                 setControllerState ( ControllerState.BROWSING );
-                browserManager.performBrowse ();
+                this.browserManager.performBrowse ();
             }
 
             setControllerState ( ControllerState.IDLE );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             logger.error ( "Failed to process", e );
             disposeSession ();
@@ -176,31 +176,31 @@ public class OPCController implements Runnable
 
         try
         {
-            setServerState ( worker.execute ( job, job ) );
+            setServerState ( this.worker.execute ( job, job ) );
         }
-        catch ( InvocationTargetException e )
+        catch ( final InvocationTargetException e )
         {
             disposeSession ();
         }
     }
 
-    protected void setServerState ( OPCSERVERSTATUS state )
+    protected void setServerState ( final OPCSERVERSTATUS state )
     {
-        model.setServerState ( state );
+        this.model.setServerState ( state );
     }
 
     private boolean performConnect ()
     {
-        model.setLastConnectNow ();
-        model.setConnecting ( true );
-        model.setConnectionState ( ConnectionState.CONNECTING );
+        this.model.setLastConnectNow ();
+        this.model.setConnecting ( true );
+        this.model.setConnectionState ( ConnectionState.CONNECTING );
 
-        final ConnectJob job = new ConnectJob ( this.model.getConnectJobTimeout (), this.connectionInformation, model.getGlobalTimeout (), model.getUpdateRate () );
+        final ConnectJob job = new ConnectJob ( this.model.getConnectJobTimeout (), this.connectionInformation, this.model.getGlobalTimeout (), this.model.getUpdateRate () );
         final OPCModel model = this.model;
 
         try
         {
-            worker.execute ( job, new Runnable () {
+            this.worker.execute ( job, new Runnable () {
 
                 public void run ()
                 {
@@ -215,7 +215,7 @@ public class OPCController implements Runnable
                 }
             } );
         }
-        catch ( InvocationTargetException e )
+        catch ( final InvocationTargetException e )
         {
             logger.info ( "Failed to connect", e );
             this.model.setLastConnectionError ( e.getCause () );
@@ -238,26 +238,26 @@ public class OPCController implements Runnable
     protected void disposeSession ( final JISession session )
     {
         logger.info ( "Destroying DCOM session..." );
-        Thread destructor = new Thread ( new Runnable () {
+        final Thread destructor = new Thread ( new Runnable () {
 
             public void run ()
             {
-                model.addDisposerRunning ( Thread.currentThread () );
-                long ts = System.currentTimeMillis ();
+                OPCController.this.model.addDisposerRunning ( Thread.currentThread () );
+                final long ts = System.currentTimeMillis ();
                 try
                 {
                     logger.debug ( "Starting destruction of DCOM session" );
                     JISession.destroySession ( session );
                     logger.info ( "Destructed DCOM session" );
                 }
-                catch ( Throwable e )
+                catch ( final Throwable e )
                 {
                     logger.warn ( "Failed to destruct DCOM session", e );
                 }
                 finally
                 {
                     logger.info ( String.format ( "Session destruction took %s ms", System.currentTimeMillis () - ts ) );
-                    model.removeDisposerRunning ( Thread.currentThread () );
+                    OPCController.this.model.removeDisposerRunning ( Thread.currentThread () );
                 }
             }
         } );
@@ -270,27 +270,27 @@ public class OPCController implements Runnable
 
     protected void disposeSession ()
     {
-        if ( model.getSession () == null )
+        if ( this.model.getSession () == null )
         {
             return;
         }
 
         this.model.setConnectionState ( ConnectionState.DISCONNECTING );
 
-        disposeSession ( model.getSession () );
+        disposeSession ( this.model.getSession () );
 
         this.itemManager.handleDisconnected ();
         this.ioManager.handleDisconnected ();
         fireDisconnected ();
 
-        model.setServerState ( null );
-        model.setConnecting ( false );
-        model.setServer ( null );
-        model.setSession ( null );
-        model.setGroup ( null );
-        model.setItemMgt ( null );
-        model.setSyncIo ( null );
-        model.setCommon ( null );
+        this.model.setServerState ( null );
+        this.model.setConnecting ( false );
+        this.model.setServer ( null );
+        this.model.setSession ( null );
+        this.model.setGroup ( null );
+        this.model.setItemMgt ( null );
+        this.model.setSyncIo ( null );
+        this.model.setCommon ( null );
 
         this.model.setConnectionState ( ConnectionState.DISCONNECTED );
     }
@@ -304,22 +304,22 @@ public class OPCController implements Runnable
 
     public OPCModel getModel ()
     {
-        return model;
+        return this.model;
     }
 
     public OPCItemManager getItemManager ()
     {
-        return itemManager;
+        return this.itemManager;
     }
 
     public OPCIoManager getIoManager ()
     {
-        return ioManager;
+        return this.ioManager;
     }
 
     public OPCBrowserManager getBrowserManager ()
     {
-        return browserManager;
+        return this.browserManager;
     }
 
     public void setLoopDelay ( long loopDelay )
@@ -334,28 +334,28 @@ public class OPCController implements Runnable
         }
         this.model.setLoopDelay ( loopDelay );
     }
-    
-    public void addStateListener ( OPCStateListener stateListener )
+
+    public void addStateListener ( final OPCStateListener stateListener )
     {
         this.stateListener.add ( stateListener );
     }
-    
-    public void removeStateListener ( OPCStateListener stateListener )
+
+    public void removeStateListener ( final OPCStateListener stateListener )
     {
         this.stateListener.remove ( stateListener );
     }
-    
+
     protected void fireConnected ()
     {
-        for ( OPCStateListener listener : this.stateListener )
+        for ( final OPCStateListener listener : this.stateListener )
         {
             listener.connectionEstablished ();
         }
     }
-    
+
     protected void fireDisconnected ()
     {
-        for ( OPCStateListener listener : this.stateListener )
+        for ( final OPCStateListener listener : this.stateListener )
         {
             listener.connectionLost ();
         }

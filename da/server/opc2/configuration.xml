@@ -14,11 +14,25 @@
 			access="sync"
 			refresh="250"
 			connected="true"
-			alias="MFX1"
+			alias="MFX01"
 			enabled="true"
+			reconnectDelay="20000"
 			>
 			<components:clsid>AEDE6AB0-95F9-11d4-BF93-0050BAC23960</components:clsid>
 		</components:configuration>
+		
+		<!-- M+F OPC Server -->
+		<components:configuration domain=""
+			host="192.168.130.129" user="jens" password="test12"
+			access="sync"
+			refresh="250"
+			connected="true"
+			alias="MFX02"
+			enabled="true"
+			reconnectDelay="20000"
+			>
+			<components:clsid>AEDE6AB0-95F9-11d4-BF93-0050BAC23960</components:clsid>
+		</components:configuration>		
 		
 		<!-- Matrikon OPC Simulation Server -->
 		<components:configuration domain=""

@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.server.opc2.configuration;
 
 import java.util.HashMap;
@@ -21,11 +40,11 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
 
     private boolean active = false;
 
-    private FolderItemFactory parentItemFactory;
+    private final FolderItemFactory parentItemFactory;
 
     protected FolderItemFactory itemFactory;
 
-    private String baseId;
+    private final String baseId;
 
     private DataItemCommand reloadCommandItem;
 
@@ -33,7 +52,7 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
 
     private Listener reloadListener;
 
-    public AbstractXMLItemSource ( FolderItemFactory parentItemFactory, String baseId )
+    public AbstractXMLItemSource ( final FolderItemFactory parentItemFactory, final String baseId )
     {
         super ();
         this.parentItemFactory = parentItemFactory;
@@ -43,14 +62,14 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
     @Override
     public void activate ()
     {
-        itemFactory = parentItemFactory.createSubFolderFactory ( baseId );
+        this.itemFactory = this.parentItemFactory.createSubFolderFactory ( this.baseId );
 
-        this.reloadCommandItem = itemFactory.createCommand ( "reload" );
-        this.stateItem = itemFactory.createInput ( "state" );
+        this.reloadCommandItem = this.itemFactory.createCommand ( "reload" );
+        this.stateItem = this.itemFactory.createInput ( "state" );
 
         this.reloadCommandItem.addListener ( this.reloadListener = new DataItemCommand.Listener () {
 
-            public void command ( Variant value )
+            public void command ( final Variant value )
             {
                 AbstractXMLItemSource.this.reload ();
             }
@@ -58,7 +77,7 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
 
         setSuccessState ( "IDLE" );
 
-        active = true;
+        this.active = true;
         reload ();
     }
 
@@ -67,7 +86,7 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
     {
         super.deactivate ();
 
-        active = false;
+        this.active = false;
 
         this.itemFactory.dispose ();
         this.itemFactory = null;
@@ -79,7 +98,7 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
 
     protected void reload ()
     {
-        if ( !active )
+        if ( !this.active )
         {
             return;
         }
@@ -87,12 +106,12 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
         try
         {
             setSuccessState ( "READ" );
-            InitialItemsType initialItems = parse ();
+            final InitialItemsType initialItems = parse ();
             setSuccessState ( "NOTIFY" );
             handleItems ( initialItems );
             setSuccessState ( "IDLE" );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             handleError ( e );
         }
@@ -100,17 +119,17 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
 
     protected abstract InitialItemsType parse () throws Exception;
 
-    private void handleItems ( InitialItemsType initialItems )
+    private void handleItems ( final InitialItemsType initialItems )
     {
-        Set<ItemDescription> items = new HashSet<ItemDescription> ();
+        final Set<ItemDescription> items = new HashSet<ItemDescription> ();
 
         logger.debug ( "Number of items: " + initialItems.getItemList ().size () );
 
-        for ( InitialItemType item : initialItems.getItemList () )
+        for ( final InitialItemType item : initialItems.getItemList () )
         {
             logger.debug ( "Found new item: " + item.getId () );
 
-            ItemDescription newItem = new ItemDescription ();
+            final ItemDescription newItem = new ItemDescription ();
             newItem.setId ( item.getId () );
             newItem.setDescription ( item.getDescription () );
             newItem.setAccessPath ( item.getAccessPath () );
@@ -124,18 +143,18 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
         fireAvailableItemsChanged ( items );
     }
 
-    private void handleError ( Throwable e )
+    private void handleError ( final Throwable e )
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "error", new Variant ( true ) );
         attributes.put ( "error.message", new Variant ( e.getMessage () ) );
 
         this.stateItem.updateData ( new Variant ( "ERROR" ), attributes, AttributeMode.UPDATE );
     }
 
-    private void setSuccessState ( String state )
+    private void setSuccessState ( final String state )
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "error", null );
         attributes.put ( "error.message", null );
 

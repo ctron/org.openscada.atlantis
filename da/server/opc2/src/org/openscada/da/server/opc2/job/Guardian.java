@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
  * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 package org.openscada.da.server.opc2.job;
@@ -49,13 +49,13 @@ public class Guardian implements Runnable
     {
         signalInitialized ();
 
-        while ( running )
+        while ( this.running )
         {
             try
             {
                 doLoop ();
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
                 log.warn ( "Failed to wait for job", e );
             }
@@ -73,7 +73,7 @@ public class Guardian implements Runnable
         this.wait ();
         log.debug ( "Woke up" );
 
-        if ( currentJob == null )
+        if ( this.currentJob == null )
         {
             log.info ( "Woke up without a job" );
             return;
@@ -84,19 +84,19 @@ public class Guardian implements Runnable
 
         // and wait again .. until the timeout is arrived or the job is completed
 
-        long timeout = this.currentJob.getTimeout ();
+        final long timeout = this.currentJob.getTimeout ();
 
-        long start = System.currentTimeMillis ();
+        final long start = System.currentTimeMillis ();
         log.debug ( String.format ( "Job timeout: %d", timeout ) );
 
-        while ( ( !completed ) && ( ( System.currentTimeMillis () - start ) < timeout ) )
+        while ( !this.completed && System.currentTimeMillis () - start < timeout )
         {
             this.wait ( 10 );
         }
 
-        log.debug ( String.format ( "Stopped waiting: completed: %s, diff: %d", completed, System.currentTimeMillis () - start ) );
+        log.debug ( String.format ( "Stopped waiting: completed: %s, diff: %d", this.completed, System.currentTimeMillis () - start ) );
 
-        if ( !completed )
+        if ( !this.completed )
         {
             cancel ();
         }
@@ -104,9 +104,9 @@ public class Guardian implements Runnable
         this.notifyAll ();
     }
 
-    public synchronized void startJob ( Job job, GuardianHandler handler )
+    public synchronized void startJob ( final Job job, final GuardianHandler handler )
     {
-        if ( !running )
+        if ( !this.running )
         {
             throw new RuntimeException ( "Guardian is already shut down" );
         }
@@ -140,7 +140,7 @@ public class Guardian implements Runnable
             {
                 this.wait ();
             }
-            catch ( InterruptedException e )
+            catch ( final InterruptedException e )
             {
                 log.error ( "Failed to wait for guardian completion" );
             }
@@ -157,7 +157,7 @@ public class Guardian implements Runnable
         {
             this.handler.performCancel ();
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             log.error ( "Failed to cancel operation", e );
         }

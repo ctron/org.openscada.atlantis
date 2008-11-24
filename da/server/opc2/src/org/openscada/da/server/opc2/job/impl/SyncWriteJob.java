@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
  * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 package org.openscada.da.server.opc2.job.impl;
@@ -38,13 +38,13 @@ public class SyncWriteJob extends ThreadJob implements JobResult<ResultSet<Write
 
     private static Logger log = Logger.getLogger ( SyncWriteJob.class );
 
-    private OPCModel model;
+    private final OPCModel model;
 
-    private WriteRequest[] writeRequests;
+    private final WriteRequest[] writeRequests;
 
     private ResultSet<WriteRequest> result;
 
-    public SyncWriteJob ( long timeout, OPCModel model, WriteRequest[] writeRequests )
+    public SyncWriteJob ( final long timeout, final OPCModel model, final WriteRequest[] writeRequests )
     {
         super ( timeout );
         this.model = model;
@@ -56,7 +56,7 @@ public class SyncWriteJob extends ThreadJob implements JobResult<ResultSet<Write
     {
         log.debug ( "Perform sync write" );
 
-        OPCSyncIO syncIo = this.model.getSyncIo ();
+        final OPCSyncIO syncIo = this.model.getSyncIo ();
         if ( syncIo != null )
         {
             this.result = syncIo.write ( this.writeRequests );
@@ -65,6 +65,6 @@ public class SyncWriteJob extends ThreadJob implements JobResult<ResultSet<Write
 
     public ResultSet<WriteRequest> getResult ()
     {
-        return result;
+        return this.result;
     }
 }

@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
  * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 package org.openscada.da.server.opc2;
@@ -41,21 +41,21 @@ public class Hive extends HiveCommon
 {
     private static Logger logger = Logger.getLogger ( Hive.class );
 
-    private Collection<OPCConnection> connections = new LinkedList<OPCConnection> ();
+    private final Collection<OPCConnection> connections = new LinkedList<OPCConnection> ();
 
-    private FolderCommon rootFolder = new FolderCommon ();
+    private final FolderCommon rootFolder = new FolderCommon ();
 
     public Hive () throws XmlException, IOException, ConfigurationError
     {
         this ( new XMLConfigurator ( "configuration.xml" ) );
     }
 
-    public Hive ( Node node ) throws XmlException, IOException, ConfigurationError
+    public Hive ( final Node node ) throws XmlException, IOException, ConfigurationError
     {
         this ( new XMLConfigurator ( node ) );
     }
 
-    public Hive ( XMLConfigurator configurator ) throws XmlException, IOException, ConfigurationError
+    public Hive ( final XMLConfigurator configurator ) throws XmlException, IOException, ConfigurationError
     {
         super ();
 
@@ -66,7 +66,7 @@ public class Hive extends HiveCommon
 
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
 
-        setRootFolder ( rootFolder );
+        setRootFolder ( this.rootFolder );
 
         configurator.configure ( this );
     }
@@ -83,11 +83,11 @@ public class Hive extends HiveCommon
 
     }
 
-    public void addConnection ( ConnectionSetup setup, boolean connect, Collection<String> initialOpcItems )
+    public void addConnection ( final ConnectionSetup setup, final boolean connect, final Collection<String> initialOpcItems )
     {
-        OPCConnection connection = new OPCConnection ( this, rootFolder, setup, initialOpcItems );
+        final OPCConnection connection = new OPCConnection ( this, this.rootFolder, setup, initialOpcItems );
 
-        connections.add ( connection );
+        this.connections.add ( connection );
 
         connection.start ();
         if ( connect )
@@ -96,7 +96,7 @@ public class Hive extends HiveCommon
         }
     }
 
-    public void removeConnection ( OPCConnection connection )
+    public void removeConnection ( final OPCConnection connection )
     {
         if ( this.connections.remove ( connection ) )
         {

@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.server.opc2.browser;
 
 import java.util.ArrayList;
@@ -21,11 +40,11 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
 
     protected boolean refreshed = false;
 
-    private OPCController controller;
+    private final OPCController controller;
 
     private Collection<String> path = new ArrayList<String> ();
 
-    public OPCTreeFolder ( OPCController controller, Collection<String> path )
+    public OPCTreeFolder ( final OPCController controller, final Collection<String> path )
     {
         this.controller = controller;
         this.path = path;
@@ -33,34 +52,34 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
 
     public void added ()
     {
-        folderImpl.added ();
+        this.folderImpl.added ();
     }
 
-    public Entry[] list ( Stack<String> path ) throws NoSuchFolderException
+    public Entry[] list ( final Stack<String> path ) throws NoSuchFolderException
     {
-        return folderImpl.list ( path );
+        return this.folderImpl.list ( path );
     }
 
     public void removed ()
     {
-        folderImpl.removed ();
+        this.folderImpl.removed ();
     }
 
-    public void subscribe ( Stack<String> path, FolderListener listener, Object tag ) throws NoSuchFolderException
+    public void subscribe ( final Stack<String> path, final FolderListener listener, final Object tag ) throws NoSuchFolderException
     {
         checkRefresh ();
-        folderImpl.subscribe ( path, listener, tag );
+        this.folderImpl.subscribe ( path, listener, tag );
     }
 
     protected void checkRefresh ()
     {
         synchronized ( this )
         {
-            if ( refreshed )
+            if ( this.refreshed )
             {
                 return;
             }
-            refreshed = true;
+            this.refreshed = true;
         }
         refresh ();
     }
@@ -70,29 +89,29 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
         this.controller.getBrowserManager ().addBrowseRequest ( new BrowseRequest ( this.path ), this );
     }
 
-    public void unsubscribe ( Stack<String> path, Object tag ) throws NoSuchFolderException
+    public void unsubscribe ( final Stack<String> path, final Object tag ) throws NoSuchFolderException
     {
         this.folderImpl.unsubscribe ( path, tag );
     }
 
-    public void browseComplete ( BrowseResult result )
+    public void browseComplete ( final BrowseResult result )
     {
-        for ( String branch : result.getBranches () )
+        for ( final String branch : result.getBranches () )
         {
-            Map<String, Variant> attributes = new HashMap<String, Variant> ();
-            Collection<String> path = new ArrayList<String> ( this.path );
+            final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+            final Collection<String> path = new ArrayList<String> ( this.path );
             path.add ( branch );
             this.folderImpl.add ( branch, new OPCTreeFolder ( this.controller, path ), attributes );
         }
 
-        for ( BrowseResultEntry entry : result.getLeaves () )
+        for ( final BrowseResultEntry entry : result.getLeaves () )
         {
-            OPCItem item = this.controller.getItemManager ().registerItem ( entry.getItemId (), entry.getIoDirections (), null );
+            final OPCItem item = this.controller.getItemManager ().registerItem ( entry.getItemId (), entry.getIoDirections (), null );
             this.folderImpl.add ( entry.getEntryName (), item, new HashMap<String, Variant> () );
         }
     }
 
-    public void browseError ( Throwable error )
+    public void browseError ( final Throwable error )
     {
     }
 }

@@ -1,3 +1,23 @@
+/*
+ * This file is part of the OpenSCADA projecimport java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.openscada.da.server.opc2.Hive;
+import org.openscada.da.server.opc2.connection.ConnectionSetup;
+import org.openscada.da.server.opc2.connection.OPCModel;
+import org.openscada.da.server.opc2.job.Worker;
+import org.openscada.da.server.opc2.job.impl.BrowseJob;
+d in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.server.opc2.browser;
 
 import java.util.ArrayList;
@@ -15,24 +35,24 @@ public class OPCBrowserManager
 
     private static class Request
     {
-        private BrowseRequest request;
+        private final BrowseRequest request;
 
-        private BrowseRequestListener listener;
+        private final BrowseRequestListener listener;
 
-        public Request ( BrowseRequest request, BrowseRequestListener listener )
+        public Request ( final BrowseRequest request, final BrowseRequestListener listener )
         {
             this.request = request;
             this.listener = listener;
         }
     }
 
-    private Worker worker;
+    private final Worker worker;
 
-    private OPCModel model;
+    private final OPCModel model;
 
-    private List<Request> requests = new LinkedList<Request> ();
+    private final List<Request> requests = new LinkedList<Request> ();
 
-    public OPCBrowserManager ( Worker worker, ConnectionSetup configuration, OPCModel model, Hive hive )
+    public OPCBrowserManager ( final Worker worker, final ConnectionSetup configuration, final OPCModel model, final Hive hive )
     {
         this.worker = worker;
         this.model = model;
@@ -51,29 +71,29 @@ public class OPCBrowserManager
             this.requests.clear ();
         }
 
-        for ( Request request : currentRequests )
+        for ( final Request request : currentRequests )
         {
             processRequest ( request );
         }
     }
 
-    private void processRequest ( Request request ) throws Throwable
+    private void processRequest ( final Request request ) throws Throwable
     {
-        BrowseJob job = new BrowseJob ( this.model.getDefaultTimeout (), this.model, request.request );
+        final BrowseJob job = new BrowseJob ( this.model.getDefaultTimeout (), this.model, request.request );
 
         try
         {
-            BrowseResult result = this.worker.execute ( job, job );
+            final BrowseResult result = this.worker.execute ( job, job );
             request.listener.browseComplete ( result );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             request.listener.browseError ( e );
             throw e;
         }
     }
 
-    public void addBrowseRequest ( BrowseRequest request, BrowseRequestListener listener )
+    public void addBrowseRequest ( final BrowseRequest request, final BrowseRequestListener listener )
     {
         if ( listener == null )
         {
