@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,10 +19,10 @@
 
 package org.openscada.da.server.common;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
@@ -34,30 +34,28 @@ import org.openscada.da.core.WriteAttributeResults;
 public class DataItemCommand extends DataItemOutput
 {
 
-    private static Logger _log = Logger.getLogger ( DataItemCommand.class );
+    private static Logger logger = Logger.getLogger ( DataItemCommand.class );
+
+    /**
+     * The listener interface
+     * @author Jens Reimann
+     *
+     */
+    public static interface Listener
+    {
+        public void command ( Variant value );
+    }
 
     public DataItemCommand ( final String name )
     {
         super ( name );
     }
 
-    public static interface Listener
-    {
-        public void command ( Variant value );
-    }
-
-    private final List<Listener> _listeners = new ArrayList<Listener> ();
+    private final List<Listener> listeners = new CopyOnWriteArrayList<Listener> ();
 
     public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
-
-        List<Listener> listeners;
-        synchronized ( this._listeners )
-        {
-            listeners = new ArrayList<Listener> ( this._listeners );
-        }
-
-        for ( final Listener listener : listeners )
+        for ( final Listener listener : this.listeners )
         {
             try
             {
@@ -65,26 +63,28 @@ public class DataItemCommand extends DataItemOutput
             }
             catch ( final Throwable e )
             {
-                _log.warn ( "Failed to run listener", e );
+                logger.warn ( "Failed to run listener", e );
                 throw new InvalidOperationException ();
             }
         }
     }
 
+    /**
+     * Add a new listener which gets called on write requests
+     * @param listener listener to add
+     */
     public void addListener ( final Listener listener )
     {
-        synchronized ( this._listeners )
-        {
-            this._listeners.add ( listener );
-        }
+        this.listeners.add ( listener );
     }
 
+    /**
+     * Remove a listener from the list
+     * @param listener listener to remove
+     */
     public void removeListener ( final Listener listener )
     {
-        synchronized ( this._listeners )
-        {
-            this._listeners.remove ( listener );
-        }
+        this.listeners.remove ( listener );
     }
 
     public Map<String, Variant> getAttributes ()
