@@ -11,7 +11,5 @@
 	<classpathentry kind="lib" path="lib/js.jar"/>
 	<classpathentry kind="lib" path="lib/jxl.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ext_junit"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/openscada_da_server_net"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/openscada_net_base"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
