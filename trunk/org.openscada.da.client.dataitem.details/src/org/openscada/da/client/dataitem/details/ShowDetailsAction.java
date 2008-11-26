@@ -38,25 +38,25 @@ import org.openscada.da.client.test.views.realtime.ListEntry;
 
 public class ShowDetailsAction implements IObjectActionDelegate
 {
-    private Collection<DataItemHolder> items = new LinkedList<DataItemHolder> ();
+    private final Collection<DataItemHolder> items = new LinkedList<DataItemHolder> ();
 
     private IWorkbenchPage page;
 
-    public void setActivePart ( IAction action, IWorkbenchPart targetPart )
+    public void setActivePart ( final IAction action, final IWorkbenchPart targetPart )
     {
         this.page = targetPart.getSite ().getPage ();
     }
 
-    public void run ( IAction action )
+    public void run ( final IAction action )
     {
-        MultiStatus status = new MultiStatus ( Activator.PLUGIN_ID, 0, "Opening details", null );
-        for ( DataItemHolder item : items )
+        final MultiStatus status = new MultiStatus ( Activator.PLUGIN_ID, 0, "Opening details", null );
+        for ( final DataItemHolder item : this.items )
         {
             try
             {
                 showItem ( item );
             }
-            catch ( PartInitException e )
+            catch ( final PartInitException e )
             {
                 status.add ( e.getStatus () );
             }
@@ -67,18 +67,18 @@ public class ShowDetailsAction implements IObjectActionDelegate
         }
     }
 
-    private void showItem ( DataItemHolder item ) throws PartInitException
+    private void showItem ( final DataItemHolder item ) throws PartInitException
     {
-        DetailsViewPart view = (DetailsViewPart)this.page.showView ( DetailsViewPart.VIEW_ID, asSecondardId ( item ), IWorkbenchPage.VIEW_ACTIVATE );
+        final DetailsViewPart view = (DetailsViewPart)this.page.showView ( DetailsViewPart.VIEW_ID, asSecondardId ( item ), IWorkbenchPage.VIEW_ACTIVATE );
         view.setDataItem ( item );
     }
 
-    private String asSecondardId ( DataItemHolder item )
+    private String asSecondardId ( final DataItemHolder item )
     {
         return item.getItemId ().replace ( "_", "__" ).replace ( ':', '_' );
     }
 
-    public void selectionChanged ( IAction action, ISelection selection )
+    public void selectionChanged ( final IAction action, final ISelection selection )
     {
         clearSelection ();
         if ( ! ( selection instanceof IStructuredSelection ) )
@@ -86,31 +86,31 @@ public class ShowDetailsAction implements IObjectActionDelegate
             return;
         }
 
-        IStructuredSelection sel = (IStructuredSelection)selection;
-        for ( Iterator<?> i = sel.iterator (); i.hasNext (); )
+        final IStructuredSelection sel = (IStructuredSelection)selection;
+        for ( final Iterator<?> i = sel.iterator (); i.hasNext (); )
         {
-            Object o = i.next ();
+            final Object o = i.next ();
             if ( o instanceof ListEntry )
             {
-                ListEntry entry = (ListEntry)o;
-                items.add ( new DataItemHolder ( entry.getDataItem ().getConnection ().getConnection (), entry.getDataItem ().getConnection ().getItemManager (), entry.getDataItem ().getId () ) );
+                final ListEntry entry = (ListEntry)o;
+                this.items.add ( new DataItemHolder ( entry.getConnection ().getConnection (), entry.getConnection ().getItemManager (), entry.getDataItem ().getItemId () ) );
             }
             else if ( o instanceof HiveItem )
             {
-                HiveItem item = (HiveItem)o;
-                items.add ( new DataItemHolder ( item.getConnection ().getConnection (), item.getConnection ().getItemManager (), item.getId () ) );
+                final HiveItem item = (HiveItem)o;
+                this.items.add ( new DataItemHolder ( item.getConnection ().getConnection (), item.getConnection ().getItemManager (), item.getId () ) );
             }
             else if ( o instanceof DataItemEntry )
             {
-                DataItemEntry entry = (DataItemEntry)o;
-                items.add ( new DataItemHolder ( entry.getConnection ().getConnection (), entry.getConnection ().getItemManager (), entry.getId () ) );
+                final DataItemEntry entry = (DataItemEntry)o;
+                this.items.add ( new DataItemHolder ( entry.getConnection ().getConnection (), entry.getConnection ().getItemManager (), entry.getId () ) );
             }
         }
     }
 
     private void clearSelection ()
     {
-        items.clear ();
+        this.items.clear ();
     }
 
 }
