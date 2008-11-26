@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.client.test.views.realtime;
 
 import java.util.ArrayList;
@@ -14,128 +33,131 @@ import org.openscada.da.client.test.impl.HiveItem;
 public class ListData implements Observer
 {
     private static Logger _log = Logger.getLogger ( ListData.class );
-    
+
     private List<ListEntry> _items = new LinkedList<ListEntry> ();
-    private Set<Listener> _listeners = new HashSet<Listener> ();
+
+    private final Set<Listener> _listeners = new HashSet<Listener> ();
 
     synchronized public List<ListEntry> getItems ()
     {
-        return new ArrayList<ListEntry> ( _items );
+        return new ArrayList<ListEntry> ( this._items );
     }
 
-    synchronized public void setItems ( List<ListEntry> items )
+    synchronized public void setItems ( final List<ListEntry> items )
     {
         clear ();
-        
-        _items = items;
-        fireAdded ( _items.toArray ( new ListEntry[_items.size ()] ) );
-        for ( ListEntry entry : items )
+
+        this._items = items;
+        fireAdded ( this._items.toArray ( new ListEntry[this._items.size ()] ) );
+        for ( final ListEntry entry : items )
         {
             entry.addObserver ( this );
         }
     }
-    
-    synchronized public void add ( ListEntry entry )
+
+    synchronized public void add ( final ListEntry entry )
     {
-        if ( _items.add ( entry ) )
+        if ( this._items.add ( entry ) )
         {
             fireAdded ( new ListEntry[] { entry } );
             entry.addObserver ( this );
         }
     }
 
-    synchronized public void add ( HiveItem hiveItem )
+    synchronized public void add ( final HiveItem hiveItem )
     {
-        ListEntry item = new ListEntry ();
-        item.setDataItem ( hiveItem );
-        
+        final ListEntry item = new ListEntry ();
+        item.setDataItem ( hiveItem.getId (), hiveItem.getConnection () );
+
         add ( item );
     }
-    
-    synchronized public void remove ( ListEntry entry )
+
+    synchronized public void remove ( final ListEntry entry )
     {
-        if ( _items.remove ( entry ) )
+        if ( this._items.remove ( entry ) )
         {
             entry.deleteObserver ( this );
             fireRemoved ( new ListEntry[] { entry } );
         }
     }
-    
+
     synchronized public void clear ()
     {
-        for ( ListEntry entry : _items )
+        for ( final ListEntry entry : this._items )
         {
             entry.deleteObserver ( this );
         }
-        _items.clear ();
-        fireRemoved ( _items.toArray ( new ListEntry[_items.size ()] ) );
+        this._items.clear ();
+        fireRemoved ( this._items.toArray ( new ListEntry[this._items.size ()] ) );
     }
-    
-    synchronized public void addListener ( Listener listener )
+
+    synchronized public void addListener ( final Listener listener )
     {
-        _listeners.add ( listener );
-        
+        this._listeners.add ( listener );
+
         // now fill the new listener with what we already have
-        if ( !_items.isEmpty () )
-            listener.added ( _items.toArray ( new ListEntry[_items.size ()] ) );
+        if ( !this._items.isEmpty () )
+        {
+            listener.added ( this._items.toArray ( new ListEntry[this._items.size ()] ) );
+        }
     }
-    
-    synchronized public void removeListener ( Listener listener )
+
+    synchronized public void removeListener ( final Listener listener )
     {
-        _listeners.remove ( listener );
+        this._listeners.remove ( listener );
     }
-    
-    synchronized protected void fireAdded ( ListEntry [] entries )
+
+    synchronized protected void fireAdded ( final ListEntry[] entries )
     {
         _log.debug ( String.format ( "Fire add for %d items", entries.length ) );
-        for ( Listener listener : _listeners )
+        for ( final Listener listener : this._listeners )
         {
             try
             {
                 listener.added ( entries );
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 _log.warn ( "Failed while sending add notification", e );
             }
         }
     }
-    
-    synchronized protected void fireRemoved ( ListEntry [] entries )
+
+    synchronized protected void fireRemoved ( final ListEntry[] entries )
     {
-        for ( Listener listener : _listeners )
+        for ( final Listener listener : this._listeners )
         {
             try
             {
                 listener.removed ( entries );
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 _log.warn ( "Failed while sending remove notification", e );
             }
         }
     }
-    
-    synchronized protected void fireUpdated ( ListEntry [] entries )
+
+    synchronized protected void fireUpdated ( final ListEntry[] entries )
     {
         _log.debug ( "Updating items: " + entries.length );
-        
-        for ( Listener listener : _listeners )
+
+        for ( final Listener listener : this._listeners )
         {
             try
             {
                 listener.updated ( entries );
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 _log.warn ( "Failed while sending update notification", e );
             }
         }
     }
 
-    synchronized public void update ( Observable o, Object arg )
+    synchronized public void update ( final Observable o, final Object arg )
     {
-        if ( (o instanceof ListEntry) && _items.contains ( o ) )
+        if ( o instanceof ListEntry && this._items.contains ( o ) )
         {
             fireUpdated ( new ListEntry[] { (ListEntry)o } );
         }

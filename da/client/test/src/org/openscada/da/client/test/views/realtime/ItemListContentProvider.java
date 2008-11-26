@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.client.test.views.realtime;
 
 import org.apache.log4j.Logger;
@@ -8,57 +27,64 @@ import org.eclipse.jface.viewers.Viewer;
 public class ItemListContentProvider implements ITreeContentProvider, Listener
 {
     private static Logger _log = Logger.getLogger ( ItemListContentProvider.class );
-    
+
     private Viewer _viewer = null;
+
     private ListData _data = null;
 
-    public Object[] getChildren ( Object parentElement )
+    public Object[] getChildren ( final Object parentElement )
     {
-        if ( _data == null )
+        if ( this._data == null )
+        {
             return null;
-        
+        }
+
         if ( parentElement instanceof ListData )
         {
-            ListData listData = (ListData)parentElement;
+            final ListData listData = (ListData)parentElement;
             return listData.getItems ().toArray ( new ListEntry[0] );
         }
         else if ( parentElement instanceof ListEntry )
         {
-            return ((ListEntry)parentElement).getAttributes ().toArray ( new ListEntry.AttributePair[0] );
+            return ( (ListEntry)parentElement ).getAttributes ().toArray ( new ListEntry.AttributePair[0] );
         }
-        
+
         return new Object[0];
     }
 
-    public Object getParent ( Object element )
+    public Object getParent ( final Object element )
     {
-        if ( _data == null )
+        if ( this._data == null )
+        {
             return null;
-        
+        }
+
         if ( element instanceof ListEntry )
         {
-            return _data;
+            return this._data;
         }
-        
+
         return null;
     }
 
-    public boolean hasChildren ( Object element )
+    public boolean hasChildren ( final Object element )
     {
-        if ( _data == null )
+        if ( this._data == null )
+        {
             return false;
-        
+        }
+
         if ( element instanceof ListEntry )
         {
-            return ((ListEntry)element).hasAttributes ();
+            return ( (ListEntry)element ).hasAttributes ();
         }
-        
+
         return false;
     }
 
-    public Object[] getElements ( Object inputElement )
+    public Object[] getElements ( final Object inputElement )
     {
-        return getChildren ( inputElement ); 
+        return getChildren ( inputElement );
     }
 
     public void dispose ()
@@ -66,33 +92,35 @@ public class ItemListContentProvider implements ITreeContentProvider, Listener
         unsubscribe ();
     }
 
-    public void inputChanged ( Viewer viewer, Object oldInput, Object newInput )
+    public void inputChanged ( final Viewer viewer, final Object oldInput, final Object newInput )
     {
         unsubscribe ();
-        
-        _viewer = viewer;
-        
+
+        this._viewer = viewer;
+
         if ( newInput != null )
         {
             subcribe ( newInput );
         }
     }
 
-    private void subcribe ( Object newInput )
+    private void subcribe ( final Object newInput )
     {
-        if ( !(newInput instanceof ListData) )
+        if ( ! ( newInput instanceof ListData ) )
+        {
             return;
-        
-        _data = (ListData)newInput;
-        _data.addListener ( this );
+        }
+
+        this._data = (ListData)newInput;
+        this._data.addListener ( this );
     }
 
     private void unsubscribe ()
     {
-        if ( _data != null )
+        if ( this._data != null )
         {
-            _data.removeListener ( this );
-            _data = null;
+            this._data.removeListener ( this );
+            this._data = null;
         }
     }
 
@@ -100,100 +128,115 @@ public class ItemListContentProvider implements ITreeContentProvider, Listener
     {
         try
         {
-            if ( _viewer != null )
-                _viewer.getControl ().getDisplay ().asyncExec ( new Runnable ()
-                {
+            if ( this._viewer != null )
+            {
+                this._viewer.getControl ().getDisplay ().asyncExec ( new Runnable () {
                     public void run ()
                     {
                         performAdded ( entries );
-                    }} 
-                );
+                    }
+                } );
+            }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             _log.warn ( "Failed to notify viewer", e );
         }
     }
-    
-    protected void performAdded ( ListEntry [] entries )
+
+    protected void performAdded ( final ListEntry[] entries )
     {
-        if ( _viewer.getControl ().isDisposed () )
-            return;
-        
-        if ( _viewer instanceof TreeViewer )
+        if ( this._viewer.getControl ().isDisposed () )
         {
-            ((TreeViewer)_viewer).add ( _data, entries );
+            return;
         }
-        else if ( _viewer != null )
-            _viewer.refresh ();
+
+        if ( this._viewer instanceof TreeViewer )
+        {
+            ( (TreeViewer)this._viewer ).add ( this._data, entries );
+        }
+        else if ( this._viewer != null )
+        {
+            this._viewer.refresh ();
+        }
     }
 
     public void removed ( final ListEntry[] entries )
     {
         try
         {
-            if ( _viewer != null )
-                _viewer.getControl ().getDisplay ().asyncExec ( new Runnable ()
-                {
+            if ( this._viewer != null )
+            {
+                this._viewer.getControl ().getDisplay ().asyncExec ( new Runnable () {
                     public void run ()
                     {
                         performRemoved ( entries );
-                    }} 
-                );
+                    }
+                } );
+            }
         }
-        catch ( Exception e )
-        {
-            _log.warn ( "Failed to notify viewer", e );
-        }
-    }
-    
-    public void performRemoved ( ListEntry[] entries )
-    {
-        if ( _viewer.getControl ().isDisposed () )
-            return;
-        
-        if ( _viewer instanceof TreeViewer )
-        {
-            ((TreeViewer)_viewer).remove ( entries );
-        }
-        else if ( _viewer != null )
-            _viewer.refresh ();
-    }
-    
-    public void updated ( final ListEntry[] entries )
-    {
-        try
-        {
-            if ( _viewer != null )
-                _viewer.getControl ().getDisplay ().asyncExec ( new Runnable ()
-                {
-                    public void run ()
-                    {
-                        performUpdated ( entries );
-                    }} 
-                );
-        }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             _log.warn ( "Failed to notify viewer", e );
         }
     }
 
-    public void performUpdated ( ListEntry[] entries )
+    public void performRemoved ( final ListEntry[] entries )
     {
-        if ( _viewer.getControl ().isDisposed () )
-            return;
-        
-        if ( _viewer instanceof TreeViewer )
+        if ( this._viewer.getControl ().isDisposed () )
         {
-            for ( ListEntry entry : entries )
-            {
-                ((TreeViewer)_viewer).refresh ( entry );    
-            }
-            ((TreeViewer)_viewer).update ( entries, null );
+            return;
         }
-        else if ( _viewer != null )
-            _viewer.refresh ();
+
+        if ( this._viewer instanceof TreeViewer )
+        {
+            ( (TreeViewer)this._viewer ).remove ( entries );
+        }
+        else if ( this._viewer != null )
+        {
+            this._viewer.refresh ();
+        }
+    }
+
+    public void updated ( final ListEntry[] entries )
+    {
+        try
+        {
+            if ( this._viewer != null )
+            {
+                this._viewer.getControl ().getDisplay ().asyncExec ( new Runnable () {
+                    public void run ()
+                    {
+                        performUpdated ( entries );
+                    }
+                } );
+            }
+        }
+        catch ( final Exception e )
+        {
+            _log.warn ( "Failed to notify viewer", e );
+        }
+    }
+
+    public void performUpdated ( final ListEntry[] entries )
+    {
+        if ( this._viewer.getControl ().isDisposed () )
+        {
+            return;
+        }
+
+        if ( this._viewer instanceof TreeViewer )
+        {
+            for ( final ListEntry entry : entries )
+            {
+                ( (TreeViewer)this._viewer ).refresh ( entry );
+            }
+            ( (TreeViewer)this._viewer ).update ( entries, null );
+        }
+        else if ( this._viewer != null )
+        {
+            this._viewer.refresh ();
+        }
     }
 
 }

@@ -1,7 +1,25 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.client.test.views.realtime;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -10,11 +28,11 @@ import java.util.Observer;
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.core.utils.AttributesHelper;
-import org.openscada.da.client.ItemUpdateListener;
-import org.openscada.da.client.test.impl.HiveItem;
+import org.openscada.da.client.DataItem;
+import org.openscada.da.client.DataItemValue;
+import org.openscada.da.client.test.impl.HiveConnection;
 
-public class ListEntry extends Observable implements ItemUpdateListener
+public class ListEntry extends Observable implements Observer
 {
     public class AttributePair
     {
@@ -22,7 +40,7 @@ public class ListEntry extends Observable implements ItemUpdateListener
 
         public Variant value;
 
-        public AttributePair ( String key, Variant value )
+        public AttributePair ( final String key, final Variant value )
         {
             super ();
             this.key = key;
@@ -34,178 +52,107 @@ public class ListEntry extends Observable implements ItemUpdateListener
         {
             final int PRIME = 31;
             int result = 1;
-            result = PRIME * result + ( ( key == null ) ? 0 : key.hashCode () );
-            result = PRIME * result + ( ( value == null ) ? 0 : value.hashCode () );
+            result = PRIME * result + ( this.key == null ? 0 : this.key.hashCode () );
+            result = PRIME * result + ( this.value == null ? 0 : this.value.hashCode () );
             return result;
         }
 
         @Override
-        public boolean equals ( Object obj )
+        public boolean equals ( final Object obj )
         {
             if ( this == obj )
+            {
                 return true;
+            }
             if ( obj == null )
+            {
                 return false;
+            }
             if ( getClass () != obj.getClass () )
+            {
                 return false;
+            }
             final AttributePair other = (AttributePair)obj;
-            if ( key == null )
+            if ( this.key == null )
             {
                 if ( other.key != null )
+                {
                     return false;
+                }
             }
-            else if ( !key.equals ( other.key ) )
+            else if ( !this.key.equals ( other.key ) )
+            {
                 return false;
-            if ( value == null )
+            }
+            if ( this.value == null )
             {
                 if ( other.value != null )
+                {
                     return false;
+                }
             }
-            else if ( !value.equals ( other.value ) )
+            else if ( !this.value.equals ( other.value ) )
+            {
                 return false;
+            }
             return true;
         }
     }
 
     private static Logger _log = Logger.getLogger ( ListEntry.class );
 
-    private HiveItem _dataItem = null;
+    private DataItem dataItem;
 
-    private Variant _value = null;
+    private HiveConnection connection;
 
-    private Map<String, Variant> _attributes = new HashMap<String, Variant> ();
-
-    private boolean _subscribed = false;
-
-    private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
-
-    private Throwable _subscriptionError = null;
-
-    public HiveItem getDataItem ()
+    public HiveConnection getConnection ()
     {
-        return _dataItem;
+        return this.connection;
     }
 
-    public synchronized void setDataItem ( HiveItem dataItem )
+    public DataItem getDataItem ()
+    {
+        return this.dataItem;
+    }
+
+    public synchronized void setDataItem ( final String itemId, final HiveConnection connection )
     {
         clear ();
-        _dataItem = dataItem;
-        checkObservers ();
+        this.connection = connection;
+        this.dataItem = new DataItem ( itemId, connection.getItemManager () );
+        this.dataItem.addObserver ( this );
     }
 
     public synchronized void clear ()
     {
-        if ( _dataItem != null )
+        this.connection = null;
+        if ( this.dataItem != null )
         {
-            unsubscribe ();
-            _dataItem = null;
+            this.dataItem.deleteObserver ( this );
+            this.dataItem.unregister ();
         }
     }
 
     public Variant getValue ()
     {
-        return _value;
+        return this.dataItem.getSnapshotValue ().getValue ();
     }
 
     public SubscriptionState getSubscriptionChange ()
     {
-        return _subscriptionState;
+        return this.dataItem.getSnapshotValue ().getSubscriptionState ();
     }
 
     public synchronized List<AttributePair> getAttributes ()
     {
-        List<AttributePair> pairs = new ArrayList<AttributePair> ( _attributes.size () );
-        for ( Map.Entry<String, Variant> entry : _attributes.entrySet () )
+        final DataItemValue value = this.dataItem.getSnapshotValue ();
+
+        final List<AttributePair> pairs = new ArrayList<AttributePair> ( value.getAttributes ().size () );
+        for ( final Map.Entry<String, Variant> entry : value.getAttributes ().entrySet () )
         {
             pairs.add ( new AttributePair ( entry.getKey (), entry.getValue () ) );
         }
         return pairs;
-    }
-
-    public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
-    {
-
-        setChanged ();
-        notifyObservers ();
-    }
-
-    public synchronized void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
-    {
-        if ( value != null )
-        {
-            setChanged ();
-            _log.debug ( "Value change: " + value );
-            _value = value;
-        }
-
-        if ( attributes != null )
-        {
-            setChanged ();
-            _log.debug ( "Attribute change: " + attributes.size () );
-            AttributesHelper.mergeAttributes ( _attributes, attributes, cache );
-        }
-
-        notifyObservers ();
-    }
-
-    public synchronized void notifySubscriptionChange ( SubscriptionState subscriptionState, Throwable subscriptionError )
-    {
-        _log.debug ( "Subscription change: " + subscriptionState.name () );
-
-        _subscriptionState = subscriptionState;
-        _subscriptionError = subscriptionError;
-        setChanged ();
-        notifyObservers ();
-    }
-
-    protected synchronized void subscribe ()
-    {
-        if ( ( _dataItem != null ) && ( !_subscribed ) )
-        {
-            _log.debug ( "Subscribe: " + _dataItem.getId () );
-            _dataItem.getConnection ().getItemManager ().addItemUpdateListener ( _dataItem.getId (), this );
-            _subscribed = true;
-        }
-    }
-
-    protected synchronized void unsubscribe ()
-    {
-        if ( ( _dataItem != null ) && _subscribed )
-        {
-            _log.debug ( "Unsubscribe: " + _dataItem.getId () );
-            _dataItem.getConnection ().getItemManager ().removeItemUpdateListener ( _dataItem.getId (), this );
-            _subscribed = false;
-        }
-    }
-
-    @Override
-    public synchronized void addObserver ( Observer o )
-    {
-        super.addObserver ( o );
-        checkObservers ();
-    }
-
-    @Override
-    public synchronized void deleteObserver ( Observer o )
-    {
-        super.deleteObserver ( o );
-        checkObservers ();
-    }
-
-    /**
-     * check if there are any observers registered an subscribe if so
-     *
-     */
-    private synchronized void checkObservers ()
-    {
-        if ( ( countObservers () > 0 ) )
-        {
-            subscribe ();
-        }
-        else
-        {
-            unsubscribe ();
-        }
     }
 
     /**
@@ -214,11 +161,18 @@ public class ListEntry extends Observable implements ItemUpdateListener
      */
     public synchronized boolean hasAttributes ()
     {
-        return !_attributes.isEmpty ();
+        return !this.dataItem.getSnapshotValue ().getAttributes ().isEmpty ();
     }
 
     public Throwable getSubscriptionError ()
     {
-        return _subscriptionError;
+        return this.dataItem.getSnapshotValue ().getSubscriptionError ();
+    }
+
+    @Override
+    public void update ( final Observable o, final Object arg )
+    {
+        setChanged ();
+        notifyObservers ( arg );
     }
 }

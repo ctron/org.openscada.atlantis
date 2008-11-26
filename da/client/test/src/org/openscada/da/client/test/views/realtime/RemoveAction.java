@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.client.test.views.realtime;
 
 import java.util.Iterator;
@@ -11,35 +30,36 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 public class RemoveAction extends Action implements ISelectionChangedListener
 {
     private RealTimeList _view = null;
+
     private ISelection _selection = null;
-    
-    public RemoveAction ( RealTimeList view )
+
+    public RemoveAction ( final RealTimeList view )
     {
         super ( "Remove", Action.AS_PUSH_BUTTON );
-        
-        _view = view;
+
+        this._view = view;
     }
-    
+
     @Override
     public void run ()
     {
-        if ( _selection instanceof IStructuredSelection )
+        if ( this._selection instanceof IStructuredSelection )
         {
-            IStructuredSelection selection = (IStructuredSelection)_selection;
-            Iterator<?> i = selection.iterator ();
+            final IStructuredSelection selection = (IStructuredSelection)this._selection;
+            final Iterator<?> i = selection.iterator ();
             while ( i.hasNext () )
             {
-                Object o = i.next ();
+                final Object o = i.next ();
                 if ( o instanceof ListEntry )
                 {
-                    _view.remove ( (ListEntry)o );
+                    this._view.remove ( (ListEntry)o );
                 }
             }
         }
     }
-    
-    public void selectionChanged ( SelectionChangedEvent event )
+
+    public void selectionChanged ( final SelectionChangedEvent event )
     {
-        _selection = event.getSelection ();
+        this._selection = event.getSelection ();
     }
 }

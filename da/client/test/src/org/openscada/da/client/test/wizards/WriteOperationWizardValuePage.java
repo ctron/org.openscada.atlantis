@@ -70,11 +70,11 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         setDescription ( "Enter the information to write" );
     }
 
-    public void createControl ( Composite parent )
+    public void createControl ( final Composite parent )
     {
-        Composite container = new Composite ( parent, SWT.NONE );
+        final Composite container = new Composite ( parent, SWT.NONE );
 
-        GridLayout layout = new GridLayout ();
+        final GridLayout layout = new GridLayout ();
         container.setLayout ( layout );
         layout.numColumns = 3;
         layout.verticalSpacing = 9;
@@ -82,11 +82,11 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         Label label = new Label ( container, SWT.NONE );
         label.setText ( "&Item:" );
 
-        _itemNameText = new Text ( container, SWT.BORDER | SWT.SINGLE );
+        this._itemNameText = new Text ( container, SWT.BORDER | SWT.SINGLE );
         GridData gd = new GridData ( GridData.FILL_HORIZONTAL );
-        _itemNameText.setLayoutData ( gd );
-        _itemNameText.addModifyListener ( new ModifyListener () {
-            public void modifyText ( ModifyEvent e )
+        this._itemNameText.setLayoutData ( gd );
+        this._itemNameText.addModifyListener ( new ModifyListener () {
+            public void modifyText ( final ModifyEvent e )
             {
                 dialogChanged ();
             }
@@ -99,40 +99,40 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         label.setText ( "&Value:" );
         label.setLayoutData ( new GridData ( SWT.BEGINNING, SWT.BEGINNING, false, false ) );
 
-        _valueText = new Text ( container, SWT.BORDER | SWT.MULTI );
+        this._valueText = new Text ( container, SWT.BORDER | SWT.MULTI );
         gd = new GridData ( SWT.FILL, SWT.FILL, true, true );
-        _valueText.setLayoutData ( gd );
-        _valueText.addModifyListener ( new ModifyListener () {
-            public void modifyText ( ModifyEvent e )
+        this._valueText.setLayoutData ( gd );
+        this._valueText.addModifyListener ( new ModifyListener () {
+            public void modifyText ( final ModifyEvent e )
             {
                 dialogChanged ();
             }
         } );
 
-        _valueTypeSelect = new Combo ( container, SWT.DROP_DOWN | SWT.READ_ONLY );
-        for ( ValueType vt : ValueType.values () )
+        this._valueTypeSelect = new Combo ( container, SWT.DROP_DOWN | SWT.READ_ONLY );
+        for ( final ValueType vt : ValueType.values () )
         {
-            _valueTypeSelect.add ( vt.label (), vt.ordinal () );
+            this._valueTypeSelect.add ( vt.label (), vt.ordinal () );
         }
-        _valueTypeSelect.addSelectionListener ( new SelectionAdapter () {
+        this._valueTypeSelect.addSelectionListener ( new SelectionAdapter () {
             @Override
-            public void widgetSelected ( SelectionEvent e )
+            public void widgetSelected ( final SelectionEvent e )
             {
                 dialogChanged ();
             }
         } );
-        _valueTypeSelect.select ( ValueType.STRING.ordinal () );
-        _valueTypeSelect.setLayoutData ( new GridData ( SWT.BEGINNING, SWT.BEGINNING, false, false ) );
+        this._valueTypeSelect.select ( ValueType.STRING.ordinal () );
+        this._valueTypeSelect.setLayoutData ( new GridData ( SWT.BEGINNING, SWT.BEGINNING, false, false ) );
 
         // row 3
 
         label = new Label ( container, SWT.NONE );
         label.setText ( "Converted Value: " );
 
-        _convertedValue = new Text ( container, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER );
+        this._convertedValue = new Text ( container, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER );
         gd = new GridData ( GridData.FILL_HORIZONTAL );
-        _convertedValue.setLayoutData ( gd );
-        _defaultValueColor = _convertedValue.getForeground ();
+        this._convertedValue.setLayoutData ( gd );
+        this._defaultValueColor = this._convertedValue.getForeground ();
 
         setControl ( container );
         fillFromSelection ();
@@ -141,44 +141,52 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
 
     private void fillFromSelection ()
     {
-        if ( _selection == null )
+        if ( this._selection == null )
+        {
             return;
+        }
 
-        Object obj = _selection.getFirstElement ();
+        final Object obj = this._selection.getFirstElement ();
         if ( obj == null )
+        {
             return;
+        }
         if ( obj instanceof DataItemEntry )
-            _itemNameText.setText ( ( (DataItemEntry)obj ).getId () );
+        {
+            this._itemNameText.setText ( ( (DataItemEntry)obj ).getId () );
+        }
         else if ( obj instanceof ListEntry )
-            _itemNameText.setText ( ( (ListEntry)obj ).getDataItem ().getId () );
+        {
+            this._itemNameText.setText ( ( (ListEntry)obj ).getDataItem ().getItemId () );
+        }
     }
 
-    private void setValueText ( String value, boolean systemText )
+    private void setValueText ( final String value, final boolean systemText )
     {
-        _convertedValue.setText ( value );
+        this._convertedValue.setText ( value );
 
         if ( systemText )
         {
-            Color color = _convertedValue.getDisplay ().getSystemColor ( SWT.COLOR_RED );
-            _convertedValue.setForeground ( color );
+            final Color color = this._convertedValue.getDisplay ().getSystemColor ( SWT.COLOR_RED );
+            this._convertedValue.setForeground ( color );
         }
         else
         {
-            _convertedValue.setForeground ( _defaultValueColor );
+            this._convertedValue.setForeground ( this._defaultValueColor );
         }
     }
 
     private void dialogChanged ()
     {
         // connection
-        if ( _connection == null )
+        if ( this._connection == null )
         {
             updateStatus ( "No hive connection selection" );
             return;
         }
 
         // item
-        if ( _itemNameText.getText ().length () <= 0 )
+        if ( this._itemNameText.getText ().length () <= 0 )
         {
             updateStatus ( "Item name must not be empty" );
             return;
@@ -186,46 +194,48 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
 
         // value stuff
         setValueText ( "<not set>", true );
-        _value = null;
+        this._value = null;
 
-        int idx = _valueTypeSelect.getSelectionIndex ();
+        final int idx = this._valueTypeSelect.getSelectionIndex ();
         try
         {
-            for ( ValueType vt : ValueType.values () )
+            for ( final ValueType vt : ValueType.values () )
             {
                 if ( vt.ordinal () == idx )
                 {
-                    _value = vt.convertTo ( _valueText.getText () );
+                    this._value = vt.convertTo ( this._valueText.getText () );
                 }
             }
         }
-        catch ( NotConvertableException e )
+        catch ( final NotConvertableException e )
         {
             updateStatus ( "Unable to convert value to target type: " + e.getMessage () );
             return;
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             _log.error ( "Failed to convert", e );
         }
-        if ( _value != null )
+        if ( this._value != null )
         {
             try
             {
-                setValueText ( _value.asString (), false );
+                setValueText ( this._value.asString (), false );
             }
-            catch ( NullValueException e )
+            catch ( final NullValueException e )
             {
                 setValueText ( "<null>", true );
             }
         }
         else
+        {
             setValueText ( "no converter found for: " + idx, true );
+        }
 
         updateStatus ( null );
     }
 
-    private void updateStatus ( String message )
+    private void updateStatus ( final String message )
     {
         setErrorMessage ( message );
         setPageComplete ( message == null );
@@ -233,29 +243,35 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
 
     public String getItem ()
     {
-        return _itemNameText.getText ();
+        return this._itemNameText.getText ();
     }
 
     public Variant getValue ()
     {
-        return _value;
+        return this._value;
     }
 
     public HiveConnection getConnection ()
     {
-        return _connection;
+        return this._connection;
     }
 
-    public void setSelection ( IStructuredSelection selection )
+    public void setSelection ( final IStructuredSelection selection )
     {
-        _selection = selection;
+        this._selection = selection;
 
-        Object obj = _selection.getFirstElement ();
+        final Object obj = this._selection.getFirstElement ();
         if ( obj instanceof HiveConnection )
-            _connection = (HiveConnection)obj;
+        {
+            this._connection = (HiveConnection)obj;
+        }
         else if ( obj instanceof DataItemEntry )
-            _connection = ( (DataItemEntry)obj ).getConnection ();
+        {
+            this._connection = ( (DataItemEntry)obj ).getConnection ();
+        }
         else if ( obj instanceof ListEntry )
-            _connection = ( (ListEntry)obj ).getDataItem ().getConnection ();
+        {
+            this._connection = ( (ListEntry)obj ).getConnection ();
+        }
     }
 }

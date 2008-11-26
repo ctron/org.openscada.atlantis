@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.client.test.views.realtime;
 
 import java.net.URISyntaxException;
@@ -16,50 +35,50 @@ import org.openscada.da.client.test.impl.HiveItem;
 public class ItemDropAdapter extends ViewerDropAdapter
 {
 
-    public ItemDropAdapter ( Viewer viewer )
+    public ItemDropAdapter ( final Viewer viewer )
     {
         super ( viewer );
         setFeedbackEnabled ( true );
         setSelectionFeedbackEnabled ( true );
     }
-    
+
     @Override
-    public boolean performDrop ( Object data )
+    public boolean performDrop ( final Object data )
     {
-        Item[] items = (Item[])data;
-        
-        ListData listData = (ListData)getViewer ().getInput ();
-        TreeViewer viewer = (TreeViewer)getViewer ();
-        
-        for ( Item item : items )
+        final Item[] items = (Item[])data;
+
+        final ListData listData = (ListData)getViewer ().getInput ();
+        final TreeViewer viewer = (TreeViewer)getViewer ();
+
+        for ( final Item item : items )
         {
             try
             {
                 dropItem ( item, listData, viewer );
             }
-            catch ( URISyntaxException e )
+            catch ( final URISyntaxException e )
             {
-                e.printStackTrace();
+                e.printStackTrace ();
             }
         }
-        
+
         return true;
     }
 
-    private void dropItem ( Item item, ListData listData, TreeViewer viewer ) throws URISyntaxException
+    private void dropItem ( final Item item, final ListData listData, final TreeViewer viewer ) throws URISyntaxException
     {
-        ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( item.getConnectionString () );
-        
-        HiveConnection connection = Activator.getRepository ().findConnection ( connectionInformation );
+        final ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( item.getConnectionString () );
+
+        final HiveConnection connection = Activator.getRepository ().findConnection ( connectionInformation );
         if ( connection != null )
         {
-            HiveItem hiveItem = new HiveItem ( connection, item.getId () );
+            final HiveItem hiveItem = new HiveItem ( connection, item.getId () );
             listData.add ( hiveItem );
         }
     }
 
     @Override
-    public boolean validateDrop ( Object target, int operation, TransferData transferType )
+    public boolean validateDrop ( final Object target, final int operation, final TransferData transferType )
     {
         return ItemTransfer.getInstance ().isSupportedType ( transferType );
     }

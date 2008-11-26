@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.client.test.views.realtime;
 
 import org.eclipse.jface.resource.ColorDescriptor;
@@ -19,20 +38,20 @@ import org.openscada.da.client.test.views.realtime.ListEntry.AttributePair;
 public class ItemListLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider, ITableColorProvider
 {
 
-    private ResourceManager resourceManager = new LocalResourceManager ( JFaceResources.getResources () );
+    private final ResourceManager resourceManager = new LocalResourceManager ( JFaceResources.getResources () );
 
-    public Image getColumnImage ( Object element, int columnIndex )
+    public Image getColumnImage ( final Object element, final int columnIndex )
     {
         if ( columnIndex == 0 && element instanceof ListEntry )
         {
-            ListEntry entry = (ListEntry)element;
+            final ListEntry entry = (ListEntry)element;
             if ( isError ( entry ) )
             {
                 try
                 {
-                    return resourceManager.createImage ( ImageDescriptor.createFromFile ( ItemListLabelProvider.class, "icons/alarm.png" ) );
+                    return this.resourceManager.createImage ( ImageDescriptor.createFromFile ( ItemListLabelProvider.class, "icons/alarm.png" ) );
                 }
-                catch ( Throwable e )
+                catch ( final Throwable e )
                 {
                     return null;
                 }
@@ -41,15 +60,15 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
         return null;
     }
 
-    public String getColumnText ( Object element, int columnIndex )
+    public String getColumnText ( final Object element, final int columnIndex )
     {
         if ( element instanceof ListEntry )
         {
-            ListEntry listEntry = (ListEntry)element;
+            final ListEntry listEntry = (ListEntry)element;
             switch ( columnIndex )
             {
             case 0:
-                return listEntry.getDataItem ().getId ();
+                return listEntry.getDataItem ().getItemId ();
             case 1:
                 if ( listEntry.getSubscriptionError () != null )
                 {
@@ -61,27 +80,35 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
                 }
             case 2:
                 if ( listEntry.getValue () != null )
+                {
                     return VariantHelper.toValueType ( listEntry.getValue () ).name ();
+                }
             case 3:
                 if ( listEntry.getValue () != null )
+                {
                     return listEntry.getValue ().asString ( "<null>" );
+                }
             default:
                 return null;
             }
         }
         else if ( element instanceof ListEntry.AttributePair )
         {
-            ListEntry.AttributePair ap = (ListEntry.AttributePair)element;
+            final ListEntry.AttributePair ap = (ListEntry.AttributePair)element;
             switch ( columnIndex )
             {
             case 0:
                 return ap.key;
             case 2:
                 if ( ap.value != null )
+                {
                     return VariantHelper.toValueType ( ap.value ).name ();
+                }
             case 3:
                 if ( ap.value != null )
+                {
                     return ap.value.asString ( "<null>" );
+                }
             default:
                 return null;
             }
@@ -89,14 +116,14 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
         return null;
     }
 
-    public Font getFont ( Object element, int columnIndex )
+    public Font getFont ( final Object element, final int columnIndex )
     {
         return null;
     }
 
-    private boolean isAttribute ( ListEntry entry, String attributeName, boolean defaultValue )
+    private boolean isAttribute ( final ListEntry entry, final String attributeName, final boolean defaultValue )
     {
-        for ( AttributePair pair : entry.getAttributes () )
+        for ( final AttributePair pair : entry.getAttributes () )
         {
             if ( pair.key.equals ( attributeName ) )
             {
@@ -106,64 +133,64 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
         return defaultValue;
     }
 
-    public Color getBackground ( Object element, int columnIndex )
+    public Color getBackground ( final Object element, final int columnIndex )
     {
         try
         {
             if ( element instanceof ListEntry )
             {
-                ListEntry entry = (ListEntry)element;
+                final ListEntry entry = (ListEntry)element;
                 if ( isError ( entry ) )
                 {
-                    return resourceManager.createColor ( ColorDescriptor.createFrom ( new RGB ( 255, 255, 0 ) ) );
+                    return this.resourceManager.createColor ( ColorDescriptor.createFrom ( new RGB ( 255, 255, 0 ) ) );
                 }
                 else if ( isAlarm ( entry ) )
                 {
-                    return resourceManager.createColor ( ColorDescriptor.createFrom ( new RGB ( 255, 0, 0 ) ) );
+                    return this.resourceManager.createColor ( ColorDescriptor.createFrom ( new RGB ( 255, 0, 0 ) ) );
                 }
             }
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
         }
 
         return null;
     }
 
-    public Color getForeground ( Object element, int columnIndex )
+    public Color getForeground ( final Object element, final int columnIndex )
     {
         try
         {
             if ( element instanceof ListEntry )
             {
-                ListEntry entry = (ListEntry)element;
+                final ListEntry entry = (ListEntry)element;
                 if ( isError ( entry ) )
                 {
                     return null;
                 }
                 else if ( isManual ( entry ) )
                 {
-                    return resourceManager.createColor ( ColorDescriptor.createFrom ( new RGB ( 0, 0, 255 ) ) );
+                    return this.resourceManager.createColor ( ColorDescriptor.createFrom ( new RGB ( 0, 0, 255 ) ) );
                 }
             }
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
         }
         return null;
     }
 
-    private boolean isManual ( ListEntry entry )
+    private boolean isManual ( final ListEntry entry )
     {
         return isAttribute ( entry, "org.openscada.da.manual.active", false );
     }
 
-    private boolean isAlarm ( ListEntry entry )
+    private boolean isAlarm ( final ListEntry entry )
     {
         return isAttribute ( entry, "alarm", false );
     }
 
-    private boolean isError ( ListEntry entry )
+    private boolean isError ( final ListEntry entry )
     {
         return isAttribute ( entry, "error", false );
     }
@@ -171,7 +198,7 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
     @Override
     public void dispose ()
     {
-        resourceManager.dispose ();
+        this.resourceManager.dispose ();
         super.dispose ();
     }
 

@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.client.test.views.realtime;
 
 import org.eclipse.jface.action.IMenuListener;
@@ -33,50 +52,50 @@ public class RealTimeList extends ViewPart
 
     private TreeViewer _viewer;
 
-    private ListData _list = new ListData ();
+    private final ListData _list = new ListData ();
 
     public RealTimeList ()
     {
         super ();
-        _removeAction = new RemoveAction ( this );
+        this._removeAction = new RemoveAction ( this );
     }
 
     @Override
-    public void createPartControl ( Composite parent )
+    public void createPartControl ( final Composite parent )
     {
-        _viewer = new TreeViewer ( parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION );
+        this._viewer = new TreeViewer ( parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION );
 
         TreeColumn col;
 
-        col = new TreeColumn ( _viewer.getTree (), SWT.NONE );
+        col = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
         col.setText ( "ID" );
-        col = new TreeColumn ( _viewer.getTree (), SWT.NONE );
+        col = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
         col.setText ( "State" );
-        col = new TreeColumn ( _viewer.getTree (), SWT.NONE );
+        col = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
         col.setText ( "Type" );
-        col = new TreeColumn ( _viewer.getTree (), SWT.NONE );
+        col = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
         col.setText ( "Value" );
 
-        _viewer.getTree ().setHeaderVisible ( true );
+        this._viewer.getTree ().setHeaderVisible ( true );
 
-        TableLayout tableLayout = new TableLayout ();
+        final TableLayout tableLayout = new TableLayout ();
         tableLayout.addColumnData ( new ColumnWeightData ( 100, 100, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 50, 50, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 50, 50, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 75, 75, true ) );
-        _viewer.getTree ().setLayout ( tableLayout );
+        this._viewer.getTree ().setLayout ( tableLayout );
 
-        _viewer.setLabelProvider ( new ItemListLabelProvider () );
-        _viewer.setContentProvider ( new ItemListContentProvider () );
-        _viewer.setComparator ( new RealTimeListComparator () );
-        _viewer.setInput ( _list );
+        this._viewer.setLabelProvider ( new ItemListLabelProvider () );
+        this._viewer.setContentProvider ( new ItemListContentProvider () );
+        this._viewer.setComparator ( new RealTimeListComparator () );
+        this._viewer.setInput ( this._list );
 
-        getViewSite ().setSelectionProvider ( _viewer );
+        getViewSite ().setSelectionProvider ( this._viewer );
 
-        _viewer.addSelectionChangedListener ( _removeAction );
-        _viewer.addDoubleClickListener ( new IDoubleClickListener () {
+        this._viewer.addSelectionChangedListener ( this._removeAction );
+        this._viewer.addDoubleClickListener ( new IDoubleClickListener () {
 
-            public void doubleClick ( DoubleClickEvent event )
+            public void doubleClick ( final DoubleClickEvent event )
             {
                 RealTimeList.this.handleDoubleClick ( event );
             }
@@ -88,20 +107,20 @@ public class RealTimeList extends ViewPart
         addDropSupport ();
     }
 
-    protected void handleDoubleClick ( DoubleClickEvent event )
+    protected void handleDoubleClick ( final DoubleClickEvent event )
     {
         if ( ! ( event.getSelection () instanceof IStructuredSelection ) )
         {
             return;
         }
 
-        Object o = ( (IStructuredSelection)event.getSelection () ).getFirstElement ();
+        final Object o = ( (IStructuredSelection)event.getSelection () ).getFirstElement ();
         if ( ! ( o instanceof ListEntry ) )
         {
             return;
         }
 
-        ListEntry entry = (ListEntry)o;
+        final ListEntry entry = (ListEntry)o;
 
         Variant value = entry.getValue ();
         if ( value == null )
@@ -115,7 +134,7 @@ public class RealTimeList extends ViewPart
 
         value = new Variant ( !value.asBoolean () );
 
-        entry.getDataItem ().getConnection ().getConnection ().write ( entry.getDataItem ().getId (), value, new WriteOperationCallback () {
+        entry.getConnection ().getConnection ().write ( entry.getDataItem ().getItemId (), value, new WriteOperationCallback () {
 
             public void complete ()
             {
@@ -123,13 +142,13 @@ public class RealTimeList extends ViewPart
 
             }
 
-            public void error ( Throwable e )
+            public void error ( final Throwable e )
             {
                 // TODO Auto-generated method stub
 
             }
 
-            public void failed ( String error )
+            public void failed ( final String error )
             {
                 // TODO Auto-generated method stub
 
@@ -139,59 +158,59 @@ public class RealTimeList extends ViewPart
 
     private void hookContextMenu ()
     {
-        MenuManager menuMgr = new MenuManager ( "#PopupMenu" );
+        final MenuManager menuMgr = new MenuManager ( "#PopupMenu" );
         menuMgr.setRemoveAllWhenShown ( true );
         menuMgr.addMenuListener ( new IMenuListener () {
-            public void menuAboutToShow ( IMenuManager manager )
+            public void menuAboutToShow ( final IMenuManager manager )
             {
                 fillContextMenu ( manager );
             }
         } );
-        Menu menu = menuMgr.createContextMenu ( _viewer.getControl () );
-        _viewer.getControl ().setMenu ( menu );
-        getSite ().registerContextMenu ( menuMgr, _viewer );
+        final Menu menu = menuMgr.createContextMenu ( this._viewer.getControl () );
+        this._viewer.getControl ().setMenu ( menu );
+        getSite ().registerContextMenu ( menuMgr, this._viewer );
     }
 
-    private void fillContextMenu ( IMenuManager manager )
+    private void fillContextMenu ( final IMenuManager manager )
     {
         // Other plug-ins can contribute there actions here
 
-        manager.add ( _removeAction );
+        manager.add ( this._removeAction );
         manager.add ( new Separator () );
         manager.add ( new Separator ( IWorkbenchActionConstants.MB_ADDITIONS ) );
     }
 
     private void contributeToActionBars ()
     {
-        IActionBars bars = getViewSite ().getActionBars ();
+        final IActionBars bars = getViewSite ().getActionBars ();
         fillLocalPullDown ( bars.getMenuManager () );
         fillLocalToolBar ( bars.getToolBarManager () );
     }
 
-    private void fillLocalToolBar ( IToolBarManager manager )
+    private void fillLocalToolBar ( final IToolBarManager manager )
     {
-        manager.add ( _removeAction );
+        manager.add ( this._removeAction );
     }
 
-    private void fillLocalPullDown ( IMenuManager manager )
+    private void fillLocalPullDown ( final IMenuManager manager )
     {
-        manager.add ( _removeAction );
+        manager.add ( this._removeAction );
     }
 
     private void addDropSupport ()
     {
-        _viewer.addDropSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance () }, new ItemDropAdapter ( _viewer ) );
+        this._viewer.addDropSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance () }, new ItemDropAdapter ( this._viewer ) );
     }
 
     @Override
     public void setFocus ()
     {
-        _viewer.getControl ().setFocus ();
+        this._viewer.getControl ().setFocus ();
     }
 
-    public void remove ( ListEntry entry )
+    public void remove ( final ListEntry entry )
     {
-        _list.remove ( entry );
+        this._list.remove ( entry );
     }
 
 }
