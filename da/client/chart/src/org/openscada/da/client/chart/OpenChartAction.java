@@ -21,7 +21,7 @@ public class OpenChartAction implements IViewActionDelegate, IObjectActionDelega
 {
 
     private static Logger _log = Logger.getLogger ( OpenChartAction.class );
-    
+
     private IWorkbenchPartSite _site = null;
 
     private IStructuredSelection _selection = null;
@@ -30,30 +30,30 @@ public class OpenChartAction implements IViewActionDelegate, IObjectActionDelega
     {
     }
 
-    public void init ( IViewPart view )
+    public void init ( final IViewPart view )
     {
-        _site = view.getSite ();
+        this._site = view.getSite ();
     }
 
-    public void run ( IAction action )
+    public void run ( final IAction action )
     {
-        if ( _selection == null )
+        if ( this._selection == null )
         {
             return;
         }
 
-        Object o = _selection.getFirstElement ();
+        final Object o = this._selection.getFirstElement ();
         String item = null;
         HiveConnection connection = null;
         if ( o instanceof DataItemEntry )
         {
-            item = ((DataItemEntry)o).getId ();
-            connection = ((DataItemEntry)o).getConnection ();
+            item = ( (DataItemEntry)o ).getId ();
+            connection = ( (DataItemEntry)o ).getConnection ();
         }
         if ( o instanceof ListEntry )
         {
-            item = ((ListEntry)o).getDataItem ().getId ();
-            connection = ((ListEntry)o).getDataItem ().getConnection ();
+            item = ( (ListEntry)o ).getDataItem ().getItemId ();
+            connection = ( (ListEntry)o ).getConnection ();
         }
 
         if ( item == null )
@@ -64,45 +64,42 @@ public class OpenChartAction implements IViewActionDelegate, IObjectActionDelega
         String secondaryId = item;
         secondaryId = secondaryId.replace ( "_", "__" );
         secondaryId = secondaryId.replace ( ":", "_" );
-        
+
         try
         {
-            IViewPart viewer = _site.getPage ().showView ( ChartView.VIEW_ID, secondaryId,
-                    IWorkbenchPage.VIEW_ACTIVATE );
+            final IViewPart viewer = this._site.getPage ().showView ( ChartView.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE );
             if ( viewer instanceof ChartView )
             {
                 ( (ChartView)viewer ).setDataItem ( connection, item );
             }
         }
-        catch ( PartInitException e )
+        catch ( final PartInitException e )
         {
             _log.error ( "Failed to create view", e );
-            Activator.getDefault ().getLog ().log (
-                    new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Failed to create chart view", e ) );
+            Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Failed to create chart view", e ) );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             _log.error ( "Failed to create view", e );
-            Activator.getDefault ().getLog ().log (
-                    new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 1, "Failed to create chart view", e ) );
+            Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 1, "Failed to create chart view", e ) );
         }
     }
 
-    public void selectionChanged ( IAction action, ISelection selection )
+    public void selectionChanged ( final IAction action, final ISelection selection )
     {
         if ( selection instanceof IStructuredSelection )
         {
-            _selection = (IStructuredSelection)selection;
+            this._selection = (IStructuredSelection)selection;
         }
         else
         {
-            _selection = null;
+            this._selection = null;
         }
     }
 
-    public void setActivePart ( IAction action, IWorkbenchPart targetPart )
+    public void setActivePart ( final IAction action, final IWorkbenchPart targetPart )
     {
-        _site = targetPart.getSite ();
+        this._site = targetPart.getSite ();
     }
 
 }
