@@ -9,9 +9,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.jfree.chart.ChartColor;
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.IntervalMarker;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.time.TimeSeries;
@@ -54,34 +60,54 @@ public class ChartView extends ViewPart implements ItemUpdateListener
     }
 
     @Override
-    public void createPartControl ( Composite parent )
+    public void createPartControl ( final Composite parent )
     {
         try
         {
-            _dataset = new TimeSeriesCollection ();
+            this._dataset = new TimeSeriesCollection ();
 
-            _series = new TimeSeries ( "Values", FixedMillisecond.class );
-            _dataset.addSeries ( _series );
+            this._series = new TimeSeries ( "Values", FixedMillisecond.class );
+            this._dataset.addSeries ( this._series );
 
-            _chart = ChartFactory.createTimeSeriesChart ( "Data Item Chart", "Time", "Value", _dataset, false, true, false );
+            this._chart = createChart ();
 
-            _lastTimestamp = new FixedMillisecond ( Calendar.getInstance ().getTime () );
+            this._lastTimestamp = new FixedMillisecond ( Calendar.getInstance ().getTime () );
 
-            _frame = new ChartComposite ( parent, SWT.NONE, _chart, true );
-            _frame.pack ();
+            this._frame = new ChartComposite ( parent, SWT.NONE, this._chart, true );
+            this._frame.pack ();
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             _log.debug ( "Failed", e );
         }
     }
 
+    private JFreeChart createChart ()
+    {
+        final ValueAxis timeAxis = new DateAxis ( "Time" );
+        timeAxis.setLowerMargin ( 0.02 ); // reduce the default margins 
+        timeAxis.setUpperMargin ( 0.02 );
+        final NumberAxis valueAxis = new NumberAxis ( "Value" );
+        valueAxis.setAutoRangeIncludesZero ( false ); // override default
+        final XYPlot plot = new XYPlot ( this._dataset, timeAxis, valueAxis, null );
+
+        XYToolTipGenerator toolTipGenerator = null;
+        toolTipGenerator = StandardXYToolTipGenerator.getTimeSeriesInstance ();
+
+        // final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer ( true, false );
+        final XYStepRenderer renderer = new XYStepRenderer ();
+        renderer.setBaseToolTipGenerator ( toolTipGenerator );
+        plot.setRenderer ( renderer );
+
+        return new JFreeChart ( "Data Item Chart", JFreeChart.DEFAULT_TITLE_FONT, plot, false );
+    }
+
     @Override
     public void setFocus ()
     {
-        if ( _frame != null )
+        if ( this._frame != null )
         {
-            _frame.setFocus ();
+            this._frame.setFocus ();
         }
     }
 
@@ -90,14 +116,14 @@ public class ChartView extends ViewPart implements ItemUpdateListener
     {
         disconnect ();
 
-        if ( _frame != null )
+        if ( this._frame != null )
         {
-            _frame.dispose ();
+            this._frame.dispose ();
         }
         super.dispose ();
     }
 
-    public void setDataItem ( HiveConnection connection, String item )
+    public void setDataItem ( final HiveConnection connection, final String item )
     {
         disconnect ();
         if ( item == null )
@@ -110,28 +136,28 @@ public class ChartView extends ViewPart implements ItemUpdateListener
 
     protected void disconnect ()
     {
-        if ( _connection != null )
+        if ( this._connection != null )
         {
-            _connection.getItemManager ().removeItemUpdateListener ( _item, this );
-            _connection = null;
+            this._connection.getItemManager ().removeItemUpdateListener ( this._item, this );
+            this._connection = null;
         }
     }
 
-    protected void connect ( HiveConnection connection, String item )
+    protected void connect ( final HiveConnection connection, final String item )
     {
-        _item = item;
-        _connection = connection;
+        this._item = item;
+        this._connection = connection;
 
-        _chart.setTitle ( item );
+        this._chart.setTitle ( item );
 
-        _connection.getItemManager ().addItemUpdateListener ( _item, this );
+        this._connection.getItemManager ().addItemUpdateListener ( this._item, this );
     }
 
-    public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
+    public void notifySubscriptionChange ( final SubscriptionState state, final Throwable subscriptionError )
     {
     }
-    
-    public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
+
+    public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         if ( value != null )
         {
@@ -141,7 +167,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
         {
             if ( attributes.containsKey ( "error" ) )
             {
-                RegularTimePeriod time = new FixedMillisecond ( Calendar.getInstance ().getTime () );
+                final RegularTimePeriod time = new FixedMillisecond ( Calendar.getInstance ().getTime () );
                 if ( attributes.get ( "error" ) == null )
                 {
                     triggerError ( false, time );
@@ -157,16 +183,16 @@ public class ChartView extends ViewPart implements ItemUpdateListener
 
     protected void triggerError ( final boolean state, final RegularTimePeriod time )
     {
-        if ( !_frame.getDisplay ().isDisposed () )
+        if ( !this._frame.getDisplay ().isDisposed () )
         {
-            _frame.getDisplay ().asyncExec ( new Runnable () {
+            this._frame.getDisplay ().asyncExec ( new Runnable () {
 
                 public void run ()
                 {
-                    if ( !_frame.isDisposed () )
+                    if ( !ChartView.this._frame.isDisposed () )
                     {
                         handleError ( state, time );
-                        _frame.forceRedraw ();
+                        ChartView.this._frame.forceRedraw ();
                     }
                 }
             } );
@@ -175,16 +201,16 @@ public class ChartView extends ViewPart implements ItemUpdateListener
 
     protected void triggerUpdate ( final Variant value )
     {
-        if ( !_frame.getDisplay ().isDisposed () )
+        if ( !this._frame.getDisplay ().isDisposed () )
         {
-            _frame.getDisplay ().asyncExec ( new Runnable () {
+            this._frame.getDisplay ().asyncExec ( new Runnable () {
 
                 public void run ()
                 {
-                    if ( !_frame.isDisposed () )
+                    if ( !ChartView.this._frame.isDisposed () )
                     {
                         performUpdate ( value );
-                        _frame.forceRedraw ();
+                        ChartView.this._frame.forceRedraw ();
                     }
                 }
             } );
@@ -192,7 +218,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
 
     }
 
-    protected static Number convertToNumber ( Variant value )
+    protected static Number convertToNumber ( final Variant value )
     {
         Number n = null;
 
@@ -200,10 +226,10 @@ public class ChartView extends ViewPart implements ItemUpdateListener
         {
             n = value.asDouble ();
         }
-        catch ( NullValueException e )
+        catch ( final NullValueException e )
         {
         }
-        catch ( NotConvertableException e )
+        catch ( final NotConvertableException e )
         {
         }
 
@@ -213,10 +239,10 @@ public class ChartView extends ViewPart implements ItemUpdateListener
             {
                 n = value.asLong ();
             }
-            catch ( NullValueException e )
+            catch ( final NullValueException e )
             {
             }
-            catch ( NotConvertableException e )
+            catch ( final NotConvertableException e )
             {
             }
         }
@@ -224,48 +250,48 @@ public class ChartView extends ViewPart implements ItemUpdateListener
         return n;
     }
 
-    protected void performUpdate ( Variant value )
+    protected void performUpdate ( final Variant value )
     {
-        Number n = convertToNumber ( value );
+        final Number n = convertToNumber ( value );
 
-        RegularTimePeriod time = new FixedMillisecond ( Calendar.getInstance ().getTime () );
+        final RegularTimePeriod time = new FixedMillisecond ( Calendar.getInstance ().getTime () );
 
-        _series.add ( new TimeSeriesDataItem ( time, n ) );
+        this._series.add ( new TimeSeriesDataItem ( time, n ) );
 
-        if ( _errorMarker != null )
+        if ( this._errorMarker != null )
         {
-            _errorMarker.setEndValue ( time.getLastMillisecond () );
+            this._errorMarker.setEndValue ( time.getLastMillisecond () );
         }
 
         // update
-        _lastTimestamp = time;
-        _frame.forceRedraw ();
+        this._lastTimestamp = time;
+        this._frame.forceRedraw ();
     }
 
-    protected void handleError ( boolean state, RegularTimePeriod time )
+    protected void handleError ( final boolean state, final RegularTimePeriod time )
     {
         _log.debug ( String.format ( "Handle error: %s (%s)", state, time ) );
 
         if ( state )
         {
-            if ( _errorMarker != null )
+            if ( this._errorMarker != null )
             {
-                _errorMarker.setEndValue ( time.getLastMillisecond () );
+                this._errorMarker.setEndValue ( time.getLastMillisecond () );
             }
             else
             {
-                _errorMarker = new IntervalMarker ( _lastTimestamp.getFirstMillisecond (), time.getLastMillisecond (), ChartColor.BLUE, new BasicStroke ( 2 ), null, null, 0.5F );
-                _chart.getXYPlot ().addDomainMarker ( _errorMarker, Layer.BACKGROUND );
+                this._errorMarker = new IntervalMarker ( this._lastTimestamp.getFirstMillisecond (), time.getLastMillisecond (), ChartColor.BLUE, new BasicStroke ( 2 ), null, null, 0.5F );
+                this._chart.getXYPlot ().addDomainMarker ( this._errorMarker, Layer.BACKGROUND );
             }
         }
         else
         {
-            if ( _errorMarker != null )
+            if ( this._errorMarker != null )
             {
-                _errorMarker.setEndValue ( time.getLastMillisecond () );
-                _errorMarker = null;
+                this._errorMarker.setEndValue ( time.getLastMillisecond () );
+                this._errorMarker = null;
             }
         }
-        _lastTimestamp = time;
+        this._lastTimestamp = time;
     }
 }
