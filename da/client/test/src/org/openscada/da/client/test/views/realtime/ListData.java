@@ -20,12 +20,12 @@
 package org.openscada.da.client.test.views.realtime;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.client.test.impl.HiveItem;
@@ -34,11 +34,11 @@ public class ListData implements Observer
 {
     private static Logger _log = Logger.getLogger ( ListData.class );
 
-    private List<ListEntry> _items = new LinkedList<ListEntry> ();
+    private List<ListEntry> _items = new CopyOnWriteArrayList<ListEntry> ();
 
-    private final Set<Listener> _listeners = new HashSet<Listener> ();
+    private final Set<Listener> _listeners = new CopyOnWriteArraySet<Listener> ();
 
-    synchronized public List<ListEntry> getItems ()
+    public List<ListEntry> getItems ()
     {
         return new ArrayList<ListEntry> ( this._items );
     }
@@ -55,7 +55,7 @@ public class ListData implements Observer
         }
     }
 
-    synchronized public void add ( final ListEntry entry )
+    public void add ( final ListEntry entry )
     {
         if ( this._items.add ( entry ) )
         {
@@ -64,7 +64,7 @@ public class ListData implements Observer
         }
     }
 
-    synchronized public void add ( final HiveItem hiveItem )
+    public void add ( final HiveItem hiveItem )
     {
         final ListEntry item = new ListEntry ();
         item.setDataItem ( hiveItem.getId (), hiveItem.getConnection () );
@@ -72,7 +72,7 @@ public class ListData implements Observer
         add ( item );
     }
 
-    synchronized public void remove ( final ListEntry entry )
+    public void remove ( final ListEntry entry )
     {
         if ( this._items.remove ( entry ) )
         {
@@ -91,7 +91,7 @@ public class ListData implements Observer
         fireRemoved ( this._items.toArray ( new ListEntry[this._items.size ()] ) );
     }
 
-    synchronized public void addListener ( final Listener listener )
+    public void addListener ( final Listener listener )
     {
         this._listeners.add ( listener );
 
@@ -102,12 +102,12 @@ public class ListData implements Observer
         }
     }
 
-    synchronized public void removeListener ( final Listener listener )
+    public void removeListener ( final Listener listener )
     {
         this._listeners.remove ( listener );
     }
 
-    synchronized protected void fireAdded ( final ListEntry[] entries )
+    protected void fireAdded ( final ListEntry[] entries )
     {
         _log.debug ( String.format ( "Fire add for %d items", entries.length ) );
         for ( final Listener listener : this._listeners )
@@ -123,7 +123,7 @@ public class ListData implements Observer
         }
     }
 
-    synchronized protected void fireRemoved ( final ListEntry[] entries )
+    protected void fireRemoved ( final ListEntry[] entries )
     {
         for ( final Listener listener : this._listeners )
         {
@@ -138,7 +138,7 @@ public class ListData implements Observer
         }
     }
 
-    synchronized protected void fireUpdated ( final ListEntry[] entries )
+    protected void fireUpdated ( final ListEntry[] entries )
     {
         _log.debug ( "Updating items: " + entries.length );
 
@@ -155,9 +155,9 @@ public class ListData implements Observer
         }
     }
 
-    synchronized public void update ( final Observable o, final Object arg )
+    public void update ( final Observable o, final Object arg )
     {
-        if ( o instanceof ListEntry && this._items.contains ( o ) )
+        if ( ( o instanceof ListEntry ) && this._items.contains ( o ) )
         {
             fireUpdated ( new ListEntry[] { (ListEntry)o } );
         }
