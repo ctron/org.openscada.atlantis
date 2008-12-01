@@ -198,7 +198,7 @@ public class ItemSyncController implements ItemUpdateListener
     {
         try
         {
-            _log.debug ( "Syncing listen state: inactive " );
+            _log.debug ( "Syncing listen state: inactive" );
             this._subscribed = false;
             this._connection.unsubscribeItem ( this._itemName );
             notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
