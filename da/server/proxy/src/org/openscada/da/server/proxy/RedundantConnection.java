@@ -137,7 +137,7 @@ public class RedundantConnection implements Connection
     public void switchConnection ( final String id ) throws NoConnectionException, OperationException
     {
         final String idOld = this.currentConnectionId;
-        final Connection conOld = getCurrentConnection ().getConnection ();
+        final SubConnection conOld = getCurrentConnection ();
         for ( final ConnectionStateListener listener : this.connectionStateListeners )
         {
             getCurrentConnection ().getConnection ().removeConnectionStateListener ( listener );
@@ -149,17 +149,64 @@ public class RedundantConnection implements Connection
         }
         for ( final RedundantConnectionChangedListener listener : this.redundantConnectionChangedListeners )
         {
-            listener.connectionChanged ( idOld, conOld, id, getCurrentConnection ().getConnection () );
+            listener.connectionChanged ( idOld, conOld.getConnection (), id, getCurrentConnection ().getConnection () );
         }
         // return last values from current connection
         for ( final java.util.Map.Entry<String, ItemUpdateListener> entry : this.itemListeners.entrySet () )
         {
-            final DataItemValue div = this.lastDataItemValues.get ( id ).get ( prepareItemId ( entry.getKey () ) );
-            if ( div != null )
+            final DataItemValue divNew = this.lastDataItemValues.get ( id ).get ( prepareItemId ( entry.getKey () ) );
+            final DataItemValue divOld = this.lastDataItemValues.get ( idOld ).get ( prepareItemId ( entry.getKey (), conOld ) );
+            // but only if value has really changed
+            if ( dataItemValueEquals ( divOld, divNew ) )
             {
-                entry.getValue ().notifyDataChange ( div.getValue (), div.getAttributes (), true );
+                entry.getValue ().notifyDataChange ( divNew.getValue (), divNew.getAttributes (), true );
             }
         }
+    }
+
+    /**
+     * other than equals of DataItemValue it only compares value and attributes
+     * @param dataItemValue1
+     * @param dataItemValue2
+     * @return
+     */
+    private boolean dataItemValueEquals ( final DataItemValue dataItemValue1, final DataItemValue dataItemValue2 )
+    {
+        if ( dataItemValue1 == dataItemValue2 )
+        {
+            return true;
+        }
+        if ( ( dataItemValue1 == null ) && ( dataItemValue2 != null ) )
+        {
+            return false;
+        }
+        if ( ( dataItemValue1 != null ) && ( dataItemValue2 == null ) )
+        {
+            return false;
+        }
+        if ( dataItemValue1.getValue () == null )
+        {
+            if ( dataItemValue2.getValue () != null )
+            {
+                return false;
+            }
+        }
+        if ( !dataItemValue1.getValue ().equals ( dataItemValue2 ) )
+        {
+            return false;
+        }
+        else if ( dataItemValue1.getAttributes () == null )
+        {
+            if ( dataItemValue2.getAttributes () != null )
+            {
+                return false;
+            }
+        }
+        else if ( !dataItemValue1.getAttributes ().equals ( dataItemValue2.getAttributes () ) )
+        {
+            return false;
+        }
+        return true;
     }
 
     /**
