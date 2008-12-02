@@ -157,7 +157,7 @@ public class RedundantConnection implements Connection
             final DataItemValue divNew = this.lastDataItemValues.get ( id ).get ( prepareItemId ( entry.getKey () ) );
             final DataItemValue divOld = this.lastDataItemValues.get ( idOld ).get ( prepareItemId ( entry.getKey (), conOld ) );
             // but only if value has really changed
-            if ( dataItemValueEquals ( divOld, divNew ) )
+            if ( !dataItemValueEquals ( divOld, divNew ) )
             {
                 entry.getValue ().notifyDataChange ( divNew.getValue (), divNew.getAttributes (), true );
             }
