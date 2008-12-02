@@ -84,30 +84,30 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 
         private DataItem _item = null;
 
-        public void inputChanged ( Viewer v, Object oldInput, Object newInput )
+        public void inputChanged ( final Viewer v, final Object oldInput, final Object newInput )
         {
             _log.debug ( "Input changed: " + oldInput + " => " + newInput );
-            _viewer = viewer;
+            this._viewer = DataItemWatchView.this.viewer;
 
             clearItem ();
 
             if ( newInput instanceof DataItemEntry )
             {
-                DataItemEntry hiveItem = (DataItemEntry)newInput;
+                final DataItemEntry hiveItem = (DataItemEntry)newInput;
 
-                _item = new DataItem ( hiveItem.getId () );
-                _item.addObserver ( this );
-                _item.register ( hiveItem.getConnection ().getItemManager () );
+                this._item = new DataItem ( hiveItem.getId () );
+                this._item.addObserver ( this );
+                this._item.register ( hiveItem.getConnection ().getItemManager () );
             }
         }
 
         private void clearItem ()
         {
-            if ( _item != null )
+            if ( this._item != null )
             {
-                _item.deleteObserver ( this );
-                _item.unregister ();
-                _item = null;
+                this._item.deleteObserver ( this );
+                this._item.unregister ();
+                this._item = null;
             }
         }
 
@@ -116,43 +116,49 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
             clearItem ();
         }
 
-        public Object[] getElements ( Object parent )
+        public Object[] getElements ( final Object parent )
         {
-            if ( _item == null )
+            if ( this._item == null )
+            {
                 return new Object[0];
+            }
 
-            Map<String, Variant> attrs = _item.getAttributes ();
-            WatchAttributeEntry[] entries = new WatchAttributeEntry[attrs.size ()];
+            final Map<String, Variant> attrs = this._item.getSnapshotValue ().getAttributes ();
+            final WatchAttributeEntry[] entries = new WatchAttributeEntry[attrs.size ()];
             int i = 0;
 
-            for ( Map.Entry<String, Variant> entry : attrs.entrySet () )
+            for ( final Map.Entry<String, Variant> entry : attrs.entrySet () )
             {
                 entries[i++] = new WatchAttributeEntry ( entry.getKey (), entry.getValue () );
             }
             return entries;
         }
 
-        public void update ( Observable o, Object arg )
+        public void update ( final Observable o, final Object arg )
         {
             _log.debug ( "Object update" );
 
-            if ( !_viewer.getControl ().isDisposed () )
+            if ( !this._viewer.getControl ().isDisposed () )
             {
-                _viewer.getControl ().getDisplay ().asyncExec ( new Runnable () {
+                this._viewer.getControl ().getDisplay ().asyncExec ( new Runnable () {
 
                     public void run ()
                     {
                         try
                         {
-                            if ( !_viewer.getControl ().isDisposed () )
+                            if ( !WatchViewContentProvider.this._viewer.getControl ().isDisposed () )
                             {
-                                if ( _viewer instanceof StructuredViewer )
-                                    ( (StructuredViewer)_viewer ).refresh ( true );
+                                if ( WatchViewContentProvider.this._viewer instanceof StructuredViewer )
+                                {
+                                    ( (StructuredViewer)WatchViewContentProvider.this._viewer ).refresh ( true );
+                                }
                                 else
-                                    _viewer.refresh ();
+                                {
+                                    WatchViewContentProvider.this._viewer.refresh ();
+                                }
                             }
                         }
-                        catch ( Exception e )
+                        catch ( final Exception e )
                         {
                             e.printStackTrace ();
                         }
@@ -166,7 +172,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
      * This is a callback that will allow us
      * to create the viewer and initialize it.
      */
-    public void createPartControl ( Composite parent )
+    public void createPartControl ( final Composite parent )
     {
         parent.setLayout ( new GridLayout ( 1, false ) );
 
@@ -177,10 +183,10 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         gd.grabExcessHorizontalSpace = true;
         gd.horizontalAlignment = SWT.FILL;
         gd.verticalAlignment = SWT.CENTER;
-        _valueLabel = new Label ( parent, SWT.NONE );
-        _valueLabel.setLayoutData ( gd );
+        this._valueLabel = new Label ( parent, SWT.NONE );
+        this._valueLabel.setLayoutData ( gd );
 
-        SashForm box = new SashForm ( parent, SWT.VERTICAL );
+        final SashForm box = new SashForm ( parent, SWT.VERTICAL );
         gd = new GridData ();
         gd.grabExcessHorizontalSpace = true;
         gd.grabExcessVerticalSpace = true;
@@ -190,33 +196,33 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 
         // attributes table
 
-        viewer = new TableViewer ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
-        viewer.getControl ().setLayoutData ( gd );
-        viewer.setContentProvider ( new WatchViewContentProvider () );
-        viewer.setLabelProvider ( new WatchViewLabelProvider () );
+        this.viewer = new TableViewer ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
+        this.viewer.getControl ().setLayoutData ( gd );
+        this.viewer.setContentProvider ( new WatchViewContentProvider () );
+        this.viewer.setLabelProvider ( new WatchViewLabelProvider () );
 
         TableColumn col;
 
-        col = new TableColumn ( viewer.getTable (), SWT.NONE );
+        col = new TableColumn ( this.viewer.getTable (), SWT.NONE );
         col.setText ( "Name" );
-        col = new TableColumn ( viewer.getTable (), SWT.NONE );
+        col = new TableColumn ( this.viewer.getTable (), SWT.NONE );
         col.setText ( "Value Type" );
-        col = new TableColumn ( viewer.getTable (), SWT.NONE );
+        col = new TableColumn ( this.viewer.getTable (), SWT.NONE );
         col.setText ( "Value" );
 
-        viewer.getTable ().setHeaderVisible ( true );
-        viewer.setSorter ( new WatchEntryNameSorter () );
+        this.viewer.getTable ().setHeaderVisible ( true );
+        this.viewer.setSorter ( new WatchEntryNameSorter () );
 
         // set table layout
-        TableLayout tableLayout = new TableLayout ();
+        final TableLayout tableLayout = new TableLayout ();
         tableLayout.addColumnData ( new ColumnWeightData ( 40, 75, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 20, 40, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 40, 75, true ) );
-        viewer.getTable ().setLayout ( tableLayout );
+        this.viewer.getTable ().setLayout ( tableLayout );
 
         // console window
-        _console = new StyledText ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY );
-        _console.setLayoutData ( gd );
+        this._console = new StyledText ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY );
+        this._console.setLayoutData ( gd );
 
         // set up sash
         box.setWeights ( new int[] { 60, 40 } );
@@ -226,18 +232,18 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 
     private void appendConsoleMessage ( final String message )
     {
-        if ( !_console.isDisposed () )
+        if ( !this._console.isDisposed () )
         {
-            _console.getDisplay ().asyncExec ( new Runnable () {
+            this._console.getDisplay ().asyncExec ( new Runnable () {
 
                 public void run ()
                 {
-                    if ( !_console.isDisposed () )
+                    if ( !DataItemWatchView.this._console.isDisposed () )
                     {
-                        _console.append ( String.format ( "%tc > ", Calendar.getInstance () ) );
-                        _console.append ( message + "\n" );
-                        _console.setSelection ( _console.getCharCount () );
-                        _console.showSelection ();
+                        DataItemWatchView.this._console.append ( String.format ( "%tc > ", Calendar.getInstance () ) );
+                        DataItemWatchView.this._console.append ( message + "\n" );
+                        DataItemWatchView.this._console.setSelection ( DataItemWatchView.this._console.getCharCount () );
+                        DataItemWatchView.this._console.showSelection ();
                     }
                 }
             } );
@@ -246,15 +252,15 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 
     private void setValue ( final Variant variant )
     {
-        if ( !_valueLabel.isDisposed () )
+        if ( !this._valueLabel.isDisposed () )
         {
-            _valueLabel.getDisplay ().asyncExec ( new Runnable () {
+            this._valueLabel.getDisplay ().asyncExec ( new Runnable () {
 
                 public void run ()
                 {
-                    if ( !_valueLabel.isDisposed () )
+                    if ( !DataItemWatchView.this._valueLabel.isDisposed () )
                     {
-                        _valueLabel.setText ( variant.toString () );
+                        DataItemWatchView.this._valueLabel.setText ( variant.toString () );
                     }
                 }
             } );
@@ -266,7 +272,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
      */
     public void setFocus ()
     {
-        viewer.getControl ().setFocus ();
+        this.viewer.getControl ().setFocus ();
     }
 
     @Override
@@ -277,15 +283,15 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         super.dispose ();
     }
 
-    public void setDataItem ( DataItemEntry item )
+    public void setDataItem ( final DataItemEntry item )
     {
-        if ( _hiveItem != null )
+        if ( this._hiveItem != null )
         {
-            _hiveItem.getConnection ().getItemManager ().removeItemUpdateListener ( _hiveItem.getId (), this );
-            appendConsoleMessage ( "Unsubscribe from item: " + _hiveItem.getId () );
+            this._hiveItem.getConnection ().getItemManager ().removeItemUpdateListener ( this._hiveItem.getId (), this );
+            appendConsoleMessage ( "Unsubscribe from item: " + this._hiveItem.getId () );
 
             setPartName ( "Data Item Viewer" );
-            viewer.setInput ( null );
+            this.viewer.setInput ( null );
         }
 
         if ( item != null )
@@ -294,16 +300,16 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
 
             _log.info ( "Set data item: " + item.getId () );
 
-            _hiveItem = item;
+            this._hiveItem = item;
 
-            appendConsoleMessage ( "Subscribe to item: " + _hiveItem.getId () );
-            _hiveItem.getConnection ().getItemManager ().addItemUpdateListener ( _hiveItem.getId (), this );
+            appendConsoleMessage ( "Subscribe to item: " + this._hiveItem.getId () );
+            this._hiveItem.getConnection ().getItemManager ().addItemUpdateListener ( this._hiveItem.getId (), this );
 
-            viewer.setInput ( item );
+            this.viewer.setInput ( item );
         }
     }
 
-    public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
+    public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         if ( value != null )
         {
@@ -314,7 +320,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         {
             appendConsoleMessage ( "Attribute change set " + ( cache ? "(initial)" : "" ) + " " + attributes.size () + " item(s) follow:" );
             int i = 0;
-            for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+            for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
             {
                 if ( entry.getValue () != null )
                 {
@@ -329,9 +335,9 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
         }
     }
 
-    public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
+    public void notifySubscriptionChange ( final SubscriptionState state, final Throwable subscriptionError )
     {
-        String error = subscriptionError == null ? "<none>" : subscriptionError.getMessage ();
+        final String error = subscriptionError == null ? "<none>" : subscriptionError.getMessage ();
         appendConsoleMessage ( String.format ( "Subscription state changed: %s (Error: %s)", state.name (), error ) );
     }
 }

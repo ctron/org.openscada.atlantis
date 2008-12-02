@@ -94,7 +94,7 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
 
         public Variant value;
 
-        public Entry ( String name, Variant value )
+        public Entry ( final String name, final Variant value )
         {
             this.name = name;
             this.value = value;
@@ -107,9 +107,9 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
 
         private DataItem _item = null;
 
-        public void inputChanged ( Viewer v, Object oldInput, Object newInput )
+        public void inputChanged ( final Viewer v, final Object oldInput, final Object newInput )
         {
-            _viewer = viewer;
+            this._viewer = DataItemOperationView.this.viewer;
 
             clearItem ();
 
@@ -117,22 +117,22 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
             {
                 if ( newInput != null )
                 {
-                    HiveItem hiveItem = (HiveItem)newInput;
+                    final HiveItem hiveItem = (HiveItem)newInput;
 
-                    _item = new DataItem ( hiveItem.getId () );
-                    _item.addObserver ( this );
-                    _item.register ( hiveItem.getConnection ().getItemManager () );
+                    this._item = new DataItem ( hiveItem.getId () );
+                    this._item.addObserver ( this );
+                    this._item.register ( hiveItem.getConnection ().getItemManager () );
                 }
             }
         }
 
         private void clearItem ()
         {
-            if ( _item != null )
+            if ( this._item != null )
             {
-                _item.deleteObserver ( this );
-                _item.unregister ();
-                _item = null;
+                this._item.deleteObserver ( this );
+                this._item.unregister ();
+                this._item = null;
             }
         }
 
@@ -141,33 +141,35 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
             clearItem ();
         }
 
-        public Object[] getElements ( Object parent )
+        public Object[] getElements ( final Object parent )
         {
-            if ( _item == null )
+            if ( this._item == null )
+            {
                 return new Object[0];
+            }
 
-            Map<String, Variant> attrs = _item.getAttributes ();
-            Entry[] entries = new Entry[attrs.size ()];
+            final Map<String, Variant> attrs = this._item.getSnapshotValue ().getAttributes ();
+            final Entry[] entries = new Entry[attrs.size ()];
             int i = 0;
 
-            for ( Map.Entry<String, Variant> entry : attrs.entrySet () )
+            for ( final Map.Entry<String, Variant> entry : attrs.entrySet () )
             {
                 entries[i++] = new Entry ( entry.getKey (), entry.getValue () );
             }
             return entries;
         }
 
-        public void update ( Observable o, Object arg )
+        public void update ( final Observable o, final Object arg )
         {
-            if ( !_viewer.getControl ().isDisposed () )
+            if ( !this._viewer.getControl ().isDisposed () )
             {
-                _viewer.getControl ().getDisplay ().asyncExec ( new Runnable () {
+                this._viewer.getControl ().getDisplay ().asyncExec ( new Runnable () {
 
                     public void run ()
                     {
-                        if ( !_viewer.getControl ().isDisposed () )
+                        if ( !ViewContentProvider.this._viewer.getControl ().isDisposed () )
                         {
-                            _viewer.refresh ();
+                            ViewContentProvider.this._viewer.refresh ();
                         }
                     }
                 } );
@@ -177,12 +179,14 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
 
     class ViewLabelProvider extends LabelProvider implements ITableLabelProvider
     {
-        public String getColumnText ( Object obj, int index )
+        public String getColumnText ( final Object obj, final int index )
         {
             if ( ! ( obj instanceof Entry ) )
+            {
                 return "";
+            }
 
-            Entry entry = (Entry)obj;
+            final Entry entry = (Entry)obj;
 
             switch ( index )
             {
@@ -194,15 +198,19 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
             return getText ( obj );
         }
 
-        public Image getColumnImage ( Object obj, int index )
+        public Image getColumnImage ( final Object obj, final int index )
         {
             if ( index == 0 )
+            {
                 return getImage ( obj );
+            }
             else
+            {
                 return null;
+            }
         }
 
-        public Image getImage ( Object obj )
+        public Image getImage ( final Object obj )
         {
             return PlatformUI.getWorkbench ().getSharedImages ().getImage ( ISharedImages.IMG_OBJ_ELEMENT );
         }
@@ -224,7 +232,7 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
      * This is a callback that will allow us
      * to create the viewer and initialize it.
      */
-    public void createPartControl ( Composite parent )
+    public void createPartControl ( final Composite parent )
     {
         parent.setLayout ( new GridLayout ( 1, false ) );
 
@@ -235,10 +243,10 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
         gd.grabExcessHorizontalSpace = true;
         gd.horizontalAlignment = SWT.FILL;
         gd.verticalAlignment = SWT.CENTER;
-        _valueLabel = new Label ( parent, SWT.NONE );
-        _valueLabel.setLayoutData ( gd );
+        this._valueLabel = new Label ( parent, SWT.NONE );
+        this._valueLabel.setLayoutData ( gd );
 
-        SashForm box = new SashForm ( parent, SWT.VERTICAL );
+        final SashForm box = new SashForm ( parent, SWT.VERTICAL );
         gd = new GridData ();
         gd.grabExcessHorizontalSpace = true;
         gd.grabExcessVerticalSpace = true;
@@ -248,26 +256,26 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
 
         // attributes table
 
-        viewer = new TableViewer ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
-        viewer.getControl ().setLayoutData ( gd );
-        viewer.setContentProvider ( new ViewContentProvider () );
-        viewer.setLabelProvider ( new ViewLabelProvider () );
+        this.viewer = new TableViewer ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
+        this.viewer.getControl ().setLayoutData ( gd );
+        this.viewer.setContentProvider ( new ViewContentProvider () );
+        this.viewer.setLabelProvider ( new ViewLabelProvider () );
 
         TableColumn col;
 
-        col = new TableColumn ( viewer.getTable (), SWT.NONE );
+        col = new TableColumn ( this.viewer.getTable (), SWT.NONE );
         col.setText ( "Name" );
         col.setWidth ( 200 );
-        col = new TableColumn ( viewer.getTable (), SWT.NONE );
+        col = new TableColumn ( this.viewer.getTable (), SWT.NONE );
         col.setText ( "Value" );
         col.setWidth ( 500 );
 
-        viewer.getTable ().setHeaderVisible ( true );
-        viewer.setSorter ( new NameSorter () );
+        this.viewer.getTable ().setHeaderVisible ( true );
+        this.viewer.setSorter ( new NameSorter () );
 
         // console window
-        _console = new StyledText ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY );
-        _console.setLayoutData ( gd );
+        this._console = new StyledText ( box, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY );
+        this._console.setLayoutData ( gd );
 
         // set up sash
         box.setWeights ( new int[] { 60, 40 } );
@@ -282,17 +290,17 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
 
     private void appendConsoleMessage ( final String message )
     {
-        if ( !_console.isDisposed () )
+        if ( !this._console.isDisposed () )
         {
-            _console.getDisplay ().asyncExec ( new Runnable () {
+            this._console.getDisplay ().asyncExec ( new Runnable () {
 
                 public void run ()
                 {
-                    if ( !_console.isDisposed () )
+                    if ( !DataItemOperationView.this._console.isDisposed () )
                     {
-                        _console.append ( message + "\n" );
-                        _console.setSelection ( _console.getCharCount () );
-                        _console.showSelection ();
+                        DataItemOperationView.this._console.append ( message + "\n" );
+                        DataItemOperationView.this._console.setSelection ( DataItemOperationView.this._console.getCharCount () );
+                        DataItemOperationView.this._console.showSelection ();
                     }
                 }
             } );
@@ -301,21 +309,21 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
 
     private void setValue ( final Variant variant )
     {
-        if ( !_valueLabel.isDisposed () )
+        if ( !this._valueLabel.isDisposed () )
         {
-            _valueLabel.getDisplay ().asyncExec ( new Runnable () {
+            this._valueLabel.getDisplay ().asyncExec ( new Runnable () {
 
                 public void run ()
                 {
-                    if ( !_valueLabel.isDisposed () )
+                    if ( !DataItemOperationView.this._valueLabel.isDisposed () )
                     {
                         if ( variant.isNull () )
                         {
-                            _valueLabel.setText ( "Value: <null>" );
+                            DataItemOperationView.this._valueLabel.setText ( "Value: <null>" );
                         }
                         else
                         {
-                            _valueLabel.setText ( "Value: " + variant.asString ( "BUG!" ) );
+                            DataItemOperationView.this._valueLabel.setText ( "Value: " + variant.asString ( "BUG!" ) );
                         }
                     }
                 }
@@ -328,7 +336,7 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
      */
     public void setFocus ()
     {
-        viewer.getControl ().setFocus ();
+        this.viewer.getControl ().setFocus ();
     }
 
     @Override
@@ -338,12 +346,12 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
         super.dispose ();
     }
 
-    public void setDataItem ( HiveItem item )
+    public void setDataItem ( final HiveItem item )
     {
-        if ( _hiveItem != null )
+        if ( this._hiveItem != null )
         {
-            _hiveItem.getConnection ().getItemManager ().removeItemUpdateListener ( _hiveItem.getId (), this );
-            appendConsoleMessage ( "Unsubscribe from item: " + _hiveItem.getId () );
+            this._hiveItem.getConnection ().getItemManager ().removeItemUpdateListener ( this._hiveItem.getId (), this );
+            appendConsoleMessage ( "Unsubscribe from item: " + this._hiveItem.getId () );
 
             setPartName ( "Data Item Viewer" );
         }
@@ -354,16 +362,16 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
 
             _log.info ( "Set data item: " + item.getId () );
 
-            _hiveItem = item;
+            this._hiveItem = item;
 
-            appendConsoleMessage ( "Subscribe to item: " + _hiveItem.getId () );
-            _hiveItem.getConnection ().getItemManager ().addItemUpdateListener ( _hiveItem.getId (), this );
+            appendConsoleMessage ( "Subscribe to item: " + this._hiveItem.getId () );
+            this._hiveItem.getConnection ().getItemManager ().addItemUpdateListener ( this._hiveItem.getId (), this );
 
-            viewer.setInput ( item );
+            this.viewer.setInput ( item );
         }
     }
 
-    public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean initial )
+    public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean initial )
     {
         if ( value != null )
         {
@@ -374,18 +382,18 @@ public class DataItemOperationView extends ViewPart implements ItemUpdateListene
         if ( attributes != null )
         {
             appendConsoleMessage ( "Attribute change set " + ( initial ? "(initial)" : "" ) + " " + attributes.size () + " item(s) follow:" );
-            int i = 0;
-            for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+            final int i = 0;
+            for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
             {
-                String q = entry.getValue ().isNull () ? "" : "'";
+                final String q = entry.getValue ().isNull () ? "" : "'";
                 appendConsoleMessage ( "#" + i + ": " + entry.getKey () + "->" + q + entry.getValue ().asString ( "<null>" ) + q );
             }
         }
     }
 
-    public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
+    public void notifySubscriptionChange ( final SubscriptionState state, final Throwable subscriptionError )
     {
-        String error = subscriptionError == null ? "<none>" : subscriptionError.getMessage ();
+        final String error = subscriptionError == null ? "<none>" : subscriptionError.getMessage ();
         appendConsoleMessage ( String.format ( "Subscription state changed: %s (Error: %s)", state.name (), error ) );
     }
 }

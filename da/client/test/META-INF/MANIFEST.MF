@@ -42,5 +42,4 @@ Export-Package: org.openscada.da.client.test;
    org.openscada.core,
    org.eclipse.swt.widgets,
    org.openscada.da.client"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
- J2SE-1.5
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

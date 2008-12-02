@@ -33,57 +33,61 @@ import org.openscada.da.core.browser.Entry;
 public class RefreshFolderUpdater extends FolderUpdater
 {
     private static Logger _log = Logger.getLogger ( RefreshFolderUpdater.class );
+
     private Job _refreshJob = null;
 
-    public RefreshFolderUpdater ( HiveConnection connection, FolderEntry folder, boolean autoInitialize )
+    public RefreshFolderUpdater ( final HiveConnection connection, final FolderEntry folder, final boolean autoInitialize )
     {
         super ( connection, folder, autoInitialize );
     }
-    
+
     synchronized public void refresh ()
     {
-        if ( _refreshJob != null )
+        if ( this._refreshJob != null )
+        {
             return;
-        
-        _refreshJob = new Job ( "Refresh..." ) {
+        }
+
+        this._refreshJob = new Job ( "Refresh..." ) {
 
             @Override
-            protected IStatus run ( IProgressMonitor monitor )
+            protected IStatus run ( final IProgressMonitor monitor )
             {
                 try
                 {
                     performRefresh ( monitor );
                     return new OperationStatus ( OperationStatus.OK, Activator.PLUGIN_ID, 0, "", null );
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     return new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, "Failed to refresh", e );
                 }
                 finally
                 {
                     monitor.done ();
-                    _refreshJob = null;
+                    RefreshFolderUpdater.this._refreshJob = null;
                 }
-            }};
-            
-            _refreshJob.schedule ();
+            }
+        };
+
+        this._refreshJob.schedule ();
     }
 
-    private void performRefresh ( IProgressMonitor monitor ) throws Exception
+    private void performRefresh ( final IProgressMonitor monitor ) throws Exception
     {
         monitor.beginTask ( "Refreshing tree", 1 );
 
-        Entry [] entries = getConnection ().getConnection ().browse ( getFolder ().getLocation ().asArray () );
+        final Entry[] entries = getConnection ().getConnection ().browse ( getFolder ().getLocation () );
 
-        Map<String, BrowserEntry> list = convert ( Arrays.asList ( entries ) );
+        final Map<String, BrowserEntry> list = convert ( Arrays.asList ( entries ) );
 
         update ( list );
-        
-        for ( Map.Entry<String, BrowserEntry> entry : _entries.entrySet () )
+
+        for ( final Map.Entry<String, BrowserEntry> entry : this._entries.entrySet () )
         {
             _log.debug ( "Entry: " + entry.getKey () );
         }
-        
+
         monitor.worked ( 1 );
     }
 

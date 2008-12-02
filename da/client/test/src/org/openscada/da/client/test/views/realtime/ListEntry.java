@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItem;
@@ -99,8 +98,6 @@ public class ListEntry extends Observable implements Observer
         }
     }
 
-    private static Logger _log = Logger.getLogger ( ListEntry.class );
-
     private DataItem dataItem;
 
     private HiveConnection connection;
@@ -169,7 +166,6 @@ public class ListEntry extends Observable implements Observer
         return this.dataItem.getSnapshotValue ().getSubscriptionError ();
     }
 
-    @Override
     public void update ( final Observable o, final Object arg )
     {
         setChanged ();
