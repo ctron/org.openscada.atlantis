@@ -163,9 +163,14 @@ public class DataItemValue
         return isAttribute ( "alarm", false );
     }
 
+    public boolean isConnected ()
+    {
+        return this.subscriptionState == SubscriptionState.CONNECTED;
+    }
+
     public boolean isError ()
     {
-        if ( this.subscriptionState != SubscriptionState.CONNECTED )
+        if ( isConnected () )
         {
             return isAttribute ( "error", false );
         }
@@ -211,6 +216,10 @@ public class DataItemValue
             sb.append ( this.value.toString () );
         }
         sb.append ( "[" );
+        if ( isConnected () )
+        {
+            sb.append ( "C" );
+        }
         if ( isAlarm () )
         {
             sb.append ( "A" );
