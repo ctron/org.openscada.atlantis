@@ -119,11 +119,6 @@ public class ItemSyncController implements ItemUpdateListener
         return this._itemName;
     }
 
-    public synchronized int getNumberOfListeners ()
-    {
-        return this._listeners.size ();
-    }
-
     public synchronized void add ( final ItemUpdateListener listener )
     {
         if ( !this._listeners.containsKey ( listener ) )
@@ -162,7 +157,7 @@ public class ItemSyncController implements ItemUpdateListener
 
     public synchronized void sync ( final boolean force )
     {
-        final boolean subscribe = getNumberOfListeners () > 0;
+        final boolean subscribe = !this._listeners.isEmpty();
 
         if ( this._subscribed == subscribe && !force )
         {
