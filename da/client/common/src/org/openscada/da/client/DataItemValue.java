@@ -101,6 +101,20 @@ public class DataItemValue
         this.subscriptionState = subscriptionState;
     }
 
+    /**
+     * Get the message of the subscription error
+     * @return the message of the subscription error or <code>null</code> if no subscription error is known
+     */
+    public String getSubscriptionErrorString ()
+    {
+        final Throwable subscriptionError = this.subscriptionError;
+        if ( subscriptionError != null )
+        {
+            return subscriptionError.getMessage ();
+        }
+        return null;
+    }
+
     public Throwable getSubscriptionError ()
     {
         return this.subscriptionError;
