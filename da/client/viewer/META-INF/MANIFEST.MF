@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA Process Viewer PlugIn
 Bundle-SymbolicName: org.openscada.da.client.viewer;singleton:=true
-Bundle-Version: 0.8.1
+Bundle-Version: 0.8.2
 Bundle-Activator: org.openscada.da.client.viewer.Activator
 Bundle-Vendor: OpenSCADA.org
 Require-Bundle: org.eclipse.ui,
@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Bundle-ClassPath: schemasrc/,
  .
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
