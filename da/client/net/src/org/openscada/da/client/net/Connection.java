@@ -248,8 +248,6 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         }
 
         fireDataChange ( itemId, value, attributes, cache );
-        // fireValueChange ( itemName, value, initial );
-        // fireAttributesChange ( itemName, attributes, initial );
     }
 
     /**
