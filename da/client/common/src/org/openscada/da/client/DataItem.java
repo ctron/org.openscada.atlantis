@@ -132,7 +132,7 @@ public class DataItem extends Observable
         }
 
         this._value = newValue;
-        notifyObservers ();
+        notifyObservers ( newValue );
     }
 
     private void performNotifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
@@ -143,7 +143,7 @@ public class DataItem extends Observable
         this._value = newValue;
 
         setChanged ();
-        notifyObservers ();
+        notifyObservers ( newValue );
     }
 
     /**
