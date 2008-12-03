@@ -48,7 +48,9 @@ public class AsyncDataItem extends DataItem
             @Override
             public Thread newThread ( final Runnable r )
             {
-                return new Thread ( r, "AsyncDataItem/" + itemId + "#" + this.i.getAndIncrement () );
+                final Thread t = new Thread ( r, "AsyncDataItem/" + itemId + "#" + this.i.getAndIncrement () );
+                t.setDaemon ( true );
+                return t;
             }
         } ) );
     }
