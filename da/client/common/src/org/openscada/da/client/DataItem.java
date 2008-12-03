@@ -23,12 +23,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 
+import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
 
 public class DataItem extends Observable
 {
+    private static Logger logger = Logger.getLogger ( DataItem.class );
+
     private final String _itemId;
 
     private ItemManager _itemManager = null;
@@ -60,7 +63,10 @@ public class DataItem extends Observable
     {
         this ( itemId );
 
-        register ( connection );
+        if ( connection != null )
+        {
+            register ( connection );
+        }
     }
 
     public void register ( final ItemManager itemManager )
@@ -132,7 +138,15 @@ public class DataItem extends Observable
         }
 
         this._value = newValue;
-        notifyObservers ( newValue );
+
+        try
+        {
+            notifyObservers ( newValue );
+        }
+        catch ( final Throwable e )
+        {
+            logger.warn ( "Failed to notify data change", e );
+        }
     }
 
     private void performNotifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
@@ -143,7 +157,15 @@ public class DataItem extends Observable
         this._value = newValue;
 
         setChanged ();
-        notifyObservers ( newValue );
+
+        try
+        {
+            notifyObservers ( newValue );
+        }
+        catch ( final Throwable e )
+        {
+            logger.warn ( "Failed to notify subscription change", e );
+        }
     }
 
     /**
