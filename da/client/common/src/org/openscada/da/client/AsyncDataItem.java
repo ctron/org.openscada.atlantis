@@ -21,6 +21,8 @@ package org.openscada.da.client;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A data item which performs the notification asynchronously
@@ -39,7 +41,16 @@ public class AsyncDataItem extends DataItem
 
     public AsyncDataItem ( final String itemId, final ItemManager connection )
     {
-        this ( itemId, connection, Executors.newSingleThreadExecutor () );
+        this ( itemId, connection, Executors.newSingleThreadExecutor ( new ThreadFactory () {
+
+            private final AtomicInteger i = new AtomicInteger ( 0 );
+
+            @Override
+            public Thread newThread ( final Runnable r )
+            {
+                return new Thread ( r, "AsyncDataItem/" + itemId + "#" + this.i.getAndIncrement () );
+            }
+        } ) );
     }
 
     public AsyncDataItem ( final String itemId, final ItemManager connection, final ExecutorService executor )
