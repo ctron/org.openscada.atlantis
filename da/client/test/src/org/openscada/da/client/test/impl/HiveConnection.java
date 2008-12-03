@@ -46,52 +46,56 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     private static Logger _log = Logger.getLogger ( HiveConnection.class );
 
     private boolean _connectionRequested = false;
+
     private ConnectionInformation _connectionInformation = null;
+
     private Connection _connection = null;
 
-    private Map<String, HiveItem> _itemMap = new HashMap<String, HiveItem> ();
+    private final Map<String, HiveItem> _itemMap = new HashMap<String, HiveItem> ();
 
     private FolderEntry _rootFolder = null;
 
     private ItemManager _itemManager;
+
     private FolderManager _folderManager;
 
     private enum Properties
     {
-        URI, STATE
+        URI,
+        STATE
     };
 
-    public HiveConnection ( HiveConnectionInformation connectionInfo )
+    public HiveConnection ( final HiveConnectionInformation connectionInfo )
     {
         super ();
 
-        _connectionInformation = ConnectionInformation.fromURI ( connectionInfo.getConnectionString () );
+        this._connectionInformation = ConnectionInformation.fromURI ( connectionInfo.getConnectionString () );
 
-        _connection = (Connection)ConnectionFactory.create ( _connectionInformation );
+        this._connection = (Connection)ConnectionFactory.create ( this._connectionInformation );
 
-        if ( _connection != null )
+        if ( this._connection != null )
         {
-            _connection.addConnectionStateListener ( new ConnectionStateListener () {
+            this._connection.addConnectionStateListener ( new ConnectionStateListener () {
 
-                public void stateChange ( org.openscada.core.client.Connection connection, ConnectionState state, Throwable error )
+                public void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
                 {
                     performStateChange ( state, error );
                 }
 
             } );
-            _itemManager = new ItemManager ( _connection );
-            _folderManager = new FolderManager ( _connection );
+            this._itemManager = new ItemManager ( this._connection );
+            this._folderManager = new FolderManager ( this._connection );
         }
     }
 
     public void connect ()
     {
-        if ( _connection == null )
+        if ( this._connection == null )
         {
             return;
         }
 
-        _connectionRequested = true;
+        this._connectionRequested = true;
         setChanged ();
         notifyObservers ();
 
@@ -99,9 +103,9 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
         try
         {
-            _connection.connect ();
+            this._connection.connect ();
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             _log.error ( "Failed to start connection", e );
             Activator.logError ( 1, "Unable to connect", e );
@@ -111,38 +115,38 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
     public void disconnect ()
     {
-        if ( _connection == null )
+        if ( this._connection == null )
         {
             return;
         }
 
-        _connectionRequested = false;
+        this._connectionRequested = false;
 
         setChanged ();
         notifyObservers ();
 
-        _connection.disconnect ();
+        this._connection.disconnect ();
     }
 
     public ConnectionInformation getConnectionInformation ()
     {
-        return _connectionInformation;
+        return this._connectionInformation;
     }
 
-    private synchronized void performStateChange ( ConnectionState state, Throwable error )
+    private synchronized void performStateChange ( final ConnectionState state, final Throwable error )
     {
         _log.debug ( String.format ( "State Change to %s (%s)", state, error ) );
 
         switch ( state )
         {
         case BOUND:
-            _rootFolder = new FolderEntry ( "", new HashMap<String, Variant> (), null, this, true );
+            this._rootFolder = new FolderEntry ( "", new HashMap<String, Variant> (), null, this, true );
             break;
         case CLOSED:
-            if ( _rootFolder != null )
+            if ( this._rootFolder != null )
             {
-                _rootFolder.dispose ();
-                _rootFolder = null;
+                this._rootFolder.dispose ();
+                this._rootFolder = null;
             }
             break;
         default:
@@ -161,49 +165,49 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
     public Connection getConnection ()
     {
-        return _connection;
+        return this._connection;
     }
 
     public boolean isConnectionRequested ()
     {
-        return _connectionRequested;
+        return this._connectionRequested;
     }
 
-    synchronized public HiveItem lookupItem ( String itemName )
+    synchronized public HiveItem lookupItem ( final String itemName )
     {
-        return _itemMap.get ( itemName );
+        return this._itemMap.get ( itemName );
     }
 
-    public boolean testAttribute ( Object target, String name, String value )
+    public boolean testAttribute ( final Object target, final String name, final String value )
     {
         if ( name.equals ( "state" ) )
         {
-            return _connection.getState ().equals ( ConnectionState.valueOf ( value ) );
+            return this._connection.getState ().equals ( ConnectionState.valueOf ( value ) );
         }
         return false;
     }
 
     public FolderEntry getRootFolder ()
     {
-        return _rootFolder;
+        return this._rootFolder;
     }
 
-    public void notifyFolderChange ( FolderEntry folder )
+    public void notifyFolderChange ( final FolderEntry folder )
     {
         setChanged ();
         notifyObservers ( folder );
     }
 
-    protected void fillPropertyDescriptors ( List<IPropertyDescriptor> list )
+    protected void fillPropertyDescriptors ( final List<IPropertyDescriptor> list )
     {
         {
-            PropertyDescriptor pd = new PropertyDescriptor ( Properties.URI, "URI" );
+            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.URI, "URI" );
             pd.setCategory ( "Connection Information" );
             pd.setAlwaysIncompatible ( true );
             list.add ( pd );
         }
         {
-            PropertyDescriptor pd = new PropertyDescriptor ( Properties.STATE, "State" );
+            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.STATE, "State" );
             pd.setCategory ( "Connection" );
             pd.setAlwaysIncompatible ( true );
             list.add ( pd );
@@ -212,55 +216,59 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
     public IPropertyDescriptor[] getPropertyDescriptors ()
     {
-        List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor> ();
+        final List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor> ();
 
         fillPropertyDescriptors ( list );
 
         return list.toArray ( new IPropertyDescriptor[list.size ()] );
     }
 
-    public Object getPropertyValue ( Object id )
+    public Object getPropertyValue ( final Object id )
     {
         if ( id.equals ( Properties.URI ) )
-            return _connectionInformation.toString ();
+        {
+            return this._connectionInformation.toString ();
+        }
         if ( id.equals ( Properties.STATE ) )
-            return _connection.getState ().name ();
+        {
+            return this._connection.getState ().name ();
+        }
 
         return null;
     }
 
     public Object getEditableValue ()
     {
-        return _connectionInformation.toString ();
+        return this._connectionInformation.toString ();
     }
 
-    public boolean isPropertySet ( Object id )
+    public boolean isPropertySet ( final Object id )
     {
         return false;
     }
 
-    public void resetPropertyValue ( Object id )
+    public void resetPropertyValue ( final Object id )
     {
         // no op
     }
 
-    public void setPropertyValue ( Object id, Object value )
+    public void setPropertyValue ( final Object id, final Object value )
     {
         // no op
     }
 
     public ItemManager getItemManager ()
     {
-        return _itemManager;
+        return this._itemManager;
     }
 
     public FolderManager getFolderManager ()
     {
-        return _folderManager;
+        return this._folderManager;
     }
 
     public boolean isValid ()
     {
-        return _connection != null;
+        return this._connection != null;
     }
 }
