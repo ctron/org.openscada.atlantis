@@ -40,7 +40,12 @@ public class ItemManager implements ConnectionStateListener
     {
         super ();
         this.connection = connection;
-        this.connection.addConnectionStateListener ( this );
+
+        synchronized ( this )
+        {
+            this.connection.addConnectionStateListener ( this );
+            this.connected = this.connection.getState () == ConnectionState.BOUND;
+        }
     }
 
     /**
