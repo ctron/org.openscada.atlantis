@@ -2,14 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Extra Details Plug-in
 Bundle-SymbolicName: org.openscada.da.client.dataitem.details.extra;singleton:=true
-Bundle-Version: 0.9.0
+Bundle-Version: 0.9.1
 Bundle-Activator: org.openscada.da.client.dataitem.details.extra.Activator
 Bundle-Vendor: inavare GmbH
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.openscada.da.client.dataitem.details,
  org.eclipse.draw2d;bundle-version="3.2.0",
- org.openscada.da.client.test;bundle-version="0.9.1"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5,
- JavaSE-1.6
+ org.openscada.rcp.client;bundle-version="0.8.1"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy

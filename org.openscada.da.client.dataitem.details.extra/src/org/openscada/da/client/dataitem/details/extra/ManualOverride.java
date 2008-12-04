@@ -49,8 +49,8 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.dataitem.details.part.AbstractBaseDetailsPart;
-import org.openscada.da.client.test.impl.ValueType;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.rcp.da.client.browser.ValueType;
 
 /**
  * A detail view for the manual override value, setting and getting the status
