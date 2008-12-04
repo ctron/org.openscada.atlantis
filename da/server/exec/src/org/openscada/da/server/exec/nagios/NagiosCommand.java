@@ -22,8 +22,11 @@
  */
 package org.openscada.da.server.exec.nagios;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
@@ -62,7 +65,7 @@ public class NagiosCommand extends CommandBase
      * @param queue
      * @param commandName
      */
-    public NagiosCommand ( HiveCommon hive, String commandName, CommandQueue queue )
+    public NagiosCommand ( final HiveCommon hive, final String commandName, final CommandQueue queue )
     {
         super ( hive, commandName, queue );
 
@@ -72,29 +75,41 @@ public class NagiosCommand extends CommandBase
     }
 
     @Override
-    public void setCommandLine ( String commandLine )
+    public void setCommandLine ( final String commandLine )
     {
         super.setCommandLine ( commandLine );
-        this.processBuilder = new ProcessBuilder ( commandLine.split( " +" ) );
+
+        final List<String> commands = new ArrayList<String> ();
+        final StringTokenizer tok = new StringTokenizer ( commandLine );
+        while ( tok.hasMoreTokens () )
+        {
+            final String token = tok.nextToken ();
+            if ( !token.isEmpty () )
+            {
+                commands.add ( token );
+            }
+        }
+
+        this.processBuilder = new ProcessBuilder ( commands );
     }
-    
+
     /**
      * run the command task
      */
     public void execute ()
     {
         // Execute
-        CommandResult result = CommandExecutor.executeCommand ( this.processBuilder );
+        final CommandResult result = CommandExecutor.executeCommand ( this.processBuilder );
 
         // Place result attributes
-        Map<String, Variant> map = new HashMap<String, Variant> ();
+        final Map<String, Variant> map = new HashMap<String, Variant> ();
         map.put ( "execution.error", new Variant ( result.isError () ) );
         map.put ( "exitCode", new Variant ( result.getExitValue () ) );
         map.put ( "output", new Variant ( result.getOutput () ) );
         map.put ( "errorOutput", new Variant ( result.getErrorOutput () ) );
         map.put ( "message", new Variant ( result.getMessage () ) );
 
-        Boolean state = result.getExitValue () == 0;
+        final Boolean state = result.getExitValue () == 0;
 
         // check result
         if ( this.lastState == null || !this.lastState.equals ( state ) )
