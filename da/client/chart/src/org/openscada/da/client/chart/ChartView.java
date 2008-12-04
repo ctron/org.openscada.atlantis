@@ -30,7 +30,7 @@ import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.ItemUpdateListener;
-import org.openscada.da.client.test.impl.HiveConnection;
+import org.openscada.rcp.da.client.browser.HiveConnection;
 
 public class ChartView extends ViewPart implements ItemUpdateListener
 {
