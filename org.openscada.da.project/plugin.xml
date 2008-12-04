@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            default-charset="UTF-8"
+            file-extensions="rtl"
+            id="org.openscada.da.project.realtimeList"
+            name="Realtime Configuration"
+            priority="normal">
+      </content-type>
+      <file-association
+            content-type="org.openscada.da.project.realtimeList"
+            file-extensions="rtl">
+      </file-association>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.openscada.da.project.editor.RealtimeListEditor"
+            default="true"
+            extensions="rtl"
+            id="org.openscada.da.project.realTimeListEditor"
+            name="Realtime List Editor">
+      </editor>
+   </extension>
+
+</plugin>
