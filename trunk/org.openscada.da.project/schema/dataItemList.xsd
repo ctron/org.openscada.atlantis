@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://openscada.org/DA/DataItemList" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:items="http://openscada.org/DA/DataItemList">
+    <annotation>
+    	<documentation>A list of data items</documentation></annotation>
+
+    <element name="items" type="items:ItemsType"></element>
+    
+    <complexType name="ItemsType">
+    	<sequence>
+    		<element name="item" type="items:ItemType"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    	</sequence>
+    	<attribute name="title" type="string"></attribute>
+    </complexType>
+
+    <complexType name="ItemType">
+    	<attribute name="uri" type="anyURI" use="required"></attribute>
+    	<attribute name="itemId" type="string" use="required"></attribute>
+    </complexType>
+</schema>
