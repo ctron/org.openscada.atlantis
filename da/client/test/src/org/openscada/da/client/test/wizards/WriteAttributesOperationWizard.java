@@ -36,9 +36,9 @@ import org.eclipse.ui.IWorkbench;
 import org.openscada.core.Variant;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.test.Activator;
-import org.openscada.da.client.test.impl.HiveConnection;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.rcp.da.client.browser.HiveConnection;
 
 public class WriteAttributesOperationWizard extends Wizard implements INewWizard
 {

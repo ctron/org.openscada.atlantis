@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.client.test.config;
+package org.openscada.rcp.da.client.browser;
 
 import java.io.Serializable;
 

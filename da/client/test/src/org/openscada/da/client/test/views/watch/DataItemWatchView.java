@@ -44,7 +44,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.ItemUpdateListener;
-import org.openscada.da.client.test.impl.DataItemEntry;
+import org.openscada.rcp.da.client.browser.DataItemEntry;
 
 /**
  * This sample class demonstrates how to plug-in a new

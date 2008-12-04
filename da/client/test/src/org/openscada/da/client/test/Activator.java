@@ -31,10 +31,10 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.openscada.da.client.test.config.HiveConnectionInformation;
-import org.openscada.da.client.test.impl.HiveConnection;
-import org.openscada.da.client.test.impl.HiveRepository;
 import org.openscada.rcp.da.client.ConnectorInitializer;
+import org.openscada.rcp.da.client.browser.HiveConnection;
+import org.openscada.rcp.da.client.browser.HiveConnectionInformation;
+import org.openscada.rcp.da.client.browser.HiveRepository;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -43,9 +43,8 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin
 {
     private static Logger _log = Logger.getLogger ( "org.openscada.da.client.test.Plugin" );
-    
+
     public static final String PLUGIN_ID = "org.openscada.da.client.test";
-    public static final String NATIVE_LS = System.getProperty ( "line.separator", "\n" );
 
     //The shared instance.
     private static Activator plugin = null;
@@ -59,22 +58,18 @@ public class Activator extends AbstractUIPlugin
     }
 
     @Override
-    protected void initializeImageRegistry ( ImageRegistry reg )
+    protected void initializeImageRegistry ( final ImageRegistry reg )
     {
         super.initializeImageRegistry ( reg );
 
         getImageRegistry ().put ( ISharedImages.IMG_HIVE_CONNECTION, getImageDescriptor ( "icons/stock_channel.png" ) );
         getImageRegistry ().put ( ISharedImages.IMG_HIVE_CONNECTED, getImageDescriptor ( "icons/stock_connect.png" ) );
-        getImageRegistry ().put ( ISharedImages.IMG_HIVE_DISCONNECTED,
-                getImageDescriptor ( "icons/stock_disconnect.png" ) );
+        getImageRegistry ().put ( ISharedImages.IMG_HIVE_DISCONNECTED, getImageDescriptor ( "icons/stock_disconnect.png" ) );
 
         getImageRegistry ().put ( ISharedImages.IMG_HIVE_ITEM, getImageDescriptor ( "icons/16x16/stock_dataitem.png" ) );
-        getImageRegistry ().put ( ISharedImages.IMG_HIVE_ITEM_I,
-                getImageDescriptor ( "icons/16x16/stock_dataitem_i.png" ) );
-        getImageRegistry ().put ( ISharedImages.IMG_HIVE_ITEM_O,
-                getImageDescriptor ( "icons/16x16/stock_dataitem_o.png" ) );
-        getImageRegistry ().put ( ISharedImages.IMG_HIVE_ITEM_IO,
-                getImageDescriptor ( "icons/16x16/stock_dataitem_io.png" ) );
+        getImageRegistry ().put ( ISharedImages.IMG_HIVE_ITEM_I, getImageDescriptor ( "icons/16x16/stock_dataitem_i.png" ) );
+        getImageRegistry ().put ( ISharedImages.IMG_HIVE_ITEM_O, getImageDescriptor ( "icons/16x16/stock_dataitem_o.png" ) );
+        getImageRegistry ().put ( ISharedImages.IMG_HIVE_ITEM_IO, getImageDescriptor ( "icons/16x16/stock_dataitem_io.png" ) );
 
         getImageRegistry ().put ( ISharedImages.IMG_HIVE_FOLDER, getImageDescriptor ( "icons/16x16/stock_folder.png" ) );
     }
@@ -82,7 +77,8 @@ public class Activator extends AbstractUIPlugin
     /**
      * This method is called upon plug-in activation
      */
-    public void start ( BundleContext context ) throws Exception
+    @Override
+    public void start ( final BundleContext context ) throws Exception
     {
         super.start ( context );
     }
@@ -90,7 +86,8 @@ public class Activator extends AbstractUIPlugin
     /**
      * This method is called when the plug-in is stopped
      */
-    public void stop ( BundleContext context ) throws Exception
+    @Override
+    public void stop ( final BundleContext context ) throws Exception
     {
         super.stop ( context );
         plugin = null;
@@ -111,7 +108,7 @@ public class Activator extends AbstractUIPlugin
      * @param path the path
      * @return the image descriptor
      */
-    public static ImageDescriptor getImageDescriptor ( String path )
+    public static ImageDescriptor getImageDescriptor ( final String path )
     {
         return AbstractUIPlugin.imageDescriptorFromPlugin ( "org.openscada.da.client.test", path );
     }
@@ -121,7 +118,7 @@ public class Activator extends AbstractUIPlugin
         return getDefault ().getBundle ().getSymbolicName ();
     }
 
-    public static void logError ( int code, String msg, Throwable ex )
+    public static void logError ( final int code, final String msg, final Throwable ex )
     {
         getDefault ().getLog ().log ( new Status ( IStatus.ERROR, getId (), code, msg, ex ) );
     }
@@ -137,17 +134,19 @@ public class Activator extends AbstractUIPlugin
             {
                 ConnectorInitializer.initialize ();
             }
-            catch ( CoreException e )
+            catch ( final CoreException e )
             {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                e.printStackTrace ();
             }
 
             _repository = new HiveRepository ();
 
-            IPath hives = getRepostoryFile ();
+            final IPath hives = getRepostoryFile ();
             if ( hives.toFile ().canRead () )
+            {
                 _repository.load ( hives );
+            }
             else
             {
                 HiveConnectionInformation connection = new HiveConnectionInformation ();
@@ -185,12 +184,11 @@ public class Activator extends AbstractUIPlugin
 
                 public void run ()
                 {
-                    Shell shell = getWorkbench ().getActiveWorkbenchWindow ().getShell ();
+                    final Shell shell = getWorkbench ().getActiveWorkbenchWindow ().getShell ();
                     _log.debug ( String.format ( "Shell disposed: %s", shell.isDisposed () ) );
                     if ( !shell.isDisposed () )
                     {
-                        IStatus status = new OperationStatus ( OperationStatus.ERROR, PLUGIN_ID, 0,
-                                message + ":" + error.getMessage (), error );
+                        final IStatus status = new OperationStatus ( OperationStatus.ERROR, PLUGIN_ID, 0, message + ":" + error.getMessage (), error );
                         ErrorDialog.openError ( shell, null, message, status );
                     }
                 }

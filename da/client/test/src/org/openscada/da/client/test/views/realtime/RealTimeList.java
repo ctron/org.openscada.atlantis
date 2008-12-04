@@ -41,7 +41,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.core.Variant;
 import org.openscada.da.client.WriteOperationCallback;
-import org.openscada.da.client.test.dnd.ItemTransfer;
+import org.openscada.rcp.da.client.dnd.ItemTransfer;
 
 public class RealTimeList extends ViewPart
 {

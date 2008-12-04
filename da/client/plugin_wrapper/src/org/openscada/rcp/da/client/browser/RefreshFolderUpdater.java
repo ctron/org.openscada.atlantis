@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.client.test.impl;
+package org.openscada.rcp.da.client.browser;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -27,8 +27,8 @@ import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
-import org.openscada.da.client.test.Activator;
 import org.openscada.da.core.browser.Entry;
+import org.openscada.rcp.da.client.Activator;
 
 public class RefreshFolderUpdater extends FolderUpdater
 {

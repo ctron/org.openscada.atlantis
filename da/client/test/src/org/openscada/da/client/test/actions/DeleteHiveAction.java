@@ -28,7 +28,7 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.openscada.da.client.test.Activator;
-import org.openscada.da.client.test.impl.HiveConnection;
+import org.openscada.rcp.da.client.browser.HiveConnection;
 
 public class DeleteHiveAction implements IObjectActionDelegate, IViewActionDelegate
 {

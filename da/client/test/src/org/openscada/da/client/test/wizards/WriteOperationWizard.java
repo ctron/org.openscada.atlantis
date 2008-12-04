@@ -31,7 +31,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.core.Variant;
 import org.openscada.da.client.WriteOperationCallback;
-import org.openscada.da.client.test.impl.HiveConnection;
+import org.openscada.rcp.da.client.browser.HiveConnection;
 
 public class WriteOperationWizard extends Wizard implements INewWizard
 {

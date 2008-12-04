@@ -1,10 +1,18 @@
 package org.openscada.rcp.da.client;
 
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
+import org.openscada.core.ConnectionInformation;
+import org.openscada.core.client.Connection;
+import org.openscada.core.client.ConnectionFactory;
 import org.osgi.framework.BundleContext;
 
 public class Activator extends Plugin
 {
+
+    public static String PLUGIN_ID = "org.openscada.da.client";
+
+    public static final String NATIVE_LS = System.getProperty ( "line.separator", "\n" );
 
     private static Activator instance;
 
@@ -18,7 +26,7 @@ public class Activator extends Plugin
     }
 
     @Override
-    public void start ( BundleContext context ) throws Exception
+    public void start ( final BundleContext context ) throws Exception
     {
         super.start ( context );
         instance = this;
@@ -27,17 +35,22 @@ public class Activator extends Plugin
         {
             ConnectorInitializer.initialize ();
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
-            e.printStackTrace ();
+            this.getLog ().log ( new Status ( Status.ERROR, PLUGIN_ID, "Failed to initialize connectors", e ) );
         }
     }
 
     @Override
-    public void stop ( BundleContext context ) throws Exception
+    public void stop ( final BundleContext context ) throws Exception
     {
         instance = null;
         super.stop ( context );
+    }
+
+    public static Connection createConnection ( final ConnectionInformation ci )
+    {
+        return ConnectionFactory.create ( ci );
     }
 
 }

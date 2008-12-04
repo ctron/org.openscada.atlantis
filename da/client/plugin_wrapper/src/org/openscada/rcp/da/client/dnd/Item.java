@@ -1,4 +1,4 @@
-package org.openscada.da.client.test.dnd;
+package org.openscada.rcp.da.client.dnd;
 
 public class Item
 {

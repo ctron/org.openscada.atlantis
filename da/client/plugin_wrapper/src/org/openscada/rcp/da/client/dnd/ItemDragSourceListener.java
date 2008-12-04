@@ -1,4 +1,4 @@
-package org.openscada.da.client.test.dnd;
+package org.openscada.rcp.da.client.dnd;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,39 +10,39 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
-import org.openscada.da.client.test.impl.DataItemEntry;
+import org.openscada.rcp.da.client.browser.DataItemEntry;
 
 public class ItemDragSourceListener implements DragSourceListener
 {
-    @SuppressWarnings("unused")
+    @SuppressWarnings ( "unused" )
     private static Logger _log = Logger.getLogger ( ItemDragSourceListener.class );
-    
+
     private Viewer _viewer = null;
-    
-    public ItemDragSourceListener ( Viewer viewer )
+
+    public ItemDragSourceListener ( final Viewer viewer )
     {
         super ();
-        _viewer = viewer;
+        this._viewer = viewer;
     }
-    
-    public void dragFinished ( DragSourceEvent event )
+
+    public void dragFinished ( final DragSourceEvent event )
     {
     }
 
-    public void dragSetData ( DragSourceEvent event )
+    public void dragSetData ( final DragSourceEvent event )
     {
         try
         {
             if ( ItemTransfer.getInstance ().isSupportedType ( event.dataType ) )
             {
-                IStructuredSelection selection = (IStructuredSelection)LocalSelectionTransfer.getTransfer ().getSelection ();
+                final IStructuredSelection selection = (IStructuredSelection)LocalSelectionTransfer.getTransfer ().getSelection ();
 
-                List<Item> items = new ArrayList<Item> ();
-                for ( Iterator<?> i = selection.iterator (); i.hasNext (); )
+                final List<Item> items = new ArrayList<Item> ();
+                for ( final Iterator<?> i = selection.iterator (); i.hasNext (); )
                 {
-                    DataItemEntry entry = (DataItemEntry)i.next ();
+                    final DataItemEntry entry = (DataItemEntry)i.next ();
 
-                    Item item = new Item ();
+                    final Item item = new Item ();
                     item.setId ( entry.getId () );
                     item.setConnectionString ( entry.getConnection ().getConnectionInformation ().toString () );
                     items.add ( item );
@@ -50,41 +50,40 @@ public class ItemDragSourceListener implements DragSourceListener
                 event.data = items.toArray ( new Item[items.size ()] );
             }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             event.doit = false;
         }
-         
+
     }
 
-    public void dragStart ( DragSourceEvent event )
+    public void dragStart ( final DragSourceEvent event )
     {
         event.doit = false;
-        
-        if ( ! (_viewer.getSelection () instanceof IStructuredSelection ) )
+
+        if ( ! ( this._viewer.getSelection () instanceof IStructuredSelection ) )
         {
             return;
         }
-        
-        IStructuredSelection selection = (IStructuredSelection)_viewer.getSelection ();
+
+        final IStructuredSelection selection = (IStructuredSelection)this._viewer.getSelection ();
         if ( selection.isEmpty () )
         {
             return;
         }
-        
-        for ( Iterator<?> i = selection.iterator (); i.hasNext (); )
+
+        for ( final Iterator<?> i = selection.iterator (); i.hasNext (); )
         {
-            Object o = i.next ();
-            if ( !(o instanceof DataItemEntry ) )
+            final Object o = i.next ();
+            if ( ! ( o instanceof DataItemEntry ) )
             {
                 return;
             }
         }
-        
-        LocalSelectionTransfer.getTransfer ().setSelection ( _viewer.getSelection () );
-        
+
+        LocalSelectionTransfer.getTransfer ().setSelection ( this._viewer.getSelection () );
+
         event.doit = true;
     }
-
 
 }

@@ -15,15 +15,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: OpenSCADA
 Eclipse-RegisterBuddy: org.apache.log4j
 Export-Package: org.openscada.da.client.test;
-  uses:="org.openscada.da.client.test.impl,
-   org.eclipse.ui.application,
-   org.osgi.framework,
-   org.eclipse.ui.plugin,
-   org.eclipse.jface.action,
-   org.eclipse.jface.resource,
-   org.eclipse.core.runtime,
-   org.eclipse.ui",
- org.openscada.da.client.test.impl;
   uses:="org.openscada.core,
    org.eclipse.ui.views.properties,
    org.openscada.da.core,

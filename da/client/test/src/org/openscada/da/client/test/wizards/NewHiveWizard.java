@@ -29,8 +29,8 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.da.client.test.Activator;
-import org.openscada.da.client.test.config.HiveConnectionInformation;
-import org.openscada.da.client.test.impl.HiveConnection;
+import org.openscada.rcp.da.client.browser.HiveConnection;
+import org.openscada.rcp.da.client.browser.HiveConnectionInformation;
 
 public class NewHiveWizard extends Wizard implements INewWizard
 {

@@ -6,11 +6,11 @@ package org.openscada.da.client.test.views;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.openscada.da.client.test.impl.BrowserEntry;
-import org.openscada.da.client.test.impl.FolderEntry;
-import org.openscada.da.client.test.impl.HiveConnection;
-import org.openscada.da.client.test.impl.HiveItem;
-import org.openscada.da.client.test.impl.HiveRepository;
+import org.openscada.rcp.da.client.browser.BrowserEntry;
+import org.openscada.rcp.da.client.browser.FolderEntry;
+import org.openscada.rcp.da.client.browser.HiveConnection;
+import org.openscada.rcp.da.client.browser.HiveItem;
+import org.openscada.rcp.da.client.browser.HiveRepository;
 
 class HiveViewContentProvider implements IStructuredContentProvider, ITreeContentProvider
 {

@@ -32,8 +32,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
-import org.openscada.da.client.test.impl.VariantHelper;
 import org.openscada.da.client.test.views.realtime.ListEntry.AttributePair;
+import org.openscada.rcp.da.client.browser.VariantHelper;
 
 public class ItemListLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider, ITableColorProvider
 {

@@ -27,7 +27,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
-import org.openscada.da.client.test.impl.HiveConnection;
+import org.openscada.rcp.da.client.browser.HiveConnection;
 
 public class ConnectHiveAction implements IObjectActionDelegate, IViewActionDelegate
 {

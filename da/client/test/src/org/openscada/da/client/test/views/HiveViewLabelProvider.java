@@ -10,12 +10,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.openscada.da.client.test.ISharedImages;
 import org.openscada.da.client.test.Activator;
-import org.openscada.da.client.test.impl.BrowserEntry;
-import org.openscada.da.client.test.impl.DataItemEntry;
-import org.openscada.da.client.test.impl.FolderEntry;
-import org.openscada.da.client.test.impl.HiveConnection;
-import org.openscada.da.client.test.impl.HiveItem;
 import org.openscada.da.core.IODirection;
+import org.openscada.rcp.da.client.browser.BrowserEntry;
+import org.openscada.rcp.da.client.browser.DataItemEntry;
+import org.openscada.rcp.da.client.browser.FolderEntry;
+import org.openscada.rcp.da.client.browser.HiveConnection;
+import org.openscada.rcp.da.client.browser.HiveItem;
 
 class HiveViewLabelProvider extends LabelProvider
 {

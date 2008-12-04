@@ -45,11 +45,11 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.da.client.test.Activator;
-import org.openscada.da.client.test.dnd.ItemDragSourceListener;
-import org.openscada.da.client.test.dnd.ItemTransfer;
-import org.openscada.da.client.test.impl.FolderEntry;
-import org.openscada.da.client.test.impl.HiveConnection;
-import org.openscada.da.client.test.impl.HiveRepository;
+import org.openscada.rcp.da.client.browser.FolderEntry;
+import org.openscada.rcp.da.client.browser.HiveConnection;
+import org.openscada.rcp.da.client.browser.HiveRepository;
+import org.openscada.rcp.da.client.dnd.ItemDragSourceListener;
+import org.openscada.rcp.da.client.dnd.ItemTransfer;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view

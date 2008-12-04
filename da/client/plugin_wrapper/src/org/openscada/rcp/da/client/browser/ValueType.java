@@ -1,9 +1,9 @@
-package org.openscada.da.client.test.impl;
+package org.openscada.rcp.da.client.browser;
 
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.da.client.test.Activator;
+import org.openscada.rcp.da.client.Activator;
 
 /**
  * value types used for visual input purposes
@@ -14,13 +14,15 @@ public enum ValueType
 {
     NULL ( 10, "NULL" )
     {
-        public Variant convertTo ( String value )
+        @Override
+        public Variant convertTo ( final String value )
         {
             return new Variant ();
         }
     },
     STRING ( 20, "string" )
     {
+        @Override
         public Variant convertTo ( String value )
         {
             value = value.replace ( Activator.NATIVE_LS, "\n" );
@@ -29,6 +31,7 @@ public enum ValueType
     },
     STRING_CRLF ( 21, "string (crlf)" )
     {
+        @Override
         public Variant convertTo ( String value )
         {
             value = value.replace ( Activator.NATIVE_LS, "\r\n" );
@@ -37,14 +40,15 @@ public enum ValueType
     },
     INT ( 30, "32 bit signed integer" )
     {
-        public Variant convertTo ( String value ) throws NotConvertableException
+        @Override
+        public Variant convertTo ( final String value ) throws NotConvertableException
         {
-            Variant stringValue = new Variant ( value );
+            final Variant stringValue = new Variant ( value );
             try
             {
                 return new Variant ( stringValue.asInteger () );
             }
-            catch ( NullValueException e )
+            catch ( final NullValueException e )
             {
                 return new Variant ();
             }
@@ -52,14 +56,15 @@ public enum ValueType
     },
     LONG ( 40, "64 bit signed integer" )
     {
-        public Variant convertTo ( String value ) throws NotConvertableException
+        @Override
+        public Variant convertTo ( final String value ) throws NotConvertableException
         {
-            Variant stringValue = new Variant ( value );
+            final Variant stringValue = new Variant ( value );
             try
             {
                 return new Variant ( stringValue.asLong () );
             }
-            catch ( NullValueException e )
+            catch ( final NullValueException e )
             {
                 return new Variant ();
             }
@@ -67,14 +72,15 @@ public enum ValueType
     },
     DOUBLE ( 50, "double floating point" )
     {
-        public Variant convertTo ( String value ) throws NotConvertableException
+        @Override
+        public Variant convertTo ( final String value ) throws NotConvertableException
         {
-            Variant stringValue = new Variant ( value );
+            final Variant stringValue = new Variant ( value );
             try
             {
                 return new Variant ( stringValue.asDouble () );
             }
-            catch ( NullValueException e )
+            catch ( final NullValueException e )
             {
                 return new Variant ();
             }
@@ -82,9 +88,10 @@ public enum ValueType
     },
     BOOLEAN ( 60, "boolean" )
     {
-        public Variant convertTo ( String value ) throws NotConvertableException
+        @Override
+        public Variant convertTo ( final String value ) throws NotConvertableException
         {
-            Variant stringValue = new Variant ( value );
+            final Variant stringValue = new Variant ( value );
             return new Variant ( stringValue.asBoolean () );
         }
     },
@@ -94,20 +101,20 @@ public enum ValueType
 
     private String _label;
 
-    ValueType ( int index, String label )
+    ValueType ( final int index, final String label )
     {
-        _index = index;
-        _label = label;
+        this._index = index;
+        this._label = label;
     }
 
     public String label ()
     {
-        return _label;
+        return this._label;
     }
 
     public int index ()
     {
-        return _index;
+        return this._index;
     }
 
     public abstract Variant convertTo ( String value ) throws NotConvertableException;

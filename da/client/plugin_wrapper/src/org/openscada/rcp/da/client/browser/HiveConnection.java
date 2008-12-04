@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.client.test.impl;
+package org.openscada.rcp.da.client.browser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +38,6 @@ import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;
-import org.openscada.da.client.test.Activator;
-import org.openscada.da.client.test.config.HiveConnectionInformation;
 
 public class HiveConnection extends Observable implements IActionFilter, IPropertySource
 {
@@ -108,7 +106,6 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
         catch ( final Exception e )
         {
             _log.error ( "Failed to start connection", e );
-            Activator.logError ( 1, "Unable to connect", e );
         }
         _log.debug ( "Connection fired up..." );
     }
@@ -159,7 +156,6 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
         if ( error != null )
         {
             _log.info ( "Connection failed with additional error", error );
-            Activator.getDefault ().notifyError ( "Connection failed", error );
         }
     }
 

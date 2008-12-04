@@ -27,10 +27,10 @@ import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.TransferData;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.client.test.Activator;
-import org.openscada.da.client.test.dnd.Item;
-import org.openscada.da.client.test.dnd.ItemTransfer;
-import org.openscada.da.client.test.impl.HiveConnection;
-import org.openscada.da.client.test.impl.HiveItem;
+import org.openscada.rcp.da.client.browser.HiveConnection;
+import org.openscada.rcp.da.client.browser.HiveItem;
+import org.openscada.rcp.da.client.dnd.Item;
+import org.openscada.rcp.da.client.dnd.ItemTransfer;
 
 public class ItemDropAdapter extends ViewerDropAdapter
 {

@@ -10,7 +10,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.test.generator.GeneratorView;
-import org.openscada.da.client.test.impl.DataItemEntry;
+import org.openscada.rcp.da.client.browser.DataItemEntry;
 
 public class ShowGenerator implements IObjectActionDelegate
 {

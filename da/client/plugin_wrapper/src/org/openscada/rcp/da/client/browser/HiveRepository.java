@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.client.test.impl;
+package org.openscada.rcp.da.client.browser;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -31,21 +31,20 @@ import java.util.Observable;
 
 import org.eclipse.core.runtime.IPath;
 import org.openscada.core.ConnectionInformation;
-import org.openscada.da.client.test.config.HiveConnectionInformation;
 
 public class HiveRepository extends Observable
 {
-    private List<HiveConnection> _connections = new ArrayList<HiveConnection> ();
+    private final List<HiveConnection> _connections = new ArrayList<HiveConnection> ();
 
     public HiveRepository ()
     {
     }
 
-    synchronized public void load ( IPath path )
+    synchronized public void load ( final IPath path )
     {
-        _connections.clear ();
+        this._connections.clear ();
 
-        File file = path.toFile ();
+        final File file = path.toFile ();
         XMLDecoder decoder = null;
         try
         {
@@ -54,18 +53,20 @@ public class HiveRepository extends Observable
             {
                 try
                 {
-                    Object o = decoder.readObject ();
+                    final Object o = decoder.readObject ();
                     if ( ! ( o instanceof HiveConnectionInformation ) )
+                    {
                         continue;
-                    _connections.add ( new HiveConnection ( (HiveConnectionInformation)o ) );
+                    }
+                    this._connections.add ( new HiveConnection ( (HiveConnectionInformation)o ) );
                 }
-                catch ( ArrayIndexOutOfBoundsException e )
+                catch ( final ArrayIndexOutOfBoundsException e )
                 {
                     break;
                 }
             }
         }
-        catch ( FileNotFoundException e )
+        catch ( final FileNotFoundException e )
         {
             // TODO Auto-generated catch block
             e.printStackTrace ();
@@ -73,24 +74,26 @@ public class HiveRepository extends Observable
         finally
         {
             if ( decoder != null )
+            {
                 decoder.close ();
+            }
         }
     }
 
-    synchronized public void save ( IPath path )
+    synchronized public void save ( final IPath path )
     {
-        File file = path.toFile ();
+        final File file = path.toFile ();
         XMLEncoder encoder = null;
 
         try
         {
             encoder = new XMLEncoder ( new FileOutputStream ( file ) );
-            for ( HiveConnection connection : _connections )
+            for ( final HiveConnection connection : this._connections )
             {
                 encoder.writeObject ( new HiveConnectionInformation ( connection.getConnectionInformation ().toString () ) );
             }
         }
-        catch ( FileNotFoundException e )
+        catch ( final FileNotFoundException e )
         {
             // TODO Auto-generated catch block
             e.printStackTrace ();
@@ -98,41 +101,45 @@ public class HiveRepository extends Observable
         finally
         {
             if ( encoder != null )
+            {
                 encoder.close ();
+            }
         }
     }
 
-    public synchronized void addConnection ( HiveConnection connection )
+    public synchronized void addConnection ( final HiveConnection connection )
     {
-        _connections.add ( connection );
+        this._connections.add ( connection );
 
         setChanged ();
         notifyObservers ();
     }
-    
-    public synchronized void removeConnection ( HiveConnection connection )
+
+    public synchronized void removeConnection ( final HiveConnection connection )
     {
         // disconnect first
         connection.disconnect ();
-        
+
         // now remove from the list
-        _connections.remove ( connection );
-        
+        this._connections.remove ( connection );
+
         setChanged ();
         notifyObservers ();
     }
 
     public List<HiveConnection> getConnections ()
     {
-        return _connections;
+        return this._connections;
     }
 
-    public HiveConnection findConnection ( ConnectionInformation connectionInformation )
+    public HiveConnection findConnection ( final ConnectionInformation connectionInformation )
     {
-        for ( HiveConnection connection : _connections )
+        for ( final HiveConnection connection : this._connections )
         {
             if ( connection.getConnectionInformation ().equals ( connectionInformation ) )
+            {
                 return connection;
+            }
         }
         return null;
     }

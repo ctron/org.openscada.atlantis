@@ -29,7 +29,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.DataItemValue;
-import org.openscada.da.client.test.impl.HiveConnection;
+import org.openscada.rcp.da.client.browser.HiveConnection;
 
 public class ListEntry extends Observable implements Observer
 {

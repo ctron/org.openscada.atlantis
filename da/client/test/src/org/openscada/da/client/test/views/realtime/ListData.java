@@ -28,7 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.client.test.impl.HiveItem;
+import org.openscada.rcp.da.client.browser.HiveItem;
 
 public class ListData implements Observer
 {
