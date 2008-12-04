@@ -32,9 +32,9 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.openscada.da.client.test.impl.DataItemEntry;
-import org.openscada.da.client.test.impl.HiveItem;
 import org.openscada.da.client.test.views.realtime.ListEntry;
+import org.openscada.rcp.da.client.browser.DataItemEntry;
+import org.openscada.rcp.da.client.browser.HiveItem;
 
 public class ShowDetailsAction implements IObjectActionDelegate
 {
