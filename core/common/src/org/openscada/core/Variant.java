@@ -113,6 +113,10 @@ public class Variant
         {
             setValue ( ( (Integer)value ).intValue () );
         }
+        else if ( value instanceof Number )
+        {
+            setValue ( ( (Number)value ).longValue () );
+        }
         else if ( value instanceof String )
         {
             setValue ( (String)value );
