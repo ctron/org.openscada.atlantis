@@ -21,15 +21,17 @@ package org.openscada.da.server.jdbc;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.jdbc.query.QueryProcessor;
-import org.openscada.utils.timing.Scheduler;
+import org.openscada.da.server.common.item.factory.FolderItemFactory;
 
 public class Query
 {
@@ -41,15 +43,15 @@ public class Query
 
     private final String sql;
 
-    private QueryProcessor processor;
-
     private final Connection connection;
 
-    private Scheduler.Job job;
+    private Timer timer;
 
-    private Scheduler scheduler;
+    private final TimerTask task;
 
-    private String[] fields = new String[] {};
+    private final Map<String, DataItemInputChained> items = new HashMap<String, DataItemInputChained> ();
+
+    private FolderItemFactory itemFactory;
 
     public Query ( final String id, final int period, final String sql, final Connection connection )
     {
@@ -59,77 +61,80 @@ public class Query
         this.sql = sql;
         this.connection = connection;
 
-        try
-        {
-            this.processor = new QueryProcessor ( this.connection, this.sql );
-        }
-        catch ( final Throwable e )
-        {
-            setError ( e );
-        }
-
         logger.info ( "Created new query: " + this.id );
 
-    }
+        this.task = new TimerTask () {
 
-    public void register ( final Scheduler scheduler )
-    {
-        this.processor.activate ();
-
-        this.scheduler = scheduler;
-        this.job = scheduler.scheduleJob ( new Runnable () {
-
+            @Override
             public void run ()
             {
                 Query.this.tick ();
             }
-        }, this.period );
+        };
+    }
+
+    public void register ( final Timer timer, final DataItemFactory parentItemFactory )
+    {
+        this.timer = timer;
+        this.itemFactory = parentItemFactory.createSubFolderFactory ( this.id );
+
+        this.timer.scheduleAtFixedRate ( this.task, 0, this.period );
     }
 
     public void unregister ()
     {
-        this.processor.deactivate ();
+        this.task.cancel ();
 
-        this.scheduler.removeJob ( this.job );
-        this.scheduler = null;
+        this.itemFactory.dispose ();
+        this.itemFactory = null;
     }
 
     public void tick ()
     {
         try
         {
-            if ( this.processor != null )
-            {
-                doQuery ();
-            }
+            doQuery ();
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
-            setError ( e );
+            setGlobalError ( e );
         }
     }
 
-    private void setError ( Throwable e )
+    private void setGlobalError ( final Throwable e )
     {
         logger.error ( "Failed to query", e );
         // TODO Auto-generated method stub
+
+        for ( final Map.Entry<String, DataItemInputChained> entry : this.items.entrySet () )
+        {
+            setError ( entry.getKey (), e );
+        }
 
     }
 
     private void doQuery () throws Exception
     {
-        java.sql.Connection connection = this.connection.getConnection ();
+        logger.debug ( "Perform query" );
+        final java.sql.Connection connection = this.connection.getConnection ();
         try
         {
-            PreparedStatement stmt = connection.prepareStatement ( this.sql );
+            final PreparedStatement stmt = connection.prepareStatement ( this.sql );
+            if ( this.connection.getTimeout () != null )
+            {
+                stmt.setQueryTimeout ( this.connection.getTimeout () / 1000 );
+            }
+
             try
             {
-                ResultSet result = stmt.executeQuery ();
+                final ResultSet result = stmt.executeQuery ();
                 if ( result.next () )
                 {
-                    for ( String field : this.fields )
+                    final int count = result.getMetaData ().getColumnCount ();
+
+                    for ( int i = 0; i < count; i++ )
                     {
-                        updateField ( field, result );
+                        updateField ( i, result );
                     }
                 }
                 result.close ();
@@ -148,39 +153,50 @@ public class Query
         }
     }
 
-    private void updateField ( String key, ResultSet result )
+    private void updateField ( final int i, final ResultSet result ) throws SQLException
     {
+        final String field = result.getMetaData ().getColumnName ( i + 1 );
         try
         {
-            setValue ( key, new Variant ( result.getObject ( key ) ) );
+            setValue ( field, new Variant ( result.getObject ( i + 1 ) ) );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
-            setError ( key, e );
+            setError ( field, e );
         }
     }
 
-    private DataItemInputChained getItem ( String key )
+    private DataItemInputChained getItem ( final String key )
     {
+        DataItemInputChained item = this.items.get ( key );
+        if ( item != null )
+        {
+            return item;
+        }
+
+        item = this.itemFactory.createInput ( key );
+        this.items.put ( key, item );
+
         return null;
     }
 
-    private void setValue ( String key, Variant value )
+    private void setValue ( final String key, final Variant value )
     {
         // TODO Auto-generated method stub
-        logger.info ( "Setting value: " + key + "=" + value );
+        logger.debug ( "Setting value: " + key + "=" + value );
 
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "jdbc.error", null );
+        attributes.put ( "jdbc.error.message", null );
 
         getItem ( key ).updateData ( value, attributes, AttributeMode.UPDATE );
     }
 
-    private void setError ( String key, Throwable e )
+    private void setError ( final String key, final Throwable e )
     {
-        logger.info ( "Setting error: " + key + " = " + e.getMessage () );
+        logger.debug ( "Setting error: " + key + " = " + e.getMessage () );
 
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "jdbc.error", new Variant ( true ) );
         attributes.put ( "jdbc.error.message", new Variant ( e.getMessage () ) );
 

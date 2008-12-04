@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Timer;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
@@ -32,7 +33,6 @@ import org.openscada.da.jdbc.configuration.RootDocument;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.utils.timing.Scheduler;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
@@ -43,7 +43,7 @@ public class Hive extends HiveCommon
 
     private final Collection<Connection> connections = new LinkedList<Connection> ();
 
-    private final Scheduler scheduler;
+    private final Timer timer;
 
     public Hive () throws XmlException, IOException
     {
@@ -61,18 +61,20 @@ public class Hive extends HiveCommon
         this.rootFolder = new FolderCommon ();
         setRootFolder ( this.rootFolder );
 
-        setValidatonStrategy ( ValidationStrategy.FULL_CHECK );
+        setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
 
-        this.scheduler = new Scheduler ( true, "JdbcServersRunner" );
+        this.timer = new Timer ( "JdbcHiveTimer", true );
 
         configure ( doc );
+
+        register ();
     }
 
     public void register ()
     {
         for ( final Connection connection : this.connections )
         {
-            connection.register ( this, this.scheduler );
+            connection.register ( this, this.rootFolder, this.timer );
         }
     }
 
@@ -94,7 +96,7 @@ public class Hive extends HiveCommon
 
     private void createConnection ( final ConnectionType connectionType )
     {
-        final Connection connection = new Connection ( connectionType.getConnectionClass (), connectionType.getUri (), connectionType.getUsername (), connectionType.getPassword () );
+        final Connection connection = new Connection ( connectionType.getId (), connectionType.getTimeout (), connectionType.getConnectionClass (), connectionType.getUri (), connectionType.getUsername (), connectionType.getPassword () );
 
         for ( final QueryType queryType : connectionType.getQueryList () )
         {
@@ -111,6 +113,8 @@ public class Hive extends HiveCommon
         {
             sql = queryType.getSql2 ();
         }
+
+        logger.info ( "Creating new query: " + sql );
 
         connection.add ( new Query ( queryType.getId (), queryType.getPeriod (), sql, connection ) );
     }

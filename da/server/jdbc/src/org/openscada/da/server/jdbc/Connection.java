@@ -23,9 +23,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Timer;
 
 import org.apache.log4j.Logger;
-import org.openscada.utils.timing.Scheduler;
+import org.openscada.da.server.browser.common.FolderCommon;
 
 public class Connection
 {
@@ -33,21 +34,25 @@ public class Connection
 
     private final Collection<Query> queries = new LinkedList<Query> ();
 
-    private Throwable globalError = null;
-
     private final String username;
 
     private final String password;
 
     private final String uri;
 
-    private java.sql.Connection connection;
+    private final String id;
 
-    public Connection ( final String connectionClass, final String uri, final String username, final String password )
+    private DataItemFactory itemFactory;
+
+    private final Integer timeout;
+
+    public Connection ( final String id, final Integer timeout, final String connectionClass, final String uri, final String username, final String password )
     {
         this.uri = uri;
         this.username = username;
         this.password = password;
+        this.id = id;
+        this.timeout = timeout;
         try
         {
             if ( connectionClass != null )
@@ -58,7 +63,6 @@ public class Connection
         catch ( final Throwable e )
         {
             logger.error ( "Failed to initialize connection", e );
-            this.globalError = e;
         }
     }
 
@@ -67,11 +71,13 @@ public class Connection
         this.queries.add ( query );
     }
 
-    public void register ( final Hive hive, final Scheduler scheduler )
+    public void register ( final Hive hive, final FolderCommon rootFolder, final Timer timer )
     {
+        this.itemFactory = new DataItemFactory ( hive, rootFolder, this.id, this.id );
+
         for ( final Query query : this.queries )
         {
-            query.register ( scheduler );
+            query.register ( timer, this.itemFactory );
         }
     }
 
@@ -81,20 +87,29 @@ public class Connection
         {
             query.unregister ();
         }
+
+        this.itemFactory.dispose ();
+        this.itemFactory = null;
     }
 
     protected java.sql.Connection createConnection () throws SQLException
     {
-        return DriverManager.getConnection ( this.uri, this.username, this.password );
+        if ( this.timeout != null )
+        {
+            DriverManager.setLoginTimeout ( this.timeout / 1000 );
+        }
+
+        final java.sql.Connection connection = DriverManager.getConnection ( this.uri, this.username, this.password );
+        return connection;
     }
 
     public java.sql.Connection getConnection () throws SQLException
     {
-        if ( this.connection == null )
-        {
-            this.connection = createConnection ();
-        }
+        return createConnection ();
+    }
 
-        return this.connection;
+    public Integer getTimeout ()
+    {
+        return this.timeout;
     }
 }
