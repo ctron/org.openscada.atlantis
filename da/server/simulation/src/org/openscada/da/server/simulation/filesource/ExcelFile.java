@@ -97,11 +97,11 @@ public class ExcelFile extends BaseFile
             ItemDefinition idef = null;
             if ( ( script == null ) || ( script.trim ().length () == 0 ) )
             {
-                idef = getHiveBuilder ().addInputItem ( itemName );
+                idef = getHiveBuilder ().addInputOutputItem ( itemName );
             }
             else
             {
-                idef = getHiveBuilder ().addInputItem ( itemName, script );
+                idef = getHiveBuilder ().addInputOutputItem ( itemName, script );
             }
             Cell cell = null;
             // Unit

@@ -4,6 +4,8 @@ importClass(java.lang.Thread);
 importClass(java.lang.Integer);
 importClass(java.lang.Long);
 importClass(java.lang.Double);
+importClass(java.lang.System);
+importClass(java.util.HashMap);
 
 Variant = org.openscada.core.Variant;
 AttributeMode = org.openscada.da.server.common.AttributeMode;
@@ -46,25 +48,58 @@ function startItemSimulator(item, callback) {
     }).start();
 }
 
+function timeStampMap() {
+	var ts = java.lang.System.currentTimeMillis();
+	var attr = new java.util.HashMap();
+	attr.put("timestamp", new Variant(new java.lang.Long(ts)));
+	return attr;
+}
 // scheduling functions
 
 function onInterval(item, millisec, changevalue) {
+	var x = 0;
 	while (true) {
+		changevalue(item, x);
+		x = x + 1;
 		java.lang.Thread.sleep(millisec);
-		changevalue(item);
 	}
 }
 
 function onProgression(item, millisec, factor, changevalue) {
+	var x = 0;
 	var waitfor = millisec;
 	while (true) {
-		java.lang.Thread.sleep(waitfor);
-		changevalue(item);
+		changevalue(item, x);
+		x = x + 1;
 		waitfor = waitfor * factor;
+		java.lang.Thread.sleep(waitfor);
+	}
+}
+
+function onWaitentry(item, waitlist, changevalue) {
+	var x = 0;
+	while (true) {
+		for (waitfor in waitlist) {
+			changevalue(item, x);
+			x = x + 1;
+			java.lang.Thread.sleep(waitfor);
+		}
+	}
+}
+
+function onRandomInterval(item, from, to, changevalue) {
+	var x = 0;
+	while (true) {
+		changevalue(item, x);
+		var millisec = Math.round(Math.random() * (1 + to - from) + from);
+		x = x + 1;
+		java.lang.Thread.sleep(millisec);
 	}
 }
 
 // data change functions
+
+// -- increment
 
 function doIncrementInt32(start, by, item) {
 	logger.info('doIncrementInt32 for ' + item.getInformation().getName());
@@ -76,7 +111,7 @@ function doIncrementInt32(start, by, item) {
 	}
 	newValue = oldValue + by;
 	var newVariant = new Variant(new java.lang.Integer(newValue));
-	item.updateData(newVariant, null, AttributeMode.UPDATE);
+	item.updateData(newVariant, timeStampMap(), AttributeMode.UPDATE);
 }
 
 function doIncrementInt64(start, by, item) {
@@ -89,7 +124,7 @@ function doIncrementInt64(start, by, item) {
 	}
 	newValue = oldValue + by;
 	var newVariant = new Variant(new java.lang.Long(newValue));
-	item.updateData(newVariant, null, AttributeMode.UPDATE);
+	item.updateData(newVariant, timeStampMap(), AttributeMode.UPDATE);
 }
 
 function doIncrementDouble(start, by, item) {
@@ -102,7 +137,7 @@ function doIncrementDouble(start, by, item) {
 	}
 	newValue = oldValue + by;
 	var newVariant = new Variant(new java.lang.Double(newValue));
-	item.updateData(newVariant, null, AttributeMode.UPDATE);
+	item.updateData(newVariant, timeStampMap(), AttributeMode.UPDATE);
 }
 
 function doToggleBoolean(item) {
@@ -115,5 +150,86 @@ function doToggleBoolean(item) {
 	}
 	newValue = !oldValue;
 	var newVariant = new Variant(new java.lang.Boolean(newValue));
-	item.updateData(newVariant, null, AttributeMode.UPDATE);
+	item.updateData(newVariant, timeStampMap(), AttributeMode.UPDATE);
+}
+
+//-- sinus
+
+function doSinusInt32(x, a, c, item) {
+	logger.info('doSinusInt32 for ' + item.getInformation().getName());
+	var newValue = a * Math.sin(x / Math.PI) + c;
+	var newVariant = new Variant(new java.lang.Integer(newValue));
+	item.updateData(newVariant, timeStampMap(), AttributeMode.UPDATE);
+}
+
+function doSinusInt64(x, a, c, item) {
+	logger.info('doSinusInt64 for ' + item.getInformation().getName());
+	var newValue = a * Math.sin(x / Math.PI) + c;
+	var newVariant = new Variant(new java.lang.Long(newValue));
+	item.updateData(newVariant, timeStampMap(), AttributeMode.UPDATE);
+}
+
+function doSinusDouble(x, a, c, item) {
+	logger.info('doSinusDouble for ' + item.getInformation().getName());
+	var newValue = a * Math.sin(x / Math.PI) + c;
+	var newVariant = new Variant(new java.lang.Double(newValue));
+	item.updateData(newVariant, timeStampMap(), AttributeMode.UPDATE);
+}
+
+//-- random
+
+function doRandomInt32(from, to, item) {
+	logger.info('doRandomInt32 for ' + item.getInformation().getName());
+	var newValue = Math.random() * (1 + to - from) + from;
+	var newVariant = new Variant(new java.lang.Integer(newValue));
+	item.updateData(newVariant, timeStampMap(), AttributeMode.UPDATE);
+}
+
+function doRandomInt64(from, to, item) {
+	logger.info('doRandomInt64 for ' + item.getInformation().getName());
+	var newValue = Math.random() * (1 + to - from) + from;
+	var newVariant = new Variant(new java.lang.Long(newValue));
+	item.updateData(newVariant, timeStampMap(), AttributeMode.UPDATE);
+}
+
+function doRandomDouble(from, to, item) {
+	logger.info('doRandomDouble for ' + item.getInformation().getName());
+	var newValue = Math.random() * (1 + to - from) + from;
+	var newVariant = new Variant(new java.lang.Double(newValue));
+	item.updateData(newVariant, timeStampMap(), AttributeMode.UPDATE);
+}
+
+//-- sawtooth
+
+function doSawtoothInt32(x, a, c, flat, item) {
+	logger.info('doSawtoothInt32 for ' + item.getInformation().getName());
+	var k = x % flat_to;
+	var newValue = k * a + c;
+	if (k >= flat_from) {
+		newValue = c;
+	}
+	var newVariant = new Variant(new java.lang.Integer(newValue));
+	item.updateData(newVariant, timeStampMap(), AttributeMode.UPDATE);
+}
+
+function doSawtoothInt64(from, to, item) {
+	logger.info('doSawtoothInt64 for ' + item.getInformation().getName());
+	var k = x % flat_to;
+	var newValue = k * a + c;
+	if (k >= flat_from) {
+		newValue = c;
+	}
+	var newVariant = new Variant(new java.lang.Long(newValue));
+	item.updateData(newVariant, timeStampMap(), AttributeMode.UPDATE);
+}
+
+function doSawtoothDouble(x, a, c, flat_from, flat_to, item) {
+	logger.info('doSawtoothDouble for ' + item.getInformation().getName());
+	var k = x % flat_to;
+	var newValue = k * a + c;
+	if (k >= flat_from) {
+		newValue = c;
+	}
+	var newVariant = new Variant(new java.lang.Double(newValue));
+	item.updateData(newVariant, timeStampMap(), AttributeMode.UPDATE);
 }
