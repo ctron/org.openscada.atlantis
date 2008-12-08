@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.openscada.da.project.feature"
+      id="org.openscada.da.project"
       label="OpenSCADA DA Project Feature"
       version="1.0.0"
       provider-name="OpenSCADA">
@@ -38,20 +38,6 @@
 
    <plugin
          id="org.openscada.da.client"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.da.ice.client"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.da.net.client"
          download-size="0"
          install-size="0"
          version="0.0.0"
