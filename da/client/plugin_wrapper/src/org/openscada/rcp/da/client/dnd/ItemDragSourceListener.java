@@ -11,18 +11,19 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.openscada.rcp.da.client.browser.DataItemEntry;
+import org.openscada.rcp.da.client.item.Item;
 
 public class ItemDragSourceListener implements DragSourceListener
 {
     @SuppressWarnings ( "unused" )
-    private static Logger _log = Logger.getLogger ( ItemDragSourceListener.class );
+    private static Logger log = Logger.getLogger ( ItemDragSourceListener.class );
 
-    private Viewer _viewer = null;
+    private Viewer viewer = null;
 
     public ItemDragSourceListener ( final Viewer viewer )
     {
         super ();
-        this._viewer = viewer;
+        this.viewer = viewer;
     }
 
     public void dragFinished ( final DragSourceEvent event )
@@ -61,12 +62,12 @@ public class ItemDragSourceListener implements DragSourceListener
     {
         event.doit = false;
 
-        if ( ! ( this._viewer.getSelection () instanceof IStructuredSelection ) )
+        if ( ! ( this.viewer.getSelection () instanceof IStructuredSelection ) )
         {
             return;
         }
 
-        final IStructuredSelection selection = (IStructuredSelection)this._viewer.getSelection ();
+        final IStructuredSelection selection = (IStructuredSelection)this.viewer.getSelection ();
         if ( selection.isEmpty () )
         {
             return;
@@ -81,7 +82,7 @@ public class ItemDragSourceListener implements DragSourceListener
             }
         }
 
-        LocalSelectionTransfer.getTransfer ().setSelection ( this._viewer.getSelection () );
+        LocalSelectionTransfer.getTransfer ().setSelection ( this.viewer.getSelection () );
 
         event.doit = true;
     }

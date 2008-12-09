@@ -5,10 +5,8 @@ import org.eclipse.ui.part.IDropActionDelegate;
 public class ItemDropAction implements IDropActionDelegate
 {
 
-    public boolean run ( Object source, Object target )
+    public boolean run ( final Object source, final Object target )
     {
-        System.out.println ( "Drop action" );
-        // TODO Auto-generated method stub
         return false;
     }
 

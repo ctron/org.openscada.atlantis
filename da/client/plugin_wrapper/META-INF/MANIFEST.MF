@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Client
 Bundle-SymbolicName: org.openscada.da.client;singleton:=true
-Bundle-Version: 0.8.2
+Bundle-Version: 0.10.0
 Bundle-Vendor: OpenSCADA.org
 Bundle-Localization: plugin
 Bundle-ClassPath: lib.jar,
@@ -19,6 +19,7 @@ Export-Package: org.openscada.core,
  org.openscada.rcp.da.client,
  org.openscada.rcp.da.client.browser,
  org.openscada.rcp.da.client.dnd,
+ org.openscada.rcp.da.client.item,
  org.openscada.utils.collection,
  org.openscada.utils.exec,
  org.openscada.utils.jobqueue,
