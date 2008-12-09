@@ -25,5 +25,19 @@
             name="Realtime List Editor">
       </editor>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.openscada.da.project"
+            name="OpenSCADA DA Project">
+      </category>
+      <wizard
+            category="org.openscada.da.project"
+            class="org.openscada.da.project.wizards.RealtimeListNewWizard"
+            icon="icons/sample.gif"
+            id="org.openscada.da.project.wizards.RealtimeListNewWizard"
+            name="Realtime List File">
+      </wizard>
+   </extension>
 
 </plugin>
