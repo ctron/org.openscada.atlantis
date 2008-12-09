@@ -1,4 +1,4 @@
-package org.openscada.da.project.editor;
+package org.openscada.da.project.editor.realtimelist;
 
 import java.net.URI;
 import java.util.List;

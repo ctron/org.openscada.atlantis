@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.project.editor;
+package org.openscada.da.project.editor.realtimelist;
 
 import java.net.URI;
 import java.util.ArrayList;
