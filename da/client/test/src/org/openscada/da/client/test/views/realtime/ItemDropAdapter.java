@@ -29,8 +29,8 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.da.client.test.Activator;
 import org.openscada.rcp.da.client.browser.HiveConnection;
 import org.openscada.rcp.da.client.browser.HiveItem;
-import org.openscada.rcp.da.client.dnd.Item;
 import org.openscada.rcp.da.client.dnd.ItemTransfer;
+import org.openscada.rcp.da.client.item.Item;
 
 public class ItemDropAdapter extends ViewerDropAdapter
 {

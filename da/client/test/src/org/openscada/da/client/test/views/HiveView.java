@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.URLTransfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
@@ -190,7 +191,7 @@ public class HiveView extends ViewPart implements Observer
 
     private void addDragSupport ()
     {
-        this._viewer.addDragSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance () }, new ItemDragSourceListener ( this._viewer ) );
+        this._viewer.addDragSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance (), URLTransfer.getInstance () }, new ItemDragSourceListener ( this._viewer ) );
     }
 
     private void hookContextMenu ()
