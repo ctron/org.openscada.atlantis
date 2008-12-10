@@ -21,6 +21,8 @@ package org.openscada.da.project.editor.realtimelist;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -28,8 +30,8 @@ import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.TransferData;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.client.ItemManager;
-import org.openscada.rcp.da.client.dnd.Item;
 import org.openscada.rcp.da.client.dnd.ItemTransfer;
+import org.openscada.rcp.da.client.item.Item;
 
 public class ItemDropAdapter extends ViewerDropAdapter
 {
@@ -47,8 +49,39 @@ public class ItemDropAdapter extends ViewerDropAdapter
     @Override
     public boolean performDrop ( final Object data )
     {
-        final Item[] items = (Item[])data;
+        if ( data instanceof Item[] )
+        {
+            dropItemType ( (Item[])data );
+            return true;
+        }
+        else if ( data instanceof String[] )
+        {
+            dropStringType ( data );
+            return true;
+        }
 
+        return false;
+    }
+
+    private void dropStringType ( final Object data )
+    {
+        final String[] urls = (String[])data;
+        final List<Item> items = new ArrayList<Item> ();
+
+        for ( final String urlString : urls )
+        {
+            final Item item = new Item ();
+
+            final String[] toks = urlString.split ( "#", 1 );
+            item.setId ( toks[1] );
+            item.setConnectionString ( toks[0] );
+
+            items.add ( item );
+        }
+    }
+
+    private void dropItemType ( final Item[] items )
+    {
         final ListData listData = (ListData)getViewer ().getInput ();
         final TreeViewer viewer = (TreeViewer)getViewer ();
 
@@ -63,8 +96,6 @@ public class ItemDropAdapter extends ViewerDropAdapter
                 e.printStackTrace ();
             }
         }
-
-        return true;
     }
 
     private void dropItem ( final Item item, final ListData listData, final TreeViewer viewer ) throws URISyntaxException
