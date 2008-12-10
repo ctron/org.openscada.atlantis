@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.URLTransfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -80,7 +81,7 @@ public class RealtimeListEditor extends EditorPart
         }
         catch ( final CoreException e )
         {
-            ErrorDialog.openError ( this.getSite ().getShell (), "Error", "Error saving file", e.getStatus () );
+            ErrorDialog.openError ( getSite ().getShell (), "Error", "Error saving file", e.getStatus () );
         }
         finally
         {
@@ -122,11 +123,11 @@ public class RealtimeListEditor extends EditorPart
         }
         catch ( final CoreException e )
         {
-            ErrorDialog.openError ( this.getSite ().getShell (), "Error", "Error loading list", e.getStatus () );
+            ErrorDialog.openError ( getSite ().getShell (), "Error", "Error loading list", e.getStatus () );
         }
         catch ( final Throwable e )
         {
-            ErrorDialog.openError ( this.getSite ().getShell (), "Error", "Error loading list", new Status ( Status.ERROR, Activator.PLUGIN_ID, "Failed to load list", e ) );
+            ErrorDialog.openError ( getSite ().getShell (), "Error", "Error loading list", new Status ( Status.ERROR, Activator.PLUGIN_ID, "Failed to load list", e ) );
         }
     }
 
@@ -281,7 +282,7 @@ public class RealtimeListEditor extends EditorPart
 
     private void addDropSupport ()
     {
-        this._viewer.addDropSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance () }, new ItemDropAdapter ( this, this._viewer ) );
+        this._viewer.addDropSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance (), URLTransfer.getInstance () }, new ItemDropAdapter ( this, this._viewer ) );
     }
 
     @Override
@@ -299,13 +300,13 @@ public class RealtimeListEditor extends EditorPart
     protected void makeDirty ()
     {
         this.dirty = true;
-        this.firePropertyChange ( PROP_DIRTY );
+        firePropertyChange ( PROP_DIRTY );
     }
 
     protected void cleanDirty ()
     {
         this.dirty = false;
-        this.firePropertyChange ( PROP_DIRTY );
+        firePropertyChange ( PROP_DIRTY );
     }
 
 }
