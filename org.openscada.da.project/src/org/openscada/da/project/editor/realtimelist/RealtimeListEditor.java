@@ -148,7 +148,7 @@ public class RealtimeListEditor extends EditorPart implements RealtimeListAdapte
 
             for ( final ItemType itemType : doc.getItems ().getItemList () )
             {
-                final Item item = new Item ( itemType.getItemId (), itemType.getUri () );
+                final Item item = new Item ( itemType.getUri (), itemType.getItemId () );
                 final URI uri = new URI ( itemType.getUri () );
 
                 this.list.add ( item, ConnectionManager.getDefault ().getItemManager ( uri, true ) );
