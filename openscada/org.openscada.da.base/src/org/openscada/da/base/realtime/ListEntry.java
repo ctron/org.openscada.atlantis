@@ -17,22 +17,23 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.project.editor.realtimelist;
+package org.openscada.da.base.realtime;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.da.base.item.Item;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemManager;
 
-public class ListEntry extends Observable implements Observer
+public class ListEntry extends Observable implements Observer, IAdaptable
 {
     public class AttributePair
     {
@@ -101,18 +102,11 @@ public class ListEntry extends Observable implements Observer
 
     private DataItem dataItem;
 
-    private ItemManager itemManager;
+    private Item item;
 
-    private URI uri;
-
-    public URI getUri ()
+    public Item getItem ()
     {
-        return this.uri;
-    }
-
-    public ItemManager getConnection ()
-    {
-        return this.itemManager;
+        return this.item;
     }
 
     public DataItem getDataItem ()
@@ -120,19 +114,17 @@ public class ListEntry extends Observable implements Observer
         return this.dataItem;
     }
 
-    public synchronized void setDataItem ( final String itemId, final URI uri, final ItemManager itemManager )
+    public synchronized void setDataItem ( final Item item, final ItemManager itemManager )
     {
         clear ();
-        this.itemManager = itemManager;
-        this.dataItem = new DataItem ( itemId, this.itemManager );
-        this.uri = uri;
+        this.item = item;
+        this.dataItem = new DataItem ( item.getId (), itemManager );
         this.dataItem.addObserver ( this );
     }
 
     public synchronized void clear ()
     {
-        this.itemManager = null;
-        this.uri = null;
+        this.item = null;
         if ( this.dataItem != null )
         {
             this.dataItem.deleteObserver ( this );
@@ -180,5 +172,15 @@ public class ListEntry extends Observable implements Observer
     {
         setChanged ();
         notifyObservers ( arg );
+    }
+
+    @SuppressWarnings ( "unchecked" )
+    public Object getAdapter ( final Class adapter )
+    {
+        if ( adapter == Item.class )
+        {
+            return new Item ( this.item );
+        }
+        return null;
     }
 }

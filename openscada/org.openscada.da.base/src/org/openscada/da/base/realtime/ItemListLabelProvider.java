@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.project.editor.realtimelist;
+package org.openscada.da.base.realtime;
 
 import org.eclipse.jface.resource.ColorDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -32,8 +32,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
-import org.openscada.da.project.editor.realtimelist.ListEntry.AttributePair;
-import org.openscada.rcp.da.client.browser.VariantHelper;
+import org.openscada.da.base.browser.VariantHelper;
+import org.openscada.da.base.realtime.ListEntry.AttributePair;
 
 public class ItemListLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider, ITableColorProvider
 {

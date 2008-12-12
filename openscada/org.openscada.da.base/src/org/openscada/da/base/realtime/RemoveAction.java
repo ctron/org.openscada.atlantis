@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.project.editor.realtimelist;
+package org.openscada.da.base.realtime;
 
 import java.util.Iterator;
 
@@ -29,11 +29,11 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 public class RemoveAction extends Action implements ISelectionChangedListener
 {
-    private RealtimeListEditor _view = null;
+    private RealtimeListAdapter _view = null;
 
     private ISelection _selection = null;
 
-    public RemoveAction ( final RealtimeListEditor view )
+    public RemoveAction ( final RealtimeListAdapter view )
     {
         super ( "Remove", Action.AS_PUSH_BUTTON );
 

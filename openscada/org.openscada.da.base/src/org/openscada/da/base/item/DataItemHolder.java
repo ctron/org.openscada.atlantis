@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.client.dataitem.details;
+package org.openscada.da.base.item;
 
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;

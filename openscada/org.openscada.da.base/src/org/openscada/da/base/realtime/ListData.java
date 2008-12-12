@@ -17,9 +17,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.project.editor.realtimelist;
+package org.openscada.da.base.realtime;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -29,6 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.base.item.Item;
 import org.openscada.da.client.ItemManager;
 
 public class ListData implements Observer
@@ -65,12 +65,12 @@ public class ListData implements Observer
         }
     }
 
-    public void add ( final String itemId, final URI uri, final ItemManager itemManager )
+    public void add ( final Item item, final ItemManager itemManager )
     {
-        final ListEntry item = new ListEntry ();
-        item.setDataItem ( itemId, uri, itemManager );
+        final ListEntry entry = new ListEntry ();
+        entry.setDataItem ( item, itemManager );
 
-        add ( item );
+        add ( entry );
     }
 
     public void remove ( final ListEntry entry )

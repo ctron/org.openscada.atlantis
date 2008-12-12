@@ -47,10 +47,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
+import org.openscada.da.base.browser.ValueType;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.dataitem.details.part.AbstractBaseDetailsPart;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.rcp.da.client.browser.ValueType;
 
 /**
  * A detail view for the manual override value, setting and getting the status
@@ -83,56 +83,56 @@ public class ManualOverride extends AbstractBaseDetailsPart
     private Combo manualValueCombo;
 
     @Override
-    public void createPart ( Composite parent )
+    public void createPart ( final Composite parent )
     {
         super.createPart ( parent );
         parent.setLayout ( new org.eclipse.swt.layout.GridLayout ( 1, false ) );
 
         this.canvas = new Canvas ( parent, SWT.NONE );
         this.canvas.setLayoutData ( new org.eclipse.swt.layout.GridData ( SWT.FILL, SWT.FILL, true, true ) );
-        LightweightSystem lws = new LightweightSystem ( canvas );
+        final LightweightSystem lws = new LightweightSystem ( this.canvas );
 
         createManualValueComposite ( parent );
 
         lws.setContents ( createRoot () );
     }
 
-    private void createManualValueComposite ( Composite parent )
+    private void createManualValueComposite ( final Composite parent )
     {
-        Composite comp = new Composite ( parent, SWT.NONE );
+        final Composite comp = new Composite ( parent, SWT.NONE );
         comp.setLayoutData ( new org.eclipse.swt.layout.GridData ( SWT.FILL, SWT.BEGINNING, true, false ) );
 
         comp.setLayout ( new org.eclipse.swt.layout.RowLayout ( SWT.HORIZONTAL ) );
 
-        org.eclipse.swt.widgets.Label label = new org.eclipse.swt.widgets.Label ( comp, SWT.NONE );
+        final org.eclipse.swt.widgets.Label label = new org.eclipse.swt.widgets.Label ( comp, SWT.NONE );
         label.setText ( "" );
         label.setAlignment ( Label.MIDDLE );
 
-        manualValueText = new Text ( comp, SWT.BORDER );
+        this.manualValueText = new Text ( comp, SWT.BORDER );
 
-        manualValueCombo = new Combo ( comp, SWT.READ_ONLY );
+        this.manualValueCombo = new Combo ( comp, SWT.READ_ONLY );
 
-        for ( ValueType vt : ValueType.values () )
+        for ( final ValueType vt : ValueType.values () )
         {
-            manualValueCombo.add ( vt.label () );
+            this.manualValueCombo.add ( vt.label () );
         }
-        manualValueCombo.select ( ValueType.STRING.ordinal () );
+        this.manualValueCombo.select ( ValueType.STRING.ordinal () );
 
-        Button setButton = new Button ( comp, SWT.BORDER );
+        final Button setButton = new Button ( comp, SWT.BORDER );
         setButton.setText ( "Set" );
         setButton.addSelectionListener ( new SelectionAdapter () {
             @Override
-            public void widgetSelected ( SelectionEvent e )
+            public void widgetSelected ( final SelectionEvent e )
             {
                 switchToManual ();
             }
         } );
 
-        Button clearButton = new Button ( comp, SWT.BORDER );
+        final Button clearButton = new Button ( comp, SWT.BORDER );
         clearButton.setText ( "Clear" );
         clearButton.addSelectionListener ( new SelectionAdapter () {
             @Override
-            public void widgetSelected ( SelectionEvent e )
+            public void widgetSelected ( final SelectionEvent e )
             {
                 switchToProcess ();
             }
@@ -141,13 +141,13 @@ public class ManualOverride extends AbstractBaseDetailsPart
 
     private IFigure createRoot ()
     {
-        Figure rootFigure = new Figure ();
+        final Figure rootFigure = new Figure ();
         rootFigure.setLayoutManager ( new GridLayout ( 2, true ) );
         rootFigure.setBackgroundColor ( ColorConstants.white );
 
-        Figure pvFigure = createPV ();
-        Figure mvFigure = createMV ();
-        Figure rvFigure = createRV ();
+        final Figure pvFigure = createPV ();
+        final Figure mvFigure = createMV ();
+        final Figure rvFigure = createRV ();
 
         rootFigure.add ( pvFigure, new GridData ( GridData.CENTER, GridData.CENTER, true, true, 1, 1 ) );
         rootFigure.add ( rvFigure, new GridData ( GridData.CENTER, GridData.CENTER, true, true, 1, 2 ) );
@@ -161,9 +161,9 @@ public class ManualOverride extends AbstractBaseDetailsPart
 
     private PolylineConnection createM2R ()
     {
-        PolylineConnection c = new PolylineConnection ();
-        ChopboxAnchor sourceAnchor = new ChopboxAnchor ( this.mvRect );
-        ChopboxAnchor targetAnchor = new ChopboxAnchor ( this.rvRect );
+        final PolylineConnection c = new PolylineConnection ();
+        final ChopboxAnchor sourceAnchor = new ChopboxAnchor ( this.mvRect );
+        final ChopboxAnchor targetAnchor = new ChopboxAnchor ( this.rvRect );
         c.setSourceAnchor ( sourceAnchor );
         c.setTargetAnchor ( targetAnchor );
         return c;
@@ -171,9 +171,9 @@ public class ManualOverride extends AbstractBaseDetailsPart
 
     private PolylineConnection createP2R ()
     {
-        PolylineConnection c = new PolylineConnection ();
-        ChopboxAnchor sourceAnchor = new ChopboxAnchor ( this.pvRect );
-        ChopboxAnchor targetAnchor = new ChopboxAnchor ( this.rvRect );
+        final PolylineConnection c = new PolylineConnection ();
+        final ChopboxAnchor sourceAnchor = new ChopboxAnchor ( this.pvRect );
+        final ChopboxAnchor targetAnchor = new ChopboxAnchor ( this.rvRect );
         c.setSourceAnchor ( sourceAnchor );
         c.setTargetAnchor ( targetAnchor );
         return c;
@@ -181,72 +181,72 @@ public class ManualOverride extends AbstractBaseDetailsPart
 
     private Figure createRV ()
     {
-        Figure rvFigure = new Figure ();
+        final Figure rvFigure = new Figure ();
         rvFigure.setLayoutManager ( new BorderLayout () );
-        Label label = new Label ( "Result Value" );
+        final Label label = new Label ( "Result Value" );
         label.setBorder ( new MarginBorder ( 10 ) );
         rvFigure.add ( label, BorderLayout.RIGHT );
 
-        rvRect = new RoundedRectangle ();
-        rvRect.setLayoutManager ( new BorderLayout () );
+        this.rvRect = new RoundedRectangle ();
+        this.rvRect.setLayoutManager ( new BorderLayout () );
         this.rvValue = new Label ();
         this.rvRect.setBackgroundColor ( ColorConstants.lightGray );
         this.rvValue.setBorder ( new MarginBorder ( 10 ) );
-        rvRect.add ( rvValue, BorderLayout.CENTER );
+        this.rvRect.add ( this.rvValue, BorderLayout.CENTER );
 
-        rvFigure.add ( rvRect, BorderLayout.CENTER );
+        rvFigure.add ( this.rvRect, BorderLayout.CENTER );
         return rvFigure;
     }
 
     private Figure createMV ()
     {
-        Figure mvFigure = new Figure ();
+        final Figure mvFigure = new Figure ();
         mvFigure.setLayoutManager ( new BorderLayout () );
-        Label label = new Label ( "Manual Value" );
+        final Label label = new Label ( "Manual Value" );
         label.setBorder ( new MarginBorder ( 10 ) );
         mvFigure.add ( label, BorderLayout.LEFT );
 
-        mvRect = new RoundedRectangle ();
-        mvRect.setLayoutManager ( new BorderLayout () );
+        this.mvRect = new RoundedRectangle ();
+        this.mvRect.setLayoutManager ( new BorderLayout () );
         this.mvValue = new Label ();
         this.mvValue.setBorder ( new MarginBorder ( 10 ) );
         this.mvRect.setBackgroundColor ( ColorConstants.lightGray );
-        mvRect.add ( mvValue, BorderLayout.CENTER );
+        this.mvRect.add ( this.mvValue, BorderLayout.CENTER );
 
-        mvRect.addMouseListener ( new MouseListener () {
+        this.mvRect.addMouseListener ( new MouseListener () {
 
-            public void mouseDoubleClicked ( MouseEvent me )
+            public void mouseDoubleClicked ( final MouseEvent me )
             {
                 ManualOverride.this.switchToManual ();
             }
 
-            public void mousePressed ( MouseEvent me )
+            public void mousePressed ( final MouseEvent me )
             {
                 // TODO Auto-generated method stub
 
             }
 
-            public void mouseReleased ( MouseEvent me )
+            public void mouseReleased ( final MouseEvent me )
             {
                 // TODO Auto-generated method stub
 
             }
         } );
 
-        mvFigure.add ( mvRect, BorderLayout.CENTER );
+        mvFigure.add ( this.mvRect, BorderLayout.CENTER );
         return mvFigure;
     }
 
     protected void switchToManual ()
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         Variant value = null;
         try
         {
             value = getManualSetValue ();
         }
-        catch ( NotConvertableException e1 )
+        catch ( final NotConvertableException e1 )
         {
             // FIXME: warn
         }
@@ -254,16 +254,16 @@ public class ManualOverride extends AbstractBaseDetailsPart
         attributes.put ( "org.openscada.da.manual.value", value );
         this.connection.writeAttributes ( this.item.getItemId (), attributes, new WriteAttributeOperationCallback () {
 
-            public void complete ( WriteAttributeResults result )
+            public void complete ( final WriteAttributeResults result )
             {
 
             }
 
-            public void error ( Throwable e )
+            public void error ( final Throwable e )
             {
             }
 
-            public void failed ( String error )
+            public void failed ( final String error )
             {
             }
         } );
@@ -271,33 +271,33 @@ public class ManualOverride extends AbstractBaseDetailsPart
 
     private Figure createPV ()
     {
-        Figure pvFigure = new Figure ();
+        final Figure pvFigure = new Figure ();
         pvFigure.setLayoutManager ( new BorderLayout () );
-        Label label = new Label ( "Process Value" );
+        final Label label = new Label ( "Process Value" );
         label.setBorder ( new MarginBorder ( 10 ) );
         pvFigure.add ( label, BorderLayout.LEFT );
 
-        pvRect = new RoundedRectangle ();
-        pvRect.setLayoutManager ( new BorderLayout () );
+        this.pvRect = new RoundedRectangle ();
+        this.pvRect.setLayoutManager ( new BorderLayout () );
         this.pvValue = new Label ();
         this.pvValue.setBorder ( new MarginBorder ( 10 ) );
         this.pvRect.setBackgroundColor ( ColorConstants.lightGray );
-        pvRect.add ( pvValue, BorderLayout.CENTER );
+        this.pvRect.add ( this.pvValue, BorderLayout.CENTER );
 
-        pvFigure.add ( pvRect, BorderLayout.CENTER );
+        pvFigure.add ( this.pvRect, BorderLayout.CENTER );
 
-        pvRect.addMouseListener ( new MouseListener () {
+        this.pvRect.addMouseListener ( new MouseListener () {
 
-            public void mouseDoubleClicked ( MouseEvent me )
+            public void mouseDoubleClicked ( final MouseEvent me )
             {
                 ManualOverride.this.switchToProcess ();
             }
 
-            public void mousePressed ( MouseEvent me )
+            public void mousePressed ( final MouseEvent me )
             {
             }
 
-            public void mouseReleased ( MouseEvent me )
+            public void mouseReleased ( final MouseEvent me )
             {
             }
         } );
@@ -307,21 +307,21 @@ public class ManualOverride extends AbstractBaseDetailsPart
 
     protected void switchToProcess ()
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         attributes.put ( "org.openscada.da.manual.value", new Variant () );
         this.connection.writeAttributes ( this.item.getItemId (), attributes, new WriteAttributeOperationCallback () {
 
-            public void complete ( WriteAttributeResults result )
+            public void complete ( final WriteAttributeResults result )
             {
 
             }
 
-            public void error ( Throwable e )
+            public void error ( final Throwable e )
             {
             }
 
-            public void failed ( String error )
+            public void failed ( final String error )
             {
             }
         } );
@@ -331,8 +331,8 @@ public class ManualOverride extends AbstractBaseDetailsPart
     {
         Variant value = new Variant ();
 
-        int idx = this.manualValueCombo.getSelectionIndex ();
-        for ( ValueType vt : ValueType.values () )
+        final int idx = this.manualValueCombo.getSelectionIndex ();
+        for ( final ValueType vt : ValueType.values () )
         {
             if ( vt.ordinal () == idx )
             {
@@ -373,8 +373,8 @@ public class ManualOverride extends AbstractBaseDetailsPart
         }
 
         // set manual value
-        Variant manualValue = this.item.getAttributes ().get ( "org.openscada.da.manual.value" );
-        Variant processValue = this.item.getAttributes ().get ( "org.openscada.da.manual.value.original" );
+        final Variant manualValue = this.item.getAttributes ().get ( "org.openscada.da.manual.value" );
+        final Variant processValue = this.item.getAttributes ().get ( "org.openscada.da.manual.value.original" );
         Variant processError = this.item.getAttributes ().get ( "org.openscada.da.manual.error.original" );
         if ( processError == null )
         {

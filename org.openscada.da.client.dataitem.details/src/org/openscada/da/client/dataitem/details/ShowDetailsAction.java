@@ -20,21 +20,19 @@
 package org.openscada.da.client.dataitem.details;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.openscada.da.client.test.views.realtime.ListEntry;
-import org.openscada.rcp.da.client.browser.DataItemEntry;
-import org.openscada.rcp.da.client.browser.HiveItem;
+import org.openscada.da.base.connection.ConnectionManager;
+import org.openscada.da.base.item.DataItemHolder;
+import org.openscada.da.base.item.ItemSelectionHelper;
 
 public class ShowDetailsAction implements IObjectActionDelegate
 {
@@ -81,31 +79,8 @@ public class ShowDetailsAction implements IObjectActionDelegate
     public void selectionChanged ( final IAction action, final ISelection selection )
     {
         clearSelection ();
-        if ( ! ( selection instanceof IStructuredSelection ) )
-        {
-            return;
-        }
 
-        final IStructuredSelection sel = (IStructuredSelection)selection;
-        for ( final Iterator<?> i = sel.iterator (); i.hasNext (); )
-        {
-            final Object o = i.next ();
-            if ( o instanceof ListEntry )
-            {
-                final ListEntry entry = (ListEntry)o;
-                this.items.add ( new DataItemHolder ( entry.getConnection ().getConnection (), entry.getConnection ().getItemManager (), entry.getDataItem ().getItemId () ) );
-            }
-            else if ( o instanceof HiveItem )
-            {
-                final HiveItem item = (HiveItem)o;
-                this.items.add ( new DataItemHolder ( item.getConnection ().getConnection (), item.getConnection ().getItemManager (), item.getId () ) );
-            }
-            else if ( o instanceof DataItemEntry )
-            {
-                final DataItemEntry entry = (DataItemEntry)o;
-                this.items.add ( new DataItemHolder ( entry.getConnection ().getConnection (), entry.getConnection ().getItemManager (), entry.getId () ) );
-            }
-        }
+        this.items.addAll ( ItemSelectionHelper.getSelectionHookedUp ( selection, ConnectionManager.getDefault () ) );
     }
 
     private void clearSelection ()
