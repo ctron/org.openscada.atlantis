@@ -17,31 +17,26 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.project.editor.realtimelist;
+package org.openscada.da.base.realtime;
 
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.TransferData;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.da.base.connection.ConnectionManager;
+import org.openscada.da.base.dnd.ItemTransfer;
+import org.openscada.da.base.item.Item;
 import org.openscada.da.client.ItemManager;
-import org.openscada.rcp.da.client.dnd.ItemTransfer;
-import org.openscada.rcp.da.client.item.Item;
 
 public class ItemDropAdapter extends ViewerDropAdapter
 {
 
-    private final RealtimeListEditor editor;
-
-    public ItemDropAdapter ( final RealtimeListEditor editor, final Viewer viewer )
+    public ItemDropAdapter ( final Viewer viewer )
     {
         super ( viewer );
-        this.editor = editor;
         setFeedbackEnabled ( true );
         setSelectionFeedbackEnabled ( true );
     }
@@ -49,39 +44,8 @@ public class ItemDropAdapter extends ViewerDropAdapter
     @Override
     public boolean performDrop ( final Object data )
     {
-        if ( data instanceof Item[] )
-        {
-            dropItemType ( (Item[])data );
-            return true;
-        }
-        else if ( data instanceof String[] )
-        {
-            dropStringType ( data );
-            return true;
-        }
+        final Item[] items = (Item[])data;
 
-        return false;
-    }
-
-    private void dropStringType ( final Object data )
-    {
-        final String[] urls = (String[])data;
-        final List<Item> items = new ArrayList<Item> ();
-
-        for ( final String urlString : urls )
-        {
-            final Item item = new Item ();
-
-            final String[] toks = urlString.split ( "#", 1 );
-            item.setId ( toks[1] );
-            item.setConnectionString ( toks[0] );
-
-            items.add ( item );
-        }
-    }
-
-    private void dropItemType ( final Item[] items )
-    {
         final ListData listData = (ListData)getViewer ().getInput ();
         final TreeViewer viewer = (TreeViewer)getViewer ();
 
@@ -96,18 +60,18 @@ public class ItemDropAdapter extends ViewerDropAdapter
                 e.printStackTrace ();
             }
         }
+
+        return true;
     }
 
     private void dropItem ( final Item item, final ListData listData, final TreeViewer viewer ) throws URISyntaxException
     {
         final ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( item.getConnectionString () );
+        final ItemManager itemManager = ConnectionManager.getDefault ().getItemManager ( connectionInformation, true );
 
-        // final HiveConnection connection = Activator.getRepository ().findConnection ( connectionInformation );
-        final ItemManager itemManager = org.openscada.da.project.Activator.getConnectionManager ().getItemManager ( connectionInformation, true );
         if ( itemManager != null )
         {
-            listData.add ( item.getId (), new URI ( item.getConnectionString () ), itemManager );
-            this.editor.makeDirty ();
+            listData.add ( new Item ( item ), itemManager );
         }
     }
 

@@ -29,8 +29,9 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.da.base.browser.HiveConnection;
+import org.openscada.da.base.item.DataItemHolder;
 import org.openscada.da.client.ItemUpdateListener;
-import org.openscada.rcp.da.client.browser.HiveConnection;
 
 public class ChartView extends ViewPart implements ItemUpdateListener
 {
@@ -44,7 +45,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
 
     private HiveConnection _connection = null;
 
-    private String _item;
+    private DataItemHolder _item;
 
     private TimeSeriesCollection _dataset;
 
@@ -123,7 +124,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
         super.dispose ();
     }
 
-    public void setDataItem ( final HiveConnection connection, final String item )
+    public void setDataItem ( final DataItemHolder item )
     {
         disconnect ();
         if ( item == null )
@@ -131,26 +132,25 @@ public class ChartView extends ViewPart implements ItemUpdateListener
             return;
         }
 
-        connect ( connection, item );
+        connect ( item );
     }
 
     protected void disconnect ()
     {
         if ( this._connection != null )
         {
-            this._connection.getItemManager ().removeItemUpdateListener ( this._item, this );
+            this._connection.getItemManager ().removeItemUpdateListener ( this._item.getItemId (), this );
             this._connection = null;
         }
     }
 
-    protected void connect ( final HiveConnection connection, final String item )
+    protected void connect ( final DataItemHolder item )
     {
         this._item = item;
-        this._connection = connection;
 
-        this._chart.setTitle ( item );
+        this._chart.setTitle ( item.getItemId () );
 
-        this._connection.getItemManager ().addItemUpdateListener ( this._item, this );
+        this._connection.getItemManager ().addItemUpdateListener ( this._item.getItemId (), this );
     }
 
     public void notifySubscriptionChange ( final SubscriptionState state, final Throwable subscriptionError )

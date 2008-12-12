@@ -52,5 +52,4 @@ public class Activator extends Plugin
     {
         return ConnectionFactory.create ( ci );
     }
-
 }

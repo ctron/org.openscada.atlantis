@@ -232,7 +232,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.test.popupMenus.oc2"
-            objectClass="org.openscada.da.client.test.impl.HiveConnection">
+            objectClass="org.openscada.da.base.browser.HiveConnection">
 		<action
                class="org.openscada.da.client.test.actions.DeleteHiveAction"
                icon="icons/16x16/stock_delete.png"
@@ -274,7 +274,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.test.popupMenus.oc1"
-            objectClass="org.openscada.da.client.test.impl.DataItemEntry">
+            objectClass="org.openscada.da.base.browser.DataItemEntry">
          <action
                class="org.openscada.da.client.test.actions.WatchItemAction"
                icon="icons/stock_watch.png"
@@ -304,7 +304,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.test.popupMenus.oc3"
-            objectClass="org.openscada.da.client.test.views.realtime.ListEntry">
+            objectClass="org.openscada.da.base.realtime.ListEntry">
          <action
                class="org.openscada.da.client.test.actions.WriteOperationAction"
                icon="icons/16x16/stock_write.png"

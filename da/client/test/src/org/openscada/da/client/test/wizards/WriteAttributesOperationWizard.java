@@ -34,11 +34,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.core.Variant;
+import org.openscada.da.client.Connection;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.test.Activator;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.rcp.da.client.browser.HiveConnection;
 
 public class WriteAttributesOperationWizard extends Wizard implements INewWizard
 {
@@ -46,24 +46,26 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
     private WriteAttributesOperationWizardValuePage _page = null;
 
     private IStructuredSelection _selection = null;
+
     private boolean _complete = false;
+
     private Throwable _error = null;
 
     @Override
     public boolean performFinish ()
     {
-        final String item = _page.getItem ();
-        final Map<String, Variant> attributes = _page.getAttributes ();
-        final HiveConnection connection = _page.getConnection ();
+        final String item = this._page.getItem ();
+        final Map<String, Variant> attributes = this._page.getAttributes ();
+        final Connection connection = this._page.getConnection ();
 
-        IRunnableWithProgress op = new IRunnableWithProgress () {
-            public void run ( IProgressMonitor monitor ) throws InvocationTargetException
+        final IRunnableWithProgress op = new IRunnableWithProgress () {
+            public void run ( final IProgressMonitor monitor ) throws InvocationTargetException
             {
                 try
                 {
                     doFinish ( monitor, connection, item, attributes );
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     throw new InvocationTargetException ( e );
                 }
@@ -77,31 +79,31 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
         {
             getContainer ().run ( true, true, op );
         }
-        catch ( InterruptedException e )
+        catch ( final InterruptedException e )
         {
             return false;
         }
-        catch ( InvocationTargetException e )
+        catch ( final InvocationTargetException e )
         {
-            Throwable realException = e.getTargetException ();
+            final Throwable realException = e.getTargetException ();
             MessageDialog.openError ( getShell (), "Error writing to item", realException.getMessage () );
             return false;
         }
         return true;
     }
 
-    private void doFinish ( final IProgressMonitor monitor, HiveConnection hiveConnection, String item, final Map<String, Variant> attributes ) throws Exception
+    private void doFinish ( final IProgressMonitor monitor, final Connection connection, final String item, final Map<String, Variant> attributes ) throws Exception
     {
         monitor.beginTask ( "Writing attributes to item", 2 );
 
         monitor.worked ( 1 );
 
         final WriteAttributesOperationWizard _this = this;
-        
-        _complete = false;
-        hiveConnection.getConnection ().writeAttributes ( item, attributes, new WriteAttributeOperationCallback () {
 
-            public void complete ( WriteAttributeResults results )
+        this._complete = false;
+        connection.writeAttributes ( item, attributes, new WriteAttributeOperationCallback () {
+
+            public void complete ( final WriteAttributeResults results )
             {
                 if ( !results.isSuccess () )
                 {
@@ -110,13 +112,13 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
                 endWait ();
             }
 
-            public void error ( Throwable e )
+            public void error ( final Throwable e )
             {
                 handleError ( e );
                 endWait ();
             }
 
-            public void failed ( String message )
+            public void failed ( final String message )
             {
                 handleError ( new Exception ( message ) );
                 endWait ();
@@ -124,73 +126,60 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
 
             private void endWait ()
             {
-                _complete = true;
+                WriteAttributesOperationWizard.this._complete = true;
                 synchronized ( _this )
                 {
                     _this.notifyAll ();
                 }
             }
         } );
-        
+
         synchronized ( this )
         {
             wait ( 100 );
-            
-            if ( _complete || monitor.isCanceled () )
+
+            if ( this._complete || monitor.isCanceled () )
             {
-                if ( _error != null )
+                if ( this._error != null )
                 {
-                    throw new Exception ( _error );
+                    throw new Exception ( this._error );
                 }
             }
         }
         monitor.worked ( 1 );
     }
 
-    public void handleError ( Throwable e )
+    public void handleError ( final Throwable e )
     {
-        _error = e;
+        this._error = e;
     }
 
-    public void handleError ( Map<String, Variant> attributes, WriteAttributeResults results )
+    public void handleError ( final Map<String, Variant> attributes, final WriteAttributeResults results )
     {
-        MultiStatus status = new MultiStatus ( Activator.PLUGIN_ID, 0,
-                "Failed to write attributes", null );
+        final MultiStatus status = new MultiStatus ( Activator.PLUGIN_ID, 0, "Failed to write attributes", null );
 
         if ( attributes.size () != results.size () )
         {
-            status.add ( new OperationStatus (
-                    OperationStatus.WARNING,
-                    Activator.PLUGIN_ID,
-                    0,
-                    String.format ( "Only %1$d items out of %2$d where processed", results.size (), attributes.size () ),
-                    null ) );
+            status.add ( new OperationStatus ( OperationStatus.WARNING, Activator.PLUGIN_ID, 0, String.format ( "Only %1$d items out of %2$d where processed", results.size (), attributes.size () ), null ) );
         }
 
-        for ( Map.Entry<String, WriteAttributeResult> entry : results.entrySet () )
+        for ( final Map.Entry<String, WriteAttributeResult> entry : results.entrySet () )
         {
             if ( entry.getValue ().isError () )
             {
-                status.add ( new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0,
-                        String.format ( "Failed to write attribute '%1$s': %2$s", entry.getKey (),
-                                entry.getValue ().getError ().getMessage () ), null ) );
+                status.add ( new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, String.format ( "Failed to write attribute '%1$s': %2$s", entry.getKey (), entry.getValue ().getError ().getMessage () ), null ) );
             }
         }
 
-        for ( String name : attributes.keySet () )
+        for ( final String name : attributes.keySet () )
         {
             if ( !results.containsKey ( name ) )
             {
-                status.add ( new OperationStatus ( OperationStatus.WARNING, Activator.PLUGIN_ID,
-                        0, String.format ( "Attribute %s is missing in result list", name ), null ) );
+                status.add ( new OperationStatus ( OperationStatus.WARNING, Activator.PLUGIN_ID, 0, String.format ( "Attribute %s is missing in result list", name ), null ) );
             }
         }
 
-        final ErrorDialog dialog = new ErrorDialog (
-                getShell (),
-                "Failed write attributes",
-                "The write attributes operation did not complete successfully. There may be one ore more attributes that could not be written. Check the status of each attribute operation using the detailed information.",
-                status, OperationStatus.ERROR | OperationStatus.WARNING );
+        final ErrorDialog dialog = new ErrorDialog ( getShell (), "Failed write attributes", "The write attributes operation did not complete successfully. There may be one ore more attributes that could not be written. Check the status of each attribute operation using the detailed information.", status, OperationStatus.ERROR | OperationStatus.WARNING );
 
         Display.getDefault ().syncExec ( new Runnable () {
 
@@ -201,12 +190,12 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
         } );
     }
 
-    public void init ( IWorkbench workbench, IStructuredSelection selection )
+    public void init ( final IWorkbench workbench, final IStructuredSelection selection )
     {
         setNeedsProgressMonitor ( true );
         setWindowTitle ( "Write Attributes" );
 
-        _selection = selection;
+        this._selection = selection;
     }
 
     @Override
@@ -214,9 +203,9 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
     {
         super.addPages ();
 
-        addPage ( _page = new WriteAttributesOperationWizardValuePage () );
+        addPage ( this._page = new WriteAttributesOperationWizardValuePage () );
 
-        _page.setSelection ( _selection );
+        this._page.setSelection ( this._selection );
     }
 
 }

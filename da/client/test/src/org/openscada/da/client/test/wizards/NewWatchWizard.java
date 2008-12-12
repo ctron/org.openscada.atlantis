@@ -19,7 +19,6 @@
 
 package org.openscada.da.client.test.wizards;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -33,80 +32,82 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchSite;
 import org.openscada.core.Variant;
+import org.openscada.da.base.browser.DataItemEntry;
+import org.openscada.da.base.browser.FolderEntry;
+import org.openscada.da.base.browser.HiveConnection;
 import org.openscada.da.client.test.views.watch.DataItemWatchView;
 import org.openscada.da.core.IODirection;
-import org.openscada.rcp.da.client.browser.DataItemEntry;
-import org.openscada.rcp.da.client.browser.FolderEntry;
-import org.openscada.rcp.da.client.browser.HiveConnection;
 
 public class NewWatchWizard extends Wizard implements INewWizard
 {
     private HiveConnection _connection = null;
+
     private DataItemEntry _itemEntry = null;
+
     private NewWatchWizardPage _page = null;
+
     private IWorkbenchSite _site = null;
-    
+
     @Override
     public boolean performFinish ()
     {
-        final String dataItemID = _page.getDataItemID ();
-        
+        final String dataItemID = this._page.getDataItemID ();
+
         try
         {
             try
             {
-                DataItemEntry dataItem = new DataItemEntry ( dataItemID, new HashMap<String,Variant> (), null, _connection, dataItemID, EnumSet.noneOf ( IODirection.class ) );
-                IViewPart viewer = _site.getPage ().showView ( DataItemWatchView.VIEW_ID, dataItem.getAsSecondaryId (), IWorkbenchPage.VIEW_ACTIVATE );
+                final DataItemEntry dataItem = new DataItemEntry ( dataItemID, new HashMap<String, Variant> (), null, this._connection, dataItemID, EnumSet.noneOf ( IODirection.class ) );
+                final IViewPart viewer = this._site.getPage ().showView ( DataItemWatchView.VIEW_ID, dataItem.getAsSecondaryId (), IWorkbenchPage.VIEW_ACTIVATE );
                 if ( viewer instanceof DataItemWatchView )
                 {
-                    ((DataItemWatchView)viewer).setDataItem ( dataItem );
+                    ( (DataItemWatchView)viewer ).setDataItem ( dataItem );
                 }
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 throw new InvocationTargetException ( e );
             }
         }
-        catch ( InvocationTargetException e )
+        catch ( final InvocationTargetException e )
         {
-            Throwable realException = e.getTargetException ();
-            MessageDialog.openError ( getShell(), "Error", realException.getMessage () );
+            final Throwable realException = e.getTargetException ();
+            MessageDialog.openError ( getShell (), "Error", realException.getMessage () );
             return false;
         }
         return true;
-    }    
+    }
 
-    public void init ( IWorkbench workbench, IStructuredSelection selection )
+    public void init ( final IWorkbench workbench, final IStructuredSelection selection )
     {
         setNeedsProgressMonitor ( true );
         setWindowTitle ( "Request watch" );
-        
-        _site = workbench.getActiveWorkbenchWindow ().getActivePage ().getActivePart ().getSite ();
-        
-        Object o = selection.getFirstElement ();
+
+        this._site = workbench.getActiveWorkbenchWindow ().getActivePage ().getActivePart ().getSite ();
+
+        final Object o = selection.getFirstElement ();
         if ( o instanceof HiveConnection )
         {
-            _connection = (HiveConnection)o;
+            this._connection = (HiveConnection)o;
         }
         else if ( o instanceof DataItemEntry )
         {
-            _itemEntry = (DataItemEntry)o;
-            _connection = _itemEntry.getConnection ();
+            this._itemEntry = (DataItemEntry)o;
+            this._connection = this._itemEntry.getConnection ();
         }
         else if ( o instanceof FolderEntry )
         {
-            _connection = ((FolderEntry)o).getConnection ();
+            this._connection = ( (FolderEntry)o ).getConnection ();
         }
     }
-    
+
     @Override
     public void addPages ()
     {
         super.addPages ();
-         
-        addPage ( _page = new NewWatchWizardPage () );
-        _page.setDataItemId ( _itemEntry.getId () );
+
+        addPage ( this._page = new NewWatchWizardPage () );
+        this._page.setDataItemId ( this._itemEntry.getId () );
     }
-    
 
 }

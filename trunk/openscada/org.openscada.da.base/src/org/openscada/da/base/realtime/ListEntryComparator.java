@@ -17,12 +17,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.client.test.views.realtime;
+package org.openscada.da.base.realtime;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
-public class RealTimeListComparator extends ViewerComparator
+public class ListEntryComparator extends ViewerComparator
 {
     @Override
     public int compare ( final Viewer viewer, final Object e1, final Object e2 )

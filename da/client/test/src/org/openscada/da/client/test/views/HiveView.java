@@ -45,12 +45,12 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.openscada.core.client.ConnectionState;
+import org.openscada.da.base.browser.FolderEntry;
+import org.openscada.da.base.browser.HiveConnection;
+import org.openscada.da.base.browser.HiveRepository;
+import org.openscada.da.base.dnd.ItemDragSourceListener;
+import org.openscada.da.base.dnd.ItemTransfer;
 import org.openscada.da.client.test.Activator;
-import org.openscada.rcp.da.client.browser.FolderEntry;
-import org.openscada.rcp.da.client.browser.HiveConnection;
-import org.openscada.rcp.da.client.browser.HiveRepository;
-import org.openscada.rcp.da.client.dnd.ItemDragSourceListener;
-import org.openscada.rcp.da.client.dnd.ItemTransfer;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -172,6 +172,7 @@ public class HiveView extends ViewPart implements Observer
      * This is a callback that will allow us to create the viewer and initialize
      * it.
      */
+    @Override
     public void createPartControl ( final Composite parent )
     {
         this._viewer = new TreeViewer ( parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI );
@@ -274,6 +275,7 @@ public class HiveView extends ViewPart implements Observer
     /**
      * Passing the focus request to the viewer's control.
      */
+    @Override
     public void setFocus ()
     {
         this._viewer.getControl ().setFocus ();

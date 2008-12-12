@@ -31,10 +31,10 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.openscada.da.base.browser.HiveConnection;
+import org.openscada.da.base.browser.HiveConnectionInformation;
+import org.openscada.da.base.browser.HiveRepository;
 import org.openscada.rcp.da.client.ConnectorInitializer;
-import org.openscada.rcp.da.client.browser.HiveConnection;
-import org.openscada.rcp.da.client.browser.HiveConnectionInformation;
-import org.openscada.rcp.da.client.browser.HiveRepository;
 import org.osgi.framework.BundleContext;
 
 /**

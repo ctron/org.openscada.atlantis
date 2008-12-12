@@ -25,45 +25,56 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.openscada.rcp.da.client.browser.DataItemEntry;
+import org.openscada.da.base.browser.DataItemEntry;
 
-public class DataItemEntryPage extends PropertyPage implements
-        IWorkbenchPropertyPage
+public class DataItemEntryPage extends PropertyPage implements IWorkbenchPropertyPage
 {
-    private Label _label = null;
+    private Label label = null;
 
     public DataItemEntryPage ()
     {
     }
 
     @Override
-    protected Control createContents ( Composite parent )
+    protected Control createContents ( final Composite parent )
     {
-        _label = new Label ( parent, SWT.NONE );
-        DataItemEntry item = getItem ();
+        this.label = new Label ( parent, SWT.NONE );
+        final DataItemEntry item = getItem ();
         if ( item != null )
-            _label.setText ( "Hello World: " + item.getId () );
+        {
+            this.label.setText ( "Hello World: " + item.getId () );
+        }
         else
-            _label.setText ( "Hello World: <no item>" );
-        return _label;
+        {
+            this.label.setText ( "Hello World: <no item>" );
+        }
+        return this.label;
     }
 
     private DataItemEntry getItem ()
     {
         if ( getElement () instanceof DataItemEntry )
+        {
             return (DataItemEntry)getElement ();
+        }
         else
+        {
             return null;
+        }
     }
-    
+
     @Override
     protected void performDefaults ()
     {
-        DataItemEntry item = getItem ();
+        final DataItemEntry item = getItem ();
         if ( item != null )
-            _label.setText ( "Hello World: " + item.getId () );
+        {
+            this.label.setText ( "Hello World: " + item.getId () );
+        }
         else
-            _label.setText ( "Hello World: <no item>" );
+        {
+            this.label.setText ( "Hello World: <no item>" );
+        }
         super.performDefaults ();
     }
 }

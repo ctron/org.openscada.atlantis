@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.client.test.views.realtime;
+package org.openscada.da.base.realtime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
-import org.openscada.rcp.da.client.browser.HiveItem;
+import org.openscada.da.base.item.Item;
+import org.openscada.da.client.ItemManager;
 
 public class ListData implements Observer
 {
@@ -64,12 +65,12 @@ public class ListData implements Observer
         }
     }
 
-    public void add ( final HiveItem hiveItem )
+    public void add ( final Item item, final ItemManager itemManager )
     {
-        final ListEntry item = new ListEntry ();
-        item.setDataItem ( hiveItem.getId (), hiveItem.getConnection () );
+        final ListEntry entry = new ListEntry ();
+        entry.setDataItem ( item, itemManager );
 
-        add ( item );
+        add ( entry );
     }
 
     public void remove ( final ListEntry entry )
@@ -157,7 +158,7 @@ public class ListData implements Observer
 
     public void update ( final Observable o, final Object arg )
     {
-        if ( ( o instanceof ListEntry ) && this._items.contains ( o ) )
+        if ( o instanceof ListEntry && this._items.contains ( o ) )
         {
             fireUpdated ( new ListEntry[] { (ListEntry)o } );
         }

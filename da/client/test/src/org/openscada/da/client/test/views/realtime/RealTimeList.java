@@ -40,10 +40,20 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.core.Variant;
+import org.openscada.da.base.connection.ConnectionManager;
+import org.openscada.da.base.dnd.ItemTransfer;
+import org.openscada.da.base.realtime.ItemDropAdapter;
+import org.openscada.da.base.realtime.ItemListContentProvider;
+import org.openscada.da.base.realtime.ItemListLabelProvider;
+import org.openscada.da.base.realtime.ListData;
+import org.openscada.da.base.realtime.ListEntry;
+import org.openscada.da.base.realtime.ListEntryComparator;
+import org.openscada.da.base.realtime.RealtimeListAdapter;
+import org.openscada.da.base.realtime.RemoveAction;
+import org.openscada.da.client.Connection;
 import org.openscada.da.client.WriteOperationCallback;
-import org.openscada.rcp.da.client.dnd.ItemTransfer;
 
-public class RealTimeList extends ViewPart
+public class RealTimeList extends ViewPart implements RealtimeListAdapter
 {
 
     public static final String VIEW_ID = "org.openscada.da.test.views.RealTimeList";
@@ -87,7 +97,7 @@ public class RealTimeList extends ViewPart
 
         this._viewer.setLabelProvider ( new ItemListLabelProvider () );
         this._viewer.setContentProvider ( new ItemListContentProvider () );
-        this._viewer.setComparator ( new RealTimeListComparator () );
+        this._viewer.setComparator ( new ListEntryComparator () );
         this._viewer.setInput ( this._list );
 
         getViewSite ().setSelectionProvider ( this._viewer );
@@ -134,7 +144,9 @@ public class RealTimeList extends ViewPart
 
         value = new Variant ( !value.asBoolean () );
 
-        entry.getConnection ().getConnection ().write ( entry.getDataItem ().getItemId (), value, new WriteOperationCallback () {
+        final Connection connection = ConnectionManager.getDefault ().getConnection ( entry.getItem ().getConnectionString (), true );
+
+        connection.write ( entry.getDataItem ().getItemId (), value, new WriteOperationCallback () {
 
             public void complete ()
             {
@@ -208,6 +220,9 @@ public class RealTimeList extends ViewPart
         this._viewer.getControl ().setFocus ();
     }
 
+    /* (non-Javadoc)
+     * @see org.openscada.da.client.test.views.realtime.RealtimeListAdapter#remove(org.openscada.da.client.test.views.realtime.ListEntry)
+     */
     public void remove ( final ListEntry entry )
     {
         this._list.remove ( entry );

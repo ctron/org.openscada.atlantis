@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.project.editor.realtimelist;
 
 import java.net.URI;
@@ -34,33 +53,44 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.openscada.core.Variant;
+import org.openscada.da.base.connection.ConnectionManager;
+import org.openscada.da.base.dnd.ItemTransfer;
+import org.openscada.da.base.item.Item;
+import org.openscada.da.base.realtime.ItemDropAdapter;
+import org.openscada.da.base.realtime.ItemListContentProvider;
+import org.openscada.da.base.realtime.ItemListLabelProvider;
+import org.openscada.da.base.realtime.ListData;
+import org.openscada.da.base.realtime.ListEntry;
+import org.openscada.da.base.realtime.ListEntryComparator;
+import org.openscada.da.base.realtime.RealtimeListAdapter;
+import org.openscada.da.base.realtime.RemoveAction;
+import org.openscada.da.client.Connection;
 import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.dataItemList.ItemType;
 import org.openscada.da.dataItemList.ItemsDocument;
 import org.openscada.da.dataItemList.ItemsType;
 import org.openscada.da.project.Activator;
-import org.openscada.rcp.da.client.dnd.ItemTransfer;
 
-public class RealtimeListEditor extends EditorPart
+public class RealtimeListEditor extends EditorPart implements RealtimeListAdapter
 {
 
-    private final RemoveAction _removeAction;
+    private final RemoveAction removeAction;
 
-    private TreeViewer _viewer;
+    private TreeViewer viewer;
 
-    private final ListData _list = new ListData ();
+    private final ListData list = new ListData ();
 
     private boolean dirty = false;
 
     public RealtimeListEditor ()
     {
-        this._removeAction = new RemoveAction ( this );
+        this.removeAction = new RemoveAction ( this );
     }
 
     @Override
     public void doSave ( final IProgressMonitor monitor )
     {
-        final List<ListEntry> list = this._list.getItems ();
+        final List<ListEntry> list = this.list.getItems ();
 
         monitor.beginTask ( "Saving", list.size () );
         try
@@ -69,9 +99,10 @@ public class RealtimeListEditor extends EditorPart
             final ItemsType items = doc.addNewItems ();
             for ( final ListEntry entry : list )
             {
-                final ItemType item = items.addNewItem ();
-                item.setItemId ( entry.getDataItem ().getItemId () );
-                item.setUri ( entry.getUri ().toString () );
+                final ItemType itemType = items.addNewItem ();
+                final Item item = entry.getItem ();
+                itemType.setItemId ( item.getId () );
+                itemType.setUri ( item.getConnectionString () );
             }
 
             final IFile file = ( (IFileEditorInput)getEditorInput () ).getFile ();
@@ -107,7 +138,7 @@ public class RealtimeListEditor extends EditorPart
     {
         super.setInput ( input );
 
-        this._list.clear ();
+        this.list.clear ();
 
         final IFile file = ( (IFileEditorInput)getEditorInput () ).getFile ();
 
@@ -115,10 +146,12 @@ public class RealtimeListEditor extends EditorPart
         {
             final ItemsDocument doc = ItemsDocument.Factory.parse ( file.getContents () );
 
-            for ( final ItemType item : doc.getItems ().getItemList () )
+            for ( final ItemType itemType : doc.getItems ().getItemList () )
             {
-                final URI uri = new URI ( item.getUri () );
-                this._list.add ( item.getItemId (), uri, Activator.getConnectionManager ().getItemManager ( uri, true ) );
+                final Item item = new Item ( itemType.getItemId (), itemType.getUri () );
+                final URI uri = new URI ( itemType.getUri () );
+
+                this.list.add ( item, ConnectionManager.getDefault ().getItemManager ( uri, true ) );
             }
         }
         catch ( final CoreException e )
@@ -146,37 +179,37 @@ public class RealtimeListEditor extends EditorPart
     @Override
     public void createPartControl ( final Composite parent )
     {
-        this._viewer = new TreeViewer ( parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION );
+        this.viewer = new TreeViewer ( parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION );
 
         TreeColumn col;
 
-        col = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
+        col = new TreeColumn ( this.viewer.getTree (), SWT.NONE );
         col.setText ( "ID" );
-        col = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
+        col = new TreeColumn ( this.viewer.getTree (), SWT.NONE );
         col.setText ( "State" );
-        col = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
+        col = new TreeColumn ( this.viewer.getTree (), SWT.NONE );
         col.setText ( "Type" );
-        col = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
+        col = new TreeColumn ( this.viewer.getTree (), SWT.NONE );
         col.setText ( "Value" );
 
-        this._viewer.getTree ().setHeaderVisible ( true );
+        this.viewer.getTree ().setHeaderVisible ( true );
 
         final TableLayout tableLayout = new TableLayout ();
         tableLayout.addColumnData ( new ColumnWeightData ( 100, 100, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 50, 50, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 50, 50, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 75, 75, true ) );
-        this._viewer.getTree ().setLayout ( tableLayout );
+        this.viewer.getTree ().setLayout ( tableLayout );
 
-        this._viewer.setLabelProvider ( new ItemListLabelProvider () );
-        this._viewer.setContentProvider ( new ItemListContentProvider () );
-        this._viewer.setComparator ( new RealTimeListComparator () );
-        this._viewer.setInput ( this._list );
+        this.viewer.setLabelProvider ( new ItemListLabelProvider () );
+        this.viewer.setContentProvider ( new ItemListContentProvider () );
+        this.viewer.setComparator ( new ListEntryComparator () );
+        this.viewer.setInput ( this.list );
 
-        getSite ().setSelectionProvider ( this._viewer );
+        getSite ().setSelectionProvider ( this.viewer );
 
-        this._viewer.addSelectionChangedListener ( this._removeAction );
-        this._viewer.addDoubleClickListener ( new IDoubleClickListener () {
+        this.viewer.addSelectionChangedListener ( this.removeAction );
+        this.viewer.addDoubleClickListener ( new IDoubleClickListener () {
 
             public void doubleClick ( final DoubleClickEvent event )
             {
@@ -217,7 +250,9 @@ public class RealtimeListEditor extends EditorPart
 
         value = new Variant ( !value.asBoolean () );
 
-        entry.getConnection ().getConnection ().write ( entry.getDataItem ().getItemId (), value, new WriteOperationCallback () {
+        final Connection connection = ConnectionManager.getDefault ().getConnection ( entry.getItem ().getConnectionString (), true );
+
+        connection.write ( entry.getDataItem ().getItemId (), value, new WriteOperationCallback () {
 
             public void complete ()
             {
@@ -249,16 +284,16 @@ public class RealtimeListEditor extends EditorPart
                 fillContextMenu ( manager );
             }
         } );
-        final Menu menu = menuMgr.createContextMenu ( this._viewer.getControl () );
-        this._viewer.getControl ().setMenu ( menu );
-        getSite ().registerContextMenu ( menuMgr, this._viewer );
+        final Menu menu = menuMgr.createContextMenu ( this.viewer.getControl () );
+        this.viewer.getControl ().setMenu ( menu );
+        getSite ().registerContextMenu ( menuMgr, this.viewer );
     }
 
     private void fillContextMenu ( final IMenuManager manager )
     {
         // Other plug-ins can contribute there actions here
 
-        manager.add ( this._removeAction );
+        manager.add ( this.removeAction );
         manager.add ( new Separator () );
         manager.add ( new Separator ( IWorkbenchActionConstants.MB_ADDITIONS ) );
     }
@@ -272,28 +307,28 @@ public class RealtimeListEditor extends EditorPart
 
     private void fillLocalToolBar ( final IToolBarManager manager )
     {
-        manager.add ( this._removeAction );
+        manager.add ( this.removeAction );
     }
 
     private void fillLocalPullDown ( final IMenuManager manager )
     {
-        manager.add ( this._removeAction );
+        manager.add ( this.removeAction );
     }
 
     private void addDropSupport ()
     {
-        this._viewer.addDropSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance (), URLTransfer.getInstance () }, new ItemDropAdapter ( this, this._viewer ) );
+        this.viewer.addDropSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance (), URLTransfer.getInstance () }, new ItemDropAdapter ( this.viewer ) );
     }
 
     @Override
     public void setFocus ()
     {
-        this._viewer.getControl ().setFocus ();
+        this.viewer.getControl ().setFocus ();
     }
 
     public void remove ( final ListEntry entry )
     {
-        this._list.remove ( entry );
+        this.list.remove ( entry );
         makeDirty ();
     }
 

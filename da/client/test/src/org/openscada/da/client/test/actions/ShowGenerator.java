@@ -8,51 +8,53 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.openscada.da.base.browser.DataItemEntry;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.test.generator.GeneratorView;
-import org.openscada.rcp.da.client.browser.DataItemEntry;
 
 public class ShowGenerator implements IObjectActionDelegate
 {
     private Connection connection;
+
     private String itemId;
+
     private IWorkbenchPart targetPart;
 
-    public void setActivePart ( IAction action, IWorkbenchPart targetPart )
+    public void setActivePart ( final IAction action, final IWorkbenchPart targetPart )
     {
         this.targetPart = targetPart;
     }
 
-    public void run ( IAction action )
+    public void run ( final IAction action )
     {
-        String secondaryId = itemId.replaceAll ( "\\.:", "_" );
+        final String secondaryId = this.itemId.replaceAll ( "\\.:", "_" );
         try
         {
-            GeneratorView view = (GeneratorView)this.targetPart.getSite ().getPage ().showView ( GeneratorView.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE );
-            view.setDataItem ( connection, itemId );
+            final GeneratorView view = (GeneratorView)this.targetPart.getSite ().getPage ().showView ( GeneratorView.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE );
+            view.setDataItem ( this.connection, this.itemId );
         }
-        catch ( PartInitException e )
+        catch ( final PartInitException e )
         {
             ErrorDialog.openError ( this.targetPart.getSite ().getShell (), "Error", "Failed to open view", e.getStatus () );
         }
     }
 
-    public void selectionChanged ( IAction action, ISelection selection )
+    public void selectionChanged ( final IAction action, final ISelection selection )
     {
-        if ( !(selection instanceof IStructuredSelection) )
+        if ( ! ( selection instanceof IStructuredSelection ) )
         {
             return;
         }
-        
-        connection = null;
-        itemId = null;
-        
-        Object o = ((IStructuredSelection)selection).getFirstElement ();
+
+        this.connection = null;
+        this.itemId = null;
+
+        final Object o = ( (IStructuredSelection)selection ).getFirstElement ();
         if ( o instanceof DataItemEntry )
         {
-            DataItemEntry entry = (DataItemEntry)o;
-            connection = entry.getConnection ().getConnection ();
-            itemId = entry.getId ();
+            final DataItemEntry entry = (DataItemEntry)o;
+            this.connection = entry.getConnection ().getConnection ();
+            this.itemId = entry.getId ();
         }
     }
 

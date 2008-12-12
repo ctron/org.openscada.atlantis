@@ -13,9 +13,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
-import org.openscada.da.client.test.views.realtime.ListEntry;
-import org.openscada.rcp.da.client.browser.DataItemEntry;
-import org.openscada.rcp.da.client.browser.HiveConnection;
+import org.openscada.da.base.connection.ConnectionManager;
+import org.openscada.da.base.item.DataItemHolder;
+import org.openscada.da.base.item.ItemSelectionHelper;
 
 public class OpenChartAction implements IViewActionDelegate, IObjectActionDelegate
 {
@@ -42,46 +42,31 @@ public class OpenChartAction implements IViewActionDelegate, IObjectActionDelega
             return;
         }
 
-        final Object o = this._selection.getFirstElement ();
-        String item = null;
-        HiveConnection connection = null;
-        if ( o instanceof DataItemEntry )
+        for ( final DataItemHolder item : ItemSelectionHelper.getSelectionHookedUp ( this._selection, ConnectionManager.getDefault () ) )
         {
-            item = ( (DataItemEntry)o ).getId ();
-            connection = ( (DataItemEntry)o ).getConnection ();
-        }
-        if ( o instanceof ListEntry )
-        {
-            item = ( (ListEntry)o ).getDataItem ().getItemId ();
-            connection = ( (ListEntry)o ).getConnection ();
-        }
+            String secondaryId = item.getItemId ();
+            secondaryId = secondaryId.replace ( "_", "__" );
+            secondaryId = secondaryId.replace ( ":", "_" );
 
-        if ( item == null )
-        {
-            return;
-        }
-
-        String secondaryId = item;
-        secondaryId = secondaryId.replace ( "_", "__" );
-        secondaryId = secondaryId.replace ( ":", "_" );
-
-        try
-        {
-            final IViewPart viewer = this._site.getPage ().showView ( ChartView.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE );
-            if ( viewer instanceof ChartView )
+            try
             {
-                ( (ChartView)viewer ).setDataItem ( connection, item );
+                final IViewPart viewer = this._site.getPage ().showView ( ChartView.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE );
+                if ( viewer instanceof ChartView )
+                {
+                    ( (ChartView)viewer ).setDataItem ( item );
+                }
             }
-        }
-        catch ( final PartInitException e )
-        {
-            _log.error ( "Failed to create view", e );
-            Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Failed to create chart view", e ) );
-        }
-        catch ( final Exception e )
-        {
-            _log.error ( "Failed to create view", e );
-            Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 1, "Failed to create chart view", e ) );
+            catch ( final PartInitException e )
+            {
+                _log.error ( "Failed to create view", e );
+                Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Failed to create chart view", e ) );
+            }
+            catch ( final Exception e )
+            {
+                _log.error ( "Failed to create view", e );
+                Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 1, "Failed to create chart view", e ) );
+            }
+
         }
     }
 

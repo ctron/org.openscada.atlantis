@@ -42,9 +42,9 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.da.base.browser.DataItemEntry;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.ItemUpdateListener;
-import org.openscada.rcp.da.client.browser.DataItemEntry;
 
 /**
  * This sample class demonstrates how to plug-in a new
@@ -172,6 +172,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
      * This is a callback that will allow us
      * to create the viewer and initialize it.
      */
+    @Override
     public void createPartControl ( final Composite parent )
     {
         parent.setLayout ( new GridLayout ( 1, false ) );
@@ -270,6 +271,7 @@ public class DataItemWatchView extends ViewPart implements ItemUpdateListener
     /**
      * Passing the focus request to the viewer's control.
      */
+    @Override
     public void setFocus ()
     {
         this.viewer.getControl ().setFocus ();

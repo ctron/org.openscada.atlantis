@@ -44,9 +44,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.da.base.browser.HiveItem;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.ItemUpdateListener;
-import org.openscada.rcp.da.client.browser.HiveItem;
 
 /**
  * This sample class demonstrates how to plug-in a new

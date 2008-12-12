@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Base Plug-in
-Bundle-SymbolicName: org.openscada.da.base
-Bundle-Version: 0.10.0
+Bundle-SymbolicName: org.openscada.da.base;singleton:=true
+Bundle-Version: 0.10.1
 Bundle-Activator: org.openscada.da.base.Activator
 Require-Bundle: org.eclipse.core.runtime,
  log4j_wrapper_plugin;bundle-version="1.2.13",
@@ -14,4 +14,5 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.da.base.browser,
  org.openscada.da.base.connection,
  org.openscada.da.base.dnd,
- org.openscada.da.base.item
+ org.openscada.da.base.item,
+ org.openscada.da.base.realtime

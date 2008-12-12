@@ -38,10 +38,13 @@ import org.eclipse.swt.widgets.Text;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.da.client.test.views.realtime.ListEntry;
-import org.openscada.rcp.da.client.browser.DataItemEntry;
-import org.openscada.rcp.da.client.browser.HiveConnection;
-import org.openscada.rcp.da.client.browser.ValueType;
+import org.openscada.da.base.browser.DataItemEntry;
+import org.openscada.da.base.browser.ValueType;
+import org.openscada.da.base.connection.ConnectionManager;
+import org.openscada.da.base.item.DataItemHolder;
+import org.openscada.da.base.item.ItemSelectionHelper;
+import org.openscada.da.base.realtime.ListEntry;
+import org.openscada.da.client.Connection;
 
 class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
 {
@@ -59,7 +62,7 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
 
     private Color _defaultValueColor = null;
 
-    private HiveConnection _connection = null;
+    private Connection _connection = null;
 
     private Variant _value = null;
 
@@ -251,7 +254,7 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         return this._value;
     }
 
-    public HiveConnection getConnection ()
+    public Connection getConnection ()
     {
         return this._connection;
     }
@@ -260,18 +263,7 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
     {
         this._selection = selection;
 
-        final Object obj = this._selection.getFirstElement ();
-        if ( obj instanceof HiveConnection )
-        {
-            this._connection = (HiveConnection)obj;
-        }
-        else if ( obj instanceof DataItemEntry )
-        {
-            this._connection = ( (DataItemEntry)obj ).getConnection ();
-        }
-        else if ( obj instanceof ListEntry )
-        {
-            this._connection = ( (ListEntry)obj ).getConnection ();
-        }
+        final DataItemHolder dataItem = ItemSelectionHelper.getFirstFromSelectionHookedUp ( selection, ConnectionManager.getDefault () );
+        this._connection = dataItem.getConnection ();
     }
 }

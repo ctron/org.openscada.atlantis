@@ -32,6 +32,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
+import org.openscada.da.base.item.DataItemHolder;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.dataitem.details.part.DetailsPart;
 
@@ -40,50 +41,52 @@ public class DetailsViewPart extends ViewPart
 
     public static final String VIEW_ID = "org.openscada.da.client.dataitem.details.DetailsViewPart";
 
-    private Collection<DetailsPart> detailParts = new LinkedList<DetailsPart> ();
+    private final Collection<DetailsPart> detailParts = new LinkedList<DetailsPart> ();
 
     private DataItem dataItem;
 
+    private CTabFolder tabFolder;
+
     @Override
-    public void createPartControl ( Composite parent )
+    public void createPartControl ( final Composite parent )
     {
-        CTabFolder tabFolder = new CTabFolder (parent, SWT.BOTTOM );
-        
-        for ( IConfigurationElement element : Platform.getExtensionRegistry ().getConfigurationElementsFor ( Activator.EXTP_DETAILS_PART ) )
+        this.tabFolder = new CTabFolder ( parent, SWT.BOTTOM );
+
+        for ( final IConfigurationElement element : Platform.getExtensionRegistry ().getConfigurationElementsFor ( Activator.EXTP_DETAILS_PART ) )
         {
-            CTabItem tabItem = new CTabItem ( tabFolder, SWT.NONE );
-            Composite parentComposite = new Composite ( tabFolder, SWT.NONE );
+            final CTabItem tabItem = new CTabItem ( this.tabFolder, SWT.NONE );
+            final Composite parentComposite = new Composite ( this.tabFolder, SWT.NONE );
             parentComposite.setLayout ( new FillLayout () );
             tabItem.setControl ( parentComposite );
             try
             {
                 createDetailsPart ( tabItem, parentComposite, element );
             }
-            catch ( CoreException e )
+            catch ( final CoreException e )
             {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                e.printStackTrace ();
             }
         }
-        if ( !detailParts.isEmpty () )
+        if ( !this.detailParts.isEmpty () )
         {
-            tabFolder.setSelection ( 0 );
+            this.tabFolder.setSelection ( 0 );
         }
     }
 
-    private void createDetailsPart ( CTabItem tabItem, Composite parent, IConfigurationElement element ) throws CoreException
+    private void createDetailsPart ( final CTabItem tabItem, final Composite parent, final IConfigurationElement element ) throws CoreException
     {
-        String name = element.getAttribute ( "name" );
-        
+        final String name = element.getAttribute ( "name" );
+
         tabItem.setText ( name );
-        
-        Object o = element.createExecutableExtension ( "class" );
+
+        final Object o = element.createExecutableExtension ( "class" );
         if ( ! ( o instanceof DetailsPart ) )
         {
             throw new CoreException ( new Status ( Status.ERROR, Activator.PLUGIN_ID, "DetailsPart is not of type 'DetailsPart'" ) );
         }
 
-        DetailsPart part = (DetailsPart)o;
+        final DetailsPart part = (DetailsPart)o;
         part.createPart ( parent );
         this.detailParts.add ( part );
     }
@@ -91,7 +94,7 @@ public class DetailsViewPart extends ViewPart
     @Override
     public void dispose ()
     {
-        for ( DetailsPart part : this.detailParts )
+        for ( final DetailsPart part : this.detailParts )
         {
             part.dispose ();
         }
@@ -102,14 +105,14 @@ public class DetailsViewPart extends ViewPart
     @Override
     public void setFocus ()
     {
-
+        this.tabFolder.setFocus ();
     }
 
     /**
      * set the current data item
      * @param item data item or <code>null</code> if none should be selected
      */
-    public void setDataItem ( DataItemHolder item )
+    public void setDataItem ( final DataItemHolder item )
     {
         disposeDataItem ();
 
@@ -117,7 +120,7 @@ public class DetailsViewPart extends ViewPart
         {
             this.dataItem = new DataItem ( item.getItemId (), item.getItemManager () );
 
-            for ( DetailsPart part : this.detailParts )
+            for ( final DetailsPart part : this.detailParts )
             {
                 part.setDataItem ( item.getConnection (), this.dataItem );
             }
@@ -125,9 +128,9 @@ public class DetailsViewPart extends ViewPart
         else
         {
             // clear
-            for ( DetailsPart part : this.detailParts )
+            for ( final DetailsPart part : this.detailParts )
             {
-                part.setDataItem ( item.getConnection (), null );
+                part.setDataItem ( null, null );
             }
         }
     }
