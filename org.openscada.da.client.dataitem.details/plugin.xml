@@ -18,7 +18,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.dataitem.details.objectContribution1"
-            objectClass="org.openscada.da.client.test.impl.HiveItem">
+            objectClass="org.openscada.da.base.browser.HiveItem">
          <action
                class="org.openscada.da.client.dataitem.details.ShowDetailsAction"
                enablesFor="1"
@@ -30,7 +30,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.dataitem.details.objectContribution2"
-            objectClass="org.openscada.da.client.test.views.realtime.ListEntry">
+            objectClass="org.openscada.da.base.realtime.ListEntry">
          <action
                class="org.openscada.da.client.dataitem.details.ShowDetailsAction"
                enablesFor="1"
@@ -42,7 +42,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.dataitem.details.objectContribution3"
-            objectClass="org.openscada.da.client.test.impl.DataItemEntry">
+            objectClass="org.openscada.da.base.browser.DataItemEntry">
          <action
                class="org.openscada.da.client.dataitem.details.ShowDetailsAction"
                enablesFor="1"
