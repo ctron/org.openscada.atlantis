@@ -21,7 +21,7 @@ package org.openscada.da.client.dataitem.details.part;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.services.IDisposable;
-import org.openscada.da.client.Connection;
+import org.openscada.da.base.item.DataItemHolder;
 import org.openscada.da.client.DataItem;
 
 public interface DetailsPart extends IDisposable
@@ -34,8 +34,8 @@ public interface DetailsPart extends IDisposable
 
     /**
      * set to update the item instance
-     * @param connection the connection of the item
+     * @param itemHolder the data item information holder
      * @param item the data item
      */
-    public void setDataItem ( Connection connection, DataItem item );
+    public void setDataItem ( DataItemHolder itemHolder, DataItem item );
 }

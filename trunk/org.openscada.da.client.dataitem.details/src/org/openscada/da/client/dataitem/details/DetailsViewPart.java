@@ -122,7 +122,7 @@ public class DetailsViewPart extends ViewPart
 
             for ( final DetailsPart part : this.detailParts )
             {
-                part.setDataItem ( item.getConnection (), this.dataItem );
+                part.setDataItem ( item, this.dataItem );
             }
         }
         else
