@@ -7,6 +7,10 @@
             class="org.openscada.da.client.dataitem.details.extra.ManualOverride"
             name="Manual Override">
       </detailsPart>
+      <detailsPart
+            class="org.openscada.da.client.dataitem.details.extra.LevelPresets"
+            name="Level Presets">
+      </detailsPart>
    </extension>
 
 </plugin>

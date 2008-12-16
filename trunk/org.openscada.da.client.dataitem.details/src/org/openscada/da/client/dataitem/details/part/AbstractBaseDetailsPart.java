@@ -24,6 +24,8 @@ import java.util.Observer;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.openscada.core.Variant;
 import org.openscada.da.base.item.DataItemHolder;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.DataItemValue;
@@ -39,6 +41,10 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
 
     protected DataItemHolder itemHolder;
 
+    protected Shell shell;
+
+    private Composite parent;
+
     public AbstractBaseDetailsPart ()
     {
         super ();
@@ -47,6 +53,8 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
     public void createPart ( final Composite parent )
     {
         this.display = parent.getDisplay ();
+        this.shell = parent.getShell ();
+        this.parent = parent;
     }
 
     public void setDataItem ( final DataItemHolder itemHolder, final DataItem item )
@@ -91,7 +99,7 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
 
             public void run ()
             {
-                if ( !AbstractBaseDetailsPart.this.display.isDisposed () )
+                if ( !AbstractBaseDetailsPart.this.parent.isDisposed () )
                 {
                     AbstractBaseDetailsPart.this.update ();
                 }
@@ -132,6 +140,46 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
             return this.value.getAttributes ().get ( name ).asBoolean ();
         }
         return false;
+    }
+
+    protected Number getNumberAttribute ( final String name, final Number defaultValue )
+    {
+        final Variant value = this.value.getAttributes ().get ( name );
+
+        if ( value == null )
+        {
+            return defaultValue;
+        }
+        if ( value.isNull () )
+        {
+            return defaultValue;
+        }
+
+        try
+        {
+            if ( value.isDouble () )
+            {
+                return value.asDouble ();
+            }
+            if ( value.isInteger () )
+            {
+                return value.asInteger ();
+            }
+            if ( value.isLong () )
+            {
+                return value.asLong ();
+            }
+            if ( value.isBoolean () )
+            {
+                return value.asBoolean () ? 1 : 0;
+            }
+            return Double.parseDouble ( value.asString () );
+        }
+        catch ( final Throwable e )
+        {
+        }
+
+        return defaultValue;
     }
 
 }
