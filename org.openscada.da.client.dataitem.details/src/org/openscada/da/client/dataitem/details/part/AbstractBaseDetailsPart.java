@@ -24,9 +24,9 @@ import java.util.Observer;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.da.client.Connection;
+import org.openscada.da.base.item.DataItemHolder;
 import org.openscada.da.client.DataItem;
+import org.openscada.da.client.DataItemValue;
 
 public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
 {
@@ -35,7 +35,9 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
 
     protected DataItem item;
 
-    protected Connection connection;
+    protected DataItemValue value;
+
+    protected DataItemHolder itemHolder;
 
     public AbstractBaseDetailsPart ()
     {
@@ -45,23 +47,26 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
     public void createPart ( final Composite parent )
     {
         this.display = parent.getDisplay ();
-
     }
 
-    public void setDataItem ( final Connection connection, final DataItem item )
+    public void setDataItem ( final DataItemHolder itemHolder, final DataItem item )
     {
-        this.connection = connection;
+        this.itemHolder = itemHolder;
 
         if ( this.item != null )
         {
             this.item.deleteObserver ( this );
+            this.item = null;
         }
         this.item = item;
 
         if ( this.item != null )
         {
-            this.item.addObserver ( this );
+            // fetch the initial value
+            this.value = this.item.getSnapshotValue ();
             update ();
+
+            this.item.addObserver ( this );
         }
     }
 
@@ -70,6 +75,7 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
         if ( this.item != null )
         {
             this.item.deleteObserver ( this );
+            this.item = null;
         }
     }
 
@@ -78,6 +84,8 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
      */
     public void update ( final Observable o, final Object arg )
     {
+        AbstractBaseDetailsPart.this.value = AbstractBaseDetailsPart.this.item.getSnapshotValue ();
+
         // trigger async update in display thread
         this.display.asyncExec ( new Runnable () {
 
@@ -99,24 +107,29 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
      */
     protected boolean isUnsafe ()
     {
-        return getBooleanAttribute ( "error" ) || !this.item.getSubscriptionState ().equals ( SubscriptionState.CONNECTED );
+        return this.value.isError () || !this.value.isConnected ();
+    }
+
+    protected boolean isError ()
+    {
+        return this.value.isError ();
     }
 
     protected boolean isAlarm ()
     {
-        return getBooleanAttribute ( "alarm" );
+        return this.value.isAlarm ();
     }
 
     protected boolean isManual ()
     {
-        return getBooleanAttribute ( "org.openscada.da.manual.active" );
+        return this.value.isManual ();
     }
 
     protected boolean getBooleanAttribute ( final String name )
     {
-        if ( this.item.getAttributes ().containsKey ( name ) )
+        if ( this.value.getAttributes ().containsKey ( name ) )
         {
-            return this.item.getAttributes ().get ( name ).asBoolean ();
+            return this.value.getAttributes ().get ( name ).asBoolean ();
         }
         return false;
     }

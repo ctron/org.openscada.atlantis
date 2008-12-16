@@ -35,6 +35,7 @@ import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
+import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.swt.SWT;
@@ -166,6 +167,7 @@ public class ManualOverride extends AbstractBaseDetailsPart
         final ChopboxAnchor targetAnchor = new ChopboxAnchor ( this.rvRect );
         c.setSourceAnchor ( sourceAnchor );
         c.setTargetAnchor ( targetAnchor );
+
         return c;
     }
 
@@ -176,6 +178,7 @@ public class ManualOverride extends AbstractBaseDetailsPart
         final ChopboxAnchor targetAnchor = new ChopboxAnchor ( this.rvRect );
         c.setSourceAnchor ( sourceAnchor );
         c.setTargetAnchor ( targetAnchor );
+
         return c;
     }
 
@@ -252,7 +255,7 @@ public class ManualOverride extends AbstractBaseDetailsPart
         }
 
         attributes.put ( "org.openscada.da.manual.value", value );
-        this.connection.writeAttributes ( this.item.getItemId (), attributes, new WriteAttributeOperationCallback () {
+        this.itemHolder.getConnection ().writeAttributes ( this.item.getItemId (), attributes, new WriteAttributeOperationCallback () {
 
             public void complete ( final WriteAttributeResults result )
             {
@@ -310,7 +313,7 @@ public class ManualOverride extends AbstractBaseDetailsPart
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         attributes.put ( "org.openscada.da.manual.value", new Variant () );
-        this.connection.writeAttributes ( this.item.getItemId (), attributes, new WriteAttributeOperationCallback () {
+        this.itemHolder.getConnection ().writeAttributes ( this.item.getItemId (), attributes, new WriteAttributeOperationCallback () {
 
             public void complete ( final WriteAttributeResults result )
             {
@@ -354,7 +357,7 @@ public class ManualOverride extends AbstractBaseDetailsPart
     protected void update ()
     {
         // set result value
-        this.rvValue.setText ( this.item.getValue ().toString () );
+        this.rvValue.setText ( this.value.getValue ().toString () );
         if ( isUnsafe () )
         {
             this.rvRect.setBackgroundColor ( ColorConstants.yellow );
@@ -373,9 +376,9 @@ public class ManualOverride extends AbstractBaseDetailsPart
         }
 
         // set manual value
-        final Variant manualValue = this.item.getAttributes ().get ( "org.openscada.da.manual.value" );
-        final Variant processValue = this.item.getAttributes ().get ( "org.openscada.da.manual.value.original" );
-        Variant processError = this.item.getAttributes ().get ( "org.openscada.da.manual.error.original" );
+        final Variant manualValue = this.value.getAttributes ().get ( "org.openscada.da.manual.value" );
+        final Variant processValue = this.value.getAttributes ().get ( "org.openscada.da.manual.value.original" );
+        Variant processError = this.value.getAttributes ().get ( "org.openscada.da.manual.error.original" );
         if ( processError == null )
         {
             processError = new Variant ( false );
@@ -395,6 +398,11 @@ public class ManualOverride extends AbstractBaseDetailsPart
             this.p2rConnection.setLineStyle ( Graphics.LINE_DASH );
             this.m2rConnection.setLineStyle ( Graphics.LINE_SOLID );
 
+            this.p2rConnection.setTargetDecoration ( null );
+            final PolygonDecoration dec = new PolygonDecoration ();
+            dec.setTemplate ( PolygonDecoration.TRIANGLE_TIP );
+            this.m2rConnection.setTargetDecoration ( dec );
+
             // set process value
             if ( processValue != null )
             {
@@ -412,7 +420,12 @@ public class ManualOverride extends AbstractBaseDetailsPart
             this.p2rConnection.setLineStyle ( Graphics.LINE_SOLID );
             this.m2rConnection.setLineStyle ( Graphics.LINE_DASH );
 
-            this.pvValue.setText ( this.item.getValue ().toString () );
+            final PolygonDecoration dec = new PolygonDecoration ();
+            dec.setTemplate ( PolygonDecoration.TRIANGLE_TIP );
+            this.p2rConnection.setTargetDecoration ( dec );
+            this.m2rConnection.setTargetDecoration ( null );
+
+            this.pvValue.setText ( this.value.getValue ().toString () );
         }
     }
 }

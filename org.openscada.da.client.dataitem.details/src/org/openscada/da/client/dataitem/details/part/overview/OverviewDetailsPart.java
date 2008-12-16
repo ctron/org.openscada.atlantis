@@ -27,7 +27,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.openscada.da.client.Connection;
+import org.openscada.da.base.item.DataItemHolder;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.dataitem.details.part.AbstractBaseDetailsPart;
 import org.openscada.da.client.dataitem.details.part.DetailsPart;
@@ -98,11 +98,11 @@ public class OverviewDetailsPart extends AbstractBaseDetailsPart implements Deta
     }
 
     @Override
-    public void setDataItem ( final Connection connection, final DataItem item )
+    public void setDataItem ( final DataItemHolder itemHolder, final DataItem item )
     {
-        super.setDataItem ( connection, item );
+        super.setDataItem ( itemHolder, item );
 
-        if ( item != null )
+        if ( item != null && itemHolder != null )
         {
             this.connectionUriText.setText ( "??" );
             this.itemIdText.setText ( item.getItemId () );
@@ -122,24 +122,20 @@ public class OverviewDetailsPart extends AbstractBaseDetailsPart implements Deta
     @Override
     protected void update ()
     {
-        this.stateText.setText ( this.item.getSubscriptionState ().name () );
+        if ( this.value.getSubscriptionError () == null )
+        {
+            this.stateText.setText ( this.value.getSubscriptionState ().name () );
+        }
+        else
+        {
+            this.stateText.setText ( String.format ( "%s (%s)", this.value.getSubscriptionState ().name (), this.value.getSubscriptionError ().getMessage () ) );
+        }
 
         this.alarmText.setText ( isAlarm () ? "alarm active" : "no alarm" );
-        this.errorText.setText ( isUnsafe () ? "error" : "ok" );
+        this.errorText.setText ( isError () ? "error" : "ok" );
 
-        this.valueText.setText ( this.item.getValue () != null ? this.item.getValue ().toString () : "<null>" );
-        if ( this.item.getAttributes ().containsKey ( "timestamp" ) )
-        {
-            final Calendar c = Calendar.getInstance ();
-            try
-            {
-                c.setTimeInMillis ( this.item.getAttributes ().get ( "timestamp" ).asLong () );
-                this.timestampText.setText ( String.format ( "%1$tF %1$tT,%1$tL", c ) );
-            }
-            catch ( final Throwable e )
-            {
-                this.timestampText.setText ( "Failed to convert timestamp: " + e.getMessage () );
-            }
-        }
+        this.valueText.setText ( this.value.getValue () != null ? this.value.getValue ().toString () : "<null>" );
+        final Calendar c = this.value.getTimestamp ();
+        this.timestampText.setText ( c != null ? String.format ( "%1$tF %1$tT,%1$tL", c ) : "<null>" );
     }
 }
