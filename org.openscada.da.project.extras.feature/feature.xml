@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.project.extras"
       label="OpenSCADA DA Project Extras Feature"
-      version="1.0.0"
+      version="1.0.2"
       provider-name="OpenSCADA">
 
    <description url="http://www.example.com/description">
