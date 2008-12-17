@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.ice.client"
       label="OpenSCDA DA ICE Client Wrapper"
-      version="0.8.1"
+      version="0.10.0"
       provider-name="OpenSCADA.org"
       plugin="org.openscada.da.ice.client">
 
@@ -494,6 +494,11 @@ DAMAGES.
    <url>
       <update label="OpenSCADA DA Test Client" url="http://openscada.org/ostc"/>
    </url>
+
+   <requires>
+      <import plugin="log4j_wrapper_plugin"/>
+      <import plugin="org.openscada.da.client"/>
+   </requires>
 
    <plugin
          id="org.openscada.da.ice.client"

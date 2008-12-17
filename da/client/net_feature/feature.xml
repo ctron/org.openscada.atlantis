@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.net.client"
       label="OpenSCADA DA NET Client Wrapper"
-      version="0.8.1"
+      version="0.10.0"
       provider-name="OpenSCADA.org"
       plugin="org.openscada.da.net.client">
 
@@ -494,6 +494,10 @@ DAMAGES.
    <url>
       <update label="OpenSCADA DA Test Client" url="http://openscada.org/ostc"/>
    </url>
+
+   <requires>
+      <import plugin="org.openscada.da.client"/>
+   </requires>
 
    <plugin
          id="log4j_wrapper_plugin"
