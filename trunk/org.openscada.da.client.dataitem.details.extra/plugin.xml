@@ -11,6 +11,10 @@
             class="org.openscada.da.client.dataitem.details.extra.LevelPresets"
             name="Level Presets">
       </detailsPart>
+      <detailsPart
+            class="org.openscada.da.client.dataitem.details.extra.InputScaleDetails"
+            name="Input Scale">
+      </detailsPart>
    </extension>
 
 </plugin>
