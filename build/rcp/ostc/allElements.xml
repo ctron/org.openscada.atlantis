@@ -14,6 +14,14 @@
       <property name="type" value="feature" />
       <property name="id" value="org.openscada.rcp.client" />
     </ant>
+  	<ant antfile="${genericTargets}" target="${target}">
+  	   <property name="type" value="feature" />
+  	   <property name="id" value="org.openscada.da.net.client" />
+  	</ant>
+  	<ant antfile="${genericTargets}" target="${target}">
+  	   <property name="type" value="feature" />
+  	   <property name="id" value="org.openscada.da.ice.client" />
+  	</ant>
   </target>
  
   <!-- ===================================================================== -->
