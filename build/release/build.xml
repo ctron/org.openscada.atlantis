@@ -175,26 +175,26 @@
     	<ant dir="${source.base}/da/ice/base"/>
        	<ant dir="${source.base}/da/net/base"/>
       	<ant dir="${source.base}/da/server/net"/>
-	  	<ant dir="${source.base}/da/server/ice"/>
+	<ant dir="${source.base}/da/server/ice"/>
     	
-	    <ant dir="${source.base}/da/server/simulation"/>
-	    <ant dir="${source.base}/da/server/snmp"/>
-	    <ant dir="${source.base}/da/server/sysinfo"/>
-	    <ant dir="${source.base}/da/server/test"/>
+	<ant dir="${source.base}/da/server/simulation"/>
+	<ant dir="${source.base}/da/server/snmp"/>
+	<ant dir="${source.base}/da/server/sysinfo"/>
+	<ant dir="${source.base}/da/server/test"/>
     	<ant dir="${source.base}/da/server/opc2"/>
-	    <ant dir="${source.base}/da/server/stock"/>
-	    <ant dir="${source.base}/da/server/spring"/>
+	<ant dir="${source.base}/da/server/stock"/>
+	<ant dir="${source.base}/da/server/spring"/>
     	<ant dir="${source.base}/da/server/exec"/>
     	<ant dir="${source.base}/da/server/jdbc"/>
 
-	   	<ant dir="${source.base}/core/client/common"/>
+	<ant dir="${source.base}/core/client/common"/>
        	<ant dir="${source.base}/core/client/net"/>
-	   	<ant dir="${source.base}/da/client/common"/>
+	<ant dir="${source.base}/da/client/common"/>
        	<ant dir="${source.base}/da/client/ice"/>
-		<ant dir="${source.base}/da/client/net"/>
+	<ant dir="${source.base}/da/client/net"/>
     	
-		<ant dir="${source.base}/da/client/samples"/>
-		<ant dir="${source.base}/da/server/exporter"/>
+	<ant dir="${source.base}/da/client/samples"/>
+	<ant dir="${source.base}/da/server/exporter"/>
     	<ant dir="${source.base}/da/server/exporter_spring"/>
 
     	<!-- the following module needs the client -->

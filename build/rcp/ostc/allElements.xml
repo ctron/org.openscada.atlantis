@@ -10,18 +10,22 @@
   <!-- Add on <ant> task for each top level element being built.             -->
   <!-- ===================================================================== -->
   <target name="allElementsDelegator">
-  	<ant antfile="${genericTargets}" target="${target}">
+    <ant antfile="${genericTargets}" target="${target}">
+      <property name="type" value="feature" />
+      <property name="id" value="org.openscada.da.client.test" />
+    </ant>
+    <ant antfile="${genericTargets}" target="${target}">
+      <property name="type" value="feature" />
+      <property name="id" value="org.openscada.da.net.client" />
+    </ant>
+    <ant antfile="${genericTargets}" target="${target}">
+      <property name="type" value="feature" />
+      <property name="id" value="org.openscada.da.ice.client" />
+    </ant>
+    <ant antfile="${genericTargets}" target="${target}">
       <property name="type" value="feature" />
       <property name="id" value="org.openscada.rcp.client" />
     </ant>
-  	<ant antfile="${genericTargets}" target="${target}">
-  	   <property name="type" value="feature" />
-  	   <property name="id" value="org.openscada.da.net.client" />
-  	</ant>
-  	<ant antfile="${genericTargets}" target="${target}">
-  	   <property name="type" value="feature" />
-  	   <property name="id" value="org.openscada.da.ice.client" />
-  	</ant>
   </target>
  
   <!-- ===================================================================== -->
@@ -36,6 +40,18 @@
   </target>
   
   <target name="assemble.org.openscada.rcp.client">  
+    <ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+  </target>
+
+  <target name="assemble.org.openscada.da.client.test">  
+    <ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+  </target>
+
+  <target name="assemble.org.openscada.da.ice.client">  
+    <ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+  </target>
+
+  <target name="assemble.org.openscada.da.net.client">  
     <ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
   </target>
 		
