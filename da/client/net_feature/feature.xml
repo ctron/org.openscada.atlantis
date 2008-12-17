@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.net.client"
       label="OpenSCADA DA NET Client Wrapper"
-      version="0.10.0"
+      version="0.10.1"
       provider-name="OpenSCADA.org"
       plugin="org.openscada.da.net.client">
 
