@@ -16,7 +16,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.base.browser.ValueType;
 
@@ -122,14 +121,7 @@ public class VariantEntryDialog extends TitleAreaDialog
         }
         if ( this.value != null )
         {
-            try
-            {
-                setValueText ( this.value.asString (), false );
-            }
-            catch ( final NullValueException e )
-            {
-                setValueText ( "<null>", true );
-            }
+            setValueText ( this.value.toString (), false );
         }
         else
         {

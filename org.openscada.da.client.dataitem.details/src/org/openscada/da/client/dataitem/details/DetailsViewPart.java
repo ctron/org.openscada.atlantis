@@ -33,6 +33,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.da.base.item.DataItemHolder;
+import org.openscada.da.client.AsyncDataItem;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.dataitem.details.part.DetailsPart;
 
@@ -118,7 +119,7 @@ public class DetailsViewPart extends ViewPart
 
         if ( item != null )
         {
-            this.dataItem = new DataItem ( item.getItemId (), item.getItemManager () );
+            this.dataItem = new AsyncDataItem ( item.getItemId (), item.getItemManager () );
 
             for ( final DetailsPart part : this.detailParts )
             {

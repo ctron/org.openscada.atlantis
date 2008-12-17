@@ -13,25 +13,17 @@ import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.Triangle;
 import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Composite;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
-import org.openscada.da.client.dataitem.details.part.AbstractBaseDetailsPart;
 
-public class LevelPresets extends AbstractBaseDetailsPart
+public class LevelPresets extends AbstractBaseDraw2DDetailsPart
 {
-
-    private Canvas canvas;
-
     private Triangle triHH;
 
     private Triangle triH;
@@ -51,20 +43,7 @@ public class LevelPresets extends AbstractBaseDetailsPart
     private Label currentLabel;
 
     @Override
-    public void createPart ( final Composite parent )
-    {
-        super.createPart ( parent );
-
-        parent.setLayout ( new org.eclipse.swt.layout.GridLayout ( 1, false ) );
-
-        this.canvas = new Canvas ( parent, SWT.NONE );
-        this.canvas.setLayoutData ( new org.eclipse.swt.layout.GridData ( SWT.FILL, SWT.FILL, true, true ) );
-        final LightweightSystem lws = new LightweightSystem ( this.canvas );
-
-        lws.setContents ( createRoot () );
-    }
-
-    private IFigure createRoot ()
+    protected IFigure createRoot ()
     {
         final Figure rootFigure = new Figure ();
 
