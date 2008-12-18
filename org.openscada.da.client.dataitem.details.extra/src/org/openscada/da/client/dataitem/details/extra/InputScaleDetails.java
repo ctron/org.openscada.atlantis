@@ -157,11 +157,13 @@ public class InputScaleDetails extends AbstractBaseDraw2DDetailsPart
     @Override
     protected void update ()
     {
+        // set the main value
         this.valueLabel.setText ( this.value.getValue ().toString () );
 
         final Variant factor = this.value.getAttributes ().get ( "org.openscada.da.scale.input.factor" );
         final Variant raw = this.value.getAttributes ().get ( "org.openscada.da.scale.input.raw" );
 
+        // set the factor value if available
         if ( factor != null )
         {
             this.factorLabel.setText ( factor.toString () );
@@ -171,6 +173,7 @@ public class InputScaleDetails extends AbstractBaseDraw2DDetailsPart
             this.factorLabel.setText ( "" );
         }
 
+        // set the raw value if available
         if ( raw != null )
         {
             this.rawLabel.setText ( raw.toString () );
