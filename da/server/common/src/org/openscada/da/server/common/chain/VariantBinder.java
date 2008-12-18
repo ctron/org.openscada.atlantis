@@ -23,30 +23,33 @@ import org.openscada.core.Variant;
 
 public class VariantBinder implements AttributeBinder
 {
-    private Variant _defaultValue = null;
-    private Variant _value = null;
-    
-    public VariantBinder ( Variant defaultValue )
+    private Variant defaultValue = null;
+
+    private Variant value = null;
+
+    public VariantBinder ( final Variant defaultValue )
     {
         super ();
-        _defaultValue = defaultValue;
+        this.defaultValue = defaultValue;
     }
-    
+
     public VariantBinder ()
     {
         super ();
     }
-    
-    public void bind ( Variant value ) throws Exception
+
+    public void bind ( final Variant value ) throws Exception
     {
-        _value = value;
+        this.value = new Variant ( value );
     }
 
     public Variant getValue ()
     {
-        if ( _value == null )
-            return _defaultValue;
-        return _value;
+        if ( this.value == null )
+        {
+            return this.defaultValue;
+        }
+        return this.value;
     }
 
     public Variant getAttributeValue ()
