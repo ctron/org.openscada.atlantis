@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,73 +27,76 @@ import org.openscada.net.line.LineHandler;
 
 public class TestLineHandler implements LineHandler
 {
-    private static Logger _log = Logger.getLogger ( TestLineHandler.class );
+    private static Logger log = Logger.getLogger ( TestLineHandler.class );
 
-    private LineBasedConnection _connection = null;
+    private LineBasedConnection connection = null;
 
-    private boolean _echo = false;
+    private boolean echo = false;
 
-    public TestLineHandler ( boolean echo )
+    public TestLineHandler ( final boolean echo )
     {
-        _echo = echo;
+        this.echo = echo;
     }
 
-    public void handleLine ( String line )
+    public void handleLine ( final String line )
     {
-        _log.info ( "New line: '" + line + "'" );
+        log.info ( "New line: '" + line + "'" );
 
-        if ( _echo )
-            _connection.sendLine ( "000 ECHO " + line );
+        if ( this.echo )
+        {
+            this.connection.sendLine ( "000 ECHO " + line );
+        }
 
         try
         {
-            StringTokenizer tok = new StringTokenizer ( line );
-            String cmd = tok.nextToken ().toUpperCase ();
+            final StringTokenizer tok = new StringTokenizer ( line );
+            final String cmd = tok.nextToken ().toUpperCase ();
             if ( cmd.equals ( "QUIT" ) || cmd.equals ( "CLOSE" ) || cmd.equals ( "EXIT" ) )
             {
-                _connection.sendLine ( "000 Bye" );
-                _connection.close ();
+                this.connection.sendLine ( "000 Bye" );
+                this.connection.close ();
             }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
-            _connection.sendLine ( "999 Command failed: " + e.getMessage () );
+            this.connection.sendLine ( "999 Command failed: " + e.getMessage () );
         }
-        _log.debug ( "Line handler complete" );
+        log.debug ( "Line handler complete" );
 
     }
 
     @Override
     protected void finalize () throws Throwable
     {
-        _log.info ( "Finalized" );
-        _connection.close ();
-        _connection = null;
+        log.info ( "Finalized" );
+        this.connection.close ();
         super.finalize ();
     }
 
     public void closed ()
     {
-        _log.info ( "Closed" );
-        _connection = null;
+        log.info ( "Closed" );
+        this.connection = null;
     }
 
     public void connected ()
     {
-        _log.info ( "Connected" );
-        _connection.sendLine ( "000 Welcome" );
+        log.info ( "Connected" );
+        this.connection.sendLine ( "000 Welcome" );
     }
 
-    public void connectionFailed ( Throwable throwable )
+    public void connectionFailed ( final Throwable throwable )
     {
-        _log.info ( "Connection failed", throwable );
+        log.info ( "Connection failed", throwable );
     }
 
-    public void setConnection ( LineBasedConnection connection )
+    public void setConnection ( final LineBasedConnection connection )
     {
-        _connection = connection;
-        if ( _connection != null )
-            _connection.getConnection ().setTimeout ( 10 * 1000 );
+        this.connection = connection;
+        if ( this.connection != null )
+        {
+            this.connection.getConnection ().setTimeout ( 10 * 1000 );
+        }
     }
 
 }
