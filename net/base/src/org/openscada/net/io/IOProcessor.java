@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,27 +38,31 @@ import org.openscada.utils.timing.WrongThreadException;
 public class IOProcessor implements Runnable
 {
 
-    @SuppressWarnings ( "unused" )
-    private static Logger _log = Logger.getLogger ( IOProcessor.class );
+    private static Logger log = Logger.getLogger ( IOProcessor.class );
 
-    private Map<SelectionKey, IOChannel> _connections = new HashMap<SelectionKey, IOChannel> ();
-    private Map<IOChannel, SelectionKey> _keys = new HashMap<IOChannel, SelectionKey> ();
-    
-    private Set<IOChannel> _timeoutConnections = new CopyOnWriteArraySet<IOChannel> ();
+    private final Map<SelectionKey, IOChannel> connections = new HashMap<SelectionKey, IOChannel> ();
 
-    private Selector _selector = null;
-    private Thread _thread = null;
-    private boolean _running = false;
-    private Scheduler _scheduler = null;
-    private Object _threadLock = new Object ();
+    private final Map<IOChannel, SelectionKey> keys = new HashMap<IOChannel, SelectionKey> ();
+
+    private final Set<IOChannel> timeoutConnections = new CopyOnWriteArraySet<IOChannel> ();
+
+    private Selector selector = null;
+
+    private Thread thread = null;
+
+    private boolean running = false;
+
+    private Scheduler scheduler = null;
+
+    private final Object threadLock = new Object ();
 
     public IOProcessor () throws IOException
     {
         super ();
 
-        _scheduler = new Scheduler ( false, "IOProcessorScheduler" );
+        this.scheduler = new Scheduler ( false, "IOProcessorScheduler" );
 
-        _selector = Selector.open ();
+        this.selector = Selector.open ();
     }
 
     /**
@@ -68,35 +72,41 @@ public class IOProcessor implements Runnable
      */
     public synchronized void start ()
     {
-        if ( _running )
+        if ( this.running )
+        {
             return;
+        }
 
-        _running = true;
+        this.running = true;
 
-        if ( _thread != null )
+        if ( this.thread != null )
+        {
             return;
+        }
 
-        _thread = new Thread ( this, "IOProcessor" );
-        _thread.setDaemon ( true );
-        _thread.start ();
+        this.thread = new Thread ( this, "IOProcessor" );
+        this.thread.setDaemon ( true );
+        this.thread.start ();
     }
 
     public synchronized void stop ()
     {
-        if ( !_running )
+        if ( !this.running )
+        {
             return;
+        }
 
-        _running = false;
+        this.running = false;
 
-        synchronized ( _threadLock )
+        synchronized ( this.threadLock )
         {
             try
             {
-                _threadLock.wait ();
+                this.threadLock.wait ();
             }
-            catch ( InterruptedException e )
+            catch ( final InterruptedException e )
             {
-                _log.warn ( "Failed to wait for runner", e );
+                log.warn ( "Failed to wait for runner", e );
             }
         }
 
@@ -105,59 +115,59 @@ public class IOProcessor implements Runnable
 
     private void closeAllConnections ()
     {
-        _log.info ( "Closing all connections" );
-        for ( SelectionKey key : _selector.keys () )
+        log.info ( "Closing all connections" );
+        for ( final SelectionKey key : this.selector.keys () )
         {
             try
             {
                 key.channel ().close ();
             }
-            catch ( IOException e )
+            catch ( final IOException e )
             {
-                _log.warn ( "Failed to close channel", e );
+                log.warn ( "Failed to close channel", e );
             }
         }
-        _connections.clear ();
-        _timeoutConnections.clear ();
+        this.connections.clear ();
+        this.timeoutConnections.clear ();
     }
 
-    public void registerConnection ( IOChannel connection, int ops ) throws ClosedChannelException
+    public void registerConnection ( final IOChannel connection, final int ops ) throws ClosedChannelException
     {
-        _log.debug ( "Register socket: " + connection + " for " + ops );
-        
-        SelectionKey key = connection.getSelectableChannel ().keyFor ( _selector );
+        log.debug ( "Register socket: " + connection + " for " + ops );
+
+        SelectionKey key = connection.getSelectableChannel ().keyFor ( this.selector );
         if ( key == null )
         {
-            _log.debug ( "Create key for channel: " + connection );
-            key = connection.getSelectableChannel ().register ( _selector, ops );
-            _connections.put ( key, connection );
-            _keys.put ( connection, key );
+            log.debug ( "Create key for channel: " + connection );
+            key = connection.getSelectableChannel ().register ( this.selector, ops );
+            this.connections.put ( key, connection );
+            this.keys.put ( connection, key );
         }
         else
         {
             key.interestOps ( ops );
         }
 
-        _selector.wakeup ();
+        this.selector.wakeup ();
     }
 
-    public void enableConnectionTimeout ( IOChannel connection )
+    public void enableConnectionTimeout ( final IOChannel connection )
     {
-        _timeoutConnections.add ( connection );
+        this.timeoutConnections.add ( connection );
     }
 
-    public void disableConnectionTimeout ( IOChannel connection )
+    public void disableConnectionTimeout ( final IOChannel connection )
     {
-        _timeoutConnections.remove ( connection );
+        this.timeoutConnections.remove ( connection );
     }
 
     private void checkTimeouts ()
     {
         Set<IOChannel> connections = null;
 
-        connections = new HashSet<IOChannel> ( _timeoutConnections );
+        connections = new HashSet<IOChannel> ( this.timeoutConnections );
 
-        for ( IOChannel channel : connections )
+        for ( final IOChannel channel : connections )
         {
             if ( channel.isTimeOut () )
             {
@@ -169,25 +179,25 @@ public class IOProcessor implements Runnable
         }
     }
 
-    public void unregisterConnection ( IOChannel connection )
+    public void unregisterConnection ( final IOChannel connection )
     {
-        _log.debug ( "UnRegister socket: " + connection );
-        
+        log.debug ( "UnRegister socket: " + connection );
+
         // SelectionKey key = connection.getSelectableChannel ().keyFor ( _selector );
-        SelectionKey key = _keys.remove ( connection );
+        final SelectionKey key = this.keys.remove ( connection );
 
         if ( key != null )
         {
-            IOChannel channel = _connections.remove ( key );
+            final IOChannel channel = this.connections.remove ( key );
             if ( channel == null )
             {
-                _log.info ( "Channel not registered " + connection );
+                log.info ( "Channel not registered " + connection );
             }
             key.cancel ();
         }
         else
         {
-            _log.info ( "Key not found for socket" + connection );
+            log.info ( "Key not found for socket" + connection );
         }
     }
 
@@ -197,138 +207,145 @@ public class IOProcessor implements Runnable
         // bound to it so we return
         try
         {
-            _scheduler.bindToCurrentThread ();
+            this.scheduler.bindToCurrentThread ();
         }
-        catch ( AlreadyBoundException e )
+        catch ( final AlreadyBoundException e )
         {
-            _log.info ( "Failed to run selector loop", e );
+            log.info ( "Failed to run selector loop", e );
             return;
         }
 
         try
         {
-            _running = true;
-            while ( _running )
+            this.running = true;
+            while ( this.running )
             {
                 try
                 {
                     int rc = 0;
-                    rc = _selector.select ( 100 );
+                    rc = this.selector.select ( 100 );
 
                     checkTimeouts ();
 
-                    _scheduler.runOnce ();
+                    this.scheduler.runOnce ();
 
                     if ( rc > 0 )
                     {
                         handleSelectedKeys ();
                     }
 
-                    
                 }
-                catch ( IOException e )
+                catch ( final IOException e )
                 {
-                    _log.info ( "IO Exception", e );
+                    log.info ( "IO Exception", e );
                 }
-                catch ( NotBoundException e )
+                catch ( final NotBoundException e )
                 {
-                    _log.info ( "While evaluation selector set", e );
-                    _running = false;
+                    log.info ( "While evaluation selector set", e );
+                    this.running = false;
                 }
-                catch ( WrongThreadException e )
+                catch ( final WrongThreadException e )
                 {
-                    _log.info ( "While evaluation selector set", e );
-                    _running = false;
+                    log.info ( "While evaluation selector set", e );
+                    this.running = false;
                 }
             }
         }
         finally
         {
-            _running = false;
-            synchronized ( _threadLock )
+            this.running = false;
+            synchronized ( this.threadLock )
             {
-                _threadLock.notifyAll ();
+                this.threadLock.notifyAll ();
             }
         }
     }
 
-    protected void handleKey ( SelectionKey key )
+    protected void handleKey ( final SelectionKey key )
     {
-        IOChannel channel = _connections.get ( key );
+        final IOChannel channel = this.connections.get ( key );
         if ( channel == null )
         {
             return;
         }
-        IOChannelListener listener = channel.getIOChannelListener ();
+        final IOChannelListener listener = channel.getIOChannelListener ();
 
         if ( !key.isValid () )
         {
-            _log.debug ( "Key got invalid: " + listener );
-            _connections.remove ( key );
+            log.debug ( "Key got invalid: " + listener );
+            this.connections.remove ( key );
             return;
         }
 
         // check state and check if connection was closed during processing
         if ( key.isConnectable () )
+        {
             listener.handleConnect ();
+        }
         if ( !key.isValid () )
         {
-            _connections.remove ( key );
+            this.connections.remove ( key );
             return;
         }
 
         // check state and check if connection was closed during processing
         if ( key.isAcceptable () )
+        {
             listener.handleAccept ();
+        }
         if ( !key.isValid () )
         {
-            _connections.remove ( key );
+            this.connections.remove ( key );
             return;
         }
 
         // check state and check if connection was closed during processing
         if ( key.isReadable () )
+        {
             listener.handleRead ();
+        }
         if ( !key.isValid () )
         {
-            _connections.remove ( key );
+            this.connections.remove ( key );
             return;
         }
 
         // check state and check if connection was closed during processing
         if ( key.isWritable () )
+        {
             listener.handleWrite ();
+        }
         if ( !key.isValid () )
         {
-            _connections.remove ( key );
+            this.connections.remove ( key );
             return;
         }
     }
 
     protected void handleSelectedKeys ()
     {
-        for ( SelectionKey key : _selector.selectedKeys () )
+        for ( final SelectionKey key : this.selector.selectedKeys () )
         {
             try
             {
                 handleKey ( key );
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
-                _log.warn ( "Failed to process selector", e );
+                log.warn ( "Failed to process selector", e );
             }
         }
-        _selector.selectedKeys ().clear ();
+        this.selector.selectedKeys ().clear ();
     }
 
     public Selector getSelector ()
     {
-        return _selector;
+        return this.selector;
     }
 
     public Scheduler getScheduler ()
     {
-        return _scheduler;
+        return this.scheduler;
     }
 
 }

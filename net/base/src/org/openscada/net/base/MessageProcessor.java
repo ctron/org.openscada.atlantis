@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,43 +30,45 @@ import org.openscada.net.utils.MessageCreator;
 public class MessageProcessor implements MessageListener
 {
 
-    private static Logger _log = Logger.getLogger ( MessageProcessor.class );
+    private static Logger log = Logger.getLogger ( MessageProcessor.class );
 
-    private Map<Integer, MessageListener> _listeners = new HashMap<Integer, MessageListener> ();
+    private final Map<Integer, MessageListener> listeners = new HashMap<Integer, MessageListener> ();
 
-    public void setHandler ( int commandCode, MessageListener handler )
+    public void setHandler ( final int commandCode, final MessageListener handler )
     {
-        _listeners.put ( new Integer ( commandCode ), handler );
+        this.listeners.put ( Integer.valueOf ( commandCode ), handler );
     }
 
-    public void unsetHandler ( int commandCode )
+    public void unsetHandler ( final int commandCode )
     {
-        _listeners.remove ( new Integer ( commandCode ) );
+        this.listeners.remove ( Integer.valueOf ( commandCode ) );
     }
 
-    public void messageReceived ( Connection connection, Message message )
+    public void messageReceived ( final Connection connection, final Message message )
     {
         if ( message.getReplySequence () == 0 )
-            _log.debug ( String.format ( "Received message: 0x%1$08X Seq: %2$d", message.getCommandCode (), message
-                    .getSequence () ) );
+        {
+            log.debug ( String.format ( "Received message: 0x%1$08X Seq: %2$d", message.getCommandCode (), message.getSequence () ) );
+        }
         else
-            _log.debug ( String.format ( "Received message: 0x%1$08X Seq: %2$d in reply to: %3$d", message
-                    .getCommandCode (), message.getSequence (), message.getReplySequence () ) );
+        {
+            log.debug ( String.format ( "Received message: 0x%1$08X Seq: %2$d in reply to: %3$d", message.getCommandCode (), message.getSequence (), message.getReplySequence () ) );
+        }
 
         switch ( message.getCommandCode () )
         {
         case Message.CC_FAILED:
             String errorInfo = "";
             if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
+            {
                 errorInfo = message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString ();
+            }
 
-            _log.warn ( "Failed message: " + message.getSequence () + "/" + message.getReplySequence () + " Message: "
-                    + errorInfo );
+            log.warn ( "Failed message: " + message.getSequence () + "/" + message.getReplySequence () + " Message: " + errorInfo );
             return;
 
         case Message.CC_UNKNOWN_COMMAND_CODE:
-            _log.warn ( "Reply to unknown message command code from peer: " + message.getSequence () + "/"
-                    + message.getReplySequence () );
+            log.warn ( "Reply to unknown message command code from peer: " + message.getSequence () + "/" + message.getReplySequence () );
             return;
 
         case Message.CC_ACK:
@@ -80,26 +82,25 @@ public class MessageProcessor implements MessageListener
 
     }
 
-    private void processCustomMessage ( Connection connection, Message message )
+    private void processCustomMessage ( final Connection connection, final Message message )
     {
-        Integer cc = message.getCommandCode ();
+        final Integer cc = message.getCommandCode ();
 
-        if ( !_listeners.containsKey ( cc ) )
+        if ( !this.listeners.containsKey ( cc ) )
         {
-            _log.warn ( String.format ( "Received message which cannot be processed! cc = %x", message
-                    .getCommandCode () ) );
+            log.warn ( String.format ( "Received message which cannot be processed! cc = %x", message.getCommandCode () ) );
             connection.sendMessage ( MessageCreator.createUnknownMessage ( message ) );
             return;
         }
 
         try
         {
-            _listeners.get ( cc ).messageReceived ( connection, message );
+            this.listeners.get ( cc ).messageReceived ( connection, message );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             // reply to other peer if message processing failed
-            _log.warn ( "Message processing failed: ", e );
+            log.warn ( "Message processing failed: ", e );
             connection.sendMessage ( MessageCreator.createFailedMessage ( message, e ) );
         }
     }
