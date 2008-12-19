@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,15 +41,14 @@ import org.openscada.net.io.net.Server;
 public class Application
 {
 
-    @SuppressWarnings ( "unused" )
-    private static Logger _log = Logger.getLogger ( Application.class );
+    private static Logger log = Logger.getLogger ( Application.class );
 
-    public static void sendTestMessage ( Connection connection )
+    public static void sendTestMessage ( final Connection connection )
     {
-        Message message = new Message ();
+        final Message message = new Message ();
         message.getValues ().put ( "test", new StringValue ( "nür ün tüst" ) );
 
-        ListValue listValue = new ListValue ();
+        final ListValue listValue = new ListValue ();
         listValue.add ( new StringValue ( "test1" ) );
         listValue.add ( new StringValue ( "test2" ) );
         listValue.add ( new StringValue ( "test3" ) );
@@ -63,14 +62,14 @@ public class Application
         connection.sendMessage ( message );
     }
 
-    public static void main ( String[] args )
+    public static void main ( final String[] args )
     {
-        _log.info ( "Start test run..." );
+        log.info ( "Start test run..." );
         try
         {
             final IOProcessor processor = new IOProcessor ();
 
-            Server server = new Server ( new ConnectionHandlerFactory () {
+            final Server server = new Server ( new ConnectionHandlerFactory () {
 
                 public ConnectionHandler createConnectionHandler ()
                 {
@@ -87,14 +86,13 @@ public class Application
             }, 1202 );
             server.start ();
 
-            AutoReconnectClientConnection client = new AutoReconnectClientConnection ( processor,
-                    new InetSocketAddress ( InetAddress.getLocalHost (), 1202 ) );
+            final AutoReconnectClientConnection client = new AutoReconnectClientConnection ( processor, new InetSocketAddress ( InetAddress.getLocalHost (), 1202 ) );
             client.start ();
             client.disablePing ();
-            
+
             processor.run ();
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             e.printStackTrace ();
         }
