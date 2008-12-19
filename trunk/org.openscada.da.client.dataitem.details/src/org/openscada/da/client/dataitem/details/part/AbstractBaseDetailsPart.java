@@ -72,9 +72,8 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
         {
             // fetch the initial value
             this.value = this.item.getSnapshotValue ();
-            update ();
-
             this.item.addObserver ( this );
+            update ();
         }
     }
 
