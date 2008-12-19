@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,69 +24,85 @@ import java.util.List;
 
 public class ValueTools
 {
-    public static Long toLong ( Value value, Long defaultValue )
+    public static Long toLong ( final Value value, final Long defaultValue )
     {
         try
         {
             if ( value instanceof IntegerValue )
-                return new Long ( ( (IntegerValue)value ).getValue () );
+            {
+                return Long.valueOf ( ( (IntegerValue)value ).getValue () );
+            }
             else if ( value instanceof LongValue )
+            {
                 return ( (LongValue)value ).getValue ();
+            }
             else if ( value instanceof DoubleValue )
+            {
                 return (long) ( (DoubleValue)value ).getValue ();
+            }
             else if ( value instanceof StringValue )
             {
-                String data = ( (StringValue)value ).getValue ();
+                final String data = ( (StringValue)value ).getValue ();
                 return Long.decode ( data );
             }
             else
+            {
                 return defaultValue;
+            }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             return defaultValue;
         }
     }
 
-    public static long toLong ( Value value, long defaultValue )
+    public static long toLong ( final Value value, final long defaultValue )
     {
-        return toLong ( value, new Long ( defaultValue ) );
+        return toLong ( value, Long.valueOf ( defaultValue ) );
     }
 
-    public static Integer toInteger ( Value value, Integer defaultValue )
+    public static Integer toInteger ( final Value value, final Integer defaultValue )
     {
         try
         {
             if ( value instanceof IntegerValue )
+            {
                 return ( (IntegerValue)value ).getValue ();
+            }
             else if ( value instanceof LongValue )
+            {
                 return new Integer ( (int) ( (LongValue)value ).getValue () );
+            }
             else if ( value instanceof DoubleValue )
+            {
                 return (int) ( (DoubleValue)value ).getValue ();
+            }
             else if ( value instanceof StringValue )
             {
-                String data = ( (StringValue)value ).getValue ();
+                final String data = ( (StringValue)value ).getValue ();
                 return Integer.decode ( data );
             }
             else
+            {
                 return defaultValue;
+            }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             return defaultValue;
         }
     }
 
-    public static int toInteger ( Value value, int defaultValue )
+    public static int toInteger ( final Value value, final int defaultValue )
     {
-        return toInteger ( value, new Integer ( defaultValue ) );
+        return toInteger ( value, Integer.valueOf ( defaultValue ) );
     }
 
-    public static ListValue toStringList ( Iterable<?> list )
+    public static ListValue toStringList ( final Iterable<?> list )
     {
-        ListValue listValue = new ListValue ();
+        final ListValue listValue = new ListValue ();
 
-        for ( Object obj : list )
+        for ( final Object obj : list )
         {
             listValue.add ( new StringValue ( obj.toString () ) );
         }
@@ -94,11 +110,11 @@ public class ValueTools
         return listValue;
     }
 
-    public static List<String> fromStringList ( ListValue list )
+    public static List<String> fromStringList ( final ListValue list )
     {
-        List<String> newList = new LinkedList<String> ();
+        final List<String> newList = new LinkedList<String> ();
 
-        for ( Value value : list.getValues () )
+        for ( final Value value : list.getValues () )
         {
             newList.add ( value.toString () );
         }
