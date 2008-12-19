@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,17 +27,20 @@ import org.openscada.net.io.net.Client;
 
 public class AutoReconnectClientConnection extends ConnectionHandlerBase
 {
-    private static Logger _log = Logger.getLogger ( AutoReconnectClientConnection.class );
+    @SuppressWarnings ( "unused" )
+    private static Logger log = Logger.getLogger ( AutoReconnectClientConnection.class );
 
-    private Client _client = null;
-    private IOProcessor _processor = null;
-    private SocketAddress _remote = null;
+    private Client client = null;
 
-    public AutoReconnectClientConnection ( IOProcessor processor, SocketAddress remote )
+    private IOProcessor processor = null;
+
+    private SocketAddress remote = null;
+
+    public AutoReconnectClientConnection ( final IOProcessor processor, final SocketAddress remote )
     {
         super ( processor.getScheduler () );
-        _processor = processor;
-        _remote = remote;
+        this.processor = processor;
+        this.remote = remote;
     }
 
     /**
@@ -45,15 +48,15 @@ public class AutoReconnectClientConnection extends ConnectionHandlerBase
      */
     public void start ()
     {
-        _client = new Client ( _processor, getMessageProcessor (), this, true );
-        setConnection ( _client.getConnection () );
-        _client.connect ( _remote );
+        this.client = new Client ( this.processor, getMessageProcessor (), this, true );
+        setConnection ( this.client.getConnection () );
+        this.client.connect ( this.remote );
     }
 
     @Override
     public void opened ()
     {
-        setConnection ( _client.getConnection () );
+        setConnection ( this.client.getConnection () );
         super.opened ();
     }
 }
