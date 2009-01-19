@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -171,6 +171,11 @@ public class Variant
         this.value = new Double ( value );
     }
 
+    /**
+     * Get the string representation of the variant value.
+     * @return The string representation of the variant value.
+     * @throws NullValueException thrown if the variant if of type {@link VariantType#NULL}
+     */
     public String asString () throws NullValueException
     {
         if ( isNull () )
@@ -181,6 +186,11 @@ public class Variant
         return this.value.toString ();
     }
 
+    /**
+     * Get the string representation of the variant value or a default value if the variant is
+     * of type {@link VariantType#NULL}.
+     * @return The string representation of the variant value or the default value.
+     */
     public String asString ( final String defaultValue )
     {
         if ( isNull () )
@@ -624,6 +634,15 @@ public class Variant
         }
     }
 
+    /**
+     * Get the string representation of the variant (not the variant value).
+     * This includes also the variant type.
+     * <p>
+     * The format is <q>VariantType#VariantValue</q>.
+     * <p>
+     * If you want to get the string representation of the variant value
+     * itself use {@link #asString()} instead. 
+     */
     @Override
     public String toString ()
     {
@@ -636,5 +655,14 @@ public class Variant
     public VariantType getType ()
     {
         return VariantType.fromJavaObject ( this.value );
+    }
+
+    /**
+     * Get the internal variant value
+     * @return the internal variant value
+     */
+    public Object getValue ()
+    {
+        return this.value;
     }
 }
