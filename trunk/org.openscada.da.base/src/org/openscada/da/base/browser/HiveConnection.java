@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,10 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.Variant;
-import org.openscada.core.client.ConnectionFactory;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
+import org.openscada.da.base.connection.ConnectionManager;
+import org.openscada.da.base.connection.ConnectionManagerEntry;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;
@@ -45,17 +46,19 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
     private boolean _connectionRequested = false;
 
-    private ConnectionInformation _connectionInformation = null;
+    private ConnectionInformation connectionInformation = null;
 
-    private Connection _connection = null;
+    private Connection connection = null;
 
-    private final Map<String, HiveItem> _itemMap = new HashMap<String, HiveItem> ();
+    private final Map<String, HiveItem> itemMap = new HashMap<String, HiveItem> ();
 
-    private FolderEntry _rootFolder = null;
+    private FolderEntry rootFolder = null;
 
-    private ItemManager _itemManager;
+    private ItemManager itemManager;
 
-    private FolderManager _folderManager;
+    private FolderManager folderManager;
+
+    private final ConnectionManagerEntry connectionEntry;
 
     private enum Properties
     {
@@ -67,13 +70,15 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     {
         super ();
 
-        this._connectionInformation = ConnectionInformation.fromURI ( connectionInfo.getConnectionString () );
+        this.connectionInformation = ConnectionInformation.fromURI ( connectionInfo.getConnectionString () );
 
-        this._connection = (Connection)ConnectionFactory.create ( this._connectionInformation );
+        this.connectionEntry = ConnectionManager.getDefault ().getEntry ( this.connectionInformation, true );
 
-        if ( this._connection != null )
+        this.connection = this.connectionEntry.getConnection ();
+
+        if ( this.connection != null )
         {
-            this._connection.addConnectionStateListener ( new ConnectionStateListener () {
+            this.connection.addConnectionStateListener ( new ConnectionStateListener () {
 
                 public void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
                 {
@@ -81,14 +86,14 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
                 }
 
             } );
-            this._itemManager = new ItemManager ( this._connection );
-            this._folderManager = new FolderManager ( this._connection );
+            this.itemManager = this.connectionEntry.getItemManager ();
+            this.folderManager = new FolderManager ( this.connection );
         }
     }
 
     public void connect ()
     {
-        if ( this._connection == null )
+        if ( this.connection == null )
         {
             return;
         }
@@ -101,7 +106,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
         try
         {
-            this._connection.connect ();
+            this.connection.connect ();
         }
         catch ( final Exception e )
         {
@@ -112,7 +117,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
     public void disconnect ()
     {
-        if ( this._connection == null )
+        if ( this.connection == null )
         {
             return;
         }
@@ -122,12 +127,12 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
         setChanged ();
         notifyObservers ();
 
-        this._connection.disconnect ();
+        this.connection.disconnect ();
     }
 
     public ConnectionInformation getConnectionInformation ()
     {
-        return this._connectionInformation;
+        return this.connectionInformation;
     }
 
     private synchronized void performStateChange ( final ConnectionState state, final Throwable error )
@@ -137,13 +142,13 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
         switch ( state )
         {
         case BOUND:
-            this._rootFolder = new FolderEntry ( "", new HashMap<String, Variant> (), null, this, true );
+            this.rootFolder = new FolderEntry ( "", new HashMap<String, Variant> (), null, this, true );
             break;
         case CLOSED:
-            if ( this._rootFolder != null )
+            if ( this.rootFolder != null )
             {
-                this._rootFolder.dispose ();
-                this._rootFolder = null;
+                this.rootFolder.dispose ();
+                this.rootFolder = null;
             }
             break;
         default:
@@ -161,7 +166,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
     public Connection getConnection ()
     {
-        return this._connection;
+        return this.connection;
     }
 
     public boolean isConnectionRequested ()
@@ -171,21 +176,21 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
     synchronized public HiveItem lookupItem ( final String itemName )
     {
-        return this._itemMap.get ( itemName );
+        return this.itemMap.get ( itemName );
     }
 
     public boolean testAttribute ( final Object target, final String name, final String value )
     {
         if ( name.equals ( "state" ) )
         {
-            return this._connection.getState ().equals ( ConnectionState.valueOf ( value ) );
+            return this.connection.getState ().equals ( ConnectionState.valueOf ( value ) );
         }
         return false;
     }
 
     public FolderEntry getRootFolder ()
     {
-        return this._rootFolder;
+        return this.rootFolder;
     }
 
     public void notifyFolderChange ( final FolderEntry folder )
@@ -223,11 +228,11 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     {
         if ( id.equals ( Properties.URI ) )
         {
-            return this._connectionInformation.toString ();
+            return this.connectionInformation.toString ();
         }
         if ( id.equals ( Properties.STATE ) )
         {
-            return this._connection.getState ().name ();
+            return this.connection.getState ().name ();
         }
 
         return null;
@@ -235,7 +240,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
     public Object getEditableValue ()
     {
-        return this._connectionInformation.toString ();
+        return this.connectionInformation.toString ();
     }
 
     public boolean isPropertySet ( final Object id )
@@ -255,16 +260,16 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
     public ItemManager getItemManager ()
     {
-        return this._itemManager;
+        return this.itemManager;
     }
 
     public FolderManager getFolderManager ()
     {
-        return this._folderManager;
+        return this.folderManager;
     }
 
     public boolean isValid ()
     {
-        return this._connection != null;
+        return this.connection != null;
     }
 }
