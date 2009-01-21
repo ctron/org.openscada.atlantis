@@ -191,7 +191,7 @@ public class RedundantConnection implements Connection
                 return false;
             }
         }
-        if ( !dataItemValue1.getValue ().equals ( dataItemValue2 ) )
+        if ( !dataItemValue1.getValue ().equals ( dataItemValue2.getValue () ) )
         {
             return false;
         }
