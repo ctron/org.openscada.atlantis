@@ -59,11 +59,14 @@ public class ProxyItem extends DataItemInputOutputChained implements ItemUpdateL
     {
         try
         {
-        	if (this.connection.getClass() == RedundantConnection.class) {
-        		this.connection.write ( this.getInformation ().getName (), value );
-        	} else {
-        		this.connection.write ( prepareItemName (), value );
-        	}
+            if ( this.connection.getClass () == RedundantConnection.class )
+            {
+                this.connection.write ( this.getInformation ().getName (), value );
+            }
+            else
+            {
+                this.connection.write ( prepareItemName (), value );
+            }
         }
         catch ( final NoConnectionException e )
         {
@@ -82,7 +85,7 @@ public class ProxyItem extends DataItemInputOutputChained implements ItemUpdateL
 
     public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        updateData ( value, attributes, AttributeMode.UPDATE );
+        updateData ( value, attributes, cache ? AttributeMode.SET : AttributeMode.UPDATE );
     }
 
     public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
