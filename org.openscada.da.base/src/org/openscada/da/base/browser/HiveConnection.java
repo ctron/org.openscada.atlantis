@@ -72,7 +72,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
         this.connectionInformation = ConnectionInformation.fromURI ( connectionInfo.getConnectionString () );
 
-        this.connectionEntry = ConnectionManager.getDefault ().getEntry ( this.connectionInformation, true );
+        this.connectionEntry = ConnectionManager.getDefault ().getEntry ( this.connectionInformation, false );
 
         this.connection = this.connectionEntry.getConnection ();
 
