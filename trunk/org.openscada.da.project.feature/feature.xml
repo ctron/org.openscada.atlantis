@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.project"
       label="OpenSCADA DA Project Feature"
-      version="1.0.7"
+      version="1.0.8"
       provider-name="OpenSCADA">
 
    <description url="http://www.example.com/description">
@@ -13,8 +13,8 @@
       [Enter Copyright Description here.]
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license>
+      Licensed under the GPL
    </license>
 
    <plugin
