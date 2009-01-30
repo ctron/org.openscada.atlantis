@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="org.openscada.da"
+            class="org.openscada.da.client.connection.manager.view.ConnectionManagerViewPart"
+            id="org.openscada.da.client.connection.manager.view.ConnectionManagerView"
+            name="Connections"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
