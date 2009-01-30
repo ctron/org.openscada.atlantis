@@ -97,6 +97,8 @@
   	<fetch-module src="${svn.base}/trunk/org.openscada.da.base" type="plugin" name="org.openscada.da.base"/>
   	<fetch-module src="${svn.base}/trunk/org.openscada.da.client.dataitem.details" type="plugin" name="org.openscada.da.client.dataitem.details"/>
   	<fetch-module src="${svn.base}/trunk/org.openscada.da.client.dataitem.details.extra" type="plugin" name="org.openscada.da.client.dataitem.details.extra"/>
+  	<fetch-module src="${svn.base}/trunk/org.openscada.da.client.connection.manager.view" type="plugin" name="org.openscada.da.client.connection.manager.view"/>
+  	
   </target>
 
   <!-- ===================================================================== -->
