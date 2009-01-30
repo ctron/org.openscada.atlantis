@@ -149,6 +149,12 @@ public class Connection implements org.openscada.da.client.Connection
         }, 5 * 1000 );
     }
 
+    @Override
+    public ConnectionInformation getConnectionInformation ()
+    {
+        return this.connectionInformation;
+    }
+
     /**
      * Fetch the next event from the queue queue. If the event queue is empty
      * the call will block until a new event is placed in the queue.
