@@ -118,10 +118,31 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         init ();
     }
 
+    @Override
+    public ConnectionInformation getConnectionInformation ()
+    {
+        final ConnectionInformation info = new ConnectionInformation ();
+        info.setInterface ( "da" );
+        info.setDriver ( "net" );
+        info.setTarget ( this.connectionInfo.getHostName () );
+        info.setSecondaryTarget ( this.connectionInfo.getPort () );
+
+        final Map<String, String> properties = new HashMap<String, String> ();
+        if ( this.connectionInfo.getReconnectDelay () > 0 )
+        {
+            properties.put ( org.openscada.da.client.net.DriverInformation.PROP_AUTO_RECONNECT, "true" );
+            properties.put ( org.openscada.da.client.net.DriverInformation.PROP_RECONNECT_DELAY, String.format ( "%s", this.connectionInfo.getReconnectDelay () ) );
+        }
+
+        info.setProperties ( properties );
+
+        return info;
+    }
+
     private void init ()
     {
 
-        this._client.getMessageProcessor ().setHandler ( Messages.CC_NOTIFY_DATA, new MessageListener () {
+        this.client.getMessageProcessor ().setHandler ( Messages.CC_NOTIFY_DATA, new MessageListener () {
 
             public void messageReceived ( final org.openscada.net.io.net.Connection connection, final Message message )
             {
@@ -129,7 +150,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
             }
         } );
 
-        this._client.getMessageProcessor ().setHandler ( Messages.CC_BROWSER_EVENT, new MessageListener () {
+        this.client.getMessageProcessor ().setHandler ( Messages.CC_BROWSER_EVENT, new MessageListener () {
 
             public void messageReceived ( final org.openscada.net.io.net.Connection connection, final Message message )
             {
@@ -138,7 +159,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
             }
         } );
 
-        this._client.getMessageProcessor ().setHandler ( Messages.CC_SUBSCRIPTION_CHANGE, new MessageListener () {
+        this.client.getMessageProcessor ().setHandler ( Messages.CC_SUBSCRIPTION_CHANGE, new MessageListener () {
 
             public void messageReceived ( final org.openscada.net.io.net.Connection connection, final Message message ) throws Exception
             {
@@ -147,19 +168,19 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
             }
         } );
 
-        this._browseController = new BrowseOperationController ( this._client );
-        this._browseController.register ( this._client.getMessageProcessor () );
+        this._browseController = new BrowseOperationController ( this.client );
+        this._browseController.register ( this.client.getMessageProcessor () );
 
-        this._writeController = new WriteOperationController ( this._client );
-        this._writeController.register ( this._client.getMessageProcessor () );
+        this._writeController = new WriteOperationController ( this.client );
+        this._writeController.register ( this.client.getMessageProcessor () );
 
-        this._writeAttributesController = new WriteAttributesOperationController ( this._client );
-        this._writeAttributesController.register ( this._client.getMessageProcessor () );
+        this._writeAttributesController = new WriteAttributesOperationController ( this.client );
+        this._writeAttributesController.register ( this.client.getMessageProcessor () );
     }
 
     private void requestSession ()
     {
-        if ( this._client == null )
+        if ( this.client == null )
         {
             return;
         }
@@ -167,7 +188,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         final Properties props = new Properties ();
         props.setProperty ( "client-version", VERSION );
 
-        this._client.getConnection ().sendMessage ( Messages.createSession ( props ), new MessageStateListener () {
+        this.client.getConnection ().sendMessage ( Messages.createSession ( props ), new MessageStateListener () {
 
             public void messageReply ( final Message message )
             {
@@ -236,12 +257,12 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         Variant value = decodeValueChange ( message );
         Map<String, Variant> attributes = decodeAttributeChange ( message );
 
-        if ( cache && ( value == null ) )
+        if ( cache && value == null )
         {
             // we need a value if we read from cache
             value = new Variant ();
         }
-        if ( cache && ( attributes == null ) )
+        if ( cache && attributes == null )
         {
             // we need attributes if we read from cache
             attributes = new HashMap<String, Variant> ();
@@ -359,7 +380,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
                     case FAILURE:
                         if ( callback != null )
                         {
-                            callback.failed ( ( error != null ) ? error.getMessage () : "<unknown error>" );
+                            callback.failed ( error != null ? error.getMessage () : "<unknown error>" );
                         }
                         break;
                     case SUCCESS:

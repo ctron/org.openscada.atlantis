@@ -26,40 +26,48 @@ import org.openscada.core.client.net.ConnectionInfo;
 public class DriverInformation implements org.openscada.core.client.DriverInformation
 {
 
-    public Connection create ( ConnectionInformation connectionInformation )
+    public static final String PROP_RECONNECT_DELAY = "reconnect-delay";
+
+    public static final String PROP_AUTO_RECONNECT = "auto-reconnect";
+
+    public Connection create ( final ConnectionInformation connectionInformation )
     {
         if ( connectionInformation.getSecondaryTarget () == null )
+        {
             return null;
-        
-        ConnectionInfo ci = new ConnectionInfo ();
-        
+        }
+
+        final ConnectionInfo ci = new ConnectionInfo ();
+
         ci.setHostName ( connectionInformation.getTarget () );
         ci.setPort ( connectionInformation.getSecondaryTarget ().intValue () );
-        
+
         // auto-reconnect
-        String autoReconnect = connectionInformation.getProperties ().get ( "auto-reconnect" );
+        final String autoReconnect = connectionInformation.getProperties ().get ( PROP_AUTO_RECONNECT );
         if ( autoReconnect != null )
         {
             try
             {
                 ci.setAutoReconnect ( Boolean.valueOf ( autoReconnect ) );
             }
-            catch ( Exception e )
-            {}
+            catch ( final Exception e )
+            {
+            }
         }
-        
+
         // reconnect-delay
-        String reconnectDelay = connectionInformation.getProperties ().get ( "reconnect-delay" );
+        final String reconnectDelay = connectionInformation.getProperties ().get ( PROP_RECONNECT_DELAY );
         if ( reconnectDelay != null )
         {
             try
             {
                 ci.setReconnectDelay ( Integer.valueOf ( reconnectDelay ) );
             }
-            catch ( Exception e )
-            {}
+            catch ( final Exception e )
+            {
+            }
         }
-        
+
         return new org.openscada.da.client.net.Connection ( ci );
     }
 
@@ -68,7 +76,7 @@ public class DriverInformation implements org.openscada.core.client.DriverInform
         return org.openscada.da.client.net.Connection.class;
     }
 
-    public void validate ( ConnectionInformation connectionInformation ) throws Throwable
+    public void validate ( final ConnectionInformation connectionInformation ) throws Throwable
     {
     }
 
