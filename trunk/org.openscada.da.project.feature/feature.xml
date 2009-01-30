@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.project"
       label="OpenSCADA DA Project Feature"
-      version="1.0.6"
+      version="1.0.7"
       provider-name="OpenSCADA">
 
    <description url="http://www.example.com/description">
@@ -52,6 +52,13 @@
 
    <plugin
          id="org.openscada.da.base"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.client.connection.manager.view"
          download-size="0"
          install-size="0"
          version="0.0.0"
