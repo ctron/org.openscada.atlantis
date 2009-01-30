@@ -29,7 +29,6 @@ import org.openscada.core.subscription.SubscriptionState;
 /**
  * A current value snapshot of the {@link DataItem}
  * @author Jens Reimann
- *
  */
 public class DataItemValue
 {
@@ -259,5 +258,68 @@ public class DataItemValue
         }
 
         return sb.toString ();
+    }
+
+    @Override
+    public int hashCode ()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( ( this.attributes == null ) ? 0 : this.attributes.hashCode () );
+        result = prime * result + ( ( this.subscriptionState == null ) ? 0 : this.subscriptionState.hashCode () );
+        result = prime * result + ( ( this.value == null ) ? 0 : this.value.hashCode () );
+        return result;
+    }
+
+    @Override
+    public boolean equals ( final Object obj )
+    {
+        if ( this == obj )
+        {
+            return true;
+        }
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( getClass () != obj.getClass () )
+        {
+            return false;
+        }
+        final DataItemValue other = (DataItemValue)obj;
+        if ( this.attributes == null )
+        {
+            if ( other.attributes != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.attributes.equals ( other.attributes ) )
+        {
+            return false;
+        }
+        if ( this.subscriptionState == null )
+        {
+            if ( other.subscriptionState != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.subscriptionState.equals ( other.subscriptionState ) )
+        {
+            return false;
+        }
+        if ( this.value == null )
+        {
+            if ( other.value != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.value.equals ( other.value ) )
+        {
+            return false;
+        }
+        return true;
     }
 }
