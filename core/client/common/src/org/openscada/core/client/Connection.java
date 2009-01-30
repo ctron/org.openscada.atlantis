@@ -19,6 +19,8 @@
 
 package org.openscada.core.client;
 
+import org.openscada.core.ConnectionInformation;
+
 public interface Connection
 {
     /**
@@ -34,6 +36,7 @@ public interface Connection
     public void disconnect ();
 
     public void addConnectionStateListener ( ConnectionStateListener connectionStateListener );
+
     public void removeConnectionStateListener ( ConnectionStateListener connectionStateListener );
 
     /**
@@ -41,4 +44,6 @@ public interface Connection
      * @return The current connection state
      */
     public ConnectionState getState ();
+
+    public ConnectionInformation getConnectionInformation ();
 }
