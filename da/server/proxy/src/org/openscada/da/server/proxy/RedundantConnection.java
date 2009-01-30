@@ -85,6 +85,18 @@ public class RedundantConnection implements Connection
         this.exposeAs = exposeAs;
     }
 
+    @Override
+    public ConnectionInformation getConnectionInformation ()
+    {
+        final ConnectionInformation info = new ConnectionInformation ();
+
+        info.setInterface ( "da" );
+        info.setDriver ( "proxy" );
+        info.setTarget ( "Unsupported operation" );
+
+        return info;
+    }
+
     /**
      * @param connection
      * @param id
@@ -176,11 +188,11 @@ public class RedundantConnection implements Connection
         {
             return true;
         }
-        if ( ( dataItemValue1 == null ) && ( dataItemValue2 != null ) )
+        if ( dataItemValue1 == null && dataItemValue2 != null )
         {
             return false;
         }
-        if ( ( dataItemValue1 != null ) && ( dataItemValue2 == null ) )
+        if ( dataItemValue1 != null && dataItemValue2 == null )
         {
             return false;
         }
