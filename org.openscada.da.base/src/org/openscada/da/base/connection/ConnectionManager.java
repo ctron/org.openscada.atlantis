@@ -39,6 +39,11 @@ public class ConnectionManager
 
     private final Map<ConnectionInformation, ConnectionManagerEntry> connections = new HashMap<ConnectionInformation, ConnectionManagerEntry> ();
 
+    public Collection<ConnectionManagerEntry> getConnections ()
+    {
+        return this.connections.values ();
+    }
+
     public synchronized ConnectionManagerEntry getEntry ( final ConnectionInformation ci, final boolean connect )
     {
         ConnectionManagerEntry entry = this.connections.get ( ci );
