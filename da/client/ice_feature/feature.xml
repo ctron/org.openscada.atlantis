@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.ice.client"
       label="OpenSCDA DA ICE Client Wrapper"
-      version="0.10.1"
+      version="0.10.2"
       provider-name="OpenSCADA.org"
       plugin="org.openscada.da.ice.client">
 
