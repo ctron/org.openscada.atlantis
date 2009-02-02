@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.browser.common;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.openscada.core.Variant;
@@ -27,28 +28,34 @@ import org.openscada.da.core.browser.FolderEntry;
 public class FolderEntryCommon implements FolderEntry
 {
     private String _name = null;
+
     private Folder _folder = null;
-    private Map < String, Variant > _attributes = null;
-    
-    public FolderEntryCommon ( String name, Folder folder, Map<String, Variant> attributes )
+
+    private Map<String, Variant> _attributes = null;
+
+    public FolderEntryCommon ( final String name, final Folder folder, final Map<String, Variant> attributes )
     {
-        _name = name;
-        _folder = folder;
-        _attributes = attributes;
+        this._name = name;
+        this._folder = folder;
+        this._attributes = attributes;
+        if ( this._attributes == null )
+        {
+            this._attributes = Collections.emptyMap ();
+        }
     }
-   
+
     public String getName ()
     {
-        return _name;
+        return this._name;
     }
 
     public Folder getFolder ()
     {
-        return _folder;
+        return this._folder;
     }
 
     public Map<String, Variant> getAttributes ()
     {
-        return _attributes;
+        return this._attributes;
     }
 }
