@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.browser.common;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -31,39 +32,45 @@ public class DataItemEntryCommon implements DataItemEntry
 {
 
     private String _name = null;
+
     private DataItem _item = null;
-    private Map < String, Variant > _attributes = null;
-    
-    public DataItemEntryCommon ( String name, DataItem item, Map < String, Variant > attributes )
+
+    private Map<String, Variant> _attributes = null;
+
+    public DataItemEntryCommon ( final String name, final DataItem item, final Map<String, Variant> attributes )
     {
-        _name = name;
-        _item = item;
-        _attributes = attributes;
+        this._name = name;
+        this._item = item;
+        this._attributes = attributes;
+        if ( this._attributes == null )
+        {
+            this._attributes = Collections.emptyMap ();
+        }
     }
-    
+
     public String getId ()
     {
-        return _item.getInformation ().getName ();
+        return this._item.getInformation ().getName ();
     }
 
     public String getName ()
     {
-        return _name;
+        return this._name;
     }
-    
+
     public DataItem getItem ()
     {
-        return _item;
+        return this._item;
     }
 
     public Map<String, Variant> getAttributes ()
     {
-        return _attributes;
+        return this._attributes;
     }
-    
+
     public EnumSet<IODirection> getIODirections ()
     {
-        return _item.getInformation ().getIODirection ().clone ();
+        return this._item.getInformation ().getIODirection ().clone ();
     }
 
 }
