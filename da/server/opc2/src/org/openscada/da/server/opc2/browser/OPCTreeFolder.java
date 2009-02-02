@@ -25,11 +25,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import org.openscada.core.Variant;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
+import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.FolderListener;
+import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.opc2.connection.OPCController;
 import org.openscada.da.server.opc2.connection.OPCItem;
 
@@ -96,19 +97,24 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
 
     public void browseComplete ( final BrowseResult result )
     {
+        final Map<String, Folder> folders = new HashMap<String, Folder> ();
+        final Map<String, DataItem> items = new HashMap<String, DataItem> ();
+
         for ( final String branch : result.getBranches () )
         {
-            final Map<String, Variant> attributes = new HashMap<String, Variant> ();
             final Collection<String> path = new ArrayList<String> ( this.path );
             path.add ( branch );
-            this.folderImpl.add ( branch, new OPCTreeFolder ( this.controller, path ), attributes );
+            folders.put ( branch, new OPCTreeFolder ( this.controller, path ) );
         }
 
         for ( final BrowseResultEntry entry : result.getLeaves () )
         {
             final OPCItem item = this.controller.getItemManager ().registerItem ( entry.getItemId (), entry.getIoDirections (), null );
-            this.folderImpl.add ( entry.getEntryName (), item, new HashMap<String, Variant> () );
+            items.put ( entry.getEntryName (), item );
         }
+
+        // bulkd add entries
+        this.folderImpl.add ( folders, items );
     }
 
     public void browseError ( final Throwable error )
