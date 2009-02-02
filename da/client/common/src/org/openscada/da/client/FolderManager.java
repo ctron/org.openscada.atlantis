@@ -28,76 +28,84 @@ import org.openscada.da.core.Location;
 
 public class FolderManager implements ConnectionStateListener
 {
-    protected Connection _connection = null;
-    private Map<Location, FolderSyncController> _folderListeners = new HashMap<Location, FolderSyncController> ();
-    
-    public FolderManager ( Connection connection )
+    protected Connection connection = null;
+
+    private final Map<Location, FolderSyncController> folderListeners = new HashMap<Location, FolderSyncController> ();
+
+    public FolderManager ( final Connection connection )
     {
-        _connection = connection;
-        _connection.addConnectionStateListener ( this );
+        this.connection = connection;
+        this.connection.addConnectionStateListener ( this );
     }
-    
-    public void addFolderListener ( FolderListener listener, Location location )
+
+    public void dispose ()
     {
-        synchronized ( _folderListeners )
+        this.connection.removeConnectionStateListener ( this );
+        disconnectAllFolders ();
+        this.connection = null;
+    }
+
+    public void addFolderListener ( final FolderListener listener, final Location location )
+    {
+        synchronized ( this.folderListeners )
         {
-            if ( !_folderListeners.containsKey ( location ) )
+            if ( !this.folderListeners.containsKey ( location ) )
             {
-                _folderListeners.put ( location, new FolderSyncController ( _connection, new Location ( location ) ) );
+                this.folderListeners.put ( location, new FolderSyncController ( this.connection, new Location ( location ) ) );
             }
-            
-            FolderSyncController controller = _folderListeners.get ( location );
+
+            final FolderSyncController controller = this.folderListeners.get ( location );
             controller.addListener ( listener );
-        }    
+        }
     }
-    
-    public void addFolderWatcher ( FolderWatcher watcher )
+
+    public void addFolderWatcher ( final FolderWatcher watcher )
     {
         addFolderListener ( watcher, watcher.getLocation () );
     }
-    
-    public void removeFolderListener ( FolderListener listener, Location location )
+
+    public void removeFolderListener ( final FolderListener listener, final Location location )
     {
-        synchronized ( _folderListeners )
+        synchronized ( this.folderListeners )
         {
-            if ( !_folderListeners.containsKey ( location ) )
+            if ( !this.folderListeners.containsKey ( location ) )
             {
                 return;
             }
-            
-            FolderSyncController controller = _folderListeners.get ( location );
+
+            final FolderSyncController controller = this.folderListeners.get ( location );
             controller.removeListener ( listener );
-        }    
+        }
     }
-    
-    public void removeFolderWatcher ( FolderWatcher watcher )
+
+    public void removeFolderWatcher ( final FolderWatcher watcher )
     {
         removeFolderListener ( watcher, watcher.getLocation () );
     }
-    
+
     private void resyncAllFolders ()
     {
-        synchronized ( _folderListeners )
+        synchronized ( this.folderListeners )
         {
-            for ( Map.Entry<Location,FolderSyncController> entry : _folderListeners.entrySet () )
+            for ( final Map.Entry<Location, FolderSyncController> entry : this.folderListeners.entrySet () )
             {
                 entry.getValue ().resync ();
             }
         }
     }
-    
+
     private void disconnectAllFolders ()
     {
-        synchronized ( _folderListeners )
+        synchronized ( this.folderListeners )
         {
-            for ( Map.Entry<Location,FolderSyncController> entry : _folderListeners.entrySet () )
+            for ( final Map.Entry<Location, FolderSyncController> entry : this.folderListeners.entrySet () )
             {
                 entry.getValue ().disconnected ();
             }
         }
     }
 
-    public void stateChange ( org.openscada.core.client.Connection connection, ConnectionState state, Throwable error )
+    public void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
     {
         switch ( state )
         {
@@ -109,5 +117,5 @@ public class FolderManager implements ConnectionStateListener
             break;
         }
     }
-    
+
 }
