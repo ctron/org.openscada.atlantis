@@ -20,6 +20,7 @@
 package org.openscada.da.server.browser.common;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -80,6 +81,59 @@ public class FolderCommon implements Folder, ConfigurableFolder
             throw new NoSuchFolderException ();
         }
 
+    }
+
+    /**
+     * Bulk add items
+     * @param folders folders to register or <code>null</code> if no folders should be registered 
+     * @param items items to register or <code>null</code> if no item should be registered
+     * @return number of items added
+     */
+    public synchronized int add ( final Map<String, Folder> folders, final Map<String, DataItem> items )
+    {
+        final Collection<Entry> entries = new ArrayList<Entry> ( folders.size () + items.size () );
+
+        // add folders
+        if ( folders != null )
+        {
+            for ( final Map.Entry<String, Folder> folderEntry : folders.entrySet () )
+            {
+                final String name = folderEntry.getKey ();
+                final Folder folder = folderEntry.getValue ();
+                if ( !this.entryMap.containsKey ( name ) )
+                {
+                    final Entry entry = new FolderEntryCommon ( name, folder, null );
+                    this.entryMap.put ( name, entry );
+
+                    folder.added ();
+                    entries.add ( entry );
+                }
+            }
+        }
+
+        // add entries
+        if ( items != null )
+        {
+            for ( final Map.Entry<String, DataItem> itemEntry : items.entrySet () )
+            {
+                final String name = itemEntry.getKey ();
+                final DataItem dataItem = itemEntry.getValue ();
+                if ( !this.entryMap.containsKey ( name ) )
+                {
+                    final Entry entry = new DataItemEntryCommon ( name, dataItem, null );
+                    this.entryMap.put ( name, entry );
+                    entries.add ( entry );
+                }
+            }
+        }
+
+        // send out bulk notify
+        if ( !entries.isEmpty () )
+        {
+            notifyAdd ( entries );
+        }
+
+        return entries.size ();
     }
 
     /* (non-Javadoc)
@@ -263,14 +317,19 @@ public class FolderCommon implements Folder, ConfigurableFolder
         listener.changed ( tag, new ArrayList<Entry> ( this.entryMap.values () ), new LinkedList<String> (), true );
     }
 
+    private synchronized void notifyAdd ( final Collection<Entry> added )
+    {
+        for ( final Map.Entry<Object, FolderListener> entry : this.listeners.entrySet () )
+        {
+            entry.getValue ().changed ( entry.getKey (), added, new LinkedList<String> (), false );
+        }
+    }
+
     private synchronized void notifyAdd ( final Entry added )
     {
         final List<Entry> list = new LinkedList<Entry> ();
         list.add ( added );
-        for ( final Map.Entry<Object, FolderListener> entry : this.listeners.entrySet () )
-        {
-            entry.getValue ().changed ( entry.getKey (), list, new LinkedList<String> (), false );
-        }
+        notifyAdd ( list );
     }
 
     private synchronized void notifyRemove ( final String removed )
