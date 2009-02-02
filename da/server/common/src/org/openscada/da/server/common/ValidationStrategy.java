@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,11 +28,16 @@ package org.openscada.da.server.common;
 public enum ValidationStrategy
 {
     /**
-     * Perform a full check through all possible checks.
+     * Perform a full check through all possible checks. If the item
+     * does not exists and all factories reject creating the item
+     * the item is considered "invalid".
      */
     FULL_CHECK,
     /**
-     * Be permissive and grant everything.
+     * Be permissive and grant everything. If the item does not exists
+     * and all factories reject creating the item it is still considered
+     * "currently unknown" and will be connected as "GRANTED" since it
+     * might be accepted later.
      */
     GRANT_ALL
 }
