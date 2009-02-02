@@ -39,26 +39,26 @@ import org.openscada.net.io.IOProcessor;
 
 public abstract class ConnectionBase implements Connection
 {
-    private static Logger _log = Logger.getLogger ( ConnectionBase.class );
+    private static Logger log = Logger.getLogger ( ConnectionBase.class );
 
-    private ConnectionInfo _connectionInfo = null;
+    protected ConnectionInfo connectionInfo = null;
 
-    private SocketAddress _remote = null;
+    private SocketAddress remote = null;
 
-    private IOProcessor _processor = null;
+    private IOProcessor processor = null;
 
-    protected ClientConnection _client = null;
+    protected ClientConnection client = null;
 
-    private final List<ConnectionStateListener> _connectionStateListeners = new ArrayList<ConnectionStateListener> ();
+    private final List<ConnectionStateListener> connectionStateListeners = new ArrayList<ConnectionStateListener> ();
 
     //private boolean _connected = false;
-    private ConnectionState _connectionState = ConnectionState.CLOSED;
+    private ConnectionState connectionState = ConnectionState.CLOSED;
 
-    private boolean _requestConnection = false;
+    private boolean requestConnection = false;
 
     private static Object _defaultProcessorLock = new Object ();
 
-    private static IOProcessor _defaultProcessor = null;
+    private static IOProcessor defaultProcessor = null;
 
     private static IOProcessor getDefaultProcessor ()
     {
@@ -66,17 +66,17 @@ public abstract class ConnectionBase implements Connection
         {
             synchronized ( _defaultProcessorLock )
             {
-                if ( _defaultProcessor == null )
+                if ( defaultProcessor == null )
                 {
-                    _defaultProcessor = new IOProcessor ();
-                    _defaultProcessor.start ();
+                    defaultProcessor = new IOProcessor ();
+                    defaultProcessor.start ();
                 }
-                return _defaultProcessor;
+                return defaultProcessor;
             }
         }
         catch ( final IOException e )
         {
-            _log.error ( "unable to created io processor", e );
+            log.error ( "unable to created io processor", e );
         }
         // operation failed
         return null;
@@ -86,8 +86,8 @@ public abstract class ConnectionBase implements Connection
     {
         super ();
 
-        this._processor = processor;
-        this._connectionInfo = connectionInfo;
+        this.processor = processor;
+        this.connectionInfo = connectionInfo;
 
         init ();
     }
@@ -99,23 +99,23 @@ public abstract class ConnectionBase implements Connection
 
     private void init ()
     {
-        if ( this._client != null )
+        if ( this.client != null )
         {
             return;
         }
 
-        this._client = new ClientConnection ( this._processor );
-        this._client.addStateListener ( new org.openscada.net.io.ConnectionStateListener () {
+        this.client = new ClientConnection ( this.processor );
+        this.client.addStateListener ( new org.openscada.net.io.ConnectionStateListener () {
 
             public void closed ( final Exception error )
             {
-                _log.debug ( "closed" );
+                log.debug ( "closed" );
                 fireDisconnected ( error );
             }
 
             public void opened ()
             {
-                _log.debug ( "opened" );
+                log.debug ( "opened" );
                 fireConnected ();
             }
         } );
@@ -124,13 +124,13 @@ public abstract class ConnectionBase implements Connection
 
     synchronized public void connect ()
     {
-        this._requestConnection = true;
+        this.requestConnection = true;
         connectInternal ();
     }
 
     synchronized protected void connectInternal ()
     {
-        switch ( this._connectionState )
+        switch ( this.connectionState )
         {
         case CLOSED:
             setState ( ConnectionState.CONNECTING, null );
@@ -140,14 +140,14 @@ public abstract class ConnectionBase implements Connection
 
     synchronized public void disconnect ()
     {
-        _log.info ( "Requesting disconnect: " + this._connectionInfo.toUri () );
-        this._requestConnection = false;
+        log.info ( "Requesting disconnect: " + this.connectionInfo.toUri () );
+        this.requestConnection = false;
         disconnect ( null );
     }
 
     synchronized protected void disconnect ( final Throwable reason )
     {
-        switch ( this._connectionState )
+        switch ( this.connectionState )
         {
         case LOOKUP:
             setState ( ConnectionState.CLOSED, reason );
@@ -163,53 +163,53 @@ public abstract class ConnectionBase implements Connection
 
     public void sendMessage ( final Message message ) throws NoConnectionException
     {
-        if ( this._client == null )
+        if ( this.client == null )
         {
             throw new NoConnectionException ();
         }
-        if ( this._client.getConnection () == null )
+        if ( this.client.getConnection () == null )
         {
             throw new NoConnectionException ();
         }
 
-        this._client.getConnection ().sendMessage ( message );
+        this.client.getConnection ().sendMessage ( message );
     }
 
     public void sendMessage ( final Message message, final MessageStateListener listener, final long timeout ) throws NoConnectionException
     {
-        if ( this._client == null )
+        if ( this.client == null )
         {
             throw new NoConnectionException ();
         }
-        if ( this._client.getConnection () == null )
+        if ( this.client.getConnection () == null )
         {
             throw new NoConnectionException ();
         }
 
-        this._client.getConnection ().sendMessage ( message, listener, timeout );
+        this.client.getConnection ().sendMessage ( message, listener, timeout );
     }
 
     public void addConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
-        synchronized ( this._connectionStateListeners )
+        synchronized ( this.connectionStateListeners )
         {
-            this._connectionStateListeners.add ( connectionStateListener );
+            this.connectionStateListeners.add ( connectionStateListener );
         }
     }
 
     public void removeConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
-        synchronized ( this._connectionStateListeners )
+        synchronized ( this.connectionStateListeners )
         {
-            this._connectionStateListeners.remove ( connectionStateListener );
+            this.connectionStateListeners.remove ( connectionStateListener );
         }
     }
 
     private void fireConnected ()
     {
-        _log.debug ( "connected" );
+        log.debug ( "connected" );
 
-        switch ( this._connectionState )
+        switch ( this.connectionState )
         {
         case CONNECTING:
             setState ( ConnectionState.CONNECTED, null );
@@ -220,9 +220,9 @@ public abstract class ConnectionBase implements Connection
 
     private void fireDisconnected ( final Throwable error )
     {
-        _log.debug ( "dis-connected" );
+        log.debug ( "dis-connected" );
 
-        switch ( this._connectionState )
+        switch ( this.connectionState )
         {
         case BOUND:
         case CONNECTED:
@@ -237,7 +237,7 @@ public abstract class ConnectionBase implements Connection
 
     public ConnectionState getState ()
     {
-        return this._connectionState;
+        return this.connectionState;
     }
 
     /**
@@ -246,7 +246,7 @@ public abstract class ConnectionBase implements Connection
      */
     public ClientConnection getClient ()
     {
-        return this._client;
+        return this.client;
     }
 
     /**
@@ -256,14 +256,14 @@ public abstract class ConnectionBase implements Connection
      */
     synchronized protected void setState ( final ConnectionState connectionState, final Throwable error )
     {
-        this._connectionState = connectionState;
+        this.connectionState = connectionState;
 
         stateChanged ( connectionState, error );
     }
 
     private void stateChanged ( final ConnectionState connectionState, final Throwable error )
     {
-        _log.debug ( "ConnectionState Change: " + connectionState );
+        log.debug ( "ConnectionState Change: " + connectionState );
         switch ( connectionState )
         {
 
@@ -271,15 +271,15 @@ public abstract class ConnectionBase implements Connection
             // maybe clean up
             onConnectionClosed ();
             // if we got the close and are auto-reconnect ... schedule the job
-            if ( this._connectionInfo.isAutoReconnect () && this._requestConnection )
+            if ( this.connectionInfo.isAutoReconnect () && this.requestConnection )
             {
-                this._processor.getScheduler ().scheduleJob ( new Runnable () {
+                this.processor.getScheduler ().scheduleJob ( new Runnable () {
 
                     public void run ()
                     {
                         connectInternal ();
                     }
-                }, this._connectionInfo.getReconnectDelay () );
+                }, this.connectionInfo.getReconnectDelay () );
             }
             break;
 
@@ -299,7 +299,7 @@ public abstract class ConnectionBase implements Connection
             break;
 
         case CLOSING:
-            this._client.disconnect ();
+            this.client.disconnect ();
             break;
         }
 
@@ -316,9 +316,9 @@ public abstract class ConnectionBase implements Connection
     {
         List<ConnectionStateListener> connectionStateListeners;
 
-        synchronized ( this._connectionStateListeners )
+        synchronized ( this.connectionStateListeners )
         {
-            connectionStateListeners = new ArrayList<ConnectionStateListener> ( this._connectionStateListeners );
+            connectionStateListeners = new ArrayList<ConnectionStateListener> ( this.connectionStateListeners );
         }
         for ( final ConnectionStateListener listener : connectionStateListeners )
         {
@@ -334,9 +334,9 @@ public abstract class ConnectionBase implements Connection
 
     synchronized private void performConnect ()
     {
-        if ( this._remote != null )
+        if ( this.remote != null )
         {
-            this._client.connect ( this._remote );
+            this.client.connect ( this.remote );
         }
         else
         {
@@ -358,12 +358,12 @@ public abstract class ConnectionBase implements Connection
         // lookup may take some time
         try
         {
-            final SocketAddress remote = new InetSocketAddress ( InetAddress.getByName ( this._connectionInfo.getHostName () ), this._connectionInfo.getPort () );
-            this._remote = remote;
+            final SocketAddress remote = new InetSocketAddress ( InetAddress.getByName ( this.connectionInfo.getHostName () ), this.connectionInfo.getPort () );
+            this.remote = remote;
             // this time "remote" should not be null
             synchronized ( this )
             {
-                if ( this._connectionState.equals ( ConnectionState.LOOKUP ) )
+                if ( this.connectionState.equals ( ConnectionState.LOOKUP ) )
                 {
                     setState ( ConnectionState.CONNECTING, null );
                 }
@@ -373,7 +373,7 @@ public abstract class ConnectionBase implements Connection
         {
             synchronized ( this )
             {
-                if ( this._connectionState.equals ( ConnectionState.LOOKUP ) )
+                if ( this.connectionState.equals ( ConnectionState.LOOKUP ) )
                 {
                     setState ( ConnectionState.CLOSED, e );
                 }
