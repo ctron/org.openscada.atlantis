@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -45,7 +44,6 @@ import org.eclipse.swt.dnd.URLTransfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -63,7 +61,6 @@ import org.openscada.da.base.realtime.ListData;
 import org.openscada.da.base.realtime.ListEntry;
 import org.openscada.da.base.realtime.ListEntryComparator;
 import org.openscada.da.base.realtime.RealtimeListAdapter;
-import org.openscada.da.base.realtime.RemoveAction;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.dataItemList.ItemType;
@@ -74,18 +71,11 @@ import org.openscada.da.project.Activator;
 public class RealtimeListEditor extends EditorPart implements RealtimeListAdapter
 {
 
-    private final RemoveAction removeAction;
-
     private TreeViewer viewer;
 
     private final ListData list = new ListData ();
 
     private boolean dirty = false;
-
-    public RealtimeListEditor ()
-    {
-        this.removeAction = new RemoveAction ( this );
-    }
 
     @Override
     public void doSave ( final IProgressMonitor monitor )
@@ -208,7 +198,6 @@ public class RealtimeListEditor extends EditorPart implements RealtimeListAdapte
 
         getSite ().setSelectionProvider ( this.viewer );
 
-        this.viewer.addSelectionChangedListener ( this.removeAction );
         this.viewer.addDoubleClickListener ( new IDoubleClickListener () {
 
             public void doubleClick ( final DoubleClickEvent event )
@@ -218,7 +207,6 @@ public class RealtimeListEditor extends EditorPart implements RealtimeListAdapte
         } );
 
         hookContextMenu ();
-        contributeToActionBars ();
 
         addDropSupport ();
     }
@@ -292,32 +280,13 @@ public class RealtimeListEditor extends EditorPart implements RealtimeListAdapte
     private void fillContextMenu ( final IMenuManager manager )
     {
         // Other plug-ins can contribute there actions here
-
-        manager.add ( this.removeAction );
         manager.add ( new Separator () );
         manager.add ( new Separator ( IWorkbenchActionConstants.MB_ADDITIONS ) );
     }
 
-    private void contributeToActionBars ()
-    {
-        final IActionBars bars = getEditorSite ().getActionBars ();
-        fillLocalPullDown ( bars.getMenuManager () );
-        fillLocalToolBar ( bars.getToolBarManager () );
-    }
-
-    private void fillLocalToolBar ( final IToolBarManager manager )
-    {
-        manager.add ( this.removeAction );
-    }
-
-    private void fillLocalPullDown ( final IMenuManager manager )
-    {
-        manager.add ( this.removeAction );
-    }
-
     private void addDropSupport ()
     {
-        this.viewer.addDropSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance (), URLTransfer.getInstance () }, new ItemDropAdapter ( this.viewer ) );
+        this.viewer.addDropSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance (), URLTransfer.getInstance () }, new ItemDropAdapter ( this.viewer, this ) );
     }
 
     @Override
@@ -329,6 +298,12 @@ public class RealtimeListEditor extends EditorPart implements RealtimeListAdapte
     public void remove ( final ListEntry entry )
     {
         this.list.remove ( entry );
+        makeDirty ();
+    }
+
+    public void add ( final ListEntry entry )
+    {
+        this.list.add ( entry );
         makeDirty ();
     }
 

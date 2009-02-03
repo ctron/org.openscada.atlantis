@@ -34,9 +34,12 @@ import org.openscada.da.client.ItemManager;
 public class ItemDropAdapter extends ViewerDropAdapter
 {
 
-    public ItemDropAdapter ( final Viewer viewer )
+    private final RealtimeListAdapter list;
+
+    public ItemDropAdapter ( final Viewer viewer, final RealtimeListAdapter list )
     {
         super ( viewer );
+        this.list = list;
         setFeedbackEnabled ( true );
         setSelectionFeedbackEnabled ( true );
     }
@@ -46,14 +49,13 @@ public class ItemDropAdapter extends ViewerDropAdapter
     {
         final Item[] items = (Item[])data;
 
-        final ListData listData = (ListData)getViewer ().getInput ();
         final TreeViewer viewer = (TreeViewer)getViewer ();
 
         for ( final Item item : items )
         {
             try
             {
-                dropItem ( item, listData, viewer );
+                dropItem ( item, viewer );
             }
             catch ( final URISyntaxException e )
             {
@@ -64,14 +66,16 @@ public class ItemDropAdapter extends ViewerDropAdapter
         return true;
     }
 
-    private void dropItem ( final Item item, final ListData listData, final TreeViewer viewer ) throws URISyntaxException
+    private void dropItem ( final Item item, final TreeViewer viewer ) throws URISyntaxException
     {
         final ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( item.getConnectionString () );
         final ItemManager itemManager = ConnectionManager.getDefault ().getItemManager ( connectionInformation, true );
 
         if ( itemManager != null )
         {
-            listData.add ( new Item ( item ), itemManager );
+            final ListEntry entry = new ListEntry ();
+            entry.setDataItem ( new Item ( item ), itemManager );
+            this.list.add ( entry );
         }
     }
 
