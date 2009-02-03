@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.ae.client.net.test;
 
 import java.util.Map;
@@ -13,38 +32,38 @@ import org.openscada.core.client.net.ConnectionInfo;
 
 public class Application
 {
-    private static Logger _log = Logger.getLogger ( Application.class );
-    
-    public static void list ( Connection connection ) throws InterruptedException, OperationException
+    private static Logger logger = Logger.getLogger ( Application.class );
+
+    public static void list ( final Connection connection ) throws InterruptedException, OperationException
     {
-        Set<QueryDescription> queries = connection.list ();
+        final Set<QueryDescription> queries = connection.list ();
         System.out.println ( "Listing queries:" );
-        for ( QueryDescription description : queries )
+        for ( final QueryDescription description : queries )
         {
             System.out.println ( description.getId () );
-            for ( Map.Entry<String, Variant> entry : description.getAttributes ().entrySet () )
+            for ( final Map.Entry<String, Variant> entry : description.getAttributes ().entrySet () )
             {
                 System.out.println ( "\t'" + entry.getKey () + "'=>'" + entry.getValue ().asString ( "<null>" ) + "'" );
             }
         }
     }
-    
-    public static void main ( String[] args ) throws Throwable
+
+    public static void main ( final String[] args ) throws Throwable
     {
-        ConnectionInfo ci = new ConnectionInfo ();
+        final ConnectionInfo ci = new ConnectionInfo ();
         ci.setAutoReconnect ( false );
         ci.setHostName ( "localhost" );
         ci.setPort ( 1302 );
-        
-        Connection connection = new Connection ( ci );
-        _log.debug ( "Initiating connection..." );
+
+        final Connection connection = new Connection ( ci );
+        logger.debug ( "Initiating connection..." );
         new ConnectWaitController ( connection ).connect ();
-        _log.debug ( "Connection established" );
-        
+        logger.debug ( "Connection established" );
+
         list ( connection );
-        
+
         connection.subscribe ( "all", new DumpListener (), 10, 10 );
-        
+
         while ( true )
         {
             Thread.sleep ( 1000 );
