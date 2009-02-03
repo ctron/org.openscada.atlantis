@@ -28,11 +28,6 @@ import java.util.regex.Pattern;
 public class ProxyUtils
 {
     /**
-     * item name for items which are only relevant for proxy server
-     */
-    public static final String ITEM_PREFIX = "connection";
-
-    /**
      * @param itemId
      * @param separator
      * @param proxyPrefix

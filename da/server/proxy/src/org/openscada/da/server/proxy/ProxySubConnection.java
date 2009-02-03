@@ -53,6 +53,9 @@ public class ProxySubConnection
         this.id = id;
     }
 
+    /**
+     * @return itemManager
+     */
     public ItemManager getItemManager ()
     {
         return this.itemManager;
@@ -82,6 +85,9 @@ public class ProxySubConnection
         return this.id;
     }
 
+    /**
+     * @return folderManager
+     */
     public FolderManager getFolderManager ()
     {
         return this.folderManager;

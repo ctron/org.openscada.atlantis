@@ -18,9 +18,12 @@ import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.FolderListener;
 import org.openscada.da.server.common.DataItem;
 
+/**
+ * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
+ *
+ */
 public class ProxyFolder implements Folder, org.openscada.da.client.FolderListener
 {
-
     private final FolderCommon folder = new FolderCommon ();
 
     private final Location location;
@@ -31,6 +34,11 @@ public class ProxyFolder implements Folder, org.openscada.da.client.FolderListen
 
     private final ProxyGroup proxyGroup;
 
+    /**
+     * @param folderManager
+     * @param proxyGroup
+     * @param location
+     */
     public ProxyFolder ( final FolderManager folderManager, final ProxyGroup proxyGroup, final Location location )
     {
         this.folderManager = folderManager;

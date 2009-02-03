@@ -11,8 +11,17 @@ import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
 import org.openscada.utils.collection.MapBuilder;
 
+/**
+ * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
+ *
+ */
 public class ProxyConnection
 {
+    /**
+     * item name for items which are only relevant for proxy server
+     */
+    public static final String ITEM_PREFIX = "proxy.connection";
+
     private final Hive hive;
 
     private final ProxyGroup group;
@@ -37,6 +46,11 @@ public class ProxyConnection
 
     private DataItemCommand disconnectItem;
 
+    /**
+     * @param hive
+     * @param connectionsFolder
+     * @param group
+     */
     public ProxyConnection ( final Hive hive, final FolderCommon connectionsFolder, final ProxyGroup group )
     {
         this.hive = hive;
@@ -47,7 +61,7 @@ public class ProxyConnection
 
     protected DataItemInputChained createItem ( final String localId )
     {
-        final DataItemInputChained item = new DataItemInputChained ( ProxyUtils.ITEM_PREFIX + this.separator + this.group.getPrefix ().getName () + this.separator + localId );
+        final DataItemInputChained item = new DataItemInputChained ( itemName ( localId ) );
 
         this.hive.registerItem ( item );
         this.connectionFolder.add ( localId, item, new MapBuilder<String, Variant> ().getMap () );
@@ -55,6 +69,14 @@ public class ProxyConnection
         return item;
     }
 
+    private String itemName ( final String localId )
+    {
+        return this.group.getPrefix ().getName () + this.separator + ITEM_PREFIX + this.separator + localId;
+    }
+
+    /**
+     * 
+     */
     public void init ()
     {
         this.connectionFolder = new FolderCommon ();
@@ -67,7 +89,7 @@ public class ProxyConnection
         this.switchDuration = createItem ( "switch.duration" );
 
         // active Connection
-        this.activeConnectionItem = new WriteHandlerItem ( ProxyUtils.ITEM_PREFIX + this.separator + this.group.getPrefix () + this.separator + "active.connection", new WriteHandler () {
+        this.activeConnectionItem = new WriteHandlerItem ( ITEM_PREFIX + this.separator + this.group.getPrefix () + this.separator + "active.connection", new WriteHandler () {
             @Override
             public void handleWrite ( final Variant value ) throws Exception
             {
@@ -91,7 +113,7 @@ public class ProxyConnection
 
         this.activeConnectionItem.updateData ( new Variant ( this.group.getCurrentConnection ().toString () ), availableConnections, AttributeMode.SET );
 
-        this.connectItem = new DataItemCommand ( "connect" );
+        this.connectItem = new DataItemCommand ( itemName ( "connect" ) );
         this.connectItem.addListener ( new DataItemCommand.Listener () {
 
             @Override
@@ -103,7 +125,7 @@ public class ProxyConnection
         this.hive.registerItem ( this.connectItem );
         this.connectionFolder.add ( "connect", this.connectItem, new MapBuilder<String, Variant> ().getMap () );
 
-        this.disconnectItem = new DataItemCommand ( "disconnect" );
+        this.disconnectItem = new DataItemCommand ( itemName ( "disconnect" ) );
         this.disconnectItem.addListener ( new DataItemCommand.Listener () {
 
             @Override
@@ -115,10 +137,9 @@ public class ProxyConnection
         this.hive.registerItem ( this.disconnectItem );
         this.connectionFolder.add ( "disconnect", this.disconnectItem, new MapBuilder<String, Variant> ().getMap () );
 
-        // actual items
-        // this.group.getConnectionFolder ().add ( "items", new ProxyFolder ( this.group ), new HashMap<String, Variant> () );
         this.group.addConnectionStateListener ( new NotifyConnectionErrorListener ( this.group ) );
 
+        // add proxy folder for actual items
         this.group.start ();
     }
 
@@ -140,14 +161,20 @@ public class ProxyConnection
         this.switchDuration.updateData ( new Variant ( end - start ), null, AttributeMode.UPDATE );
     }
 
-    public void dispose ()
-    {
-        this.group.stop ();
-    }
-
+    /**
+     * @param id
+     * @return item
+     */
     public ProxyDataItem realizeItem ( final String id )
     {
         return this.group.realizeItem ( id );
     }
 
+    /**
+     * 
+     */
+    public void dispose ()
+    {
+        this.group.stop ();
+    }
 }

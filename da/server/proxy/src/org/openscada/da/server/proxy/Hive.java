@@ -91,7 +91,7 @@ public class Hive extends HiveCommon
     }
 
     /**
-     * @param connection
+     * @param group
      */
     public void addGroup ( final ProxyGroup group )
     {

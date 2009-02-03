@@ -54,11 +54,17 @@ public class ProxyGroup
 
     private FolderCommon connectionFolder;
 
+    /**
+     * 
+     */
     public void start ()
     {
         createProxyFolder ();
     }
 
+    /**
+     * 
+     */
     public void stop ()
     {
         destroyProxyFolder ();
@@ -138,6 +144,9 @@ public class ProxyGroup
         }
     }
 
+    /**
+     * @param connectionStateListener
+     */
     public void addConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
         this.connectionStateListeners.add ( connectionStateListener );
@@ -202,16 +211,26 @@ public class ProxyGroup
         return ProxyUtils.originalItemId ( itemId, this.separator, getPrefix (), currentSubConnection ().getPrefix () );
     }
 
+    /**
+     * @param itemId
+     * @return return name of item in proxy
+     */
     public String convertToProxyId ( final String itemId )
     {
         return ProxyUtils.proxyItemId ( itemId, this.separator, getPrefix (), currentSubConnection ().getPrefix () );
     }
 
+    /**
+     * 
+     */
     public void disconnectCurrentConnection ()
     {
         currentConnection ().disconnect ();
     }
 
+    /**
+     * 
+     */
     public void connectCurrentConnection ()
     {
         currentConnection ().connect ();
@@ -259,6 +278,9 @@ public class ProxyGroup
         }
     }
 
+    /**
+     * @param connectionStateListener
+     */
     public void removeConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
         this.connectionStateListeners.remove ( connectionStateListener );
@@ -283,9 +305,6 @@ public class ProxyGroup
 
     /**
      * @param newConnectionId
-     * @throws InvalidOperationException
-     * @throws NullValueException
-     * @throws NotConvertableException
      */
     public void switchTo ( final ProxySubConnectionId newConnectionId )
     {
