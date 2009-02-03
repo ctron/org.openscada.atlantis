@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Base Plug-in
 Bundle-SymbolicName: org.openscada.da.base;singleton:=true
-Bundle-Version: 0.10.2
+Bundle-Version: 0.10.3
 Bundle-Activator: org.openscada.da.base.Activator
 Require-Bundle: org.eclipse.core.runtime,
  log4j_wrapper_plugin;bundle-version="1.2.13",
