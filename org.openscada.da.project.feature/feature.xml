@@ -3,19 +3,24 @@
       id="org.openscada.da.project"
       label="OpenSCADA DA Project Feature"
       version="1.0.9"
-      provider-name="OpenSCADA">
+      provider-name="OpenSCADA"
+      plugin="org.openscada.da.project">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      OpenSCADA DA Project Feature
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright url="http://www.gnu.org/licenses/gpl.txt">
+      http://www.gnu.org/licenses/gpl.txt
    </copyright>
 
-   <license>
+   <license url="http://www.gnu.org/licenses/gpl.txt">
       Licensed under the GPL
    </license>
+
+   <url>
+      <update label="OpenSCADA IDE Update Site" url="http://openscada.org/ide/update_site"/>
+   </url>
 
    <plugin
          id="ext_plugin_icej"

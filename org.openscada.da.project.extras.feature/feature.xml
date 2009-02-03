@@ -2,8 +2,9 @@
 <feature
       id="org.openscada.da.project.extras"
       label="OpenSCADA DA Project Extras Feature"
-      version="1.0.4"
-      provider-name="OpenSCADA">
+      version="1.0.5"
+      provider-name="OpenSCADA"
+      plugin="org.openscada.da.project">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -16,6 +17,10 @@
    <license url="http://www.example.com/license">
       [Enter License Description here.]
    </license>
+
+   <url>
+      <update label="OpenSCADA IDE Update Site" url="http://openscada.org/ide/update_site"/>
+   </url>
 
    <plugin
          id="ext_plugin_jfreechart"
