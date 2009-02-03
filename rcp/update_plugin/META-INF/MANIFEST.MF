@@ -5,10 +5,10 @@ Bundle-SymbolicName: org.openscada.rcp.update; singleton:=true
 Bundle-Version: 0.2.0
 Bundle-Activator: org.openscada.rcp.update.Activator
 Bundle-Vendor: OpenSCADA
-Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.update.core,
  log4j_wrapper_plugin
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: org.openscada.rcp.update
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
