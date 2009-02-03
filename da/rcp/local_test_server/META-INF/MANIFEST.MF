@@ -2,15 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Local NET Test Server
 Bundle-SymbolicName: org.openscada.da.rcp.LocalTestServer;singleton:=true
-Bundle-Version: 0.9.0
+Bundle-Version: 0.10.0
 Bundle-Activator: org.openscada.da.rcp.LocalTestServer.Activator
 Bundle-Vendor: OpenSCADA
-Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  log4j_wrapper_plugin,
  ext_plugin_xmlbeans
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: openscada_net_server_test.jar,
  .,
  openscada_net_server_sim.jar
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

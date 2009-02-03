@@ -26,7 +26,6 @@ import java.util.Map;
 import org.apache.xmlbeans.XmlException;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
@@ -118,7 +117,7 @@ public class Activator extends AbstractUIPlugin
         {
             checkRunning ( TEST_PORT );
 
-            final Path path = new Path ( "hive.xml" );
+            // final Path path = new Path ( "hive.xml" );
 
             // final Configurator configurator = new XMLConfigurator ( FileLocator.openStream ( getBundle (), path, true ) );
             final org.openscada.da.server.test.Hive testHive = new org.openscada.da.server.test.Hive ();
