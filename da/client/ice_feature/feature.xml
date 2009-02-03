@@ -496,7 +496,6 @@ DAMAGES.
    </url>
 
    <requires>
-      <import plugin="log4j_wrapper_plugin"/>
       <import plugin="org.openscada.da.client"/>
    </requires>
 
@@ -506,5 +505,11 @@ DAMAGES.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="log4j_wrapper_plugin"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
