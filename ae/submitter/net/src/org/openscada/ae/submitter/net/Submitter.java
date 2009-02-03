@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,40 +28,41 @@ import org.openscada.core.client.net.ConnectionInfo;
 
 public class Submitter implements Submission
 {
-    
-    private ConnectionInfo _connectionInformation = null;
-    private Connection _connection = null;
-    
+
+    private ConnectionInfo connectionInformation = null;
+
+    private Connection connection = null;
+
     public Submitter ()
     {
         super ();
-        
-        _connectionInformation = new ConnectionInfo ();
-        _connectionInformation.setAutoReconnect ( false );
-        _connectionInformation.setHostName ( System.getProperty ( "openscada.ae.submitter.net.hostname" ) );
-        _connectionInformation.setPort ( Integer.getInteger ( "openscada.ae.submitter.net.port", 1302 ) );
+
+        this.connectionInformation = new ConnectionInfo ();
+        this.connectionInformation.setAutoReconnect ( false );
+        this.connectionInformation.setHostName ( System.getProperty ( "openscada.ae.submitter.net.hostname" ) );
+        this.connectionInformation.setPort ( Integer.getInteger ( "openscada.ae.submitter.net.port", 1302 ) );
     }
-    
-    public Submitter ( ConnectionInfo connectionInfo )
+
+    public Submitter ( final ConnectionInfo connectionInfo )
     {
         super ();
-        
-        _connectionInformation = connectionInfo;
+
+        this.connectionInformation = connectionInfo;
     }
-    
+
     synchronized protected Connection getConnection () throws Throwable
     {
-        if ( _connection == null )
+        if ( this.connection == null )
         {
-            _connection = new Connection ( _connectionInformation );
-            new ConnectWaitController ( _connection ).connect ();
+            this.connection = new Connection ( this.connectionInformation );
+            new ConnectWaitController ( this.connection ).connect ();
         }
-        return _connection;
+        return this.connection;
     }
-    
-    public void submitEvent ( Properties properties, Event event ) throws Throwable
+
+    public void submitEvent ( final Properties properties, final Event event ) throws Throwable
     {
         getConnection ().submitEvent ( properties, event );
     }
-    
+
 }

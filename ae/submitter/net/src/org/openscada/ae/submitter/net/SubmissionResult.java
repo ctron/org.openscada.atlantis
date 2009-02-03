@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,26 +21,26 @@ package org.openscada.ae.submitter.net;
 
 public class SubmissionResult
 {
-    private Exception _error = null;
-    
+    private Exception error = null;
+
     public Exception getError ()
     {
-        return _error;
+        return this.error;
     }
-    
+
     public boolean isSuccess ()
     {
-        return _error == null;
+        return this.error == null;
     }
-    
+
     synchronized public void complete ()
     {
         notifyAll ();
     }
-    
-    synchronized public void fail ( Exception error )
+
+    synchronized public void fail ( final Exception error )
     {
-        _error = error;
+        this.error = error;
         notifyAll ();
     }
 }

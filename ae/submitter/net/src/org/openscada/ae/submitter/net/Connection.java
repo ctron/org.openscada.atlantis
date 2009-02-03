@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,11 +19,14 @@
 
 package org.openscada.ae.submitter.net;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openscada.ae.core.Event;
 import org.openscada.ae.core.Submission;
 import org.openscada.ae.net.SubmitEventMessage;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
@@ -32,8 +35,11 @@ import org.openscada.net.base.data.Message;
 
 public class Connection extends ConnectionBase implements Submission
 {
+    public static final String PROP_RECONNECT_DELAY = "reconnect-delay";
 
-    public Connection ( ConnectionInfo connectionInfo )
+    public static final String PROP_AUTO_RECONNECT = "auto-reconnect";
+
+    public Connection ( final ConnectionInfo connectionInfo )
     {
         super ( connectionInfo );
     }
@@ -55,19 +61,19 @@ public class Connection extends ConnectionBase implements Submission
         setState ( ConnectionState.BOUND, null );
     }
 
-    public void submitEvent ( Properties properties, Event event ) throws Exception
+    public void submitEvent ( final Properties properties, final Event event ) throws Exception
     {
-        SubmitEventMessage message = new SubmitEventMessage ();
+        final SubmitEventMessage message = new SubmitEventMessage ();
         message.setEvent ( event );
         message.setProperties ( properties );
-        
+
         final SubmissionResult result = new SubmissionResult ();
-        
+
         synchronized ( result )
         {
             sendMessage ( message.toMessage (), new MessageStateListener () {
 
-                public void messageReply ( Message message )
+                public void messageReply ( final Message message )
                 {
                     if ( message.getCommandCode () == Message.CC_ACK )
                     {
@@ -81,16 +87,38 @@ public class Connection extends ConnectionBase implements Submission
 
                 public void messageTimedOut ()
                 {
-                    result.fail ( (Exception)new Exception ( "Message timed out").fillInStackTrace () );
+                    result.fail ( (Exception)new Exception ( "Message timed out" ).fillInStackTrace () );
 
-                }}, Integer.getInteger ( "openscada.ae.message.timeout", 10 * 1000 ) );
-            
+                }
+            }, Integer.getInteger ( "openscada.ae.message.timeout", 10 * 1000 ) );
+
             result.wait ();
         }
-        
+
         if ( !result.isSuccess () )
+        {
             throw result.getError ();
+        }
     }
 
-    
+    @Override
+    public ConnectionInformation getConnectionInformation ()
+    {
+        final ConnectionInformation info = new ConnectionInformation ();
+        info.setInterface ( "aes" );
+        info.setDriver ( "net" );
+        info.setTarget ( this.connectionInfo.getHostName () );
+        info.setSecondaryTarget ( this.connectionInfo.getPort () );
+
+        final Map<String, String> properties = new HashMap<String, String> ();
+        if ( this.connectionInfo.getReconnectDelay () > 0 )
+        {
+            properties.put ( PROP_AUTO_RECONNECT, "true" );
+            properties.put ( PROP_RECONNECT_DELAY, String.format ( "%s", this.connectionInfo.getReconnectDelay () ) );
+        }
+
+        info.setProperties ( properties );
+
+        return info;
+    }
 }

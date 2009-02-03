@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,54 +30,54 @@ import org.openscada.core.Variant;
 
 public class Application
 {
-    public static Event fillEventAndProperties ( String[] args, Properties properties )
+    public static Event fillEventAndProperties ( final String[] args, final Properties properties )
     {
         String id = "openscada_ae_submitter." + System.currentTimeMillis ();
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        
-        Pattern p1 = Pattern.compile ( "-A([0-9a-zA-Z\\.-_:]+)=(.*)" );
-        Pattern p2 = Pattern.compile ( "-P([0-9a-zA-Z\\.-_:]+)=(.*)" );
-        Pattern p3 = Pattern.compile ( "--id=(.*)" );
-        
-        for ( String arg : args )
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+
+        final Pattern p1 = Pattern.compile ( "-A([0-9a-zA-Z\\.-_:]+)=(.*)" );
+        final Pattern p2 = Pattern.compile ( "-P([0-9a-zA-Z\\.-_:]+)=(.*)" );
+        final Pattern p3 = Pattern.compile ( "--id=(.*)" );
+
+        for ( final String arg : args )
         {
             Matcher m;
-            
+
             // check for attribute
             m = p1.matcher ( arg );
             if ( m.matches () )
             {
-                String key = m.group ( 1 );
-                String value = m.group ( 2 );
+                final String key = m.group ( 1 );
+                final String value = m.group ( 2 );
                 attributes.put ( key, new Variant ( value ) );
             }
-            
+
             // check for property
             m = p2.matcher ( arg );
             if ( m.matches () )
             {
-                String key = m.group ( 1 );
-                String value = m.group ( 2 );
+                final String key = m.group ( 1 );
+                final String value = m.group ( 2 );
                 properties.put ( key, value );
             }
-            
+
             m = p3.matcher ( arg );
             if ( m.matches () )
             {
                 id = m.group ( 1 );
             }
         }
-        
-        Event event = new Event ( id );
+
+        final Event event = new Event ( id );
         event.setAttributes ( attributes );
         return event;
     }
-    
-    public static void main ( String[] args ) throws Throwable
+
+    public static void main ( final String[] args ) throws Throwable
     {
-        Properties properties = new Properties ();
-        Event event = fillEventAndProperties ( args, properties );
-        
+        final Properties properties = new Properties ();
+        final Event event = fillEventAndProperties ( args, properties );
+
         new Submitter ().submitEvent ( properties, event );
     }
 }
