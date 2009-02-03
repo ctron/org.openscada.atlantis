@@ -19,47 +19,87 @@
 
 package org.openscada.da.base.realtime;
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.ui.IEditorActionDelegate;
+import org.eclipse.ui.IEditorPart;
 
-public class RemoveAction extends Action implements ISelectionChangedListener
+public class RemoveAction extends Action implements ISelectionChangedListener, IEditorActionDelegate
 {
-    private RealtimeListAdapter _view = null;
+    private RealtimeListAdapter view = null;
 
-    private ISelection _selection = null;
+    private Collection<ListEntry> entries;
 
     public RemoveAction ( final RealtimeListAdapter view )
     {
         super ( "Remove", Action.AS_PUSH_BUTTON );
 
-        this._view = view;
+        this.view = view;
+    }
+
+    public RemoveAction ()
+    {
     }
 
     @Override
     public void run ()
     {
-        if ( this._selection instanceof IStructuredSelection )
+        if ( this.entries == null || this.view == null )
         {
-            final IStructuredSelection selection = (IStructuredSelection)this._selection;
-            final Iterator<?> i = selection.iterator ();
-            while ( i.hasNext () )
-            {
-                final Object o = i.next ();
-                if ( o instanceof ListEntry )
-                {
-                    this._view.remove ( (ListEntry)o );
-                }
-            }
+            return;
+        }
+        for ( final ListEntry entry : this.entries )
+        {
+            this.view.remove ( entry );
         }
     }
 
     public void selectionChanged ( final SelectionChangedEvent event )
     {
-        this._selection = event.getSelection ();
+        setSelection ( event.getSelection () );
+    }
+
+    public void setActiveEditor ( final IAction action, final IEditorPart targetEditor )
+    {
+        if ( targetEditor instanceof RealtimeListAdapter )
+        {
+            this.view = (RealtimeListAdapter)targetEditor;
+        }
+    }
+
+    public void run ( final IAction action )
+    {
+        run ();
+    }
+
+    public void selectionChanged ( final IAction action, final ISelection selection )
+    {
+        setSelection ( selection );
+    }
+
+    private void setSelection ( final ISelection selection )
+    {
+        this.entries = new LinkedList<ListEntry> ();
+
+        if ( selection instanceof IStructuredSelection )
+        {
+            final Iterator<?> i = ( (IStructuredSelection)selection ).iterator ();
+            while ( i.hasNext () )
+            {
+                final Object o = i.next ();
+                if ( o instanceof ListEntry )
+                {
+                    this.entries.add ( (ListEntry)o );
+                }
+            }
+        }
     }
 }

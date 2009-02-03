@@ -23,6 +23,9 @@
             extensions="rtl"
             id="org.openscada.da.project.realTimeListEditor"
             name="Realtime List Editor">
+         <contentTypeBinding
+               contentTypeId="org.openscada.da.project.realtimeList">
+         </contentTypeBinding>
       </editor>
    </extension>
    <extension
@@ -38,6 +41,21 @@
             id="org.openscada.da.project.wizards.RealtimeListNewWizard"
             name="Realtime List File">
       </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            id="org.openscada.da.project.editorContribution1"
+            targetID="org.openscada.da.project.realTimeListEditor">
+         <action
+               class="org.openscada.da.base.realtime.RemoveAction"
+               id="org.openscada.da.project.realtime.RemoveAction"
+               label="Remove"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions">
+         </action>
+      </editorContribution>
    </extension>
 
 </plugin>
