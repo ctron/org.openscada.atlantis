@@ -19,6 +19,7 @@
 
 package org.openscada.da.client.test;
 
+import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
@@ -32,9 +33,17 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor
 
     private static final String PERSPECTIVE_ID = "org.openscada.da.client.test.perspective"; //$NON-NLS-1$
 
+    @Override
     public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor ( final IWorkbenchWindowConfigurer configurer )
     {
         return new ApplicationWorkbenchWindowAdvisor ( configurer );
+    }
+
+    @Override
+    public void initialize ( final IWorkbenchConfigurer configurer )
+    {
+        super.initialize ( configurer );
+        configurer.setSaveAndRestore ( true );
     }
 
     public String getInitialWindowPerspectiveId ()
