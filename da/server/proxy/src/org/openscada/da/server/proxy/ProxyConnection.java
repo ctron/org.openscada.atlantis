@@ -89,7 +89,7 @@ public class ProxyConnection
         this.switchDuration = createItem ( "switch.duration" );
 
         // active Connection
-        this.activeConnectionItem = new WriteHandlerItem ( ITEM_PREFIX + this.separator + this.group.getPrefix () + this.separator + "active.connection", new WriteHandler () {
+        this.activeConnectionItem = new WriteHandlerItem ( itemName ( "active" ), new WriteHandler () {
             @Override
             public void handleWrite ( final Variant value ) throws Exception
             {
