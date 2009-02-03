@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.ae.client.test"
       label="OpenSCADA AE Test Client Feature"
-      version="0.8.1"
+      version="0.10.0"
       provider-name="OpenSCADA">
 
    <description>
@@ -323,9 +323,10 @@ POSSIBILITY OF SUCH DAMAGES.
    </url>
 
    <requires>
-      <import plugin="log4j_wrapper_plugin"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="log4j_wrapper_plugin"/>
+      <import plugin="org.eclipse.ui.views"/>
    </requires>
 
    <plugin
