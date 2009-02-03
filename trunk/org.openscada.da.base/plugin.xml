@@ -8,5 +8,12 @@
             name="OpenSCADA DA">
       </category>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.openscada.da.category"
+            name="OpenSCADA DA">
+      </category>
+   </extension>
 
 </plugin>
