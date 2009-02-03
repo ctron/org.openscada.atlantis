@@ -24,7 +24,8 @@
          point="org.eclipse.ui.views">
       <category
             id="org.openscada.da.client.test"
-            name="OpenSCADA DA"/>
+            name="OpenSCADA DA Testing"
+            parentCategory="org.openscada.da.category"/>
       <view
             category="org.openscada.da.client.test"
             class="org.openscada.da.client.test.views.HiveView"
