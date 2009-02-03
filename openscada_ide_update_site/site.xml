@@ -9,10 +9,10 @@
    <feature url="features/org.openscada.da.net.client_0.10.2.jar" id="org.openscada.da.net.client" version="0.10.2">
       <category name="OpenSCADA DA"/>
    </feature>
-   <feature url="features/org.openscada.da.project_1.0.8.jar" id="org.openscada.da.project" version="1.0.8">
+   <feature url="features/org.openscada.da.project_1.0.9.jar" id="org.openscada.da.project" version="1.0.9">
       <category name="OpenSCADA DA"/>
    </feature>
-   <feature url="features/org.openscada.da.project.extras_1.0.4.jar" id="org.openscada.da.project.extras" version="1.0.4">
+   <feature url="features/org.openscada.da.project.extras_1.0.5.jar" id="org.openscada.da.project.extras" version="1.0.5">
       <category name="OpenSCADA DA Extras"/>
    </feature>
    <category-def name="OpenSCADA DA" label="OpenSCADA DA"/>
