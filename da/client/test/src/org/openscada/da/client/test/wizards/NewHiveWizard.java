@@ -70,7 +70,7 @@ public class NewHiveWizard extends Wizard implements INewWizard
         catch ( InvocationTargetException e )
         {
             Throwable realException = e.getTargetException ();
-            MessageDialog.openError ( getShell (), "Error", realException.getMessage () );
+            MessageDialog.openError ( getShell (), Messages.getString("NewHiveWizard.errorDialog.title"), realException.getMessage () ); //$NON-NLS-1$
             return false;
         }
         return true;
@@ -79,7 +79,7 @@ public class NewHiveWizard extends Wizard implements INewWizard
     private void doFinish ( IProgressMonitor monitor, String connectionString ) throws Exception
     {
 
-        monitor.beginTask ( "Adding hive connection...", 2 );
+        monitor.beginTask ( Messages.getString("NewHiveWizard.finishJob.title"), 2 ); //$NON-NLS-1$
 
         // add the hive
         HiveConnectionInformation info = new HiveConnectionInformation ( connectionString );
@@ -89,7 +89,7 @@ public class NewHiveWizard extends Wizard implements INewWizard
         monitor.worked ( 1 );
 
         // store all
-        monitor.subTask ( "Saving hive configuration" );
+        monitor.subTask ( Messages.getString("NewHiveWizard.finishJob.subJobSave.title") ); //$NON-NLS-1$
         Activator.getRepository ().save ( Activator.getRepostoryFile () );
         monitor.worked ( 1 );
     }
@@ -97,7 +97,7 @@ public class NewHiveWizard extends Wizard implements INewWizard
     public void init ( IWorkbench workbench, IStructuredSelection selection )
     {
         setNeedsProgressMonitor ( true );
-        setDefaultPageImageDescriptor ( Activator.getImageDescriptor ( "icons/48x48/stock_channel.png" ) );
+        setDefaultPageImageDescriptor ( Activator.getImageDescriptor ( "icons/48x48/stock_channel.png" ) ); //$NON-NLS-1$
     }
 
     @Override

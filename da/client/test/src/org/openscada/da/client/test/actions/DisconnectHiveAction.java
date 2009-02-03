@@ -46,7 +46,7 @@ public class DisconnectHiveAction implements IObjectActionDelegate, IViewActionD
         }
         catch ( Exception e )
         {
-            _log.error ( "Dis-Connect failed", e );
+            _log.error ( "Dis-Connect failed", e ); //$NON-NLS-1$
         }
     }
 

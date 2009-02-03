@@ -48,7 +48,7 @@ public class ConnectHiveAction implements IObjectActionDelegate, IViewActionDele
         }
         catch ( Throwable e )
         {
-            _log.error ( "Connect failed", e );
+            _log.error ( "Connect failed", e ); //$NON-NLS-1$
         }
     }
 

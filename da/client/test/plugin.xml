@@ -31,26 +31,26 @@
             class="org.openscada.da.client.test.views.HiveView"
             icon="icons/stock_channel.png"
             id="org.openscada.da.client.test.views.HiveView"
-            name="Hive View"/>
+            name="%view.hiveView.name"/>
       <view
             allowMultiple="true"
             category="org.openscada.da.client.test"
             class="org.openscada.da.client.test.views.watch.DataItemWatchView"
             icon="icons/stock_watch.png"
             id="org.openscada.da.client.test.views.DataItemWatchView"
-            name="Data Item View"/>
+            name="%view.dataItemWatch.name"/>
       <view
             allowMultiple="true"
             category="org.openscada.da.client.test"
             class="org.openscada.da.client.test.views.realtime.RealTimeList"
             id="org.openscada.da.test.views.RealTimeList"
-            name="Real Time List"/>
+            name="%view.realtimeList.name"/>
       <view
             allowMultiple="true"
             category="org.openscada.da.client.test"
             class="org.openscada.da.client.test.generator.GeneratorView"
             id="org.openscada.da.client.test.GeneratorView"
-            name="Signal Generator">
+            name="%view.signalGenerator.name">
       </view>
    </extension>
    <extension
@@ -58,9 +58,9 @@
       <command
             categoryId="org.openscada.da.client.test"
             defaultHandler="org.openscada.da.client.test.commands.OpenNewRealtimeList"
-            description="Open a new Realtime List"
+            description="%command.openNewRealtimeList.description"
             id="org.openscada.da.client.test.NewRealtimeList"
-            name="New Realtime List">
+            name="%command.openNewRealtimeList.name">
       </command>
       <category
             id="org.openscada.da.client.test"
@@ -120,7 +120,7 @@
                toolbarPath="additions"
                tooltip="Watch selected item">
             <enablement>
-               <objectClass name="org.openscada.da.client.test.impl.DataItemEntry"/>
+               <objectClass name="org.openscada.da.base.browser.DataItemEntry"/>
             </enablement>
          </action>
          <action
@@ -132,7 +132,7 @@
                style="push"
                toolbarPath="additions">
             <enablement>
-               <objectClass name="org.openscada.da.client.test.impl.DataItemEntry"/>
+               <objectClass name="org.openscada.da.base.browser.DataItemEntry"/>
             </enablement>
          </action>
          <action
@@ -144,34 +144,34 @@
                style="push"
                toolbarPath="additions">
             <enablement>
-               <objectClass name="org.openscada.da.client.test.impl.DataItemEntry"/>
+               <objectClass name="org.openscada.da.base.browser.DataItemEntry"/>
             </enablement>
          </action>
          <action
                class="org.openscada.da.client.test.actions.DeleteHiveAction"
                icon="icons/16x16/stock_delete.png"
                id="org.openscada.da.client.test.actions.DeleteHiveAction"
-               label="Delete"
+               label="%action.deleteHive.label"
                menubarPath="additions"
                style="push"
                toolbarPath="additions"
-               tooltip="Delete a Hive">
+               tooltip="%action.deleteHive.tooltip">
             <enablement>
-               <objectClass name="org.openscada.da.client.test.impl.HiveConnection"/>
+               <objectClass name="org.openscada.da.base.browser.HiveConnection"/>
             </enablement>
          </action>
          <action
                class="org.openscada.da.client.test.actions.ConnectHiveAction"
                icon="icons/stock_connect.png"
                id="org.openscada.da.client.test.actions.ConnectHiveAction"
-               label="Connect"
+               label="%action.connectHive.label"
                menubarPath="additions"
                style="push"
                toolbarPath="additions"
-               tooltip="Connect to Hive">
+               tooltip="%action.connectHive.tooltip">
             <enablement>
                <and>
-                  <objectClass name="org.openscada.da.client.test.impl.HiveConnection"/>
+                  <objectClass name="org.openscada.da.base.browser.HiveConnection"/>
                   <objectState
                         name="state"
                         value="CLOSED"/>
@@ -189,7 +189,7 @@
                tooltip="Disconnect from hive">
             <enablement>
                <and>
-                  <objectClass name="org.openscada.da.client.test.impl.HiveConnection"/>
+                  <objectClass name="org.openscada.da.base.browser.HiveConnection"/>
                   <not>
                      <objectState
                            name="state"
@@ -211,7 +211,7 @@
                style="push"
                toolbarPath="additions">
             <enablement>
-               <objectClass name="org.openscada.da.client.test.views.realtime.ListEntry"/>
+               <objectClass name="org.openscada.da.base.realtime.ListEntry"/>
             </enablement>
          </action>
          <action
@@ -223,7 +223,7 @@
                style="push"
                toolbarPath="additions">
             <enablement>
-               <objectClass name="org.openscada.da.client.test.views.realtime.ListEntry"/>
+               <objectClass name="org.openscada.da.base.realtime.ListEntry"/>
             </enablement>
          </action>
             </viewContribution>
@@ -248,13 +248,11 @@
                label="Disconnect"
                menubarPath="additions">
             <enablement>
-               <and>
                   <not>
                      <objectState
                            name="state"
                            value="CLOSED"/>
                   </not>
-               </and>
             </enablement>
          </action>
          <action
@@ -264,11 +262,9 @@
                label="Connect"
                menubarPath="additions">
             <enablement>
-               <and>
                   <objectState
                         name="state"
                         value="CLOSED"/>
-               </and>
             </enablement>
          </action>
       </objectContribution>
@@ -323,7 +319,7 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
-            category="org.openscada.da.client.test"
+            category="org.openscada.da.category"
             class="org.openscada.da.client.test.wizards.NewHiveWizard"
             descriptionImage="icons/32x32/stock_channel.png"
             hasPages="true"
@@ -344,22 +340,26 @@
       </wizard>
       <category
             id="org.openscada.da.client.test"
-            name="OpenSCADA DA"
-            />
+            name="OpenSCADA DA Testing"
+            parentCategory="org.openscada.da.category"/>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
             class="org.openscada.da.client.test.pages.DataItemEntryPage"
             id="org.openscada.da.client.test.propertyPages.DataItemEntryPage"
-            name="Data Item"
-            objectClass="org.openscada.da.client.test.impl.DataItemEntry">
+            name="Data Item">
+         <enabledWhen>
+            <instanceof
+                  value="org.openscada.da.base.browser.DataItemEntry">
+            </instanceof>
+         </enabledWhen>
       </page>
    </extension>
    <extension
          point="org.eclipse.ui.dropActions">
       <action
-            class="org.openscada.da.client.test.dnd.ItemDropAction"
+            class="org.openscada.da.base.dnd.ItemDropAction"
             id="itemDrop"/>
    </extension>
    <extension

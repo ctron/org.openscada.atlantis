@@ -27,16 +27,19 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
  * This workbench advisor creates the window advisor, and specifies
  * the perspective id for the initial window.
  */
-public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
-	
-	private static final String PERSPECTIVE_ID = "org.openscada.da.client.test.perspective";
+public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor
+{
 
-    public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
-        return new ApplicationWorkbenchWindowAdvisor(configurer);
+    private static final String PERSPECTIVE_ID = "org.openscada.da.client.test.perspective"; //$NON-NLS-1$
+
+    public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor ( final IWorkbenchWindowConfigurer configurer )
+    {
+        return new ApplicationWorkbenchWindowAdvisor ( configurer );
     }
 
-	public String getInitialWindowPerspectiveId() {
-		return PERSPECTIVE_ID;
-	} 
-	
+    public String getInitialWindowPerspectiveId ()
+    {
+        return PERSPECTIVE_ID;
+    }
+
 }

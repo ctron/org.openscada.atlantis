@@ -72,7 +72,7 @@ public class NewWatchWizard extends Wizard implements INewWizard
         catch ( final InvocationTargetException e )
         {
             final Throwable realException = e.getTargetException ();
-            MessageDialog.openError ( getShell (), "Error", realException.getMessage () );
+            MessageDialog.openError ( getShell (), Messages.getString("NewWatchWizard.errorDialog.title"), realException.getMessage () ); //$NON-NLS-1$
             return false;
         }
         return true;
@@ -81,7 +81,7 @@ public class NewWatchWizard extends Wizard implements INewWizard
     public void init ( final IWorkbench workbench, final IStructuredSelection selection )
     {
         setNeedsProgressMonitor ( true );
-        setWindowTitle ( "Request watch" );
+        setWindowTitle ( Messages.getString("NewWatchWizard.window.title") ); //$NON-NLS-1$
 
         this._site = workbench.getActiveWorkbenchWindow ().getActivePage ().getActivePart ().getSite ();
 
