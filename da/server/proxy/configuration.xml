@@ -2,15 +2,11 @@
 <proxy:root xmlns:proxy="http://openscada.org/DA/Proxy/Configuration"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://openscada.org/DA/Proxy/Configuration schema/configuration.xsd ">
-	<proxy:proxy prefix="PROXY01">
-		<proxy:connection uri="da:net://localhost:12003?auto-reconnect=true"
-			className="org.openscada.da.client.net.Connection" />
-	</proxy:proxy>
 	
-	<proxy:redundant prefix="PLS">
-		<proxy:connection id="pls01" prefix="PLS01"
-			uri="da:net://10.54.240.22:12027?auto-reconnect=true" className="org.openscada.da.client.net.Connection" />
-		<proxy:connection id="pls02" prefix="PLS02"
-			uri="da:net://10.54.240.22:12027?auto-reconnect=true" className="org.openscada.da.client.net.Connection" />
-	</proxy:redundant>
+	<proxy:proxy prefix="proxy" wait="10000">
+		<proxy:connection id="con1" prefix="example"
+			uri="da:net://127.0.0.1:12001?auto-reconnect=true&amp;reconnect-delay=500" className="org.openscada.da.client.net.Connection" />
+		<proxy:connection id="con2" prefix="example"
+			uri="da:net://127.0.0.1:12002?auto-reconnect=true&amp;reconnect-delay=500" className="org.openscada.da.client.net.Connection" />
+	</proxy:proxy>
 </proxy:root>

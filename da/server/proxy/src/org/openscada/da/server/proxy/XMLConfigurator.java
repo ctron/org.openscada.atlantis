@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,61 +23,72 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.InvalidOperationException;
+import org.openscada.core.NotConvertableException;
+import org.openscada.core.NullValueException;
 import org.openscada.core.client.ConnectionFactory;
 import org.openscada.da.client.Connection;
+import org.openscada.da.proxy.configuration.ConnectionType;
 import org.openscada.da.proxy.configuration.ProxyType;
-import org.openscada.da.proxy.configuration.RedundantType;
 import org.openscada.da.proxy.configuration.RootDocument;
-import org.openscada.da.proxy.configuration.SubConnectionType;
 
+/**
+ * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
+ *
+ */
 public class XMLConfigurator
 {
     private final RootDocument document;
 
     final Map<String, Connection> connections = new HashMap<String, Connection> ();
 
+    /**
+     * @param document
+     */
     public XMLConfigurator ( final RootDocument document )
     {
         this.document = document;
     }
 
-    public void configure ( final Hive hive ) throws ClassNotFoundException
+    /**
+     * @param hive
+     * @throws ClassNotFoundException
+     * @throws InvalidOperationException
+     * @throws NullValueException
+     * @throws NotConvertableException
+     */
+    public void configure ( final Hive hive ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException
     {
-        final String separator = this.document.getRoot ().getSeparator ();
-        hive.setSeparator ( separator );
-        for ( final ProxyType con : this.document.getRoot ().getProxyList () )
+        if ( this.document.getRoot ().isSetSeparator () )
         {
-            final String serverPrefix = con.getPrefix ();
-            final String uri = con.getConnection ().getUri ();
-            final String className = con.getConnection ().getClassName ();
-            final Connection connection = makeConnection ( uri, className );
-            connection.connect ();
-            hive.addConnection ( connection, serverPrefix );
+            hive.setSeparator ( this.document.getRoot ().getSeparator () );
         }
-        for ( final RedundantType con : this.document.getRoot ().getRedundantList () )
+        for ( final ProxyType proxyConf : this.document.getRoot ().getProxyList () )
         {
-            final String serverPrefix = con.getPrefix ();
-            final RedundantConnection redundantConnection = new RedundantConnection ( separator, serverPrefix );
-            for ( final SubConnectionType subConnection : con.getConnectionList () )
+            final ProxyGroup proxyConnection = new ProxyGroup ( hive.getSeparator (), new ProxyPrefixName ( proxyConf.getPrefix () ) );
+            for ( final ConnectionType connectionConf : proxyConf.getConnectionList () )
             {
-                final String id = subConnection.getId ();
-                final String uri = subConnection.getUri ();
-                final String className = subConnection.getClassName ();
-                final String remotePrefix = subConnection.getPrefix ();
-                redundantConnection.addConnection ( makeConnection ( uri, className ), id, remotePrefix );
+                final Connection connection = createConnection ( connectionConf.getUri (), connectionConf.getClassName () );
+                proxyConnection.addConnection ( connection, connectionConf.getId (), new ProxyPrefixName ( connectionConf.getPrefix () ) );
+                connection.connect ();
             }
-            redundantConnection.connect ();
-            hive.addConnection ( redundantConnection );
+            proxyConnection.setWait ( proxyConf.getWait () );
+            hive.addGroup ( proxyConnection );
         }
-        hive.initialize ();
     }
 
-    private Connection makeConnection ( final String uri, final String className ) throws ClassNotFoundException
+    /**
+     * @param uri
+     * @param className
+     * @return
+     * @throws ClassNotFoundException
+     */
+    private Connection createConnection ( final String uri, final String className ) throws ClassNotFoundException
     {
         Connection connection = this.connections.get ( uri );
         if ( connection == null )
         {
-            if ( className != null && className.length () > 0 )
+            if ( ( className != null ) && ( className.length () > 0 ) )
             {
                 Class.forName ( className );
             }

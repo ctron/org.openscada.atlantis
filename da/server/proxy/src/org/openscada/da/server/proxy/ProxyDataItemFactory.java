@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,66 +21,68 @@ package org.openscada.da.server.proxy;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.openscada.da.client.ItemManager;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 
 /**
- * uses a redundant connection to provide failover redundancy
  * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
+ *
  */
 public class ProxyDataItemFactory implements DataItemFactory
 {
-    Map<String, SubConnection> connections = new HashMap<String, SubConnection> ();
-
-    Map<String, ItemManager> itemManagers = new HashMap<String, ItemManager> ();
+    final Map<ProxyPrefixName, ProxyConnection> connections = new HashMap<ProxyPrefixName, ProxyConnection> ();
 
     private String separator = ".";
 
     /**
-     * @param connection
+     * @param connections
+     * @param separator
      */
-    public ProxyDataItemFactory ( final Map<String, SubConnection> connections, final String separator )
+    public ProxyDataItemFactory ( final Map<ProxyPrefixName, ProxyConnection> connections, final String separator )
     {
         this.separator = separator;
         this.connections.putAll ( connections );
-        for ( final Entry<String, SubConnection> entry : connections.entrySet () )
-        {
-            this.itemManagers.put ( entry.getKey (), new ItemManager ( entry.getValue ().getConnection () ) );
-        }
     }
 
+    @Override
     public boolean canCreate ( final DataItemFactoryRequest request )
     {
-        for ( final String prefix : this.connections.keySet () )
-        {
-            if ( request.getId ().startsWith ( prefix + this.separator ) )
-            {
-                return true;
-            }
-        }
-        return false;
+        return findConnection ( request ) != null;
     }
 
-    public DataItem create ( final DataItemFactoryRequest request )
+    protected ProxyConnection findConnection ( final DataItemFactoryRequest request )
     {
         if ( request == null )
         {
             return null;
         }
-        for ( final Entry<String, SubConnection> entry : this.connections.entrySet () )
+
+        for ( final Map.Entry<ProxyPrefixName, ProxyConnection> entry : this.connections.entrySet () )
         {
-            if ( request.getId ().startsWith ( entry.getKey () + this.separator ) )
+            if ( request.getId ().startsWith ( entry.getKey ().getName () + this.separator ) )
             {
-                final ItemManager itemManager = this.itemManagers.get ( entry.getKey () );
-                final ProxyItem item = new ProxyItem ( entry.getValue ().getConnection (), request.getId (), entry.getKey () + this.separator );
-                itemManager.addItemUpdateListener ( request.getId (), item );
-                return item;
+                return entry.getValue ();
             }
         }
         return null;
     }
+
+    @Override
+    public DataItem create ( final DataItemFactoryRequest request )
+    {
+        final ProxyConnection connection = findConnection ( request );
+
+        if ( connection == null )
+        {
+            return null;
+        }
+
+        final ProxyDataItem item = connection.realizeItem ( request.getId () );
+
+        return item;
+
+    }
+
 }

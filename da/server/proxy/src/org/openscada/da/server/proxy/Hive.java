@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,11 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.openscada.core.InvalidOperationException;
+import org.openscada.core.NotConvertableException;
+import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.da.client.Connection;
 import org.openscada.da.proxy.configuration.RootDocument;
 import org.openscada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.chain.WriteHandler;
-import org.openscada.da.server.common.chain.WriteHandlerItem;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.w3c.dom.Node;
 
@@ -44,25 +42,50 @@ public class Hive extends HiveCommon
 {
     private final FolderCommon rootFolder;
 
-    private final Map<String, SubConnection> connections = new HashMap<String, SubConnection> ();
+    private final Map<ProxyPrefixName, ProxyConnection> connections = new HashMap<ProxyPrefixName, ProxyConnection> ();
 
     private boolean initialized = false;
 
     private String separator = ".";
 
-    public Hive () throws XmlException, IOException, ClassNotFoundException
+    private FolderCommon connectionsFolder;
+
+    /**
+     * @throws XmlException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws NotConvertableException 
+     * @throws NullValueException 
+     * @throws InvalidOperationException 
+     */
+    public Hive () throws XmlException, IOException, ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException
     {
         this ( new XMLConfigurator ( RootDocument.Factory.parse ( new File ( "configuration.xml" ) ) ) );
     }
 
-    public Hive ( final XMLConfigurator configurator ) throws ClassNotFoundException
+    /**
+     * @param configurator
+     * @throws ClassNotFoundException
+     * @throws NotConvertableException 
+     * @throws NullValueException 
+     * @throws InvalidOperationException 
+     */
+    public Hive ( final XMLConfigurator configurator ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException
     {
         this.rootFolder = new FolderCommon ();
         setRootFolder ( this.rootFolder );
-        configurator.configure ( this );
+        initialize ( configurator );
     }
 
-    public Hive ( final Node node ) throws XmlException, ClassNotFoundException
+    /**
+     * @param node
+     * @throws XmlException
+     * @throws ClassNotFoundException
+     * @throws NotConvertableException 
+     * @throws NullValueException 
+     * @throws InvalidOperationException 
+     */
+    public Hive ( final Node node ) throws XmlException, ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException
     {
         this ( new XMLConfigurator ( RootDocument.Factory.parse ( node ) ) );
     }
@@ -70,91 +93,53 @@ public class Hive extends HiveCommon
     /**
      * @param connection
      */
-    public SubConnection addConnection ( final RedundantConnection connection )
+    public void addGroup ( final ProxyGroup group )
     {
         if ( this.initialized )
         {
             throw new IllegalArgumentException ( "no further connections may be added when initialize() was already called!" );
         }
-        if ( this.connections.keySet ().contains ( connection.getExposeAs () ) )
+        if ( this.connections.keySet ().contains ( group.getPrefix () ) )
         {
             throw new IllegalArgumentException ( "prefix must not already exist!" );
         }
-        final SubConnection subConnection = new SubConnection ( connection, connection.getExposeAs (), connection.getExposeAs () );
-        this.connections.put ( connection.getExposeAs (), subConnection );
-        return subConnection;
+        final ProxyConnection connection = new ProxyConnection ( this, this.connectionsFolder, group );
+        this.connections.put ( group.getPrefix (), connection );
     }
 
     /**
-     * @param connection
+     * @param configurator 
+     * @throws NotConvertableException 
+     * @throws NullValueException 
+     * @throws InvalidOperationException 
+     * @throws ClassNotFoundException 
+     * 
      */
-    public SubConnection addConnection ( final Connection connection, final String prefix )
+    public void initialize ( final XMLConfigurator configurator ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException
     {
-        if ( this.initialized )
-        {
-            throw new IllegalArgumentException ( "no further connections may be added when initialize() was already called!" );
-        }
-        if ( this.connections.keySet ().contains ( prefix ) )
-        {
-            throw new IllegalArgumentException ( "prefix must not already exist!" );
-        }
-        final SubConnection subConnection = new SubConnection ( connection, prefix, prefix );
-        this.connections.put ( prefix, subConnection );
-        return subConnection;
-    }
+        // create connections folder
+        this.connectionsFolder = new FolderCommon ();
+        this.rootFolder.add ( "connections", this.connectionsFolder, new HashMap<String, Variant> () );
 
-    public void initialize ()
-    {
-        addConnectionItems ();
+        if ( configurator != null )
+        {
+            configurator.configure ( this );
+
+        }
+
+        for ( final ProxyConnection proxyConnection : this.connections.values () )
+        {
+            proxyConnection.init ();
+        }
+
         addItemFactory ( new ProxyDataItemFactory ( this.connections, this.separator ) );
+
         this.initialized = true;
     }
 
     /**
-     * 
+     * @param separator
      */
-    private void addConnectionItems ()
-    {
-        final FolderCommon connectionsFolder = new FolderCommon ();
-        this.rootFolder.add ( "connections", connectionsFolder, new HashMap<String, Variant> () );
-        for ( final SubConnection con : this.connections.values () )
-        {
-            final FolderCommon connectionFolder = new FolderCommon ();
-            connectionsFolder.add ( con.getPrefix (), connectionFolder, new HashMap<String, Variant> () );
-            if ( RedundantConnection.class.isInstance ( con.getConnection () ) )
-            {
-                final RedundantConnection redundantConnection = (RedundantConnection)con.getConnection ();
-                final WriteHandlerItem connectionIdItem = new WriteHandlerItem ( con.getPrefix () + ".redundant.connection.id", new WriteHandler () {
-                    public void handleWrite ( final Variant value ) throws Exception
-                    {
-                        if ( redundantConnection.isValidConnection ( value.asString () ) )
-                        {
-                            redundantConnection.switchConnection ( value.asString () );
-                        }
-                        else
-                        {
-                            throw new InvalidOperationException ();
-                        }
-                    }
-                } );
-                final Map<String, Variant> attr = new HashMap<String, Variant> ();
-                for ( final SubConnection subConnection : redundantConnection.getUnderlyingConnections ().values () )
-                {
-                    attr.put ( "available.connection." + subConnection.getId (), new Variant ( subConnection.getPrefix () ) );
-                }
-                registerItem ( connectionIdItem );
-                connectionFolder.add ( connectionIdItem.getInformation ().getName (), connectionIdItem, new HashMap<String, Variant> () );
-                connectionIdItem.updateData ( new Variant ( redundantConnection.getCurrentConnection ().getId () ), attr, AttributeMode.UPDATE );
-                redundantConnection.addConnectionChangedListener ( new RedundantConnectionChangedListener () {
-                    public void connectionChanged ( final String idOld, final Connection connectionOld, final String idNew, final Connection connectionNew )
-                    {
-                        connectionIdItem.updateData ( new Variant ( idNew ), null, AttributeMode.UPDATE );
-                    }
-                } );
-            }
-        }
-    }
-
     public void setSeparator ( final String separator )
     {
         if ( this.initialized )
@@ -164,6 +149,9 @@ public class Hive extends HiveCommon
         this.separator = separator;
     }
 
+    /**
+     * @return separator which separates prefix from rest of item name
+     */
     public String getSeparator ()
     {
         return this.separator;
