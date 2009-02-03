@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description url="http://openscada.org/ide/update_site">
+      OpenSCADA IDE Update Site
+   </description>
+   <feature url="features/org.openscada.da.ice.client_0.10.2.jar" id="org.openscada.da.ice.client" version="0.10.2">
+      <category name="OpenSCADA DA"/>
+   </feature>
+   <feature url="features/org.openscada.da.net.client_0.10.2.jar" id="org.openscada.da.net.client" version="0.10.2">
+      <category name="OpenSCADA DA"/>
+   </feature>
+   <feature url="features/org.openscada.da.project_1.0.8.jar" id="org.openscada.da.project" version="1.0.8">
+      <category name="OpenSCADA DA"/>
+   </feature>
+   <feature url="features/org.openscada.da.project.extras_1.0.4.jar" id="org.openscada.da.project.extras" version="1.0.4">
+      <category name="OpenSCADA DA Extras"/>
+   </feature>
+   <category-def name="OpenSCADA DA" label="OpenSCADA DA"/>
+   <category-def name="OpenSCADA DA Extras" label="OpenSCADA DA Extras"/>
+</site>
