@@ -51,16 +51,19 @@ public class ProxyValueHolder
     private String separator = ".";
 
     private final ProxyPrefixName prefix;
+    
+    private String itemId;
 
     /**
      * @param currentConnection
      */
-    public ProxyValueHolder ( final String separator, final ProxyPrefixName prefix, final Map<ProxySubConnectionId, ProxySubConnection> subConnections, final ProxySubConnectionId currentConnection )
+    public ProxyValueHolder ( final String separator, final ProxyPrefixName prefix, final Map<ProxySubConnectionId, ProxySubConnection> subConnections, final ProxySubConnectionId currentConnection, final String itemId )
     {
         this.separator = separator;
         this.prefix = prefix;
         this.subConnections = Collections.unmodifiableMap ( subConnections );
         this.currentConnection = currentConnection;
+        this.itemId = itemId;
         for ( final Entry<ProxySubConnectionId, ProxySubConnection> subConnectionEntry : subConnections.entrySet () )
         {
             this.values.put ( subConnectionEntry.getKey (), new DataItemValue () );
@@ -92,7 +95,7 @@ public class ProxyValueHolder
                 }
                 else if ( ( newData.getAttributes () != null ) && !newData.getAttributes ().equals ( oldData.getAttributes () ) )
                 {
-                    this.listener.notifyDataChange ( null, newData.getAttributes (), true );
+                    this.listener.notifyDataChange ( newData.getValue (), newData.getAttributes (), true );
                 }
             }
             this.currentConnection = newConnection;

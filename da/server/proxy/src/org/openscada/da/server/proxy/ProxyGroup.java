@@ -246,7 +246,7 @@ public class ProxyGroup
         if ( item == null )
         {
             // create actual item
-            final ProxyValueHolder pvh = new ProxyValueHolder ( this.separator, this.getPrefix (), this.getSubConnections (), this.getCurrentConnection () );
+            final ProxyValueHolder pvh = new ProxyValueHolder ( this.separator, this.getPrefix (), this.getSubConnections (), this.getCurrentConnection (), id );
             item = new ProxyDataItem ( id, pvh );
             this.getRegisteredItems ().put ( id, item );
 
