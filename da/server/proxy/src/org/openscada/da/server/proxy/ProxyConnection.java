@@ -109,7 +109,7 @@ public class ProxyConnection
         {
             availableConnections.put ( "available.connection." + subConnection.getId (), new Variant ( subConnection.getPrefix ().getName () ) );
         }
-        this.connectionFolder.add ( this.activeConnectionItem.getInformation ().getName (), this.activeConnectionItem, availableConnections );
+        this.connectionFolder.add ( "active", this.activeConnectionItem, availableConnections );
 
         this.activeConnectionItem.updateData ( new Variant ( this.group.getCurrentConnection ().toString () ), availableConnections, AttributeMode.SET );
 
