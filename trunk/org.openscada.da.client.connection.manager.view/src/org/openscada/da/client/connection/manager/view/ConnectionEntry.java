@@ -7,7 +7,7 @@ import org.openscada.da.client.Connection;
 
 public class ConnectionEntry extends AbstractModelObject implements ConnectionStateListener
 {
-    private static final String PROP_CONNECTION_STATE = "connectionState";
+    private static final String PROP_CONNECTION_STATE = "connectionState"; //$NON-NLS-1$
 
     protected Connection connection;
 
@@ -45,5 +45,10 @@ public class ConnectionEntry extends AbstractModelObject implements ConnectionSt
     public ConnectionState getConnectionState ()
     {
         return this.connectionState;
+    }
+
+    public Connection getConnection ()
+    {
+        return this.connection;
     }
 }

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Connection Manager View Plug-in
 Bundle-SymbolicName: org.openscada.da.client.connection.manager.view;singleton:=true
-Bundle-Version: 0.10.3
+Bundle-Version: 0.12.0
 Bundle-Activator: org.openscada.da.client.connection.manager.view.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -13,3 +13,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.databinding;bundle-version="1.2.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Localization: plugin
