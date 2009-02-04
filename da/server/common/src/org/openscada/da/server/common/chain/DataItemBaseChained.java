@@ -40,6 +40,7 @@ import org.openscada.da.server.common.WriteAttributesHelper;
 public abstract class DataItemBaseChained extends DataItemBase
 {
     protected Map<String, Variant> _primaryAttributes = null;
+
     protected AttributeManager _secondaryAttributes = null;
 
     /**
@@ -47,12 +48,12 @@ public abstract class DataItemBaseChained extends DataItemBase
      */
     protected Set<ChainProcessEntry> _chain = new CopyOnWriteArraySet<ChainProcessEntry> ();
 
-    public DataItemBaseChained ( DataItemInformation dataItemInformation )
+    public DataItemBaseChained ( final DataItemInformation dataItemInformation )
     {
         super ( dataItemInformation );
 
-        _primaryAttributes = new HashMap<String, Variant> ();
-        _secondaryAttributes = new AttributeManager ( this );
+        this._primaryAttributes = new HashMap<String, Variant> ();
+        this._secondaryAttributes = new AttributeManager ( this );
     }
 
     /*
@@ -70,7 +71,7 @@ public abstract class DataItemBaseChained extends DataItemBase
         }
     }
     */
-    
+
     /**
      * Remove all attributes
      *
@@ -91,21 +92,31 @@ public abstract class DataItemBaseChained extends DataItemBase
 
     public Map<String, Variant> getAttributes ()
     {
-        return _secondaryAttributes.get ();
+        return this._secondaryAttributes.get ();
     }
 
-    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
+    /**
+     * This method sets the attributes.
+     * <p>
+     * It is intended to be overridden by subclasses that wish to handle attribute
+     * writes differently. The method needs to remove attributes from the parameter map
+     * that were handled and return a result for all attributes that were requested.
+     * 
+     * @param attributes Attributes to set
+     * @return status for the attribute write request  
+     */
+    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
     {
-        WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
+        final WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
 
-        for ( ChainProcessEntry chainEntry : getChainCopy () )
+        for ( final ChainProcessEntry chainEntry : getChainCopy () )
         {
-            ChainItem item = chainEntry.getWhat ();
+            final ChainItem item = chainEntry.getWhat ();
 
-            WriteAttributeResults partialResult = item.setAttributes ( attributes );
+            final WriteAttributeResults partialResult = item.setAttributes ( attributes );
             if ( partialResult != null )
             {
-                for ( Map.Entry<String, WriteAttributeResult> entry : partialResult.entrySet () )
+                for ( final Map.Entry<String, WriteAttributeResult> entry : partialResult.entrySet () )
                 {
                     if ( entry.getValue ().isError () )
                     {
@@ -127,54 +138,54 @@ public abstract class DataItemBaseChained extends DataItemBase
      * Replace the current chain with the new one
      * @param chain the new chain
      */
-    public void setChain ( Collection<ChainProcessEntry> chain )
+    public void setChain ( final Collection<ChainProcessEntry> chain )
     {
-        for ( ChainProcessEntry entry : _chain )
+        for ( final ChainProcessEntry entry : this._chain )
         {
             entry.getWhat ().dataItemChanged ( this );
         }
-        
+
         if ( chain == null )
         {
-            _chain = new CopyOnWriteArraySet<ChainProcessEntry> ();
+            this._chain = new CopyOnWriteArraySet<ChainProcessEntry> ();
         }
         else
         {
-            Set<ChainProcessEntry> newChain = new CopyOnWriteArraySet<ChainProcessEntry> ( chain );
-            for ( ChainProcessEntry entry : newChain )
+            final Set<ChainProcessEntry> newChain = new CopyOnWriteArraySet<ChainProcessEntry> ( chain );
+            for ( final ChainProcessEntry entry : newChain )
             {
                 entry.getWhat ().dataItemChanged ( this );
             }
-            _chain = newChain;
+            this._chain = newChain;
         }
         process ();
     }
 
-    public void addChainElement ( EnumSet<IODirection> when, ChainItem item )
+    public void addChainElement ( final EnumSet<IODirection> when, final ChainItem item )
     {
-        if ( _chain.add ( new ChainProcessEntry ( when, item ) ) )
+        if ( this._chain.add ( new ChainProcessEntry ( when, item ) ) )
         {
             item.dataItemChanged ( this );
             process ();
         }
     }
 
-    public void addChainElement ( IODirection when, ChainItem item )
+    public void addChainElement ( final IODirection when, final ChainItem item )
     {
-        if ( _chain.add ( new ChainProcessEntry ( EnumSet.of ( when ), item ) ) )
+        if ( this._chain.add ( new ChainProcessEntry ( EnumSet.of ( when ), item ) ) )
         {
             item.dataItemChanged ( this );
             process ();
         }
     }
 
-    public void removeChainElement ( EnumSet<IODirection> when, ChainItem item )
+    public void removeChainElement ( final EnumSet<IODirection> when, final ChainItem item )
     {
         int n = 0;
 
-        for ( Iterator<ChainProcessEntry> i = _chain.iterator (); i.hasNext (); )
+        for ( final Iterator<ChainProcessEntry> i = this._chain.iterator (); i.hasNext (); )
         {
-            ChainProcessEntry entry = i.next ();
+            final ChainProcessEntry entry = i.next ();
 
             if ( entry.getWhen ().equals ( when ) )
             {
@@ -195,7 +206,7 @@ public abstract class DataItemBaseChained extends DataItemBase
 
     protected Collection<ChainProcessEntry> getChainCopy ()
     {
-        return new ArrayList<ChainProcessEntry> ( _chain );
+        return new ArrayList<ChainProcessEntry> ( this._chain );
     }
 
 }
