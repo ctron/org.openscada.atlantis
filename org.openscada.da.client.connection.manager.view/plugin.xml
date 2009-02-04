@@ -8,9 +8,31 @@
             category="org.openscada.da.category"
             class="org.openscada.da.client.connection.manager.view.ConnectionManagerViewPart"
             id="org.openscada.da.client.connection.manager.view.ConnectionManagerView"
-            name="Connections"
+            name="%view.connection.name"
             restorable="true">
       </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.openscada.da.client.connection.manager.view.ConnectionEntry.oc1"
+            objectClass="org.openscada.da.client.connection.manager.view.ConnectionEntry">
+         <action
+               class="org.openscada.da.client.connection.manager.view.action.ConnectAction"
+               enablesFor="+"
+               id="org.openscada.da.client.connection.manager.view.ConnectAction"
+               label="%actions.connect.label"
+               menubarPath="additions">
+         </action>
+         <action
+               class="org.openscada.da.client.connection.manager.view.action.DisconnectAction"
+               enablesFor="+"
+               id="org.openscada.da.client.connection.manager.view.DisconnectAction"
+               label="%action.disconnect.label"
+               menubarPath="additions">
+         </action>
+      </objectContribution>
    </extension>
 
 </plugin>
