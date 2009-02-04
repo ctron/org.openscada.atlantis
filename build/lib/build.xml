@@ -235,6 +235,8 @@
     		<jar destfile="${build.dir}/${package}/bin/openscada-${package}-${tag}.jar">
     			<fileset dir="${build.dir}/${package}-build/bin">
     				<include name="**/*.class"/>
+    				<!-- allow js files for the file simulation server -->
+    				<include name="**/*.js"/>
     			</fileset>
     			<fileset dir="${build.dir}/${package}-build/schemabin"/>
     			<manifest>
