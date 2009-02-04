@@ -39,12 +39,14 @@ public abstract class BaseChainItemCommon implements ChainItem
     private static Logger log = Logger.getLogger ( BaseChainItemCommon.class );
 
     protected HiveServiceRegistry serviceRegistry;
+
     protected String itemId;
 
-    private Set<String> reservedAttributes = new HashSet<String> ();
-    private Map<String, AttributeBinder> binders = new HashMap<String, AttributeBinder> ();
+    private final Set<String> reservedAttributes = new HashSet<String> ();
 
-    public BaseChainItemCommon ( HiveServiceRegistry serviceRegistry )
+    private final Map<String, AttributeBinder> binders = new HashMap<String, AttributeBinder> ();
+
+    public BaseChainItemCommon ( final HiveServiceRegistry serviceRegistry )
     {
         this.serviceRegistry = serviceRegistry;
     }
@@ -52,7 +54,7 @@ public abstract class BaseChainItemCommon implements ChainItem
     /**
      * called when the chain item is assigned to a new data item
      */
-    public void dataItemChanged ( DataItem item )
+    public void dataItemChanged ( final DataItem item )
     {
         this.itemId = item.getInformation ().getName ();
         loadInitialProperties ();
@@ -65,49 +67,47 @@ public abstract class BaseChainItemCommon implements ChainItem
             return;
         }
 
-        Set<String> values = new HashSet<String> ();
-        for ( String binderName : this.binders.keySet () )
+        final Set<String> values = new HashSet<String> ();
+        for ( final String binderName : this.binders.keySet () )
         {
             values.add ( binderName );
         }
 
-        for ( Map.Entry<String, Variant> entry : loadStoredValues ( values ).entrySet () )
+        for ( final Map.Entry<String, Variant> entry : loadStoredValues ( values ).entrySet () )
         {
-            AttributeBinder binder = this.binders.get ( entry.getKey () );
+            final AttributeBinder binder = this.binders.get ( entry.getKey () );
             if ( binder != null )
             {
                 try
                 {
                     binder.bind ( entry.getValue () );
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
-                    log.error ( String.format ( "Failed to apply binder value to %s item %s, value %s",
-                            entry.getKey (), this.itemId, entry.getValue () ) );
+                    log.error ( String.format ( "Failed to apply binder value to %s item %s, value %s", entry.getKey (), this.itemId, entry.getValue () ) );
                 }
             }
         }
     }
 
-    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
+    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
     {
-        WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
+        final WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
 
-        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+        for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
             if ( this.reservedAttributes.contains ( entry.getKey () ) )
             {
-                writeAttributeResults.put ( entry.getKey (), new WriteAttributeResult ( new Exception (
-                        "Attribute may not be set" ) ) );
+                writeAttributeResults.put ( entry.getKey (), new WriteAttributeResult ( new Exception ( "Attribute may not be set" ) ) );
             }
-            else if ( binders.containsKey ( entry.getKey () ) )
+            else if ( this.binders.containsKey ( entry.getKey () ) )
             {
                 try
                 {
-                    binders.get ( entry.getKey () ).bind ( entry.getValue () );
+                    this.binders.get ( entry.getKey () ).bind ( entry.getValue () );
                     writeAttributeResults.put ( entry.getKey (), new WriteAttributeResult () );
                 }
-                catch ( Exception e )
+                catch ( final Throwable e )
                 {
                     writeAttributeResults.put ( entry.getKey (), new WriteAttributeResult ( e ) );
                 }
@@ -126,20 +126,20 @@ public abstract class BaseChainItemCommon implements ChainItem
             return;
         }
 
-        if ( serviceRegistry == null )
+        if ( this.serviceRegistry == null )
         {
             return;
         }
 
         // get the service and check the type
-        HiveService service = serviceRegistry.getService ( ChainStorageService.SERVICE_ID );
+        final HiveService service = this.serviceRegistry.getService ( ChainStorageService.SERVICE_ID );
         if ( ! ( service instanceof ChainStorageService ) )
         {
             return;
         }
 
-        ChainStorageService storageService = (ChainStorageService)service;
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final ChainStorageService storageService = (ChainStorageService)service;
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         performWriteBinders ( attributes );
         storageService.storeValues ( this.itemId, attributes );
     }
@@ -148,31 +148,31 @@ public abstract class BaseChainItemCommon implements ChainItem
      * Perform the write operation
      * @param attributes add your attributes to this map to persist them
      */
-    protected void performWriteBinders ( Map<String, Variant> attributes )
+    protected void performWriteBinders ( final Map<String, Variant> attributes )
     {
         addAttributes ( attributes );
     }
 
-    public void setReservedAttributes ( String... reservedAttributes )
+    public void setReservedAttributes ( final String... reservedAttributes )
     {
         this.reservedAttributes.addAll ( Arrays.asList ( reservedAttributes ) );
     }
 
-    public void addBinder ( String name, AttributeBinder binder )
+    public void addBinder ( final String name, final AttributeBinder binder )
     {
-        binders.put ( name, binder );
+        this.binders.put ( name, binder );
 
         if ( isPersistent () )
         {
             // apply the stored value if we found one
-            Variant storedValue = loadStoredValue ( name );
+            final Variant storedValue = loadStoredValue ( name );
             if ( storedValue != null )
             {
                 try
                 {
                     binder.bind ( storedValue );
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     log.warn ( "Failed to set stored binder value" );
                 }
@@ -180,16 +180,16 @@ public abstract class BaseChainItemCommon implements ChainItem
         }
     }
 
-    private Variant loadStoredValue ( String name )
+    private Variant loadStoredValue ( final String name )
     {
-        Set<String> values = new HashSet<String> ();
+        final Set<String> values = new HashSet<String> ();
         values.add ( name );
         return loadStoredValues ( values ).get ( name );
     }
 
-    protected Map<String, Variant> loadStoredValues ( Set<String> values )
+    protected Map<String, Variant> loadStoredValues ( final Set<String> values )
     {
-        if ( serviceRegistry == null )
+        if ( this.serviceRegistry == null )
         {
             return new HashMap<String, Variant> ();
         }
@@ -200,30 +200,30 @@ public abstract class BaseChainItemCommon implements ChainItem
         }
 
         // get the service and check the type
-        HiveService service = serviceRegistry.getService ( ChainStorageService.SERVICE_ID );
+        final HiveService service = this.serviceRegistry.getService ( ChainStorageService.SERVICE_ID );
         if ( ! ( service instanceof ChainStorageService ) )
         {
             return new HashMap<String, Variant> ();
         }
 
-        ChainStorageService storageService = (ChainStorageService)service;
+        final ChainStorageService storageService = (ChainStorageService)service;
 
         // load an return the value
         return storageService.loadValues ( this.itemId, values );
     }
 
-    public void removeBinder ( String name )
+    public void removeBinder ( final String name )
     {
-        binders.remove ( name );
+        this.binders.remove ( name );
     }
 
     /**
      * Add the attributes from the value binders
      * @param attributes the map to which the attributes should be bound
      */
-    public void addAttributes ( Map<String, Variant> attributes )
+    public void addAttributes ( final Map<String, Variant> attributes )
     {
-        for ( Map.Entry<String, AttributeBinder> entry : binders.entrySet () )
+        for ( final Map.Entry<String, AttributeBinder> entry : this.binders.entrySet () )
         {
             attributes.put ( entry.getKey (), entry.getValue ().getAttributeValue () );
         }
@@ -231,6 +231,6 @@ public abstract class BaseChainItemCommon implements ChainItem
 
     public boolean isPersistent ()
     {
-        return serviceRegistry != null;
+        return this.serviceRegistry != null;
     }
 }
