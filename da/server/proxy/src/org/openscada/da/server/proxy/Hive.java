@@ -31,6 +31,8 @@ import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.proxy.configuration.RootDocument;
 import org.openscada.da.server.browser.common.FolderCommon;
+import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
+import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.w3c.dom.Node;
 
@@ -57,8 +59,9 @@ public class Hive extends HiveCommon
      * @throws NotConvertableException 
      * @throws NullValueException 
      * @throws InvalidOperationException 
+     * @throws ConfigurationError 
      */
-    public Hive () throws XmlException, IOException, ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException
+    public Hive () throws XmlException, IOException, ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
     {
         this ( new XMLConfigurator ( RootDocument.Factory.parse ( new File ( "configuration.xml" ) ) ) );
     }
@@ -69,9 +72,13 @@ public class Hive extends HiveCommon
      * @throws NotConvertableException 
      * @throws NullValueException 
      * @throws InvalidOperationException 
+     * @throws ConfigurationError 
      */
-    public Hive ( final XMLConfigurator configurator ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException
+    public Hive ( final XMLConfigurator configurator ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
     {
+        // enable chain storage for this hive
+        ChainStorageServiceHelper.registerDefaultPropertyService ( this );
+
         this.rootFolder = new FolderCommon ();
         setRootFolder ( this.rootFolder );
         initialize ( configurator );
@@ -84,8 +91,9 @@ public class Hive extends HiveCommon
      * @throws NotConvertableException 
      * @throws NullValueException 
      * @throws InvalidOperationException 
+     * @throws ConfigurationError 
      */
-    public Hive ( final Node node ) throws XmlException, ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException
+    public Hive ( final Node node ) throws XmlException, ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
     {
         this ( new XMLConfigurator ( RootDocument.Factory.parse ( node ) ) );
     }
@@ -113,9 +121,10 @@ public class Hive extends HiveCommon
      * @throws NullValueException 
      * @throws InvalidOperationException 
      * @throws ClassNotFoundException 
+     * @throws ConfigurationError 
      * 
      */
-    public void initialize ( final XMLConfigurator configurator ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException
+    public void initialize ( final XMLConfigurator configurator ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
     {
         // create connections folder
         this.connectionsFolder = new FolderCommon ();

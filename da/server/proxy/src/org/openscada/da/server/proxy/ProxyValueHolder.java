@@ -31,6 +31,7 @@ import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemUpdateListener;
+import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.server.common.AttributeMode;
 
@@ -51,8 +52,8 @@ public class ProxyValueHolder
     private String separator = ".";
 
     private final ProxyPrefixName prefix;
-    
-    private String itemId;
+
+    private final String itemId;
 
     /**
      * @param currentConnection
@@ -169,15 +170,43 @@ public class ProxyValueHolder
     /**
      * @param itemId
      * @param attributes
-     * @return results
-     * @throws OperationException 
-     * @throws NoConnectionException 
+     * @param writeAttributeResults 
      */
-    public WriteAttributeResults writeAttributes ( final String itemId, final Map<String, Variant> attributes ) throws NoConnectionException, OperationException
+    public void writeAttributes ( final String itemId, final Map<String, Variant> attributes, final WriteAttributeResults writeAttributeResults )
     {
         final ProxySubConnection subConnection = this.subConnections.get ( this.currentConnection );
         final String actualItemId = ProxyUtils.originalItemId ( itemId, this.separator, this.prefix, subConnection.getPrefix () );
-        return subConnection.getConnection ().writeAttributes ( actualItemId, attributes );
+        WriteAttributeResults actualWriteAttributeResults;
+        try
+        {
+            actualWriteAttributeResults = subConnection.getConnection ().writeAttributes ( actualItemId, attributes );
+        }
+        catch ( final NoConnectionException e )
+        {
+            actualWriteAttributeResults = attributesCouldNotBeWritten ( attributes, e );
+        }
+        catch ( final OperationException e )
+        {
+            actualWriteAttributeResults = attributesCouldNotBeWritten ( attributes, e );
+        }
+        writeAttributeResults.putAll ( actualWriteAttributeResults );
+    }
+
+    /**
+     * creates a WriteAttributeResults object for given attributes filled 
+     * with given exception for each attribute
+     * @param attributes
+     * @param e
+     * @return
+     */
+    private WriteAttributeResults attributesCouldNotBeWritten ( final Map<String, Variant> attributes, final Exception e )
+    {
+        final WriteAttributeResults results = new WriteAttributeResults ();
+        for ( final String name : attributes.keySet () )
+        {
+            results.put ( name, new WriteAttributeResult ( e ) );
+        }
+        return results;
     }
 
     /**
@@ -196,6 +225,14 @@ public class ProxyValueHolder
     {
         final DataItemValue div = this.values.get ( this.currentConnection );
         return div.getValue ();
+    }
+
+    /**
+     * @return id of proxy item
+     */
+    public String getItemId ()
+    {
+        return this.itemId;
     }
 
     /**

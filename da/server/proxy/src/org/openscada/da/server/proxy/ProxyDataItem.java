@@ -21,10 +21,10 @@ package org.openscada.da.server.proxy;
 
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
@@ -33,14 +33,15 @@ import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.server.common.DataItemBase;
+import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
  *
  */
-public class ProxyDataItem extends DataItemBase
+public class ProxyDataItem extends DataItemInputOutputChained
 {
     private final ProxyValueHolder proxyValueHolder;
 
@@ -56,33 +57,15 @@ public class ProxyDataItem extends DataItemBase
             @Override
             public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
             {
-                ProxyDataItem.this.notifyData ( value, attributes, cache );
+                ProxyDataItem.this.updateData ( value, attributes, cache ? AttributeMode.SET : AttributeMode.UPDATE );
             }
 
             @Override
             public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
             {
-                // TODO: (jr) is there something which is to be done?
+                // TODO: (jr2) is there something which is to be done?
             }
         } );
-    }
-
-    @Override
-    protected Map<String, Variant> getCacheAttributes ()
-    {
-        return this.proxyValueHolder.getAttributes ();
-    }
-
-    @Override
-    protected Variant getCacheValue ()
-    {
-        return this.proxyValueHolder.getValue ();
-    }
-
-    @Override
-    public Map<String, Variant> getAttributes ()
-    {
-        return this.proxyValueHolder.getAttributes ();
     }
 
     /**
@@ -94,47 +77,31 @@ public class ProxyDataItem extends DataItemBase
     }
 
     @Override
-    public Variant readValue () throws InvalidOperationException
-    {
-        return this.proxyValueHolder.getValue ();
-    }
-
-    @Override
     public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
     {
-        try
+        final WriteAttributeResults writeAttributeResults = super.setAttributes ( attributes );
+        // all attributes which could be successfully processed by chain must be ignored
+        for ( final Entry<String, WriteAttributeResult> entry : writeAttributeResults.entrySet () )
         {
-            return this.proxyValueHolder.writeAttributes ( this.getInformation ().getName (), attributes );
+            if ( entry.getValue ().isSuccess () )
+            {
+                attributes.remove ( entry.getKey () );
+            }
         }
-        catch ( final NoConnectionException e )
-        {
-            return attributesCouldNotBeWritten ( attributes, e );
-        }
-        catch ( final OperationException e )
-        {
-            return attributesCouldNotBeWritten ( attributes, e );
-        }
+        this.proxyValueHolder.writeAttributes ( this.getInformation ().getName (), attributes, writeAttributeResults );
+        return writeAttributeResults;
     }
 
     /**
-     * creates a WriteAttributeResults object for given attributes filled 
-     * with given exception for each attribute
      * @param attributes
-     * @param e
-     * @return
      */
-    private WriteAttributeResults attributesCouldNotBeWritten ( final Map<String, Variant> attributes, final Exception e )
+    public void setTemplateAttributes ( final Map<String, Variant> attributes )
     {
-        final WriteAttributeResults results = new WriteAttributeResults ();
-        for ( final String name : attributes.keySet () )
-        {
-            results.put ( name, new WriteAttributeResult ( e ) );
-        }
-        return results;
+        super.setAttributes ( attributes );
     }
 
     @Override
-    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    protected void writeCalculatedValue ( final Variant value ) throws NotConvertableException, InvalidOperationException
     {
         try
         {
@@ -142,11 +109,11 @@ public class ProxyDataItem extends DataItemBase
         }
         catch ( final NoConnectionException e )
         {
-            throw new InvalidOperationException ();
+            throw new InvalidOperationException ( e );
         }
         catch ( final OperationException e )
         {
-            throw new InvalidOperationException ();
+            throw new InvalidOperationException ( e );
         }
     }
 }

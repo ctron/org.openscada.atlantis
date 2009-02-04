@@ -31,6 +31,7 @@ import org.openscada.da.client.Connection;
 import org.openscada.da.proxy.configuration.ConnectionType;
 import org.openscada.da.proxy.configuration.ProxyType;
 import org.openscada.da.proxy.configuration.RootDocument;
+import org.openscada.da.server.common.configuration.ConfigurationError;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
@@ -56,24 +57,28 @@ public class XMLConfigurator
      * @throws InvalidOperationException
      * @throws NullValueException
      * @throws NotConvertableException
+     * @throws ConfigurationError 
      */
-    public void configure ( final Hive hive ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException
+    public void configure ( final Hive hive ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
     {
+        // first configure the base hive
+        new org.openscada.da.server.common.configuration.xml.XMLConfigurator ( null, this.document.getRoot ().getItemTemplates (), null, null ).configure ( hive );
+        // then the rest of the hive
         if ( this.document.getRoot ().isSetSeparator () )
         {
             hive.setSeparator ( this.document.getRoot ().getSeparator () );
         }
         for ( final ProxyType proxyConf : this.document.getRoot ().getProxyList () )
         {
-            final ProxyGroup proxyConnection = new ProxyGroup ( hive.getSeparator (), new ProxyPrefixName ( proxyConf.getPrefix () ) );
+            final ProxyGroup proxyGroup = new ProxyGroup ( hive, new ProxyPrefixName ( proxyConf.getPrefix () ) );
             for ( final ConnectionType connectionConf : proxyConf.getConnectionList () )
             {
                 final Connection connection = createConnection ( connectionConf.getUri (), connectionConf.getClassName () );
-                proxyConnection.addConnection ( connection, connectionConf.getId (), new ProxyPrefixName ( connectionConf.getPrefix () ) );
+                proxyGroup.addConnection ( connection, connectionConf.getId (), new ProxyPrefixName ( connectionConf.getPrefix () ) );
                 connection.connect ();
             }
-            proxyConnection.setWait ( proxyConf.getWait () );
-            hive.addGroup ( proxyConnection );
+            proxyGroup.setWait ( proxyConf.getWait () );
+            hive.addGroup ( proxyGroup );
         }
     }
 

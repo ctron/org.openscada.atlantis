@@ -82,7 +82,5 @@ public class ProxyDataItemFactory implements DataItemFactory
         final ProxyDataItem item = connection.realizeItem ( request.getId () );
 
         return item;
-
     }
-
 }

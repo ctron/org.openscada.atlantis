@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
@@ -37,6 +38,9 @@ import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.core.Location;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeMode;
+import org.openscada.da.server.common.configuration.ConfigurationError;
+import org.openscada.da.server.common.factory.FactoryHelper;
+import org.openscada.da.server.common.factory.FactoryTemplate;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
@@ -44,6 +48,8 @@ import org.openscada.da.server.common.AttributeMode;
  */
 public class ProxyGroup
 {
+    private static Logger logger = Logger.getLogger ( ProxyGroup.class );
+
     private final List<ConnectionStateListener> connectionStateListeners = Collections.synchronizedList ( new ArrayList<ConnectionStateListener> () );
 
     private ProxySubConnectionId currentConnection;
@@ -53,6 +59,8 @@ public class ProxyGroup
     private final Map<String, ProxyDataItem> registeredItems = Collections.synchronizedMap ( new HashMap<String, ProxyDataItem> () );
 
     private FolderCommon connectionFolder;
+
+    private final Hive hive;
 
     /**
      * 
@@ -86,8 +94,6 @@ public class ProxyGroup
         this.connectionFolder = connectionFolder;
     }
 
-    private final String separator;
-
     private final Map<ProxySubConnectionId, ProxySubConnection> subConnections = new HashMap<ProxySubConnectionId, ProxySubConnection> ();
 
     private Integer wait = 0;
@@ -95,12 +101,12 @@ public class ProxyGroup
     private ProxyFolder proxyFolder;
 
     /**
-     * @param separator
+     * @param hive
      * @param prefix
      */
-    public ProxyGroup ( final String separator, final ProxyPrefixName prefix )
+    public ProxyGroup ( final Hive hive, final ProxyPrefixName prefix )
     {
-        this.separator = separator;
+        this.hive = hive;
         this.prefix = prefix;
     }
 
@@ -182,7 +188,7 @@ public class ProxyGroup
      */
     public String getSeparator ()
     {
-        return this.separator;
+        return this.hive.getSeparator ();
     }
 
     /**
@@ -208,7 +214,7 @@ public class ProxyGroup
      */
     public String convertToOriginalId ( final String itemId )
     {
-        return ProxyUtils.originalItemId ( itemId, this.separator, getPrefix (), currentSubConnection ().getPrefix () );
+        return ProxyUtils.originalItemId ( itemId, this.hive.getSeparator (), getPrefix (), currentSubConnection ().getPrefix () );
     }
 
     /**
@@ -217,7 +223,7 @@ public class ProxyGroup
      */
     public String convertToProxyId ( final String itemId )
     {
-        return ProxyUtils.proxyItemId ( itemId, this.separator, getPrefix (), currentSubConnection ().getPrefix () );
+        return ProxyUtils.proxyItemId ( itemId, this.hive.getSeparator (), getPrefix (), currentSubConnection ().getPrefix () );
     }
 
     /**
@@ -246,7 +252,7 @@ public class ProxyGroup
         if ( item == null )
         {
             // create actual item
-            final ProxyValueHolder pvh = new ProxyValueHolder ( this.separator, this.getPrefix (), this.getSubConnections (), this.getCurrentConnection (), id );
+            final ProxyValueHolder pvh = new ProxyValueHolder ( this.hive.getSeparator (), this.getPrefix (), this.getSubConnections (), this.getCurrentConnection (), id );
             item = new ProxyDataItem ( id, pvh );
             this.getRegisteredItems ().put ( id, item );
 
@@ -257,11 +263,12 @@ public class ProxyGroup
 
     private void setUpItem ( final ProxyDataItem item, final String requestId )
     {
+        applyTemplate ( item );
         // hook up item
         for ( final ProxySubConnection subConnection : getSubConnections ().values () )
         {
             final ItemManager itemManager = subConnection.getItemManager ();
-            final String originalItemId = ProxyUtils.originalItemId ( requestId, this.separator, getPrefix (), subConnection.getPrefix () );
+            final String originalItemId = ProxyUtils.originalItemId ( requestId, this.hive.getSeparator (), getPrefix (), subConnection.getPrefix () );
             itemManager.addItemUpdateListener ( originalItemId, new ItemUpdateListener () {
                 @Override
                 public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
@@ -275,6 +282,29 @@ public class ProxyGroup
                     item.getProxyValueHolder ().updateSubscriptionState ( subConnection.getId (), subscriptionState, subscriptionError );
                 }
             } );
+        }
+    }
+
+    /**
+     * Apply the item template as configured in the hive
+     * @param item the item to which a template should by applied
+     */
+    private void applyTemplate ( final ProxyDataItem item )
+    {
+        final String itemId = item.getInformation ().getName ();
+        final FactoryTemplate ft = this.hive.findFactoryTemplate ( itemId );
+        logger.debug ( String.format ( "Find template for item '%s' : %s", itemId, ft ) );
+        if ( ft != null )
+        {
+            try
+            {
+                item.setChain ( FactoryHelper.instantiateChainList ( this.hive, ft.getChainEntries () ) );
+            }
+            catch ( final ConfigurationError e )
+            {
+                logger.warn ( "Failed to apply item template", e );
+            }
+            item.setTemplateAttributes ( ft.getItemAttributes () );
         }
     }
 
@@ -347,5 +377,4 @@ public class ProxyGroup
 
         this.connectionFolder.add ( "items", this.proxyFolder, null );
     }
-
 }
