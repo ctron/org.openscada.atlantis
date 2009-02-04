@@ -2,12 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Client ICE Library Wrapper
 Bundle-SymbolicName: org.openscada.da.ice.client;singleton:=true
-Bundle-Version: 0.9.0
+Bundle-Version: 0.12.0
 Bundle-ClassPath: lib.jar,
  Ice.jar,
  .
 Bundle-Vendor: OpenSCADA
-Bundle-Localization: plugin
 Export-Package: OpenSCADA.Core,
  OpenSCADA.DA,
  OpenSCADA.DA.Browser,
@@ -15,4 +14,6 @@ Export-Package: OpenSCADA.Core,
  org.openscada.da.ice
 Require-Bundle: log4j_wrapper_plugin,
  org.openscada.da.client
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
 

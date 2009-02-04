@@ -4,6 +4,12 @@
    <extension
          point="org.openscada.da.client.connector">
       <driver class="org.openscada.da.client.ice.ConnectorLoader"/>
+      <driverAdapter
+            class="org.openscada.da.client.ice.DriverAdapter"
+            interface="da"
+            name="OpenSCADA DA ICE"
+            type="ice">
+      </driverAdapter>
    </extension>
 
 </plugin>
