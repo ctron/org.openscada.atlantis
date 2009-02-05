@@ -109,11 +109,11 @@ public class ProxyDataItem extends DataItemInputOutputChained
         }
         catch ( final NoConnectionException e )
         {
-            throw new InvalidOperationException ( e );
+            throw new InvalidOperationException ();
         }
         catch ( final OperationException e )
         {
-            throw new InvalidOperationException ( e );
+            throw new InvalidOperationException ();
         }
     }
 }
