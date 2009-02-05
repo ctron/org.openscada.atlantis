@@ -28,51 +28,54 @@ import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
 public class SimpleVariantIntegerConverter extends BaseDynamicObject
 {
+    @SuppressWarnings ( "unused" )
     private static Logger _log = Logger.getLogger ( SimpleVariantIntegerConverter.class );
-    
-    private IntegerSetterOutput _output = new IntegerSetterOutput ( "value" );
-    private BooleanSetterOutput _errorOutput = new BooleanSetterOutput ( "error" );
-    
+
+    private final IntegerSetterOutput _output = new IntegerSetterOutput ( "value" );
+
+    private final BooleanSetterOutput _errorOutput = new BooleanSetterOutput ( "error" );
+
     private Variant _value = null;
+
     private long _defaultValue = 0;
-    
-    public SimpleVariantIntegerConverter ( String id )
+
+    public SimpleVariantIntegerConverter ( final String id )
     {
         super ( id );
-        
-        addOutput ( _output );
-        addOutput ( _errorOutput );
+
+        addOutput ( this._output );
+        addOutput ( this._errorOutput );
         addInput ( new PropertyInput ( this, "value" ) );
         addInput ( new PropertyInput ( this, "defaultValue" ) );
     }
-    
-    public void setValue ( Variant value )
+
+    public void setValue ( final Variant value )
     {
-        _value = value;
+        this._value = value;
         update ();
     }
-    
-    public void setDefaultValue ( Long defaultValue )
+
+    public void setDefaultValue ( final Long defaultValue )
     {
         if ( defaultValue != null )
         {
-            _defaultValue = defaultValue.longValue ();
+            this._defaultValue = defaultValue.longValue ();
             update ();
         }
     }
-    
+
     public void update ()
     {
         try
         {
-            _output.setValue ( _value.asLong () );
-            _errorOutput.setValue ( false );
+            this._output.setValue ( this._value.asLong () );
+            this._errorOutput.setValue ( false );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             //_log.info ( String.format ( "Failed to convert value %s to integer", _value ), e );
-            _output.setValue ( _defaultValue );
-            _errorOutput.setValue ( true );
+            this._output.setValue ( this._defaultValue );
+            this._errorOutput.setValue ( true );
         }
     }
 }

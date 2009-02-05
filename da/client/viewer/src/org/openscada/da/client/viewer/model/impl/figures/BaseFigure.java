@@ -34,6 +34,7 @@ import org.openscada.da.client.viewer.model.impl.PropertyInput;
 
 public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIObject
 {
+    @SuppressWarnings ( "unused" )
     private static Logger _log = Logger.getLogger ( BaseFigure.class );
 
     static
@@ -43,19 +44,22 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
         {
             PropertyEditorManager.registerEditor ( Integer.class, Class.forName ( "sun.beans.editors.IntEditor" ) );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
         }
     }
 
     private Color _color = null;
+
     private Color _backgroundColor = null;
+
     private boolean _opaque = false;
+
     private Integer _fontSize = null;
 
     private Font _font = null;
 
-    public BaseFigure ( String id )
+    public BaseFigure ( final String id )
     {
         super ( id );
         addInput ( new PropertyInput ( this, "color" ) );
@@ -66,13 +70,13 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
     @Override
     public void dispose ()
     {
-        if ( _color != null )
+        if ( this._color != null )
         {
-            _color.dispose ();
+            this._color.dispose ();
         }
-        if ( _backgroundColor != null )
+        if ( this._backgroundColor != null )
         {
-            _backgroundColor.dispose ();
+            this._backgroundColor.dispose ();
         }
         disposeFont ();
         super.dispose ();
@@ -80,115 +84,131 @@ public abstract class BaseFigure extends BaseDynamicObject implements DynamicUIO
 
     private void disposeFont ()
     {
-        if ( _font != null )
+        if ( this._font != null )
         {
-            _font.dispose ();
-            _font = null;
+            this._font.dispose ();
+            this._font = null;
         }
     }
 
     public org.openscada.da.client.viewer.model.types.Color getColor ()
     {
-        if ( _color == null )
+        if ( this._color == null )
+        {
             return null;
+        }
         else
-            return Helper.colorFromRGB ( _color.getRGB () );
+        {
+            return Helper.colorFromRGB ( this._color.getRGB () );
+        }
     }
 
     public org.openscada.da.client.viewer.model.types.Color getBackgroundColor ()
     {
-        if ( _backgroundColor == null )
+        if ( this._backgroundColor == null )
+        {
             return null;
+        }
         else
-            return Helper.colorFromRGB ( _backgroundColor.getRGB () );
+        {
+            return Helper.colorFromRGB ( this._backgroundColor.getRGB () );
+        }
     }
 
-    public void setColor ( org.openscada.da.client.viewer.model.types.Color color )
+    public void setColor ( final org.openscada.da.client.viewer.model.types.Color color )
     {
-        if ( _color != null )
+        if ( this._color != null )
         {
-            _color.dispose ();
+            this._color.dispose ();
         }
-        
+
         if ( color == null )
-            _color = null;
-        else
-            _color = new Color ( Display.getCurrent (), Helper.colorToRGB ( color ) );
-        update ();
-    }
-
-    public void setBackgroundColor ( org.openscada.da.client.viewer.model.types.Color backgroundColor )
-    {
-        if ( _backgroundColor != null )
         {
-            _backgroundColor.dispose ();
+            this._color = null;
         }
-        
-        if ( backgroundColor == null )
-            _backgroundColor = null;
         else
-            _backgroundColor = new Color ( Display.getCurrent (), Helper.colorToRGB ( backgroundColor ) );
+        {
+            this._color = new Color ( Display.getCurrent (), Helper.colorToRGB ( color ) );
+        }
         update ();
     }
 
-    protected void updateFigure ( IFigure figure )
+    public void setBackgroundColor ( final org.openscada.da.client.viewer.model.types.Color backgroundColor )
+    {
+        if ( this._backgroundColor != null )
+        {
+            this._backgroundColor.dispose ();
+        }
+
+        if ( backgroundColor == null )
+        {
+            this._backgroundColor = null;
+        }
+        else
+        {
+            this._backgroundColor = new Color ( Display.getCurrent (), Helper.colorToRGB ( backgroundColor ) );
+        }
+        update ();
+    }
+
+    protected void updateFigure ( final IFigure figure )
     {
         if ( figure == null )
         {
             return;
         }
 
-        figure.setForegroundColor ( _color );
-        figure.setBackgroundColor ( _backgroundColor );
-        figure.setOpaque ( _opaque );
+        figure.setForegroundColor ( this._color );
+        figure.setBackgroundColor ( this._backgroundColor );
+        figure.setOpaque ( this._opaque );
 
         updateFont ( figure );
-        figure.setFont ( _font );
+        figure.setFont ( this._font );
     }
 
     protected abstract void update ();
 
     public boolean isOpaque ()
     {
-        return _opaque;
+        return this._opaque;
     }
 
-    public void setOpaque ( boolean opaque )
+    public void setOpaque ( final boolean opaque )
     {
-        _opaque = opaque;
+        this._opaque = opaque;
         update ();
     }
 
-    protected void updateFont ( IFigure figure )
+    protected void updateFont ( final IFigure figure )
     {
-        if ( _font != null )
+        if ( this._font != null )
         {
             return;
         }
 
-        if ( _fontSize == null )
+        if ( this._fontSize == null )
         {
             return;
         }
 
         // build our font
-        Font parentFont = figure.getParent ().getFont ();
-        FontData[] fds = parentFont.getFontData ();
+        final Font parentFont = figure.getParent ().getFont ();
+        final FontData[] fds = parentFont.getFontData ();
 
-        for ( FontData fontData : fds )
+        for ( final FontData fontData : fds )
         {
-            if ( _fontSize != null )
+            if ( this._fontSize != null )
             {
-                fontData.setHeight ( _fontSize );
+                fontData.setHeight ( this._fontSize );
             }
         }
 
-        _font = new Font ( parentFont.getDevice (), fds );
+        this._font = new Font ( parentFont.getDevice (), fds );
     }
 
-    public void setFontSize ( Integer fontSize )
+    public void setFontSize ( final Integer fontSize )
     {
-        _fontSize = fontSize;
+        this._fontSize = fontSize;
         disposeFont ();
         update ();
     }

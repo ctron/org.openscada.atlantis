@@ -6,18 +6,18 @@ import org.eclipse.swt.widgets.Shell;
 
 public class PopupCommandDialog extends PopupDialog
 {
-    private Point _initialLocation;
+    private final Point _initialLocation;
 
-    public PopupCommandDialog ( Shell parent, Point initialLocation, String titleText, String infoText )
+    public PopupCommandDialog ( final Shell parent, final Point initialLocation, final String titleText, final String infoText )
     {
-        super ( parent, PopupDialog.INFOPOPUP_SHELLSTYLE, true, false, true, false, titleText, infoText );
-        _initialLocation = initialLocation;
+        super ( parent, PopupDialog.INFOPOPUP_SHELLSTYLE, true, false, false, true, true, titleText, infoText );
+        this._initialLocation = initialLocation;
     }
 
     @Override
-    protected Point getInitialLocation ( Point initialSize )
+    protected Point getInitialLocation ( final Point initialSize )
     {
-        return _initialLocation;
+        return this._initialLocation;
     }
 
 }

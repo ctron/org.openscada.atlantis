@@ -70,125 +70,127 @@ import org.w3c.dom.Node;
 public class XMLConfigurator implements Configurator
 {
     private static Logger _log = Logger.getLogger ( XMLConfigurator.class );
-    
+
     private RootDocument _document = null;
-    
-    public XMLConfigurator ( RootDocument document )
+
+    public XMLConfigurator ( final RootDocument document )
     {
         super ();
-        _document = document;
+        this._document = document;
     }
-    
-    public XMLConfigurator ( InputStream stream ) throws XmlException, IOException
+
+    public XMLConfigurator ( final InputStream stream ) throws XmlException, IOException
     {
         this ( RootDocument.Factory.parse ( stream ) );
     }
-    
-    public View configure ( String viewId ) throws ConfigurationError
+
+    public View configure ( final String viewId ) throws ConfigurationError
     {
-        XMLConfigurationContext ctx = new XMLConfigurationContext ();
-        ctx.setDocument ( _document );
-        
-        configureFactories ( ctx, _document.getRoot ().getFactories () );
-        return configureView ( ctx, _document.getRoot ().getViews (), viewId );
+        final XMLConfigurationContext ctx = new XMLConfigurationContext ();
+        ctx.setDocument ( this._document );
+
+        configureFactories ( ctx, this._document.getRoot ().getFactories () );
+        return configureView ( ctx, this._document.getRoot ().getViews (), viewId );
     }
 
-    public static void configureFactories ( XMLConfigurationContext ctx, FactoriesType factories ) throws ConfigurationError
+    public static void configureFactories ( final XMLConfigurationContext ctx, final FactoriesType factories ) throws ConfigurationError
     {
-        for ( ContainerFactoryType factory : factories.getContainerFactoryList () )
+        for ( final ContainerFactoryType factory : factories.getContainerFactoryList () )
         {
             createContainerFactory ( ctx, factory );
         }
-        for ( ConnectorFactoryType factory : factories.getConnectorFactoryList () )
+        for ( final ConnectorFactoryType factory : factories.getConnectorFactoryList () )
         {
             createConnectorFactory ( ctx, factory );
         }
-        for ( ObjectFactoryType factory : factories.getObjectFactoryList () )
+        for ( final ObjectFactoryType factory : factories.getObjectFactoryList () )
         {
             createObjectFactory ( ctx, factory );
         }
     }
 
-    private static void createContainerFactory ( XMLConfigurationContext ctx, ContainerFactoryType factory ) throws ConfigurationError
+    private static void createContainerFactory ( final XMLConfigurationContext ctx, final ContainerFactoryType factory ) throws ConfigurationError
     {
         try
         {
-            Class factoryClass = Class.forName ( factory.getClass1 () );
-            
-            
-            ContainerFactory containerFactory = ContainerCreator.findFactory ( factoryClass );
+            final Class<?> factoryClass = Class.forName ( factory.getClass1 () );
+
+            final ContainerFactory containerFactory = ContainerCreator.findFactory ( factoryClass );
             if ( containerFactory == null )
             {
                 throw new ConfigurationError ( String.format ( "Unable to create new container factory." ) );
             }
-            
+
             checkCallConfigurationHook ( ctx, containerFactory, factory.getDomNode () );
-            
+
             ctx.getContainerFactories ().put ( factory.getId (), containerFactory );
-                
+
         }
-        catch ( ClassNotFoundException e )
+        catch ( final ClassNotFoundException e )
         {
             throw new ConfigurationError ( "Unable to load class", e );
         }
     }
 
-    public static void createConnectorFactory ( XMLConfigurationContext ctx, ConnectorFactoryType factory ) throws ConfigurationError
+    public static void createConnectorFactory ( final XMLConfigurationContext ctx, final ConnectorFactoryType factory ) throws ConfigurationError
     {
         try
         {
-            Class factoryClass = Class.forName ( factory.getClass1 () );
-            
-            Object factoryObject = factoryClass.newInstance ();
-            
+            final Class<?> factoryClass = Class.forName ( factory.getClass1 () );
+
+            final Object factoryObject = factoryClass.newInstance ();
+
             if ( ! ( factoryObject instanceof ConnectorFactory ) )
+            {
                 throw new ConfigurationError ( "Class does not implement ConnectorFactory interface" );
-            
-            ConnectorFactory connectorFactory = (ConnectorFactory)factoryObject;
+            }
+
+            final ConnectorFactory connectorFactory = (ConnectorFactory)factoryObject;
             checkCallConfigurationHook ( ctx, connectorFactory, factory.getDomNode () );
-            
+
             ctx.getConnectorFactories ().put ( factory.getId (), connectorFactory );
-                
+
         }
-        catch ( ClassNotFoundException e )
+        catch ( final ClassNotFoundException e )
         {
             throw new ConfigurationError ( "Unable to load class", e );
         }
-        catch ( InstantiationException e )
+        catch ( final InstantiationException e )
         {
             throw new ConfigurationError ( "Unable to instatiate connector factory class", e );
         }
-        catch ( IllegalAccessException e )
+        catch ( final IllegalAccessException e )
         {
-            throw new ConfigurationError ( "No access to instatiate connector factory class", e );        }
+            throw new ConfigurationError ( "No access to instatiate connector factory class", e );
+        }
     }
-    
-    public static void createObjectFactory ( XMLConfigurationContext ctx, ObjectFactoryType factory ) throws ConfigurationError
+
+    public static void createObjectFactory ( final XMLConfigurationContext ctx, final ObjectFactoryType factory ) throws ConfigurationError
     {
         try
         {
-            Class objectClass = Class.forName ( factory.getClass1 () );
-            
-            ObjectFactory objectFactory = DynamicObjectCreator.findFactory ( objectClass );
+            final Class<?> objectClass = Class.forName ( factory.getClass1 () );
+
+            final ObjectFactory objectFactory = DynamicObjectCreator.findFactory ( objectClass );
             checkCallConfigurationHook ( ctx, objectFactory, factory.getDomNode () );
-            
+
             ctx.getObjectFactories ().put ( factory.getId (), objectFactory );
             _log.debug ( String.format ( "Created object factory: %s", factory.getId () ) );
-                
+
         }
-        catch ( ClassNotFoundException e )
+        catch ( final ClassNotFoundException e )
         {
             throw new ConfigurationError ( "Unable to load class", e );
         }
     }
 
-    public static View configureView ( XMLConfigurationContext ctx, ViewsType views, String viewId) throws ConfigurationError
+    public static View configureView ( final XMLConfigurationContext ctx, final ViewsType views, final String viewId ) throws ConfigurationError
     {
-        for ( ViewType view : views.getViewList () )
+        for ( final ViewType view : views.getViewList () )
         {
             if ( view.getId ().equals ( viewId ) )
             {
-                Container container = createContainer ( new XMLContainerContext ( ctx ), view.getId (), view );
+                final Container container = createContainer ( new XMLContainerContext ( ctx ), view.getId (), view );
                 if ( container instanceof View )
                 {
                     return (View)container;
@@ -199,103 +201,107 @@ public class XMLConfigurator implements Configurator
         return null;
     }
 
-    public static Container createContainer ( XMLContainerContext ctx, String id, ContainerType container ) throws ConfigurationError
+    public static Container createContainer ( final XMLContainerContext ctx, final String id, final ContainerType container ) throws ConfigurationError
     {
         Container containerObject = null;
 
-        ContainerFactory containerFactory = ctx.getConfigurationContext ().getContainerFactories ().get ( container.getType () );
+        final ContainerFactory containerFactory = ctx.getConfigurationContext ().getContainerFactories ().get ( container.getType () );
         if ( containerFactory == null )
+        {
             throw new ConfigurationError ( String.format ( "Unable to find container factory %s", container.getType () ) );
-        
+        }
+
         containerObject = containerFactory.create ( id );
-        
-        for ( PropertyType property : container.getPropertyList () )
+
+        for ( final PropertyType property : container.getPropertyList () )
         {
             setObjectProperty ( containerObject, property.getName ().toString (), property.getStringValue () );
         }
-        
-        for ( ConstantType constant : container.getObjects ().getConstantList () )
+
+        for ( final ConstantType constant : container.getObjects ().getConstantList () )
         {
             createConstant ( ctx, constant, containerObject );
         }
-        
-        for ( ObjectType object : container.getObjects ().getObjectList () )
+
+        for ( final ObjectType object : container.getObjects ().getObjectList () )
         {
             createObject ( ctx, object, containerObject );
         }
-        
-        for ( TemplateObjectType template : container.getObjects ().getTemplateObjectList () )
+
+        for ( final TemplateObjectType template : container.getObjects ().getTemplateObjectList () )
         {
             createTemplateObject ( ctx, template, containerObject );
         }
-        
-        for ( ContainerType containerType : container.getObjects ().getContainerList () )
+
+        for ( final ContainerType containerType : container.getObjects ().getContainerList () )
         {
             createContainer ( ctx, containerType, containerObject );
         }
-        
+
         if ( container.getConnectors () != null )
         {
-            for ( ConnectorType connector : container.getConnectors ().getConnectorList () )
+            for ( final ConnectorType connector : container.getConnectors ().getConnectorList () )
             {
                 createConnector ( ctx, connector, containerObject );
             }
         }
-       
+
         if ( container.getInputs () != null )
         {
-            for ( InputExportType input : container.getInputs ().getInputExportList () )
+            for ( final InputExportType input : container.getInputs ().getInputExportList () )
             {
                 containerObject.addInputExport ( new Container.Export ( input.getObject (), input.getName (), input.getExportName () ) );
             }
         }
-        
+
         if ( container.getOutputs () != null )
         {
-            for ( OutputExportType output : container.getOutputs ().getOutputExportList () )
+            for ( final OutputExportType output : container.getOutputs ().getOutputExportList () )
             {
                 containerObject.addOutputExport ( new Container.Export ( output.getObject (), output.getName (), output.getExportName () ) );
             }
         }
-        
+
         return containerObject;
     }
 
-    private static void createContainer ( XMLContainerContext ctx, ContainerType template, Container parentContainer ) throws ConfigurationError
+    private static void createContainer ( final XMLContainerContext ctx, final ContainerType template, final Container parentContainer ) throws ConfigurationError
     {
-        XMLContainerContext cctx = new XMLContainerContext ( ctx.getConfigurationContext () );
-        Container container = createContainer ( cctx, template.getId (), template );
+        final XMLContainerContext cctx = new XMLContainerContext ( ctx.getConfigurationContext () );
+        final Container container = createContainer ( cctx, template.getId (), template );
         parentContainer.add ( container );
         ctx.getObjects ().put ( template.getId (), container );
     }
 
-    public static void createTemplateObject ( XMLContainerContext ctx, TemplateObjectType template, Container viewObject ) throws ConfigurationError
+    public static void createTemplateObject ( final XMLContainerContext ctx, final TemplateObjectType template, final Container viewObject ) throws ConfigurationError
     {
-        ObjectFactory factory = ctx.getConfigurationContext ().getObjectFactories ().get ( template.getTemplate () );
-        
+        final ObjectFactory factory = ctx.getConfigurationContext ().getObjectFactories ().get ( template.getTemplate () );
+
         if ( factory == null )
+        {
             throw new ConfigurationError ( String.format ( "Unable to find template object factory %s", template.getTemplate () ) );
-        
-        DynamicObject dynamicObject = factory.create ( template.getId () );
-        
+        }
+
+        final DynamicObject dynamicObject = factory.create ( template.getId () );
+
         if ( dynamicObject == null )
         {
             throw new ConfigurationError ( String.format ( "Unable to create template object %s", template.getTemplate () ) );
         }
-        
-        for ( PropertyType property : template.getPropertyList () )
+
+        for ( final PropertyType property : template.getPropertyList () )
         {
             setObjectProperty ( dynamicObject, property.getName ().toString (), property.getStringValue () );
         }
-        
+
         viewObject.add ( dynamicObject );
         ctx.getObjects ().put ( template.getId (), dynamicObject );
         _log.debug ( String.format ( "Created object (template) %s", template.getId () ) );
     }
 
-    public static void createConstant ( XMLContainerContext ctx, ConstantType constant, Container viewObject )
+    public static void createConstant ( final XMLContainerContext ctx, final ConstantType constant, final Container viewObject )
     {
-        ConstantOutput co = new ConstantOutput ( "value" );
+        final ConstantOutput co = new ConstantOutput ( "value" );
         if ( constant.getNull () != null )
         {
             co.setValue ( Type.NULL, null );
@@ -322,55 +328,57 @@ public class XMLConfigurator implements Configurator
         }
         else if ( constant.getColor () != null )
         {
-            Color color = new Color ( constant.getColor ().getRed (), constant.getColor ().getGreen (), constant.getColor ().getBlue () );
+            final Color color = new Color ( constant.getColor ().getRed (), constant.getColor ().getGreen (), constant.getColor ().getBlue () );
             co.setValue ( Type.COLOR, color );
         }
-        else 
+        else
         {
             _log.warn ( "Unknown constant type! Setting null!" );
             co.setValue ( Type.NULL, null );
         }
-        ConstantObject constantObject = new ConstantObject ( constant.getId (), co );
+        final ConstantObject constantObject = new ConstantObject ( constant.getId (), co );
         viewObject.add ( constantObject );
         ctx.getObjects ().put ( constant.getId (), constantObject );
         _log.debug ( String.format ( "Created object (constant) %s", constant.getId () ) );
     }
 
-    public static void createObject ( XMLContainerContext ctx, ObjectType object, Container viewObject ) throws ConfigurationError
+    public static void createObject ( final XMLContainerContext ctx, final ObjectType object, final Container viewObject ) throws ConfigurationError
     {
-        ObjectFactory factory = ctx.getConfigurationContext ().getObjectFactories ().get ( object.getType () );
+        final ObjectFactory factory = ctx.getConfigurationContext ().getObjectFactories ().get ( object.getType () );
         if ( factory == null )
+        {
             throw new ConfigurationError ( String.format ( "Failed to create object since object type %s is unknown", object.getType () ) );
-        
-        DynamicObject dynamicObject = factory.create ( object.getId () );
-        
-        for ( PropertyType property : object.getPropertyList () )
+        }
+
+        final DynamicObject dynamicObject = factory.create ( object.getId () );
+
+        for ( final PropertyType property : object.getPropertyList () )
         {
             setObjectProperty ( dynamicObject, property.getName ().toString (), property.getStringValue () );
         }
-        
+
         viewObject.add ( dynamicObject );
         ctx.getObjects ().put ( object.getId (), dynamicObject );
         _log.debug ( String.format ( "Created object %s", object.getId () ) );
     }
 
-    public static void setObjectProperty ( Object object, String name, String stringValue ) throws ConfigurationError
+    public static void setObjectProperty ( final Object object, final String name, final String stringValue ) throws ConfigurationError
     {
         try
         {
-            BeanInfo beanInfo = Introspector.getBeanInfo ( object.getClass () );
-            for ( PropertyDescriptor pd  : beanInfo.getPropertyDescriptors () )
+            final BeanInfo beanInfo = Introspector.getBeanInfo ( object.getClass () );
+            for ( final PropertyDescriptor pd : beanInfo.getPropertyDescriptors () )
             {
                 if ( pd.getName ().equals ( name ) )
                 {
-                    PropertyEditor pe = PropertyEditorManager.findEditor ( pd.getPropertyType () );
+                    final PropertyEditor pe = PropertyEditorManager.findEditor ( pd.getPropertyType () );
                     if ( pe != null )
                     {
                         pe.setAsText ( stringValue );
                         pd.getWriteMethod ().invoke ( object, new Object[] { pe.getValue () } );
                         return;
                     }
-                    if  ( pd.getPropertyType ().isAssignableFrom ( stringValue.getClass () ) )
+                    if ( pd.getPropertyType ().isAssignableFrom ( stringValue.getClass () ) )
                     {
                         pd.getWriteMethod ().invoke ( object, new Object[] { stringValue } );
                         return;
@@ -379,71 +387,85 @@ public class XMLConfigurator implements Configurator
                 }
             }
         }
-        catch ( ConfigurationError e )
+        catch ( final ConfigurationError e )
         {
             _log.debug ( "Failed to set property", e );
             throw e;
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             _log.debug ( "Failed to set property", e );
             throw new ConfigurationError ( String.format ( "Unable to set property for dynamic object. Object: %s, Property: %s, String-Value: '%s'", object, name, stringValue ), e );
         }
     }
 
-    public static void createConnector ( XMLContainerContext ctx, ConnectorType connector, Container viewObject ) throws ConfigurationError
+    public static void createConnector ( final XMLContainerContext ctx, final ConnectorType connector, final Container viewObject ) throws ConfigurationError
     {
-        Connector connectorObject = ctx.getConfigurationContext ().getConnectorFactories ().get ( connector.getType () ).create ();
-        
-        InputType input = connector.getInput ();
+        final Connector connectorObject = ctx.getConfigurationContext ().getConnectorFactories ().get ( connector.getType () ).create ();
+
+        final InputType input = connector.getInput ();
         try
         {
-            DynamicObject object = ctx.getObjects ().get ( input.getObject () );
-            
+            final DynamicObject object = ctx.getObjects ().get ( input.getObject () );
+
             if ( object == null )
+            {
                 throw new ConfigurationError ( String.format ( "Unable to find object '%s' for binding", input.getObject () ) );
-            
-            InputDefinition inputDef = object.getInputByName ( input.getName () );
+            }
+
+            final InputDefinition inputDef = object.getInputByName ( input.getName () );
             if ( inputDef == null )
+            {
                 throw new ConfigurationError ( String.format ( "Unable to find input '%s' on '%s' for binding", input.getName (), input.getObject () ) );
-            
+            }
+
             connectorObject.setInput ( object.getInputByName ( input.getName () ) );
         }
-        catch ( AlreadyConnectedException e )
+        catch ( final AlreadyConnectedException e )
         {
             throw new ConfigurationError ( String.format ( "Unable to connect to object: %s/%s", input.getObject (), input.getName () ), e );
         }
-        
-        OutputType output = connector.getOutput ();
-        DynamicObject outputObject = ctx.getObjects ().get ( output.getObject () );
+
+        final OutputType output = connector.getOutput ();
+        final DynamicObject outputObject = ctx.getObjects ().get ( output.getObject () );
         if ( outputObject == null )
+        {
             throw new ConfigurationError ( String.format ( "Unable to connect to output: %s", output.getObject () ) );
-        
-        OutputDefinition outputDef = outputObject.getOutputByName ( output.getName () );
+        }
+
+        final OutputDefinition outputDef = outputObject.getOutputByName ( output.getName () );
         if ( outputDef == null )
+        {
             throw new ConfigurationError ( String.format ( "Unable to find output: %s/%s Input: %s/%s", output.getObject (), output.getName (), input.getObject (), input.getName () ) );
+        }
         connectorObject.setOutput ( outputDef );
-        
+
         viewObject.add ( connectorObject );
     }
 
-    private static void checkCallConfigurationHook ( XMLConfigurationContext ctx, Object object, Node node ) throws ConfigurationError
+    private static void checkCallConfigurationHook ( final XMLConfigurationContext ctx, final Object object, final Node node ) throws ConfigurationError
     {
         if ( object == null )
+        {
             return;
+        }
         if ( node == null )
+        {
             return;
-        if ( !(object instanceof XMLConfigurable) )
+        }
+        if ( ! ( object instanceof XMLConfigurable ) )
+        {
             return;
-        
+        }
+
         for ( int i = 0; i < node.getChildNodes ().getLength (); i++ )
         {
-            Node childNode = node.getChildNodes ().item ( i );
+            final Node childNode = node.getChildNodes ().item ( i );
             if ( childNode != null )
             {
                 if ( childNode.getNodeType () == Node.ELEMENT_NODE )
                 {
-                    ((XMLConfigurable)object).configure ( ctx, childNode );
+                    ( (XMLConfigurable)object ).configure ( ctx, childNode );
                     return;
                 }
             }

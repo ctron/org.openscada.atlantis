@@ -25,6 +25,7 @@ import java.util.Observer;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.client.DataItem;
+import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.viewer.model.OutputDefinition;
 import org.openscada.da.client.viewer.model.OutputListener;
@@ -34,55 +35,62 @@ import org.openscada.da.client.viewer.model.impl.BaseOutput;
 public class DataItemOutput extends BaseOutput implements OutputDefinition, Observer
 {
     private static Logger _log = Logger.getLogger ( DataItemOutput.class );
-    
+
     private ItemManager _itemManager = null;
+
     private DataItem _dataItem = null;
+
     private boolean _subscribed = false;
-    
-    public DataItemOutput ( ItemManager itemManager, String item, String name )
+
+    public DataItemOutput ( final ItemManager itemManager, final String item, final String name )
     {
         super ( name );
-        _itemManager = itemManager;
-        _dataItem = new DataItem ( item );
+        this._itemManager = itemManager;
+        this._dataItem = new DataItem ( item );
     }
-    
+
     protected synchronized void subscribe ()
     {
-        if ( _subscribed )
+        if ( this._subscribed )
+        {
             return;
-        
+        }
+
         _log.debug ( String.format ( "Subscribing to item" ) );
-        
-        _dataItem.addObserver ( this );
-        _dataItem.register ( _itemManager );
-        _subscribed = true;
+
+        this._dataItem.addObserver ( this );
+        this._dataItem.register ( this._itemManager );
+        this._subscribed = true;
     }
-    
+
     protected synchronized void unsubscribe ()
     {
-        if ( !_subscribed )
+        if ( !this._subscribed )
+        {
             return;
-        
+        }
+
         _log.debug ( String.format ( "Un-Subscribing from item" ) );
-        
-        _dataItem.deleteObserver ( this );
-        _dataItem.unregister ();
-        _subscribed = false;
+
+        this._dataItem.deleteObserver ( this );
+        this._dataItem.unregister ();
+        this._subscribed = false;
     }
-    
+
     public EnumSet<Type> getSupportedTypes ()
     {
         return EnumSet.of ( Type.VARIANT );
     }
 
-    public void update ( Observable o, Object arg )
+    public void update ( final Observable o, final Object arg )
     {
-        _log.debug ( String.format ( "Update: %s", _dataItem.getValue () ) );
-        fireEvent ( Type.VARIANT, _dataItem.getValue () );
+        final DataItemValue value = this._dataItem.getSnapshotValue ();
+        _log.debug ( String.format ( "Update: %s", value ) );
+        fireEvent ( Type.VARIANT, value.getValue () );
     }
 
     @Override
-    public synchronized void addListener ( OutputListener listener )
+    public synchronized void addListener ( final OutputListener listener )
     {
         super.addListener ( listener );
         if ( hasListeners () )
@@ -90,12 +98,12 @@ public class DataItemOutput extends BaseOutput implements OutputDefinition, Obse
             subscribe ();
         }
     }
-    
+
     @Override
-    public synchronized void removeListener ( OutputListener listener )
+    public synchronized void removeListener ( final OutputListener listener )
     {
         _log.debug ( "Removing listener" );
-        
+
         super.removeListener ( listener );
         if ( !hasListeners () )
         {
