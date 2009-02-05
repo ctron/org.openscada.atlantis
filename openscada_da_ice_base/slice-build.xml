@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     ice-build-da
+     OpenSCADA Atlantis
+     
+     Jens Reimann <jens.reimann@inavare.net>
+     ====================================================================== -->
+<project name="ice-build-da" default="default">
+    <description>
+            OpenSCADA Atlantis Project
+    </description>
+	
+	<property name="libfile" location="../atlantis_build/lib/libs.xml"/>
+	<import file="${libfile}"/>
+	
+	<!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="" description="--> Build SLICE">
+		<delete dir="gensrc"/>
+		<mkdir dir="gensrc"/>
+    	<slice2java outputdir="gensrc" casesensitive="true">
+			<meta value="true"/>
+			<fileset dir="../openscada_interface_ice">
+				<include name="da/*.ice"/>
+			</fileset>
+		</slice2java>
+    </target>
+
+</project>
