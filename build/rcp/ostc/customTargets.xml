@@ -92,7 +92,7 @@
 	<fetch-module src="${svn.base}/ae/client/test" type="plugin" name="org.openscada.ae.client.test"/>
 	<fetch-module src="${svn.base}/ae/client/net_feature" type="feature" name="org.openscada.ae.client.test"/>
 	<fetch-module src="${svn.base}/ae/rcp/local_test_server" type="plugin" name="org.openscada.ae.rcp.LocalTestServer"/>
-	<fetch-module src="${svn.base}/da/client/viewer" type="plugin" name="org.openscada.da.client.viewer"/>
+	<fetch-module src="${svn.base}/trunk/org.openscada.da.client.viewer" type="plugin" name="org.openscada.da.client.viewer"/>
 	<fetch-module src="${svn.base}/trunk/org.openscada.da.client.chart" type="plugin" name="org.openscada.da.client.chart"/>
   	<fetch-module src="${svn.base}/trunk/org.openscada.da.base" type="plugin" name="org.openscada.da.base"/>
   	<fetch-module src="${svn.base}/trunk/org.openscada.da.client.dataitem.details" type="plugin" name="org.openscada.da.client.dataitem.details"/>
