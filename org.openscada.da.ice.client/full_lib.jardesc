@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jardesc>
+<jar path="openscada_da_client_ice_plugin_wrapper/lib.jar"/>
+<options buildIfNeeded="true" compress="true" descriptionLocation="/openscada_da_client_ice_plugin_wrapper/full_lib.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+<storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+<selectedProjects/>
+<manifest generateManifest="true" manifestLocation="/oxygen_snmp_driver/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+<sealing sealJar="false">
+<packagesToSeal/>
+<packagesToUnSeal/>
+</sealing>
+</manifest>
+<selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+<javaElement handleIdentifier="=openscada_da_core_common/src"/>
+<javaElement handleIdentifier="=openscada_da_ice_base/src"/>
+<javaElement handleIdentifier="=openscada_utils/src"/>
+<javaElement handleIdentifier="=openscada_da_client_common/src"/>
+<javaElement handleIdentifier="=openscada_core_ice_base/gensrc"/>
+<javaElement handleIdentifier="=openscada_core_ice_base/src"/>
+<javaElement handleIdentifier="=openscada_da_core_server/src"/>
+<javaElement handleIdentifier="=openscada_da_client_ice/src"/>
+<javaElement handleIdentifier="=openscada_core_common/src"/>
+<javaElement handleIdentifier="=openscada_core_client_common/src"/>
+<javaElement handleIdentifier="=openscada_da_ice_base/gensrc"/>
+</selectedElements>
+</jardesc>
