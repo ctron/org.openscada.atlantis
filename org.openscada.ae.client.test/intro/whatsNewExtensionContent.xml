@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<introContent>
+
+  <extensionContent id="org.openscada.ae.client.test.whatsnew" name="ostc"
+    alt-style="css/swt.properties" style="css/whatsnew.css"
+    path="whatsnew/@">
+    <group style-id="content-group" id="content-group">
+      <link label="New AE prespective"
+        url="http://org.eclipse.ui.intro/showPage?id=newAEperspective"
+        style-id="content-link" id="ostc">
+        <text>Introducing the new AE perspective</text>
+      </link>
+    </group>
+  </extensionContent>
+
+  <page id="newAEperspective" style="$theme$/html/whatsnew.css"
+    style-id="page">
+    <title style-id="intro-header">$introTitle$</title>
+    <group id="extra-group1" filteredFrom="swt" />
+    <include path="whatsnew/navigation-links" />
+    <group id="page-content">
+      <group id="content-header" label="PERSPECTIVE OVERVIEW" filteredFrom="swt">
+      </group>
+      <text style-id="page-title" id="page-title" filteredFrom="html">
+        NEW AE PERSPECTIVE
+      </text>
+      <text style-id="page-description" id="page-description">
+        Introducing the new AE perspective
+      </text>
+      <html src="html/newAE.html" type="inline"></html>
+    </group>
+  </page>
+</introContent>
