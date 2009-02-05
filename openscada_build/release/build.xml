@@ -53,7 +53,7 @@
     	<!-- init genworkspace XML buffer -->
     	<dirname property="dir" file="${file.genworkspace}"/>
     	<mkdir dir="${dir}"/>
-    	<xmltask source="${source.base}/build/data/genworkspace.xml" dest="${file.genworkspace}"/>
+    	<xmltask source="${source.base}/openscada_build/data/genworkspace.xml" dest="${file.genworkspace}"/>
     </target>
     
     <target name="build.post.genworkspace">
