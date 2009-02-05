@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            description="Control the local testserver"
+            id="org.openscada.da.rcp.LocalTestServer.actionSet"
+            label="Local Test Server">
+         <action
+               class="org.openscada.da.rcp.LocalTestServer.actions.StartTestServerAction"
+               icon="icons/stock_start_sever.png"
+               id="org.openscada.da.rcp.LocalTestServer.StartTestServerAction"
+               label="Start Local Test Server"
+               menubarPath="testing/server"
+               style="push"/>
+         <action
+               class="org.openscada.da.rcp.LocalTestServer.actions.StartSimServerAction"
+               icon="icons/stock_start_sever.png"
+               id="org.openscada.da.rcp.LocalTestServer.StartSimServerAction"
+               label="Start Local Simulation Server"
+               menubarPath="testing/server"
+               style="push"/>
+         <menu
+               id="testing"
+               label="Testing"
+               path="additions"/>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
+         <actionSet id="org.openscada.da.rcp.LocalTestServer.actionSet"/>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>
