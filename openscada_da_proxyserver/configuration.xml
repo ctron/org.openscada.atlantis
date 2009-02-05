@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy:root xmlns:proxy="http://openscada.org/DA/Proxy/Configuration"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://openscada.org/DA/Proxy/Configuration schema/configuration.xsd ">
+	
+	<proxy:proxy prefix="proxy" wait="10000">
+		<proxy:connection id="con1" prefix="example"
+			uri="da:net://127.0.0.1:12001?auto-reconnect=true&amp;reconnect-delay=500" className="org.openscada.da.client.net.Connection" />
+		<proxy:connection id="con2" prefix="example"
+			uri="da:net://127.0.0.1:12002?auto-reconnect=true&amp;reconnect-delay=500" className="org.openscada.da.client.net.Connection" />
+	</proxy:proxy>
+</proxy:root>
