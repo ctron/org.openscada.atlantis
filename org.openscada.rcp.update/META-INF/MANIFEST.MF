@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenSCADA RCP Update
+Bundle-SymbolicName: org.openscada.rcp.update; singleton:=true
+Bundle-Version: 0.2.0
+Bundle-Activator: org.openscada.rcp.update.Activator
+Bundle-Vendor: inavare GmbH
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.update.core,
+ log4j_wrapper_plugin
+Bundle-ActivationPolicy: lazy
+Export-Package: org.openscada.rcp.update
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

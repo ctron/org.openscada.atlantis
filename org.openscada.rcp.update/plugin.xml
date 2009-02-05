@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+ <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.openscada.rcp.update.updateActionSet"
+            label="Update Management"
+            visible="true">
+         <action
+               class="org.openscada.rcp.update.actions.UpdateAction"
+               icon="icons/stock_refresh.png"
+               id="org.openscada.rcp.update.UpdateAction"
+               label="&amp;Update"
+               menubarPath="help/update"
+               style="push"
+               tooltip="Update this application"/>
+      </actionSet>
+   </extension>
+ <extension
+       point="org.eclipse.ui.perspectiveExtensions">
+    <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
+       <actionSet id="org.openscada.rcp.update.updateActionSet"/>
+    </perspectiveExtension>
+ </extension>
+</plugin>
