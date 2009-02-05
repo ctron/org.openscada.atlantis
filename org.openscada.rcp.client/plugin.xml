@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         id="application"
+         name="OpenSCADA RCP Client Application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.openscada.rcp.client.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="Client Perspective"
+            class="org.openscada.rcp.client.Perspective"
+            id="org.openscada.rcp.client.perspective">
+      </perspective>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.openscada.rcp.client.application"
+            name="OpenSCADA Client">
+         <property
+               name="aboutImage"
+               value="about.png"/>
+         <property
+               name="aboutText"
+               value="%aboutText"/>
+         <property
+               name="windowImages"
+               value="platform:/plugin/org.openscada.da.client.test/icons/app/app_icon_16.gif,platform:/plugin/org.openscada.da.client.test/icons/app/app_icon_32.gif,platform:/plugin/org.openscada.da.client.test/icons/app/app_icon_48.gif"/>
+               <property
+               name="introTitle"
+               value="Welcome to the OpenSCADA RCP Client"/>
+         <property
+               name="introBrandingImage"
+               value="product:about.png"/>
+         <property
+       	       name="introBrandingImageText"
+               value="OpenSCADA Project"/>
+         <property
+               name="appName"
+               value="OpenSCADA Client">
+         </property>
+      </product>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.openscada.rcp.client.perspective">
+         <perspectiveShortcut id="org.openscada.da.client.test.perspective"/>
+         <perspectiveShortcut id="org.openscada.ae.client.test.perspective"/>
+      </perspectiveExtension>
+   </extension>
+<extension
+	point="org.eclipse.ui.intro">
+   <introProductBinding
+      introId="org.eclipse.ui.intro.universal"
+      productId="org.openscada.rcp.client.product"/>
+</extension>
+
+<extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig" 
+            content="intro/overviewExtensionContent.xml"/>  
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig" 
+            content="intro/whatsNewExtensionContent.xml"/>  
+   </extension>
+
+</plugin>
