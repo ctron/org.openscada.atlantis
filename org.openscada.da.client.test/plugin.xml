@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.openscada.da.client.test.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.openscada.da.client.test.Perspective"
+            icon="icons/stock_channel.png"
+            id="org.openscada.da.client.test.perspective"
+            name="DA">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.openscada.da.client.test"
+            name="OpenSCADA DA Testing"
+            parentCategory="org.openscada.da.category"/>
+      <view
+            category="org.openscada.da.client.test"
+            class="org.openscada.da.client.test.views.HiveView"
+            icon="icons/stock_channel.png"
+            id="org.openscada.da.client.test.views.HiveView"
+            name="%view.hiveView.name"/>
+      <view
+            allowMultiple="true"
+            category="org.openscada.da.client.test"
+            class="org.openscada.da.client.test.views.watch.DataItemWatchView"
+            icon="icons/stock_watch.png"
+            id="org.openscada.da.client.test.views.DataItemWatchView"
+            name="%view.dataItemWatch.name"/>
+      <view
+            allowMultiple="true"
+            category="org.openscada.da.client.test"
+            class="org.openscada.da.client.test.views.realtime.RealTimeList"
+            id="org.openscada.da.test.views.RealTimeList"
+            name="%view.realtimeList.name"/>
+      <view
+            allowMultiple="true"
+            category="org.openscada.da.client.test"
+            class="org.openscada.da.client.test.generator.GeneratorView"
+            id="org.openscada.da.client.test.GeneratorView"
+            name="%view.signalGenerator.name">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.openscada.da.client.test"
+            defaultHandler="org.openscada.da.client.test.commands.OpenNewRealtimeList"
+            description="%command.openNewRealtimeList.description"
+            id="org.openscada.da.client.test.NewRealtimeList"
+            name="%command.openNewRealtimeList.name">
+      </command>
+      <category
+            id="org.openscada.da.client.test"
+            name="OpenSCADA DA">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.ui.file.exit"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+X">
+      </key>
+   </extension>
+   <extension
+         id="product"
+         name="OpenSCADA DA Test Client"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.openscada.rcp.client.application"
+            name="OpenSCADA Client">
+         <property
+               name="aboutText"
+               value="%aboutText"/>
+         <property
+               name="aboutImage"
+               value="about.png"/>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini"/>
+         <property
+               name="windowImages"
+               value="icons/app/app_icon_16.gif,icons/app/app_icon_32.gif,icons/app/app_icon_48.gif"/>
+      </product>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
+         <newWizardShortcut id="org.openscada.da.client.test.newWizards.NewHive"/>
+         <newWizardShortcut id="org.openscada.da.client.test.newWizards.NewWatch"/>
+         <perspectiveShortcut id="org.openscada.ae.client.test.perspective"/>
+         <viewShortcut id="org.openscada.da.test.views.RealTimeList"/>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="org.openscada.da.client.test.TestViewAction"
+            targetID="org.openscada.da.client.test.views.HiveView">
+         <action
+               class="org.openscada.da.client.test.actions.WatchItemAction"
+               icon="icons/stock_watch.png"
+               id="org.openscada.da.client.test.actions.WatchItemAction"
+               label="Watch"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions"
+               tooltip="Watch selected item">
+            <enablement>
+               <objectClass name="org.openscada.da.base.browser.DataItemEntry"/>
+            </enablement>
+         </action>
+         <action
+               class="org.openscada.da.client.test.actions.WriteOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteOperationAction"
+               label="Write"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions">
+            <enablement>
+               <objectClass name="org.openscada.da.base.browser.DataItemEntry"/>
+            </enablement>
+         </action>
+         <action
+               class="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               label="Write Attributes"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions">
+            <enablement>
+               <objectClass name="org.openscada.da.base.browser.DataItemEntry"/>
+            </enablement>
+         </action>
+         <action
+               class="org.openscada.da.client.test.actions.DeleteHiveAction"
+               icon="icons/16x16/stock_delete.png"
+               id="org.openscada.da.client.test.actions.DeleteHiveAction"
+               label="%action.deleteHive.label"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions"
+               tooltip="%action.deleteHive.tooltip">
+            <enablement>
+               <objectClass name="org.openscada.da.base.browser.HiveConnection"/>
+            </enablement>
+         </action>
+         <action
+               class="org.openscada.da.client.test.actions.ConnectHiveAction"
+               icon="icons/stock_connect.png"
+               id="org.openscada.da.client.test.actions.ConnectHiveAction"
+               label="%action.connectHive.label"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions"
+               tooltip="%action.connectHive.tooltip">
+            <enablement>
+               <and>
+                  <objectClass name="org.openscada.da.base.browser.HiveConnection"/>
+                  <objectState
+                        name="state"
+                        value="CLOSED"/>
+               </and>
+            </enablement>
+         </action>
+         <action
+               class="org.openscada.da.client.test.actions.DisconnectHiveAction"
+               icon="icons/stock_disconnect.png"
+               id="org.openscada.da.client.test.actions.DisconnectHiveAction"
+               label="Disconnect"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions"
+               tooltip="Disconnect from hive">
+            <enablement>
+               <and>
+                  <objectClass name="org.openscada.da.base.browser.HiveConnection"/>
+                  <not>
+                     <objectState
+                           name="state"
+                           value="CLOSED"/>
+                  </not>
+               </and>
+            </enablement>
+         </action>
+      </viewContribution>
+      <viewContribution
+            id="org.openscada.da.test.views.RealTimeList.vc1"
+            targetID="org.openscada.da.test.views.RealTimeList">
+            <action
+               class="org.openscada.da.client.test.actions.WriteOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteOperationAction"
+               label="Write"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions">
+            <enablement>
+               <objectClass name="org.openscada.da.base.realtime.ListEntry"/>
+            </enablement>
+         </action>
+         <action
+               class="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               label="Write Attributes"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions">
+            <enablement>
+               <objectClass name="org.openscada.da.base.realtime.ListEntry"/>
+            </enablement>
+         </action>
+            </viewContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.openscada.da.client.test.popupMenus.oc2"
+            objectClass="org.openscada.da.base.browser.HiveConnection">
+		<action
+               class="org.openscada.da.client.test.actions.DeleteHiveAction"
+               icon="icons/16x16/stock_delete.png"
+               id="org.openscada.da.client.test.actions.DeleteHiveAction"
+               label="Delete"
+               menubarPath="additions">
+         </action>
+         <action
+               class="org.openscada.da.client.test.actions.DisconnectHiveAction"
+               icon="icons/stock_disconnect.png"
+               id="org.openscada.da.client.test.actions.DisconnectHiveAction"
+               label="Disconnect"
+               menubarPath="additions">
+            <enablement>
+                  <not>
+                     <objectState
+                           name="state"
+                           value="CLOSED"/>
+                  </not>
+            </enablement>
+         </action>
+         <action
+               class="org.openscada.da.client.test.actions.ConnectHiveAction"
+               icon="icons/stock_connect.png"
+               id="org.openscada.da.client.test.actions.ConnectHiveAction"
+               label="Connect"
+               menubarPath="additions">
+            <enablement>
+                  <objectState
+                        name="state"
+                        value="CLOSED"/>
+            </enablement>
+         </action>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.openscada.da.client.test.popupMenus.oc1"
+            objectClass="org.openscada.da.base.browser.DataItemEntry">
+         <action
+               class="org.openscada.da.client.test.actions.WatchItemAction"
+               icon="icons/stock_watch.png"
+               id="org.openscada.da.client.test.actions.WatchItemAction"
+               label="Watch"
+               menubarPath="additions"/>
+         <action
+               class="org.openscada.da.client.test.actions.WriteOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteOperationAction"
+               label="Write Operation"
+               menubarPath="additions"/>
+         <action
+               class="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               label="Write Attributes Operation"
+               menubarPath="additions"/>
+         <action
+               class="org.openscada.da.client.test.actions.ShowGenerator"
+               enablesFor="1"
+               id="org.openscada.da.client.test.actions.ShowGenerator"
+               label="Generator"
+               menubarPath="additions">
+         </action>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.openscada.da.client.test.popupMenus.oc3"
+            objectClass="org.openscada.da.base.realtime.ListEntry">
+         <action
+               class="org.openscada.da.client.test.actions.WriteOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteOperationAction"
+               label="Write Operation"
+               menubarPath="additions"/>
+         <action
+               class="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               icon="icons/16x16/stock_write.png"
+               id="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
+               label="Write Attributes Operation"
+               menubarPath="additions"/>
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="org.openscada.da.category"
+            class="org.openscada.da.client.test.wizards.NewHiveWizard"
+            descriptionImage="icons/32x32/stock_channel.png"
+            hasPages="true"
+            icon="icons/stock_channel.png"
+            id="org.openscada.da.client.test.newWizards.NewHive"
+            name="New Hive"
+            project="false">
+      </wizard>
+      <wizard
+            category="org.openscada.da.client.test"
+            class="org.openscada.da.client.test.wizards.NewWatchWizard"
+            descriptionImage="icons/32x32/stock_channel.png"
+            hasPages="true"
+            icon="icons/stock_channel.png"
+            id="org.openscada.da.client.test.newWizards.NewWatch"
+            name="New Watch"
+            project="false">
+      </wizard>
+      <category
+            id="org.openscada.da.client.test"
+            name="OpenSCADA DA Testing"
+            parentCategory="org.openscada.da.category"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.openscada.da.client.test.pages.DataItemEntryPage"
+            id="org.openscada.da.client.test.propertyPages.DataItemEntryPage"
+            name="Data Item">
+         <enabledWhen>
+            <instanceof
+                  value="org.openscada.da.base.browser.DataItemEntry">
+            </instanceof>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.dropActions">
+      <action
+            class="org.openscada.da.base.dnd.ItemDropAction"
+            id="itemDrop"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="org.openscada.da.client.test.toolbar">
+            <command
+                  commandId="org.openscada.da.client.test.NewRealtimeList"
+                  id="org.openscada.da.test.actions.OpenNewRealtimeView"
+                  label="New realtime list"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   
+  
+
+
+</plugin>
