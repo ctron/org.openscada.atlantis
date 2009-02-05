@@ -1,0 +1,32 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenSCADA AE Client Library Wrapper
+Bundle-SymbolicName: org.openscada.ae.net.client;singleton:=true
+Bundle-Version: 0.12.0
+Bundle-ClassPath: lib.jar
+Bundle-Vendor: inavare GmbH
+Export-Package: org.openscada.ae.client,
+ org.openscada.ae.client.net,
+ org.openscada.ae.client.net.operations,
+ org.openscada.ae.client.net.test,
+ org.openscada.ae.core,
+ org.openscada.ae.net,
+ org.openscada.core,
+ org.openscada.core.client,
+ org.openscada.core.client.net,
+ org.openscada.core.utils,
+ org.openscada.net.base,
+ org.openscada.net.base.data,
+ org.openscada.net.base.handlers,
+ org.openscada.net.io,
+ org.openscada.net.test,
+ org.openscada.net.utils,
+ org.openscada.utils.collection,
+ org.openscada.utils.exec,
+ org.openscada.utils.jobqueue,
+ org.openscada.utils.lang,
+ org.openscada.utils.str,
+ org.openscada.utils.timing
+Require-Bundle: log4j_wrapper_plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
