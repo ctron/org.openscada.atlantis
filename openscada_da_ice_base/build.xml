@@ -50,7 +50,7 @@
 		<mkdir dir="${build.dir}/${package}-build/gensrc"/>
 		<slice2java outputdir="${build.dir}/${package}-build/gensrc" casesensitive="true">
 			<meta value="true"/>
-			<fileset dir="${source.base}/interface/ice">
+			<fileset dir="${source.base}/openscada_interface_ice">
 				<include name="da/*.ice"/>
 			</fileset>
 		</slice2java>
