@@ -165,52 +165,52 @@
        	<ant dir="${source.base}/external/mibble"/>
        	<ant dir="${source.base}/external/SNMP4J"/>
        		
-    	<ant dir="${source.base}/utils"/>
-    	<ant dir="${source.base}/core/common"/>
-       	<ant dir="${source.base}/net/base"/>
-       	<ant dir="${source.base}/core/server/common"/>
-		<ant dir="${source.base}/core/ice/base"/>
-       	<ant dir="${source.base}/core/net/base"/>
-       	<ant dir="${source.base}/da/core/common"/>
-       	<ant dir="${source.base}/da/core/server"/>
-       	<ant dir="${source.base}/da/server/common"/>
-    	<ant dir="${source.base}/da/ice/base"/>
-       	<ant dir="${source.base}/da/net/base"/>
-      	<ant dir="${source.base}/da/server/net"/>
-	<ant dir="${source.base}/da/server/ice"/>
-    	
-	<ant dir="${source.base}/da/server/simulation"/>
-	<ant dir="${source.base}/da/server/snmp"/>
-	<ant dir="${source.base}/da/server/sysinfo"/>
-	<ant dir="${source.base}/da/server/test"/>
-    	<ant dir="${source.base}/da/server/opc2"/>
-	<ant dir="${source.base}/da/server/stock"/>
-	<ant dir="${source.base}/da/server/spring"/>
-    	<ant dir="${source.base}/da/server/exec"/>
-    	<ant dir="${source.base}/da/server/jdbc"/>
+    	<ant dir="${source.base}/openscada_utils"/>
+    	<ant dir="${source.base}/openscada_core_common"/>
+       	<ant dir="${source.base}/openscada_net_base"/>
+       	<ant dir="${source.base}/openscada_core_server_common"/>
+		<ant dir="${source.base}/openscada_core_ice_base"/>
+       	<ant dir="${source.base}/openscada_core_net_base"/>
+       	<ant dir="${source.base}/openscada_da_core_common"/>
+       	<ant dir="${source.base}/openscada_da_core_server"/>
+       	<ant dir="${source.base}/openscada_da_server_common"/>
+    	<ant dir="${source.base}/openscada_da_ice_base"/>
+       	<ant dir="${source.base}/openscada_da_net_base"/>
+       	<ant dir="${source.base}/openscada_da_server_ice"/>
+      	<ant dir="${source.base}/openscada_da_server_net"/>
+		
+		<ant dir="${source.base}/openscada_da_simserver"/>
+		<ant dir="${source.base}/openscada_da_snmpserver"/>
+		<ant dir="${source.base}/openscada_da_sysinfoserver"/>
+		<ant dir="${source.base}/openscada_da_testserver"/>
+    	<ant dir="${source.base}/openscada_da_opcserver"/>
+		<ant dir="${source.base}/openscada_da_stockserver"/>
+		<ant dir="${source.base}/openscada_da_springserver"/>
+    	<ant dir="${source.base}/openscada_da_execserver"/>
+    	<ant dir="${source.base}/openscada_da_jdbcserver"/>
 
-	<ant dir="${source.base}/core/client/common"/>
-       	<ant dir="${source.base}/core/client/net"/>
-	<ant dir="${source.base}/da/client/common"/>
-       	<ant dir="${source.base}/da/client/ice"/>
-	<ant dir="${source.base}/da/client/net"/>
+		<ant dir="${source.base}/openscada_core_client_common"/>
+       	<ant dir="${source.base}/openscada_core_client_net"/>
+		<ant dir="${source.base}/openscada_da_client_common"/>
+       	<ant dir="${source.base}/openscada_da_client_ice"/>
+		<ant dir="${source.base}/openscada_da_client_net"/>
     	
-	<ant dir="${source.base}/da/client/samples"/>
-	<ant dir="${source.base}/da/server/exporter"/>
-    	<ant dir="${source.base}/da/server/exporter_spring"/>
+		<ant dir="${source.base}/openscada_da_client_samples"/>
+		<ant dir="${source.base}/openscada_server_exporter"/>
+    	<ant dir="${source.base}/openscada_server_exporter_spring"/>
 
     	<!-- the following module needs the client -->
-    	<ant dir="${source.base}/da/server/proxy"/>
+		<ant dir="${source.base}/openscada_da_proxyserver"/>
     	
-    	<ant dir="${source.base}/ae/core/common"/>
-    	<ant dir="${source.base}/ae/net/base"/>
-    	<ant dir="${source.base}/ae/storage/common"/>
-   		<ant dir="${source.base}/ae/client/common"/>
-		<ant dir="${source.base}/ae/client/net"/>
-    	<ant dir="${source.base}/ae/storage/test"/>
-    	<ant dir="${source.base}/ae/storage/syslog"/>
-    	<ant dir="${source.base}/ae/submitter/net"/>
-       	<ant dir="${source.base}/ae/storage/net"/>
+    	<ant dir="${source.base}/openscada_ae_core_common"/>
+    	<ant dir="${source.base}/openscada_ae_net_base"/>
+    	<ant dir="${source.base}/openscada_ae_storage_common"/>
+   		<ant dir="${source.base}/openscada_ae_client_common"/>
+		<ant dir="${source.base}/openscada_ae_client_net"/>
+    	<ant dir="${source.base}/openscada_ae_storage_test"/>
+    	<ant dir="${source.base}/openscada_ae_storage_syslog"/>
+    	<ant dir="${source.base}/openscada_ae_submitter_net"/>
+       	<ant dir="${source.base}/openscada_ae_storage_net"/>
 	
     	<concat append="true" destfile="${module.dep.file}">
     		<path location="${source.base}/build/data/module.deps.footer"/>
