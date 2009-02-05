@@ -1,26 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-<jar path="openscada_da_rcp_localtestserver/openscada_net_server_test.jar"/>
-<options buildIfNeeded="true" compress="true" descriptionLocation="/openscada_da_rcp_localtestserver/full_net_test.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
-<storedRefactorings deprecationInfo="true" structuralOnly="false"/>
-<selectedProjects/>
-<manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
-<sealing sealJar="false">
-<packagesToSeal/>
-<packagesToUnSeal/>
-</sealing>
-</manifest>
-<selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-<javaElement handleIdentifier="=openscada_core_server_common"/>
-<javaElement handleIdentifier="=openscada_da_server_common"/>
-<javaElement handleIdentifier="=openscada_da_net_base"/>
-<javaElement handleIdentifier="=openscada_da_testserver"/>
-<javaElement handleIdentifier="=openscada_da_core_server"/>
-<javaElement handleIdentifier="=openscada_da_core_common"/>
-<javaElement handleIdentifier="=openscada_core_net_base"/>
-<javaElement handleIdentifier="=openscada_utils"/>
-<javaElement handleIdentifier="=openscada_core_common"/>
-<javaElement handleIdentifier="=openscada_da_server_net"/>
-<javaElement handleIdentifier="=openscada_net_base"/>
-</selectedElements>
+    <jar path="org.openscada.da.rcp.LocalTestServer/openscada_net_server_test.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/org.openscada.da.rcp.LocalTestServer/full_net_test.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=openscada_core_common"/>
+        <javaElement handleIdentifier="=openscada_da_core_server"/>
+        <javaElement handleIdentifier="=openscada_da_testserver"/>
+        <javaElement handleIdentifier="=openscada_utils"/>
+        <javaElement handleIdentifier="=openscada_da_server_common"/>
+        <javaElement handleIdentifier="=openscada_core_net_base"/>
+        <javaElement handleIdentifier="=openscada_da_core_common"/>
+        <javaElement handleIdentifier="=openscada_da_server_net"/>
+        <javaElement handleIdentifier="=openscada_da_net_base"/>
+        <javaElement handleIdentifier="=openscada_net_base"/>
+        <javaElement handleIdentifier="=openscada_core_server_common"/>
+    </selectedElements>
+    <fatjar builder="org.eclipse.jdt.ui.plain_jar_builder" launchConfig=""/>
 </jardesc>
