@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="append-line">
+	<macrodef name="append-line">
+		<attribute name="file"/>
+		<text name="text"/>
+		<sequential>
+			<concat append="true" destfile="@{file}">@{text}<![CDATA[
+]]></concat>
+		</sequential>
+	</macrodef>
+</project>

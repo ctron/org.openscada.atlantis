@@ -1,0 +1,591 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     OpenSCADA Atlantis    
+     Master build file for OpenSCADA Atlantis
+                   
+	 Jens Reimann <jens.reimann@inavare.net>
+     ====================================================================== -->
+<project name="OpenSCADA Atlantis" default="default">
+    <description>
+            Master build file for OpenSCADA Atlantis
+    </description>
+
+	<property file="../config/local.properties" />
+	
+	<property name="version" value="0.10.0"/>
+	<property name="release" value=""/>
+	<property name="buildType" value="R"/>
+	<property name="buildId" value="Release-${version}"/>
+	<property name="tag" value="${version}${release}"/>
+	
+	<property name="source.base" location="../.."/>
+	
+	<property name="url.base" value="http://openscada.org/download/atlantis"/>
+	<property name="url.dir" value="${url.base}/${tag}"/>
+	<property name="url.dist.project" value="${url.dir}/project"/>
+	
+	<property name="deploy.base" value="/var/vhosts/openscada/download/atlantis"/>
+	<property name="deploy.dir" value="${deploy.base}/${tag}"/>
+	<property name="deploy.dist.module" value="${deploy.dir}/module"/>
+	<property name="deploy.dist.source" value="${deploy.dir}/source"/>
+	<property name="deploy.dist.binary" value="${deploy.dir}/binary"/>
+	<property name="deploy.dist.project" value="${deploy.dir}/project"/>
+	<property name="deploy.additional" value="${deploy.dir}/additional"/>
+	
+	<property name="file.genworkspace" value="${deploy.additional}/prepareimport.xml"/>
+	
+	<property name="temp.dir" location="/tmp/atlantis"/>
+	
+	<property name="build.dir" value="${temp.dir}/build"/>
+	<property name="libfile" location="../lib/build.xml"/>
+	
+	<property name="module.dep.file" location="${deploy.additional}/module.deps"/>
+	
+	<import file="${libfile}"/>
+	
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="clean, init, build, dist-source, dist-binary, apps, rcp, make-ice-documentation, dist-doc" description="--> Master build file for OpenSCADA Atlabtis">
+    </target>
+    
+    <target name="init.genworkspace">
+    	<!-- init genworkspace XML buffer -->
+    	<dirname property="dir" file="${file.genworkspace}"/>
+    	<mkdir dir="${dir}"/>
+    	<xmltask source="${source.base}/build/data/genworkspace.xml" dest="${file.genworkspace}"/>
+    </target>
+    
+    <target name="build.post.genworkspace">
+    	<xmltask source="${file.genworkspace}" dest="${file.genworkspace}" outputter="simple:2"/>
+    </target>
+	
+	<target name="export-project">
+		<openscada.export.project dir="${dir}"/>
+	</target>
+	
+	<target name="export-other-projects">
+		<!--
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/external/plugins/icej"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/external/log4j_wrapper_plugin"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/external/xmlbeans_plugin"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/external/plugins/jfreechart"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/rcp/client"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/rcp/client_feature"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/rcp/update_plugin"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/da/rcp/local_test_server"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/da/client/net_feature"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/da/client/ice_feature"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/da/client/test"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/da/client/test_feature"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/da/client/viewer"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/da/client/plugin_wrapper"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/da/client/net_wrapper_plugin"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/da/client/ice_wrapper_plugin"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/da/client/chart"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/ae/rcp/local_test_server"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/ae/client/net_feature"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/ae/client/net_wrapper_plugin"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/ae/client/test"/>
+		</antcall>
+		-->
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/build"/>
+		</antcall>
+		<antcall target="export-project">
+			<param name="dir" value="${source.base}/interface/ice"/>
+		</antcall>
+	</target>
+	
+	<!-- ================================= 
+          target: build              
+         ================================= -->
+    <target name="build" depends="init, init.genworkspace" description="--> Build all">
+    	<mkdir dir="${temp.dir}"/>
+    	
+    	<!-- init dependency file -->
+    	<concat append="false" destfile="${module.dep.file}">
+    		<path location="${source.base}/build/data/module.deps.header"/>
+    	</concat>
+    	
+    	<mkdir dir="${deploy.dir}"/>
+    	<copy file="../data/htaccess" tofile="${deploy.dir}/.htaccess"/>
+	
+		<!-- now add all plugins projects that are build using the PDE builder -->
+		<!-- due to a bug in xmltask we need to put the export stuff in a seperate task each -->
+		<antcall target="export-other-projects"/>
+		
+    	
+	    <ant dir="${source.base}/external/spring"/>
+	    <ant dir="${source.base}/external/log4j"/>
+    	<ant dir="${source.base}/external/icej"/>
+       	<ant dir="${source.base}/external/xmlbeans"/>
+       	<ant dir="${source.base}/external/junit4"/>
+       	<ant dir="${source.base}/external/mibble"/>
+       	<ant dir="${source.base}/external/SNMP4J"/>
+       		
+    	<ant dir="${source.base}/utils"/>
+    	<ant dir="${source.base}/core/common"/>
+       	<ant dir="${source.base}/net/base"/>
+       	<ant dir="${source.base}/core/server/common"/>
+		<ant dir="${source.base}/core/ice/base"/>
+       	<ant dir="${source.base}/core/net/base"/>
+       	<ant dir="${source.base}/da/core/common"/>
+       	<ant dir="${source.base}/da/core/server"/>
+       	<ant dir="${source.base}/da/server/common"/>
+    	<ant dir="${source.base}/da/ice/base"/>
+       	<ant dir="${source.base}/da/net/base"/>
+      	<ant dir="${source.base}/da/server/net"/>
+	<ant dir="${source.base}/da/server/ice"/>
+    	
+	<ant dir="${source.base}/da/server/simulation"/>
+	<ant dir="${source.base}/da/server/snmp"/>
+	<ant dir="${source.base}/da/server/sysinfo"/>
+	<ant dir="${source.base}/da/server/test"/>
+    	<ant dir="${source.base}/da/server/opc2"/>
+	<ant dir="${source.base}/da/server/stock"/>
+	<ant dir="${source.base}/da/server/spring"/>
+    	<ant dir="${source.base}/da/server/exec"/>
+    	<ant dir="${source.base}/da/server/jdbc"/>
+
+	<ant dir="${source.base}/core/client/common"/>
+       	<ant dir="${source.base}/core/client/net"/>
+	<ant dir="${source.base}/da/client/common"/>
+       	<ant dir="${source.base}/da/client/ice"/>
+	<ant dir="${source.base}/da/client/net"/>
+    	
+	<ant dir="${source.base}/da/client/samples"/>
+	<ant dir="${source.base}/da/server/exporter"/>
+    	<ant dir="${source.base}/da/server/exporter_spring"/>
+
+    	<!-- the following module needs the client -->
+    	<ant dir="${source.base}/da/server/proxy"/>
+    	
+    	<ant dir="${source.base}/ae/core/common"/>
+    	<ant dir="${source.base}/ae/net/base"/>
+    	<ant dir="${source.base}/ae/storage/common"/>
+   		<ant dir="${source.base}/ae/client/common"/>
+		<ant dir="${source.base}/ae/client/net"/>
+    	<ant dir="${source.base}/ae/storage/test"/>
+    	<ant dir="${source.base}/ae/storage/syslog"/>
+    	<ant dir="${source.base}/ae/submitter/net"/>
+       	<ant dir="${source.base}/ae/storage/net"/>
+	
+    	<concat append="true" destfile="${module.dep.file}">
+    		<path location="${source.base}/build/data/module.deps.footer"/>
+    	</concat>
+	
+		<!-- Create dot graph from deps file -->
+		<exec executable="dot" dir="${deploy.additional}" failifexecutionfails="no" failonerror="false">
+			<arg line="-Tps"/>
+			<arg line="module.deps"/>
+			<arg line="-omodule.ps"/>
+		</exec>
+    	
+    	<antcall target="build.post.genworkspace"/>
+
+    </target>
+
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean" depends="init">
+        <delete dir="${deploy.dir}"/>
+    	<delete dir="${build.dir}"/>
+    	<delete dir="${temp.dir}"/>
+    	<delete dir="../rcp/eclipse.build"/>
+    	<delete dir="../rcp/nsis.build"/>
+    	<delete dir="../rcp/nsis.out"/>
+    </target>
+
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: init                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="init">
+    	<echo>Java Version: ${java.runtime.version}</echo>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: dist-source
+         - - - - - - - - - - - - - - - - - -->
+    <target name="dist-source" depends="build, dist-binary">
+    	<mkdir dir="${build.dir}/dist-source"/>
+    	<unzip dest="${build.dir}/dist-source">
+    		<fileset dir="${deploy.dist.module}">
+    			<include name="**/*.zip"/>
+    		</fileset>
+    		<patternset>
+    			<include name="src/**"/>
+    		</patternset>
+    	</unzip>
+	
+		<!-- create an "all in one" javadoc -->
+		<mkdir dir="${deploy.dir}/doc/api"/>
+		<javadoc destdir="${deploy.dir}/doc/api"
+	       	author="true"
+	       	version="true"
+	       	use="true"
+	       	encoding="utf-8"
+	       	>
+	       	<tag name="note" description="Note" scope="all"/>
+	       	<tag name="warning" description="Warning" scope="all"/>
+	       	<packageset dir="${build.dir}/dist-source/src" defaultexcludes="yes">
+	       		<include name="**"/>
+	       	</packageset>
+			<classpath>
+				<fileset dir="${build.dir}/dist-binary/lib">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${build.dir}/dist-binary/bin">
+					<include name="*.jar"/>
+				</fileset>
+	  		</classpath>
+		</javadoc>
+	
+    	<!-- re-package -->
+    	<mkdir dir="${deploy.dist.source}"/>
+    	<zip basedir="${build.dir}/dist-source" destfile="${deploy.dist.source}/openscada-atlantis-source-${tag}.zip">
+    	</zip>
+	
+		<!-- pack up javadoc -->
+		<zip basedir="${deploy.dir}/doc/api" destfile="${deploy.dist.source}/openscada-atlantis-doc-${tag}.zip">
+		</zip>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: dist-binary
+         - - - - - - - - - - - - - - - - - -->
+    <target name="dist-binary" depends="build">
+    	<!-- unpack what we need -->
+    	<mkdir dir="${build.dir}/dist-binary"/>
+    	<unzip dest="${build.dir}/dist-binary">
+    		<fileset dir="${deploy.dist.module}">
+    			<include name="**/*.zip"/>
+    		</fileset>
+    		<patternset>
+    			<include name="bin/**"/>
+       			<include name="lib/**"/>
+    		</patternset>
+    	</unzip>
+    	
+    	<!-- re-pack it -->
+    	<mkdir dir="${deploy.dist.binary}"/>
+    	<zip basedir="${build.dir}/dist-binary" destfile="${deploy.dist.binary}/openscada-atlantis-bin-${tag}.zip">
+    	</zip>
+    </target>
+
+	<!-- ================================= 
+          target: rcp              
+         ================================= -->
+    <target name="rcp" depends="" description="--> Build RCP Application">
+		<ant antfile="build.xml" dir="../rcp">
+			<property name="eclipse.home" value="/home/user/eclipse"/>
+			<property name="eclipse.builder.version" value="_3.4.0.v20080604"/>
+			<property name="upload.base.ostc" value="${deploy.dir}/ostc"/>
+    	</ant>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: apps                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="apps" depends="make-sim-server-dist, make-test-server-dist, make-opc-server-dist, make-exporter-dist, make-snmp-server-dist">
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: make-sim-server-dist                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="make-sim-server-dist" depends="">
+		<delete dir="${temp.dir}/dist-sim-server"/>
+	
+		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-sim-server"/>
+		<openscada.unpack-module name="da-server-simulation" todir="${temp.dir}/dist-sim-server"/>
+
+		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-sim-server"/>
+	
+		<openscada.runfile.init file="${temp.dir}/dist-sim-server/runfile.xml"/>
+    	<openscada.runfile.gather-jars file="${temp.dir}/dist-sim-server/runfile.xml" dir="${temp.dir}/dist-sim-server"/>
+		<openscada.runfile.arg.add file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.simulation.component.Hive"/>
+		<openscada.runfile.set-main file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.net.Application"/>
+		<openscada.runfile.transform dir="${temp.dir}/dist-sim-server"/>
+
+		<mkdir dir="${deploy.dist.binary}/"/>
+		<zip basedir="${temp.dir}/dist-sim-server" destfile="${deploy.dist.binary}/openscada-atlantis-simserver-component-net-${tag}.zip">
+		</zip>
+		
+    	
+    	<delete dir="${temp.dir}/dist-sim-server"/>
+    		
+		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-sim-server"/>
+		<openscada.unpack-module name="da-server-simulation" todir="${temp.dir}/dist-sim-server"/>
+
+		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-sim-server"/>
+	
+		<openscada.runfile.init file="${temp.dir}/dist-sim-server/runfile.xml"/>
+    	<openscada.runfile.gather-jars file="${temp.dir}/dist-sim-server/runfile.xml" dir="${temp.dir}/dist-sim-server"/>
+		<openscada.runfile.arg.add file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.simulation.filesource.Hive"/>
+		<openscada.runfile.set-main file="${temp.dir}/dist-sim-server/runfile.xml" value="org.openscada.da.server.net.Application"/>
+		<openscada.runfile.transform dir="${temp.dir}/dist-sim-server"/>
+
+		<mkdir dir="${deploy.dist.binary}/"/>
+		<zip basedir="${temp.dir}/dist-sim-server" destfile="${deploy.dist.binary}/openscada-atlantis-simserver-filesource-net-${tag}.zip">
+		</zip>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: make-snmp-server-dist                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="make-snmp-server-dist" depends="">
+		<delete dir="${temp.dir}/dist-snmp-server"/>
+	
+		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-snmp-server"/>
+		<openscada.unpack-module name="da-server-snmp" todir="${temp.dir}/dist-snmp-server"/>
+	
+		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-snmp-server" failonerror="false"/>
+
+		<openscada.runfile.init file="${temp.dir}/dist-snmp-server/runfile.xml"/>
+    	<openscada.runfile.gather-jars file="${temp.dir}/dist-snmp-server/runfile.xml" dir="${temp.dir}/dist-snmp-server"/>
+		<openscada.runfile.arg.add file="${temp.dir}/dist-snmp-server/runfile.xml" value="org.openscada.da.server.snmp.Hive"/>
+		<openscada.runfile.set-main file="${temp.dir}/dist-snmp-server/runfile.xml" value="org.openscada.da.server.net.Application"/>
+		<openscada.runfile.transform dir="${temp.dir}/dist-snmp-server"/>
+
+		<mkdir dir="${deploy.dist.binary}/"/>
+		<zip basedir="${temp.dir}/dist-snmp-server" destfile="${deploy.dist.binary}/openscada-atlantis-snmpserver-net-${tag}.zip">
+		</zip>
+		
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: make-test-server-dist                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="make-test-server-dist" depends="">
+		<delete dir="${temp.dir}/dist-test-server"/>
+	
+		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-test-server"/>
+		<openscada.unpack-module name="da-server-test" todir="${temp.dir}/dist-test-server"/>
+	
+		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-test-server"/>
+
+		<openscada.runfile.init file="${temp.dir}/dist-test-server/runfile.xml"/>
+    	<openscada.runfile.gather-jars file="${temp.dir}/dist-test-server/runfile.xml" dir="${temp.dir}/dist-test-server"/>
+		<openscada.runfile.arg.add file="${temp.dir}/dist-test-server/runfile.xml" value="org.openscada.da.server.test.Hive"/>
+		<openscada.runfile.set-main file="${temp.dir}/dist-test-server/runfile.xml" value="org.openscada.da.server.net.Application"/>
+		<openscada.runfile.transform dir="${temp.dir}/dist-test-server"/>
+
+		<mkdir dir="${deploy.dist.binary}/"/>
+		<zip basedir="${temp.dir}/dist-test-server" destfile="${deploy.dist.binary}/openscada-atlantis-testserver-net-${tag}.zip">
+		</zip>
+		
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: make-opc-server-dist                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="make-opc-server-dist" depends="">
+		<delete dir="${temp.dir}/dist-opc-server"/>
+	
+		<openscada.unpack-module name="da-server-net" todir="${temp.dir}/dist-opc-server"/>
+		<openscada.unpack-module name="da-server-opc2" todir="${temp.dir}/dist-opc-server"/>
+		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-opc-server"/>
+
+		<openscada.runfile.init file="${temp.dir}/dist-opc-server/runfile.xml"/>
+    	<openscada.runfile.gather-jars file="${temp.dir}/dist-opc-server/runfile.xml" dir="${temp.dir}/dist-opc-server"/>
+		<openscada.runfile.arg.add file="${temp.dir}/dist-opc-server/runfile.xml" value="org.openscada.da.server.opc2.Hive"/>
+		<openscada.runfile.set-main file="${temp.dir}/dist-opc-server/runfile.xml" value="org.openscada.da.server.net.Application"/>
+		<openscada.runfile.transform dir="${temp.dir}/dist-opc-server"/>
+
+		<mkdir dir="${deploy.dist.binary}/"/>
+		<zip basedir="${temp.dir}/dist-opc-server" destfile="${deploy.dist.binary}/openscada-atlantis-opcserver-net-${tag}.zip">
+		</zip>
+		
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: make-exporter-dist
+         - - - - - - - - - - - - - - - - - -->
+    <target name="make-exporter-dist" depends="">
+		<delete dir="${temp.dir}/dist-exporter"/>
+	
+		<openscada.unpack-module name="da-server-exporter" todir="${temp.dir}/dist-exporter"/>
+		<openscada.unpack-module name="da-server-test" todir="${temp.dir}/dist-exporter"/>
+		<openscada.unpack-module name="da-server-simulation" todir="${temp.dir}/dist-exporter"/>
+		<openscada.unpack-module name="da-server-opc2" todir="${temp.dir}/dist-exporter"/>
+		<openscada.unpack-module name="da-server-stock" todir="${temp.dir}/dist-exporter"/>
+		<copy file="${datadir}/log4j.properties" todir="${temp.dir}/dist-exporter"/>
+		<copy file="${source.base}/da/server/exporter/configuration.xml" todir="${temp.dir}/dist-exporter"/>
+
+		<openscada.runfile.init file="${temp.dir}/dist-exporter/runfile.xml"/>
+    	<openscada.runfile.gather-jars file="${temp.dir}/dist-exporter/runfile.xml" dir="${temp.dir}/dist-exporter"/>
+		<openscada.runfile.set-main file="${temp.dir}/dist-exporter/runfile.xml" value="org.openscada.da.server.exporter.Application"/>
+		<openscada.runfile.transform dir="${temp.dir}/dist-exporter"/>
+
+		<mkdir dir="${deploy.dist.binary}/"/>
+		<zip basedir="${temp.dir}/dist-exporter" destfile="${deploy.dist.binary}/openscada-atlantis-da-exporter-${tag}.zip">
+		</zip>
+		
+    </target>
+	
+	<!-- ================================= 
+          target: make-ice-documentation              
+         ================================= -->
+    <target name="make-ice-documentation" depends="" description="--> Generate the ICE documentation">
+		<mkdir dir="${deploy.dir}/doc/ice/sgml"/>
+		<mkdir dir="${deploy.dir}/doc/ice/html"/>
+		<mkdir dir="${deploy.dir}/doc/ice/pdf"/>
+        <exec executable="slice2docbook" failonerror="true">
+			<arg line="-s"/>
+			<arg line="${deploy.dir}/doc/ice/sgml/openscada.sgml"/>
+			<arg line="${source.base}/interface/ice/core/core.ice"/>
+			<arg line="${source.base}/interface/ice/da/da.ice"/>
+		</exec>
+    	<parallel>
+			<exec executable="docbook2html" failonerror="true" dir="${deploy.dir}/doc/ice/html">
+				<arg line="${deploy.dir}/doc/ice/sgml/openscada.sgml"/>
+			</exec>
+			<exec executable="docbook2pdf" failonerror="true" dir="${deploy.dir}/doc/ice/pdf">
+				<arg line="${deploy.dir}/doc/ice/sgml/openscada.sgml"/>
+			</exec>
+		</parallel>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: dist-doc                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="dist-doc" depends="dist-doc-client, dist-doc-server">
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: dist-doc-client
+         - - - - - - - - - - - - - - - - - -->
+    <target name="dist-doc-client" depends="build, dist-binary">
+    	<mkdir dir="${build.dir}/dist-doc-client"/>
+    	<unzip dest="${build.dir}/dist-doc-client">
+    		<fileset dir="${deploy.dist.module}">
+				<include name="**/openscada-core-common-*.zip"/>
+    			<include name="**/openscada-core-client-common-*.zip"/>
+	
+				<include name="**/openscada-da-core-common-*.zip"/>
+				<include name="**/openscada-da-client-common-*.zip"/>
+    		</fileset>
+    		<patternset>
+    			<include name="src/**"/>
+    		</patternset>
+    	</unzip>
+	
+		<!-- create an "all in one" javadoc -->
+		<mkdir dir="${deploy.dir}/doc/client/api"/>
+		<javadoc destdir="${deploy.dir}/doc/client/api"
+	       	author="true"
+	       	version="true"
+	       	use="true"
+	       	encoding="utf-8"
+	       	>
+	       	<tag name="note" description="Note" scope="all"/>
+	       	<tag name="warning" description="Warning" scope="all"/>
+	       	<packageset dir="${build.dir}/dist-doc-client/src" defaultexcludes="yes">
+	       		<include name="**"/>
+	       	</packageset>
+			<classpath>
+				<fileset dir="${build.dir}/dist-binary/lib">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${build.dir}/dist-binary/bin">
+					<include name="*.jar"/>
+				</fileset>
+	  		</classpath>
+		</javadoc>
+
+		<!-- pack up javadoc -->
+		<zip basedir="${deploy.dir}/doc/client/api" destfile="${deploy.dist.source}/openscada-atlantis-client-doc-${tag}.zip">
+		</zip>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: dist-doc-server
+         - - - - - - - - - - - - - - - - - -->
+    <target name="dist-doc-server" depends="build, dist-binary">
+    	<mkdir dir="${build.dir}/dist-doc-server"/>
+    	<unzip dest="${build.dir}/dist-doc-server">
+    		<fileset dir="${deploy.dist.module}">
+				<include name="**/openscada-core-common-*.zip"/>
+    			<include name="**/openscada-core-server-*.zip"/>
+			
+				<include name="**/openscada-da-core-common-*.zip"/>
+				<include name="**/openscada-da-core-server-*.zip"/>
+    		</fileset>
+    		<patternset>
+    			<include name="src/**"/>
+    		</patternset>
+    	</unzip>
+	
+		<!-- create an "all in one" javadoc -->
+		<mkdir dir="${deploy.dir}/doc/server/api"/>
+		<javadoc destdir="${deploy.dir}/doc/server/api"
+	       	author="true"
+	       	version="true"
+	       	use="true"
+	       	encoding="utf-8"
+	       	>
+	       	<tag name="note" description="Note" scope="all"/>
+	       	<tag name="warning" description="Warning" scope="all"/>
+	       	<packageset dir="${build.dir}/dist-doc-server/src" defaultexcludes="yes">
+	       		<include name="**"/>
+	       	</packageset>
+			<classpath>
+				<fileset dir="${build.dir}/dist-binary/lib">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${build.dir}/dist-binary/bin">
+					<include name="*.jar"/>
+				</fileset>
+	  		</classpath>
+		</javadoc>
+
+		<!-- pack up javadoc -->
+		<zip basedir="${deploy.dir}/doc/server/api" destfile="${deploy.dist.source}/openscada-atlantis-server-doc-${tag}.zip">
+		</zip>
+    </target>
+
+</project>
