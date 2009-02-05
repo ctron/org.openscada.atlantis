@@ -131,10 +131,10 @@
 		</antcall>
 		-->
 		<antcall target="export-project">
-			<param name="dir" value="${source.base}/build"/>
+			<param name="dir" value="${source.base}/openscada_build"/>
 		</antcall>
 		<antcall target="export-project">
-			<param name="dir" value="${source.base}/interface/ice"/>
+			<param name="dir" value="${source.base}/openscada_interface_ice"/>
 		</antcall>
 	</target>
 	
