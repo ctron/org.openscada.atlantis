@@ -18,7 +18,7 @@
 	<property name="buildId" value="Release-${version}"/>
 	<property name="tag" value="${version}${release}"/>
 	
-	<property name="source.base" location="../.."/>
+	<property name="source.base" location=".."/>
 	
 	<property name="url.base" value="http://openscada.org/download/atlantis"/>
 	<property name="url.dir" value="${url.base}/${tag}"/>
