@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Client
 Bundle-SymbolicName: org.openscada.da.client;singleton:=true
-Bundle-Version: 0.10.3
-Bundle-Vendor: OpenSCADA.org
+Bundle-Version: 0.12.0
+Bundle-Vendor: inavare GmbH
 Bundle-ClassPath: lib.jar,
  .
 Export-Package: org.openscada.core,
