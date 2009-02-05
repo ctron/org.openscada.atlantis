@@ -1,0 +1,32 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenSCADA DA Client
+Bundle-SymbolicName: org.openscada.da.client;singleton:=true
+Bundle-Version: 0.12.0
+Bundle-Vendor: inavare GmbH
+Bundle-ClassPath: lib.jar,
+ .
+Export-Package: org.openscada.core,
+ org.openscada.core.client,
+ org.openscada.core.subscription,
+ org.openscada.core.utils,
+ org.openscada.da.client,
+ org.openscada.da.core,
+ org.openscada.da.core.browser,
+ org.openscada.da.core.server,
+ org.openscada.da.core.server.browser,
+ org.openscada.rcp.da.client,
+ org.openscada.rcp.da.client.connector,
+ org.openscada.utils.collection,
+ org.openscada.utils.exec,
+ org.openscada.utils.jobqueue,
+ org.openscada.utils.lang,
+ org.openscada.utils.str,
+ org.openscada.utils.timing
+Require-Bundle: org.eclipse.core.runtime,
+ log4j_wrapper_plugin,
+ org.eclipse.ui;bundle-version="3.2.0",
+ org.eclipse.ui.views;bundle-version="3.2.0"
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.openscada.rcp.da.client.Activator
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
