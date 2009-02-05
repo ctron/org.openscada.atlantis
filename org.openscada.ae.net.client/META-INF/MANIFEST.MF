@@ -5,28 +5,53 @@ Bundle-SymbolicName: org.openscada.ae.net.client;singleton:=true
 Bundle-Version: 0.12.0
 Bundle-ClassPath: lib.jar
 Bundle-Vendor: inavare GmbH
-Export-Package: org.openscada.ae.client,
- org.openscada.ae.client.net,
- org.openscada.ae.client.net.operations,
- org.openscada.ae.client.net.test,
+Export-Package: org.openscada.ae.client;uses:="org.openscada.core.client,org.openscada.utils.exec,org.openscada.ae.core",
+ org.openscada.ae.client.net;
+  uses:="org.openscada.ae.client,
+   org.openscada.net.base.data,
+   org.openscada.utils.exec,
+   org.openscada.net.io,
+   org.openscada.net.base,
+   org.openscada.net.io.net,
+   org.openscada.core.client.net,
+   org.openscada.ae.core,
+   org.openscada.core",
+ org.openscada.ae.client.net.operations;uses:="org.openscada.utils.exec,org.openscada.net.base",
+ org.openscada.ae.client.net.test;uses:="org.openscada.ae.client.net,org.openscada.ae.core",
  org.openscada.ae.core,
- org.openscada.ae.net,
+ org.openscada.ae.net;uses:="org.openscada.net.base.data,org.openscada.ae.core",
  org.openscada.core,
- org.openscada.core.client,
- org.openscada.core.client.net,
+ org.openscada.core.client;uses:="org.openscada.core",
+ org.openscada.core.client.net;
+  uses:="org.openscada.core.client,
+   org.openscada.net.base.data,
+   org.openscada.net.io,
+   org.apache.log4j,
+   org.openscada.net.base",
  org.openscada.core.utils,
- org.openscada.net.base,
+ org.openscada.net.base;
+  uses:="org.openscada.net.base.data,
+   org.openscada.net.io,
+   org.openscada.utils.exec,
+   org.openscada.net.io.net,
+   org.openscada.utils.timing",
  org.openscada.net.base.data,
- org.openscada.net.base.handlers,
- org.openscada.net.io,
- org.openscada.net.test,
- org.openscada.net.utils,
- org.openscada.utils.collection,
+ org.openscada.net.base.handlers;uses:="org.openscada.net.base.data,org.openscada.net.base,org.openscada.net.io.net",
+ org.openscada.net.io;uses:="org.apache.log4j,org.openscada.utils.timing",
+ org.openscada.net.test;
+  uses:="org.openscada.net.line,
+   org.openscada.net.io,
+   new org.openscada.net.test,
+   org.openscada.net.base,
+   org.openscada.net.io.net,
+   org.openscada.utils.timing",
+ org.openscada.net.utils;uses:="org.openscada.net.base.data",
+ org.openscada.utils.collection;uses:="org.openscada.utils.lang",
  org.openscada.utils.exec,
  org.openscada.utils.jobqueue,
  org.openscada.utils.lang,
  org.openscada.utils.str,
- org.openscada.utils.timing
+ org.openscada.utils.timing;uses:="org.apache.log4j,org.openscada.utils.statuscodes"
 Require-Bundle: log4j_wrapper_plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
