@@ -3,13 +3,13 @@
    <description url="http://openscada.org/ide/update_site">
       OpenSCADA IDE Update Site
    </description>
-   <feature url="features/org.openscada.da.ice.client_0.10.2.jar" id="org.openscada.da.ice.client" version="0.10.2">
+   <feature url="features/org.openscada.da.ice.client_0.12.0.jar" id="org.openscada.da.ice.client" version="0.12.0">
       <category name="OpenSCADA DA"/>
    </feature>
-   <feature url="features/org.openscada.da.net.client_0.10.2.jar" id="org.openscada.da.net.client" version="0.10.2">
+   <feature url="features/org.openscada.da.net.client_0.12.0.jar" id="org.openscada.da.net.client" version="0.12.0">
       <category name="OpenSCADA DA"/>
    </feature>
-   <feature url="features/org.openscada.da.project_1.0.9.jar" id="org.openscada.da.project" version="1.0.9">
+   <feature url="features/org.openscada.da.project_1.0.10.jar" id="org.openscada.da.project" version="1.0.10">
       <category name="OpenSCADA DA"/>
    </feature>
    <feature url="features/org.openscada.da.project.extras_1.0.5.jar" id="org.openscada.da.project.extras" version="1.0.5">
