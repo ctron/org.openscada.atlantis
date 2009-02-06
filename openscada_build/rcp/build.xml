@@ -64,6 +64,7 @@
     	</java>
     	
     	<!-- copy result to pde upload -->
+    	<mkdir dir="${upload.base.pde}"/>
     	<copy todir="${upload.base.pde}">
     		<fileset dir="${buildDirectory}.pde/${buildType}.${buildId}">
     			<include name="*.zip"/>
