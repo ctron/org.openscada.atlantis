@@ -26,6 +26,7 @@
 	<property name="version" value="0.0.0"/>
 	<property name="release" value="-devel"/>
 	<property name="upload.base.ostc" value="${upload.base}/ostc"/>
+	<property name="upload.base.pde" value="${upload.base}/pde"/>
 	
     <!-- ================================= 
           target: default              
@@ -61,6 +62,13 @@
 			<arg value="-Ddeploy.dist.module=${deploy.dist.module}"/>
 			<arg value="-Dtag=${tag}"/>
     	</java>
+    	
+    	<!-- copy result to pde upload -->
+    	<copy todir="${upload.base.pde}">
+    		<fileset dir="${buildDirectory}.pde/${buildType}.${buildType}-${buildId}">
+    			<include name="*.zip"/>
+    		</fileset>
+    	</copy>
     </target>
 
 
