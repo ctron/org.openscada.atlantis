@@ -96,7 +96,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: package                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="package" depends="build">
+    <target name="package" depends="build, openscada_pde">
     	<java jar="${startup}" failonerror="true" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts">
     		<arg value="-application" />
     	    <arg value="org.eclipse.ant.core.antRunner" />
