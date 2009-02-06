@@ -32,7 +32,7 @@
     	</exec>
     </target>
 	
-	<target name="rcp_only">
+	<target name="rcp_only" depends="init">
         <ant dir="../release" antfile="build.xml" target="rcp">
         	<property name="deploy.dir" value="${deploy.base}/${DSTAMP}"/>
         	<property name="url.dir" value="${url.base}/${DSTAMP}"/>
