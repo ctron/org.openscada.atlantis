@@ -4,7 +4,7 @@
      Support build file                                                  
      ====================================================================== -->
 <project name="openscada_ae_client_net_plugin_wrapper" default="default" basedir=".">
-	<property name="libfile" location="../atlantis_build/lib/build.xml"/>
+	<property name="libfile" location="../openscada_build/lib/build.xml"/>
 	<import file="${libfile}"/>
 	
 	<property name="libjar" location="./lib.jar"/>
