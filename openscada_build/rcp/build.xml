@@ -65,7 +65,7 @@
     	
     	<!-- copy result to pde upload -->
     	<copy todir="${upload.base.pde}">
-    		<fileset dir="${buildDirectory}.pde/${buildType}.${buildType}-${buildId}">
+    		<fileset dir="${buildDirectory}.pde/${buildType}.${buildId}">
     			<include name="*.zip"/>
     		</fileset>
     	</copy>
