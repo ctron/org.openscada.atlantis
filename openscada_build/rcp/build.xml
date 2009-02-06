@@ -30,7 +30,7 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="init, package, win32installer" description="--> The OpenSCADA RCP Client">
+    <target name="default" depends="init, package, openscada_pde, win32installer" description="--> The OpenSCADA RCP Client">
         
     </target>
 	
@@ -42,6 +42,27 @@
 		<delete dir="${buildDirectory}"/>
 		<delete dir="${upload.base.ostc}"/>
 	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: openscada_pde                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="openscada_pde">
+		<java jar="${startup}" failonerror="true" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts" >
+			<arg value="-application" />
+    		<arg value="org.eclipse.ant.core.antRunner" />
+			<arg value="-Dbuilder=${basedir}/openscada"/>
+    		<arg value="-DbaseLocation=${eclipse.home}"/>
+			<arg value="-DbuildDirectory=${buildDirectory}"/>
+       		<arg value="-DbuildType=${buildType}"/>
+    		<arg value="-DbuildId=${buildId}"/>
+    		<arg value="-Dlibfile=${libfile}"/>
+   			<arg value="-Dsource.base=${source.base}"/>
+   			<arg value="-Ddeploy.dir=${deploy.dir}"/>
+			<arg value="-Ddeploy.dist.module=${deploy.dist.module}"/>
+			<arg value="-Dtag=${tag}"/>
+    	</java>
+    </target>
+
 
 	<!-- - - - - - - - - - - - - - - - - - 
           target: build                      
