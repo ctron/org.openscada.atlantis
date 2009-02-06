@@ -52,7 +52,7 @@
     		<arg value="org.eclipse.ant.core.antRunner" />
 			<arg value="-Dbuilder=${basedir}/openscada"/>
     		<arg value="-DbaseLocation=${eclipse.home}"/>
-			<arg value="-DbuildDirectory=${buildDirectory}"/>
+			<arg value="-DbuildDirectory=${buildDirectory}.pde"/>
        		<arg value="-DbuildType=${buildType}"/>
     		<arg value="-DbuildId=${buildId}"/>
     		<arg value="-Dlibfile=${libfile}"/>
