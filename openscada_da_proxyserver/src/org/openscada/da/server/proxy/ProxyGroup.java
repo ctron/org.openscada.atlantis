@@ -130,18 +130,19 @@ public class ProxyGroup
      * @param connection
      * @param id
      * @param prefix
+     * @param folderCommon 
      * @throws InvalidOperationException
      * @throws NullValueException
      * @throws NotConvertableException
      */
-    public void addConnection ( final Connection connection, final String id, final ProxyPrefixName prefix ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void addConnection ( final Connection connection, final String id, final ProxyPrefixName prefix, final FolderCommon connectionFolder ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         final ProxySubConnectionId proxySubConnectionId = new ProxySubConnectionId ( id );
         if ( this.subConnections.containsKey ( proxySubConnectionId ) )
         {
             throw new IllegalArgumentException ( "connection with id " + proxySubConnectionId + " already exists!" );
         }
-        final ProxySubConnection proxySubConnection = new ProxySubConnection ( connection, proxySubConnectionId, prefix );
+        final ProxySubConnection proxySubConnection = new ProxySubConnection ( connection, this.prefix, proxySubConnectionId, prefix, this.hive, connectionFolder );
         this.subConnections.put ( proxySubConnectionId, proxySubConnection );
 
         if ( this.currentConnection == null )

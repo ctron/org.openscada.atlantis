@@ -70,15 +70,16 @@ public class XMLConfigurator
         }
         for ( final ProxyType proxyConf : this.document.getRoot ().getProxyList () )
         {
-            final ProxyGroup proxyGroup = new ProxyGroup ( hive, new ProxyPrefixName ( proxyConf.getPrefix () ) );
+            final ProxyConnection proxyConnection = hive.addConnection ( new ProxyPrefixName ( proxyConf.getPrefix () ) );
+
             for ( final ConnectionType connectionConf : proxyConf.getConnectionList () )
             {
                 final Connection connection = createConnection ( connectionConf.getUri (), connectionConf.getClassName () );
-                proxyGroup.addConnection ( connection, connectionConf.getId (), new ProxyPrefixName ( connectionConf.getPrefix () ) );
+                proxyConnection.addConnection ( connection, connectionConf.getId (), new ProxyPrefixName ( connectionConf.getPrefix () ) );
                 connection.connect ();
             }
-            proxyGroup.setWait ( proxyConf.getWait () );
-            hive.addGroup ( proxyGroup );
+            proxyConnection.setWait ( proxyConf.getWait () );
+            proxyConnection.init ();
         }
     }
 
@@ -93,7 +94,7 @@ public class XMLConfigurator
         Connection connection = this.connections.get ( uri );
         if ( connection == null )
         {
-            if ( ( className != null ) && ( className.length () > 0 ) )
+            if ( className != null && className.length () > 0 )
             {
                 Class.forName ( className );
             }

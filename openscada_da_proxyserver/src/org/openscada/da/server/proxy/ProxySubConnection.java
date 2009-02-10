@@ -19,15 +19,22 @@
 
 package org.openscada.da.server.proxy;
 
+import org.openscada.core.Variant;
+import org.openscada.core.client.ConnectionState;
+import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;
+import org.openscada.da.server.browser.common.FolderCommon;
+import org.openscada.da.server.common.DataItemCommand;
+import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.openscada.da.server.common.item.factory.FolderItemFactory;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
  *
  */
-public class ProxySubConnection
+public class ProxySubConnection implements ConnectionStateListener
 {
     private final Connection connection;
 
@@ -39,18 +46,66 @@ public class ProxySubConnection
 
     private final FolderManager folderManager;
 
+    private final Hive hive;
+
+    private final FolderItemFactory itemFactory;
+
+    private final DataItemInputChained stateItem;
+
+    private final DataItemCommand connectItem;
+
+    private final DataItemCommand disconnectItem;
+
     /**
      * @param connection
      * @param id
      * @param prefix
+     * @param connectionFolder 
+     * @param hive 
      */
-    public ProxySubConnection ( final Connection connection, final ProxySubConnectionId id, final ProxyPrefixName prefix )
+    public ProxySubConnection ( final Connection connection, final ProxyPrefixName parentName, final ProxySubConnectionId id, final ProxyPrefixName prefix, final Hive hive, final FolderCommon connectionFolder )
     {
         this.connection = connection;
         this.itemManager = new ItemManager ( this.connection );
         this.folderManager = new FolderManager ( this.connection );
         this.prefix = prefix;
         this.id = id;
+        this.hive = hive;
+        this.itemFactory = new FolderItemFactory ( this.hive, connectionFolder, parentName.getName () + ".connections." + id, id.getName () );
+
+        // setup state watcher
+        this.stateItem = this.itemFactory.createInput ( "state" );
+        this.connection.addConnectionStateListener ( this );
+
+        this.connectItem = this.itemFactory.createCommand ( "connect" );
+        this.connectItem.addListener ( new DataItemCommand.Listener () {
+
+            @Override
+            public void command ( final Variant value ) throws Exception
+            {
+                ProxySubConnection.this.connect ();
+            }
+        } );
+
+        this.disconnectItem = this.itemFactory.createCommand ( "disconnect" );
+        this.disconnectItem.addListener ( new DataItemCommand.Listener () {
+
+            @Override
+            public void command ( final Variant value ) throws Exception
+            {
+                ProxySubConnection.this.disconnect ();
+            }
+        } );
+    }
+
+    protected void disconnect ()
+    {
+        this.connection.disconnect ();
+    }
+
+    protected void connect ()
+    {
+        this.connection.connect ();
     }
 
     /**
@@ -91,5 +146,16 @@ public class ProxySubConnection
     public FolderManager getFolderManager ()
     {
         return this.folderManager;
+    }
+
+    public void dispose ()
+    {
+        this.itemFactory.dispose ();
+    }
+
+    @Override
+    public void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
+    {
+        this.stateItem.updateData ( new Variant ( state.toString () ), null, null );
     }
 }

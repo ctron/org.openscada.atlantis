@@ -2,7 +2,11 @@ package org.openscada.da.server.proxy;
 
 import java.util.HashMap;
 
+import org.openscada.core.InvalidOperationException;
+import org.openscada.core.NotConvertableException;
+import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
+import org.openscada.da.client.Connection;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemCommand;
@@ -40,7 +44,7 @@ public class ProxyConnection
 
     private DataItemInputChained switchDuration;
 
-    private FolderCommon connectionFolder;
+    private final FolderCommon connectionFolder;
 
     private DataItemCommand connectItem;
 
@@ -48,15 +52,19 @@ public class ProxyConnection
 
     /**
      * @param hive
+     * @param prefix 
      * @param connectionsFolder
-     * @param group
      */
-    public ProxyConnection ( final Hive hive, final FolderCommon connectionsFolder, final ProxyGroup group )
+    public ProxyConnection ( final Hive hive, final ProxyPrefixName prefix, final FolderCommon connectionsFolder )
     {
         this.hive = hive;
         this.connectionsFolder = connectionsFolder;
-        this.group = group;
+        this.group = new ProxyGroup ( hive, prefix );
         this.separator = this.hive.getSeparator ();
+
+        this.connectionFolder = new FolderCommon ();
+        this.group.setConnectionFolder ( this.connectionFolder );
+        this.connectionsFolder.add ( this.group.getPrefix ().getName (), this.connectionFolder, new HashMap<String, Variant> () );
     }
 
     protected DataItemInputChained createItem ( final String localId )
@@ -79,10 +87,6 @@ public class ProxyConnection
      */
     public void init ()
     {
-        this.connectionFolder = new FolderCommon ();
-        this.group.setConnectionFolder ( this.connectionFolder );
-        this.connectionsFolder.add ( this.group.getPrefix ().getName (), this.connectionFolder, new HashMap<String, Variant> () );
-
         this.switchStarted = createItem ( "switch.started" );
         this.switchEnded = createItem ( "switch.ended" );
         this.switchInProgress = createItem ( "switch.inprogress" );
@@ -176,5 +180,20 @@ public class ProxyConnection
     public void dispose ()
     {
         this.group.stop ();
+    }
+
+    public ProxyPrefixName getPrefix ()
+    {
+        return this.group.getPrefix ();
+    }
+
+    public void setWait ( final int wait )
+    {
+        this.group.setWait ( wait );
+    }
+
+    public void addConnection ( final Connection connection, final String id, final ProxyPrefixName proxyPrefixName ) throws InvalidOperationException, NullValueException, NotConvertableException
+    {
+        this.group.addConnection ( connection, id, proxyPrefixName, this.connectionFolder );
     }
 }

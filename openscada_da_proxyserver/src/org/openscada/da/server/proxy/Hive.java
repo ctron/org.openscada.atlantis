@@ -100,19 +100,22 @@ public class Hive extends HiveCommon
 
     /**
      * @param group
+     * @return 
      */
-    public void addGroup ( final ProxyGroup group )
+    public ProxyConnection addConnection ( final ProxyPrefixName prefix )
     {
         if ( this.initialized )
         {
             throw new IllegalArgumentException ( "no further connections may be added when initialize() was already called!" );
         }
-        if ( this.connections.keySet ().contains ( group.getPrefix () ) )
+        if ( this.connections.keySet ().contains ( prefix ) )
         {
             throw new IllegalArgumentException ( "prefix must not already exist!" );
         }
-        final ProxyConnection connection = new ProxyConnection ( this, this.connectionsFolder, group );
-        this.connections.put ( group.getPrefix (), connection );
+
+        final ProxyConnection connection = new ProxyConnection ( this, prefix, this.connectionsFolder );
+        this.connections.put ( prefix, connection );
+        return connection;
     }
 
     /**
@@ -134,11 +137,6 @@ public class Hive extends HiveCommon
         {
             configurator.configure ( this );
 
-        }
-
-        for ( final ProxyConnection proxyConnection : this.connections.values () )
-        {
-            proxyConnection.init ();
         }
 
         addItemFactory ( new ProxyDataItemFactory ( this.connections, this.separator ) );
