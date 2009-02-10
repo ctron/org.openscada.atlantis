@@ -1,4 +1,4 @@
-package org.openscada.da.client.dataitem.details.extra.view;
+package org.openscada.da.client.dataitem.details.extra.part;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;

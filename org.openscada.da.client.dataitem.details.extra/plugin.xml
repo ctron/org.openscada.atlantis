@@ -4,17 +4,17 @@
    <extension
          point="org.openscada.da.client.dataitem.details.DetailsViewPart">
       <detailsPart
-            class="org.openscada.da.client.dataitem.details.extra.view.ManualOverride"
+            class="org.openscada.da.client.dataitem.details.extra.part.ManualOverride"
             name="Manual Override"
             sortKey="5000">
       </detailsPart>
       <detailsPart
-            class="org.openscada.da.client.dataitem.details.extra.view.LevelPresets"
+            class="org.openscada.da.client.dataitem.details.extra.part.LevelPresets"
             name="Level Presets"
             sortKey="3000">
       </detailsPart>
       <detailsPart
-            class="org.openscada.da.client.dataitem.details.extra.view.InputScaleDetails"
+            class="org.openscada.da.client.dataitem.details.extra.part.InputScaleDetails"
             name="Input Scale"
             sortKey="1000">
       </detailsPart>
