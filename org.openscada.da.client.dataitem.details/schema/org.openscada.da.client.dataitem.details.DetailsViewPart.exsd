@@ -52,7 +52,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The class of the details part
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.openscada.da.client.dataitem.details.part.DetailsPart"/>
@@ -62,11 +62,18 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The name of the details part
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
                </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="sortKey" type="string">
+            <annotation>
+               <documentation>
+                  Sort key in which sort order the views should be presented
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
