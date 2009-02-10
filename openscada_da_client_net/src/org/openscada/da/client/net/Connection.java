@@ -100,7 +100,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
     private final Map<String, ItemUpdateListener> _itemListeners = new HashMap<String, ItemUpdateListener> ();
 
-    private final Map<Location, FolderListener> _folderListeners = new HashMap<Location, FolderListener> ();
+    private final Map<Location, FolderListener> folderListeners = new HashMap<Location, FolderListener> ();
 
     //private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener> ();
 
@@ -225,17 +225,18 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
     private void fireBrowseEvent ( final Location location, final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
-        synchronized ( this._folderListeners )
+        final FolderListener listener;
+
+        listener = this.folderListeners.get ( location );
+
+        if ( listener != null )
         {
-            if ( this._folderListeners.containsKey ( location ) )
+            try
             {
-                try
-                {
-                    this._folderListeners.get ( location ).folderChanged ( added, removed, full );
-                }
-                catch ( final Exception e )
-                {
-                }
+                listener.folderChanged ( added, removed, full );
+            }
+            catch ( final Throwable e )
+            {
             }
         }
     }
@@ -627,9 +628,9 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
     public FolderListener setFolderListener ( final Location location, final FolderListener listener )
     {
-        synchronized ( this._folderListeners )
+        synchronized ( this.folderListeners )
         {
-            return this._folderListeners.put ( location, listener );
+            return this.folderListeners.put ( location, listener );
         }
     }
 
