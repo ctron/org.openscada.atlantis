@@ -1,4 +1,4 @@
-package org.openscada.da.client.dataitem.details.extra;
+package org.openscada.da.client.dataitem.details.extra.view;
 
 import java.util.HashMap;
 import java.util.Map;

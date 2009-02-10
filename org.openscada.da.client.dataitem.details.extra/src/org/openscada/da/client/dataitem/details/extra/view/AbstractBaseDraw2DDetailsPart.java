@@ -1,4 +1,4 @@
-package org.openscada.da.client.dataitem.details.extra;
+package org.openscada.da.client.dataitem.details.extra.view;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LightweightSystem;
