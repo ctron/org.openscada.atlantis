@@ -98,6 +98,10 @@ public class RoundChainItem extends BaseChainItemCommon
             attributes.put ( ORIGINAL_VALUE, originalValue );
             attributes.put ( ROUND_TYPE, new Variant ( type.toString () ) );
         }
+        else if ( type == RoundType.NONE )
+        {
+            attributes.put ( ROUND_TYPE, null );
+        }
 
     }
 
