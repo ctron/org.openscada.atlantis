@@ -87,6 +87,9 @@ public class RoundChainItem extends BaseChainItemCommon
         {
         }
 
+        // add binder attributes
+        addAttributes ( attributes );
+
         // common section
         if ( type != RoundType.NONE && doubleValue != null )
         {
@@ -95,9 +98,6 @@ public class RoundChainItem extends BaseChainItemCommon
             attributes.put ( ORIGINAL_VALUE, originalValue );
             attributes.put ( ROUND_TYPE, new Variant ( type.toString () ) );
         }
-
-        // add binder attributes
-        addAttributes ( attributes );
 
     }
 
@@ -116,7 +116,7 @@ public class RoundChainItem extends BaseChainItemCommon
             value.setValue ( Math.floor ( doubleValue ) );
             break;
         case ROUND:
-            value.setValue ( Math.round ( doubleValue ) );
+            value.setValue ( (double)Math.round ( doubleValue ) );
             break;
         }
     }
