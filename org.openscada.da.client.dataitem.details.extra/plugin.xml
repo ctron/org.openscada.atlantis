@@ -5,18 +5,23 @@
          point="org.openscada.da.client.dataitem.details.DetailsViewPart">
       <detailsPart
             class="org.openscada.da.client.dataitem.details.extra.part.ManualOverride"
-            name="Manual Override"
+            name="%detailsPart.manualOverride.name"
             sortKey="5000">
       </detailsPart>
       <detailsPart
             class="org.openscada.da.client.dataitem.details.extra.part.LevelPresets"
-            name="Level Presets"
+            name="%detailsPart.levelPresets.name"
             sortKey="3000">
       </detailsPart>
       <detailsPart
             class="org.openscada.da.client.dataitem.details.extra.part.InputScaleDetails"
-            name="Input Scale"
+            name="%detailsPart.inputScale.name"
             sortKey="1000">
+      </detailsPart>
+      <detailsPart
+            class="org.openscada.da.client.dataitem.details.extra.part.RoundDetailsPart"
+            name="%detailsPart.rounding.name"
+            sortKey="1500">
       </detailsPart>
    </extension>
 

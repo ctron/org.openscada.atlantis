@@ -20,7 +20,10 @@
 package org.openscada.da.client.dataitem.details;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -53,21 +56,21 @@ public class DetailsViewPart extends ViewPart
     {
         this.tabFolder = new CTabFolder ( parent, SWT.BOTTOM );
 
-        for ( final IConfigurationElement element : Platform.getExtensionRegistry ().getConfigurationElementsFor ( Activator.EXTP_DETAILS_PART ) )
+        try
         {
-            final CTabItem tabItem = new CTabItem ( this.tabFolder, SWT.NONE );
-            final Composite parentComposite = new Composite ( this.tabFolder, SWT.NONE );
-            parentComposite.setLayout ( new FillLayout () );
-            tabItem.setControl ( parentComposite );
-            try
+            for ( final DetailsPartInformation info : getPartInformation () )
             {
-                createDetailsPart ( tabItem, parentComposite, element );
+                final CTabItem tabItem = new CTabItem ( this.tabFolder, SWT.NONE );
+                final Composite parentComposite = new Composite ( this.tabFolder, SWT.NONE );
+                parentComposite.setLayout ( new FillLayout () );
+                tabItem.setControl ( parentComposite );
+                createDetailsPart ( tabItem, parentComposite, info );
+
             }
-            catch ( final CoreException e )
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace ();
-            }
+        }
+        catch ( final CoreException e )
+        {
+            Activator.getDefault ().getLog ().log ( e.getStatus () );
         }
         if ( !this.detailParts.isEmpty () )
         {
@@ -75,21 +78,59 @@ public class DetailsViewPart extends ViewPart
         }
     }
 
-    private void createDetailsPart ( final CTabItem tabItem, final Composite parent, final IConfigurationElement element ) throws CoreException
+    private Collection<DetailsPartInformation> getPartInformation () throws CoreException
     {
-        final String name = element.getAttribute ( "name" );
+        final List<DetailsPartInformation> result = new LinkedList<DetailsPartInformation> ();
 
-        tabItem.setText ( name );
-
-        final Object o = element.createExecutableExtension ( "class" );
-        if ( ! ( o instanceof DetailsPart ) )
+        for ( final IConfigurationElement element : Platform.getExtensionRegistry ().getConfigurationElementsFor ( Activator.EXTP_DETAILS_PART ) )
         {
-            throw new CoreException ( new Status ( Status.ERROR, Activator.PLUGIN_ID, "DetailsPart is not of type 'DetailsPart'" ) );
+            if ( !"detailsPart".equals ( element.getName () ) )
+            {
+                continue;
+            }
+            Object o;
+            o = element.createExecutableExtension ( "class" );
+
+            if ( ! ( o instanceof DetailsPart ) )
+            {
+                throw new CoreException ( new Status ( Status.ERROR, Activator.PLUGIN_ID, "DetailsPart is not of type 'DetailsPart'" ) );
+            }
+
+            final DetailsPartInformation info = new DetailsPartInformation ();
+            info.setDetailsPart ( (DetailsPart)o );
+            info.setLabel ( element.getAttribute ( "name" ) );
+            info.setSortKey ( element.getAttribute ( "sortKey" ) );
+            result.add ( info );
         }
 
-        final DetailsPart part = (DetailsPart)o;
-        part.createPart ( parent );
-        this.detailParts.add ( part );
+        Collections.sort ( result, new Comparator<DetailsPartInformation> () {
+
+            public int compare ( final DetailsPartInformation arg0, final DetailsPartInformation arg1 )
+            {
+                String key1 = arg0.getSortKey ();
+                String key2 = arg1.getSortKey ();
+                if ( key1 == null )
+                {
+                    key1 = "";
+                }
+                if ( key2 == null )
+                {
+                    key2 = "";
+                }
+
+                return key1.compareTo ( key2 );
+            }
+        } );
+
+        return result;
+    }
+
+    private void createDetailsPart ( final CTabItem tabItem, final Composite parent, final DetailsPartInformation info ) throws CoreException
+    {
+        tabItem.setText ( info.getLabel () );
+
+        info.getDetailsPart ().createPart ( parent );
+        this.detailParts.add ( info.getDetailsPart () );
     }
 
     @Override

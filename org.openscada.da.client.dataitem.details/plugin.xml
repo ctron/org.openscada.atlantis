@@ -9,7 +9,7 @@
             category="org.openscada.da.client.test"
             class="org.openscada.da.client.dataitem.details.DetailsViewPart"
             id="org.openscada.da.client.dataitem.details.DetailsViewPart"
-            name="Data Item Details"
+            name="%view.dataItemDetails.name"
             restorable="true">
       </view>
    </extension>
@@ -23,7 +23,7 @@
                class="org.openscada.da.client.dataitem.details.ShowDetailsAction"
                enablesFor="1"
                id="org.openscada.da.client.dataitem.details.DataItemDetails"
-               label="Data Item Details"
+               label="%action.dataItemDetails.label"
                menubarPath="additions">
          </action>
       </objectContribution>
@@ -35,7 +35,7 @@
                class="org.openscada.da.client.dataitem.details.ShowDetailsAction"
                enablesFor="1"
                id="org.openscada.da.client.dataitem.details.DataItemDetails"
-               label="Data Item Details"
+               label="%action.dataItemDetails.label"
                menubarPath="additions">
          </action>
       </objectContribution>
@@ -47,7 +47,7 @@
                class="org.openscada.da.client.dataitem.details.ShowDetailsAction"
                enablesFor="1"
                id="org.openscada.da.client.dataitem.details.DataItemDetails"
-               label="Data Item Details"
+               label="%action.dataItemDetails.label"
                menubarPath="additions">
          </action>
       </objectContribution>
@@ -56,7 +56,8 @@
          point="org.openscada.da.client.dataitem.details.DetailsViewPart">
       <detailsPart
             class="org.openscada.da.client.dataitem.details.part.overview.OverviewDetailsPart"
-            name="Overview">
+            name="%detailsPart.overview.name"
+            sortKey="0000">
       </detailsPart>
    </extension>
 
