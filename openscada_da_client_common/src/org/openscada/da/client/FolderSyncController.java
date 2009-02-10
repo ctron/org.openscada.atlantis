@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
 package org.openscada.da.client;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.core.Location;
@@ -30,128 +30,130 @@ import org.openscada.da.core.browser.Entry;
 
 public class FolderSyncController extends FolderWatcher
 {
-    private static Logger _log = Logger.getLogger ( FolderSyncController.class );
-    
-    private Set<FolderListener> _listener = new HashSet<FolderListener> ();
-    
-    private Connection _connection;
-    private boolean _subscribed = false;
-    
-    public FolderSyncController ( Connection connection, Location location )
+    private static Logger logger = Logger.getLogger ( FolderSyncController.class );
+
+    private final Set<FolderListener> listener = new CopyOnWriteArraySet<FolderListener> ();
+
+    private final Connection connection;
+
+    private boolean subscribed = false;
+
+    public FolderSyncController ( final Connection connection, final Location location )
     {
         super ( location );
-        _connection = connection;
-        _connection.setFolderListener ( _location, this );
+        this.connection = connection;
+        this.connection.setFolderListener ( location, this );
     }
-    
-    public void addListener ( FolderListener listener )
+
+    public void addListener ( final FolderListener listener )
     {
-        synchronized ( this )
+        if ( this.listener.add ( listener ) )
         {
-            if ( _listener.add ( listener ) )
-            {
-                sync ();
-            }
-            transmitCache ( listener );
+            sync ();
+        }
+        transmitCache ( listener );
+    }
+
+    public void removeListener ( final FolderListener listener )
+    {
+        if ( this.listener.remove ( listener ) )
+        {
+            sync ();
         }
     }
-    
-    public void removeListener ( FolderListener listener )
-    {
-        synchronized ( this )
-        {
-            if ( _listener.remove ( listener ) )
-            {
-                sync ();
-            }
-        }
-    }
-    
+
     public void sync ()
     {
-        sync ( false );    
+        sync ( false );
     }
-    
+
     public void resync ()
     {
         sync ( true );
     }
-    
-    private void sync ( boolean force )
+
+    private void sync ( final boolean force )
     {
         synchronized ( this )
         {
-            boolean needSubscription = _listener.size () > 0;
-            
-            if ( (needSubscription != _subscribed) || force )
+            final boolean needSubscription = this.listener.size () > 0;
+
+            if ( needSubscription != this.subscribed || force )
             {
                 if ( needSubscription )
+                {
                     subscribe ();
+                }
                 else
+                {
                     unsubscribe ();
+                }
             }
         }
     }
-    
+
     private synchronized void subscribe ()
     {
-        _log.debug ( "subscribing to folder: " + _location.toString () );
-        
-        _subscribed = true;
-        
+        logger.debug ( "subscribing to folder: " + this.location.toString () );
+
+        this.subscribed = true;
+
         try
         {
-            _connection.subscribeFolder ( _location );
+            this.connection.subscribeFolder ( this.location );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             handleError ( e );
         }
     }
-    
+
     private synchronized void unsubscribe ()
     {
-        _log.debug ( "unsubscribing from folder: " + _location.toString () );
-        
-        _subscribed = false;
-        
+        logger.debug ( "unsubscribing from folder: " + this.location.toString () );
+
+        this.subscribed = false;
+
         try
         {
-            _connection.unsubscribeFolder ( _location );
+            this.connection.unsubscribeFolder ( this.location );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             handleError ( e );
         }
     }
-    
-    protected synchronized void handleError ( Throwable e )
+
+    protected void handleError ( final Throwable e )
     {
-        _subscribed = false;
+        this.subscribed = false;
     }
-    
-    private synchronized void transmitCache ( FolderListener listener )
+
+    private void transmitCache ( final FolderListener listener )
     {
-        listener.folderChanged ( _cache.values (), new LinkedList<String>(), true );
+        listener.folderChanged ( this.cache.values (), new LinkedList<String> (), true );
     }
-    
+
     @Override
-    public synchronized void folderChanged ( Collection<Entry> added, Collection<String> removed, boolean full )
+    public void folderChanged ( final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
         super.folderChanged ( added, removed, full );
 
-        for ( FolderListener listener : _listener )
+        for ( final FolderListener listener : this.listener )
         {
             listener.folderChanged ( added, removed, full );
         }
     }
-    
-    public synchronized void disconnected ()
-    {
-        _subscribed = false;
-        _cache.clear ();
 
-        for ( FolderListener listener : _listener )
+    public void disconnected ()
+    {
+        synchronized ( this )
+        {
+            this.subscribed = false;
+            this.cache.clear ();
+        }
+
+        for ( final FolderListener listener : this.listener )
         {
             listener.folderChanged ( new LinkedList<Entry> (), new LinkedList<String> (), true );
         }

@@ -29,61 +29,68 @@ import org.openscada.da.core.browser.Entry;
 
 public class FolderWatcher extends Observable implements FolderListener
 {
-    protected Location _location = null;
-    protected Map<String, Entry> _cache = new HashMap<String, Entry> (); 
-    
-    public FolderWatcher ( String... path )
+    protected Location location = null;
+
+    protected Map<String, Entry> cache = new HashMap<String, Entry> ();
+
+    public FolderWatcher ( final String... path )
     {
-        _location = new Location ( path );
+        this.location = new Location ( path );
     }
-    
-    public FolderWatcher ( Location location )
+
+    public FolderWatcher ( final Location location )
     {
-        _location = location;
+        this.location = location;
     }
-    
-    synchronized public void folderChanged ( Collection<Entry> added, Collection<String> removed, boolean full )
+
+    public void folderChanged ( final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
         int changed = 0;
-        
-        if ( full )
+
+        synchronized ( this )
         {
-            _cache.clear ();
-        }
-        
-        for ( Entry entry : added )
-        {
-            _cache.put ( entry.getName (), entry );
-            changed++;
-        }
-        
-        for ( String name : removed )
-        {
-            if ( _cache.remove ( name ) != null )
+
+            if ( full )
             {
+                this.cache.clear ();
+            }
+
+            for ( final Entry entry : added )
+            {
+                this.cache.put ( entry.getName (), entry );
                 changed++;
             }
+
+            for ( final String name : removed )
+            {
+                if ( this.cache.remove ( name ) != null )
+                {
+                    changed++;
+                }
+            }
+
+            if ( changed > 0 || full )
+            {
+                setChanged ();
+
+            }
         }
-        
-        if ( changed > 0 || full )
-        {
-            setChanged ();
-            notifyObservers ();
-        }
+
+        notifyObservers ();
     }
 
     public Location getLocation ()
     {
-        return _location;
+        return this.location;
     }
 
     public Map<String, Entry> getCache ()
     {
-        return _cache;
+        return this.cache;
     }
 
     public Collection<Entry> getList ()
     {
-        return _cache.values ();
+        return this.cache.values ();
     }
 }

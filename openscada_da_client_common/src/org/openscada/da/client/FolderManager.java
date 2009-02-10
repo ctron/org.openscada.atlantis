@@ -68,12 +68,11 @@ public class FolderManager implements ConnectionStateListener
     {
         synchronized ( this.folderListeners )
         {
-            if ( !this.folderListeners.containsKey ( location ) )
+            final FolderSyncController controller = this.folderListeners.get ( location );
+            if ( controller == null )
             {
                 return;
             }
-
-            final FolderSyncController controller = this.folderListeners.get ( location );
             controller.removeListener ( listener );
         }
     }
