@@ -43,21 +43,21 @@ public class RoundChainItem extends BaseChainItemCommon
 
     public static final String ROUND_ERROR = ROUND_BASE + ".error";
 
-    private final StringBinder manualType = new StringBinder ();
+    private final StringBinder roundType = new StringBinder ();
 
     private enum RoundType
     {
         NONE,
-        UP,
-        DOWN,
-        ROUND
+        CEIL,
+        FLOOR,
+        ROUND,
     }
 
     public RoundChainItem ( final HiveServiceRegistry serviceRegistry )
     {
         super ( serviceRegistry );
 
-        addBinder ( ROUND_TYPE, this.manualType );
+        addBinder ( ROUND_TYPE, this.roundType );
         setReservedAttributes ( ORIGINAL_VALUE, ROUND_ACTIVE, ROUND_ERROR );
     }
 
@@ -66,14 +66,16 @@ public class RoundChainItem extends BaseChainItemCommon
         attributes.put ( ROUND_ACTIVE, null );
         attributes.put ( ORIGINAL_VALUE, null );
         attributes.put ( ROUND_ERROR, null );
+        attributes.put ( ROUND_TYPE, null );
 
-        final Variant originalValue = value;
+        final Variant originalValue = new Variant ( value );
 
         // check and get the rounding type
         final RoundType type = checkRoundType ( attributes );
 
         Double doubleValue = null;
 
+        // check if we got a double value
         try
         {
             if ( value.isDouble () )
@@ -91,11 +93,12 @@ public class RoundChainItem extends BaseChainItemCommon
             performRound ( type, doubleValue, value, attributes );
             attributes.put ( ROUND_ACTIVE, new Variant ( true ) );
             attributes.put ( ORIGINAL_VALUE, originalValue );
+            attributes.put ( ROUND_TYPE, new Variant ( type.toString () ) );
         }
 
         // add binder attributes
         addAttributes ( attributes );
-        attributes.put ( ROUND_TYPE, new Variant ( type.toString () ) );
+
     }
 
     private void performRound ( final RoundType type, final double doubleValue, final Variant value, final Map<String, Variant> attributes )
@@ -106,10 +109,10 @@ public class RoundChainItem extends BaseChainItemCommon
         case NONE:
             // no-op
             break;
-        case UP:
+        case CEIL:
             value.setValue ( Math.ceil ( doubleValue ) );
             break;
-        case DOWN:
+        case FLOOR:
             value.setValue ( Math.floor ( doubleValue ) );
             break;
         case ROUND:
@@ -120,9 +123,15 @@ public class RoundChainItem extends BaseChainItemCommon
 
     private RoundType checkRoundType ( final Map<String, Variant> attributes )
     {
+        // not value is set ... so default to "NONE"
+        if ( this.roundType.getValue () == null )
+        {
+            return RoundType.NONE;
+        }
+
         try
         {
-            final RoundType type = RoundType.valueOf ( this.manualType.getValue () );
+            final RoundType type = RoundType.valueOf ( this.roundType.getValue ().toUpperCase () );
             if ( type != null )
             {
                 return type;
