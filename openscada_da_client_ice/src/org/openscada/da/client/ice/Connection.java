@@ -20,12 +20,13 @@
 package org.openscada.da.client.ice;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
@@ -88,9 +89,9 @@ public class Connection implements org.openscada.da.client.Connection
 
     private SessionPrx session = null;
 
-    private final Map<String, ItemUpdateListener> itemListenerMap = new HashMap<String, ItemUpdateListener> ();
+    private final Map<String, ItemUpdateListener> itemListenerMap = new ConcurrentHashMap<String, ItemUpdateListener> ();
 
-    private final Map<Location, FolderListener> folderListenerMap = new HashMap<Location, FolderListener> ();
+    private final Map<Location, FolderListener> folderListenerMap = new ConcurrentHashMap<Location, FolderListener> ();
 
     private final Set<ConnectionStateListener> listeners = new HashSet<ConnectionStateListener> ();
 
@@ -105,6 +106,21 @@ public class Connection implements org.openscada.da.client.Connection
     private Thread eventPusher = null;
 
     private boolean connectionRequested = false;
+
+    private Executor executor = new Executor () {
+
+        public void execute ( final Runnable command )
+        {
+            try
+            {
+                command.run ();
+            }
+            catch ( final Throwable e )
+            {
+                log.info ( "Uncaught exception in connection executor", e );
+            }
+        }
+    };
 
     public Connection ( final ConnectionInformation connectionInformation )
     {
@@ -614,7 +630,14 @@ public class Connection implements org.openscada.da.client.Connection
         final ItemUpdateListener listener = this.itemListenerMap.get ( itemId );
         if ( listener != null )
         {
-            listener.notifyDataChange ( variant, attributes, cache );
+            this.executor.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    listener.notifyDataChange ( variant, attributes, cache );
+                }
+            } );
+
         }
     }
 
@@ -623,20 +646,28 @@ public class Connection implements org.openscada.da.client.Connection
         final ItemUpdateListener listener = this.itemListenerMap.get ( itemId );
         if ( listener != null )
         {
-            listener.notifySubscriptionChange ( subscriptionState, null );
+            this.executor.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    listener.notifySubscriptionChange ( subscriptionState, null );
+                }
+            } );
         }
     }
 
     protected void fireFolderChange ( final Location location, final Entry[] added, final String[] removed, final boolean full )
     {
-        FolderListener listener;
-        synchronized ( this.folderListenerMap )
-        {
-            listener = this.folderListenerMap.get ( location );
-        }
+        final FolderListener listener = this.folderListenerMap.get ( location );
         if ( listener != null )
         {
-            listener.folderChanged ( Arrays.asList ( added ), Arrays.asList ( removed ), full );
+            this.executor.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    listener.folderChanged ( Arrays.asList ( added ), Arrays.asList ( removed ), full );
+                }
+            } );
         }
     }
 
@@ -770,5 +801,15 @@ public class Connection implements org.openscada.da.client.Connection
         {
             callback.error ( e );
         }
+    }
+
+    public void setExecutor ( final Executor executor )
+    {
+        this.executor = executor;
+    }
+
+    public Executor getExecutor ()
+    {
+        return this.executor;
     }
 }

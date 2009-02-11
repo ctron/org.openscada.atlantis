@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,9 @@ package org.openscada.da.client;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
@@ -36,21 +39,21 @@ import org.openscada.core.utils.AttributesHelper;
  */
 public class ItemSyncController implements ItemUpdateListener
 {
-    private static Logger _log = Logger.getLogger ( ItemSyncController.class );
+    private static Logger log = Logger.getLogger ( ItemSyncController.class );
 
-    private final org.openscada.da.client.Connection _connection;
+    private final org.openscada.da.client.Connection connection;
 
-    private final String _itemName;
+    private final String itemId;
 
-    private boolean _subscribed = false;
+    private boolean subscribed = false;
 
-    private Variant _cachedValue = new Variant ();
+    private Variant cachedValue = new Variant ();
 
-    private final Map<String, Variant> _cachedAttributes = new ConcurrentHashMap<String, Variant> ();
+    private final Map<String, Variant> cachedAttributes = new ConcurrentHashMap<String, Variant> ();
 
-    private SubscriptionState _subscriptionState = SubscriptionState.DISCONNECTED;
+    private SubscriptionState subscriptionState = SubscriptionState.DISCONNECTED;
 
-    private Throwable _subscriptionError = null;
+    private Throwable subscriptionError = null;
 
     /**
      * Holds some additional listener information 
@@ -104,28 +107,51 @@ public class ItemSyncController implements ItemUpdateListener
         }
     }
 
-    private final Map<ItemUpdateListener, ListenerInfo> _listeners = new HashMap<ItemUpdateListener, ListenerInfo> ();
+    private final Map<ItemUpdateListener, ListenerInfo> listeners = new ConcurrentHashMap<ItemUpdateListener, ListenerInfo> ();
 
-    public ItemSyncController ( final org.openscada.da.client.Connection connection, final String itemName )
+    private final ItemManager itemManager;
+
+    private final ExecutorService syncExecutor;
+
+    public ItemSyncController ( final org.openscada.da.client.Connection connection, final ItemManager itemManager, final String itemId )
     {
-        this._connection = connection;
-        this._itemName = itemName;
+        this.connection = connection;
+        this.itemManager = itemManager;
+        this.itemId = itemId;
 
-        this._connection.setItemUpdateListener ( this._itemName, this );
+        this.connection.setItemUpdateListener ( this.itemId, this );
+
+        this.syncExecutor = Executors.newSingleThreadExecutor ( new ThreadFactory () {
+
+            public Thread newThread ( final Runnable r )
+            {
+                final Thread t = new Thread ( r, "SyncExecutor" );
+                t.setDaemon ( true );
+                return t;
+            }
+        } );
     }
 
     public String getItemName ()
     {
-        return this._itemName;
+        return this.itemId;
     }
 
     public synchronized void add ( final ItemUpdateListener listener )
     {
-        if ( !this._listeners.containsKey ( listener ) )
+        if ( !this.listeners.containsKey ( listener ) )
         {
-            this._listeners.put ( listener, new ListenerInfo ( listener ) );
-            listener.notifySubscriptionChange ( this._subscriptionState, this._subscriptionError );
-            listener.notifyDataChange ( this._cachedValue, this._cachedAttributes, true );
+            this.listeners.put ( listener, new ListenerInfo ( listener ) );
+
+            // send the initial update
+            this.itemManager.getExecutor ().execute ( new Runnable () {
+
+                public void run ()
+                {
+                    listener.notifySubscriptionChange ( ItemSyncController.this.subscriptionState, ItemSyncController.this.subscriptionError );
+                    listener.notifyDataChange ( ItemSyncController.this.cachedValue, ItemSyncController.this.cachedAttributes, true );
+                }
+            } );
 
             triggerSync ();
         }
@@ -133,9 +159,9 @@ public class ItemSyncController implements ItemUpdateListener
 
     public synchronized void remove ( final ItemUpdateListener listener )
     {
-        if ( this._listeners.containsKey ( listener ) )
+        if ( this.listeners.containsKey ( listener ) )
         {
-            this._listeners.remove ( listener );
+            this.listeners.remove ( listener );
 
             triggerSync ();
         }
@@ -143,23 +169,20 @@ public class ItemSyncController implements ItemUpdateListener
 
     public void triggerSync ()
     {
-        final Thread t = new Thread ( new Runnable () {
+        this.syncExecutor.execute ( new Runnable () {
 
             public void run ()
             {
                 sync ( false );
             }
         } );
-        t.setDaemon ( true );
-        t.setName ( "TriggerSync" );
-        t.start ();
     }
 
     public synchronized void sync ( final boolean force )
     {
-        final boolean subscribe = !this._listeners.isEmpty();
+        final boolean subscribe = !this.listeners.isEmpty ();
 
-        if ( this._subscribed == subscribe && !force )
+        if ( this.subscribed == subscribe && !force )
         {
             // nothing to do
             return;
@@ -179,9 +202,9 @@ public class ItemSyncController implements ItemUpdateListener
     {
         try
         {
-            _log.debug ( "Syncing listen state: active" );
-            this._subscribed = true;
-            this._connection.subscribeItem ( this._itemName );
+            log.debug ( "Syncing listen state: active" );
+            this.subscribed = true;
+            this.connection.subscribeItem ( this.itemId );
         }
         catch ( final Throwable e )
         {
@@ -193,9 +216,9 @@ public class ItemSyncController implements ItemUpdateListener
     {
         try
         {
-            _log.debug ( "Syncing listen state: inactive" );
-            this._subscribed = false;
-            this._connection.unsubscribeItem ( this._itemName );
+            log.debug ( "Syncing listen state: inactive" );
+            this.subscribed = false;
+            this.connection.unsubscribeItem ( this.itemId );
             notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
         }
         catch ( final Throwable e )
@@ -206,8 +229,8 @@ public class ItemSyncController implements ItemUpdateListener
 
     private void handleError ( final Throwable e )
     {
-        _log.warn ( "Failed to subscribe", e );
-        this._subscribed = false;
+        log.warn ( "Failed to subscribe", e );
+        this.subscribed = false;
         notifySubscriptionChange ( SubscriptionState.DISCONNECTED, e );
     }
 
@@ -218,10 +241,10 @@ public class ItemSyncController implements ItemUpdateListener
         synchronized ( this )
         {
             // update value
-            if ( this._cachedValue == null || !this._cachedValue.equals ( value ) )
+            if ( this.cachedValue == null || !this.cachedValue.equals ( value ) )
             {
                 change = true;
-                this._cachedValue = value;
+                this.cachedValue = value;
             }
 
             // update attributes
@@ -229,7 +252,7 @@ public class ItemSyncController implements ItemUpdateListener
             {
                 if ( !attributes.isEmpty () || cache )
                 {
-                    AttributesHelper.mergeAttributes ( this._cachedAttributes, attributes, cache );
+                    AttributesHelper.mergeAttributes ( this.cachedAttributes, attributes, cache );
                     change = true;
                 }
             }
@@ -237,10 +260,16 @@ public class ItemSyncController implements ItemUpdateListener
 
         if ( change )
         {
-            for ( final ListenerInfo listenerInfo : this._listeners.values () )
-            {
-                listenerInfo.getListener ().notifyDataChange ( value, attributes, cache );
-            }
+            this.itemManager.getExecutor ().execute ( new Runnable () {
+
+                public void run ()
+                {
+                    for ( final ListenerInfo listenerInfo : ItemSyncController.this.listeners.values () )
+                    {
+                        listenerInfo.getListener ().notifyDataChange ( value, attributes, cache );
+                    }
+                }
+            } );
         }
     }
 
@@ -248,19 +277,26 @@ public class ItemSyncController implements ItemUpdateListener
     {
         synchronized ( this )
         {
-            if ( this._subscriptionState.equals ( subscriptionState ) && this._subscriptionError == e )
+            if ( this.subscriptionState.equals ( subscriptionState ) && this.subscriptionError == e )
             {
                 return;
             }
 
-            this._subscriptionState = subscriptionState;
-            this._subscriptionError = e;
+            this.subscriptionState = subscriptionState;
+            this.subscriptionError = e;
         }
 
-        for ( final ListenerInfo listenerInfo : this._listeners.values () )
-        {
-            listenerInfo.getListener ().notifySubscriptionChange ( subscriptionState, e );
-        }
+        this.itemManager.getExecutor ().execute ( new Runnable () {
+
+            public void run ()
+            {
+                for ( final ListenerInfo listenerInfo : ItemSyncController.this.listeners.values () )
+                {
+                    listenerInfo.getListener ().notifySubscriptionChange ( subscriptionState, e );
+                }
+            }
+        } );
+
     }
 
     public synchronized void disconnect ()
@@ -272,7 +308,7 @@ public class ItemSyncController implements ItemUpdateListener
     @Override
     protected void finalize () throws Throwable
     {
-        _log.debug ( "Finalizing..." );
+        log.debug ( "Finalizing..." );
         super.finalize ();
     }
 }

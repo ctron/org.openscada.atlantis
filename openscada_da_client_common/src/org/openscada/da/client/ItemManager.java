@@ -21,6 +21,7 @@ package org.openscada.da.client;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.client.ConnectionState;
@@ -48,6 +49,12 @@ public class ItemManager implements ConnectionStateListener
         }
     }
 
+    public Executor getExecutor ()
+    {
+        // we don't cache the executor since it might change on the connection
+        return this.connection.getExecutor ();
+    }
+
     /**
      * Get the current assigned connection
      * @return the current connection or <code>null</code> if none is assigned.
@@ -61,7 +68,7 @@ public class ItemManager implements ConnectionStateListener
     {
         if ( !this.itemListeners.containsKey ( itemName ) )
         {
-            this.itemListeners.put ( itemName, new ItemSyncController ( this.connection, new String ( itemName ) ) );
+            this.itemListeners.put ( itemName, new ItemSyncController ( this.connection, this, new String ( itemName ) ) );
         }
 
         final ItemSyncController controller = this.itemListeners.get ( itemName );

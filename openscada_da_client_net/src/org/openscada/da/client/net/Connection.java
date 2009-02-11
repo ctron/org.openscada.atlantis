@@ -25,6 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
@@ -69,6 +73,8 @@ import org.openscada.utils.lang.Holder;
 
 public class Connection extends ConnectionBase implements org.openscada.da.client.Connection
 {
+    public static final String SESSION_CLIENT_VERSION = "client-version";
+
     static
     {
         ConnectionFactory.registerDriverFactory ( new DriverFactory () {
@@ -96,11 +102,11 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
     public static final String VERSION = "0.1.7";
 
-    private static Logger _log = Logger.getLogger ( Connection.class );
+    private static Logger logger = Logger.getLogger ( Connection.class );
 
-    private final Map<String, ItemUpdateListener> _itemListeners = new HashMap<String, ItemUpdateListener> ();
+    private final Map<String, ItemUpdateListener> itemListeners = new ConcurrentHashMap<String, ItemUpdateListener> ();
 
-    private final Map<Location, FolderListener> folderListeners = new HashMap<Location, FolderListener> ();
+    private final Map<Location, FolderListener> folderListeners = new ConcurrentHashMap<Location, FolderListener> ();
 
     //private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener> ();
 
@@ -111,11 +117,47 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
     private WriteAttributesOperationController _writeAttributesController = null;
 
-    public Connection ( final ConnectionInfo connectionInfo )
+    private Executor executor = new Executor () {
+
+        public void execute ( final Runnable command )
+        {
+            try
+            {
+                command.run ();
+            }
+            catch ( final Throwable e )
+            {
+                logger.info ( "Uncaught exception in default executor", e );
+            }
+        }
+    };
+
+    private final boolean defaultExecutorAsync;
+
+    public Connection ( final ConnectionInfo connectionInfo, final boolean defaultExecutorAsync )
     {
         super ( connectionInfo );
 
+        this.defaultExecutorAsync = defaultExecutorAsync;
+        if ( defaultExecutorAsync )
+        {
+            setupAsyncExecutor ();
+        }
+
         init ();
+    }
+
+    private void setupAsyncExecutor ()
+    {
+        this.executor = Executors.newSingleThreadExecutor ( new ThreadFactory () {
+
+            public Thread newThread ( final Runnable r )
+            {
+                final Thread t = new Thread ( r, "ConnectionExecutor/" + getConnectionInformation () );
+                t.setDaemon ( true );
+                return t;
+            }
+        } );
     }
 
     public ConnectionInformation getConnectionInformation ()
@@ -131,6 +173,10 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         {
             properties.put ( org.openscada.da.client.net.DriverInformation.PROP_AUTO_RECONNECT, "true" );
             properties.put ( org.openscada.da.client.net.DriverInformation.PROP_RECONNECT_DELAY, String.format ( "%s", this.connectionInfo.getReconnectDelay () ) );
+        }
+        if ( this.defaultExecutorAsync )
+        {
+            properties.put ( org.openscada.da.client.net.DriverInformation.PROP_DEFAULT_ASYNC, "true" );
         }
 
         info.setProperties ( properties );
@@ -153,7 +199,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
             public void messageReceived ( final org.openscada.net.io.net.Connection connection, final Message message )
             {
-                _log.debug ( "Browse event message from server" );
+                logger.debug ( "Browse event message from server" );
                 performBrowseEvent ( message );
             }
         } );
@@ -162,7 +208,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
             public void messageReceived ( final org.openscada.net.io.net.Connection connection, final Message message ) throws Exception
             {
-                _log.debug ( "received subscription change" );
+                logger.debug ( "received subscription change" );
                 performSubscriptionChange ( message );
             }
         } );
@@ -185,7 +231,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         }
 
         final Properties props = new Properties ();
-        props.setProperty ( "client-version", VERSION );
+        props.setProperty ( SESSION_CLIENT_VERSION, VERSION );
 
         this.client.getConnection ().sendMessage ( Messages.createSession ( props ), new MessageStateListener () {
 
@@ -204,7 +250,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
     private void processSessionReply ( final Message message )
     {
-        _log.debug ( "Got session reply!" );
+        logger.debug ( "Got session reply!" );
 
         if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
         {
@@ -224,28 +270,32 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
     private void fireBrowseEvent ( final Location location, final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
-        final FolderListener listener;
-
-        listener = this.folderListeners.get ( location );
+        final FolderListener listener = this.folderListeners.get ( location );
 
         if ( listener != null )
         {
-            try
-            {
-                listener.folderChanged ( added, removed, full );
-            }
-            catch ( final Throwable e )
-            {
-            }
+            this.executor.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    listener.folderChanged ( added, removed, full );
+                }
+            } );
         }
     }
 
     private void fireDataChange ( final String itemName, final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        final ItemUpdateListener listener = this._itemListeners.get ( itemName );
+        final ItemUpdateListener listener = this.itemListeners.get ( itemName );
         if ( listener != null )
         {
-            listener.notifyDataChange ( value, attributes, cache );
+            this.executor.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    listener.notifyDataChange ( value, attributes, cache );
+                }
+            } );
         }
     }
 
@@ -328,7 +378,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
     private void performBrowseEvent ( final Message message )
     {
-        _log.debug ( "Performing browse event" );
+        logger.debug ( "Performing browse event" );
 
         final List<Entry> added = new ArrayList<Entry> ();
         final List<String> removed = new ArrayList<String> ();
@@ -341,7 +391,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
         final Location location = new Location ( path );
 
-        _log.debug ( String.format ( "Folder: %1$s Added: %2$d Removed: %3$d", location.toString (), added.size (), removed.size () ) );
+        logger.debug ( String.format ( "Folder: %1$s Added: %2$d Removed: %3$d", location.toString (), added.size (), removed.size () ) );
 
         fireBrowseEvent ( location, added, removed, initial.value );
     }
@@ -407,7 +457,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         }
         catch ( final Exception e )
         {
-            _log.info ( "Failed to write", e );
+            logger.info ( "Failed to write", e );
             if ( callback != null )
             {
                 callback.error ( e );
@@ -619,18 +669,12 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
     public ItemUpdateListener setItemUpdateListener ( final String itemId, final ItemUpdateListener listener )
     {
-        synchronized ( this._itemListeners )
-        {
-            return this._itemListeners.put ( itemId, listener );
-        }
+        return this.itemListeners.put ( itemId, listener );
     }
 
     public FolderListener setFolderListener ( final Location location, final FolderListener listener )
     {
-        synchronized ( this.folderListeners )
-        {
-            return this.folderListeners.put ( location, listener );
-        }
+        return this.folderListeners.put ( location, listener );
     }
 
     public void subscribeFolder ( final Location location ) throws NoConnectionException, OperationException
@@ -655,20 +699,24 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
     private void fireSubscriptionChange ( final String item, final SubscriptionState subscriptionState )
     {
-        synchronized ( this._itemListeners )
+        final ItemUpdateListener listener = this.itemListeners.get ( item );
+
+        if ( listener != null )
         {
-            final ItemUpdateListener listener = this._itemListeners.get ( item );
-            if ( listener != null )
-            {
-                listener.notifySubscriptionChange ( subscriptionState, null );
-            }
+            this.executor.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    listener.notifySubscriptionChange ( subscriptionState, null );
+                }
+            } );
         }
     }
 
     @Override
     protected void finalize () throws Throwable
     {
-        _log.debug ( "Finalizing connection" );
+        logger.debug ( "Finalizing connection" );
         super.finalize ();
     }
 
@@ -732,5 +780,15 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
         {
             callback.error ( e );
         }
+    }
+
+    public void setExecutor ( final Executor executor )
+    {
+        this.executor = executor;
+    }
+
+    public Executor getExecutor ()
+    {
+        return this.executor;
     }
 }

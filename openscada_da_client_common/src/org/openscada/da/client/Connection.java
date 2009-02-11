@@ -20,6 +20,7 @@
 package org.openscada.da.client;
 
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
@@ -132,4 +133,19 @@ public interface Connection extends org.openscada.core.client.Connection
      * @return The previous set listener or <code>null</code> if there was no previous listener
      */
     public abstract ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener );
+
+    /**
+     * Clients may set an executor which the implementation must use for sending any event on registered
+     * listeners.
+     * <p>
+     * The default executor is unspecified.
+     * @param executor the executor to use
+     */
+    public abstract void setExecutor ( Executor executor );
+
+    /**
+     * Retrieve the executor that is currently set
+     * @return the currently used executor. Implementations must never return <code>null</code>
+     */
+    public abstract Executor getExecutor ();
 }

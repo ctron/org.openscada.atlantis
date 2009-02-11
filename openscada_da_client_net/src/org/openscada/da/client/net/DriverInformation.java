@@ -30,6 +30,8 @@ public class DriverInformation implements org.openscada.core.client.DriverInform
 
     public static final String PROP_AUTO_RECONNECT = "auto-reconnect";
 
+    public static final String PROP_DEFAULT_ASYNC = "defaultAsyncExecutor";
+
     public Connection create ( final ConnectionInformation connectionInformation )
     {
         if ( connectionInformation.getSecondaryTarget () == null )
@@ -68,7 +70,14 @@ public class DriverInformation implements org.openscada.core.client.DriverInform
             }
         }
 
-        return new org.openscada.da.client.net.Connection ( ci );
+        final String defaultAsync = connectionInformation.getProperties ().get ( PROP_DEFAULT_ASYNC );
+        boolean defaultAsyncFlag = false;
+        if ( defaultAsync != null )
+        {
+            defaultAsyncFlag = Boolean.parseBoolean ( defaultAsync );
+        }
+
+        return new org.openscada.da.client.net.Connection ( ci, defaultAsyncFlag );
     }
 
     public Class<?> getConnectionClass ()
