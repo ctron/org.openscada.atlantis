@@ -13,13 +13,12 @@ import org.apache.log4j.Logger;
 
 public class TestApplication2
 {
+    @SuppressWarnings ( "unused" )
     private static Logger logger = Logger.getLogger ( TestApplication2.class );
 
     private static final int ITERATIONS = 1000000;
 
     private static final int VARIANCE = 1;
-
-    private static long operations = 0;
 
     private static final List<ProxySubConnectionId> connections = Arrays.asList ( // 
     new ProxySubConnectionId ( "sub1" ), //
