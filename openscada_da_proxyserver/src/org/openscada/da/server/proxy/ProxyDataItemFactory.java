@@ -46,7 +46,6 @@ public class ProxyDataItemFactory implements DataItemFactory
         this.connections.putAll ( connections );
     }
 
-    @Override
     public boolean canCreate ( final DataItemFactoryRequest request )
     {
         return findConnection ( request ) != null;
@@ -69,7 +68,6 @@ public class ProxyDataItemFactory implements DataItemFactory
         return null;
     }
 
-    @Override
     public DataItem create ( final DataItemFactoryRequest request )
     {
         final ProxyConnection connection = findConnection ( request );

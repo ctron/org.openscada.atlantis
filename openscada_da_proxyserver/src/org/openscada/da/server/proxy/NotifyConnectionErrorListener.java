@@ -56,7 +56,6 @@ public class NotifyConnectionErrorListener implements ConnectionStateListener
      * either sends connection state straight away, or schedules it for later execution
      * @see org.openscada.core.client.ConnectionStateListener#stateChange(org.openscada.core.client.Connection, org.openscada.core.client.ConnectionState, java.lang.Throwable)
      */
-    @Override
     public void stateChange ( final Connection connection, final ConnectionState state, final Throwable error )
     {
         this.currentState = state;

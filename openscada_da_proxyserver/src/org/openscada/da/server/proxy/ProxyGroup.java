@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -47,6 +48,14 @@ import org.openscada.da.server.common.factory.FactoryTemplate;
  */
 public class ProxyGroup
 {
+    private static Executor defaultExecutor = new Executor () {
+        // DirectExecutor using caller thread
+        public void execute ( final Runnable r )
+        {
+            r.run ();
+        }
+    };
+
     private static Logger logger = Logger.getLogger ( ProxyGroup.class );
 
     private final List<ConnectionStateListener> connectionStateListeners = Collections.synchronizedList ( new ArrayList<ConnectionStateListener> () );
@@ -63,17 +72,19 @@ public class ProxyGroup
 
     private final Lock switchLock = new ReentrantLock ();
 
-    /**
-     * 
-     */
+    private final Executor executor = defaultExecutor;
+
+    private final Map<ProxySubConnectionId, ProxySubConnection> subConnections = new HashMap<ProxySubConnectionId, ProxySubConnection> ();
+
+    private Integer wait = 0;
+
+    private ProxyFolder proxyFolder;
+
     public void start ()
     {
         createProxyFolder ();
     }
 
-    /**
-     * 
-     */
     public void stop ()
     {
         destroyProxyFolder ();
@@ -95,12 +106,6 @@ public class ProxyGroup
         this.connectionFolder = connectionFolder;
     }
 
-    private final Map<ProxySubConnectionId, ProxySubConnection> subConnections = new HashMap<ProxySubConnectionId, ProxySubConnection> ();
-
-    private Integer wait = 0;
-
-    private ProxyFolder proxyFolder;
-
     /**
      * @param hive
      * @param prefix
@@ -112,7 +117,7 @@ public class ProxyGroup
     }
 
     /**
-     * @return
+     * @return the current selected connection
      */
     private Connection currentConnection ()
     {
@@ -120,7 +125,7 @@ public class ProxyGroup
     }
 
     /**
-     * @return
+     * @return the current selected connection
      */
     private ProxySubConnection currentSubConnection ()
     {
@@ -265,14 +270,16 @@ public class ProxyGroup
 
     private void setUpItem ( final ProxyDataItem item, final String requestId )
     {
+        // add item chains
         applyTemplate ( item );
+
         // hook up item
         for ( final ProxySubConnection subConnection : getSubConnections ().values () )
         {
             final ItemManager itemManager = subConnection.getItemManager ();
             final String originalItemId = ProxyUtils.originalItemId ( requestId, this.hive.getSeparator (), getPrefix (), subConnection.getPrefix () );
 
-            itemManager.addItemUpdateListener ( originalItemId, new ProxyItemUpdateListener ( item, subConnection ) );
+            itemManager.addItemUpdateListener ( originalItemId, new ProxyItemUpdateListener ( this.executor, item, subConnection ) );
         }
     }
 
@@ -350,7 +357,6 @@ public class ProxyGroup
 
         try
         {
-
             // remove 
             for ( final ConnectionStateListener listener : this.connectionStateListeners )
             {
@@ -396,4 +402,5 @@ public class ProxyGroup
 
         this.connectionFolder.add ( "items", this.proxyFolder, null );
     }
+
 }

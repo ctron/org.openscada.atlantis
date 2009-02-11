@@ -54,13 +54,11 @@ public class ProxyDataItem extends DataItemInputOutputChained
         super ( new DataItemInformationBase ( id, EnumSet.allOf ( IODirection.class ) ) );
         this.proxyValueHolder = proxyValueHolder;
         this.proxyValueHolder.setListener ( new ItemUpdateListener () {
-            @Override
             public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
             {
                 ProxyDataItem.this.updateData ( value, attributes, cache ? AttributeMode.SET : AttributeMode.UPDATE );
             }
 
-            @Override
             public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
             {
                 // TODO: (jr2) is there something which is to be done?

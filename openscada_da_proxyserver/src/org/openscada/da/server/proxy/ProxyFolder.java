@@ -46,19 +46,16 @@ public class ProxyFolder implements Folder, org.openscada.da.client.FolderListen
         this.proxyGroup = proxyGroup;
     }
 
-    @Override
     public void added ()
     {
         this.folder.added ();
     }
 
-    @Override
     public Entry[] list ( final Stack<String> path ) throws NoSuchFolderException
     {
         return this.folder.list ( path );
     }
 
-    @Override
     public void removed ()
     {
         disconnect ();
@@ -75,7 +72,6 @@ public class ProxyFolder implements Folder, org.openscada.da.client.FolderListen
         }
     }
 
-    @Override
     public void subscribe ( final Stack<String> path, final FolderListener listener, final Object tag ) throws NoSuchFolderException
     {
         connect ();
@@ -91,13 +87,11 @@ public class ProxyFolder implements Folder, org.openscada.da.client.FolderListen
         }
     }
 
-    @Override
     public void unsubscribe ( final Stack<String> path, final Object tag ) throws NoSuchFolderException
     {
         this.folder.unsubscribe ( path, tag );
     }
 
-    @Override
     public void folderChanged ( final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
         try

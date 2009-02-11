@@ -94,7 +94,7 @@ public class ProxyConnection
 
         // active Connection
         this.activeConnectionItem = new WriteHandlerItem ( itemName ( "active" ), new WriteHandler () {
-            @Override
+
             public void handleWrite ( final Variant value ) throws Exception
             {
                 final String newId = value.asString ( null );
@@ -120,7 +120,6 @@ public class ProxyConnection
         this.connectItem = new DataItemCommand ( itemName ( "connect" ) );
         this.connectItem.addListener ( new DataItemCommand.Listener () {
 
-            @Override
             public void command ( final Variant value ) throws Exception
             {
                 ProxyConnection.this.group.connectCurrentConnection ();
@@ -132,7 +131,6 @@ public class ProxyConnection
         this.disconnectItem = new DataItemCommand ( itemName ( "disconnect" ) );
         this.disconnectItem.addListener ( new DataItemCommand.Listener () {
 
-            @Override
             public void command ( final Variant value ) throws Exception
             {
                 ProxyConnection.this.group.connectCurrentConnection ();

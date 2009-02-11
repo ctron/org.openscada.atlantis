@@ -20,6 +20,7 @@
 package org.openscada.da.server.proxy;
 
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
@@ -32,21 +33,36 @@ class ProxyItemUpdateListener implements ItemUpdateListener
 
     private final ProxySubConnection subConnection;
 
-    public ProxyItemUpdateListener ( final ProxyDataItem item, final ProxySubConnection subConnection )
+    private final Executor executor;
+
+    public ProxyItemUpdateListener ( final Executor executor, final ProxyDataItem item, final ProxySubConnection subConnection )
     {
+        this.executor = executor;
         this.item = item;
         this.subConnection = subConnection;
     }
 
-    @Override
     public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        this.item.getProxyValueHolder ().updateData ( this.subConnection.getId (), value, attributes, cache ? AttributeMode.SET : AttributeMode.UPDATE );
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                ProxyItemUpdateListener.this.item.getProxyValueHolder ().updateData ( ProxyItemUpdateListener.this.subConnection.getId (), value, attributes, cache ? AttributeMode.SET : AttributeMode.UPDATE );
+            }
+        } );
+
     }
 
-    @Override
     public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
     {
-        this.item.getProxyValueHolder ().updateSubscriptionState ( this.subConnection.getId (), subscriptionState, subscriptionError );
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                ProxyItemUpdateListener.this.item.getProxyValueHolder ().updateSubscriptionState ( ProxyItemUpdateListener.this.subConnection.getId (), subscriptionState, subscriptionError );
+            }
+        } );
+
     }
 }
