@@ -143,9 +143,11 @@ public class OPCItemManager extends AbstractPropertyChange implements ItemSource
      */
     public OPCItem registerItem ( final String opcItemId, final EnumSet<IODirection> ioDirection, final Map<String, Variant> additionalBrowserAttributes )
     {
+        OPCItem item;
+
         synchronized ( this.itemMap )
         {
-            OPCItem item = this.itemMap.get ( opcItemId );
+            item = this.itemMap.get ( opcItemId );
             if ( item != null )
             {
                 // return existing item
@@ -154,25 +156,29 @@ public class OPCItemManager extends AbstractPropertyChange implements ItemSource
 
             item = new OPCItem ( this.hive, this.controller, new DataItemInformationBase ( createItemId ( opcItemId ), ioDirection ), opcItemId );
 
-            applyTemplate ( item );
-
-            // register the item
+            // add the item to the local map
             this.itemMap.put ( opcItemId, item );
-            this.hive.registerItem ( item );
-
-            // fill the browser map
-            final Map<String, Variant> browserMap = new HashMap<String, Variant> ();
-            browserMap.put ( "opc.itemId", new Variant ( opcItemId ) );
-            if ( additionalBrowserAttributes != null )
-            {
-                browserMap.putAll ( additionalBrowserAttributes );
-            }
-            // add to "allItems" folder
-            this.knownItemsFolder.add ( opcItemId, item, browserMap );
-
-            // return new item
-            return item;
         }
+
+        // apply the chain items
+        applyTemplate ( item );
+
+        // register the item with the hive
+        this.hive.registerItem ( item );
+
+        // fill the browser map
+        final Map<String, Variant> browserMap = new HashMap<String, Variant> ();
+        browserMap.put ( "opc.itemId", new Variant ( opcItemId ) );
+        if ( additionalBrowserAttributes != null )
+        {
+            browserMap.putAll ( additionalBrowserAttributes );
+        }
+        // add to "allItems" folder
+        this.knownItemsFolder.add ( opcItemId, item, browserMap );
+
+        // return new item
+        return item;
+
     }
 
     /**
