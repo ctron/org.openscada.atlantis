@@ -24,6 +24,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
@@ -61,6 +64,8 @@ public class ProxyGroup
     private FolderCommon connectionFolder;
 
     private final Hive hive;
+
+    private final Lock switchLock = new ReentrantLock ();
 
     /**
      * 
@@ -255,7 +260,7 @@ public class ProxyGroup
             // create actual item
             final ProxyValueHolder pvh = new ProxyValueHolder ( this.hive.getSeparator (), this.getPrefix (), this.getSubConnections (), this.getCurrentConnection (), id );
             item = new ProxyDataItem ( id, pvh );
-            this.getRegisteredItems ().put ( id, item );
+            this.registeredItems.put ( id, item );
 
             setUpItem ( item, id );
         }
@@ -339,24 +344,52 @@ public class ProxyGroup
      */
     public void switchTo ( final ProxySubConnectionId newConnectionId )
     {
+        logger.warn ( String.format ( "Switching from '%' to '%s'", this.currentConnection, newConnectionId ) );
 
-        // remove 
-        for ( final ConnectionStateListener listener : this.connectionStateListeners )
+        boolean locked = false;
+        try
         {
-            currentConnection ().removeConnectionStateListener ( listener );
+            locked = this.switchLock.tryLock ( 1000, TimeUnit.MILLISECONDS );
+        }
+        catch ( final InterruptedException e )
+        {
+            logger.warn ( String.format ( "Failed switching from '%' to '%s'. Got interrupted while waiting!", this.currentConnection, newConnectionId ), e );
+            return;
         }
 
-        for ( final ProxyDataItem proxyDataItem : this.registeredItems.values () )
+        if ( !locked )
         {
-            proxyDataItem.getProxyValueHolder ().switchTo ( newConnectionId );
-        }
-        this.currentConnection = newConnectionId;
-        for ( final ConnectionStateListener listener : this.connectionStateListeners )
-        {
-            currentConnection ().addConnectionStateListener ( listener );
+            logger.warn ( String.format ( "Failed switching from '%' to '%s'. Switching is still in progress!", this.currentConnection, newConnectionId ) );
+            return;
         }
 
-        createProxyFolder ();
+        try
+        {
+
+            // remove 
+            for ( final ConnectionStateListener listener : this.connectionStateListeners )
+            {
+                currentConnection ().removeConnectionStateListener ( listener );
+            }
+
+            for ( final ProxyDataItem proxyDataItem : this.registeredItems.values () )
+            {
+                proxyDataItem.getProxyValueHolder ().switchTo ( newConnectionId );
+            }
+            this.currentConnection = newConnectionId;
+            for ( final ConnectionStateListener listener : this.connectionStateListeners )
+            {
+                currentConnection ().addConnectionStateListener ( listener );
+            }
+
+            // create the proxy folder
+            createProxyFolder ();
+        }
+        finally
+        {
+            this.switchLock.unlock ();
+        }
+
     }
 
     private void destroyProxyFolder ()

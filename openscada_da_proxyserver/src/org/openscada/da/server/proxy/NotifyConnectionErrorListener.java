@@ -28,6 +28,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
+import org.openscada.da.server.common.AttributeMode;
 
 /**
  * encapsulates notification of items in case of a connection error
@@ -59,7 +60,7 @@ public class NotifyConnectionErrorListener implements ConnectionStateListener
     public void stateChange ( final Connection connection, final ConnectionState state, final Throwable error )
     {
         this.currentState = state;
-        if ( ( this.proxyConnection.getWait () > 0 ) && !ConnectionState.BOUND.equals ( state ) )
+        if ( this.proxyConnection.getWait () > 0 && !ConnectionState.BOUND.equals ( state ) )
         {
             scheduleItemUpdate ( state );
         }
@@ -115,7 +116,7 @@ public class NotifyConnectionErrorListener implements ConnectionStateListener
                 attrs.put ( "proxy.error", new Variant ( true ) );
                 attrs.put ( "proxy.error.message", new Variant ( "Underlying connection in state " + state ) );
             }
-            item.notifyData ( null, attrs, false );
+            item.updateData ( null, attrs, AttributeMode.UPDATE );
         }
     }
 }

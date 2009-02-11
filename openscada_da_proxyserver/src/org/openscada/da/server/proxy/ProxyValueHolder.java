@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
@@ -41,6 +42,8 @@ import org.openscada.da.server.common.AttributeMode;
  */
 public class ProxyValueHolder
 {
+    private static Logger logger = Logger.getLogger ( ProxyValueHolder.class );
+
     private final Map<ProxySubConnectionId, DataItemValue> values = Collections.synchronizedMap ( new HashMap<ProxySubConnectionId, DataItemValue> () );
 
     private final Map<ProxySubConnectionId, ProxySubConnection> subConnections;
@@ -53,7 +56,10 @@ public class ProxyValueHolder
 
     private final ProxyPrefixName prefix;
 
-    private final String itemId;
+    /**
+     * This is the item Id of the proxy item
+     */
+    private final String proxyItemId;
 
     /**
      * @param currentConnection
@@ -64,7 +70,7 @@ public class ProxyValueHolder
         this.prefix = prefix;
         this.subConnections = Collections.unmodifiableMap ( subConnections );
         this.currentConnection = currentConnection;
-        this.itemId = itemId;
+        this.proxyItemId = itemId;
         for ( final Entry<ProxySubConnectionId, ProxySubConnection> subConnectionEntry : subConnections.entrySet () )
         {
             this.values.put ( subConnectionEntry.getKey (), new DataItemValue () );
@@ -72,6 +78,7 @@ public class ProxyValueHolder
     }
 
     /**
+     * Switch between connections
      * @param newConnection
      */
     public void switchTo ( final ProxySubConnectionId newConnection )
@@ -90,11 +97,11 @@ public class ProxyValueHolder
             }
             if ( !oldData.equals ( newData ) )
             {
-                if ( ( newData.getValue () != null ) && !newData.getValue ().equals ( oldData.getValue () ) )
+                if ( newData.getValue () != null && !newData.getValue ().equals ( oldData.getValue () ) )
                 {
                     this.listener.notifyDataChange ( newData.getValue (), newData.getAttributes (), true );
                 }
-                else if ( ( newData.getAttributes () != null ) && !newData.getAttributes ().equals ( oldData.getAttributes () ) )
+                else if ( newData.getAttributes () != null && !newData.getAttributes ().equals ( oldData.getAttributes () ) )
                 {
                     this.listener.notifyDataChange ( newData.getValue (), newData.getAttributes (), true );
                 }
@@ -109,13 +116,35 @@ public class ProxyValueHolder
      * @param attributes
      * @param mode
      */
-    public void updateData ( final ProxySubConnectionId connection, final Variant value, final Map<String, Variant> attributes, AttributeMode mode )
+    public void updateData ( final ProxySubConnectionId connection, final Variant value, final Map<String, Variant> attributes, final AttributeMode mode )
     {
-        synchronized ( this.values )
+        try
+        {
+            handleUpdateData ( connection, value, attributes, mode );
+        }
+        catch ( final Throwable e )
+        {
+            logger.error ( String.format ( "Failed to update data of item '%s'", this.proxyItemId ), e );
+        }
+    }
+
+    /**
+     * Wrap the event of data updates
+     * @param connection the connection on which the even occurred
+     * @param value the new value
+     * @param attributes the new attributes
+     * @param mode the attribute mode
+     */
+    private void handleUpdateData ( final ProxySubConnectionId connection, final Variant value, final Map<String, Variant> attributes, AttributeMode mode )
+    {
+        DataItemValue div;
+        boolean doSend;
+
+        synchronized ( this )
         {
             boolean changed = false;
-            final DataItemValue div = this.values.get ( connection );
-            if ( ( value != null ) && !div.getValue ().equals ( value ) )
+            div = this.values.get ( connection );
+            if ( value != null && !div.getValue ().equals ( value ) )
             {
                 div.setValue ( new Variant ( value ) );
                 changed = true;
@@ -138,12 +167,20 @@ public class ProxyValueHolder
                 }
                 changed = changed || !diff.isEmpty ();
             }
-            if ( connection.equals ( this.currentConnection ) )
+
+            // make a copy
+            div = new DataItemValue ( div );
+
+            // check if we should send changes directly
+            doSend = connection.equals ( this.currentConnection );
+        }
+
+        // now send outside of sync
+        if ( doSend )
+        {
+            if ( sendOnLostConnection ( div ) )
             {
-                if ( sendOnLostConnection ( div ) )
-                {
-                    this.listener.notifyDataChange ( value, attributes, false );
-                }
+                this.listener.notifyDataChange ( value, attributes, false );
             }
         }
     }
@@ -232,7 +269,7 @@ public class ProxyValueHolder
      */
     public String getItemId ()
     {
-        return this.itemId;
+        return this.proxyItemId;
     }
 
     /**
@@ -250,15 +287,37 @@ public class ProxyValueHolder
      */
     public void updateSubscriptionState ( final ProxySubConnectionId connection, final SubscriptionState subscriptionState, final Throwable subscriptionError )
     {
-        synchronized ( this.values )
+        try
+        {
+            handleUpdateSubscriptionChange ( connection, subscriptionState, subscriptionError );
+        }
+        catch ( final Throwable e )
+        {
+            logger.error ( String.format ( "Failed to change subscription state of item '%s'", this.proxyItemId ), e );
+        }
+    }
+
+    /**
+     * Handle the actual subscription change and wrap the call
+     * @param connection the connection that changed 
+     * @param subscriptionState the new state
+     * @param subscriptionError the optional error
+     */
+    private void handleUpdateSubscriptionChange ( final ProxySubConnectionId connection, final SubscriptionState subscriptionState, final Throwable subscriptionError )
+    {
+        boolean doSend;
+
+        synchronized ( this )
         {
             final DataItemValue div = this.values.get ( this.currentConnection );
             div.setSubscriptionState ( subscriptionState );
             div.setSubscriptionError ( subscriptionError );
-            if ( connection.equals ( this.currentConnection ) )
-            {
-                this.listener.notifySubscriptionChange ( subscriptionState, subscriptionError );
-            }
+            doSend = connection.equals ( this.currentConnection );
+        }
+
+        if ( doSend )
+        {
+            this.listener.notifySubscriptionChange ( subscriptionState, subscriptionError );
         }
     }
 }
