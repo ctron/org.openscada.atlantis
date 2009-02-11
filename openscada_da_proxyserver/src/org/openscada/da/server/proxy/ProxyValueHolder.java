@@ -100,8 +100,8 @@ public class ProxyValueHolder extends ProxyItemSupport
      */
     private void handleUpdateData ( final ProxySubConnectionId connection, final Variant value, final Map<String, Variant> attributes, AttributeMode mode )
     {
-        DataItemValue div;
-        boolean doSend;
+        final DataItemValue div;
+        final boolean doSend;
 
         synchronized ( this )
         {
@@ -215,7 +215,7 @@ public class ProxyValueHolder extends ProxyItemSupport
      */
     private void handleUpdateSubscriptionChange ( final ProxySubConnectionId connection, final SubscriptionState subscriptionState, final Throwable subscriptionError )
     {
-        boolean doSend;
+        final boolean doSend;
 
         synchronized ( this )
         {
