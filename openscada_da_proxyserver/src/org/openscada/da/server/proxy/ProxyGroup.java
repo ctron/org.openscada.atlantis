@@ -32,15 +32,11 @@ import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
-import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionStateListener;
-import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;
-import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.core.Location;
 import org.openscada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
@@ -275,19 +271,8 @@ public class ProxyGroup
         {
             final ItemManager itemManager = subConnection.getItemManager ();
             final String originalItemId = ProxyUtils.originalItemId ( requestId, this.hive.getSeparator (), getPrefix (), subConnection.getPrefix () );
-            itemManager.addItemUpdateListener ( originalItemId, new ItemUpdateListener () {
-                @Override
-                public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
-                {
-                    item.getProxyValueHolder ().updateData ( subConnection.getId (), value, attributes, cache ? AttributeMode.SET : AttributeMode.UPDATE );
-                }
 
-                @Override
-                public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
-                {
-                    item.getProxyValueHolder ().updateSubscriptionState ( subConnection.getId (), subscriptionState, subscriptionError );
-                }
-            } );
+            itemManager.addItemUpdateListener ( originalItemId, new ProxyItemUpdateListener ( item, subConnection ) );
         }
     }
 
