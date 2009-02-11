@@ -274,7 +274,6 @@ public class Connection extends ConnectionBase implements org.openscada.ae.clien
         }
     }
 
-    @Override
     public ConnectionInformation getConnectionInformation ()
     {
         final ConnectionInformation info = new ConnectionInformation ();
