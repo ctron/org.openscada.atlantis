@@ -20,7 +20,9 @@ public class TestApplication1
 
     private static final int ITERATIONS = 1000000;
 
-    private static final int VARIANCE = 100000;
+    private static final int VARIANCE = 1;
+
+    static long operations = 0;
 
     private static final Collection<ProxySubConnectionId> connections = Arrays.asList ( // 
     new ProxySubConnectionId ( "sub1" ), //
@@ -32,88 +34,6 @@ public class TestApplication1
     {
         final Random r = new Random ();
         return ITERATIONS + r.nextInt ( VARIANCE );
-    }
-
-    private static final class SubscriptionChanger implements Callable<Object>
-    {
-
-        private final ProxySubConnectionId connectionId;
-
-        private final ProxyValueHolder pvh;
-
-        private SubscriptionChanger ( final ProxySubConnectionId connectionId, final ProxyValueHolder pvh )
-        {
-            this.connectionId = connectionId;
-            this.pvh = pvh;
-        }
-
-        public Object call () throws Exception
-        {
-            final SubscriptionState[] states = SubscriptionState.values ();
-
-            for ( int i = 0; i < getCount (); i++ )
-            {
-                this.pvh.updateSubscriptionState ( this.connectionId, states[i % states.length], null );
-            }
-            this.pvh.updateSubscriptionState ( this.connectionId, SubscriptionState.CONNECTED, null );
-
-            return null;
-        }
-    }
-
-    private static final class Switcher implements Callable<Object>
-    {
-
-        private final ProxySubConnectionId connectionId;
-
-        private final ProxyValueHolder pvh;
-
-        private Switcher ( final ProxySubConnectionId connectionId, final ProxyValueHolder pvh )
-        {
-            this.connectionId = connectionId;
-            this.pvh = pvh;
-        }
-
-        public Object call () throws Exception
-        {
-            for ( int i = 0; i < getCount (); i++ )
-            {
-                this.pvh.switchTo ( this.connectionId );
-            }
-
-            return null;
-        }
-    }
-
-    private static final class Writer implements Callable<Object>
-    {
-        private final ProxySubConnectionId connectionId;
-
-        private final ProxyValueHolder pvh;
-
-        private Writer ( final ProxySubConnectionId connectionId, final ProxyValueHolder pvh )
-        {
-            this.connectionId = connectionId;
-            this.pvh = pvh;
-        }
-
-        public Object call () throws Exception
-        {
-            try
-            {
-                for ( int i = 0; i < getCount (); i++ )
-                {
-                    this.pvh.updateData ( this.connectionId, new Variant ( i ), null, null );
-                }
-                this.pvh.updateData ( this.connectionId, new Variant ( "complete" ), null, null );
-            }
-            catch ( final Throwable e )
-            {
-                e.printStackTrace ();
-            }
-
-            return null;
-        }
     }
 
     public static void main ( final String[] args ) throws InterruptedException
@@ -132,7 +52,7 @@ public class TestApplication1
             }
         } );
 
-        final ExecutorService e = Executors.newFixedThreadPool ( 10 );
+        final ExecutorService e = Executors.newFixedThreadPool ( 30 );
 
         final Collection<Callable<Object>> calls = new LinkedList<Callable<Object>> ();
 
@@ -151,7 +71,11 @@ public class TestApplication1
             calls.add ( new Switcher ( connection, pvh ) );
         }
 
+        final long start = System.currentTimeMillis ();
+
         e.invokeAll ( calls );
+
+        final long end = System.currentTimeMillis ();
 
         e.shutdown ();
 
@@ -163,5 +87,7 @@ public class TestApplication1
             System.out.println ( "Value: " + pvh.getValue () );
             System.out.println ( "Current state: " + pvh.getCurrentValue ().getSubscriptionState () );
         }
+
+        System.out.println ( String.format ( "%s operations in %s ms (%.2f)", operations, end - start, (double)operations / (double) ( end - start ) ) );
     }
 }
