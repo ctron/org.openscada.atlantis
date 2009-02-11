@@ -45,11 +45,13 @@ public class ProxyDataItem extends DataItemInputOutputChained
 {
     private final ProxyValueHolder proxyValueHolder;
 
+    private final ProxyWriteHandler writeHandler;
+
     /**
      * @param id
      * @param proxyValueHolder
      */
-    public ProxyDataItem ( final String id, final ProxyValueHolder proxyValueHolder )
+    public ProxyDataItem ( final String id, final ProxyValueHolder proxyValueHolder, final ProxyWriteHandler writeHandler )
     {
         super ( new DataItemInformationBase ( id, EnumSet.allOf ( IODirection.class ) ) );
         this.proxyValueHolder = proxyValueHolder;
@@ -64,6 +66,8 @@ public class ProxyDataItem extends DataItemInputOutputChained
                 // TODO: (jr2) is there something which is to be done?
             }
         } );
+
+        this.writeHandler = writeHandler;
     }
 
     /**
@@ -86,7 +90,7 @@ public class ProxyDataItem extends DataItemInputOutputChained
                 attributes.remove ( entry.getKey () );
             }
         }
-        this.proxyValueHolder.writeAttributes ( this.getInformation ().getName (), attributes, writeAttributeResults );
+        this.writeHandler.writeAttributes ( this.getInformation ().getName (), attributes, writeAttributeResults );
         return writeAttributeResults;
     }
 
@@ -103,7 +107,7 @@ public class ProxyDataItem extends DataItemInputOutputChained
     {
         try
         {
-            this.proxyValueHolder.write ( this.getInformation ().getName (), value );
+            this.writeHandler.write ( this.getInformation ().getName (), value );
         }
         catch ( final NoConnectionException e )
         {

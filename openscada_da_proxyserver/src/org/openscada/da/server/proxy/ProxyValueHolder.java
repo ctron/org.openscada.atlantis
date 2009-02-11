@@ -19,82 +19,45 @@
 
 package org.openscada.da.server.proxy;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
-import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemUpdateListener;
-import org.openscada.da.core.WriteAttributeResult;
-import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.server.common.AttributeMode;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
  *
  */
-public class ProxyValueHolder
+public class ProxyValueHolder extends ProxyItemSupport
 {
     private static Logger logger = Logger.getLogger ( ProxyValueHolder.class );
 
-    private final Map<ProxySubConnectionId, DataItemValue> values = Collections.synchronizedMap ( new HashMap<ProxySubConnectionId, DataItemValue> () );
+    protected final Map<ProxySubConnectionId, DataItemValue> values = new HashMap<ProxySubConnectionId, DataItemValue> ();
 
-    private final Map<ProxySubConnectionId, ProxySubConnection> subConnections;
-
-    private ProxySubConnectionId currentConnection;
-
-    private ItemUpdateListener listener = null;
-
-    private String separator = ".";
-
-    private final ProxyPrefixName prefix;
-
-    /**
-     * This is the item Id of the proxy item
-     */
-    private final String proxyItemId;
+    protected ItemUpdateListener listener = null;
 
     /**
      * @param currentConnection
      */
-    public ProxyValueHolder ( final String separator, final ProxyPrefixName prefix, final Map<ProxySubConnectionId, ProxySubConnection> subConnections, final ProxySubConnectionId currentConnection, final String itemId )
+    public ProxyValueHolder ( final String separator, final ProxyPrefixName prefix, final ProxySubConnectionId currentConnection, final String itemId )
     {
-        this.separator = separator;
-        this.prefix = prefix;
-        this.subConnections = Collections.unmodifiableMap ( subConnections );
-        this.currentConnection = currentConnection;
-        this.proxyItemId = itemId;
-        for ( final Entry<ProxySubConnectionId, ProxySubConnection> subConnectionEntry : subConnections.entrySet () )
-        {
-            this.values.put ( subConnectionEntry.getKey (), new DataItemValue () );
-        }
+        super ( separator, prefix, currentConnection, itemId );
     }
 
-    /**
-     * Switch between connections
-     * @param newConnection
-     */
+    @Override
     public void switchTo ( final ProxySubConnectionId newConnection )
     {
         synchronized ( this )
         {
-            DataItemValue oldData = this.values.get ( this.currentConnection );
-            DataItemValue newData = this.values.get ( newConnection );
-            if ( oldData == null )
-            {
-                oldData = new DataItemValue ();
-            }
-            if ( newData == null )
-            {
-                newData = new DataItemValue ();
-            }
+            final DataItemValue oldData = getItemValue ( this.currentConnection );
+            final DataItemValue newData = getItemValue ( newConnection );
+
             if ( !oldData.equals ( newData ) )
             {
                 if ( newData.getValue () != null && !newData.getValue ().equals ( oldData.getValue () ) )
@@ -106,7 +69,7 @@ public class ProxyValueHolder
                     this.listener.notifyDataChange ( newData.getValue (), newData.getAttributes (), true );
                 }
             }
-            this.currentConnection = newConnection;
+            super.switchTo ( newConnection );
         }
     }
 
@@ -143,7 +106,8 @@ public class ProxyValueHolder
         synchronized ( this )
         {
             boolean changed = false;
-            div = this.values.get ( connection );
+            div = getItemValue ( connection );
+
             if ( value != null && !div.getValue ().equals ( value ) )
             {
                 div.setValue ( new Variant ( value ) );
@@ -178,72 +142,24 @@ public class ProxyValueHolder
         // now send outside of sync
         if ( doSend )
         {
-            if ( sendOnLostConnection ( div ) )
+            this.listener.notifyDataChange ( value, attributes, false );
+        }
+    }
+
+    protected DataItemValue getItemValue ( final ProxySubConnectionId id )
+    {
+        DataItemValue div = this.values.get ( id );
+        if ( div == null )
+        {
+            if ( logger.isDebugEnabled () )
             {
-                this.listener.notifyDataChange ( value, attributes, false );
+                logger.debug ( String.format ( "Creating item value for %s on connection %s", this.proxyItemId, id.getName () ) );
             }
-        }
-    }
 
-    private boolean sendOnLostConnection ( final DataItemValue div )
-    {
-        return true;
-        // return SubscriptionState.CONNECTED.equals ( div.getSubscriptionState () ) && ( ( div.getValue () != null ) && !getValue ().isNull () );
-    }
-
-    /**
-     * @param itemId
-     * @param value
-     * @throws NoConnectionException
-     * @throws OperationException
-     */
-    public void write ( final String itemId, final Variant value ) throws NoConnectionException, OperationException
-    {
-        final ProxySubConnection subConnection = this.subConnections.get ( this.currentConnection );
-        final String actualItemId = ProxyUtils.originalItemId ( itemId, this.separator, this.prefix, subConnection.getPrefix () );
-        subConnection.getConnection ().write ( actualItemId, value );
-    }
-
-    /**
-     * @param itemId
-     * @param attributes
-     * @param writeAttributeResults 
-     */
-    public void writeAttributes ( final String itemId, final Map<String, Variant> attributes, final WriteAttributeResults writeAttributeResults )
-    {
-        final ProxySubConnection subConnection = this.subConnections.get ( this.currentConnection );
-        final String actualItemId = ProxyUtils.originalItemId ( itemId, this.separator, this.prefix, subConnection.getPrefix () );
-        WriteAttributeResults actualWriteAttributeResults;
-        try
-        {
-            actualWriteAttributeResults = subConnection.getConnection ().writeAttributes ( actualItemId, attributes );
+            // if the value holder is not set up to know .. create one
+            this.values.put ( id, div = new DataItemValue () );
         }
-        catch ( final NoConnectionException e )
-        {
-            actualWriteAttributeResults = attributesCouldNotBeWritten ( attributes, e );
-        }
-        catch ( final OperationException e )
-        {
-            actualWriteAttributeResults = attributesCouldNotBeWritten ( attributes, e );
-        }
-        writeAttributeResults.putAll ( actualWriteAttributeResults );
-    }
-
-    /**
-     * creates a WriteAttributeResults object for given attributes filled 
-     * with given exception for each attribute
-     * @param attributes
-     * @param e
-     * @return
-     */
-    private WriteAttributeResults attributesCouldNotBeWritten ( final Map<String, Variant> attributes, final Exception e )
-    {
-        final WriteAttributeResults results = new WriteAttributeResults ();
-        for ( final String name : attributes.keySet () )
-        {
-            results.put ( name, new WriteAttributeResult ( e ) );
-        }
-        return results;
+        return div;
     }
 
     /**
@@ -262,14 +178,6 @@ public class ProxyValueHolder
     {
         final DataItemValue div = this.values.get ( this.currentConnection );
         return div.getValue ();
-    }
-
-    /**
-     * @return id of proxy item
-     */
-    public String getItemId ()
-    {
-        return this.proxyItemId;
     }
 
     /**
@@ -309,7 +217,7 @@ public class ProxyValueHolder
 
         synchronized ( this )
         {
-            final DataItemValue div = this.values.get ( this.currentConnection );
+            final DataItemValue div = getItemValue ( this.currentConnection );
             div.setSubscriptionState ( subscriptionState );
             div.setSubscriptionError ( subscriptionError );
             doSend = connection.equals ( this.currentConnection );
@@ -319,5 +227,10 @@ public class ProxyValueHolder
         {
             this.listener.notifySubscriptionChange ( subscriptionState, subscriptionError );
         }
+    }
+
+    public DataItemValue getCurrentValue ()
+    {
+        return getItemValue ( this.currentConnection );
     }
 }

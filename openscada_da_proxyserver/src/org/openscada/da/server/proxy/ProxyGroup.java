@@ -274,8 +274,9 @@ public class ProxyGroup
         if ( item == null )
         {
             // create actual item
-            final ProxyValueHolder pvh = new ProxyValueHolder ( this.hive.getSeparator (), this.getPrefix (), this.getSubConnections (), this.getCurrentConnection (), id );
-            item = new ProxyDataItem ( id, pvh );
+            final ProxyValueHolder pvh = new ProxyValueHolder ( this.hive.getSeparator (), this.getPrefix (), this.getCurrentConnection (), id );
+            final ProxyWriteHandler pwh = new ProxyWriteHandlerImpl ( this.hive.getSeparator (), this.getPrefix (), this.getSubConnections (), this.getCurrentConnection (), id );
+            item = new ProxyDataItem ( id, pvh, pwh );
             this.registeredItems.put ( id, item );
 
             setUpItem ( item, id );
@@ -356,7 +357,7 @@ public class ProxyGroup
         boolean locked = false;
         try
         {
-            locked = this.switchLock.tryLock ( 1000, TimeUnit.MILLISECONDS );
+            locked = this.switchLock.tryLock ( Integer.getInteger ( "org.openscada.da.server.proxy.switchLockTimeout", 1000 ), TimeUnit.MILLISECONDS );
         }
         catch ( final InterruptedException e )
         {
