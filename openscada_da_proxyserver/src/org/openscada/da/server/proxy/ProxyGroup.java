@@ -80,6 +80,16 @@ public class ProxyGroup
 
     private ProxyFolder proxyFolder;
 
+    /**
+     * @param hive
+     * @param prefix
+     */
+    public ProxyGroup ( final Hive hive, final ProxyPrefixName prefix )
+    {
+        this.hive = hive;
+        this.prefix = prefix;
+    }
+
     public void start ()
     {
         createProxyFolder ();
@@ -104,16 +114,6 @@ public class ProxyGroup
     public void setConnectionFolder ( final FolderCommon connectionFolder )
     {
         this.connectionFolder = connectionFolder;
-    }
-
-    /**
-     * @param hive
-     * @param prefix
-     */
-    public ProxyGroup ( final Hive hive, final ProxyPrefixName prefix )
-    {
-        this.hive = hive;
-        this.prefix = prefix;
     }
 
     /**
