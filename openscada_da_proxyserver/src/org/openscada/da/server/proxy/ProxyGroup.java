@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -49,7 +51,6 @@ import org.openscada.da.server.common.factory.FactoryTemplate;
 public class ProxyGroup
 {
     private static Executor defaultExecutor = new Executor () {
-        // DirectExecutor using caller thread
         public void execute ( final Runnable r )
         {
             r.run ();
@@ -72,7 +73,7 @@ public class ProxyGroup
 
     private final Lock switchLock = new ReentrantLock ();
 
-    private final Executor executor = defaultExecutor;
+    private Executor itemListenerExecutor = defaultExecutor;
 
     private final Map<ProxySubConnectionId, ProxySubConnection> subConnections = new HashMap<ProxySubConnectionId, ProxySubConnection> ();
 
@@ -88,6 +89,20 @@ public class ProxyGroup
     {
         this.hive = hive;
         this.prefix = prefix;
+
+        if ( Boolean.getBoolean ( "org.openscada.da.server.proxy.asyncListener" ) )
+        {
+            final ThreadFactory tf = new ThreadFactory () {
+
+                public Thread newThread ( final Runnable r )
+                {
+                    final Thread t = new Thread ( r, "ProxyItemListener/" + ProxyGroup.this.prefix.getName () );
+                    t.setDaemon ( true );
+                    return t;
+                }
+            };
+            this.itemListenerExecutor = Executors.newSingleThreadExecutor ( tf );
+        }
     }
 
     public void start ()
@@ -279,7 +294,7 @@ public class ProxyGroup
             final ItemManager itemManager = subConnection.getItemManager ();
             final String originalItemId = ProxyUtils.originalItemId ( requestId, this.hive.getSeparator (), getPrefix (), subConnection.getPrefix () );
 
-            itemManager.addItemUpdateListener ( originalItemId, new ProxyItemUpdateListener ( this.executor, item, subConnection ) );
+            itemManager.addItemUpdateListener ( originalItemId, new ProxyItemUpdateListener ( this.itemListenerExecutor, item, subConnection ) );
         }
     }
 
