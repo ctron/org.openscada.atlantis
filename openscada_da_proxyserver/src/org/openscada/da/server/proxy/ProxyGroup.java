@@ -351,7 +351,7 @@ public class ProxyGroup
      */
     public void switchTo ( final ProxySubConnectionId newConnectionId )
     {
-        logger.warn ( String.format ( "Switching from '%' to '%s'", this.currentConnection, newConnectionId ) );
+        logger.warn ( String.format ( "Switching from '%s' to '%s'", this.currentConnection, newConnectionId ) );
 
         boolean locked = false;
         try
@@ -360,13 +360,13 @@ public class ProxyGroup
         }
         catch ( final InterruptedException e )
         {
-            logger.warn ( String.format ( "Failed switching from '%' to '%s'. Got interrupted while waiting!", this.currentConnection, newConnectionId ), e );
+            logger.warn ( String.format ( "Failed switching from '%s' to '%s'. Got interrupted while waiting!", this.currentConnection, newConnectionId ), e );
             return;
         }
 
         if ( !locked )
         {
-            logger.warn ( String.format ( "Failed switching from '%' to '%s'. Switching is still in progress!", this.currentConnection, newConnectionId ) );
+            logger.warn ( String.format ( "Failed switching from '%s' to '%s'. Switching is still in progress!", this.currentConnection, newConnectionId ) );
             return;
         }
 
