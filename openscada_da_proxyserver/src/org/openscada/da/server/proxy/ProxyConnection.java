@@ -167,15 +167,20 @@ public class ProxyConnection
         this.switchStarted.updateData ( new Variant ( start ), null, AttributeMode.UPDATE );
         this.switchInProgress.updateData ( new Variant ( true ), null, AttributeMode.UPDATE );
 
-        // perform switch
-        this.group.switchTo ( id );
-        this.activeConnectionItem.updateData ( new Variant ( id ), null, null );
-
-        // mark end of switch
-        this.switchInProgress.updateData ( new Variant ( false ), null, AttributeMode.UPDATE );
-        final long end = System.currentTimeMillis ();
-        this.switchEnded.updateData ( new Variant ( end ), null, AttributeMode.UPDATE );
-        this.switchDuration.updateData ( new Variant ( end - start ), null, AttributeMode.UPDATE );
+        try
+        {
+            // perform switch
+            this.group.switchTo ( id );
+            this.activeConnectionItem.updateData ( new Variant ( id ), null, null );
+        }
+        finally
+        {
+            // mark end of switch
+            this.switchInProgress.updateData ( new Variant ( false ), null, AttributeMode.UPDATE );
+            final long end = System.currentTimeMillis ();
+            this.switchEnded.updateData ( new Variant ( end ), null, AttributeMode.UPDATE );
+            this.switchDuration.updateData ( new Variant ( end - start ), null, AttributeMode.UPDATE );
+        }
     }
 
     /**
