@@ -101,7 +101,6 @@ public class Connection extends ConnectionBase implements Submission
         }
     }
 
-    @Override
     public ConnectionInformation getConnectionInformation ()
     {
         final ConnectionInformation info = new ConnectionInformation ();
