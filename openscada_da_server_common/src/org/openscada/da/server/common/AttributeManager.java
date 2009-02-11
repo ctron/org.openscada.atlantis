@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,46 +21,40 @@ package org.openscada.da.server.common;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
 
 public class AttributeManager
 {
-    private DataItemBase _item = null;
+    private DataItemBase item = null;
 
-    private Map<String, Variant> _attributes = null;
+    private final Map<String, Variant> attributes = new ConcurrentHashMap<String, Variant> ();
 
-    public AttributeManager ( DataItemBase item )
+    public AttributeManager ( final DataItemBase item )
     {
-        _item = item;
-        _attributes = new HashMap<String, Variant> ();
+        this.item = item;
     }
 
     public Map<String, Variant> getCopy ()
     {
-        synchronized ( _attributes )
-        {
-            return new HashMap<String, Variant> ( _attributes );
-        }
+        return new HashMap<String, Variant> ( this.attributes );
     }
 
     public Map<String, Variant> get ()
     {
-        synchronized ( _attributes )
-        {
-            return _attributes;
-        }
+        return this.attributes;
     }
 
-    public void update ( Variant value, Map<String, Variant> updates, AttributeMode mode )
+    public void update ( final Variant value, final Map<String, Variant> updates, AttributeMode mode )
     {
         // defaults to "update"
         if ( mode == null )
         {
             mode = AttributeMode.UPDATE;
         }
-        
+
         switch ( mode )
         {
         case SET:
@@ -72,12 +66,12 @@ public class AttributeManager
         }
     }
 
-    public void update ( Variant value, Map<String, Variant> updates )
+    public void update ( final Variant value, final Map<String, Variant> updates )
     {
         Map<String, Variant> diff = new HashMap<String, Variant> ();
-        synchronized ( _attributes )
+        synchronized ( this.attributes )
         {
-            AttributesHelper.mergeAttributes ( _attributes, updates, diff );
+            AttributesHelper.mergeAttributes ( this.attributes, updates, diff );
             if ( value != null || !diff.isEmpty () )
             {
                 if ( diff.isEmpty () )
@@ -85,17 +79,18 @@ public class AttributeManager
                     // don't send attribute diff if we don't have one
                     diff = null;
                 }
-                _item.notifyData ( value, diff );
+
+                this.item.notifyData ( value, diff );
             }
         }
     }
 
-    public void set ( Variant value, Map<String, Variant> values )
+    public void set ( final Variant value, final Map<String, Variant> values )
     {
         Map<String, Variant> diff = new HashMap<String, Variant> ();
-        synchronized ( _attributes )
+        synchronized ( this.attributes )
         {
-            AttributesHelper.set ( _attributes, values, diff );
+            AttributesHelper.set ( this.attributes, values, diff );
             if ( value != null || !diff.isEmpty () )
             {
                 if ( diff.isEmpty () )
@@ -103,14 +98,15 @@ public class AttributeManager
                     // don't send attribute diff if we don't have one
                     diff = null;
                 }
-                _item.notifyData ( value, diff );
+
+                this.item.notifyData ( value, diff );
             }
         }
     }
 
-    public void update ( String name, Variant value )
+    public void update ( final String name, final Variant value )
     {
-        Map<String, Variant> updates = new HashMap<String, Variant> ();
+        final Map<String, Variant> updates = new HashMap<String, Variant> ();
         updates.put ( name, value );
 
         update ( null, updates );
