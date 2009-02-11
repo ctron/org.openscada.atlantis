@@ -39,12 +39,12 @@ public class DataItemInputChained extends DataItemBaseChained
 
     protected Variant _secondaryValue = new Variant ();
 
-    public DataItemInputChained ( DataItemInformation dataItemInformation )
+    public DataItemInputChained ( final DataItemInformation dataItemInformation )
     {
         this ( dataItemInformation, true );
     }
-    
-    public DataItemInputChained ( DataItemInformation dataItemInformation, boolean autoTimestamp )
+
+    public DataItemInputChained ( final DataItemInformation dataItemInformation, final boolean autoTimestamp )
     {
         super ( dataItemInformation );
         if ( autoTimestamp )
@@ -53,7 +53,7 @@ public class DataItemInputChained extends DataItemBaseChained
         }
     }
 
-    public DataItemInputChained ( String id )
+    public DataItemInputChained ( final String id )
     {
         this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT ) ), true );
     }
@@ -64,14 +64,14 @@ public class DataItemInputChained extends DataItemBaseChained
      * @param attributes the new attributes, <code>null</code> if no attribute have changed
      * @param mode The attribute change mode, <code>null</code> will use the default ( {@link AttributeMode#UPDATE} )
      */
-    public synchronized void updateData ( Variant value, Map<String, Variant> attributes, AttributeMode mode )
+    public synchronized void updateData ( final Variant value, final Map<String, Variant> attributes, AttributeMode mode )
     {
         boolean changed = false;
 
         // handle value change
-        if ( value != null && !_primaryValue.equals ( value ) )
+        if ( value != null && !this._primaryValue.equals ( value ) )
         {
-            _primaryValue = new Variant ( value );
+            this._primaryValue = new Variant ( value );
             changed = true;
         }
 
@@ -83,14 +83,14 @@ public class DataItemInputChained extends DataItemBaseChained
                 mode = AttributeMode.UPDATE;
             }
 
-            Map<String, Variant> diff = new HashMap<String, Variant> ();
+            final Map<String, Variant> diff = new HashMap<String, Variant> ();
             if ( mode == AttributeMode.SET )
             {
-                AttributesHelper.set ( _primaryAttributes, attributes, diff );
+                AttributesHelper.set ( this._primaryAttributes, attributes, diff );
             }
             else
             {
-                AttributesHelper.mergeAttributes ( _primaryAttributes, attributes, diff );
+                AttributesHelper.mergeAttributes ( this._primaryAttributes, attributes, diff );
             }
             changed = changed || !diff.isEmpty ();
         }
@@ -104,10 +104,10 @@ public class DataItemInputChained extends DataItemBaseChained
     @Override
     protected void process ()
     {
-        Variant newSecondaryValue = new Variant ( _primaryValue );
-        Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
+        final Variant newSecondaryValue = new Variant ( this._primaryValue );
+        final Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( this._primaryAttributes );
 
-        for ( ChainProcessEntry entry : getChainCopy () )
+        for ( final ChainProcessEntry entry : getChainCopy () )
         {
             if ( entry.getWhen ().contains ( IODirection.INPUT ) )
             {
@@ -116,20 +116,20 @@ public class DataItemInputChained extends DataItemBaseChained
         }
 
         Variant newValue = null;
-        if ( !_secondaryValue.equals ( newSecondaryValue ) )
+        if ( !this._secondaryValue.equals ( newSecondaryValue ) )
         {
-            newValue = _secondaryValue = new Variant ( newSecondaryValue );
+            newValue = this._secondaryValue = new Variant ( newSecondaryValue );
         }
 
-        _secondaryAttributes.set ( newValue, primaryAttributes );
+        this._secondaryAttributes.set ( newValue, primaryAttributes );
     }
 
     public Variant readValue () throws InvalidOperationException
     {
-        return new Variant ( _secondaryValue );
+        return new Variant ( this._secondaryValue );
     }
 
-    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         throw new InvalidOperationException ();
     }
@@ -137,13 +137,13 @@ public class DataItemInputChained extends DataItemBaseChained
     @Override
     protected Map<String, Variant> getCacheAttributes ()
     {
-        return _secondaryAttributes.get ();
+        return this._secondaryAttributes.get ();
     }
 
     @Override
     protected Variant getCacheValue ()
     {
-        return _secondaryValue;
+        return this._secondaryValue;
     }
 
 }
