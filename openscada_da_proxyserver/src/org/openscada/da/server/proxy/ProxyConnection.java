@@ -2,6 +2,7 @@ package org.openscada.da.server.proxy;
 
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
@@ -21,6 +22,8 @@ import org.openscada.utils.collection.MapBuilder;
  */
 public class ProxyConnection
 {
+    private static Logger logger = Logger.getLogger ( ProxyConnection.class );
+
     /**
      * item name for items which are only relevant for proxy server
      */
@@ -98,11 +101,7 @@ public class ProxyConnection
             public void handleWrite ( final Variant value ) throws Exception
             {
                 final String newId = value.asString ( null );
-                final ProxySubConnection newSubConnection = ProxyConnection.this.group.getSubConnections ().get ( new ProxySubConnectionId ( newId ) );
-                if ( newSubConnection != null )
-                {
-                    ProxyConnection.this.switchTo ( newSubConnection.getId () );
-                }
+                ProxyConnection.this.switchTo ( newId );
             }
         } );
         this.hive.registerItem ( this.activeConnectionItem );
@@ -143,6 +142,22 @@ public class ProxyConnection
 
         // add proxy folder for actual items
         this.group.start ();
+    }
+
+    protected void switchTo ( final String newId )
+    {
+        try
+        {
+            final ProxySubConnection newSubConnection = ProxyConnection.this.group.getSubConnections ().get ( new ProxySubConnectionId ( newId ) );
+            if ( newSubConnection != null )
+            {
+                ProxyConnection.this.switchTo ( newSubConnection.getId () );
+            }
+        }
+        catch ( final Throwable e )
+        {
+            logger.error ( String.format ( "Failed to switch to: %s", newId ), e );
+        }
     }
 
     protected void switchTo ( final ProxySubConnectionId id )
