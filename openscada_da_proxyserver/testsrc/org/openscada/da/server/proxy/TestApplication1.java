@@ -9,18 +9,24 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.ItemUpdateListener;
 
 public class TestApplication1
 {
+    private static Logger logger = Logger.getLogger ( TestApplication1.class );
 
     private static final int ITERATIONS = 1000000;
 
     private static final int VARIANCE = 100000;
 
-    private static final Collection<ProxySubConnectionId> connections = Arrays.asList ( new ProxySubConnectionId ( "sub1" ), new ProxySubConnectionId ( "sub2" ) );
+    private static final Collection<ProxySubConnectionId> connections = Arrays.asList ( // 
+    new ProxySubConnectionId ( "sub1" ), //
+    new ProxySubConnectionId ( "sub2" ), //
+    new ProxySubConnectionId ( "sub3" ) //
+    );
 
     public static int getCount ()
     {
@@ -132,6 +138,8 @@ public class TestApplication1
 
         for ( final ProxySubConnectionId connection : connections )
         {
+            logger.info ( "String connection: " + connection.getName () );
+
             calls.add ( new Writer ( connection, pvh ) );
             calls.add ( new Writer ( connection, pvh ) );
             calls.add ( new Writer ( connection, pvh ) );

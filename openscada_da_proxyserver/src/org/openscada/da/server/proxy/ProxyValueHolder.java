@@ -132,9 +132,6 @@ public class ProxyValueHolder extends ProxyItemSupport
                 changed = changed || !diff.isEmpty ();
             }
 
-            // make a copy
-            div = new DataItemValue ( div );
-
             // check if we should send changes directly
             doSend = connection.equals ( this.currentConnection );
         }
@@ -146,6 +143,11 @@ public class ProxyValueHolder extends ProxyItemSupport
         }
     }
 
+    /**
+     * must be called synchronized
+     * @param id if the connection
+     * @return the data item value for this connection
+     */
     protected DataItemValue getItemValue ( final ProxySubConnectionId id )
     {
         DataItemValue div = this.values.get ( id );
@@ -217,7 +219,7 @@ public class ProxyValueHolder extends ProxyItemSupport
 
         synchronized ( this )
         {
-            final DataItemValue div = getItemValue ( this.currentConnection );
+            final DataItemValue div = getItemValue ( connection );
             div.setSubscriptionState ( subscriptionState );
             div.setSubscriptionError ( subscriptionError );
             doSend = connection.equals ( this.currentConnection );
@@ -231,6 +233,6 @@ public class ProxyValueHolder extends ProxyItemSupport
 
     public DataItemValue getCurrentValue ()
     {
-        return getItemValue ( this.currentConnection );
+        return this.values.get ( this.currentConnection );
     }
 }
