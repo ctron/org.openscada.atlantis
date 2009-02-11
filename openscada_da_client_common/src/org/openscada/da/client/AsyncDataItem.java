@@ -45,7 +45,6 @@ public class AsyncDataItem extends DataItem
 
             private final AtomicInteger i = new AtomicInteger ( 0 );
 
-            @Override
             public Thread newThread ( final Runnable r )
             {
                 final Thread t = new Thread ( r, "AsyncDataItem/" + itemId + "#" + this.i.getAndIncrement () );
@@ -72,7 +71,6 @@ public class AsyncDataItem extends DataItem
     {
         this.executor.execute ( new Runnable () {
 
-            @Override
             public void run ()
             {
                 AsyncDataItem.super.notifyObservers ( arg );
