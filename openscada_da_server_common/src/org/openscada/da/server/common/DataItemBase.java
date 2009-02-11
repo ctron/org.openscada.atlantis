@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.server.common.chain.DataItemBaseChained;
 
 /**
  * This is an abstract base class for the {@link DataItem} interface. It also supports
@@ -32,29 +33,29 @@ import org.openscada.da.core.DataItemInformation;
  */
 public abstract class DataItemBase implements DataItem
 {
-    protected ItemListener _listener;
+    protected ItemListener listener;
 
-    private DataItemInformation _information;
+    private final DataItemInformation _information;
 
-    public DataItemBase ( DataItemInformation information )
+    public DataItemBase ( final DataItemInformation information )
     {
-        _information = information;
+        this._information = information;
     }
 
     public DataItemInformation getInformation ()
     {
-        return _information;
+        return this._information;
     }
 
-    public synchronized void setListener ( ItemListener listener )
+    public synchronized void setListener ( final ItemListener listener )
     {
-        if ( _listener != listener )
+        if ( this.listener != listener )
         {
             handleListenerChange ( listener );
         }
     }
 
-    protected synchronized void handleListenerChange ( ItemListener listener )
+    protected synchronized void handleListenerChange ( final ItemListener listener )
     {
         if ( listener == null )
         {
@@ -63,18 +64,18 @@ public abstract class DataItemBase implements DataItem
                 ( (SuspendableDataItem)this ).suspend ();
             }
         }
-        else if ( _listener == null )
+        else if ( this.listener == null )
         {
             // we might need the listener in the wakeup call 
-            _listener = listener;
+            this.listener = listener;
             if ( this instanceof SuspendableDataItem )
             {
                 ( (SuspendableDataItem)this ).wakeup ();
             }
         }
-        _listener = listener;
+        this.listener = listener;
 
-        if ( _listener != null )
+        if ( this.listener != null )
         {
             Variant cacheValue = getCacheValue ();
             if ( cacheValue != null && cacheValue.isNull () )
@@ -104,24 +105,34 @@ public abstract class DataItemBase implements DataItem
     }
 
     /**
-     * Notify a data change without checking for a real change
+     * Notify a data change without checking for a real change.
+     * <p>
+     * See {@link #notifyData(Variant, Map, boolean)} when to use the method!
      * @param value the value to send
      * @param attributes the attributes to send
      */
-    protected void notifyData ( Variant value, Map<String, Variant> attributes )
+    protected void notifyData ( final Variant value, final Map<String, Variant> attributes )
     {
         notifyData ( value, attributes, false );
     }
 
     /**
-     * Notify a data change without checking for a real change
+     * Notify a data change without checking for a real change.
+     * <p>
+     * This method simply forwards the change notification to the currently connected listener. It does
+     * not provide any real difference check and should therefore only be called by implementations that
+     * check for difference first.
+     * <p>
+     * If you simple want to send data away without the need to check for differences first see
+     * {@link DataItemBaseChained}, {@link DataItemInput} or one of their derivations.
+     * 
      * @param value the value to send
      * @param attributes the attributes to send
      * @param cache cache bit
      */
-    public synchronized void notifyData ( Variant value, Map<String, Variant> attributes, boolean cache )
+    public synchronized void notifyData ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        ItemListener listener = _listener;
+        final ItemListener listener = this.listener;
         if ( listener != null )
         {
             listener.dataChanged ( this, value, attributes, cache );
