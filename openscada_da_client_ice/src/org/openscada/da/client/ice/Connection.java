@@ -149,7 +149,6 @@ public class Connection implements org.openscada.da.client.Connection
         }, 5 * 1000 );
     }
 
-    @Override
     public ConnectionInformation getConnectionInformation ()
     {
         return this.connectionInformation;
