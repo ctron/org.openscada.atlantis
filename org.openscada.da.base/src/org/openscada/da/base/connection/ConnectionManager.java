@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.base.item.DataItemHolder;
@@ -51,6 +52,9 @@ public class ConnectionManager
         {
             entry = new ConnectionManagerEntry ();
             entry.setConnection ( (Connection)Activator.createConnection ( ci ) );
+
+            setupConnection ( entry.getConnection () );
+
             entry.setItemManager ( new ItemManager ( entry.getConnection () ) );
             if ( connect )
             {
@@ -63,6 +67,15 @@ public class ConnectionManager
             fireConnectionsAdded ( Arrays.asList ( entry ) );
         }
         return entry;
+    }
+
+    /**
+     * configure the new connection
+     * @param connection the connection to configure
+     */
+    private void setupConnection ( final Connection connection )
+    {
+        connection.setExecutor ( Executors.newFixedThreadPool ( 1 ) );
     }
 
     public synchronized DataItemHolder getDataItemHolder ( final ConnectionInformation ci, final String itemId, final boolean connect )
