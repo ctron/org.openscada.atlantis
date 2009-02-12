@@ -8,7 +8,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="true"
-            class="org.openscada.da.client.chart.ChartView"
+            class="org.openscada.da.client.chart.view.ChartView2"
             id="org.openscada.da.client.chart.ChartView"
             name="%view.chartView.name"/>
    </extension>
@@ -19,7 +19,7 @@
             id="org.openscada.da.client.chart.oc1"
             objectClass="org.openscada.da.base.browser.DataItemEntry">
          <action
-               class="org.openscada.da.client.chart.OpenChartAction"
+               class="org.openscada.da.client.chart.action.OpenChartAction"
                id="org.openscada.da.client.chart.OpenChartAction"
                label="%action.viewAsChart.label"
                menubarPath="additions"/>
@@ -29,7 +29,7 @@
             id="org.openscada.da.client.chart.oc2"
             objectClass="org.openscada.da.base.realtime.ListEntry">
          <action
-               class="org.openscada.da.client.chart.OpenChartAction"
+               class="org.openscada.da.client.chart.action.OpenChartAction"
                id="org.openscada.da.client.chart.OpenChartAction"
                label="%action.viewAsChart.label"
                menubarPath="additions"/>

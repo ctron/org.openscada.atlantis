@@ -1,4 +1,4 @@
-package org.openscada.da.client.chart;
+package org.openscada.da.client.chart.action;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IStatus;
@@ -16,33 +16,33 @@ import org.eclipse.ui.PartInitException;
 import org.openscada.da.base.connection.ConnectionManager;
 import org.openscada.da.base.item.DataItemHolder;
 import org.openscada.da.base.item.ItemSelectionHelper;
+import org.openscada.da.client.chart.Activator;
+import org.openscada.da.client.chart.Messages;
+import org.openscada.da.client.chart.view.ChartView;
+import org.openscada.da.client.chart.view.ChartView2;
 
 public class OpenChartAction implements IViewActionDelegate, IObjectActionDelegate
 {
 
     private static Logger _log = Logger.getLogger ( OpenChartAction.class );
 
-    private IWorkbenchPartSite _site = null;
+    private IWorkbenchPartSite site = null;
 
-    private IStructuredSelection _selection = null;
-
-    public OpenChartAction ()
-    {
-    }
+    private IStructuredSelection selection = null;
 
     public void init ( final IViewPart view )
     {
-        this._site = view.getSite ();
+        this.site = view.getSite ();
     }
 
     public void run ( final IAction action )
     {
-        if ( this._selection == null )
+        if ( this.selection == null )
         {
             return;
         }
 
-        for ( final DataItemHolder item : ItemSelectionHelper.getSelectionHookedUp ( this._selection, ConnectionManager.getDefault () ) )
+        for ( final DataItemHolder item : ItemSelectionHelper.getSelectionHookedUp ( this.selection, ConnectionManager.getDefault () ) )
         {
             String secondaryId = item.getItemId ();
             secondaryId = secondaryId.replace ( "_", "__" ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -50,10 +50,14 @@ public class OpenChartAction implements IViewActionDelegate, IObjectActionDelega
 
             try
             {
-                final IViewPart viewer = this._site.getPage ().showView ( ChartView.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE );
+                final IViewPart viewer = this.site.getPage ().showView ( ChartView.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE );
                 if ( viewer instanceof ChartView )
                 {
                     ( (ChartView)viewer ).setDataItem ( item );
+                }
+                else if ( viewer instanceof ChartView2 )
+                {
+                    ( (ChartView2)viewer ).setDataItem ( item );
                 }
             }
             catch ( final PartInitException e )
@@ -74,17 +78,17 @@ public class OpenChartAction implements IViewActionDelegate, IObjectActionDelega
     {
         if ( selection instanceof IStructuredSelection )
         {
-            this._selection = (IStructuredSelection)selection;
+            this.selection = (IStructuredSelection)selection;
         }
         else
         {
-            this._selection = null;
+            this.selection = null;
         }
     }
 
     public void setActivePart ( final IAction action, final IWorkbenchPart targetPart )
     {
-        this._site = targetPart.getSite ();
+        this.site = targetPart.getSite ();
     }
 
 }

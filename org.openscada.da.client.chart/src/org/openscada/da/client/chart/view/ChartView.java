@@ -1,4 +1,4 @@
-package org.openscada.da.client.chart;
+package org.openscada.da.client.chart.view;
 
 import java.awt.BasicStroke;
 import java.util.Calendar;
@@ -32,6 +32,7 @@ import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.base.browser.HiveConnection;
 import org.openscada.da.base.item.DataItemHolder;
 import org.openscada.da.client.ItemUpdateListener;
+import org.openscada.da.client.chart.Messages;
 
 public class ChartView extends ViewPart implements ItemUpdateListener
 {
@@ -67,7 +68,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
         {
             this._dataset = new TimeSeriesCollection ();
 
-            this._series = new TimeSeries ( Messages.getString("ChartView.seriesLabel.values"), FixedMillisecond.class ); //$NON-NLS-1$
+            this._series = new TimeSeries ( Messages.getString ( "ChartView.seriesLabel.values" ), FixedMillisecond.class ); //$NON-NLS-1$
             this._dataset.addSeries ( this._series );
 
             this._chart = createChart ();
@@ -85,10 +86,10 @@ public class ChartView extends ViewPart implements ItemUpdateListener
 
     private JFreeChart createChart ()
     {
-        final ValueAxis timeAxis = new DateAxis ( Messages.getString("ChartView.axis.time") ); //$NON-NLS-1$
+        final ValueAxis timeAxis = new DateAxis ( Messages.getString ( "ChartView.axis.time" ) ); //$NON-NLS-1$
         timeAxis.setLowerMargin ( 0.02 ); // reduce the default margins 
         timeAxis.setUpperMargin ( 0.02 );
-        final NumberAxis valueAxis = new NumberAxis ( Messages.getString("ChartView.axis.value") ); //$NON-NLS-1$
+        final NumberAxis valueAxis = new NumberAxis ( Messages.getString ( "ChartView.axis.value" ) ); //$NON-NLS-1$
         valueAxis.setAutoRangeIncludesZero ( false ); // override default
         final XYPlot plot = new XYPlot ( this._dataset, timeAxis, valueAxis, null );
 
@@ -100,7 +101,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
         renderer.setBaseToolTipGenerator ( toolTipGenerator );
         plot.setRenderer ( renderer );
 
-        return new JFreeChart ( Messages.getString("ChartView.chartTitle"), JFreeChart.DEFAULT_TITLE_FONT, plot, false ); //$NON-NLS-1$
+        return new JFreeChart ( Messages.getString ( "ChartView.chartTitle" ), JFreeChart.DEFAULT_TITLE_FONT, plot, false ); //$NON-NLS-1$
     }
 
     @Override
