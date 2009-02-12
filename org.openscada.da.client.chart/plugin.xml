@@ -10,28 +10,28 @@
             allowMultiple="true"
             class="org.openscada.da.client.chart.ChartView"
             id="org.openscada.da.client.chart.ChartView"
-            name="Chart View"/>
+            name="%view.chartView.name"/>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.chart.oc1"
-            objectClass="org.openscada.da.client.test.impl.DataItemEntry">
+            objectClass="org.openscada.da.base.browser.DataItemEntry">
          <action
                class="org.openscada.da.client.chart.OpenChartAction"
                id="org.openscada.da.client.chart.OpenChartAction"
-               label="View as Chart"
+               label="%action.viewAsChart.label"
                menubarPath="additions"/>
       </objectContribution>
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.chart.oc2"
-            objectClass="org.openscada.da.client.test.views.realtime.ListEntry">
+            objectClass="org.openscada.da.base.realtime.ListEntry">
          <action
                class="org.openscada.da.client.chart.OpenChartAction"
                id="org.openscada.da.client.chart.OpenChartAction"
-               label="View as Chart"
+               label="%action.viewAsChart.label"
                menubarPath="additions"/>
       </objectContribution>
    </extension>
