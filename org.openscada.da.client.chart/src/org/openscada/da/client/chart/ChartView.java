@@ -37,7 +37,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
 {
     private static Logger _log = Logger.getLogger ( ChartView.class );
 
-    public final static String VIEW_ID = "org.openscada.da.client.chart.ChartView";
+    public final static String VIEW_ID = "org.openscada.da.client.chart.ChartView"; //$NON-NLS-1$
 
     private ChartComposite _frame = null;
 
@@ -67,7 +67,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
         {
             this._dataset = new TimeSeriesCollection ();
 
-            this._series = new TimeSeries ( "Values", FixedMillisecond.class );
+            this._series = new TimeSeries ( Messages.getString("ChartView.seriesLabel.values"), FixedMillisecond.class ); //$NON-NLS-1$
             this._dataset.addSeries ( this._series );
 
             this._chart = createChart ();
@@ -79,16 +79,16 @@ public class ChartView extends ViewPart implements ItemUpdateListener
         }
         catch ( final Exception e )
         {
-            _log.debug ( "Failed", e );
+            _log.debug ( "Failed", e ); //$NON-NLS-1$
         }
     }
 
     private JFreeChart createChart ()
     {
-        final ValueAxis timeAxis = new DateAxis ( "Time" );
+        final ValueAxis timeAxis = new DateAxis ( Messages.getString("ChartView.axis.time") ); //$NON-NLS-1$
         timeAxis.setLowerMargin ( 0.02 ); // reduce the default margins 
         timeAxis.setUpperMargin ( 0.02 );
-        final NumberAxis valueAxis = new NumberAxis ( "Value" );
+        final NumberAxis valueAxis = new NumberAxis ( Messages.getString("ChartView.axis.value") ); //$NON-NLS-1$
         valueAxis.setAutoRangeIncludesZero ( false ); // override default
         final XYPlot plot = new XYPlot ( this._dataset, timeAxis, valueAxis, null );
 
@@ -100,7 +100,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
         renderer.setBaseToolTipGenerator ( toolTipGenerator );
         plot.setRenderer ( renderer );
 
-        return new JFreeChart ( "Data Item Chart", JFreeChart.DEFAULT_TITLE_FONT, plot, false );
+        return new JFreeChart ( Messages.getString("ChartView.chartTitle"), JFreeChart.DEFAULT_TITLE_FONT, plot, false ); //$NON-NLS-1$
     }
 
     @Override
@@ -165,16 +165,16 @@ public class ChartView extends ViewPart implements ItemUpdateListener
         }
         if ( attributes != null )
         {
-            if ( attributes.containsKey ( "error" ) )
+            if ( attributes.containsKey ( "error" ) ) //$NON-NLS-1$
             {
                 final RegularTimePeriod time = new FixedMillisecond ( Calendar.getInstance ().getTime () );
-                if ( attributes.get ( "error" ) == null )
+                if ( attributes.get ( "error" ) == null ) //$NON-NLS-1$
                 {
                     triggerError ( false, time );
                 }
                 else
                 {
-                    triggerError ( attributes.get ( "error" ).asBoolean (), time );
+                    triggerError ( attributes.get ( "error" ).asBoolean (), time ); //$NON-NLS-1$
                 }
             }
 
@@ -270,7 +270,7 @@ public class ChartView extends ViewPart implements ItemUpdateListener
 
     protected void handleError ( final boolean state, final RegularTimePeriod time )
     {
-        _log.debug ( String.format ( "Handle error: %s (%s)", state, time ) );
+        _log.debug ( String.format ( "Handle error: %s (%s)", state, time ) ); //$NON-NLS-1$
 
         if ( state )
         {

@@ -45,8 +45,8 @@ public class OpenChartAction implements IViewActionDelegate, IObjectActionDelega
         for ( final DataItemHolder item : ItemSelectionHelper.getSelectionHookedUp ( this._selection, ConnectionManager.getDefault () ) )
         {
             String secondaryId = item.getItemId ();
-            secondaryId = secondaryId.replace ( "_", "__" );
-            secondaryId = secondaryId.replace ( ":", "_" );
+            secondaryId = secondaryId.replace ( "_", "__" ); //$NON-NLS-1$ //$NON-NLS-2$
+            secondaryId = secondaryId.replace ( ":", "_" ); //$NON-NLS-1$ //$NON-NLS-2$
 
             try
             {
@@ -58,13 +58,13 @@ public class OpenChartAction implements IViewActionDelegate, IObjectActionDelega
             }
             catch ( final PartInitException e )
             {
-                _log.error ( "Failed to create view", e );
-                Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Failed to create chart view", e ) );
+                _log.error ( "Failed to create view", e ); //$NON-NLS-1$
+                Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 0, Messages.getString ( "OpenChartAction.FailedToCreateChartView" ), e ) ); //$NON-NLS-1$
             }
             catch ( final Exception e )
             {
-                _log.error ( "Failed to create view", e );
-                Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 1, "Failed to create chart view", e ) );
+                _log.error ( "Failed to create view", e ); //$NON-NLS-1$
+                Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 1, Messages.getString ( "OpenChartAction.FailedToCreateChartView" ), e ) ); //$NON-NLS-1$
             }
 
         }
