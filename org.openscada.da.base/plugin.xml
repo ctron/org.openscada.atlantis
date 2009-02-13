@@ -5,14 +5,14 @@
          point="org.eclipse.ui.views">
       <category
             id="org.openscada.da.category"
-            name="OpenSCADA DA">
+            name="%category.openscada.da.name">
       </category>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
       <category
             id="org.openscada.da.category"
-            name="OpenSCADA DA">
+            name="%category.openscada.da.name">
       </category>
    </extension>
 

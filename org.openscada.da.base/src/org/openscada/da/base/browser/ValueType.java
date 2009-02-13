@@ -12,7 +12,7 @@ import org.openscada.rcp.da.client.Activator;
  */
 public enum ValueType
 {
-    NULL ( 10, "NULL" )
+    NULL ( 10, Messages.getString ( "ValueType.NULL.label" ) ) //$NON-NLS-1$
     {
         @Override
         public Variant convertTo ( final String value )
@@ -20,25 +20,25 @@ public enum ValueType
             return new Variant ();
         }
     },
-    STRING ( 20, "string" )
+    STRING ( 20, Messages.getString ( "ValueType.STRING.label" ) ) //$NON-NLS-1$
     {
         @Override
         public Variant convertTo ( String value )
         {
-            value = value.replace ( Activator.NATIVE_LS, "\n" );
+            value = value.replace ( Activator.NATIVE_LS, "\n" ); //$NON-NLS-1$
             return new Variant ( value );
         }
     },
-    STRING_CRLF ( 21, "string (crlf)" )
+    STRING_CRLF ( 21, Messages.getString ( "ValueType.STRING_CRLF.label" ) ) //$NON-NLS-1$
     {
         @Override
         public Variant convertTo ( String value )
         {
-            value = value.replace ( Activator.NATIVE_LS, "\r\n" );
+            value = value.replace ( Activator.NATIVE_LS, "\r\n" ); //$NON-NLS-1$
             return new Variant ( value );
         }
     },
-    INT ( 30, "32 bit signed integer" )
+    INT ( 30, Messages.getString ( "ValueType.INT.label" ) ) //$NON-NLS-1$
     {
         @Override
         public Variant convertTo ( final String value ) throws NotConvertableException
@@ -54,7 +54,7 @@ public enum ValueType
             }
         }
     },
-    LONG ( 40, "64 bit signed integer" )
+    LONG ( 40, Messages.getString ( "ValueType.LONG.label" ) ) //$NON-NLS-1$
     {
         @Override
         public Variant convertTo ( final String value ) throws NotConvertableException
@@ -70,7 +70,7 @@ public enum ValueType
             }
         }
     },
-    DOUBLE ( 50, "double floating point" )
+    DOUBLE ( 50, Messages.getString ( "ValueType.DOUBLE.label" ) ) //$NON-NLS-1$
     {
         @Override
         public Variant convertTo ( final String value ) throws NotConvertableException
@@ -86,7 +86,7 @@ public enum ValueType
             }
         }
     },
-    BOOLEAN ( 60, "boolean" )
+    BOOLEAN ( 60, Messages.getString ( "ValueType.BOOLEAN.label" ) ) //$NON-NLS-1$
     {
         @Override
         public Variant convertTo ( final String value ) throws NotConvertableException

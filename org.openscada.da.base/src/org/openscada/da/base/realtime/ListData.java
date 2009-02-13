@@ -110,7 +110,7 @@ public class ListData implements Observer
 
     protected void fireAdded ( final ListEntry[] entries )
     {
-        _log.debug ( String.format ( "Fire add for %d items", entries.length ) );
+        _log.debug ( String.format ( "Fire add for %d items", entries.length ) ); //$NON-NLS-1$
         for ( final Listener listener : this._listeners )
         {
             try
@@ -119,7 +119,7 @@ public class ListData implements Observer
             }
             catch ( final Exception e )
             {
-                _log.warn ( "Failed while sending add notification", e );
+                _log.warn ( "Failed while sending add notification", e ); //$NON-NLS-1$
             }
         }
     }
@@ -134,14 +134,14 @@ public class ListData implements Observer
             }
             catch ( final Exception e )
             {
-                _log.warn ( "Failed while sending remove notification", e );
+                _log.warn ( "Failed while sending remove notification", e ); //$NON-NLS-1$
             }
         }
     }
 
     protected void fireUpdated ( final ListEntry[] entries )
     {
-        _log.debug ( "Updating items: " + entries.length );
+        _log.debug ( "Updating items: " + entries.length ); //$NON-NLS-1$
 
         for ( final Listener listener : this._listeners )
         {
@@ -151,7 +151,7 @@ public class ListData implements Observer
             }
             catch ( final Exception e )
             {
-                _log.warn ( "Failed while sending update notification", e );
+                _log.warn ( "Failed while sending update notification", e ); //$NON-NLS-1$
             }
         }
     }

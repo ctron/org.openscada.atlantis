@@ -29,18 +29,18 @@ public class VariantHelper
         try
         {
             if ( vt == null )
-                return "VT_UNKNOWN";
+                return "VT_UNKNOWN"; //$NON-NLS-1$
 
             StringBuffer str = new StringBuffer ();
             str.append ( vt.toString () );
-            str.append ( "[" );
+            str.append ( "[" ); //$NON-NLS-1$
             switch ( vt )
             {
             case NULL:
-                str.append ( "<null>" );
+                str.append ( "<null>" ); //$NON-NLS-1$
                 break;
             case BOOLEAN:
-                str.append ( variant.asBoolean () ? "true" : "false" );
+                str.append ( variant.asBoolean () ? "true" : "false" ); //$NON-NLS-1$ //$NON-NLS-2$
                 break;
             case DOUBLE:
                 str.append ( variant.asDouble () );
@@ -55,12 +55,12 @@ public class VariantHelper
                 str.append ( variant.asString () );
                 break;
             }
-            str.append ( "]" );
+            str.append ( "]" ); //$NON-NLS-1$
             return str.toString ();
         }
         catch ( Exception e )
         {
-            return "VT_ERROR[" + e.getMessage () + "]";
+            return "VT_ERROR[" + e.getMessage () + "]"; //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 

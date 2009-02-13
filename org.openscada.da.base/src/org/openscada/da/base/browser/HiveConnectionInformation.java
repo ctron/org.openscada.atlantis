@@ -27,14 +27,14 @@ public class HiveConnectionInformation implements Serializable
      * Serializeable ID 
      */
     private static final long serialVersionUID = 4226848319802862860L;
-    
-    private String _connectionString = "";
-    
+
+    private String _connectionString = ""; //$NON-NLS-1$
+
     public HiveConnectionInformation ()
     {
         super ();
     }
-    
+
     public HiveConnectionInformation ( String connectionString )
     {
         super ();

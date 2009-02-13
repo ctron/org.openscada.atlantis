@@ -28,7 +28,7 @@ public class DataItemHolder
     private Connection connection;
 
     private ItemManager itemManager;
-    
+
     private String itemId;
 
     public DataItemHolder ( Connection connection, ItemManager itemManager, String itemId )

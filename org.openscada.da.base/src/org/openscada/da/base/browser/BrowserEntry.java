@@ -30,22 +30,25 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.openscada.core.Variant;
 
-
 public class BrowserEntry extends Observable implements IPropertySource
 {
-    @SuppressWarnings("unused")
+    @SuppressWarnings ( "unused" )
     private static Logger _log = Logger.getLogger ( BrowserEntry.class );
-    
+
     private String _name = null;
+
     private Map<String, Variant> _attributes = null;
+
     private HiveConnection _connection = null;
+
     private FolderEntry _parent = null;
-    
-    private enum Properties {
+
+    private enum Properties
+    {
         NAME;
     }
-    
-    public BrowserEntry ( String name,  Map<String, Variant> attributes, HiveConnection connection, FolderEntry parent )
+
+    public BrowserEntry ( String name, Map<String, Variant> attributes, HiveConnection connection, FolderEntry parent )
     {
         _name = name;
         _connection = connection;
@@ -73,9 +76,8 @@ public class BrowserEntry extends Observable implements IPropertySource
         return _attributes;
     }
 
-    
     // IPropertySource
-    
+
     public Object getEditableValue ()
     {
         return _name;
@@ -84,40 +86,40 @@ public class BrowserEntry extends Observable implements IPropertySource
     protected void fillPropertyDescriptors ( List<IPropertyDescriptor> list )
     {
         {
-            PropertyDescriptor pd = new PropertyDescriptor ( Properties.NAME, "Name" );
-            pd.setCategory ( "Entry Info" );
+            PropertyDescriptor pd = new PropertyDescriptor ( Properties.NAME, Messages.getString ( "BrowserEntry.PropertyDescriptor.name.name" ) ); //$NON-NLS-1$
+            pd.setCategory ( Messages.getString ( "BrowserEntry.PropertyDescriptor.entryInfo.category" ) ); //$NON-NLS-1$
             list.add ( pd );
         }
-        
+
         for ( Map.Entry<String, Variant> entry : _attributes.entrySet () )
         {
-            PropertyDescriptor pd = new PropertyDescriptor ( entry.getKey (), entry.getKey() );
+            PropertyDescriptor pd = new PropertyDescriptor ( entry.getKey (), entry.getKey () );
             pd.setAlwaysIncompatible ( true );
-            pd.setCategory ( "Entry Attributes" );
-            
+            pd.setCategory ( Messages.getString ( "BrowserEntry.PropertyDescriptor.entryAttributes.category" ) ); //$NON-NLS-1$
+
             list.add ( pd );
         }
     }
-    
+
     public IPropertyDescriptor[] getPropertyDescriptors ()
     {
         List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor> ();
-        
+
         fillPropertyDescriptors ( list );
-        
-        return list.toArray ( new IPropertyDescriptor[list.size()] );
+
+        return list.toArray ( new IPropertyDescriptor[list.size ()] );
     }
 
     public Object getPropertyValue ( Object id )
     {
-        if ( id.equals ( Properties.NAME ))
+        if ( id.equals ( Properties.NAME ) )
             return _name;
-        
-        if ( !(id instanceof String) )
+
+        if ( ! ( id instanceof String ) )
             return null;
-        
+
         String name = (String)id;
-        
+
         return _attributes.get ( name ).asString ( null );
     }
 

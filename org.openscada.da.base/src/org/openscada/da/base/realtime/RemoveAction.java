@@ -40,7 +40,7 @@ public class RemoveAction extends Action implements ISelectionChangedListener, I
 
     public RemoveAction ( final RealtimeListAdapter view )
     {
-        super ( "Remove", Action.AS_PUSH_BUTTON );
+        super ( Messages.getString ( "RemoveAction.Title" ), Action.AS_PUSH_BUTTON ); //$NON-NLS-1$
 
         this.view = view;
     }

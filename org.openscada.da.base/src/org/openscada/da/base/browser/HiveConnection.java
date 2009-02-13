@@ -102,7 +102,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
         setChanged ();
         notifyObservers ();
 
-        _log.debug ( "Initiating connection..." );
+        _log.debug ( "Initiating connection..." ); //$NON-NLS-1$
 
         try
         {
@@ -110,9 +110,9 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
         }
         catch ( final Exception e )
         {
-            _log.error ( "Failed to start connection", e );
+            _log.error ( "Failed to start connection", e ); //$NON-NLS-1$
         }
-        _log.debug ( "Connection fired up..." );
+        _log.debug ( "Connection fired up..." ); //$NON-NLS-1$
     }
 
     public void disconnect ()
@@ -137,12 +137,12 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
     private synchronized void performStateChange ( final ConnectionState state, final Throwable error )
     {
-        _log.debug ( String.format ( "State Change to %s (%s)", state, error ) );
+        _log.debug ( String.format ( "State Change to %s (%s)", state, error ) ); //$NON-NLS-1$
 
         switch ( state )
         {
         case BOUND:
-            this.rootFolder = new FolderEntry ( "", new HashMap<String, Variant> (), null, this, true );
+            this.rootFolder = new FolderEntry ( "", new HashMap<String, Variant> (), null, this, true ); //$NON-NLS-1$
             break;
         case CLOSED:
             if ( this.rootFolder != null )
@@ -160,7 +160,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
         if ( error != null )
         {
-            _log.info ( "Connection failed with additional error", error );
+            _log.info ( "Connection failed with additional error", error ); //$NON-NLS-1$
         }
     }
 
@@ -181,7 +181,7 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
     public boolean testAttribute ( final Object target, final String name, final String value )
     {
-        if ( name.equals ( "state" ) )
+        if ( name.equals ( "state" ) ) //$NON-NLS-1$
         {
             return this.connection.getState ().equals ( ConnectionState.valueOf ( value ) );
         }
@@ -202,14 +202,14 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
     protected void fillPropertyDescriptors ( final List<IPropertyDescriptor> list )
     {
         {
-            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.URI, "URI" );
-            pd.setCategory ( "Connection Information" );
+            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.URI, Messages.getString ( "HiveConnection.PropertyDescriptor.uri.name" ) ); //$NON-NLS-1$
+            pd.setCategory ( Messages.getString ( "HiveConnection.PropertyDescriptor.connectionInformation.category" ) ); //$NON-NLS-1$
             pd.setAlwaysIncompatible ( true );
             list.add ( pd );
         }
         {
-            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.STATE, "State" );
-            pd.setCategory ( "Connection" );
+            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.STATE, Messages.getString ( "HiveConnection.PropertyDescriptor.state.name" ) ); //$NON-NLS-1$
+            pd.setCategory ( Messages.getString ( "HiveConnection.PropertyDescriptor.connection.category" ) ); //$NON-NLS-1$
             pd.setAlwaysIncompatible ( true );
             list.add ( pd );
         }

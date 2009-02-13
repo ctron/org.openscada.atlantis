@@ -56,21 +56,21 @@ public class DataItemEntry extends BrowserEntry implements IAdaptable
 
     public String getAsSecondaryId ()
     {
-        return this._id.replace ( "_", "__" ).replace ( ':', '_' );
+        return this._id.replace ( "_", "__" ).replace ( ':', '_' ); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override
     protected void fillPropertyDescriptors ( final List<IPropertyDescriptor> list )
     {
         {
-            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.ITEM_ID, "Item ID" );
-            pd.setCategory ( "Data Item Info" );
+            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.ITEM_ID, Messages.getString ( "DataItemEntry.PropertyDescriptor.item.name" ) ); //$NON-NLS-1$
+            pd.setCategory ( Messages.getString ( "DataItemEntry.PropertyDescriptor.item.category" ) ); //$NON-NLS-1$
             pd.setAlwaysIncompatible ( true );
             list.add ( pd );
         }
         {
-            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.IO_DIRECTION, "IO Direction" );
-            pd.setCategory ( "Data Item Info" );
+            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.IO_DIRECTION, Messages.getString ( "DataItemEntry.PropertyDescriptor.ioDirection.name" ) ); //$NON-NLS-1$
+            pd.setCategory ( Messages.getString ( "DataItemEntry.PropertyDescriptor.item.category" ) ); //$NON-NLS-1$
             list.add ( pd );
         }
         super.fillPropertyDescriptors ( list );

@@ -49,7 +49,7 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
             {
                 try
                 {
-                    return this.resourceManager.createImage ( ImageDescriptor.createFromFile ( ItemListLabelProvider.class, "icons/alarm.png" ) );
+                    return this.resourceManager.createImage ( ImageDescriptor.createFromFile ( ItemListLabelProvider.class, "icons/alarm.png" ) ); //$NON-NLS-1$
                 }
                 catch ( final Throwable e )
                 {
@@ -72,7 +72,7 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
             case 1:
                 if ( listEntry.getSubscriptionError () != null )
                 {
-                    return String.format ( "%s (%s)", listEntry.getSubscriptionChange (), listEntry.getSubscriptionError ().getMessage () );
+                    return String.format ( "%s (%s)", listEntry.getSubscriptionChange (), listEntry.getSubscriptionError ().getMessage () ); //$NON-NLS-1$
                 }
                 else
                 {
@@ -86,7 +86,7 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
             case 3:
                 if ( listEntry.getValue () != null )
                 {
-                    return listEntry.getValue ().asString ( "<null>" );
+                    return listEntry.getValue ().asString ( "<null>" ); //$NON-NLS-1$
                 }
             default:
                 return null;
@@ -107,7 +107,7 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
             case 3:
                 if ( ap.value != null )
                 {
-                    return ap.value.asString ( "<null>" );
+                    return ap.value.asString ( "<null>" ); //$NON-NLS-1$
                 }
             default:
                 return null;
@@ -182,17 +182,17 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
 
     private boolean isManual ( final ListEntry entry )
     {
-        return isAttribute ( entry, "org.openscada.da.manual.active", false );
+        return isAttribute ( entry, "org.openscada.da.manual.active", false ); //$NON-NLS-1$
     }
 
     private boolean isAlarm ( final ListEntry entry )
     {
-        return isAttribute ( entry, "alarm", false );
+        return isAttribute ( entry, "alarm", false ); //$NON-NLS-1$
     }
 
     private boolean isError ( final ListEntry entry )
     {
-        return isAttribute ( entry, "error", false );
+        return isAttribute ( entry, "error", false ); //$NON-NLS-1$
     }
 
     @Override

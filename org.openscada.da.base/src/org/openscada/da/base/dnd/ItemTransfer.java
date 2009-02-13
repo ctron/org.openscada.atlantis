@@ -17,7 +17,7 @@ public class ItemTransfer extends ByteArrayTransfer
 {
     private static ItemTransfer instance = new ItemTransfer ();
 
-    private static final String TYPE_NAME = "openscada-da-item-transfer-format";
+    private static final String TYPE_NAME = "openscada-da-item-transfer-format"; //$NON-NLS-1$
 
     private static final int TYPEID = registerType ( TYPE_NAME );
 

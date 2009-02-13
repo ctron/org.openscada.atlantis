@@ -30,33 +30,35 @@ import org.openscada.da.core.browser.Entry;
 public abstract class FolderUpdater extends Observable
 {
     private static Logger _log = Logger.getLogger ( FolderUpdater.class );
-    
+
     private HiveConnection _connection = null;
+
     private FolderEntry _folder = null;
+
     private boolean _autoInitialize = true;
-    
+
     protected Map<String, BrowserEntry> _entries = null;
-    
+
     public FolderUpdater ( HiveConnection connection, FolderEntry folder, boolean autoInitialize )
     {
         _folder = folder;
         _connection = connection;
         _autoInitialize = autoInitialize;
     }
-    
+
     synchronized public BrowserEntry[] list ()
     {
         if ( _entries == null )
         {
             if ( _autoInitialize )
                 init ();
-            
+
             return new BrowserEntry[0];
         }
-        
-        return _entries.values ().toArray ( new BrowserEntry[_entries.size()] );
+
+        return _entries.values ().toArray ( new BrowserEntry[_entries.size ()] );
     }
-    
+
     protected Map<String, BrowserEntry> convert ( Collection<Entry> entries )
     {
         Map<String, BrowserEntry> list = new HashMap<String, BrowserEntry> ();
@@ -66,15 +68,15 @@ public abstract class FolderUpdater extends Observable
             if ( entry instanceof org.openscada.da.core.browser.FolderEntry )
             {
                 FolderEntry folder = new FolderEntry ( entry.getName (), entry.getAttributes (), _folder, getConnection (), true );
-                list.put ( entry.getName (), folder ); 
+                list.put ( entry.getName (), folder );
             }
             else if ( entry instanceof org.openscada.da.core.browser.DataItemEntry )
             {
                 org.openscada.da.core.browser.DataItemEntry itemEntry = (org.openscada.da.core.browser.DataItemEntry)entry;
-                list.put ( entry.getName (), new DataItemEntry ( entry.getName(), entry.getAttributes (), _folder, getConnection (), itemEntry.getId (), itemEntry.getIODirections () ) ); 
+                list.put ( entry.getName (), new DataItemEntry ( entry.getName (), entry.getAttributes (), _folder, getConnection (), itemEntry.getId (), itemEntry.getIODirections () ) );
             }
             else
-                _log.warn ( "Unknown entry type in tree: " + entry.getClass ().getName () );
+                _log.warn ( "Unknown entry type in tree: " + entry.getClass ().getName () ); //$NON-NLS-1$
             i++;
         }
         return list;
@@ -84,7 +86,7 @@ public abstract class FolderUpdater extends Observable
     {
         return _connection;
     }
-    
+
     synchronized protected void update ( Map<String, BrowserEntry> newEntries )
     {
         // if we don't have content it is quite easy
@@ -100,7 +102,7 @@ public abstract class FolderUpdater extends Observable
         {
             if ( entry.getValue () instanceof FolderEntry )
             {
-                ((FolderEntry)entry.getValue ()).dispose (); 
+                ( (FolderEntry)entry.getValue () ).dispose ();
             }
         }
 
@@ -115,7 +117,7 @@ public abstract class FolderUpdater extends Observable
         setChanged ();
         notifyObservers ();
     }
-    
+
     synchronized public void clear ()
     {
         if ( _entries != null )
@@ -131,7 +133,7 @@ public abstract class FolderUpdater extends Observable
             _entries.clear ();
             notifyChange ();
         }
-        
+
         _entries = null;
     }
 
@@ -139,8 +141,9 @@ public abstract class FolderUpdater extends Observable
     {
         return _folder;
     }
-    
+
     public abstract void dispose ();
+
     public abstract void init ();
 
     public boolean isAutoInitialize ()

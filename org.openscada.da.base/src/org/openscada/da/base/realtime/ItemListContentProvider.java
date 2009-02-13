@@ -140,7 +140,7 @@ public class ItemListContentProvider implements ITreeContentProvider, Listener
         }
         catch ( final Exception e )
         {
-            _log.warn ( "Failed to notify viewer", e );
+            _log.warn ( "Failed to notify viewer", e ); //$NON-NLS-1$
         }
     }
 
@@ -177,7 +177,7 @@ public class ItemListContentProvider implements ITreeContentProvider, Listener
         }
         catch ( final Exception e )
         {
-            _log.warn ( "Failed to notify viewer", e );
+            _log.warn ( "Failed to notify viewer", e ); //$NON-NLS-1$
         }
     }
 
@@ -214,7 +214,7 @@ public class ItemListContentProvider implements ITreeContentProvider, Listener
         }
         catch ( final Exception e )
         {
-            _log.warn ( "Failed to notify viewer", e );
+            _log.warn ( "Failed to notify viewer", e ); //$NON-NLS-1$
         }
     }
 

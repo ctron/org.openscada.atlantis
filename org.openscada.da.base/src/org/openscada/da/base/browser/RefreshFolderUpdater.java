@@ -48,7 +48,7 @@ public class RefreshFolderUpdater extends FolderUpdater
             return;
         }
 
-        this._refreshJob = new Job ( "Refresh..." ) {
+        this._refreshJob = new Job ( Messages.getString ( "RefreshFolderUpdater.RefreshJob.name" ) ) { //$NON-NLS-1$
 
             @Override
             protected IStatus run ( final IProgressMonitor monitor )
@@ -56,11 +56,11 @@ public class RefreshFolderUpdater extends FolderUpdater
                 try
                 {
                     performRefresh ( monitor );
-                    return new OperationStatus ( OperationStatus.OK, Activator.PLUGIN_ID, 0, "", null );
+                    return new OperationStatus ( OperationStatus.OK, Activator.PLUGIN_ID, 0, "", null ); //$NON-NLS-1$
                 }
                 catch ( final Exception e )
                 {
-                    return new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, "Failed to refresh", e );
+                    return new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, Messages.getString ( "RefreshFolderUpdater.ErrorCondition.1" ), e ); //$NON-NLS-1$
                 }
                 finally
                 {
@@ -75,7 +75,7 @@ public class RefreshFolderUpdater extends FolderUpdater
 
     private void performRefresh ( final IProgressMonitor monitor ) throws Exception
     {
-        monitor.beginTask ( "Refreshing tree", 1 );
+        monitor.beginTask ( Messages.getString ( "RefreshFolderUpdater.RefreshTask.message" ), 1 ); //$NON-NLS-1$
 
         final Entry[] entries = getConnection ().getConnection ().browse ( getFolder ().getLocation () );
 
@@ -85,7 +85,7 @@ public class RefreshFolderUpdater extends FolderUpdater
 
         for ( final Map.Entry<String, BrowserEntry> entry : this._entries.entrySet () )
         {
-            _log.debug ( "Entry: " + entry.getKey () );
+            _log.debug ( "Entry: " + entry.getKey () ); //$NON-NLS-1$
         }
 
         monitor.worked ( 1 );

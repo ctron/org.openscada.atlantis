@@ -50,7 +50,7 @@ public class FolderEntry extends BrowserEntry implements Observer
     @Override
     protected void finalize () throws Throwable
     {
-        _log.debug ( "Finalized: " + getLocation ().toString () );
+        _log.debug ( "Finalized: " + getLocation ().toString () ); //$NON-NLS-1$
         dispose ();
         super.finalize ();
     }
@@ -64,7 +64,7 @@ public class FolderEntry extends BrowserEntry implements Observer
         }
         catch ( final Exception e )
         {
-            _log.warn ( "Disposing failed", e );
+            _log.warn ( "Disposing failed", e ); //$NON-NLS-1$
         }
 
     }
@@ -105,7 +105,7 @@ public class FolderEntry extends BrowserEntry implements Observer
     // update from subcsription
     public void update ( final Observable o, final Object arg )
     {
-        _log.debug ( "Update: " + o + "/" + arg );
+        _log.debug ( "Update: " + o + "/" + arg ); //$NON-NLS-1$ //$NON-NLS-2$
         if ( o == this._updater )
         {
             this._connection.notifyFolderChange ( this );
