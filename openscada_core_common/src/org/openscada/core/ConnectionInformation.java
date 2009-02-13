@@ -51,18 +51,18 @@ public class ConnectionInformation
 
     private Map<String, String> _properties = new HashMap<String, String> ();
 
-    public static ConnectionInformation fromURI ( String uri )
+    public static ConnectionInformation fromURI ( final String uri )
     {
         return fromURI ( URI.create ( uri ) );
     }
 
-    public static ConnectionInformation fromURI ( URI uri )
+    public static ConnectionInformation fromURI ( final URI uri )
     {
-        URI subUri = URI.create ( uri.getRawSchemeSpecificPart () );
+        final URI subUri = URI.create ( uri.getRawSchemeSpecificPart () );
 
         try
         {
-            ConnectionInformation ci = new ConnectionInformation ();
+            final ConnectionInformation ci = new ConnectionInformation ();
             ci._interface = uri.getScheme ();
             ci._driver = subUri.getScheme ();
             ci._target = subUri.getHost ();
@@ -77,7 +77,9 @@ public class ConnectionInformation
                 // remove leading slash since it would create an empty first subtarget
                 String path = subUri.getPath ();
                 if ( path.startsWith ( "/" ) )
+                {
                     path = path.substring ( 1 );
+                }
 
                 if ( path.length () > 0 )
                 {
@@ -88,11 +90,15 @@ public class ConnectionInformation
             // parse user info
             if ( subUri.getUserInfo () != null )
             {
-                String[] userInfo = subUri.getRawUserInfo ().split ( "\\:" );
+                final String[] userInfo = subUri.getRawUserInfo ().split ( "\\:" );
                 if ( userInfo.length > 0 )
+                {
                     ci._properties.put ( "user", URLDecoder.decode ( userInfo[0], "utf-8" ) );
+                }
                 if ( userInfo.length > 1 )
+                {
                     ci._properties.put ( "password", URLDecoder.decode ( userInfo[1], "utf-8" ) );
+                }
             }
 
             // parse query
@@ -100,14 +106,14 @@ public class ConnectionInformation
             {
                 if ( subUri.getRawQuery ().length () > 0 )
                 {
-                    Pattern p = Pattern.compile ( "(.*?)=(.*)" );
-                    for ( String pair : subUri.getRawQuery ().split ( "\\&" ) )
+                    final Pattern p = Pattern.compile ( "(.*?)=(.*)" );
+                    for ( final String pair : subUri.getRawQuery ().split ( "\\&" ) )
                     {
-                        Matcher m = p.matcher ( pair );
+                        final Matcher m = p.matcher ( pair );
                         if ( m.matches () )
                         {
-                            String key = URLDecoder.decode ( m.group ( 1 ), "utf-8" );
-                            String value = URLDecoder.decode ( m.group ( 2 ), "utf-8" );
+                            final String key = URLDecoder.decode ( m.group ( 1 ), "utf-8" );
+                            final String value = URLDecoder.decode ( m.group ( 2 ), "utf-8" );
                             ci._properties.put ( key, value );
                         }
                         else
@@ -120,7 +126,7 @@ public class ConnectionInformation
 
             return ci;
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             return null;
         }
@@ -132,16 +138,16 @@ public class ConnectionInformation
         try
         {
             String userInfo = null;
-            String user = _properties.get ( "user" );
-            String password = _properties.get ( "password" );
+            final String user = this._properties.get ( "user" );
+            final String password = this._properties.get ( "password" );
             String subtargets = null;
             String query = null;
 
             // prepare subtargets
-            if ( _subtargets.size () > 0 )
+            if ( this._subtargets.size () > 0 )
             {
                 subtargets = "";
-                for ( String subtarget : _subtargets )
+                for ( final String subtarget : this._subtargets )
                 {
                     subtargets += "/";
                     subtargets += URLEncoder.encode ( subtarget, "utf-8" );
@@ -149,14 +155,18 @@ public class ConnectionInformation
             }
 
             // perpare properties
-            _properties.remove ( "user" );
-            _properties.remove ( "password" );
-            for ( Map.Entry<String, String> entry : _properties.entrySet () )
+            this._properties.remove ( "user" );
+            this._properties.remove ( "password" );
+            for ( final Map.Entry<String, String> entry : this._properties.entrySet () )
             {
                 if ( query == null )
+                {
                     query = "?";
+                }
                 else
+                {
                     query += "&";
+                }
                 query += URLEncoder.encode ( entry.getKey (), "utf-8" );
                 query += "=";
                 query += URLEncoder.encode ( entry.getValue (), "utf-8" );
@@ -164,27 +174,39 @@ public class ConnectionInformation
 
             // prepare user info
             if ( user != null && password != null )
+            {
                 userInfo = URLEncoder.encode ( user, "utf-8" ) + ":" + URLEncoder.encode ( password, "utf-8" );
+            }
             else if ( user != null )
+            {
                 userInfo = URLEncoder.encode ( user, "utf-8" );
+            }
 
             String uri = "";
-            
-            uri += URLEncoder.encode ( _interface, "utf-8" ) + ":" + URLEncoder.encode ( _driver, "utf-8" ) + "://";
+
+            uri += URLEncoder.encode ( this._interface, "utf-8" ) + ":" + URLEncoder.encode ( this._driver, "utf-8" ) + "://";
             if ( userInfo != null )
+            {
                 uri += userInfo + "@";
-            
-            uri += URLEncoder.encode ( _target, "utf-8" );
-            if ( _secondaryTarget != null )
-                uri += ":" + _secondaryTarget;
-            if ( subtargets != null)
+            }
+
+            uri += URLEncoder.encode ( this._target, "utf-8" );
+            if ( this._secondaryTarget != null )
+            {
+                uri += ":" + this._secondaryTarget;
+            }
+            if ( subtargets != null )
+            {
                 uri += subtargets;
+            }
             if ( query != null )
+            {
                 uri += query;
-            
+            }
+
             return uri;
         }
-        catch ( UnsupportedEncodingException e )
+        catch ( final UnsupportedEncodingException e )
         {
             return null;
         }
@@ -192,135 +214,166 @@ public class ConnectionInformation
 
     public String getDriver ()
     {
-        return _driver;
+        return this._driver;
     }
 
-    public void setDriver ( String driver )
+    public void setDriver ( final String driver )
     {
-        _driver = driver;
+        this._driver = driver;
     }
 
     public String getInterface ()
     {
-        return _interface;
+        return this._interface;
     }
 
-    public void setInterface ( String interface1 )
+    public void setInterface ( final String interface1 )
     {
-        _interface = interface1;
+        this._interface = interface1;
     }
 
     public Integer getSecondaryTarget ()
     {
-        return _secondaryTarget;
+        return this._secondaryTarget;
     }
 
-    public void setSecondaryTarget ( Integer secondaryTarget )
+    public void setSecondaryTarget ( final Integer secondaryTarget )
     {
-        _secondaryTarget = secondaryTarget;
+        this._secondaryTarget = secondaryTarget;
     }
 
     public List<String> getSubtargets ()
     {
-        return _subtargets;
+        return this._subtargets;
     }
 
-    public void setSubtargets ( List<String> subtargets )
+    public void setSubtargets ( final List<String> subtargets )
     {
-        _subtargets = subtargets;
+        this._subtargets = subtargets;
     }
 
     public String getTarget ()
     {
-        return _target;
+        return this._target;
     }
 
-    public void setTarget ( String target )
+    public void setTarget ( final String target )
     {
-        _target = target;
+        this._target = target;
     }
 
     public Map<String, String> getProperties ()
     {
-        return _properties;
+        return this._properties;
     }
 
-    public void setProperties ( Map<String, String> properties )
+    public void setProperties ( final Map<String, String> properties )
     {
-        _properties = properties;
+        this._properties = properties;
     }
 
     public boolean isValid ()
     {
-        return _driver != null && _interface != null && _properties != null && _subtargets != null && _target != null;
+        return this._driver != null && this._interface != null && this._properties != null && this._subtargets != null && this._target != null;
     }
 
     @Override
     public int hashCode ()
     {
-        final int PRIME = 31;
+        final int prime = 31;
         int result = 1;
-        result = PRIME * result + ( ( _driver == null ) ? 0 : _driver.hashCode () );
-        result = PRIME * result + ( ( _interface == null ) ? 0 : _interface.hashCode () );
-        result = PRIME * result + ( ( _properties == null ) ? 0 : _properties.hashCode () );
-        result = PRIME * result + ( ( _secondaryTarget == null ) ? 0 : _secondaryTarget.hashCode () );
-        result = PRIME * result + ( ( _subtargets == null ) ? 0 : _subtargets.hashCode () );
-        result = PRIME * result + ( ( _target == null ) ? 0 : _target.hashCode () );
+        result = prime * result + ( this._driver == null ? 0 : this._driver.hashCode () );
+        result = prime * result + ( this._interface == null ? 0 : this._interface.hashCode () );
+        result = prime * result + ( this._properties == null ? 0 : this._properties.hashCode () );
+        result = prime * result + ( this._secondaryTarget == null ? 0 : this._secondaryTarget.hashCode () );
+        result = prime * result + ( this._subtargets == null ? 0 : this._subtargets.hashCode () );
+        result = prime * result + ( this._target == null ? 0 : this._target.hashCode () );
         return result;
     }
 
     @Override
-    public boolean equals ( Object obj )
+    public boolean equals ( final Object obj )
     {
         if ( this == obj )
+        {
             return true;
+        }
         if ( obj == null )
+        {
             return false;
-        if ( getClass () != obj.getClass () )
+        }
+        if ( ! ( obj instanceof ConnectionInformation ) )
+        {
             return false;
+        }
         final ConnectionInformation other = (ConnectionInformation)obj;
-        if ( _driver == null )
+        if ( this._driver == null )
         {
             if ( other._driver != null )
+            {
                 return false;
+            }
         }
-        else if ( !_driver.equals ( other._driver ) )
+        else if ( !this._driver.equals ( other._driver ) )
+        {
             return false;
-        if ( _interface == null )
+        }
+        if ( this._interface == null )
         {
             if ( other._interface != null )
+            {
                 return false;
+            }
         }
-        else if ( !_interface.equals ( other._interface ) )
+        else if ( !this._interface.equals ( other._interface ) )
+        {
             return false;
-        if ( _properties == null )
+        }
+        if ( this._properties == null )
         {
             if ( other._properties != null )
+            {
                 return false;
+            }
         }
-        else if ( !_properties.equals ( other._properties ) )
+        else if ( !this._properties.equals ( other._properties ) )
+        {
             return false;
-        if ( _secondaryTarget == null )
+        }
+        if ( this._secondaryTarget == null )
         {
             if ( other._secondaryTarget != null )
+            {
                 return false;
+            }
         }
-        else if ( !_secondaryTarget.equals ( other._secondaryTarget ) )
+        else if ( !this._secondaryTarget.equals ( other._secondaryTarget ) )
+        {
             return false;
-        if ( _subtargets == null )
+        }
+        if ( this._subtargets == null )
         {
             if ( other._subtargets != null )
+            {
                 return false;
+            }
         }
-        else if ( !_subtargets.equals ( other._subtargets ) )
+        else if ( !this._subtargets.equals ( other._subtargets ) )
+        {
             return false;
-        if ( _target == null )
+        }
+        if ( this._target == null )
         {
             if ( other._target != null )
+            {
                 return false;
+            }
         }
-        else if ( !_target.equals ( other._target ) )
+        else if ( !this._target.equals ( other._target ) )
+        {
             return false;
+        }
         return true;
     }
+
 }
