@@ -21,9 +21,9 @@ package org.openscada.da.base.realtime;
 
 public interface Listener
 {
-    void added ( ListEntry[] entries );
+    public void added ( ListEntry[] entries );
 
-    void updated ( ListEntry[] entries );
+    public void updated ( ListEntry[] entries );
 
-    void removed ( ListEntry[] entries );
+    public void removed ( ListEntry[] entries );
 }
