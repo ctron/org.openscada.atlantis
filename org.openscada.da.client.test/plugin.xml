@@ -315,6 +315,17 @@
                label="Write Attributes Operation"
                menubarPath="additions"/>
       </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.openscada.da.client.test.folderEntry.oc1"
+            objectClass="org.openscada.da.base.browser.FolderEntry">
+         <action
+               class="org.openscada.da.client.test.views.realtime.PatternSubscribeAction"
+               id="org.openscada.da.client.test.action1"
+               label="Pattern Subscribe"
+               menubarPath="additions">
+         </action>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

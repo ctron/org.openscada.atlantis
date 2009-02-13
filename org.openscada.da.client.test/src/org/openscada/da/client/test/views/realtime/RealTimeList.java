@@ -37,11 +37,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.core.Variant;
 import org.openscada.da.base.connection.ConnectionManager;
 import org.openscada.da.base.dnd.ItemTransfer;
+import org.openscada.da.base.item.Item;
 import org.openscada.da.base.realtime.ItemDropAdapter;
 import org.openscada.da.base.realtime.ItemListContentProvider;
 import org.openscada.da.base.realtime.ItemListLabelProvider;
@@ -62,7 +66,7 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
 
     private TreeViewer _viewer;
 
-    private final ListData _list = new ListData ();
+    private final ListData list = new ListData ();
 
     public RealTimeList ()
     {
@@ -98,7 +102,7 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
         this._viewer.setLabelProvider ( new ItemListLabelProvider () );
         this._viewer.setContentProvider ( new ItemListContentProvider () );
         this._viewer.setComparator ( new ListEntryComparator () );
-        this._viewer.setInput ( this._list );
+        this._viewer.setInput ( this.list );
 
         getViewSite ().setSelectionProvider ( this._viewer );
 
@@ -225,12 +229,48 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
      */
     public void remove ( final ListEntry entry )
     {
-        this._list.remove ( entry );
+        this.list.remove ( entry );
     }
 
     public void add ( final ListEntry entry )
     {
-        this._list.add ( entry );
+        this.list.add ( entry );
     }
 
+    @Override
+    public void saveState ( final IMemento memento )
+    {
+        super.saveState ( memento );
+
+        if ( memento != null )
+        {
+            for ( final ListEntry entry : this.list.getItems () )
+            {
+                final Item item = entry.getItem ();
+                saveItem ( memento, item );
+            }
+        }
+    }
+
+    private void saveItem ( final IMemento memento, final Item item )
+    {
+        final IMemento child = memento.createChild ( "item" );
+        child.putString ( "id", item.getId () );
+        child.putString ( "connection", item.getConnectionString () );
+    }
+
+    @Override
+    public void init ( final IViewSite site, final IMemento memento ) throws PartInitException
+    {
+        super.init ( site, memento );
+
+        if ( memento != null )
+        {
+            for ( final IMemento child : memento.getChildren ( "item" ) )
+            {
+                final Item item = new Item ( child.getString ( "connection" ), child.getString ( "id" ) );
+                this.list.add ( item );
+            }
+        }
+    }
 }
