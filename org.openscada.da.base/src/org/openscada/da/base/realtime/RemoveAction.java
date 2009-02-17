@@ -45,10 +45,6 @@ public class RemoveAction extends Action implements ISelectionChangedListener, I
         this.view = view;
     }
 
-    public RemoveAction ()
-    {
-    }
-
     @Override
     public void run ()
     {
