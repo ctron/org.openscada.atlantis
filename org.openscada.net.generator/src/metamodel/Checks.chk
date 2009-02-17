@@ -1,0 +1,12 @@
+import metamodel;
+
+extension metamodel::Extensions;
+
+/*	
+context Entity ERROR "Duplicate entity "+name :
+	model().entities().select(e|e.name==name).size==1;
+	
+context Message ERROR "Duplicate message code "+name + "(" + messageCode + ")" :
+	model().messages().select(e|e.messageCode==messageCode).size==1;
+	
+	*/

@@ -1,0 +1,62 @@
+import metamodel;
+
+extension metamodel::Extensions reexport;
+
+getter(Attribute this) :
+	"get"+name.toFirstUpper();
+	
+setter(Attribute this) :
+	"set"+name.toFirstUpper();
+	
+valueName(Attribute this) :
+	if ( this.alternateValueName != null ) then this.alternateValueName else this.name;
+	
+javaType(Datatype this) :
+	if ( this == metamodel::Datatype::BOOLEAN ) then  "Boolean" else
+	if ( this == metamodel::Datatype::DOUBLE ) then "Double" else
+	if ( this == metamodel::Datatype::STRING ) then "String" else
+	if ( this == metamodel::Datatype::INT ) then "Integer" else
+	if ( this == metamodel::Datatype::LONG ) then "Long" else
+	"Object";
+	
+gmppType(Datatype this) :
+	if ( this == metamodel::Datatype::BOOLEAN ) then  "org.openscada.net.base.data.BooleanValue" else
+	if ( this == metamodel::Datatype::DOUBLE ) then "org.openscada.net.base.data.DoubleValue" else
+	if ( this == metamodel::Datatype::STRING ) then "org.openscada.net.base.data.StringValue" else
+	if ( this == metamodel::Datatype::INT ) then "org.openscada.net.base.data.IntegerValue" else
+	if ( this == metamodel::Datatype::LONG ) then "org.openscada.net.base.data.LongValue" else
+	"Object";
+
+attributeJavaType(Attribute this) :
+	if ( this.list ) then "java.util.Collection<" + this.singleAttributeJavaType() + ">"
+	else this.singleAttributeJavaType();
+	
+singleAttributeJavaType(Attribute this) :
+	if ( this.metaType == metamodel::BasicAttribute ) then ((metamodel::BasicAttribute)this).type.javaType()
+	else if ( this.metaType == metamodel::VariantAttribute ) then "org.openscada.core.Variant"
+	else if ( this.metaType == metamodel::FlagAttribute ) then "boolean"
+	else if ( this.metaType == metamodel::MapAttribute ) then "java.util.Map<String,org.openscada.core.Variant>"
+	else "Object";
+	
+
+serverImplName(Service this) :
+	this.name + "ServerImpl";
+
+interfaceName(Service this) :
+	this.name;
+	
+clientImplName(Service this) :
+	this.name + "ClientImpl";
+	
+String packageFileNameFq(Package this) :
+	this.eRootContainer == null ? this.name : packageFileNameFq ( (Package)this.eRootContainer ) + "/" + this.name;
+	
+String packageClassNameFq(Package this) :
+	this.eRootContainer == null ? this.name : packageClassNameFq ( (Package)this.eRootContainer ) + "." + this.name;
+	
+typeClassNameFq(Type this) :
+	this.eRootContainer==null ? this.name : packageClassNameFq ( (Package)this.eRootContainer ) + "." + this.name;
+	
+typeFileNameFq(Type this) :
+	this.eRootContainer==null ? this.name : packageFileNameFq ( (Package)this.eRootContainer ) + "/" + this.name;
+		

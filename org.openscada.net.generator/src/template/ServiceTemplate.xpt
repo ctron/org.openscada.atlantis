@@ -1,0 +1,122 @@
+«IMPORT metamodel»
+
+«EXTENSION template::GeneratorExtensions»
+
+«DEFINE main FOR Model»
+	«EXPAND javaClass FOREACH services()»
+«ENDDEFINE»
+
+«DEFINE javaClass FOR Service»
+	«FILE this.interfaceName() + ".java"»
+		public interface «this.interfaceName()»  {
+		
+		«FOREACH this.operations AS operation»
+			public abstract 
+			
+			«IF operation.result != null»
+				«operation.result.name»
+			«ELSE»
+				void
+			«ENDIF»
+			
+			 «operation.name» (
+				«IF operation.argument != null»
+					final «operation.argument.name» argument
+				«ENDIF»
+			);
+		«ENDFOREACH»
+		
+		}
+	«ENDFILE»
+	
+	«FILE this.clientImplName() + ".java"»
+		public class «this.clientImplName()» implements «this.interfaceName()»  {
+		
+		«FOREACH this.operations AS operation»
+			public 
+			
+			«IF operation.result != null»
+				«operation.result.name»
+			«ELSE»
+				void
+			«ENDIF»
+			
+			 «operation.name» (
+				«IF operation.argument != null»
+					final «operation.argument.name» argument
+				«ENDIF»
+			)
+			{
+			
+			«IF operation.result != null»
+				return null;
+			«ENDIF»
+			
+			}
+		«ENDFOREACH»
+		
+		}
+	«ENDFILE»
+	
+
+	
+	«FILE this.serverImplName() + ".java"»
+		public abstract class «this.serverImplName()» implements «this.interfaceName()»  {
+		
+		private final org.openscada.net.base.MessageProcessor messageProcessor;
+		
+		public «this.serverImplName()» ( org.openscada.net.base.MessageProcessor messageProcessor )
+		{
+			this.messageProcessor = messageProcessor;
+			
+			«FOREACH this.operations AS operation»
+			this.messageProcessor.setHandler ( «operation.argument.messageCode», new org.openscada.net.base.MessageListener () {
+				public void messageReceived ( org.openscada.net.io.net.Connection connection, org.openscada.net.base.data.Message message )
+	            {
+	                «this.serverImplName()».this.handle«operation.name.toFirstUpper()» ( connection, message );
+	            }
+			} );
+			«ENDFOREACH»
+			
+		} 
+		
+		«FOREACH this.operations AS operation»
+			private 
+			 void handle«operation.name.toFirstUpper()» (
+			 	org.openscada.net.io.net.Connection connection,
+				org.openscada.net.base.data.Message message
+			)
+			{
+				
+				
+				«IF operation.result != null»
+				
+					«operation.result.name» result;
+					«IF operation.argument != null»
+						result = «operation.name» (
+						«operation.argument.name».fromMessage ( message )
+						);
+					«ELSE»
+						result = «operation.name» ();
+					«ENDIF»
+					
+					org.openscada.net.base.data.Message resultMessage = «operation.result.name».toMessage ( result, message );
+					connection.sendMessage ( resultMessage );
+					
+				«ELSE»
+				
+					«IF operation.argument != null»
+						«operation.name» (
+						«operation.argument.name».fromMessage ( message )
+						);
+					«ELSE»
+						«operation.name» ();
+					«ENDIF»
+				
+				«ENDIF»
+			}
+		«ENDFOREACH»
+		
+		}
+	«ENDFILE»
+«ENDDEFINE»

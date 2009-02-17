@@ -1,0 +1,22 @@
+import metamodel;
+
+Model model(Type this) :
+	eContainer;
+	
+List[Package] packages(Model this) :
+	packages.typeSelect(Package);
+
+
+// List[Entity] entities(Model this) :
+//	types.typeSelect(Entity);
+	
+List[Service] services(Model this) :
+	services.typeSelect(Service);
+	
+// List[Message] messages(Model this) :
+//	types.typeSelect(Message);
+
+Package package(Type this) :
+	if ( this.eRootContainer == null ) then null
+	else if ( this.eRootContainer.metaType == Package ) then (Package)this.eRootContainer
+	else null; 
