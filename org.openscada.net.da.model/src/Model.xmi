@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="ASCII"?>
 <metamodel:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:metamodel="http://www.example.org/metamodel" xsi:schemaLocation="http://www.example.org/metamodel ../../org.openscada.net.generator/src/metamodel/metamodel.ecore">
-  <types xsi:type="metamodel:Message" name="WriteAttributes" messageCode="1202">
-    <attributes xsi:type="metamodel:BasicAttribute" name="itemId" alternateValueName="item-id"/>
-    <attributes xsi:type="metamodel:MapAttribute" name="attributes"/>
-  </types>
-  <types xsi:type="metamodel:Message" name="WriteValue" messageCode="1203">
-    <attributes xsi:type="metamodel:BasicAttribute" name="itemId"/>
-    <attributes xsi:type="metamodel:VariantAttribute" name="value"/>
-  </types>
-  <types xsi:type="metamodel:Message" name="FolderSubscribe" messageCode="1204">
-    <attributes xsi:type="metamodel:BasicAttribute" name="location" list="true"/>
-    <attributes xsi:type="metamodel:FlagAttribute" name="flag"/>
-  </types>
   <services name="Connection">
-    <operations name="writeAttributes" longRunning="true" argument="//@types.0"/>
-    <operations name="writeValue" longRunning="true" argument="//@types.1" result="//@types.2"/>
+    <operations name="writeAttributes" longRunning="true" argument="//@packages.0/@packages.0/@packages.0/@packages.0/@types.0"/>
+    <operations name="writeValue" longRunning="true" argument="//@packages.0/@packages.0/@packages.0/@packages.0/@types.1" result="//@packages.0/@packages.0/@packages.0/@packages.0/@types.2"/>
   </services>
+  <packages name="org">
+    <packages name="openscada">
+      <packages name="da">
+        <packages name="net">
+          <types xsi:type="metamodel:Message" name="WriteAttributes" messageCode="1202">
+            <attributes xsi:type="metamodel:BasicAttribute" name="itemId" alternateValueName="item-id"/>
+            <attributes xsi:type="metamodel:MapAttribute" name="attributes"/>
+          </types>
+          <types xsi:type="metamodel:Message" name="WriteValue" messageCode="1203">
+            <attributes xsi:type="metamodel:BasicAttribute" name="itemId"/>
+            <attributes xsi:type="metamodel:VariantAttribute" name="value"/>
+          </types>
+          <types xsi:type="metamodel:Message" name="FolderSubscribe" messageCode="1204">
+            <attributes xsi:type="metamodel:BasicAttribute" name="location" list="true"/>
+            <attributes xsi:type="metamodel:FlagAttribute" name="flag"/>
+          </types>
+        </packages>
+      </packages>
+    </packages>
+  </packages>
 </metamodel:Model>
