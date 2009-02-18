@@ -34,10 +34,7 @@ import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.client.ConnectionFactory;
 import org.openscada.core.client.ConnectionState;
-import org.openscada.core.client.DriverFactory;
-import org.openscada.core.client.DriverInformation;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.net.ConnectionBase;
 import org.openscada.core.client.net.ConnectionInfo;
@@ -77,27 +74,7 @@ public class Connection extends ConnectionBase implements org.openscada.da.clien
 
     static
     {
-        ConnectionFactory.registerDriverFactory ( new DriverFactory () {
-
-            public DriverInformation getDriverInformation ( final ConnectionInformation connectionInformation )
-            {
-                if ( !connectionInformation.getInterface ().equalsIgnoreCase ( "da" ) )
-                {
-                    return null;
-                }
-                if ( ! ( connectionInformation.getDriver ().equalsIgnoreCase ( "net" ) || connectionInformation.getDriver ().equalsIgnoreCase ( "gmpp" ) ) )
-                {
-                    return null;
-                }
-
-                if ( connectionInformation.getSecondaryTarget () == null )
-                {
-                    return null;
-                }
-
-                return new org.openscada.da.client.net.DriverInformation ();
-            }
-        } );
+        DriverFactory.registerDriver ();
     }
 
     public static final String VERSION = "0.1.7";
