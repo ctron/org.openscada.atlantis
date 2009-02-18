@@ -30,6 +30,8 @@
     		<arg line="${DSTAMP}"/>
     		<arg line="latest"/>
     	</exec>
+    	
+    	<echo file="${deploy.base}/latest/latest.txt" message="${DSTAMP}"/>
     </target>
 	
 	<target name="rcp_only" depends="init">
