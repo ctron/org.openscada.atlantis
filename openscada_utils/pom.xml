@@ -9,4 +9,9 @@
 		<version>0.12.0</version>
 		<relativePath>../openscada_build/pom.xml</relativePath>
 	</parent>
+	<scm>
+		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_utils</connection>
+		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_utils</developerConnection>
+		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_utils</url>
+	</scm>
 </project>
