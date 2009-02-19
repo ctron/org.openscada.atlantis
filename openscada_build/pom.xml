@@ -5,7 +5,32 @@
 	<groupId>org.openscada</groupId>
 	<artifactId>build</artifactId>
 	<packaging>pom</packaging>
+	<name>OpenSCADA</name>
 	<version>0.12.0</version>
+	<url>http://www.openscada.org</url>
+	<issueManagement>
+		<system>bugzilla</system>
+		<url>http://openscada.org/bugzilla/</url>
+	</issueManagement>
+	
+	<developers>
+		<developer>
+			<id>Jens.Reimann</id>
+			<name>Jens Reimann</name>
+			<email>Jens.Reimann@inavare.net</email>
+			<organization>inavare GmbH</organization>
+			<timezone>GMT+1</timezone>
+		</developer>
+	</developers>
+	<scm>
+		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_build</connection>
+		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_build</developerConnection>
+		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_build</url>
+	</scm>
+	<organization>
+		<name>inavare GmbH</name>
+		<url>http://www.inavare.net</url>
+	</organization>
 
 	<build>
 		<finalName>
@@ -70,6 +95,13 @@
 			</plugin>
 		</plugins>
 	</build>
+	<repositories>
+		<repository>
+			<id>inavare-internal</id>
+			<name>internal Repository</name>
+			<url>http://carlton.local:8080/artifactory/repo/</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>xmlbeans</groupId>
