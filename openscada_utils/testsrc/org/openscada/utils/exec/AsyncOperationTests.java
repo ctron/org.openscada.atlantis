@@ -82,7 +82,7 @@ public class AsyncOperationTests
     @Test
     public void testAsyncHandler () throws Exception
     {
-        TestOperationHandler<String> handler = new TestOperationHandler<String> ();
+        OperationHandlerTestImpl<String> handler = new OperationHandlerTestImpl<String> ();
 
         OperationResult<String> or = _opAsyncSuccess.startExecute ( handler, "Bob" );
         System.out.println ( "Started execution" );

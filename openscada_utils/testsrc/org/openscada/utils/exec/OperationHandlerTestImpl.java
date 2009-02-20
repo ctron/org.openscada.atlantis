@@ -19,9 +19,8 @@
 
 package org.openscada.utils.exec;
 
-import org.openscada.utils.exec.OperationResultHandler;
 
-class TestOperationHandler<R> implements OperationResultHandler<R>
+class OperationHandlerTestImpl<R> implements OperationResultHandler<R>
 {
     R _result = null;
 
@@ -31,40 +30,40 @@ class TestOperationHandler<R> implements OperationResultHandler<R>
 
     boolean _success = false;
 
-    public void failure ( Exception e )
+    public void failure ( final Exception e )
     {
-        _result = null;
-        _exception = e;
-        _success = false;
-        _failure = true;
+        this._result = null;
+        this._exception = e;
+        this._success = false;
+        this._failure = true;
     }
 
-    public void success ( R result )
+    public void success ( final R result )
     {
-        _result = result;
-        _exception = null;
-        _success = true;
-        _failure = false;
+        this._result = result;
+        this._exception = null;
+        this._success = true;
+        this._failure = false;
     }
 
     public Exception getException ()
     {
-        return _exception;
+        return this._exception;
     }
 
     public boolean isFailure ()
     {
-        return _failure;
+        return this._failure;
     }
 
     public R getResult ()
     {
-        return _result;
+        return this._result;
     }
 
     public boolean isSuccess ()
     {
-        return _success;
+        return this._success;
     }
 
 }
