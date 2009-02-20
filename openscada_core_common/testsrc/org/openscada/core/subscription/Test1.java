@@ -53,7 +53,7 @@ public class Test1
     public void test2 () throws Exception
     {
         SubscriptionRecorder recorder = new SubscriptionRecorder ();
-        TestSubscriptionSource source = new TestSubscriptionSource ();
+        SubscriptionSourceTestImpl source = new SubscriptionSourceTestImpl ();
 
         _manager.subscribe ( "", recorder );
         _manager.setSource ( "", source );
@@ -80,7 +80,7 @@ public class Test1
     public void test3 () throws Exception
     {
         SubscriptionRecorder recorder = new SubscriptionRecorder ();
-        TestSubscriptionSource source = new TestSubscriptionSource ();
+        SubscriptionSourceTestImpl source = new SubscriptionSourceTestImpl ();
 
         _manager.setSource ( "", source );
         _manager.subscribe ( "", recorder );
@@ -106,7 +106,7 @@ public class Test1
     public void test4 () throws Exception
     {
         SubscriptionRecorder recorder = new SubscriptionRecorder ();
-        TestSubscriptionSource source = new TestSubscriptionSource ();
+        SubscriptionSourceTestImpl source = new SubscriptionSourceTestImpl ();
 
         _manager.setSource ( "", source );
         _manager.subscribe ( "", recorder );
