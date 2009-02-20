@@ -3,16 +3,28 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada</groupId>
-	<artifactId>build</artifactId>
+	<artifactId>atlantis.build</artifactId>
 	<packaging>pom</packaging>
 	<name>OpenSCADA</name>
-	<version>0.12.0</version>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>openscada-atlantis-integration-local</id>
+			<name>openscada-atlantis-integration-local</name>
+			<url>http://carlton.local:8080/artifactory/openscada-atlantis-integration-local/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<properties>
+		<OpenSCADAVersion>0.12.0-SNAPSHOT</OpenSCADAVersion>
+	</properties>
+	<version>${OpenSCADAVersion}</version>
 	<url>http://www.openscada.org</url>
 	<issueManagement>
 		<system>bugzilla</system>
 		<url>http://openscada.org/bugzilla/</url>
 	</issueManagement>
-	
+
 	<developers>
 		<developer>
 			<id>Jens.Reimann</id>
@@ -42,13 +54,6 @@
 		<outputDirectory>${basedir}/bin</outputDirectory>
 		<testOutputDirectory>${basedir}/bin
 		</testOutputDirectory>
-		<extensions>
-			<extension>
-				<groupId>org.jvnet.wagon-svn</groupId>
-				<artifactId>wagon-svn</artifactId>
-				<version>1.8</version>
-			</extension>
-		</extensions>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -84,15 +89,6 @@
 					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2-beta-2</version>
-				<configuration>
-					<descriptors>
-						<descriptor>src/assemble/src.xml</descriptor>
-					</descriptors>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 	<modules>
@@ -103,9 +99,9 @@
 	</modules>
 	<repositories>
 		<repository>
-			<id>inavare-internal</id>
-			<name>internal Repository</name>
-			<url>http://carlton.local:8080/artifactory/repo/</url>
+			<id>openscada-atlantis</id>
+			<name>openscada-atlantis</name>
+			<url>http://carlton.local:8080/artifactory/openscada-atlantis-integration-local/</url>
 		</repository>
 	</repositories>
 	<dependencies>

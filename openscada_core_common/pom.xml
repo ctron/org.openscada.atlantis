@@ -2,11 +2,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada</groupId>
-	<artifactId>core.common</artifactId>
+	<artifactId>atlantis.core.common</artifactId>
 	<parent>
-		<artifactId>build</artifactId>
+		<artifactId>atlantis.build</artifactId>
 		<groupId>org.openscada</groupId>
-		<version>0.12.0</version>
+		<version>${OpenSCADAVersion}</version>
 		<relativePath>../openscada_build/pom.xml</relativePath>
 	</parent>
 	<scm>

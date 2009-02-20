@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.openscada</groupId>
-  <artifactId>da.core.common</artifactId>
+  <artifactId>atlantis.da.core.common</artifactId>
 	<parent>
-		<artifactId>build</artifactId>
+		<artifactId>atlantis.build</artifactId>
 		<groupId>org.openscada</groupId>
-		<version>0.12.0</version>
+		<version>${OpenSCADAVersion}</version>
 		<relativePath>../openscada_build/pom.xml</relativePath>
 	</parent>
 	<scm>
@@ -16,13 +16,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.openscada</groupId>
-			<artifactId>core.common</artifactId>
-			<version>0.12.0</version>
+			<artifactId>atlantis.core.common</artifactId>
+			<version>${OpenSCADAVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openscada</groupId>
-			<artifactId>utils</artifactId>
-			<version>0.12.0</version>
+			<artifactId>atlantis.utils</artifactId>
+			<version>${OpenSCADAVersion}</version>
 		</dependency>
 	</dependencies>
 </project>
