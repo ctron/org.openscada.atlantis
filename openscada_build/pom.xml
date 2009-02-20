@@ -99,6 +99,7 @@
 		<module>../openscada_utils</module>
 		<module>../openscada_core_common</module>
 		<module>../openscada_da_core_common</module>
+		<module>../openscada_net_base</module>
 	</modules>
 	<repositories>
 		<repository>
