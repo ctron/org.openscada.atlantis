@@ -1,12 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.openscada</groupId>
-  <artifactId>atlantis.da.core.common</artifactId>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openscada.atlantis</groupId>
+	<artifactId>org.openscada.atlantis.da.core.common</artifactId>
 	<parent>
-		<artifactId>atlantis.build</artifactId>
-		<groupId>org.openscada</groupId>
-		<version>${OpenSCADAVersion}</version>
-		<relativePath>../openscada_build/pom.xml</relativePath>
+		<groupId>org.openscada.atlantis</groupId>
+		<artifactId>org.openscada.atlantis</artifactId>
+		<relativePath>../openscada_build</relativePath>
+		<version>${atlantis.version}</version>
 	</parent>
 	<scm>
 		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_core_common</connection>
@@ -15,14 +16,14 @@
 	</scm>
 	<dependencies>
 		<dependency>
-			<groupId>org.openscada</groupId>
-			<artifactId>atlantis.core.common</artifactId>
-			<version>${OpenSCADAVersion}</version>
+			<groupId>org.openscada.atlantis</groupId>
+			<artifactId>org.openscada.atlantis.core.common</artifactId>
+			<version>${atlantis.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.openscada</groupId>
-			<artifactId>atlantis.utils</artifactId>
-			<version>${OpenSCADAVersion}</version>
+			<groupId>org.openscada.aurora</groupId>
+			<artifactId>org.openscada.aurora.utils</artifactId>
+			<version>${aurora.version}</version>
 		</dependency>
 	</dependencies>
 </project>
