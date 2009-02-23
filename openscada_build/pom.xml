@@ -111,9 +111,7 @@
 	<modules>
 		<module>../openscada_core_common</module>
 		<module>../openscada_da_core_common</module>
-		<!--
 		<module>../openscada_net_base</module>
-		 -->
 	</modules>
 	<dependencies>
 		<dependency>
