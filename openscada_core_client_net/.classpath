@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/openscada_core_common"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/openscada_core_net_base"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ext_log4j"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/openscada_net_base"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/openscada_utils"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/openscada_core_client_common"/>
+	<classpathentry kind="src" output="bin" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
