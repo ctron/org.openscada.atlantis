@@ -36,11 +36,11 @@ public class LineApplication
 
             public LineHandler createHandler ()
             {
-                return new TestLineHandler ( true );
+                return new LineHandlerTestImpl ( true );
             }
         } );
 
-        final LineBasedClient client = new LineBasedClient ( io, new TestLineHandler ( false ) );
+        final LineBasedClient client = new LineBasedClient ( io, new LineHandlerTestImpl ( false ) );
 
         io.getScheduler ().executeJobAsync ( new Runnable () {
 

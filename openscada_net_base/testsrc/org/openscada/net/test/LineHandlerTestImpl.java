@@ -25,15 +25,15 @@ import org.apache.log4j.Logger;
 import org.openscada.net.line.LineBasedConnection;
 import org.openscada.net.line.LineHandler;
 
-public class TestLineHandler implements LineHandler
+public class LineHandlerTestImpl implements LineHandler
 {
-    private static Logger log = Logger.getLogger ( TestLineHandler.class );
+    private static Logger log = Logger.getLogger ( LineHandlerTestImpl.class );
 
     private LineBasedConnection connection = null;
 
     private boolean echo = false;
 
-    public TestLineHandler ( final boolean echo )
+    public LineHandlerTestImpl ( final boolean echo )
     {
         this.echo = echo;
     }

@@ -26,37 +26,37 @@ import java.util.List;
 
 import org.openscada.net.codec.Protocol;
 
-public class TestInputStream
+public class InputStreamTestImpl
 {
-    private List<TestBytePacket> _pseudoStream = new ArrayList<TestBytePacket> ();
+    private List<BytePacketTestImpl> _pseudoStream = new ArrayList<BytePacketTestImpl> ();
 
     /**
      * 
      */
-    public TestInputStream ()
+    public InputStreamTestImpl ()
     {
         super ();
     }
 
-    public TestInputStream ( Collection<TestBytePacket> packetList )
+    public InputStreamTestImpl ( final Collection<BytePacketTestImpl> packetList )
     {
-        _pseudoStream = new ArrayList<TestBytePacket> ( packetList );
+        this._pseudoStream = new ArrayList<BytePacketTestImpl> ( packetList );
     }
 
     public void clear ()
     {
-        _pseudoStream.clear ();
+        this._pseudoStream.clear ();
     }
 
-    public void add ( TestBytePacket packet )
+    public void add ( final BytePacketTestImpl packet )
     {
-        _pseudoStream.add ( packet );
+        this._pseudoStream.add ( packet );
     }
 
-    public void run ( Protocol protocol )
+    public void run ( final Protocol protocol )
     {
-        TestBytePacket packet;
-        Iterator<TestBytePacket> i = _pseudoStream.iterator ();
+        BytePacketTestImpl packet;
+        final Iterator<BytePacketTestImpl> i = this._pseudoStream.iterator ();
         while ( i.hasNext () )
         {
             packet = i.next ();

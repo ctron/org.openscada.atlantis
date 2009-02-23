@@ -40,10 +40,10 @@ public class ProtocolGMPPTest
 {
     private static Logger log = Logger.getLogger ( ProtocolGMPPTest.class );
 
-    private void performTest ( final Collection<TestBytePacket> packets, final Collection<Message> messages )
+    private void performTest ( final Collection<BytePacketTestImpl> packets, final Collection<Message> messages )
     {
-        final TestInputStream stream = new TestInputStream ( packets );
-        final TestMessageListener listener = new TestMessageListener ();
+        final InputStreamTestImpl stream = new InputStreamTestImpl ( packets );
+        final MessageListenerTestImpl listener = new MessageListenerTestImpl ();
 
         final Protocol protocol = new ProtocolGMPP ( null, listener );
 
@@ -52,16 +52,16 @@ public class ProtocolGMPPTest
         listener.assertMessages ( messages );
     }
 
-    private void performScatterTest ( final Collection<TestBytePacket> packets, final Collection<Message> messages, final int scatterSize )
+    private void performScatterTest ( final Collection<BytePacketTestImpl> packets, final Collection<Message> messages, final int scatterSize )
     {
         log.info ( "Running scatter test with: " + scatterSize );
 
-        final List<TestBytePacket> scatteredPackets = new ArrayList<TestBytePacket> ();
+        final List<BytePacketTestImpl> scatteredPackets = new ArrayList<BytePacketTestImpl> ();
 
         final byte[] data = new byte[scatterSize];
         int pos = 0;
 
-        for ( final TestBytePacket packet : packets )
+        for ( final BytePacketTestImpl packet : packets )
         {
             for ( final byte b : packet.getBytes () )
             {
@@ -69,7 +69,7 @@ public class ProtocolGMPPTest
                 pos++;
                 if ( data.length == pos )
                 {
-                    scatteredPackets.add ( new TestBytePacket ( data ) );
+                    scatteredPackets.add ( new BytePacketTestImpl ( data ) );
                     pos = 0;
                 }
             }
@@ -83,13 +83,13 @@ public class ProtocolGMPPTest
                 addData[i] = data[i];
             }
 
-            scatteredPackets.add ( new TestBytePacket ( addData ) );
+            scatteredPackets.add ( new BytePacketTestImpl ( addData ) );
         }
 
         performTest ( scatteredPackets, messages );
     }
 
-    private void performScatterTest ( final Collection<TestBytePacket> packets, final Collection<Message> messages, final int... scatterSize )
+    private void performScatterTest ( final Collection<BytePacketTestImpl> packets, final Collection<Message> messages, final int... scatterSize )
     {
         for ( final int i : scatterSize )
         {
@@ -97,7 +97,7 @@ public class ProtocolGMPPTest
         }
     }
 
-    private void performAllTests ( final Collection<TestBytePacket> packets, final Collection<Message> messages )
+    private void performAllTests ( final Collection<BytePacketTestImpl> packets, final Collection<Message> messages )
     {
         performTest ( packets, messages );
 
@@ -109,8 +109,8 @@ public class ProtocolGMPPTest
     {
         log.info ( "Running test1" );
 
-        final List<TestBytePacket> packets = new ArrayList<TestBytePacket> ();
-        packets.add ( new TestBytePacket ( " 00 00 00 01" + // command code
+        final List<BytePacketTestImpl> packets = new ArrayList<BytePacketTestImpl> ();
+        packets.add ( new BytePacketTestImpl ( " 00 00 00 01" + // command code
         " 00 00 00 00 00 00 00 00" + // timestamp
         " 00 00 00 00 00 00 00 02" + // sequence
         " 00 00 00 00 00 00 00 03" + // reply sequence
@@ -143,7 +143,7 @@ public class ProtocolGMPPTest
     public void testPacket2 ()
     {
         log.info ( "Running test2" );
-        final List<TestBytePacket> packets = new ArrayList<TestBytePacket> ();
+        final List<BytePacketTestImpl> packets = new ArrayList<BytePacketTestImpl> ();
         Message message;
         final List<Message> messages = new ArrayList<Message> ();
 
@@ -151,7 +151,7 @@ public class ProtocolGMPPTest
         {
             final int commandCode = i % 255;
             final String strCommandCode = Integer.toHexString ( commandCode );
-            packets.add ( new TestBytePacket ( " 00 00 00 " + strCommandCode + // command code
+            packets.add ( new BytePacketTestImpl ( " 00 00 00 " + strCommandCode + // command code
             " 00 00 00 00 00 00 00 00" + // timestamp
             " 00 00 00 00 00 00 00 02" + // sequence
             " 00 00 00 00 00 00 00 03" + // reply sequence
@@ -170,7 +170,7 @@ public class ProtocolGMPPTest
         performAllTests ( packets, messages );
     }
 
-    private void performCode ( final Message message, final TestBytePacket expectedBuffer ) throws InvalidValueTypeException
+    private void performCode ( final Message message, final BytePacketTestImpl expectedBuffer ) throws InvalidValueTypeException
     {
         final Protocol protocol = new ProtocolGMPP ( null, null );
         final ByteBuffer byteBuffer = protocol.code ( message );
@@ -229,7 +229,7 @@ public class ProtocolGMPPTest
         message.setReplySequence ( 3 );
         message.getValues ().put ( "test", new StringValue ( "test" ) );
 
-        final TestBytePacket packet = new TestBytePacket ( " 00 00 00 01" + // command code
+        final BytePacketTestImpl packet = new BytePacketTestImpl ( " 00 00 00 01" + // command code
         " 00 00 00 00 00 00 00 00" + // timestamp
         " 00 00 00 00 00 00 00 02" + // sequence
         " 00 00 00 00 00 00 00 03" + // reply sequence
@@ -260,7 +260,7 @@ public class ProtocolGMPPTest
         message.getValues ().put ( "test", new StringValue ( "test" ) );
         message.getValues ().put ( "tett", new StringValue ( "tett" ) );
 
-        final TestBytePacket packet = new TestBytePacket ( " 00 00 01 00" + // command code
+        final BytePacketTestImpl packet = new BytePacketTestImpl ( " 00 00 01 00" + // command code
         " 00 00 00 00 00 00 00 00" + // timestamp
         " 00 00 00 00 00 00 00 02" + // sequence
         " 00 00 00 00 00 00 01 00" + // reply sequence
@@ -298,7 +298,7 @@ public class ProtocolGMPPTest
         list.getValues ().add ( new StringValue ( "teut" ) );
         message.getValues ().put ( "test", list );
 
-        final TestBytePacket packet = new TestBytePacket ( " 00 00 01 00" + // command code
+        final BytePacketTestImpl packet = new BytePacketTestImpl ( " 00 00 01 00" + // command code
         " 00 00 00 00 00 00 00 00" + // timestamp
         " 00 00 00 00 00 00 00 02" + // sequence
         " 00 00 00 00 00 00 01 00" + // reply sequence
