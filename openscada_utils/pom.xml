@@ -19,9 +19,6 @@
 		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_utils</url>
 	</scm>
 	<build>
-		<finalName>
-			${project.groupId}.${project.artifactId}-${project.version}
-		</finalName>
 		<sourceDirectory>${basedir}/src</sourceDirectory>
 		<testSourceDirectory>${basedir}/testsrc
 		</testSourceDirectory>
