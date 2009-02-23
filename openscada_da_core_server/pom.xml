@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openscada.atlantis</groupId>
+	<artifactId>org.openscada.atlantis.da.core.server</artifactId>
+	<name>OpenSCADA - DA - Core - Server</name>
+
+	<parent>
+		<groupId>org.openscada.atlantis</groupId>
+		<artifactId>org.openscada.atlantis</artifactId>
+		<relativePath>../openscada_build</relativePath>
+		<version>0.12.0-SNAPSHOT</version>
+	</parent>
+
+	<scm>
+		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_core_server</connection>
+		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_core_server</developerConnection>
+		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_core_server</url>
+	</scm>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.openscada.atlantis</groupId>
+			<artifactId>org.openscada.atlantis.da.core.common</artifactId>
+			<version>0.12.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+</project>
