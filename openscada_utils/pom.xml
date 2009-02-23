@@ -41,18 +41,6 @@
 			</plugin>
 		</plugins>
 	</build>
-	<repositories>
-		<repository>
-			<id>openscada-snapshots</id>
-			<name>openscada-snapshots</name>
-			<url>http://carlton.local:8080/artifactory/openscada-snapshots/</url>
-		</repository>
-		<repository>
-			<id>openscada-releases</id>
-			<name>openscada-releases</name>
-			<url>http://carlton.local:8080/artifactory/openscada-releases/</url>
-		</repository>
-	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
