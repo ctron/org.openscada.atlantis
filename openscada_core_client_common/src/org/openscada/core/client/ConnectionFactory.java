@@ -19,26 +19,26 @@
 
 package org.openscada.core.client;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 
-import sun.misc.Service;
+// FIXME: isn't exactly legal with a generic java runtime
+// import sun.misc.Service;
 
 public class ConnectionFactory
 {
     private static Logger logger = Logger.getLogger ( ConnectionFactory.class );
 
-    protected static List<DriverFactory> _registeredDrivers = new LinkedList<DriverFactory> ();
+    protected static List<DriverFactory> registeredDrivers = new LinkedList<DriverFactory> ();
 
     public static void registerDriverFactory ( final DriverFactory driverFactory )
     {
-        synchronized ( _registeredDrivers )
+        synchronized ( registeredDrivers )
         {
-            _registeredDrivers.add ( driverFactory );
+            registeredDrivers.add ( driverFactory );
         }
     }
 
@@ -49,9 +49,9 @@ public class ConnectionFactory
             throw new IllegalArgumentException ( "Connection information is not valid" );
         }
 
-        synchronized ( _registeredDrivers )
+        synchronized ( registeredDrivers )
         {
-            for ( final DriverFactory factory : _registeredDrivers )
+            for ( final DriverFactory factory : registeredDrivers )
             {
                 final DriverInformation di = factory.getDriverInformation ( connectionInformation );
                 if ( di != null )
@@ -61,23 +61,26 @@ public class ConnectionFactory
             }
         }
 
+        // FIXME: isn't exactly legal with a generic java runtime
+        // and is obviously not used so far
+
         // now try using the service framework
-        try
-        {
-            final Iterator<?> i = Service.providers ( DriverFactory.class );
-            while ( i.hasNext () )
-            {
-                final DriverFactory factory = (DriverFactory)i.next ();
-                final DriverInformation di = factory.getDriverInformation ( connectionInformation );
-                if ( di != null )
-                {
-                    return di;
-                }
-            }
-        }
-        catch ( final Throwable e )
-        {
-        }
+        //        try
+        //        {
+        //            final Iterator<?> i = Service.providers ( DriverFactory.class );
+        //            while ( i.hasNext () )
+        //            {
+        //                final DriverFactory factory = (DriverFactory)i.next ();
+        //                final DriverInformation di = factory.getDriverInformation ( connectionInformation );
+        //                if ( di != null )
+        //                {
+        //                    return di;
+        //                }
+        //            }
+        //        }
+        //        catch ( final Throwable e )
+        //        {
+        //        }
 
         return null;
     }

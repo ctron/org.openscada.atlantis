@@ -113,6 +113,7 @@
 		<module>../openscada_da_core_common</module>
 		<module>../openscada_net_base</module>
 		<module>../openscada_core_net_base</module>
+		<module>../openscada_core_client_common</module>
 	</modules>
 	<dependencies>
 		<dependency>
