@@ -8,10 +8,15 @@
 	<name>OpenSCADA</name>
 
 	<distributionManagement>
+		<repository>
+			<id>openscada-atlantis-releases</id>
+			<name>openscada-atlantis-releases</name>
+			<url>http://carlton.local:8080/artifactory/openscada-atlantis-releases/</url>
+		</repository>
 		<snapshotRepository>
 			<id>openscada-atlantis-snapshots</id>
 			<name>openscada-atlantis-snapshots</name>
-			<url>http://carlton.local:8080/artifactory/openscada-atlantis-integration-local/</url>
+			<url>http://carlton.local:8080/artifactory/openscada-atlantis-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
