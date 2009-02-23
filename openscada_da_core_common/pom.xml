@@ -3,27 +3,31 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.da.core.common</artifactId>
+	<name>OpenSCADA - DA - Core - Common</name>
+
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
 		<artifactId>org.openscada.atlantis</artifactId>
 		<relativePath>../openscada_build</relativePath>
-		<version>${atlantis.version}</version>
+		<version>0.12.0-SNAPSHOT</version>
 	</parent>
+
 	<scm>
 		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_core_common</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_core_common</developerConnection>
 		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_core_common</url>
 	</scm>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
 			<artifactId>org.openscada.atlantis.core.common</artifactId>
-			<version>${atlantis.version}</version>
+			<version>0.12.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openscada.aurora</groupId>
 			<artifactId>org.openscada.aurora.utils</artifactId>
-			<version>${aurora.version}</version>
+			<version>0.12.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

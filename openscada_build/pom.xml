@@ -20,12 +20,25 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<properties>
-		<atlantis.version>0.12.0-SNAPSHOT</atlantis.version>
-		<aurora.version>0.12.0-SNAPSHOT</aurora.version>
-	</properties>
-	
-	<version>${atlantis.version}</version>
+	<repositories>
+		<repository>
+			<id>openscada-snapshots</id>
+			<name>openscada-snapshots</name>
+			<url>http://carlton.local:8080/artifactory/openscada-snapshots/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<version>0.12.0-SNAPSHOT</version>
 	<url>http://www.openscada.org</url>
 	<issueManagement>
 		<system>bugzilla</system>
