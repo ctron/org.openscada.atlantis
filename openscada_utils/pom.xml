@@ -2,15 +2,20 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.aurora</groupId>
-	<artifactId>openscada-aurora-utils</artifactId>
+	<artifactId>org.openscada.aurora.utils</artifactId>
 	<version>0.12.0-SNAPSHOT</version>
 	<name>OpenSCADA Utilities</name>
 	<description>Utility classes for use throughout the OpenSCADA project</description>
 	<distributionManagement>
+		<repository>
+			<id>openscada-aurora-releases</id>
+			<name>openscada-aurora-releases</name>
+			<url>http://carlton.local:8080/artifactory/openscada-aurora-releases/</url>
+		</repository>
 		<snapshotRepository>
-			<id>openscada-atlantis-integration-local</id>
-			<name>openscada-atlantis-integration-local</name>
-			<url>http://carlton.local:8080/artifactory/openscada-atlantis-integration-local/</url>
+			<id>openscada-aurora-snapshots</id>
+			<name>openscada-aurora-snapshots</name>
+			<url>http://carlton.local:8080/artifactory/openscada-aurora-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<scm>
@@ -38,9 +43,14 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>openscada-aurora</id>
-			<name>openscada-aurora</name>
-			<url>http://carlton.local:8080/artifactory/openscada-atlantis-integration-local/</url>
+			<id>openscada-snapshots</id>
+			<name>openscada-snapshots</name>
+			<url>http://carlton.local:8080/artifactory/openscada-snapshots/</url>
+		</repository>
+		<repository>
+			<id>openscada-releases</id>
+			<name>openscada-releases</name>
+			<url>http://carlton.local:8080/artifactory/openscada-releases/</url>
 		</repository>
 	</repositories>
 	<dependencies>
