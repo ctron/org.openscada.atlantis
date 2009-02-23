@@ -2,23 +2,24 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.openscada</groupId>
-	<artifactId>atlantis.build</artifactId>
+	<groupId>org.openscada.atlantis</groupId>
+	<artifactId>org.openscada.atlantis</artifactId>
 	<packaging>pom</packaging>
 	<name>OpenSCADA</name>
 
 	<distributionManagement>
 		<snapshotRepository>
-			<id>openscada-atlantis-integration-local</id>
-			<name>openscada-atlantis-integration-local</name>
+			<id>openscada-atlantis-snapshots</id>
+			<name>openscada-atlantis-snapshots</name>
 			<url>http://carlton.local:8080/artifactory/openscada-atlantis-integration-local/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
 	<properties>
-		<OpenSCADAVersion>0.12.0-SNAPSHOT</OpenSCADAVersion>
+		<atlantis.version>0.12.0-SNAPSHOT</atlantis.version>
 	</properties>
-	<version>${OpenSCADAVersion}</version>
+	
+	<version>${atlantis.version}</version>
 	<url>http://www.openscada.org</url>
 	<issueManagement>
 		<system>bugzilla</system>
@@ -45,9 +46,6 @@
 	</organization>
 
 	<build>
-		<finalName>
-			${project.groupId}.${project.artifactId}-${project.version}
-		</finalName>
 		<sourceDirectory>${basedir}/src</sourceDirectory>
 		<testSourceDirectory>${basedir}/testsrc
 		</testSourceDirectory>
@@ -93,16 +91,11 @@
 	</build>
 	<modules>
 		<module>../openscada_core_common</module>
+		<!-- 
 		<module>../openscada_da_core_common</module>
 		<module>../openscada_net_base</module>
+		 -->
 	</modules>
-	<repositories>
-		<repository>
-			<id>openscada-atlantis</id>
-			<name>openscada-atlantis</name>
-			<url>http://carlton.local:8080/artifactory/openscada-atlantis-integration-local/</url>
-		</repository>
-	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
