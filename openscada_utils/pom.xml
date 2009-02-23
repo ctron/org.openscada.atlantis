@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada</groupId>
-	<artifactId>utils</artifactId>
+	<artifactId>openscada-aurora-utils</artifactId>
 	<version>0.12.0-SNAPSHOT</version>
 	<name>OpenSCADA Utilities</name>
 	<description>Utility classes for use throughout the OpenSCADA project</description>
@@ -56,7 +56,7 @@
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>[1.2.0,2.0.0)</version>
+			<version>[1.0.0,2.0.0)</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
