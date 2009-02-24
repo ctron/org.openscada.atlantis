@@ -34,7 +34,7 @@ import org.openscada.da.server.common.impl.HiveCommon;
  * @author jens
  *
  */
-public class TestHiveServiceRegistry implements HiveServiceRegistry
+public class HiveServiceRegistryTestImpl implements HiveServiceRegistry
 {
     private final Map<String, HiveService> services = new HashMap<String, HiveService> ();
 

@@ -40,7 +40,7 @@ public class TestLevelChainItem extends TestInputChain
 
     protected LevelAlarmChainItem _levelAlarm = null;
 
-    protected HiveServiceRegistry serviceRegistry = new TestHiveServiceRegistry ();
+    protected HiveServiceRegistry serviceRegistry = new HiveServiceRegistryTestImpl ();
 
     @Before
     public void setupLevelAlarm ()

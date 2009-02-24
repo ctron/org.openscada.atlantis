@@ -44,7 +44,7 @@ public class ScaleChainTest
     public static final String INPUT_FACTOR = "org.openscada.da.scale.input.factor";
     public static final String OUTPUT_FACTOR = "org.openscada.da.scale.output.factor";
 
-    protected HiveServiceRegistry serviceRegistry = new TestHiveServiceRegistry ();
+    protected HiveServiceRegistry serviceRegistry = new HiveServiceRegistryTestImpl ();
 
     @Before
     public void init ()
