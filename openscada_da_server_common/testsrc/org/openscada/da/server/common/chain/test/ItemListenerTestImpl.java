@@ -30,9 +30,9 @@ import org.openscada.core.Variant;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.ItemListener;
 
-public class TestItemListener implements ItemListener
+public class ItemListenerTestImpl implements ItemListener
 {
-    private static Logger logger = Logger.getLogger ( TestItemListener.class );
+    private static Logger logger = Logger.getLogger ( ItemListenerTestImpl.class );
 
     private List<EventEntry> _events = new LinkedList<EventEntry> ();
 

@@ -33,7 +33,7 @@ import org.openscada.da.server.common.chain.DataItemInputChained;
 
 public class TestInputChain
 {
-    protected TestItemListener _listener = null;
+    protected ItemListenerTestImpl _listener = null;
 
     protected DataItemInputChained _dataItem = null;
 
@@ -48,7 +48,7 @@ public class TestInputChain
     @Before
     public void init ()
     {
-        _listener = new TestItemListener ();
+        _listener = new ItemListenerTestImpl ();
         _dataItem = new DataItemInputChained ( "test-id" );
         _dataItem.setListener ( _listener );
     }
