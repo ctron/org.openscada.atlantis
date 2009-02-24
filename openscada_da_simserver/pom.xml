@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openscada.atlantis</groupId>
+	<artifactId>org.openscada.atlantis.da.server.simulation</artifactId>
+	<name>OpenSCADA - DA - Server - simulation</name>
+
+	<parent>
+		<groupId>org.openscada.atlantis</groupId>
+		<artifactId>org.openscada.atlantis</artifactId>
+		<relativePath>../openscada_build/pom.xml</relativePath>
+		<version>0.12.0-SNAPSHOT</version>
+	</parent>
+
+	<scm>
+		<connection>scm:svn:https://svn.inavare.net/openscada/modules/alantis/trunk/openscada_da_simserver</connection>
+		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_simserver</developerConnection>
+		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_simserver</url>
+	</scm>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.openscada.atlantis</groupId>
+			<artifactId>org.openscada.atlantis.da.server.common</artifactId>
+			<version>0.12.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>jOpenDocument</groupId>
+			<artifactId>jOpenDocument</artifactId>
+			<version>1.1b3</version>
+			<classifier>jdk5</classifier>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/jOpenDocument-1.1b3-jdk5.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>jexcelapi</groupId>
+			<artifactId>jxl</artifactId>
+			<version>2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.script</groupId>
+			<artifactId>script-api</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/script-api.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>javax.scripting</groupId>
+			<artifactId>js-engine</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/js-engine.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>javax.scripting</groupId>
+			<artifactId>js</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/js.jar</systemPath>
+		</dependency>
+	</dependencies>
+</project>
