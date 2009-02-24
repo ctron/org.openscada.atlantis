@@ -121,6 +121,7 @@
 		<module>../openscada_da_core_server</module>
 		<module>../openscada_da_client_common</module>
 		<module>../openscada_da_server_common</module>
+		<module>../openscada_da_proxyserver</module>
 	</modules>
 	<dependencies>
 		<dependency>
