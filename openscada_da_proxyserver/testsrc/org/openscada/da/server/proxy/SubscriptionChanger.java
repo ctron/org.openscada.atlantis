@@ -24,9 +24,9 @@ final class SubscriptionChanger implements Callable<Object>
     {
         final SubscriptionState[] states = SubscriptionState.values ();
 
-        for ( int i = 0; i < TestApplication1.getCount (); i++ )
+        for ( int i = 0; i < ApplicationRunner1.getCount (); i++ )
         {
-            TestApplication1.operations++;
+            ApplicationRunner1.operations++;
             this.pvh.updateSubscriptionState ( this.connectionId, states[i % states.length], null );
         }
         this.pvh.updateSubscriptionState ( this.connectionId, SubscriptionState.CONNECTED, null );

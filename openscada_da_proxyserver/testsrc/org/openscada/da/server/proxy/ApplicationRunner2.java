@@ -11,10 +11,10 @@ import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
-public class TestApplication2
+public class ApplicationRunner2
 {
     @SuppressWarnings ( "unused" )
-    private static Logger logger = Logger.getLogger ( TestApplication2.class );
+    private static Logger logger = Logger.getLogger ( ApplicationRunner2.class );
 
     private static final int ITERATIONS = 1000000;
 
@@ -58,6 +58,6 @@ public class TestApplication2
 
         listener.dump ();
 
-        System.out.println ( String.format ( "%s operations in %s ms (%.2f)", TestApplication1.operations, end - start, (double)TestApplication1.operations / (double) ( end - start ) ) );
+        System.out.println ( String.format ( "%s operations in %s ms (%.2f)", ApplicationRunner1.operations, end - start, (double)ApplicationRunner1.operations / (double) ( end - start ) ) );
     }
 }

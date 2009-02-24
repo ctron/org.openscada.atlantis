@@ -20,9 +20,9 @@ final class Switcher implements Callable<Object>
 
     public Object call () throws Exception
     {
-        for ( int i = 0; i < TestApplication1.getCount (); i++ )
+        for ( int i = 0; i < ApplicationRunner1.getCount (); i++ )
         {
-            TestApplication1.operations++;
+            ApplicationRunner1.operations++;
             this.pvh.switchTo ( this.connectionId );
         }
 

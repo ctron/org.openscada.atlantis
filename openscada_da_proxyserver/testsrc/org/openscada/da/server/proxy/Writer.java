@@ -23,9 +23,9 @@ final class Writer implements Callable<Object>
     {
         try
         {
-            for ( int i = 0; i < TestApplication1.getCount (); i++ )
+            for ( int i = 0; i < ApplicationRunner1.getCount (); i++ )
             {
-                TestApplication1.operations++;
+                ApplicationRunner1.operations++;
                 this.pvh.updateData ( this.connectionId, new Variant ( i ), null, null );
             }
             this.pvh.updateData ( this.connectionId, new Variant ( "complete" ), null, null );

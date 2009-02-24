@@ -14,9 +14,9 @@ import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.ItemUpdateListener;
 
-public class TestApplication1
+public class ApplicationRunner1
 {
-    private static Logger logger = Logger.getLogger ( TestApplication1.class );
+    private static Logger logger = Logger.getLogger ( ApplicationRunner1.class );
 
     private static final int ITERATIONS = 1000000;
 
