@@ -128,6 +128,8 @@
 		<module>../openscada_da_simserver</module>
 		<module>../openscada_da_sysinfoserver</module>
 		<module>../openscada_da_testserver</module>
+		<module>../openscada_da_stockserver</module>
+		<module>../openscada_da_opcserver2</module>
 	</modules>
 	<dependencies>
 		<dependency>
