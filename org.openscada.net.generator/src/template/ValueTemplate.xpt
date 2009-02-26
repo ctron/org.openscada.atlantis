@@ -1,0 +1,291 @@
+«IMPORT metamodel»
+
+«EXTENSION template::GeneratorExtensions»
+
+«DEFINE main FOR Model»
+	«EXPAND main FOREACH this.packages()»
+«ENDDEFINE»
+
+«DEFINE main FOR Package»
+	«EXPAND main FOREACH this.packages»
+	«EXPAND javaClass FOREACH this.entities.typeSelect(Entity)»
+«ENDDEFINE»
+
+«DEFINE javaClass FOR Entity»
+	«FILE this.typeFileNameFq() + ".java"»
+		
+		«IF this.package() != null»
+		package «this.package().packageNameFq()»;
+		«ENDIF»
+		
+		public class «name» {
+			
+			public «name» ()
+			{
+			}
+			
+			«REM»Ctor with attributes«ENDREM»
+			«IF !this.attributes.isEmpty»
+			public «name» (
+				«EXPAND ctorVariables FOREACH this.attributes SEPARATOR ","»
+			)
+			{
+				«EXPAND ctorAssignments FOREACH this.attributes»
+			}
+			«ENDIF»
+			
+			«EXPAND attributeAccess FOREACH this.attributes»
+			
+			«EXPAND fromValue FOR this»
+			«EXPAND toValue FOR this»
+		}
+	«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE ctorVariables FOR Value»
+	final «this.attributeJavaType()» «this.name»
+«ENDDEFINE»
+
+«DEFINE ctorAssignments FOR Value»
+	this.«this.name» = «this.name»;
+«ENDDEFINE»
+
+«REM»Attribute Access«ENDREM»
+
+
+«DEFINE attributeAccess FOR Value»
+
+private «this.attributeJavaType()» «this.name»;
+
+public void «this.setter()»( final «this.attributeJavaType()» «this.name» )
+{
+	this.«this.name» = «this.name»;
+}
+
+public «this.attributeJavaType()» «this.getter()»()
+{
+	return «this.name»;
+}
+«ENDDEFINE»
+
+«REM»Conversion from value«ENDREM»
+
+«DEFINE fromValue FOR Entity»
+public static «this.name» fromValue ( final org.openscada.net.base.data.MapValue entityValue )
+{
+   «this.name» bean = new «this.name» ();
+   
+   «EXPAND fromAttribute FOREACH this.attributes»
+   
+   return bean;
+}
+«ENDDEFINE»
+
+«DEFINE toValue FOR Entity»
+public static org.openscada.net.base.data.MapValue toValue ( final «this.name» bean ){
+	final org.openscada.net.base.data.MapValue value;
+	value = new org.openscada.net.base.data.MapValue ();
+		
+	«EXPAND toAttribute FOREACH this.attributes»
+		
+	return value;
+}
+«ENDDEFINE»
+
+«REM»FROM«ENDREM»
+
+«DEFINE fromAttribute FOR Value»
+	// FIXME: not implemented
+«ENDDEFINE»
+
+«DEFINE fromAttribute FOR RefValue»
+«IF this.list»
+	{
+		org.openscada.net.base.data.Value value = entityValue.get ( "«this.valueName ()»" );
+		if ( value != null && value instanceof org.openscada.net.base.data.ListValue )
+		{
+			java.util.Collection<«this.type.typeClassNameFq()»> list = new java.util.LinkedList<«this.type.typeClassNameFq()»> ();
+			
+			for ( org.openscada.net.base.data.Value entry : ((org.openscada.net.base.data.ListValue)value).getValues () )
+			{ 
+				if ( entry instanceof org.openscada.net.base.data.MapValue )
+				{
+					list.add ( «this.type.typeClassNameFq()».fromValue ((org.openscada.net.base.data.MapValue)value) );
+				}
+			}
+			
+			bean.«this.setter()» ( list );
+		}
+	}
+«ELSE»
+	{
+		org.openscada.net.base.data.Value value = entityValue.get ( "«this.valueName ()»" );
+		if ( value != null && value instanceof org.openscada.net.base.data.MapValue )
+		{
+			bean.«this.setter()» ( «this.type.typeClassNameFq()».fromValue ((org.openscada.net.base.data.MapValue)value) ) );
+		}
+	}
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE fromAttribute FOR BasicValue»
+«IF this.list»
+	{
+		org.openscada.net.base.data.Value value = entityValue.get ( "«this.valueName ()»" );
+		if ( value != null && value instanceof org.openscada.net.base.data.ListValue )
+		{
+			java.util.Collection<«this.type.javaType()»> list = new java.util.LinkedList<«this.type.javaType()»> ();
+			
+			for ( org.openscada.net.base.data.Value entry : ((org.openscada.net.base.data.ListValue)value).getValues () )
+			{ 
+				if ( entry instanceof «this.type.gmppType()» )
+				{
+					list.add ( ((«this.type.gmppType()»)entry).getValue () );
+				}
+			}
+			
+			bean.«this.setter()» ( list );
+		}
+	}
+«ELSE»
+	{
+		org.openscada.net.base.data.Value value = entityValue.get ( "«this.valueName ()»" );
+		if ( value != null && value instanceof «this.type.gmppType()» )
+		{
+			bean.«this.setter()» ( ((«this.type.gmppType()»)value).getValue () );
+		}
+	}
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE fromAttribute FOR VariantValue»
+«IF this.list»
+	{
+		org.openscada.net.base.data.Value value = entityValue.get ( "«this.valueName ()»" );
+		if ( value != null && value instanceof org.openscada.net.base.data.ListValue )
+		{
+			java.util.Collection<org.openscada.core.Variant> list = new java.util.LinkedList<org.openscada.core.Variant> ();
+			
+			for ( org.openscada.net.base.data.Value entry : ((org.openscada.net.base.data.ListValue)value).getValues () )
+			{ 
+				list.add ( org.openscada.core.net.MessageHelper.valueToVariant ( entry, new org.openscada.core.Variant () ) );
+			}
+			
+			bean.«this.setter()» ( list );
+		}
+	}
+«ELSE»
+    {
+    	org.openscada.net.base.data.Value value = entityValue.get ( "«this.valueName ()»" );
+		bean.«this.setter()» ( org.openscada.core.net.MessageHelper.valueToVariant ( value, new org.openscada.core.Variant () ) );
+	}
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE fromAttribute FOR MapValue»
+«IF this.list»
+	{
+		org.openscada.net.base.data.Value value = entityValue.get ( "«this.valueName ()»" );
+		if ( value != null && value instanceof org.openscada.net.base.data.ListValue )
+		{
+			java.util.Collection<java.util.Map<String,org.openscada.core.Variant>> list = new java.util.LinkedList<java.util.Map<String,org.openscada.core.Variant>> ();
+			
+			for ( org.openscada.net.base.data.Value entry : ((org.openscada.net.base.data.ListValue)value).getValues () )
+			{ 
+				if ( entry instanceof org.openscada.net.base.data.MapValue )
+			    	{
+						list.add ( org.openscada.core.net.MessageHelper.mapToAttributes ( (org.openscada.net.base.data.MapValue)entry ) );
+					}				
+			}
+			
+			bean.«this.setter()» ( list );
+		}
+	}
+«ELSE»
+    {
+    	org.openscada.net.base.data.Value value = entityValue.get ( "«this.valueName ()»" );
+    	if ( value instanceof org.openscada.net.base.data.MapValue )
+    	{
+			bean.«this.setter()» ( org.openscada.core.net.MessageHelper.mapToAttributes ( (org.openscada.net.base.data.MapValue)value ) );
+		}
+	}
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE fromAttribute FOR FlagValue»
+	bean.«this.setter()» ( entityValue.containsKey ( "«this.valueName ()»" ) );
+«ENDDEFINE»
+
+«REM»TO«ENDREM»
+
+«DEFINE toAttribute FOR Value»
+	// FIXME: implement
+«ENDDEFINE»
+
+«DEFINE toAttribute FOR RefValue»
+«IF this.list»
+	{
+		org.openscada.net.base.data.ListValue listValue = new org.openscada.net.base.data.ListValue ();
+		for ( final «this.type.typeClassNameFq()» entry : bean.«this.getter()»() )
+		{
+			listValue.add ( «this.type.typeClassNameFq()».toValue ( entry ) );
+		}
+		value.getValues ().put ( "«this.valueName ()»", listValue );
+	}
+«ELSE»
+	value.getValues().put ( "«this.valueName()»", «this.type.typeClassNameFq()».toValue ( bean.«this.getter()»() ) ); 
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE toAttribute FOR BasicValue»
+«IF this.list»
+	{
+		org.openscada.net.base.data.ListValue listValue = new org.openscada.net.base.data.ListValue ();
+		for ( final «this.type.javaType()» entry :   bean.«this.getter()»() )
+		{
+			listValue.add ( new «this.type.gmppType()» ( entry ) );
+		}
+		value.getValues ().put ( "«this.valueName ()»", listValue );
+	}
+«ELSE»
+	value.getValues ().put ( "«this.valueName ()»", new «this.type.gmppType()» ( bean.«this.getter()»() ) );
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE toAttribute FOR VariantValue»
+«IF this.list»
+	{
+		org.openscada.net.base.data.ListValue listValue = new org.openscada.net.base.data.ListValue ();
+		for ( final org.openscada.core.Variant entry : bean.«this.getter()»() )
+		{
+			listValue.add ( org.openscada.core.net.MessageHelper.variantToValue ( entry ) );
+		}
+		value.getValues ().put ( "«this.valueName ()»", listValue );
+	}
+«ELSE»
+	value.getValues ().put ( "«this.valueName ()»", org.openscada.core.net.MessageHelper.variantToValue ( bean.«this.getter()»() ) );
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE toAttribute FOR MapValue»
+«IF this.list»
+	{
+		org.openscada.net.base.data.ListValue listValue = new org.openscada.net.base.data.ListValue ();
+		for ( final java.util.Map<String,org.openscada.core.Variant> entry : bean.«this.getter()»() )
+		{
+			listValue.add ( org.openscada.core.net.MessageHelper.attributesToMap ( entry ) );
+		}
+		value.getValues ().put ( "«this.valueName ()»", listValue );
+	}
+«ELSE»
+	value.getValues ().put ( "«this.valueName ()»", org.openscada.core.net.MessageHelper.attributesToMap ( bean.«this.getter()»() ) );
+«ENDIF»
+
+«ENDDEFINE»
+
+«DEFINE toAttribute FOR FlagValue»
+	if ( bean.«this.getter()» ()  )
+	{
+		value.getValues ().put ( "«this.valueName ()»", new org.openscada.net.base.data.VoidValue () );
+	}
+«ENDDEFINE»

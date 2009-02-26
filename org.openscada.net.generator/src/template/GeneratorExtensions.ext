@@ -2,13 +2,13 @@ import metamodel;
 
 extension metamodel::Extensions reexport;
 
-getter(Attribute this) :
+getter(Value this) :
 	"get"+name.toFirstUpper();
 	
-setter(Attribute this) :
+setter(Value this) :
 	"set"+name.toFirstUpper();
 	
-valueName(Attribute this) :
+valueName(Value this) :
 	if ( this.alternateValueName != null ) then this.alternateValueName else this.name;
 	
 javaType(Datatype this) :
@@ -27,45 +27,48 @@ gmppType(Datatype this) :
 	if ( this == metamodel::Datatype::LONG ) then "org.openscada.net.base.data.LongValue" else
 	"Object";
 
-attributeJavaType(Attribute this) :
+attributeJavaType(Value this) :
 	if ( this.list ) then "java.util.Collection<" + this.singleAttributeJavaType() + ">"
 	else this.singleAttributeJavaType();
 	
-singleAttributeJavaType(Attribute this) :
-	if ( this.metaType == metamodel::BasicAttribute ) then ((metamodel::BasicAttribute)this).type.javaType()
-	else if ( this.metaType == metamodel::VariantAttribute ) then "org.openscada.core.Variant"
-	else if ( this.metaType == metamodel::FlagAttribute ) then "boolean"
-	else if ( this.metaType == metamodel::MapAttribute ) then "java.util.Map<String,org.openscada.core.Variant>"
+singleAttributeJavaType(Value this) :
+	if ( this.metaType == metamodel::BasicValue ) then ((metamodel::BasicValue)this).type.javaType()
+	else if ( this.metaType == metamodel::VariantValue ) then "org.openscada.core.Variant"
+	else if ( this.metaType == metamodel::FlagValue ) then "boolean"
+	else if ( this.metaType == metamodel::MapValue ) then "java.util.Map<String,org.openscada.core.Variant>"
+	else if ( this.metaType == metamodel::RefValue ) then ((RefValue)this).type.typeClassNameFq()
 	else "Object";
-	
 
 serverImplName(Service this) :
-	this.serviceClassNameFq() + "ServerImpl";
-
+	this.name + "ServerImpl";
+	
 interfaceName(Service this) :
-	this.serviceClassNameFq();
+	this.name;
 	
 clientImplName(Service this) :
-	this.serviceClassNameFq() + "ClientImpl";
-	
-interfaceFileName(Service this) :
-	this.serviceFileNameFq();
-	
-String packageFileNameFq(Package this) :
-	this.package() == null ? this.name : packageFileNameFq ( this.package() ) + "/" + this.name;
-	
-String packageClassNameFq(Package this) :
-	this.package() == null ? this.name : packageClassNameFq ( this.package() ) + "." + this.name;
-	
-typeClassNameFq(Type this) :
-	this.package()==null ? this.name : packageClassNameFq ( this.package() ) + "." + this.name;
-	
-typeFileNameFq(Type this) :
-	this.package()==null ? this.name : packageFileNameFq ( this.package() ) + "/" + this.name;
-	
-serviceClassNameFq(Service this) :
-	this.package()==null ? this.name : packageClassNameFq ( this.package() ) + "." + this.name;
+	this.name + "ClientImpl";
 
-serviceFileNameFq(Service this) :
-	this.package()==null ? this.name : packageClassNameFq ( this.package() ) + "/" + this.name;
+String packagePathFq(Package this) :
+	this.package() == null ? this.name : packageNameFq ( this.package(), "/" ) + "/" + this.name;
+
+String packageNameFq(Package this) :
+	this.package() == null ? this.name : packageNameFq ( this.package(), "." ) + "." + this.name;
+
+String packageNameFq(Package this, String delim) :
+	this.package() == null ? this.name : packageNameFq ( this.package(), delim ) + delim + this.name;
+	
+String servicePathFq(Service this) :
+	this.package() == null ? this.name : packageNameFq ( this.package(), "/" ) + "/";
+	
+String servicePackageNameFq(Service this) :
+	this.package() == null ? this.name : packageNameFq ( this.package(), "." ) + ".";
+	
+typeClassNameFq(Entity this) :
+	this.package()==null ? this.name : packageNameFq ( this.package(), "." ) + "." + this.name;
+	
+typeFileNameFq(Entity this) :
+	this.package()==null ? this.name : packageNameFq ( this.package(), "/" ) + "/" + this.name;
+	
+typeFileNameFq(Message this) :
+	this.package()==null ? this.name : packageNameFq ( this.package(), "/" ) + "/" + this.name;
 		

@@ -1,0 +1,90 @@
+«IMPORT metamodel»
+
+«EXTENSION template::GeneratorExtensions»
+
+«DEFINE main FOR Model»
+	«EXPAND main FOREACH this.packages()»
+«ENDDEFINE»
+
+«DEFINE main FOR Package»
+	«EXPAND main FOREACH this.packages»
+	«EXPAND javaClass FOREACH this.messages»
+«ENDDEFINE»
+
+«DEFINE javaClass FOR Message»
+	«FILE this.typeFileNameFq() + ".java"»
+		
+		«IF this.package() != null»
+		package «this.package().packageNameFq()»;
+		«ENDIF»
+		
+		public class «name» {
+		
+			public static final int COMMAND_CODE = «this.messageCode»;
+			
+			public «name» ()
+			{
+			}
+			
+			public static org.openscada.net.base.data.Message toMessage ( final «name» bean )
+			{
+				return toMessage ( bean, null );
+			}
+			
+			public static org.openscada.net.base.data.Message toMessage ( «name» bean, org.openscada.net.base.data.Message requestMessage )
+			{
+				org.openscada.net.base.data.Message message;
+
+				if ( requestMessage == null )
+				{				
+					message = new org.openscada.net.base.data.Message ( COMMAND_CODE );
+				}
+				else
+				{
+					message = new org.openscada.net.base.data.Message ( COMMAND_CODE, requestMessage.getSequence () );
+				}
+				
+				«IF this.value != null»
+					message.setValues ( «this.value.type.typeClassNameFq()».toValue ( bean.getValue () ) );
+				«ENDIF»
+				
+				return message;
+			}
+			
+			public static «name» fromMessage ( final org.openscada.net.base.data.Message message )
+			{
+				«name» bean = new «name» ();
+				
+				«IF this.value != null »
+				bean.setValue ( «this.value.type.typeClassNameFq()».fromValue ( message.getValues () ) );
+				«ENDIF»
+				
+				return bean;
+			}
+			
+			«IF this.value != null »
+			public «name» ( final «this.value.type.typeClassNameFq()» value )
+			{
+				this.value = value;
+			}
+			
+			private «this.value.type.typeClassNameFq()» value;
+			
+			public «this.value.type.typeClassNameFq()» getValue ()
+			{
+				return this.value;
+			} 
+			
+			public void setValue ( final «this.value.type.typeClassNameFq()» value )
+			{
+				this.value = value;
+			}
+			
+			«ELSE»
+			
+			«ENDIF»
+			
+			
+		}
+	«ENDFILE»
+«ENDDEFINE»

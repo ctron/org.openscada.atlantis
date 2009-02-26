@@ -2,11 +2,8 @@ import metamodel;
 
 extension metamodel::Extensions;
 
-/*	
-context Entity ERROR "Duplicate entity "+name :
-	model().entities().select(e|e.name==name).size==1;
-	
-context Message ERROR "Duplicate message code "+name + "(" + messageCode + ")" :
-	model().messages().select(e|e.messageCode==messageCode).size==1;
-	
-	*/
+context Operation ERROR "No Request message" :
+	this.request != null;
+
+context Message ERROR "Duplicate message code: " + this.messageCode:
+	this.eRootContainer.eAllContents.typeSelect(Message).select(e|e.messageCode==this.messageCode).size==1;
