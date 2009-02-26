@@ -27,6 +27,14 @@
 		<metaModel idRef="mm"/>
 		<expand
 			value="template::Template::main FOR model" />
+		<outlet path="${src-gen}" >
+			<postprocessor class="org.openarchitectureware.xpand2.output.JavaBeautifier" />
+		</outlet>
+	</component>
+	
+	<!--  generate code -->
+	<component class="org.openarchitectureware.xpand2.Generator">
+		<metaModel idRef="mm"/>
 		<expand
 			value="template::ServiceTemplate::main FOR model" />
 		<outlet path="${src-gen}" >

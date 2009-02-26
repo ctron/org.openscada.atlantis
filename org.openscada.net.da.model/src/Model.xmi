@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
 <metamodel:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:metamodel="http://www.example.org/metamodel" xsi:schemaLocation="http://www.example.org/metamodel ../../org.openscada.net.generator/src/metamodel/metamodel.ecore">
-  <services name="Connection">
-    <operations name="writeAttributes" longRunning="true" argument="//@packages.0/@packages.0/@packages.0/@packages.0/@types.0"/>
-    <operations name="writeValue" longRunning="true" argument="//@packages.0/@packages.0/@packages.0/@packages.0/@types.1" result="//@packages.0/@packages.0/@packages.0/@packages.0/@types.2"/>
-  </services>
   <packages name="org">
     <packages name="openscada">
       <packages name="da">
@@ -20,6 +16,10 @@
             <attributes xsi:type="metamodel:BasicAttribute" name="location" list="true"/>
             <attributes xsi:type="metamodel:FlagAttribute" name="flag"/>
           </types>
+          <services name="Connection">
+            <operations name="writeAttributes" longRunning="true" argument="//@packages.0/@packages.0/@packages.0/@packages.0/@types.0"/>
+            <operations name="writeValue" longRunning="true" argument="//@packages.0/@packages.0/@packages.0/@packages.0/@types.1" result="//@packages.0/@packages.0/@packages.0/@packages.0/@types.2"/>
+          </services>
         </packages>
       </packages>
     </packages>
