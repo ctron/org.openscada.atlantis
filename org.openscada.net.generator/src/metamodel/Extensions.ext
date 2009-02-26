@@ -17,6 +17,16 @@ List[Service] services(Model this) :
 //	types.typeSelect(Message);
 
 Package package(Type this) :
-	if ( this.eRootContainer == null ) then null
-	else if ( this.eRootContainer.metaType == Package ) then (Package)this.eRootContainer
+	if ( this.eContainer == null ) then null
+	else if ( this.eContainer.metaType == Package ) then ((Package)this.eContainer)
+	else null; 
+	
+Package package(Service this) :
+	if ( this.eContainer == null ) then null
+	else if ( this.eContainer.metaType == Package ) then ((Package)this.eContainer)
+	else null;
+	
+Package package(Package this) :
+	if ( this.eContainer == null ) then null
+	else if ( this.eContainer.metaType == Package ) then ((Package)this.eContainer)
 	else null; 

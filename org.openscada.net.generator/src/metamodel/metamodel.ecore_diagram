@@ -495,4 +495,28 @@
     <element xsi:nil="true"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_LlXgg_zQEd2rOdFbzKVdiw" points="[-37, 2, 127, -20]$[-188, -4, -24, -26]"/>
   </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_SBYj4fzfEd2jJe44DH1irw" type="4003" source="_2eOiYPnUEd2fjJwtUR1Cxg" target="_1QaJUPzSEd2rOdFbzKVdiw">
+    <children xmi:type="notation:Node" xmi:id="_SBbnMPzfEd2jJe44DH1irw" type="6002">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_SBbnMfzfEd2jJe44DH1irw" y="40"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_SBcOQPzfEd2jJe44DH1irw" type="6004">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_SBcOQfzfEd2jJe44DH1irw" y="60"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_SBZK8PzfEd2jJe44DH1irw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_SBZK8fzfEd2jJe44DH1irw" fontName="Sans"/>
+    <element xmi:type="ecore:EReference" href="metamodel.ecore#//Model/packages"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_SBZK8vzfEd2jJe44DH1irw" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_SBhGwPzfEd2jJe44DH1irw" type="4003" source="_1QaJUPzSEd2rOdFbzKVdiw" target="_1QaJUPzSEd2rOdFbzKVdiw">
+    <children xmi:type="notation:Node" xmi:id="_SBht0PzfEd2jJe44DH1irw" type="6002">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_SBht0fzfEd2jJe44DH1irw" y="40"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_SBht0vzfEd2jJe44DH1irw" type="6004">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_SBht0_zfEd2jJe44DH1irw" y="60"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_SBhGwfzfEd2jJe44DH1irw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_SBhGwvzfEd2jJe44DH1irw" fontName="Sans"/>
+    <element xmi:type="ecore:EReference" href="metamodel.ecore#//Package/packages"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_SBhGw_zfEd2jJe44DH1irw" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
 </notation:Diagram>

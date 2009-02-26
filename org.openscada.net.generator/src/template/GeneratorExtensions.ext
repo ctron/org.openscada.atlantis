@@ -40,23 +40,32 @@ singleAttributeJavaType(Attribute this) :
 	
 
 serverImplName(Service this) :
-	this.name + "ServerImpl";
+	this.serviceClassNameFq() + "ServerImpl";
 
 interfaceName(Service this) :
-	this.name;
+	this.serviceClassNameFq();
 	
 clientImplName(Service this) :
-	this.name + "ClientImpl";
+	this.serviceClassNameFq() + "ClientImpl";
+	
+interfaceFileName(Service this) :
+	this.serviceFileNameFq();
 	
 String packageFileNameFq(Package this) :
-	this.eRootContainer == null ? this.name : packageFileNameFq ( (Package)this.eRootContainer ) + "/" + this.name;
+	this.package() == null ? this.name : packageFileNameFq ( this.package() ) + "/" + this.name;
 	
 String packageClassNameFq(Package this) :
-	this.eRootContainer == null ? this.name : packageClassNameFq ( (Package)this.eRootContainer ) + "." + this.name;
+	this.package() == null ? this.name : packageClassNameFq ( this.package() ) + "." + this.name;
 	
 typeClassNameFq(Type this) :
-	this.eRootContainer==null ? this.name : packageClassNameFq ( (Package)this.eRootContainer ) + "." + this.name;
+	this.package()==null ? this.name : packageClassNameFq ( this.package() ) + "." + this.name;
 	
 typeFileNameFq(Type this) :
-	this.eRootContainer==null ? this.name : packageFileNameFq ( (Package)this.eRootContainer ) + "/" + this.name;
+	this.package()==null ? this.name : packageFileNameFq ( this.package() ) + "/" + this.name;
+	
+serviceClassNameFq(Service this) :
+	this.package()==null ? this.name : packageClassNameFq ( this.package() ) + "." + this.name;
+
+serviceFileNameFq(Service this) :
+	this.package()==null ? this.name : packageClassNameFq ( this.package() ) + "/" + this.name;
 		

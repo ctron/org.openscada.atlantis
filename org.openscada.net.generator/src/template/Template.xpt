@@ -3,16 +3,12 @@
 «EXTENSION template::GeneratorExtensions»
 
 «DEFINE main FOR Model»
-	«EXPAND main FOREACH this.packages»
+	«EXPAND main FOREACH this.packages()»
 «ENDDEFINE»
 
 «DEFINE main FOR Package»
 	«EXPAND main FOREACH this.packages»
-	«EXPAND main FOREACH this.types.typeSelect(Message)»
-«ENDDEFINE»
-
-«DEFINE main FOR Message»
-	«EXPAND javaClass FOR this»
+	«EXPAND javaClass FOREACH this.types.typeSelect(Message)»
 «ENDDEFINE»
 
 «DEFINE javaClass FOR Message»

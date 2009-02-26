@@ -3,25 +3,30 @@
 «EXTENSION template::GeneratorExtensions»
 
 «DEFINE main FOR Model»
-	«EXPAND javaClass FOREACH services()»
+	«EXPAND main FOREACH this.packages()»
+«ENDDEFINE»
+
+«DEFINE main FOR Package»
+	«EXPAND main FOREACH this.packages»
+	«EXPAND javaClass FOREACH this.services.typeSelect(Service)»
 «ENDDEFINE»
 
 «DEFINE javaClass FOR Service»
-	«FILE this.interfaceName() + ".java"»
+	«FILE this.interfaceFileName() + ".java"»
 		public interface «this.interfaceName()»  {
 		
 		«FOREACH this.operations AS operation»
 			public abstract 
 			
 			«IF operation.result != null»
-				«operation.result.name»
+				«operation.result.typeClassNameFq()»
 			«ELSE»
 				void
 			«ENDIF»
 			
 			 «operation.name» (
 				«IF operation.argument != null»
-					final «operation.argument.name» argument
+					final «operation.argument.typeClassNameFq()» argument
 				«ENDIF»
 			);
 		«ENDFOREACH»
@@ -36,14 +41,14 @@
 			public 
 			
 			«IF operation.result != null»
-				«operation.result.name»
+				«operation.result.typeClassNameFq()»
 			«ELSE»
 				void
 			«ENDIF»
 			
 			 «operation.name» (
 				«IF operation.argument != null»
-					final «operation.argument.name» argument
+					final «operation.argument.typeClassNameFq()» argument
 				«ENDIF»
 			)
 			{
@@ -91,23 +96,23 @@
 				
 				«IF operation.result != null»
 				
-					«operation.result.name» result;
+					«operation.result.typeClassNameFq()» result;
 					«IF operation.argument != null»
 						result = «operation.name» (
-						«operation.argument.name».fromMessage ( message )
+						«operation.argument.typeClassNameFq()».fromMessage ( message )
 						);
 					«ELSE»
 						result = «operation.name» ();
 					«ENDIF»
 					
-					org.openscada.net.base.data.Message resultMessage = «operation.result.name».toMessage ( result, message );
+					org.openscada.net.base.data.Message resultMessage = «operation.result.typeClassNameFq()».toMessage ( result, message );
 					connection.sendMessage ( resultMessage );
 					
 				«ELSE»
 				
 					«IF operation.argument != null»
 						«operation.name» (
-						«operation.argument.name».fromMessage ( message )
+						«operation.argument.typeClassNameFq()».fromMessage ( message )
 						);
 					«ELSE»
 						«operation.name» ();
