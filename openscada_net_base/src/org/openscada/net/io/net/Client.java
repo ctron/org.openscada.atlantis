@@ -32,61 +32,65 @@ import org.openscada.net.io.SocketConnection;
 public class Client implements ConnectionStateListener
 {
 
-    private static Logger _log = Logger.getLogger ( Client.class );
+    private static Logger logger = Logger.getLogger ( Client.class );
 
-    private int reconnectDelay = Integer.getInteger ( "openscada.net.reconnectDelay", 10000 );
+    private final int reconnectDelay = Integer.getInteger ( "openscada.net.reconnectDelay", 10000 );
 
-    private IOProcessor _processor = null;
-    private MessageListener _listener;
-    private ClientConnection _connection = null;
-    private ConnectionStateListener _stateListener = null;
+    private IOProcessor processor = null;
 
-    private boolean _connected = false;
-    private boolean _autoReconnect = false;
+    private final MessageListener listener;
 
-    private SocketAddress _lastRemote = null;
+    private ClientConnection connection = null;
 
-    public Client ( IOProcessor processor, MessageListener listener, ConnectionStateListener stateListener, boolean autoReconnect )
+    private ConnectionStateListener stateListener = null;
+
+    private boolean connected = false;
+
+    private boolean autoReconnect = false;
+
+    private SocketAddress lastRemote = null;
+
+    public Client ( final IOProcessor processor, final MessageListener listener, final ConnectionStateListener stateListener, final boolean autoReconnect )
     {
-        _processor = processor;
-        _listener = listener;
-        _stateListener = stateListener;
-        _autoReconnect = autoReconnect;
+        this.processor = processor;
+        this.listener = listener;
+        this.stateListener = stateListener;
+        this.autoReconnect = autoReconnect;
     }
 
-    public void sendMessage ( Message message )
+    public void sendMessage ( final Message message )
     {
-        if ( _connection != null )
+        if ( this.connection != null )
         {
-            _connection.sendMessage ( message );
+            this.connection.sendMessage ( message );
         }
     }
 
-    public void connect ( SocketAddress remote )
+    public void connect ( final SocketAddress remote )
     {
-        _lastRemote = remote;
+        this.lastRemote = remote;
         performConnect ( remote );
     }
 
-    public void connect ( SocketAddress remote, boolean wait )
+    public void connect ( final SocketAddress remote, final boolean wait )
     {
-        _lastRemote = remote;
-        scheduleConnectJob ( remote, reconnectDelay );
+        this.lastRemote = remote;
+        scheduleConnectJob ( remote, this.reconnectDelay );
     }
 
-    private void performConnect ( SocketAddress remote )
+    private void performConnect ( final SocketAddress remote )
     {
-        _log.debug ( "connecting..." );
+        logger.debug ( "connecting..." );
 
         closeCurrent ();
 
         try
         {
-            SocketConnection channel = new SocketConnection ( _processor );
-            _connection = new ClientConnection ( _listener, this, channel );
+            final SocketConnection channel = new SocketConnection ( this.processor );
+            this.connection = new ClientConnection ( this.listener, this, channel );
             channel.connect ( remote );
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
             e.printStackTrace ();
         }
@@ -94,52 +98,58 @@ public class Client implements ConnectionStateListener
 
     private void closeCurrent ()
     {
-        if ( _connection != null )
+        if ( this.connection != null )
         {
-            _connected = false;
-            _connection.close ();
-            _connection = null;
+            this.connected = false;
+            this.connection.close ();
+            this.connection = null;
         }
     }
 
-    public void closed ( Exception error )
+    public void closed ( final Exception error )
     {
-        _log.debug ( "Connection closed" );
+        logger.debug ( "Connection closed" );
 
-        if ( _stateListener != null )
-            _stateListener.closed ( error );
+        if ( this.stateListener != null )
+        {
+            this.stateListener.closed ( error );
+        }
 
-        _connected = false;
+        this.connected = false;
 
-        if ( _autoReconnect && ( _lastRemote != null ) )
-            connect ( _lastRemote, true );
+        if ( this.autoReconnect && this.lastRemote != null )
+        {
+            connect ( this.lastRemote, true );
+        }
     }
 
     public void opened ()
     {
-        _connected = true;
+        this.connected = true;
 
-        _log.debug ( "Connection open" );
+        logger.debug ( "Connection open" );
 
-        if ( _stateListener != null )
-            _stateListener.opened ();
+        if ( this.stateListener != null )
+        {
+            this.stateListener.opened ();
+        }
     }
 
     public ClientConnection getConnection ()
     {
-        return _connection;
+        return this.connection;
     }
 
     public boolean isConnected ()
     {
-        return _connected;
+        return this.connected;
     }
 
-    private void scheduleConnectJob ( final SocketAddress remote, int timeout )
+    private void scheduleConnectJob ( final SocketAddress remote, final int timeout )
     {
-        _log.debug ( "adding connect job" );
+        logger.debug ( "adding connect job" );
 
-        _processor.getScheduler ().scheduleJob ( new Runnable () {
+        this.processor.getScheduler ().scheduleJob ( new Runnable () {
 
             public void run ()
             {
