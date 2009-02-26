@@ -34,93 +34,105 @@ import org.openscada.utils.timing.Scheduler;
 public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
 {
 
-    private static Logger _log = Logger.getLogger ( ConnectionHandlerBase.class );
+    private static Logger logger = Logger.getLogger ( ConnectionHandlerBase.class );
 
-    private MessageProcessor _messageProcessor = null;
-    private Scheduler.Job _pingJob = null;
-    protected Scheduler _scheduler = null;
-    private Connection _connection = null;
-    private boolean _pingDisabled = false;
+    private MessageProcessor messageProcessor = null;
 
-    private List<ConnectionStateListener> _csListeners = new CopyOnWriteArrayList<ConnectionStateListener> ();
+    private Scheduler.Job pingJob = null;
 
-    public ConnectionHandlerBase ( Scheduler scheduler )
+    protected Scheduler scheduler = null;
+
+    private Connection connection = null;
+
+    private boolean pingDisabled = false;
+
+    private final List<ConnectionStateListener> connectionStateListeners = new CopyOnWriteArrayList<ConnectionStateListener> ();
+
+    private long lastMessageReceived;
+
+    private final int pingJobPeriod;
+
+    public ConnectionHandlerBase ( final Scheduler scheduler )
     {
-        _scheduler = scheduler;
-        _messageProcessor = new MessageProcessor ();
+        this.scheduler = scheduler;
+        this.messageProcessor = new MessageProcessor ();
 
-        _messageProcessor.setHandler ( Message.CC_PING, new PingHandler () );
-        _messageProcessor.setHandler ( Message.CC_PONG, new PongHandler () );
+        this.messageProcessor.setHandler ( Message.CC_PING, new PingHandler () );
+        this.messageProcessor.setHandler ( Message.CC_PONG, new PongHandler () );
+
+        // The ping job period is either directly defined or calculated from the amount of ping
+        // that have to be sent in the connection timeout timespan 
+        this.pingJobPeriod = Long.getLong ( "openscada.net.ping.period", this.connection.getTimeout () / Integer.getInteger ( "openscada.net.ping.frequency", 3 ) ).intValue ();
 
     }
 
     private void doPing ()
     {
-        if ( _connection != null && !_pingDisabled )
+        if ( this.connection != null && !this.pingDisabled )
         {
-            _log.debug ( "Sending ping" );
-            _connection.sendMessage ( MessageCreator.createPing () );
+            if ( System.currentTimeMillis () - this.lastMessageReceived > this.pingJobPeriod )
+            {
+                logger.debug ( "Sending ping" );
+                this.connection.sendMessage ( MessageCreator.createPing () );
+            }
         }
     }
 
-    public void messageReceived ( Connection connection, Message message )
+    public void messageReceived ( final Connection connection, final Message message )
     {
-        _messageProcessor.messageReceived ( connection, message );
+        this.lastMessageReceived = System.currentTimeMillis ();
+        this.messageProcessor.messageReceived ( connection, message );
     }
 
-    public void addStateListener ( ConnectionStateListener listener )
+    public void addStateListener ( final ConnectionStateListener listener )
     {
-        _csListeners.add ( listener );
+        this.connectionStateListeners.add ( listener );
     }
 
-    public void removeStateListener ( ConnectionStateListener listener )
+    public void removeStateListener ( final ConnectionStateListener listener )
     {
-        _csListeners.remove ( listener );
+        this.connectionStateListeners.remove ( listener );
     }
 
     private void removePingJob ()
     {
-        if ( _pingJob != null )
+        if ( this.pingJob != null )
         {
-            _log.debug ( "removing ping job" );
-            _scheduler.removeJob ( _pingJob );
-            _pingJob = null;
+            logger.debug ( "removing ping job" );
+            this.scheduler.removeJob ( this.pingJob );
+            this.pingJob = null;
         }
     }
 
     private void addPingJob ()
     {
         removePingJob ();
-        
-        _log.debug ( "adding ping job" );
 
-        // The ping job period is either directly defined or calculated from the amount of ping
-        // that have to be sent in the connection timeout timespan 
-        int pingJobPeriod = Long.getLong ( "openscada.net.ping.period", _connection.getTimeout () / Integer.getInteger ( "openscada.net.ping.frequency", 3 ) ).intValue ();
-        
-        // adding the ping job with half the period time of the timeout
-        _pingJob = _scheduler.addJob ( new Runnable () {
+        logger.debug ( "adding ping job" );
+
+        // adding the ping job with the ping job period
+        this.pingJob = this.scheduler.addJob ( new Runnable () {
 
             public void run ()
             {
                 doPing ();
             }
-        }, pingJobPeriod );
+        }, this.pingJobPeriod );
     }
 
-    public void closed ( Exception error )
+    public void closed ( final Exception error )
     {
         removePingJob ();
 
-        for ( ConnectionStateListener csl : _csListeners )
+        for ( final ConnectionStateListener csl : this.connectionStateListeners )
         {
             try
             {
                 csl.closed ( error );
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
-                _log.warn ( "Failed not notify", e );
+                logger.warn ( "Failed not notify", e );
             }
         }
     }
@@ -129,13 +141,13 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
     {
         addPingJob ();
 
-        for ( ConnectionStateListener csl : _csListeners )
+        for ( final ConnectionStateListener csl : this.connectionStateListeners )
         {
             try
             {
                 csl.opened ();
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
             }
         }
@@ -143,27 +155,27 @@ public class ConnectionHandlerBase implements ConnectionHandler, ConnectionAware
 
     public MessageProcessor getMessageProcessor ()
     {
-        return _messageProcessor;
+        return this.messageProcessor;
     }
 
     public Connection getConnection ()
     {
-        return _connection;
+        return this.connection;
     }
 
-    public void setConnection ( Connection connection )
+    public void setConnection ( final Connection connection )
     {
-        _connection = connection;
+        this.connection = connection;
     }
 
     public synchronized void disablePing ()
     {
-        _pingDisabled = true;
+        this.pingDisabled = true;
     }
 
     public synchronized void enablePing ()
     {
-        _pingDisabled = false;
+        this.pingDisabled = false;
     }
 
 }
