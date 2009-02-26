@@ -42,7 +42,7 @@ import org.openscada.utils.timing.Scheduler;
 
 public class Connection implements ConnectionListener, MessageListener
 {
-    private static Logger _log = Logger.getLogger ( Connection.class );
+    private static Logger logger = Logger.getLogger ( Connection.class );
 
     private static final long MAX_SEQUENCE = 0x7FFFFFFF;
 
@@ -52,104 +52,105 @@ public class Connection implements ConnectionListener, MessageListener
 
     private static Scheduler _scheduler = new Scheduler ( "GlobalConnectionScheduler" );
 
-    private Protocol _protocolGMPP = null;
+    private Protocol protocolGMPP = null;
 
     protected SocketConnection _connection = null;
 
-    private ConnectionStateListener _connectionStateListener = null;
+    private ConnectionStateListener connectionStateListener = null;
 
-    private long _sequence = INIT_SEQUENCE;
+    private long sequence = INIT_SEQUENCE;
 
-    private MessageListener _listener = null;
+    private MessageListener messageListener = null;
 
-    private Scheduler.Job _timeoutJob = null;
+    private Scheduler.Job timeoutJob = null;
 
-    private boolean _connected = false;
+    private boolean connected = false;
 
     private static class MessageTag
     {
-        private MessageStateListener _listener;
+        private MessageStateListener listener;
 
-        private long _timestamp = 0;
+        private long timestamp = 0;
 
-        private long _timeout = 0;
+        private long timeout = 0;
 
-        private boolean _canceled = false;
+        private boolean canceled = false;
 
         public MessageStateListener getListener ()
         {
-            return _listener;
+            return this.listener;
         }
 
-        public void setListener ( MessageStateListener listener )
+        public void setListener ( final MessageStateListener listener )
         {
-            _listener = listener;
+            this.listener = listener;
         }
 
         public long getTimestamp ()
         {
-            return _timestamp;
+            return this.timestamp;
         }
 
-        public void setTimestamp ( long timestamp )
+        public void setTimestamp ( final long timestamp )
         {
-            _timestamp = timestamp;
+            this.timestamp = timestamp;
         }
 
         public long getTimeout ()
         {
-            return _timeout;
+            return this.timeout;
         }
 
-        public void setTimeout ( long timeout )
+        public void setTimeout ( final long timeout )
         {
-            _timeout = timeout;
+            this.timeout = timeout;
         }
 
-        synchronized public boolean isTimedOut ()
+        public synchronized boolean isTimedOut ()
         {
-            if ( _timeout <= 0 )
-                return _canceled;
+            if ( this.timeout <= 0 )
+            {
+                return this.canceled;
+            }
 
-            if ( _canceled )
+            if ( this.canceled )
+            {
                 return true;
+            }
 
-            return ( System.currentTimeMillis () - _timestamp ) >= _timeout;
+            return System.currentTimeMillis () - this.timestamp >= this.timeout;
         }
 
-        synchronized public void cancel ()
+        public synchronized void cancel ()
         {
-            if ( _canceled )
-                return;
-
-            _canceled = true;
+            this.canceled = true;
         }
     }
 
-    private Map<Long, MessageTag> _tagList = new HashMap<Long, MessageTag> ();
+    private final Map<Long, MessageTag> _tagList = new HashMap<Long, MessageTag> ();
 
-    public Connection ( MessageListener listener, ConnectionStateListener connectionStateListener, SocketConnection connection )
+    public Connection ( final MessageListener listener, final ConnectionStateListener connectionStateListener, final SocketConnection connection )
     {
-        _connectionStateListener = connectionStateListener;
-        _listener = listener;
-        _connection = connection;
+        this.connectionStateListener = connectionStateListener;
+        this.messageListener = listener;
+        this._connection = connection;
 
-        _protocolGMPP = new ProtocolGMPP ( this, this );
+        this.protocolGMPP = new ProtocolGMPP ( this, this );
 
-        _connected = true;
+        this.connected = true;
 
         addTimeOutJob ();
 
         setTimeout ( DEFAULT_CONNECTION_TIMEOUT );
     }
 
-    public Connection ( MessageListener listener, SocketConnection connection )
+    public Connection ( final MessageListener listener, final SocketConnection connection )
     {
-        _listener = listener;
-        _protocolGMPP = new ProtocolGMPP ( this, this );
-        _connection = connection;
+        this.messageListener = listener;
+        this.protocolGMPP = new ProtocolGMPP ( this, this );
+        this._connection = connection;
 
-        _connected = true;
+        this.connected = true;
 
         addTimeOutJob ();
 
@@ -158,102 +159,114 @@ public class Connection implements ConnectionListener, MessageListener
 
     private void addTimeOutJob ()
     {
-        if ( _timeoutJob != null )
+        if ( this.timeoutJob != null )
+        {
             return;
+        }
 
         final WeakReference<Connection> _this = new WeakReference<Connection> ( this );
 
-        _timeoutJob = _scheduler.addJob ( new Runnable () {
+        this.timeoutJob = _scheduler.addJob ( new Runnable () {
 
             public void run ()
             {
-                Connection c = _this.get ();
+                final Connection c = _this.get ();
                 if ( c == null )
+                {
                     _scheduler.removeJob ( this );
+                }
                 else
+                {
                     c.processTimeOuts ();
+                }
             }
         }, 1000 );
     }
 
     private void removeTimeOutJob ()
     {
-        if ( _timeoutJob != null )
+        if ( this.timeoutJob != null )
         {
-            _scheduler.removeJob ( _timeoutJob );
-            _timeoutJob = null;
+            _scheduler.removeJob ( this.timeoutJob );
+            this.timeoutJob = null;
         }
     }
 
-    private ByteBuffer encode ( Message message )
+    private ByteBuffer encode ( final Message message )
     {
         try
         {
-            return _protocolGMPP.code ( message );
+            return this.protocolGMPP.code ( message );
         }
-        catch ( InvalidValueTypeException e )
+        catch ( final InvalidValueTypeException e )
         {
-            _log.warn ( "Message contained unsupported value type", e );
+            logger.warn ( "Message contained unsupported value type", e );
             return null;
         }
     }
 
-    public void sendMessage ( Message message )
+    public void sendMessage ( final Message message )
     {
-        if ( !_connected )
+        if ( !this.connected )
+        {
             return;
+        }
 
-        synchronized ( _connection )
+        synchronized ( this._connection )
         {
             message.setSequence ( nextSequence () );
 
-            ByteBuffer buffer = encode ( message );
+            final ByteBuffer buffer = encode ( message );
 
             if ( buffer != null )
-                _connection.scheduleWrite ( buffer );
+            {
+                this._connection.scheduleWrite ( buffer );
+            }
         }
     }
 
-    public MessageTag sendMessage ( Message message, MessageStateListener listener, long timeout )
+    public MessageTag sendMessage ( final Message message, final MessageStateListener listener, final long timeout )
     {
-        MessageTag tag = new MessageTag ();
+        final MessageTag tag = new MessageTag ();
 
         tag.setListener ( listener );
         tag.setTimestamp ( System.currentTimeMillis () );
         tag.setTimeout ( timeout );
 
-        if ( !_connected )
+        if ( !this.connected )
         {
             listener.messageTimedOut ();
             return tag;
         }
 
-        synchronized ( _connection )
+        synchronized ( this._connection )
         {
             message.setSequence ( nextSequence () );
 
-            ByteBuffer buffer = encode ( message );
+            final ByteBuffer buffer = encode ( message );
             if ( buffer == null )
-                return tag;
-
-            synchronized ( _tagList )
             {
-                _tagList.put ( message.getSequence (), tag );
+                return tag;
             }
 
-            _connection.scheduleWrite ( buffer );
+            synchronized ( this._tagList )
+            {
+                this._tagList.put ( message.getSequence (), tag );
+            }
+
+            this._connection.scheduleWrite ( buffer );
         }
         return tag;
     }
 
-    public MessageTag sendMessage ( Message message, MessageStateListener listener )
+    public MessageTag sendMessage ( final Message message, final MessageStateListener listener )
     {
         return sendMessage ( message, listener, 0 );
     }
 
-    public void read ( ByteBuffer buffer )
+    public void read ( final ByteBuffer buffer )
     {
-        _protocolGMPP.decode ( buffer );
+        this.protocolGMPP.decode ( buffer );
     }
 
     public void written ()
@@ -263,83 +276,89 @@ public class Connection implements ConnectionListener, MessageListener
 
     public void connected ()
     {
-        _connected = true;
+        this.connected = true;
 
         cleanTagList ();
 
-        _connection.triggerRead ();
+        this._connection.triggerRead ();
 
-        if ( _connectionStateListener != null )
-            _connectionStateListener.opened ();
+        if ( this.connectionStateListener != null )
+        {
+            this.connectionStateListener.opened ();
+        }
     }
 
-    public void connectionFailed ( IOException e )
+    public void connectionFailed ( final IOException e )
     {
-        _log.debug ( "connection failed" );
+        logger.debug ( "connection failed" );
 
-        _connected = false;
+        this.connected = false;
 
         removeTimeOutJob ();
 
-        if ( _connectionStateListener != null )
-            _connectionStateListener.closed ( e );
+        if ( this.connectionStateListener != null )
+        {
+            this.connectionStateListener.closed ( e );
+        }
     }
 
     public void closed ()
     {
-        _log.debug ( "connection closed" );
+        logger.debug ( "connection closed" );
 
-        _connected = false;
+        this.connected = false;
 
         removeTimeOutJob ();
 
         cleanTagList ();
 
-        if ( _connectionStateListener != null )
-            _connectionStateListener.closed ( null );
+        if ( this.connectionStateListener != null )
+        {
+            this.connectionStateListener.closed ( null );
+        }
     }
 
     public void close ()
     {
-        _connected = false;
-        _connection.close ();
+        this.connected = false;
+        this._connection.close ();
     }
 
     private void cleanTagList ()
     {
-        synchronized ( _tagList )
+        synchronized ( this._tagList )
         {
-            for ( Map.Entry<Long, MessageTag> tag : _tagList.entrySet () )
+            for ( final Map.Entry<Long, MessageTag> tag : this._tagList.entrySet () )
             {
                 try
                 {
                     tag.getValue ().getListener ().messageTimedOut ();
                 }
-                catch ( Throwable e )
+                catch ( final Throwable e )
                 {
-                    _log.warn ( "Failed to handle message timeout", e );
+                    logger.warn ( "Failed to handle message timeout", e );
                 }
             }
-            _tagList.clear ();
+            this._tagList.clear ();
         }
     }
 
-    public void messageReceived ( Connection connection, Message message )
+    public void messageReceived ( final Connection connection, final Message message )
     {
-        _log.debug ( "Message received: Seq: " + message.getSequence () + " Reply: " + message.getReplySequence () );
+        logger.debug ( "Message received: Seq: " + message.getSequence () + " Reply: " + message.getReplySequence () );
 
-        Long seq = Long.valueOf ( message.getReplySequence () );
+        final Long seq = Long.valueOf ( message.getReplySequence () );
 
         MessageTag tag = null;
-        synchronized ( _tagList )
+        synchronized ( this._tagList )
         {
-            if ( _tagList.containsKey ( seq ) )
+            if ( this._tagList.containsKey ( seq ) )
             {
-                tag = _tagList.get ( seq );
+                tag = this._tagList.get ( seq );
                 // if the tag is timed out then we don't process it here and let processTimeOuts () do the job
                 if ( !tag.isTimedOut () )
                 {
-                    _tagList.remove ( seq );
+                    this._tagList.remove ( seq );
                 }
                 else
                 {
@@ -356,24 +375,24 @@ public class Connection implements ConnectionListener, MessageListener
             }
             else
             {
-                _listener.messageReceived ( connection, message );
+                this.messageListener.messageReceived ( connection, message );
             }
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
-            _log.warn ( "Custom message failed", e );
+            logger.warn ( "Custom message failed", e );
         }
     }
 
     private void processTimeOuts ()
     {
-        List<MessageTag> removeBag = new ArrayList<MessageTag> ();
+        final List<MessageTag> removeBag = new ArrayList<MessageTag> ();
 
-        synchronized ( _tagList )
+        synchronized ( this._tagList )
         {
-            for ( Iterator<Map.Entry<Long, MessageTag>> i = _tagList.entrySet ().iterator (); i.hasNext (); )
+            for ( final Iterator<Map.Entry<Long, MessageTag>> i = this._tagList.entrySet ().iterator (); i.hasNext (); )
             {
-                MessageTag tag = i.next ().getValue ();
+                final MessageTag tag = i.next ().getValue ();
 
                 if ( tag.isTimedOut () )
                 {
@@ -384,24 +403,26 @@ public class Connection implements ConnectionListener, MessageListener
         }
 
         // now send out time outs
-        for ( MessageTag tag : removeBag )
+        for ( final MessageTag tag : removeBag )
         {
             try
             {
                 tag.getListener ().messageTimedOut ();
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
-                _log.info ( "Failed to handle messageTimedOut", e );
+                logger.info ( "Failed to handle messageTimedOut", e );
             }
         }
     }
 
     private long nextSequence ()
     {
-        long seq = _sequence++;
-        if ( _sequence >= MAX_SEQUENCE )
-            _sequence = INIT_SEQUENCE;
+        final long seq = this.sequence++;
+        if ( this.sequence >= MAX_SEQUENCE )
+        {
+            this.sequence = INIT_SEQUENCE;
+        }
         return seq;
     }
 
@@ -409,15 +430,15 @@ public class Connection implements ConnectionListener, MessageListener
      * Set the connection timeout
      * @param timeout
      */
-    protected void setTimeout ( long timeout )
+    protected void setTimeout ( final long timeout )
     {
-        _log.debug ( String.format ( "Setting timeout to %s", timeout ) );
+        logger.debug ( String.format ( "Setting timeout to %s", timeout ) );
 
-        _connection.setTimeout ( timeout );
+        this._connection.setTimeout ( timeout );
     }
 
     public long getTimeout ()
     {
-        return _connection.getTimeout ();
+        return this._connection.getTimeout ();
     }
 }
