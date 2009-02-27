@@ -177,6 +177,10 @@
 		<module>../openscada_ae_submitter_net</module>
 		<module>../openscada_ae_client_common</module>
 		<module>../openscada_ae_client_net</module>
+		<module>../openscada_ae_storage_common</module>
+		<module>../openscada_ae_storage_test</module>
+		<module>../openscada_ae_storage_syslog</module>
+		<module>../openscada_ae_storage_net</module>
 	</modules>
 	<dependencies>
 		<dependency>
