@@ -3,6 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.ae.net.base</artifactId>
+	<name>OpenSCADA-AE-Net-Base</name>
 	<version>0.12.0-SNAPSHOT</version>
 
 	<parent>
