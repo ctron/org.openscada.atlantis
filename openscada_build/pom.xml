@@ -176,6 +176,7 @@
 		<module>../openscada_ae_net_base</module>
 		<module>../openscada_ae_submitter_net</module>
 		<module>../openscada_ae_client_common</module>
+		<module>../openscada_ae_client_net</module>
 	</modules>
 	<dependencies>
 		<dependency>
