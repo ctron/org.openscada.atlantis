@@ -130,6 +130,9 @@
 		<module>../openscada_da_testserver</module>
 		<module>../openscada_da_stockserver</module>
 		<module>../openscada_da_opcserver</module>
+		<module>../openscada_da_snmpserver</module>
+		<module>../openscada_da_server_net</module>
+		<module>../openscada_da_client_net</module>
 	</modules>
 	<dependencies>
 		<dependency>
