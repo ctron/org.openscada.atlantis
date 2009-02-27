@@ -139,6 +139,9 @@
 		<module>../openscada_da_ice_base</module>
 		<module>../openscada_da_client_ice</module>
 		<module>../openscada_da_server_ice</module>
+		<module>../openscada_da_server_ice</module>
+		<module>../openscada_server_exporter</module>
+		<module>../openscada_server_exporter_spring</module>
 	</modules>
 	<dependencies>
 		<dependency>
