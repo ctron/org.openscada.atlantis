@@ -6,18 +6,6 @@
 	<version>0.12.0-SNAPSHOT</version>
 	<name>OpenSCADA Utilities</name>
 	<description>Utility classes for use throughout the OpenSCADA project</description>
-	<distributionManagement>
-		<repository>
-			<id>openscada-aurora-releases</id>
-			<name>openscada-aurora-releases</name>
-			<url>http://carlton.local:8080/artifactory/openscada-aurora-releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>openscada-aurora-snapshots</id>
-			<name>openscada-aurora-snapshots</name>
-			<url>http://carlton.local:8080/artifactory/openscada-aurora-snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
 	<parent>
 		<artifactId>org.openscada.aurora</artifactId>
 		<groupId>org.openscada.aurora</groupId>

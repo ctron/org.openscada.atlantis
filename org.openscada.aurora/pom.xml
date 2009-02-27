@@ -1,12 +1,30 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.openscada.aurora</groupId>
-  <artifactId>org.openscada.aurora</artifactId>
-  <packaging>pom</packaging>
-  <name>Master project</name>
-  <version>0.12.0-SNAPSHOT</version>
-  <modules>
-  	<module>../openscada_utils</module>
-  	<module>../org.openscada.aurora.slice.plugin</module>
-  </modules>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openscada.aurora</groupId>
+	<artifactId>org.openscada.aurora</artifactId>
+	<packaging>pom</packaging>
+	<name>Master project</name>
+	<version>0.12.0-SNAPSHOT</version>
+	<modules>
+		<module>../openscada_utils</module>
+		<module>../org.openscada.aurora.slice.plugin</module>
+	</modules>
+	<distributionManagement>
+		<repository>
+			<id>openscada-aurora-releases</id>
+			<name>openscada-aurora-releases</name>
+			<url>http://carlton.local:8080/artifactory/openscada-aurora-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>openscada-aurora-snapshots</id>
+			<name>openscada-aurora-snapshots</name>
+			<url>http://carlton.local:8080/artifactory/openscada-aurora-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<scm>
+		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora</connection>
+		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora</developerConnection>
+		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora</url>
+	</scm>
 </project>
