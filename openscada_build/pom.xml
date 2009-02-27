@@ -38,6 +38,14 @@
 		</repository>
 	</repositories>
 
+	<pluginRepositories>
+		<pluginRepository>
+			<id>openscada-snapshots</id>
+			<name>openscada-snapshots</name>
+			<url>http://carlton.local:8080/artifactory/openscada-snapshots/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
 	<version>0.12.0-SNAPSHOT</version>
 	<url>http://www.openscada.org</url>
 	<issueManagement>
