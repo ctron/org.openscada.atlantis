@@ -4,6 +4,25 @@
 	<groupId>org.openscada.aurora</groupId>
 	<artifactId>org.openscada.aurora.slice.plugin</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<name>Maven Plugin to process slice files</name>
+	<description></description>
+	<distributionManagement>
+		<repository>
+			<id>openscada-aurora-releases</id>
+			<name>openscada-aurora-releases</name>
+			<url>http://carlton.local:8080/artifactory/openscada-aurora-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>openscada-aurora-snapshots</id>
+			<name>openscada-aurora-snapshots</name>
+			<url>http://carlton.local:8080/artifactory/openscada-aurora-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<scm>
+		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora.slice.plugin</connection>
+		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora.slice.plugin</developerConnection>
+		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora.slice.plugin</url>
+	</scm>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
