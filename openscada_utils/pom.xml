@@ -18,6 +18,12 @@
 			<url>http://carlton.local:8080/artifactory/openscada-aurora-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
+	<parent>
+		<artifactId>org.openscada.aurora</artifactId>
+		<groupId>org.openscada.aurora</groupId>
+		<version>0.12.0-SNAPSHOT</version>
+		<relativePath>../org.openscada.aurora/pom.xml</relativePath>
+	</parent>
 	<scm>
 		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_utils</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_utils</developerConnection>
