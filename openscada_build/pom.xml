@@ -135,6 +135,7 @@
 		<module>../openscada_da_springserver</module>
 		<module>../openscada_da_client_net</module>
 		<module>../openscada_da_client_samples</module>
+		<module>../openscada_core_ice_base</module>
 	</modules>
 	<dependencies>
 		<dependency>
