@@ -173,6 +173,8 @@
 		<module>../openscada_server_exporter</module>
 		<module>../openscada_server_exporter_spring</module>
 		<module>../openscada_ae_core_common</module>
+		<module>../openscada_ae_net_base</module>
+		<module>../openscada_ae_client_common</module>
 	</modules>
 	<dependencies>
 		<dependency>
