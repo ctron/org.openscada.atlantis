@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
-	<artifactId>org.openscada.atlantis.ae.net.base</artifactId>
+	<artifactId>org.openscada.atlantis.ae.submitter.net</artifactId>
 	<version>0.12.0-SNAPSHOT</version>
 
 	<parent>
@@ -13,15 +13,15 @@
 	</parent>
 
 	<scm>
-		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_net_base</connection>
-		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_net_base</developerConnection>
-		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_net_base</url>
+		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_submitter_net</connection>
+		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_submitter_net</developerConnection>
+		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_submitter_net</url>
 	</scm>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
-			<artifactId>org.openscada.atlantis.ae.core.common</artifactId>
+			<artifactId>org.openscada.atlantis.ae.net.base</artifactId>
 			<version>0.12.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
