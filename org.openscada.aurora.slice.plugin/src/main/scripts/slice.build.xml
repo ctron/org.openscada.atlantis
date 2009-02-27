@@ -1,0 +1,21 @@
+<project>
+	<taskdef name="slice2java" classname="org.openscada.aurora.slice.plugin.Slice2JavaTask">
+	</taskdef>
+	
+	<target name="slice-build">
+		<echo>reading ice files from ${iceSourceDirectory}</echo>
+		<echo>writing generated sources to ${iceTargetDirectory}</echo>
+		<mkdir dir="${iceTargetDirectory}"/>
+    	<slice2java outputdir="${iceTargetDirectory}" casesensitive="true">
+			<meta value="true"/>
+			<fileset dir="${iceSourceDirectory}">
+				<include name="*.ice"/>
+			</fileset>
+		</slice2java>
+	</target>
+
+	<target name="slice-build-clean">
+		<echo>deleting generated sources in ${iceTargetDirectory}</echo>
+		<deltree dir="${iceTargetDirectory}"/>
+	</target>
+</project>

@@ -1,0 +1,65 @@
+<pluginMetadata>
+	<mojos>
+		<mojo>
+			<goal>slice-build</goal>
+
+			<requiresProject>true</requiresProject>
+			<requiresReports>false</requiresReports>
+			<phase>generate-sources</phase>
+
+			<!-- this element refers to the Ant target we'll invoke -->
+			<call>slice-build</call>
+			<description>
+				Generate files for ice.
+      		</description>
+			<parameters>
+				<parameter>
+					<name>iceSourceDirectory</name>
+					<property>iceSourceDirectory</property>
+					<required>false</required>
+					<expression>${iceSourceDirectory}</expression>
+					<defaultValue>${basedir}/src/main/ice
+					</defaultValue>
+					<type>java.lang.String</type>
+					<description>Input</description>
+				</parameter>
+				<parameter>
+					<name>iceTargetDirectory</name>
+					<property>iceTargetDirectory</property>
+					<required>false</required>
+					<expression>${iceTargetDirectory}</expression>
+					<defaultValue>${project.build.directory}/generated-sources/slice
+					</defaultValue>
+					<type>java.lang.String</type>
+					<description>Output</description>
+				</parameter>
+			</parameters>
+		</mojo>
+		
+		<mojo>
+			<goal>slice-build-clean</goal>
+
+			<requiresProject>true</requiresProject>
+			<requiresReports>false</requiresReports>
+			<phase>clean</phase>
+
+			<!-- this element refers to the Ant target we'll invoke -->
+			<call>slice-build-clean</call>
+			<description>
+				Delete generated files for ice.
+      		</description>
+			<parameters>
+				<parameter>
+					<name>iceTargetDirectory</name>
+					<property>iceTargetDirectory</property>
+					<required>false</required>
+					<expression>${iceTargetDirectory}</expression>
+					<defaultValue>${project.build.directory}/generated-sources/slice
+					</defaultValue>
+					<type>java.lang.String</type>
+					<description>Output</description>
+				</parameter>
+			</parameters>
+		</mojo>
+	</mojos>
+</pluginMetadata>
