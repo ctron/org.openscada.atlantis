@@ -172,6 +172,7 @@
 		<module>../openscada_da_server_ice</module>
 		<module>../openscada_server_exporter</module>
 		<module>../openscada_server_exporter_spring</module>
+		<module>../openscada_ae_core_common</module>
 	</modules>
 	<dependencies>
 		<dependency>
