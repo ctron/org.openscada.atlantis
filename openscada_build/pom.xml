@@ -137,6 +137,8 @@
 		<module>../openscada_da_client_samples</module>
 		<module>../openscada_core_ice_base</module>
 		<module>../openscada_da_ice_base</module>
+		<module>../openscada_da_client_ice</module>
+		<module>../openscada_da_server_ice</module>
 	</modules>
 	<dependencies>
 		<dependency>
