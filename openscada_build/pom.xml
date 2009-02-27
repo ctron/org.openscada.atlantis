@@ -132,8 +132,9 @@
 		<module>../openscada_da_opcserver</module>
 		<module>../openscada_da_snmpserver</module>
 		<module>../openscada_da_server_net</module>
-		<module>../openscada_da_client_net</module>
 		<module>../openscada_da_springserver</module>
+		<module>../openscada_da_client_net</module>
+		<module>../openscada_da_client_samples</module>
 	</modules>
 	<dependencies>
 		<dependency>
