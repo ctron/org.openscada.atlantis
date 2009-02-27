@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.da.server.snmp</artifactId>
-	<name>OpenSCADA - DA - Server - SNMP</name>
+	<name>OpenSCADA-DA-Server-SNMP</name>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>

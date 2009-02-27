@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.core.ice.base</artifactId>
-	<name>OpenSCADA - ice - Base</name>
+	<name>OpenSCADA-Core-Ice-Base</name>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>

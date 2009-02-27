@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.da.server.simulation</artifactId>
-	<name>OpenSCADA - DA - Server - simulation</name>
+	<name>OpenSCADA-DA-Server-Simulation</name>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
@@ -25,12 +25,10 @@
 			<version>0.12.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>jOpenDocument</groupId>
+			<groupId>org.openscada.external</groupId>
 			<artifactId>jOpenDocument</artifactId>
-			<version>1.1b3</version>
 			<classifier>jdk5</classifier>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/jOpenDocument-1.1b3-jdk5.jar</systemPath>
+			<version>1.1b3</version>
 		</dependency>
 		<dependency>
 			<groupId>jexcelapi</groupId>
@@ -38,39 +36,19 @@
 			<version>2.6</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.script</groupId>
+			<groupId>org.openscada.external</groupId>
 			<artifactId>script-api</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/script-api.jar</systemPath>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.scripting</groupId>
+			<groupId>org.openscada.external</groupId>
 			<artifactId>js-engine</artifactId>
 			<version>1.0.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/js-engine.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>javax.scripting</groupId>
+			<groupId>org.openscada.external</groupId>
 			<artifactId>js</artifactId>
 			<version>1.0.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/js.jar</systemPath>
 		</dependency>
 	</dependencies>
-	
-	<build>
-	<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>

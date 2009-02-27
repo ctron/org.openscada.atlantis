@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.da.server.test</artifactId>
-	<name>OpenSCADA - DA - Server - testserver</name>
+	<name>OpenSCADA-DA-Server-Test</name>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>

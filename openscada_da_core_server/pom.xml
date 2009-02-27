@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.da.core.server</artifactId>
-	<name>OpenSCADA - DA - Core - Server</name>
+	<name>OpenSCADA-DA-Core-Server</name>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>

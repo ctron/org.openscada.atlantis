@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.core.common</artifactId>
-	<name>OpenSCADA - Core</name>
+	<name>OpenSCADA-Core-Common</name>
 	<description></description>
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.da.server.stock</artifactId>
-	<name>OpenSCADA - DA - Server - stock</name>
+	<name>OpenSCADA-DA-Server-Stock</name>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>

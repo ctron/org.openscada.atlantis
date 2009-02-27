@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.openscada.atlantis</groupId>
   <artifactId>org.openscada.atlantis.da.server.exporter</artifactId>
-  <name>OpenSCADA DA Server Exporter</name>
+  <name>OpenSCADA-DA-Server-Exporter</name>
   <parent>
   	<artifactId>org.openscada.atlantis</artifactId>
   	<groupId>org.openscada.atlantis</groupId>

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.openscada.atlantis</groupId>
   <artifactId>org.openscada.atlantis.da.client.samples</artifactId>
-  <name>OpenSCADA DA Client Samples</name>
+  <name>OpenSCADA-DA-Client-Samples</name>
   
   
 	<parent>

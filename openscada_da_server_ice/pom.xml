@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.da.server.ice</artifactId>
-	<name>OpenSCADA - DA - server - Ice</name>
+	<name>OpenSCADA-DA-Server-Ice</name>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>

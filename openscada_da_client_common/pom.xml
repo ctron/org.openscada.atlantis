@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.da.client.common</artifactId>
-	<name>OpenSCADA - DA - Client - Common</name>
+	<name>OpenSCADA-DA-Client-Common</name>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>

@@ -4,7 +4,7 @@
 	<groupId>org.openscada.aurora</groupId>
 	<artifactId>org.openscada.aurora.utils</artifactId>
 	<version>0.12.0-SNAPSHOT</version>
-	<name>OpenSCADA Utilities</name>
+	<name>OpenSCADA-Common-Utilities</name>
 	<description>Utility classes for use throughout the OpenSCADA project</description>
 	<parent>
 		<artifactId>org.openscada.aurora</artifactId>
