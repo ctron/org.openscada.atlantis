@@ -11,6 +11,10 @@
 		<relativePath>../openscada_build</relativePath>
 		<version>0.12.0-SNAPSHOT</version>
 	</parent>
+	
+	<properties>
+		<ice.version>3.3</ice.version>
+	</properties>
 
 	<scm>
 		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_core_ice_base</connection>
@@ -66,7 +70,7 @@
 		<dependency>
 			<groupId>org.openscada.external</groupId>
 			<artifactId>Ice</artifactId>
-			<version>3.3</version>
+			<version>${ice.version}</version>
 		</dependency>
 	</dependencies>
 </project>
