@@ -109,7 +109,7 @@ public class Hive extends HiveCommon
     private void createQuery ( final Connection connection, final QueryType queryType )
     {
         String sql = queryType.getSql ();
-        if ( sql == null || sql.isEmpty () )
+        if ( ( sql == null ) || ( sql.length () == 0 ) )
         {
             sql = queryType.getSql2 ();
         }

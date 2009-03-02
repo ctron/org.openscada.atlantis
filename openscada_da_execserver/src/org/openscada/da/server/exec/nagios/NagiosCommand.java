@@ -84,7 +84,7 @@ public class NagiosCommand extends CommandBase
         while ( tok.hasMoreTokens () )
         {
             final String token = tok.nextToken ();
-            if ( !token.isEmpty () )
+            if ( token.length () > 0 )
             {
                 commands.add ( token );
             }
@@ -112,7 +112,7 @@ public class NagiosCommand extends CommandBase
         final Boolean state = result.getExitValue () == 0;
 
         // check result
-        if ( this.lastState == null || !this.lastState.equals ( state ) )
+        if ( ( this.lastState == null ) || !this.lastState.equals ( state ) )
         {
             map.put ( "timestamp", new Variant ( System.currentTimeMillis () ) );
             this.lastState = state;
