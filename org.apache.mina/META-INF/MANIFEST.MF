@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Apache Mina Plug-in
+Bundle-SymbolicName: org.apache.mina
+Bundle-Version: 2.0.0.4
+Bundle-Vendor: inavare GmbH
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ClassPath: lib/mina-core-2.0.0-M4.jar,
+ lib/mina-filter-compression-2.0.0-M4.jar,
+ lib/mina-transport-apr-2.0.0-M4.jar,
+ .
