@@ -34,23 +34,23 @@ public class ItemListenerTestImpl implements ItemListener
 {
     private static Logger logger = Logger.getLogger ( ItemListenerTestImpl.class );
 
-    private List<EventEntry> _events = new LinkedList<EventEntry> ();
+    private final List<EventEntry> _events = new LinkedList<EventEntry> ();
 
-    public void dataChanged ( DataItem item, Variant variant, Map<String, Variant> attributes, boolean cache )
+    public void dataChanged ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache )
     {
         int size = attributes != null ? attributes.size () : 0;
-        logger.info ( String.format ( "Data changed: %s, %s", variant,  size ) );
-        _events.add ( new EventEntry ( item, variant, attributes ) );
+        logger.info ( String.format ( "Data changed: %s, %s", variant, size ) );
+        this._events.add ( new EventEntry ( item, variant, attributes ) );
     }
 
-    public void assertEquals ( EventEntry[] events )
+    public void assertEquals ( final EventEntry[] events )
     {
-        Assert.assertEquals ( "Events are not the same", events, _events.toArray ( new EventEntry[_events.size ()] ) );
+        Assert.assertArrayEquals ( "Events are not the same", events, this._events.toArray ( new EventEntry[this._events.size ()] ) );
     }
 
-    public void assertEquals ( Collection<EventEntry> events )
+    public void assertEquals ( final Collection<EventEntry> events )
     {
-        Assert.assertEquals ( "Events are not the same", events.toArray ( new EventEntry[events.size ()] ), _events.toArray ( new EventEntry[_events.size ()] ) );
+        Assert.assertArrayEquals ( "Events are not the same", events.toArray ( new EventEntry[events.size ()] ), this._events.toArray ( new EventEntry[this._events.size ()] ) );
     }
 
 }
