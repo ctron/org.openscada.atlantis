@@ -38,15 +38,15 @@ public class CommandFactory
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    public static Command createCommand ( String commandClassName, HiveCommon hive, String commandName, CommandQueue queue ) throws NoSuchMethodException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
+    public static Command createCommand ( final String commandClassName, final HiveCommon hive, final String commandName, final CommandQueue queue ) throws NoSuchMethodException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
     {
         if ( hive == null || commandClassName == null || commandName == null || queue == null )
         {
             throw new InstantiationException ( "Arguments cannot be null" );
         }
 
-        Class<?> commandClass = Class.forName ( commandClassName );
-        Constructor<?> ctor = commandClass.getConstructor ( HiveCommon.class, String.class, CommandQueue.class );
+        final Class<?> commandClass = Class.forName ( commandClassName );
+        final Constructor<?> ctor = commandClass.getConstructor ( HiveCommon.class, String.class, CommandQueue.class );
         if ( ctor == null )
         {
             throw new InstantiationException ( "Unable to find suitable constructor" );

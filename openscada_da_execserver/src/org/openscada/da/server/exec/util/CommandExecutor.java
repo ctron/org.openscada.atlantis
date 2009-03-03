@@ -33,19 +33,19 @@ import org.apache.log4j.Logger;
 public class CommandExecutor
 {
     private static Logger logger = Logger.getLogger ( CommandExecutor.class );
-    
+
     /**
      * This method executes the specified command on the shell using the passed objects as information provider.
      * @param cmd command string including arguments
      * @param formatArguments objects that will be parsed into the command string
      */
-    public static CommandResult executeCommand ( ProcessBuilder processBuilder )
+    public static CommandResult executeCommand ( final ProcessBuilder processBuilder )
     {
         // Prepare a result
-        CommandResult result = new CommandResult ();
+        final CommandResult result = new CommandResult ();
         result.setError ( true );
         result.setMessage ( "OK" );
-        
+
         Process p = null;
         // Execute the command
         try
@@ -55,17 +55,17 @@ public class CommandExecutor
             p.waitFor ();
 
             // Get exit value
-            int exitValue = p.exitValue ();
+            final int exitValue = p.exitValue ();
             result.setExitValue ( exitValue );
 
             // Get result
-            InputStream input = p.getInputStream ();
+            final InputStream input = p.getInputStream ();
             result.setOutput ( inputStreamToString ( input ) );
 
-            InputStream error = p.getErrorStream ();
+            final InputStream error = p.getErrorStream ();
             result.setErrorOutput ( inputStreamToString ( error ) );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             result.setMessage ( String.format ( "Unable to execute command! Detailed message: %1$s", e.getMessage () ) );
             return result;
@@ -84,7 +84,7 @@ public class CommandExecutor
         return result;
     }
 
-    protected static void closeStream ( Object stream )
+    protected static void closeStream ( final Object stream )
     {
         if ( stream == null )
         {
@@ -101,7 +101,7 @@ public class CommandExecutor
                 ( (OutputStream)stream ).close ();
             }
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
             logger.warn ( "Failed to close stream", e );
         }
@@ -112,10 +112,10 @@ public class CommandExecutor
      * @param inputStream
      * @return
      */
-    private static String inputStreamToString ( InputStream inputStream ) throws IOException
+    private static String inputStreamToString ( final InputStream inputStream ) throws IOException
     {
-        InputStreamReader inputStreamReader = new InputStreamReader ( inputStream );
-        BufferedReader br = new BufferedReader ( inputStreamReader );
+        final InputStreamReader inputStreamReader = new InputStreamReader ( inputStream );
+        final BufferedReader br = new BufferedReader ( inputStreamReader );
 
         String output = "";
         String line = "";

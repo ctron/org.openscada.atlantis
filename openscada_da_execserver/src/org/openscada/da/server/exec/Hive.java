@@ -92,7 +92,7 @@ public class Hive extends HiveCommon
     public Hive ( final RootDocument document )
     {
         super ();
-        
+
         ChainStorageServiceHelper.registerDefaultPropertyService ( this );
 
         // Init root folder
@@ -109,7 +109,7 @@ public class Hive extends HiveCommon
     protected void startQueues ()
     {
         // Iterate through all configured command queues and initialize them
-        for ( CommandQueueType commandQueueConfig : this.document.getRoot ().getCommandQueueList () )
+        for ( final CommandQueueType commandQueueConfig : this.document.getRoot ().getCommandQueueList () )
         {
             // Create the queue
             CommandQueue commandQueue = null;
@@ -118,14 +118,14 @@ public class Hive extends HiveCommon
                 commandQueue = CommandQueueFactory.createCommandQueue ( commandQueueConfig.getCommandQueueClass (), commandQueueConfig.getCommandQueueName () );
                 logger.info ( "Created command queue " + commandQueueConfig.getCommandQueueName () );
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 logger.error ( "Error creating command queue from class name: " + commandQueueConfig.getCommandQueueClass () + ". Reason: " + e.getMessage () );
                 break;
             }
 
             // Iterate through all commands of the command queue and initialize them
-            for ( CommandType commandConfig : commandQueueConfig.getCommandList () )
+            for ( final CommandType commandConfig : commandQueueConfig.getCommandList () )
             {
                 Command command = null;
                 try
@@ -137,7 +137,7 @@ public class Hive extends HiveCommon
                     command.setCommandLine ( commandConfig.getCommandLine () );
                     command.setMinDelay ( commandConfig.getMinPeriod () );
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     logger.error ( "Error creating command from class name: " + commandConfig.getCommandClass () + ". Reason: " + e.getMessage () );
                     break;
@@ -152,7 +152,7 @@ public class Hive extends HiveCommon
                         command.setParser ( CommandResultParserFactory.createParser ( commandConfig.getParserClass (), this, command ) );
                     }
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     logger.error ( "Error creating parser from class name: " + commandConfig.getParserClass () + ". Reason: " + e.getMessage () );
                     break;
@@ -163,7 +163,7 @@ public class Hive extends HiveCommon
             }
 
             // Create the queue
-            Timer executor = new Timer ( commandQueue.getQueueName () + "-timer", true );
+            final Timer executor = new Timer ( commandQueue.getQueueName () + "-timer", true );
 
             // get the queue period time .. use a default it none specified
             int period = commandQueueConfig.getDelay ();
@@ -193,7 +193,7 @@ public class Hive extends HiveCommon
     public void dispose ()
     {
         // Send stop request
-        for ( Timer executor : this.threads )
+        for ( final Timer executor : this.threads )
         {
             executor.cancel ();
         }

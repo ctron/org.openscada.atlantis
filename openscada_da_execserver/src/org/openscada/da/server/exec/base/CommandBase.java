@@ -118,7 +118,7 @@ public abstract class CommandBase implements Command
      * Constructor
      * @param hive
      */
-    public CommandBase ( HiveCommon hive, String commandName, CommandQueue queue )
+    public CommandBase ( final HiveCommon hive, final String commandName, final CommandQueue queue )
     {
         this.commandName = commandName;
         this.queue = queue;
@@ -127,14 +127,14 @@ public abstract class CommandBase implements Command
         //this.commandItemFactory = queue.getFolderItemFactory ().createSubFolderFactory ( commandName );
         this.commandItemFactory = new FolderItemFactory ( hive, (FolderCommon)hive.getRootFolder (), this.commandName, this.commandName ) {
             @Override
-            protected DataItemInputChained constructInput ( String localId )
-            {          
-                DataItemInputChained item = super.constructInput ( localId );
-                item.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
-                item.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( hive ) );
+            protected DataItemInputChained constructInput ( final String localId )
+            {
+                final DataItemInputChained item = super.constructInput ( localId );
+                item.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( this.hive ) );
+                item.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( this.hive ) );
                 item.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
-                item.addChainElement ( IODirection.INPUT, new LevelAlarmChainItem ( hive ) );
-                item.addChainElement ( IODirection.INPUT, new SumAlarmChainItem ( hive ) );
+                item.addChainElement ( IODirection.INPUT, new LevelAlarmChainItem ( this.hive ) );
+                item.addChainElement ( IODirection.INPUT, new SumAlarmChainItem ( this.hive ) );
                 return item;
             }
         };
@@ -168,7 +168,7 @@ public abstract class CommandBase implements Command
     /**
      * setCommandline
      */
-    public void setCommandLine ( String commandLine )
+    public void setCommandLine ( final String commandLine )
     {
         this.commandLine = commandLine;
         this.commandLineItem.updateData ( new Variant ( commandLine ), null, null );
@@ -212,7 +212,7 @@ public abstract class CommandBase implements Command
      * Sets the minimum time delay (ms) between executions
      * @param delay
      */
-    public void setMinDelay ( int delay )
+    public void setMinDelay ( final int delay )
     {
         this.minPeriod = delay;
         this.minPeriodItem.updateData ( new Variant ( this.minPeriod ), null, null );
@@ -229,7 +229,7 @@ public abstract class CommandBase implements Command
     /**
      * sets a parser to the command
      */
-    public void setParser ( CommandResultParser parser )
+    public void setParser ( final CommandResultParser parser )
     {
         this.parser = parser;
     }
@@ -239,19 +239,19 @@ public abstract class CommandBase implements Command
      */
     public void tick ()
     {
-        Calendar check = Calendar.getInstance ();
+        final Calendar check = Calendar.getInstance ();
         check.add ( Calendar.MILLISECOND, -this.minPeriod );
 
         if ( this.getLastExecutionTime () == null || check.after ( this.getLastExecutionTime () ) )
         {
             // remember the last execution time before calling the command. Otherwise we will have unnecessary delays
             this.lastExecutionTime = Calendar.getInstance ();
-            
+
             // Execute the command
             this.busyItem.updateData ( new Variant ( true ), null, null );
-            long start = System.currentTimeMillis ();
+            final long start = System.currentTimeMillis ();
             execute ();
-            long stop = System.currentTimeMillis ();
+            final long stop = System.currentTimeMillis ();
             this.busyItem.updateData ( new Variant ( false ), null, null );
 
             // Set the time of the finished execution
@@ -265,5 +265,5 @@ public abstract class CommandBase implements Command
     {
         this.commandItemFactory.dispose ();
     }
-    
+
 }

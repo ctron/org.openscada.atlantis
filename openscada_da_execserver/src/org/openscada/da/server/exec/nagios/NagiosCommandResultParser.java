@@ -42,18 +42,18 @@ public class NagiosCommandResultParser extends CommandResultParserBase
      * @param command
      * @return 
      */
-    public NagiosCommandResultParser ( HiveCommon hive, Command command )
+    public NagiosCommandResultParser ( final HiveCommon hive, final Command command )
     {
         super ( hive, command );
     }
 
     private static Pattern resultPattern = Pattern.compile ( "(.*?)( - |: )" );
-    
+
     /**
      * Analyse the output from nagios and return true when the result is ok
      */
     @Override
-    public boolean parse ( String output )
+    public boolean parse ( final String output )
     {
         // show the class name as item
         // DataItemInputChained commandTypeItem = this.getCommand ().getCommandItemFactory ().createInput ( "output.output" );
@@ -61,15 +61,15 @@ public class NagiosCommandResultParser extends CommandResultParserBase
 
         // "/usr/local/nagios/libexec/check_ping -H 192.168.1.115 -w 5,50% -c 5,80% -p 10 -t 2"
 
-        Matcher m = resultPattern.matcher ( output );
-        
+        final Matcher m = resultPattern.matcher ( output );
+
         if ( !m.find () )
         {
             // we did not expect that format
             return false;
         }
-        
-        String resultTag = m.group ( 1 );
+
+        final String resultTag = m.group ( 1 );
         return resultTag.endsWith ( "OK" );
     }
 

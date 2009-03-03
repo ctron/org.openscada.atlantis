@@ -35,15 +35,15 @@ public class CommandQueueFactory
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public static CommandQueue createCommandQueue ( String commandQueueClassName, String commandQueueName ) throws NoSuchMethodException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
+    public static CommandQueue createCommandQueue ( final String commandQueueClassName, final String commandQueueName ) throws NoSuchMethodException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
     {
         if ( commandQueueClassName == null || commandQueueName == null )
         {
             throw new InstantiationException ( "Arguments cannot be null" );
         }
 
-        Class<?> commandQueueClass = Class.forName ( commandQueueClassName );
-        Constructor<?> ctor = commandQueueClass.getConstructor ( String.class );
+        final Class<?> commandQueueClass = Class.forName ( commandQueueClassName );
+        final Constructor<?> ctor = commandQueueClass.getConstructor ( String.class );
         if ( ctor == null )
         {
             throw new InstantiationException ( "Unable to find suitable constructor" );

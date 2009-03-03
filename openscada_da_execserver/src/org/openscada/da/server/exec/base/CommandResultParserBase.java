@@ -41,7 +41,7 @@ public class CommandResultParserBase implements CommandResultParser
      * @param hive
      * @param command
      */
-    public CommandResultParserBase ( HiveCommon hive, Command command )
+    public CommandResultParserBase ( final HiveCommon hive, final Command command )
     {
         this.hive = hive;
         this.command = command;
@@ -50,7 +50,7 @@ public class CommandResultParserBase implements CommandResultParser
     /**
      * Analyse the output from nagios and return true when the result is ok
      */
-    public boolean parse ( String output )
+    public boolean parse ( final String output )
     {
         return false;
     }

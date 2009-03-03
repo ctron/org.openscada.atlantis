@@ -37,15 +37,15 @@ public class CommandResultParserFactory
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public static CommandResultParser createParser ( String commandResultParserClassName, HiveCommon hive, Command command ) throws NoSuchMethodException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
+    public static CommandResultParser createParser ( final String commandResultParserClassName, final HiveCommon hive, final Command command ) throws NoSuchMethodException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
     {
         if ( hive == null || commandResultParserClassName == null || command == null )
         {
             throw new InstantiationException ( "Arguments cannot be null" );
         }
 
-        Class<?> commandResultParserClass = Class.forName ( commandResultParserClassName );
-        Constructor<?> ctor = commandResultParserClass.getConstructor ( HiveCommon.class, Command.class );
+        final Class<?> commandResultParserClass = Class.forName ( commandResultParserClassName );
+        final Constructor<?> ctor = commandResultParserClass.getConstructor ( HiveCommon.class, Command.class );
         if ( ctor == null )
         {
             throw new InstantiationException ( "Unable to find suitable constructor" );

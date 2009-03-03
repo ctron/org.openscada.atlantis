@@ -38,7 +38,7 @@ public abstract class CommandQueueBase implements CommandQueue
      * Constructor
      * @param hive
      */
-    public CommandQueueBase ( String queueName )
+    public CommandQueueBase ( final String queueName )
     {
         this.queueName = queueName;
     }
@@ -55,7 +55,7 @@ public abstract class CommandQueueBase implements CommandQueue
      * Add a command to the queue
      * @param command
      */
-    public void addCommand ( Command command )
+    public void addCommand ( final Command command )
     {
         // Add the new command to the list of commands
         this.commands.add ( command );
@@ -74,7 +74,7 @@ public abstract class CommandQueueBase implements CommandQueue
      */
     public void run ()
     {
-        for ( Command command : this.getCommands () )
+        for ( final Command command : this.getCommands () )
         {
             command.tick ();
         }

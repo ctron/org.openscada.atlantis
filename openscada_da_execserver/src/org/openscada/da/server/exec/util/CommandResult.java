@@ -60,7 +60,7 @@ public class CommandResult
     /**
      * @param message the message to set
      */
-    public void setMessage ( String message )
+    public void setMessage ( final String message )
     {
         this.message = message;
     }
@@ -76,7 +76,7 @@ public class CommandResult
     /**
      * @param error the error to set
      */
-    public void setError ( boolean error )
+    public void setError ( final boolean error )
     {
         this.error = error;
     }
@@ -92,7 +92,7 @@ public class CommandResult
     /**
      * @param exitValue the exitValue to set
      */
-    public void setExitValue ( int exitValue )
+    public void setExitValue ( final int exitValue )
     {
         this.exitValue = exitValue;
     }
@@ -108,7 +108,7 @@ public class CommandResult
     /**
      * @param output the output to set
      */
-    public void setOutput ( String output )
+    public void setOutput ( final String output )
     {
         this.output = output;
     }
@@ -124,7 +124,7 @@ public class CommandResult
     /**
      * @param errorOutput the errorOutput to set
      */
-    public void setErrorOutput ( String errorOutput )
+    public void setErrorOutput ( final String errorOutput )
     {
         this.errorOutput = errorOutput;
     }

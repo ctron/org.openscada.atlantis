@@ -31,7 +31,7 @@ public class StandardCommandQueue extends CommandQueueBase
      * @param hive
      * @param queueName
      */
-    public StandardCommandQueue ( String queueName )
+    public StandardCommandQueue ( final String queueName )
     {
         super ( queueName );
     }
