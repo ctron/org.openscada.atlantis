@@ -35,12 +35,12 @@ import org.openscada.da.server.common.SuspendableDataItem;
 public abstract class DataItemOutputChained extends DataItemBaseChained implements SuspendableDataItem
 {
 
-    public DataItemOutputChained ( DataItemInformation dataItemInformation )
+    public DataItemOutputChained ( final DataItemInformation dataItemInformation )
     {
         super ( dataItemInformation );
     }
 
-    public DataItemOutputChained ( String id )
+    public DataItemOutputChained ( final String id )
     {
         this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.OUTPUT ) ) );
     }
@@ -50,7 +50,7 @@ public abstract class DataItemOutputChained extends DataItemBaseChained implemen
         throw new InvalidOperationException ();
     }
 
-    synchronized public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    synchronized public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         process ( value );
 
@@ -63,11 +63,11 @@ public abstract class DataItemOutputChained extends DataItemBaseChained implemen
         process ( null );
     }
 
-    protected void process ( Variant value )
+    protected void process ( final Variant value )
     {
-        Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
+        final Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( this._primaryAttributes );
 
-        for ( ChainProcessEntry entry : getChainCopy () )
+        for ( final ChainProcessEntry entry : getChainCopy () )
         {
             if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
             {
@@ -75,7 +75,7 @@ public abstract class DataItemOutputChained extends DataItemBaseChained implemen
             }
         }
 
-        _secondaryAttributes.set ( null, primaryAttributes );
+        this._secondaryAttributes.set ( null, primaryAttributes );
     }
 
     public void suspend ()
@@ -84,9 +84,9 @@ public abstract class DataItemOutputChained extends DataItemBaseChained implemen
 
     public void wakeup ()
     {
-        if ( _secondaryAttributes.get ().size () > 0 )
+        if ( this._secondaryAttributes.get ().size () > 0 )
         {
-            notifyData ( null, _secondaryAttributes.get () );
+            notifyData ( null, this._secondaryAttributes.get () );
         }
     }
 

@@ -34,16 +34,16 @@ public class WriteAttributesHelper
      * @param attributes The attributes to write
      * @return the initial results including the unprocessed results
      */
-    public static WriteAttributeResults errorUnhandled ( WriteAttributeResults initialResults, Map<String, Variant> attributes )
+    public static WriteAttributeResults errorUnhandled ( final WriteAttributeResults initialResults, final Map<String, Variant> attributes )
     {
         WriteAttributeResults writeAttributeResults = initialResults;
-        
+
         if ( writeAttributeResults == null )
         {
             writeAttributeResults = new WriteAttributeResults ();
         }
-        
-        for ( String name : attributes.keySet () )
+
+        for ( final String name : attributes.keySet () )
         {
             if ( !writeAttributeResults.containsKey ( name ) )
             {

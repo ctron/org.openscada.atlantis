@@ -30,14 +30,14 @@ import org.openscada.da.core.IODirection;
 public abstract class DataItemInput extends DataItemBase
 {
 
-	public DataItemInput ( String name )
+    public DataItemInput ( final String name )
     {
-		super ( new DataItemInformationBase ( name, EnumSet.of ( IODirection.INPUT ) ) );
-	}
-    
-	public void writeValue(Variant value) throws InvalidOperationException, NullValueException, NotConvertableException
+        super ( new DataItemInformationBase ( name, EnumSet.of ( IODirection.INPUT ) ) );
+    }
+
+    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
-		throw new InvalidOperationException();
-	}
-	
+        throw new InvalidOperationException ();
+    }
+
 }

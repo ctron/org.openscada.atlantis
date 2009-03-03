@@ -38,27 +38,36 @@ import org.openscada.da.server.common.chain.VariantBinder;
 public class ManualOverrideChainItem extends BaseChainItemCommon
 {
     public static final String MANUAL_BASE = "org.openscada.da.manual";
+
     public static final String ORIGINAL_VALUE = MANUAL_BASE + ".value.original";
+
     public static final String ORIGINAL_TIMESTAMP = MANUAL_BASE + ".timestamp.original";
+
     public static final String MANUAL_ACTIVE = MANUAL_BASE + ".active";
+
     public static final String MANUAL_VALUE = MANUAL_BASE + ".value";
+
     public static final String MANUAL_TIMESTAMP = MANUAL_BASE + ".timestamp";
+
     public static final String MANUAL_USER = MANUAL_BASE + ".user";
+
     public static final String MANUAL_REASON = MANUAL_BASE + ".reason";
 
-    private VariantBinder manualValue = new VariantBinder ( new Variant () );
-    private VariantBinder manualReason = new VariantBinder ( new Variant () );
-    private VariantBinder manualUser = new VariantBinder ( new Variant () );
+    private final VariantBinder manualValue = new VariantBinder ( new Variant () );
+
+    private final VariantBinder manualReason = new VariantBinder ( new Variant () );
+
+    private final VariantBinder manualUser = new VariantBinder ( new Variant () );
 
     private Calendar manualTimestamp;
 
-    public ManualOverrideChainItem ( HiveServiceRegistry serviceRegistry )
+    public ManualOverrideChainItem ( final HiveServiceRegistry serviceRegistry )
     {
         super ( serviceRegistry );
 
-        addBinder ( MANUAL_VALUE, manualValue );
-        addBinder ( MANUAL_REASON, manualReason );
-        addBinder ( MANUAL_USER, manualUser );
+        addBinder ( MANUAL_VALUE, this.manualValue );
+        addBinder ( MANUAL_REASON, this.manualReason );
+        addBinder ( MANUAL_USER, this.manualUser );
         setReservedAttributes ( ORIGINAL_VALUE, MANUAL_ACTIVE );
     }
 
@@ -73,10 +82,10 @@ public class ManualOverrideChainItem extends BaseChainItemCommon
 
         // load the manual timestamp
         this.manualTimestamp = null;
-        Map<String, Variant> properties = loadStoredValues ( new HashSet<String> ( Arrays.asList ( MANUAL_TIMESTAMP ) ) );
+        final Map<String, Variant> properties = loadStoredValues ( new HashSet<String> ( Arrays.asList ( MANUAL_TIMESTAMP ) ) );
         if ( properties.containsKey ( MANUAL_TIMESTAMP ) )
         {
-            Variant value = properties.get ( MANUAL_TIMESTAMP );
+            final Variant value = properties.get ( MANUAL_TIMESTAMP );
             if ( !value.isNull () )
             {
                 this.manualTimestamp = Calendar.getInstance ();
@@ -84,7 +93,7 @@ public class ManualOverrideChainItem extends BaseChainItemCommon
                 {
                     this.manualTimestamp.setTimeInMillis ( value.asLong () );
                 }
-                catch ( Throwable e )
+                catch ( final Throwable e )
                 {
                 }
             }
@@ -92,62 +101,62 @@ public class ManualOverrideChainItem extends BaseChainItemCommon
     }
 
     @Override
-    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
+    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
     {
-        Variant value = attributes.get ( MANUAL_VALUE );
+        final Variant value = attributes.get ( MANUAL_VALUE );
         if ( value != null )
         {
             if ( value.isNull () )
             {
                 // if the value is set as Variant#NULL clear the timestamp
-                manualTimestamp = null;
+                this.manualTimestamp = null;
             }
             else
             {
                 // we got a valid value
-                manualTimestamp = Calendar.getInstance ();
+                this.manualTimestamp = Calendar.getInstance ();
             }
         }
         else if ( attributes.containsKey ( MANUAL_VALUE ) )
         {
             // if the value is set but as "null" then clear the timestamp
-            manualTimestamp = null;
+            this.manualTimestamp = null;
         }
         return super.setAttributes ( attributes );
     }
 
     @Override
-    protected void performWriteBinders ( Map<String, Variant> attributes )
+    protected void performWriteBinders ( final Map<String, Variant> attributes )
     {
         // if we got a timestamp, store it
-        if ( manualTimestamp != null )
+        if ( this.manualTimestamp != null )
         {
-            attributes.put ( MANUAL_TIMESTAMP, new Variant ( manualTimestamp.getTimeInMillis () ) );
+            attributes.put ( MANUAL_TIMESTAMP, new Variant ( this.manualTimestamp.getTimeInMillis () ) );
         }
         super.performWriteBinders ( attributes );
     }
 
-    public void process ( Variant value, Map<String, Variant> attributes )
+    public void process ( final Variant value, final Map<String, Variant> attributes )
     {
         attributes.put ( MANUAL_ACTIVE, null );
         attributes.put ( ORIGINAL_VALUE, null );
         attributes.put ( ORIGINAL_TIMESTAMP, null );
         attributes.put ( MANUAL_TIMESTAMP, null );
 
-        if ( !manualValue.getValue ().isNull () )
+        if ( !this.manualValue.getValue ().isNull () )
         {
             attributes.put ( ORIGINAL_VALUE, new Variant ( value ) );
             value.setValue ( new Variant ( this.manualValue.getValue () ) );
             attributes.put ( MANUAL_ACTIVE, new Variant ( true ) );
-            attributes.put ( MANUAL_TIMESTAMP, new Variant ( manualTimestamp.getTimeInMillis () ) );
+            attributes.put ( MANUAL_TIMESTAMP, new Variant ( this.manualTimestamp.getTimeInMillis () ) );
 
             // if we have an original timestamp, replace it
-            Variant originalTimestamp = attributes.get ( "timestamp" );
+            final Variant originalTimestamp = attributes.get ( "timestamp" );
             if ( originalTimestamp != null )
             {
                 attributes.put ( ORIGINAL_TIMESTAMP, new Variant ( originalTimestamp ) );
             }
-            attributes.put ( "timestamp", new Variant ( manualTimestamp.getTimeInMillis () ) );
+            attributes.put ( "timestamp", new Variant ( this.manualTimestamp.getTimeInMillis () ) );
         }
         addAttributes ( attributes );
     }

@@ -32,27 +32,27 @@ import org.openscada.da.server.common.HiveServiceRegistry;
  */
 public class SumPatternAttributesChainItem extends SummarizeChainItem
 {
-    @SuppressWarnings("unused")
+    @SuppressWarnings ( "unused" )
     private static Logger _log = Logger.getLogger ( SumPatternAttributesChainItem.class );
-    
-    private Pattern _pattern;
-    
-    public SumPatternAttributesChainItem ( HiveServiceRegistry serviceRegistry, String baseName, String pattern )
+
+    private final Pattern _pattern;
+
+    public SumPatternAttributesChainItem ( final HiveServiceRegistry serviceRegistry, final String baseName, final String pattern )
     {
         this ( serviceRegistry, baseName, Pattern.compile ( pattern ) );
     }
-    
-    public SumPatternAttributesChainItem ( HiveServiceRegistry serviceRegistry, String baseName, Pattern pattern )
+
+    public SumPatternAttributesChainItem ( final HiveServiceRegistry serviceRegistry, final String baseName, final Pattern pattern )
     {
         super ( serviceRegistry, baseName );
-        
-        _pattern = pattern;
+
+        this._pattern = pattern;
     }
 
     @Override
-    protected boolean matches ( Variant value, String attributeName, Variant attributeValue )
+    protected boolean matches ( final Variant value, final String attributeName, final Variant attributeValue )
     {
-        return _pattern.matcher ( attributeName ).matches ();
+        return this._pattern.matcher ( attributeName ).matches ();
     }
 
 }

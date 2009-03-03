@@ -38,7 +38,7 @@ public interface DataItem
      * @throws InvalidOperationException Raised if "read" is not a valid operation for this item
      */
     public Variant readValue () throws InvalidOperationException;
-    
+
     /**
      * The write operation of a data item.
      * @param value The value to write to the subsystem
@@ -49,6 +49,7 @@ public interface DataItem
     public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException;
 
     public Map<String, Variant> getAttributes ();
+
     public WriteAttributeResults setAttributes ( Map<String, Variant> attributes );
 
     /**

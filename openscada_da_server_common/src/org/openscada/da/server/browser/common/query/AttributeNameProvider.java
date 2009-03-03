@@ -22,18 +22,20 @@ package org.openscada.da.server.browser.common.query;
 public class AttributeNameProvider implements NameProvider
 {
     private String _attribute = null;
-    
-    public AttributeNameProvider ( String attribute )
+
+    public AttributeNameProvider ( final String attribute )
     {
-        _attribute = attribute;
+        this._attribute = attribute;
     }
-    
-    public String getName ( ItemDescriptor descriptor )
+
+    public String getName ( final ItemDescriptor descriptor )
     {
-        if ( _attribute == null )
+        if ( this._attribute == null )
+        {
             return null;
-        
-        return descriptor.getAttributes ().get ( _attribute ).asString ( null );
+        }
+
+        return descriptor.getAttributes ().get ( this._attribute ).asString ( null );
     }
 
 }

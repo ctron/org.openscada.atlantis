@@ -29,95 +29,97 @@ import org.openscada.da.server.common.DataItem;
 
 public class SessionCommonData
 {
-	private Set<DataItem> _items = new HashSet<DataItem> ();
-    private Map<Object,Location> _paths = new HashMap<Object, Location> ();
-    private Map<Location,Object> _pathRev = new HashMap<Location, Object> ();
-	
-	public void addItem ( DataItem item )
-	{
-		synchronized ( _items )
-		{
-			_items.add ( item );
-		}
-	}
-	
-	public void removeItem ( DataItem item )
-	{
-		synchronized ( _items )
-		{
-			_items.remove ( item );
-		}
-	}
-	
-	public boolean containsItem ( DataItem item )
-	{
-		synchronized ( _items )
-		{
-			return _items.contains ( item );
-		}	
-	}
+    private final Set<DataItem> _items = new HashSet<DataItem> ();
 
-	public Set<DataItem> getItems()
+    private final Map<Object, Location> _paths = new HashMap<Object, Location> ();
+
+    private final Map<Location, Object> _pathRev = new HashMap<Location, Object> ();
+
+    public void addItem ( final DataItem item )
     {
-        synchronized ( _items )
+        synchronized ( this._items )
         {
-            return _items;
-        }
-	}
-    
-    // paths
-    public void addPath ( Object tag, Location path )
-    {
-        synchronized ( _paths )
-        {
-            _paths.put ( tag, path );
-            _pathRev.put ( path, tag );
+            this._items.add ( item );
         }
     }
-    
-    public void removePath ( Location path )
+
+    public void removeItem ( final DataItem item )
     {
-        synchronized ( _paths )
+        synchronized ( this._items )
         {
-            Object tag = _pathRev.get ( path );
+            this._items.remove ( item );
+        }
+    }
+
+    public boolean containsItem ( final DataItem item )
+    {
+        synchronized ( this._items )
+        {
+            return this._items.contains ( item );
+        }
+    }
+
+    public Set<DataItem> getItems ()
+    {
+        synchronized ( this._items )
+        {
+            return this._items;
+        }
+    }
+
+    // paths
+    public void addPath ( final Object tag, final Location path )
+    {
+        synchronized ( this._paths )
+        {
+            this._paths.put ( tag, path );
+            this._pathRev.put ( path, tag );
+        }
+    }
+
+    public void removePath ( final Location path )
+    {
+        synchronized ( this._paths )
+        {
+            final Object tag = this._pathRev.get ( path );
             if ( tag != null )
             {
-                _pathRev.remove ( path );
-                _paths.remove ( tag );
+                this._pathRev.remove ( path );
+                this._paths.remove ( tag );
             }
         }
     }
-    
-    public Object getTag ( Location path )
+
+    public Object getTag ( final Location path )
     {
-        synchronized ( _paths )
+        synchronized ( this._paths )
         {
-            return _pathRev.get ( path );
+            return this._pathRev.get ( path );
         }
     }
-    
-    public boolean containsPath ( Object tag )
+
+    public boolean containsPath ( final Object tag )
     {
-        synchronized ( _paths )
+        synchronized ( this._paths )
         {
-            return _paths.containsKey ( tag );
-        }   
+            return this._paths.containsKey ( tag );
+        }
     }
 
     public Map<Object, Location> getPaths ()
     {
-        synchronized ( _paths )
+        synchronized ( this._paths )
         {
-            return _paths;
+            return this._paths;
         }
     }
-    
+
     public void clearPaths ()
     {
-        synchronized ( _paths )
+        synchronized ( this._paths )
         {
-            _paths.clear ();
-            _pathRev.clear ();
+            this._paths.clear ();
+            this._pathRev.clear ();
         }
     }
 }

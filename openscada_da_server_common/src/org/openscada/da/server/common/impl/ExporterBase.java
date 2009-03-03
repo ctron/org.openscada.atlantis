@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,37 +19,43 @@
 
 package org.openscada.da.server.common.impl;
 
-import java.io.IOException;
-
+import org.openscada.core.ConnectionInformation;
 import org.openscada.da.core.server.Hive;
 
-public class ExporterBase
+public abstract class ExporterBase implements HiveExporter
 {
-    protected Hive _hive = null;
+    protected Hive hive = null;
 
-    public ExporterBase ( final Hive hive ) throws IOException
+    protected ConnectionInformation connectionInformation;
+
+    public ExporterBase ( final Hive hive, final ConnectionInformation connectionInformation ) throws Exception
     {
-        this._hive = hive;
+        this.hive = hive;
+        this.connectionInformation = connectionInformation;
     }
 
-    public ExporterBase ( final Class<?> hiveClass ) throws InstantiationException, IllegalAccessException, IOException
+    public ExporterBase ( final Class<?> hiveClass, final ConnectionInformation connectionInformation ) throws Exception
     {
-        this ( createInstance ( hiveClass ) );
+        this ( createInstance ( hiveClass ), connectionInformation );
     }
 
-    public ExporterBase ( final String hiveClassName ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
+    public ExporterBase ( final String hiveClassName, final ConnectionInformation connectionInformation ) throws Exception
     {
-        this ( createInstance ( Class.forName ( hiveClassName ) ) );
+        this ( createInstance ( Class.forName ( hiveClassName ) ), connectionInformation );
     }
 
-    private static Hive createInstance ( final Class<?> hiveClass ) throws InstantiationException, IllegalAccessException
+    private static Hive createInstance ( final Class<?> hiveClass ) throws Exception
     {
         return (Hive)hiveClass.newInstance ();
     }
 
     public Class<?> getHiveClass ()
     {
-        return this._hive.getClass ();
+        return this.hive.getClass ();
     }
 
+    public ConnectionInformation getConnectionInformation ()
+    {
+        return this.connectionInformation;
+    }
 }

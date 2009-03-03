@@ -27,19 +27,19 @@ import org.openscada.da.core.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
 
 public class MemoryItemChained extends DataItemInputOutputChained
-{    
-    public MemoryItemChained ( DataItemInformation di )
+{
+    public MemoryItemChained ( final DataItemInformation di )
     {
         super ( di );
     }
-    
-    public MemoryItemChained ( String id )
+
+    public MemoryItemChained ( final String id )
     {
         this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
     }
 
     @Override
-    protected void writeCalculatedValue ( Variant value )
+    protected void writeCalculatedValue ( final Variant value )
     {
         updateData ( value, null, null );
     }

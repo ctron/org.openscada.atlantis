@@ -38,7 +38,7 @@ public class ItemListenerTestImpl implements ItemListener
 
     public void dataChanged ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache )
     {
-        int size = attributes != null ? attributes.size () : 0;
+        final int size = attributes != null ? attributes.size () : 0;
         logger.info ( String.format ( "Data changed: %s, %s", variant, size ) );
         this._events.add ( new EventEntry ( item, variant, attributes ) );
     }

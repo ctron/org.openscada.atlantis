@@ -35,7 +35,7 @@ public interface SuspendableDataItem
      *
      */
     public abstract void suspend ();
-    
+
     /**
      * Called when the listener is set from <code>null</code> to a valid listener
      *

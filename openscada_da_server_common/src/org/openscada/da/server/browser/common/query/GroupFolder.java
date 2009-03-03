@@ -30,72 +30,81 @@ import org.openscada.da.server.browser.common.FolderListener;
 
 public class GroupFolder implements StorageBasedFolder
 {
-    private Map<ItemDescriptor, GroupSubFolder> _itemList = new HashMap<ItemDescriptor, GroupSubFolder> ();
+    private final Map<ItemDescriptor, GroupSubFolder> _itemList = new HashMap<ItemDescriptor, GroupSubFolder> ();
+
     private GroupProvider _groupProvider = null;
+
     private NameProvider _nameProvider = null;
-    
+
     private GroupSubFolder _folder = null;
-    
-    public GroupFolder ( GroupProvider groupProvider, NameProvider nameProvider )
+
+    public GroupFolder ( final GroupProvider groupProvider, final NameProvider nameProvider )
     {
-        _groupProvider = groupProvider;
-        _nameProvider = nameProvider;
-        
-        _folder = new GroupSubFolder ( _nameProvider );
+        this._groupProvider = groupProvider;
+        this._nameProvider = nameProvider;
+
+        this._folder = new GroupSubFolder ( this._nameProvider );
     }
 
-    synchronized public Entry[] list ( Stack<String> path ) throws NoSuchFolderException
+    synchronized public Entry[] list ( final Stack<String> path ) throws NoSuchFolderException
     {
-        return _folder.list ( path );
+        return this._folder.list ( path );
     }
 
-    synchronized public void subscribe ( Stack<String> path, FolderListener listener, Object tag ) throws NoSuchFolderException
+    synchronized public void subscribe ( final Stack<String> path, final FolderListener listener, final Object tag ) throws NoSuchFolderException
     {
-        _folder.subscribe ( path, listener, tag );
+        this._folder.subscribe ( path, listener, tag );
     }
 
-    synchronized public void unsubscribe ( Stack<String> path, Object tag ) throws NoSuchFolderException
+    synchronized public void unsubscribe ( final Stack<String> path, final Object tag ) throws NoSuchFolderException
     {
-        _folder.unsubscribe ( path, tag );
+        this._folder.unsubscribe ( path, tag );
     }
 
-    synchronized public void added ( ItemDescriptor descriptor )
+    synchronized public void added ( final ItemDescriptor descriptor )
     {
-        if ( _itemList.containsKey ( descriptor ) )
+        if ( this._itemList.containsKey ( descriptor ) )
+        {
             return;
-        
-        String [] groupingArray = _groupProvider.getGrouping ( descriptor );
+        }
+
+        final String[] groupingArray = this._groupProvider.getGrouping ( descriptor );
         if ( groupingArray == null )
+        {
             return;
-        
-        Location grouping = new Location ( groupingArray );
-        
-        GroupSubFolder subFolder = _folder.add ( grouping.getPathStack (), descriptor );
-        
+        }
+
+        final Location grouping = new Location ( groupingArray );
+
+        final GroupSubFolder subFolder = this._folder.add ( grouping.getPathStack (), descriptor );
+
         if ( subFolder != null )
-            _itemList.put ( descriptor, subFolder );
+        {
+            this._itemList.put ( descriptor, subFolder );
+        }
     }
 
-    synchronized public void removed ( ItemDescriptor descriptor )
+    synchronized public void removed ( final ItemDescriptor descriptor )
     {
-        GroupSubFolder folder = _itemList.get ( descriptor );
-        
+        final GroupSubFolder folder = this._itemList.get ( descriptor );
+
         if ( folder == null )
+        {
             return;
-        
+        }
+
         folder.remove ( descriptor );
-        _itemList.remove ( descriptor );
+        this._itemList.remove ( descriptor );
     }
 
     public void added ()
     {
-        _folder.added ();
+        this._folder.added ();
     }
 
     public void removed ()
     {
-        _folder.removed ();
+        this._folder.removed ();
     }
-    
-    
+
 }

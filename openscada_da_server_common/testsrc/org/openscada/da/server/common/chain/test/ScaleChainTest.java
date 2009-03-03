@@ -38,10 +38,13 @@ import org.openscada.da.server.common.chain.item.ScaleOutputItem;
 public class ScaleChainTest
 {
     private MemoryItemChained _item = null;
+
     private ScaleInputItem _scaleInput = null;
+
     private ScaleOutputItem _scaleOutput = null;
 
     public static final String INPUT_FACTOR = "org.openscada.da.scale.input.factor";
+
     public static final String OUTPUT_FACTOR = "org.openscada.da.scale.output.factor";
 
     protected HiveServiceRegistry serviceRegistry = new HiveServiceRegistryTestImpl ();
@@ -49,11 +52,11 @@ public class ScaleChainTest
     @Before
     public void init ()
     {
-        _item = new MemoryItemChained ( "test-id" );
-        _scaleInput = new ScaleInputItem ( serviceRegistry );
-        _scaleOutput = new ScaleOutputItem ( serviceRegistry );
-        _item.addChainElement ( IODirection.INPUT, _scaleInput );
-        _item.addChainElement ( IODirection.OUTPUT, _scaleOutput );
+        this._item = new MemoryItemChained ( "test-id" );
+        this._scaleInput = new ScaleInputItem ( this.serviceRegistry );
+        this._scaleOutput = new ScaleOutputItem ( this.serviceRegistry );
+        this._item.addChainElement ( IODirection.INPUT, this._scaleInput );
+        this._item.addChainElement ( IODirection.OUTPUT, this._scaleOutput );
     }
 
     @Test
@@ -65,10 +68,10 @@ public class ScaleChainTest
     @Test
     public void testInput1 () throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         attributes.put ( INPUT_FACTOR, new Variant ( 3 ) );
-        _item.setAttributes ( attributes );
+        this._item.setAttributes ( attributes );
 
         setAndTest ( 2, 6 );
     }
@@ -76,11 +79,11 @@ public class ScaleChainTest
     @Test
     public void testInput2 () throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         setValue ( 2 );
         attributes.put ( INPUT_FACTOR, new Variant ( 3 ) );
-        _item.setAttributes ( attributes );
+        this._item.setAttributes ( attributes );
 
         testValue ( 6 );
     }
@@ -88,16 +91,16 @@ public class ScaleChainTest
     @Test
     public void testInput3 () throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         setValue ( 2 );
         attributes.put ( INPUT_FACTOR, new Variant ( 3 ) );
-        _item.setAttributes ( attributes );
+        this._item.setAttributes ( attributes );
 
         testValue ( 6 );
 
         attributes.put ( INPUT_FACTOR, new Variant () );
-        _item.setAttributes ( attributes );
+        this._item.setAttributes ( attributes );
 
         testValue ( 2 );
     }
@@ -105,10 +108,10 @@ public class ScaleChainTest
     @Test
     public void testOutput1 () throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         attributes.put ( OUTPUT_FACTOR, new Variant ( 3 ) );
-        _item.setAttributes ( attributes );
+        this._item.setAttributes ( attributes );
 
         setAndTest ( 2, 6 );
     }
@@ -116,17 +119,17 @@ public class ScaleChainTest
     @Test
     public void testInputOutput1 () throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         attributes.put ( OUTPUT_FACTOR, new Variant ( 3 ) );
         attributes.put ( INPUT_FACTOR, new Variant ( 5 ) );
-        _item.setAttributes ( attributes );
+        this._item.setAttributes ( attributes );
 
         setAndTest ( 2, 2 * 3 * 5 );
 
         attributes.put ( OUTPUT_FACTOR, new Variant () );
         attributes.put ( INPUT_FACTOR, new Variant () );
-        _item.setAttributes ( attributes );
+        this._item.setAttributes ( attributes );
 
         // Output filter is still active since the value was not re-written
         testValue ( 6 );
@@ -139,36 +142,36 @@ public class ScaleChainTest
     @Test
     public void testInputOutput2 () throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         setAndTest ( 2, 2 );
 
         attributes.put ( OUTPUT_FACTOR, new Variant ( 3 ) );
         attributes.put ( INPUT_FACTOR, new Variant ( 5 ) );
-        _item.setAttributes ( attributes );
+        this._item.setAttributes ( attributes );
 
         testValue ( 2 * 5 );
         setAndTest ( 2, 2 * 3 * 5 );
 
         attributes.put ( OUTPUT_FACTOR, new Variant () );
         attributes.put ( INPUT_FACTOR, new Variant () );
-        _item.setAttributes ( attributes );
+        this._item.setAttributes ( attributes );
 
         testValue ( 2 * 3 );
         setAndTest ( 2, 2 );
     }
 
-    public void setValue ( double value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void setValue ( final double value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        _item.writeValue ( new Variant ( value ) );
+        this._item.writeValue ( new Variant ( value ) );
     }
 
-    public void testValue ( double value ) throws InvalidOperationException
+    public void testValue ( final double value ) throws InvalidOperationException
     {
-        Assert.assertEquals ( new Variant ( value ), _item.readValue () );
+        Assert.assertEquals ( new Variant ( value ), this._item.readValue () );
     }
 
-    public void setAndTest ( double writeValue, double expectedValue ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void setAndTest ( final double writeValue, final double expectedValue ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         setValue ( writeValue );
         testValue ( expectedValue );

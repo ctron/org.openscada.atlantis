@@ -22,7 +22,7 @@ package org.openscada.da.server.browser.common.query;
 public class NullNameProvider implements NameProvider
 {
 
-    public String getName ( ItemDescriptor descriptor )
+    public String getName ( final ItemDescriptor descriptor )
     {
         return null;
     }

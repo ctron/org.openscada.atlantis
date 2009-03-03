@@ -25,16 +25,17 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 
-public abstract class DataItemOutput extends DataItemBase {
+public abstract class DataItemOutput extends DataItemBase
+{
 
-	public DataItemOutput ( String name )
+    public DataItemOutput ( final String name )
     {
-		super ( new DataItemInformationBase ( name, EnumSet.of ( IODirection.OUTPUT ) ) );
-	}
+        super ( new DataItemInformationBase ( name, EnumSet.of ( IODirection.OUTPUT ) ) );
+    }
 
-	public Variant readValue() throws InvalidOperationException
+    public Variant readValue () throws InvalidOperationException
     {
-		throw new InvalidOperationException ();
-	}
+        throw new InvalidOperationException ();
+    }
 
 }

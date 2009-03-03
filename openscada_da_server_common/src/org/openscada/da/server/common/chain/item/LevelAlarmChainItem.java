@@ -32,44 +32,56 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
     private static Logger _log = Logger.getLogger ( LevelAlarmChainItem.class );
 
     public static final String HIGH_PRESET = "org.openscada.da.level.high.preset";
+
     public static final String HIGHHIGH_PRESET = "org.openscada.da.level.highhigh.preset";
+
     public static final String LOW_PRESET = "org.openscada.da.level.low.preset";
+
     public static final String LOWLOW_PRESET = "org.openscada.da.level.lowlow.preset";
 
     public static final String HIGH_ALARM = "org.openscada.da.level.high.alarm";
+
     public static final String HIGHHIGH_ALARM = "org.openscada.da.level.highhigh.alarm";
+
     public static final String LOWLOW_ALARM = "org.openscada.da.level.lowlow.alarm";
+
     public static final String LOW_ALARM = "org.openscada.da.level.low.alarm";
 
     public static final String HIGH_ERROR = "org.openscada.da.level.high.error";
+
     public static final String HIGHHIGH_ERROR = "org.openscada.da.level.highhigh.error";
+
     public static final String LOW_ERROR = "org.openscada.da.level.low.error";
+
     public static final String LOWLOW_ERROR = "org.openscada.da.level.lowlow.error";
 
-    private VariantBinder _highLevel = new VariantBinder ( new Variant () );
-    private VariantBinder _lowLevel = new VariantBinder ( new Variant () );
-    private VariantBinder _highHighLevel = new VariantBinder ( new Variant () );
-    private VariantBinder _lowLowLevel = new VariantBinder ( new Variant () );
+    private final VariantBinder _highLevel = new VariantBinder ( new Variant () );
 
-    public LevelAlarmChainItem ( HiveServiceRegistry serviceRegistry )
+    private final VariantBinder _lowLevel = new VariantBinder ( new Variant () );
+
+    private final VariantBinder _highHighLevel = new VariantBinder ( new Variant () );
+
+    private final VariantBinder _lowLowLevel = new VariantBinder ( new Variant () );
+
+    public LevelAlarmChainItem ( final HiveServiceRegistry serviceRegistry )
     {
         super ( serviceRegistry );
 
-        addBinder ( HIGH_PRESET, _highLevel );
-        addBinder ( LOW_PRESET, _lowLevel );
-        addBinder ( HIGHHIGH_PRESET, _highHighLevel );
-        addBinder ( LOWLOW_PRESET, _lowLowLevel );
+        addBinder ( HIGH_PRESET, this._highLevel );
+        addBinder ( LOW_PRESET, this._lowLevel );
+        addBinder ( HIGHHIGH_PRESET, this._highHighLevel );
+        addBinder ( LOWLOW_PRESET, this._lowLowLevel );
 
         setReservedAttributes ( HIGH_ALARM, LOW_ALARM, HIGHHIGH_ALARM, LOWLOW_ALARM );
     }
 
-    public void process ( Variant value, Map<String, Variant> attributes )
+    public void process ( final Variant value, final Map<String, Variant> attributes )
     {
         attributes.put ( HIGH_ALARM, null );
         attributes.put ( LOW_ALARM, null );
         attributes.put ( HIGH_ERROR, null );
         attributes.put ( LOW_ERROR, null );
-        
+
         attributes.put ( HIGHHIGH_ALARM, null );
         attributes.put ( LOWLOW_ALARM, null );
         attributes.put ( HIGHHIGH_ERROR, null );
@@ -78,56 +90,56 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         // high alarm
         try
         {
-            if ( !_highLevel.getValue ().isNull () && !value.isNull () )
+            if ( !this._highLevel.getValue ().isNull () && !value.isNull () )
             {
-                attributes.put ( HIGH_ALARM, new Variant ( value.asDouble () >= _highLevel.getValue ().asDouble () ) );
+                attributes.put ( HIGH_ALARM, new Variant ( value.asDouble () >= this._highLevel.getValue ().asDouble () ) );
             }
 
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             _log.info ( "Failed to evaluate high level alarm", e );
             attributes.put ( HIGH_ERROR, new Variant ( e.getMessage () ) );
         }
-        
+
         // low alarm
         try
         {
-            if ( !_lowLevel.getValue ().isNull () && !value.isNull () )
+            if ( !this._lowLevel.getValue ().isNull () && !value.isNull () )
             {
-                attributes.put ( LOW_ALARM, new Variant ( value.asDouble () <= _lowLevel.getValue ().asDouble () ) );
+                attributes.put ( LOW_ALARM, new Variant ( value.asDouble () <= this._lowLevel.getValue ().asDouble () ) );
             }
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             _log.info ( "Failed to evaluate low level alarm", e );
             attributes.put ( LOW_ERROR, new Variant ( e.getMessage () ) );
         }
-        
+
         // high high alarm
         try
         {
-            if ( !_highHighLevel.getValue ().isNull () && !value.isNull () )
+            if ( !this._highHighLevel.getValue ().isNull () && !value.isNull () )
             {
-                attributes.put ( HIGHHIGH_ALARM, new Variant ( value.asDouble () >= _highHighLevel.getValue ().asDouble () ) );
+                attributes.put ( HIGHHIGH_ALARM, new Variant ( value.asDouble () >= this._highHighLevel.getValue ().asDouble () ) );
             }
 
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             _log.info ( "Failed to evaluate high high level alarm", e );
             attributes.put ( HIGHHIGH_ERROR, new Variant ( e.getMessage () ) );
         }
-        
+
         // low low alarm
         try
         {
-            if ( !_lowLowLevel.getValue ().isNull () && !value.isNull () )
+            if ( !this._lowLowLevel.getValue ().isNull () && !value.isNull () )
             {
-                attributes.put ( LOWLOW_ALARM, new Variant ( value.asDouble () <= _lowLowLevel.getValue ().asDouble () ) );
+                attributes.put ( LOWLOW_ALARM, new Variant ( value.asDouble () <= this._lowLowLevel.getValue ().asDouble () ) );
             }
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             _log.info ( "Failed to evaluate low low level alarm", e );
             attributes.put ( LOWLOW_ERROR, new Variant ( e.getMessage () ) );

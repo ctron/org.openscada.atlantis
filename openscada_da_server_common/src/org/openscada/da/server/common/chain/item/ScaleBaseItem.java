@@ -29,26 +29,28 @@ import org.openscada.da.server.common.chain.VariantBinder;
 public abstract class ScaleBaseItem extends BaseChainItemCommon
 {
     public static final String SCALE_FACTOR = ".factor";
+
     public static final String SCALE_RAW = ".raw";
+
     public static final String SCALE_ERROR = ".error";
 
-    private VariantBinder _scaleFactor = new VariantBinder ( new Variant () );
+    private final VariantBinder _scaleFactor = new VariantBinder ( new Variant () );
 
-    public ScaleBaseItem ( HiveServiceRegistry serviceRegistry )
+    public ScaleBaseItem ( final HiveServiceRegistry serviceRegistry )
     {
         super ( serviceRegistry );
 
-        addBinder ( getFactorName (), _scaleFactor );
+        addBinder ( getFactorName (), this._scaleFactor );
         setReservedAttributes ( getRawName (), getErrorName () );
     }
 
-    public void process ( Variant value, Map<String, Variant> attributes )
+    public void process ( final Variant value, final Map<String, Variant> attributes )
     {
         attributes.put ( getRawName (), null );
         attributes.put ( getErrorName (), null );
         try
         {
-            Variant scaleFactor = _scaleFactor.getValue ();
+            final Variant scaleFactor = this._scaleFactor.getValue ();
             // only process if we have a scale factor
             if ( !scaleFactor.isNull () )
             {
@@ -56,7 +58,7 @@ public abstract class ScaleBaseItem extends BaseChainItemCommon
                 value.setValue ( value.asDouble () * scaleFactor.asDouble () );
             }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             attributes.put ( getErrorName (), new Variant ( e.getMessage () ) );
         }

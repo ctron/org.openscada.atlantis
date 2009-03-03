@@ -19,17 +19,16 @@
 
 package org.openscada.da.server.browser.common.query;
 
-
 public class IDNameProvider implements NameProvider
 {
-   
-    public String getName ( ItemDescriptor descriptor )
+
+    public String getName ( final ItemDescriptor descriptor )
     {
         try
         {
             return descriptor.getItem ().getInformation ().getName ();
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             return null;
         }

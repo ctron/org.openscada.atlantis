@@ -24,8 +24,8 @@ import org.openscada.core.Variant;
 public class BooleanBinder implements AttributeBinder
 {
     private Boolean value = null;
-    
-    public void bind ( Variant value ) throws Exception
+
+    public void bind ( final Variant value ) throws Exception
     {
         if ( value == null )
         {

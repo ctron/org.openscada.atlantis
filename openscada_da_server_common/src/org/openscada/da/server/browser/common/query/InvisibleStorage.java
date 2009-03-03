@@ -26,72 +26,73 @@ import java.util.Set;
 
 public class InvisibleStorage implements SubscribeableStorage
 {
-    private Set<ItemDescriptor> _items = new HashSet<ItemDescriptor> ();
-    private Collection<ItemStorage> _childs = new LinkedList <ItemStorage> ();
-    
-    public void added ( ItemDescriptor descriptor )
+    private final Set<ItemDescriptor> _items = new HashSet<ItemDescriptor> ();
+
+    private final Collection<ItemStorage> _childs = new LinkedList<ItemStorage> ();
+
+    public void added ( final ItemDescriptor descriptor )
     {
         synchronized ( this )
         {
-            if ( _items.contains ( descriptor ) )
+            if ( this._items.contains ( descriptor ) )
             {
                 return;
             }
 
-            _items.add ( descriptor );
+            this._items.add ( descriptor );
             notifyAdd ( descriptor );
         }
     }
 
-    public void removed ( ItemDescriptor descriptor )
+    public void removed ( final ItemDescriptor descriptor )
     {
         synchronized ( this )
         {
-            if ( !_items.contains ( descriptor ) )
+            if ( !this._items.contains ( descriptor ) )
             {
                 return;
             }
 
-            _items.remove ( descriptor );
+            this._items.remove ( descriptor );
             notifyRemove ( descriptor );
         }
     }
-    
-    public void addChild ( ItemStorage child )
+
+    public void addChild ( final ItemStorage child )
     {
         synchronized ( this )
         {
-            _childs.add ( child );
+            this._childs.add ( child );
 
             // now push all possible descriptors
-            for ( ItemDescriptor desc : _items )
+            for ( final ItemDescriptor desc : this._items )
             {
                 child.added ( desc );
             }
         }
     }
-    
-    public void removeChild ( ItemStorage child )
+
+    public void removeChild ( final ItemStorage child )
     {
         synchronized ( this )
         {
-            _childs.remove ( child );
+            this._childs.remove ( child );
         }
     }
-    
-    private void notifyAdd ( ItemDescriptor desc )
+
+    private void notifyAdd ( final ItemDescriptor desc )
     {
         // notify childs
-        for ( ItemStorage child : _childs )
+        for ( final ItemStorage child : this._childs )
         {
             child.added ( desc );
         }
     }
-    
-    private void notifyRemove ( ItemDescriptor desc )
+
+    private void notifyRemove ( final ItemDescriptor desc )
     {
         // notify childs
-        for ( ItemStorage child : _childs )
+        for ( final ItemStorage child : this._childs )
         {
             child.removed ( desc );
         }
@@ -101,11 +102,11 @@ public class InvisibleStorage implements SubscribeableStorage
     {
         synchronized ( this )
         {
-            for ( ItemDescriptor desc : _items )
+            for ( final ItemDescriptor desc : this._items )
             {
                 notifyRemove ( desc );
             }
-            _items.clear ();
+            this._items.clear ();
         }
     }
 

@@ -33,62 +33,63 @@ import org.openscada.da.core.WriteAttributeResults;
 public class MemoryDataItem extends DataItemBase
 {
     private Variant _value = new Variant ();
+
     private AttributeManager _attributes = null;
 
-    public MemoryDataItem ( String name )
+    public MemoryDataItem ( final String name )
     {
         this ( name, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) );
     }
-    
-    protected MemoryDataItem ( String name, EnumSet<IODirection> ioDirection )
+
+    protected MemoryDataItem ( final String name, final EnumSet<IODirection> ioDirection )
     {
         super ( new DataItemInformationBase ( name, ioDirection ) );
-        _attributes = new AttributeManager ( this );
+        this._attributes = new AttributeManager ( this );
     }
 
     public Variant readValue () throws InvalidOperationException
     {
-        return new Variant ( _value );
+        return new Variant ( this._value );
     }
 
-    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        if ( !_value.equals ( value ) )
+        if ( !this._value.equals ( value ) )
         {
-            _value = new Variant ( value );
+            this._value = new Variant ( value );
             notifyData ( value, null );
         }
     }
 
     public Map<String, Variant> getAttributes ()
     {
-        return _attributes.get ();
+        return this._attributes.get ();
     }
 
     @Override
     protected Map<String, Variant> getCacheAttributes ()
     {
-        return _attributes.get ();
+        return this._attributes.get ();
     }
-    
+
     @Override
     protected Variant getCacheValue ()
     {
-        return _value;
+        return this._value;
     }
-    
-    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
+
+    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
     {
-        WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
+        final WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
 
-        _attributes.update ( null, attributes );
+        this._attributes.update ( null, attributes );
 
-        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+        for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
             writeAttributeResults.put ( entry.getKey (), new WriteAttributeResult () );
         }
 
         return writeAttributeResults;
     }
-    
+
 }

@@ -43,26 +43,29 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
 {
     private static Logger _log = Logger.getLogger ( SummarizeChainItem.class );
 
-    private String _sumStateName;
-    private String _sumCountName;
-    private String _sumListName;
-    private String _sumIgnoreName;
+    private final String _sumStateName;
 
-    private StringBinder _ignoreBinder;
+    private final String _sumCountName;
 
-    public SummarizeChainItem ( HiveServiceRegistry serviceRegistry, String baseName )
+    private final String _sumListName;
+
+    private final String _sumIgnoreName;
+
+    private final StringBinder _ignoreBinder;
+
+    public SummarizeChainItem ( final HiveServiceRegistry serviceRegistry, final String baseName )
     {
         super ( serviceRegistry );
 
-        _sumStateName = baseName;
-        _sumCountName = baseName + ".count";
-        _sumListName = baseName + ".items";
-        _sumIgnoreName = baseName + ".ignore";
+        this._sumStateName = baseName;
+        this._sumCountName = baseName + ".count";
+        this._sumListName = baseName + ".items";
+        this._sumIgnoreName = baseName + ".ignore";
 
-        setReservedAttributes ( _sumStateName, _sumCountName, _sumListName );
+        setReservedAttributes ( this._sumStateName, this._sumCountName, this._sumListName );
 
-        _ignoreBinder = new StringBinder ();
-        addBinder ( _sumIgnoreName, _ignoreBinder );
+        this._ignoreBinder = new StringBinder ();
+        addBinder ( this._sumIgnoreName, this._ignoreBinder );
     }
 
     /**
@@ -74,52 +77,51 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
      */
     protected abstract boolean matches ( Variant value, String attributeName, Variant attributeValue );
 
-    public void process ( Variant value, Map<String, Variant> attributes )
+    public void process ( final Variant value, final Map<String, Variant> attributes )
     {
-        attributes.put ( _sumStateName, null );
-        attributes.put ( _sumCountName, null );
-        attributes.put ( _sumListName, null );
+        attributes.put ( this._sumStateName, null );
+        attributes.put ( this._sumCountName, null );
+        attributes.put ( this._sumListName, null );
 
         long count = 0;
-        List<String> items = new LinkedList<String> ();
-        Set<String> ignoreItems = getIgnoreItems ();
+        final List<String> items = new LinkedList<String> ();
+        final Set<String> ignoreItems = getIgnoreItems ();
 
-        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+        for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
-            String attributeName = entry.getKey ();
+            final String attributeName = entry.getKey ();
 
             // ignore our own entries
-            if ( !attributeName.equals ( _sumStateName ) && !attributeName.equals ( _sumCountName )
-                    && !attributeName.equals ( _sumListName ) && !ignoreItems.contains ( attributeName ) )
+            if ( !attributeName.equals ( this._sumStateName ) && !attributeName.equals ( this._sumCountName ) && !attributeName.equals ( this._sumListName ) && !ignoreItems.contains ( attributeName ) )
             {
                 try
                 {
                     if ( matches ( value, attributeName, entry.getValue () ) )
                     {
-                        if ( ( entry.getValue () != null ) && entry.getValue ().asBoolean () )
+                        if ( entry.getValue () != null && entry.getValue ().asBoolean () )
                         {
                             count++;
                             items.add ( entry.getKey () );
                         }
                     }
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     _log.warn ( String.format ( "Failed to summarize item '%s'", attributeName ), e );
                 }
             }
         }
 
-        attributes.put ( _sumStateName, new Variant ( count > 0 ) );
-        attributes.put ( _sumCountName, new Variant ( count ) );
-        attributes.put ( _sumListName, new Variant ( StringHelper.join ( items, ", " ) ) );
+        attributes.put ( this._sumStateName, new Variant ( count > 0 ) );
+        attributes.put ( this._sumCountName, new Variant ( count ) );
+        attributes.put ( this._sumListName, new Variant ( StringHelper.join ( items, ", " ) ) );
 
         addAttributes ( attributes );
     }
 
     protected Set<String> getIgnoreItems ()
     {
-        String txt = _ignoreBinder.getValue ();
+        final String txt = this._ignoreBinder.getValue ();
         if ( txt != null )
         {
             return new HashSet<String> ( Arrays.asList ( txt.split ( ",\\s" ) ) );

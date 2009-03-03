@@ -35,11 +35,11 @@ public class EventEntry
 
     private Map<String, Variant> _attributes = null;
 
-    public EventEntry ( DataItem item, Variant value, Map<String, Variant> attributes )
+    public EventEntry ( final DataItem item, final Variant value, final Map<String, Variant> attributes )
     {
-        _item = item;
-        _value = value;
-        _attributes = attributes;
+        this._item = item;
+        this._value = value;
+        this._attributes = attributes;
     }
 
     @Override
@@ -47,54 +47,70 @@ public class EventEntry
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ( ( _attributes == null ) ? 0 : _attributes.hashCode () );
-        result = PRIME * result + ( ( _item == null ) ? 0 : _item.hashCode () );
-        result = PRIME * result + ( ( _value == null ) ? 0 : _value.hashCode () );
+        result = PRIME * result + ( this._attributes == null ? 0 : this._attributes.hashCode () );
+        result = PRIME * result + ( this._item == null ? 0 : this._item.hashCode () );
+        result = PRIME * result + ( this._value == null ? 0 : this._value.hashCode () );
         return result;
     }
 
     @Override
-    public boolean equals ( Object obj )
+    public boolean equals ( final Object obj )
     {
         if ( this == obj )
+        {
             return true;
+        }
         if ( obj == null )
+        {
             return false;
+        }
         final EventEntry other = (EventEntry)obj;
-        if ( _attributes == null )
+        if ( this._attributes == null )
         {
             if ( other._attributes != null )
+            {
                 return false;
+            }
         }
-        else if ( !_attributes.equals ( other._attributes ) )
+        else if ( !this._attributes.equals ( other._attributes ) )
+        {
             return false;
-        if ( _item == null )
+        }
+        if ( this._item == null )
         {
             if ( other._item != null )
+            {
                 return false;
+            }
         }
-        else if ( !_item.equals ( other._item ) )
+        else if ( !this._item.equals ( other._item ) )
+        {
             return false;
-        if ( _value == null )
+        }
+        if ( this._value == null )
         {
             if ( other._value != null )
+            {
                 return false;
+            }
         }
-        else if ( !_value.equals ( other._value ) )
+        else if ( !this._value.equals ( other._value ) )
+        {
             return false;
+        }
         return true;
     }
 
     @Override
     public String toString ()
     {
-        StringBuilder sb = new StringBuilder ();
+        final StringBuilder sb = new StringBuilder ();
 
-        sb.append ( String.format ( "Value: %s, ", _value ) );
+        sb.append ( String.format ( "Value: %s, ", this._value ) );
 
-        if ( _attributes != null )
+        if ( this._attributes != null )
         {
-            for ( Map.Entry<String, Variant> entry : _attributes.entrySet () )
+            for ( final Map.Entry<String, Variant> entry : this._attributes.entrySet () )
             {
                 sb.append ( String.format ( "'%s'=>'%s', ", entry.getKey (), entry.getValue () ) );
             }

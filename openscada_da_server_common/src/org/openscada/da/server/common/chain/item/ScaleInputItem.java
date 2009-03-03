@@ -21,11 +21,9 @@ package org.openscada.da.server.common.chain.item;
 
 import org.openscada.da.server.common.HiveServiceRegistry;
 
-
-
 public class ScaleInputItem extends ScaleBaseItem
 {
-    public ScaleInputItem ( HiveServiceRegistry serviceRegistry )
+    public ScaleInputItem ( final HiveServiceRegistry serviceRegistry )
     {
         super ( serviceRegistry );
     }

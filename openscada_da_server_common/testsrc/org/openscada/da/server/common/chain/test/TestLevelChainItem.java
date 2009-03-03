@@ -45,22 +45,22 @@ public class TestLevelChainItem extends TestInputChain
     @Before
     public void setupLevelAlarm ()
     {
-        _levelAlarm = new LevelAlarmChainItem ( serviceRegistry );
+        this._levelAlarm = new LevelAlarmChainItem ( this.serviceRegistry );
     }
 
     @Test
     public void testSetValueAfterAttributes ()
     {
 
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        _dataItem.addChainElement ( IODirection.INPUT, _levelAlarm );
+        this._dataItem.addChainElement ( IODirection.INPUT, this._levelAlarm );
 
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 3 ) );
-        _dataItem.setAttributes ( attributes );
+        this._dataItem.setAttributes ( attributes );
         addEvent ( null, attributes );
 
-        _dataItem.updateData ( new Variant ( 4 ), null, null );
+        this._dataItem.updateData ( new Variant ( 4 ), null, null );
         addEvent ( new Variant ( 4 ), new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( true ) ).getMap () );
 
         assertEvents ();
@@ -69,19 +69,18 @@ public class TestLevelChainItem extends TestInputChain
     @Test
     public void testSetValueBeforeAttributes ()
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        _dataItem.addChainElement ( IODirection.INPUT, _levelAlarm );
+        this._dataItem.addChainElement ( IODirection.INPUT, this._levelAlarm );
 
-        _dataItem.updateData ( new Variant ( 4 ), null, null );
+        this._dataItem.updateData ( new Variant ( 4 ), null, null );
         addEvent ( new Variant ( 4 ), null );
 
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 3 ) );
-        _dataItem.setAttributes ( attributes );
+        this._dataItem.setAttributes ( attributes );
 
         // both changes come in the same event
-        addEvent ( null, new MapBuilder<String, Variant> ( attributes ).put ( LevelAlarmChainItem.HIGH_ALARM,
-                new Variant ( true ) ).getMap () );
+        addEvent ( null, new MapBuilder<String, Variant> ( attributes ).put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( true ) ).getMap () );
 
         assertEvents ();
     }
@@ -90,15 +89,15 @@ public class TestLevelChainItem extends TestInputChain
     public void testSetValueAfterAttributesNoInject ()
     {
 
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 3 ) );
-        WriteAttributeResults writeAttributeResults = _dataItem.setAttributes ( attributes );
+        final WriteAttributeResults writeAttributeResults = this._dataItem.setAttributes ( attributes );
         Assert.assertFalse ( "WriteAttributeResult is empty", writeAttributeResults.isEmpty () );
         Assert.assertFalse ( "WriteAttributeResult is ok although it should not", writeAttributeResults.isSuccess () );
         Assert.assertFalse ( writeAttributeResults.get ( LevelAlarmChainItem.HIGH_PRESET ).isSuccess () );
 
-        _dataItem.updateData ( new Variant ( 4 ), null, null );
+        this._dataItem.updateData ( new Variant ( 4 ), null, null );
         addEvent ( new Variant ( 4 ), null );
 
         // no alarm must be present since chain item is not present 
@@ -111,28 +110,25 @@ public class TestLevelChainItem extends TestInputChain
 
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        _dataItem.addChainElement ( IODirection.INPUT, _levelAlarm );
+        this._dataItem.addChainElement ( IODirection.INPUT, this._levelAlarm );
 
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 3 ) );
-        _dataItem.setAttributes ( attributes );
+        this._dataItem.setAttributes ( attributes );
         addEvent ( null, attributes );
 
-        _dataItem.updateData ( new Variant ( 4 ), null, null );
+        this._dataItem.updateData ( new Variant ( 4 ), null, null );
         addEvent ( new Variant ( 4 ), new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( true ) ).getMap () );
 
         assertEvents ();
 
         attributes = new HashMap<String, Variant> ();
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 5 ) );
-        _dataItem.setAttributes ( attributes );
-        addEvent ( null, new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( false ) ).put (
-                LevelAlarmChainItem.HIGH_PRESET, new Variant ( 5 ) ).getMap () );
+        this._dataItem.setAttributes ( attributes );
+        addEvent ( null, new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( false ) ).put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 5 ) ).getMap () );
 
         assertEvents ();
 
-        Assert.assertEquals ( new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_PRESET,
-                new Variant ( 5 ) ).put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( false ) ).getMap (),
-                _dataItem.getAttributes () );
+        Assert.assertEquals ( new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 5 ) ).put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( false ) ).getMap (), this._dataItem.getAttributes () );
     }
 
     @Test
@@ -141,26 +137,25 @@ public class TestLevelChainItem extends TestInputChain
 
         Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        _dataItem.addChainElement ( IODirection.INPUT, _levelAlarm );
+        this._dataItem.addChainElement ( IODirection.INPUT, this._levelAlarm );
 
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, new Variant ( 3 ) );
-        _dataItem.setAttributes ( attributes );
+        this._dataItem.setAttributes ( attributes );
         addEvent ( null, attributes );
 
-        _dataItem.updateData ( new Variant ( 4 ), null, null );
+        this._dataItem.updateData ( new Variant ( 4 ), null, null );
         addEvent ( new Variant ( 4 ), new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_ALARM, new Variant ( true ) ).getMap () );
 
         assertEvents ();
 
         attributes = new HashMap<String, Variant> ();
         attributes.put ( LevelAlarmChainItem.HIGH_PRESET, null );
-        _dataItem.setAttributes ( attributes );
-        addEvent ( null, new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_PRESET, null ).put (
-                LevelAlarmChainItem.HIGH_ALARM, null ).getMap () );
+        this._dataItem.setAttributes ( attributes );
+        addEvent ( null, new MapBuilder<String, Variant> ().put ( LevelAlarmChainItem.HIGH_PRESET, null ).put ( LevelAlarmChainItem.HIGH_ALARM, null ).getMap () );
 
         assertEvents ();
 
-        Assert.assertEquals ( new MapBuilder<String, Variant> ().getMap (), _dataItem.getAttributes () );
+        Assert.assertEquals ( new MapBuilder<String, Variant> ().getMap (), this._dataItem.getAttributes () );
     }
 
 }

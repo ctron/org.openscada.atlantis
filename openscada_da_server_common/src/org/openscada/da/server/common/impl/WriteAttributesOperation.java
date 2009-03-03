@@ -31,41 +31,42 @@ public class WriteAttributesOperation extends RunnableCancelOperation
 {
 
     private DataItem _item = null;
+
     private WriteAttributesOperationListener _listener = null;
+
     private Map<String, Variant> _attributes = null;
-    
-    public WriteAttributesOperation ( DataItem item, WriteAttributesOperationListener listener, Map<String, Variant> attributes )
+
+    public WriteAttributesOperation ( final DataItem item, final WriteAttributesOperationListener listener, final Map<String, Variant> attributes )
     {
-        _item = item;
-        _listener = listener;
-        _attributes = attributes;
+        this._item = item;
+        this._listener = listener;
+        this._attributes = attributes;
     }
-    
+
     public void run ()
     {
         try
         {
-            WriteAttributeResults writeAttributeResults = _item.setAttributes ( _attributes );
+            final WriteAttributeResults writeAttributeResults = this._item.setAttributes ( this._attributes );
             synchronized ( this )
             {
                 if ( !isCanceled () )
                 {
-                    _listener.complete ( writeAttributeResults );
+                    this._listener.complete ( writeAttributeResults );
                 }
             }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             synchronized ( this )
             {
                 if ( !isCanceled () )
                 {
-                    _listener.failed ( e );
+                    this._listener.failed ( e );
                 }
             }
         }
-        
-        
+
     }
 
 }

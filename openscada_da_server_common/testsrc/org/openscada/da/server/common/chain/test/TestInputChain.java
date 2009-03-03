@@ -48,15 +48,15 @@ public class TestInputChain
     @Before
     public void init ()
     {
-        _listener = new ItemListenerTestImpl ();
-        _dataItem = new DataItemInputChained ( "test-id" );
-        _dataItem.setListener ( _listener );
+        this._listener = new ItemListenerTestImpl ();
+        this._dataItem = new DataItemInputChained ( "test-id" );
+        this._dataItem.setListener ( this._listener );
     }
 
     @Test
     public void testValueEvent () throws Exception
     {
-        _dataItem.updateData ( new Variant ( 1 ), null, null );
+        this._dataItem.updateData ( new Variant ( 1 ), null, null );
         addEvent ( new Variant ( 1 ), null );
         assertEvents ();
     }
@@ -64,10 +64,10 @@ public class TestInputChain
     @Test
     public void testAttributeEvent () throws Exception
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "name", new Variant ( "value" ) );
 
-        _dataItem.updateData ( null, attributes, null );
+        this._dataItem.updateData ( null, attributes, null );
         addEvent ( null, attributes );
 
         assertEvents ();
@@ -76,36 +76,36 @@ public class TestInputChain
     @Test
     public void testPreSetValue () throws Exception
     {
-        _dataItem.setListener ( null );
-        _dataItem.updateData ( new Variant ( true ), null, null );
+        this._dataItem.setListener ( null );
+        this._dataItem.updateData ( new Variant ( true ), null, null );
         assertEvents ();
 
         addEvent ( new Variant ( true ), null );
-        _dataItem.setListener ( _listener );
+        this._dataItem.setListener ( this._listener );
         assertEvents ();
     }
 
     @Test
     public void testPreSetAttributes () throws Exception
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "test", new Variant ( "test" ) );
 
-        _dataItem.setListener ( null );
-        _dataItem.updateData ( null, attributes, null );
+        this._dataItem.setListener ( null );
+        this._dataItem.updateData ( null, attributes, null );
         assertEvents ();
 
         addEvent ( null, attributes );
-        _dataItem.setListener ( _listener );
+        this._dataItem.setListener ( this._listener );
         assertEvents ();
     }
 
     protected void assertEvents ()
     {
-        _listener.assertEquals ( _expectedEvents );
+        this._listener.assertEquals ( this._expectedEvents );
     }
 
-    protected void addEvent ( Variant value, Map<String, Variant> attributes )
+    protected void addEvent ( final Variant value, final Map<String, Variant> attributes )
     {
         Variant copyValue = null;
         if ( value != null )
@@ -117,7 +117,7 @@ public class TestInputChain
         {
             copyAttributes = new HashMap<String, Variant> ( attributes );
         }
-        _expectedEvents.add ( new EventEntry ( _dataItem, copyValue, copyAttributes ) );
+        this._expectedEvents.add ( new EventEntry ( this._dataItem, copyValue, copyAttributes ) );
     }
 
 }

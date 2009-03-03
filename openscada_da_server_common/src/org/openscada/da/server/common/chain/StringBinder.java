@@ -24,18 +24,22 @@ import org.openscada.core.Variant;
 public class StringBinder implements AttributeBinder
 {
     private String _value = null;
-    
-    public void bind ( Variant value ) throws Exception
+
+    public void bind ( final Variant value ) throws Exception
     {
         if ( value == null )
-            _value = null;
+        {
+            this._value = null;
+        }
         else
-            _value = value.asString ( null );
+        {
+            this._value = value.asString ( null );
+        }
     }
 
     public String getValue ()
     {
-        return _value;
+        return this._value;
     }
 
     public Variant getAttributeValue ()

@@ -22,28 +22,31 @@ package org.openscada.da.server.browser.common.query;
 public class SplitGroupProvider implements GroupProvider
 {
     private NameProvider _nameProvider = null;
+
     private String _regex = "";
+
     private int _skipPrefix = 0;
+
     private int _skipSuffix = 0;
 
-    public SplitGroupProvider ( NameProvider nameProvider, String regex )
+    public SplitGroupProvider ( final NameProvider nameProvider, final String regex )
     {
-        _nameProvider = nameProvider;
-        _regex = regex;
+        this._nameProvider = nameProvider;
+        this._regex = regex;
     }
 
     public SplitGroupProvider ()
     {
     }
 
-    public String[] getGrouping ( ItemDescriptor descriptor )
+    public String[] getGrouping ( final ItemDescriptor descriptor )
     {
-        if ( _nameProvider == null )
+        if ( this._nameProvider == null )
         {
             return null;
         }
 
-        String name = _nameProvider.getName ( descriptor );
+        final String name = this._nameProvider.getName ( descriptor );
 
         if ( name == null )
         {
@@ -52,42 +55,42 @@ public class SplitGroupProvider implements GroupProvider
 
         try
         {
-            String[] tok = name.split ( _regex );
-            if ( _skipPrefix + _skipSuffix >= tok.length )
+            final String[] tok = name.split ( this._regex );
+            if ( this._skipPrefix + this._skipSuffix >= tok.length )
             {
                 return null;
             }
-            String[] result = new String[tok.length - ( _skipPrefix + _skipSuffix )];
-            for ( int i = _skipPrefix; i < tok.length - _skipSuffix; i++ )
+            final String[] result = new String[tok.length - ( this._skipPrefix + this._skipSuffix )];
+            for ( int i = this._skipPrefix; i < tok.length - this._skipSuffix; i++ )
             {
-                result[i - _skipPrefix] = tok[i];
+                result[i - this._skipPrefix] = tok[i];
             }
             return result;
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             return null;
         }
     }
 
-    public void setNameProvider ( NameProvider nameProvider )
+    public void setNameProvider ( final NameProvider nameProvider )
     {
-        _nameProvider = nameProvider;
+        this._nameProvider = nameProvider;
     }
 
-    public void setRegex ( String regex )
+    public void setRegex ( final String regex )
     {
-        _regex = regex;
+        this._regex = regex;
     }
 
-    public void setSkipPrefix ( int skipPrefix )
+    public void setSkipPrefix ( final int skipPrefix )
     {
-        _skipPrefix = skipPrefix;
+        this._skipPrefix = skipPrefix;
     }
 
-    public void setSkipSuffix ( int skipSuffix )
+    public void setSkipSuffix ( final int skipSuffix )
     {
-        _skipSuffix = skipSuffix;
+        this._skipSuffix = skipSuffix;
     }
 
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,33 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.server.browser.common.query;
+package org.openscada.da.server.common.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.openscada.core.Variant;
-import org.openscada.da.server.common.DataItem;
-
-public class ItemDescriptor
+/**
+ * A hive exporter interface
+ * @author Jens Reimann
+ *
+ */
+public interface HiveExporter
 {
-    private Map<String, Variant> _attributes = new HashMap<String, Variant> ();
+    public abstract void start () throws Exception;
 
-    private DataItem _item = null;
+    public abstract void stop () throws Exception;
 
-    public ItemDescriptor ( final DataItem item, final Map<String, Variant> attributes )
-    {
-        this._item = item;
-        this._attributes = attributes;
-    }
-
-    public Map<String, Variant> getAttributes ()
-    {
-        return this._attributes;
-    }
-
-    public DataItem getItem ()
-    {
-        return this._item;
-    }
 }

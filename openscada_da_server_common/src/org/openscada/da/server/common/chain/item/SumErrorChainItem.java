@@ -21,8 +21,6 @@ package org.openscada.da.server.common.chain.item;
 
 import org.openscada.da.server.common.HiveServiceRegistry;
 
-
-
 /**
  * A chain item that sums up error attributes and generates an error state
  * @author Jens Reimann &lt;jens.reimann@inavare.net&gt;
@@ -30,7 +28,7 @@ import org.openscada.da.server.common.HiveServiceRegistry;
  */
 public class SumErrorChainItem extends SumPatternAttributesChainItem
 {
-    public SumErrorChainItem ( HiveServiceRegistry serviceRegistry )
+    public SumErrorChainItem ( final HiveServiceRegistry serviceRegistry )
     {
         super ( serviceRegistry, "error", ".*\\.error$" );
     }

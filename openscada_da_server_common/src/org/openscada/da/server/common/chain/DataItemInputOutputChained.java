@@ -34,24 +34,24 @@ import org.openscada.da.server.common.DataItemInformationBase;
 
 public abstract class DataItemInputOutputChained extends DataItemInputChained
 {
-    public DataItemInputOutputChained ( DataItemInformation di )
+    public DataItemInputOutputChained ( final DataItemInformation di )
     {
         super ( di );
     }
 
-    public DataItemInputOutputChained ( String id )
+    public DataItemInputOutputChained ( final String id )
     {
         this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
     }
 
     @Override
-    synchronized public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    synchronized public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        Collection<ChainProcessEntry> chain = getChainCopy ();
-        
-        Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( _primaryAttributes );
+        final Collection<ChainProcessEntry> chain = getChainCopy ();
 
-        for ( ChainProcessEntry entry : chain )
+        final Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( this._primaryAttributes );
+
+        for ( final ChainProcessEntry entry : chain )
         {
             if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
             {

@@ -29,31 +29,32 @@ import org.openscada.da.server.common.chain.VariantBinder;
 public abstract class NegateBaseItem extends BaseChainItemCommon
 {
     public static final String NEGATE_ACTIVE = ".active";
+
     public static final String NEGATE_ERROR = ".error";
 
-    private VariantBinder _negateActive = new VariantBinder ( new Variant () );
+    private final VariantBinder _negateActive = new VariantBinder ( new Variant () );
 
-    public NegateBaseItem ( HiveServiceRegistry serviceRegistry )
+    public NegateBaseItem ( final HiveServiceRegistry serviceRegistry )
     {
         super ( serviceRegistry );
 
-        addBinder ( getActiveName (), _negateActive );
+        addBinder ( getActiveName (), this._negateActive );
         setReservedAttributes ( getErrorName () );
     }
 
-    public void process ( Variant value, Map<String, Variant> attributes )
+    public void process ( final Variant value, final Map<String, Variant> attributes )
     {
         attributes.put ( getErrorName (), null );
         try
         {
-            Variant activeFlag = _negateActive.getValue ();
+            final Variant activeFlag = this._negateActive.getValue ();
             // only process if we are active
             if ( !activeFlag.isNull () )
             {
                 value.setValue ( !value.asBoolean () );
             }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             attributes.put ( getErrorName (), new Variant ( e.getMessage () ) );
         }

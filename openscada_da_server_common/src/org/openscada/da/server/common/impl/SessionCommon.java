@@ -29,73 +29,74 @@ import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.FolderListener;
 import org.openscada.da.server.common.DataItem;
 
-
 public class SessionCommon implements Session, DataItemSubscriptionListener
 {
-	private HiveCommon _hive;
-	private ItemChangeListener _listener;
-    
-	private SessionCommonData _data = new SessionCommonData ();
-    private SessionCommonOperations _operations = new SessionCommonOperations ();
-	
+    private final HiveCommon _hive;
+
+    private ItemChangeListener _listener;
+
+    private final SessionCommonData _data = new SessionCommonData ();
+
+    private final SessionCommonOperations _operations = new SessionCommonOperations ();
+
     private FolderListener _folderListener = null;
-    
-	public SessionCommon ( HiveCommon hive )
-	{
-		_hive = hive;
-	}
-	
-	public HiveCommon getHive ()
-	{
-		return _hive;
-	}
 
-	public void setListener ( ItemChangeListener listener )
-	{
-		_listener = listener;
-	}
-
-	public ItemChangeListener getListener ()
-	{
-		return _listener;
-	}
-
-	public SessionCommonData getData ()
+    public SessionCommon ( final HiveCommon hive )
     {
-		return _data;
-	}
+        this._hive = hive;
+    }
+
+    public HiveCommon getHive ()
+    {
+        return this._hive;
+    }
+
+    public void setListener ( final ItemChangeListener listener )
+    {
+        this._listener = listener;
+    }
+
+    public ItemChangeListener getListener ()
+    {
+        return this._listener;
+    }
+
+    public SessionCommonData getData ()
+    {
+        return this._data;
+    }
 
     public FolderListener getFolderListener ()
     {
-        return _folderListener;
+        return this._folderListener;
     }
 
-    public void setListener ( FolderListener folderListener )
+    public void setListener ( final FolderListener folderListener )
     {
-        _folderListener = folderListener;
+        this._folderListener = folderListener;
     }
 
     public SessionCommonOperations getOperations ()
     {
-        return _operations;
+        return this._operations;
     }
-    
+
     // Data item listener stuff
-    public void updateStatus ( Object topic, SubscriptionState subscriptionState )
+    public void updateStatus ( final Object topic, final SubscriptionState subscriptionState )
     {
         ItemChangeListener listener;
-        
-        if ( ( listener = _listener ) != null )
+
+        if ( ( listener = this._listener ) != null )
         {
             listener.subscriptionChanged ( topic.toString (), subscriptionState );
         }
     }
 
-    public void dataChanged ( DataItem item, Variant value, Map<String, Variant> attributes, boolean cache )
+    public void dataChanged ( final DataItem item, final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         ItemChangeListener listener;
-        
-        if ( ( listener = _listener ) != null )
+
+        if ( ( listener = this._listener ) != null )
         {
             listener.dataChanged ( item.getInformation ().getName (), value, attributes, cache );
         }

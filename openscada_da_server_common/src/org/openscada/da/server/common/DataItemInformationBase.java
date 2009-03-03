@@ -27,67 +27,81 @@ import org.openscada.da.core.IODirection;
 public class DataItemInformationBase implements org.openscada.da.core.DataItemInformation
 {
     private String _name = "";
+
     private EnumSet<IODirection> _ioDirection = EnumSet.noneOf ( IODirection.class );
-    
-    public DataItemInformationBase ( String name, EnumSet<IODirection> ioDirection )
+
+    public DataItemInformationBase ( final String name, final EnumSet<IODirection> ioDirection )
     {
         super ();
-        _name = new String ( name );
-        _ioDirection = ioDirection.clone ();
+        this._name = new String ( name );
+        this._ioDirection = ioDirection.clone ();
     }
-    
-    public DataItemInformationBase ( String name )
+
+    public DataItemInformationBase ( final String name )
     {
         super ();
-        _name = new String ( name );
+        this._name = new String ( name );
     }
-    
-    public DataItemInformationBase ( DataItemInformation information )
+
+    public DataItemInformationBase ( final DataItemInformation information )
     {
-        super();
-        
-        _name = new String ( information.getName() );
-        _ioDirection = information.getIODirection ().clone ();
+        super ();
+
+        this._name = new String ( information.getName () );
+        this._ioDirection = information.getIODirection ().clone ();
     }
 
     public EnumSet<IODirection> getIODirection ()
     {
-        return _ioDirection;
+        return this._ioDirection;
     }
-    
+
     public String getName ()
     {
-        return _name;
+        return this._name;
     }
 
     @Override
     public int hashCode ()
     {
-        if ( _name == null )
+        if ( this._name == null )
+        {
             return "".hashCode ();
+        }
         else
-            return _name.hashCode ();
+        {
+            return this._name.hashCode ();
+        }
     }
 
     @Override
-    public boolean equals ( Object obj )
+    public boolean equals ( final Object obj )
     {
         if ( this == obj )
-            return true;
-        if ( obj == null )
-            return false;
-        if ( !( obj instanceof DataItemInformation) )
-            return false;
-        
-        final DataItemInformation other = (DataItemInformation)obj;
-        if ( _name == null )
         {
-            if ( other.getName() != null )
-                return false;
+            return true;
         }
-        else
-            if ( !_name.equals ( other.getName() ) )
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( ! ( obj instanceof DataItemInformation ) )
+        {
+            return false;
+        }
+
+        final DataItemInformation other = (DataItemInformation)obj;
+        if ( this._name == null )
+        {
+            if ( other.getName () != null )
+            {
                 return false;
+            }
+        }
+        else if ( !this._name.equals ( other.getName () ) )
+        {
+            return false;
+        }
         return true;
     }
 

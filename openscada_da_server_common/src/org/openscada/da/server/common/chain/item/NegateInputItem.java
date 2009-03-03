@@ -24,7 +24,7 @@ import org.openscada.da.server.common.HiveServiceRegistry;
 public class NegateInputItem extends NegateBaseItem
 {
 
-    public NegateInputItem ( HiveServiceRegistry serviceRegistry )
+    public NegateInputItem ( final HiveServiceRegistry serviceRegistry )
     {
         super ( serviceRegistry );
     }

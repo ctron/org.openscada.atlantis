@@ -21,7 +21,6 @@ package org.openscada.da.server.common.chain.item;
 
 import org.openscada.da.server.common.HiveServiceRegistry;
 
-
 /**
  * A chain item that sums up alarm attributes and generates an alarm state
  * @author Jens Reimann &lt;jens.reimann@inavare.net&gt;
@@ -29,7 +28,7 @@ import org.openscada.da.server.common.HiveServiceRegistry;
  */
 public class SumAlarmChainItem extends SumPatternAttributesChainItem
 {
-    public SumAlarmChainItem ( HiveServiceRegistry serviceRegistry )
+    public SumAlarmChainItem ( final HiveServiceRegistry serviceRegistry )
     {
         super ( serviceRegistry, "alarm", ".*\\.alarm$" );
     }

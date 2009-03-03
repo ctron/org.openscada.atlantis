@@ -40,20 +40,20 @@ public interface ChainItem
      * @return result for processed attributes
      */
     public abstract WriteAttributeResults setAttributes ( Map<String, Variant> attributes );
-    
+
     /**
      * Process the chain item
      * @param value the value to process or <code>null</code> if a output item changed only the attributes 
      * @param attributes The current primary attributes
      */
     public abstract void process ( Variant value, Map<String, Variant> attributes );
-    
+
     /**
      * Called when the chain item is set to a data item
      * @param item The data item itself or <code>null</code> if the chain element is removed from the data item
      */
     public abstract void dataItemChanged ( DataItem item );
-    
+
     /**
      * If this method returns true its binders are persisted when added to the {@link BaseChainItemCommon}
      * @return

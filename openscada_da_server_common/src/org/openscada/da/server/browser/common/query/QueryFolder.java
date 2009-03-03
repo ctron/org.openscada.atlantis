@@ -37,148 +37,157 @@ import org.openscada.da.server.common.DataItem;
 public class QueryFolder implements StorageBasedFolder
 {
     private Matcher _matcher = null;
+
     private NameProvider _nameProvider = null;
-    private FolderCommon _folder = new FolderCommon ();
-    
-    private List<StorageBasedFolder> _folders = new ArrayList<StorageBasedFolder> ();
-    private Set<ItemDescriptor> _items = new HashSet<ItemDescriptor> ();
-    
-    public QueryFolder ( Matcher matcher, NameProvider nameProvider )
+
+    private final FolderCommon _folder = new FolderCommon ();
+
+    private final List<StorageBasedFolder> _folders = new ArrayList<StorageBasedFolder> ();
+
+    private final Set<ItemDescriptor> _items = new HashSet<ItemDescriptor> ();
+
+    public QueryFolder ( final Matcher matcher, final NameProvider nameProvider )
     {
-        _matcher = matcher;
-        _nameProvider = nameProvider;
+        this._matcher = matcher;
+        this._nameProvider = nameProvider;
     }
-    
-    public void addChild ( String name, StorageBasedFolder folder, Map<String, Variant> attributes )
+
+    public void addChild ( final String name, final StorageBasedFolder folder, final Map<String, Variant> attributes )
     {
         synchronized ( this )
         {
-            _folder.add ( name, folder, attributes );
-            _folders.add ( folder );
+            this._folder.add ( name, folder, attributes );
+            this._folders.add ( folder );
 
             // now push all possible descriptors
-            for ( ItemDescriptor desc : _items )
+            for ( final ItemDescriptor desc : this._items )
             {
                 folder.added ( desc );
             }
         }
     }
-    
-    public void removeChild ( QueryFolder folder )
+
+    public void removeChild ( final QueryFolder folder )
     {
         synchronized ( this )
         {
-            _folder.remove ( folder );
-            _folders.remove ( folder );
+            this._folder.remove ( folder );
+            this._folders.remove ( folder );
         }
     }
-    
-    private boolean match ( ItemDescriptor desc )
+
+    private boolean match ( final ItemDescriptor desc )
     {
-        if ( _matcher != null )
-            return _matcher.matches ( desc );
-        
+        if ( this._matcher != null )
+        {
+            return this._matcher.matches ( desc );
+        }
+
         return false;
     }
-    
-    public void added ( ItemDescriptor desc )
+
+    public void added ( final ItemDescriptor desc )
     {
         synchronized ( this )
         {
-            if ( _items.contains ( desc ) )
+            if ( this._items.contains ( desc ) )
+            {
                 return;
+            }
 
             if ( match ( desc ) )
             {
-                _items.add ( desc );
+                this._items.add ( desc );
                 notifyAdd ( desc );
             }
         }
     }
-    
-    public void removed ( ItemDescriptor desc )
+
+    public void removed ( final ItemDescriptor desc )
     {
         synchronized ( this )
         {
-            if ( !_items.contains ( desc ) )
+            if ( !this._items.contains ( desc ) )
+            {
                 return;
+            }
 
-            _items.remove ( desc );
+            this._items.remove ( desc );
             notifyRemove ( desc );
         }
     }
-    
-    public void removeAllForItem ( DataItem dataItem )
+
+    public void removeAllForItem ( final DataItem dataItem )
     {
         synchronized ( this )
         {
-            List<ItemDescriptor> removeList = new LinkedList<ItemDescriptor> ();
-            for ( ItemDescriptor desc : _items )
+            final List<ItemDescriptor> removeList = new LinkedList<ItemDescriptor> ();
+            for ( final ItemDescriptor desc : this._items )
             {
                 if ( desc.getItem () == dataItem )
                 {
                     removeList.add ( desc );
                 }
             }
-            for ( ItemDescriptor desc : removeList )
+            for ( final ItemDescriptor desc : removeList )
             {
                 removed ( desc );
             }
         }
     }
-    
-    private void notifyAdd ( ItemDescriptor desc )
+
+    private void notifyAdd ( final ItemDescriptor desc )
     {
-        String name = _nameProvider.getName ( desc );
+        final String name = this._nameProvider.getName ( desc );
         if ( name != null )
         {
-            _folder.add ( name, desc.getItem (), desc.getAttributes () );
+            this._folder.add ( name, desc.getItem (), desc.getAttributes () );
         }
-        
+
         // notify childs
-        for ( StorageBasedFolder folder : _folders )
+        for ( final StorageBasedFolder folder : this._folders )
         {
             folder.added ( desc );
         }
     }
-    
-    private void notifyRemove ( ItemDescriptor desc )
+
+    private void notifyRemove ( final ItemDescriptor desc )
     {
-        String name = _nameProvider.getName ( desc );
+        final String name = this._nameProvider.getName ( desc );
         if ( name != null )
         {
-            _folder.remove ( desc.getItem () );
+            this._folder.remove ( desc.getItem () );
         }
-        
+
         // notify childs
-        for ( StorageBasedFolder folder : _folders )
+        for ( final StorageBasedFolder folder : this._folders )
         {
             folder.removed ( desc );
         }
     }
 
-    public Entry[] list ( Stack<String> path ) throws NoSuchFolderException
+    public Entry[] list ( final Stack<String> path ) throws NoSuchFolderException
     {
-        return _folder.list ( path );
+        return this._folder.list ( path );
     }
 
-    public void subscribe ( Stack<String> path, FolderListener listener, Object tag ) throws NoSuchFolderException
+    public void subscribe ( final Stack<String> path, final FolderListener listener, final Object tag ) throws NoSuchFolderException
     {
-        _folder.subscribe ( path, listener, tag );
+        this._folder.subscribe ( path, listener, tag );
     }
 
-    public void unsubscribe ( Stack<String> path, Object tag ) throws NoSuchFolderException
+    public void unsubscribe ( final Stack<String> path, final Object tag ) throws NoSuchFolderException
     {
-        _folder.unsubscribe ( path, tag );
+        this._folder.unsubscribe ( path, tag );
     }
 
     public void added ()
     {
-        _folder.added ();
+        this._folder.added ();
     }
 
     public void removed ()
     {
-        _folder.removed ();
+        this._folder.removed ();
     }
 }
