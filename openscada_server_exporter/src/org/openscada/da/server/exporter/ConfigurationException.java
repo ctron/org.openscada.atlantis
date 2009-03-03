@@ -3,7 +3,7 @@ package org.openscada.da.server.exporter;
 public class ConfigurationException extends Exception
 {
 
-    public ConfigurationException ( String message, Throwable error )
+    public ConfigurationException ( final String message, final Throwable error )
     {
         super ( message, error );
     }

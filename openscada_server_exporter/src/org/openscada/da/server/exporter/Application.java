@@ -33,24 +33,24 @@ import org.apache.xmlbeans.XmlException;
 public class Application
 {
     private static Logger _log = Logger.getLogger ( Application.class );
-    
-    public static void main ( String[] args ) throws XmlException, IOException, ConfigurationException
+
+    public static void main ( final String[] args ) throws XmlException, IOException, ConfigurationException
     {
         String configurationFile = "configuration.xml";
-        
+
         // use the provided config file name if we have one
         if ( args.length > 0 )
         {
             configurationFile = args[0];
         }
-        
+
         _log.info ( "Loading configuration file: " + configurationFile );
-        
-        Controller controller = new Controller ( configurationFile );
+
+        final Controller controller = new Controller ( configurationFile );
         controller.start ();
-        
+
         _log.info ( "Exporter running..." );
-        
+
         // Loop forever
         while ( true )
         {
@@ -58,7 +58,7 @@ public class Application
             {
                 Thread.sleep ( 1000 );
             }
-            catch ( InterruptedException e )
+            catch ( final InterruptedException e )
             {
                 _log.warn ( "Failed to sleep", e );
             }

@@ -15,38 +15,38 @@ import org.w3c.dom.Node;
 public class NewInstanceHiveFactory implements HiveFactory
 {
     private static Logger _log = Logger.getLogger ( NewInstanceHiveFactory.class );
-    
-    public Hive createHive ( String reference, HiveConfigurationType configuration ) throws ConfigurationException
+
+    public Hive createHive ( final String reference, final HiveConfigurationType configuration ) throws ConfigurationException
     {
         Node subNode = null;
         if ( configuration != null )
         {
             for ( int i = 0; i < configuration.getDomNode ().getChildNodes ().getLength (); i++ )
             {
-                Node node = configuration.getDomNode ().getChildNodes ().item ( i ); 
+                final Node node = configuration.getDomNode ().getChildNodes ().item ( i );
                 if ( node.getNodeType () == Node.ELEMENT_NODE )
                 {
                     subNode = node;
                 }
             }
         }
-        
+
         try
         {
             return createInstance ( reference, subNode );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             throw new ConfigurationException ( "Failed to initialze hive using new instance", e );
         }
     }
-    
-    protected static Hive createInstance ( String hiveClassName, Node node ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+
+    protected static Hive createInstance ( final String hiveClassName, final Node node ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
-        Class<?> hiveClass = Class.forName ( hiveClassName );
-       
+        final Class<?> hiveClass = Class.forName ( hiveClassName );
+
         Constructor<?> ctor = null;
-        
+
         if ( node != null )
         {
             _log.debug ( "We have an xml configuration node. try XML-Node ctor" );
@@ -54,20 +54,20 @@ public class NewInstanceHiveFactory implements HiveFactory
             try
             {
                 ctor = hiveClass.getConstructor ( Node.class );
-                if ( ctor != null)
+                if ( ctor != null )
                 {
                     _log.debug ( "Using XML-Node constructor" );
-                    return (Hive)ctor.newInstance ( new Object [] { node } );
+                    return (Hive)ctor.newInstance ( new Object[] { node } );
                 }
                 // fall back to standard ctor
                 _log.debug ( "No XML-Node ctor found .. fall back to default" );
             }
-            catch ( InvocationTargetException e )
+            catch ( final InvocationTargetException e )
             {
                 _log.info ( "Failed to create new instance", e.getTargetException () );
                 throw e;
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 _log.info ( String.format ( "No XML node constructor found (%s)", e.getMessage () ) );
             }

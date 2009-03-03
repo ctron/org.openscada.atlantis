@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@
 
 package org.openscada.da.server.exporter;
 
-import java.io.IOException;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -29,63 +28,54 @@ import org.openscada.da.server.ice.Exporter;
 
 public class IceExport implements Export
 {
-    private static Logger _log = Logger.getLogger ( IceExport.class );
-    
-    private Ice.Communicator _communicator = null;
-    private Exporter _exporter = null;
-    private Hive _hive = null;
-    private ConnectionInformation _connectionInformation = null;
-    
-    public IceExport ( Hive hive, ConnectionInformation ci )
+    private static Logger logger = Logger.getLogger ( IceExport.class );
+
+    private Ice.Communicator communicator = null;
+
+    private Exporter exporter = null;
+
+    private Hive hive = null;
+
+    private ConnectionInformation connectionInformation = null;
+
+    public IceExport ( final Hive hive, final ConnectionInformation ci )
     {
         super ();
-        _hive = hive;
-        _connectionInformation = ci;
-    }
-    
-    public String getEndpoints ()
-    {
-        try
-        {
-            return _connectionInformation.getProperties ().get ( _connectionInformation.getTarget () );
-        }
-        catch ( Exception e )
-        {
-        }
-        return null;
+        this.hive = hive;
+        this.connectionInformation = ci;
     }
 
-    public synchronized void start () throws IOException
+    public synchronized void start () throws Exception
     {
-        _log.info ( String.format ( "Starting exporter (%s) on endpoints '%s'", _hive, getEndpoints () ) );
-        
-        Ice.InitializationData initData = new Ice.InitializationData ();
+        logger.info ( String.format ( "Starting exporter (%s) on endpoints '%s'", this.hive, this.connectionInformation ) );
+
+        final Ice.InitializationData initData = new Ice.InitializationData ();
         initData.properties = Ice.Util.createProperties ();
-        
-        for ( Map.Entry<String,String> entry : _connectionInformation.getProperties ().entrySet () )
+
+        for ( final Map.Entry<String, String> entry : this.connectionInformation.getProperties ().entrySet () )
         {
             initData.properties.setProperty ( entry.getKey (), entry.getValue () );
         }
-        
-        _communicator = Ice.Util.initialize ( initData );
-        
-        _exporter = new Exporter ( _hive, _communicator, getEndpoints () );
-        
-        _exporter.start ();
+
+        this.communicator = Ice.Util.initialize ( initData );
+
+        this.exporter = new Exporter ( this.hive, this.communicator, this.connectionInformation );
+
+        this.exporter.start ();
     }
 
     public synchronized void stop ()
     {
-        _exporter.stop ();
-        _communicator.shutdown ();
-        
-        _communicator = null;
-        _exporter = null;
+        this.exporter.stop ();
+        this.communicator.shutdown ();
+
+        this.communicator = null;
+        this.exporter = null;
     }
 
     public Ice.Communicator getCommunicator ()
     {
-        return _communicator;
+        return this.communicator;
     }
 
 }

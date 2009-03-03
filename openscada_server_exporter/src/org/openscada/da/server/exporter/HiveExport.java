@@ -19,8 +19,8 @@
 
 package org.openscada.da.server.exporter;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
@@ -33,7 +33,7 @@ public class HiveExport
 
     private Hive hive = null;
 
-    private final List<Export> exports = new LinkedList<Export> ();
+    private final Collection<Export> exports = new CopyOnWriteArrayList<Export> ();
 
     public HiveExport ( final Hive hive )
     {
@@ -95,17 +95,24 @@ public class HiveExport
             throw new ConfigurationError ( String.format ( "Interface must be 'da' but is '%s'", ci.getInterface () ) );
         }
 
-        if ( ci.getDriver ().equalsIgnoreCase ( "net" ) || ci.getDriver ().equalsIgnoreCase ( "gmpp" ) )
+        try
         {
-            return new NetExport ( this.hive, ci );
+            if ( ci.getDriver ().equalsIgnoreCase ( "net" ) || ci.getDriver ().equalsIgnoreCase ( "gmpp" ) )
+            {
+                return new NetExport ( this.hive, ci );
+            }
+            else if ( ci.getDriver ().equalsIgnoreCase ( "ice" ) )
+            {
+                return new IceExport ( this.hive, ci );
+            }
+            else
+            {
+                throw new ConfigurationError ( String.format ( "Driver '%s' is unknown", ci.getDriver () ) );
+            }
         }
-        else if ( ci.getDriver ().equalsIgnoreCase ( "ice" ) )
+        catch ( final Throwable e )
         {
-            return new IceExport ( this.hive, ci );
-        }
-        else
-        {
-            throw new ConfigurationError ( String.format ( "Driver '%s' is unknown", ci.getDriver () ) );
+            throw new ConfigurationError ( "Failed to configure exporter", e );
         }
     }
 }

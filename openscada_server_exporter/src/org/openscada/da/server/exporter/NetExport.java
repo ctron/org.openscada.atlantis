@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,40 +26,39 @@ import org.openscada.da.server.net.Exporter;
 
 public class NetExport implements Export
 {
-    private static Logger _log = Logger.getLogger ( NetExport.class );
-    
-    private Hive _hive = null;
-    private Exporter _exporter = null; 
-    private Thread _thread = null;
-    private Integer _port = 0;
-    
-    public NetExport ( Hive hive, ConnectionInformation ci )
+    private static Logger logger = Logger.getLogger ( NetExport.class );
+
+    private Hive hive = null;
+
+    private Exporter exporter = null;
+
+    private final ConnectionInformation connectionInformation;
+
+    public NetExport ( final Hive hive, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ();
-        _hive = hive;
-        
-        _port = ci.getSecondaryTarget ();
+        this.hive = hive;
+
+        this.connectionInformation = connectionInformation;
+
+        this.exporter = new Exporter ( this.hive, this.connectionInformation );
     }
-    
+
     public synchronized void start () throws Exception
     {
-        if ( _exporter != null )
+        if ( this.exporter != null )
         {
             return;
         }
-        
-        _log.info ( String.format ( "Starting exporter (%s) on port %s", _hive, _port ) );
-        
-        _exporter = new Exporter ( _hive, _port );
-        
-        _thread = new Thread ( _exporter, "NetExport-" + _port );
-        _thread.setDaemon ( true );
-        _thread.start ();
+
+        logger.info ( String.format ( "Starting exporter (%s) on port %s", this.hive, this.connectionInformation ) );
+
+        this.exporter.start ();
     }
 
-    public void stop ()
+    public void stop () throws Exception
     {
-        
+        this.exporter.stop ();
     }
 
 }
