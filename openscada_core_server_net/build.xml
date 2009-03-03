@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     openscada_core_server_net
+     OpenSCADA Atlantis
+                   
+     jens                                                                
+     ====================================================================== -->
+<project name="openscada_core_server_net" default="default">
+    <description>
+            OpenSCADA Atlantis Project
+    </description>
+	
+	<property name="libfile" location="../openscada_build/lib/build.xml"/>
+	<import file="${libfile}"/>
+	<property name="package" value="core-server-net"/>
+
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="clean, deploy" description="--> OpenSCADA Atlantis Project">
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: init                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="init">
+    </target>
+	
+	<!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" depends="init" description="--> Clean Up">
+        <delete dir="${build.dir}"/>
+		<delete dir="bin"/>
+    </target>
+	
+	<!-- ================================= 
+          target: prepare              
+         ================================= -->
+    <target name="prepare" depends="init" description="--> Prepare It">
+        <mkdir dir="${build.dir}"/>
+		<openscada.prepare-local-libs/>
+		<openscada.pull-in-external-lib name="log4j"/>
+		<openscada.pull-in-external-lib name="junit4"/>
+    	<openscada.pull-in-module name="utils"/>
+    	<openscada.pull-in-module name="core-common"/>
+    	<openscada.pull-in-module name="core-net-base"/>
+    	<openscada.pull-in-module name="da-core-common"/>
+    	<openscada.pull-in-module name="net-base"/>
+    </target>
+
+	<!-- ================================= 
+          target: build              
+         ================================= -->
+    <target name="build" depends="init, prepare" description="--> Build It">
+		<openscada.common.build/>
+    </target>
+	
+	<!-- ================================= 
+          target: deploy              
+         ================================= -->
+    <target name="deploy" depends="build" description="--> Deploy It">
+		<openscada.common.deploy/>
+    </target>
+
+
+</project>
