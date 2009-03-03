@@ -34,7 +34,7 @@
                value="%aboutText"/>
          <property
                name="windowImages"
-               value="platform:/plugin/org.openscada.da.client.test/icons/app/app_icon_16.gif,platform:/plugin/org.openscada.da.client.test/icons/app/app_icon_32.gif,platform:/plugin/org.openscada.da.client.test/icons/app/app_icon_48.gif"/>
+               value="/openscada_da_client_test/icons/app/app_icon_16.gif,/openscada_da_client_test/icons/app/app_icon_32.gif,/openscada_da_client_test/icons/app/app_icon_48.gif"/>
                <property
                name="introTitle"
                value="Welcome to the OpenSCADA RCP Client"/>

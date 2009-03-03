@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Client NET Connector
 Bundle-SymbolicName: org.openscada.da.net.client;singleton:=true
-Bundle-Version: 0.12.3
+Bundle-Version: 0.12.4
 Bundle-ClassPath: lib.jar, .
 Bundle-Vendor: inavare GmbH
 Export-Package: org.openscada.core.client.net,

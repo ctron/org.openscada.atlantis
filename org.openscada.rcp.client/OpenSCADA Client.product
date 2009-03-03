@@ -36,12 +36,12 @@
    </plugins>
 
    <features>
-      <feature id="org.openscada.rcp.client" version="0.8.1"/>
+      <feature id="org.openscada.rcp.client" version="0.12.0"/>
       <feature id="org.eclipse.rcp" version="3.4.0.v20080324a-989JERhEk-jWnd5IY8K5tjxB"/>
-      <feature id="org.openscada.da.ice.client" version="0.10.2"/>
-      <feature id="org.openscada.da.net.client" version="0.10.2"/>
-      <feature id="org.openscada.da.client.test" version="0.10.3"/>
-      <feature id="org.openscada.ae.client.test" version="0.10.0"/>
+      <feature id="org.openscada.da.ice.client" version="0.12.1"/>
+      <feature id="org.openscada.da.net.client" version="0.12.1"/>
+      <feature id="org.openscada.ae.client.test" version="0.12.1"/>
+      <feature id="org.openscada.da.client.test" version="0.12.1"/>
    </features>
 
 </product>
