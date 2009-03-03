@@ -8,6 +8,10 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ClassPath: lib/mina-core-2.0.0-M4.jar,
  lib/mina-filter-compression-2.0.0-M4.jar,
  lib/mina-transport-apr-2.0.0-M4.jar,
+ lib/jzlib-1.0.7.jar,
+ lib/slf4j-api-1.5.6.jar,
+ lib/slf4j-log4j12-1.5.6.jar,
+ lib/tomcat-apr-5.5.23.jar,
  .
 Export-Package: org.apache.mina.core,
  org.apache.mina.core.buffer,
@@ -57,3 +61,4 @@ Export-Package: org.apache.mina.core,
  org.apache.mina.transport.vmpipe,
  org.apache.mina.util,
  org.apache.mina.util.byteaccess
+Require-Bundle: log4j_wrapper_plugin;bundle-version="1.2.13"
