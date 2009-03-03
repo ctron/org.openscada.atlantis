@@ -11,17 +11,24 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=openscada_core_common"/>
-        <javaElement handleIdentifier="=openscada_da_core_server"/>
-        <javaElement handleIdentifier="=openscada_da_testserver"/>
+        <javaElement handleIdentifier="=openscada_core_common/testsrc"/>
         <javaElement handleIdentifier="=openscada_utils"/>
-        <javaElement handleIdentifier="=openscada_da_server_common"/>
         <javaElement handleIdentifier="=openscada_core_net_base"/>
-        <javaElement handleIdentifier="=openscada_da_core_common"/>
+        <javaElement handleIdentifier="=openscada_da_server_common"/>
         <javaElement handleIdentifier="=openscada_da_server_net"/>
         <javaElement handleIdentifier="=openscada_da_net_base"/>
-        <javaElement handleIdentifier="=openscada_net_base"/>
+        <file path="/openscada_core_common/build.xml"/>
+        <file path="/openscada_core_common/COPYING"/>
         <javaElement handleIdentifier="=openscada_core_server_common"/>
+        <javaElement handleIdentifier="=openscada_net_base"/>
+        <file path="/openscada_core_common/.classpath"/>
+        <file path="/openscada_core_common/pom.xml"/>
+        <javaElement handleIdentifier="=openscada_core_common/src"/>
+        <javaElement handleIdentifier="=openscada_da_core_server"/>
+        <javaElement handleIdentifier="=openscada_da_testserver"/>
+        <javaElement handleIdentifier="=openscada_da_core_common"/>
+        <file path="/openscada_core_common/.project"/>
+        <javaElement handleIdentifier="=openscada_core_server_net"/>
     </selectedElements>
     <fatjar builder="org.eclipse.jdt.ui.plain_jar_builder" launchConfig=""/>
 </jardesc>

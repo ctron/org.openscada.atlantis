@@ -24,61 +24,60 @@ import org.openscada.ae.core.Listener;
 
 public class QueryDataController implements Listener
 {
-    
+
     private QueryDataModel _model = null;
-    
-    public QueryDataController ( QueryDataModel model )
+
+    public QueryDataController ( final QueryDataModel model )
     {
         super ();
-        _model = model;
+        this._model = model;
     }
 
-    public void events ( EventInformation[] eventInformations )
+    public void events ( final EventInformation[] eventInformations )
     {
-        QueryDataModel.UpdateData updateData = _model.new UpdateData ();
-        
-        synchronized ( _model )
+        final QueryDataModel.UpdateData updateData = this._model.new UpdateData ();
+
+        synchronized ( this._model )
         {
-            for ( EventInformation eventInformation : eventInformations )
+            for ( final EventInformation eventInformation : eventInformations )
             {
                 switch ( eventInformation.getAction () )
                 {
                 case ADDED:
-                    {
-                        EventData eventData = new EventData ( eventInformation.getEvent (), _model );
-                        addEvent ( eventData );
-                        updateData.added.add ( eventData );
-                        updateData.removed.remove ( eventData );
-                        break;
-                    }
+                {
+                    final EventData eventData = new EventData ( eventInformation.getEvent (), this._model );
+                    addEvent ( eventData );
+                    updateData.added.add ( eventData );
+                    updateData.removed.remove ( eventData );
+                    break;
+                }
                 case REMOVED:
-                    {
-                        EventData eventData = new EventData ( eventInformation.getEvent (), _model );
-                        removeEvent ( eventData );
-                        updateData.removed.add ( eventData );
-                        updateData.added.remove ( eventData );
-                        break;
-                    }
+                {
+                    final EventData eventData = new EventData ( eventInformation.getEvent (), this._model );
+                    removeEvent ( eventData );
+                    updateData.removed.add ( eventData );
+                    updateData.added.remove ( eventData );
+                    break;
+                }
                 }
             }
-            _model.notifyUpdates ( updateData );
+            this._model.notifyUpdates ( updateData );
         }
     }
-    
-    protected void removeEvent ( EventData eventData )
+
+    protected void removeEvent ( final EventData eventData )
     {
-        _model.removeEvent ( eventData );
+        this._model.removeEvent ( eventData );
     }
 
-    protected void addEvent ( EventData eventData )
+    protected void addEvent ( final EventData eventData )
     {
-        _model.addEvent ( eventData );
+        this._model.addEvent ( eventData );
     }
 
-    public void unsubscribed ( String arg0 )
+    public void unsubscribed ( final String arg0 )
     {
-        _model.setUnsubscribed ( arg0 );
+        this._model.setUnsubscribed ( arg0 );
     }
-    
-   
+
 }

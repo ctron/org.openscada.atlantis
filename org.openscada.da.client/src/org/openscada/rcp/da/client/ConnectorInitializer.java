@@ -10,33 +10,41 @@ import org.eclipse.core.runtime.Platform;
 public class ConnectorInitializer
 {
     private static boolean _initialized = false;
+
     private static Object _sync = new Object ();
-    
-    public static void initialize ( ) throws CoreException
+
+    public static void initialize () throws CoreException
     {
         // pre-check .. not synchronized
         if ( _initialized )
+        {
             return;
-        
+        }
+
         synchronized ( _sync )
         {
             // check ... synchronized
             if ( _initialized )
-                return;
-            
-            _initialized = true;
-            
-            IExtensionRegistry registry = Platform.getExtensionRegistry ();
-            IExtensionPoint point = registry.getExtensionPoint ( "org.openscada.da.client.connector" );
-
-            for ( IExtension extension : point.getExtensions () )
             {
-                for ( IConfigurationElement config : extension.getConfigurationElements () )
+                return;
+            }
+
+            _initialized = true;
+
+            final IExtensionRegistry registry = Platform.getExtensionRegistry ();
+            final IExtensionPoint point = registry.getExtensionPoint ( "org.openscada.da.client.connector" );
+
+            for ( final IExtension extension : point.getExtensions () )
+            {
+                for ( final IConfigurationElement config : extension.getConfigurationElements () )
                 {
-                    ConnectorLoader loader = (ConnectorLoader)config.createExecutableExtension ( "class" );
-                    if ( loader != null )
+                    if ( "driver".equals ( config.getName () ) )
                     {
-                        loader.load ();
+                        final ConnectorLoader loader = (ConnectorLoader)config.createExecutableExtension ( "class" );
+                        if ( loader != null )
+                        {
+                            loader.load ();
+                        }
                     }
                 }
             }

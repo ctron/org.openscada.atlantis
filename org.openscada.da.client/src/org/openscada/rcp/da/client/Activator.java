@@ -1,5 +1,6 @@
 package org.openscada.rcp.da.client;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.openscada.core.ConnectionInformation;
@@ -37,7 +38,7 @@ public class Activator extends Plugin
         }
         catch ( final Throwable e )
         {
-            this.getLog ().log ( new Status ( Status.ERROR, PLUGIN_ID, "Failed to initialize connectors", e ) );
+            this.getLog ().log ( new Status ( IStatus.ERROR, PLUGIN_ID, "Failed to initialize connectors", e ) );
         }
     }
 

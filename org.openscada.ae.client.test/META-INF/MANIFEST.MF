@@ -9,6 +9,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  log4j_wrapper_plugin,
  org.eclipse.ui.views,
- org.openscada.ae.net.client;bundle-version="0.12.0"
+ org.openscada.ae.net.client;bundle-version="0.12.0",
+ org.apache.mina;bundle-version="2.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

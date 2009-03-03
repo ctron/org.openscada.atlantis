@@ -33,83 +33,89 @@ import org.eclipse.core.runtime.IPath;
 
 public class StorageRepository extends Observable
 {
-    private List<StorageConnection> _connections = new ArrayList<StorageConnection>();
-    
+    private final List<StorageConnection> _connections = new ArrayList<StorageConnection> ();
+
     public StorageRepository ()
     {
     }
-    
-    synchronized public void load ( IPath path )
+
+    synchronized public void load ( final IPath path )
     {
-        _connections.clear();
-        
-        File file = path.toFile();
+        this._connections.clear ();
+
+        final File file = path.toFile ();
         XMLDecoder decoder = null;
         try
         {
-            decoder = new XMLDecoder(new FileInputStream(file));
+            decoder = new XMLDecoder ( new FileInputStream ( file ) );
             while ( true )
             {
                 try
                 {
-                    Object o = decoder.readObject();
-                    if ( !(o instanceof StorageConnectionInformation) )
+                    final Object o = decoder.readObject ();
+                    if ( ! ( o instanceof StorageConnectionInformation ) )
+                    {
                         continue;
-                    _connections.add( new StorageConnection((StorageConnectionInformation)o) );
+                    }
+                    this._connections.add ( new StorageConnection ( (StorageConnectionInformation)o ) );
                 }
-                catch ( ArrayIndexOutOfBoundsException e )
+                catch ( final ArrayIndexOutOfBoundsException e )
                 {
                     break;
                 }
             }
         }
-        catch ( FileNotFoundException e )
+        catch ( final FileNotFoundException e )
         {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.printStackTrace ();
         }
         finally
         {
             if ( decoder != null )
-                decoder.close();
-        }
-    }
-    
-    synchronized public void save ( IPath path )
-    {
-        File file = path.toFile();
-        XMLEncoder encoder = null;
-        
-        try
-        {
-            encoder = new XMLEncoder(new FileOutputStream(file));
-            for ( StorageConnection connection : _connections )
             {
-                encoder.writeObject(connection.getConnectionInformation());
+                decoder.close ();
             }
         }
-        catch ( FileNotFoundException e )
+    }
+
+    synchronized public void save ( final IPath path )
+    {
+        final File file = path.toFile ();
+        XMLEncoder encoder = null;
+
+        try
+        {
+            encoder = new XMLEncoder ( new FileOutputStream ( file ) );
+            for ( final StorageConnection connection : this._connections )
+            {
+                encoder.writeObject ( connection.getConnectionInformation () );
+            }
+        }
+        catch ( final FileNotFoundException e )
         {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.printStackTrace ();
         }
         finally
         {
             if ( encoder != null )
-                encoder.close();
+            {
+                encoder.close ();
+            }
         }
     }
 
-    public void addConnection ( StorageConnection connection )
+    public void addConnection ( final StorageConnection connection )
     {
-        _connections.add ( connection );
-        
-        setChanged();
-        notifyObservers();
+        this._connections.add ( connection );
+
+        setChanged ();
+        notifyObservers ();
     }
-    
+
     public List<StorageConnection> getConnections ()
     {
-        return _connections;
+        return this._connections;
     }
 }

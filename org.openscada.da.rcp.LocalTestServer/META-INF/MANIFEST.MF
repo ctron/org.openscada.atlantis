@@ -8,7 +8,8 @@ Bundle-Vendor: inavare GmbH
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  log4j_wrapper_plugin,
- ext_plugin_xmlbeans
+ ext_plugin_xmlbeans,
+ org.apache.mina;bundle-version="2.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: openscada_net_server_test.jar,
  .,

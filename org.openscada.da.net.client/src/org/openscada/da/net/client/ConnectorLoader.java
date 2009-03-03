@@ -9,10 +9,10 @@ public class ConnectorLoader implements org.openscada.rcp.da.client.ConnectorLoa
         {
             Class.forName ( "org.openscada.da.client.net.Connection" );
         }
-        catch ( ClassNotFoundException e )
+        catch ( final ClassNotFoundException e )
         {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.printStackTrace ();
         }
     }
 

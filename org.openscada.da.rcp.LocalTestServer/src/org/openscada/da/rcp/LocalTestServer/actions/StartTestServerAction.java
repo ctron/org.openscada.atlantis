@@ -60,35 +60,35 @@ public class StartTestServerAction implements IWorkbenchWindowActionDelegate
         }
         catch ( final ClassNotFoundException e )
         {
-            status = new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, "Unable to find hive class", e );
+            status = new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Unable to find hive class", e );
         }
         catch ( final InstantiationException e )
         {
-            status = new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, "Unable to instantiate hive class", e );
+            status = new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Unable to instantiate hive class", e );
         }
         catch ( final IllegalAccessException e )
         {
-            status = new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, "Access violation accessing hive class", e );
+            status = new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Access violation accessing hive class", e );
         }
         catch ( final IOException e )
         {
-            status = new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, "IO Error", e );
+            status = new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "IO Error", e );
         }
         catch ( final AlreadyStartedException e )
         {
-            status = new OperationStatus ( OperationStatus.WARNING, Activator.PLUGIN_ID, 0, "Local server was already started", e );
+            status = new OperationStatus ( IStatus.WARNING, Activator.PLUGIN_ID, 0, "Local server was already started", e );
         }
         catch ( final ConfigurationError e )
         {
-            status = new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, "Configuration error", e );
+            status = new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Configuration error", e );
         }
         catch ( final XmlException e )
         {
-            status = new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, "XML Error", e );
+            status = new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "XML Error", e );
         }
         catch ( final Throwable e )
         {
-            status = new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, "Unknown error", e );
+            status = new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Unknown error", e );
         }
         if ( status != null )
         {

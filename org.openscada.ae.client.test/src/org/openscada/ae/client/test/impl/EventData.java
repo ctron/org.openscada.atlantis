@@ -31,29 +31,31 @@ import org.openscada.core.Variant;
 
 public class EventData implements IPropertySource
 {
-    private enum Properties {
+    private enum Properties
+    {
         ID,
         TIMESTAMP;
     }
-    
+
     private Event _event = null;
+
     private QueryDataModel _query = null;
-    
-    public EventData ( Event event, QueryDataModel query )
+
+    public EventData ( final Event event, final QueryDataModel query )
     {
         super ();
-        _event = event;
-        _query = query;
+        this._event = event;
+        this._query = query;
     }
 
     public Event getEvent ()
     {
-        return _event;
+        return this._event;
     }
 
     public QueryDataModel getQuery ()
     {
-        return _query;
+        return this._query;
     }
 
     @Override
@@ -61,94 +63,108 @@ public class EventData implements IPropertySource
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ( ( _event == null ) ? 0 : _event.hashCode () );
+        result = PRIME * result + ( this._event == null ? 0 : this._event.hashCode () );
         return result;
     }
 
     @Override
-    public boolean equals ( Object obj )
+    public boolean equals ( final Object obj )
     {
         if ( this == obj )
+        {
             return true;
+        }
         if ( obj == null )
+        {
             return false;
+        }
         if ( getClass () != obj.getClass () )
+        {
             return false;
+        }
         final EventData other = (EventData)obj;
-        if ( _event == null )
+        if ( this._event == null )
         {
             if ( other._event != null )
+            {
                 return false;
+            }
         }
-        else
-            if ( !_event.equals ( other._event ) )
-                return false;
+        else if ( !this._event.equals ( other._event ) )
+        {
+            return false;
+        }
         return true;
     }
 
     public Object getEditableValue ()
     {
-        return _event.getId ();
+        return this._event.getId ();
     }
 
-    protected void fillPropertyDescriptors ( List<IPropertyDescriptor> list )
+    protected void fillPropertyDescriptors ( final List<IPropertyDescriptor> list )
     {
         {
-            PropertyDescriptor pd = new PropertyDescriptor ( Properties.ID, "ID" );
+            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.ID, "ID" );
             pd.setCategory ( "Event Information" );
             list.add ( pd );
         }
         {
-            PropertyDescriptor pd = new PropertyDescriptor ( Properties.TIMESTAMP, "Timestamp" );
+            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.TIMESTAMP, "Timestamp" );
             pd.setCategory ( "Event Information" );
             list.add ( pd );
         }
-        
-        for ( Map.Entry<String, Variant> entry : _event.getAttributes ().entrySet () )
+
+        for ( final Map.Entry<String, Variant> entry : this._event.getAttributes ().entrySet () )
         {
-            PropertyDescriptor pd = new PropertyDescriptor ( entry.getKey (), entry.getKey() );
+            final PropertyDescriptor pd = new PropertyDescriptor ( entry.getKey (), entry.getKey () );
             pd.setAlwaysIncompatible ( true );
             pd.setCategory ( "Event Data" );
-            
+
             list.add ( pd );
         }
     }
-    
+
     public IPropertyDescriptor[] getPropertyDescriptors ()
     {
-        List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor> ();
+        final List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor> ();
         fillPropertyDescriptors ( list );
-        return list.toArray ( new IPropertyDescriptor [ list.size () ] );
+        return list.toArray ( new IPropertyDescriptor[list.size ()] );
     }
 
-    public Object getPropertyValue ( Object id )
+    public Object getPropertyValue ( final Object id )
     {
-        if ( id.equals ( Properties.ID ))
-            return _event.getId ();
-        
+        if ( id.equals ( Properties.ID ) )
+        {
+            return this._event.getId ();
+        }
+
         if ( id.equals ( Properties.TIMESTAMP ) )
-            return String.format ( "%1$TF %1$TT %1$TN", _event.getTimestamp () );
-        
-        if ( !(id instanceof String) )
+        {
+            return String.format ( "%1$TF %1$TT %1$TN", this._event.getTimestamp () );
+        }
+
+        if ( ! ( id instanceof String ) )
+        {
             return null;
-        
-        String name = (String)id;
-        
-        return _event.getAttributes ().get ( name ).asString ( null );
+        }
+
+        final String name = (String)id;
+
+        return this._event.getAttributes ().get ( name ).asString ( null );
     }
 
-    public boolean isPropertySet ( Object id )
+    public boolean isPropertySet ( final Object id )
     {
         return false;
     }
 
-    public void resetPropertyValue ( Object id )
+    public void resetPropertyValue ( final Object id )
     {
     }
 
-    public void setPropertyValue ( Object id, Object value )
+    public void setPropertyValue ( final Object id, final Object value )
     {
     }
-    
-    
+
 }

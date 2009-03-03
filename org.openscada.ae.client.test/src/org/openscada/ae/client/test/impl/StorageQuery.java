@@ -24,34 +24,38 @@ import org.openscada.ae.core.QueryDescription;
 public class StorageQuery
 {
     private StorageConnection _connection = null;
-    private QueryDescription _queryDescription  = null;
-    
+
+    private QueryDescription _queryDescription = null;
+
     public StorageQuery ()
     {
         super ();
     }
-    
-    public StorageQuery ( StorageConnection connection, QueryDescription queryDescription )
+
+    public StorageQuery ( final StorageConnection connection, final QueryDescription queryDescription )
     {
         super ();
-        _connection = connection;
-        _queryDescription = queryDescription;
+        this._connection = connection;
+        this._queryDescription = queryDescription;
     }
-    
+
     public StorageConnection getConnection ()
     {
-        return _connection;
+        return this._connection;
     }
-    public void setConnection ( StorageConnection connection )
+
+    public void setConnection ( final StorageConnection connection )
     {
-        _connection = connection;
+        this._connection = connection;
     }
+
     public QueryDescription getQueryDescription ()
     {
-        return _queryDescription;
+        return this._queryDescription;
     }
-    public void setQueryDescription ( QueryDescription queryDescription )
+
+    public void setQueryDescription ( final QueryDescription queryDescription )
     {
-        _queryDescription = queryDescription;
+        this._queryDescription = queryDescription;
     }
 }

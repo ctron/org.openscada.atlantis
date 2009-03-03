@@ -37,127 +37,136 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin {
+public class Activator extends AbstractUIPlugin
+{
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "org.openscada.ae.client.test";
+    // The plug-in ID
+    public static final String PLUGIN_ID = "org.openscada.ae.client.test";
 
-	// The shared instance
-	private static Activator plugin;
-	
-	/**
-	 * The constructor
-	 */
-	public Activator() {
-		plugin = this;
-	}
+    // The shared instance
+    private static Activator plugin;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
-
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static Activator getDefault() {
-		return plugin;
-	}
-
-	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path
-	 *
-	 * @param path the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
-	}
-    
-    public static String getId()
+    /**
+     * The constructor
+     */
+    public Activator ()
     {
-        return getDefault().getBundle().getSymbolicName();
+        plugin = this;
     }
-    
-    public static void logError ( int code, String msg, Throwable ex )
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+     */
+    @Override
+    public void start ( final BundleContext context ) throws Exception
     {
-        getDefault().getLog().log(new Status(IStatus.ERROR, getId(), code, msg, ex));
+        super.start ( context );
     }
-    
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+     */
+    @Override
+    public void stop ( final BundleContext context ) throws Exception
+    {
+        plugin = null;
+        super.stop ( context );
+    }
+
+    /**
+     * Returns the shared instance
+     *
+     * @return the shared instance
+     */
+    public static Activator getDefault ()
+    {
+        return plugin;
+    }
+
+    /**
+     * Returns an image descriptor for the image file at the given
+     * plug-in relative path
+     *
+     * @param path the path
+     * @return the image descriptor
+     */
+    public static ImageDescriptor getImageDescriptor ( final String path )
+    {
+        return imageDescriptorFromPlugin ( PLUGIN_ID, path );
+    }
+
+    public static String getId ()
+    {
+        return getDefault ().getBundle ().getSymbolicName ();
+    }
+
+    public static void logError ( final int code, final String msg, final Throwable ex )
+    {
+        getDefault ().getLog ().log ( new Status ( IStatus.ERROR, getId (), code, msg, ex ) );
+    }
 
     public void notifyError ( final String message, final Throwable error )
     {
-        
         final Display display = getWorkbench ().getDisplay ();
-        
+
         if ( !display.isDisposed () )
         {
-            display.asyncExec ( new Runnable() {
+            display.asyncExec ( new Runnable () {
 
                 public void run ()
                 {
-                    Shell shell = getWorkbench ().getActiveWorkbenchWindow ().getShell ();
+                    final Shell shell = getWorkbench ().getActiveWorkbenchWindow ().getShell ();
                     if ( !shell.isDisposed () )
                     {
-                        IStatus status = new OperationStatus ( OperationStatus.ERROR, PLUGIN_ID, 0, error.getMessage (), error );
+                        final IStatus status = new OperationStatus ( IStatus.ERROR, PLUGIN_ID, 0, error.getMessage (), error );
                         ErrorDialog.openError ( shell, null, message, status );
                     }
-                }} );
+                }
+            } );
         }
-    }
-    
-    @Override
-    protected void initializeImageRegistry ( ImageRegistry reg )
-    {
-        super.initializeImageRegistry ( reg );
-        
-        getImageRegistry().put ( ISharedImages.IMG_HIVE_CONNECTION, getImageDescriptor ( "icons/stock_channel.png" ) );
-        getImageRegistry().put ( ISharedImages.IMG_HIVE_CONNECTED, getImageDescriptor ( "icons/stock_connect.png" ) );
-        getImageRegistry().put ( ISharedImages.IMG_HIVE_DISCONNECTED, getImageDescriptor ( "icons/stock_disconnect.png" ) );
     }
 
-    private static StorageRepository _repository = null;
+    @Override
+    protected void initializeImageRegistry ( final ImageRegistry reg )
+    {
+        super.initializeImageRegistry ( reg );
+
+        getImageRegistry ().put ( ISharedImages.IMG_HIVE_CONNECTION, getImageDescriptor ( "icons/stock_channel.png" ) );
+        getImageRegistry ().put ( ISharedImages.IMG_HIVE_CONNECTED, getImageDescriptor ( "icons/stock_connect.png" ) );
+        getImageRegistry ().put ( ISharedImages.IMG_HIVE_DISCONNECTED, getImageDescriptor ( "icons/stock_disconnect.png" ) );
+    }
+
+    private static StorageRepository repository = null;
+
     public static StorageRepository getRepository ()
     {
-        if ( _repository == null )
+        if ( repository == null )
         {
-            _repository = new StorageRepository ();
-            
-            IPath storages = getRepostoryFile ();
+            repository = new StorageRepository ();
+
+            final IPath storages = getRepostoryFile ();
             if ( storages.toFile ().canRead () )
-                _repository.load ( storages );
+            {
+                repository.load ( storages );
+            }
             else
             {
-                StorageConnectionInformation connection = new StorageConnectionInformation();
+                final StorageConnectionInformation connection = new StorageConnectionInformation ();
                 connection.setHost ( "localhost" );
                 connection.setPort ( 1302 );
-                _repository.getConnections ().add(new StorageConnection ( connection ));
-                _repository.save ( storages );
+                repository.getConnections ().add ( new StorageConnection ( connection ) );
+                repository.save ( storages );
             }
-            
-            
+
         }
-        return _repository;
+        return repository;
     }
-    
+
     public static IPath getRepostoryFile ()
     {
         return getDefault ().getStateLocation ().append ( "storages.xml" );
     }
-    
+
 }

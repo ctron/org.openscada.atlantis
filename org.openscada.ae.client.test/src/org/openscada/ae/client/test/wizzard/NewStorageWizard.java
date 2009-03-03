@@ -19,7 +19,6 @@
 
 package org.openscada.ae.client.test.wizzard;
 
-
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,24 +34,23 @@ import org.openscada.ae.client.test.impl.StorageConnectionInformation;
 
 public class NewStorageWizard extends Wizard implements INewWizard
 {
-    
+
     private NewStorageWizardConnectionPage _page = null;
-    
+
     @Override
     public boolean performFinish ()
     {
-        final String hostName = _page.getHostName();
-        final int port = _page.getPort();
-        
-        IRunnableWithProgress op = new IRunnableWithProgress()
-        {
-            public void run ( IProgressMonitor monitor ) throws InvocationTargetException
+        final String hostName = this._page.getHostName ();
+        final int port = this._page.getPort ();
+
+        final IRunnableWithProgress op = new IRunnableWithProgress () {
+            public void run ( final IProgressMonitor monitor ) throws InvocationTargetException
             {
                 try
                 {
                     doFinish ( monitor, hostName, port );
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     throw new InvocationTargetException ( e );
                 }
@@ -64,54 +62,53 @@ public class NewStorageWizard extends Wizard implements INewWizard
         };
         try
         {
-            getContainer().run(true, false, op);
+            getContainer ().run ( true, false, op );
         }
-        catch (InterruptedException e)
+        catch ( final InterruptedException e )
         {
             return false;
         }
-        catch (InvocationTargetException e)
+        catch ( final InvocationTargetException e )
         {
-            Throwable realException = e.getTargetException();
-            MessageDialog.openError ( getShell(), "Error", realException.getMessage () );
+            final Throwable realException = e.getTargetException ();
+            MessageDialog.openError ( getShell (), "Error", realException.getMessage () );
             return false;
         }
         return true;
     }
-    
-    private void doFinish ( IProgressMonitor monitor, String hostName, int port ) throws Exception
+
+    private void doFinish ( final IProgressMonitor monitor, final String hostName, final int port ) throws Exception
     {
-        
-        monitor.beginTask ( "Adding storage connection..." , 2 );
-        
+
+        monitor.beginTask ( "Adding storage connection...", 2 );
+
         // add the hive
-        StorageConnectionInformation info = new StorageConnectionInformation();
+        final StorageConnectionInformation info = new StorageConnectionInformation ();
         info.setHost ( hostName );
         info.setPort ( port );
-        
-        StorageConnection connection = new StorageConnection(info);
-        Activator.getRepository().addConnection ( connection );
+
+        final StorageConnection connection = new StorageConnection ( info );
+        Activator.getRepository ().addConnection ( connection );
         monitor.worked ( 1 );
-        
+
         // store all
         monitor.subTask ( "Saving storage configuration" );
         Activator.getRepository ().save ( Activator.getRepostoryFile () );
         monitor.worked ( 1 );
     }
 
-    public void init ( IWorkbench workbench, IStructuredSelection selection )
+    public void init ( final IWorkbench workbench, final IStructuredSelection selection )
     {
         setNeedsProgressMonitor ( true );
-        setDefaultPageImageDescriptor(Activator.getImageDescriptor("icons/48x48/stock_channel.png"));
+        setDefaultPageImageDescriptor ( Activator.getImageDescriptor ( "icons/48x48/stock_channel.png" ) );
     }
-    
+
     @Override
     public void addPages ()
     {
         super.addPages ();
-        
-        addPage ( _page = new NewStorageWizardConnectionPage() );
+
+        addPage ( this._page = new NewStorageWizardConnectionPage () );
     }
-    
 
 }

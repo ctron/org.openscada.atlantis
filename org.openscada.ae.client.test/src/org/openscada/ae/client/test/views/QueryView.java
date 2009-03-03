@@ -39,41 +39,45 @@ public class QueryView extends ViewPart
     public final static String VIEW_ID = "org.openscada.ae.client.test.views.QueryView";
 
     private TreeViewer _viewer = null;
-    
+
     private StorageQuery _query = null;
+
     private QueryDataModel _model = null;
+
     private QueryDataController _controller = null;
-    
+
     class NameSorter extends ViewerSorter
     {
         @Override
-        public int compare ( Viewer viewer, Object e1, Object e2 )
+        public int compare ( final Viewer viewer, final Object e1, final Object e2 )
         {
             if ( e1 instanceof EventData && e2 instanceof EventData )
             {
-                EventData ev1 = (EventData)e1;
-                EventData ev2 = (EventData)e2;
-                int cmp = ev1.getEvent ().getTimestamp ().compareTo ( ev2.getEvent ().getTimestamp () );
+                final EventData ev1 = (EventData)e1;
+                final EventData ev2 = (EventData)e2;
+                final int cmp = ev1.getEvent ().getTimestamp ().compareTo ( ev2.getEvent ().getTimestamp () );
                 if ( cmp != 0 )
+                {
                     return cmp;
+                }
                 return ev1.getEvent ().getId ().compareTo ( ev2.getEvent ().getId () );
             }
             else if ( e1 instanceof AttributePair && e2 instanceof AttributePair )
             {
-                AttributePair ap1 = (AttributePair)e1;
-                AttributePair ap2 = (AttributePair)e2;
-                
+                final AttributePair ap1 = (AttributePair)e1;
+                final AttributePair ap2 = (AttributePair)e2;
+
                 return ap1._key.compareTo ( ap2._key );
             }
             return 0;
         }
     }
-    
+
     public QueryView ()
     {
         super ();
     }
-    
+
     @Override
     public void dispose ()
     {
@@ -82,56 +86,56 @@ public class QueryView extends ViewPart
     }
 
     @Override
-    public void createPartControl ( Composite parent )
+    public void createPartControl ( final Composite parent )
     {
-        _viewer = new TreeViewer ( parent, SWT.NONE );
-        TreeColumn idCol = new TreeColumn ( _viewer.getTree (), SWT.NONE );
+        this._viewer = new TreeViewer ( parent, SWT.NONE );
+        final TreeColumn idCol = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
         idCol.setText ( "ID" );
-        TreeColumn dataCol = new TreeColumn ( _viewer.getTree (), SWT.NONE );
+        final TreeColumn dataCol = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
         dataCol.setText ( "Data" );
-        
+
         // show headers
-        _viewer.getTree ().setHeaderVisible ( true );
-        
+        this._viewer.getTree ().setHeaderVisible ( true );
+
         // set model
-        _viewer.setContentProvider ( new QueryDataContentProvider () );
-        _viewer.setLabelProvider ( new QueryDataLabelProvider ( _viewer.getTree ().getFont () ) );
-        _viewer.setSorter ( new NameSorter () );
-        
-        TableLayout tableLayout = new TableLayout ();
+        this._viewer.setContentProvider ( new QueryDataContentProvider () );
+        this._viewer.setLabelProvider ( new QueryDataLabelProvider ( this._viewer.getTree ().getFont () ) );
+        this._viewer.setSorter ( new NameSorter () );
+
+        final TableLayout tableLayout = new TableLayout ();
         tableLayout.addColumnData ( new ColumnWeightData ( 50, 75, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 50, 75, true ) );
-        _viewer.getTree ().setLayout ( tableLayout );
-        
-        getViewSite ().setSelectionProvider ( _viewer );
+        this._viewer.getTree ().setLayout ( tableLayout );
+
+        getViewSite ().setSelectionProvider ( this._viewer );
     }
 
     @Override
     public void setFocus ()
     {
-        _viewer.getTree ().setFocus ();
+        this._viewer.getTree ().setFocus ();
     }
 
-    public void setQuery ( StorageQuery query )
+    public void setQuery ( final StorageQuery query )
     {
         clear ();
-        
-        _query = query;
-        _model = new QueryDataModel ();
-        _controller = new QueryDataController ( _model );
-        
-        _query.getConnection ().getConnection ().subscribe ( _query.getQueryDescription ().getId (), _controller, 10, -1 );
-        _viewer.setInput ( _model );
+
+        this._query = query;
+        this._model = new QueryDataModel ();
+        this._controller = new QueryDataController ( this._model );
+
+        this._query.getConnection ().getConnection ().subscribe ( this._query.getQueryDescription ().getId (), this._controller, 10, -1 );
+        this._viewer.setInput ( this._model );
     }
 
     public void clear ()
     {
-        if ( _query != null )
+        if ( this._query != null )
         {
-            _query.getConnection ().getConnection ().unsubscribe ( _query.getQueryDescription ().getId (), _controller );
+            this._query.getConnection ().getConnection ().unsubscribe ( this._query.getQueryDescription ().getId (), this._controller );
         }
-        _query = null;
-        _model = null;
-        _controller = null;
+        this._query = null;
+        this._model = null;
+        this._controller = null;
     }
 }

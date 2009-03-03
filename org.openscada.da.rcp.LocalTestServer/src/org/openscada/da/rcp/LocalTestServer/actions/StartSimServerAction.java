@@ -19,8 +19,6 @@
 
 package org.openscada.da.rcp.LocalTestServer.actions;
 
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IStatus;
@@ -35,42 +33,42 @@ import org.openscada.da.rcp.LocalTestServer.AlreadyStartedException;
 public class StartSimServerAction implements IWorkbenchWindowActionDelegate
 {
     private static Logger _log = Logger.getLogger ( StartSimServerAction.class );
-    
+
     private IWorkbenchWindow _window = null;
-    
+
     public void dispose ()
     {
     }
 
-    public void init ( IWorkbenchWindow window )
+    public void init ( final IWorkbenchWindow window )
     {
-        _window = window;
+        this._window = window;
     }
 
-    public void run ( IAction action )
+    public void run ( final IAction action )
     {
         _log.debug ( "Try to start local sim server" );
-        
+
         IStatus status = null;
         try
         {
             Activator.getDefault ().startLocalSimServer ();
         }
-        catch ( IOException e )
+        catch ( final AlreadyStartedException e )
         {
-            status = new OperationStatus ( OperationStatus.ERROR, Activator.PLUGIN_ID, 0, "IO Error", e );
+            status = new OperationStatus ( IStatus.WARNING, Activator.PLUGIN_ID, 0, "Local server was already started", e );
         }
-        catch ( AlreadyStartedException e )
+        catch ( final Throwable e )
         {
-            status = new OperationStatus ( OperationStatus.WARNING, Activator.PLUGIN_ID, 0, "Local server was already started", e );
+            status = new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Error", e );
         }
         if ( status != null )
         {
-            ErrorDialog.openError ( _window.getShell (), null, "Failed to start local server", status );
+            ErrorDialog.openError ( this._window.getShell (), null, "Failed to start local server", status );
         }
     }
 
-    public void selectionChanged ( IAction action, ISelection selection )
+    public void selectionChanged ( final IAction action, final ISelection selection )
     {
         // we don't care about a selection
     }

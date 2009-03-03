@@ -29,57 +29,59 @@ public class QueryDataModel extends Observable
     public class UpdateData
     {
         public Set<EventData> added = new HashSet<EventData> ();
+
         public Set<EventData> removed = new HashSet<EventData> ();
+
         public Set<EventData> modified = new HashSet<EventData> ();
     }
-    
+
     private String _unsubscribed = null;
-    
+
     private Set<EventData> _events = new HashSet<EventData> ();
 
     public Set<EventData> getEvents ()
     {
-        return Collections.unmodifiableSet ( _events );
+        return Collections.unmodifiableSet ( this._events );
     }
 
-    public void setEvents ( Set<EventData> events )
+    public void setEvents ( final Set<EventData> events )
     {
         setChanged ();
-        _events = events;
+        this._events = events;
     }
-    
-    public void setUnsubscribed ( String reason )
+
+    public void setUnsubscribed ( final String reason )
     {
-        _unsubscribed = reason;
+        this._unsubscribed = reason;
     }
-    
+
     public String getUnsubscribed ()
     {
-        return _unsubscribed;
+        return this._unsubscribed;
     }
-    
+
     public boolean isUnsubscribed ()
     {
-        return _unsubscribed != null;
+        return this._unsubscribed != null;
     }
-    
-    public void addEvent ( EventData event )
+
+    public void addEvent ( final EventData event )
     {
-        if ( _events.add ( event ) )
+        if ( this._events.add ( event ) )
         {
             setChanged ();
         }
     }
-    
-    public void removeEvent ( EventData event )
+
+    public void removeEvent ( final EventData event )
     {
-        if ( _events.remove ( event ) )
+        if ( this._events.remove ( event ) )
         {
             setChanged ();
         }
     }
-    
-    public void notifyUpdates ( UpdateData updateData )
+
+    public void notifyUpdates ( final UpdateData updateData )
     {
         notifyObservers ( updateData );
     }

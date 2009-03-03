@@ -24,51 +24,51 @@ import java.io.Serializable;
 public class StorageConnectionInformation implements Serializable
 {
 
-    
     /**
      * 
      */
     private static final long serialVersionUID = 46012900227961405L;
-    
-    
+
     private String _host;
+
     private int _port;
+
     private boolean _autoReconnect;
-    
+
     public StorageConnectionInformation ()
     {
-        _host = "";
-        _port = 0;
-        _autoReconnect = false;
+        this._host = "";
+        this._port = 0;
+        this._autoReconnect = false;
     }
-    
+
     public String getHost ()
     {
-        return _host;
+        return this._host;
     }
-    
-    public void setHost ( String host )
+
+    public void setHost ( final String host )
     {
-        _host = host;
+        this._host = host;
     }
-    
+
     public int getPort ()
     {
-        return _port;
+        return this._port;
     }
-    
-    public void setPort ( int port )
+
+    public void setPort ( final int port )
     {
-        _port = port;
+        this._port = port;
     }
 
     public boolean isAutoReconnect ()
     {
-        return _autoReconnect;
+        return this._autoReconnect;
     }
 
-    public void setAutoReconnect ( boolean autoReconnect )
+    public void setAutoReconnect ( final boolean autoReconnect )
     {
-        _autoReconnect = autoReconnect;
+        this._autoReconnect = autoReconnect;
     }
 }

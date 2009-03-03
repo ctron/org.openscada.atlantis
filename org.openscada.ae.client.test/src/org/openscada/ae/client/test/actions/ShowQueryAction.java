@@ -35,52 +35,53 @@ public class ShowQueryAction implements IViewActionDelegate
 {
 
     private StorageQuery _query = null;
+
     private IWorkbenchSite _site = null;
-    
-    public void init ( IViewPart view )
+
+    public void init ( final IViewPart view )
     {
-        _site = view.getSite ();
+        this._site = view.getSite ();
     }
 
-    public void run ( IAction action )
+    public void run ( final IAction action )
     {
         try
         {
-            IViewPart viewer = _site.getPage ().showView ( QueryView.VIEW_ID, _query.getQueryDescription ().getId (), IWorkbenchPage.VIEW_ACTIVATE );
+            final IViewPart viewer = this._site.getPage ().showView ( QueryView.VIEW_ID, this._query.getQueryDescription ().getId (), IWorkbenchPage.VIEW_ACTIVATE );
             if ( viewer instanceof QueryView )
             {
-                ((QueryView)viewer).setQuery ( _query );
+                ( (QueryView)viewer ).setQuery ( this._query );
             }
         }
-        catch ( PartInitException e )
+        catch ( final PartInitException e )
         {
-            
+
             Activator.getDefault ().notifyError ( "Unable to show query", e );
         }
     }
 
-    public void selectionChanged ( IAction action, ISelection selection )
+    public void selectionChanged ( final IAction action, final ISelection selection )
     {
-        _query = null;
-        
+        this._query = null;
+
         if ( selection instanceof IStructuredSelection )
         {
-            IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+            final IStructuredSelection structuredSelection = (IStructuredSelection)selection;
             if ( structuredSelection.getFirstElement () instanceof StorageQuery )
             {
-                _query = (StorageQuery)structuredSelection.getFirstElement ();
+                this._query = (StorageQuery)structuredSelection.getFirstElement ();
             }
         }
     }
 
     public StorageQuery getQuery ()
     {
-        return _query;
+        return this._query;
     }
 
-    public void setQuery ( StorageQuery query )
+    public void setQuery ( final StorageQuery query )
     {
-        _query = query;
+        this._query = query;
     }
 
 }

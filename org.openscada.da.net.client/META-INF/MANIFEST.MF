@@ -15,11 +15,9 @@ Export-Package: org.openscada.core.client.net,
  org.openscada.net.base.handlers,
  org.openscada.net.codec,
  org.openscada.net.da.handler,
- org.openscada.net.io,
- org.openscada.net.io.net,
- org.openscada.net.line,
  org.openscada.net.utils
 Require-Bundle: log4j_wrapper_plugin,
- org.openscada.da.client
+ org.openscada.da.client,
+ org.apache.mina;bundle-version="2.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy

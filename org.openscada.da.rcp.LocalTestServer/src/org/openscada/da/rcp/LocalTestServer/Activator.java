@@ -30,6 +30,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.net.Exporter;
@@ -53,9 +54,7 @@ public class Activator extends AbstractUIPlugin
 
     class Server
     {
-        Exporter _exporter = null;
-
-        Thread _thread = null;
+        Exporter exporter = null;
     }
 
     private final Map<Integer, Server> _exportMap = new HashMap<Integer, Server> ();
@@ -123,11 +122,18 @@ public class Activator extends AbstractUIPlugin
             final org.openscada.da.server.test.Hive testHive = new org.openscada.da.server.test.Hive ();
             // configurator.configure ( testHive );
 
-            exportServer ( testHive, TEST_PORT );
+            try
+            {
+                exportServer ( testHive, TEST_PORT );
+            }
+            catch ( final Exception e )
+            {
+                notifyServerError ( e );
+            }
         }
     }
 
-    public void startLocalSimServer () throws AlreadyStartedException, IOException
+    public void startLocalSimServer () throws Exception
     {
         synchronized ( this )
         {
@@ -145,39 +151,18 @@ public class Activator extends AbstractUIPlugin
         }
     }
 
-    private void exportServer ( final Hive hive, final int port ) throws IOException
+    private void exportServer ( final Hive hive, final int port ) throws Exception
     {
         final Server server = new Server ();
-        server._exporter = new Exporter ( hive, port );
-        server._thread = new Thread ( new Runnable () {
-
-            public void run ()
-            {
-                try
-                {
-                    server._exporter.run ();
-                }
-                catch ( final Exception e )
-                {
-                    notifyServerError ( e );
-                    exportEnded ( port );
-                }
-            }
-        } );
-        server._thread.setDaemon ( true );
-        server._thread.start ();
+        server.exporter = new Exporter ( hive, ConnectionInformation.fromURI ( "da:net://0.0.0.0:" + port ) );
+        server.exporter.start ();
         this._exportMap.put ( port, server );
-    }
-
-    private synchronized void exportEnded ( final int port )
-    {
-        this._exportMap.remove ( port );
     }
 
     private void notifyServerError ( final Throwable t )
     {
         final Shell shell = getWorkbench ().getActiveWorkbenchWindow ().getShell ();
-        final IStatus status = new OperationStatus ( OperationStatus.ERROR, PLUGIN_ID, 0, "Server execution failed", t );
+        final IStatus status = new OperationStatus ( IStatus.ERROR, PLUGIN_ID, 0, "Server execution failed", t );
 
         if ( !shell.isDisposed () )
         {

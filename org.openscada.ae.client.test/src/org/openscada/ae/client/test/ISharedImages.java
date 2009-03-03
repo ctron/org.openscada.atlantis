@@ -22,6 +22,8 @@ package org.openscada.ae.client.test;
 public interface ISharedImages
 {
     static final String IMG_HIVE_CONNECTION = "org.openscada.ae.client.test.HiveConnection";
+
     static final String IMG_HIVE_CONNECTED = "org.openscada.ae.client.test.connected";
+
     static final String IMG_HIVE_DISCONNECTED = "org.openscada.ae.client.test.disconnected";
 }

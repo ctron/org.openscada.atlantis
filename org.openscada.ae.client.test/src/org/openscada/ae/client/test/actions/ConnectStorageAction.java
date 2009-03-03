@@ -32,49 +32,59 @@ import org.openscada.ae.client.test.impl.StorageConnection;
 public class ConnectStorageAction implements IObjectActionDelegate, IViewActionDelegate
 {
     private static Logger _log = Logger.getLogger ( ConnectStorageAction.class );
-    
+
     private StorageConnection _connection = null;
-   
-    public void run ( IAction action )
+
+    public void run ( final IAction action )
     {
-        if ( _connection == null )
+        if ( this._connection == null )
+        {
             return;
-        
+        }
+
         try
         {
-            _connection.connect();
+            this._connection.connect ();
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             _log.error ( "Connect failed", e );
         }
     }
 
-    public void selectionChanged ( IAction action, ISelection selection )
+    public void selectionChanged ( final IAction action, final ISelection selection )
     {
-        _connection = null;
-        
+        this._connection = null;
+
         if ( selection == null )
+        {
             return;
-        if ( ! (selection instanceof IStructuredSelection) )
+        }
+        if ( ! ( selection instanceof IStructuredSelection ) )
+        {
             return;
-        
-        IStructuredSelection sel = (IStructuredSelection)selection;
-        Object obj = sel.getFirstElement ();
-        
+        }
+
+        final IStructuredSelection sel = (IStructuredSelection)selection;
+        final Object obj = sel.getFirstElement ();
+
         if ( obj == null )
+        {
             return;
-        if ( !(obj instanceof StorageConnection) )
+        }
+        if ( ! ( obj instanceof StorageConnection ) )
+        {
             return;
-        
-        _connection = (StorageConnection)obj;
+        }
+
+        this._connection = (StorageConnection)obj;
     }
 
-    public void setActivePart ( IAction action, IWorkbenchPart targetPart )
+    public void setActivePart ( final IAction action, final IWorkbenchPart targetPart )
     {
     }
 
-    public void init ( IViewPart view )
+    public void init ( final IViewPart view )
     {
     }
 

@@ -60,7 +60,6 @@ import org.openscada.ae.client.test.impl.StorageConnection;
 import org.openscada.ae.client.test.impl.StorageQuery;
 import org.openscada.ae.client.test.impl.StorageRepository;
 
-
 /**
  * This sample class demonstrates how to plug-in a new
  * workbench view. The view shows data obtained from the
@@ -82,63 +81,68 @@ import org.openscada.ae.client.test.impl.StorageRepository;
 public class StorageView extends ViewPart implements Observer
 {
     public static final String VIEW_ID = "org.openscada.ae.client.test.views.StorageView";
-    
+
     private static Logger _log = Logger.getLogger ( StorageView.class );
-    
+
     private TreeViewer _viewer;
+
     private DrillDownAdapter drillDownAdapter;
-    
+
     private IViewActionDelegate connectAction;
+
     private Action propertiesAction;
-    
-    private StorageRepository _repository;
-    
+
+    private final StorageRepository _repository;
+
     class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider
     {
-       
+
         private Viewer _viewer = null;
+
         private StorageRepository _repository = null;
-        
+
         public ViewContentProvider ()
         {
         }
-        
-        public void inputChanged ( Viewer v, Object oldInput, Object newInput )
+
+        public void inputChanged ( final Viewer v, final Object oldInput, final Object newInput )
         {
             clearInput ();
-            
-            _viewer = v;
+
+            this._viewer = v;
             if ( newInput instanceof StorageRepository )
             {
-                _repository = (StorageRepository)newInput;
+                this._repository = (StorageRepository)newInput;
             }
         }
-        
+
         public void clearInput ()
         {
-            if ( _repository != null )
+            if ( this._repository != null )
             {
-                _repository = null;
+                this._repository = null;
             }
         }
-        
-        public void dispose()
+
+        public void dispose ()
         {
             clearInput ();
         }
-        
-        public Object[] getElements ( Object parent )
+
+        public Object[] getElements ( final Object parent )
         {
-            if ( parent.equals ( getViewSite() ) ) {
-                return getChildren ( _repository );
+            if ( parent.equals ( getViewSite () ) )
+            {
+                return getChildren ( this._repository );
             }
             return getChildren ( parent );
         }
-        public Object getParent ( Object child )
+
+        public Object getParent ( final Object child )
         {
-            if (child instanceof StorageConnection)
+            if ( child instanceof StorageConnection )
             {
-                return _repository;
+                return this._repository;
             }
             /*
             else if ( child instanceof HiveItem )
@@ -151,62 +155,72 @@ public class StorageView extends ViewPart implements Observer
             }*/
             return null;
         }
-        public Object [] getChildren(Object parent)
+
+        public Object[] getChildren ( final Object parent )
         {
             if ( parent instanceof StorageRepository )
             {
-                return((StorageRepository)parent).getConnections().toArray(new StorageConnection[0]);
+                return ( (StorageRepository)parent ).getConnections ().toArray ( new StorageConnection[0] );
             }
             else if ( parent instanceof StorageConnection )
             {
-                Set<StorageQuery> queries = ((StorageConnection)parent).getQueries (); 
+                final Set<StorageQuery> queries = ( (StorageConnection)parent ).getQueries ();
                 if ( queries == null )
-                    return new String [] { "Loading..." };
-                return queries.toArray ( new StorageQuery [queries.size ()] );
+                {
+                    return new String[] { "Loading..." };
+                }
+                return queries.toArray ( new StorageQuery[queries.size ()] );
             }
             return new Object[0];
         }
-        public boolean hasChildren(Object parent)
+
+        public boolean hasChildren ( final Object parent )
         {
-            if (parent instanceof StorageRepository)
+            if ( parent instanceof StorageRepository )
             {
-                return ((StorageRepository)parent).getConnections().size() > 0;
+                return ( (StorageRepository)parent ).getConnections ().size () > 0;
             }
             else if ( parent instanceof StorageConnection )
             {
-                Set<StorageQuery> queries = ((StorageConnection)parent).getQueries (); 
+                final Set<StorageQuery> queries = ( (StorageConnection)parent ).getQueries ();
                 if ( queries == null )
+                {
                     return true; // the loading string
+                }
                 return !queries.isEmpty ();
             }
             return false;
         }
 
     }
+
     class ViewLabelProvider extends LabelProvider
     {
-        
-        public String getText(Object obj)
+
+        @Override
+        public String getText ( final Object obj )
         {
             if ( obj instanceof StorageConnection )
             {
-                StorageConnection connection = (StorageConnection)obj;
-                return connection.getConnectionInformation().getHost() + ":" + connection.getConnectionInformation().getPort() + " (" + connection.getConnection ().getState ().toString () + ")";
+                final StorageConnection connection = (StorageConnection)obj;
+                return connection.getConnectionInformation ().getHost () + ":" + connection.getConnectionInformation ().getPort () + " (" + connection.getConnection ().getState ().toString () + ")";
             }
             else if ( obj instanceof StorageQuery )
             {
-                return ((StorageQuery)obj).getQueryDescription ().getId ();
+                return ( (StorageQuery)obj ).getQueryDescription ().getId ();
             }
-            return obj.toString();
+            return obj.toString ();
         }
-        public Image getImage(Object obj)
+
+        @Override
+        public Image getImage ( final Object obj )
         {
             String imageKey;
-            
+
             if ( obj instanceof StorageConnection )
             {
-                StorageConnection connection = (StorageConnection)obj;
-                if ( connection.isConnectionRequested() )
+                final StorageConnection connection = (StorageConnection)obj;
+                if ( connection.isConnectionRequested () )
                 {
                     switch ( connection.getConnection ().getState () )
                     {
@@ -225,7 +239,9 @@ public class StorageView extends ViewPart implements Observer
                     }
                 }
                 else
+                {
                     imageKey = ISharedImages.IMG_HIVE_CONNECTION;
+                }
             }
             /*
             else if ( obj instanceof DataItemEntry )
@@ -245,38 +261,40 @@ public class StorageView extends ViewPart implements Observer
                 imageKey = ISharedImages.IMG_HIVE_FOLDER;
                 */
             else
-                return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_ELEMENT );
-            
-            return org.openscada.ae.client.test.Activator.getDefault().getImageRegistry().get ( imageKey );
+            {
+                return PlatformUI.getWorkbench ().getSharedImages ().getImage ( org.eclipse.ui.ISharedImages.IMG_OBJ_ELEMENT );
+            }
+
+            return org.openscada.ae.client.test.Activator.getDefault ().getImageRegistry ().get ( imageKey );
         }
     }
-    
+
     class NameSorter extends ViewerSorter
     {
     }
-    
+
     /**
      * The constructor.
      */
-    public StorageView()
+    public StorageView ()
     {
-        _repository = org.openscada.ae.client.test.Activator.getRepository ();
-        _repository.addObserver ( this );
+        this._repository = org.openscada.ae.client.test.Activator.getRepository ();
+        this._repository.addObserver ( this );
         registerAllConnections ();
     }
-    
+
     @Override
     public void dispose ()
     {
         unregisterAllConnections ();
-        _repository.deleteObserver ( this );
+        this._repository.deleteObserver ( this );
         super.dispose ();
     }
-    
-    public void update ( Observable o, Object arg )
+
+    public void update ( final Observable o, final Object arg )
     {
         _log.debug ( "Update: " + o + " / " + arg );
-        if ( o == _repository )
+        if ( o == this._repository )
         {
             triggerUpdateRepository ( null );
         }
@@ -285,106 +303,109 @@ public class StorageView extends ViewPart implements Observer
             triggerUpdateRepository ( o );
         }
     }
-    
+
     public void triggerUpdateRepository ( final Object arg0 )
     {
-        if ( !_viewer.getControl ().isDisposed () )
+        if ( !this._viewer.getControl ().isDisposed () )
         {
-            _viewer.getControl().getDisplay().asyncExec(new Runnable(){
+            this._viewer.getControl ().getDisplay ().asyncExec ( new Runnable () {
 
                 public void run ()
                 {
-                    if ( !_viewer.getControl().isDisposed() )
+                    if ( !StorageView.this._viewer.getControl ().isDisposed () )
+                    {
                         performUpdateRepository ( arg0 );
-                }});
+                    }
+                }
+            } );
         }
     }
-    
-    private void performUpdateRepository ( Object arg0 )
+
+    private void performUpdateRepository ( final Object arg0 )
     {
         _log.debug ( "Perform update on: " + arg0 );
         if ( arg0 == null )
         {
             unregisterAllConnections ();
-            _viewer.refresh ( true );
+            this._viewer.refresh ( true );
             registerAllConnections ();
         }
         else
         {
-            _viewer.refresh ( arg0, true );
+            this._viewer.refresh ( arg0, true );
         }
     }
-    
+
     /**
      * This is a callback that will allow us
      * to create the viewer and initialize it.
      */
-    public void createPartControl ( Composite parent )
+    @Override
+    public void createPartControl ( final Composite parent )
     {
-        _viewer = new TreeViewer ( parent, SWT.H_SCROLL | SWT.V_SCROLL );
-        drillDownAdapter = new DrillDownAdapter(_viewer);
-        _viewer.setContentProvider ( new ViewContentProvider() );
-        _viewer.setLabelProvider ( new ViewLabelProvider() );
-        _viewer.setSorter ( new NameSorter() );
-        _viewer.setInput ( _repository );
-        
-        makeActions();
-        hookContextMenu();
-        hookDoubleClickAction();
-        contributeToActionBars();
-        
-        getViewSite ().setSelectionProvider ( _viewer );
+        this._viewer = new TreeViewer ( parent, SWT.H_SCROLL | SWT.V_SCROLL );
+        this.drillDownAdapter = new DrillDownAdapter ( this._viewer );
+        this._viewer.setContentProvider ( new ViewContentProvider () );
+        this._viewer.setLabelProvider ( new ViewLabelProvider () );
+        this._viewer.setSorter ( new NameSorter () );
+        this._viewer.setInput ( this._repository );
+
+        makeActions ();
+        hookContextMenu ();
+        hookDoubleClickAction ();
+        contributeToActionBars ();
+
+        getViewSite ().setSelectionProvider ( this._viewer );
     }
-    
-    
-    
-    private void hookContextMenu()
+
+    private void hookContextMenu ()
     {
-        MenuManager menuMgr = new MenuManager ( "#PopupMenu" );
-        menuMgr.setRemoveAllWhenShown(true);
-        menuMgr.addMenuListener(new IMenuListener() {
-            public void menuAboutToShow(IMenuManager manager) {
-                StorageView.this.fillContextMenu(manager);
+        final MenuManager menuMgr = new MenuManager ( "#PopupMenu" );
+        menuMgr.setRemoveAllWhenShown ( true );
+        menuMgr.addMenuListener ( new IMenuListener () {
+            public void menuAboutToShow ( final IMenuManager manager )
+            {
+                StorageView.this.fillContextMenu ( manager );
             }
-        });
-        Menu menu = menuMgr.createContextMenu(_viewer.getControl());
-        _viewer.getControl().setMenu(menu);
-        getSite().registerContextMenu(menuMgr, _viewer);
+        } );
+        final Menu menu = menuMgr.createContextMenu ( this._viewer.getControl () );
+        this._viewer.getControl ().setMenu ( menu );
+        getSite ().registerContextMenu ( menuMgr, this._viewer );
     }
-    
-    private void contributeToActionBars()
+
+    private void contributeToActionBars ()
     {
-        IActionBars bars = getViewSite().getActionBars();
-        fillLocalPullDown(bars.getMenuManager());
-        fillLocalToolBar(bars.getToolBarManager());
+        final IActionBars bars = getViewSite ().getActionBars ();
+        fillLocalPullDown ( bars.getMenuManager () );
+        fillLocalToolBar ( bars.getToolBarManager () );
     }
-    
-    private void fillLocalPullDown(IMenuManager manager)
+
+    private void fillLocalPullDown ( final IMenuManager manager )
     {
         //manager.add(connectAction);
         //manager.add(new Separator());
     }
-    
-    private void fillContextMenu(IMenuManager manager)
+
+    private void fillContextMenu ( final IMenuManager manager )
     {
         //manager.add(connectAction);
         //manager.add(new Separator());
         //drillDownAdapter.addNavigationActions ( manager );
         // Other plug-ins can contribute there actions here
-        
+
         manager.add ( new Separator ( IWorkbenchActionConstants.MB_ADDITIONS ) );
         manager.add ( new Separator () );
-        manager.add ( propertiesAction );
+        manager.add ( this.propertiesAction );
     }
-    
-    private void fillLocalToolBar(IToolBarManager manager)
+
+    private void fillLocalToolBar ( final IToolBarManager manager )
     {
         //manager.add(connectAction);
         //manager.add(new Separator());
         //drillDownAdapter.addNavigationActions ( manager );
     }
-    
-    private void makeActions()
+
+    private void makeActions ()
     {
         // Connect Action
 
@@ -399,72 +420,75 @@ public class StorageView extends ViewPart implements Observer
         connectAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
                 getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
         */
-        connectAction = new ConnectStorageAction ();
-        propertiesAction = new PropertyDialogAction ( new SameShellProvider ( getViewSite ().getShell () ), _viewer );
-        _viewer.addSelectionChangedListener ( new ISelectionChangedListener() {
+        this.connectAction = new ConnectStorageAction ();
+        this.propertiesAction = new PropertyDialogAction ( new SameShellProvider ( getViewSite ().getShell () ), this._viewer );
+        this._viewer.addSelectionChangedListener ( new ISelectionChangedListener () {
 
-            public void selectionChanged ( SelectionChangedEvent event )
+            public void selectionChanged ( final SelectionChangedEvent event )
             {
-                IStructuredSelection ss = (IStructuredSelection)event.getSelection ();
+                final IStructuredSelection ss = (IStructuredSelection)event.getSelection ();
                 if ( ss.size () == 1 )
                 {
-                    propertiesAction.setEnabled ( true );
+                    StorageView.this.propertiesAction.setEnabled ( true );
                 }
                 else
                 {
-                    propertiesAction.setEnabled ( false );
+                    StorageView.this.propertiesAction.setEnabled ( false );
                 }
-            }} );
-    }
-    
-    private void hookDoubleClickAction()
-    {
-        _viewer.addDoubleClickListener ( new IDoubleClickListener()
-        {
-            public void doubleClick ( DoubleClickEvent event )
-            {
-                connectAction.selectionChanged ( null, event.getSelection () );
-                connectAction.run ( null );
             }
-        });
+        } );
     }
-   
+
+    private void hookDoubleClickAction ()
+    {
+        this._viewer.addDoubleClickListener ( new IDoubleClickListener () {
+            public void doubleClick ( final DoubleClickEvent event )
+            {
+                StorageView.this.connectAction.selectionChanged ( null, event.getSelection () );
+                StorageView.this.connectAction.run ( null );
+            }
+        } );
+    }
+
     /**
      * Passing the focus request to the viewer's control.
      */
-    public void setFocus()
+    @Override
+    public void setFocus ()
     {
-        _viewer.getControl ().setFocus ();
+        this._viewer.getControl ().setFocus ();
     }
-    
+
     synchronized private void unregisterAllConnections ()
     {
-        for ( StorageConnection connection : _repository.getConnections() )
+        for ( final StorageConnection connection : this._repository.getConnections () )
         {
             connection.deleteObserver ( this );
         }
     }
-    
+
     synchronized private void registerAllConnections ()
     {
-        unregisterAllConnections();
-        
-        for ( StorageConnection connection : _repository.getConnections() )
+        unregisterAllConnections ();
+
+        for ( final StorageConnection connection : this._repository.getConnections () )
         {
             connection.addObserver ( this );
         }
     }
-    
+
     @Override
-    public Object getAdapter ( Class adapter )
+    public Object getAdapter ( final Class adapter )
     {
         _log.debug ( "getAdapter: " + adapter );
         if ( adapter.equals ( org.eclipse.ui.views.properties.IPropertySheetPage.class ) )
         {
-            PropertySheetPage psd = new PropertySheetPage ();
+            final PropertySheetPage psd = new PropertySheetPage ();
             return psd;
         }
         else
+        {
             return super.getAdapter ( adapter );
+        }
     }
 }

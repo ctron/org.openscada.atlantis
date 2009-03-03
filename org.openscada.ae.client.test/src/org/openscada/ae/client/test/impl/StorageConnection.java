@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,165 +30,164 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IActionFilter;
-import org.openscada.ae.client.Connection;
+import org.openscada.ae.client.net.Connection;
 import org.openscada.ae.client.test.Activator;
 import org.openscada.ae.core.QueryDescription;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
-import org.openscada.core.client.net.ConnectionInfo;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
 import org.openscada.utils.exec.LongRunningState;
 
-
 public class StorageConnection extends Observable implements IActionFilter
 {
     private static Logger _log = Logger.getLogger ( StorageConnection.class );
-    
-    private boolean _connectionRequested = false;
-    private StorageConnectionInformation _connectionInfo;
-    private Connection _connection = null;
-    
-    private boolean _refreshing = false;
-    private Set<StorageQuery> _queries = new HashSet<StorageQuery> (); 
-    
-    public StorageConnection ( StorageConnectionInformation connectionInfo )
-    {
-        _connectionInfo = connectionInfo;
-        
-        ConnectionInfo conInfo = new ConnectionInfo ();
-        conInfo.setHostName ( _connectionInfo.getHost () );
-        conInfo.setPort ( connectionInfo.getPort () );
-        conInfo.setAutoReconnect ( false );
-        
-        _connection = new org.openscada.ae.client.net.Connection ( conInfo );
-        _connection.addConnectionStateListener ( new ConnectionStateListener(){
 
-            public void stateChange ( org.openscada.core.client.Connection connection, ConnectionState state, Throwable error )
+    private boolean _connectionRequested = false;
+
+    private final StorageConnectionInformation _connectionInfo;
+
+    private Connection _connection = null;
+
+    private boolean refreshing = false;
+
+    private Set<StorageQuery> _queries = new HashSet<StorageQuery> ();
+
+    public StorageConnection ( final StorageConnectionInformation connectionInfo )
+    {
+        this._connectionInfo = connectionInfo;
+
+        this._connection = new org.openscada.ae.client.net.Connection ( ConnectionInformation.fromURI ( String.format ( "ae:net://%s:%s", this._connectionInfo.getHost (), this._connectionInfo.getPort () ) ) );
+        this._connection.addConnectionStateListener ( new ConnectionStateListener () {
+
+            public void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
             {
                 performStateChange ( state, error );
             }
-            
-            });
-        
+
+        } );
     }
-    
+
     public void connect ()
     {
-        
-        _connectionRequested = true;
+        this._connectionRequested = true;
         setChanged ();
         notifyObservers ();
-        
-        _log.debug("Initiating connection...");
-        
+
+        _log.debug ( "Initiating connection..." );
+
         try
         {
-            _connection.connect ();
+            this._connection.connect ();
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             _log.error ( "Failed to start connection", e );
             org.openscada.ae.client.test.Activator.logError ( 1, "Unable to connect", e );
         }
         _log.debug ( "Connection fired up..." );
     }
-    
+
     public void disconnect ()
     {
-        _connectionRequested = false;
-        
+        this._connectionRequested = false;
+
         setChanged ();
         notifyObservers ();
-        
-        _connection.disconnect ();
+
+        this._connection.disconnect ();
     }
-    
-    public StorageConnectionInformation getConnectionInformation()
+
+    public StorageConnectionInformation getConnectionInformation ()
     {
-        return _connectionInfo;
+        return this._connectionInfo;
     }
-    
-    private void performStateChange ( ConnectionState state, Throwable error )
+
+    private void performStateChange ( final ConnectionState state, final Throwable error )
     {
         switch ( state )
         {
         case BOUND:
             // force refresh
-            _queries = null;
+            this._queries = null;
             break;
         case CLOSED:
-            _queries = new HashSet<StorageQuery> ();
+            this._queries = new HashSet<StorageQuery> ();
             break;
         default:
             break;
         }
-        
+
         setChanged ();
         notifyObservers ();
-        
+
         if ( error != null )
         {
             org.openscada.ae.client.test.Activator.getDefault ().notifyError ( "Connection failed", error );
         }
     }
-    
+
     public Connection getConnection ()
     {
-        return _connection;
+        return this._connection;
     }
 
     public boolean isConnectionRequested ()
     {
-        return _connectionRequested;
+        return this._connectionRequested;
     }
-    
-    public boolean testAttribute ( Object target, String name, String value )
+
+    public boolean testAttribute ( final Object target, final String name, final String value )
     {
         if ( name.equals ( "state" ) )
         {
-            return _connection.getState ().equals ( ConnectionState.valueOf ( value ) );
+            return this._connection.getState ().equals ( ConnectionState.valueOf ( value ) );
         }
         return false;
     }
-    
+
     synchronized public Set<StorageQuery> getQueries ()
     {
-        if ( ( _queries == null ) && !_refreshing )
+        if ( this._queries == null && !this.refreshing )
+        {
             refreshQueries ();
-        return _queries;
+        }
+        return this._queries;
     }
 
-    synchronized public void setQueries ( Set<StorageQuery> queries )
+    synchronized public void setQueries ( final Set<StorageQuery> queries )
     {
-        _queries = queries;
+        this._queries = queries;
         setChanged ();
         notifyObservers ();
     }
-    
+
     public void refreshQueries ()
     {
-        if ( !_connection.getState ().equals ( ConnectionState.BOUND ) )
+        if ( !this._connection.getState ().equals ( ConnectionState.BOUND ) )
+        {
             return;
-        
-        _refreshing = true;
-        
-        Job job = new Job ( "Refreshing storage" ) {
+        }
+
+        this.refreshing = true;
+
+        final Job job = new Job ( "Refreshing storage" ) {
 
             @Override
-            protected IStatus run ( IProgressMonitor monitor )
+            protected IStatus run ( final IProgressMonitor monitor )
             {
                 try
                 {
                     performRefreshQueries ( monitor );
                 }
-                catch ( InterruptedException e )
+                catch ( final InterruptedException e )
                 {
                     setQueries ( new HashSet<StorageQuery> () );
                     return new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 0, "Failed to refresh queries", e );
                 }
-                catch ( OperationException e )
+                catch ( final OperationException e )
                 {
                     setQueries ( new HashSet<StorageQuery> () );
                     return new OperationStatus ( IStatus.ERROR, Activator.PLUGIN_ID, 1, "Failed to refresh queries", e );
@@ -199,24 +198,25 @@ public class StorageConnection extends Observable implements IActionFilter
         job.setUser ( true );
         job.schedule ();
     }
-    
+
     private void performRefreshQueries ( final IProgressMonitor monitor ) throws InterruptedException, OperationException
     {
         setQueries ( null );
-        
-        LongRunningOperation op = _connection.startList ( new LongRunningListener () {
 
-            public void stateChanged ( LongRunningOperation operation, LongRunningState state, Throwable error )
+        final LongRunningOperation op = this._connection.startList ( new LongRunningListener () {
+
+            public void stateChanged ( final LongRunningOperation operation, final LongRunningState state, final Throwable error )
             {
                 monitor.setTaskName ( state.toString () );
-            }} );
-        
+            }
+        } );
+
         try
         {
             op.waitForCompletion ();
-            
-            Set<StorageQuery> queries = new HashSet<StorageQuery> ();
-            for ( QueryDescription queryDescription : _connection.completeList ( op ) )
+
+            final Set<StorageQuery> queries = new HashSet<StorageQuery> ();
+            for ( final QueryDescription queryDescription : this._connection.completeList ( op ) )
             {
                 queries.add ( new StorageQuery ( this, queryDescription ) );
             }
@@ -225,9 +225,9 @@ public class StorageConnection extends Observable implements IActionFilter
         finally
         {
             monitor.done ();
-            _refreshing = false;
+            this.refreshing = false;
         }
-        
+
     }
-    
+
 }

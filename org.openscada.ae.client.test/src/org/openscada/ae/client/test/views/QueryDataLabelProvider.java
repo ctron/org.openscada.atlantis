@@ -33,60 +33,64 @@ import org.openscada.ae.client.test.impl.EventData;
 public class QueryDataLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider, ITableColorProvider
 {
     private Font _boldFont = null;
+
     private Font _italicFont = null;
-    
+
     private static final Color RED = new Color ( null, 255, 0, 0 );
+
     private static final Color GRAY = new Color ( null, 200, 200, 200 );
+
     private static final Color BLACK = new Color ( null, 0, 0, 0 );
+
     private static final Color YELLOW = new Color ( null, 255, 255, 0 );
-    
-    public QueryDataLabelProvider ( Font defaultFont )
+
+    public QueryDataLabelProvider ( final Font defaultFont )
     {
         super ();
-        
+
         createBoldFont ( defaultFont );
         createItalicFont ( defaultFont );
     }
-    
-    private void createBoldFont ( Font defaultFont )
+
+    private void createBoldFont ( final Font defaultFont )
     {
         // create bold font
-        FontData [] fdset = defaultFont.getFontData ();
-        for ( FontData fd : fdset )
+        final FontData[] fdset = defaultFont.getFontData ();
+        for ( final FontData fd : fdset )
         {
             fd.setStyle ( SWT.BOLD );
         }
-        _boldFont = new Font ( defaultFont.getDevice (), fdset );
+        this._boldFont = new Font ( defaultFont.getDevice (), fdset );
     }
-    
-    private void createItalicFont ( Font defaultFont )
+
+    private void createItalicFont ( final Font defaultFont )
     {
         // create bold font
-        FontData [] fdset = defaultFont.getFontData ();
-        for ( FontData fd : fdset )
+        final FontData[] fdset = defaultFont.getFontData ();
+        for ( final FontData fd : fdset )
         {
             fd.setStyle ( SWT.ITALIC );
         }
-        _italicFont = new Font ( defaultFont.getDevice (), fdset );
+        this._italicFont = new Font ( defaultFont.getDevice (), fdset );
     }
 
     @Override
     public void dispose ()
     {
-        _boldFont.dispose ();
-        _boldFont = null;
+        this._boldFont.dispose ();
+        this._boldFont = null;
     }
-    
-    public Image getColumnImage ( Object element, int columnIndex )
+
+    public Image getColumnImage ( final Object element, final int columnIndex )
     {
         return null;
     }
 
-    public String getColumnText ( Object element, int columnIndex )
+    public String getColumnText ( final Object element, final int columnIndex )
     {
         if ( element instanceof EventData )
         {
-            EventData event = (EventData)element;
+            final EventData event = (EventData)element;
             switch ( columnIndex )
             {
             case 0:
@@ -99,7 +103,7 @@ public class QueryDataLabelProvider extends LabelProvider implements ITableLabel
         }
         else if ( element instanceof QueryDataContentProvider.AttributePair )
         {
-            QueryDataContentProvider.AttributePair pair = (QueryDataContentProvider.AttributePair)element;
+            final QueryDataContentProvider.AttributePair pair = (QueryDataContentProvider.AttributePair)element;
             switch ( columnIndex )
             {
             case 0:
@@ -107,42 +111,46 @@ public class QueryDataLabelProvider extends LabelProvider implements ITableLabel
             case 1:
                 return pair._value.toString ();
             default:
-                return null;    
+                return null;
             }
         }
         return null;
     }
 
-    public Font getFont ( Object element, int columnIndex )
+    public Font getFont ( final Object element, final int columnIndex )
     {
         if ( element instanceof EventData )
         {
-            EventData event = (EventData)element;
+            final EventData event = (EventData)element;
             if ( !event.getEvent ().getAttributes ().containsKey ( "severity" ) )
+            {
                 return null;
-            String severity = event.getEvent ().getAttributes ().get ( "severity" ).asString ( "" ).toUpperCase ();
-            
+            }
+            final String severity = event.getEvent ().getAttributes ().get ( "severity" ).asString ( "" ).toUpperCase ();
+
             if ( severity.equals ( "DEBUG" ) )
             {
-                return _italicFont;
+                return this._italicFont;
             }
             else if ( severity.equals ( "FATAL" ) )
             {
-                return _boldFont;
+                return this._boldFont;
             }
         }
         return null;
     }
 
-    public Color getBackground ( Object element, int columnIndex )
+    public Color getBackground ( final Object element, final int columnIndex )
     {
         if ( element instanceof EventData )
         {
-            EventData event = (EventData)element;
+            final EventData event = (EventData)element;
             if ( !event.getEvent ().getAttributes ().containsKey ( "severity" ) )
+            {
                 return null;
-            String severity = event.getEvent ().getAttributes ().get ( "severity" ).asString ( "" ).toUpperCase ();
-            
+            }
+            final String severity = event.getEvent ().getAttributes ().get ( "severity" ).asString ( "" ).toUpperCase ();
+
             if ( severity.equals ( "WARNING" ) )
             {
                 return YELLOW;
@@ -159,15 +167,17 @@ public class QueryDataLabelProvider extends LabelProvider implements ITableLabel
         return null;
     }
 
-    public Color getForeground ( Object element, int columnIndex )
+    public Color getForeground ( final Object element, final int columnIndex )
     {
         if ( element instanceof EventData )
         {
-            EventData event = (EventData)element;
+            final EventData event = (EventData)element;
             if ( !event.getEvent ().getAttributes ().containsKey ( "severity" ) )
+            {
                 return null;
-            String severity = event.getEvent ().getAttributes ().get ( "severity" ).asString ( "" ).toUpperCase ();
-            
+            }
+            final String severity = event.getEvent ().getAttributes ().get ( "severity" ).asString ( "" ).toUpperCase ();
+
             if ( severity.equals ( "FATAL" ) )
             {
                 return RED;
@@ -179,5 +189,5 @@ public class QueryDataLabelProvider extends LabelProvider implements ITableLabel
         }
         return null;
     }
-    
+
 }
