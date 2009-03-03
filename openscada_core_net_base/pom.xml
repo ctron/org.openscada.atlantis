@@ -21,12 +21,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
-			<artifactId>org.openscada.atlantis.da.core.common</artifactId>
+			<artifactId>org.openscada.atlantis.net.base</artifactId>
 			<version>0.12.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
-			<artifactId>org.openscada.atlantis.net.base</artifactId>
+			<artifactId>org.openscada.atlantis.core.common</artifactId>
 			<version>0.12.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
