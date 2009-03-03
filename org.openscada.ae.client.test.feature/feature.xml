@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.ae.client.test"
       label="OpenSCADA AE Test Client Feature"
-      version="0.12.0"
+      version="0.12.1"
       provider-name="inavare GmbH">
 
    <description>

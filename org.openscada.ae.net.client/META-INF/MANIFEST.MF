@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA AE Client Library Wrapper
 Bundle-SymbolicName: org.openscada.ae.net.client;singleton:=true
-Bundle-Version: 0.12.0
+Bundle-Version: 0.12.1
 Bundle-ClassPath: lib.jar
 Bundle-Vendor: inavare GmbH
 Require-Bundle: log4j_wrapper_plugin,
