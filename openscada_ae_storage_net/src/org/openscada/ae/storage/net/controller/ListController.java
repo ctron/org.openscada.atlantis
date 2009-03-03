@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,47 +31,50 @@ import org.openscada.ae.net.ListReplyMessage;
 import org.openscada.ae.net.Messages;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.net.OperationController;
-import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
+import org.openscada.net.mina.Messenger;
 
 public class ListController extends OperationController implements ListOperationListener
 {
     private Storage _storage = null;
+
     private Long _id = null;
+
     private Session _session = null;
-    private ConnectionHandlerBase _connection = null;
-    
-    public ListController ( Storage storage, Session session, ConnectionHandlerBase connection )
+
+    private Messenger _connection = null;
+
+    public ListController ( final Storage storage, final Session session, final Messenger connection )
     {
         super ( connection );
-        _storage = storage;
-        _session = session;
-        _connection = connection;
+        this._storage = storage;
+        this._session = session;
+        this._connection = connection;
     }
 
-    public void run ( Message request ) throws InvalidSessionException
+    public void run ( final Message request ) throws InvalidSessionException
     {
-        _id = _storage.startList ( _session, this );
-        sendACK ( request, _id );
-        _storage.thawOperation ( _session, _id );
+        this._id = this._storage.startList ( this._session, this );
+        sendACK ( request, this._id );
+        this._storage.thawOperation ( this._session, this._id );
     }
 
-    public void complete ( QueryDescription[] queries )
+    public void complete ( final QueryDescription[] queries )
     {
-        ListReplyMessage message = new ListReplyMessage ();
-        Set<QueryDescription> q = new HashSet<QueryDescription> ();
+        final ListReplyMessage message = new ListReplyMessage ();
+        final Set<QueryDescription> q = new HashSet<QueryDescription> ();
         q.addAll ( Arrays.asList ( queries ) );
         message.setQueries ( q );
-        _connection.getConnection ().sendMessage ( message.toMessage ( _id ) );
+        this._connection.sendMessage ( message.toMessage ( this._id ) );
     }
 
-    public void failed ( Throwable error )
+    public void failed ( final Throwable error )
     {
-        Message replyMessage = new Message ( Messages.CC_LIST_REPLY );
+        final Message replyMessage = new Message ( Messages.CC_LIST_REPLY );
         replyMessage.getValues ().put ( Message.FIELD_ERROR_INFO, new StringValue ( error.getMessage () ) );
-        replyMessage.getValues ().put ( "id", new LongValue ( _id ) );
-        _connection.getConnection().sendMessage ( replyMessage );
+        replyMessage.getValues ().put ( "id", new LongValue ( this._id ) );
+        this._connection.sendMessage ( replyMessage );
     }
 }

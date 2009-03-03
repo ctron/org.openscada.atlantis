@@ -29,28 +29,31 @@ import org.apache.log4j.Logger;
 public class SyslogDateParser implements DateParser
 {
     private static Logger _log = Logger.getLogger ( SyslogDateParser.class );
-    
-    private String _format = "MMM d HH:mm:ss";
-    private boolean _fixYear = true;
-    
-    public Calendar parseDate ( String date )
+
+    private final String _format = "MMM d HH:mm:ss";
+
+    private final boolean _fixYear = true;
+
+    public Calendar parseDate ( final String date )
     {
         try
         {
-            Calendar timestamp = Calendar.getInstance ();
-            DateFormat df = new SimpleDateFormat ( _format, Locale.US );
+            final Calendar timestamp = Calendar.getInstance ();
+            final DateFormat df = new SimpleDateFormat ( this._format, Locale.US );
             timestamp.setTime ( df.parse ( date ) );
-            
-            if ( _fixYear )
-                timestamp.set ( Calendar.YEAR, Calendar.getInstance ().get ( Calendar.YEAR  ) );
-            
+
+            if ( this._fixYear )
+            {
+                timestamp.set ( Calendar.YEAR, Calendar.getInstance ().get ( Calendar.YEAR ) );
+            }
+
             return timestamp;
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             _log.info ( "Failed to parse date: " + date, e );
         }
         return Calendar.getInstance ();
     }
-    
+
 }

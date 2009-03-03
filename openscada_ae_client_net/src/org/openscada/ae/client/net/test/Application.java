@@ -25,10 +25,10 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.openscada.ae.client.net.Connection;
 import org.openscada.ae.core.QueryDescription;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectWaitController;
-import org.openscada.core.client.net.ConnectionInfo;
 
 public class Application
 {
@@ -50,10 +50,7 @@ public class Application
 
     public static void main ( final String[] args ) throws Throwable
     {
-        final ConnectionInfo ci = new ConnectionInfo ();
-        ci.setAutoReconnect ( false );
-        ci.setHostName ( "localhost" );
-        ci.setPort ( 1302 );
+        final ConnectionInformation ci = ConnectionInformation.fromURI ( "da:net://localhost:1302" );
 
         final Connection connection = new Connection ( ci );
         logger.debug ( "Initiating connection..." );

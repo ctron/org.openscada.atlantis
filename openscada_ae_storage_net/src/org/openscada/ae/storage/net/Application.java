@@ -20,6 +20,7 @@
 package org.openscada.ae.storage.net;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.ConnectionInformation;
 
 /**
  * Application to export an AE storage using the OpenSCADA NET protocol
@@ -28,31 +29,29 @@ import org.apache.log4j.Logger;
  */
 public class Application
 {
-	private static Logger _log = Logger.getLogger ( Application.class );
-	
-	public static void main ( String[] args )
-	{
-		try
+    private static Logger _log = Logger.getLogger ( Application.class );
+
+    public static void main ( final String[] args )
+    {
+        try
         {
             // check if we have a class name
-		    if ( args.length != 1 )
-		    {
-		        System.err.println ( "syntax: Application <hiveClassName>" );
+            if ( args.length != 1 )
+            {
+                System.err.println ( "syntax: Application <hiveClassName>" );
                 return;
-		    }
-            
+            }
+
             // create exporter
-            Exporter exporter = new Exporter ( args[0] );
-            
+            final Exporter exporter = new Exporter ( args[0], ConnectionInformation.fromURI ( "ae:net://0.0.0.0:1301" ) );
+
             // run the lizzard
             _log.info ( "Running exporter (storage class: " + exporter.getStorageClass ().getCanonicalName () + ")..." );
-			exporter.run ();
-            _log.warn ( "Exporter returned!" );
-		}
-		catch ( Exception e )
-		{
+        }
+        catch ( final Exception e )
+        {
             // ops
-			_log.fatal ( "Error in OpenSCADA DA[NET] Server", e );
-		}
-	}
+            _log.fatal ( "Error in OpenSCADA DA[NET] Server", e );
+        }
+    }
 }

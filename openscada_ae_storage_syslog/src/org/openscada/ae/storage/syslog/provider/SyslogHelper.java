@@ -22,41 +22,59 @@ package org.openscada.ae.storage.syslog.provider;
 public class SyslogHelper
 {
 
-    public static final int LOG_EMERG    = 0;
-    public static final int LOG_ALERT    = 1;
-    public static final int LOG_CRIT     = 2;
-    public static final int LOG_ERR      = 3;
-    public static final int LOG_WARNING  = 4;
-    public static final int LOG_NOTICE   = 5;
-    public static final int LOG_INFO     = 6;
-    public static final int LOG_DEBUG    = 7;
-    public static final int LOG_ALL      = 8;
-    
-    public static final int LOG_KERN     = 0; 
-    public static final int LOG_USER     = 1; 
-    public static final int LOG_MAIL     = 2; 
-    public static final int LOG_DAEMON   = 3;
-    public static final int LOG_AUTH     = 4; 
-    public static final int LOG_SYSLOG   = 5;
-    public static final int LOG_LPR      = 6;
-    public static final int LOG_NEWS     = 7;
-    public static final int LOG_UUCP     = 8;
-    public static final int LOG_CRON     = 9;
-    
-    public static final int LOG_PRIMASK  = 0x0007;            
-    public static final int LOG_FACMASK  = 0x03F8;
-    
-    public static int getPriority ( int messageCode )
+    public static final int LOG_EMERG = 0;
+
+    public static final int LOG_ALERT = 1;
+
+    public static final int LOG_CRIT = 2;
+
+    public static final int LOG_ERR = 3;
+
+    public static final int LOG_WARNING = 4;
+
+    public static final int LOG_NOTICE = 5;
+
+    public static final int LOG_INFO = 6;
+
+    public static final int LOG_DEBUG = 7;
+
+    public static final int LOG_ALL = 8;
+
+    public static final int LOG_KERN = 0;
+
+    public static final int LOG_USER = 1;
+
+    public static final int LOG_MAIL = 2;
+
+    public static final int LOG_DAEMON = 3;
+
+    public static final int LOG_AUTH = 4;
+
+    public static final int LOG_SYSLOG = 5;
+
+    public static final int LOG_LPR = 6;
+
+    public static final int LOG_NEWS = 7;
+
+    public static final int LOG_UUCP = 8;
+
+    public static final int LOG_CRON = 9;
+
+    public static final int LOG_PRIMASK = 0x0007;
+
+    public static final int LOG_FACMASK = 0x03F8;
+
+    public static int getPriority ( final int messageCode )
     {
         return messageCode & LOG_PRIMASK;
     }
-    
-    public static int getFacility ( int messageCode )
+
+    public static int getFacility ( final int messageCode )
     {
         return ( messageCode & LOG_FACMASK ) >> 3;
     }
 
-    public static String getPriorityNameConverted ( int priority )
+    public static String getPriorityNameConverted ( final int priority )
     {
         switch ( priority )
         {
@@ -80,8 +98,8 @@ public class SyslogHelper
             return "INFO";
         }
     }
-    
-    public static String getPriorityName ( int priority )
+
+    public static String getPriorityName ( final int priority )
     {
         switch ( priority )
         {
@@ -106,7 +124,7 @@ public class SyslogHelper
         }
     }
 
-    public static String getFacilityName ( int facility )
+    public static String getFacilityName ( final int facility )
     {
         switch ( facility )
         {

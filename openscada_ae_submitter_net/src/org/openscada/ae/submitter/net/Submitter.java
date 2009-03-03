@@ -23,27 +23,21 @@ import java.util.Properties;
 
 import org.openscada.ae.core.Event;
 import org.openscada.ae.core.Submission;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectWaitController;
-import org.openscada.core.client.net.ConnectionInfo;
 
 public class Submitter implements Submission
 {
-
-    private ConnectionInfo connectionInformation = null;
-
     private Connection connection = null;
+
+    private final ConnectionInformation connectionInformation;
 
     public Submitter ()
     {
-        super ();
-
-        this.connectionInformation = new ConnectionInfo ();
-        this.connectionInformation.setAutoReconnect ( false );
-        this.connectionInformation.setHostName ( System.getProperty ( "openscada.ae.submitter.net.hostname" ) );
-        this.connectionInformation.setPort ( Integer.getInteger ( "openscada.ae.submitter.net.port", 1302 ) );
+        this ( ConnectionInformation.fromURI ( "da:aes://" + System.getProperty ( "openscada.ae.submitter.net.hostname" ) + ":" + Integer.getInteger ( "openscada.ae.submitter.net.port", 1302 ) ) );
     }
 
-    public Submitter ( final ConnectionInfo connectionInfo )
+    public Submitter ( final ConnectionInformation connectionInfo )
     {
         super ();
 

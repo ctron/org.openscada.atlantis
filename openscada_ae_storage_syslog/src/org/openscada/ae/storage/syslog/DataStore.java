@@ -23,5 +23,5 @@ import org.openscada.ae.core.Event;
 
 public interface DataStore
 {
-    public void submitEvent ( Event event ); 
+    public void submitEvent ( Event event );
 }

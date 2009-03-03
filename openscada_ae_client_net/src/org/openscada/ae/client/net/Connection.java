@@ -21,15 +21,12 @@ package org.openscada.ae.client.net;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.openscada.ae.client.net.operations.ListOperationController;
 import org.openscada.ae.core.EventInformation;
 import org.openscada.ae.core.QueryDescription;
-import org.openscada.ae.net.CreateSessionMessage;
 import org.openscada.ae.net.EventMessage;
 import org.openscada.ae.net.ListReplyMessage;
 import org.openscada.ae.net.Messages;
@@ -38,19 +35,13 @@ import org.openscada.ae.net.UnsubscribeMessage;
 import org.openscada.ae.net.UnsubscribedMessage;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
-import org.openscada.core.client.ConnectionState;
-import org.openscada.core.client.net.ConnectionBase;
-import org.openscada.core.client.net.ConnectionInfo;
-import org.openscada.core.client.net.DisconnectReason;
-import org.openscada.core.client.net.OperationTimedOutException;
+import org.openscada.core.client.net.SessionConnectionBase;
 import org.openscada.net.base.MessageListener;
-import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
-import org.openscada.net.io.IOProcessor;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
 
-public class Connection extends ConnectionBase implements org.openscada.ae.client.Connection
+public class Connection extends SessionConnectionBase implements org.openscada.ae.client.Connection
 {
     public static final String VERSION = "0.1.0";
 
@@ -58,108 +49,37 @@ public class Connection extends ConnectionBase implements org.openscada.ae.clien
 
     public static final String PROP_AUTO_RECONNECT = "auto-reconnect";
 
-    private static Logger logger = Logger.getLogger ( Connection.class );
-
     private ListOperationController listOperationController = null;
 
     private final Map<Long, org.openscada.ae.core.Listener> eventListenerMap = new HashMap<Long, org.openscada.ae.core.Listener> ();
 
-    public Connection ( final ConnectionInfo connectionInfo )
+    public Connection ( final ConnectionInformation connectionInformation )
     {
-        super ( connectionInfo );
-
-        init ();
-    }
-
-    public Connection ( final ConnectionInfo connectionInfo, final IOProcessor processor )
-    {
-        super ( processor, connectionInfo );
+        super ( connectionInformation );
 
         init ();
     }
 
     private void init ()
     {
-        this.listOperationController = new ListOperationController ( this.client );
-        this.listOperationController.register ( this.client.getMessageProcessor () );
+        this.listOperationController = new ListOperationController ( this.messenger );
+        this.listOperationController.register ();
 
-        this.client.getMessageProcessor ().setHandler ( Messages.CC_SUBSCRIPTION_EVENT, new MessageListener () {
+        this.messenger.setHandler ( Messages.CC_SUBSCRIPTION_EVENT, new MessageListener () {
 
-            public void messageReceived ( final org.openscada.net.io.net.Connection connection, final Message message ) throws Exception
+            public void messageReceived ( final Message message ) throws Exception
             {
                 handleSubscriptionEvent ( message );
             }
         } );
 
-        this.client.getMessageProcessor ().setHandler ( Messages.CC_SUBSCRIPTION_UNSUBSCRIBED, new MessageListener () {
+        this.messenger.setHandler ( Messages.CC_SUBSCRIPTION_UNSUBSCRIBED, new MessageListener () {
 
-            public void messageReceived ( final org.openscada.net.io.net.Connection connection, final Message message ) throws Exception
+            public void messageReceived ( final Message message ) throws Exception
             {
                 handleSubscriptionUnsubscribed ( message );
             }
         } );
-    }
-
-    private void requestSession ()
-    {
-        if ( this.client == null )
-        {
-            return;
-        }
-
-        final Properties props = new Properties ();
-        props.setProperty ( "client-version", VERSION );
-
-        final CreateSessionMessage message = new CreateSessionMessage ();
-        message.setProperties ( props );
-        this.client.getConnection ().sendMessage ( message.toMessage (), new MessageStateListener () {
-
-            public void messageReply ( final Message message )
-            {
-                processSessionReply ( message );
-            }
-
-            public void messageTimedOut ()
-            {
-                disconnect ( new OperationTimedOutException ().fillInStackTrace () );
-            }
-        }, 10 * 1000 );
-    }
-
-    private void processSessionReply ( final Message message )
-    {
-        logger.debug ( "Got session reply!" );
-
-        if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
-        {
-            final String errorInfo = message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString ();
-            disconnect ( new DisconnectReason ( "Failed to create session: " + errorInfo ) );
-        }
-        else if ( message.getCommandCode () != Message.CC_ACK )
-        {
-            disconnect ( new DisconnectReason ( "Received an invalid reply when requesting session" ) );
-        }
-        else
-        {
-            setState ( ConnectionState.BOUND, null );
-
-        }
-    }
-
-    @Override
-    protected void onConnectionBound ()
-    {
-    }
-
-    @Override
-    protected void onConnectionClosed ()
-    {
-    }
-
-    @Override
-    protected void onConnectionEstablished ()
-    {
-        requestSession ();
     }
 
     public LongRunningOperation startList ( final LongRunningListener listener )
@@ -220,7 +140,7 @@ public class Connection extends ConnectionBase implements org.openscada.ae.clien
         message.setListenerId ( id );
         message.setArchiveSet ( archiveSet );
         message.setMaxBatchSize ( maxBatchSize );
-        getClient ().getConnection ().sendMessage ( message.toMessage () );
+        this.messenger.sendMessage ( message.toMessage () );
     }
 
     synchronized public void unsubscribe ( final String queryId, final org.openscada.ae.core.Listener listener )
@@ -235,7 +155,7 @@ public class Connection extends ConnectionBase implements org.openscada.ae.clien
         final UnsubscribeMessage message = new UnsubscribeMessage ();
         message.setListenerId ( id );
         message.setQueryId ( queryId );
-        getClient ().getConnection ().sendMessage ( message.toMessage () );
+        this.messenger.sendMessage ( message.toMessage () );
     }
 
     synchronized private Long findListenerId ( final org.openscada.ae.core.Listener listener )
@@ -274,23 +194,9 @@ public class Connection extends ConnectionBase implements org.openscada.ae.clien
         }
     }
 
-    public ConnectionInformation getConnectionInformation ()
+    @Override
+    public String getRequiredVersion ()
     {
-        final ConnectionInformation info = new ConnectionInformation ();
-        info.setInterface ( "ae" );
-        info.setDriver ( "net" );
-        info.setTarget ( this.connectionInfo.getHostName () );
-        info.setSecondaryTarget ( this.connectionInfo.getPort () );
-
-        final Map<String, String> properties = new HashMap<String, String> ();
-        if ( this.connectionInfo.getReconnectDelay () > 0 )
-        {
-            properties.put ( PROP_AUTO_RECONNECT, "true" );
-            properties.put ( PROP_RECONNECT_DELAY, String.format ( "%s", this.connectionInfo.getReconnectDelay () ) );
-        }
-
-        info.setProperties ( properties );
-
-        return info;
+        return VERSION;
     }
 }

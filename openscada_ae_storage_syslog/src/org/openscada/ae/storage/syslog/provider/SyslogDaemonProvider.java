@@ -33,53 +33,52 @@ import org.openscada.ae.storage.syslog.DataStore;
 public class SyslogDaemonProvider implements Runnable
 {
     private static Logger _log = Logger.getLogger ( SyslogDaemonProvider.class );
-    
-    private static final int MAX_BUFFER = 16 * 1024;
-    
-    private SyslogParser _parser = null;
-    
-    private DatagramSocket _socket = null;
-    private Thread _thread = new Thread ( this );
 
-    private CharsetDecoder _decoder = Charset.forName ( "iso-8859-1" ).newDecoder ();
-    
-    public SyslogDaemonProvider ( DataStore store, int port ) throws SocketException
+    private static final int MAX_BUFFER = 16 * 1024;
+
+    private SyslogParser _parser = null;
+
+    private DatagramSocket _socket = null;
+
+    private final Thread _thread = new Thread ( this );
+
+    private final CharsetDecoder _decoder = Charset.forName ( "iso-8859-1" ).newDecoder ();
+
+    public SyslogDaemonProvider ( final DataStore store, final int port ) throws SocketException
     {
         super ();
-        _parser = new SyslogParser ( store, "syslog.net", "INFO" );
-        
-        _socket = new DatagramSocket ( port );
+        this._parser = new SyslogParser ( store, "syslog.net", "INFO" );
 
-        _thread.setDaemon ( true );
-        _thread.start ();
+        this._socket = new DatagramSocket ( port );
+
+        this._thread.setDaemon ( true );
+        this._thread.start ();
     }
 
     public void run ()
     {
         _log.debug ( "Reader running..." );
-        
+
         while ( true )
         {
-            byte [] buffer = new byte [ MAX_BUFFER ];
-            DatagramPacket packet = new DatagramPacket ( buffer, buffer.length );
+            final byte[] buffer = new byte[MAX_BUFFER];
+            final DatagramPacket packet = new DatagramPacket ( buffer, buffer.length );
             try
             {
-                _socket.receive ( packet );
+                this._socket.receive ( packet );
                 handlePacket ( packet );
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 _log.error ( "Failed to receive", e );
             }
         }
     }
 
-    private void handlePacket ( DatagramPacket packet ) throws CharacterCodingException
+    private void handlePacket ( final DatagramPacket packet ) throws CharacterCodingException
     {
-        String message = _decoder.decode ( ByteBuffer.wrap ( packet.getData () ) ).toString ();
-        _parser.handleLine ( message.trim () );
+        final String message = this._decoder.decode ( ByteBuffer.wrap ( packet.getData () ) ).toString ();
+        this._parser.handleLine ( message.trim () );
     }
-    
-  
 
 }

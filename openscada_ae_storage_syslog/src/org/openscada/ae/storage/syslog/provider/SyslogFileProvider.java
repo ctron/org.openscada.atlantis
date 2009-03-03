@@ -29,35 +29,39 @@ public class SyslogFileProvider extends FileProviderBase
     private static Logger _log = Logger.getLogger ( SyslogFileProvider.class );
 
     private SyslogParser _parser = null;
+
     private DataStore _storage = null;
 
-    private File _file;
+    private final File _file;
 
-    private String _severity;
+    private final String _severity;
 
-    public SyslogFileProvider ( DataStore storage, File file, String severity )
+    public SyslogFileProvider ( final DataStore storage, final File file, final String severity )
     {
         super ( storage, file );
-        _storage = storage;
-        _file = file;
-        _severity = severity;
+        this._storage = storage;
+        this._file = file;
+        this._severity = severity;
     }
 
     @Override
-    protected void handleLine ( String line )
+    protected void handleLine ( final String line )
     {
-        if ( _parser != null )
-            _parser.handleLine ( line );
+        if ( this._parser != null )
+        {
+            this._parser.handleLine ( line );
+        }
         else
         {
             synchronized ( this )
             {
-                if ( _parser == null )
-                    _parser = new SyslogParser ( _storage, _file.getAbsolutePath (), _severity );
-                _parser.handleLine ( line );
+                if ( this._parser == null )
+                {
+                    this._parser = new SyslogParser ( this._storage, this._file.getAbsolutePath (), this._severity );
+                }
+                this._parser.handleLine ( line );
             }
         }
     }
-    
-   
+
 }

@@ -25,119 +25,137 @@ public class SyslogMessage
 {
     public enum Priority
     {
-        EMERGENCY(0),
-        ALERT(1),
-        CRITICAL(2),
-        ERROR(3),
-        WARNING(4),
-        NOTICE(5),
-        INFO(6),
-        DEBUG(7),
-        ;
-        
+        EMERGENCY ( 0 ),
+        ALERT ( 1 ),
+        CRITICAL ( 2 ),
+        ERROR ( 3 ),
+        WARNING ( 4 ),
+        NOTICE ( 5 ),
+        INFO ( 6 ),
+        DEBUG ( 7 ), ;
+
         int _code;
-        Priority ( int code )
+
+        Priority ( final int code )
         {
-            _code = code;
+            this._code = code;
         }
+
         public int getCode ()
         {
-            return _code;
+            return this._code;
         }
-        
+
     };
-    
+
     public enum Facility
     {
-        KERNEL(0),
-        USER(1),
-        MAIL(2),
-        DAEMON(3),
-        AUTH(4),
-        SYSOG(5),
-        PR(6),
-        NEWS(7),
-        UUCP(8),
-        CRON(9),
-        ;
-        
+        KERNEL ( 0 ),
+        USER ( 1 ),
+        MAIL ( 2 ),
+        DAEMON ( 3 ),
+        AUTH ( 4 ),
+        SYSOG ( 5 ),
+        PR ( 6 ),
+        NEWS ( 7 ),
+        UUCP ( 8 ),
+        CRON ( 9 ), ;
+
         int _code;
-        Facility ( int code )
+
+        Facility ( final int code )
         {
-            _code = code;
+            this._code = code;
         }
-        
+
         public int getCode ()
         {
-            return _code;
+            return this._code;
         }
     };
-    
-    
+
     private String _message = "";
+
     private String _host = "localhost";
+
     private String _application = "";
+
     private Calendar _timestamp = Calendar.getInstance ();
+
     private Priority _priority = Priority.INFO;
+
     private Facility _facility = Facility.USER;
+
     private Long _processId = null;
-    
+
     public Facility getFacility ()
     {
-        return _facility;
+        return this._facility;
     }
-    public void setFacility ( Facility facility )
+
+    public void setFacility ( final Facility facility )
     {
-        _facility = facility;
+        this._facility = facility;
     }
+
     public String getMessage ()
     {
-        return _message;
+        return this._message;
     }
-    public void setMessage ( String message )
+
+    public void setMessage ( final String message )
     {
-        _message = message;
+        this._message = message;
     }
+
     public Priority getPriority ()
     {
-        return _priority;
+        return this._priority;
     }
-    public void setPriority ( Priority priority )
+
+    public void setPriority ( final Priority priority )
     {
-        _priority = priority;
+        this._priority = priority;
     }
+
     public Calendar getTimestamp ()
     {
-        return _timestamp;
+        return this._timestamp;
     }
-    public void setTimestamp ( Calendar timestamp )
+
+    public void setTimestamp ( final Calendar timestamp )
     {
-        _timestamp = timestamp;
+        this._timestamp = timestamp;
     }
+
     public String getHost ()
     {
-        return _host;
+        return this._host;
     }
-    public void setHost ( String host )
+
+    public void setHost ( final String host )
     {
-        _host = host;
+        this._host = host;
     }
+
     public String getApplication ()
     {
-        return _application;
+        return this._application;
     }
-    public void setApplication ( String application )
+
+    public void setApplication ( final String application )
     {
-        _application = application;
+        this._application = application;
     }
+
     public Long getProcessId ()
     {
-        return _processId;
+        return this._processId;
     }
-    public void setProcessId ( Long processId )
+
+    public void setProcessId ( final Long processId )
     {
-        _processId = processId;
+        this._processId = processId;
     }
-    
-    
+
 }

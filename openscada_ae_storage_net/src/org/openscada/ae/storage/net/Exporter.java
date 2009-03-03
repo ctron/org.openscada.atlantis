@@ -21,58 +21,67 @@ package org.openscada.ae.storage.net;
 
 import java.io.IOException;
 
+import org.apache.mina.core.session.IoSession;
+import org.apache.mina.handler.multiton.SingleSessionIoHandler;
+import org.apache.mina.handler.multiton.SingleSessionIoHandlerDelegate;
+import org.apache.mina.handler.multiton.SingleSessionIoHandlerFactory;
 import org.openscada.ae.core.Storage;
-import org.openscada.net.io.net.Server;
-import org.openscada.utils.timing.Scheduler;
+import org.openscada.core.ConnectionInformation;
+import org.openscada.core.server.net.Server;
 
-public class Exporter implements Runnable
+public class Exporter
 {
-    private Storage _storage;
-    private Server _server;
-    private static Scheduler _scheduler = new Scheduler ( true, "AEExporterScheduler" );
-    
-    public Exporter ( Storage storage ) throws IOException
+    private final Storage storage;
+
+    private Server server;
+
+    private final ConnectionInformation connectionInformation;
+
+    public Exporter ( final Storage storage, final ConnectionInformation connectionInformation ) throws IOException
     {
-        _storage = storage;
-        
+        this.storage = storage;
+        this.connectionInformation = connectionInformation;
+
         createServer ();
     }
-    
-    public Exporter ( Class storageClass ) throws InstantiationException, IllegalAccessException, IOException
+
+    public Exporter ( final Class<Storage> storageClass, final ConnectionInformation connectionInformation ) throws InstantiationException, IllegalAccessException, IOException
     {
-        _storage = createInstance ( storageClass );
-        
+        this.storage = createInstance ( storageClass );
+        this.connectionInformation = connectionInformation;
+
         createServer ();
     }
-    
-    public Exporter ( String storageClassName ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
+
+    public Exporter ( final String storageClassName, final ConnectionInformation connectionInformation ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
     {
-        _storage = createInstance ( Class.forName ( storageClassName ) );
-        
+        this.storage = createInstance ( Class.forName ( storageClassName ) );
+        this.connectionInformation = connectionInformation;
+
         createServer ();
     }
-    
-    private Storage createInstance ( Class storageClass ) throws InstantiationException, IllegalAccessException
+
+    private Storage createInstance ( final Class<?> storageClass ) throws InstantiationException, IllegalAccessException
     {
-        return (Storage)storageClass.newInstance();
+        return (Storage)storageClass.newInstance ();
     }
-    
+
     private void createServer () throws IOException
     {
-        _server = new Server (
-                new ConnectionHandlerServerFactory ( _scheduler, _storage ),
-                Integer.getInteger ( "openscada.ae.net.server.port", 1302 )
-        );
+        // this._server = new Server ( new ConnectionHandlerServerFactory ( _scheduler, this._storage ), Integer.getInteger ( "openscada.ae.net.server.port", 1302 ) );
+        this.server = new Server ( this.connectionInformation );
+        this.server.start ( new SingleSessionIoHandlerDelegate ( new SingleSessionIoHandlerFactory () {
+
+            public SingleSessionIoHandler getHandler ( final IoSession session ) throws Exception
+            {
+                return new ServerConnectionHandler ( Exporter.this.storage, session, Exporter.this.connectionInformation );
+            }
+        } ) );
     }
 
-    public void run ()
+    public Class<?> getStorageClass ()
     {
-        _server.run ();
+        return this.storage.getClass ();
     }
-    
-    public Class getStorageClass ()
-    {
-        return _storage.getClass ();
-    }
-    
+
 }

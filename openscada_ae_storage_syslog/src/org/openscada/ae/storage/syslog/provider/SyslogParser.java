@@ -31,90 +31,101 @@ import org.openscada.core.Variant;
 public class SyslogParser
 {
     private static Logger _log = Logger.getLogger ( SyslogParser.class );
-    
+
     private DataStore _store = null;
-    private String _sourceName = null; 
+
+    private String _sourceName = null;
+
     private String _defaultSeverity = null;
 
     private Pattern _pattern = null;
-    private DateParser _dateParser = new SyslogDateParser ();
+
+    private final DateParser _dateParser = new SyslogDateParser ();
 
     private Calendar _lastTimestamp = null;
+
     private long _cnt = 0;
-    
-    public SyslogParser ( DataStore store, String sourceName, String severity )
+
+    public SyslogParser ( final DataStore store, final String sourceName, final String severity )
     {
         super ();
-        _store = store;
-        _sourceName = sourceName;
-        _defaultSeverity = severity;
-        
-        _pattern = Pattern.compile ( "(\\<([0-9]+)\\>|)(.*?[0-9]{2}:[0-9]{2}:[0-9]{2})\\s+([a-zA-Z0-9\\.-]+)\\s+(([\\w\\S]+):\\s*|)(.*)" );
+        this._store = store;
+        this._sourceName = sourceName;
+        this._defaultSeverity = severity;
+
+        this._pattern = Pattern.compile ( "(\\<([0-9]+)\\>|)(.*?[0-9]{2}:[0-9]{2}:[0-9]{2})\\s+([a-zA-Z0-9\\.-]+)\\s+(([\\w\\S]+):\\s*|)(.*)" );
     }
-    
-    public void handleLine ( String line )
+
+    public void handleLine ( final String line )
     {
-        Matcher matcher = _pattern.matcher ( line );
+        final Matcher matcher = this._pattern.matcher ( line );
         if ( matcher.matches () )
-        {   
-            String severity = _defaultSeverity;
+        {
+            String severity = this._defaultSeverity;
             String facility = null;
             String syslogPriority = null;
-            
+
             try
             {
-                int messageCode = Integer.parseInt ( matcher.group ( 2 ) );
+                final int messageCode = Integer.parseInt ( matcher.group ( 2 ) );
                 severity = SyslogHelper.getPriorityNameConverted ( SyslogHelper.getPriority ( messageCode ) );
                 facility = SyslogHelper.getFacilityName ( SyslogHelper.getFacility ( messageCode ) );
                 syslogPriority = SyslogHelper.getPriorityName ( SyslogHelper.getPriority ( messageCode ) );
             }
-            catch ( Exception e )
-            {}
-            
-            String timestamp = matcher.group ( 3 );
-            String host = matcher.group ( 4 );
-            String app = matcher.group ( 6 );
-            String message = matcher.group ( 7 );
-         
-            Calendar datetime = _dateParser.parseDate ( timestamp );
-            
-            Event event = new Event ( getNextEventId ( datetime, _sourceName, host ) );
-            
-            event.setTimestamp ( _dateParser.parseDate ( timestamp ) );
+            catch ( final Exception e )
+            {
+            }
+
+            final String timestamp = matcher.group ( 3 );
+            final String host = matcher.group ( 4 );
+            final String app = matcher.group ( 6 );
+            final String message = matcher.group ( 7 );
+
+            final Calendar datetime = this._dateParser.parseDate ( timestamp );
+
+            final Event event = new Event ( getNextEventId ( datetime, this._sourceName, host ) );
+
+            event.setTimestamp ( this._dateParser.parseDate ( timestamp ) );
             event.getAttributes ().put ( "syslog.raw.timestamp", new Variant ( timestamp ) );
             event.getAttributes ().put ( "host", new Variant ( host ) );
             event.getAttributes ().put ( "application", new Variant ( app ) );
             event.getAttributes ().put ( "message", new Variant ( message ) );
             event.getAttributes ().put ( "raw", new Variant ( matcher.group ( 0 ) ) );
-            event.getAttributes ().put ( "source", new Variant ( _sourceName ) );
+            event.getAttributes ().put ( "source", new Variant ( this._sourceName ) );
             event.getAttributes ().put ( "severity", new Variant ( severity ) );
             if ( facility != null )
+            {
                 event.getAttributes ().put ( "syslog.facility", new Variant ( facility ) );
+            }
             if ( syslogPriority != null )
+            {
                 event.getAttributes ().put ( "syslog.priority", new Variant ( syslogPriority ) );
-            
-            _store.submitEvent ( event );
+            }
+
+            this._store.submitEvent ( event );
         }
         else
+        {
             _log.debug ( "did not match: '" + line + "'" );
-    }
-    
-    protected String getNextEventId ( Calendar timestamp, String sourceName, String hostname )
-    {
-        if ( _lastTimestamp == null )
-        {
-            _cnt = 0;
-            _lastTimestamp = timestamp;
         }
-        else if ( _lastTimestamp.equals ( timestamp ) )
+    }
+
+    protected String getNextEventId ( final Calendar timestamp, final String sourceName, final String hostname )
+    {
+        if ( this._lastTimestamp == null )
         {
-            _cnt++;
+            this._cnt = 0;
+            this._lastTimestamp = timestamp;
+        }
+        else if ( this._lastTimestamp.equals ( timestamp ) )
+        {
+            this._cnt++;
         }
         else
         {
-            _lastTimestamp = timestamp;
-            _cnt = 0;
+            this._lastTimestamp = timestamp;
+            this._cnt = 0;
         }
-        return hostname + "." + sourceName + "." + _lastTimestamp.getTimeInMillis () + "." + _cnt;
+        return hostname + "." + sourceName + "." + this._lastTimestamp.getTimeInMillis () + "." + this._cnt;
     }
 }

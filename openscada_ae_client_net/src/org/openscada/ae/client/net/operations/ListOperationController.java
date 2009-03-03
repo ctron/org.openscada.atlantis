@@ -21,9 +21,8 @@ package org.openscada.ae.client.net.operations;
 
 import org.openscada.ae.net.ListMessage;
 import org.openscada.ae.net.Messages;
-import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.LongRunningController;
-import org.openscada.net.base.MessageProcessor;
+import org.openscada.net.mina.Messenger;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
 
@@ -31,19 +30,19 @@ public class ListOperationController
 {
     private LongRunningController controller = null;
 
-    public ListOperationController ( final ConnectionHandlerBase connection )
+    public ListOperationController ( final Messenger connection )
     {
         this.controller = new LongRunningController ( connection, Messages.CC_CANCEL_OPERATION, Messages.CC_LIST_REPLY );
     }
 
-    public void register ( final MessageProcessor processor )
+    public void register ()
     {
-        this.controller.register ( processor );
+        this.controller.register ();
     }
 
-    public void unregister ( final MessageProcessor processor )
+    public void unregister ()
     {
-        this.controller.unregister ( processor );
+        this.controller.unregister ();
     }
 
     public LongRunningOperation start ( final LongRunningListener listener )

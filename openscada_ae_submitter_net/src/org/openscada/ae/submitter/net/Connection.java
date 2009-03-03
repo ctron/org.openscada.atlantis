@@ -19,46 +19,25 @@
 
 package org.openscada.ae.submitter.net;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import org.openscada.ae.core.Event;
 import org.openscada.ae.core.Submission;
 import org.openscada.ae.net.SubmitEventMessage;
 import org.openscada.core.ConnectionInformation;
-import org.openscada.core.client.ConnectionState;
-import org.openscada.core.client.net.ConnectionBase;
-import org.openscada.core.client.net.ConnectionInfo;
+import org.openscada.core.client.net.SessionConnectionBase;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
 
-public class Connection extends ConnectionBase implements Submission
+public class Connection extends SessionConnectionBase implements Submission
 {
     public static final String PROP_RECONNECT_DELAY = "reconnect-delay";
 
     public static final String PROP_AUTO_RECONNECT = "auto-reconnect";
 
-    public Connection ( final ConnectionInfo connectionInfo )
+    public Connection ( final ConnectionInformation connectionInfo )
     {
         super ( connectionInfo );
-    }
-
-    @Override
-    protected void onConnectionBound ()
-    {
-    }
-
-    @Override
-    protected void onConnectionClosed ()
-    {
-    }
-
-    @Override
-    protected void onConnectionEstablished ()
-    {
-        // we don't need no binding for submitting an event
-        setState ( ConnectionState.BOUND, null );
     }
 
     public void submitEvent ( final Properties properties, final Event event ) throws Exception
@@ -71,7 +50,7 @@ public class Connection extends ConnectionBase implements Submission
 
         synchronized ( result )
         {
-            sendMessage ( message.toMessage (), new MessageStateListener () {
+            this.messenger.sendMessage ( message.toMessage (), new MessageStateListener () {
 
                 public void messageReply ( final Message message )
                 {
@@ -101,23 +80,9 @@ public class Connection extends ConnectionBase implements Submission
         }
     }
 
-    public ConnectionInformation getConnectionInformation ()
+    @Override
+    public String getRequiredVersion ()
     {
-        final ConnectionInformation info = new ConnectionInformation ();
-        info.setInterface ( "aes" );
-        info.setDriver ( "net" );
-        info.setTarget ( this.connectionInfo.getHostName () );
-        info.setSecondaryTarget ( this.connectionInfo.getPort () );
-
-        final Map<String, String> properties = new HashMap<String, String> ();
-        if ( this.connectionInfo.getReconnectDelay () > 0 )
-        {
-            properties.put ( PROP_AUTO_RECONNECT, "true" );
-            properties.put ( PROP_RECONNECT_DELAY, String.format ( "%s", this.connectionInfo.getReconnectDelay () ) );
-        }
-
-        info.setProperties ( properties );
-
-        return info;
+        return "0.1.0";
     }
 }
