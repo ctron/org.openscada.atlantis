@@ -174,10 +174,10 @@
        	<ant dir="${source.base}/openscada_core_server_common"/>
 		<ant dir="${source.base}/openscada_core_ice_base"/>
        	<ant dir="${source.base}/openscada_core_net_base"/>
+		<ant dir="${source.base}/openscada_core_server_net"/>
        	<ant dir="${source.base}/openscada_da_core_common"/>
        	<ant dir="${source.base}/openscada_da_core_server"/>
        	<ant dir="${source.base}/openscada_da_server_common"/>
-    	<ant dir="${source.base}/openscada_da_server_net"/>
     	<ant dir="${source.base}/openscada_da_ice_base"/>
        	<ant dir="${source.base}/openscada_da_net_base"/>
        	<ant dir="${source.base}/openscada_da_server_ice"/>
