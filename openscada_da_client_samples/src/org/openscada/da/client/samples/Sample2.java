@@ -41,33 +41,37 @@ import org.openscada.core.client.NoConnectionException;
  */
 public class Sample2 extends SampleBase
 {
-    public Sample2 ( String uri, String className) throws ClassNotFoundException
+    public Sample2 ( final String uri, final String className ) throws ClassNotFoundException
     {
         super ( uri, className );
     }
-    
+
     public void run () throws NoConnectionException, OperationException
     {
         // set the main value
-        _connection.write ( "test-1", new Variant ( "Hello World" ) );
-        
+        this.connection.write ( "test-1", new Variant ( "Hello World" ) );
+
         // set some attributes
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "hello", new Variant ( "world" ) );
         attributes.put ( "foo", new Variant ( "bar" ) );
-        _connection.writeAttributes ( "test-1", attributes );
+        this.connection.writeAttributes ( "test-1", attributes );
     }
-    
-    public static void main ( String[] args ) throws Exception
+
+    public static void main ( final String[] args ) throws Exception
     {
         String uri = null;
         String className = null;
-        
+
         if ( args.length > 0 )
+        {
             uri = args[0];
+        }
         if ( args.length > 1 )
+        {
             className = args[1];
-        
+        }
+
         Sample2 s = null;
         try
         {
@@ -75,7 +79,7 @@ public class Sample2 extends SampleBase
             s.connect ();
             s.run ();
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             e.printStackTrace ();
         }

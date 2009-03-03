@@ -265,9 +265,9 @@ public class DataItemValue
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( this.attributes == null ) ? 0 : this.attributes.hashCode () );
-        result = prime * result + ( ( this.subscriptionState == null ) ? 0 : this.subscriptionState.hashCode () );
-        result = prime * result + ( ( this.value == null ) ? 0 : this.value.hashCode () );
+        result = prime * result + ( this.attributes == null ? 0 : this.attributes.hashCode () );
+        result = prime * result + ( this.subscriptionState == null ? 0 : this.subscriptionState.hashCode () );
+        result = prime * result + ( this.value == null ? 0 : this.value.hashCode () );
         return result;
     }
 

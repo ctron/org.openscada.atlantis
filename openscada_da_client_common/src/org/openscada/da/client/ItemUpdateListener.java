@@ -41,8 +41,8 @@ public interface ItemUpdateListener
      * that the change was not triggered by a device and that <em>all</em>
      * attribute where sent, not only the changed ones
      */
-    public void notifyDataChange ( Variant value, Map<String,Variant> attributes, boolean cache );
-    
+    public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache );
+
     /**
      * Notify a change in the subscription change
      * @param subscriptionState the new subscription change

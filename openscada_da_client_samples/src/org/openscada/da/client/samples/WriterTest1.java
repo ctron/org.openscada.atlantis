@@ -14,7 +14,7 @@ public class WriterTest1
 {
     private static Logger logger = Logger.getLogger ( WriterTest1.class );
 
-    public static void main ( String[] args ) throws ClassNotFoundException
+    public static void main ( final String[] args ) throws ClassNotFoundException
     {
         final String className = "org.openscada.da.client.net.Connection";
         final String uri = "da:net://127.0.0.1:1202?auto-reconnect=true";
@@ -26,7 +26,7 @@ public class WriterTest1
             Class.forName ( className );
         }
 
-        ConnectionInformation ci = ConnectionInformation.fromURI ( uri );
+        final ConnectionInformation ci = ConnectionInformation.fromURI ( uri );
 
         final Connection connection = (Connection)ConnectionFactory.create ( ci );
         if ( connection == null )
@@ -46,7 +46,7 @@ public class WriterTest1
                     {
                         Thread.sleep ( 1000 );
                     }
-                    catch ( InterruptedException e )
+                    catch ( final InterruptedException e )
                     {
                         return;
                     }
@@ -58,7 +58,7 @@ public class WriterTest1
 
     private static Random random = new Random ();
 
-    public static void doWrite ( Connection connection, String itemName )
+    public static void doWrite ( final Connection connection, final String itemName )
     {
         final Variant value = new Variant ( random.nextInt () );
         logger.info ( "Start write: " + value );
@@ -77,7 +77,7 @@ public class WriterTest1
                     }
                 }
 
-                public void error ( Throwable e )
+                public void error ( final Throwable e )
                 {
                     logger.info ( "Error", e );
                     synchronized ( lock )
@@ -86,7 +86,7 @@ public class WriterTest1
                     }
                 }
 
-                public void failed ( String error )
+                public void failed ( final String error )
                 {
                     logger.info ( "Failed: " + error );
                     // async call since it might called inline
@@ -97,12 +97,13 @@ public class WriterTest1
                             synchronized ( lock )
                             {
                                 lock.notify ();
-                            }        
-                        }} ).start ();
-                    
+                            }
+                        }
+                    } ).start ();
+
                 }
             } );
-            
+
             /*
             try
             {

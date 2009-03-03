@@ -36,21 +36,21 @@ import org.openscada.da.core.browser.FolderEntry;
  */
 public class Sample4 extends SampleBase
 {
-    private FolderManager _folderManager = null;
-    
-    public Sample4 ( String uri, String className) throws ClassNotFoundException
+    private FolderManager folderManager = null;
+
+    public Sample4 ( final String uri, final String className ) throws ClassNotFoundException
     {
         super ( uri, className );
     }
-    
+
     @Override
     public void connect () throws Exception
     {
         super.connect ();
-        _folderManager = new FolderManager ( _connection );
+        this.folderManager = new FolderManager ( this.connection );
     }
-    
-    protected void showEntry ( Entry entry )
+
+    protected void showEntry ( final Entry entry )
     {
         System.out.print ( "'" + entry.getName () + "' " );
         if ( entry instanceof FolderEntry )
@@ -61,38 +61,43 @@ public class Sample4 extends SampleBase
         {
             System.out.print ( "[Item]" );
         }
-            
+
         System.out.println ();
     }
-    
+
     public void subscribe () throws InterruptedException, OperationException
     {
-        _folderManager.addFolderListener ( new FolderListener () {
+        this.folderManager.addFolderListener ( new FolderListener () {
 
-            public void folderChanged ( Collection<Entry> added, Collection<String> removed, boolean full )
+            public void folderChanged ( final Collection<Entry> added, final Collection<String> removed, final boolean full )
             {
-                System.out.println ( String.format ( "Added: %d Removed: %d, Full: %s" , added.size (), removed.size (), full ) );
-                for ( Entry entry : added )
+                System.out.println ( String.format ( "Added: %d Removed: %d, Full: %s", added.size (), removed.size (), full ) );
+                for ( final Entry entry : added )
                 {
                     showEntry ( entry );
                 }
-                for ( String entry : removed )
+                for ( final String entry : removed )
                 {
                     System.out.println ( String.format ( "Remove: '%s'", entry ) );
                 }
-            }}, new Location () );
+            }
+        }, new Location () );
     }
-    
-    public static void main ( String[] args ) throws Exception
+
+    public static void main ( final String[] args ) throws Exception
     {
         String uri = null;
         String className = null;
-        
+
         if ( args.length > 0 )
+        {
             uri = args[0];
+        }
         if ( args.length > 1 )
+        {
             className = args[1];
-        
+        }
+
         Sample4 s = null;
         try
         {
@@ -101,7 +106,7 @@ public class Sample4 extends SampleBase
             s.subscribe ();
             Thread.sleep ( 5 * 1000 );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             e.printStackTrace ();
         }

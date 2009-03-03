@@ -25,6 +25,7 @@ import java.util.Observer;
 
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItem;
+import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemManager;
 
 /**
@@ -50,60 +51,67 @@ import org.openscada.da.client.ItemManager;
  */
 public class Sample5 extends SampleBase implements Observer
 {
-    private ItemManager _itemManager;
-    private DataItem _dataItem;
+    private ItemManager itemManager;
 
-    public Sample5 ( String uri, String className ) throws Exception
+    private DataItem dataItem;
+
+    public Sample5 ( final String uri, final String className ) throws Exception
     {
         super ( uri, className );
     }
-    
+
     @Override
     public void connect () throws Exception
     {
         super.connect ();
-        _itemManager = new ItemManager ( _connection );
+        this.itemManager = new ItemManager ( this.connection );
     }
-    
+
     public void subscribe ()
     {
         // we use a DataItem here which does all the update handling for
         // us and can be accessed using the Observable interface
-        _dataItem = new DataItem("time",_itemManager);
-        _dataItem.addObserver ( this );
+        this.dataItem = new DataItem ( "time", this.itemManager );
+        this.dataItem.addObserver ( this );
     }
-    
+
     public void unsubscribe ()
     {
         // now remove the update listener
-        _dataItem.deleteObservers ();
-        _dataItem.unregister ();
+        this.dataItem.deleteObservers ();
+        this.dataItem.unregister ();
     }
-    
-    public void update ( Observable o, Object arg )
+
+    public void update ( final Observable o, final Object arg )
     {
         // you can either use the _dataItem field or the observable
         // passed on the method call
-        System.out.println ( "Item: " + _dataItem.getItemId () );
-        System.out.println ( "Subscription state: " + _dataItem.getSubscriptionState ().name () );
-        System.out.println ( "Value of item changed: " + _dataItem.getValue ().toString () );
+        final DataItemValue value = this.dataItem.getSnapshotValue ();
+
+        System.out.println ( "Item: " + this.dataItem.getItemId () );
+        System.out.println ( "Subscription state: " + value.getSubscriptionState ().name () );
+        System.out.println ( "Value of item changed: " + value.getValue ().toString () );
         System.out.println ( String.format ( "Attributes for item: " ) );
-        for ( Map.Entry<String, Variant> entry : _dataItem.getAttributes ().entrySet () )
+        for ( final Map.Entry<String, Variant> entry : value.getAttributes ().entrySet () )
         {
             System.out.println ( String.format ( "'%s' => '%s'", entry.getKey (), entry.getValue ().toString () ) );
         }
     }
-    
-    public static void main ( String[] args ) throws Exception
+
+    public static void main ( final String[] args ) throws Exception
     {
         String uri = null;
         String className = null;
-        
+
         if ( args.length > 0 )
+        {
             uri = args[0];
+        }
         if ( args.length > 1 )
+        {
             className = args[1];
-        
+        }
+
         Sample5 s = null;
         try
         {
@@ -113,7 +121,7 @@ public class Sample5 extends SampleBase implements Observer
             Thread.sleep ( 10 * 1000 );
             s.unsubscribe ();
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             e.printStackTrace ();
         }

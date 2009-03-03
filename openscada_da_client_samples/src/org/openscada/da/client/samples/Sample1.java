@@ -21,6 +21,7 @@ package org.openscada.da.client.samples;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.ItemManager;
@@ -39,9 +40,12 @@ import org.openscada.da.client.ItemUpdateListener;
  */
 public class Sample1 extends SampleBase implements ItemUpdateListener
 {
-    private ItemManager _itemManager;
 
-    public Sample1 ( String uri, String className ) throws Exception
+    private static Logger logger = Logger.getLogger ( Sample1.class );
+
+    private ItemManager itemManager;
+
+    public Sample1 ( final String uri, final String className ) throws Exception
     {
         super ( uri, className );
     }
@@ -50,7 +54,7 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
     public void connect () throws Exception
     {
         super.connect ();
-        this._itemManager = new ItemManager ( this._connection );
+        this.itemManager = new ItemManager ( this.connection );
     }
 
     public void subscribe ()
@@ -59,20 +63,20 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
         // since we subscribe with "initial=true" we will get the current value
         // before any other event. Setting to "false" would ignore the current
         // value of this item and wait for the first change.
-        this._itemManager.addItemUpdateListener ( "time", this );
+        this.itemManager.addItemUpdateListener ( "time", this );
     }
 
     public void unsubscribe ()
     {
         // now remove the update listener
-        this._itemManager.removeItemUpdateListener ( "time", this );
+        this.itemManager.removeItemUpdateListener ( "time", this );
     }
 
-    public void notifyAttributeChange ( Map<String, Variant> attributes, boolean initial )
+    public void notifyAttributeChange ( final Map<String, Variant> attributes, final boolean initial )
     {
     }
 
-    public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
+    public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         if ( value != null )
         {
@@ -86,7 +90,7 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
             // If it is an "initial" transmission it is a complete set. Otherwise it is only
             // the set of changed attributes.
             System.out.println ( String.format ( "Attributes changed for item: %d update(s)%s", attributes.size (), ( cache ? " (cache read)" : "" ) ) );
-            for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+            for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
             {
                 System.out.println ( String.format ( "'%s' => '%s'", entry.getKey (), entry.getValue ().toString () ) );
             }
@@ -94,20 +98,31 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
         }
     }
 
-    public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
+    public void notifySubscriptionChange ( final SubscriptionState state, final Throwable subscriptionError )
     {
-        System.out.println ( "Subscription state: " + state.name () + " Error: " + ( ( subscriptionError == null ) ? "<none>" : subscriptionError.getMessage () ) );
+        System.out.println ( "Subscription state: " + state.name () + " Error: " + ( subscriptionError == null ? "<none>" : subscriptionError.getMessage () ) );
     }
 
-    public static void main ( String[] args ) throws Exception
+    @Override
+    protected void finalize () throws Throwable
+    {
+        logger.info ( "Finalized" );
+        super.finalize ();
+    }
+
+    public static void main ( final String[] args ) throws Exception
     {
         String uri = null;
         String className = null;
 
         if ( args.length > 0 )
+        {
             uri = args[0];
+        }
         if ( args.length > 1 )
+        {
             className = args[1];
+        }
 
         Sample1 s = null;
         try
@@ -118,7 +133,7 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
             Thread.sleep ( 10 * 1000 );
             s.unsubscribe ();
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             e.printStackTrace ();
         }

@@ -19,61 +19,40 @@
 
 package org.openscada.da.client.samples;
 
-import org.openscada.core.OperationException;
-import org.openscada.da.core.Location;
-import org.openscada.da.core.browser.DataItemEntry;
-import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.browser.FolderEntry;
+import org.apache.log4j.Logger;
 
 /**
- * Sample showing how to browse once
- * <br> 
+ * Sample showing how to subscribe for events only
+ * <br>
+ * The example shows how to create a new connection, connect, and listen for events coming
+ * in for a period of 10 seconds.
+ * <br>
+ * We will listen to the <em>time</em> data item of the test server. The item is an input
+ * item and will provided the current unix timestamp every second.
+ * 
  * @author Jens Reimann <jens.reimann@inavare.net>
  */
-public class Sample3 extends SampleBase
+public class IdleSample1 extends SampleBase
 {
-    public Sample3 ( final String uri, final String className ) throws ClassNotFoundException
+
+    private static Logger logger = Logger.getLogger ( IdleSample1.class );
+
+    public IdleSample1 ( final String uri, final String className ) throws Exception
     {
         super ( uri, className );
     }
 
-    /**
-     * Show one folder entry. 
-     * @param entry A folder entry which can be an item or a sub-folder
-     */
-    protected void showEntry ( final Entry entry )
+    @Override
+    public void connect () throws Exception
     {
-        System.out.print ( "'" + entry.getName () + "' " );
-        if ( entry instanceof FolderEntry )
-        {
-            System.out.print ( "[Folder] " );
-        }
-        else if ( entry instanceof DataItemEntry )
-        {
-            System.out.print ( "[Item]: " + ( (DataItemEntry)entry ).getId () );
-        }
-
-        System.out.println ();
+        super.connect ();
     }
 
-    /**
-     * browse once through a predefined folder named "test"
-     * @throws InterruptedException
-     * @throws OperationException
-     */
-    public void run () throws InterruptedException, OperationException
+    @Override
+    protected void finalize () throws Throwable
     {
-        try
-        {
-            for ( final Entry entry : this.connection.browse ( new Location ( "test" ) ) )
-            {
-                showEntry ( entry );
-            }
-        }
-        catch ( final Exception e )
-        {
-            e.printStackTrace ();
-        }
+        logger.info ( "Finalized" );
+        super.finalize ();
     }
 
     public static void main ( final String[] args ) throws Exception
@@ -90,12 +69,13 @@ public class Sample3 extends SampleBase
             className = args[1];
         }
 
-        Sample3 s = null;
+        IdleSample1 s = null;
         try
         {
-            s = new Sample3 ( uri, className );
+            s = new IdleSample1 ( uri, className );
             s.connect ();
-            s.run ();
+            Thread.sleep ( 30 * 1000 );
+            logger.info ( "Idle check complete" );
         }
         catch ( final Throwable e )
         {

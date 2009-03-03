@@ -33,17 +33,17 @@ public class GCTest1 extends SampleBase implements ItemUpdateListener
 
     private String _itemName = "time";
 
-    public GCTest1 ( String uri, String className, String itemName ) throws Exception
+    public GCTest1 ( final String uri, final String className, final String itemName ) throws Exception
     {
         super ( uri, className );
-        _itemName = itemName;
+        this._itemName = itemName;
     }
 
     @Override
     public void connect () throws Exception
     {
         super.connect ();
-        _itemManager = new ItemManager ( _connection );
+        this._itemManager = new ItemManager ( this.connection );
     }
 
     public void subscribe ()
@@ -52,16 +52,16 @@ public class GCTest1 extends SampleBase implements ItemUpdateListener
         // since we subscribe with "initial=true" we will get the current value
         // before any other event. Setting to "false" would ignore the current
         // value of this item and wait for the first change.
-        _itemManager.addItemUpdateListener ( _itemName, this );
+        this._itemManager.addItemUpdateListener ( this._itemName, this );
     }
 
     public void unsubscribe ()
     {
         // now remove the update listener
-        _itemManager.removeItemUpdateListener ( _itemName, this );
+        this._itemManager.removeItemUpdateListener ( this._itemName, this );
     }
 
-    public void notifyDataChange ( Variant value, Map<String, Variant> attributes, boolean cache )
+    public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         if ( value != null )
         {
@@ -76,16 +76,16 @@ public class GCTest1 extends SampleBase implements ItemUpdateListener
             // If it is an "initial" transmission it is a complete set. Otherwise it is only
             // the set of changed attributes.
             System.out.println ( String.format ( "Attributes changed for item: %d update(s)%s", attributes.size (), ( cache ? " (cache read)" : "" ) ) );
-            for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+            for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
             {
                 System.out.println ( String.format ( "'%s' => '%s'", entry.getKey (), entry.getValue ().toString () ) );
             }
         }
     }
 
-    public void notifySubscriptionChange ( SubscriptionState state, Throwable subscriptionError )
+    public void notifySubscriptionChange ( final SubscriptionState state, final Throwable subscriptionError )
     {
-        System.out.println ( "Subscription state: " + state.name () + " Error: " + ( ( subscriptionError == null ) ? "<none>" : subscriptionError.getMessage () ) );
+        System.out.println ( "Subscription state: " + state.name () + " Error: " + ( subscriptionError == null ? "<none>" : subscriptionError.getMessage () ) );
     }
 
     @Override
@@ -95,10 +95,10 @@ public class GCTest1 extends SampleBase implements ItemUpdateListener
         super.finalize ();
     }
 
-    public static void main ( String[] args ) throws Exception
+    public static void main ( final String[] args ) throws Exception
     {
-        String uri = "da:net://localhost:12020";
-        String className = Connection.class.getName ();
+        final String uri = "da:net://localhost:12020";
+        final String className = Connection.class.getName ();
 
         /*
         if ( args.length > 0 )
@@ -109,7 +109,7 @@ public class GCTest1 extends SampleBase implements ItemUpdateListener
         if ( args.length > 2 )
             itemName = args[2];
             */
-        String itemName = "TW1.state";
+        final String itemName = "TW1.state";
 
         GCTest1 s = null;
         try
@@ -120,7 +120,7 @@ public class GCTest1 extends SampleBase implements ItemUpdateListener
             Thread.sleep ( 10 * 1000 );
             s.unsubscribe ();
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             e.printStackTrace ();
         }

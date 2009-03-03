@@ -20,38 +20,37 @@
 package org.openscada.da.client.net.operations;
 
 import org.openscada.core.Variant;
-import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.LongRunningController;
-import org.openscada.net.base.MessageProcessor;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.da.handler.Messages;
+import org.openscada.net.mina.Messenger;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
 
 public class WriteOperationController
 {
     private LongRunningController _controller = null;
-    
-    public WriteOperationController ( ConnectionHandlerBase connection )
+
+    public WriteOperationController ( final Messenger connection )
     {
-        _controller = new LongRunningController ( connection, Messages.CC_WRITE_OPERATION_RESULT );
+        this._controller = new LongRunningController ( connection, Messages.CC_WRITE_OPERATION_RESULT );
     }
 
-    public void register ( MessageProcessor processor )
+    public void register ()
     {
-        _controller.register ( processor );
+        this._controller.register ();
     }
 
-    public void unregister ( MessageProcessor processor )
+    public void unregister ()
     {
-        _controller.unregister ( processor );
+        this._controller.unregister ();
     }
-    
-    public LongRunningOperation start ( String itemName, Variant value, LongRunningListener listener )
+
+    public LongRunningOperation start ( final String itemName, final Variant value, final LongRunningListener listener )
     {
-        Message message = org.openscada.net.da.handler.WriteOperation.create ( itemName, value );
-        
-        return _controller.start ( message, listener );
+        final Message message = org.openscada.net.da.handler.WriteOperation.create ( itemName, value );
+
+        return this._controller.start ( message, listener );
     }
-    
+
 }

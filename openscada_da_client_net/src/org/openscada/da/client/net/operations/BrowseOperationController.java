@@ -19,39 +19,38 @@
 
 package org.openscada.da.client.net.operations;
 
-import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.LongRunningController;
-import org.openscada.net.base.MessageProcessor;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
+import org.openscada.net.mina.Messenger;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
 
 public class BrowseOperationController
 {
     private LongRunningController _controller = null;
-    
-    public BrowseOperationController ( ConnectionHandlerBase connection )
+
+    public BrowseOperationController ( final Messenger connection )
     {
-        _controller = new LongRunningController ( connection, Messages.CC_BROWSER_LIST_RES );
+        this._controller = new LongRunningController ( connection, Messages.CC_BROWSER_LIST_RES );
     }
 
-    public void register ( MessageProcessor processor )
+    public void register ()
     {
-        _controller.register ( processor );
+        this._controller.register ();
     }
 
-    public void unregister ( MessageProcessor processor )
+    public void unregister ()
     {
-        _controller.unregister ( processor );
+        this._controller.unregister ();
     }
-    
-    public LongRunningOperation start ( String [] location, LongRunningListener listener )
+
+    public LongRunningOperation start ( final String[] location, final LongRunningListener listener )
     {
-        Message message = ListBrowser.createRequest ( location );
-        
-        return _controller.start ( message, listener );
+        final Message message = ListBrowser.createRequest ( location );
+
+        return this._controller.start ( message, listener );
     }
-    
+
 }

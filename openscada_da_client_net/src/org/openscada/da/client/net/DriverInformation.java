@@ -21,7 +21,6 @@ package org.openscada.da.client.net;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
-import org.openscada.core.client.net.ConnectionInfo;
 
 public class DriverInformation implements org.openscada.core.client.DriverInformation
 {
@@ -39,37 +38,6 @@ public class DriverInformation implements org.openscada.core.client.DriverInform
             return null;
         }
 
-        final ConnectionInfo ci = new ConnectionInfo ();
-
-        ci.setHostName ( connectionInformation.getTarget () );
-        ci.setPort ( connectionInformation.getSecondaryTarget ().intValue () );
-
-        // auto-reconnect
-        final String autoReconnect = connectionInformation.getProperties ().get ( PROP_AUTO_RECONNECT );
-        if ( autoReconnect != null )
-        {
-            try
-            {
-                ci.setAutoReconnect ( Boolean.valueOf ( autoReconnect ) );
-            }
-            catch ( final Exception e )
-            {
-            }
-        }
-
-        // reconnect-delay
-        final String reconnectDelay = connectionInformation.getProperties ().get ( PROP_RECONNECT_DELAY );
-        if ( reconnectDelay != null )
-        {
-            try
-            {
-                ci.setReconnectDelay ( Integer.valueOf ( reconnectDelay ) );
-            }
-            catch ( final Exception e )
-            {
-            }
-        }
-
         final String defaultAsync = connectionInformation.getProperties ().get ( PROP_DEFAULT_ASYNC );
         boolean defaultAsyncFlag = false;
         if ( defaultAsync != null )
@@ -77,7 +45,7 @@ public class DriverInformation implements org.openscada.core.client.DriverInform
             defaultAsyncFlag = Boolean.parseBoolean ( defaultAsync );
         }
 
-        return new org.openscada.da.client.net.Connection ( ci, defaultAsyncFlag );
+        return new org.openscada.da.client.net.Connection ( connectionInformation, defaultAsyncFlag );
     }
 
     public Class<?> getConnectionClass ()

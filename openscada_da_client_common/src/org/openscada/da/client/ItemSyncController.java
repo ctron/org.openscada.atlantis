@@ -22,9 +22,6 @@ package org.openscada.da.client;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
@@ -111,8 +108,6 @@ public class ItemSyncController implements ItemUpdateListener
 
     private final ItemManager itemManager;
 
-    private final ExecutorService syncExecutor;
-
     public ItemSyncController ( final org.openscada.da.client.Connection connection, final ItemManager itemManager, final String itemId )
     {
         this.connection = connection;
@@ -120,16 +115,6 @@ public class ItemSyncController implements ItemUpdateListener
         this.itemId = itemId;
 
         this.connection.setItemUpdateListener ( this.itemId, this );
-
-        this.syncExecutor = Executors.newSingleThreadExecutor ( new ThreadFactory () {
-
-            public Thread newThread ( final Runnable r )
-            {
-                final Thread t = new Thread ( r, "SyncExecutor" );
-                t.setDaemon ( true );
-                return t;
-            }
-        } );
     }
 
     public String getItemName ()
@@ -169,7 +154,7 @@ public class ItemSyncController implements ItemUpdateListener
 
     public void triggerSync ()
     {
-        this.syncExecutor.execute ( new Runnable () {
+        this.itemManager.getExecutor ().execute ( new Runnable () {
 
             public void run ()
             {
