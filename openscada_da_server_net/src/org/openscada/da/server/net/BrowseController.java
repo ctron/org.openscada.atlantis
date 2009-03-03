@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,65 +27,67 @@ import org.openscada.da.core.server.BrowseOperationListener;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.HiveBrowser;
-import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.da.handler.ListBrowser;
+import org.openscada.net.mina.Messenger;
 
 public class BrowseController extends OperationController implements BrowseOperationListener
 {
-    private Hive _hive = null;
-    private Session _session = null;
-    private ConnectionHandlerBase _connection = null;
-    
-    private Long _id = null; 
-    
-    public BrowseController ( Hive hive, Session session, ConnectionHandlerBase connection )
+    private Hive hive = null;
+
+    private Session session = null;
+
+    private Messenger messenger = null;
+
+    private Long id = null;
+
+    public BrowseController ( final Hive hive, final Session session, final Messenger messenger )
     {
-        super ( connection );
-        _hive = hive;
-        _session = session;
-        _connection = connection;
+        super ( messenger );
+        this.hive = hive;
+        this.session = session;
+        this.messenger = messenger;
     }
-    
-    public void run ( Message request )
+
+    public void run ( final Message request )
     {
         try
         {
-            String [] location = ListBrowser.parseRequest ( request );
-            
-            HiveBrowser browser = _hive.getBrowser ();
+            final String[] location = ListBrowser.parseRequest ( request );
+
+            final HiveBrowser browser = this.hive.getBrowser ();
             if ( browser == null )
             {
                 throw new Exception ( "Browsing not supported" );
             }
-            _id = browser.startBrowse ( _session, new Location ( location ), this );
+            this.id = browser.startBrowse ( this.session, new Location ( location ), this );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             sendFailure ( request, e );
             return;
         }
-        
+
         // send out ACK with operation id
-        sendACK ( request, _id );
-        
+        sendACK ( request, this.id );
+
         try
         {
-            _hive.thawOperation ( _session, _id );
+            this.hive.thawOperation ( this.session, this.id );
         }
-        catch ( InvalidSessionException e )
+        catch ( final InvalidSessionException e )
         {
             // should never happen
         }
     }
-    
-    public void failure ( Throwable throwable )
+
+    public void failure ( final Throwable throwable )
     {
-        _connection.getConnection ().sendMessage ( ListBrowser.createResponse ( _id, throwable.getMessage () ) );
+        this.messenger.sendMessage ( ListBrowser.createResponse ( this.id, throwable.getMessage () ) );
     }
 
-    public void success ( Entry[] entry )
+    public void success ( final Entry[] entry )
     {
-        _connection.getConnection ().sendMessage ( ListBrowser.createResponse ( _id, entry ) );
+        this.messenger.sendMessage ( ListBrowser.createResponse ( this.id, entry ) );
     }
 }

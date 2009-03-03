@@ -21,68 +21,67 @@ package org.openscada.da.server.net;
 
 import java.io.IOException;
 
+import org.apache.mina.core.session.IoSession;
+import org.apache.mina.handler.multiton.SingleSessionIoHandler;
+import org.apache.mina.handler.multiton.SingleSessionIoHandlerDelegate;
+import org.apache.mina.handler.multiton.SingleSessionIoHandlerFactory;
+import org.openscada.core.ConnectionInformation;
+import org.openscada.core.server.net.Server;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.impl.ExporterBase;
-import org.openscada.net.io.net.Server;
-import org.openscada.utils.timing.Scheduler;
 
-public class Exporter extends ExporterBase implements Runnable
+public class Exporter extends ExporterBase
 {
-    private Server _server;
-    
-    private static Scheduler scheduler = new Scheduler ( true, "ExporterScheduler" );
-    
-    public Exporter ( Hive hive, Integer port ) throws IOException
+    private Server server;
+
+    public Exporter ( final Hive hive, final ConnectionInformation connectionInformation ) throws Exception
     {
-        super ( hive );
-        
-        createServer ( port );
-    }
-    
-    public Exporter ( Hive hive ) throws IOException
-    {
-        this ( hive, null );
-    }
-    
-    public Exporter ( Class<?> hiveClass, Integer port ) throws InstantiationException, IllegalAccessException, IOException
-    {
-        super ( hiveClass );
-        
-        createServer ( port );
-    }
-    
-    public Exporter ( Class<?> hiveClass ) throws InstantiationException, IllegalAccessException, IOException
-    {
-        this ( hiveClass, null );
-    }
-    
-    public Exporter ( String hiveClassName, Integer port ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
-    {
-        super ( hiveClassName );
-        
-        createServer ( port );
-    }
-    
-    public Exporter ( String hiveClassName ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
-    {
-        this ( hiveClassName, null );
-    }
-    
-    private void createServer ( Integer port ) throws IOException
-    {
-        if ( port == null )
-        {
-            port = Integer.getInteger ( "openscada.da.net.server.port", 1202 );
-        }
-        
-        _server = new Server (
-                new ConnectionHandlerServerFactory ( _hive, scheduler ),
-                port
-        );
+        super ( hive, connectionInformation );
     }
 
-    public void run ()
+    public Exporter ( final Class<?> hiveClass, final ConnectionInformation connectionInformation ) throws Exception
     {
-        _server.run ();
+        super ( hiveClass, connectionInformation );
+    }
+
+    public Exporter ( final String hiveClassName, final ConnectionInformation connectionInformation ) throws Exception
+    {
+        super ( hiveClassName, connectionInformation );
+    }
+
+    private void createServer () throws IOException
+    {
+        this.server = new Server ( this.connectionInformation );
+        this.server.start ( createFactory () );
+    }
+
+    private SingleSessionIoHandlerDelegate createFactory ()
+    {
+        return new SingleSessionIoHandlerDelegate ( new SingleSessionIoHandlerFactory () {
+
+            public SingleSessionIoHandler getHandler ( final IoSession session ) throws Exception
+            {
+                return new ServerConnectionHandler ( Exporter.this.hive, session, Exporter.this.connectionInformation );
+            }
+        } );
+    }
+
+    public void start () throws Exception
+    {
+        createServer ();
+    }
+
+    public void stop () throws Exception
+    {
+        destroyServer ();
+    }
+
+    private void destroyServer ()
+    {
+        if ( this.server != null )
+        {
+            this.server.dispose ();
+            this.server = null;
+        }
     }
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,76 +26,78 @@ import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.WriteOperationListener;
-import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.da.handler.Messages;
+import org.openscada.net.mina.Messenger;
 import org.openscada.utils.lang.Holder;
 
 public class WriteValueController extends OperationController implements WriteOperationListener
 {
-    private Hive _hive = null;
-    private Session _session = null;
-    private ConnectionHandlerBase _connection = null;
-    
-    private Long _id = null; 
-    
-    public WriteValueController ( Hive hive, Session session, ConnectionHandlerBase connection )
+    private Hive hive = null;
+
+    private Session session = null;
+
+    private Messenger messenger = null;
+
+    private Long id = null;
+
+    public WriteValueController ( final Hive hive, final Session session, final Messenger messenger )
     {
-        super ( connection );
-        _hive = hive;
-        _session = session;
-        _connection = connection;
+        super ( messenger );
+        this.hive = hive;
+        this.session = session;
+        this.messenger = messenger;
     }
-    
-    public void run ( Message request )
+
+    public void run ( final Message request )
     {
         try
         {
-            Holder<String> itemId = new Holder<String> ();
-            Holder<Variant> value = new Holder<Variant> ();
-            
+            final Holder<String> itemId = new Holder<String> ();
+            final Holder<Variant> value = new Holder<Variant> ();
+
             org.openscada.net.da.handler.WriteOperation.parse ( request, itemId, value );
-            
-            _id = _hive.startWrite ( _session, itemId.value, value.value, this );
+
+            this.id = this.hive.startWrite ( this.session, itemId.value, value.value, this );
         }
-        catch ( InvalidSessionException e )
+        catch ( final InvalidSessionException e )
         {
             sendFailure ( request, e );
             return;
         }
-        catch ( InvalidItemException e )
+        catch ( final InvalidItemException e )
         {
             sendFailure ( request, e );
             return;
         }
-        
+
         // send out ACK with operation id
-        sendACK ( request, _id );
-        
+        sendACK ( request, this.id );
+
         try
         {
-            _hive.thawOperation ( _session, _id );
+            this.hive.thawOperation ( this.session, this.id );
         }
-        catch ( InvalidSessionException e )
+        catch ( final InvalidSessionException e )
         {
             // should never happen
         }
     }
-    
-    public void failure ( Throwable throwable )
+
+    public void failure ( final Throwable throwable )
     {
-        Message replyMessage = new Message ( Messages.CC_WRITE_OPERATION_RESULT );
+        final Message replyMessage = new Message ( Messages.CC_WRITE_OPERATION_RESULT );
         replyMessage.getValues ().put ( Message.FIELD_ERROR_INFO, new StringValue ( throwable.getMessage () ) );
-        replyMessage.getValues ().put ( "id", new LongValue ( _id ) );
-        _connection.getConnection().sendMessage ( replyMessage );
+        replyMessage.getValues ().put ( "id", new LongValue ( this.id ) );
+        this.messenger.sendMessage ( replyMessage );
     }
 
     public void success ()
     {
-        Message replyMessage = new Message ( Messages.CC_WRITE_OPERATION_RESULT );
-        replyMessage.getValues ().put ( "id", new LongValue ( _id ) );
-        _connection.getConnection().sendMessage ( replyMessage );
+        final Message replyMessage = new Message ( Messages.CC_WRITE_OPERATION_RESULT );
+        replyMessage.getValues ().put ( "id", new LongValue ( this.id ) );
+        this.messenger.sendMessage ( replyMessage );
     }
 }

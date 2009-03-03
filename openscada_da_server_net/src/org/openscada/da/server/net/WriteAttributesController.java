@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,77 +29,77 @@ import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.WriteAttributesOperationListener;
-import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.da.handler.WriteAttributesOperation;
+import org.openscada.net.mina.Messenger;
 import org.openscada.utils.lang.Holder;
 
 public class WriteAttributesController extends OperationController implements WriteAttributesOperationListener
 {
-    private Hive _hive = null;
-    private Session _session = null;
-    private ConnectionHandlerBase _connection = null;
-    
-    private Long _id = null; 
-    
-    public WriteAttributesController ( Hive hive, Session session, ConnectionHandlerBase connection )
+    private Hive hive = null;
+
+    private Session session = null;
+
+    private Messenger messenger = null;
+
+    private Long id = null;
+
+    public WriteAttributesController ( final Hive hive, final Session session, final Messenger messenger )
     {
-        super ( connection );
-        _hive = hive;
-        _session = session;
-        _connection = connection;
+        super ( messenger );
+        this.hive = hive;
+        this.session = session;
+        this.messenger = messenger;
     }
-    
-    public void run ( Message request )
+
+    public void run ( final Message request )
     {
         try
         {
-            Holder<String> itemId = new Holder<String> ();
-            Holder<Map<String,Variant>> attributes = new Holder<Map<String,Variant>> ();
-            
+            final Holder<String> itemId = new Holder<String> ();
+            final Holder<Map<String, Variant>> attributes = new Holder<Map<String, Variant>> ();
+
             WriteAttributesOperation.parseRequest ( request, itemId, attributes );
-            
-            _id = _hive.startWriteAttributes ( _session, itemId.value, attributes.value, this );
+
+            this.id = this.hive.startWriteAttributes ( this.session, itemId.value, attributes.value, this );
         }
-        catch ( InvalidSessionException e )
+        catch ( final InvalidSessionException e )
         {
             sendFailure ( request, e );
         }
-        catch ( InvalidItemException e )
+        catch ( final InvalidItemException e )
         {
-            sendFailure ( request, e );  
+            sendFailure ( request, e );
         }
-        
+
         // send out ACK with operation id
-        sendACK ( request, _id );
-        
+        sendACK ( request, this.id );
+
         try
         {
-            _hive.thawOperation ( _session, _id );
+            this.hive.thawOperation ( this.session, this.id );
         }
-        catch ( InvalidSessionException e )
+        catch ( final InvalidSessionException e )
         {
             // should never happen
         }
     }
 
-    
-    
-    public void complete ( WriteAttributeResults writeAttributeResults )
+    public void complete ( final WriteAttributeResults writeAttributeResults )
     {
-        if ( _id != null )
+        if ( this.id != null )
         {
-            Message message = WriteAttributesOperation.createResponse ( _id, writeAttributeResults );
-            _connection.getConnection ().sendMessage ( message );
+            final Message message = WriteAttributesOperation.createResponse ( this.id, writeAttributeResults );
+            this.messenger.sendMessage ( message );
         }
     }
 
-    public void failed ( Throwable error )
+    public void failed ( final Throwable error )
     {
-        if ( _id != null )
+        if ( this.id != null )
         {
-            Message message = WriteAttributesOperation.createResponse ( _id, error );
-            _connection.getConnection ().sendMessage ( message );
+            final Message message = WriteAttributesOperation.createResponse ( this.id, error );
+            this.messenger.sendMessage ( message );
         }
     }
 }
