@@ -21,7 +21,9 @@ package org.openscada.net.base.data;
 
 public abstract class Value
 {
+    @Override
     public abstract int hashCode ();
 
+    @Override
     public abstract boolean equals ( Object other );
 }

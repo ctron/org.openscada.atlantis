@@ -24,26 +24,26 @@ public class DoubleValue extends Value
 
     private double _value;
 
-    public DoubleValue ( double value )
+    public DoubleValue ( final double value )
     {
         super ();
-        _value = value;
+        this._value = value;
     }
 
     public double getValue ()
     {
-        return _value;
+        return this._value;
     }
 
-    public void setValue ( double value )
+    public void setValue ( final double value )
     {
-        _value = value;
+        this._value = value;
     }
 
     @Override
     public String toString ()
     {
-        return String.valueOf ( _value );
+        return String.valueOf ( this._value );
     }
 
     @Override
@@ -52,23 +52,31 @@ public class DoubleValue extends Value
         final int PRIME = 31;
         int result = 1;
         long temp;
-        temp = Double.doubleToLongBits ( _value );
-        result = PRIME * result + (int) ( temp ^ ( temp >>> 32 ) );
+        temp = Double.doubleToLongBits ( this._value );
+        result = PRIME * result + (int) ( temp ^ temp >>> 32 );
         return result;
     }
 
     @Override
-    public boolean equals ( Object obj )
+    public boolean equals ( final Object obj )
     {
         if ( this == obj )
+        {
             return true;
+        }
         if ( obj == null )
+        {
             return false;
+        }
         if ( getClass () != obj.getClass () )
+        {
             return false;
+        }
         final DoubleValue other = (DoubleValue)obj;
-        if ( Double.doubleToLongBits ( _value ) != Double.doubleToLongBits ( other._value ) )
+        if ( Double.doubleToLongBits ( this._value ) != Double.doubleToLongBits ( other._value ) )
+        {
             return false;
+        }
         return true;
     }
 

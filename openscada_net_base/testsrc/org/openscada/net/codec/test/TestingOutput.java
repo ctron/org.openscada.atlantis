@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,9 +17,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.net.base;
+package org.openscada.net.codec.test;
 
-public interface ConnectionHandlerFactory
+import org.apache.mina.core.buffer.IoBuffer;
+import org.apache.mina.core.future.WriteFuture;
+import org.apache.mina.filter.codec.ProtocolEncoderOutput;
+
+public class TestingOutput implements ProtocolEncoderOutput
 {
-    public ConnectionHandler createConnectionHandler ();
+
+    private final IoBuffer buffer = IoBuffer.allocate ( 0 );
+
+    public WriteFuture flush ()
+    {
+        return null;
+    }
+
+    public void mergeAll ()
+    {
+    }
+
+    public void write ( final Object encodedMessage )
+    {
+        if ( encodedMessage instanceof IoBuffer )
+        {
+            this.buffer.setAutoExpand ( true );
+            this.buffer.put ( (IoBuffer)encodedMessage );
+        }
+    }
+
+    public IoBuffer getBuffer ()
+    {
+        return this.buffer;
+    }
 }

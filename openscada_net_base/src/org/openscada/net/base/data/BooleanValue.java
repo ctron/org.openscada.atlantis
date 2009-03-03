@@ -24,26 +24,26 @@ public class BooleanValue extends Value
 
     private boolean _value;
 
-    public BooleanValue ( boolean value )
+    public BooleanValue ( final boolean value )
     {
         super ();
-        _value = value;
+        this._value = value;
     }
 
     public boolean getValue ()
     {
-        return _value;
+        return this._value;
     }
 
-    public void setValue ( boolean value )
+    public void setValue ( final boolean value )
     {
-        _value = value;
+        this._value = value;
     }
 
     @Override
     public String toString ()
     {
-        return String.valueOf ( _value );
+        return String.valueOf ( this._value );
     }
 
     @Override
@@ -51,22 +51,30 @@ public class BooleanValue extends Value
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ( _value ? 1231 : 1237 );
+        result = PRIME * result + ( this._value ? 1231 : 1237 );
         return result;
     }
 
     @Override
-    public boolean equals ( Object obj )
+    public boolean equals ( final Object obj )
     {
         if ( this == obj )
+        {
             return true;
+        }
         if ( obj == null )
+        {
             return false;
+        }
         if ( getClass () != obj.getClass () )
+        {
             return false;
+        }
         final BooleanValue other = (BooleanValue)obj;
-        if ( _value != other._value )
+        if ( this._value != other._value )
+        {
             return false;
+        }
         return true;
     }
 

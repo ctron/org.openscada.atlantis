@@ -28,37 +28,37 @@ public class MapValue extends Value
 
     public MapValue ()
     {
-        _values = new HashMap<String, Value> ();
+        this._values = new HashMap<String, Value> ();
     }
 
     public Map<String, Value> getValues ()
     {
-        return _values;
+        return this._values;
     }
 
-    public void put ( String key, Value value )
+    public void put ( final String key, final Value value )
     {
-        _values.put ( key, value );
+        this._values.put ( key, value );
     }
 
-    public void remove ( String key )
+    public void remove ( final String key )
     {
-        _values.remove ( key );
+        this._values.remove ( key );
     }
 
-    public Value get ( String key )
+    public Value get ( final String key )
     {
-        return _values.get ( key );
+        return this._values.get ( key );
     }
 
-    public boolean containsKey ( String key )
+    public boolean containsKey ( final String key )
     {
-        return _values.containsKey ( key );
+        return this._values.containsKey ( key );
     }
 
     public int size ()
     {
-        return _values.size ();
+        return this._values.size ();
     }
 
     @Override
@@ -66,27 +66,37 @@ public class MapValue extends Value
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ( ( _values == null ) ? 0 : _values.hashCode () );
+        result = PRIME * result + ( this._values == null ? 0 : this._values.hashCode () );
         return result;
     }
 
     @Override
-    public boolean equals ( Object obj )
+    public boolean equals ( final Object obj )
     {
         if ( this == obj )
+        {
             return true;
+        }
         if ( obj == null )
+        {
             return false;
+        }
         if ( getClass () != obj.getClass () )
+        {
             return false;
+        }
         final MapValue other = (MapValue)obj;
-        if ( _values == null )
+        if ( this._values == null )
         {
             if ( other._values != null )
+            {
                 return false;
+            }
         }
-        else if ( !_values.equals ( other._values ) )
+        else if ( !this._values.equals ( other._values ) )
+        {
             return false;
+        }
         return true;
     }
 }

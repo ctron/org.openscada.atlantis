@@ -24,26 +24,26 @@ public class LongValue extends Value
 
     private long _value;
 
-    public LongValue ( long value )
+    public LongValue ( final long value )
     {
         super ();
-        _value = value;
+        this._value = value;
     }
 
     public long getValue ()
     {
-        return _value;
+        return this._value;
     }
 
-    public void setValue ( long value )
+    public void setValue ( final long value )
     {
-        _value = value;
+        this._value = value;
     }
 
     @Override
     public String toString ()
     {
-        return String.valueOf ( _value );
+        return String.valueOf ( this._value );
     }
 
     @Override
@@ -51,22 +51,30 @@ public class LongValue extends Value
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + (int) ( _value ^ ( _value >>> 32 ) );
+        result = PRIME * result + (int) ( this._value ^ this._value >>> 32 );
         return result;
     }
 
     @Override
-    public boolean equals ( Object obj )
+    public boolean equals ( final Object obj )
     {
         if ( this == obj )
+        {
             return true;
+        }
         if ( obj == null )
+        {
             return false;
+        }
         if ( getClass () != obj.getClass () )
+        {
             return false;
+        }
         final LongValue other = (LongValue)obj;
-        if ( _value != other._value )
+        if ( this._value != other._value )
+        {
             return false;
+        }
         return true;
     }
 }

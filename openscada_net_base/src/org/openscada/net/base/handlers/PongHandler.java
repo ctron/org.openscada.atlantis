@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,17 +22,18 @@ package org.openscada.net.base.handlers;
 import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
-import org.openscada.net.io.net.Connection;
 
 public class PongHandler implements MessageListener
 {
+    private static Logger logger = Logger.getLogger ( PongHandler.class );
 
-    private static Logger _log = Logger.getLogger ( PongHandler.class );
-
-    public void messageReceived ( Connection connection, Message message )
+    public void messageReceived ( final Message message )
     {
-        _log.debug ( "Pong request: " + message.getValues ().get ( "pong-data" ) );
         // no-op
+        if ( logger.isDebugEnabled () )
+        {
+            logger.debug ( "Pong request: " + message.getValues ().get ( "pong-data" ) );
+        }
     }
 
 }

@@ -22,16 +22,23 @@ package org.openscada.net.base.data;
 public class Message
 {
     public final static int CC_UNKNOWN_COMMAND_CODE = 0x00000001;
+
     public final static int CC_FAILED = 0x00000002;
+
     public final static int CC_ACK = 0x00000003;
+
     public final static int CC_PING = 0x00000010;
+
     public final static int CC_PONG = 0x00000011;
 
     public final static String FIELD_ERROR_INFO = "error-info";
 
     private int _commandCode = 0;
+
     private long _sequence = 0;
+
     private long _replySequence = 0;
+
     private long _timestamp = System.currentTimeMillis ();
 
     private MapValue _values = null;
@@ -41,90 +48,90 @@ public class Message
     public Message ()
     {
         super ();
-        _values = new MapValue ();
+        this._values = new MapValue ();
     }
 
-    public Message ( int commandCode )
+    public Message ( final int commandCode )
     {
         super ();
-        _commandCode = commandCode;
-        _values = new MapValue ();
+        this._commandCode = commandCode;
+        this._values = new MapValue ();
     }
 
-    public Message ( int commandCode, long replySequence )
+    public Message ( final int commandCode, final long replySequence )
     {
         super ();
-        _commandCode = commandCode;
-        _replySequence = replySequence;
-        _values = new MapValue ();
+        this._commandCode = commandCode;
+        this._replySequence = replySequence;
+        this._values = new MapValue ();
     }
 
     // methods
 
     public int getCommandCode ()
     {
-        return _commandCode;
+        return this._commandCode;
     }
 
-    public void setCommandCode ( int commandCode )
+    public void setCommandCode ( final int commandCode )
     {
-        _commandCode = commandCode;
+        this._commandCode = commandCode;
     }
 
     public long getSequence ()
     {
-        return _sequence;
+        return this._sequence;
     }
 
-    public void setSequence ( long sequence )
+    public void setSequence ( final long sequence )
     {
-        _sequence = sequence;
+        this._sequence = sequence;
     }
 
     public MapValue getValues ()
     {
-        return _values;
+        return this._values;
     }
 
-    public void setValues ( MapValue values )
+    public void setValues ( final MapValue values )
     {
-        _values = values;
+        this._values = values;
     }
 
     public long getReplySequence ()
     {
-        return _replySequence;
+        return this._replySequence;
     }
 
-    public void setReplySequence ( long replySequence )
+    public void setReplySequence ( final long replySequence )
     {
-        _replySequence = replySequence;
+        this._replySequence = replySequence;
     }
 
     // tool methods
-    public void setValue ( String name, Value value )
+    public void setValue ( final String name, final Value value )
     {
-        _values.put ( name, value );
+        this._values.put ( name, value );
     }
 
-    public void setValue ( String name, String value )
+    public void setValue ( final String name, final String value )
     {
-        _values.put ( name, new StringValue ( value ) );
+        this._values.put ( name, new StringValue ( value ) );
     }
 
-    public void unsetValue ( String name )
+    public void unsetValue ( final String name )
     {
-        _values.remove ( name );
+        this._values.remove ( name );
     }
 
     public long getTimestamp ()
     {
-        return _timestamp;
+        return this._timestamp;
     }
 
-    public void setTimestamp ( long timestamp )
+    public void setTimestamp ( final long timestamp )
     {
-        _timestamp = timestamp;
+        this._timestamp = timestamp;
     }
 
 }

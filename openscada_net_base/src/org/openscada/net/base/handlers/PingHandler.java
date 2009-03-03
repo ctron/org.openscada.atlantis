@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,18 +22,28 @@ package org.openscada.net.base.handlers;
 import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
-import org.openscada.net.io.net.Connection;
+import org.openscada.net.mina.Messenger;
 import org.openscada.net.utils.MessageCreator;
 
 public class PingHandler implements MessageListener
 {
-    private static Logger _log = Logger.getLogger ( PingHandler.class );
+    private static Logger logger = Logger.getLogger ( PingHandler.class );
 
-    public void messageReceived ( Connection connection, Message message )
+    private final Messenger messenger;
+
+    public PingHandler ( final Messenger messenger )
     {
-        _log.debug ( "Ping request: " + message.getValues ().get ( "ping-data" ) );
+        this.messenger = messenger;
+    }
 
-        connection.sendMessage ( MessageCreator.createPong ( message ) );
+    public void messageReceived ( final Message message )
+    {
+        if ( logger.isDebugEnabled () )
+        {
+            logger.debug ( "Ping request: " + message.getValues ().get ( "ping-data" ) );
+        }
+
+        this.messenger.sendMessage ( MessageCreator.createPong ( message ) );
     }
 
 }

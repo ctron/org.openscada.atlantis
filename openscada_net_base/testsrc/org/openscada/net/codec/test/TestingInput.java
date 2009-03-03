@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,33 +19,38 @@
 
 package org.openscada.net.codec.test;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 
+import org.apache.mina.core.filterchain.IoFilter.NextFilter;
+import org.apache.mina.core.session.IoSession;
+import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.junit.Assert;
-import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
-import org.openscada.net.io.net.Connection;
 
-public class MessageListenerTestImpl implements MessageListener
+public class TestingInput implements ProtocolDecoderOutput
 {
-    private final List<Message> _messages = new ArrayList<Message> ();
 
-    public void messageReceived ( final Connection connection, final Message message )
+    private final Collection<Message> messages = new LinkedList<Message> ();
+
+    public void flush ( final NextFilter nextFilter, final IoSession session )
     {
-        this._messages.add ( message );
+    }
+
+    public void write ( final Object message )
+    {
+        this.messages.add ( (Message)message );
     }
 
     public void assertMessages ( final Collection<Message> assertMessages )
     {
-        Assert.assertEquals ( "Number of messages", assertMessages.size (), this._messages.size () );
+        Assert.assertEquals ( "Number of messages", assertMessages.size (), this.messages.size () );
 
         final Iterator<Message> i1 = assertMessages.iterator ();
-        final Iterator<Message> i2 = this._messages.iterator ();
+        final Iterator<Message> i2 = this.messages.iterator ();
 
         while ( i1.hasNext () )
         {
@@ -71,4 +76,5 @@ public class MessageListenerTestImpl implements MessageListener
             }
         }
     }
+
 }

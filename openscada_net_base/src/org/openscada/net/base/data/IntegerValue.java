@@ -24,26 +24,26 @@ public class IntegerValue extends Value
 
     private int _value;
 
-    public IntegerValue ( int value )
+    public IntegerValue ( final int value )
     {
         super ();
-        _value = value;
+        this._value = value;
     }
 
     public int getValue ()
     {
-        return _value;
+        return this._value;
     }
 
-    public void setValue ( int value )
+    public void setValue ( final int value )
     {
-        _value = value;
+        this._value = value;
     }
 
     @Override
     public String toString ()
     {
-        return String.valueOf ( _value );
+        return String.valueOf ( this._value );
     }
 
     @Override
@@ -51,22 +51,30 @@ public class IntegerValue extends Value
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + _value;
+        result = PRIME * result + this._value;
         return result;
     }
 
     @Override
-    public boolean equals ( Object obj )
+    public boolean equals ( final Object obj )
     {
         if ( this == obj )
+        {
             return true;
+        }
         if ( obj == null )
+        {
             return false;
+        }
         if ( getClass () != obj.getClass () )
+        {
             return false;
+        }
         final IntegerValue other = (IntegerValue)obj;
-        if ( _value != other._value )
+        if ( this._value != other._value )
+        {
             return false;
+        }
         return true;
     }
 

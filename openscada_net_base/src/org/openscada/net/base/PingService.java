@@ -19,11 +19,32 @@
 
 package org.openscada.net.base;
 
+import org.apache.log4j.Logger;
 import org.openscada.net.base.data.Message;
+import org.openscada.net.base.handlers.PingHandler;
+import org.openscada.net.base.handlers.PongHandler;
+import org.openscada.net.mina.Messenger;
+import org.openscada.net.utils.MessageCreator;
 
-public interface MessageStateListener
+public class PingService
 {
-    public void messageReply ( Message message );
 
-    public void messageTimedOut ();
+    private static Logger logger = Logger.getLogger ( PingService.class );
+
+    private final Messenger messenger;
+
+    public PingService ( final Messenger messenger )
+    {
+        this.messenger = messenger;
+
+        this.messenger.setHandler ( Message.CC_PING, new PingHandler ( this.messenger ) );
+        this.messenger.setHandler ( Message.CC_PONG, new PongHandler () );
+    }
+
+    public void sendPing ()
+    {
+        logger.debug ( "Sending ping" );
+        this.messenger.sendMessage ( MessageCreator.createPing () );
+    }
+
 }

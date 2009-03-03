@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,12 @@
 
 package org.openscada.net.codec.test;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.mina.core.buffer.IoBuffer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openscada.net.base.data.DoubleValue;
@@ -32,27 +32,28 @@ import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
-import org.openscada.net.codec.InvalidValueTypeException;
-import org.openscada.net.codec.Protocol;
-import org.openscada.net.codec.ProtocolGMPP;
+import org.openscada.net.mina.GMPPProtocolDecoder;
+import org.openscada.net.mina.GMPPProtocolEncoder;
 
 public class ProtocolGMPPTest
 {
     private static Logger log = Logger.getLogger ( ProtocolGMPPTest.class );
 
-    private void performTest ( final Collection<BytePacketTestImpl> packets, final Collection<Message> messages )
+    private void performTest ( final Collection<BytePacketTestImpl> packets, final Collection<Message> messages ) throws Exception
     {
         final InputStreamTestImpl stream = new InputStreamTestImpl ( packets );
-        final MessageListenerTestImpl listener = new MessageListenerTestImpl ();
 
-        final Protocol protocol = new ProtocolGMPP ( null, listener );
+        final GMPPProtocolDecoder decoder = new GMPPProtocolDecoder ();
+        final GMPPProtocolEncoder encoder = new GMPPProtocolEncoder ();
 
-        stream.run ( protocol );
+        final TestingInput in = new TestingInput ();
 
-        listener.assertMessages ( messages );
+        stream.run ( decoder, encoder, in );
+
+        in.assertMessages ( messages );
     }
 
-    private void performScatterTest ( final Collection<BytePacketTestImpl> packets, final Collection<Message> messages, final int scatterSize )
+    private void performScatterTest ( final Collection<BytePacketTestImpl> packets, final Collection<Message> messages, final int scatterSize ) throws Exception
     {
         log.info ( "Running scatter test with: " + scatterSize );
 
@@ -89,7 +90,7 @@ public class ProtocolGMPPTest
         performTest ( scatteredPackets, messages );
     }
 
-    private void performScatterTest ( final Collection<BytePacketTestImpl> packets, final Collection<Message> messages, final int... scatterSize )
+    private void performScatterTest ( final Collection<BytePacketTestImpl> packets, final Collection<Message> messages, final int... scatterSize ) throws Exception
     {
         for ( final int i : scatterSize )
         {
@@ -97,7 +98,7 @@ public class ProtocolGMPPTest
         }
     }
 
-    private void performAllTests ( final Collection<BytePacketTestImpl> packets, final Collection<Message> messages )
+    private void performAllTests ( final Collection<BytePacketTestImpl> packets, final Collection<Message> messages ) throws Exception
     {
         performTest ( packets, messages );
 
@@ -105,7 +106,7 @@ public class ProtocolGMPPTest
     }
 
     @Test
-    public void testPacket1 ()
+    public void testPacket1 () throws Exception
     {
         log.info ( "Running test1" );
 
@@ -140,7 +141,7 @@ public class ProtocolGMPPTest
         performAllTests ( packets, messages );
     }
 
-    public void testPacket2 ()
+    public void testPacket2 () throws Exception
     {
         log.info ( "Running test2" );
         final List<BytePacketTestImpl> packets = new ArrayList<BytePacketTestImpl> ();
@@ -170,10 +171,14 @@ public class ProtocolGMPPTest
         performAllTests ( packets, messages );
     }
 
-    private void performCode ( final Message message, final BytePacketTestImpl expectedBuffer ) throws InvalidValueTypeException
+    private void performCode ( final Message message, final BytePacketTestImpl expectedBuffer ) throws Exception
     {
-        final Protocol protocol = new ProtocolGMPP ( null, null );
-        final ByteBuffer byteBuffer = protocol.code ( message );
+        final GMPPProtocolEncoder encoder = new GMPPProtocolEncoder ();
+
+        final TestingOutput out = new TestingOutput ();
+        encoder.encode ( null, message, out );
+
+        final IoBuffer byteBuffer = out.getBuffer ();
 
         final int max = Math.max ( byteBuffer.remaining (), expectedBuffer.getBytes ().length );
         System.out.println ( "Buffer sizes: " + byteBuffer.remaining () + "/" + expectedBuffer.getBytes ().length );
@@ -218,7 +223,7 @@ public class ProtocolGMPPTest
     }
 
     @Test
-    public void testEncode1 () throws InvalidValueTypeException
+    public void testEncode1 () throws Exception
     {
         log.info ( "Running encode1" );
 
@@ -248,7 +253,7 @@ public class ProtocolGMPPTest
     }
 
     @Test
-    public void testEncode2 () throws InvalidValueTypeException
+    public void testEncode2 () throws Exception
     {
         log.info ( "Running encode2" );
 
@@ -284,7 +289,7 @@ public class ProtocolGMPPTest
     }
 
     @Test
-    public void testEncode3 () throws InvalidValueTypeException
+    public void testEncode3 () throws Exception
     {
         log.info ( "Running encode3" );
 
@@ -322,7 +327,7 @@ public class ProtocolGMPPTest
         performCode ( message, packet );
     }
 
-    public void testPerformance () throws InvalidValueTypeException
+    public void testPerformance () throws Exception
     {
         final Message message = new Message ();
 
@@ -333,14 +338,15 @@ public class ProtocolGMPPTest
         message.getValues ().put ( "double-0", new DoubleValue ( 1.234 ) );
         message.getValues ().put ( "double-1", new DoubleValue ( 1.234 ) );
 
-        final Protocol protocol = new ProtocolGMPP ( null, null );
+        final GMPPProtocolEncoder encoder = new GMPPProtocolEncoder ();
 
         log.info ( "Start performance run" );
 
         final long start = System.currentTimeMillis ();
         for ( int i = 0; i < 10 * 1000; i++ )
         {
-            protocol.code ( message );
+            final TestingOutput out = new TestingOutput ();
+            encoder.encode ( null, message, out );
         }
         final long end = System.currentTimeMillis ();
 

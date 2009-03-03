@@ -12,8 +12,8 @@ public class InvalidMessageReplyException extends Exception
     {
         super ( "Invalid message reply" );
     }
-    
-    public InvalidMessageReplyException ( String message )
+
+    public InvalidMessageReplyException ( final String message )
     {
         super ( "Invalid message reply: " + message );
     }

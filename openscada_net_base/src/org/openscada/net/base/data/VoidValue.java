@@ -35,14 +35,20 @@ public class VoidValue extends Value
     }
 
     @Override
-    public boolean equals ( Object other )
+    public boolean equals ( final Object other )
     {
         if ( this == other )
+        {
             return true;
+        }
         if ( other == null )
+        {
             return false;
+        }
         if ( getClass () != other.getClass () )
+        {
             return false;
+        }
         return true;
     }
 

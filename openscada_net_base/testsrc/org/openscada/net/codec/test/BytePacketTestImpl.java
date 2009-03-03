@@ -19,20 +19,21 @@
 
 package org.openscada.net.codec.test;
 
-import java.nio.ByteBuffer;
-
 import org.apache.log4j.Logger;
-import org.openscada.net.codec.Protocol;
+import org.apache.mina.core.buffer.IoBuffer;
+import org.apache.mina.filter.codec.ProtocolDecoderOutput;
+import org.openscada.net.mina.GMPPProtocolDecoder;
+import org.openscada.net.mina.GMPPProtocolEncoder;
 
 public class BytePacketTestImpl
 {
-    private static Logger _log = Logger.getLogger ( BytePacketTestImpl.class );
+    private static Logger logger = Logger.getLogger ( BytePacketTestImpl.class );
 
-    private int _preDelay = 0;
+    private int preDelay = 0;
 
-    private final byte[] _bytes;
+    private final byte[] bytes;
 
-    private final int _postDelay = 0;
+    private final int postDelay = 0;
 
     static byte[] fromString ( final String str )
     {
@@ -57,9 +58,9 @@ public class BytePacketTestImpl
     public BytePacketTestImpl ( final byte[] bytes, final int preDelay, final int postDelay )
     {
         super ();
-        this._preDelay = preDelay;
-        this._bytes = bytes.clone ();
-        this._preDelay = postDelay;
+        this.preDelay = preDelay;
+        this.bytes = bytes.clone ();
+        this.preDelay = postDelay;
     }
 
     public BytePacketTestImpl ( final byte[] bytes, final int preDelay )
@@ -77,17 +78,17 @@ public class BytePacketTestImpl
         this ( bytes, 0, 0 );
     }
 
-    public void process ( final Protocol decoder )
+    public void process ( final GMPPProtocolDecoder decoder, final GMPPProtocolEncoder encoder, final ProtocolDecoderOutput in ) throws Exception
     {
-        final ByteBuffer buffer = ByteBuffer.allocate ( this._bytes.length );
-        buffer.put ( this._bytes );
+        final IoBuffer buffer = IoBuffer.allocate ( this.bytes.length );
+        buffer.put ( this.bytes );
         buffer.flip ();
 
         try
         {
-            Thread.sleep ( this._preDelay );
-            decoder.decode ( buffer );
-            Thread.sleep ( this._postDelay );
+            Thread.sleep ( this.preDelay );
+            decoder.decode ( null, buffer, in );
+            Thread.sleep ( this.postDelay );
         }
         catch ( final InterruptedException e )
         {
@@ -97,20 +98,20 @@ public class BytePacketTestImpl
 
     public byte[] getBytes ()
     {
-        return this._bytes;
+        return this.bytes;
     }
 
-    public boolean equalToBuffer ( final ByteBuffer buffer )
+    public boolean equalToBuffer ( final IoBuffer buffer )
     {
-        if ( this._bytes.length != buffer.remaining () )
+        if ( this.bytes.length != buffer.remaining () )
         {
             return false;
         }
 
-        for ( int i = 0; i < this._bytes.length; i++ )
+        for ( int i = 0; i < this.bytes.length; i++ )
         {
-            _log.info ( "Expected/Current: " + this._bytes[i] + "/" + buffer.get ( i ) );
-            if ( this._bytes[i] != buffer.get ( i ) )
+            logger.info ( "Expected/Current: " + this.bytes[i] + "/" + buffer.get ( i ) );
+            if ( this.bytes[i] != buffer.get ( i ) )
             {
                 return false;
             }

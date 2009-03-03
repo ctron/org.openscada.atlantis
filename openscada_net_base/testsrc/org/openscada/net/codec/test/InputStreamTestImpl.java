@@ -24,7 +24,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.openscada.net.codec.Protocol;
+import org.apache.mina.filter.codec.ProtocolDecoderOutput;
+import org.openscada.net.mina.GMPPProtocolDecoder;
+import org.openscada.net.mina.GMPPProtocolEncoder;
 
 public class InputStreamTestImpl
 {
@@ -53,14 +55,14 @@ public class InputStreamTestImpl
         this._pseudoStream.add ( packet );
     }
 
-    public void run ( final Protocol protocol )
+    public void run ( final GMPPProtocolDecoder decoder, final GMPPProtocolEncoder encoder, final ProtocolDecoderOutput in ) throws Exception
     {
         BytePacketTestImpl packet;
         final Iterator<BytePacketTestImpl> i = this._pseudoStream.iterator ();
         while ( i.hasNext () )
         {
             packet = i.next ();
-            packet.process ( protocol );
+            packet.process ( decoder, encoder, in );
         }
     }
 }

@@ -25,32 +25,34 @@ import org.openscada.net.base.data.StringValue;
 public class MessageCreator
 {
 
-    public static Message createUnknownMessage ( Message inputMessage )
+    public static Message createUnknownMessage ( final Message inputMessage )
     {
-        Message msg = new Message ( Message.CC_UNKNOWN_COMMAND_CODE );
+        final Message msg = new Message ( Message.CC_UNKNOWN_COMMAND_CODE );
 
         msg.setReplySequence ( inputMessage.getSequence () );
 
         return msg;
     }
 
-    public static Message createFailedMessage ( Message inputMessage, Throwable error )
+    public static Message createFailedMessage ( final Message inputMessage, final Throwable error )
     {
         String msg = error.getMessage ();
         if ( msg == null )
+        {
             msg = error.toString ();
+        }
 
         return createFailedMessage ( inputMessage, msg );
     }
 
-    public static Message createFailedMessage ( Message inputMessage, String failMessage )
+    public static Message createFailedMessage ( final Message inputMessage, final String failMessage )
     {
         return createFailedMessage ( inputMessage, Message.CC_FAILED, failMessage );
     }
-    
-    public static Message createFailedMessage ( Message inputMessage, int commandCode, String failMessage )
+
+    public static Message createFailedMessage ( final Message inputMessage, final int commandCode, final String failMessage )
     {
-        Message msg = new Message ( commandCode );
+        final Message msg = new Message ( commandCode );
 
         msg.setReplySequence ( inputMessage.getSequence () );
         msg.setValue ( Message.FIELD_ERROR_INFO, failMessage );
@@ -60,19 +62,19 @@ public class MessageCreator
 
     public static Message createPing ()
     {
-        Message msg = new Message ( Message.CC_PING );
+        final Message msg = new Message ( Message.CC_PING );
         msg.getValues ().put ( "ping-data", new StringValue ( String.valueOf ( System.currentTimeMillis () ) ) );
         return msg;
     }
 
-    public static Message createPong ( Message inputMessage )
+    public static Message createPong ( final Message inputMessage )
     {
-        Message msg = new Message ( Message.CC_PONG, inputMessage.getSequence () );
+        final Message msg = new Message ( Message.CC_PONG, inputMessage.getSequence () );
         msg.getValues ().put ( "pong-data", inputMessage.getValues ().get ( "ping-data" ) );
         return msg;
     }
 
-    public static Message createACK ( Message inputMessage )
+    public static Message createACK ( final Message inputMessage )
     {
         return new Message ( Message.CC_ACK, inputMessage.getSequence () );
     }
