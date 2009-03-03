@@ -26,7 +26,7 @@ public class OperationFailedException extends Exception
      */
     private static final long serialVersionUID = -6829837359703669899L;
 
-    public OperationFailedException ( String failure )
+    public OperationFailedException ( final String failure )
     {
         super ( failure );
     }

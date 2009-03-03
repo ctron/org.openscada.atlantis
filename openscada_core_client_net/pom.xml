@@ -29,5 +29,11 @@
 			<artifactId>org.openscada.atlantis.core.net.base</artifactId>
 			<version>0.12.0-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.openscada.atlantis</groupId>
+			<artifactId>org.openscada.atlantis.net.base</artifactId>
+			<version>0.12.0-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 </project>

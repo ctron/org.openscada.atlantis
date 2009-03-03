@@ -22,77 +22,84 @@ package org.openscada.core.client.net;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-
 public class ConnectionInfo
 {
     private String _hostName = "";
+
     private int _port = 0;
+
     private boolean _autoReconnect = false;
-    
+
     private int _reconnectDelay = Integer.getInteger ( "org.openscada.da.net.client.reconnect_delay", 10 * 1000 );
 
     public ConnectionInfo ()
     {
     }
-    
-    public ConnectionInfo ( String hostName, int port )
+
+    public ConnectionInfo ( final String hostName, final int port )
     {
         super ();
-        _hostName = hostName;
-        _port = port;
+        this._hostName = hostName;
+        this._port = port;
     }
-    
+
     public boolean isValid ()
     {
-        if ( _hostName == null )
+        if ( this._hostName == null )
+        {
             return false;
-        if ( _hostName.equals ( "" ) )
+        }
+        if ( this._hostName.equals ( "" ) )
+        {
             return false;
-        
-        if ( _port <= 0 )
+        }
+
+        if ( this._port <= 0 )
+        {
             return false;
-        
+        }
+
         return true;
     }
 
     public boolean isAutoReconnect ()
     {
-        return _autoReconnect;
+        return this._autoReconnect;
     }
 
-    public void setAutoReconnect ( boolean autoReconnect )
+    public void setAutoReconnect ( final boolean autoReconnect )
     {
-        _autoReconnect = autoReconnect;
+        this._autoReconnect = autoReconnect;
     }
 
     public int getReconnectDelay ()
     {
-        return _reconnectDelay;
+        return this._reconnectDelay;
     }
 
-    public void setReconnectDelay ( int reconnectDelay )
+    public void setReconnectDelay ( final int reconnectDelay )
     {
-        _reconnectDelay = reconnectDelay;
+        this._reconnectDelay = reconnectDelay;
     }
 
     public String getHostName ()
     {
-        return _hostName;
+        return this._hostName;
     }
 
-    public void setHostName ( String hostName )
+    public void setHostName ( final String hostName )
     {
-        _hostName = hostName;
+        this._hostName = hostName;
     }
 
     public int getPort ()
     {
-        return _port;
+        return this._port;
     }
 
-    public void setPort ( int port )
+    public void setPort ( final int port )
     {
-        _port = port;
+        this._port = port;
     }
 
     public URI toUri ()
@@ -100,29 +107,30 @@ public class ConnectionInfo
 
         try
         {
-            return new URI ( "net", null, _hostName, _port, null, null, null );
+            return new URI ( "net", null, this._hostName, this._port, null, null, null );
         }
-        catch ( URISyntaxException e )
+        catch ( final URISyntaxException e )
         {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.printStackTrace ();
             return null;
         }
 
     }
 
-    public static ConnectionInfo fromUri ( URI uri )
+    public static ConnectionInfo fromUri ( final URI uri )
     {
-        ConnectionInfo ci =  new ConnectionInfo ();
-        
+        final ConnectionInfo ci = new ConnectionInfo ();
+
         if ( !uri.getScheme ().equals ( "net" ) )
+        {
             return null;
-        
+        }
+
         ci.setHostName ( uri.getHost () );
         ci.setPort ( uri.getPort () );
-        
+
         return ci;
     }
 
-    
 }

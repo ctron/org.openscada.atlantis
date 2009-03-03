@@ -19,7 +19,6 @@
 
 package org.openscada.core.client;
 
-
 public interface ConnectionStateListener
 {
     /**

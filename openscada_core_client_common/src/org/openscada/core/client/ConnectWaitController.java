@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,16 +25,17 @@ public class ConnectWaitController implements ConnectionStateListener
 {
     private static Logger logger = Logger.getLogger ( ConnectWaitController.class );
 
-    private Connection _connection;
+    private final Connection connection;
 
-    private ConnectionState _state = null;
+    private ConnectionState state = null;
 
-    private Throwable _error = null;
+    private Throwable error = null;
 
-    public ConnectWaitController ( Connection connection )
+    public ConnectWaitController ( final Connection connection )
     {
         super ();
-        _connection = connection;
+        this.connection = connection;
+        this.state = connection.getState ();
     }
 
     public synchronized void connect () throws Exception
@@ -42,44 +43,44 @@ public class ConnectWaitController implements ConnectionStateListener
         connect ( 0 );
     }
 
-    public synchronized void connect ( int timeout ) throws Exception
+    public synchronized void connect ( final int timeout ) throws Exception
     {
         try
         {
-            _connection.addConnectionStateListener ( this );
-            _connection.connect ();
-            switch ( _state )
+            this.connection.addConnectionStateListener ( this );
+            this.connection.connect ();
+            switch ( this.state )
             {
             case BOUND:
                 return;
             case CLOSED:
-                if ( _error == null )
+                if ( this.error == null )
                 {
                     return;
                 }
                 else
                 {
-                    throw new Exception ( _error );
+                    throw new Exception ( this.error );
                 }
             }
 
             wait ( timeout );
-            if ( _error != null )
+            if ( this.error != null )
             {
-                throw new Exception ( _error );
+                throw new Exception ( this.error );
             }
         }
         finally
         {
-            _connection.removeConnectionStateListener ( this );
+            this.connection.removeConnectionStateListener ( this );
         }
     }
 
-    public synchronized void stateChange ( Connection connection, ConnectionState state, Throwable error )
+    public synchronized void stateChange ( final Connection connection, final ConnectionState state, final Throwable error )
     {
         logger.info ( String.format ( "New connection state: %s", state ) );
-        _state = state;
-        _error = error;
+        this.state = state;
+        this.error = error;
 
         switch ( state )
         {

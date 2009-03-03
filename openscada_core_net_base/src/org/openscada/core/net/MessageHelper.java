@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ package org.openscada.core.net;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
@@ -30,103 +31,153 @@ import org.openscada.net.base.data.DoubleValue;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
+import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
 
 public class MessageHelper
 {
+    public static final int CC_CREATE_SESSION = 0x00010001;
+
+    public static final int CC_CLOSE_SESSION = 0x00010002;
+
     /**
      * Convert a MapValue to a attributes map
      * @param mapValue the map value to convert
      * @return the attributes map
      * @note Only scalar entries in the map are converted. Other values are skipped.
      */
-    public static Map<String, Variant> mapToAttributes ( MapValue mapValue )
+    public static Map<String, Variant> mapToAttributes ( final MapValue mapValue )
     {
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        
-        for ( Map.Entry<String, Value> entry : mapValue.getValues ().entrySet () )
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+
+        for ( final Map.Entry<String, Value> entry : mapValue.getValues ().entrySet () )
         {
             Variant value = null;
-            Value entryValue = entry.getValue ();
-            
+            final Value entryValue = entry.getValue ();
+
             value = valueToVariant ( entryValue, null );
-            
+
             if ( value != null )
             {
-                attributes.put ( new String ( entry.getKey () ) , value );
+                attributes.put ( new String ( entry.getKey () ), value );
             }
         }
-        
+
         return attributes;
     }
-    
-    public static MapValue attributesToMap ( Map<String, Variant> attributes )
+
+    public static MapValue attributesToMap ( final Map<String, Variant> attributes )
     {
-        MapValue mapValue = new MapValue ();
-        
-        for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+        final MapValue mapValue = new MapValue ();
+
+        for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
-            Value value = variantToValue ( entry.getValue () );
+            final Value value = variantToValue ( entry.getValue () );
             if ( value != null )
             {
                 mapValue.put ( new String ( entry.getKey () ), value );
             }
         }
-        
+
         return mapValue;
     }
-    
 
-    public static Variant valueToVariant ( Value value, Variant defaultValue )
+    public static Variant valueToVariant ( final Value value, final Variant defaultValue )
     {
         if ( value == null )
+        {
             return defaultValue;
-        
+        }
+
         if ( value instanceof StringValue )
-            return new Variant ( ((StringValue)value).getValue () );
+        {
+            return new Variant ( ( (StringValue)value ).getValue () );
+        }
         else if ( value instanceof BooleanValue )
-            return new Variant ( ((BooleanValue)value).getValue () );
+        {
+            return new Variant ( ( (BooleanValue)value ).getValue () );
+        }
         else if ( value instanceof DoubleValue )
-            return new Variant ( ((DoubleValue)value).getValue () );
+        {
+            return new Variant ( ( (DoubleValue)value ).getValue () );
+        }
         else if ( value instanceof LongValue )
-            return new Variant ( ((LongValue)value).getValue () );
+        {
+            return new Variant ( ( (LongValue)value ).getValue () );
+        }
         else if ( value instanceof IntegerValue )
-            return new Variant ( ((IntegerValue)value).getValue () );
+        {
+            return new Variant ( ( (IntegerValue)value ).getValue () );
+        }
         else if ( value instanceof VoidValue )
+        {
             return new Variant ();
-        
+        }
+
         return defaultValue;
     }
-    
-    public static Value variantToValue ( Variant value )
+
+    public static Value variantToValue ( final Variant value )
     {
         if ( value == null )
+        {
             return null;
-        
-        try {
-            if ( value.isDouble () )
-                return new DoubleValue ( value.asDouble () );
-            else if ( value.isInteger () )
-                return new IntegerValue ( value.asInteger () );
-            else if ( value.isLong () )
-                return new LongValue ( value.asLong () );
-            else if ( value.isBoolean () )
-                return new BooleanValue ( value.asBoolean () );
-            else if ( value.isString () )
-                return new StringValue ( value.asString () );
-            else if ( value.isNull () )
-                return new VoidValue ();
         }
-        catch ( NullValueException e )
+
+        try
+        {
+            if ( value.isDouble () )
+            {
+                return new DoubleValue ( value.asDouble () );
+            }
+            else if ( value.isInteger () )
+            {
+                return new IntegerValue ( value.asInteger () );
+            }
+            else if ( value.isLong () )
+            {
+                return new LongValue ( value.asLong () );
+            }
+            else if ( value.isBoolean () )
+            {
+                return new BooleanValue ( value.asBoolean () );
+            }
+            else if ( value.isString () )
+            {
+                return new StringValue ( value.asString () );
+            }
+            else if ( value.isNull () )
+            {
+                return new VoidValue ();
+            }
+        }
+        catch ( final NullValueException e )
         {
             return new VoidValue ();
         }
-        catch ( NotConvertableException e )
+        catch ( final NotConvertableException e )
         {
         }
         return null;
     }
-    
+
+    public static Message createSession ( final Properties props )
+    {
+        final Message msg = new Message ( CC_CREATE_SESSION );
+
+        for ( final Map.Entry<Object, Object> entry : props.entrySet () )
+        {
+            msg.getValues ().put ( entry.getKey ().toString (), new StringValue ( entry.getValue ().toString () ) );
+        }
+
+        return msg;
+    }
+
+    public static Message closeSession ()
+    {
+        return new Message ( CC_CLOSE_SESSION );
+    }
+
 }

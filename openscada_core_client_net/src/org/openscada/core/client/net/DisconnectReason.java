@@ -23,25 +23,25 @@ public class DisconnectReason extends Exception
 {
 
     private String _reason = "";
-    
+
     /**
      * 
      */
     private static final long serialVersionUID = -4831595156582204891L;
-    
+
     public DisconnectReason ()
     {
         super ( "Disconnected" );
     }
-    
-    public DisconnectReason ( String reason )
+
+    public DisconnectReason ( final String reason )
     {
         super ( "Disconnected: " + reason );
-        _reason = reason;
+        this._reason = reason;
     }
 
     public String getReason ()
     {
-        return _reason;
+        return this._reason;
     }
 }

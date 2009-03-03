@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,31 +19,31 @@
 
 package org.openscada.core.net;
 
-import org.openscada.net.base.ConnectionHandlerBase;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
+import org.openscada.net.mina.Messenger;
 import org.openscada.net.utils.MessageCreator;
 
 public class OperationController
 {
-    private ConnectionHandlerBase _connection = null;
+    private Messenger messenger = null;
 
-    public OperationController ( ConnectionHandlerBase connection )
+    public OperationController ( final Messenger messenger )
     {
         super ();
-        _connection = connection;
-    }
-    
-    protected void sendACK ( Message request, long id )
-    {
-        Message message = MessageCreator.createACK ( request );
-        message.getValues ().put ( "id", new LongValue ( id ) );
-        _connection.getConnection ().sendMessage ( message );
+        this.messenger = messenger;
     }
 
-    protected void sendFailure ( Message request, Throwable e )
+    protected void sendACK ( final Message request, final long id )
     {
-        Message message = MessageCreator.createFailedMessage ( request, e );
-        _connection.getConnection ().sendMessage ( message );
+        final Message message = MessageCreator.createACK ( request );
+        message.getValues ().put ( "id", new LongValue ( id ) );
+        this.messenger.sendMessage ( message );
+    }
+
+    protected void sendFailure ( final Message request, final Throwable e )
+    {
+        final Message message = MessageCreator.createFailedMessage ( request, e );
+        this.messenger.sendMessage ( message );
     }
 }

@@ -3,6 +3,8 @@
 	<name>openscada_core_client_net</name>
 	<comment></comment>
 	<projects>
+		<project>openscada_core_net_base</project>
+		<project>openscada_net_base</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

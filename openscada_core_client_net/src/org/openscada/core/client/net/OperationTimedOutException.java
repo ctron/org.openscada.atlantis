@@ -23,7 +23,7 @@ public class OperationTimedOutException extends Exception
 {
 
     private String _additionalInformation = "";
-    
+
     /**
      * 
      */
@@ -33,15 +33,15 @@ public class OperationTimedOutException extends Exception
     {
         super ( "Operation timed out" );
     }
-    
-    public OperationTimedOutException ( String additionalInformation )
+
+    public OperationTimedOutException ( final String additionalInformation )
     {
         super ( "Operation timed out: " + additionalInformation );
-        _additionalInformation = additionalInformation;
+        this._additionalInformation = additionalInformation;
     }
 
     public String getAdditionalInformation ()
     {
-        return _additionalInformation;
+        return this._additionalInformation;
     }
 }
