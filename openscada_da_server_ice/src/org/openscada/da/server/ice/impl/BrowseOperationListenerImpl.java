@@ -6,37 +6,41 @@ import org.openscada.da.core.server.BrowseOperationListener;
 public class BrowseOperationListenerImpl implements BrowseOperationListener
 {
     private Throwable _error = null;
+
     private Entry[] _result = null;
+
     private boolean _completed = false;
-    
-    public synchronized void failure ( Throwable throwable )
+
+    public synchronized void failure ( final Throwable throwable )
     {
-        _error = throwable;
-        _completed = true;
+        this._error = throwable;
+        this._completed = true;
         notifyAll ();
     }
 
-    public synchronized void success ( Entry[] result )
+    public synchronized void success ( final Entry[] result )
     {
-        _result = result;
-        _completed = true;
+        this._result = result;
+        this._completed = true;
         notifyAll ();
     }
 
     public Throwable getError ()
     {
-        return _error;
+        return this._error;
     }
 
     public Entry[] getResult ()
     {
-        return _result;
+        return this._result;
     }
-    
+
     public synchronized void waitForCompletion () throws InterruptedException
     {
-        if ( _completed )
+        if ( this._completed )
+        {
             return;
+        }
 
         wait ();
     }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,98 +19,78 @@
 
 package org.openscada.da.server.ice;
 
-import java.io.IOException;
-
+import org.openscada.core.ConnectionInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.impl.ExporterBase;
 import org.openscada.da.server.ice.impl.HiveImpl;
 
 import Ice.Communicator;
 
-public class Exporter extends ExporterBase implements Runnable
+public class Exporter extends ExporterBase
 {
-    private Communicator _communicator = null;
-    private String _endpoints = null;
-    private Ice.ObjectAdapter _adapter = null;
-    private boolean _running = false;
+    private Communicator communicator = null;
 
-    public Exporter ( String hiveClassName, Communicator communicator ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
+    private Ice.ObjectAdapter adapter = null;
+
+    private boolean running = false;
+
+    public Exporter ( final String hiveClassName, final Communicator communicator, final ConnectionInformation connectionInformation ) throws Exception
     {
-        this ( hiveClassName, communicator, null );
-    }
-    
-    public Exporter ( Hive hive, Communicator communicator ) throws IOException
-    {
-        this ( hive, communicator, null );
-    }
-    
-    public Exporter ( Class hiveClass, Communicator communicator ) throws InstantiationException, IllegalAccessException, IOException
-    {
-        this ( hiveClass, communicator, null );
-    }
-    
-    public Exporter ( String hiveClassName, Communicator communicator, String endpoints ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException
-    {
-        super ( hiveClassName );
-        _communicator = communicator;
-        _endpoints = endpoints;
-    }
-    
-    public Exporter ( Hive hive, Communicator communicator, String endpoints ) throws IOException
-    {
-        super ( hive );
-        _communicator = communicator;
-        _endpoints = endpoints;
-    }
-    
-    public Exporter ( Class hiveClass, Communicator communicator, String endpoints ) throws InstantiationException, IllegalAccessException, IOException
-    {
-        super ( hiveClass );
-        _communicator = communicator;
-        _endpoints = endpoints;
+        super ( hiveClassName, connectionInformation );
+        this.communicator = communicator;
     }
 
-    public void run ()
+    public Exporter ( final Hive hive, final Communicator communicator, final ConnectionInformation connectionInformation ) throws Exception
     {
-        if ( _endpoints == null )
-        {
-            _adapter = _communicator.createObjectAdapter ( "Hive" );
-        }
-        else
-        {
-            _adapter = _communicator.createObjectAdapterWithEndpoints ( "Hive", _endpoints );
-        }
-        
-        _adapter.add ( new HiveImpl ( _hive, _adapter ), _communicator.stringToIdentity ( "hive" ) );
-        _adapter.activate ();
-        _communicator.waitForShutdown ();
+        super ( hive, connectionInformation );
+        this.communicator = communicator;
     }
-    
+
+    public Exporter ( final Class<Hive> hiveClass, final Communicator communicator, final ConnectionInformation connectionInformation ) throws Exception
+    {
+        super ( hiveClass, connectionInformation );
+        this.communicator = communicator;
+    }
+
     public synchronized void start ()
     {
-        if ( _running )
+        if ( this.running )
         {
             return;
         }
-        
-        Thread thread = new Thread ( this );
-        thread.setDaemon ( true );
-        thread.start ();
-        
-        _running = true;
+
+        this.running = true;
+
+        final String endpoints = getEndpoints ();
+        if ( endpoints == null )
+        {
+            this.adapter = this.communicator.createObjectAdapter ( "Hive" );
+        }
+        else
+        {
+            this.adapter = this.communicator.createObjectAdapterWithEndpoints ( "Hive", endpoints );
+        }
+
+        this.adapter.add ( new HiveImpl ( this.hive, this.adapter ), this.communicator.stringToIdentity ( "hive" ) );
+        this.adapter.activate ();
     }
-    
+
+    private String getEndpoints ()
+    {
+        return this.connectionInformation.getTarget ();
+    }
+
     public synchronized void stop ()
     {
-        if ( _running )
+        if ( this.running )
         {
-            _adapter.deactivate ();
-            _communicator.shutdown ();
+            this.adapter.deactivate ();
+            this.communicator.shutdown ();
 
-            _adapter = null;
-            _communicator = null;
-            
-            _running = false;
+            this.adapter = null;
+            this.communicator = null;
+
+            this.running = false;
         }
     }
 

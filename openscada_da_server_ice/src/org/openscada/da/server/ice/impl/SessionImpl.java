@@ -46,63 +46,66 @@ import OpenSCADA.DA.Browser.FolderCallbackPrxHelper;
 public class SessionImpl extends _SessionDisp implements ItemChangeListener, FolderListener
 {
     private static Logger _log = Logger.getLogger ( SessionImpl.class );
-    
+
     private HiveImpl _hive;
+
     private Session _session;
+
     private DataCallbackPrx _dataCallback = null;
+
     private FolderCallbackPrx _folderCallback = null;
-    
-    public SessionImpl ( HiveImpl hive, Session session )
+
+    public SessionImpl ( final HiveImpl hive, final Session session )
     {
         super ();
-        _hive = hive;
-        _session = session;
-        _session.setListener ( (ItemChangeListener)this );
-        _session.setListener ( (FolderListener)this );
-        
+        this._hive = hive;
+        this._session = session;
+        this._session.setListener ( (ItemChangeListener)this );
+        this._session.setListener ( (FolderListener)this );
+
         System.gc ();
     }
-    
+
     @Override
     protected void finalize () throws Throwable
     {
         _log.debug ( "Session finalized" );
         super.finalize ();
     }
-    
-    public void setDataCallback ( Identity ident, Current __current )
+
+    public void setDataCallback ( final Identity ident, final Current __current )
     {
-        _dataCallback = DataCallbackPrxHelper.uncheckedCast ( __current.con.createProxy ( ident ).ice_oneway () );
-    }
-    
-    public void unsetDataCallback ( Current __current )
-    {
-        _dataCallback = null;
-    }
-    
-    public void setFolderCallback ( Identity ident, Current __current )
-    {
-        _folderCallback = FolderCallbackPrxHelper.uncheckedCast ( __current.con.createProxy ( ident ).ice_oneway () );
+        this._dataCallback = DataCallbackPrxHelper.uncheckedCast ( __current.con.createProxy ( ident ).ice_oneway () );
     }
 
-    public void unsetFolderCallback ( Current __current )
+    public void unsetDataCallback ( final Current __current )
     {
-        _folderCallback = null;
+        this._dataCallback = null;
+    }
+
+    public void setFolderCallback ( final Identity ident, final Current __current )
+    {
+        this._folderCallback = FolderCallbackPrxHelper.uncheckedCast ( __current.con.createProxy ( ident ).ice_oneway () );
+    }
+
+    public void unsetFolderCallback ( final Current __current )
+    {
+        this._folderCallback = null;
     }
 
     public Session getSession ()
     {
-        return _session;
+        return this._session;
     }
 
-    @SuppressWarnings("unchecked")
-    public void dataChanged ( String itemId, Variant value, Map<String, Variant> attributes, boolean cache )
+    @SuppressWarnings ( "unchecked" )
+    public void dataChanged ( final String itemId, final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         _log.debug ( String.format ( "Data changed for '%s'", itemId ) );
 
         DataCallbackPrx dataCallback;
-        
-        if ( (dataCallback = _dataCallback) != null )
+
+        if ( ( dataCallback = this._dataCallback ) != null )
         {
             dataCallback.dataChange ( itemId, VariantHelper.toIce ( value ), AttributesHelper.toIce ( attributes ), cache );
         }
@@ -113,87 +116,87 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
         _log.info ( "handleListenerError" );
         destroy ();
     }
-    
+
     public synchronized void destroy ()
     {
         _log.debug ( "destroy session" );
-        
-        if ( _session == null )
+
+        if ( this._session == null )
         {
             return;
         }
-        
-        _dataCallback = null;
-        _folderCallback = null;
-        _session.setListener ( (ItemChangeListener)null );
-        _session.setListener ( (FolderListener)null );
-        
+
+        this._dataCallback = null;
+        this._folderCallback = null;
+        this._session.setListener ( (ItemChangeListener)null );
+        this._session.setListener ( (FolderListener)null );
+
         try
         {
-            _hive.closeSession ( this );
+            this._hive.closeSession ( this );
         }
-        catch ( InvalidSessionException e )
+        catch ( final InvalidSessionException e )
         {
             // we don't care
         }
 
-        _session = null;
-        _hive = null;
+        this._session = null;
+        this._hive = null;
     }
 
-    public void folderChanged ( Location location, Collection<Entry> added, Collection<String> removed, boolean full )
+    public void folderChanged ( final Location location, final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
-       _log.debug ( String.format ( "Folder changed: %s", location.toString () ) );
-       
-       if ( _folderCallback == null )
-       {
-           _log.debug ( "Folder changed but no listener subscribed" );
-           return;
-       }
+        _log.debug ( String.format ( "Folder changed: %s", location.toString () ) );
 
-       FolderCallbackPrx folderCallback;
-       
-       if ( (folderCallback = _folderCallback) != null )
-       {
-           folderCallback.folderChanged ( location.asArray (), BrowserEntryHelper.toIce ( added.toArray ( new Entry[0] ) ), removed.toArray ( new String[0] ), full );
-       }
+        if ( this._folderCallback == null )
+        {
+            _log.debug ( "Folder changed but no listener subscribed" );
+            return;
+        }
+
+        FolderCallbackPrx folderCallback;
+
+        if ( ( folderCallback = this._folderCallback ) != null )
+        {
+            folderCallback.folderChanged ( location.asArray (), BrowserEntryHelper.toIce ( added.toArray ( new Entry[0] ) ), removed.toArray ( new String[0] ), full );
+        }
     }
 
     public void ping ()
     {
         try
         {
-            DataCallbackPrx dataCallback = _dataCallback;
+            DataCallbackPrx dataCallback = this._dataCallback;
             if ( dataCallback != null )
             {
                 dataCallback = DataCallbackPrxHelper.uncheckedCast ( dataCallback.ice_twoway () );
                 dataCallback.ice_ping ();
             }
-            
-            FolderCallbackPrx folderCallback = _folderCallback;
+
+            FolderCallbackPrx folderCallback = this._folderCallback;
             if ( folderCallback != null )
             {
                 folderCallback = FolderCallbackPrxHelper.uncheckedCast ( folderCallback.ice_twoway () );
                 folderCallback.ice_ping ();
             }
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             _log.debug ( "Ping failed", e );
             handleListenerError ();
         }
     }
 
-    public void subscriptionChanged ( String item, SubscriptionState subscriptionState )
+    public void subscriptionChanged ( final String item, final SubscriptionState subscriptionState )
     {
         _log.debug ( String.format ( "Subscription changed: '%s' - '%s'", item, subscriptionState.name () ) );
-        
+
         DataCallbackPrx dataCallback;
-        
-        if ( (dataCallback = _dataCallback) != null )
+
+        if ( ( dataCallback = this._dataCallback ) != null )
         {
             OpenSCADA.DA.SubscriptionState ss = OpenSCADA.DA.SubscriptionState.DISCONNECTED;
-            
+
             switch ( subscriptionState )
             {
             case CONNECTED:
@@ -206,7 +209,7 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
                 ss = OpenSCADA.DA.SubscriptionState.GRANTED;
                 break;
             }
-            
+
             dataCallback.subscriptionChange ( item, ss );
         }
     }

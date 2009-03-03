@@ -20,29 +20,38 @@
 package org.openscada.da.server.ice;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.ConnectionInformation;
 
 public class Application extends Ice.Application
 {
-    private static Logger _log = Logger.getLogger ( Application.class );
-    
+    private static Logger log = Logger.getLogger ( Application.class );
+
+    @SuppressWarnings ( "unused" )
+    private Exporter e;
+
     @Override
-    public int run ( String[] args )
+    public int run ( final String[] args )
     {
         try
         {
-            _log.debug ( String.format ( "Try to export hive '%s'", args[0] ) );
-            Exporter e = new Exporter ( args[0], communicator () );
-            e.run ();
+            log.debug ( String.format ( "Try to export hive '%s'", args[0] ) );
+
+            final ConnectionInformation ci = ConnectionInformation.fromURI ( "da:ice://Hive" );
+
+            this.e = new Exporter ( args[0], communicator (), ci );
+
+            communicator ().waitForShutdown ();
+
             return 0;
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
-            _log.error ( "Failed to start exporter", e );
+            log.error ( "Failed to start exporter", e );
             return 1;
         }
     }
-    
-    public static void main ( String[] args )
+
+    public static void main ( final String[] args )
     {
         new Application ().main ( "Hive", args, System.getProperty ( "openscada.ice.config" ) );
     }
