@@ -9,22 +9,22 @@
 
 	<distributionManagement>
 		<repository>
-			<id>openscada-atlantis-releases</id>
-			<name>openscada-atlantis-releases</name>
-			<url>http://carlton.local:8080/artifactory/openscada-atlantis-releases/</url>
+			<id>openscada-releases</id>
+			<name>openscada-releases</name>
+			<url>http://carlton.local:8080/artifactory/openscada-releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>openscada-atlantis-snapshots</id>
-			<name>openscada-atlantis-snapshots</name>
-			<url>http://carlton.local:8080/artifactory/openscada-atlantis-snapshots/</url>
+			<id>openscada-snapshots</id>
+			<name>openscada-snapshots</name>
+			<url>http://carlton.local:8080/artifactory/openscada-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
 	<repositories>
 		<repository>
-			<id>openscada-snapshots</id>
-			<name>openscada-snapshots</name>
-			<url>http://carlton.local:8080/artifactory/openscada-snapshots/</url>
+			<id>openscada-repos</id>
+			<name>openscada-repos</name>
+			<url>http://carlton.local:8080/artifactory/openscada-repos/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
@@ -40,9 +40,9 @@
 
 	<pluginRepositories>
 		<pluginRepository>
-			<id>openscada-snapshots</id>
-			<name>openscada-snapshots</name>
-			<url>http://carlton.local:8080/artifactory/openscada-snapshots/</url>
+			<id>openscada-repos</id>
+			<name>openscada-repos</name>
+			<url>http://carlton.local:8080/artifactory/openscada-repos/</url>
 		</pluginRepository>
 	</pluginRepositories>
 
