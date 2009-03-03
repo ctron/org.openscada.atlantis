@@ -26,23 +26,24 @@ import org.openscada.da.core.browser.Entry;
 
 public class EntryCommon implements Entry
 {
-    private String _name;
-    private Map<String, Variant> _attributes;
-    
-    public EntryCommon ( String name, Map<String, Variant> attributes )
+    private final String _name;
+
+    private final Map<String, Variant> _attributes;
+
+    public EntryCommon ( final String name, final Map<String, Variant> attributes )
     {
-        _name = name;
-        _attributes = attributes;
+        this._name = name;
+        this._attributes = attributes;
     }
-    
+
     public Map<String, Variant> getAttributes ()
     {
-        return _attributes;
+        return this._attributes;
     }
 
     public String getName ()
     {
-        return _name;
+        return this._name;
     }
 
 }

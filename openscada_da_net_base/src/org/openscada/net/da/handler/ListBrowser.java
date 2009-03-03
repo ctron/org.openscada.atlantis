@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.core.net.MessageHelper;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.browser.DataItemEntry;
 import org.openscada.da.core.browser.Entry;
@@ -46,51 +47,57 @@ import org.openscada.utils.lang.Holder;
 public class ListBrowser
 {
     private static Logger _log = Logger.getLogger ( ListBrowser.class );
-    
-    public static Message createRequest ( String [] path )
+
+    public static Message createRequest ( final String[] path )
     {
-        Message message = new Message ( Messages.CC_BROWSER_LIST_REQ );
-     
-        ListValue value = new ListValue ();
-        for ( String tok : path )
+        final Message message = new Message ( Messages.CC_BROWSER_LIST_REQ );
+
+        final ListValue value = new ListValue ();
+        for ( final String tok : path )
         {
             value.add ( new StringValue ( tok ) );
         }
         message.getValues ().put ( "path", value );
-        
+
         return message;
     }
-    
-    public static String [] parseRequest ( Message message )
+
+    public static String[] parseRequest ( final Message message )
     {
-        List<String> list = new ArrayList<String> ();
+        final List<String> list = new ArrayList<String> ();
         List<Value> listValue = null;
-        
+
         if ( message.getValues ().containsKey ( "path" ) )
+        {
             if ( message.getValues ().get ( "path" ) instanceof ListValue )
-                listValue = ((ListValue)message.getValues ().get ( "path" )).getValues ();
+            {
+                listValue = ( (ListValue)message.getValues ().get ( "path" ) ).getValues ();
+            }
+        }
 
         if ( listValue == null )
+        {
             return new String[0];
-        
-        for ( Value value : listValue )
+        }
+
+        for ( final Value value : listValue )
         {
             list.add ( value.toString () );
         }
-        
+
         return list.toArray ( new String[0] );
     }
-    
-    private static void createEntries ( Message message, String field, Iterable<Entry> entries )
+
+    private static void createEntries ( final Message message, final String field, final Iterable<Entry> entries )
     {
-        ListValue list = new ListValue ();
-        for ( Entry entry : entries )
+        final ListValue list = new ListValue ();
+        for ( final Entry entry : entries )
         {
-            MapValue mapValue = new MapValue ();
-            
+            final MapValue mapValue = new MapValue ();
+
             mapValue.put ( "name", new StringValue ( entry.getName () ) );
-            mapValue.put ( "attributes", Messages.attributesToMap ( entry.getAttributes () ) );
-            
+            mapValue.put ( "attributes", MessageHelper.attributesToMap ( entry.getAttributes () ) );
+
             if ( entry instanceof FolderEntry )
             {
                 mapValue.put ( "type", new StringValue ( "folder" ) );
@@ -98,67 +105,67 @@ public class ListBrowser
             else if ( entry instanceof DataItemEntry )
             {
                 mapValue.put ( "type", new StringValue ( "item" ) );
-                DataItemEntry dataItemEntry = (DataItemEntry)entry;
+                final DataItemEntry dataItemEntry = (DataItemEntry)entry;
                 mapValue.put ( "item-id", new StringValue ( dataItemEntry.getId () ) );
-                mapValue.put ( "io-direction", new IntegerValue ( Messages.encodeIO ( dataItemEntry.getIODirections () )) );
+                mapValue.put ( "io-direction", new IntegerValue ( Messages.encodeIO ( dataItemEntry.getIODirections () ) ) );
             }
             else
             {
                 mapValue.put ( "type", new StringValue ( "unknown" ) );
             }
-            
+
             list.add ( mapValue );
         }
         message.getValues ().put ( field, list );
     }
-    
-    public static Message createResponse ( long id, Entry [] entries )
+
+    public static Message createResponse ( final long id, final Entry[] entries )
     {
-        Message message = new Message ( Messages.CC_BROWSER_LIST_RES );
-        
+        final Message message = new Message ( Messages.CC_BROWSER_LIST_RES );
+
         createEntries ( message, "entries", Arrays.asList ( entries ) );
         message.getValues ().put ( "id", new LongValue ( id ) );
-        
+
         return message;
     }
-    
-    public static Message createResponse ( long id, String failure )
+
+    public static Message createResponse ( final long id, final String failure )
     {
-        Message message = new Message ( Messages.CC_BROWSER_LIST_RES );
-        
+        final Message message = new Message ( Messages.CC_BROWSER_LIST_RES );
+
         message.getValues ().put ( Message.FIELD_ERROR_INFO, new StringValue ( failure ) );
         message.getValues ().put ( "id", new LongValue ( id ) );
-        
+
         return message;
     }
-    
-    private static void parseEntries ( Message message, String field, List<Entry> list )
+
+    private static void parseEntries ( final Message message, final String field, final List<Entry> list )
     {
         list.clear ();
-        
+
         if ( !message.getValues ().containsKey ( field ) )
         {
             _log.warn ( "Required value '" + field + "' missing" );
             return;
         }
-        
-        if ( !(message.getValues ().get ( field ) instanceof ListValue) )
+
+        if ( ! ( message.getValues ().get ( field ) instanceof ListValue ) )
         {
             _log.warn ( "'" + field + "' must be of type 'list'" );
             return;
         }
 
-        ListValue entries = (ListValue)message.getValues ().get ( field );
-        
-        for ( Value value : entries.getValues () )
+        final ListValue entries = (ListValue)message.getValues ().get ( field );
+
+        for ( final Value value : entries.getValues () )
         {
-            if ( !(value instanceof MapValue) )
+            if ( ! ( value instanceof MapValue ) )
             {
                 _log.warn ( "list value is not of type 'map'. Skipping!" );
                 continue;
             }
-            MapValue mapValue = (MapValue)value;
-            
+            final MapValue mapValue = (MapValue)value;
+
             Entry entry = null;
             if ( !mapValue.containsKey ( "type" ) )
             {
@@ -175,17 +182,17 @@ public class ListBrowser
                 _log.warn ( "map misses required value 'attributes'" );
                 continue;
             }
-            if ( !(mapValue.get ( "attributes" ) instanceof MapValue) )
+            if ( ! ( mapValue.get ( "attributes" ) instanceof MapValue ) )
             {
                 _log.warn ( "map entry 'attributes' is not of type MapValue" );
                 continue;
             }
-            
-            String type = mapValue.get ( "type" ).toString ();
-            Map<String, Variant> attributes = Messages.mapToAttributes ( (MapValue)mapValue.get ( "attributes" ) );
-            
+
+            final String type = mapValue.get ( "type" ).toString ();
+            final Map<String, Variant> attributes = MessageHelper.mapToAttributes ( (MapValue)mapValue.get ( "attributes" ) );
+
             _log.debug ( "entry type: '" + type + "'" );
-            
+
             if ( type.equals ( "folder" ) )
             {
                 entry = new FolderEntryCommon ( mapValue.get ( "name" ).toString (), attributes );
@@ -194,116 +201,128 @@ public class ListBrowser
             {
                 if ( !mapValue.containsKey ( "item-id" ) )
                 {
-                    _log.warn ( "map entry is an item but misses 'item-id' ");
+                    _log.warn ( "map entry is an item but misses 'item-id' " );
                     continue;
                 }
                 if ( !mapValue.containsKey ( "io-direction" ) )
                 {
-                    _log.warn ( "map entry is an item but misses 'io-direction' ");
+                    _log.warn ( "map entry is an item but misses 'io-direction' " );
                     continue;
                 }
-                
-                String id = mapValue.get ( "item-id" ).toString ();
-                
-                EnumSet<IODirection> io = Messages.decodeIO ( ValueTools.toInteger ( mapValue.get ( "io-direction" ), 0 ) );
-                
+
+                final String id = mapValue.get ( "item-id" ).toString ();
+
+                final EnumSet<IODirection> io = Messages.decodeIO ( ValueTools.toInteger ( mapValue.get ( "io-direction" ), 0 ) );
+
                 entry = new DataItemEntryCommon ( mapValue.get ( "name" ).toString (), io, attributes, id );
             }
-            
+
             // now add the entry
             if ( entry != null )
+            {
                 list.add ( entry );
+            }
         }
     }
-    
-    public static Entry [] parseResponse ( Message message )
+
+    public static Entry[] parseResponse ( final Message message )
     {
-        List<Entry> list = new ArrayList<Entry> ();
+        final List<Entry> list = new ArrayList<Entry> ();
         parseEntries ( message, "entries", list );
         return list.toArray ( new Entry[list.size ()] );
     }
-    
-    public static void parseEvent ( Message message, List<String> path, List<Entry> added, List<String> removed, Holder<Boolean> full )
+
+    public static void parseEvent ( final Message message, final List<String> path, final List<Entry> added, final List<String> removed, final Holder<Boolean> full )
     {
         // first clear what we have
         path.clear ();
         added.clear ();
         removed.clear ();
-        
+
         // path 
         if ( message.getValues ().containsKey ( "path" ) )
+        {
             if ( message.getValues ().get ( "path" ) instanceof ListValue )
+            {
                 path.addAll ( ValueTools.fromStringList ( (ListValue)message.getValues ().get ( "path" ) ) );
-        
+            }
+        }
+
         // added
         parseEntries ( message, "added", added );
-        
+
         // full
         full.value = message.getValues ().containsKey ( "full" );
-        
+
         // removed
         if ( message.getValues ().containsKey ( "removed" ) )
         {
             if ( message.getValues ().get ( "removed" ) instanceof ListValue )
             {
-                ListValue listValue = (ListValue)message.getValues ().get ( "removed" );
-                for ( Value value : listValue.getValues () )
+                final ListValue listValue = (ListValue)message.getValues ().get ( "removed" );
+                for ( final Value value : listValue.getValues () )
                 {
                     removed.add ( value.toString () );
                 }
             }
         }
     }
-    
-    public static Message createEvent ( String [] path, Collection<Entry> added, Collection<String> removed, boolean full )
+
+    public static Message createEvent ( final String[] path, final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
-        Message message = new Message ( Messages.CC_BROWSER_EVENT );
-        
+        final Message message = new Message ( Messages.CC_BROWSER_EVENT );
+
         if ( full )
-            message.getValues ().put ( "full", new VoidValue() );
-        
+        {
+            message.getValues ().put ( "full", new VoidValue () );
+        }
+
         message.getValues ().put ( "path", ValueTools.toStringList ( Arrays.asList ( path ) ) );
-        message.getValues().put ( "removed", ValueTools.toStringList ( removed ) );
-        
+        message.getValues ().put ( "removed", ValueTools.toStringList ( removed ) );
+
         createEntries ( message, "added", added );
-        
+
         return message;
     }
-    
-    private static Message createRegMessage ( int commandCode, String [] path )
+
+    private static Message createRegMessage ( final int commandCode, final String[] path )
     {
-        Message message = new Message ( commandCode );
-        
+        final Message message = new Message ( commandCode );
+
         message.getValues ().put ( "path", ValueTools.toStringList ( Arrays.asList ( path ) ) );
-        
+
         return message;
     }
-    
-    public static Message createSubscribe ( String [] path )
+
+    public static Message createSubscribe ( final String[] path )
     {
         return createRegMessage ( Messages.CC_BROWSER_SUBSCRIBE, path );
     }
-    
-    public static Message createUnsubscribe ( String [] path )
+
+    public static Message createUnsubscribe ( final String[] path )
     {
         return createRegMessage ( Messages.CC_BROWSER_UNSUBSCRIBE, path );
     }
-    
-    private static String[] parseRegMessage ( Message message )
+
+    private static String[] parseRegMessage ( final Message message )
     {
         if ( !message.getValues ().containsKey ( "path" ) )
+        {
             return new String[0];
-        if ( !(message.getValues ().get ( "path" ) instanceof ListValue) )
+        }
+        if ( ! ( message.getValues ().get ( "path" ) instanceof ListValue ) )
+        {
             return new String[0];
+        }
         return ValueTools.fromStringList ( (ListValue)message.getValues ().get ( "path" ) ).toArray ( new String[0] );
     }
-    
-    public static String [] parseSubscribeMessage ( Message message )
+
+    public static String[] parseSubscribeMessage ( final Message message )
     {
         return parseRegMessage ( message );
     }
-    
-    public static String [] parseUnsubscribeMessage ( Message message )
+
+    public static String[] parseUnsubscribeMessage ( final Message message )
     {
         return parseRegMessage ( message );
     }

@@ -21,7 +21,6 @@ package org.openscada.net.da.handler;
 
 import java.util.EnumSet;
 import java.util.Map;
-import java.util.Properties;
 
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
@@ -37,10 +36,6 @@ import org.openscada.utils.lang.Holder;
 
 public class Messages extends org.openscada.core.net.MessageHelper
 {
-    public final static int CC_CREATE_SESSION = 0x00010001;
-
-    public final static int CC_CLOSE_SESSION = 0x00010002;
-
     public final static int CC_SUBSCRIBE_ITEM = 0x00010010;
 
     public final static int CC_UNSUBSCRIBE_ITEM = 0x00010011;
@@ -70,40 +65,23 @@ public class Messages extends org.openscada.core.net.MessageHelper
 
     public final static int CC_BROWSER_UNSUBSCRIBE = 0x00010212;
 
-    public static Message createSession ( Properties props )
+    public static Message subscribeItem ( final String itemName )
     {
-        Message msg = new Message ( CC_CREATE_SESSION );
-
-        for ( Map.Entry<Object, Object> entry : props.entrySet () )
-        {
-            msg.getValues ().put ( entry.getKey ().toString (), new StringValue ( entry.getValue ().toString () ) );
-        }
-
-        return msg;
-    }
-
-    public static Message closeSession ()
-    {
-        return new Message ( CC_CLOSE_SESSION );
-    }
-
-    public static Message subscribeItem ( String itemName )
-    {
-        Message msg = new Message ( CC_SUBSCRIBE_ITEM );
+        final Message msg = new Message ( CC_SUBSCRIBE_ITEM );
         msg.getValues ().put ( "item-id", new StringValue ( itemName ) );
         return msg;
     }
 
-    public static Message unsubscribeItem ( String itemName )
+    public static Message unsubscribeItem ( final String itemName )
     {
-        Message msg = new Message ( CC_UNSUBSCRIBE_ITEM );
+        final Message msg = new Message ( CC_UNSUBSCRIBE_ITEM );
         msg.getValues ().put ( "item-id", new StringValue ( itemName ) );
         return msg;
     }
 
-    public static Message notifyData ( String itemName, Variant value, Map<String, Variant> attributes, boolean cache )
+    public static Message notifyData ( final String itemName, final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        Message msg = new Message ( CC_NOTIFY_DATA );
+        final Message msg = new Message ( CC_NOTIFY_DATA );
 
         msg.getValues ().put ( "item-id", new StringValue ( itemName ) );
 
@@ -114,21 +92,21 @@ public class Messages extends org.openscada.core.net.MessageHelper
         }
 
         // encode message
-        Value messageValue = variantToValue ( value );
+        final Value messageValue = variantToValue ( value );
         if ( messageValue != null )
         {
             msg.getValues ().put ( "value", messageValue );
         }
 
         // encode attributes
-        ListValue unsetEntries = new ListValue ();
-        MapValue setEntries = new MapValue ();
+        final ListValue unsetEntries = new ListValue ();
+        final MapValue setEntries = new MapValue ();
 
         if ( attributes != null )
         {
-            for ( Map.Entry<String, Variant> entry : attributes.entrySet () )
+            for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
             {
-                Value valueEntry = variantToValue ( entry.getValue () );
+                final Value valueEntry = variantToValue ( entry.getValue () );
                 if ( valueEntry == null )
                 {
                     unsetEntries.add ( new StringValue ( entry.getKey () ) );
@@ -146,7 +124,7 @@ public class Messages extends org.openscada.core.net.MessageHelper
         return msg;
     }
 
-    public static int encodeIO ( EnumSet<IODirection> io )
+    public static int encodeIO ( final EnumSet<IODirection> io )
     {
         int bits = 0;
         if ( io.contains ( IODirection.INPUT ) )
@@ -161,9 +139,9 @@ public class Messages extends org.openscada.core.net.MessageHelper
         return bits;
     }
 
-    public static EnumSet<IODirection> decodeIO ( int bits )
+    public static EnumSet<IODirection> decodeIO ( final int bits )
     {
-        EnumSet<IODirection> ioDirection = EnumSet.noneOf ( IODirection.class );
+        final EnumSet<IODirection> ioDirection = EnumSet.noneOf ( IODirection.class );
 
         if ( ( bits & 1 ) > 0 )
         {
@@ -177,9 +155,9 @@ public class Messages extends org.openscada.core.net.MessageHelper
         return ioDirection;
     }
 
-    public static Message notifySubscriptionChange ( String item, SubscriptionState subscriptionState )
+    public static Message notifySubscriptionChange ( final String item, final SubscriptionState subscriptionState )
     {
-        Message msg = new Message ( CC_SUBSCRIPTION_CHANGE );
+        final Message msg = new Message ( CC_SUBSCRIPTION_CHANGE );
         msg.getValues ().put ( "item-id", new StringValue ( item ) );
         switch ( subscriptionState )
         {
@@ -196,7 +174,7 @@ public class Messages extends org.openscada.core.net.MessageHelper
         return msg;
     }
 
-    public static void parseSubscriptionChange ( Message msg, Holder<String> item, Holder<SubscriptionState> subscriptionState )
+    public static void parseSubscriptionChange ( final Message msg, final Holder<String> item, final Holder<SubscriptionState> subscriptionState )
     {
         if ( msg.getValues ().containsKey ( "item-id" ) )
         {

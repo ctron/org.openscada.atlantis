@@ -26,9 +26,9 @@ import org.openscada.da.core.browser.FolderEntry;
 
 public class FolderEntryCommon extends EntryCommon implements FolderEntry
 {
-    public FolderEntryCommon ( String name, Map<String, Variant> attributes )
+    public FolderEntryCommon ( final String name, final Map<String, Variant> attributes )
     {
         super ( name, attributes );
     }
-    
+
 }

@@ -29,22 +29,23 @@ import org.openscada.da.core.browser.DataItemEntry;
 public class DataItemEntryCommon extends EntryCommon implements DataItemEntry
 {
     private String _id = "";
+
     private EnumSet<IODirection> _directions = EnumSet.noneOf ( IODirection.class );
-    
-    public DataItemEntryCommon ( String name, EnumSet<IODirection> directions, Map<String, Variant> attributes, String id )
+
+    public DataItemEntryCommon ( final String name, final EnumSet<IODirection> directions, final Map<String, Variant> attributes, final String id )
     {
         super ( name, attributes );
-        _directions = directions;
-        _id = id;
+        this._directions = directions;
+        this._id = id;
     }
-    
+
     public String getId ()
     {
-        return _id;
+        return this._id;
     }
 
     public EnumSet<IODirection> getIODirections ()
     {
-        return _directions;
+        return this._directions;
     }
 }
