@@ -130,9 +130,11 @@
 			<param name="dir" value="${source.base}/ae/client/test"/>
 		</antcall>
 		-->
+		<!--
 		<antcall target="export-project">
 			<param name="dir" value="${source.base}/openscada_build"/>
 		</antcall>
+		-->
 		<antcall target="export-project">
 			<param name="dir" value="${source.base}/openscada_interface_ice"/>
 		</antcall>
