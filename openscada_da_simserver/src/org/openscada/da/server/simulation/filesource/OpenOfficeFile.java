@@ -93,7 +93,7 @@ public class OpenOfficeFile extends BaseFile
             }
             final String script = (String)sheet.getValueAt ( 18, y );
             ItemDefinition idef = null;
-            if ( ( script == null ) || ( script.trim ().length () == 0 ) )
+            if ( script == null || script.trim ().length () == 0 )
             {
                 idef = getHiveBuilder ().addInputOutputItem ( itemName );
             }

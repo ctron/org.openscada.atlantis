@@ -95,7 +95,7 @@ public class ExcelFile extends BaseFile
             }
             final String script = sheet.getCell ( 18, y ).getContents ();
             ItemDefinition idef = null;
-            if ( ( script == null ) || ( script.trim ().length () == 0 ) )
+            if ( script == null || script.trim ().length () == 0 )
             {
                 idef = getHiveBuilder ().addInputOutputItem ( itemName );
             }
@@ -106,13 +106,13 @@ public class ExcelFile extends BaseFile
             Cell cell = null;
             // Unit
             cell = sheet.getCell ( 3, y );
-            if ( ( cell != null ) && ( cell.getType () == CellType.LABEL ) )
+            if ( cell != null && cell.getType () == CellType.LABEL )
             {
                 idef.addAttr ( "Unit", ( (LabelCell)cell ).getString () );
             }
             // Description
             cell = sheet.getCell ( 4, y );
-            if ( ( cell != null ) && ( cell.getType () == CellType.LABEL ) )
+            if ( cell != null && cell.getType () == CellType.LABEL )
             {
                 idef.addAttr ( "Description", ( (LabelCell)cell ).getString () );
             }
@@ -130,25 +130,25 @@ public class ExcelFile extends BaseFile
             }
             // LL
             cell = sheet.getCell ( alarm_ll_col, y );
-            if ( ( cell != null ) && ( cell.getType () == CellType.NUMBER ) )
+            if ( cell != null && cell.getType () == CellType.NUMBER )
             {
                 idef.addAttr ( "LL", ( (NumberCell)cell ).getValue () );
             }
             // L
             cell = sheet.getCell ( alarm_l_col, y );
-            if ( ( cell != null ) && ( cell.getType () == CellType.NUMBER ) )
+            if ( cell != null && cell.getType () == CellType.NUMBER )
             {
                 idef.addAttr ( "L", ( (NumberCell)cell ).getValue () );
             }
             // H
             cell = sheet.getCell ( alarm_h_col, y );
-            if ( ( cell != null ) && ( cell.getType () == CellType.NUMBER ) )
+            if ( cell != null && cell.getType () == CellType.NUMBER )
             {
                 idef.addAttr ( "H", ( (NumberCell)cell ).getValue () );
             }
             // HH
             cell = sheet.getCell ( alarm_hh_col, y );
-            if ( ( cell != null ) && ( cell.getType () == CellType.NUMBER ) )
+            if ( cell != null && cell.getType () == CellType.NUMBER )
             {
                 idef.addAttr ( "HH", ( (NumberCell)cell ).getValue () );
             }

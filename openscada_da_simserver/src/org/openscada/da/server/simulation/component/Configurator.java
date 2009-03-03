@@ -5,14 +5,14 @@ import org.openscada.da.server.simulation.component.modules.SimpleMOV;
 public class Configurator
 {
     private Hive _hive = null;
-    
-    public Configurator ( Hive hive )
+
+    public Configurator ( final Hive hive )
     {
-        _hive = hive;
+        this._hive = hive;
     }
-    
+
     public void configure ()
     {
-        _hive.addModule ( new SimpleMOV ( _hive, "1000" ) );
+        this._hive.addModule ( new SimpleMOV ( this._hive, "1000" ) );
     }
 }

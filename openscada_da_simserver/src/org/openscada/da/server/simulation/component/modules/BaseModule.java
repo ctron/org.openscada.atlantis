@@ -16,29 +16,29 @@ public class BaseModule
 
     private String _base = null;
 
-    private Map<String, DataItem> _items = new HashMap<String, DataItem> ();
+    private final Map<String, DataItem> _items = new HashMap<String, DataItem> ();
 
-    public BaseModule ( Hive hive, String base )
+    public BaseModule ( final Hive hive, final String base )
     {
-        _hive = hive;
-        _base = base;
+        this._hive = hive;
+        this._base = base;
     }
 
     public void dispose ()
     {
-        for ( DataItem item : _items.values () )
+        for ( final DataItem item : this._items.values () )
         {
-            _hive.unregisterItem ( item );
-            _hive.getStorage ().removed ( new ItemDescriptor ( item, new HashMap<String, Variant> () ) );
+            this._hive.unregisterItem ( item );
+            this._hive.getStorage ().removed ( new ItemDescriptor ( item, new HashMap<String, Variant> () ) );
         }
-        _items.clear ();
+        this._items.clear ();
     }
 
-    protected DataItemInputChained getInput ( String name, Map<String, Variant> attributes )
+    protected DataItemInputChained getInput ( final String name, final Map<String, Variant> attributes )
     {
-        String id = getItemId ( name );
+        final String id = getItemId ( name );
 
-        DataItem dataItem = _items.get ( name );
+        final DataItem dataItem = this._items.get ( name );
         if ( dataItem != null )
         {
             if ( dataItem instanceof DataItemInputChained )
@@ -51,20 +51,20 @@ public class BaseModule
             }
         }
 
-        DataItemInputChained item = new DataItemInputChained ( id );
-        _items.put ( name, item );
-        _hive.registerItem ( item );
+        final DataItemInputChained item = new DataItemInputChained ( id );
+        this._items.put ( name, item );
+        this._hive.registerItem ( item );
 
-        ItemDescriptor idesc = new ItemDescriptor ( item, attributes );
-        _hive.getStorage ().added ( idesc );
+        final ItemDescriptor idesc = new ItemDescriptor ( item, attributes );
+        this._hive.getStorage ().added ( idesc );
         return item;
     }
 
-    protected DataItemCommand getOutput ( String name, Map<String, Variant> attributes )
+    protected DataItemCommand getOutput ( final String name, final Map<String, Variant> attributes )
     {
-        String id = getItemId ( name );
+        final String id = getItemId ( name );
 
-        DataItem dataItem = _items.get ( name );
+        final DataItem dataItem = this._items.get ( name );
         if ( dataItem != null )
         {
             if ( dataItem instanceof DataItemCommand )
@@ -77,17 +77,17 @@ public class BaseModule
             }
         }
 
-        DataItemCommand item = new DataItemCommand ( id );
-        _items.put ( name, item );
-        _hive.registerItem ( item );
+        final DataItemCommand item = new DataItemCommand ( id );
+        this._items.put ( name, item );
+        this._hive.registerItem ( item );
 
-        ItemDescriptor idesc = new ItemDescriptor ( item, attributes );
-        _hive.getStorage ().added ( idesc );
+        final ItemDescriptor idesc = new ItemDescriptor ( item, attributes );
+        this._hive.getStorage ().added ( idesc );
         return item;
     }
-    
-    private String getItemId ( String name )
+
+    private String getItemId ( final String name )
     {
-        return _base + "." + name;
+        return this._base + "." + name;
     }
 }

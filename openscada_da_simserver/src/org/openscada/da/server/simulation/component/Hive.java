@@ -39,50 +39,50 @@ public class Hive extends HiveCommon
 {
     private Scheduler _scheduler = null;
 
-    private List<BaseModule> _modules = new LinkedList<BaseModule> ();
+    private final List<BaseModule> _modules = new LinkedList<BaseModule> ();
 
-    private InvisibleStorage _storage = new InvisibleStorage ();
+    private final InvisibleStorage _storage = new InvisibleStorage ();
 
     public Hive ()
     {
         super ();
 
-        _scheduler = new Scheduler ( true, "SimHiveScheduler" );
+        this._scheduler = new Scheduler ( true, "SimHiveScheduler" );
 
         // create root folder
-        FolderCommon rootFolder = new FolderCommon ();
+        final FolderCommon rootFolder = new FolderCommon ();
         setRootFolder ( rootFolder );
 
         addModule ( new SimpleMOV ( this, "1000" ) );
         addModule ( new SimpleScale ( this, "1001" ) );
 
-        QueryFolder queryFolder = new QueryFolder ( new Matcher () {
+        final QueryFolder queryFolder = new QueryFolder ( new Matcher () {
 
-            public boolean matches ( ItemDescriptor desc )
+            public boolean matches ( final ItemDescriptor desc )
             {
                 return true;
             }
         }, new IDNameProvider () );
         rootFolder.add ( "all", queryFolder, new HashMap<String, Variant> () );
-        _storage.addChild ( queryFolder );
-        
-        GroupFolder groupFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "tag" ), "\\." ), new IDNameProvider () );
+        this._storage.addChild ( queryFolder );
+
+        final GroupFolder groupFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "tag" ), "\\." ), new IDNameProvider () );
         rootFolder.add ( "components", groupFolder, new HashMap<String, Variant> () );
-        _storage.addChild ( groupFolder );
+        this._storage.addChild ( groupFolder );
     }
 
     public Scheduler getScheduler ()
     {
-        return _scheduler;
+        return this._scheduler;
     }
 
     public ItemStorage getStorage ()
     {
-        return _storage;
+        return this._storage;
     }
-    
-    public void addModule ( BaseModule module )
+
+    public void addModule ( final BaseModule module )
     {
-        _modules.add ( module );
+        this._modules.add ( module );
     }
 }
