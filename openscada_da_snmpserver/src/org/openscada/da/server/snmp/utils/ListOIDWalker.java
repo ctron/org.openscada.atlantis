@@ -28,22 +28,22 @@ import org.snmp4j.smi.OID;
 public class ListOIDWalker extends WalkOperation
 {
 
-    private Set<OID> _oidSet = new HashSet<OID> ();
-    
-    public ListOIDWalker ( SNMPNode node, OID oid, boolean useBulkGet )
+    private final Set<OID> _oidSet = new HashSet<OID> ();
+
+    public ListOIDWalker ( final SNMPNode node, final OID oid, final boolean useBulkGet )
     {
         super ( node, oid, useBulkGet );
     }
 
     @Override
-    protected void handleOID ( OID oid )
+    protected void handleOID ( final OID oid )
     {
-       _oidSet.add ( oid );
+        this._oidSet.add ( oid );
     }
-    
+
     public Set<OID> getList ()
     {
-        return _oidSet;
+        return this._oidSet;
     }
-    
+
 }

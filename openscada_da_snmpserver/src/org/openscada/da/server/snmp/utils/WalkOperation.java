@@ -34,53 +34,57 @@ import org.snmp4j.smi.VariableBinding;
 public abstract class WalkOperation
 {
     private static Logger _log = Logger.getLogger ( WalkOperation.class );
-    
+
     private SNMPNode _node = null;
+
     private OID _oid = null;
+
     private boolean _useBulkGet = false;
-    
-    public WalkOperation ( SNMPNode node, OID oid, boolean useBulkGet )
+
+    public WalkOperation ( final SNMPNode node, final OID oid, final boolean useBulkGet )
     {
-        _node = node;
-        _oid = oid;
-        _useBulkGet = useBulkGet;
+        this._node = node;
+        this._oid = oid;
+        this._useBulkGet = useBulkGet;
     }
-    
+
     protected abstract void handleOID ( OID oid );
-    
-    @SuppressWarnings("unchecked")
-    private OID processResponse ( ResponseEvent responseEvent )
+
+    @SuppressWarnings ( "unchecked" )
+    private OID processResponse ( final ResponseEvent responseEvent )
     {
         if ( responseEvent == null )
+        {
             return null;
-        
+        }
+
         if ( responseEvent.getError () != null )
         {
             _log.warn ( "Listing failed", responseEvent.getError () );
             return null;
         }
-        
+
         if ( responseEvent.getResponse () == null )
         {
             return null;
         }
-        
-        PDU response = responseEvent.getResponse ();
+
+        final PDU response = responseEvent.getResponse ();
         if ( response.getErrorStatus () != 0 )
         {
             _log.warn ( String.format ( "Error in reply: %1$d", response.getErrorStatus () ) );
             return null;
         }
-        
+
         if ( response.getType () == PDU.REPORT )
         {
             return null;
         }
-        
-        Vector<VariableBinding> vbs = response.getVariableBindings ();
-        
+
+        final Vector<VariableBinding> vbs = response.getVariableBindings ();
+
         OID nextOID = null;
-        for ( VariableBinding vb : vbs )
+        for ( final VariableBinding vb : vbs )
         {
             if ( vb.isException () )
             {
@@ -92,41 +96,41 @@ public abstract class WalkOperation
                 _log.info ( "Variable Exception: " + vb.getVariable ().toString () );
                 return null;
             }
-            
-            OID oid = vb.getOid ();
-            if ( !oid.startsWith ( _oid ) )
+
+            final OID oid = vb.getOid ();
+            if ( !oid.startsWith ( this._oid ) )
             {
                 _log.info ( "OID has not same root" );
                 return null;
             }
-            
+
             handleOID ( oid );
-            
+
             nextOID = oid;
         }
-        
+
         return nextOID;
     }
-    
+
     public void run ()
     {
-        _log.debug ( "Starting walk operation for subtree: " + _oid );
-        
-        Target target = _node.getConnection ().createTarget ();
-        PDU request = _node.getConnection ().createPDU ( target, _useBulkGet ? PDU.GETBULK : PDU.GETNEXT );
-        
-        if ( _useBulkGet )
+        _log.debug ( "Starting walk operation for subtree: " + this._oid );
+
+        final Target target = this._node.getConnection ().createTarget ();
+        final PDU request = this._node.getConnection ().createPDU ( target, this._useBulkGet ? PDU.GETBULK : PDU.GETNEXT );
+
+        if ( this._useBulkGet )
         {
             request.setNonRepeaters ( 0 );
             request.setMaxRepetitions ( 10 );
         }
-        
-        OID currentOID = _oid;
+
+        OID currentOID = this._oid;
         boolean endOfList = false;
-        
+
         // add dummy entry .. will be set later
-        request.add ( new VariableBinding ( new OID ( _oid ) ) );
-        
+        request.add ( new VariableBinding ( new OID ( this._oid ) ) );
+
         while ( !endOfList )
         {
             request.set ( 0, new VariableBinding ( currentOID ) );
@@ -135,15 +139,15 @@ public abstract class WalkOperation
             try
             {
                 //_log.info ( "Requesting: " + request.get ( 0 ).getOid () );
-                responseEvent = _node.getConnection ().send ( target, request );
+                responseEvent = this._node.getConnection ().send ( target, request );
                 currentOID = processResponse ( responseEvent );
-                endOfList = ( currentOID == null );
+                endOfList = currentOID == null;
             }
-            catch ( IOException e )
+            catch ( final IOException e )
             {
                 endOfList = true;
             }
-            
+
         }
     }
 }
