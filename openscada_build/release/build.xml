@@ -34,6 +34,8 @@
 	
 	<property name="deploy.base" value="/var/vhosts/openscada/download/atlantis"/>
 	<property name="deploy.dir" value="${deploy.base}/${tag}"/>
+	
+	<property name="deploy.dist.lib" value="${deploy.dir}/lib"/>
 	<property name="deploy.dist.module" value="${deploy.dir}/module"/>
 	<property name="deploy.dist.source" value="${deploy.dir}/source"/>
 	<property name="deploy.dist.binary" value="${deploy.dir}/binary"/>
