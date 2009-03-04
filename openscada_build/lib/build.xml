@@ -469,6 +469,7 @@
 		<attribute name="prefix" default="default" />
         <sequential>
     		<artifact:dependencies pathId="@{prefix}.runtime.classpath" filesetId="@{prefix}.runtime.fileset" useScope="runtime">
+    			<remoteRepository id="openscada-repos" url="${maven.repository}" />
     			<artifact:dependency groupId="@{groupId}" artifactId="@{artifactId}" version="@{version}" scope="runtime" />
     		</artifact:dependencies>
 			<delete dir="extract-module"/>

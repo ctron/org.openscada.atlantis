@@ -69,6 +69,7 @@
 			<arg value="-Daurora.version=${aurora.version}"/>
 			<arg value="-Datlantis.version=${atlantis.version}"/>
 			<arg value="-Dutgard.version=${utgard.version}"/>
+			<arg value="-Durl.maven.repository=${url.maven.repository}"/>
 		</java>
     	
     	<!-- copy result to pde upload -->
@@ -105,6 +106,7 @@
 			<arg value="-Daurora.version=${aurora.version}"/>
 			<arg value="-Datlantis.version=${atlantis.version}"/>
 			<arg value="-Dutgard.version=${utgard.version}"/>
+			<arg value="-Durl.maven.repository=${url.maven.repository}"/>
     	</java>
     </target>
    	
@@ -135,6 +137,7 @@
 			<arg value="-Daurora.version=${aurora.version}"/>
 			<arg value="-Datlantis.version=${atlantis.version}"/>
 			<arg value="-Dutgard.version=${utgard.version}"/>
+			<arg value="-Durl.maven.repository=${url.maven.repository}"/>
     	</java>
     	<mkdir dir="${upload.base.ostc}"/>
     	<copy todir="${upload.base.ostc}">
