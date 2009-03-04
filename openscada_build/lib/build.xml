@@ -463,9 +463,9 @@
           current PDE module, this time retrieved from maven repository.
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="openscada.pde.import-module.add-maven-dependency">
-		<attribute name="groupId" default="${groupId}" />
+		<attribute name="groupId" default="${groupId.atlantis}" />
 		<attribute name="artifactId" />
-		<attribute name="version" default="${version}" />
+		<attribute name="version" default="${atlantis.version}" />
 		<attribute name="prefix" default="default" />
         <sequential>
     		<artifact:dependencies pathId="@{prefix}.runtime.classpath" filesetId="@{prefix}.runtime.fileset" useScope="runtime">
@@ -478,7 +478,7 @@
         	</copy>
 			<unzip overwrite="true" dest="lib-jar-build-dir">
 				<fileset dir="extract-module">
-					<include name="**/org.openscada*.jar"/>
+					<include name="**/${groupId}*.jar"/>
 				</fileset>
 			</unzip>
 			<delete dir="extract-module"/>

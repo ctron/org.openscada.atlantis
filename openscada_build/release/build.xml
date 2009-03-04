@@ -17,7 +17,13 @@
 	<property name="buildType" value="R"/>
 	<property name="buildId" value="Release-${version}"/>
 	<property name="tag" value="${version}${release}"/>
-	<property name="groupId" value="org.openscada.atlantis" />
+	<property name="groupId" value="org.openscada" />
+	<property name="groupId.aurora" value="${groupId}.aurora" />
+	<property name="groupId.atlantis" value="${groupId}.atlantis" />
+	<property name="groupId.utgard" value="${groupId}.utgard" />
+	<property name="aurora.version" value="0.12.0-SNAPSHOT" />
+	<property name="atlantis.version" value="0.12.0-SNAPSHOT" />
+	<property name="utgard.version" value="0.4.2-SNAPSHOT" />
 	
 	<property name="source.base" location="../.."/>
 	
