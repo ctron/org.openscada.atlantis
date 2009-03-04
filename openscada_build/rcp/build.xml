@@ -62,7 +62,14 @@
    			<arg value="-Ddeploy.dir=${deploy.dir}"/>
 			<arg value="-Ddeploy.dist.module=${deploy.dist.module}"/>
 			<arg value="-Dtag=${tag}"/>
-    	</java>
+			<arg value="-DgroupId=${groupId}"/>
+			<arg value="-DgroupId.aurora=${groupId.aurora}"/>
+			<arg value="-DgroupId.atlantis=${groupId.atlantis}"/>
+			<arg value="-DgroupId.utgard=${groupId.utgard}"/>
+			<arg value="-Daurora.version=${aurora.version}"/>
+			<arg value="-Datlantis.version=${atlantis.version}"/>
+			<arg value="-Dutgard.version=${utgard.version}"/>
+		</java>
     	
     	<!-- copy result to pde upload -->
     	<mkdir dir="${upload.base.pde}"/>
