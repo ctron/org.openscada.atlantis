@@ -17,6 +17,7 @@
 	<property name="buildType" value="R"/>
 	<property name="buildId" value="Release-${version}"/>
 	<property name="tag" value="${version}${release}"/>
+	<property name="groupId" value="org.openscada.atlantis" />
 	
 	<property name="source.base" location="../.."/>
 	
