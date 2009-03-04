@@ -6,7 +6,7 @@
 	 Jens Reimann <jens.reimann@inavare.net>
      ====================================================================== -->
 
-<project name="tools">
+<project name="tools" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
     <description>
     	Providing common build targets for all other ant-scripts
     </description>
@@ -450,6 +450,26 @@
 			<unzip overwrite="true" dest="lib-jar-build-dir">
 				<fileset dir="extract-module">
 					<include name="**/*.jar"/>
+				</fileset>
+			</unzip>
+			<delete dir="extract-module"/>
+        </sequential>
+    </macrodef>
+	
+    <macrodef name="openscada.pde.import-module.add-maven-modules">
+        <sequential>
+        	<artifact:pom file="pom.xml" id="maven.project" />
+    		<artifact:dependencies pathId="runtime.classpath" filesetId="runtime.fileset" useScope="runtime">
+    			<pom refid="maven.project" />
+    		</artifact:dependencies>
+			<delete dir="extract-module"/>
+			<mkdir dir="extract-module"/>
+        	<copy todir="extract-module">
+        		<fileset refid="runtime.fileset" />
+        	</copy>
+			<unzip overwrite="true" dest="lib-jar-build-dir">
+				<fileset dir="extract-module">
+					<include name="**/org.openscada*.jar"/>
 				</fileset>
 			</unzip>
 			<delete dir="extract-module"/>
