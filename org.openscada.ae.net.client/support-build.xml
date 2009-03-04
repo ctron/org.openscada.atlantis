@@ -24,7 +24,10 @@
          ================================= -->
     <target name="genjar" depends="" description="--> Generate the JAR file">
 		<openscada.pde.import-module.init/>
+    	<!--
 		<openscada.pde.import-module.add-module name="ae-client-net"/>
+		-->
+		<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.ae.client.net" />
 		<openscada.pde.import-module.finalize destfile="${libjar}"/>
     </target>
 

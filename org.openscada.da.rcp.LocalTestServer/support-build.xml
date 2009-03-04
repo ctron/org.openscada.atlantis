@@ -23,12 +23,20 @@
          ================================= -->
     <target name="genjar" depends="" description="--> Generate the JAR file">
 		<openscada.pde.import-module.init/>
+    	<!--
 		<openscada.pde.import-module.add-module name="da-server-simulation"/>
 		<openscada.pde.import-module.add-module name="da-server-net"/>
+		-->
+		<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.server.net" />
+		<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.server.simulation" />
 		<openscada.pde.import-module.finalize destfile="openscada_net_server_sim.jar"/>
 		<openscada.pde.import-module.init/>
+    	<!--
 		<openscada.pde.import-module.add-module name="da-server-test"/>
 		<openscada.pde.import-module.add-module name="da-server-net"/>
+		-->
+		<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.server.net" />
+		<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.server.test" />
 		<openscada.pde.import-module.finalize destfile="openscada_net_server_test.jar"/>
     </target>
 

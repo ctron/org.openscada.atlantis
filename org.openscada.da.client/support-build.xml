@@ -4,6 +4,7 @@
      Support build file                                                  
      ====================================================================== -->
 <project name="openscada_da_client_net_plugin_wrapper" default="default" basedir=".">
+	<property name="libfile" location="../openscada_build/lib/build.xml"/>
 	<import file="${libfile}"/>
 	
 	<property name="libjar" location="./lib.jar"/>
@@ -23,10 +24,14 @@
          ================================= -->
     <target name="genjar" depends="" description="--> Generate the JAR file">
 		<openscada.pde.import-module.init/>
+    	<!--
 		<openscada.pde.import-module.add-module name="da-core-server"/>
 		<openscada.pde.import-module.add-module name="da-core-common"/>
 		<openscada.pde.import-module.add-module name="core-client-common"/>
 		<openscada.pde.import-module.add-module name="da-client-common"/>
+		-->
+    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.core.server" />
+    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.ae.client.common" />
 		<openscada.pde.import-module.finalize destfile="${libjar}"/>
     </target>
 

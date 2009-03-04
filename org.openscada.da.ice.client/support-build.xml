@@ -4,6 +4,8 @@
      Support build file                                                  
      ====================================================================== -->
 <project name="openscada_da_client_ice_plugin_wrapper" default="default" basedir=".">
+
+	<property name="libfile" location="../openscada_build/lib/build.xml"/>
 	<import file="${libfile}"/>
 	
 	<property name="libjar" location="./lib.jar"/>
@@ -23,7 +25,10 @@
          ================================= -->
     <target name="genjar" depends="" description="--> Generate the JAR file">
 		<openscada.pde.import-module.init/>
+    	<!--
 		<openscada.pde.import-module.add-module name="da-client-ice"/>
+		-->
+    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.client.ice" />
 		<openscada.pde.import-module.finalize destfile="${libjar}"/>
     </target>
 
