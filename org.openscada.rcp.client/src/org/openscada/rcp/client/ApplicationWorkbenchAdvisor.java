@@ -27,7 +27,7 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor
 {
 
-    private static final String PERSPECTIVE_ID = "org.openscada.rcp.client.perspective";
+    private static final String PERSPECTIVE_ID = "org.openscada.rcp.client.perspective"; //$NON-NLS-1$
 
     @Override
     public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor ( final IWorkbenchWindowConfigurer configurer )
