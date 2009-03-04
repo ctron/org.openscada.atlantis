@@ -50,7 +50,7 @@
 		</classpath>
 	</taskdef>
 	
-	<taskdef uri="antlib:org.apache.maven.artifact.ant" classpath="maven-ant-tasks.jar">
+	<taskdef uri="antlib:org.apache.maven.artifact.ant">
 		<classpath>
 			<path path="${builddir}/maven-ant-tasks-2.0.9.jar"/>
 		</classpath>
