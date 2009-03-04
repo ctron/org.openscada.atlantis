@@ -15,7 +15,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Client Perspective"
+            name="%perspective.clientApp.name"
             class="org.openscada.rcp.client.Perspective"
             id="org.openscada.rcp.client.perspective">
       </perspective>
@@ -25,7 +25,7 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.openscada.rcp.client.application"
-            name="OpenSCADA Client">
+            name="OpenSCADA Test Client">
          <property
                name="aboutImage"
                value="about.png"/>
@@ -46,7 +46,7 @@
                value="OpenSCADA Project"/>
          <property
                name="appName"
-               value="OpenSCADA Client">
+               value="OpenSCADA Test Client">
          </property>
          <property
                name="startupForegroundColor"
