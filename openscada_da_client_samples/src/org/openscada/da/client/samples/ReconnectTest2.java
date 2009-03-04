@@ -19,61 +19,50 @@
 
 package org.openscada.da.client.samples;
 
-import org.openscada.core.OperationException;
-import org.openscada.da.core.Location;
-import org.openscada.da.core.browser.DataItemEntry;
-import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.browser.FolderEntry;
+import org.apache.log4j.Logger;
+import org.openscada.core.client.AutoReconnectController;
 
 /**
- * Sample showing how to browse once
- * <br> 
+ * Sample showing how to subscribe for events only
+ * <br>
+ * The example shows how to create a new connection, connect, and listen for events coming
+ * in for a period of 10 seconds.
+ * <br>
+ * We will listen to the <em>time</em> data item of the test server. The item is an input
+ * item and will provided the current unix timestamp every second.
+ * 
  * @author Jens Reimann <jens.reimann@inavare.net>
  */
-public class Sample3 extends SampleBase
+public class ReconnectTest2 extends SampleBase
 {
-    public Sample3 ( final String uri, final String className ) throws Exception
+
+    private static Logger logger = Logger.getLogger ( ReconnectTest2.class );
+
+    private final AutoReconnectController controller;
+
+    public ReconnectTest2 ( final String uri, final String className ) throws Exception
     {
         super ( uri, className );
+        this.controller = new AutoReconnectController ( this.connection, 2000 );
     }
 
-    /**
-     * Show one folder entry. 
-     * @param entry A folder entry which can be an item or a sub-folder
-     */
-    protected void showEntry ( final Entry entry )
+    @Override
+    public void connect () throws Exception
     {
-        System.out.print ( "'" + entry.getName () + "' " );
-        if ( entry instanceof FolderEntry )
-        {
-            System.out.print ( "[Folder] " );
-        }
-        else if ( entry instanceof DataItemEntry )
-        {
-            System.out.print ( "[Item]: " + ( (DataItemEntry)entry ).getId () );
-        }
-
-        System.out.println ();
+        this.controller.connect ();
     }
 
-    /**
-     * browse once through a predefined folder named "test"
-     * @throws InterruptedException
-     * @throws OperationException
-     */
-    public void run () throws InterruptedException, OperationException
+    @Override
+    public void disconnect ()
     {
-        try
-        {
-            for ( final Entry entry : this.connection.browse ( new Location ( "test" ) ) )
-            {
-                showEntry ( entry );
-            }
-        }
-        catch ( final Exception e )
-        {
-            e.printStackTrace ();
-        }
+        this.controller.disconnect ();
+    }
+
+    @Override
+    protected void finalize () throws Throwable
+    {
+        logger.info ( "Finalized" );
+        super.finalize ();
     }
 
     public static void main ( final String[] args ) throws Exception
@@ -90,12 +79,12 @@ public class Sample3 extends SampleBase
             className = args[1];
         }
 
-        Sample3 s = null;
+        ReconnectTest2 s = null;
         try
         {
-            s = new Sample3 ( uri, className );
+            s = new ReconnectTest2 ( uri, className );
             s.connect ();
-            s.run ();
+            SampleBase.sleep ( 2000 );
         }
         catch ( final Throwable e )
         {
@@ -108,5 +97,15 @@ public class Sample3 extends SampleBase
                 s.disconnect ();
             }
         }
+        s = null;
+
+        while ( true )
+        {
+            logger.info ( "Sleep" );
+            SampleBase.sleep ( 2000 );
+            System.gc ();
+        }
+
+        // logger.info ( "Finished" );
     }
 }

@@ -41,7 +41,7 @@ import org.openscada.core.client.NoConnectionException;
  */
 public class Sample2 extends SampleBase
 {
-    public Sample2 ( final String uri, final String className ) throws ClassNotFoundException
+    public Sample2 ( final String uri, final String className ) throws Exception
     {
         super ( uri, className );
     }

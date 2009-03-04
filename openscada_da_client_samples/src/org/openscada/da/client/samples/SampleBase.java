@@ -17,7 +17,7 @@ public class SampleBase
 
     protected Connection connection = null;
 
-    public SampleBase ( final String uri, final String className ) throws ClassNotFoundException
+    public SampleBase ( final String uri, final String className ) throws Exception
     {
         super ();
 
@@ -34,10 +34,6 @@ public class SampleBase
             this.uri = "da:net://localhost:1202";
         }
 
-    }
-
-    public void connect () throws Exception
-    {
         final ConnectionInformation ci = ConnectionInformation.fromURI ( this.uri );
 
         this.connection = (Connection)ConnectionFactory.create ( ci );
@@ -46,19 +42,24 @@ public class SampleBase
             throw new Exception ( "Unable to find a connection driver for specified URI" );
         }
 
+        this.connection.addConnectionStateListener ( new ConnectionStateListener () {
+
+            public void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
+            {
+                logger.info ( "Connection state changed: " + state, error );
+            }
+        } );
+
+    }
+
+    public void connect () throws Exception
+    {
         // trigger the connection
         try
         {
             // wait until the connection is established. If it already is the call
             // will return immediately.
             // If the connect attempt fails an exception is thrown.
-            this.connection.addConnectionStateListener ( new ConnectionStateListener () {
-
-                public void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
-                {
-                    logger.info ( "Connection state changed: " + state, error );
-                }
-            } );
             new ConnectWaitController ( this.connection ).connect ();
         }
         catch ( final Throwable e )
@@ -73,6 +74,18 @@ public class SampleBase
         this.connection.disconnect ();
         this.connection = null;
         System.gc ();
+    }
+
+    public static void sleep ( final long millis )
+    {
+        try
+        {
+            Thread.sleep ( millis );
+        }
+        catch ( final Throwable e )
+        {
+            e.printStackTrace ();
+        }
     }
 
 }

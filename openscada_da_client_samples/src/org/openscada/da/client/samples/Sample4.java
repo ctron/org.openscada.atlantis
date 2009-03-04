@@ -38,7 +38,7 @@ public class Sample4 extends SampleBase
 {
     private FolderManager folderManager = null;
 
-    public Sample4 ( final String uri, final String className ) throws ClassNotFoundException
+    public Sample4 ( final String uri, final String className ) throws Exception
     {
         super ( uri, className );
     }
