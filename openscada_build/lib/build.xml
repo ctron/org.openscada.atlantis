@@ -456,13 +456,20 @@
         </sequential>
     </macrodef>
 	
-    <macrodef name="openscada.pde.import-module.add-maven-modules">
-		<attribute name="pom" default="pom.xml" />
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.pde.import-module.add-maven-dependency
+          Add the content of a openscada module built during
+          the normal build process to this import lib jar for the
+          current PDE module, this time retrieved from maven repository.
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.pde.import-module.add-maven-dependency">
+		<attribute name="groupId" default="${groupId}" />
+		<attribute name="artifactId" />
+		<attribute name="version" default="${version}" />
 		<attribute name="prefix" default="default" />
         <sequential>
-        	<artifact:pom file="@{pom}" id="@{prefix}.maven.project" />
     		<artifact:dependencies pathId="@{prefix}.runtime.classpath" filesetId="@{prefix}.runtime.fileset" useScope="runtime">
-    			<pom refid="@{prefix}.maven.project" />
+    			<artifact:dependency groupId="@{groupId}" artifactId="@{artifactId}" version="@{version}" scope="runtime" />
     		</artifact:dependencies>
 			<delete dir="extract-module"/>
 			<mkdir dir="extract-module"/>
