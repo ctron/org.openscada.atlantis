@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.apache.mina.core.future.ConnectFuture;
@@ -48,6 +49,25 @@ import org.openscada.net.mina.Messenger;
 
 public abstract class ConnectionBase implements Connection, IoHandler
 {
+    private final static class ThreadFactoryImplementation implements ThreadFactory
+    {
+        private final ConnectionInformation connectionInformation;
+
+        private ThreadFactoryImplementation ( final ConnectionInformation connectionInformation )
+        {
+            this.connectionInformation = connectionInformation;
+        }
+
+        private final AtomicInteger counter = new AtomicInteger ();
+
+        public Thread newThread ( final Runnable r )
+        {
+            final Thread t = new Thread ( r, "ConnectionBaseExecutor/" + this.counter.getAndIncrement () + "/" + this.connectionInformation );
+            t.setDaemon ( true );
+            return t;
+        }
+    }
+
     private static Logger logger = Logger.getLogger ( ConnectionBase.class );
 
     private final List<ConnectionStateListener> connectionStateListeners = new CopyOnWriteArrayList<ConnectionStateListener> ();
@@ -77,15 +97,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         super ();
         this.connectionInformation = connectionInformation;
 
-        this.executor = Executors.newCachedThreadPool ( new ThreadFactory () {
-
-            public Thread newThread ( final Runnable r )
-            {
-                final Thread t = new Thread ( r, "ConnectionBaseExecutor/" + connectionInformation );
-                t.setDaemon ( true );
-                return t;
-            }
-        } );
+        this.executor = Executors.newCachedThreadPool ( new ThreadFactoryImplementation ( connectionInformation ) );
 
         this.messenger = new Messenger ();
 
