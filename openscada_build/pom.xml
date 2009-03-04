@@ -183,6 +183,7 @@
 		<module>../openscada_ae_storage_syslog</module>
 		<module>../openscada_ae_storage_net</module>
 		<module>../openscada_core_server_net</module>
+		<module>../openscada_spring_components</module>
 	</modules>
 	<dependencies>
 		<dependency>
