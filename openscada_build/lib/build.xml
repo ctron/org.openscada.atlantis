@@ -457,15 +457,17 @@
     </macrodef>
 	
     <macrodef name="openscada.pde.import-module.add-maven-modules">
+		<attribute name="pom" default="pom.xml" />
+		<attribute name="prefix" default="default" />
         <sequential>
-        	<artifact:pom file="pom.xml" id="maven.project" />
-    		<artifact:dependencies pathId="runtime.classpath" filesetId="runtime.fileset" useScope="runtime">
-    			<pom refid="maven.project" />
+        	<artifact:pom file="@{pom}" id="@{prefix}.maven.project" />
+    		<artifact:dependencies pathId="@{prefix}.runtime.classpath" filesetId="@{prefix}.runtime.fileset" useScope="runtime">
+    			<pom refid="@{prefix}.maven.project" />
     		</artifact:dependencies>
 			<delete dir="extract-module"/>
 			<mkdir dir="extract-module"/>
         	<copy todir="extract-module">
-        		<fileset refid="runtime.fileset" />
+        		<fileset refid="@{prefix}.runtime.fileset" />
         	</copy>
 			<unzip overwrite="true" dest="lib-jar-build-dir">
 				<fileset dir="extract-module">
