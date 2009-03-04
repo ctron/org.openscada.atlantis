@@ -98,6 +98,13 @@
    			<arg value="-Ddeploy.dir=${deploy.dir}"/>
 			<arg value="-Ddeploy.dist.module=${deploy.dist.module}"/>
 			<arg value="-Dtag=${tag}"/>
+			<arg value="-DgroupId=${groupId}"/>
+			<arg value="-DgroupId.aurora=${groupId.aurora}"/>
+			<arg value="-DgroupId.atlantis=${groupId.atlantis}"/>
+			<arg value="-DgroupId.utgard=${groupId.utgard}"/>
+			<arg value="-Daurora.version=${aurora.version}"/>
+			<arg value="-Datlantis.version=${atlantis.version}"/>
+			<arg value="-Dutgard.version=${utgard.version}"/>
     	</java>
     </target>
    	
@@ -121,6 +128,13 @@
    			<arg value="-Ddeploy.dir=${deploy.dir}"/>
 			<arg value="-Ddeploy.dist.module=${deploy.dist.module}"/>
 			<arg value="-Dtag=${tag}"/>
+			<arg value="-DgroupId=${groupId}"/>
+			<arg value="-DgroupId.aurora=${groupId.aurora}"/>
+			<arg value="-DgroupId.atlantis=${groupId.atlantis}"/>
+			<arg value="-DgroupId.utgard=${groupId.utgard}"/>
+			<arg value="-Daurora.version=${aurora.version}"/>
+			<arg value="-Datlantis.version=${atlantis.version}"/>
+			<arg value="-Dutgard.version=${utgard.version}"/>
     	</java>
     	<mkdir dir="${upload.base.ostc}"/>
     	<copy todir="${upload.base.ostc}">
