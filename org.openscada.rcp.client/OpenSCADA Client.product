@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.4"?>
 
-<product name="OpenSCADA Client" id="org.openscada.rcp.client.product" application="org.openscada.rcp.client.application" useFeatures="true">
+<product name="OpenSCADA Client" id="org.openscada.rcp.client.product" application="org.openscada.rcp.client.application" version="0.12.0" useFeatures="true">
 
    <aboutInfo>
       <image path="about.png"/>
@@ -14,15 +14,23 @@
    </configIni>
 
    <launcherArgs>
+      <vmArgsMac>-XstartOnFirstThread
+-Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="/openscada_da_client_test/icons/app/app_icon_16.gif" i32="/openscada_da_client_test/icons/app/app_icon_32.gif" i48="/openscada_da_client_test/icons/app/app_icon_48.gif"/>
+   <windowImages i16="/org.openscada.rcp.client/icons/app/app_icon_16.gif" i32="/org.openscada.rcp.client/icons/app/app_icon_32.gif" i48="/org.openscada.rcp.client/icons/app/app_icon_48.gif"/>
 
+   <splash
+      location="org.openscada.rcp.client"
+      startupProgressRect="15,274,250,12"
+      startupMessageRect="15,249,424,18"
+      startupForegroundColor="000000" />
    <launcher name="ostc">
-      <macosx icon="/openscada_da_client_test/icons/app/app_icon.icns"/>
+      <linux icon="/org.openscada.rcp.client/icons/app/app_icon.xpm"/>
+      <macosx icon="/org.openscada.rcp.client/icons/app/app_icon.icns"/>
       <solaris/>
       <win useIco="true">
-         <ico path="/openscada_da_client_test/icons/app/app_icon.ico"/>
+         <ico path="/org.openscada.rcp.client/icons/app/app_icon.ico"/>
          <bmp/>
       </win>
    </launcher>

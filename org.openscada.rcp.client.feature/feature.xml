@@ -3,7 +3,8 @@
       id="org.openscada.rcp.client"
       label="OpenSCADA RCP Client Feature"
       version="0.12.0"
-      provider-name="OpenSCADA.org">
+      provider-name="OpenSCADA.org"
+      plugin="org.openscada.rcp.client">
 
    <description url="http://openscada.org">
       The OpenSCADA RCP Client Feature
