@@ -248,7 +248,7 @@ public class ChartView2 extends ViewPart implements Observer
             final String itemId = memento.getString ( "itemId" );
             final String connectionUri = memento.getString ( "connectionUri" );
 
-            if ( itemId != null && connectionUri != null )
+            if ( ( itemId != null ) && ( connectionUri != null ) )
             {
                 final ConnectionManagerEntry entry = ConnectionManager.getDefault ().getEntry ( ConnectionInformation.fromURI ( connectionUri ), false );
                 setDataItem ( new DataItemHolder ( entry.getConnection (), entry.getItemManager (), itemId ) );
@@ -275,7 +275,7 @@ public class ChartView2 extends ViewPart implements Observer
 
     protected void performUpdate ()
     {
-        final Number n = convertToNumber ( this.dataItem.getValue () );
+        final Number n = convertToNumber ( this.dataItem.getSnapshotValue ().getValue () );
 
         final RegularTimePeriod time = new FixedMillisecond ( Calendar.getInstance ().getTime () );
 
