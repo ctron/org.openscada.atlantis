@@ -481,10 +481,10 @@
         	</copy>
 			<unzip overwrite="true" dest="lib-jar-build-dir">
 				<fileset dir="extract-module">
-					<include name="**/${groupId}*.jar"/>
+					<include name="**/@{groupId}*.jar"/>
 				</fileset>
 			</unzip>
-			<delete dir="extract-module"/>
+			<delete dir="extract-module" />
         </sequential>
     </macrodef>
 	
