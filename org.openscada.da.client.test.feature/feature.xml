@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.client.test"
       label="OpenSCADA DA Test Client Feature"
-      version="0.12.1"
+      version="0.12.2"
       provider-name="inavare GmbH"
       plugin="org.openscada.da.client.test">
 
@@ -346,12 +346,6 @@ POSSIBILITY OF SUCH DAMAGES.
          unpack="false"/>
 
    <plugin
-         id="log4j_wrapper_plugin"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.openscada.rcp.update"
          download-size="0"
          install-size="0"
@@ -458,6 +452,13 @@ POSSIBILITY OF SUCH DAMAGES.
 
    <plugin
          id="org.openscada.da.client.connection.manager.view"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.external.org.apache.log4j"
          download-size="0"
          install-size="0"
          version="0.0.0"
