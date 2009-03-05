@@ -55,6 +55,8 @@ public class Activator extends AbstractUIPlugin
     class Server
     {
         Exporter exporter = null;
+
+        Exporter exporter2 = null;
     }
 
     private final Map<Integer, Server> _exportMap = new HashMap<Integer, Server> ();
@@ -156,6 +158,8 @@ public class Activator extends AbstractUIPlugin
         final Server server = new Server ();
         server.exporter = new Exporter ( hive, ConnectionInformation.fromURI ( "da:net://0.0.0.0:" + port ) );
         server.exporter.start ();
+        server.exporter2 = new Exporter ( hive, ConnectionInformation.fromURI ( "da:net://0.0.0.0:" + port + "?socketImpl=VMPIPE" ) );
+        server.exporter2.start ();
         this._exportMap.put ( port, server );
     }
 
