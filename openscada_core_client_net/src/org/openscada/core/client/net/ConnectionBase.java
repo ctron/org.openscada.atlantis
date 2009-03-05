@@ -19,7 +19,6 @@
 
 package org.openscada.core.client.net;
 
-import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -31,12 +30,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.Logger;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.future.IoFutureListener;
+import org.apache.mina.core.service.IoConnector;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
-import org.apache.mina.transport.socket.SocketConnector;
-import org.apache.mina.transport.socket.apr.AprSocketConnector;
-import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
@@ -46,6 +43,7 @@ import org.openscada.net.base.PingService;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.mina.IoSessionSender;
 import org.openscada.net.mina.Messenger;
+import org.openscada.net.mina.SocketImpl;
 
 public abstract class ConnectionBase implements Connection, IoHandler
 {
@@ -82,7 +80,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     private final ConnectionInformation connectionInformation;
 
-    private SocketConnector connector;
+    private IoConnector connector;
 
     private final PingService pingService;
 
@@ -322,7 +320,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
     }
 
-    protected void setupConnector ( final ConnectionInformation connectionInformation, final SocketConnector connector )
+    protected void setupConnector ( final ConnectionInformation connectionInformation, final IoConnector connector )
     {
         // set connector timeout
         connector.setConnectTimeoutMillis ( getConnectTimeout () );
@@ -349,21 +347,12 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
             public void run ()
             {
-                InetSocketAddress address = null;
-                try
-                {
-                    address = new InetSocketAddress ( ConnectionBase.this.connectionInformation.getTarget (), ConnectionBase.this.connectionInformation.getSecondaryTarget () );
-                    ConnectionBase.this.resolvedRemoteAddress ( address, null );
-                }
-                catch ( final Throwable e )
-                {
-                    ConnectionBase.this.resolvedRemoteAddress ( address, e );
-                }
+                doLookup ();
             }
         } );
     }
 
-    protected void resolvedRemoteAddress ( final InetSocketAddress address, final Throwable e )
+    protected void resolvedRemoteAddress ( final SocketAddress address, final Throwable e )
     {
         logger.info ( String.format ( "Completed resolving remote address: %s", address ), e );
         if ( this.connectionState != ConnectionState.LOOKUP )
@@ -372,7 +361,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
         synchronized ( this )
         {
-            if ( e == null && !address.isUnresolved () )
+            if ( e == null )
             {
                 // lookup successful ... re-trigger connecting
                 this.remoteAddress = address;
@@ -433,19 +422,16 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
     }
 
-    private SocketConnector createConnector ()
+    private String getSocketImpl ()
     {
-        final SocketConnector connector;
-        final String socketImpl = this.connectionInformation.getProperties ().get ( "socketImpl" );
-        if ( "apr".equals ( socketImpl ) )
-        {
-            logger.info ( "Using APR socket" );
-            connector = new AprSocketConnector ();
-        }
-        else
-        {
-            connector = new NioSocketConnector ();
-        }
+        return this.connectionInformation.getProperties ().get ( "socketImpl" );
+    }
+
+    private IoConnector createConnector ()
+    {
+        final SocketImpl socketImpl = SocketImpl.fromName ( getSocketImpl () );
+
+        final IoConnector connector = socketImpl.createConnector ();
 
         connector.setHandler ( this );
 
@@ -459,7 +445,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
      */
     private void disposeConnector ()
     {
-        final SocketConnector connector;
+        final IoConnector connector;
 
         synchronized ( this )
         {
@@ -626,6 +612,25 @@ public abstract class ConnectionBase implements Connection, IoHandler
         logger.info ( "Finalized" );
         this.executor.shutdown ();
         super.finalize ();
+    }
+
+    /**
+     * Does the actual lookup
+     */
+    private void doLookup ()
+    {
+        final SocketImpl socketImpl = SocketImpl.fromName ( getSocketImpl () );
+
+        SocketAddress address = null;
+        try
+        {
+            address = socketImpl.doLookup ( ConnectionBase.this.connectionInformation.getTarget (), ConnectionBase.this.connectionInformation.getSecondaryTarget () );
+            ConnectionBase.this.resolvedRemoteAddress ( address, null );
+        }
+        catch ( final Throwable e )
+        {
+            ConnectionBase.this.resolvedRemoteAddress ( null, e );
+        }
     }
 
 }

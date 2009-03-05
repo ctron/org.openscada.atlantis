@@ -20,15 +20,13 @@
 package org.openscada.core.server.net;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.handler.multiton.SingleSessionIoHandlerDelegate;
-import org.apache.mina.transport.socket.apr.AprSocketAcceptor;
-import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.net.ConnectionHelper;
+import org.openscada.net.mina.SocketImpl;
 
 public class Server
 {
@@ -50,20 +48,10 @@ public class Server
     {
         IoAcceptor acceptor = null;
 
-        final String socketImpl = this.connectionInformation.getProperties ().get ( "socketImpl" );
-        if ( "apr".equals ( socketImpl ) )
-        {
-            final AprSocketAcceptor aprAcceptor = new AprSocketAcceptor ();
-            aprAcceptor.setReuseAddress ( true );
-            acceptor = aprAcceptor;
-        }
+        final SocketImpl socketImpl = SocketImpl.fromName ( this.connectionInformation.getProperties ().get ( "socketImpl" ) );
 
-        if ( acceptor == null )
-        {
-            final NioSocketAcceptor nioAcceptor = new NioSocketAcceptor ();
-            nioAcceptor.setReuseAddress ( true );
-            acceptor = nioAcceptor;
-        }
+        // create the acceptor
+        acceptor = socketImpl.createAcceptor ();
 
         // set up the filter chain
         ConnectionHelper.setupFilterChain ( this.connectionInformation, acceptor.getFilterChain () );
@@ -71,8 +59,15 @@ public class Server
         // set the session handler
         acceptor.setHandler ( ioHandler );
 
+        // check if the primary target is the wildcard target
+        String host = this.connectionInformation.getTarget ();
+        if ( host != null && ( host.length () == 0 || "*".equals ( host ) ) )
+        {
+            host = null;
+        }
+
         // bind
-        acceptor.bind ( new InetSocketAddress ( this.connectionInformation.getSecondaryTarget () ) );
+        acceptor.bind ( socketImpl.doLookup ( host, this.connectionInformation.getSecondaryTarget () ) );
 
         return acceptor;
     }
