@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Apache Mina Plug-in
 Bundle-SymbolicName: org.apache.mina
-Bundle-Version: 2.0.0.4
+Bundle-Version: 2.0.0.RC4-v1
 Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ClassPath: lib/mina-core-2.0.0-M4.jar,
@@ -61,4 +61,4 @@ Export-Package: org.apache.mina.core,
  org.apache.mina.transport.vmpipe,
  org.apache.mina.util,
  org.apache.mina.util.byteaccess
-Require-Bundle: log4j_wrapper_plugin;bundle-version="1.2.13"
+Require-Bundle: org.openscada.external.org.apache.log4j;bundle-version="1.2.15"

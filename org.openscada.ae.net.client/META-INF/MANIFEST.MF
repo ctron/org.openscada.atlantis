@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA AE Client Library Wrapper
 Bundle-SymbolicName: org.openscada.ae.net.client;singleton:=true
-Bundle-Version: 0.12.1
+Bundle-Version: 0.12.2
 Bundle-ClassPath: lib.jar
 Bundle-Vendor: inavare GmbH
-Require-Bundle: log4j_wrapper_plugin,
- org.apache.mina;bundle-version="2.0.0";visibility:=reexport
+Require-Bundle: org.apache.mina;bundle-version="2.0.0";visibility:=reexport,
+ org.openscada.external.org.apache.log4j;bundle-version="1.2.15"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openscada.ae.client;uses:="org.openscada.core.client,org.openscada.utils.exec,org.openscada.ae.core",
