@@ -497,6 +497,7 @@
         <sequential>
 			<jar basedir="lib-jar-build-dir" destfile="@{destfile}">
 			</jar>
+        	<delete dir="lib-jar-build-dir"/>
         </sequential>
     </macrodef>
 
