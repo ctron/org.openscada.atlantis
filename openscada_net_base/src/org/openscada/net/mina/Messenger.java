@@ -16,8 +16,6 @@ import org.openscada.net.utils.MessageCreator;
 
 public class Messenger implements MessageListener
 {
-    private static final long DEFAULT_SESSION_TIMEOUT = Long.getLong ( "openscada.net.sessionTimeout", 10000 );
-
     private static Logger logger = Logger.getLogger ( Messenger.class );
 
     private TimerTask timeoutJob = null;
@@ -97,11 +95,6 @@ public class Messenger implements MessageListener
     private final long sessionTimeout;
 
     private final long timeoutJobPeriod;
-
-    public Messenger ()
-    {
-        this ( DEFAULT_SESSION_TIMEOUT );
-    }
 
     public Messenger ( final long timeout )
     {
