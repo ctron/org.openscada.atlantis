@@ -153,6 +153,7 @@ public class Messenger implements MessageListener
     {
         if ( this.connection != null )
         {
+            this.connection = null;
             logger.info ( "Disconnected" );
             cleanTagList ();
             if ( this.timeoutJob != null )
@@ -166,7 +167,6 @@ public class Messenger implements MessageListener
                 this.timer = null;
             }
         }
-        this.connection = null;
     }
 
     private final Map<Integer, MessageListener> listeners = new HashMap<Integer, MessageListener> ();
@@ -321,11 +321,19 @@ public class Messenger implements MessageListener
         final long now = System.currentTimeMillis ();
         final long timeDiff = now - this.lastMessge;
 
+        if ( this.connection == null )
+        {
+            logger.warn ( "Called without a connection" );
+        }
+
         if ( timeDiff > this.sessionTimeout )
         {
-            logger.warn ( String.format ( "Closing connection due to receive timeout: %s (timeout: %s)", timeDiff, this.sessionTimeout ) );
-            this.connection.close ();
-            disconnected ();
+            synchronized ( this )
+            {
+                logger.warn ( String.format ( "Closing connection due to receive timeout: %s (timeout: %s)", timeDiff, this.sessionTimeout ) );
+                this.connection.close ();
+                disconnected ();
+            }
         }
     }
 
