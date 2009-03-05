@@ -50,9 +50,9 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="openscada_pde">
 		<antelope:if name="use.maven.dependecies" value="true">
-			<property name="${maven.args}" value="-Duse.maven.dependecies=${use.maven.dependecies}" />
+			<property name="maven.args" value="-Duse.maven.dependecies=${use.maven.dependecies}" />
 			<antelope:else>
-				<property name="${maven.args}" value="-Ddo.not.use.maven.dependecies=true" />
+				<property name="maven.args" value="-Ddo.not.use.maven.dependecies=true" />
 			</antelope:else>
 		</antelope:if>
 		<java jar="${startup}" failonerror="true" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts" >
@@ -94,9 +94,9 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="build" depends="clean">
 		<antelope:if name="use.maven.dependecies" value="true">
-			<property name="${maven.args}" value="-Duse.maven.dependecies=${use.maven.dependecies}" />
+			<property name="maven.args" value="-Duse.maven.dependecies=${use.maven.dependecies}" />
 			<antelope:else>
-				<property name="${maven.args}" value="-Ddo.not.use.maven.dependecies=true" />
+				<property name="maven.args" value="-Ddo.not.use.maven.dependecies=true" />
 			</antelope:else>
 		</antelope:if>
 		<java jar="${startup}" failonerror="true" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts" >
@@ -129,9 +129,9 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="package" depends="build">
 		<antelope:if name="use.maven.dependecies" value="true">
-			<property name="${maven.args}" value="-Duse.maven.dependecies=${use.maven.dependecies}" />
+			<property name="maven.args" value="-Duse.maven.dependecies=${use.maven.dependecies}" />
 			<antelope:else>
-				<property name="${maven.args}" value="-Ddo.not.use.maven.dependecies=true" />
+				<property name="maven.args" value="-Ddo.not.use.maven.dependecies=true" />
 			</antelope:else>
 		</antelope:if>
     	<java jar="${startup}" failonerror="true" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts">
