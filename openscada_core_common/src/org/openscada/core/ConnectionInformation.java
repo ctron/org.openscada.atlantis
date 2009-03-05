@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,17 +39,17 @@ public class ConnectionInformation
      *  da:net://target:secondarytarget/subtarget/subsubtarget?property1=value1&property2=value2
      */
 
-    private String _interface = null;
+    private String interfaceName = null;
 
-    private String _driver = null;
+    private String driver = null;
 
-    private String _target = null;
+    private String target = null;
 
-    private Integer _secondaryTarget = null;
+    private Integer secondaryTarget = null;
 
-    private List<String> _subtargets = new LinkedList<String> ();
+    private List<String> subtargets = new LinkedList<String> ();
 
-    private Map<String, String> _properties = new HashMap<String, String> ();
+    private Map<String, String> properties = new HashMap<String, String> ();
 
     public static ConnectionInformation fromURI ( final String uri )
     {
@@ -63,13 +63,13 @@ public class ConnectionInformation
         try
         {
             final ConnectionInformation ci = new ConnectionInformation ();
-            ci._interface = uri.getScheme ();
-            ci._driver = subUri.getScheme ();
-            ci._target = subUri.getHost ();
+            ci.interfaceName = uri.getScheme ();
+            ci.driver = subUri.getScheme ();
+            ci.target = subUri.getHost ();
 
             if ( subUri.getPort () >= 0 )
             {
-                ci._secondaryTarget = subUri.getPort ();
+                ci.secondaryTarget = subUri.getPort ();
             }
 
             if ( subUri.getPath () != null )
@@ -83,7 +83,7 @@ public class ConnectionInformation
 
                 if ( path.length () > 0 )
                 {
-                    ci._subtargets = new LinkedList<String> ( Arrays.asList ( path.split ( "\\/" ) ) );
+                    ci.subtargets = new LinkedList<String> ( Arrays.asList ( path.split ( "\\/" ) ) );
                 }
             }
 
@@ -93,11 +93,11 @@ public class ConnectionInformation
                 final String[] userInfo = subUri.getRawUserInfo ().split ( "\\:" );
                 if ( userInfo.length > 0 )
                 {
-                    ci._properties.put ( "user", URLDecoder.decode ( userInfo[0], "utf-8" ) );
+                    ci.properties.put ( "user", URLDecoder.decode ( userInfo[0], "utf-8" ) );
                 }
                 if ( userInfo.length > 1 )
                 {
-                    ci._properties.put ( "password", URLDecoder.decode ( userInfo[1], "utf-8" ) );
+                    ci.properties.put ( "password", URLDecoder.decode ( userInfo[1], "utf-8" ) );
                 }
             }
 
@@ -114,11 +114,11 @@ public class ConnectionInformation
                         {
                             final String key = URLDecoder.decode ( m.group ( 1 ), "utf-8" );
                             final String value = URLDecoder.decode ( m.group ( 2 ), "utf-8" );
-                            ci._properties.put ( key, value );
+                            ci.properties.put ( key, value );
                         }
                         else
                         {
-                            ci._properties.put ( URLDecoder.decode ( pair, "utf-8" ), "" );
+                            ci.properties.put ( URLDecoder.decode ( pair, "utf-8" ), "" );
                         }
                     }
                 }
@@ -138,16 +138,16 @@ public class ConnectionInformation
         try
         {
             String userInfo = null;
-            final String user = this._properties.get ( "user" );
-            final String password = this._properties.get ( "password" );
+            final String user = this.properties.get ( "user" );
+            final String password = this.properties.get ( "password" );
             String subtargets = null;
             String query = null;
 
             // prepare subtargets
-            if ( this._subtargets.size () > 0 )
+            if ( this.subtargets.size () > 0 )
             {
                 subtargets = "";
-                for ( final String subtarget : this._subtargets )
+                for ( final String subtarget : this.subtargets )
                 {
                     subtargets += "/";
                     subtargets += URLEncoder.encode ( subtarget, "utf-8" );
@@ -155,9 +155,9 @@ public class ConnectionInformation
             }
 
             // perpare properties
-            this._properties.remove ( "user" );
-            this._properties.remove ( "password" );
-            for ( final Map.Entry<String, String> entry : this._properties.entrySet () )
+            this.properties.remove ( "user" );
+            this.properties.remove ( "password" );
+            for ( final Map.Entry<String, String> entry : this.properties.entrySet () )
             {
                 if ( query == null )
                 {
@@ -184,16 +184,16 @@ public class ConnectionInformation
 
             String uri = "";
 
-            uri += URLEncoder.encode ( this._interface, "utf-8" ) + ":" + URLEncoder.encode ( this._driver, "utf-8" ) + "://";
+            uri += URLEncoder.encode ( this.interfaceName, "utf-8" ) + ":" + URLEncoder.encode ( this.driver, "utf-8" ) + "://";
             if ( userInfo != null )
             {
                 uri += userInfo + "@";
             }
 
-            uri += URLEncoder.encode ( this._target, "utf-8" );
-            if ( this._secondaryTarget != null )
+            uri += URLEncoder.encode ( this.target, "utf-8" );
+            if ( this.secondaryTarget != null )
             {
-                uri += ":" + this._secondaryTarget;
+                uri += ":" + this.secondaryTarget;
             }
             if ( subtargets != null )
             {
@@ -214,67 +214,67 @@ public class ConnectionInformation
 
     public String getDriver ()
     {
-        return this._driver;
+        return this.driver;
     }
 
     public void setDriver ( final String driver )
     {
-        this._driver = driver;
+        this.driver = driver;
     }
 
     public String getInterface ()
     {
-        return this._interface;
+        return this.interfaceName;
     }
 
     public void setInterface ( final String interface1 )
     {
-        this._interface = interface1;
+        this.interfaceName = interface1;
     }
 
     public Integer getSecondaryTarget ()
     {
-        return this._secondaryTarget;
+        return this.secondaryTarget;
     }
 
     public void setSecondaryTarget ( final Integer secondaryTarget )
     {
-        this._secondaryTarget = secondaryTarget;
+        this.secondaryTarget = secondaryTarget;
     }
 
     public List<String> getSubtargets ()
     {
-        return this._subtargets;
+        return this.subtargets;
     }
 
     public void setSubtargets ( final List<String> subtargets )
     {
-        this._subtargets = subtargets;
+        this.subtargets = subtargets;
     }
 
     public String getTarget ()
     {
-        return this._target;
+        return this.target;
     }
 
     public void setTarget ( final String target )
     {
-        this._target = target;
+        this.target = target;
     }
 
     public Map<String, String> getProperties ()
     {
-        return this._properties;
+        return this.properties;
     }
 
     public void setProperties ( final Map<String, String> properties )
     {
-        this._properties = properties;
+        this.properties = properties;
     }
 
     public boolean isValid ()
     {
-        return this._driver != null && this._interface != null && this._properties != null && this._subtargets != null && this._target != null;
+        return this.driver != null && this.interfaceName != null && this.properties != null && this.subtargets != null && this.target != null;
     }
 
     @Override
@@ -282,12 +282,12 @@ public class ConnectionInformation
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( this._driver == null ? 0 : this._driver.hashCode () );
-        result = prime * result + ( this._interface == null ? 0 : this._interface.hashCode () );
-        result = prime * result + ( this._properties == null ? 0 : this._properties.hashCode () );
-        result = prime * result + ( this._secondaryTarget == null ? 0 : this._secondaryTarget.hashCode () );
-        result = prime * result + ( this._subtargets == null ? 0 : this._subtargets.hashCode () );
-        result = prime * result + ( this._target == null ? 0 : this._target.hashCode () );
+        result = prime * result + ( this.driver == null ? 0 : this.driver.hashCode () );
+        result = prime * result + ( this.interfaceName == null ? 0 : this.interfaceName.hashCode () );
+        result = prime * result + ( this.properties == null ? 0 : this.properties.hashCode () );
+        result = prime * result + ( this.secondaryTarget == null ? 0 : this.secondaryTarget.hashCode () );
+        result = prime * result + ( this.subtargets == null ? 0 : this.subtargets.hashCode () );
+        result = prime * result + ( this.target == null ? 0 : this.target.hashCode () );
         return result;
     }
 
@@ -307,69 +307,69 @@ public class ConnectionInformation
             return false;
         }
         final ConnectionInformation other = (ConnectionInformation)obj;
-        if ( this._driver == null )
+        if ( this.driver == null )
         {
-            if ( other._driver != null )
+            if ( other.driver != null )
             {
                 return false;
             }
         }
-        else if ( !this._driver.equals ( other._driver ) )
+        else if ( !this.driver.equals ( other.driver ) )
         {
             return false;
         }
-        if ( this._interface == null )
+        if ( this.interfaceName == null )
         {
-            if ( other._interface != null )
+            if ( other.interfaceName != null )
             {
                 return false;
             }
         }
-        else if ( !this._interface.equals ( other._interface ) )
+        else if ( !this.interfaceName.equals ( other.interfaceName ) )
         {
             return false;
         }
-        if ( this._properties == null )
+        if ( this.properties == null )
         {
-            if ( other._properties != null )
+            if ( other.properties != null )
             {
                 return false;
             }
         }
-        else if ( !this._properties.equals ( other._properties ) )
+        else if ( !this.properties.equals ( other.properties ) )
         {
             return false;
         }
-        if ( this._secondaryTarget == null )
+        if ( this.secondaryTarget == null )
         {
-            if ( other._secondaryTarget != null )
+            if ( other.secondaryTarget != null )
             {
                 return false;
             }
         }
-        else if ( !this._secondaryTarget.equals ( other._secondaryTarget ) )
+        else if ( !this.secondaryTarget.equals ( other.secondaryTarget ) )
         {
             return false;
         }
-        if ( this._subtargets == null )
+        if ( this.subtargets == null )
         {
-            if ( other._subtargets != null )
+            if ( other.subtargets != null )
             {
                 return false;
             }
         }
-        else if ( !this._subtargets.equals ( other._subtargets ) )
+        else if ( !this.subtargets.equals ( other.subtargets ) )
         {
             return false;
         }
-        if ( this._target == null )
+        if ( this.target == null )
         {
-            if ( other._target != null )
+            if ( other.target != null )
             {
                 return false;
             }
         }
-        else if ( !this._target.equals ( other._target ) )
+        else if ( !this.target.equals ( other.target ) )
         {
             return false;
         }
