@@ -7,7 +7,7 @@
                    
      jens                                                                
      ====================================================================== -->
-<project name="OpenSCADA RCP Client" default="default">
+<project name="OpenSCADA RCP Client" default="default" xmlns:antelope="openscada:/antelope">
     <description>
             The OpenSCADA RCP Client
     </description>
@@ -70,6 +70,9 @@
 			<arg value="-Datlantis.version=${atlantis.version}"/>
 			<arg value="-Dutgard.version=${utgard.version}"/>
 			<arg value="-Durl.maven.repository=${url.maven.repository}"/>
+			<antelope:if name="use.maven.dependecies" value="true">
+				<arg value="-Duse.maven.dependecies=${use.maven.dependecies}"/>
+			</antelope:if>
 		</java>
     	
     	<!-- copy result to pde upload -->
@@ -107,6 +110,9 @@
 			<arg value="-Datlantis.version=${atlantis.version}"/>
 			<arg value="-Dutgard.version=${utgard.version}"/>
 			<arg value="-Durl.maven.repository=${url.maven.repository}"/>
+			<antelope:if name="use.maven.dependecies" value="true">
+				<arg value="-Duse.maven.dependecies=${use.maven.dependecies}"/>
+			</antelope:if>
     	</java>
     </target>
    	
@@ -138,6 +144,9 @@
 			<arg value="-Datlantis.version=${atlantis.version}"/>
 			<arg value="-Dutgard.version=${utgard.version}"/>
 			<arg value="-Durl.maven.repository=${url.maven.repository}"/>
+			<antelope:if name="use.maven.dependecies" value="true">
+				<arg value="-Duse.maven.dependecies=${use.maven.dependecies}"/>
+			</antelope:if>
     	</java>
     	<mkdir dir="${upload.base.ostc}"/>
     	<copy todir="${upload.base.ostc}">
