@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.ice.client"
       label="OpenSCADA DA ICE Client Connector"
-      version="0.12.1"
+      version="0.12.2"
       provider-name="inavare GmbH"
       plugin="org.openscada.da.ice.client">
 
@@ -509,13 +509,14 @@ DAMAGES.
          unpack="false"/>
 
    <plugin
-         id="log4j_wrapper_plugin"
+         id="org.openscada.da.client"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
-         id="org.openscada.da.client"
+         id="org.openscada.external.org.apache.log4j"
          download-size="0"
          install-size="0"
          version="0.0.0"
