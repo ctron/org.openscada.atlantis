@@ -90,6 +90,7 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
     {
         if ( this.ioSession != null )
         {
+            this.messenger.disconnected ();
             this.ioSession.close ( true );
             this.ioSession = null;
         }
