@@ -92,6 +92,11 @@ public enum SocketImpl
 
     public static SocketImpl fromName ( final String name )
     {
+        if ( name == null )
+        {
+            return NIO;
+        }
+
         final SocketImpl impl = SocketImpl.valueOf ( name );
         if ( impl != null )
         {
