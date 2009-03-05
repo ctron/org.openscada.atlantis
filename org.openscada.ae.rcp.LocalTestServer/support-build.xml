@@ -14,22 +14,24 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="genjar" description="--> Support build file">
+    <target name="default" depends="genjar, genjar-maven" description="--> Support build file">
     </target>
     	
    	<!-- ================================= 
           target: genjar              
          ================================= -->
-    <target name="genjar" depends="" description="--> Generate the JAR file">
+    <target name="genjar" depends="" description="--> Generate the JAR file" unless="use.maven.dependecies">
 		<openscada.pde.import-module.init/>
-    	<!--
 		<openscada.pde.import-module.add-module name="ae-storage-test"/>
 		<openscada.pde.import-module.add-module name="ae-storage-net"/>
-		-->
+		<openscada.pde.import-module.finalize destfile="openscada_ae_test_server_net.jar"/>
+    </target>
+
+    <target name="genjar-maven" depends="" description="--> Generate the JAR file" if="use.maven.dependecies">
+		<openscada.pde.import-module.init/>
     	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.ae.storage.test" />
     	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.ae.storage.net" />
 		<openscada.pde.import-module.finalize destfile="openscada_ae_test_server_net.jar"/>
     </target>
-
 
 </project>

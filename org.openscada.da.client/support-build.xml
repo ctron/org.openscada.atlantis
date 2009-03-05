@@ -16,25 +16,26 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="genjar" description="--> Support build file">
+    <target name="default" depends="genjar, genjar-maven" description="--> Support build file">
     </target>
     	
    	<!-- ================================= 
           target: genjar              
          ================================= -->
-    <target name="genjar" depends="" description="--> Generate the JAR file">
+    <target name="genjar" depends="" description="--> Generate the JAR file" unless="use.maven.dependecies">
 		<openscada.pde.import-module.init/>
-    	<!--
 		<openscada.pde.import-module.add-module name="da-core-server"/>
 		<openscada.pde.import-module.add-module name="da-core-common"/>
 		<openscada.pde.import-module.add-module name="core-client-common"/>
 		<openscada.pde.import-module.add-module name="da-client-common"/>
-		-->
-    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.aurora.utils" groupid="org.openscada.aurora" />
+		<openscada.pde.import-module.finalize destfile="${libjar}"/>
+    </target>
+
+    <target name="genjar-maven" depends="" description="--> Generate the JAR file" if="use.maven.dependecies">
+		<openscada.pde.import-module.init/>
     	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.core.server" />
     	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.client.common" />
 		<openscada.pde.import-module.finalize destfile="${libjar}"/>
     </target>
-
 
 </project>
