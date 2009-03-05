@@ -31,7 +31,7 @@
 		<openscada.pde.import-module.add-module name="da-client-common"/>
 		-->
     	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.core.server" />
-    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.ae.client.common" />
+    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.client.common" />
 		<openscada.pde.import-module.finalize destfile="${libjar}"/>
     </target>
 
