@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.project"
       label="OpenSCADA DA Project Feature"
-      version="1.0.10"
+      version="0.12.0"
       provider-name="OpenSCADA"
       plugin="org.openscada.da.project">
 
@@ -36,12 +36,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="log4j_wrapper_plugin"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.openscada.da.client"
          download-size="0"
          install-size="0"
@@ -64,6 +58,13 @@
 
    <plugin
          id="org.openscada.da.client.connection.manager.view"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.external.org.apache.log4j"
          download-size="0"
          install-size="0"
          version="0.0.0"
