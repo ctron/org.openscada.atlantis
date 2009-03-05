@@ -45,6 +45,12 @@ public class ConnectionManager
         return this.connections.values ();
     }
 
+    /**
+     * Get the complete entry including item manager
+     * @param ci the connection information
+     * @param connect <code>true</code> if the connection should be connected when created
+     * @return the connection manager entry
+     */
     public synchronized ConnectionManagerEntry getEntry ( final ConnectionInformation ci, final boolean connect )
     {
         ConnectionManagerEntry entry = this.connections.get ( ci );
