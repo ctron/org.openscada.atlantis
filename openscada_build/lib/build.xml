@@ -21,6 +21,8 @@
 	<property name="build.java.target.version" value="1.5"/>
 	<property name="build.java.source.encoding" value="utf-8"/>
 	
+	<property name="groupId.atlantis" value="org.openscada.atlantis"/>
+	
 	<!-- - - - - - - - - - - - - - - - - - 
           macrodef: openscada.unpack-module
           Unpack a deployed module
