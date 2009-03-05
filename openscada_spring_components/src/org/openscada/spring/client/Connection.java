@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.client.AutoReconnectController;
 import org.openscada.core.client.ConnectionFactory;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
@@ -44,6 +45,11 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class Connection implements InitializingBean, DisposableBean, ConnectionOperations, ConnectionStateListener
 {
+    /**
+     * The default reconnect delay: 10s
+     */
+    private static final long DEFAULT_RECONNECT_DELAY = 10000;
+
     private static Logger log = Logger.getLogger ( Connection.class );
 
     private static Logger logWrite = Logger.getLogger ( Connection.class.getName () + ".write" );
@@ -64,6 +70,29 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
      * The item manager handling all item subscriptions
      */
     private ItemManager itemManager;
+
+    /**
+     * A flag that indicates if the connection should be kept open using
+     * a {@link AutoReconnectController}.
+     */
+    private boolean keepOpen = true;
+
+    /**
+     * The auto reconnect controller, if used
+     */
+    private AutoReconnectController reconnectController;
+
+    private long reconnectDelay = DEFAULT_RECONNECT_DELAY;
+
+    public void setReconnectDelay ( final long reconnectDelay )
+    {
+        this.reconnectDelay = reconnectDelay;
+    }
+
+    public void setKeepOpen ( final boolean keepOpen )
+    {
+        this.keepOpen = keepOpen;
+    }
 
     /**
      * <p>Start the connection</p>
@@ -87,26 +116,40 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
             throw new RuntimeException ( "No connection provider found that can handle: " + this.connectionInformation );
         }
         this.connection.addConnectionStateListener ( this );
-        this.connection.connect ();
+
+        if ( this.keepOpen )
+        {
+            this.reconnectController = new AutoReconnectController ( this.connection, this.reconnectDelay );
+        }
+
+        // trigger connect
+        connect ();
         this.itemManager = new ItemManager ( this.connection );
     }
 
     public void connect ()
     {
-        final org.openscada.da.client.Connection connection = this.connection;
-        if ( connection != null )
+        if ( this.reconnectController == null )
         {
-            connection.connect ();
+            this.connection.connect ();
+        }
+        else
+        {
+            this.reconnectController.connect ();
         }
     }
 
     public void disconnect ()
     {
-        final org.openscada.da.client.Connection connection = this.connection;
-        if ( connection != null )
+        if ( this.reconnectController == null )
         {
-            connection.disconnect ();
+            this.connection.disconnect ();
         }
+        else
+        {
+            this.reconnectController.disconnect ();
+        }
+
     }
 
     /**
@@ -117,8 +160,11 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
      */
     public void stop ()
     {
+        disconnect ();
+
+        this.reconnectController = null;
         this.itemManager = null;
-        this.connection.disconnect ();
+
         this.connection.removeConnectionStateListener ( this );
         this.connection = null;
     }
@@ -153,6 +199,10 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
 
     public void afterPropertiesSet () throws Exception
     {
+        if ( this.reconnectDelay <= 0 )
+        {
+            this.reconnectDelay = DEFAULT_RECONNECT_DELAY;
+        }
         start ();
     }
 
