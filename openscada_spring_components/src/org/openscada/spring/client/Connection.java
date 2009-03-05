@@ -40,6 +40,10 @@ import org.springframework.beans.factory.InitializingBean;
  * item adapters will be attached to the connection and a subscription will be
  * requested.
  * </p>
+ * <p>
+ * By default the connection will be kept open using a {@link AutoReconnectController}. Use the property {@link #keepOpen}
+ * to change this behavior.
+ * </p>
  * @author Jens Reimannn
  *
  */
