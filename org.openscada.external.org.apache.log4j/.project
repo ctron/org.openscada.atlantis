@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>log4j_wrapper_plugin</name>
+	<name>org.openscada.external.org.apache.log4j</name>
 	<comment></comment>
 	<projects>
 	</projects>
