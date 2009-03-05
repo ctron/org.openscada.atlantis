@@ -99,7 +99,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
         this.executor = Executors.newCachedThreadPool ( new ThreadFactoryImplementation ( connectionInformation ) );
 
-        this.messenger = new Messenger ();
+        this.messenger = new Messenger ( getMessageTimeout () );
 
         this.pingService = new PingService ( this.messenger );
     }
