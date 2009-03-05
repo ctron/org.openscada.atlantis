@@ -97,11 +97,20 @@ public enum SocketImpl
             return NIO;
         }
 
-        final SocketImpl impl = SocketImpl.valueOf ( name );
-        if ( impl != null )
+        try
         {
-            return impl;
+            final SocketImpl impl = SocketImpl.valueOf ( name );
+            if ( impl != null )
+            {
+                return impl;
+            }
         }
+        catch ( final Throwable e )
+        {
+
+        }
+
+        // check defined aliases
         if ( "apr".equals ( name ) )
         {
             return APR;
