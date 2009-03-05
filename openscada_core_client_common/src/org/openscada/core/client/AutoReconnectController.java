@@ -62,6 +62,20 @@ public class AutoReconnectController implements ConnectionStateListener
 
     private boolean checkScheduled;
 
+    /**
+     * Create a new reconnect controller for the provided connection using the default reconnect delay
+     * @param connection the connection to manage
+     */
+    public AutoReconnectController ( final Connection connection )
+    {
+        this ( connection, DEFAULT_RECONNECT_DELAY );
+    }
+
+    /**
+     * Create a new reconnect controller for the provided connection
+     * @param connection the connection to manage
+     * @param reconnectDelay the minimum delay between reconnect attempts
+     */
     public AutoReconnectController ( final Connection connection, long reconnectDelay )
     {
         this.connection = connection;
