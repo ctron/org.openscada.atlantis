@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,9 +51,15 @@ public class ConnectionManager
         if ( entry == null )
         {
             entry = new ConnectionManagerEntry ();
-            entry.setConnection ( (Connection)Activator.createConnection ( ci ) );
+            final Connection connection = (Connection)Activator.createConnection ( ci );
 
-            setupConnection ( entry.getConnection () );
+            if ( connection == null )
+            {
+                return null;
+            }
+
+            setupConnection ( connection );
+            entry.setConnection ( connection );
 
             entry.setItemManager ( new ItemManager ( entry.getConnection () ) );
             if ( connect )
