@@ -49,6 +49,12 @@
           target: openscada_pde                      
          - - - - - - - - - - - - - - - - - -->
     <target name="openscada_pde">
+		<antelope:if name="use.maven.dependecies" value="true">
+			<property name="${maven.args}" value="-Duse.maven.dependecies=${use.maven.dependecies}" />
+			<antelope:else>
+				<property name="${maven.args}" value="-Ddo.not.use.maven.dependecies=true" />
+			</antelope:else>
+		</antelope:if>
 		<java jar="${startup}" failonerror="true" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts" >
 			<arg value="-application" />
     		<arg value="org.eclipse.ant.core.antRunner" />
@@ -70,9 +76,7 @@
 			<arg value="-Datlantis.version=${atlantis.version}"/>
 			<arg value="-Dutgard.version=${utgard.version}"/>
 			<arg value="-Durl.maven.repository=${url.maven.repository}"/>
-			<antelope:if name="use.maven.dependecies" value="true">
-				<arg value="-Duse.maven.dependecies=${use.maven.dependecies}"/>
-			</antelope:if>
+			<arg line="${maven.args}" />
 		</java>
     	
     	<!-- copy result to pde upload -->
@@ -89,6 +93,12 @@
           target: build                      
          - - - - - - - - - - - - - - - - - -->
     <target name="build" depends="clean">
+		<antelope:if name="use.maven.dependecies" value="true">
+			<property name="${maven.args}" value="-Duse.maven.dependecies=${use.maven.dependecies}" />
+			<antelope:else>
+				<property name="${maven.args}" value="-Ddo.not.use.maven.dependecies=true" />
+			</antelope:else>
+		</antelope:if>
 		<java jar="${startup}" failonerror="true" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts" >
 			<arg value="-application" />
     		<arg value="org.eclipse.ant.core.antRunner" />
@@ -110,9 +120,7 @@
 			<arg value="-Datlantis.version=${atlantis.version}"/>
 			<arg value="-Dutgard.version=${utgard.version}"/>
 			<arg value="-Durl.maven.repository=${url.maven.repository}"/>
-			<antelope:if name="use.maven.dependecies" value="true">
-				<arg value="-Duse.maven.dependecies=${use.maven.dependecies}"/>
-			</antelope:if>
+			<arg line="${maven.args}" />
     	</java>
     </target>
    	
@@ -120,6 +128,12 @@
           target: package                      
          - - - - - - - - - - - - - - - - - -->
     <target name="package" depends="build">
+		<antelope:if name="use.maven.dependecies" value="true">
+			<property name="${maven.args}" value="-Duse.maven.dependecies=${use.maven.dependecies}" />
+			<antelope:else>
+				<property name="${maven.args}" value="-Ddo.not.use.maven.dependecies=true" />
+			</antelope:else>
+		</antelope:if>
     	<java jar="${startup}" failonerror="true" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts">
     		<arg value="-application" />
     	    <arg value="org.eclipse.ant.core.antRunner" />
@@ -144,9 +158,7 @@
 			<arg value="-Datlantis.version=${atlantis.version}"/>
 			<arg value="-Dutgard.version=${utgard.version}"/>
 			<arg value="-Durl.maven.repository=${url.maven.repository}"/>
-			<antelope:if name="use.maven.dependecies" value="true">
-				<arg value="-Duse.maven.dependecies=${use.maven.dependecies}"/>
-			</antelope:if>
+			<arg line="${maven.args}" />
     	</java>
     	<mkdir dir="${upload.base.ostc}"/>
     	<copy todir="${upload.base.ostc}">
