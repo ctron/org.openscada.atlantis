@@ -86,7 +86,7 @@ public class ConnectionManager
         connection.setExecutor ( Executors.newFixedThreadPool ( 1 ) );
     }
 
-    public synchronized DataItemHolder getDataItemHolder ( final ConnectionInformation ci, final String itemId, final boolean connect )
+    public DataItemHolder getDataItemHolder ( final ConnectionInformation ci, final String itemId, final boolean connect )
     {
         final ConnectionManagerEntry entry = getEntry ( ci, connect );
         if ( entry != null )
@@ -96,7 +96,7 @@ public class ConnectionManager
         return null;
     }
 
-    public synchronized Connection getConnection ( final ConnectionInformation ci, final boolean connect )
+    public Connection getConnection ( final ConnectionInformation ci, final boolean connect )
     {
         final ConnectionManagerEntry entry = getEntry ( ci, connect );
         if ( entry != null )
@@ -106,7 +106,7 @@ public class ConnectionManager
         return null;
     }
 
-    public synchronized Connection getConnection ( final String connectionUri, final boolean connect )
+    public Connection getConnection ( final String connectionUri, final boolean connect )
     {
         final ConnectionManagerEntry entry = getEntry ( ConnectionInformation.fromURI ( connectionUri ), connect );
         if ( entry != null )
@@ -116,12 +116,12 @@ public class ConnectionManager
         return null;
     }
 
-    public synchronized Connection getConnection ( final URI uri, final boolean connect )
+    public Connection getConnection ( final URI uri, final boolean connect )
     {
         return getConnection ( ConnectionInformation.fromURI ( uri ), connect );
     }
 
-    public synchronized ItemManager getItemManager ( final ConnectionInformation ci, final boolean connect )
+    public ItemManager getItemManager ( final ConnectionInformation ci, final boolean connect )
     {
         final ConnectionManagerEntry entry = getEntry ( ci, connect );
         if ( entry != null )
@@ -131,7 +131,7 @@ public class ConnectionManager
         return null;
     }
 
-    public synchronized ItemManager getItemManager ( final URI uri, final boolean connect )
+    public ItemManager getItemManager ( final URI uri, final boolean connect )
     {
         return getItemManager ( ConnectionInformation.fromURI ( uri ), connect );
     }

@@ -49,6 +49,8 @@ public class ConnectionManagerViewPart extends ViewPart implements ConnectionMan
     @Override
     public void dispose ()
     {
+        ConnectionManager.getDefault ().removeConnectionManagerListener ( this );
+
         for ( final ConnectionEntry entry : this.sourceEntries )
         {
             entry.dispose ();
@@ -68,11 +70,11 @@ public class ConnectionManagerViewPart extends ViewPart implements ConnectionMan
         this.viewer.getTable ().setLayout ( layout );
 
         final TableViewerColumn col1 = new TableViewerColumn ( this.viewer, SWT.NONE );
-        col1.getColumn ().setText ( Messages.getString("ConnectionManagerViewPart.viewer.column.connection.text") ); //$NON-NLS-1$
+        col1.getColumn ().setText ( Messages.getString ( "ConnectionManagerViewPart.viewer.column.connection.text" ) ); //$NON-NLS-1$
         layout.addColumnData ( new ColumnWeightData ( 50 ) );
 
         final TableViewerColumn col2 = new TableViewerColumn ( this.viewer, SWT.NONE );
-        col2.getColumn ().setText ( Messages.getString("ConnectionManagerViewPart.viewer.column.state.text") ); //$NON-NLS-1$
+        col2.getColumn ().setText ( Messages.getString ( "ConnectionManagerViewPart.viewer.column.state.text" ) ); //$NON-NLS-1$
         layout.addColumnData ( new ColumnWeightData ( 25 ) );
 
         this.viewer.getTable ().setHeaderVisible ( true );
@@ -116,40 +118,50 @@ public class ConnectionManagerViewPart extends ViewPart implements ConnectionMan
         this.viewer.getControl ().setFocus ();
     }
 
-    public synchronized void connectionsAdded ( final Collection<ConnectionManagerEntry> connections )
+    public void connectionsAdded ( final Collection<ConnectionManagerEntry> connections )
     {
         this.entries.getRealm ().exec ( new Runnable () {
 
             public void run ()
             {
-                for ( final ConnectionManagerEntry entry : connections )
-                {
-                    final ConnectionEntry newEntry = new ConnectionEntry ( entry.getConnection () );
-                    ConnectionManagerViewPart.this.entries.add ( newEntry );
-                    ConnectionManagerViewPart.this.connectionMap.put ( entry.getConnection (), newEntry );
-                }
+                performAddConnections ( connections );
             }
         } );
 
     }
 
-    public synchronized void connectionsRemoved ( final Collection<ConnectionManagerEntry> connections )
+    protected synchronized void performAddConnections ( final Collection<ConnectionManagerEntry> connections )
+    {
+        for ( final ConnectionManagerEntry entry : connections )
+        {
+            final ConnectionEntry newEntry = new ConnectionEntry ( entry.getConnection () );
+            ConnectionManagerViewPart.this.entries.add ( newEntry );
+            ConnectionManagerViewPart.this.connectionMap.put ( entry.getConnection (), newEntry );
+        }
+    }
+
+    public void connectionsRemoved ( final Collection<ConnectionManagerEntry> connections )
     {
         this.entries.getRealm ().exec ( new Runnable () {
 
             public void run ()
             {
-                for ( final ConnectionManagerEntry entry : connections )
-                {
-                    final ConnectionEntry newEntry = ConnectionManagerViewPart.this.connectionMap.get ( entry.getConnection () );
-                    if ( newEntry != null )
-                    {
-                        ConnectionManagerViewPart.this.entries.remove ( newEntry );
-                        newEntry.dispose ();
-                    }
-                }
+                performRemoveConnection ( connections );
             }
         } );
+    }
+
+    protected synchronized void performRemoveConnection ( final Collection<ConnectionManagerEntry> connections )
+    {
+        for ( final ConnectionManagerEntry entry : connections )
+        {
+            final ConnectionEntry newEntry = ConnectionManagerViewPart.this.connectionMap.get ( entry.getConnection () );
+            if ( newEntry != null )
+            {
+                ConnectionManagerViewPart.this.entries.remove ( newEntry );
+                newEntry.dispose ();
+            }
+        }
     }
 
 }
