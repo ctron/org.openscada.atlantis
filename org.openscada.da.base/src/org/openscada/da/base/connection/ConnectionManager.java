@@ -72,6 +72,7 @@ public class ConnectionManager
             {
                 entry.getConnection ().connect ();
             }
+            this.connections.put ( ci, entry );
             fireConnectionsAdded ( Arrays.asList ( entry ) );
         }
         return entry;
