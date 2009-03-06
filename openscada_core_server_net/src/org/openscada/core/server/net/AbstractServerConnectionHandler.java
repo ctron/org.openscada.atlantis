@@ -54,14 +54,9 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
 
         this.pingService = new PingService ( this.messenger );
 
-        setupSession ();
+        this.ioSession.getConfig ().setReaderIdleTime ( getPingPeriod () / 1000 );
 
         this.messenger.connected ( new IoSessionSender ( this.ioSession ) );
-    }
-
-    private void setupSession ()
-    {
-        this.ioSession.getConfig ().setBothIdleTime ( getPingPeriod () / 1000 );
     }
 
     public void exceptionCaught ( final Throwable cause ) throws Exception

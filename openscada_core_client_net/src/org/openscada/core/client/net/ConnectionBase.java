@@ -533,7 +533,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         logger.info ( "Session created: " + session );
 
-        session.getConfig ().setBothIdleTime ( getPingPeriod () / 1000 );
+        session.getConfig ().setReaderIdleTime ( getPingPeriod () / 1000 );
 
         if ( this.session == null )
         {
