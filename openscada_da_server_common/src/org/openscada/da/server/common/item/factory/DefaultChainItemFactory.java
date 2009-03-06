@@ -19,19 +19,12 @@
 
 package org.openscada.da.server.common.item.factory;
 
-import org.openscada.da.core.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.DataItemBaseChained;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
-import org.openscada.da.server.common.chain.item.LevelAlarmChainItem;
-import org.openscada.da.server.common.chain.item.ManualErrorOverrideChainItem;
-import org.openscada.da.server.common.chain.item.ManualOverrideChainItem;
-import org.openscada.da.server.common.chain.item.NegateInputItem;
-import org.openscada.da.server.common.chain.item.ScaleInputItem;
-import org.openscada.da.server.common.chain.item.SumAlarmChainItem;
-import org.openscada.da.server.common.chain.item.SumErrorChainItem;
+import org.openscada.da.server.common.chain.item.ChainCreator;
 import org.openscada.da.server.common.impl.HiveCommon;
 
 /**
@@ -93,13 +86,7 @@ public class DefaultChainItemFactory extends FolderItemFactory
      */
     protected void applyChain ( final DataItemBaseChained item )
     {
-        item.addChainElement ( IODirection.INPUT, new NegateInputItem ( this.hive ) );
-        item.addChainElement ( IODirection.INPUT, new ScaleInputItem ( this.hive ) );
-        item.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( this.hive ) );
-        item.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
-        item.addChainElement ( IODirection.INPUT, new LevelAlarmChainItem ( this.hive ) );
-        item.addChainElement ( IODirection.INPUT, new SumAlarmChainItem ( this.hive ) );
-        item.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( this.hive ) );
+        ChainCreator.applyDefaultInputChain ( item, this.hive );
     }
 
 }
