@@ -48,7 +48,7 @@
             id="org.openscada.da.project.editorContribution1"
             targetID="org.openscada.da.project.realTimeListEditor">
          <action
-               class="org.openscada.da.base.realtime.RemoveAction"
+               class="org.openscada.da.client.base.realtime.RemoveAction"
                id="org.openscada.da.project.realtime.RemoveAction"
                label="Remove"
                menubarPath="additions"

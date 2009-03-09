@@ -48,8 +48,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
-import org.openscada.da.base.browser.ValueType;
 import org.openscada.da.client.WriteAttributeOperationCallback;
+import org.openscada.da.client.base.browser.ValueType;
 import org.openscada.da.client.dataitem.details.part.AbstractBaseDetailsPart;
 import org.openscada.da.core.WriteAttributeResults;
 

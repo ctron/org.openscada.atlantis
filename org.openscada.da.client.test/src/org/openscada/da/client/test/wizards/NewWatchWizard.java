@@ -32,9 +32,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchSite;
 import org.openscada.core.Variant;
-import org.openscada.da.base.browser.DataItemEntry;
-import org.openscada.da.base.browser.FolderEntry;
-import org.openscada.da.base.browser.HiveConnection;
+import org.openscada.da.client.base.browser.DataItemEntry;
+import org.openscada.da.client.base.browser.FolderEntry;
+import org.openscada.da.client.base.browser.HiveConnection;
 import org.openscada.da.client.test.views.watch.DataItemWatchView;
 import org.openscada.da.core.IODirection;
 

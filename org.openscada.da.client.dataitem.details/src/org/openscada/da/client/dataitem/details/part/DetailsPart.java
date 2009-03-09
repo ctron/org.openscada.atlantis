@@ -21,8 +21,8 @@ package org.openscada.da.client.dataitem.details.part;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.services.IDisposable;
-import org.openscada.da.base.item.DataItemHolder;
 import org.openscada.da.client.DataItem;
+import org.openscada.da.client.base.item.DataItemHolder;
 
 public interface DetailsPart extends IDisposable
 {

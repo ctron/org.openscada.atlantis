@@ -27,8 +27,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.openscada.da.base.item.DataItemHolder;
 import org.openscada.da.client.DataItem;
+import org.openscada.da.client.base.item.DataItemHolder;
 import org.openscada.da.client.dataitem.details.part.AbstractBaseDetailsPart;
 import org.openscada.da.client.dataitem.details.part.DetailsPart;
 

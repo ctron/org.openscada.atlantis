@@ -26,9 +26,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.openscada.core.Variant;
-import org.openscada.da.base.item.DataItemHolder;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.da.client.base.item.DataItemHolder;
 
 public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
 {

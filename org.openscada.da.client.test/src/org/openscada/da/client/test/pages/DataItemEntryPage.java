@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.openscada.da.base.browser.DataItemEntry;
+import org.openscada.da.client.base.browser.DataItemEntry;
 
 public class DataItemEntryPage extends PropertyPage implements IWorkbenchPropertyPage
 {

@@ -30,9 +30,9 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.openscada.da.base.connection.ConnectionManager;
-import org.openscada.da.base.item.DataItemHolder;
-import org.openscada.da.base.item.ItemSelectionHelper;
+import org.openscada.da.client.base.connection.ConnectionManager;
+import org.openscada.da.client.base.item.DataItemHolder;
+import org.openscada.da.client.base.item.ItemSelectionHelper;
 
 public class ShowDetailsAction implements IObjectActionDelegate
 {

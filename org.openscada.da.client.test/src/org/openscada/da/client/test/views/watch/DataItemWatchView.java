@@ -42,9 +42,9 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.da.base.browser.DataItemEntry;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.ItemUpdateListener;
+import org.openscada.da.client.base.browser.DataItemEntry;
 
 /**
  * This sample class demonstrates how to plug-in a new

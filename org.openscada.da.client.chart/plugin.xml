@@ -17,7 +17,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.chart.oc1"
-            objectClass="org.openscada.da.base.browser.DataItemEntry">
+            objectClass="org.openscada.da.client.base.browser.DataItemEntry">
          <action
                class="org.openscada.da.client.chart.action.OpenChartAction"
                id="org.openscada.da.client.chart.OpenChartAction"
@@ -27,7 +27,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.chart.oc2"
-            objectClass="org.openscada.da.base.realtime.ListEntry">
+            objectClass="org.openscada.da.client.base.realtime.ListEntry">
          <action
                class="org.openscada.da.client.chart.action.OpenChartAction"
                id="org.openscada.da.client.chart.OpenChartAction"

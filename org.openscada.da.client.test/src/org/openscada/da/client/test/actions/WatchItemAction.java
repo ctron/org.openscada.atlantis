@@ -30,7 +30,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
-import org.openscada.da.base.browser.DataItemEntry;
+import org.openscada.da.client.base.browser.DataItemEntry;
 import org.openscada.da.client.test.views.watch.DataItemWatchView;
 
 public class WatchItemAction implements IViewActionDelegate, IObjectActionDelegate

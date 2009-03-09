@@ -31,11 +31,11 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.da.base.connection.ConnectionManager;
-import org.openscada.da.base.connection.ConnectionManagerEntry;
-import org.openscada.da.base.item.DataItemHolder;
 import org.openscada.da.client.AsyncDataItem;
 import org.openscada.da.client.DataItem;
+import org.openscada.da.client.base.connection.ConnectionManager;
+import org.openscada.da.client.base.connection.ConnectionManagerEntry;
+import org.openscada.da.client.base.item.DataItemHolder;
 import org.openscada.da.client.chart.Messages;
 
 public class ChartView2 extends ViewPart implements Observer

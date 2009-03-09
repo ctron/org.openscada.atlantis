@@ -24,10 +24,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
-import org.openscada.da.base.connection.ConnectionManager;
-import org.openscada.da.base.connection.ConnectionManagerEntry;
-import org.openscada.da.base.connection.ConnectionManagerListener;
 import org.openscada.da.client.Connection;
+import org.openscada.da.client.base.connection.ConnectionManager;
+import org.openscada.da.client.base.connection.ConnectionManagerEntry;
+import org.openscada.da.client.base.connection.ConnectionManagerListener;
 
 public class ConnectionManagerViewPart extends ViewPart implements ConnectionManagerListener
 {

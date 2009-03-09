@@ -120,7 +120,7 @@
                toolbarPath="additions"
                tooltip="Watch selected item">
             <enablement>
-               <objectClass name="org.openscada.da.base.browser.DataItemEntry"/>
+               <objectClass name="org.openscada.da.client.base.browser.DataItemEntry"/>
             </enablement>
          </action>
          <action
@@ -132,7 +132,7 @@
                style="push"
                toolbarPath="additions">
             <enablement>
-               <objectClass name="org.openscada.da.base.browser.DataItemEntry"/>
+               <objectClass name="org.openscada.da.client.base.browser.DataItemEntry"/>
             </enablement>
          </action>
          <action
@@ -144,7 +144,7 @@
                style="push"
                toolbarPath="additions">
             <enablement>
-               <objectClass name="org.openscada.da.base.browser.DataItemEntry"/>
+               <objectClass name="org.openscada.da.client.base.browser.DataItemEntry"/>
             </enablement>
          </action>
          <action
@@ -157,7 +157,7 @@
                toolbarPath="additions"
                tooltip="%action.deleteHive.tooltip">
             <enablement>
-               <objectClass name="org.openscada.da.base.browser.HiveConnection"/>
+               <objectClass name="org.openscada.da.client.base.browser.HiveConnection"/>
             </enablement>
          </action>
          <action
@@ -171,7 +171,7 @@
                tooltip="%action.connectHive.tooltip">
             <enablement>
                <and>
-                  <objectClass name="org.openscada.da.base.browser.HiveConnection"/>
+                  <objectClass name="org.openscada.da.client.base.browser.HiveConnection"/>
                   <objectState
                         name="state"
                         value="CLOSED"/>
@@ -189,7 +189,7 @@
                tooltip="Disconnect from hive">
             <enablement>
                <and>
-                  <objectClass name="org.openscada.da.base.browser.HiveConnection"/>
+                  <objectClass name="org.openscada.da.client.base.browser.HiveConnection"/>
                   <not>
                      <objectState
                            name="state"
@@ -211,7 +211,7 @@
                style="push"
                toolbarPath="additions">
             <enablement>
-               <objectClass name="org.openscada.da.base.realtime.ListEntry"/>
+               <objectClass name="org.openscada.da.client.base.realtime.ListEntry"/>
             </enablement>
          </action>
          <action
@@ -223,7 +223,7 @@
                style="push"
                toolbarPath="additions">
             <enablement>
-               <objectClass name="org.openscada.da.base.realtime.ListEntry"/>
+               <objectClass name="org.openscada.da.client.base.realtime.ListEntry"/>
             </enablement>
          </action>
             </viewContribution>
@@ -233,7 +233,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.test.popupMenus.oc2"
-            objectClass="org.openscada.da.base.browser.HiveConnection">
+            objectClass="org.openscada.da.client.base.browser.HiveConnection">
 		<action
                class="org.openscada.da.client.test.actions.DeleteHiveAction"
                icon="icons/16x16/stock_delete.png"
@@ -271,7 +271,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.test.popupMenus.oc1"
-            objectClass="org.openscada.da.base.browser.DataItemEntry">
+            objectClass="org.openscada.da.client.base.browser.DataItemEntry">
          <action
                class="org.openscada.da.client.test.actions.WatchItemAction"
                icon="icons/stock_watch.png"
@@ -301,7 +301,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.test.popupMenus.oc3"
-            objectClass="org.openscada.da.base.realtime.ListEntry">
+            objectClass="org.openscada.da.client.base.realtime.ListEntry">
          <action
                class="org.openscada.da.client.test.actions.WriteOperationAction"
                icon="icons/16x16/stock_write.png"
@@ -318,7 +318,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.da.client.test.folderEntry.oc1"
-            objectClass="org.openscada.da.base.browser.FolderEntry">
+            objectClass="org.openscada.da.client.base.browser.FolderEntry">
          <action
                class="org.openscada.da.client.test.views.realtime.PatternSubscribeAction"
                id="org.openscada.da.client.test.action1"
@@ -362,7 +362,7 @@
             name="Data Item">
          <enabledWhen>
             <instanceof
-                  value="org.openscada.da.base.browser.DataItemEntry">
+                  value="org.openscada.da.client.base.browser.DataItemEntry">
             </instanceof>
          </enabledWhen>
       </page>
@@ -370,7 +370,7 @@
    <extension
          point="org.eclipse.ui.dropActions">
       <action
-            class="org.openscada.da.base.dnd.ItemDropAction"
+            class="org.openscada.da.client.base.dnd.ItemDropAction"
             id="itemDrop"/>
    </extension>
    <extension

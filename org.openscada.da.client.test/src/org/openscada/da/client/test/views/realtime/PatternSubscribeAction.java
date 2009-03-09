@@ -17,12 +17,12 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.openscada.core.ConnectionInformation;
-import org.openscada.da.base.browser.BrowserEntry;
-import org.openscada.da.base.browser.DataItemEntry;
-import org.openscada.da.base.browser.FolderEntry;
-import org.openscada.da.base.connection.ConnectionManager;
-import org.openscada.da.base.item.Item;
-import org.openscada.da.base.realtime.ListEntry;
+import org.openscada.da.client.base.browser.BrowserEntry;
+import org.openscada.da.client.base.browser.DataItemEntry;
+import org.openscada.da.client.base.browser.FolderEntry;
+import org.openscada.da.client.base.connection.ConnectionManager;
+import org.openscada.da.client.base.item.Item;
+import org.openscada.da.client.base.realtime.ListEntry;
 
 public class PatternSubscribeAction implements IObjectActionDelegate
 {

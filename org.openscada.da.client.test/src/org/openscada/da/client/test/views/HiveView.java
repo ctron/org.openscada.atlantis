@@ -45,11 +45,11 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.openscada.core.client.ConnectionState;
-import org.openscada.da.base.browser.FolderEntry;
-import org.openscada.da.base.browser.HiveConnection;
-import org.openscada.da.base.browser.HiveRepository;
-import org.openscada.da.base.dnd.ItemDragSourceListener;
-import org.openscada.da.base.dnd.ItemTransfer;
+import org.openscada.da.client.base.browser.FolderEntry;
+import org.openscada.da.client.base.browser.HiveConnection;
+import org.openscada.da.client.base.browser.HiveRepository;
+import org.openscada.da.client.base.dnd.ItemDragSourceListener;
+import org.openscada.da.client.base.dnd.ItemTransfer;
 import org.openscada.da.client.test.Activator;
 
 /**

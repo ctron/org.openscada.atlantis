@@ -29,9 +29,9 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.da.base.browser.HiveConnection;
-import org.openscada.da.base.item.DataItemHolder;
 import org.openscada.da.client.ItemUpdateListener;
+import org.openscada.da.client.base.browser.HiveConnection;
+import org.openscada.da.client.base.item.DataItemHolder;
 import org.openscada.da.client.chart.Messages;
 
 public class ChartView extends ViewPart implements ItemUpdateListener

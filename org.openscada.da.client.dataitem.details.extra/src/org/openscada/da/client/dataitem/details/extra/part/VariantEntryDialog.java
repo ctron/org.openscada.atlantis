@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
-import org.openscada.da.base.browser.ValueType;
+import org.openscada.da.client.base.browser.ValueType;
 
 public class VariantEntryDialog extends TitleAreaDialog
 {
