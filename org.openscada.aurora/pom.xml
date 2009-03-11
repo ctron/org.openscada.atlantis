@@ -6,12 +6,12 @@
 	<packaging>pom</packaging>
 	<name>OpenSCADA-Common</name>
 	<version>0.12.0-SNAPSHOT</version>
-	
+
 	<modules>
 		<module>../openscada_utils</module>
 		<module>../org.openscada.aurora.slice.plugin</module>
 	</modules>
-	
+
 	<distributionManagement>
 		<repository>
 			<id>openscada-releases</id>
@@ -57,6 +57,19 @@
 					<execution>
 						<id>attach-sources</id>
 						<phase>verify</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<inherited>true</inherited>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
 						<goals>
 							<goal>jar</goal>
 						</goals>
