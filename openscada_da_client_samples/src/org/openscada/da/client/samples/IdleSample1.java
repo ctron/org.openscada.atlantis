@@ -74,7 +74,7 @@ public class IdleSample1 extends SampleBase
         {
             s = new IdleSample1 ( uri, className );
             s.connect ();
-            Thread.sleep ( 30 * 1000 );
+            Thread.sleep ( 60 * 1000 );
             logger.info ( "Idle check complete" );
         }
         catch ( final Throwable e )
