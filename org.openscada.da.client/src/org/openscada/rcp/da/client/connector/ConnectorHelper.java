@@ -29,6 +29,11 @@ public class ConnectorHelper
 
         for ( final IConfigurationElement element : elements )
         {
+            final String name = element.getName ();
+            if ( !"driverAdapter".equals ( name ) )
+            {
+                continue;
+            }
             final String interfaceString = element.getAttribute ( "interface" );
             final String typeString = element.getAttribute ( "type" );
 
