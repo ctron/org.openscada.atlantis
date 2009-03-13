@@ -19,15 +19,13 @@
 
 package org.openscada.da.client.dataitem.details;
 
-import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.openscada.da.client.base.action.AbstractItemAction;
 import org.openscada.da.client.base.item.DataItemHolder;
 
-public class ShowDetailsAction extends AbstractItemAction implements IObjectActionDelegate
+public class ShowDetailsAction extends AbstractItemAction
 {
-
     public ShowDetailsAction ()
     {
         super ( "Show details" );
