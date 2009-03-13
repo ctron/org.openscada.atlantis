@@ -13,9 +13,9 @@
 	</parent>
 
 	<scm>
-		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_net_base</connection>
+		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_net_base</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_net_base</developerConnection>
-		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_net_base</url>
+		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_net_base</url>
 	</scm>
 
 	<dependencies>
