@@ -20,12 +20,16 @@
 package org.openscada.da.client.base.realtime;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItem;
@@ -33,8 +37,17 @@ import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.base.item.Item;
 
-public class ListEntry extends Observable implements Observer, IAdaptable
+public class ListEntry extends Observable implements Observer, IAdaptable, IPropertySource
 {
+
+    private enum Properties
+    {
+        ITEM_ID,
+        CONNECTION_URI,
+        VALUE,
+        SUBSCRIPTION_STATE
+    };
+
     public class AttributePair
     {
         public String key;
@@ -182,5 +195,76 @@ public class ListEntry extends Observable implements Observer, IAdaptable
             return new Item ( this.item );
         }
         return null;
+    }
+
+    // IPropertySource Methods
+
+    public Object getEditableValue ()
+    {
+        return this.item.getId ();
+    }
+
+    public IPropertyDescriptor[] getPropertyDescriptors ()
+    {
+        final List<IPropertyDescriptor> result = new LinkedList<IPropertyDescriptor> ();
+
+        {
+            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.ITEM_ID, "ID" );
+            pd.setCategory ( "Item" );
+            pd.setAlwaysIncompatible ( true );
+            result.add ( pd );
+        }
+        {
+            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.CONNECTION_URI, "Connection" );
+            pd.setCategory ( "Item" );
+            pd.setAlwaysIncompatible ( true );
+            result.add ( pd );
+        }
+        {
+            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.VALUE, "Value" );
+            pd.setCategory ( "State" );
+            pd.setAlwaysIncompatible ( true );
+            result.add ( pd );
+        }
+        {
+            final PropertyDescriptor pd = new PropertyDescriptor ( Properties.SUBSCRIPTION_STATE, "Subscription" );
+            pd.setCategory ( "State" );
+            pd.setAlwaysIncompatible ( true );
+            result.add ( pd );
+        }
+
+        return result.toArray ( new IPropertyDescriptor[0] );
+    }
+
+    public Object getPropertyValue ( final Object id )
+    {
+        if ( id instanceof Properties )
+        {
+            switch ( (Properties)id )
+            {
+            case ITEM_ID:
+                return this.item.getId ();
+            case CONNECTION_URI:
+                return this.item.getConnectionString ();
+            case VALUE:
+                return this.dataItem.getSnapshotValue ();
+            case SUBSCRIPTION_STATE:
+                return this.dataItem.getSnapshotValue ().getSubscriptionState ();
+            }
+        }
+        return null;
+    }
+
+    public boolean isPropertySet ( final Object id )
+    {
+        return false;
+    }
+
+    public void resetPropertyValue ( final Object id )
+    {
+    }
+
+    public void setPropertyValue ( final Object id, final Object value )
+    {
     }
 }
