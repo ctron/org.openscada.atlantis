@@ -11,12 +11,12 @@
 		<repository>
 			<id>openscada-releases</id>
 			<name>openscada-releases</name>
-			<url>http://carlton.local:8080/artifactory/openscada-releases/</url>
+			<url>${openscada.distrib.repository}</url>
 		</repository>
 		<snapshotRepository>
 			<id>openscada-snapshots</id>
 			<name>openscada-snapshots</name>
-			<url>http://carlton.local:8080/artifactory/openscada-snapshots/</url>
+			<url>${openscada.distrib.repository}</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -24,7 +24,22 @@
 		<repository>
 			<id>openscada-repos</id>
 			<name>openscada-repos</name>
-			<url>http://carlton.local:8080/artifactory/openscada-repos/</url>
+			<url>${openscada.internal.repository}</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>openscada-public-repos</id>
+			<name>openscada-public-repos</name>
+			<url>http://www.openscada.org/download/maven-repo/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
@@ -37,12 +52,36 @@
 			</snapshots>
 		</repository>
 	</repositories>
-
 	<pluginRepositories>
 		<pluginRepository>
 			<id>openscada-repos</id>
 			<name>openscada-repos</name>
-			<url>http://carlton.local:8080/artifactory/openscada-repos/</url>
+			<url>${openscada.internal.repository}</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>openscada-public-repos</id>
+			<name>openscada-public-repos</name>
+			<url>http://www.openscada.org/download/maven-repo/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
 
@@ -63,9 +102,9 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_build</connection>
+		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_build</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_build</developerConnection>
-		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_build</url>
+		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_build</url>
 	</scm>
 	<organization>
 		<name>inavare GmbH</name>
