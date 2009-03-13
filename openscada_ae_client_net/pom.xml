@@ -14,9 +14,9 @@
 	</parent>
 
 	<scm>
-		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_client_common</connection>
+		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_client_common</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_client_common</developerConnection>
-		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_client_common</url>
+		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_client_common</url>
 	</scm>
 	
 	<dependencies>
