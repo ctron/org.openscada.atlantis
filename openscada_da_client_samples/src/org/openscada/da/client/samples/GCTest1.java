@@ -97,7 +97,7 @@ public class GCTest1 extends SampleBase implements ItemUpdateListener
 
     public static void main ( final String[] args ) throws Exception
     {
-        final String uri = "da:net://localhost:12020";
+        final String uri = "da:net://localhost:1202";
         final String className = Connection.class.getName ();
 
         /*

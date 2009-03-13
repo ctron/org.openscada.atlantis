@@ -13,9 +13,9 @@
 	</parent>
 
 	<scm>
-		<connection>scm:svn:https://svn.inavare.net/openscada/modules/alantis/trunk/openscada_da_execserver</connection>
+		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/alantis/trunk/openscada_da_execserver</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_execserver</developerConnection>
-		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_execserver</url>
+		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_execserver</url>
 	</scm>
 
 	<dependencies>
