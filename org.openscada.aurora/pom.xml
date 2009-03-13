@@ -16,12 +16,12 @@
 		<repository>
 			<id>openscada-releases</id>
 			<name>openscada-releases</name>
-			<url>http://carlton.local:8080/artifactory/openscada-releases/</url>
+			<url>${openscada.distrib.repository}</url>
 		</repository>
 		<snapshotRepository>
 			<id>openscada-snapshots</id>
 			<name>openscada-snapshots</name>
-			<url>http://carlton.local:8080/artifactory/openscada-snapshots/</url>
+			<url>${openscada.distrib.repository}</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -29,7 +29,7 @@
 		<repository>
 			<id>openscada-repos</id>
 			<name>openscada-repos</name>
-			<url>http://carlton.local:8080/artifactory/openscada-repos/</url>
+			<url>${openscada.internal.repository}</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
@@ -61,7 +61,7 @@
 		<pluginRepository>
 			<id>openscada-repos</id>
 			<name>openscada-repos</name>
-			<url>http://carlton.local:8080/artifactory/openscada-repos/</url>
+			<url>${openscada.internal.repository}</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
@@ -91,10 +91,15 @@
 	</pluginRepositories>
 
 	<scm>
-		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora</connection>
+		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora</developerConnection>
-		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora</url>
+		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora</url>
 	</scm>
+	<organization>
+		<name>inavare GmbH</name>
+		<url>http://www.inavare.net</url>
+	</organization>
+	
 	<build>
 		<plugins>
 			<plugin>

@@ -14,9 +14,9 @@
 		<relativePath>../org.openscada.aurora/pom.xml</relativePath>
 	</parent>
 	<scm>
-		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora.slice.plugin</connection>
+		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora.slice.plugin</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora.slice.plugin</developerConnection>
-		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora.slice.plugin</url>
+		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/org.openscada.aurora.slice.plugin</url>
 	</scm>
 	<dependencies>
 		<dependency>
