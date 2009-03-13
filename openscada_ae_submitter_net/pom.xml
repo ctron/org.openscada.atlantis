@@ -14,9 +14,9 @@
 	</parent>
 
 	<scm>
-		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_submitter_net</connection>
+		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_submitter_net</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_submitter_net</developerConnection>
-		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_submitter_net</url>
+		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_submitter_net</url>
 	</scm>
 
 	<dependencies>
