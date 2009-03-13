@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+   <extension-point id="org.openscada.da.client.signalGenerator" name="generator" schema="schema/org.openscada.da.client.signalGenerator.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <view
@@ -40,6 +41,14 @@
                menubarPath="additions">
          </action>
       </objectContribution>
+   </extension>
+   <extension
+         point="org.openscada.da.client.signalGenerator">
+      <generatorPage
+            class="org.openscada.da.client.signalgenerator.page.BooleanGeneratorPage"
+            label="Boolean"
+            sortKey="20">
+      </generatorPage>
    </extension>
 
 </plugin>
