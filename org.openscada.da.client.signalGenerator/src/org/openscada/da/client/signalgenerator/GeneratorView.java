@@ -62,6 +62,7 @@ public class GeneratorView extends ViewPart
 
     public void setDataItem ( final DataItemHolder item )
     {
+        setPartName ( String.format ( "Signal generator for: %s", item.getItemId (), item.getConnection ().getConnectionInformation () ) );
         for ( final GeneratorPage page : this.pages )
         {
             page.setDataItem ( item );

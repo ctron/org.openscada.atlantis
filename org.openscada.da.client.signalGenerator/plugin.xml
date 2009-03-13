@@ -20,7 +20,7 @@
             objectClass="org.openscada.da.client.base.browser.DataItemEntry">
          <action
                class="org.openscada.da.client.signalgenerator.action.ShowGenerator"
-               enablesFor="1"
+               enablesFor="+"
                icon="icons/thread_obj.gif"
                id="org.openscada.da.client.test.actions.ShowGenerator"
                label="%action.signalGenerator.name"
@@ -33,7 +33,7 @@
             objectClass="org.openscada.da.client.base.realtime.ListEntry">
          <action
                class="org.openscada.da.client.signalgenerator.action.ShowGenerator"
-               enablesFor="1"
+               enablesFor="+"
                icon="icons/thread_obj.gif"
                id="org.openscada.da.client.test.actions.ShowGenerator"
                label="%action.signalGenerator.name"
