@@ -11,7 +11,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="true"
-            category="org.openscada.da.client.test"
+            category="org.openscada.da.category"
             class="org.openscada.da.client.viewer.views.ProcessView"
             id="org.openscada.da.client.viewer.ProcessView"
             name="Process Viewer"/>
