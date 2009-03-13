@@ -14,9 +14,9 @@
 	</parent>
 
 	<scm>
-		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_storage_test</connection>
+		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_storage_test</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_storage_test</developerConnection>
-		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_storage_test</url>
+		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_storage_test</url>
 	</scm>
 	
 	<dependencies>
