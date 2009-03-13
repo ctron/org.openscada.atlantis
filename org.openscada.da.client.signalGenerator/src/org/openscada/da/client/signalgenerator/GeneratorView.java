@@ -8,6 +8,9 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.da.client.base.item.DataItemHolder;
 import org.openscada.da.client.signalgenerator.page.BooleanGeneratorPage;
@@ -21,14 +24,17 @@ public class GeneratorView extends ViewPart
 
     private final List<GeneratorPage> pages = new LinkedList<GeneratorPage> ();
 
+    private DataItemHolder item;
+
     public GeneratorView ()
     {
-        this.pages.add ( new BooleanGeneratorPage () );
     }
 
     @Override
     public void createPartControl ( final Composite parent )
     {
+        this.pages.add ( new BooleanGeneratorPage () );
+
         this.tabFolder = new CTabFolder ( parent, SWT.BOTTOM );
 
         for ( final GeneratorPage page : this.pages )
@@ -39,6 +45,11 @@ public class GeneratorView extends ViewPart
             page.createPage ( tabComposite );
             tabItem.setText ( page.getName () );
             tabItem.setControl ( tabComposite );
+
+            if ( this.item != null )
+            {
+                page.setDataItem ( this.item );
+            }
         }
 
         this.tabFolder.setSelection ( 0 );
@@ -62,11 +73,36 @@ public class GeneratorView extends ViewPart
 
     public void setDataItem ( final DataItemHolder item )
     {
-        setPartName ( String.format ( "Signal generator for: %s", item.getItemId (), item.getConnection ().getConnectionInformation () ) );
+        this.item = item;
+        if ( item != null )
+        {
+            setPartName ( String.format ( "Signal generator for: %s", item.getItemId (), item.getConnection ().getConnectionInformation () ) );
+        }
+        else
+        {
+            setPartName ( "No item set" );
+        }
+
         for ( final GeneratorPage page : this.pages )
         {
             page.setDataItem ( item );
         }
     }
 
+    @Override
+    public void init ( final IViewSite site, final IMemento memento ) throws PartInitException
+    {
+        super.init ( site, memento );
+        setDataItem ( DataItemHolder.loadFrom ( memento ) );
+    }
+
+    @Override
+    public void saveState ( final IMemento memento )
+    {
+        super.saveState ( memento );
+        if ( this.item != null )
+        {
+            this.item.saveTo ( memento );
+        }
+    }
 }
