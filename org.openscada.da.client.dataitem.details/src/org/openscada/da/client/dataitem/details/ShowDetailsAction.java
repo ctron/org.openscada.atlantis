@@ -19,73 +19,25 @@
 
 package org.openscada.da.client.dataitem.details;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.openscada.da.client.base.connection.ConnectionManager;
+import org.openscada.da.client.base.action.AbstractItemAction;
 import org.openscada.da.client.base.item.DataItemHolder;
-import org.openscada.da.client.base.item.ItemSelectionHelper;
 
-public class ShowDetailsAction implements IObjectActionDelegate
+public class ShowDetailsAction extends AbstractItemAction implements IObjectActionDelegate
 {
-    private final Collection<DataItemHolder> items = new LinkedList<DataItemHolder> ();
 
-    private IWorkbenchPage page;
-
-    public void setActivePart ( final IAction action, final IWorkbenchPart targetPart )
+    public ShowDetailsAction ()
     {
-        this.page = targetPart.getSite ().getPage ();
+        super ( "Show details" );
     }
 
-    public void run ( final IAction action )
-    {
-        final MultiStatus status = new MultiStatus ( Activator.PLUGIN_ID, 0, "Opening details", null );
-        for ( final DataItemHolder item : this.items )
-        {
-            try
-            {
-                showItem ( item );
-            }
-            catch ( final PartInitException e )
-            {
-                status.add ( e.getStatus () );
-            }
-        }
-        if ( !status.isOK () )
-        {
-            ErrorDialog.openError ( this.page.getWorkbenchWindow ().getShell (), "View Error", "Failed to show data item details", status );
-        }
-    }
-
-    private void showItem ( final DataItemHolder item ) throws PartInitException
+    @Override
+    protected void processItem ( final DataItemHolder item ) throws PartInitException
     {
         final DetailsViewPart view = (DetailsViewPart)this.page.showView ( DetailsViewPart.VIEW_ID, asSecondardId ( item ), IWorkbenchPage.VIEW_ACTIVATE );
         view.setDataItem ( item );
-    }
-
-    private String asSecondardId ( final DataItemHolder item )
-    {
-        return item.getItemId ().replace ( "_", "__" ).replace ( ':', '_' );
-    }
-
-    public void selectionChanged ( final IAction action, final ISelection selection )
-    {
-        clearSelection ();
-
-        this.items.addAll ( ItemSelectionHelper.getSelectionHookedUp ( selection, ConnectionManager.getDefault () ) );
-    }
-
-    private void clearSelection ()
-    {
-        this.items.clear ();
     }
 
 }
