@@ -11,7 +11,7 @@ public class ShowGenerator extends AbstractItemAction
 
     public ShowGenerator ()
     {
-        super ( "Show generator" );
+        super ( Messages.getString ( "ShowGenerator.actionName" ) ); //$NON-NLS-1$
     }
 
     @Override

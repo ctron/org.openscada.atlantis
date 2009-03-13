@@ -48,26 +48,26 @@ public class BooleanGeneratorPage implements GeneratorPage
     private void createTimedGroup ( final Composite parent )
     {
         final Group group = new Group ( parent, SWT.BORDER );
-        group.setText ( "Timed" );
+        group.setText ( Messages.getString("BooleanGeneratorPage.groupTimed.text") ); //$NON-NLS-1$
 
         group.setLayout ( new GridLayout ( 6, false ) );
-        new Label ( group, SWT.NONE ).setText ( "Before Delay" );
-        new Label ( group, SWT.NONE ).setText ( "0-1" );
-        new Label ( group, SWT.NONE ).setText ( "After Delay" );
-        new Label ( group, SWT.NONE ).setText ( "1-0" );
-        new Label ( group, SWT.NONE ).setText ( "Iterations" );
-        new Label ( group, SWT.NONE ).setText ( "" );
+        new Label ( group, SWT.NONE ).setText ( Messages.getString("BooleanGeneratorPage.timedGroup.beforeDelay") ); //$NON-NLS-1$
+        new Label ( group, SWT.NONE ).setText ( Messages.getString("BooleanGeneratorPage.timedGroup.0to1") ); //$NON-NLS-1$
+        new Label ( group, SWT.NONE ).setText ( Messages.getString("BooleanGeneratorPage.timedGroup.afterDelay") ); //$NON-NLS-1$
+        new Label ( group, SWT.NONE ).setText ( Messages.getString("BooleanGeneratorPage.timedGroup.1to0") ); //$NON-NLS-1$
+        new Label ( group, SWT.NONE ).setText ( Messages.getString("BooleanGeneratorPage.timedGroup.iterations") ); //$NON-NLS-1$
+        new Label ( group, SWT.NONE ).setText ( Messages.getString("BooleanGeneratorPage.timedGroup.after") ); //$NON-NLS-1$
 
         this.startDelaySpinner = new Spinner ( group, SWT.BORDER );
         this.startDelaySpinner.setValues ( 1000, 0, Integer.MAX_VALUE, 0, 100, 1000 );
-        new Label ( group, SWT.NONE ).setText ( "->" );
+        new Label ( group, SWT.NONE ).setText ( Messages.getString("BooleanGeneratorPage.timedGroup.transition") ); //$NON-NLS-1$
         this.endDelaySpinner = new Spinner ( group, SWT.BORDER );
         this.endDelaySpinner.setValues ( 1000, 0, Integer.MAX_VALUE, 0, 100, 1000 );
-        new Label ( group, SWT.NONE ).setText ( "->" );
+        new Label ( group, SWT.NONE ).setText ( Messages.getString("BooleanGeneratorPage.timedGroup.transition") ); //$NON-NLS-1$
         this.iterationsSpinner = new Spinner ( group, SWT.BORDER );
         this.iterationsSpinner.setValues ( 100, 0, Integer.MAX_VALUE, 0, 5, 100 );
         this.goButton = new Button ( group, SWT.TOGGLE );
-        this.goButton.setText ( "Go!" );
+        this.goButton.setText ( Messages.getString("BooleanGeneratorPage.goButton.text") ); //$NON-NLS-1$
         this.goButton.addSelectionListener ( new SelectionAdapter () {
             @Override
             public void widgetSelected ( final SelectionEvent e )
@@ -101,12 +101,12 @@ public class BooleanGeneratorPage implements GeneratorPage
     private void createManualGroup ( final Composite parent )
     {
         final Group group = new Group ( parent, SWT.BORDER );
-        group.setText ( "Manual" );
+        group.setText ( Messages.getString("BooleanGeneratorPage.manualGroup.text") ); //$NON-NLS-1$
 
         group.setLayout ( new RowLayout ( SWT.HORIZONTAL ) );
 
         this.triggerTrue = new Button ( group, SWT.BORDER );
-        this.triggerTrue.setText ( "True" );
+        this.triggerTrue.setText ( Messages.getString("BooleanGeneratorPage.manualGroup.triggerTrue.text") ); //$NON-NLS-1$
         this.triggerTrue.addSelectionListener ( new SelectionAdapter () {
             @Override
             public void widgetSelected ( final SelectionEvent e )
@@ -116,7 +116,7 @@ public class BooleanGeneratorPage implements GeneratorPage
         } );
 
         this.triggerFalse = new Button ( group, SWT.BORDER );
-        this.triggerFalse.setText ( "False" );
+        this.triggerFalse.setText ( Messages.getString("BooleanGeneratorPage.manualGroup.triggerFalse.text") ); //$NON-NLS-1$
         this.triggerFalse.addSelectionListener ( new SelectionAdapter () {
             @Override
             public void widgetSelected ( final SelectionEvent e )
@@ -165,7 +165,7 @@ public class BooleanGeneratorPage implements GeneratorPage
 
     public String getName ()
     {
-        return "Boolean";
+        return Messages.getString("BooleanGeneratorPage.generator.name"); //$NON-NLS-1$
     }
 
     public void setDataItem ( final DataItemHolder item )
