@@ -22,32 +22,28 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
-      <category
-            id="org.openscada.da.client.test"
-            name="OpenSCADA DA Testing"
-            parentCategory="org.openscada.da.category"/>
       <view
-            category="org.openscada.da.client.test"
+            category="org.openscada.da.category"
             class="org.openscada.da.client.test.views.HiveView"
             icon="icons/stock_channel.png"
             id="org.openscada.da.client.test.views.HiveView"
             name="%view.hiveView.name"/>
       <view
             allowMultiple="true"
-            category="org.openscada.da.client.test"
+            category="org.openscada.da.category"
             class="org.openscada.da.client.test.views.watch.DataItemWatchView"
             icon="icons/stock_watch.png"
             id="org.openscada.da.client.test.views.DataItemWatchView"
             name="%view.dataItemWatch.name"/>
       <view
             allowMultiple="true"
-            category="org.openscada.da.client.test"
+            category="org.openscada.da.category"
             class="org.openscada.da.client.test.views.realtime.RealTimeList"
             id="org.openscada.da.test.views.RealTimeList"
             name="%view.realtimeList.name"/>
       <view
             allowMultiple="true"
-            category="org.openscada.da.client.test"
+            category="org.openscada.da.category"
             class="org.openscada.da.client.test.generator.GeneratorView"
             id="org.openscada.da.client.test.GeneratorView"
             name="%view.signalGenerator.name">
@@ -290,13 +286,6 @@
                id="org.openscada.da.client.test.actions.WriteAttributesOperationAction"
                label="Write Attributes Operation"
                menubarPath="additions"/>
-         <action
-               class="org.openscada.da.client.test.actions.ShowGenerator"
-               enablesFor="1"
-               id="org.openscada.da.client.test.actions.ShowGenerator"
-               label="Generator"
-               menubarPath="additions">
-         </action>
       </objectContribution>
       <objectContribution
             adaptable="false"
@@ -382,8 +371,9 @@
             <command
                   commandId="org.openscada.da.client.test.NewRealtimeList"
                   id="org.openscada.da.test.actions.OpenNewRealtimeView"
-                  label="New realtime list"
-                  style="push">
+                  label="%command.openNewRealtimeList.name"
+                  style="push"
+                  tooltip="%command.openNewRealtimeList.description">
             </command>
          </toolbar>
       </menuContribution>

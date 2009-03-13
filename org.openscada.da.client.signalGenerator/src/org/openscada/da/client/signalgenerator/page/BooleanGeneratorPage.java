@@ -1,4 +1,4 @@
-package org.openscada.da.client.test.generator;
+package org.openscada.da.client.signalgenerator.page;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -12,16 +12,11 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.openscada.core.Variant;
-import org.openscada.da.client.Connection;
 import org.openscada.da.client.WriteOperationCallback;
+import org.openscada.da.client.base.item.DataItemHolder;
 
-public class BooleanGeneratorPage implements IGeneratorPage
+public class BooleanGeneratorPage implements GeneratorPage
 {
-
-    private Connection connection;
-
-    private String itemId;
-
     private Button triggerTrue;
 
     private Button triggerFalse;
@@ -35,22 +30,24 @@ public class BooleanGeneratorPage implements IGeneratorPage
     private Button goButton;
 
     private Composite parent;
-    
+
     private BooleanGenerator generator;
 
-    public void createPage ( Composite parent )
+    private DataItemHolder item;
+
+    public void createPage ( final Composite parent )
     {
         this.parent = parent;
         parent.setLayout ( new FillLayout ( SWT.VERTICAL ) );
         createManualGroup ( parent );
         createTimedGroup ( parent );
-        
+
         update ();
     }
 
-    private void createTimedGroup ( Composite parent )
+    private void createTimedGroup ( final Composite parent )
     {
-        Group group = new Group ( parent, SWT.BORDER );
+        final Group group = new Group ( parent, SWT.BORDER );
         group.setText ( "Timed" );
 
         group.setLayout ( new GridLayout ( 6, false ) );
@@ -70,10 +67,10 @@ public class BooleanGeneratorPage implements IGeneratorPage
         this.iterationsSpinner = new Spinner ( group, SWT.BORDER );
         this.iterationsSpinner.setValues ( 100, 0, Integer.MAX_VALUE, 0, 5, 100 );
         this.goButton = new Button ( group, SWT.TOGGLE );
-        goButton.setText ( "Go!" );
-        goButton.addSelectionListener ( new SelectionAdapter () {
+        this.goButton.setText ( "Go!" );
+        this.goButton.addSelectionListener ( new SelectionAdapter () {
             @Override
-            public void widgetSelected ( SelectionEvent e )
+            public void widgetSelected ( final SelectionEvent e )
             {
                 BooleanGeneratorPage.this.toggleGo ();
             }
@@ -84,45 +81,45 @@ public class BooleanGeneratorPage implements IGeneratorPage
     {
         if ( this.goButton.getSelection () )
         {
-            int startDelay = this.startDelaySpinner.getSelection ();
-            int endDelay = this.endDelaySpinner.getSelection ();
-            int iterations = this.iterationsSpinner.getSelection ();
-            generator = new BooleanGenerator ( parent.getDisplay (), this.connection, this.itemId );
-            generator.setStartDelay ( startDelay );
-            generator.setEndDelay ( endDelay );
-            generator.setIterations ( iterations );
-            generator.start ();
+            final int startDelay = this.startDelaySpinner.getSelection ();
+            final int endDelay = this.endDelaySpinner.getSelection ();
+            final int iterations = this.iterationsSpinner.getSelection ();
+            this.generator = new BooleanGenerator ( this.parent.getDisplay (), this.item );
+            this.generator.setStartDelay ( startDelay );
+            this.generator.setEndDelay ( endDelay );
+            this.generator.setIterations ( iterations );
+            this.generator.start ();
         }
         else
         {
-            generator.dispose ();
-            generator = null;
+            this.generator.dispose ();
+            this.generator = null;
         }
         update ();
     }
 
-    private void createManualGroup ( Composite parent )
+    private void createManualGroup ( final Composite parent )
     {
-        Group group = new Group ( parent, SWT.BORDER );
+        final Group group = new Group ( parent, SWT.BORDER );
         group.setText ( "Manual" );
 
         group.setLayout ( new RowLayout ( SWT.HORIZONTAL ) );
 
-        triggerTrue = new Button ( group, SWT.BORDER );
-        triggerTrue.setText ( "True" );
-        triggerTrue.addSelectionListener ( new SelectionAdapter () {
+        this.triggerTrue = new Button ( group, SWT.BORDER );
+        this.triggerTrue.setText ( "True" );
+        this.triggerTrue.addSelectionListener ( new SelectionAdapter () {
             @Override
-            public void widgetSelected ( SelectionEvent e )
+            public void widgetSelected ( final SelectionEvent e )
             {
                 BooleanGeneratorPage.this.manualTriggerTrue ();
             }
         } );
 
-        triggerFalse = new Button ( group, SWT.BORDER );
-        triggerFalse.setText ( "False" );
-        triggerFalse.addSelectionListener ( new SelectionAdapter () {
+        this.triggerFalse = new Button ( group, SWT.BORDER );
+        this.triggerFalse.setText ( "False" );
+        this.triggerFalse.addSelectionListener ( new SelectionAdapter () {
             @Override
-            public void widgetSelected ( SelectionEvent e )
+            public void widgetSelected ( final SelectionEvent e )
             {
                 BooleanGeneratorPage.this.manualTriggerFalse ();
             }
@@ -139,19 +136,19 @@ public class BooleanGeneratorPage implements IGeneratorPage
         writeValue ( new Variant ( true ) );
     }
 
-    private void writeValue ( Variant variant )
+    private void writeValue ( final Variant variant )
     {
-        this.connection.write ( itemId, variant, new WriteOperationCallback () {
+        this.item.getConnection ().write ( this.item.getItemId (), variant, new WriteOperationCallback () {
 
             public void complete ()
             {
             }
 
-            public void error ( Throwable e )
+            public void error ( final Throwable e )
             {
             }
 
-            public void failed ( String error )
+            public void failed ( final String error )
             {
             }
         } );
@@ -159,7 +156,7 @@ public class BooleanGeneratorPage implements IGeneratorPage
 
     public void dispose ()
     {
-        if ( generator != null )
+        if ( this.generator != null )
         {
             this.generator.dispose ();
             this.generator = null;
@@ -171,11 +168,9 @@ public class BooleanGeneratorPage implements IGeneratorPage
         return "Boolean";
     }
 
-    public void setDataItem ( Connection connection, String itemId )
+    public void setDataItem ( final DataItemHolder item )
     {
-        this.connection = connection;
-        this.itemId = itemId;
-
+        this.item = item;
         update ();
     }
 
@@ -184,18 +179,18 @@ public class BooleanGeneratorPage implements IGeneratorPage
         this.startDelaySpinner.setEnabled ( this.generator == null );
         this.endDelaySpinner.setEnabled ( this.generator == null );
         this.iterationsSpinner.setEnabled ( this.generator == null );
-        
+
         if ( this.generator != null )
         {
-            triggerFalse.setEnabled ( false );
-            triggerTrue.setEnabled ( false );
+            this.triggerFalse.setEnabled ( false );
+            this.triggerTrue.setEnabled ( false );
         }
         else
         {
-            boolean enabled = this.connection != null && this.itemId != null;
+            final boolean enabled = this.item != null && this.item.getConnection () != null && this.item.getItemId () != null;
 
-            triggerFalse.setEnabled ( enabled );
-            triggerTrue.setEnabled ( enabled );
+            this.triggerFalse.setEnabled ( enabled );
+            this.triggerTrue.setEnabled ( enabled );
         }
     }
 

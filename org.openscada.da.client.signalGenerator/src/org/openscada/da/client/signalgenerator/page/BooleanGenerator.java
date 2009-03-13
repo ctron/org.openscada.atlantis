@@ -1,16 +1,18 @@
-package org.openscada.da.client.test.generator;
+package org.openscada.da.client.signalgenerator.page;
 
 import org.eclipse.swt.widgets.Display;
 import org.openscada.core.Variant;
-import org.openscada.da.client.Connection;
 import org.openscada.da.client.WriteOperationCallback;
+import org.openscada.da.client.base.item.DataItemHolder;
 
 public class BooleanGenerator
 {
-    public enum State {
+    public enum State
+    {
         START_DELAY,
         END_DELAY,
     }
+
     private Display display;
 
     private int startDelay = 1000;
@@ -20,31 +22,28 @@ public class BooleanGenerator
     private int iterations = -1;
 
     private boolean running = false;
-    
+
     private long lastTick = 0;
-    
+
     private State currentState;
 
-    private Connection connection;
+    private final DataItemHolder item;
 
-    private String itemId;
-
-    public BooleanGenerator ( Display display, Connection connection, String itemId )
+    public BooleanGenerator ( final Display display, final DataItemHolder item )
     {
         this.display = display;
-        this.connection = connection;
-        this.itemId = itemId;
+        this.item = item;
     }
 
     public void start ()
     {
-        if ( running )
+        if ( this.running )
         {
             return;
         }
-        lastTick = System.currentTimeMillis ();
-        currentState = State.START_DELAY;
-        running = true;
+        this.lastTick = System.currentTimeMillis ();
+        this.currentState = State.START_DELAY;
+        this.running = true;
         triggerRun ();
     }
 
@@ -65,9 +64,9 @@ public class BooleanGenerator
 
     public void stop ()
     {
-        if ( !running )
+        if ( !this.running )
         {
-            running = false;
+            this.running = false;
             return;
         }
     }
@@ -75,87 +74,88 @@ public class BooleanGenerator
     public void dispose ()
     {
         stop ();
-        display = null;
+        this.display = null;
     }
-    
+
     protected void tick ()
     {
-        long now = System.currentTimeMillis ();
-        switch ( currentState )
+        final long now = System.currentTimeMillis ();
+        switch ( this.currentState )
         {
         case START_DELAY:
-            if ( now - lastTick > startDelay )
+            if ( now - this.lastTick > this.startDelay )
             {
-                currentState = State.END_DELAY;
-                lastTick = now; 
+                this.currentState = State.END_DELAY;
+                this.lastTick = now;
                 writeValue ( true );
             }
             break;
         case END_DELAY:
-            if ( now - lastTick > endDelay )
+            if ( now - this.lastTick > this.endDelay )
             {
-                currentState = State.START_DELAY;
-                lastTick = now;
-                if ( iterations > 0 )
+                this.currentState = State.START_DELAY;
+                this.lastTick = now;
+                if ( this.iterations > 0 )
                 {
-                    iterations--;
+                    this.iterations--;
                 }
                 writeValue ( false );
             }
             break;
         }
-        
-        if ( iterations == 0 )
+
+        if ( this.iterations == 0 )
         {
-            running = false;
+            this.running = false;
         }
     }
 
     public int getStartDelay ()
     {
-        return startDelay;
+        return this.startDelay;
     }
 
-    public void setStartDelay ( int startDelay )
+    public void setStartDelay ( final int startDelay )
     {
         this.startDelay = startDelay;
     }
 
     public int getEndDelay ()
     {
-        return endDelay;
+        return this.endDelay;
     }
 
-    public void setEndDelay ( int endDelay )
+    public void setEndDelay ( final int endDelay )
     {
         this.endDelay = endDelay;
     }
 
     public int getIterations ()
     {
-        return iterations;
+        return this.iterations;
     }
 
-    public void setIterations ( int iterations )
+    public void setIterations ( final int iterations )
     {
         this.iterations = iterations;
     }
-    
-    public void writeValue ( boolean value )
+
+    public void writeValue ( final boolean value )
     {
-        this.connection.write ( this.itemId, new Variant ( value ), new WriteOperationCallback () {
+        this.item.getConnection ().write ( this.item.getItemId (), new Variant ( value ), new WriteOperationCallback () {
 
             public void complete ()
             {
             }
 
-            public void error ( Throwable e )
+            public void error ( final Throwable e )
             {
             }
 
-            public void failed ( String error )
+            public void failed ( final String error )
             {
-            }} );
+            }
+        } );
     }
 
 }
