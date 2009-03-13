@@ -26,9 +26,9 @@
 	
 	
 	<scm>
-		<connection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_core_server_net</connection>
+		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_core_server_net</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_core_server_net</developerConnection>
-		<url>https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_core_server_net</url>
+		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_core_server_net</url>
 	</scm>
 	
 </project>
