@@ -7,3 +7,9 @@ context Operation ERROR "No Request message" :
 
 context Message ERROR "Duplicate message code: " + this.messageCode:
 	this.eRootContainer.eAllContents.typeSelect(Message).select(e|e.messageCode==this.messageCode).size==1;
+	
+context Message ERROR "Duplicate object: "+ this.name:
+	this.package().entities.select(e|e.name==this.name).isEmpty;
+	
+context Operation ERROR "Invalid request":
+	this.request != null;

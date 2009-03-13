@@ -27,7 +27,7 @@ gmppType(Datatype this) :
 	if ( this == metamodel::Datatype::LONG ) then "org.openscada.net.base.data.LongValue" else
 	"Object";
 
-attributeJavaType(Value this) :
+String attributeJavaType(Value this) :
 	if ( this.list ) then "java.util.Collection<" + this.singleAttributeJavaType() + ">"
 	else this.singleAttributeJavaType();
 	
@@ -47,6 +47,12 @@ interfaceName(Service this) :
 	
 clientImplName(Service this) :
 	this.name + "ClientImpl";
+	
+clientInterfaceName(Service this) :
+	this.name + "Client";
+	
+serverInterfaceName(Service this) :
+	this.name + "Server";
 
 String packagePathFq(Package this) :
 	this.package() == null ? this.name : packageNameFq ( this.package(), "/" ) + "/" + this.name;
@@ -69,6 +75,34 @@ typeClassNameFq(Entity this) :
 typeFileNameFq(Entity this) :
 	this.package()==null ? this.name : packageNameFq ( this.package(), "/" ) + "/" + this.name;
 	
+typeClassNameFq(Message this) :
+	this.package()==null ? this.name : packageNameFq ( this.package(), "." ) + "." + this.name;
+	
 typeFileNameFq(Message this) :
 	this.package()==null ? this.name : packageNameFq ( this.package(), "/" ) + "/" + this.name;
 		
+/* services */
+
+String resultBase(Operation this) :
+	if ( this.result.value != null ) then
+		"org.openscada.utils.exec.Result<" + this.result.value.typeClassNameFq() + ">"
+	else
+		"org.openscada.utils.exec.Result<Object>"
+	;
+
+String resultType(Operation this) :
+	this.name.toFirstUpper() + "$Result"
+	;
+	
+String resultTypeImpl(Operation this) :
+	this.name.toFirstUpper() + "$ResultImpl"
+	;
+
+String requestTypeName(Operation this) :
+	this.request.value.typeClassNameFq();
+
+String requestMessageTypeFq (Operation this) :
+	this.request.typeClassNameFq();
+	
+String resultMessageTypeFq (Operation this) :
+	this.result.typeClassNameFq();

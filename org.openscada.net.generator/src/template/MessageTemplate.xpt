@@ -26,12 +26,24 @@
 			{
 			}
 			
+			«IF this.value==null»
+			public static org.openscada.net.base.data.Message toMessage ()
+			{
+				return toMessage ( («name»)null ); 
+			}
+			
+			public static org.openscada.net.base.data.Message toMessage ( final org.openscada.net.base.data.Message requestMessage )
+			{
+				return toMessage ( («name»)null, requestMessage ); 
+			}
+			«ENDIF»
+			
 			public static org.openscada.net.base.data.Message toMessage ( final «name» bean )
 			{
 				return toMessage ( bean, null );
 			}
 			
-			public static org.openscada.net.base.data.Message toMessage ( «name» bean, org.openscada.net.base.data.Message requestMessage )
+			public static org.openscada.net.base.data.Message toMessage ( «name» bean, final org.openscada.net.base.data.Message requestMessage )
 			{
 				org.openscada.net.base.data.Message message;
 
@@ -45,7 +57,7 @@
 				}
 				
 				«IF this.value != null»
-					message.setValues ( «this.value.type.typeClassNameFq()».toValue ( bean.getValue () ) );
+					message.setValues ( «this.value.typeClassNameFq()».toValue ( bean.getValue () ) );
 				«ENDIF»
 				
 				return message;
@@ -56,26 +68,26 @@
 				«name» bean = new «name» ();
 				
 				«IF this.value != null »
-				bean.setValue ( «this.value.type.typeClassNameFq()».fromValue ( message.getValues () ) );
+				bean.setValue ( «this.value.typeClassNameFq()».fromValue ( message.getValues () ) );
 				«ENDIF»
 				
 				return bean;
 			}
 			
 			«IF this.value != null »
-			public «name» ( final «this.value.type.typeClassNameFq()» value )
+			public «name» ( final «this.value.typeClassNameFq()» value )
 			{
 				this.value = value;
 			}
 			
-			private «this.value.type.typeClassNameFq()» value;
+			private «this.value.typeClassNameFq()» value;
 			
-			public «this.value.type.typeClassNameFq()» getValue ()
+			public «this.value.typeClassNameFq()» getValue ()
 			{
 				return this.value;
 			} 
 			
-			public void setValue ( final «this.value.type.typeClassNameFq()» value )
+			public void setValue ( final «this.value.typeClassNameFq()» value )
 			{
 				this.value = value;
 			}

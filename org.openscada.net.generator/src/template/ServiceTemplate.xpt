@@ -19,27 +19,369 @@
 		«ENDIF»
 		
 		public interface «this.interfaceName()»  {
+
+		«EXPAND interfaceOperation FOREACH this.operations»
+		}
+	«ENDFILE»
+	
+	«FILE this.servicePathFq() + this.clientInterfaceName() + ".java"»
 		
-		«FOREACH this.operations AS operation»
-			public abstract 
+		«IF this.package() != null»
+		package «this.package().packageNameFq()»;
+		«ENDIF»
+		
+		public interface «this.clientInterfaceName()» extends «this.interfaceName()» {
+
+		«EXPAND clientInterfaceOperation FOREACH this.operations»
+		«EXPAND clientInterfaceEvent FOREACH this.events»
+		}
+	«ENDFILE»
+	
+	«FILE this.servicePathFq() + this.serverInterfaceName() + ".java"»
+		
+		«IF this.package() != null»
+		package «this.package().packageNameFq()»;
+		«ENDIF»
+		
+		public interface «this.serverInterfaceName()» extends «this.interfaceName()» {
+
+			«EXPAND serverInterfaceEvent FOREACH this.events»
+		}
+	«ENDFILE»
+	
+	«FILE this.servicePathFq() + this.clientImplName() + ".java"»
+		«IF this.package() != null»
+		package «this.package().packageNameFq()»;
+		«ENDIF»
+		
+		public abstract class «this.clientImplName()»  implements «this.clientInterfaceName()» {
+		
+			protected org.openscada.net.mina.Messenger messenger;
+		
+			public «this.clientImplName()» ( final org.openscada.net.mina.Messenger messenger )
+			{
+				this.messenger = messenger;
+				
+				«EXPAND clientEvent FOREACH this.events»
+			}
+		
+			«EXPAND clientOperation FOREACH this.operations»
+		}
+	«ENDFILE»
+	
+	«FILE this.servicePathFq() + this.serverImplName() + ".java"»
+		«IF this.package() != null»
+		package «this.package().packageNameFq()»;
+		«ENDIF»
+		
+		public abstract class «this.serverImplName()»  implements «this.serverInterfaceName()» {
+		
+			protected org.openscada.net.mina.Messenger messenger;
+		
+			public «this.serverImplName()» ( final org.openscada.net.mina.Messenger messenger )
+			{
+				this.messenger = messenger;
+				
+				«EXPAND serverOperation FOREACH this.operations»
+			}
 			
-			«IF operation.result != null»
-				«operation.result.value.type.typeClassNameFq()»
-			«ELSE»
-				void
-			«ENDIF»
-			
-			 «operation.name» (
-				«IF operation.request != null»
-					«IF operation.request.value != null»
-						final «operation.request.value.type.typeClassNameFq()» argument
-					«ENDIF»
-				«ENDIF»
-			);
-		«ENDFOREACH»
+			«EXPAND serverEvent FOREACH this.events»
 		
 		}
 	«ENDFILE»
 	
+«ENDDEFINE»
 
+«DEFINE interfaceOperation FOR Operation»
+«IF this.request.value!=null»
+	«IF this.result!=null»
+		public abstract «this.result.value.typeClassNameFq()» «this.name» ( «this.request.value.typeClassNameFq()» request );
+	«ELSE»
+		public abstract void «this.name» ( «this.request.value.typeClassNameFq()» request );
+	«ENDIF»
+«ELSE»
+	«IF this.result!=null»
+		public abstract «this.result.value.typeClassNameFq()» «this.name» ();
+	«ELSE»
+		public abstract void «this.name» ();
+	«ENDIF»
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE clientInterfaceOperation FOR Operation»
+public static abstract class «this.resultType()» extends «this.resultBase()»
+{
+}
+
+«IF this.request.value!=null»
+	public abstract «this.resultType()» start«this.name.toFirstUpper()» ( «this.request.value.typeClassNameFq()» request, long timeout );
+	«IF this.result!=null»
+		public abstract «this.result.value.typeClassNameFq()» «this.name» ( «this.request.value.typeClassNameFq()» request, long timeout );
+	«ELSE»
+	«ENDIF»
+«ELSE»
+	public abstract «this.resultType()» start«this.name.toFirstUpper()» ( long timeout );
+	«IF this.result!=null»
+		public abstract «this.result.value.typeClassNameFq()» «this.name» ( long timeout );
+	«ELSE»
+	«ENDIF»
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE clientInterfaceEvent FOR Message»
+	«IF this.value!=null»
+		public abstract void handle«this.name.toFirstUpper()» ( final «this.value.typeClassNameFq()» eventData );
+	«ELSE»
+		public abstract void handle«this.name.toFirstUpper()» ();
+	«ENDIF»
+«ENDDEFINE»
+
+«DEFINE clientOperation FOR Operation»
+protected static class «this.resultTypeImpl()» extends «this.resultType()»
+{
+	protected synchronized void handleError ( final Throwable error )
+	{
+		this.signalError ( error );
+	}
+
+«IF this.result == null || this.result.value == null»
+	protected synchronized void handleSuccess ()
+	{
+		this.signalResult ( null );
+	}
+«ELSE»
+	protected synchronized void handleSuccess ( final «this.result.value.typeClassNameFq()» result )
+	{
+		this.signalResult ( result );
+	}
+«ENDIF»
+}
+
+«IF this.request.value != null»
+public «this.resultType()» start«this.name.toFirstUpper()» ( final «this.request.value.typeClassNameFq()» requestValue, final long timeout )
+{
+«ELSE»
+public «this.resultType()» start«this.name.toFirstUpper()» ( final long timeout )
+{
+«ENDIF»
+
+	«REM»the result type .. not the value«ENDREM»
+	final «this.resultTypeImpl()» result = new «this.resultTypeImpl()» ();
+
+	«REM»the request message .. not the value«ENDREM»
+
+	
+	«IF this.request.value!=null»
+	final «this.requestMessageTypeFq()» request = new «this.requestMessageTypeFq()» ( requestValue );	
+	«ELSE»
+	final «this.requestMessageTypeFq()» request = new «this.requestMessageTypeFq()» ();
+	«ENDIF»
+	
+	final org.openscada.net.base.data.Message message = «this.requestMessageTypeFq()».toMessage ( request );
+	
+	«REM»send the message«ENDREM»
+	this.messenger.sendMessage ( message, new org.openscada.net.base.MessageStateListener () {
+
+		public void messageReply ( final org.openscada.net.base.data.Message message )
+		{
+			«IF this.result.value!=null»
+			result.handleSuccess ( «this.result.typeClassNameFq()».fromMessage ( message ).getValue () );
+			«ELSE»
+			switch ( message.getCommandCode () )
+            {
+            case org.openscada.net.base.data.Message.CC_ACK:
+                result.handleSuccess ();
+                break;
+            default:
+                result.handleError ( new Exception ( String.format ( "Invalid reply to message: ", message.getCommandCode () ) ).fillInStackTrace () );
+                break;
+            }
+            «ENDIF»
+		}
+
+        public void messageTimedOut ()
+        {
+            result.handleError ( null );
+        }
+    }, timeout );
+
+	return result;
+}
+
+«REM»The default variations«ENDREM»
+
+«IF this.request.value!=null»
+	«IF this.result!=null»
+		public «this.result.value.typeClassNameFq()» «this.name» ( «this.request.value.typeClassNameFq()» request )
+		{
+			return «this.name» ( request, 0L );
+		}
+		
+		public «this.result.value.typeClassNameFq()» «this.name» ( «this.request.value.typeClassNameFq()» request, final long timeout )
+		{
+			final «this.resultType()» result = start«this.name.toFirstUpper()» ( request, timeout );
+		    try
+		    {
+		        return result.waitForResult ( timeout );
+		    }
+		    catch ( final InterruptedException e )
+		    {
+		        return null;
+		    }
+		}
+	«ELSE»
+		public void «this.name» ( «this.request.value.typeClassNameFq()» request )
+		{
+			«this.name» ( request, 0L );
+		}
+		
+		public void «this.name» ( «this.request.value.typeClassNameFq()» request, final long timeout )
+		{
+		 	final «this.resultType()» result = start«this.name.toFirstUpper()» ( request, timeout );
+		    try
+		    {
+		        result.waitForResult ( timeout );
+		    }
+		    catch ( final InterruptedException e )
+		    {
+		    }
+		}
+	«ENDIF»
+«ELSE»
+	«IF this.result!=null»
+		public «this.result.value.typeClassNameFq()» «this.name» ( )
+		{
+			return «this.name» ( 0L );
+		}
+		
+		public «this.result.value.typeClassNameFq()» «this.name» ( final long timeout )
+		{
+			final «this.resultType()» result = start«this.name.toFirstUpper()» ( timeout );
+		    try
+		    {
+		        return result.waitForResult ( timeout );
+		    }
+		    catch ( final InterruptedException e )
+		    {
+		        return null;
+		    }
+		}
+	«ELSE»
+		public void «this.name» ()
+		{
+			«this.name» ( 0L );
+		}
+		
+		public void «this.name» ( final long timeout )
+		{
+			final «this.resultType()» result = start«this.name.toFirstUpper()» ( timeout );
+		    try
+		    {
+		        result.waitForResult ( timeout );
+		    }
+		    catch ( final InterruptedException e )
+		    {
+		    }
+		}
+	«ENDIF»
+«ENDIF»
+
+«ENDDEFINE»
+
+«DEFINE clientEvent FOR Message»
+this.messenger.setHandler ( «this.typeClassNameFq()».COMMAND_CODE, new org.openscada.net.base.MessageListener () {
+
+	public void messageReceived ( final org.openscada.net.base.data.Message message ) throws Exception
+	{
+	«IF this.value!=null»
+		«this.typeClassNameFq()» event = «this.typeClassNameFq()».fromMessage ( message ); 
+		handle«this.name.toFirstUpper()» ( event.getValue () );		
+	«ELSE»
+		handle«this.name.toFirstUpper()» ();
+	«ENDIF»
+	}
+	});
+	
+«ENDDEFINE»
+
+«DEFINE serverOperation FOR Operation»
+
+this.messenger.setHandler ( «this.requestMessageTypeFq()».COMMAND_CODE, new org.openscada.net.base.MessageListener () {
+
+	public void messageReceived ( final org.openscada.net.base.data.Message message ) throws Exception
+	{
+	
+		«IF this.request.value!=null»
+		«this.requestMessageTypeFq()» request = «this.requestMessageTypeFq()».fromMessage ( message );
+		«ENDIF»
+		
+		org.openscada.net.base.data.Message responseMessage;
+	
+«IF this.request.value != null»
+	«IF this.result != null»
+		final «this.result.value.typeClassNameFq()» result = «this.name» ( request.getValue () );
+		
+	    final «this.resultMessageTypeFq()» response = new «this.resultMessageTypeFq()» ( result );
+	    responseMessage = «this.resultMessageTypeFq()».toMessage ( response, message );
+	«ELSE»
+		try
+		{
+			«this.name» ( request.getValue () );
+			responseMessage = org.openscada.net.utils.MessageCreator.createACK ( message );
+		}
+		catch ( Throwable e )
+		{
+			responseMessage = org.openscada.net.utils.MessageCreator.createFailedMessage ( message, e );
+		}
+	«ENDIF»
+«ELSE»
+	«IF this.result != null»
+		final «this.result.value.typeClassNameFq()» result = «this.name» ();
+		
+	    final «this.resultMessageTypeFq()» response = new «this.resultMessageTypeFq()» ( result );
+	    responseMessage = «this.resultMessageTypeFq()».toMessage ( response, message );
+	«ELSE»
+		try
+		{
+			«this.name» ();
+			responseMessage = org.openscada.net.utils.MessageCreator.createACK ( message );
+		}
+		catch ( Throwable e )
+		{
+			responseMessage = org.openscada.net.utils.MessageCreator.createFailedMessage ( message, e );
+		}
+	«ENDIF»
+«ENDIF»
+	    messenger.sendMessage ( responseMessage );
+	}
+} );
+«ENDDEFINE»
+
+«DEFINE serverInterfaceEvent FOR Message»
+	«IF this.value != null»
+		public abstract void «this.name.toFirstLower()» ( «this.value.typeClassNameFq()» eventData );
+	«ELSE»
+		public abstract void «this.name.toFirstLower()» ();
+	«ENDIF»
+	
+«ENDDEFINE»
+
+«DEFINE serverEvent FOR Message»
+	«IF this.value != null»
+		public void «this.name.toFirstLower()» ( «this.value.typeClassNameFq()» eventData )
+		{
+			«this.typeClassNameFq()» event = new «this.typeClassNameFq()» ( eventData );
+			
+			final org.openscada.net.base.data.Message message;
+			message = «this.typeClassNameFq()».toMessage ( event );
+			messenger.sendMessage ( message );
+		}
+	«ELSE»
+		public void «this.name.toFirstLower()» ()
+		{
+			final org.openscada.net.base.data.Message message;
+			message = «this.typeClassNameFq()».toMessage ();
+			messenger.sendMessage ( message );
+		}
+	«ENDIF»
 «ENDDEFINE»
