@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     11.03.2009 20:59:56                                                        
+
+     install-libs    
+     description
+                   
+     jr                                                                
+     ====================================================================== -->
+<project name="maven-helper" default="usage" xmlns:artifact="uri:maven-artifact-ant">
+	<description>
+            description
+    </description>
+
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="uri:maven-artifact-ant" classpath="lib/maven-ant-tasks-2.0.9.jar" />
+
+	<target name="usage">
+		<echo>deploy-libs  : installs required libs in remote repository</echo>
+	</target>
+		
+	<macrodef name="deploy-single-file">
+		<attribute name="name" />
+		<sequential>
+			<exec executable="mvn">
+				<arg value="deploy:deploy-file" />
+				<arg value="-Durl=${openscada.distrib.repository}" />
+				<arg value="-DrepositoryId=openscada-external" />
+				<arg value="-Dfile=@{name}.jar" />
+				<arg value="-DpomFile=@{name}.pom" />
+			</exec>
+		</sequential>
+	</macrodef>
+
+	<target name="deploy-libs" description="description">
+		<!-- Ice -->
+		<deploy-single-file name="../external/icej/Ice-3.1" />
+		<deploy-single-file name="../external/icej/Ice-3.2" />
+		<deploy-single-file name="../external/icej/Ice-3.3" />
+		<!-- SNMP -->
+		<deploy-single-file name="../external/mibble/mibble-mibs-2.7" />
+		<deploy-single-file name="../external/mibble/mibble-mibs-2.8" />
+		<deploy-single-file name="../external/mibble/mibble-parser-2.7" />
+		<deploy-single-file name="../external/mibble/mibble-parser-2.8" />
+		<deploy-single-file name="../external/mibble/grammatica-bin-1.4" />
+		<!-- SimServer -->
+		<deploy-single-file name="../openscada_da_simserver/lib/jOpenDocument-1.1b3-jdk5" />
+		<deploy-single-file name="../openscada_da_simserver/lib/script-api" />
+		<deploy-single-file name="../openscada_da_simserver/lib/js" />
+		<deploy-single-file name="../openscada_da_simserver/lib/js-engine" />
+	</target>
+
+</project>
