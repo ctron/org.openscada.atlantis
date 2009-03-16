@@ -5,8 +5,6 @@ import org.openscada.da.client.base.item.DataItemHolder;
 
 public interface GeneratorPage
 {
-    public String getName ();
-
     public void createPage ( Composite parent );
 
     public void dispose ();
