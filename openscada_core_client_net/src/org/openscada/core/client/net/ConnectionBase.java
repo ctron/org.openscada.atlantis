@@ -265,6 +265,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
         {
             logger.info ( "Session disconnected" );
 
+            setState ( ConnectionState.CLOSING, reason );
+
             this.session.close ( true );
             this.session = null;
         }
