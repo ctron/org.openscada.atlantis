@@ -42,6 +42,7 @@ import org.openscada.da.core.server.browser.FolderListener;
 import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.net.base.MessageListener;
+import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.da.handler.ListBrowser;
@@ -50,7 +51,7 @@ import org.openscada.net.utils.MessageCreator;
 
 public class ServerConnectionHandler extends AbstractServerConnectionHandler implements ItemChangeListener, FolderListener
 {
-    public final static String VERSION = "0.1.7";
+    public final static String VERSION = "0.1.8";
 
     private static Logger logger = Logger.getLogger ( ServerConnectionHandler.class );
 
@@ -146,10 +147,16 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             return;
         }
 
+        // get the session properties
         final Properties props = new Properties ();
-        for ( final Map.Entry<String, Value> entry : message.getValues ().getValues ().entrySet () )
+        final Value propertiesValue = message.getValues ().get ( "properties" );
+        if ( propertiesValue instanceof MapValue )
         {
-            props.put ( entry.getKey (), entry.getValue ().toString () );
+            final MapValue properties = (MapValue)propertiesValue;
+            for ( final Map.Entry<String, Value> entry : properties.getValues ().entrySet () )
+            {
+                props.put ( entry.getKey (), entry.getValue ().toString () );
+            }
         }
 
         // now check client version

@@ -70,7 +70,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         DriverFactory.registerDriver ();
     }
 
-    public static final String VERSION = "0.1.7";
+    public static final String VERSION = "0.1.8";
 
     private static Logger logger = Logger.getLogger ( Connection.class );
 

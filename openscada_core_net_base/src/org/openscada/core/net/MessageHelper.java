@@ -163,14 +163,23 @@ public class MessageHelper
         return null;
     }
 
+    /**
+     * Construct a CC_CREATE_SESSION message
+     * @param props the session properties
+     * @return the create session message
+     */
     public static Message createSession ( final Properties props )
     {
         final Message msg = new Message ( CC_CREATE_SESSION );
 
+        final MapValue properties = new MapValue ();
+
         for ( final Map.Entry<Object, Object> entry : props.entrySet () )
         {
-            msg.getValues ().put ( entry.getKey ().toString (), new StringValue ( entry.getValue ().toString () ) );
+            properties.put ( entry.getKey ().toString (), new StringValue ( entry.getValue ().toString () ) );
         }
+
+        msg.getValues ().put ( "properties", properties );
 
         return msg;
     }
