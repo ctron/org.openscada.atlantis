@@ -253,6 +253,7 @@ public class Messenger implements MessageListener
             if ( this.tagList.containsKey ( seq ) )
             {
                 tag = this.tagList.get ( seq );
+                logger.info ( String.format ( "Found tag for message %s but it is timed out", seq ) );
                 // if the tag is timed out then we don't process it here and let processTimeOuts () do the job
                 if ( !tag.isTimedOut () )
                 {
@@ -270,6 +271,7 @@ public class Messenger implements MessageListener
         {
             if ( tag != null )
             {
+                logger.debug ( String.format ( "Processing message listener for message %s", seq ) );
                 tag.getListener ().messageReply ( message );
             }
         }
