@@ -78,8 +78,6 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
     private final Map<Location, FolderListener> folderListeners = new ConcurrentHashMap<Location, FolderListener> ();
 
-    //private List<ItemListListener> _itemListListeners = new ArrayList<ItemListListener> ();
-
     // operations
     private BrowseOperationController browseController = null;
 
