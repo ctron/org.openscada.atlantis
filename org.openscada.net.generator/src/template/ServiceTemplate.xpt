@@ -76,6 +76,8 @@
 		
 		public abstract class «this.serverImplName()»  implements «this.serverInterfaceName()» {
 		
+			private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger ( «this.serverImplName()».class );
+		
 			protected org.openscada.net.mina.Messenger messenger;
 		
 			public «this.serverImplName()» ( final org.openscada.net.mina.Messenger messenger )
@@ -95,15 +97,15 @@
 «DEFINE interfaceOperation FOR Operation»
 «IF this.request.value!=null»
 	«IF this.result!=null»
-		public abstract «this.result.value.typeClassNameFq()» «this.name» ( «this.request.value.typeClassNameFq()» request );
+		public abstract «this.result.value.typeClassNameFq()» «this.name» ( «this.request.value.typeClassNameFq()» request ) throws Exception;
 	«ELSE»
-		public abstract void «this.name» ( «this.request.value.typeClassNameFq()» request );
+		public abstract void «this.name» ( «this.request.value.typeClassNameFq()» request ) throws Exception;
 	«ENDIF»
 «ELSE»
 	«IF this.result!=null»
-		public abstract «this.result.value.typeClassNameFq()» «this.name» ();
+		public abstract «this.result.value.typeClassNameFq()» «this.name» () throws Exception;
 	«ELSE»
-		public abstract void «this.name» ();
+		public abstract void «this.name» () throws Exception;
 	«ENDIF»
 «ENDIF»
 «ENDDEFINE»
@@ -331,6 +333,7 @@ this.messenger.setHandler ( «this.requestMessageTypeFq()».COMMAND_CODE, new or
 		}
 		catch ( Throwable e )
 		{
+			logger.warn ( "Failed to execute operation '«this.name»'", e );
 			responseMessage = org.openscada.net.utils.MessageCreator.createFailedMessage ( message, e );
 		}
 	«ENDIF»
@@ -348,6 +351,7 @@ this.messenger.setHandler ( «this.requestMessageTypeFq()».COMMAND_CODE, new or
 		}
 		catch ( Throwable e )
 		{
+			logger.warn ( "Failed to execute operation '«this.name»'", e );
 			responseMessage = org.openscada.net.utils.MessageCreator.createFailedMessage ( message, e );
 		}
 	«ENDIF»
