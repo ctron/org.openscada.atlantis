@@ -60,11 +60,6 @@ public class ChartView2 extends ViewPart implements Observer
 
     private Display display;
 
-    public ChartView2 ()
-    {
-
-    }
-
     @Override
     public void createPartControl ( final Composite parent )
     {
@@ -147,6 +142,7 @@ public class ChartView2 extends ViewPart implements Observer
         if ( this.frame != null )
         {
             this.frame.dispose ();
+            this.frame = null;
         }
         super.dispose ();
     }
@@ -248,7 +244,7 @@ public class ChartView2 extends ViewPart implements Observer
             final String itemId = memento.getString ( "itemId" );
             final String connectionUri = memento.getString ( "connectionUri" );
 
-            if ( ( itemId != null ) && ( connectionUri != null ) )
+            if ( itemId != null && connectionUri != null )
             {
                 final ConnectionManagerEntry entry = ConnectionManager.getDefault ().getEntry ( ConnectionInformation.fromURI ( connectionUri ), false );
                 setDataItem ( new DataItemHolder ( entry.getConnection (), entry.getItemManager (), itemId ) );
