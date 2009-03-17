@@ -45,11 +45,6 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
 
     private Composite parent;
 
-    public AbstractBaseDetailsPart ()
-    {
-        super ();
-    }
-
     public void createPart ( final Composite parent )
     {
         this.display = parent.getDisplay ();
