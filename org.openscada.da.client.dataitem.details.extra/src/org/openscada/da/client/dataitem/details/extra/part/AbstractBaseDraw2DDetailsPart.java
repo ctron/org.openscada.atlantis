@@ -25,5 +25,14 @@ public abstract class AbstractBaseDraw2DDetailsPart extends AbstractBaseDetailsP
         lws.setContents ( createRoot () );
     }
 
+    @Override
+    public void dispose ()
+    {
+        this.canvas.dispose ();
+        this.canvas = null;
+
+        super.dispose ();
+    }
+
     protected abstract IFigure createRoot ();
 }
