@@ -27,7 +27,6 @@
 		<dependency>
 			<groupId>org.openscada.external</groupId>
 			<artifactId>jOpenDocument</artifactId>
-			<classifier>jdk5</classifier>
 			<version>1.1b3</version>
 		</dependency>
 		<dependency>
@@ -35,20 +34,31 @@
 			<artifactId>jxl</artifactId>
 			<version>2.6</version>
 		</dependency>
-		<dependency>
-			<groupId>org.openscada.external</groupId>
-			<artifactId>script-api</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openscada.external</groupId>
-			<artifactId>js-engine</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openscada.external</groupId>
-			<artifactId>js</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>jdk15</id>
+			<activation>
+				<jdk>1.5</jdk>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.openscada.external</groupId>
+					<artifactId>script-api</artifactId>
+					<version>1.0.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.openscada.external</groupId>
+					<artifactId>js-engine</artifactId>
+					<version>1.0.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.openscada.external</groupId>
+					<artifactId>js</artifactId>
+					<version>1.0.0</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 </project>
