@@ -18,11 +18,13 @@ public enum SocketImpl
 {
     APR
     {
+        @Override
         public SocketAddress doLookup ( final String address, final int port )
         {
             return NIO.doLookup ( address, port );
         }
 
+        @Override
         public IoConnector createConnector ()
         {
             return new AprSocketConnector ();
@@ -38,6 +40,7 @@ public enum SocketImpl
     },
     NIO
     {
+        @Override
         public SocketAddress doLookup ( final String address, final int port )
         {
             final InetSocketAddress resolvedAddress;
@@ -58,6 +61,7 @@ public enum SocketImpl
             return resolvedAddress;
         }
 
+        @Override
         public IoConnector createConnector ()
         {
             return new NioSocketConnector ();
@@ -73,11 +77,13 @@ public enum SocketImpl
     },
     VMPIPE
     {
+        @Override
         public SocketAddress doLookup ( final String address, final int port )
         {
             return new VmPipeAddress ( port );
         }
 
+        @Override
         public IoConnector createConnector ()
         {
             return new VmPipeConnector ();
