@@ -71,7 +71,7 @@ public class ValueTools
             }
             else if ( value instanceof LongValue )
             {
-                return new Integer ( (int) ( (LongValue)value ).getValue () );
+                return (int) ( (LongValue)value ).getValue ();
             }
             else if ( value instanceof DoubleValue )
             {

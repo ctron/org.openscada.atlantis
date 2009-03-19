@@ -98,7 +98,7 @@ public class BytePacketTestImpl
 
     public byte[] getBytes ()
     {
-        return this.bytes;
+        return this.bytes.clone ();
     }
 
     public boolean equalToBuffer ( final IoBuffer buffer )

@@ -128,12 +128,10 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
      */
     public synchronized void waitForCompletion () throws InterruptedException
     {
-        if ( isComplete () )
+        while ( !isComplete () )
         {
-            return;
+            wait ();
         }
-
-        wait ();
     }
 
     /* (non-Javadoc)
@@ -141,11 +139,9 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
      */
     public synchronized void waitForCompletion ( final int timeout ) throws InterruptedException
     {
-        if ( isComplete () )
+        while ( !isComplete () )
         {
-            return;
+            wait ( timeout );
         }
-
-        wait ( timeout );
     }
 }
