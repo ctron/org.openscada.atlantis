@@ -68,7 +68,7 @@ public class ItemManager implements ConnectionStateListener
     {
         if ( !this.itemListeners.containsKey ( itemName ) )
         {
-            this.itemListeners.put ( itemName, new ItemSyncController ( this.connection, this, new String ( itemName ) ) );
+            this.itemListeners.put ( itemName, new ItemSyncController ( this.connection, this, itemName ) );
         }
 
         final ItemSyncController controller = this.itemListeners.get ( itemName );
