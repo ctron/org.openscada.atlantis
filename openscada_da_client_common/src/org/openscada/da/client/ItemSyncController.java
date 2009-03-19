@@ -57,7 +57,7 @@ public class ItemSyncController implements ItemUpdateListener
      * @author jens
      *
      */
-    private class ListenerInfo
+    private static class ListenerInfo
     {
         private final ItemUpdateListener _listener;
 
