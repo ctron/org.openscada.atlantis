@@ -4,8 +4,8 @@ Bundle-Name: OpenSCADA DA Client
 Bundle-SymbolicName: org.openscada.da.client;singleton:=true
 Bundle-Version: 0.12.5
 Bundle-Vendor: inavare GmbH
-Bundle-ClassPath: .,
- extbin/
+Bundle-ClassPath: extbin/,
+ .
 Export-Package: org.openscada.core,
  org.openscada.core.client;uses:="org.openscada.core",
  org.openscada.core.subscription,
