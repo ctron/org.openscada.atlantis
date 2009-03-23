@@ -17,14 +17,6 @@
           target: default              
          ================================= -->
     <target name="default" depends="genjar, genjar-maven" description="--> Support build file">
-    	<delete dir="extbin" failonerror="false"/>
-    	<mkdir dir="extbin"/>
-    	<unzip dest="extbin" src="${libjar}">
-    		<patternset>
-    			<exclude name="META-INF/**"/>
-    		</patternset>
-    	</unzip>
-    	<delete file="${libjar}"/>
     </target>
     	
    	<!-- ================================= 
