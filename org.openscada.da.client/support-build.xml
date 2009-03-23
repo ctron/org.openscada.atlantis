@@ -17,6 +17,14 @@
           target: default              
          ================================= -->
     <target name="default" depends="genjar, genjar-maven" description="--> Support build file">
+    	<delete dir="extbin" failonerror="false"/>
+    	<mkdir dir="extbin"/>
+    	<unzip dest="extbin" src="${libjar}">
+    		<patternset>
+    			<exclude name="META-INF/**"/>
+    		</patternset>
+    	</unzip>
+    	<delete file="${libjar}"/>
     </target>
     	
    	<!-- ================================= 
@@ -33,8 +41,9 @@
 
     <target name="genjar-maven" depends="" description="--> Generate the JAR file" if="use.maven.dependecies">
 		<openscada.pde.import-module.init/>
-    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.core.server" />
-    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.client.common" />
+    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.aurora.utils" groupid="org.openscada.aurora" groupIdBase="org.openscada"/>
+    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.core.server" groupIdBase="org.openscada"/>
+    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.client.common" groupIdBase="org.openscada"/>
 		<openscada.pde.import-module.finalize destfile="${libjar}"/>
     </target>
 
