@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<workflow>
+	<property name="model" value="org.openscada.net.ae.model/src/Model.xmi" />
+	<property name="src-gen" value="gensrc" />
+	
+	<!-- set up EMF for standalone execution -->
+	<bean class="org.eclipse.mwe.emf.StandaloneSetup" >
+		<platformUri value=".."/>
+	</bean>
+
+	<!-- load model and store it in slot 'model' -->
+	<component class="org.eclipse.mwe.emf.Reader">
+		<uri value="platform:/resource/${model}" />
+		<modelSlot value="model" />
+	</component>
+
+	<!-- check model -->
+	<component class="oaw.check.CheckComponent">
+		<metaModel id="mm"
+			class="org.eclipse.m2t.type.emf.EmfRegistryMetaModel"/>
+		<checkFile value="metamodel::Checks" />
+		<emfAllChildrenSlot value="model" />
+	</component>
+
+	<!--  generate code -->
+	<component class="org.openarchitectureware.xpand2.Generator">
+		<metaModel idRef="mm"/>
+		<expand
+			value="template::ValueTemplate::main FOR model" />
+		<outlet path="${src-gen}" >
+			<postprocessor class="org.openarchitectureware.xpand2.output.JavaBeautifier" />
+		</outlet>
+	</component>
+	
+	<component class="org.openarchitectureware.xpand2.Generator">
+		<metaModel idRef="mm"/>
+		<expand
+			value="template::MessageTemplate::main FOR model" />
+		<outlet path="${src-gen}" >
+			<postprocessor class="org.openarchitectureware.xpand2.output.JavaBeautifier" />
+		</outlet>
+	</component>
+	
+	<!--  generate code -->
+	<component class="org.openarchitectureware.xpand2.Generator">
+		<metaModel idRef="mm"/>
+		<expand
+			value="template::ServiceTemplate::main FOR model" />
+		<outlet path="${src-gen}" >
+			<postprocessor class="org.openarchitectureware.xpand2.output.JavaBeautifier" />
+		</outlet>
+	</component>
+</workflow>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ASCII"?>
+<metamodel:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:metamodel="http://www.example.org/metamodel" xsi:schemaLocation="http://www.example.org/metamodel ../../org.openscada.net.generator/src/metamodel/metamodel.ecore">
+  <packages name="org">
+    <packages name="openscada">
+      <packages name="ae">
+        <packages name="net">
+          <entities name="Query">
+            <attributes xsi:type="metamodel:BasicValue" name="name"/>
+            <attributes xsi:type="metamodel:MapValue" name="attributes"/>
+          </entities>
+          <entities name="ListQueryResult">
+            <attributes xsi:type="metamodel:RefValue" name="queries" list="true" type="//@packages.0/@packages.0/@packages.0/@packages.0/@entities.0"/>
+          </entities>
+          <entities name="TestEntity">
+            <attributes xsi:type="metamodel:VariantValue" name="variant"/>
+            <attributes xsi:type="metamodel:VariantValue" name="listVariant" list="true"/>
+            <attributes xsi:type="metamodel:BasicValue" name="basicValue"/>
+            <attributes xsi:type="metamodel:BasicValue" name="listBasicValue" list="true"/>
+            <attributes xsi:type="metamodel:MapValue" name="mapValue"/>
+            <attributes xsi:type="metamodel:MapValue" name="listMapValue" list="true"/>
+            <attributes xsi:type="metamodel:FlagValue" name="flagValue"/>
+          </entities>
+          <entities name="QueryUpdate">
+            <attributes xsi:type="metamodel:FlagValue" name="fullUpdate"/>
+            <attributes xsi:type="metamodel:RefValue" name="entries" list="true" type="//@packages.0/@packages.0/@packages.0/@packages.0/@entities.4"/>
+            <attributes xsi:type="metamodel:BasicValue" name="queryId"/>
+          </entities>
+          <entities name="QueryUpdateEntry"/>
+          <entities name="SubscriptionInformation">
+            <attributes xsi:type="metamodel:BasicValue" name="query"/>
+          </entities>
+          <services name="Connection" events="//@packages.0/@packages.0/@packages.0/@packages.0/@messages.5">
+            <operations longRunning="true" request="//@packages.0/@packages.0/@packages.0/@packages.0/@messages.2" result="//@packages.0/@packages.0/@packages.0/@packages.0/@messages.0" name="listQueries"/>
+            <operations request="//@packages.0/@packages.0/@packages.0/@packages.0/@messages.3" name="subscribe"/>
+            <operations request="//@packages.0/@packages.0/@packages.0/@packages.0/@messages.4" name="unsubscribe"/>
+            <operations request="//@packages.0/@packages.0/@packages.1/@messages.0" name="createSession"/>
+            <operations request="//@packages.0/@packages.0/@packages.1/@messages.1" name="closeSession"/>
+          </services>
+          <messages messageCode="13010001" value="//@packages.0/@packages.0/@packages.0/@packages.0/@entities.1" name="ListQueriesResponse"/>
+          <messages messageCode="1" value="//@packages.0/@packages.0/@packages.0/@packages.0/@entities.2" name="TestMessage"/>
+          <messages messageCode="13010002" name="ListQueriesRequest"/>
+          <messages messageCode="13010003" value="//@packages.0/@packages.0/@packages.0/@packages.0/@entities.5" name="Subscribe"/>
+          <messages messageCode="13010004" value="//@packages.0/@packages.0/@packages.0/@packages.0/@entities.5" name="Unsubscribe"/>
+          <messages messageCode="13010005" value="//@packages.0/@packages.0/@packages.0/@packages.0/@entities.3" name="QueryUpdateEvent"/>
+        </packages>
+      </packages>
+      <packages name="core">
+        <entities name="CreateSessionData">
+          <attributes xsi:type="metamodel:MapValue" name="properties"/>
+        </entities>
+        <messages messageCode="65537" value="//@packages.0/@packages.0/@packages.1/@entities.0" name="CreateSessionRequest"/>
+        <messages messageCode="65538" name="CloseSessionRequest"/>
+      </packages>
+    </packages>
+  </packages>
+</metamodel:Model>
