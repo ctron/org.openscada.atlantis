@@ -25,7 +25,7 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.handler.multiton.SingleSessionIoHandler;
 import org.apache.mina.handler.multiton.SingleSessionIoHandlerDelegate;
 import org.apache.mina.handler.multiton.SingleSessionIoHandlerFactory;
-import org.openscada.ae.core.Storage;
+import org.openscada.ae.storage.Storage;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.server.net.Server;
 

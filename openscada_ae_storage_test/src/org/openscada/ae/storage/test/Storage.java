@@ -19,7 +19,26 @@
 
 package org.openscada.ae.storage.test;
 
-public class Storage extends StorageCommon implements Runnable
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.openscada.ae.core.QueryDescriptor;
+import org.openscada.ae.storage.Session;
+import org.openscada.ae.storage.common.StorageCommon;
+import org.openscada.core.InvalidSessionException;
+import org.openscada.core.Variant;
+
+public class Storage extends StorageCommon
 {
 
+    public Collection<QueryDescriptor> listQueries ( final Session session ) throws InvalidSessionException
+    {
+        validateSession ( session );
+
+        final QueryDescriptor desc = new QueryDescriptor ();
+        desc.setId ( "QUERY1" );
+        desc.getAttributes ().put ( "description", new Variant ( "Description for QUERY1" ) );
+
+        return Arrays.asList ( desc );
+    }
 }
