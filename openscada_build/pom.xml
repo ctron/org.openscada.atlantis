@@ -6,115 +6,33 @@
 	<artifactId>org.openscada.atlantis</artifactId>
 	<packaging>pom</packaging>
 	<name>OpenSCADA</name>
-	
-	<properties>
-		<aurora.version>0.12.0</aurora.version>
-		<utgard.version>0.4.2</utgard.version>
-	</properties>
-
-	<distributionManagement>
-		<repository>
-			<id>openscada-releases</id>
-			<name>openscada-releases</name>
-			<url>${openscada.distrib.repository}</url>
-		</repository>
-		<snapshotRepository>
-			<id>openscada-snapshots</id>
-			<name>openscada-snapshots</name>
-			<url>${openscada.distrib.repository}</url>
-		</snapshotRepository>
-	</distributionManagement>
-
-	<repositories>
-		<repository>
-			<id>openscada-repos</id>
-			<name>openscada-repos</name>
-			<url>${openscada.internal.repository}</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>openscada-public-repos</id>
-			<name>openscada-public-repos</name>
-			<url>http://www.openscada.org/download/maven-repo/</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>openscada-repos</id>
-			<name>openscada-repos</name>
-			<url>${openscada.internal.repository}</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>openscada-public-repos</id>
-			<name>openscada-public-repos</name>
-			<url>http://www.openscada.org/download/maven-repo/</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<version>0.12.0-SNAPSHOT</version>
 	<url>http://www.openscada.org</url>
+
+	<organization>
+		<name>inavare GmbH</name>
+		<url>http://www.inavare.net</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>GNU General Public License, version 2</name>
+			<url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
 	<issueManagement>
 		<system>bugzilla</system>
 		<url>http://openscada.org/bugzilla/</url>
 	</issueManagement>
 
-	<developers>
-		<developer>
-			<id>Jens.Reimann</id>
-			<name>Jens Reimann</name>
-			<email>Jens.Reimann@inavare.net</email>
-			<organization>inavare GmbH</organization>
-			<timezone>GMT+1</timezone>
-		</developer>
-	</developers>
 	<scm>
 		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_build</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_build</developerConnection>
 		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_build</url>
 	</scm>
-	<organization>
-		<name>inavare GmbH</name>
-		<url>http://www.inavare.net</url>
-	</organization>
 
 	<build>
 		<sourceDirectory>${basedir}/src</sourceDirectory>
@@ -148,7 +66,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
@@ -161,43 +78,18 @@
 					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<inherited>true</inherited>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
-	</build>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</reporting>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.openscada.aurora</groupId>
+					<artifactId>org.openscada.aurora.slice.plugin</artifactId>
+					<version>0.12.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
 	<modules>
 		<module>../openscada_core_common</module>
@@ -242,50 +134,248 @@
 		<module>../openscada_core_server_net</module>
 		<module>../openscada_spring_components</module>
 	</modules>
-	<dependencies>
-		<dependency>
-			<groupId>org.junit</groupId>
-			<artifactId>com.springsource.org.junit</artifactId> 
-			<version>4.5.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.log4j</groupId>
-			<artifactId>com.springsource.org.apache.log4j</artifactId>
-			<version>1.2.15</version>
-			<type>jar</type>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>jms</artifactId>
-					<groupId>javax.jms</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jmxri</artifactId>
-					<groupId>com.sun.jmx</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jmxtools</artifactId>
-					<groupId>com.sun.jdmk</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>mail</artifactId>
-					<groupId>javax.mail</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.xmlbeans</groupId>
-			<artifactId>xmlbeans</artifactId>
-			<version>2.4.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>com.springsource.slf4j.log4j</artifactId>
-			<version>1.5.3</version>
-			<type>jar</type>
-			<scope>runtime</scope>
-		</dependency>
-	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.junit</groupId>
+				<artifactId>com.springsource.org.junit</artifactId>
+				<version>4.5.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.xmlbeans</groupId>
+				<artifactId>com.springsource.org.apache.xmlbeans</artifactId>
+				<version>2.4.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>com.springsource.slf4j.api</artifactId>
+				<version>1.5.6</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>com.springsource.slf4j.log4j</artifactId>
+				<version>1.5.3</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.log4j</groupId>
+				<artifactId>com.springsource.org.apache.log4j</artifactId>
+				<version>1.2.15</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openscada.aurora</groupId>
+				<artifactId>org.openscada.aurora.utils</artifactId>
+				<version>0.12.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openscada.utgard</groupId>
+				<artifactId>org.openscada.utgard.opc.lib</artifactId>
+				<version>0.4.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.mina</groupId>
+				<artifactId>mina-core</artifactId>
+				<version>2.0.0-M4</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>slf4j-api</artifactId>
+						<groupId>org.slf4j</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.mina</groupId>
+				<artifactId>mina-transport-apr</artifactId>
+				<version>2.0.0-M4</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>slf4j-api</artifactId>
+						<groupId>org.slf4j</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.mina</groupId>
+				<artifactId>mina-filter-compression</artifactId>
+				<version>2.0.0-M4</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>slf4j-api</artifactId>
+						<groupId>org.slf4j</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>org.springframework.context</artifactId>
+				<version>2.5.6.A</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<profiles>
+		<!-- profile is used in inavare internal environment -->
+		<profile>
+			<id>inavare</id>
+			<pluginRepositories>
+				<pluginRepository>
+					<id>openscada-repos</id>
+					<name>openscada-repos</name>
+					<url>${openscada.internal.repository}</url>
+					<releases>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</snapshots>
+				</pluginRepository>
+			</pluginRepositories>
+			<repositories>
+				<repository>
+					<id>openscada-repos</id>
+					<name>openscada-repos</name>
+					<url>${openscada.internal.repository}</url>
+					<releases>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</snapshots>
+				</repository>
+			</repositories>
+			<distributionManagement>
+				<repository>
+					<id>openscada-releases</id>
+					<name>openscada-releases</name>
+					<url>${openscada.distrib.repository}</url>
+				</repository>
+				<snapshotRepository>
+					<id>openscada-snapshots</id>
+					<name>openscada-snapshots</name>
+					<url>${openscada.distrib.repository}</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+		<!-- profile is used in 3rdparty environment -->
+		<profile>
+			<id>public</id>
+			<pluginRepositories>
+				<pluginRepository>
+					<id>openscada-public-repos</id>
+					<name>openscada-public-repos</name>
+					<url>http://www.openscada.org/download/maven-repo/</url>
+					<releases>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</snapshots>
+				</pluginRepository>
+			</pluginRepositories>
+			<repositories>
+				<repository>
+					<id>openscada-public-repos</id>
+					<name>openscada-public-repos</name>
+					<url>http://www.openscada.org/download/maven-repo/</url>
+					<releases>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</snapshots>
+				</repository>
+				<!-- Spring Enterprise Repository -->
+				<repository>
+					<id>com.springsource.repository.bundles.release</id>
+					<name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
+					<url>http://repository.springsource.com/maven/bundles/release</url>
+					<releases>
+						<enabled>true</enabled>
+						<updatePolicy>daily</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</releases>
+				</repository>
+				<repository>
+					<id>com.springsource.repository.bundles.external</id>
+					<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+					<url>http://repository.springsource.com/maven/bundles/external</url>
+					<releases>
+						<enabled>true</enabled>
+						<updatePolicy>daily</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</releases>
+				</repository>
+				<repository>
+					<id>com.springsource.repository.libraries.release</id>
+					<name>SpringSource Enterprise Bundle Repository - SpringSource Library Releases</name>
+					<url>http://repository.springsource.com/maven/libraries/release</url>
+					<releases>
+						<enabled>true</enabled>
+						<updatePolicy>daily</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</releases>
+				</repository>
+				<repository>
+					<id>com.springsource.repository.libraries.external</id>
+					<name>SpringSource Enterprise Bundle Repository - External Library Releases</name>
+					<url>http://repository.springsource.com/maven/libraries/external</url>
+					<releases>
+						<enabled>true</enabled>
+						<updatePolicy>daily</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</releases>
+				</repository>
+			</repositories>
+		</profile>
+		<!-- profile used in deploy environment -->
+		<profile>
+			<id>deploy</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

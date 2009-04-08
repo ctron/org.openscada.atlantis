@@ -4,7 +4,6 @@
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.ae.client.common</artifactId>
 	<name>OpenSCADA-AE-Client-Common</name>
-	<version>0.12.0-SNAPSHOT</version>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
@@ -23,12 +22,12 @@
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
 			<artifactId>org.openscada.atlantis.ae.core.common</artifactId>
-			<version>0.12.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
 			<artifactId>org.openscada.atlantis.core.client.common</artifactId>
-			<version>0.12.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 

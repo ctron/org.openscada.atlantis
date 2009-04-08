@@ -5,16 +5,26 @@
 	<artifactId>org.openscada.atlantis.core.common</artifactId>
 	<name>OpenSCADA-Core-Common</name>
 	<description></description>
+
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
 		<artifactId>org.openscada.atlantis</artifactId>
 		<relativePath>../openscada_build</relativePath>
 		<version>0.12.0-SNAPSHOT</version>
 	</parent>
+
 	<scm>
 		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_core_common</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_core_common</developerConnection>
 		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_core_common</url>
 	</scm>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.junit</groupId>
+			<artifactId>com.springsource.org.junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>
 

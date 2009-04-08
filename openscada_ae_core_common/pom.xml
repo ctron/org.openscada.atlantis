@@ -17,17 +17,21 @@
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_core_common</developerConnection>
 		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_ae_core_common</url>
 	</scm>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
 			<artifactId>org.openscada.atlantis.core.common</artifactId>
-			<version>0.12.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openscada.aurora</groupId>
 			<artifactId>org.openscada.aurora.utils</artifactId>
-			<version>${aurora.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit</groupId>
+			<artifactId>com.springsource.org.junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

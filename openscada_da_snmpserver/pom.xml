@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
 			<artifactId>org.openscada.atlantis.da.server.common</artifactId>
-			<version>0.12.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.snmp4j</groupId>
@@ -45,4 +45,18 @@
 			<version>1.4</version>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>jdk15</id>
+			<dependencies>
+				<dependency>
+					<groupId>javax.xml.stream</groupId>
+					<artifactId>com.springsource.javax.xml.stream</artifactId>
+					<version>1.0.1</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+	
 </project>

@@ -20,14 +20,19 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.junit</groupId>
+			<artifactId>com.springsource.org.junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
 			<artifactId>org.openscada.atlantis.da.ice.base</artifactId>
-			<version>0.12.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
 			<artifactId>org.openscada.atlantis.da.client.common</artifactId>
-			<version>0.12.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

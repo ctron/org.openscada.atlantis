@@ -20,14 +20,31 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>com.springsource.org.apache.xmlbeans</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
 			<artifactId>org.openscada.atlantis.da.server.common</artifactId>
-			<version>0.12.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openscada.utgard</groupId>
 			<artifactId>org.openscada.utgard.opc.lib</artifactId>
-			<version>0.4.2</version>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>jdk15</id>
+			<dependencies>
+				<dependency>
+					<groupId>javax.xml.stream</groupId>
+					<artifactId>com.springsource.javax.xml.stream</artifactId>
+					<version>1.0.1</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+	
 </project>

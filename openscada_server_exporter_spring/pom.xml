@@ -1,24 +1,26 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.openscada.atlantis</groupId>
-  <artifactId>org.openscada.atlantis.da.server.exporter.spring</artifactId>
-  <name>OpenSCADA-DA-Server-Exporter-Spring</name>
-  <parent>
-  	<artifactId>org.openscada.atlantis</artifactId>
-  	<groupId>org.openscada.atlantis</groupId>
-  	<version>0.12.0-SNAPSHOT</version>
-  	<relativePath>../openscada_build/pom.xml</relativePath>
-  </parent>
-  <dependencies>
-  	<dependency>
-  		<groupId>org.openscada.atlantis</groupId>
-  		<artifactId>org.openscada.atlantis.da.server.exporter</artifactId>
-  		<version>0.12.0-SNAPSHOT</version>
-  	</dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openscada.atlantis</groupId>
+	<artifactId>org.openscada.atlantis.da.server.exporter.spring</artifactId>
+	<name>OpenSCADA-DA-Server-Exporter-Spring</name>
+
+	<parent>
+		<artifactId>org.openscada.atlantis</artifactId>
+		<groupId>org.openscada.atlantis</groupId>
+		<version>0.12.0-SNAPSHOT</version>
+		<relativePath>../openscada_build/pom.xml</relativePath>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.openscada.atlantis</groupId>
+			<artifactId>org.openscada.atlantis.da.server.exporter</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>org.springframework.context</artifactId>
-			<version>2.5.6.A</version>
 		</dependency>
-  </dependencies>
+	</dependencies>
 </project>

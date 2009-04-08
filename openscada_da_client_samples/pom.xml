@@ -1,10 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.openscada.atlantis</groupId>
-  <artifactId>org.openscada.atlantis.da.client.samples</artifactId>
-  <name>OpenSCADA-DA-Client-Samples</name>
-  
-  
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openscada.atlantis</groupId>
+	<artifactId>org.openscada.atlantis.da.client.samples</artifactId>
+	<name>OpenSCADA-DA-Client-Samples</name>
+
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
 		<artifactId>org.openscada.atlantis</artifactId>
@@ -17,18 +17,18 @@
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_client_samples</developerConnection>
 		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_client_samples</url>
 	</scm>
-  
-  
-  <dependencies>
-    <dependency>
-      <groupId>org.openscada.atlantis</groupId>
-      <artifactId>org.openscada.atlantis.da.client.common</artifactId>
-      <version>0.12.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.openscada.atlantis</groupId>
-    	<artifactId>org.openscada.atlantis.da.client.net</artifactId>
-    	<version>0.12.0-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.openscada.atlantis</groupId>
+			<artifactId>org.openscada.atlantis.da.client.common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openscada.atlantis</groupId>
+			<artifactId>org.openscada.atlantis.da.client.net</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 </project>

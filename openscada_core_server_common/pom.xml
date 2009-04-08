@@ -22,7 +22,6 @@
 		<dependency>
 			<groupId>org.openscada.aurora</groupId>
 			<artifactId>org.openscada.aurora.utils</artifactId>
-			<version>${aurora.version}</version>
 		</dependency>
 	</dependencies>
 </project>
