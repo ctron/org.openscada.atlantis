@@ -6,6 +6,11 @@
 	<artifactId>org.openscada.atlantis</artifactId>
 	<packaging>pom</packaging>
 	<name>OpenSCADA</name>
+	
+	<properties>
+		<aurora.version>0.12.0</aurora.version>
+		<utgard.version>0.4.2</utgard.version>
+	</properties>
 
 	<distributionManagement>
 		<repository>

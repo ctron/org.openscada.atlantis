@@ -4,7 +4,6 @@
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.ae.core.common</artifactId>
 	<name>OpenSCADA-AE-Core-Common</name>
-	<version>0.12.0-SNAPSHOT</version>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
@@ -28,7 +27,7 @@
 		<dependency>
 			<groupId>org.openscada.aurora</groupId>
 			<artifactId>org.openscada.aurora.utils</artifactId>
-			<version>0.12.0-SNAPSHOT</version>
+			<version>${aurora.version}</version>
 		</dependency>
 	</dependencies>
 

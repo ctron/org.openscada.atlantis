@@ -23,7 +23,7 @@
 			<plugin>
 				<groupId>org.openscada.aurora</groupId>
 				<artifactId>org.openscada.aurora.slice.plugin</artifactId>
-				<version>0.12.0-SNAPSHOT</version>
+				<version>${aurora.version}</version>
 				<configuration>
 					<iceSourceDirectory>${basedir}/../openscada_interface_ice/da</iceSourceDirectory>
 					<iceTargetDirectory>${basedir}/gensrc</iceTargetDirectory>
