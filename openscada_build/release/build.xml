@@ -201,6 +201,7 @@
 		<ant dir="${source.base}/openscada_da_stockserver"/>
 		<ant dir="${source.base}/openscada_da_springserver"/>
     	<ant dir="${source.base}/openscada_da_execserver"/>
+    	<ant dir="${source.base}/openscada_da_execserver2"/>
     	<ant dir="${source.base}/openscada_da_jdbcserver"/>
 
 		<ant dir="${source.base}/openscada_core_client_common"/>
