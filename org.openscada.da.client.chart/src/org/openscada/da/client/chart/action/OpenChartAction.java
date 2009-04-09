@@ -24,7 +24,7 @@ import org.openscada.da.client.chart.view.ChartView2;
 public class OpenChartAction implements IViewActionDelegate, IObjectActionDelegate
 {
 
-    private static Logger _log = Logger.getLogger ( OpenChartAction.class );
+    private static Logger logger = Logger.getLogger ( OpenChartAction.class );
 
     private IWorkbenchPartSite site = null;
 
@@ -42,36 +42,45 @@ public class OpenChartAction implements IViewActionDelegate, IObjectActionDelega
             return;
         }
 
+        final StringBuilder sb = new StringBuilder ();
+
         for ( final DataItemHolder item : ItemSelectionHelper.getSelectionHookedUp ( this.selection, ConnectionManager.getDefault () ) )
         {
-            String secondaryId = item.getItemId ();
-            secondaryId = secondaryId.replace ( "_", "__" ); //$NON-NLS-1$ //$NON-NLS-2$
-            secondaryId = secondaryId.replace ( ":", "_" ); //$NON-NLS-1$ //$NON-NLS-2$
+            sb.append ( item.getItemId () );
+        }
 
-            try
+        String secondaryId = sb.toString ();
+        secondaryId = secondaryId.replace ( "_", "__" ); //$NON-NLS-1$ //$NON-NLS-2$
+        secondaryId = secondaryId.replace ( ":", "_" ); //$NON-NLS-1$ //$NON-NLS-2$
+
+        try
+        {
+            final IViewPart viewer = this.site.getPage ().showView ( ChartView.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE );
+
+            for ( final DataItemHolder item : ItemSelectionHelper.getSelectionHookedUp ( this.selection, ConnectionManager.getDefault () ) )
             {
-                final IViewPart viewer = this.site.getPage ().showView ( ChartView.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE );
                 if ( viewer instanceof ChartView )
                 {
                     ( (ChartView)viewer ).setDataItem ( item );
                 }
                 else if ( viewer instanceof ChartView2 )
                 {
-                    ( (ChartView2)viewer ).setDataItem ( item );
+                    ( (ChartView2)viewer ).addItem ( item );
                 }
-            }
-            catch ( final PartInitException e )
-            {
-                _log.error ( "Failed to create view", e ); //$NON-NLS-1$
-                Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 0, Messages.getString ( "OpenChartAction.FailedToCreateChartView" ), e ) ); //$NON-NLS-1$
-            }
-            catch ( final Exception e )
-            {
-                _log.error ( "Failed to create view", e ); //$NON-NLS-1$
-                Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 1, Messages.getString ( "OpenChartAction.FailedToCreateChartView" ), e ) ); //$NON-NLS-1$
             }
 
         }
+        catch ( final PartInitException e )
+        {
+            logger.error ( "Failed to create view", e ); //$NON-NLS-1$
+            Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 0, Messages.getString ( "OpenChartAction.FailedToCreateChartView" ), e ) ); //$NON-NLS-1$
+        }
+        catch ( final Exception e )
+        {
+            logger.error ( "Failed to create view", e ); //$NON-NLS-1$
+            Activator.getDefault ().getLog ().log ( new Status ( IStatus.ERROR, Activator.PLUGIN_ID, 1, Messages.getString ( "OpenChartAction.FailedToCreateChartView" ), e ) ); //$NON-NLS-1$
+        }
+
     }
 
     public void selectionChanged ( final IAction action, final ISelection selection )

@@ -1,8 +1,10 @@
 package org.openscada.da.client.chart.view;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
@@ -18,9 +20,9 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.labels.XYToolTipGenerator;
-import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.time.TimeSeries;
@@ -38,7 +40,7 @@ import org.openscada.da.client.base.connection.ConnectionManagerEntry;
 import org.openscada.da.client.base.item.DataItemHolder;
 import org.openscada.da.client.chart.Messages;
 
-public class ChartView2 extends ViewPart implements Observer
+public class ChartView2 extends ViewPart
 {
     private static Logger log = Logger.getLogger ( ChartView2.class );
 
@@ -50,15 +52,86 @@ public class ChartView2 extends ViewPart implements Observer
 
     private JFreeChart chart = null;
 
-    private DataItemHolder item;
-
-    private TimeSeriesCollection dataset;
-
-    private TimeSeries series;
-
-    private DataItem dataItem;
+    private final TimeSeriesCollection dataset;
 
     private Display display;
+
+    private static class Item implements Observer
+    {
+        private final DataItemHolder item;
+
+        private final TimeSeries series;
+
+        private DataItem dataItem;
+
+        private final ChartView2 chartView;
+
+        public Item ( final DataItemHolder item, final TimeSeriesCollection dataset, final ChartView2 chartView )
+        {
+            this.item = item;
+
+            this.series = new TimeSeries ( getLabel (), FixedMillisecond.class );
+            dataset.addSeries ( this.series );
+
+            this.chartView = chartView;
+        }
+
+        public DataItemHolder getItem ()
+        {
+            return this.item;
+        }
+
+        public String getLabel ()
+        {
+            return this.item.getItemId ();
+        }
+
+        public void connect ()
+        {
+            this.dataItem = new AsyncDataItem ( this.item.getItemId (), this.item.getItemManager () );
+
+            this.dataItem.addObserver ( this );
+        }
+
+        public void disconnect ()
+        {
+            if ( this.dataItem != null )
+            {
+                this.dataItem.deleteObserver ( this );
+
+                this.dataItem.unregister ();
+                this.dataItem = null;
+            }
+        }
+
+        public void update ( final Observable o, final Object arg )
+        {
+            this.chartView.update ();
+        }
+
+        public void performUpdate ()
+        {
+            final Number n = convertToNumber ( this.dataItem.getSnapshotValue ().getValue () );
+
+            final RegularTimePeriod time = new FixedMillisecond ( Calendar.getInstance ().getTime () );
+
+            final TimeSeriesDataItem di = new TimeSeriesDataItem ( time, n );
+
+            // final long end = this.series.getMaximumItemAge ();
+            // final long now = time.getLastMillisecond ();
+
+            this.series.add ( di );
+
+            // this.chart.getXYPlot ().addDomainMarker ( new IntervalMarker ( end, now ) );
+        }
+    }
+
+    private final Collection<Item> items = new CopyOnWriteArrayList<Item> ();
+
+    public ChartView2 ()
+    {
+        this.dataset = new TimeSeriesCollection ();
+    }
 
     @Override
     public void createPartControl ( final Composite parent )
@@ -67,20 +140,10 @@ public class ChartView2 extends ViewPart implements Observer
         {
             this.display = parent.getDisplay ();
 
-            this.dataset = new TimeSeriesCollection ();
-
-            this.series = new TimeSeries ( Messages.getString ( "ChartView.seriesLabel.values" ), FixedMillisecond.class ); //$NON-NLS-1$
-            this.dataset.addSeries ( this.series );
-
             this.chart = createChart ();
 
             this.frame = new ChartComposite ( parent, SWT.NONE, this.chart, true );
             this.frame.pack ();
-
-            if ( this.item != null )
-            {
-                this.chart.setTitle ( this.item.getItemId () );
-            }
 
             scheduleUpdate ();
         }
@@ -122,7 +185,11 @@ public class ChartView2 extends ViewPart implements Observer
         renderer.setBaseToolTipGenerator ( toolTipGenerator );
         plot.setRenderer ( renderer );
 
-        return new JFreeChart ( Messages.getString ( "ChartView.chartTitle" ), JFreeChart.DEFAULT_TITLE_FONT, plot, false ); //$NON-NLS-1$
+        final JFreeChart chart = new JFreeChart ( Messages.getString ( "ChartView.chartTitle" ), JFreeChart.DEFAULT_TITLE_FONT, plot, false ); //$NON-NLS-1$
+
+        chart.addLegend ( new LegendTitle ( plot ) );
+
+        return chart;
     }
 
     @Override
@@ -147,42 +214,24 @@ public class ChartView2 extends ViewPart implements Observer
         super.dispose ();
     }
 
-    public void setDataItem ( final DataItemHolder item )
-    {
-        disconnect ();
-        if ( item == null )
-        {
-            return;
-        }
-
-        connect ( item );
-    }
-
     protected void disconnect ()
     {
-        if ( this.item != null )
+        for ( final Item item : this.items )
         {
-            this.item = null;
+            item.disconnect ();
         }
-        if ( this.dataItem != null )
-        {
-            this.dataItem.deleteObserver ( this );
+        this.items.clear ();
 
-            this.dataItem.unregister ();
-            this.dataItem = null;
-        }
     }
 
-    protected void connect ( final DataItemHolder item )
+    public void addItem ( final DataItemHolder itemHolder )
     {
-        this.item = item;
-        this.dataItem = new AsyncDataItem ( item.getItemId (), this.item.getItemManager () );
 
-        this.dataItem.addObserver ( this );
-
-        if ( this.chart != null )
+        if ( itemHolder != null )
         {
-            this.chart.setTitle ( item.getItemId () );
+            Item item;
+            this.items.add ( item = new Item ( itemHolder, this.dataset, this ) );
+            item.connect ();
         }
     }
 
@@ -241,13 +290,21 @@ public class ChartView2 extends ViewPart implements Observer
     {
         if ( memento != null )
         {
-            final String itemId = memento.getString ( "itemId" );
-            final String connectionUri = memento.getString ( "connectionUri" );
-
-            if ( itemId != null && connectionUri != null )
+            final IMemento[] childs = memento.getChildren ( "item" );
+            if ( childs != null )
             {
-                final ConnectionManagerEntry entry = ConnectionManager.getDefault ().getEntry ( ConnectionInformation.fromURI ( connectionUri ), false );
-                setDataItem ( new DataItemHolder ( entry.getConnection (), entry.getItemManager (), itemId ) );
+                for ( final IMemento child : childs )
+                {
+                    final String itemId = child.getString ( "itemId" );
+                    final String connectionUri = child.getString ( "connectionUri" );
+
+                    if ( itemId != null && connectionUri != null )
+                    {
+                        final ConnectionManagerEntry entry = ConnectionManager.getDefault ().getEntry ( ConnectionInformation.fromURI ( connectionUri ), false );
+                        addItem ( new DataItemHolder ( entry.getConnection (), entry.getItemManager (), itemId ) );
+                    }
+
+                }
             }
         }
 
@@ -257,13 +314,11 @@ public class ChartView2 extends ViewPart implements Observer
     @Override
     public void saveState ( final IMemento memento )
     {
-        if ( this.item != null )
+        for ( final Item item : this.items )
         {
-            final String itemId = this.item.getItemId ();
-            final String connectionUri = this.item.getConnection ().getConnectionInformation ().toString ();
-
-            memento.putString ( "itemId", itemId );
-            memento.putString ( "connectionUri", connectionUri );
+            final IMemento child = memento.createChild ( "item" );
+            child.putString ( "itemId", item.getItem ().getItemId () );
+            child.putString ( "connectionUri", item.getItem ().getConnection ().getConnectionInformation ().toString () );
         }
 
         super.saveState ( memento );
@@ -271,24 +326,16 @@ public class ChartView2 extends ViewPart implements Observer
 
     protected void performUpdate ()
     {
-        final Number n = convertToNumber ( this.dataItem.getSnapshotValue ().getValue () );
-
-        final RegularTimePeriod time = new FixedMillisecond ( Calendar.getInstance ().getTime () );
-
-        final TimeSeriesDataItem di = new TimeSeriesDataItem ( time, n );
-
-        final long end = this.series.getMaximumItemAge ();
-        final long now = time.getLastMillisecond ();
-
-        this.series.add ( di );
-
-        this.chart.getXYPlot ().addDomainMarker ( new IntervalMarker ( end, now ) );
+        for ( final Item item : this.items )
+        {
+            item.performUpdate ();
+        }
 
         // update
         this.frame.forceRedraw ();
     }
 
-    public void update ( final Observable o, final Object arg )
+    public void update ()
     {
         triggerUpdate ();
     }
