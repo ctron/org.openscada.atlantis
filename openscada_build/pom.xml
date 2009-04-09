@@ -105,6 +105,7 @@
 		<module>../openscada_da_proxyserver</module>
 		<module>../openscada_da_net_base</module>
 		<module>../openscada_da_execserver</module>
+		<module>../openscada_da_execserver2</module>
 		<module>../openscada_da_jdbcserver</module>
 		<module>../openscada_da_simserver</module>
 		<module>../openscada_da_sysinfoserver</module>
