@@ -25,7 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.xmlbeans.XmlException;
-import org.openscada.da.exec2.config.RootDocument;
+import org.openscada.da.exec2.configuration.RootDocument;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.impl.HiveCommon;
