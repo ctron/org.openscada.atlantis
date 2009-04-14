@@ -22,6 +22,7 @@ package org.openscada.da.server.exec2.command;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ProcessConfiguration
 {
@@ -29,10 +30,23 @@ public class ProcessConfiguration
 
     private String[] arguments = new String[] {};
 
-    public ProcessConfiguration ( final String exec, final String[] arguments )
+    private Map<String, String> environment;
+
+    public ProcessConfiguration ( final String exec, final String[] arguments, final Map<String, String> environment )
     {
         this.exec = exec;
         this.arguments = arguments;
+        this.environment = environment;
+    }
+
+    public Map<String, String> getEnvironment ()
+    {
+        return this.environment;
+    }
+
+    public void setEnvironment ( final Map<String, String> environment )
+    {
+        this.environment = environment;
     }
 
     public String getExec ()
@@ -61,6 +75,25 @@ public class ProcessConfiguration
         args.add ( this.exec );
         args.addAll ( Arrays.asList ( this.arguments ) );
 
-        return new ProcessBuilder ( args.toArray ( new String[0] ) );
+        final ProcessBuilder builder = new ProcessBuilder ( args );
+
+        if ( this.environment != null )
+        {
+            // setting enviroment
+            Map<String, String> env = builder.environment ();
+            for ( Map.Entry<String, String> entry : this.environment.entrySet () )
+            {
+                if ( entry.getValue () == null )
+                {
+                    env.remove ( entry.getKey () );
+                }
+                else
+                {
+                    env.put ( entry.getKey (), entry.getValue () );
+                }
+            }
+        }
+
+        return builder;
     }
 }

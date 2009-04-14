@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<exec:root xmlns:exec="http://openscada.org/DA/Exec2/Config"
+<exec:root xmlns:exec="http://openscada.org/DA/Exec2/Configuration"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://openscada.org/DA/Exec2/Config schema/exec2.xsd ">
+	xsi:schemaLocation="http://openscada.org/DA/Exec2/Configuration schema/exec2.xsd ">
 	
 	<!-- 
 	<exec:queue name="Q1">
@@ -127,6 +127,15 @@
 			</exec:process>
 			<exec:extractor xsi:type="exec:NagiosReturnCodeExtractorType" name="nagios"/>
 		</exec:command>
-	</exec:queue>	
+		
+		<exec:command id="ENV">
+			<exec:process exec="env">
+				<exec:env name="DISPLAY"/>
+				<exec:env name="FOO" value="BAR"/>
+				<exec:env name="USERNAME" value="someonelese"/>
+			</exec:process>
+		</exec:command>
+	</exec:queue>
+		
 
 </exec:root>

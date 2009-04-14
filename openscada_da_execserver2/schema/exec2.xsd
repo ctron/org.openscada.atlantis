@@ -84,6 +84,9 @@
     		<element name="argument" type="string" maxOccurs="unbounded"
     			minOccurs="0">
     		</element>
+    		<element name="env" type="exec:EnvEntryType"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
     	</sequence>
     	<attribute name="exec" type="string"></attribute>
     </complexType>
@@ -241,5 +244,10 @@
         <complexContent>
     		<extension base="exec:ExtractorType"></extension>
     	</complexContent>
+    </complexType>
+
+    <complexType name="EnvEntryType">
+    	<attribute name="name" type="string" use="required"></attribute>
+    	<attribute name="value" type="string"></attribute>
     </complexType>
 </schema>

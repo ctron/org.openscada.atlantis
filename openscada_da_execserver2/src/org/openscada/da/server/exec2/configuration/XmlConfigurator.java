@@ -21,11 +21,14 @@ package org.openscada.da.server.exec2.configuration;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.xmlbeans.XmlException;
+import org.openscada.da.exec2.configuration.EnvEntryType;
 import org.openscada.da.exec2.configuration.ExtractorType;
 import org.openscada.da.exec2.configuration.FieldExtractorType;
 import org.openscada.da.exec2.configuration.FieldType;
@@ -213,9 +216,30 @@ public class XmlConfigurator implements Configurator
         return groups;
     }
 
+    /**
+     * Create a new {@link ProcessConfiguration} instance based on a {@link ProcessType}
+     * @param process the {@link ProcessType} object
+     * @return the new {@link ProcessConfiguration} instance
+     */
     private ProcessConfiguration createProcessConfiguration ( final ProcessType process )
     {
-        final ProcessConfiguration pc = new ProcessConfiguration ( process.getExec (), process.getArgumentList ().toArray ( new String[0] ) );
+        // create the env var map
+        Map<String, String> env = null;
+
+        if ( ( process.getEnvList () != null ) && !process.getEnvList ().isEmpty () )
+        {
+            env = new HashMap<String, String> ();
+            for ( EnvEntryType entry : process.getEnvList () )
+            {
+                if ( ( entry.getName () != null ) && ( entry.getName ().length () > 0 ) )
+                {
+                    env.put ( entry.getName (), entry.getValue () );
+                }
+            }
+        }
+
+        // create the process configuration instance
+        final ProcessConfiguration pc = new ProcessConfiguration ( process.getExec (), process.getArgumentList ().toArray ( new String[0] ), env );
         return pc;
     }
 
