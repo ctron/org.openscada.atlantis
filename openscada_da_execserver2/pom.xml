@@ -13,9 +13,9 @@
 	</parent>
 
 	<scm>
-		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/alantis/trunk/openscada_da_exec2server</connection>
-		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_exec2server</developerConnection>
-		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_exec2server</url>
+		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/alantis/trunk/openscada_da_execserver2</connection>
+		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_execserver2</developerConnection>
+		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_execserver2</url>
 	</scm>
 
 	<dependencies>
@@ -27,6 +27,10 @@
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>com.springsource.org.apache.xmlbeans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.log4j</groupId>
+			<artifactId>com.springsource.org.apache.log4j</artifactId>
 		</dependency>
 	</dependencies>
 
