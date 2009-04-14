@@ -46,7 +46,7 @@ public class AutoReconnectController implements ConnectionStateListener
 
     private static Logger logger = Logger.getLogger ( AutoReconnectController.class );
 
-    private static final long DEFAULT_RECONNECT_DELAY = 10 * 1000;
+    private static final long DEFAULT_RECONNECT_DELAY = Long.getLong ( "openscada.default.reconnect.delay", 10 * 1000 );
 
     private final Connection connection;
 
