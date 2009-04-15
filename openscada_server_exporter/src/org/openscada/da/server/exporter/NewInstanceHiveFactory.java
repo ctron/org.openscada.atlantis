@@ -14,7 +14,7 @@ import org.w3c.dom.Node;
  */
 public class NewInstanceHiveFactory implements HiveFactory
 {
-    private static Logger _log = Logger.getLogger ( NewInstanceHiveFactory.class );
+    private static Logger logger = Logger.getLogger ( NewInstanceHiveFactory.class );
 
     public Hive createHive ( final String reference, final HiveConfigurationType configuration ) throws ConfigurationException
     {
@@ -49,27 +49,27 @@ public class NewInstanceHiveFactory implements HiveFactory
 
         if ( node != null )
         {
-            _log.debug ( "We have an xml configuration node. try XML-Node ctor" );
+            logger.debug ( "We have an xml configuration node. try XML-Node ctor" );
             // if we have an xml configuration node try to use the XML ctor
             try
             {
                 ctor = hiveClass.getConstructor ( Node.class );
                 if ( ctor != null )
                 {
-                    _log.debug ( "Using XML-Node constructor" );
+                    logger.debug ( "Using XML-Node constructor" );
                     return (Hive)ctor.newInstance ( new Object[] { node } );
                 }
                 // fall back to standard ctor
-                _log.debug ( "No XML-Node ctor found .. fall back to default" );
+                logger.debug ( "No XML-Node ctor found .. fall back to default" );
             }
             catch ( final InvocationTargetException e )
             {
-                _log.info ( "Failed to create new instance", e.getTargetException () );
+                logger.info ( "Failed to create new instance", e.getTargetException () );
                 throw e;
             }
-            catch ( final Exception e )
+            catch ( final Throwable e )
             {
-                _log.info ( String.format ( "No XML node constructor found (%s)", e.getMessage () ) );
+                logger.info ( String.format ( "No XML node constructor found (%s)", e.getMessage () ) );
             }
         }
         return (Hive)hiveClass.newInstance ();
