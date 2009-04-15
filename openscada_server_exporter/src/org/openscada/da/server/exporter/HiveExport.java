@@ -90,6 +90,8 @@ public class HiveExport
 
     protected Export findExport ( final ConnectionInformation ci ) throws ConfigurationError
     {
+        log.info ( String.format ( "Requested export to: %s", ci ) );
+
         if ( !ci.getInterface ().equalsIgnoreCase ( "da" ) )
         {
             throw new ConfigurationError ( String.format ( "Interface must be 'da' but is '%s'", ci.getInterface () ) );
