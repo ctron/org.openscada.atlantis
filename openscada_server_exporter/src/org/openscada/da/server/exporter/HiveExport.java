@@ -77,12 +77,19 @@ public class HiveExport
 
     public Export addExport ( final String endpointUri ) throws ConfigurationError
     {
+        log.info ( String.format ( "Adding export: %s", endpointUri ) );
+
         final ConnectionInformation ci = ConnectionInformation.fromURI ( endpointUri );
         final Export export = findExport ( ci );
 
         if ( export != null )
         {
             this.exports.add ( export );
+        }
+        else
+        {
+            log.info ( String.format ( "No exporter found for endpoint: %s", endpointUri ) );
+            throw new ConfigurationError ( String.format ( "No exporter found for endpoint: %s", endpointUri ) );
         }
 
         return export;
