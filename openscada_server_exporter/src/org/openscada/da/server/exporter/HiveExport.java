@@ -108,10 +108,12 @@ public class HiveExport
         {
             if ( ci.getDriver ().equalsIgnoreCase ( "net" ) || ci.getDriver ().equalsIgnoreCase ( "gmpp" ) )
             {
+                log.debug ( "Create new 'net' exporter" );
                 return new NetExport ( this.hive, ci );
             }
             else if ( ci.getDriver ().equalsIgnoreCase ( "ice" ) )
             {
+                log.debug ( "Create new 'ice' exporter" );
                 return new IceExport ( this.hive, ci );
             }
             else

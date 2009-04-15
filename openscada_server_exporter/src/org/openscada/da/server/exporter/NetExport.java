@@ -41,12 +41,14 @@ public class NetExport implements Export
 
         this.connectionInformation = connectionInformation;
 
+        logger.debug ( "Instatiate exporter class" );
+
         this.exporter = new Exporter ( this.hive, this.connectionInformation );
     }
 
     public synchronized void start () throws Exception
     {
-        if ( this.exporter != null )
+        if ( this.exporter == null )
         {
             return;
         }
