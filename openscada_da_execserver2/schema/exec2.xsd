@@ -60,7 +60,7 @@
     					<restriction base="int"></restriction>
     				</simpleType>
     			</attribute>
-                <attribute name="maxInputBuffer" type="int"></attribute>
+                <attribute name="maxInputBuffer" type="int" use="optional" default="4000"></attribute>
     		</extension>
     	</complexContent>
     </complexType>

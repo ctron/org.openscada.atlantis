@@ -35,6 +35,8 @@ import org.openscada.da.server.exec2.util.StreamProcessor;
 
 public abstract class AbstractContinuousCommand implements ContinuousCommand, Runnable
 {
+    private static final int DEFAULT_MAX_INPUT_BUFFER = 4000;
+
     private static Logger logger = Logger.getLogger ( AbstractContinuousCommand.class );
 
     public enum State
@@ -88,9 +90,17 @@ public abstract class AbstractContinuousCommand implements ContinuousCommand, Ru
         this.id = id;
         this.processConfiguration = processConfiguration;
         this.restartDelay = restartDelay;
-        this.maxInputBuffer = maxInputBuffer;
-        this.splitter = splitter;
 
+        this.splitter = splitter;
+        if ( maxInputBuffer > 0 )
+        {
+            this.maxInputBuffer = maxInputBuffer;
+        }
+        else
+        {
+            logger.warn ( String.format ( "Using default (%s) max input buffer instead of provided (%s)", DEFAULT_MAX_INPUT_BUFFER, maxInputBuffer ) );
+            this.maxInputBuffer = DEFAULT_MAX_INPUT_BUFFER;
+        }
     }
 
     public void start ( final Hive hive, final FolderCommon parentFolder )
