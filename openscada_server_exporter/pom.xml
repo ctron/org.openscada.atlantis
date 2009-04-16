@@ -23,6 +23,10 @@
 			<artifactId>org.openscada.atlantis.da.server.net</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.log4j</groupId>
+			<artifactId>com.springsource.org.apache.log4j</artifactId>
+		</dependency>
 	</dependencies>
 
 	<profiles>
