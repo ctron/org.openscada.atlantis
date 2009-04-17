@@ -72,7 +72,6 @@ public class OpenOfficeFile extends BaseFile
         }
         final int rows = sheet.getRowCount ();
         final int startRow = 2;
-        Integer currentPort = null;
         for ( int y = startRow; y < rows; y++ )
         {
             String serverName = (String)sheet.getValueAt ( 0, y );
@@ -81,7 +80,6 @@ public class OpenOfficeFile extends BaseFile
             {
                 final String[] n = serverName.split ( ":" );
                 serverName = n[0];
-                currentPort = Integer.valueOf ( n[1] );
             }
             if ( !getHiveBuilder ().getName ().equals ( serverName ) )
             {
@@ -105,25 +103,25 @@ public class OpenOfficeFile extends BaseFile
             final String unit = (String)sheet.getValueAt ( 3, y );
             if ( unit != null )
             {
-                idef.addAttr ( "Unit", unit );
+                idef.addAttr ( "unit", unit );
             }
             // Description
             final String description = (String)sheet.getValueAt ( 4, y );
             if ( description != null )
             {
-                idef.addAttr ( "Description", description );
+                idef.addAttr ( "description", description );
             }
             // Error
             final String error = (String)sheet.getValueAt ( 6, y );
             if ( "x".equalsIgnoreCase ( error ) )
             {
-                idef.addAttr ( "Error", false );
+                idef.addAttr ( "error", false );
             }
             // Alarm
             final String alarm = (String)sheet.getValueAt ( 7, y );
             if ( "x".equalsIgnoreCase ( alarm ) )
             {
-                idef.addAttr ( "Alarm", false );
+                idef.addAttr ( "alarm", false );
             }
             // LL
             try

@@ -78,12 +78,10 @@ public class ExcelFile extends BaseFile
         {
             String serverName = sheet.getCell ( 0, y ).getContents ();
             final String itemName = sheet.getCell ( 1, y ).getContents ();
-            Integer currentPort = null;
             if ( serverName.contains ( ":" ) )
             {
                 final String[] n = serverName.split ( ":" );
                 serverName = n[0];
-                currentPort = Integer.valueOf ( n[1] );
             }
             if ( !getHiveBuilder ().getName ().equals ( serverName ) )
             {
@@ -108,25 +106,25 @@ public class ExcelFile extends BaseFile
             cell = sheet.getCell ( 3, y );
             if ( cell != null && cell.getType () == CellType.LABEL )
             {
-                idef.addAttr ( "Unit", ( (LabelCell)cell ).getString () );
+                idef.addAttr ( "unit", ( (LabelCell)cell ).getString () );
             }
             // Description
             cell = sheet.getCell ( 4, y );
             if ( cell != null && cell.getType () == CellType.LABEL )
             {
-                idef.addAttr ( "Description", ( (LabelCell)cell ).getString () );
+                idef.addAttr ( "description", ( (LabelCell)cell ).getString () );
             }
             // Error
             final String error = sheet.getCell ( 6, y ).getContents ();
             if ( "x".equalsIgnoreCase ( error ) )
             {
-                idef.addAttr ( "Error", false );
+                idef.addAttr ( "error", false );
             }
             // Alarm
             final String alarm = sheet.getCell ( 7, y ).getContents ();
             if ( "x".equalsIgnoreCase ( alarm ) )
             {
-                idef.addAttr ( "Alarm", false );
+                idef.addAttr ( "alarm", false );
             }
             // LL
             cell = sheet.getCell ( alarm_ll_col, y );

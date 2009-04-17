@@ -2,8 +2,6 @@ package org.openscada.da.server.simulation.filesource;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
-
 /**
  * base class for building servers from office files. Current
  * implementations are {@link OpenOfficeFile} and {@link ExcelFile}. 
@@ -17,8 +15,6 @@ public abstract class BaseFile
     private final File js;
 
     private final HiveBuilder hiveBuilder;
-
-    private static Logger logger = Logger.getLogger ( BaseFile.class );
 
     protected static final int alarm_ll_col = 8;
 
