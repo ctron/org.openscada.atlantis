@@ -19,10 +19,14 @@
 
 package org.openscada.da.client;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionState;
 
 /**
  * A data item which performs the notification asynchronously
@@ -32,26 +36,38 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AsyncDataItem extends DataItem
 {
 
+    private final static class ThreadFactoryImplementation implements ThreadFactory
+    {
+        private final String itemId;
+
+        private final AtomicInteger i = new AtomicInteger ( 0 );
+
+        private ThreadFactoryImplementation ( final String itemId )
+        {
+            this.itemId = itemId;
+        }
+
+        public Thread newThread ( final Runnable r )
+        {
+            final Thread t = new Thread ( r, "AsyncDataItem/" + this.itemId + "#" + this.i.getAndIncrement () );
+            t.setDaemon ( true );
+            return t;
+        }
+    }
+
+    /**
+     * The executor to use
+     */
     private final ExecutorService executor;
 
     public AsyncDataItem ( final String itemId )
     {
-        this ( itemId, null );
+        this ( itemId, (ItemManager)null );
     }
 
     public AsyncDataItem ( final String itemId, final ItemManager connection )
     {
-        this ( itemId, connection, Executors.newSingleThreadExecutor ( new ThreadFactory () {
-
-            private final AtomicInteger i = new AtomicInteger ( 0 );
-
-            public Thread newThread ( final Runnable r )
-            {
-                final Thread t = new Thread ( r, "AsyncDataItem/" + itemId + "#" + this.i.getAndIncrement () );
-                t.setDaemon ( true );
-                return t;
-            }
-        } ) );
+        this ( itemId, connection, Executors.newSingleThreadExecutor ( new ThreadFactoryImplementation ( itemId ) ) );
     }
 
     public AsyncDataItem ( final String itemId, final ItemManager connection, final ExecutorService executor )
@@ -67,13 +83,25 @@ public class AsyncDataItem extends DataItem
     }
 
     @Override
-    public void notifyObservers ( final Object arg )
+    protected void performNotifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         this.executor.execute ( new Runnable () {
 
             public void run ()
             {
-                AsyncDataItem.super.notifyObservers ( arg );
+                AsyncDataItem.this.handlePerformNotifyDataChange ( value, attributes, cache );
+            }
+        } );
+    }
+
+    @Override
+    protected void performNotifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
+    {
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                AsyncDataItem.this.handlePerformNotifySubscriptionChange ( subscriptionState, subscriptionError );
             }
         } );
     }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,8 @@
 
 package org.openscada.da.client;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -30,15 +32,28 @@ import org.openscada.core.utils.AttributesHelper;
 
 public class DataItem extends Observable
 {
+    private static final String PROP_VALUE = "snapshotValue";
+
     private static Logger logger = Logger.getLogger ( DataItem.class );
 
-    private final String _itemId;
+    private final String itemId;
 
-    private ItemManager _itemManager = null;
+    /**
+     * The item manager
+     */
+    private ItemManager itemManager;
 
-    private DataItemValue _value = new DataItemValue ();
+    /**
+     * The stored item value
+     */
+    private DataItemValue value = new DataItemValue ();
 
-    private ItemUpdateListener _listener = null;
+    /**
+     * The listener used to register with the item manager
+     */
+    private final ItemUpdateListener listener;
+
+    private final PropertyChangeSupport propertySupport = new PropertyChangeSupport ( this );
 
     /**
      * create a new data item structure.
@@ -48,7 +63,21 @@ public class DataItem extends Observable
      */
     public DataItem ( final String itemId )
     {
-        this._itemId = itemId;
+        this.itemId = itemId;
+
+        // create the item listener
+        this.listener = new ItemUpdateListener () {
+
+            public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
+            {
+                DataItem.this.performNotifyDataChange ( value, attributes, cache );
+            }
+
+            public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
+            {
+                DataItem.this.performNotifySubscriptionChange ( subscriptionState, subscriptionError );
+            }
+        };
     }
 
     /**
@@ -71,50 +100,34 @@ public class DataItem extends Observable
 
     public void register ( final ItemManager itemManager )
     {
-        if ( this._itemManager == itemManager )
+        if ( this.itemManager == itemManager )
         {
             return;
         }
         unregister ();
 
-        this._listener = new ItemUpdateListener () {
-
-            public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
-            {
-                performNotifyDataChange ( value, attributes, cache );
-            }
-
-            public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
-            {
-                performNotifySubscriptionChange ( subscriptionState, subscriptionError );
-            }
-        };
-
-        this._itemManager = itemManager;
-        this._itemManager.addItemUpdateListener ( this._itemId, this._listener );
+        this.itemManager = itemManager;
+        this.itemManager.addItemUpdateListener ( this.itemId, this.listener );
     }
 
+    /**
+     * Unregister from the currently registered item manager
+     */
     public void unregister ()
     {
-        ItemManager manager;
-        ItemUpdateListener listener;
+        final ItemManager manager = this.itemManager;
 
-        manager = this._itemManager;
-        listener = this._listener;
-
-        this._itemManager = null;
-        this._listener = null;
+        this.itemManager = null;
 
         if ( manager != null )
         {
-            manager.removeItemUpdateListener ( this._itemId, listener );
+            manager.removeItemUpdateListener ( this.itemId, this.listener );
         }
     }
 
-    private void performNotifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
+    protected void handlePerformNotifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-
-        final DataItemValue newValue = new DataItemValue ( this._value );
+        final DataItemValue newValue = new DataItemValue ( this.value );
 
         if ( cache )
         {
@@ -137,11 +150,13 @@ public class DataItem extends Observable
             newValue.setValue ( new Variant ( value ) );
         }
 
-        this._value = newValue;
+        final DataItemValue oldValue = this.value;
+        this.value = newValue;
 
         try
         {
             notifyObservers ( newValue );
+            this.propertySupport.firePropertyChange ( PROP_VALUE, oldValue, newValue );
         }
         catch ( final Throwable e )
         {
@@ -149,23 +164,36 @@ public class DataItem extends Observable
         }
     }
 
-    private void performNotifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
+    protected void performNotifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        final DataItemValue newValue = new DataItemValue ( this._value );
+        handlePerformNotifyDataChange ( value, attributes, cache );
+    }
+
+    protected void handlePerformNotifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
+    {
+        final DataItemValue newValue = new DataItemValue ( this.value );
         newValue.setSubscriptionState ( subscriptionState );
         newValue.setSubscriptionError ( subscriptionError );
-        this._value = newValue;
+
+        final DataItemValue oldValue = this.value;
+        this.value = newValue;
 
         setChanged ();
 
         try
         {
             notifyObservers ( newValue );
+            this.propertySupport.firePropertyChange ( PROP_VALUE, oldValue, newValue );
         }
         catch ( final Throwable e )
         {
             logger.warn ( "Failed to notify subscription change", e );
         }
+    }
+
+    protected void performNotifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
+    {
+        handlePerformNotifySubscriptionChange ( subscriptionState, subscriptionError );
     }
 
     /**
@@ -179,7 +207,7 @@ public class DataItem extends Observable
     @Deprecated
     public Variant getValue ()
     {
-        return this._value.getValue ();
+        return this.value.getValue ();
     }
 
     /**
@@ -188,7 +216,7 @@ public class DataItem extends Observable
      */
     public DataItemValue getSnapshotValue ()
     {
-        return new DataItemValue ( this._value );
+        return new DataItemValue ( this.value );
     }
 
     /**
@@ -202,7 +230,7 @@ public class DataItem extends Observable
     @Deprecated
     public Map<String, Variant> getAttributes ()
     {
-        return this._value.getAttributes ();
+        return this.value.getAttributes ();
     }
 
     /**
@@ -213,7 +241,7 @@ public class DataItem extends Observable
     @Deprecated
     public SubscriptionState getSubscriptionState ()
     {
-        return this._value.getSubscriptionState ();
+        return this.value.getSubscriptionState ();
     }
 
     /**
@@ -222,7 +250,7 @@ public class DataItem extends Observable
      */
     public String getItemId ()
     {
-        return this._itemId;
+        return this.itemId;
     }
 
     /**
@@ -233,6 +261,27 @@ public class DataItem extends Observable
     @Deprecated
     public Throwable getSubscriptionError ()
     {
-        return this._value.getSubscriptionError ();
+        return this.value.getSubscriptionError ();
     }
+
+    public void addPropertyChangeListener ( final PropertyChangeListener listener )
+    {
+        this.propertySupport.addPropertyChangeListener ( listener );
+    }
+
+    public void addPropertyChangeListener ( final String propertyName, final PropertyChangeListener listener )
+    {
+        this.propertySupport.addPropertyChangeListener ( propertyName, listener );
+    }
+
+    public void removePropertyChangeListener ( final PropertyChangeListener listener )
+    {
+        this.propertySupport.removePropertyChangeListener ( listener );
+    }
+
+    public void removePropertyChangeListener ( final String propertyName, final PropertyChangeListener listener )
+    {
+        this.propertySupport.removePropertyChangeListener ( propertyName, listener );
+    }
+
 }
