@@ -19,6 +19,8 @@
 
 package org.openscada.spring.client;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
@@ -29,7 +31,9 @@ import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.da.client.ItemManager;
+import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
+import org.openscada.da.core.WriteAttributeResults;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -245,6 +249,35 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
             public void failed ( final String arg0 )
             {
                 log.warn ( String.format ( "Write operation to %s (%s) failed: %s", itemName, value, arg0 ) );
+            }
+        } );
+    }
+
+    public void writeAttributes ( final String itemName, final Map<String, Variant> attributes ) throws NoConnectionException, OperationException
+    {
+        final org.openscada.da.client.Connection connection = this.connection;
+        if ( connection == null )
+        {
+            throw new NoConnectionException ();
+        }
+
+        logWrite.info ( String.format ( "Writing: %s to %s", attributes, itemName ) );
+
+        connection.writeAttributes ( itemName, attributes, new WriteAttributeOperationCallback () {
+
+            public void complete ( final WriteAttributeResults writeAttributeResults )
+            {
+                log.debug ( String.format ( "Write attributes operation to %s (%s) completed", itemName, attributes ) );
+            }
+
+            public void error ( final Throwable throwable )
+            {
+                log.warn ( String.format ( "Write attributes operation to %s (%s) failed", itemName, attributes ), throwable );
+            }
+
+            public void failed ( final String reason )
+            {
+                log.warn ( String.format ( "Write operation to %s (%s) failed: %s", itemName, attributes, reason ) );
             }
         } );
     }

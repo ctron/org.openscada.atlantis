@@ -24,8 +24,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.NullValueException;
@@ -34,7 +37,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
-import org.openscada.spring.client.command.DataItemCommand;
+import org.openscada.spring.client.Connection;
 import org.openscada.spring.client.event.ItemEventAdapter;
 import org.openscada.spring.client.event.ItemEventListener;
 import org.springframework.beans.factory.InitializingBean;
@@ -46,35 +49,39 @@ import org.springframework.util.Assert;
  */
 public class RedundancySwitchHandler implements InitializingBean
 {
+    private static final String USER_ATTRIBUTE = "org.openscada.da.redundancy.user";
+
     private static Logger logger = Logger.getLogger ( RedundancySwitchHandler.class );
 
-    protected final Map<String, Boolean> lastConnectionStates = Collections.synchronizedMap ( new HashMap<String, Boolean> () );
+    protected final Map<String, Boolean> lastConnectionStates = new ConcurrentHashMap<String, Boolean> ();
 
-    protected final Map<String, Boolean> lastMasterFlags = Collections.synchronizedMap ( new HashMap<String, Boolean> () );
+    protected final Map<String, Boolean> lastMasterFlags = new ConcurrentHashMap<String, Boolean> ();
 
-    protected Map<String, ItemEventAdapter> masterFlagItems;
+    protected final Map<String, ItemEventAdapter> masterFlagItems = new ConcurrentHashMap<String, ItemEventAdapter> ();
 
-    protected Map<String, ItemEventAdapter> connectedFlagItems;
+    protected final Map<String, ItemEventAdapter> connectedFlagItems = new ConcurrentHashMap<String, ItemEventAdapter> ();
 
-    protected DataItemCommand redundancySwitcherCommand;
+    protected Connection redundancySwitcherConnection;
+
+    protected String redundancySwitcherItemId;
 
     protected ItemEventAdapter redundancySwitcherItem;
 
-    protected Long lastSwitchOccured = 0L;
+    protected AtomicLong lastSwitchOccured = new AtomicLong ( 0L );
 
-    protected String currentConnection = null;
+    protected final AtomicReference<String> currentConnection = new AtomicReference<String> ();
 
-    protected Timer switchTimer = new Timer ();
-
-    protected Boolean automatic = true;
+    protected AtomicBoolean automatic = new AtomicBoolean ( true );
 
     public void afterPropertiesSet () throws Exception
     {
-        Assert.notNull ( this.redundancySwitcherCommand, "'redundancySwitcher' must not be null" );
+        Assert.notNull ( this.redundancySwitcherConnection, "'redundancySwitcherConnection' must not be null" );
+        Assert.notNull ( this.redundancySwitcherItemId, "'redundancySwitcherItemId' must not be null" );
         Assert.notNull ( this.masterFlagItems, "'masterFlagItems' must not be null" );
+        Assert.isTrue ( this.masterFlagItems.size () > 0 );
         if ( Long.valueOf ( 0 ).equals ( this.lastSwitchOccured ) )
         {
-            this.lastSwitchOccured = System.currentTimeMillis ();
+            this.lastSwitchOccured.set ( System.currentTimeMillis () );
         }
 
         // first evaluate master flags
@@ -139,11 +146,11 @@ public class RedundancySwitchHandler implements InitializingBean
                 logger.info ( "Current redundant connection changed to " + value );
                 try
                 {
-                    RedundancySwitchHandler.this.currentConnection = value.getValue ().asString ();
+                    RedundancySwitchHandler.this.currentConnection.set ( value.getValue ().asString () );
                 }
                 catch ( final NullValueException e )
                 {
-                    RedundancySwitchHandler.this.currentConnection = null;
+                    RedundancySwitchHandler.this.currentConnection.set ( null );
                 }
             };
         } );
@@ -152,7 +159,7 @@ public class RedundancySwitchHandler implements InitializingBean
     protected void switchConnection ()
     {
         // automatic switch is not wanted, therefore don't switch automatically
-        if ( !this.automatic )
+        if ( !this.automatic.get () )
         {
             logger.info ( "switch to new connection was requested, but automatic switching is not active" );
             return;
@@ -183,7 +190,7 @@ public class RedundancySwitchHandler implements InitializingBean
             }
             // if currentConnection is available anyway, just stay on current 
             // connection
-            if ( availableMasters.contains ( this.currentConnection ) )
+            if ( availableMasters.contains ( this.currentConnection.get () ) )
             {
                 logger.info ( "curent master is already active connection" );
                 return;
@@ -207,9 +214,9 @@ public class RedundancySwitchHandler implements InitializingBean
                 }
             }
             // if current connection is active even though not master use it anyway
-            if ( availableConnections.contains ( this.currentConnection ) )
+            if ( availableConnections.contains ( this.currentConnection.get () ) )
             {
-                logger.info ( "no master available but current connection exists, therefore staying on " + this.currentConnection );
+                logger.info ( "no master available but current connection exists, therefore staying on " + this.currentConnection.get () );
                 return;
             }
             // in any other case, just use the first available connection 
@@ -244,8 +251,11 @@ public class RedundancySwitchHandler implements InitializingBean
     public void switchTo ( final String connectionId ) throws NoConnectionException, OperationException
     {
         logger.info ( "switching to new Master " + connectionId );
-        this.redundancySwitcherCommand.command ( new Variant ( connectionId ) );
-        this.lastSwitchOccured = System.currentTimeMillis ();
+        final Map<String, Variant> userAttribute = new HashMap<String, Variant> ();
+        userAttribute.put ( USER_ATTRIBUTE, new Variant ( "automatic" ) );
+        this.redundancySwitcherConnection.writeAttributes ( this.redundancySwitcherItemId, userAttribute );
+        this.redundancySwitcherConnection.writeItem ( this.redundancySwitcherItemId, new Variant ( connectionId ) );
+        this.lastSwitchOccured.set ( System.currentTimeMillis () );
     }
 
     /**
@@ -253,15 +263,7 @@ public class RedundancySwitchHandler implements InitializingBean
      */
     public Map<String, ItemEventAdapter> getMasterFlagItems ()
     {
-        return this.masterFlagItems;
-    }
-
-    /**
-     * @return command to switch redundant connection
-     */
-    public DataItemCommand getRedundancySwitcherCommand ()
-    {
-        return this.redundancySwitcherCommand;
+        return Collections.unmodifiableMap ( this.masterFlagItems );
     }
 
     /**
@@ -285,7 +287,8 @@ public class RedundancySwitchHandler implements InitializingBean
      */
     public void setMasterFlagItems ( final Map<String, ItemEventAdapter> masterFlagItems )
     {
-        this.masterFlagItems = masterFlagItems;
+        this.masterFlagItems.clear ();
+        this.masterFlagItems.putAll ( masterFlagItems );
     }
 
     /**
@@ -293,7 +296,7 @@ public class RedundancySwitchHandler implements InitializingBean
      */
     public Map<String, ItemEventAdapter> getConnectedFlagItems ()
     {
-        return this.connectedFlagItems;
+        return Collections.unmodifiableMap ( this.connectedFlagItems );
     }
 
     /**
@@ -301,15 +304,8 @@ public class RedundancySwitchHandler implements InitializingBean
      */
     public void setConnectedFlagItems ( final Map<String, ItemEventAdapter> connectedFlagItems )
     {
-        this.connectedFlagItems = connectedFlagItems;
-    }
-
-    /**
-     * @param redundancySwitcher
-     */
-    public void setRedundancySwitcherCommand ( final DataItemCommand redundancySwitcher )
-    {
-        this.redundancySwitcherCommand = redundancySwitcher;
+        this.connectedFlagItems.clear ();
+        this.connectedFlagItems.putAll ( connectedFlagItems );
     }
 
     /**
@@ -317,7 +313,7 @@ public class RedundancySwitchHandler implements InitializingBean
      */
     public Boolean getAutomatic ()
     {
-        return this.automatic;
+        return this.automatic.get ();
     }
 
     /**
@@ -325,6 +321,38 @@ public class RedundancySwitchHandler implements InitializingBean
      */
     public void setAutomatic ( final Boolean automatic )
     {
-        this.automatic = automatic;
+        this.automatic.set ( automatic );
+    }
+
+    /**
+     * @return
+     */
+    public Connection getRedundancySwitcherConnection ()
+    {
+        return this.redundancySwitcherConnection;
+    }
+
+    /**
+     * @param redundancySwitcherConnection
+     */
+    public void setRedundancySwitcherConnection ( final Connection redundancySwitcherConnection )
+    {
+        this.redundancySwitcherConnection = redundancySwitcherConnection;
+    }
+
+    /**
+     * @return
+     */
+    public String getRedundancySwitcherItemId ()
+    {
+        return this.redundancySwitcherItemId;
+    }
+
+    /**
+     * @param redundancySwitcherItemId
+     */
+    public void setRedundancySwitcherItemId ( final String redundancySwitcherItemId )
+    {
+        this.redundancySwitcherItemId = redundancySwitcherItemId;
     }
 }
