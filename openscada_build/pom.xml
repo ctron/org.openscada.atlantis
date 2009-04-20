@@ -148,6 +148,7 @@
 				<groupId>org.junit</groupId>
 				<artifactId>com.springsource.org.junit</artifactId>
 				<version>4.5.0</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.xmlbeans</groupId>
@@ -216,6 +217,11 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>org.springframework.context</artifactId>
 				<version>2.5.6.A</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>com.springsource.org.apache.commons.beanutils</artifactId>
+				<version>1.8.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
