@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     11.03.2009 20:59:56                                                        
+
+     install-libs    
+     description
+                   
+     jr                                                                
+     ====================================================================== -->
+<project name="maven-helper" default="usage" xmlns:artifact="uri:maven-artifact-ant">
+	<description>
+            description
+    </description>
+
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="uri:maven-artifact-ant" classpath="${basedir}/../openscada_build/lib/maven-ant-tasks-2.0.9.jar" />
+
+	<target name="usage">
+		<echo>install-libs : installs required libs in local repository</echo>
+		<echo>deploy-libs  : installs required libs in remote repository</echo>
+	</target>
+		
+	<target name="install-libs" description="description">
+		<artifact:install file="${basedir}/lib/grammatica-bin-1.4.jar">
+			<artifact:pom file="${basedir}/lib/grammatica-bin-1.4.pom" />
+		</artifact:install>
+		<artifact:install file="${basedir}/lib/mibble-mibs-2.7.jar">
+			<artifact:pom file="${basedir}/lib/mibble-mibs-2.7.pom" />
+		</artifact:install>
+		<artifact:install file="${basedir}/lib/mibble-parser-2.7.jar">
+			<artifact:pom file="${basedir}/lib/mibble-parser-2.7.pom" />
+		</artifact:install>
+	</target>
+
+	<macrodef name="deploy-single-file">
+		<attribute name="name" />
+		<sequential>
+			<exec executable="mvn">
+				<arg value="deploy:deploy-file" />
+				<arg value="-Durl=${openscada.distrib.repository}" />
+				<arg value="-DrepositoryId=openscada-external" />
+				<arg value="-Dfile=${basedir}/lib/@{artifact}.jar" />
+				<arg value="-DpomFile=${basedir}/lib/@{artifact}.pom" />
+			</exec>
+		</sequential>
+	</macrodef>
+
+	<target name="deploy-libs" description="description">
+		<deploy-single-file name="grammatica-bin-1.4" />
+		<deploy-single-file name="mibble-mibs-2.7" />
+		<deploy-single-file name="mibble-parser-2.7" />
+	</target>
+	
+</project>
