@@ -12,7 +12,7 @@
             description
     </description>
 
-	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="uri:maven-artifact-ant" classpath="${basedir}/lib/maven-ant-tasks-2.0.9.jar" />
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="uri:maven-artifact-ant" classpath="${basedir}/../openscada_build/lib/maven-ant-tasks-2.0.9.jar" />
 
 	<target name="usage">
 		<echo>install-libs : installs required libs in local repository</echo>
