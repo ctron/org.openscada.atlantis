@@ -28,10 +28,11 @@ import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
+import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.snmp.ConfigurationDocument.Configuration;
-import org.openscada.da.server.snmp.ConfigurationDocument.Configuration.Connection;
 import org.openscada.da.server.snmp.utils.MIBManager;
+import org.openscada.da.snmp.configuration.ConfigurationDocument;
+import org.openscada.da.snmp.configuration.ConnectionType;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
@@ -47,6 +48,9 @@ public class Hive extends HiveCommon
     public Hive ()
     {
         super ();
+
+        // enable chain storage for this hive
+        ChainStorageServiceHelper.registerDefaultPropertyService ( this );
 
         // create root folder
         this.rootFolder = new FolderCommon ();
@@ -66,6 +70,9 @@ public class Hive extends HiveCommon
     public Hive ( final Node node )
     {
         super ();
+
+        // enable chain storage for this hive
+        ChainStorageServiceHelper.registerDefaultPropertyService ( this );
 
         // create root folder
         this.rootFolder = new FolderCommon ();
@@ -90,7 +97,7 @@ public class Hive extends HiveCommon
     {
         this.mibManager = new MIBManager ( doc.getConfiguration ().getMibs () );
 
-        for ( final Configuration.Connection connection : doc.getConfiguration ().getConnectionList () )
+        for ( final ConnectionType connection : doc.getConfiguration ().getConnectionList () )
         {
             configure ( connection );
         }
@@ -131,7 +138,7 @@ public class Hive extends HiveCommon
         }
     }
 
-    protected void configure ( final Connection connection )
+    protected void configure ( final ConnectionType connection )
     {
         logger.debug ( String.format ( "New Connection: %1$s - %2$s", connection.getName (), connection.getAddress () ) );
         ConnectionInformation ci;

@@ -1,30 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:os="http://openscada.org/DA/Server/SNMP"
-    targetNamespace="http://openscada.org/DA/Server/SNMP"
+    xmlns:snmp="http://openscada.org/DA/SNMP/Configuration"
+    targetNamespace="http://openscada.org/DA/SNMP/Configuration"
     elementFormDefault="qualified">
     <xs:element name="configuration">
     
     <xs:complexType>
     <xs:sequence>
-                <xs:element name="mibs" type="os:mibsType" maxOccurs="1" minOccurs="1"></xs:element>
-                <xs:element name="connection" maxOccurs="unbounded"
-    		minOccurs="0">
-    		<xs:complexType>
-    			<xs:attribute name="name" use="required"
-    				type="xs:NMTOKEN">
-    			</xs:attribute>
-    			<xs:attribute name="community" use="required"
-    				type="xs:NMTOKEN">
-    			</xs:attribute>
-    			<xs:attribute name="address" use="required"
-    				type="os:address">
-    			</xs:attribute>
-    			<xs:attribute name="version" default="2"
-    				type="os:snmpVersion">
-    			</xs:attribute>
-    		</xs:complexType>
+    	<xs:element name="mibs" type="snmp:mibsType" maxOccurs="1"
+    		minOccurs="1">
+    	</xs:element>
+    	<xs:element ref="snmp:connection" minOccurs="0"
+    		maxOccurs="unbounded">
     	</xs:element>
 
     </xs:sequence>
@@ -57,5 +45,19 @@
     		<xs:element name="mibDir" type="xs:string"></xs:element>
     		<xs:element name="recursiveMibDir" type="xs:string"></xs:element>
     	</xs:choice>
+    </xs:complexType>
+    <xs:element name="connection" type="snmp:ConnectionType">
+    </xs:element>
+    <xs:complexType name="ConnectionType">
+    	<xs:attribute use="required" name="name" type="xs:NMTOKEN"></xs:attribute>
+    	<xs:attribute use="required" name="community"
+    		type="xs:NMTOKEN">
+    	</xs:attribute>
+    	<xs:attribute use="required" name="address"
+    		type="snmp:address">
+    	</xs:attribute>
+    	<xs:attribute default="2" name="version"
+    		type="snmp:snmpVersion">
+    	</xs:attribute>
     </xs:complexType>
 </xs:schema>

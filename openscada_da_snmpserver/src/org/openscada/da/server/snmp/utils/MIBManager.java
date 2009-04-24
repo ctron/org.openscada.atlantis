@@ -33,7 +33,7 @@ import net.percederberg.mibble.snmp.SnmpObjectType;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
-import org.openscada.da.server.snmp.MibsType;
+import org.openscada.da.snmp.configuration.MibsType;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.str.StringHelper;
 import org.snmp4j.smi.OID;
