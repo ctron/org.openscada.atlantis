@@ -1,8 +1,10 @@
 package org.openscada.net.mina;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -118,53 +120,81 @@ public class Messenger implements MessageListener
         super.finalize ();
     }
 
-    public synchronized void connected ( final MessageSender connection )
+    public void connected ( final MessageSender connection )
     {
         disconnected ();
 
-        if ( connection != null )
+        Collection<MessageTag> tags = null;
+
+        synchronized ( this )
         {
-            logger.info ( "Messenger connected" );
+            if ( connection != null )
+            {
+                logger.info ( "Messenger connected" );
 
-            this.connection = connection;
-            cleanTagList ();
+                this.connection = connection;
+                tags = cleanTagList ();
 
-            this.timer = new Timer ( "MessengerTimer/" + connection, true );
-            this.timeoutJob = new TimerTask () {
+                this.timer = new Timer ( "MessengerTimer/" + connection, true );
+                this.timeoutJob = new TimerTask () {
 
-                @Override
-                public void run ()
-                {
-                    Messenger.this.processTimeOuts ();
-                }
+                    @Override
+                    public void run ()
+                    {
+                        Messenger.this.processTimeOuts ();
+                    }
 
-                @Override
-                protected void finalize () throws Throwable
-                {
-                    logger.info ( "Finalized timeout job" );
-                    super.finalize ();
-                }
-            };
-            this.timer.scheduleAtFixedRate ( this.timeoutJob, this.sessionTimeout, this.timeoutJobPeriod );
+                    @Override
+                    protected void finalize () throws Throwable
+                    {
+                        logger.info ( "Finalized timeout job" );
+                        super.finalize ();
+                    }
+                };
+                this.timer.scheduleAtFixedRate ( this.timeoutJob, this.sessionTimeout, this.timeoutJobPeriod );
+            }
+        }
+        
+        // now fire events from cleanup but outside the sync lock
+        if ( tags != null )
+        {
+            for ( MessageTag tag : tags )
+            {
+                tag.getListener ().messageTimedOut ();
+            }
         }
     }
 
-    public synchronized void disconnected ()
+    public void disconnected ()
     {
-        if ( this.connection != null )
+        Collection<MessageTag> tags = null;
+
+        synchronized ( this )
         {
-            this.connection = null;
-            logger.info ( "Disconnected" );
-            cleanTagList ();
-            if ( this.timeoutJob != null )
+            if ( this.connection != null )
             {
-                this.timeoutJob.cancel ();
-                this.timeoutJob = null;
+                this.connection = null;
+                logger.info ( "Disconnected" );
+                tags = cleanTagList ();
+                if ( this.timeoutJob != null )
+                {
+                    this.timeoutJob.cancel ();
+                    this.timeoutJob = null;
+                }
+                if ( this.timer != null )
+                {
+                    this.timer.cancel ();
+                    this.timer = null;
+                }
             }
-            if ( this.timer != null )
+        }
+
+        // now fire events from cleanup but outside the sync lock
+        if ( tags != null )
+        {
+            for ( MessageTag tag : tags )
             {
-                this.timer.cancel ();
-                this.timer = null;
+                tag.getListener ().messageTimedOut ();
             }
         }
     }
@@ -183,8 +213,10 @@ public class Messenger implements MessageListener
         this.listeners.remove ( Integer.valueOf ( commandCode ) );
     }
 
-    private void cleanTagList ()
+    private Collection<MessageTag> cleanTagList ()
     {
+        Collection<MessageTag> tags = new LinkedList<MessageTag> ();
+
         synchronized ( this.tagList )
         {
             for ( final Map.Entry<Long, MessageTag> tag : this.tagList.entrySet () )
@@ -194,7 +226,7 @@ public class Messenger implements MessageListener
                     if ( !tag.getValue ().isCanceled () )
                     {
                         tag.getValue ().cancel ();
-                        tag.getValue ().getListener ().messageTimedOut ();
+                        tags.add ( tag.getValue () );
                     }
                 }
                 catch ( final Throwable e )
@@ -204,6 +236,7 @@ public class Messenger implements MessageListener
             }
             this.tagList.clear ();
         }
+        return tags;
     }
 
     public void messageReceived ( final Message message )
