@@ -154,7 +154,7 @@ public class Messenger implements MessageListener
                 this.timer.scheduleAtFixedRate ( this.timeoutJob, this.sessionTimeout, this.timeoutJobPeriod );
             }
         }
-        
+
         // now fire events from cleanup but outside the sync lock
         if ( tags != null )
         {
@@ -363,12 +363,9 @@ public class Messenger implements MessageListener
 
         if ( timeDiff > this.sessionTimeout )
         {
-            synchronized ( this )
-            {
-                logger.warn ( String.format ( "Closing connection due to receive timeout: %s (timeout: %s)", timeDiff, this.sessionTimeout ) );
-                this.connection.close ();
-                disconnected ();
-            }
+            logger.warn ( String.format ( "Closing connection due to receive timeout: %s (timeout: %s)", timeDiff, this.sessionTimeout ) );
+            this.connection.close ();
+            disconnected ();
         }
     }
 
