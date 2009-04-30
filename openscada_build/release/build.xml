@@ -22,7 +22,7 @@
 	<property name="groupId.atlantis" value="${groupId}.atlantis" />
 	<property name="groupId.utgard" value="${groupId}.utgard" />
 	<property name="aurora.version" value="0.12.0" />
-	<property name="atlantis.version" value="0.12.0-SNAPSHOT" />
+	<property name="atlantis.version" value="0.12-RC2" />
 	<property name="utgard.version" value="0.4.2" />
 	
 	<property name="source.base" location="../.."/>
