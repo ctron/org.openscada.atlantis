@@ -19,39 +19,9 @@
 
 package org.openscada.da.client.base.connection;
 
-import org.openscada.da.client.Connection;
-import org.openscada.da.client.ItemManager;
+import org.openscada.core.ConnectionInformation;
 
-public class ConnectionManagerEntry
+public interface EntryBuilder
 {
-    private Connection connection;
-
-    private ItemManager itemManager;
-
-    public void setConnection ( final Connection connection )
-    {
-        this.connection = connection;
-    }
-
-    public Connection getConnection ()
-    {
-        return this.connection;
-    }
-
-    public void setItemManager ( final ItemManager itemManager )
-    {
-        this.itemManager = itemManager;
-    }
-
-    public ItemManager getItemManager ()
-    {
-        return this.itemManager;
-    }
-
-    public void dispose ()
-    {
-        this.connection.disconnect ();
-        this.connection = null;
-        this.itemManager = null;
-    }
+    public ConnectionManagerEntry build ( ConnectionInformation connectionInformation, boolean requireOpen );
 }

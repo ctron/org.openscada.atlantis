@@ -25,13 +25,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.base.item.DataItemHolder;
-import org.openscada.rcp.da.client.Activator;
 
 public class ConnectionManager
 {
@@ -39,6 +37,18 @@ public class ConnectionManager
     private final Collection<ConnectionManagerListener> listeners = new CopyOnWriteArrayList<ConnectionManagerListener> ();
 
     private final Map<ConnectionInformation, ConnectionManagerEntry> connections = new HashMap<ConnectionInformation, ConnectionManagerEntry> ();
+
+    private final EntryBuilder builder;
+
+    public ConnectionManager ()
+    {
+        this.builder = new DefaultEntryBuilder ();
+    }
+
+    public ConnectionManager ( final EntryBuilder builder )
+    {
+        this.builder = builder;
+    }
 
     public Collection<ConnectionManagerEntry> getConnections ()
     {
@@ -51,40 +61,32 @@ public class ConnectionManager
      * @param connect <code>true</code> if the connection should be connected when created
      * @return the connection manager entry
      */
-    public synchronized ConnectionManagerEntry getEntry ( final ConnectionInformation ci, final boolean connect )
+    public ConnectionManagerEntry getEntry ( final ConnectionInformation ci, final boolean connect )
     {
-        ConnectionManagerEntry entry = this.connections.get ( ci );
-        if ( entry == null )
+        ConnectionManagerEntry entry;
+
+        ConnectionManagerEntry newEntry = null;
+
+        synchronized ( this )
         {
-            entry = new ConnectionManagerEntry ();
-            final Connection connection = (Connection)Activator.createConnection ( ci );
-
-            if ( connection == null )
+            entry = this.connections.get ( ci );
+            if ( entry == null )
             {
-                return null;
-            }
+                newEntry = entry = this.builder.build ( ci, connect );
 
-            setupConnection ( connection );
-            entry.setConnection ( connection );
-
-            entry.setItemManager ( new ItemManager ( entry.getConnection () ) );
-            if ( connect )
-            {
-                entry.getConnection ().connect ();
+                if ( entry != null )
+                {
+                    this.connections.put ( ci, entry );
+                }
             }
-            this.connections.put ( ci, entry );
-            fireConnectionsAdded ( Arrays.asList ( entry ) );
         }
-        return entry;
-    }
 
-    /**
-     * configure the new connection
-     * @param connection the connection to configure
-     */
-    private void setupConnection ( final Connection connection )
-    {
-        connection.setExecutor ( Executors.newFixedThreadPool ( 1 ) );
+        if ( newEntry != null )
+        {
+            fireConnectionsAdded ( Arrays.asList ( newEntry ) );
+        }
+
+        return entry;
     }
 
     public DataItemHolder getDataItemHolder ( final ConnectionInformation ci, final String itemId, final boolean connect )
@@ -141,7 +143,7 @@ public class ConnectionManager
     {
         for ( final Map.Entry<ConnectionInformation, ConnectionManagerEntry> entry : this.connections.entrySet () )
         {
-            entry.getValue ().getConnection ().disconnect ();
+            entry.getValue ().dispose ();
         }
         this.connections.clear ();
     }
