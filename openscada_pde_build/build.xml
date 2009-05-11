@@ -20,8 +20,8 @@
 	<property name="configs" value="win32,win32,x86&amp;linux,gtk,x86&amp;linux,gtk,x86_64&amp;macosx,carbon,ppc&amp;solaris,gtk,sparc"/>
 	<property name="buildType" value="I"/>
 	<property name="buildId" value="AutoBuild"/>
-	<property name="version" value="0.0.0"/>
-	<property name="release" value="-devel"/>
+	<property name="version" value="0.12"/>
+	<property name="release" value="-RC2"/>
 	<property name="upload.base.ostc" value="${upload.base}/ostc"/>
 	<property name="upload.base.pde" value="${upload.base}/pde"/>
 	
@@ -98,6 +98,8 @@
         		
         		<!-- pass on -->
         		<arg value="-Dlibfile=${libfile}"/>
+        		<arg value="-Dversion=${version}"/>
+        		<arg value="-Drelease=${release}"/>
 			</java>
         	
         	<mkdir dir="${deploy.dir}/@{builderDir}"/>

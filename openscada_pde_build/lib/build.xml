@@ -12,6 +12,7 @@
     </description>
 
 	<import file="libs.xml"/>
+	<property file="../config/local.properties"/>
 
 	<!-- = = = = = = = = = = = = = = = = =
           macrodef: openscada.pde.import-module.init
