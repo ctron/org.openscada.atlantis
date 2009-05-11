@@ -30,7 +30,7 @@
 	<property name="url.base" value="http://openscada.org/download/atlantis"/>
 	<property name="url.dir" value="${url.base}/${tag}"/>
 	<property name="url.dist.project" value="${url.dir}/project"/>
-	<property name="url.maven.repository" value="http://carlton.local:8080/artifactory/openscada-repos/"/>
+	<property name="url.maven.repository" value="http://openscada.org/download/maven-repo"/>
 	
 	<property name="deploy.base" value="/var/vhosts/openscada/download/atlantis"/>
 	<property name="deploy.dir" value="${deploy.base}/${tag}"/>
