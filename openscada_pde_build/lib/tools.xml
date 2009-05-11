@@ -47,7 +47,9 @@
         	<if>
         		<available type="file" file="${buildDirectory}/@{type}s/@{name}/support-build.xml"/>
         		<then>
-        			<ant antfile="${buildDirectory}/@{type}s/@{name}/support-build.xml" dir="${buildDirectory}/@{type}s/@{name}"/>
+        			<ant antfile="${buildDirectory}/@{type}s/@{name}/support-build.xml" dir="${buildDirectory}/@{type}s/@{name}">
+        				<property name="use.maven.dependecies" value="true"/>
+        			</ant>
         		</then>
         	</if>
 		</sequential>

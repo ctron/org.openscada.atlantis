@@ -13,7 +13,6 @@
 
 	<import file="libs.xml"/>
 
-
 	<!-- = = = = = = = = = = = = = = = = =
           macrodef: openscada.pde.import-module.init
           Cleans up a previously build import lib jar.

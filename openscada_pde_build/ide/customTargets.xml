@@ -1,7 +1,6 @@
 <project name="Build specific targets and properties" default="noDefault">
 
-  <import file="tools.xml" />
-  <import file="${libfile}"/>
+  <import file="../lib/tools.xml" />
 
   <!-- ===================================================================== -->
   <!-- Run a given ${target} on all elements being built -->
