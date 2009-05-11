@@ -4,7 +4,7 @@
      Support build file                                                  
      ====================================================================== -->
 <project name="openscada_ae_rcp_localtestserver" default="default" basedir=".">
-	<property name="libfile" location="../openscada_build/lib/build.xml"/>
+	<property name="libfile" location="../openscada_pde_build/lib/build.xml"/>
 	<import file="${libfile}"/>
 	
     <description>
@@ -29,8 +29,8 @@
 
     <target name="genjar-maven" depends="" description="--> Generate the JAR file" if="use.maven.dependecies">
 		<openscada.pde.import-module.init/>
-    	<openscada.pde.import-module.add-maven-dependency groupid="org.openscada.atlantis" artifactid="org.openscada.atlantis.ae.storage.test" version="${version}${release}" />
-    	<openscada.pde.import-module.add-maven-dependency groupid="org.openscada.atlantis" artifactid="org.openscada.atlantis.ae.storage.net" version="${version}${release}" />
+    	<openscada.pde.import-module.add-maven-dependency groupid="org.openscada.atlantis" groupIdBase="org.openscada" artifactid="org.openscada.atlantis.ae.storage.test" version="${version}${release}" />
+    	<openscada.pde.import-module.add-maven-dependency groupid="org.openscada.atlantis" groupIdBase="org.openscada" artifactid="org.openscada.atlantis.ae.storage.net" version="${version}${release}" />
 		<openscada.pde.import-module.finalize destfile="openscada_ae_test_server_net.jar"/>
     </target>
 
