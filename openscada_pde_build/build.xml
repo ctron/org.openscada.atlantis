@@ -133,9 +133,6 @@
 		   		<arg value="-DbuildType=${buildType}"/>
 				<arg value="-DbuildId=${buildId}"/>
 	    		
-	    		<!-- configs -->
-	    		<arg value="-Dconfigs=${configs}"/>
-        		
         		<!-- pass on -->
         		<arg value="-Dlibfile=${libfile}"/>
         		<arg value="-Dversion=${version}"/>
