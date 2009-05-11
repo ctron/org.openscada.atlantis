@@ -29,8 +29,8 @@
 
     <target name="genjar-maven" depends="" description="--> Generate the JAR file" if="use.maven.dependecies">
 		<openscada.pde.import-module.init/>
-    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.ae.storage.test" />
-    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.ae.storage.net" />
+    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.ae.storage.test" version="${version}${release}" />
+    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.ae.storage.net" version="${version}${release}" />
 		<openscada.pde.import-module.finalize destfile="openscada_ae_test_server_net.jar"/>
     </target>
 
