@@ -4,8 +4,6 @@
      Support build file                                                  
      ====================================================================== -->
 <project name="openscada_da_client_net_plugin_wrapper" default="default" basedir=".">
-	<echo message="Libfile: ${libfile}"/>
-		
 	<property name="libfile" location="../openscada_pde_build/lib/build.xml"/>
 	<import file="${libfile}"/>
 	
