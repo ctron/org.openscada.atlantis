@@ -37,13 +37,13 @@
 	
 	<target name="clean">
 		<delete dir="${buildDirectory}"/>
-		<delete dir="${upload.base.ostc}"/>
 		<delete dir="${upload.base.pde}"/>
+		<delete dir="${upload.base.ostc}"/>
 	</target>
 	
 	<target name="build">
+		<eclipse.bundleBuild builderDir="ide" />
 		<eclipse.productBuild builderDir="ostc" />
-		<eclipse.productBuild builderDir="ide" />
 	</target>
 	
 	<target name="win32installer">
@@ -85,6 +85,46 @@
 			    <arg value="org.eclipse.ant.core.antRunner" />
 			    <arg value="-buildfile" />
 		   		<arg value="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts/productBuild/productBuild.xml" />
+				<arg value="-Dbuilder=${basedir}/@{builderDir}"/>
+	    		<arg value="-DbaseLocation=${eclipse.home}"/>
+				<arg value="-DbuildDirectory=${buildDirectory}"/>
+
+				<!-- version information -->
+		   		<arg value="-DbuildType=${buildType}"/>
+				<arg value="-DbuildId=${buildId}"/>
+	    		
+	    		<!-- configs -->
+	    		<arg value="-Dconfigs=${configs}"/>
+        		
+        		<!-- pass on -->
+        		<arg value="-Dlibfile=${libfile}"/>
+        		<arg value="-Dversion=${version}"/>
+        		<arg value="-Drelease=${release}"/>
+			</java>
+        	
+        	<mkdir dir="${deploy.dir}/@{builderDir}"/>
+        	<copy todir="${deploy.dir}/@{builderDir}">
+        		<fileset dir="${buildDirectory}">
+        			<include name="**/${buildType}.${buildId}/${buildId}*.zip"/>
+        		</fileset>
+        		<mapper type="flatten"/>
+        	</copy>
+        </sequential>
+    </macrodef>
+    
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: eclipse.bundleBuild          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="eclipse.bundleBuild">
+        <attribute name="builderDir"  />
+        <sequential>
+        	<delete dir="${buildDirectory}" failonerror="false"/>
+        	<mkdir dir="${buildDirectory}" />
+        	<java jar="${startup}" failonerror="true" maxmemory="1024m" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts">
+	    		<jvmarg value="-XX:MaxPermSize=256m"/>
+	    		
+				<arg value="-application" />
+			    <arg value="org.eclipse.ant.core.antRunner" />
 				<arg value="-Dbuilder=${basedir}/@{builderDir}"/>
 	    		<arg value="-DbaseLocation=${eclipse.home}"/>
 				<arg value="-DbuildDirectory=${buildDirectory}"/>
