@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     OpenSCADA Atlantis Build Tools File    
+     Providing common build targets for all other ant-scripts
+                   
+	 Jens Reimann <jens.reimann@inavare.net>
+     ====================================================================== -->
+
+<project name="tools" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+    <description>
+    	Providing common build targets for all other ant-scripts
+    </description>
+
+	<import file="libs.xml"/>
+
+
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.pde.import-module.init
+          Cleans up a previously build import lib jar.
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.pde.import-module.init">
+        <sequential>
+			<delete file="lib.jar"/>
+			<delete dir="lib-jar-build-dir"/>
+			<mkdir dir="lib-jar-build-dir"/>
+        </sequential>
+    </macrodef>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.pde.import-module.add-module
+          Add the content of a openscada module built during
+          the normal build process to this import lib jar for the
+          current PDE module.
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.pde.import-module.add-module">
+		<attribute name="name"/>
+        <sequential>
+			<delete dir="extract-module"/>
+			<mkdir dir="extract-module"/>
+			<unzip overwrite="true" src="${deploy.dist.module}/openscada-@{name}-${tag}.zip" dest="extract-module">
+				<patternset>
+					<include name="bin/*.jar"/>
+				</patternset>
+			</unzip>
+			<unzip overwrite="true" dest="lib-jar-build-dir">
+				<fileset dir="extract-module">
+					<include name="**/*.jar"/>
+				</fileset>
+			</unzip>
+			<delete dir="extract-module"/>
+        </sequential>
+    </macrodef>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.pde.import-module.add-maven-dependency
+          Add the content of a openscada module built during
+          the normal build process to this import lib jar for the
+          current PDE module, this time retrieved from maven repository.
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.pde.import-module.add-maven-dependency">
+		<attribute name="groupIdBase" default="${groupId}" />
+		<attribute name="groupId" default="${groupId.atlantis}" />
+		<attribute name="artifactId" />
+		<attribute name="version" default="${atlantis.version}" />
+		<attribute name="prefix" default="default" />
+        <sequential>
+    		<artifact:dependencies pathId="@{prefix}.runtime.classpath" filesetId="@{prefix}.runtime.fileset" useScope="runtime">
+    			<remoteRepository id="openscada-repos" url="${maven.repository}" />
+    			<artifact:dependency groupId="@{groupId}" artifactId="@{artifactId}" version="@{version}" scope="runtime" />
+    		</artifact:dependencies>
+			<delete dir="extract-module"/>
+			<mkdir dir="extract-module"/>
+        	<copy todir="extract-module">
+        		<fileset refid="@{prefix}.runtime.fileset" />
+        	</copy>
+			<unzip overwrite="true" dest="lib-jar-build-dir">
+				<fileset dir="extract-module">
+					<include name="**/@{groupIdBase}*.jar"/>
+				</fileset>
+			</unzip>
+			<delete dir="extract-module" />
+        </sequential>
+    </macrodef>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: openscada.pde.import-module.finalize
+          Build the import lib jar. Don't add stuff afterwards.
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="openscada.pde.import-module.finalize">
+		<attribute name="destfile"/>
+        <sequential>
+			<jar basedir="lib-jar-build-dir" destfile="@{destfile}">
+			</jar>
+        	<delete dir="lib-jar-build-dir"/>
+        </sequential>
+    </macrodef>
+
+</project>
