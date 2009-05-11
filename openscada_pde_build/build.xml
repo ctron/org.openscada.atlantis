@@ -41,8 +41,8 @@
 	</target>
 	
 	<target name="build">
-		<eclipse.bundleBuild builderDir="ide" />
 		<eclipse.productBuild builderDir="ostc" />
+		<eclipse.bundleBuild builderDir="ide" />
 	</target>
 	
 	<target name="win32installer">
@@ -141,7 +141,7 @@
         	<mkdir dir="${deploy.dir}/@{builderDir}"/>
         	<copy todir="${deploy.dir}/@{builderDir}">
         		<fileset dir="${buildDirectory}">
-        			<include name="**/${buildType}.${buildId}/${buildId}*.zip"/>
+        			<include name="**/${buildType}.${buildId}/*.zip"/>
         		</fileset>
         		<mapper type="flatten"/>
         	</copy>
