@@ -14,6 +14,8 @@
 	<property name="buildId" value="Integration"/>
 	<property name="release" value="-integration"/>
 	<property name="eclipse.pack.dir" value="/home/user/eclipse.pack"/>
+	<property name="version" value="0.12"/>
+	<property name="release" value="-RC2"/>
 	
 	<!-- eclipse stuff -->
 	
