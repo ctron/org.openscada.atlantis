@@ -23,6 +23,8 @@
 	<property name="version" value="0.12"/>
 	<property name="release" value="-RC2"/>
 	
+	<property name="deploy.dir" location="${deploy.base}/deploy"/>
+	
     <!-- ================================= 
           target: default              
          ================================= -->
