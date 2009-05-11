@@ -34,12 +34,12 @@
 
     <target name="genjar-maven" depends="" description="--> Generate the JAR file" if="use.maven.dependecies">
 		<openscada.pde.import-module.init/>
-		<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.server.net" />
-		<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.server.simulation" />
+		<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.server.net" version="${version}${release}"/>
+		<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.server.simulation" version="${version}${release}"/>
 		<openscada.pde.import-module.finalize destfile="openscada_net_server_sim.jar"/>
 		<openscada.pde.import-module.init/>
-		<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.server.net" />
-		<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.server.test" />
+		<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.server.net" version="${version}${release}"/>
+		<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.server.test" version="${version}${release}"/>
 		<openscada.pde.import-module.finalize destfile="openscada_net_server_test.jar"/>
     </target>
 
