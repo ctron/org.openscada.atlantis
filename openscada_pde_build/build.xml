@@ -22,8 +22,6 @@
 	<property name="buildId" value="AutoBuild"/>
 	<property name="version" value="0.12"/>
 	<property name="release" value="-RC2"/>
-	<property name="upload.base.ostc" value="${upload.base}/ostc"/>
-	<property name="upload.base.pde" value="${upload.base}/pde"/>
 	
     <!-- ================================= 
           target: default              
@@ -37,8 +35,7 @@
 	
 	<target name="clean">
 		<delete dir="${buildDirectory}"/>
-		<delete dir="${upload.base.pde}"/>
-		<delete dir="${upload.base.ostc}"/>
+		<delete dir="${deploy.base}"/>
 	</target>
 	
 	<target name="build">
