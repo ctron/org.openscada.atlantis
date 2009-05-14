@@ -63,13 +63,13 @@
         <attribute name="module"/>
         <sequential>
         	<echo message="Setting version to ${version}"/>
-        	<exec executable="${advinst.base}/AdvancedInstaller.com" dir="@{module}" failonerror="true">
+        	<exec executable="${advinst.base}/AdvancedInstaller.com" dir="." failonerror="true">
 	    		<arg value="/edit"/>
 	    		<arg value="@{module}_setup.aip"/>
 	    		<arg value="/SetVersion"/>
 	    		<arg value="${version}"/>
 	    	</exec>
-	    	<exec executable="${advinst.base}/AdvancedInstaller.com" dir="@{module}" failonerror="true">
+	    	<exec executable="${advinst.base}/AdvancedInstaller.com" dir="." failonerror="true">
 	    		<arg value="/build"/>
 	    		<arg value="@{module}_setup.aip"/>
 	    	</exec>
