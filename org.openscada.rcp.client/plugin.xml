@@ -6,7 +6,8 @@
          id="application"
          name="OpenSCADA RCP Client Application"
          point="org.eclipse.core.runtime.applications">
-      <application>
+      <application
+            icon="icons/app/openscada.ico">
          <run
                class="org.openscada.rcp.client.Application">
          </run>
@@ -34,7 +35,7 @@
                value="%aboutText"/>
          <property
                name="windowImages"
-               value="icons/app/app_icon_16.gif,icons/app/app_icon_32.gif,icons/app/app_icon_48.gif"/>
+               value="icons/app/Sign_open-Scada_16px.png,icons/app/Sign_open-Scada_32px.png,icons/app/Sign_open-Scada_48px.png,icons/app/Sign_open-Scada_64px.png,icons/app/Sign_open-Scada_128px.png"/>
                <property
                name="introTitle"
                value="Welcome to the OpenSCADA RCP Client"/>
