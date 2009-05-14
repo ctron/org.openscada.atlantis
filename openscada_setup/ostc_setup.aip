@@ -9,8 +9,8 @@
     <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="ARPPRODUCTICON" Value="ostc.exe" Type="8"/>
     <ROW Property="ARPURLINFOABOUT" Value="http://openscada.org"/>
-    <ROW Property="BannerBitmap" MultiBuildValue="DefaultBuild:iv_header.bmp" Type="1"/>
-    <ROW Property="DialogBitmap" MultiBuildValue="DefaultBuild:iv_body.bmp" Type="1"/>
+    <ROW Property="BannerBitmap" MultiBuildValue="DefaultBuild:resources/iv_header.bmp" Type="1"/>
+    <ROW Property="DialogBitmap" MultiBuildValue="DefaultBuild:resources/iv_body.bmp" Type="1"/>
     <ROW Property="Manufacturer" Value="inavare GmbH" ValueLocId="*"/>
     <ROW Property="ProductCode" Value="1033:{24F15632-2840-4713-9A22-C2E9FDBF91CE} 1031:{7780A858-2712-44B4-A8D9-1B247CE69B53} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
@@ -535,7 +535,7 @@
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
-    <ROW Name="ostc.exe" SourcePath="openscada.ico" Index="0"/>
+    <ROW Name="ostc.exe" SourcePath="resources/openscada.ico" Index="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIniFileComponent">
     <ROW IniFile="AppDir" FileName="updater.ini" DirProperty="APPDIR" Section="General" Key="AppDir" Value="[APPDIR]" Action="0" Component_="updater.exe"/>
