@@ -69,7 +69,7 @@
 	    		<arg value="/SetVersion"/>
 	    		<arg value="${version}"/>
 	    	</exec>
-	    	<exec executable="${advinst.base}/AdvancedInstaller.com" dir="../vims_client_setup" failonerror="true">
+	    	<exec executable="${advinst.base}/AdvancedInstaller.com" dir="." failonerror="true">
 	    		<arg value="/build"/>
 	    		<arg value="@{module}_setup.aip"/>
 	    	</exec>
