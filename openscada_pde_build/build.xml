@@ -75,6 +75,7 @@
     <macrodef name="eclipse.productBuild">
         <attribute name="builderDir"  />
         <sequential>
+        	<echo>${maven.repository}</echo>
         	<delete dir="${buildDirectory}" failonerror="false"/>
         	<mkdir dir="${buildDirectory}" />
         	<java jar="${startup}" failonerror="true" maxmemory="1024m" fork="true" dir="${eclipse.home}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts">
