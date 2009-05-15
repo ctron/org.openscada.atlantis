@@ -18,7 +18,7 @@
 -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="/org.openscada.rcp.client/icons/app/Sign_open-Scada_16px.gif" i32="/org.openscada.rcp.client/icons/app/app_icon_48.gif" i48="/org.openscada.rcp.client/icons/app/Sign_open-Scada_32px.gif" i64="/org.openscada.rcp.client/icons/app/Sign_open-Scada_64px.gif" i128="/org.openscada.rcp.client/icons/app/Sign_open-Scada_128px.gif"/>
+   <windowImages i16="/org.openscada.rcp.client/icons/app/Sign_open-Scada_16px.png" i32="/org.openscada.rcp.client/icons/app/Sign_open-Scada_32px.png" i48="/org.openscada.rcp.client/icons/app/Sign_open-Scada_48px.png" i64="/org.openscada.rcp.client/icons/app/Sign_open-Scada_64px.png" i128="/org.openscada.rcp.client/icons/app/Sign_open-Scada_128px.png"/>
 
    <splash
       location="org.openscada.rcp.client"
