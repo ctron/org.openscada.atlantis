@@ -99,6 +99,7 @@
         		<arg value="-Dlibfile=${libfile}"/>
         		<arg value="-Dversion=${version}"/>
         		<arg value="-Drelease=${release}"/>
+        		<arg value="-Dmaven.repository=${maven.repository}"/>
 			</java>
         	
         	<mkdir dir="${deploy.dir}/@{builderDir}"/>
@@ -136,6 +137,7 @@
         		<arg value="-Dlibfile=${libfile}"/>
         		<arg value="-Dversion=${version}"/>
         		<arg value="-Drelease=${release}"/>
+        		<arg value="-Dmaven.repository=${maven.repository}"/>
 			</java>
         	
         	<mkdir dir="${deploy.dir}/@{builderDir}"/>
