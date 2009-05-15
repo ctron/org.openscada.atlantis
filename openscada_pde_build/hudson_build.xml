@@ -62,6 +62,7 @@
          ================================= -->
     <target name="build" depends="" description="Build">
         <ant>
+        	<property name="maven.repository" value="${maven.repository}"/>
     	</ant>
     </target>
 
