@@ -23,6 +23,10 @@
 		</license>
 	</licenses>
 
+	<properties>
+		<update.policy>interval:10080</update.policy>
+	</properties>
+
 	<issueManagement>
 		<system>bugzilla</system>
 		<url>http://openscada.org/bugzilla/</url>
@@ -237,12 +241,12 @@
 					<url>${openscada.internal.repository}</url>
 					<releases>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</releases>
 					<snapshots>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</snapshots>
 				</pluginRepository>
@@ -254,12 +258,12 @@
 					<url>${openscada.internal.repository}</url>
 					<releases>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</releases>
 					<snapshots>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</snapshots>
 				</repository>
@@ -287,12 +291,12 @@
 					<url>http://www.openscada.org/download/maven-repo/</url>
 					<releases>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</releases>
 					<snapshots>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</snapshots>
 				</pluginRepository>
@@ -304,12 +308,12 @@
 					<url>http://www.openscada.org/download/maven-repo/</url>
 					<releases>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</releases>
 					<snapshots>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</snapshots>
 				</repository>
