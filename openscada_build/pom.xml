@@ -28,6 +28,10 @@
 		<url>http://openscada.org/bugzilla/</url>
 	</issueManagement>
 
+	<properties>
+		<update.policy>interval:10080</update.policy>
+	</properties>
+	
 	<scm>
 		<connection>scm:svn:http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_build</connection>
 		<developerConnection>scm:svn:https://svn.inavare.net/openscada/modules/atlantis/trunk/openscada_build</developerConnection>
@@ -246,12 +250,12 @@
 					<url>${openscada.internal.repository}</url>
 					<releases>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</releases>
 					<snapshots>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</snapshots>
 				</pluginRepository>
@@ -263,12 +267,12 @@
 					<url>${openscada.internal.repository}</url>
 					<releases>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</releases>
 					<snapshots>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</snapshots>
 				</repository>
@@ -296,12 +300,12 @@
 					<url>http://openscada.org/download/maven-repo/</url>
 					<releases>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</releases>
 					<snapshots>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</snapshots>
 				</pluginRepository>
@@ -313,12 +317,12 @@
 					<url>http://openscada.org/download/maven-repo/</url>
 					<releases>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</releases>
 					<snapshots>
 						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
+						<updatePolicy>${update.policy}</updatePolicy>
 						<checksumPolicy>warn</checksumPolicy>
 					</snapshots>
 				</repository>
