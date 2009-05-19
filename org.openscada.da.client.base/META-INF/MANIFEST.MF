@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Base Plug-in
 Bundle-SymbolicName: org.openscada.da.client.base;singleton:=true
-Bundle-Version: 0.12.8
+Bundle-Version: 0.12.9
 Bundle-Activator: org.openscada.da.client.base.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.openscada.da.client;bundle-version="0.10.0",
