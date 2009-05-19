@@ -36,7 +36,7 @@ public class ConnectionManager
 
     private final Collection<ConnectionManagerListener> listeners = new CopyOnWriteArrayList<ConnectionManagerListener> ();
 
-    private final Map<ConnectionInformation, ConnectionManagerEntry> connections = new HashMap<ConnectionInformation, ConnectionManagerEntry> ();
+    private Map<ConnectionInformation, ConnectionManagerEntry> connections = new HashMap<ConnectionInformation, ConnectionManagerEntry> ();
 
     private final EntryBuilder builder;
 
@@ -139,13 +139,20 @@ public class ConnectionManager
         return getItemManager ( ConnectionInformation.fromURI ( uri ), connect );
     }
 
-    public synchronized void dispose ()
+    public void dispose ()
     {
-        for ( final Map.Entry<ConnectionInformation, ConnectionManagerEntry> entry : this.connections.entrySet () )
+        Map<ConnectionInformation, ConnectionManagerEntry> connections;
+
+        synchronized ( this )
+        {
+            connections = this.connections;
+            this.connections = new HashMap<ConnectionInformation, ConnectionManagerEntry> ();
+        }
+
+        for ( final Map.Entry<ConnectionInformation, ConnectionManagerEntry> entry : connections.entrySet () )
         {
             entry.getValue ().dispose ();
         }
-        this.connections.clear ();
     }
 
     public static ConnectionManager getDefault ()
