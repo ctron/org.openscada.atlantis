@@ -68,7 +68,7 @@ public class AutoReconnectEntryBuilder implements EntryBuilder
         }
 
         entry.setConnection ( connection );
-        entry.setItemManager ( new ItemManager ( entry.getConnection () ) );
+        entry.setItemManager ( new ItemManager ( connection ) );
         entry.setController ( new AutoReconnectController ( connection ) );
 
         setupConnection ( entry, requireOpen );
