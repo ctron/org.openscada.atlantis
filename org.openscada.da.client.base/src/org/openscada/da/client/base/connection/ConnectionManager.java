@@ -147,6 +147,8 @@ public class ConnectionManager
         {
             connections = this.connections;
             this.connections = new HashMap<ConnectionInformation, ConnectionManagerEntry> ();
+
+            this.listeners.clear ();
         }
 
         for ( final Map.Entry<ConnectionInformation, ConnectionManagerEntry> entry : connections.entrySet () )
