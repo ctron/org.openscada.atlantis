@@ -160,7 +160,7 @@ public class AutoReconnectController implements ConnectionStateListener
         }
     }
 
-    protected synchronized void performUpdate ( final ConnectionState state )
+    private void performUpdate ( final ConnectionState state )
     {
         logger.debug ( "Performing update: " + state );
 
@@ -189,9 +189,13 @@ public class AutoReconnectController implements ConnectionStateListener
         this.lastTimestamp = System.currentTimeMillis ();
     }
 
-    private synchronized void performCheckNow ()
+    private void performCheckNow ()
     {
-        this.checkScheduled = false;
+        synchronized ( this )
+        {
+            this.checkScheduled = false;
+        }
+
         logger.debug ( String.format ( "Performing state check: %s (request: %s)", this.state, this.connect ) );
 
         switch ( this.state )
