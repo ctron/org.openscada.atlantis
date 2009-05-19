@@ -294,11 +294,19 @@ public abstract class ConnectionBase implements Connection, IoHandler
      * @param connectionState
      * @param error additional error information or <code>null</code> if we don't have an error.
      */
-    private synchronized void setState ( final ConnectionState connectionState, final Throwable error )
+    private void setState ( final ConnectionState connectionState, final Throwable error )
     {
-        if ( this.connectionState != connectionState )
+        boolean trigger = false;
+        synchronized ( this )
         {
-            this.connectionState = connectionState;
+            if ( this.connectionState != connectionState )
+            {
+                this.connectionState = connectionState;
+                trigger = true;
+            }
+        }
+        if ( trigger )
+        {
             notifyStateChange ( connectionState, error );
         }
     }
