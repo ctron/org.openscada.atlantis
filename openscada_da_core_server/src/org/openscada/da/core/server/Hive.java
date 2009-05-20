@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,8 +27,9 @@ import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.server.browser.HiveBrowser;
+import org.openscada.utils.lifecycle.LifecycleAware;
 
-public interface Hive
+public interface Hive extends LifecycleAware
 {
     /**
      * Create a new session for further accessing the hive
@@ -36,8 +37,8 @@ public interface Hive
      * @return a new session
      * @throws UnableToCreateSessionException in the case the session could not be created
      */
-	public Session createSession ( Properties props ) throws UnableToCreateSessionException;
-    
+    public Session createSession ( Properties props ) throws UnableToCreateSessionException;
+
     /**
      * Close the provided session
      * 
@@ -46,8 +47,8 @@ public interface Hive
      * @param session the session to close
      * @throws InvalidSessionException In the case the session is not a valid session
      */
-	public void closeSession ( Session session ) throws InvalidSessionException;
-	
+    public void closeSession ( Session session ) throws InvalidSessionException;
+
     /**
      * Register to an item for event notification
      * @param session the session to use 
@@ -56,8 +57,8 @@ public interface Hive
      * @throws InvalidSessionException In the case the session is not a valid session
      * @throws InvalidItemException In the case the item is not valid
      */
-	public void subscribeItem ( Session session, String item ) throws InvalidSessionException, InvalidItemException;
-    
+    public void subscribeItem ( Session session, String item ) throws InvalidSessionException, InvalidItemException;
+
     /**
      * Unregister from an an item for event notification
      * @param session the session to use
@@ -65,9 +66,9 @@ public interface Hive
      * @throws InvalidSessionException In the case the session is not a valid session
      * @throws InvalidItemException In the case the item is not valid
      */
-	public void unsubscribeItem ( Session session, String item ) throws InvalidSessionException, InvalidItemException;
-	 
-	/**
+    public void unsubscribeItem ( Session session, String item ) throws InvalidSessionException, InvalidItemException;
+
+    /**
      * Start a write operation
      * 
      * The operation is not started unless {@link #thawOperation(Session, long)} is called. 
@@ -79,9 +80,10 @@ public interface Hive
      * @return An operation ID which can be used to cancel or run the operation
      * @throws InvalidSessionException In the case the session is not a valid session
      * @throws InvalidItemException In the case the item is not valid
-	 */
-    
+     */
+
     public long startWrite ( Session session, String item, Variant value, WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException;
+
     /**
      * Start a write attributes operation
      * 
@@ -95,10 +97,11 @@ public interface Hive
      * @throws InvalidSessionException In the case the session is not a valid session
      * @throws InvalidItemException In the case the item is not valid
      */
-    
+
     public long startWriteAttributes ( Session session, String item, Map<String, Variant> attribute, WriteAttributesOperationListener listener ) throws InvalidSessionException, InvalidItemException;
+
     //public void startRead ( Session session, String item, Variant value, ReadOperationListener listener );
-    
+
     /**
      * Thaw a long running operation.
      * 
@@ -116,7 +119,7 @@ public interface Hive
      * @throws InvalidSessionException In the case the session is not a valid session
      */
     public void thawOperation ( Session session, long id ) throws InvalidSessionException;
-    
+
     /**
      * Cancel a long running operation
      *
@@ -132,9 +135,9 @@ public interface Hive
      * @throws CancellationNotSupportedException Thrown in the case the operation does not support cancellation
      */
     public void cancelOperation ( Session session, long id ) throws InvalidSessionException, CancellationNotSupportedException;
-    
+
     public HiveBrowser getBrowser ();
-    
+
     /**
      * Validate an item it.
      * 
