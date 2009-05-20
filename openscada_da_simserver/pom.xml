@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" ?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.da.server.simulation</artifactId>
@@ -9,7 +9,7 @@
 		<groupId>org.openscada.atlantis</groupId>
 		<artifactId>org.openscada.atlantis</artifactId>
 		<relativePath>../openscada_build/pom.xml</relativePath>
-		<version>0.12.0-SNAPSHOT</version>
+		<version>0.13.0-SNAPSHOT</version>
 	</parent>
 
 	<scm>
@@ -66,5 +66,46 @@
 				</dependency>
 			</dependencies>
 		</profile>
+		<profile>
+			<id>deploy-libs</id>
+			<build>
+				<defaultGoal>deploy:deploy-file</defaultGoal>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<configuration>
+							<repositoryId>openscada-external</repositoryId>
+							<url>${openscada.distrib.repository}</url>
+						</configuration>
+						<executions>
+							<execution>
+								<id>jOpenDocument</id>
+								<goals>
+									<goal>deploy-file</goal>
+								</goals>
+								<phase>deploy</phase>
+								<configuration>
+									<file>lib/jOpenDocument-1.1b3-jdk5.jar</file>
+									<pomFile>lib/jOpenDocument-1.1b3-jdk5.pom</pomFile>
+								</configuration>
+							</execution>
+							<execution>
+								<id>script-api.jar</id>
+								<goals>
+									<goal>deploy-file</goal>
+								</goals>
+								<phase>deploy</phase>
+								<configuration>
+									<file>../openscada_opc_dcom/lib/script-api.jar.jar</file>
+									<pomFile>../openscada_opc_dcom/lib/script-api.jar.pom</pomFile>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 	</profiles>
 </project>
