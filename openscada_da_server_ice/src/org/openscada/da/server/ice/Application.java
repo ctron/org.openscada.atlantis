@@ -21,6 +21,7 @@ package org.openscada.da.server.ice;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.da.core.server.Hive;
 
 public class Application extends Ice.Application
 {
@@ -38,7 +39,9 @@ public class Application extends Ice.Application
 
             final ConnectionInformation ci = ConnectionInformation.fromURI ( "da:ice://Hive" );
 
-            this.e = new Exporter ( args[0], communicator (), ci );
+            Class hiveClass = Class.forName ( args[0] );
+            Hive hive = (Hive)hiveClass.newInstance ();
+            this.e = new Exporter ( hive, communicator (), ci );
 
             communicator ().waitForShutdown ();
 

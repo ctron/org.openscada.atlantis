@@ -21,6 +21,7 @@ package org.openscada.da.server.net;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.da.core.server.Hive;
 
 /**
  * Application to export a hive using the OpenSCADA NET protocol
@@ -52,7 +53,10 @@ public class Application
             }
 
             // create exporter
-            final Exporter exporter = new Exporter ( args[0], ci );
+            Class hiveClass = Class.forName ( args[0] );
+            Hive hive = (Hive)hiveClass.newInstance ();
+            final Exporter exporter = new Exporter ( hive, ci );
+            hive.start ();
             exporter.start ();
 
             // run the lizzard
