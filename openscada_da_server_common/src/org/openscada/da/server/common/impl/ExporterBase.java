@@ -34,16 +34,19 @@ public abstract class ExporterBase implements HiveExporter
         this.connectionInformation = connectionInformation;
     }
 
+    @Deprecated
     public ExporterBase ( final Class<?> hiveClass, final ConnectionInformation connectionInformation ) throws Exception
     {
         this ( createInstance ( hiveClass ), connectionInformation );
     }
 
+    @Deprecated
     public ExporterBase ( final String hiveClassName, final ConnectionInformation connectionInformation ) throws Exception
     {
         this ( createInstance ( Class.forName ( hiveClassName ) ), connectionInformation );
     }
 
+    @Deprecated
     private static Hive createInstance ( final Class<?> hiveClass ) throws Exception
     {
         return (Hive)hiveClass.newInstance ();

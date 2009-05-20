@@ -34,6 +34,7 @@ public class Exporter extends ExporterBase
 
     private boolean running = false;
 
+    @Deprecated
     public Exporter ( final String hiveClassName, final Communicator communicator, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( hiveClassName, connectionInformation );
@@ -46,6 +47,7 @@ public class Exporter extends ExporterBase
         this.communicator = communicator;
     }
 
+    @Deprecated
     public Exporter ( final Class<Hive> hiveClass, final Communicator communicator, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( hiveClass, connectionInformation );

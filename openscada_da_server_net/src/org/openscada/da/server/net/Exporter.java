@@ -39,11 +39,13 @@ public class Exporter extends ExporterBase
         super ( hive, connectionInformation );
     }
 
+    @Deprecated
     public Exporter ( final Class<?> hiveClass, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( hiveClass, connectionInformation );
     }
 
+    @Deprecated
     public Exporter ( final String hiveClassName, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( hiveClassName, connectionInformation );
