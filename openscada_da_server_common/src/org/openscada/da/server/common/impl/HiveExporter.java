@@ -19,15 +19,13 @@
 
 package org.openscada.da.server.common.impl;
 
+import org.openscada.utils.lifecycle.LifecycleAware;
+
 /**
  * A hive exporter interface
  * @author Jens Reimann
  *
  */
-public interface HiveExporter
+public interface HiveExporter extends LifecycleAware
 {
-    public abstract void start () throws Exception;
-
-    public abstract void stop () throws Exception;
-
 }
