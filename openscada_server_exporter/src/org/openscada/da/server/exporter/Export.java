@@ -19,14 +19,13 @@
 
 package org.openscada.da.server.exporter;
 
+import org.openscada.utils.lifecycle.LifecycleAware;
+
 /**
  * A service that can be exported
  * @author Jens Reimann
  *
  */
-public interface Export
+public interface Export extends LifecycleAware
 {
-    public void start () throws Exception;
-
-    public void stop () throws Exception;
 }
