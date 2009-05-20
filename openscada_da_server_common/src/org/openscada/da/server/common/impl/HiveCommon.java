@@ -131,6 +131,14 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         } );
     }
 
+    public void start () throws Exception
+    {
+    }
+
+    public void stop () throws Exception
+    {
+    }
+
     @Override
     protected void finalize () throws Throwable
     {
