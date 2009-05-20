@@ -42,7 +42,7 @@ public interface Hive extends LifecycleAware
     /**
      * Close the provided session
      * 
-     * Closing the session includes: unregistering from all items, cancelling all running operations
+     * Closing the session includes: unregistering from all items, canceling all running operations
      * 
      * @param session the session to close
      * @throws InvalidSessionException In the case the session is not a valid session
