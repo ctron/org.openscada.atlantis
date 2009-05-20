@@ -21,7 +21,7 @@
 	<property name="buildType" value="I"/>
 	<property name="buildId" value="AutoBuild"/>
 	<property name="version" value="0.12"/>
-	<property name="release" value="-RC2"/>
+	<property name="release" value=".0"/>
 	<property name="maven.repository" value="http://repo.openscada.org/maven2"/>
 	
 	<property name="deploy.dir" location="${deploy.base}/deploy"/>
