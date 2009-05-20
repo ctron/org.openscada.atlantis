@@ -137,15 +137,23 @@ public class ConnectionManager
         return getItemManager ( ConnectionInformation.fromURI ( uri ), connect );
     }
 
-    public synchronized void dispose ()
+    public void dispose ()
     {
-        for ( final Map.Entry<ConnectionInformation, ConnectionManagerEntry> entry : this.connections.entrySet () )
-        {
-            entry.getValue ().getConnection ().disconnect ();
-        }
-        this.connections.clear ();
-    }
+        Map<ConnectionInformation, ConnectionManagerEntry> connections;
 
+        synchronized ( this )
+        {
+            connections = this.connections;
+            this.connections = new HashMap<ConnectionInformation, ConnectionManagerEntry> ();
+
+            this.listeners.clear ();
+        }
+
+        for ( final Map.Entry<ConnectionInformation, ConnectionManagerEntry> entry : connections.entrySet () )
+        {
+            entry.getValue ().dispose ();
+        }
+    }
     public static ConnectionManager getDefault ()
     {
         return org.openscada.da.client.base.Activator.getConnectionManager ();
