@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006, 2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -73,37 +73,37 @@ import org.openscada.utils.jobqueue.OperationManager.Handle;
 public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 {
 
-    private static Logger _log = Logger.getLogger ( HiveCommon.class );
+    private static Logger logger = Logger.getLogger ( HiveCommon.class );
 
-    private final Set<SessionCommon> _sessions = new HashSet<SessionCommon> ();
+    private final Set<SessionCommon> sessions = new HashSet<SessionCommon> ();
 
-    private final Map<DataItemInformation, DataItem> _itemMap = new HashMap<DataItemInformation, DataItem> ();
+    private final Map<DataItemInformation, DataItem> itemMap = new HashMap<DataItemInformation, DataItem> ();
 
-    private HiveBrowserCommon _browser = null;
+    private HiveBrowserCommon browser = null;
 
-    private Folder _rootFolder = null;
+    private Folder rootFolder = null;
 
-    private final Set<SessionListener> _sessionListeners = new CopyOnWriteArraySet<SessionListener> ();
+    private final Set<SessionListener> sessionListeners = new CopyOnWriteArraySet<SessionListener> ();
 
-    private final OperationManager _opManager = new OperationManager ();
+    private final OperationManager opManager = new OperationManager ();
 
-    private final OperationProcessor _opProcessor = new OperationProcessor ();
+    private final OperationProcessor opProcessor = new OperationProcessor ();
 
-    private Thread _jobQueueThread = null;
+    private Thread jobQueueThread = null;
 
-    private final List<DataItemFactory> _factoryList = new CopyOnWriteArrayList<DataItemFactory> ();
+    private final List<DataItemFactory> factoryList = new CopyOnWriteArrayList<DataItemFactory> ();
 
-    private final Set<DataItemFactoryListener> _factoryListeners = new HashSet<DataItemFactoryListener> ();
+    private final Set<DataItemFactoryListener> factoryListeners = new HashSet<DataItemFactoryListener> ();
 
-    private final List<FactoryTemplate> _templates = new LinkedList<FactoryTemplate> ();
+    private final List<FactoryTemplate> templates = new LinkedList<FactoryTemplate> ();
 
-    private final SubscriptionManager _itemSubscriptionManager = new SubscriptionManager ();
+    private final SubscriptionManager itemSubscriptionManager = new SubscriptionManager ();
 
-    private final Set<DataItemValidator> _itemValidators = new CopyOnWriteArraySet<DataItemValidator> ();
+    private final Set<DataItemValidator> itemValidators = new CopyOnWriteArraySet<DataItemValidator> ();
 
-    private ValidationStrategy _validatonStrategy = ValidationStrategy.FULL_CHECK;
+    private ValidationStrategy validatonStrategy = ValidationStrategy.FULL_CHECK;
 
-    private HiveEventListener _hiveEventListener;
+    private HiveEventListener hiveEventListener;
 
     private boolean autoEnableStats = true;
 
@@ -116,13 +116,13 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
     {
         super ();
 
-        this._jobQueueThread = new Thread ( this._opProcessor );
-        this._jobQueueThread.setName ( "HiveOpProcessor" );
-        this._jobQueueThread.setDaemon ( true );
-        this._jobQueueThread.start ();
+        this.jobQueueThread = new Thread ( this.opProcessor );
+        this.jobQueueThread.setName ( "HiveOpProcessor" );
+        this.jobQueueThread.setDaemon ( true );
+        this.jobQueueThread.start ();
 
         // set the validator of the subscription manager
-        this._itemSubscriptionManager.setValidator ( new SubscriptionValidator () {
+        this.itemSubscriptionManager.setValidator ( new SubscriptionValidator () {
 
             public boolean validate ( final SubscriptionListener listener, final Object topic )
             {
@@ -137,38 +137,34 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 
     public void stop () throws Exception
     {
+        unregisterAllServices ();
     }
 
     @Override
     protected void finalize () throws Throwable
     {
-        this._jobQueueThread.interrupt ();
+        this.jobQueueThread.interrupt ();
         super.finalize ();
-    }
-
-    public void dispose ()
-    {
-        unregisterAllServices ();
     }
 
     public void addSessionListener ( final SessionListener listener )
     {
-        this._sessionListeners.add ( listener );
+        this.sessionListeners.add ( listener );
     }
 
     public void removeSessionListener ( final SessionListener listener )
     {
-        this._sessionListeners.remove ( listener );
+        this.sessionListeners.remove ( listener );
     }
 
     private void fireSessionCreate ( final SessionCommon session )
     {
-        if ( this._hiveEventListener != null )
+        if ( this.hiveEventListener != null )
         {
-            this._hiveEventListener.sessionCreated ( session );
+            this.hiveEventListener.sessionCreated ( session );
         }
 
-        for ( final SessionListener listener : this._sessionListeners )
+        for ( final SessionListener listener : this.sessionListeners )
         {
             try
             {
@@ -183,14 +179,14 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 
     private void fireSessionDestroy ( final SessionCommon session )
     {
-        if ( this._hiveEventListener != null )
+        if ( this.hiveEventListener != null )
         {
-            this._hiveEventListener.sessionDestroyed ( session );
+            this.hiveEventListener.sessionDestroyed ( session );
         }
 
-        synchronized ( this._sessionListeners )
+        synchronized ( this.sessionListeners )
         {
-            for ( final SessionListener listener : this._sessionListeners )
+            for ( final SessionListener listener : this.sessionListeners )
             {
                 try
                 {
@@ -209,7 +205,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      */
     public Folder getRootFolder ()
     {
-        return this._rootFolder;
+        return this.rootFolder;
     }
 
     /**
@@ -218,12 +214,12 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      */
     public synchronized void setRootFolder ( final Folder rootFolder )
     {
-        if ( this._rootFolder == null )
+        if ( this.rootFolder == null )
         {
-            this._rootFolder = rootFolder;
+            this.rootFolder = rootFolder;
             if ( rootFolder instanceof FolderCommon && this.autoEnableStats )
             {
-                enableStats ( (FolderCommon)this._rootFolder );
+                enableStats ( (FolderCommon)this.rootFolder );
             }
         }
     }
@@ -231,7 +227,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
     private void enableStats ( final FolderCommon rootFolder )
     {
         final HiveCommonStatisticsGenerator stats = new HiveCommonStatisticsGenerator ( "statistics" );
-        this._hiveEventListener = stats;
+        this.hiveEventListener = stats;
 
         final FolderCommon statsFolder = new FolderCommon ();
         rootFolder.add ( "statistics", statsFolder, new HashMap<String, Variant> () );
@@ -258,7 +254,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
             throw new InvalidSessionException ();
         }
 
-        if ( !this._sessions.contains ( sessionCommon ) )
+        if ( !this.sessions.contains ( sessionCommon ) )
         {
             throw new InvalidSessionException ();
         }
@@ -271,10 +267,10 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
     public Session createSession ( final Properties props )
     {
         final SessionCommon session = new SessionCommon ( this );
-        synchronized ( this._sessions )
+        synchronized ( this.sessions )
         {
-            this._sessions.add ( session );
-            this._opManager.addListener ( session.getOperations () );
+            this.sessions.add ( session );
+            this.opManager.addListener ( session.getOperations () );
             fireSessionCreate ( session );
         }
         return session;
@@ -290,18 +286,18 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
     {
         final SessionCommon sessionCommon = validateSession ( session );
 
-        synchronized ( this._sessions )
+        synchronized ( this.sessions )
         {
-            _log.debug ( "Close session: " + session );
+            logger.debug ( "Close session: " + session );
             fireSessionDestroy ( (SessionCommon)session );
 
             // destroy all subscriptions for this session
-            this._itemSubscriptionManager.unsubscribeAll ( sessionCommon );
+            this.itemSubscriptionManager.unsubscribeAll ( sessionCommon );
 
             // cancel all pending operations
             sessionCommon.getOperations ().cancelAll ();
 
-            this._sessions.remove ( session );
+            this.sessions.remove ( session );
         }
     }
 
@@ -314,7 +310,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         try
         {
             retrieveItem ( itemId );
-            this._itemSubscriptionManager.subscribe ( itemId, sessionCommon );
+            this.itemSubscriptionManager.subscribe ( itemId, sessionCommon );
         }
         catch ( final ValidationException e )
         {
@@ -330,7 +326,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         final SessionCommon sessionCommon = validateSession ( session );
 
         // unsubscribe using the new item subscription manager
-        this._itemSubscriptionManager.unsubscribe ( itemId, sessionCommon );
+        this.itemSubscriptionManager.unsubscribe ( itemId, sessionCommon );
     }
 
     /**
@@ -339,23 +335,23 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      */
     public void registerItem ( final DataItem item )
     {
-        synchronized ( this._itemMap )
+        synchronized ( this.itemMap )
         {
             final String id = item.getInformation ().getName ();
 
-            if ( !this._itemMap.containsKey ( new DataItemInformationBase ( item.getInformation () ) ) )
+            if ( !this.itemMap.containsKey ( new DataItemInformationBase ( item.getInformation () ) ) )
             {
                 // first add internally ...
-                this._itemMap.put ( new DataItemInformationBase ( item.getInformation () ), item );
+                this.itemMap.put ( new DataItemInformationBase ( item.getInformation () ), item );
 
-                if ( this._hiveEventListener != null )
+                if ( this.hiveEventListener != null )
                 {
-                    this._hiveEventListener.itemRegistered ( item );
+                    this.hiveEventListener.itemRegistered ( item );
                 }
             }
 
             // add new topic to the new item subscription manager
-            this._itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( item, this._hiveEventListener ) );
+            this.itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( item, this.hiveEventListener ) );
         }
     }
 
@@ -365,20 +361,20 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      */
     public void unregisterItem ( final DataItem item )
     {
-        synchronized ( this._itemMap )
+        synchronized ( this.itemMap )
         {
             final String id = item.getInformation ().getName ();
-            if ( this._itemMap.containsKey ( new DataItemInformationBase ( item.getInformation () ) ) )
+            if ( this.itemMap.containsKey ( new DataItemInformationBase ( item.getInformation () ) ) )
             {
-                this._itemMap.remove ( new DataItemInformationBase ( item.getInformation () ) );
-                if ( this._hiveEventListener != null )
+                this.itemMap.remove ( new DataItemInformationBase ( item.getInformation () ) );
+                if ( this.hiveEventListener != null )
                 {
-                    this._hiveEventListener.itemUnregistered ( item );
+                    this.hiveEventListener.itemUnregistered ( item );
                 }
             }
 
             // remove the source from the manager
-            this._itemSubscriptionManager.setSource ( id, null );
+            this.itemSubscriptionManager.setSource ( id, null );
         }
     }
 
@@ -389,15 +385,15 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      */
     protected DataItem findRegisteredDataItem ( final String itemId )
     {
-        synchronized ( this._itemMap )
+        synchronized ( this.itemMap )
         {
-            return this._itemMap.get ( itemId );
+            return this.itemMap.get ( itemId );
         }
     }
 
     private DataItem factoryCreate ( final DataItemFactoryRequest request )
     {
-        for ( final DataItemFactory factory : this._factoryList )
+        for ( final DataItemFactory factory : this.factoryList )
         {
             if ( factory.canCreate ( request ) )
             {
@@ -421,7 +417,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      */
     public boolean validateItem ( final String id )
     {
-        if ( this._validatonStrategy == ValidationStrategy.GRANT_ALL )
+        if ( this.validatonStrategy == ValidationStrategy.GRANT_ALL )
         {
             return true;
         }
@@ -433,7 +429,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         }
 
         // now check if the item passes the validators
-        for ( final DataItemValidator dataItemValidator : this._itemValidators )
+        for ( final DataItemValidator dataItemValidator : this.itemValidators )
         {
             if ( dataItemValidator.isValid ( id ) )
             {
@@ -444,9 +440,9 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         final DataItemFactoryRequest request = new DataItemFactoryRequest ();
         request.setId ( id );
 
-        synchronized ( this._factoryList )
+        synchronized ( this.factoryList )
         {
-            for ( final DataItemFactory factory : this._factoryList )
+            for ( final DataItemFactory factory : this.factoryList )
             {
                 if ( factory.canCreate ( request ) )
                 {
@@ -459,14 +455,14 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 
     public DataItem lookupItem ( final String id )
     {
-        return this._itemMap.get ( new DataItemInformationBase ( id ) );
+        return this.itemMap.get ( new DataItemInformationBase ( id ) );
     }
 
     public FactoryTemplate findFactoryTemplate ( final String item )
     {
-        synchronized ( this._templates )
+        synchronized ( this.templates )
         {
-            for ( final FactoryTemplate template : this._templates )
+            for ( final FactoryTemplate template : this.templates )
             {
                 if ( template.getPattern ().matcher ( item ).matches () )
                 {
@@ -500,7 +496,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
             }
             catch ( final ConfigurationError e )
             {
-                _log.warn ( String.format ( "Unable to create item %s", id ), e );
+                logger.warn ( String.format ( "Unable to create item %s", id ), e );
                 return null;
             }
         }
@@ -510,7 +506,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 
     public DataItem retrieveItem ( final DataItemFactoryRequest request )
     {
-        synchronized ( this._itemMap )
+        synchronized ( this.itemMap )
         {
             DataItem dataItem = lookupItem ( request.getId () );
             if ( dataItem == null )
@@ -538,16 +534,16 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         }
 
         final WriteAttributesOperation op = new WriteAttributesOperation ( item, listener, attributes );
-        final Handle handle = this._opManager.schedule ( op );
+        final Handle handle = this.opManager.schedule ( op );
 
         synchronized ( sessionCommon )
         {
             sessionCommon.getOperations ().addOperation ( handle );
         }
 
-        if ( this._hiveEventListener != null )
+        if ( this.hiveEventListener != null )
         {
-            this._hiveEventListener.startWriteAttributes ( session, itemId, attributes.size () );
+            this.hiveEventListener.startWriteAttributes ( session, itemId, attributes.size () );
         }
 
         return handle.getId ();
@@ -591,9 +587,9 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
             }
         } );
 
-        if ( this._hiveEventListener != null )
+        if ( this.hiveEventListener != null )
         {
-            this._hiveEventListener.startWrite ( session, itemName, value );
+            this.hiveEventListener.startWrite ( session, itemName, value );
         }
 
         return handle.getId ();
@@ -607,29 +603,29 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      */
     public synchronized Handle scheduleOperation ( final SessionCommon sessionCommon, final Operation operation )
     {
-        final Handle handle = this._opManager.schedule ( operation );
+        final Handle handle = this.opManager.schedule ( operation );
         sessionCommon.getOperations ().addOperation ( handle );
         return handle;
     }
 
     public synchronized HiveBrowser getBrowser ()
     {
-        if ( this._browser == null )
+        if ( this.browser == null )
         {
-            if ( this._rootFolder != null )
+            if ( this.rootFolder != null )
             {
-                this._browser = new HiveBrowserCommon ( this ) {
+                this.browser = new HiveBrowserCommon ( this ) {
 
                     @Override
                     public Folder getRootFolder ()
                     {
-                        return HiveCommon.this._rootFolder;
+                        return HiveCommon.this.rootFolder;
                     }
                 };
             }
         }
 
-        return this._browser;
+        return this.browser;
     }
 
     public void cancelOperation ( final Session session, final long id ) throws CancellationNotSupportedException, InvalidSessionException
@@ -638,9 +634,9 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 
         synchronized ( sessionCommon )
         {
-            _log.info ( String.format ( "Cancelling operation: %d", id ) );
+            logger.info ( String.format ( "Cancelling operation: %d", id ) );
 
-            final Handle handle = this._opManager.get ( id );
+            final Handle handle = this.opManager.get ( id );
             if ( handle != null )
             {
                 if ( sessionCommon.getOperations ().containsOperation ( handle ) )
@@ -664,19 +660,19 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 
         synchronized ( sessionCommon )
         {
-            _log.debug ( String.format ( "Thawing operation %d", id ) );
+            logger.debug ( String.format ( "Thawing operation %d", id ) );
 
-            final Handle handle = this._opManager.get ( id );
+            final Handle handle = this.opManager.get ( id );
             if ( handle != null )
             {
                 if ( sessionCommon.getOperations ().containsOperation ( handle ) )
                 {
-                    this._opProcessor.add ( handle );
+                    this.opProcessor.add ( handle );
                 }
             }
             else
             {
-                _log.warn ( String.format ( "%d is not a valid operation id", id ) );
+                logger.warn ( String.format ( "%d is not a valid operation id", id ) );
             }
         }
     }
@@ -686,27 +682,27 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      */
     public void addItemFactory ( final DataItemFactory factory )
     {
-        this._factoryList.add ( factory );
+        this.factoryList.add ( factory );
     }
 
     public void removeItemFactory ( final DataItemFactory factory )
     {
-        this._factoryList.remove ( factory );
+        this.factoryList.remove ( factory );
     }
 
     public void addItemFactoryListener ( final DataItemFactoryListener listener )
     {
-        this._factoryListeners.add ( listener );
+        this.factoryListeners.add ( listener );
     }
 
     public void removeItemFactoryListener ( final DataItemFactoryListener listener )
     {
-        this._factoryListeners.remove ( listener );
+        this.factoryListeners.remove ( listener );
     }
 
     private void fireDataItemCreated ( final DataItem dataItem )
     {
-        for ( final DataItemFactoryListener listener : this._factoryListeners )
+        for ( final DataItemFactoryListener listener : this.factoryListeners )
         {
             listener.created ( dataItem );
         }
@@ -714,9 +710,9 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 
     public void registerTemplate ( final FactoryTemplate template )
     {
-        synchronized ( this._templates )
+        synchronized ( this.templates )
         {
-            this._templates.add ( template );
+            this.templates.add ( template );
         }
     }
 
@@ -727,7 +723,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      */
     public void recheckGrantedItems ()
     {
-        final List<Object> topics = this._itemSubscriptionManager.getAllGrantedTopics ();
+        final List<Object> topics = this.itemSubscriptionManager.getAllGrantedTopics ();
 
         for ( final Object topic : topics )
         {
@@ -741,7 +737,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      */
     public Set<String> getGrantedItems ()
     {
-        final List<Object> topics = this._itemSubscriptionManager.getAllGrantedTopics ();
+        final List<Object> topics = this.itemSubscriptionManager.getAllGrantedTopics ();
 
         final Set<String> items = new HashSet<String> ();
 
@@ -754,22 +750,22 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 
     public void addDataItemValidator ( final DataItemValidator dataItemValidator )
     {
-        this._itemValidators.add ( dataItemValidator );
+        this.itemValidators.add ( dataItemValidator );
     }
 
     public void removeItemValidator ( final DataItemValidator dataItemValidator )
     {
-        this._itemValidators.remove ( dataItemValidator );
+        this.itemValidators.remove ( dataItemValidator );
     }
 
     protected ValidationStrategy getValidatonStrategy ()
     {
-        return this._validatonStrategy;
+        return this.validatonStrategy;
     }
 
     protected void setValidatonStrategy ( final ValidationStrategy validatonStrategy )
     {
-        this._validatonStrategy = validatonStrategy;
+        this.validatonStrategy = validatonStrategy;
     }
 
     public boolean isAutoEnableStats ()
