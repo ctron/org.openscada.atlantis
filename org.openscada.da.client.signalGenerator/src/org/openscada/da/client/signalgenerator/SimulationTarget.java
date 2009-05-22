@@ -17,20 +17,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.client.signalgenerator.page;
+package org.openscada.da.client.signalgenerator;
 
-import org.eclipse.swt.widgets.Composite;
-import org.openscada.da.client.signalgenerator.SimulationTarget;
+import org.openscada.core.Variant;
 
-public interface GeneratorPage
+public interface SimulationTarget
 {
-    public void createPage ( Composite parent );
-
-    public void dispose ();
-
-    public void setTarget ( SimulationTarget target );
-
-    public void start ();
-
-    public void stop ();
+    public void writeValue ( Variant value );
 }

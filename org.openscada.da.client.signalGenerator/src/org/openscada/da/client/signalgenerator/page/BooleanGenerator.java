@@ -1,9 +1,27 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.client.signalgenerator.page;
 
 import org.eclipse.swt.widgets.Display;
 import org.openscada.core.Variant;
-import org.openscada.da.client.WriteOperationCallback;
-import org.openscada.da.client.base.item.DataItemHolder;
+import org.openscada.da.client.signalgenerator.SimulationTarget;
 
 public class BooleanGenerator
 {
@@ -27,12 +45,12 @@ public class BooleanGenerator
 
     private State currentState;
 
-    private final DataItemHolder item;
+    private final SimulationTarget target;
 
-    public BooleanGenerator ( final Display display, final DataItemHolder item )
+    public BooleanGenerator ( final Display display, final SimulationTarget target )
     {
         this.display = display;
-        this.item = item;
+        this.target = target;
     }
 
     public void start ()
@@ -87,7 +105,7 @@ public class BooleanGenerator
             {
                 this.currentState = State.END_DELAY;
                 this.lastTick = now;
-                writeValue ( true );
+                this.target.writeValue ( new Variant ( true ) );
             }
             break;
         case END_DELAY:
@@ -99,7 +117,7 @@ public class BooleanGenerator
                 {
                     this.iterations--;
                 }
-                writeValue ( false );
+                this.target.writeValue ( new Variant ( false ) );
             }
             break;
         }
@@ -139,23 +157,4 @@ public class BooleanGenerator
     {
         this.iterations = iterations;
     }
-
-    public void writeValue ( final boolean value )
-    {
-        this.item.getConnection ().write ( this.item.getItemId (), new Variant ( value ), new WriteOperationCallback () {
-
-            public void complete ()
-            {
-            }
-
-            public void error ( final Throwable e )
-            {
-            }
-
-            public void failed ( final String error )
-            {
-            }
-        } );
-    }
-
 }

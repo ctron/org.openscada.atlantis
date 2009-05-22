@@ -1,25 +1,35 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.client.signalgenerator.page;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
-import org.openscada.core.Variant;
-import org.openscada.da.client.WriteOperationCallback;
-import org.openscada.da.client.base.item.DataItemHolder;
+import org.openscada.da.client.signalgenerator.SimulationTarget;
 
 public class BooleanGeneratorPage implements GeneratorPage
 {
-    private Button triggerTrue;
-
-    private Button triggerFalse;
 
     private Spinner iterationsSpinner;
 
@@ -27,21 +37,17 @@ public class BooleanGeneratorPage implements GeneratorPage
 
     private Spinner endDelaySpinner;
 
-    private Button goButton;
-
     private Composite parent;
 
     private BooleanGenerator generator;
 
-    private DataItemHolder item;
+    private SimulationTarget target;
 
     public void createPage ( final Composite parent )
     {
         this.parent = parent;
         parent.setLayout ( new FillLayout ( SWT.VERTICAL ) );
-        createManualGroup ( parent );
         createTimedGroup ( parent );
-
         update ();
     }
 
@@ -66,92 +72,24 @@ public class BooleanGeneratorPage implements GeneratorPage
         new Label ( group, SWT.NONE ).setText ( Messages.getString ( "BooleanGeneratorPage.timedGroup.transition" ) ); //$NON-NLS-1$
         this.iterationsSpinner = new Spinner ( group, SWT.BORDER );
         this.iterationsSpinner.setValues ( 100, 0, Integer.MAX_VALUE, 0, 5, 100 );
-        this.goButton = new Button ( group, SWT.TOGGLE );
-        this.goButton.setText ( Messages.getString ( "BooleanGeneratorPage.goButton.text" ) ); //$NON-NLS-1$
-        this.goButton.addSelectionListener ( new SelectionAdapter () {
-            @Override
-            public void widgetSelected ( final SelectionEvent e )
-            {
-                BooleanGeneratorPage.this.toggleGo ();
-            }
-        } );
     }
 
-    protected void toggleGo ()
+    public void start ()
     {
-        if ( this.goButton.getSelection () )
-        {
-            final int startDelay = this.startDelaySpinner.getSelection ();
-            final int endDelay = this.endDelaySpinner.getSelection ();
-            final int iterations = this.iterationsSpinner.getSelection ();
-            this.generator = new BooleanGenerator ( this.parent.getDisplay (), this.item );
-            this.generator.setStartDelay ( startDelay );
-            this.generator.setEndDelay ( endDelay );
-            this.generator.setIterations ( iterations );
-            this.generator.start ();
-        }
-        else
-        {
-            this.generator.dispose ();
-            this.generator = null;
-        }
-        update ();
+        final int startDelay = this.startDelaySpinner.getSelection ();
+        final int endDelay = this.endDelaySpinner.getSelection ();
+        final int iterations = this.iterationsSpinner.getSelection ();
+        this.generator = new BooleanGenerator ( this.parent.getDisplay (), this.target );
+        this.generator.setStartDelay ( startDelay );
+        this.generator.setEndDelay ( endDelay );
+        this.generator.setIterations ( iterations );
+        this.generator.start ();
     }
 
-    private void createManualGroup ( final Composite parent )
+    public void stop ()
     {
-        final Group group = new Group ( parent, SWT.BORDER );
-        group.setText ( Messages.getString ( "BooleanGeneratorPage.manualGroup.text" ) ); //$NON-NLS-1$
-
-        group.setLayout ( new RowLayout ( SWT.HORIZONTAL ) );
-
-        this.triggerTrue = new Button ( group, SWT.BORDER );
-        this.triggerTrue.setText ( Messages.getString ( "BooleanGeneratorPage.manualGroup.triggerTrue.text" ) ); //$NON-NLS-1$
-        this.triggerTrue.addSelectionListener ( new SelectionAdapter () {
-            @Override
-            public void widgetSelected ( final SelectionEvent e )
-            {
-                BooleanGeneratorPage.this.manualTriggerTrue ();
-            }
-        } );
-
-        this.triggerFalse = new Button ( group, SWT.BORDER );
-        this.triggerFalse.setText ( Messages.getString ( "BooleanGeneratorPage.manualGroup.triggerFalse.text" ) ); //$NON-NLS-1$
-        this.triggerFalse.addSelectionListener ( new SelectionAdapter () {
-            @Override
-            public void widgetSelected ( final SelectionEvent e )
-            {
-                BooleanGeneratorPage.this.manualTriggerFalse ();
-            }
-        } );
-    }
-
-    protected void manualTriggerFalse ()
-    {
-        writeValue ( new Variant ( false ) );
-    }
-
-    protected void manualTriggerTrue ()
-    {
-        writeValue ( new Variant ( true ) );
-    }
-
-    private void writeValue ( final Variant variant )
-    {
-        this.item.getConnection ().write ( this.item.getItemId (), variant, new WriteOperationCallback () {
-
-            public void complete ()
-            {
-            }
-
-            public void error ( final Throwable e )
-            {
-            }
-
-            public void failed ( final String error )
-            {
-            }
-        } );
+        this.generator.dispose ();
+        this.generator = null;
     }
 
     public void dispose ()
@@ -163,9 +101,9 @@ public class BooleanGeneratorPage implements GeneratorPage
         }
     }
 
-    public void setDataItem ( final DataItemHolder item )
+    public void setTarget ( final SimulationTarget target )
     {
-        this.item = item;
+        this.target = target;
         update ();
     }
 
@@ -174,19 +112,6 @@ public class BooleanGeneratorPage implements GeneratorPage
         this.startDelaySpinner.setEnabled ( this.generator == null );
         this.endDelaySpinner.setEnabled ( this.generator == null );
         this.iterationsSpinner.setEnabled ( this.generator == null );
-
-        if ( this.generator != null )
-        {
-            this.triggerFalse.setEnabled ( false );
-            this.triggerTrue.setEnabled ( false );
-        }
-        else
-        {
-            final boolean enabled = this.item != null && this.item.getConnection () != null && this.item.getItemId () != null;
-
-            this.triggerFalse.setEnabled ( enabled );
-            this.triggerTrue.setEnabled ( enabled );
-        }
     }
 
 }

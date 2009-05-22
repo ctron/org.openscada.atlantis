@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package org.openscada.da.client.signalgenerator;
 
 import java.util.Collection;
@@ -14,16 +33,26 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
+import org.openscada.core.Variant;
+import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.client.base.item.DataItemHolder;
 import org.openscada.da.client.signalgenerator.page.GeneratorPage;
 
-public class GeneratorView extends ViewPart
+public class GeneratorView extends ViewPart implements SimulationTarget
 {
     public static final String VIEW_ID = "org.openscada.da.client.signalGenerator.GeneratorView"; //$NON-NLS-1$
 
@@ -31,7 +60,15 @@ public class GeneratorView extends ViewPart
 
     private final List<GeneratorPageInformation> pages = new LinkedList<GeneratorPageInformation> ();
 
+    private GeneratorPageInformation activePage;
+
     private DataItemHolder item;
+
+    private Composite header;
+
+    private Button startButton;
+
+    private Label errorLabel;
 
     public GeneratorView ()
     {
@@ -41,8 +78,17 @@ public class GeneratorView extends ViewPart
     public void createPartControl ( final Composite parent )
     {
         createPages ();
+        applyParentLayout ( parent );
+        createHeader ( parent );
+        createTabFolder ( parent );
 
+        updateState ();
+    }
+
+    private void createTabFolder ( final Composite parent )
+    {
         this.tabFolder = new CTabFolder ( parent, SWT.BOTTOM );
+        this.tabFolder.setLayoutData ( new GridData ( GridData.FILL, GridData.FILL, true, true ) );
 
         for ( final GeneratorPageInformation page : this.pages )
         {
@@ -52,14 +98,96 @@ public class GeneratorView extends ViewPart
             page.getGeneratorPage ().createPage ( tabComposite );
             tabItem.setText ( page.getLabel () );
             tabItem.setControl ( tabComposite );
-
-            if ( this.item != null )
-            {
-                page.getGeneratorPage ().setDataItem ( this.item );
-            }
+            page.getGeneratorPage ().setTarget ( this );
         }
 
         this.tabFolder.setSelection ( 0 );
+    }
+
+    private void applyParentLayout ( final Composite parent )
+    {
+        final GridLayout layout = new GridLayout ( 1, false );
+        layout.horizontalSpacing = layout.verticalSpacing = 0;
+        layout.marginWidth = layout.marginHeight = 0;
+        parent.setLayout ( layout );
+    }
+
+    private void createHeader ( final Composite parent )
+    {
+        this.header = new Composite ( parent, SWT.NONE );
+        this.header.setLayoutData ( new GridData ( GridData.BEGINNING, GridData.BEGINNING, true, false ) );
+
+        this.header.setLayout ( new RowLayout () );
+
+        this.startButton = new Button ( this.header, SWT.BORDER | SWT.TOGGLE );
+        this.startButton.setText ( "Go!" );
+        this.startButton.addSelectionListener ( new SelectionAdapter () {
+            @Override
+            public void widgetSelected ( final SelectionEvent e )
+            {
+                GeneratorView.this.toggleButton ( GeneratorView.this.startButton.getSelection () );
+            }
+        } );
+
+        this.errorLabel = new Label ( this.header, SWT.NONE );
+    }
+
+    protected void toggleButton ( final boolean selection )
+    {
+        if ( selection )
+        {
+            handleStart ();
+        }
+        else
+        {
+            handleStop ();
+        }
+    }
+
+    protected GeneratorPageInformation getSelection ()
+    {
+        try
+        {
+            return this.pages.get ( this.tabFolder.getSelectionIndex () );
+        }
+        catch ( final Throwable e )
+        {
+            return null;
+        }
+    }
+
+    private void handleStop ()
+    {
+        if ( this.activePage != null )
+        {
+            this.activePage.getGeneratorPage ().stop ();
+            this.activePage = null;
+            updateState ();
+        }
+    }
+
+    private void handleStart ()
+    {
+        handleStop ();
+        this.activePage = getSelection ();
+        if ( this.activePage != null )
+        {
+            this.activePage.getGeneratorPage ().start ();
+        }
+        updateState ();
+
+    }
+
+    private void updateState ()
+    {
+        final boolean state = this.activePage == null;
+
+        if ( this.startButton != null )
+        {
+            this.startButton.setEnabled ( this.item != null );
+            this.startButton.setSelection ( !state );
+            this.tabFolder.setEnabled ( state );
+        }
     }
 
     private void createPages ()
@@ -73,7 +201,7 @@ public class GeneratorView extends ViewPart
         }
         catch ( final CoreException e )
         {
-            ErrorDialog.openError ( this.getSite ().getShell (), Messages.getString("GeneratorView.createPages.error"), Messages.getString("GeneratorView.createPages.errorMessage"), e.getStatus () ); //$NON-NLS-1$ //$NON-NLS-2$
+            ErrorDialog.openError ( this.getSite ().getShell (), Messages.getString ( "GeneratorView.createPages.error" ), Messages.getString ( "GeneratorView.createPages.errorMessage" ), e.getStatus () ); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
@@ -99,17 +227,13 @@ public class GeneratorView extends ViewPart
         this.item = item;
         if ( item != null )
         {
-            setPartName ( String.format ( Messages.getString("GeneratorView.partName"), item.getItemId (), item.getConnection ().getConnectionInformation () ) ); //$NON-NLS-1$
+            setPartName ( String.format ( Messages.getString ( "GeneratorView.partName" ), item.getItemId (), item.getConnection ().getConnectionInformation () ) ); //$NON-NLS-1$
         }
         else
         {
-            setPartName ( Messages.getString("GeneratorView.emptyPartName") ); //$NON-NLS-1$
+            setPartName ( Messages.getString ( "GeneratorView.emptyPartName" ) ); //$NON-NLS-1$
         }
-
-        for ( final GeneratorPageInformation page : this.pages )
-        {
-            page.getGeneratorPage ().setDataItem ( item );
-        }
+        updateState ();
     }
 
     private Collection<GeneratorPageInformation> getPageInformation () throws CoreException
@@ -127,7 +251,7 @@ public class GeneratorView extends ViewPart
 
             if ( ! ( o instanceof GeneratorPage ) )
             {
-                throw new CoreException ( new Status ( Status.ERROR, Activator.PLUGIN_ID, Messages.getString("GeneratorView.classTypeMismatchError") ) ); //$NON-NLS-1$
+                throw new CoreException ( new Status ( Status.ERROR, Activator.PLUGIN_ID, Messages.getString ( "GeneratorView.classTypeMismatchError" ) ) ); //$NON-NLS-1$
             }
 
             final GeneratorPageInformation info = new GeneratorPageInformation ();
@@ -175,4 +299,60 @@ public class GeneratorView extends ViewPart
             this.item.saveTo ( memento );
         }
     }
+
+    public void writeValue ( final Variant value )
+    {
+        final DataItemHolder item = this.item;
+        if ( item != null )
+        {
+            item.getConnection ().write ( item.getItemId (), value, new WriteOperationCallback () {
+
+                public void complete ()
+                {
+                    GeneratorView.this.setFailure ( null );
+                }
+
+                public void error ( final Throwable e )
+                {
+                    GeneratorView.this.setFailure ( e.getMessage () );
+                }
+
+                public void failed ( final String reason )
+                {
+                    GeneratorView.this.setFailure ( reason );
+                }
+            } );
+        }
+    }
+
+    protected void setFailure ( final String reason )
+    {
+        if ( reason != null )
+        {
+            triggerErrorLabel ( reason );
+        }
+        else
+        {
+            triggerErrorLabel ( "" );
+        }
+    }
+
+    private void triggerErrorLabel ( final String string )
+    {
+        final Display d = this.errorLabel.getDisplay ();
+        if ( !d.isDisposed () )
+        {
+            d.asyncExec ( new Runnable () {
+
+                public void run ()
+                {
+                    if ( !GeneratorView.this.errorLabel.isDisposed () )
+                    {
+                        GeneratorView.this.errorLabel.setText ( string );
+                    }
+                }
+            } );
+        }
+    }
+
 }

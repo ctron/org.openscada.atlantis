@@ -49,6 +49,11 @@
             label="Boolean"
             sortKey="20">
       </generatorPage>
+      <generatorPage
+            class="org.openscada.da.client.signalgenerator.page.AnalogPage"
+            label="Analog"
+            sortKey="30">
+      </generatorPage>
    </extension>
 
 </plugin>
