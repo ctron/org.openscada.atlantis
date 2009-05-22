@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ public class Activator extends AbstractUIPlugin
      * (non-Javadoc)
      * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
      */
-    public void start ( BundleContext context ) throws Exception
+    public void start ( final BundleContext context ) throws Exception
     {
         super.start ( context );
         plugin = this;
@@ -55,7 +55,7 @@ public class Activator extends AbstractUIPlugin
      * (non-Javadoc)
      * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
      */
-    public void stop ( BundleContext context ) throws Exception
+    public void stop ( final BundleContext context ) throws Exception
     {
         plugin = null;
         super.stop ( context );
