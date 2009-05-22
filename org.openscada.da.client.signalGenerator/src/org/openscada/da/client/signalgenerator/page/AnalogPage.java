@@ -78,7 +78,7 @@ public class AnalogPage extends AbstractStepGeneratorPage implements GeneratorPa
 
         // min
         label = new Label ( comp, SWT.NONE );
-        label.setText ( Messages.getString("AnalogPage.PresetMin") ); //$NON-NLS-1$
+        label.setText ( Messages.getString ( "AnalogPage.PresetMin" ) ); //$NON-NLS-1$
         this.minText = new Text ( comp, SWT.BORDER | SWT.SINGLE );
         this.minText.setText ( "-20" ); //$NON-NLS-1$
         this.minText.addSelectionListener ( updateAdapter );
@@ -86,7 +86,7 @@ public class AnalogPage extends AbstractStepGeneratorPage implements GeneratorPa
 
         // max
         label = new Label ( comp, SWT.NONE );
-        label.setText ( Messages.getString("AnalogPage.PresetMax") ); //$NON-NLS-1$
+        label.setText ( Messages.getString ( "AnalogPage.PresetMax" ) ); //$NON-NLS-1$
         this.maxText = new Text ( comp, SWT.BORDER | SWT.SINGLE );
         this.maxText.setText ( "20" ); //$NON-NLS-1$
         this.maxText.addSelectionListener ( updateAdapter );
@@ -94,7 +94,7 @@ public class AnalogPage extends AbstractStepGeneratorPage implements GeneratorPa
 
         // frequency
         label = new Label ( comp, SWT.NONE );
-        label.setText ( Messages.getString("AnalogPage.PresetPeriod") ); //$NON-NLS-1$
+        label.setText ( Messages.getString ( "AnalogPage.PresetPeriod" ) ); //$NON-NLS-1$
         this.perText = new Text ( comp, SWT.BORDER | SWT.SINGLE );
         this.perText.setText ( "2000" ); //$NON-NLS-1$
         this.perText.addSelectionListener ( updateAdapter );
@@ -102,7 +102,7 @@ public class AnalogPage extends AbstractStepGeneratorPage implements GeneratorPa
 
         // function
         label = new Label ( comp, SWT.NONE );
-        label.setText ( Messages.getString("AnalogPage.PresetFunction") ); //$NON-NLS-1$
+        label.setText ( Messages.getString ( "AnalogPage.PresetFunction" ) ); //$NON-NLS-1$
         this.functionCombo = new Combo ( comp, SWT.DROP_DOWN | SWT.READ_ONLY );
         this.functionCombo.setLayoutData ( labelData () );
         this.functionComboViewer = new ComboViewer ( this.functionCombo );
@@ -113,7 +113,7 @@ public class AnalogPage extends AbstractStepGeneratorPage implements GeneratorPa
             {
                 if ( element instanceof AnalogType )
                 {
-                    ( (AnalogType)element ).toLabel ();
+                    return ( (AnalogType)element ).toLabel ();
                 }
                 return super.getText ( element );
             }
