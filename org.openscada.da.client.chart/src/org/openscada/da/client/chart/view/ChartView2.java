@@ -239,16 +239,20 @@ public class ChartView2 extends ViewPart
     {
         if ( !this.display.isDisposed () )
         {
-            this.frame.getDisplay ().asyncExec ( new Runnable () {
+            final ChartComposite frame = this.frame;
+            if ( frame != null )
+            {
+                frame.getDisplay ().asyncExec ( new Runnable () {
 
-                public void run ()
-                {
-                    if ( !ChartView2.this.frame.isDisposed () )
+                    public void run ()
                     {
-                        performUpdate ();
+                        if ( !ChartView2.this.frame.isDisposed () )
+                        {
+                            performUpdate ();
+                        }
                     }
-                }
-            } );
+                } );
+            }
         }
 
     }
