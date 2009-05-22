@@ -22,9 +22,9 @@ package org.openscada.da.client.base.connection;
 import java.util.concurrent.Executors;
 
 import org.openscada.core.ConnectionInformation;
+import org.openscada.da.client.Activator;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;
-import org.openscada.rcp.da.client.Activator;
 
 /**
  * Build a simple connection
@@ -40,7 +40,7 @@ public class DefaultEntryBuilder implements EntryBuilder
             return null;
         }
 
-        ConnectionManagerEntry entry = new ConnectionManagerEntry ();
+        final ConnectionManagerEntry entry = new ConnectionManagerEntry ();
 
         final Connection connection = (Connection)Activator.createConnection ( connectionInformation );
 

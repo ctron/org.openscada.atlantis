@@ -1,4 +1,4 @@
-package org.openscada.rcp.da.client.connector;
+package org.openscada.da.client.connector;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;

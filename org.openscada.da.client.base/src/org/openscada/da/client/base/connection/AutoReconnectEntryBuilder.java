@@ -23,9 +23,9 @@ import java.util.concurrent.Executors;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.AutoReconnectController;
+import org.openscada.da.client.Activator;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;
-import org.openscada.rcp.da.client.Activator;
 
 public class AutoReconnectEntryBuilder implements EntryBuilder
 {
@@ -58,7 +58,7 @@ public class AutoReconnectEntryBuilder implements EntryBuilder
             return null;
         }
 
-        Entry entry = new Entry ();
+        final Entry entry = new Entry ();
 
         final Connection connection = (Connection)Activator.createConnection ( connectionInformation );
 

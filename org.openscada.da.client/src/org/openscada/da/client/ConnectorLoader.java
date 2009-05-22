@@ -1,4 +1,4 @@
-package org.openscada.rcp.da.client;
+package org.openscada.da.client;
 
 public interface ConnectorLoader
 {

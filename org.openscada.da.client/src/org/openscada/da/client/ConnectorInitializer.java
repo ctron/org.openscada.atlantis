@@ -1,4 +1,4 @@
-package org.openscada.rcp.da.client;
+package org.openscada.da.client;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -9,27 +9,27 @@ import org.eclipse.core.runtime.Platform;
 
 public class ConnectorInitializer
 {
-    private static boolean _initialized = false;
+    private static boolean initialized = false;
 
-    private static Object _sync = new Object ();
+    private static Object sync = new Object ();
 
     public static void initialize () throws CoreException
     {
         // pre-check .. not synchronized
-        if ( _initialized )
+        if ( initialized )
         {
             return;
         }
 
-        synchronized ( _sync )
+        synchronized ( sync )
         {
             // check ... synchronized
-            if ( _initialized )
+            if ( initialized )
             {
                 return;
             }
 
-            _initialized = true;
+            initialized = true;
 
             final IExtensionRegistry registry = Platform.getExtensionRegistry ();
             final IExtensionPoint point = registry.getExtensionPoint ( "org.openscada.da.client.connector" );

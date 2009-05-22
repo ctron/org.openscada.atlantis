@@ -67,7 +67,7 @@
                   The class name of the ConnectorLoader class
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.openscada.rcp.da.client.ConnectorLoader"/>
+                  <meta.attribute kind="java" basedOn="org.openscada.da.client.ConnectorLoader"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -106,7 +106,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.openscada.rcp.da.client.connector.DriverAdapter"/>
+                  <meta.attribute kind="java" basedOn=":org.openscada.da.client.connector.DriverAdapter"/>
                </appinfo>
             </annotation>
          </attribute>

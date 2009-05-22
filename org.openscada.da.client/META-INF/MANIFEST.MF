@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Client
 Bundle-SymbolicName: org.openscada.da.client;singleton:=true
-Bundle-Version: 0.12.5
+Bundle-Version: 0.12.6
 Bundle-Vendor: inavare GmbH
 Bundle-ClassPath: .,
  lib.jar
@@ -12,10 +12,10 @@ Export-Package: org.openscada.core,
  org.openscada.core.utils,
  org.openscada.da.client;
   uses:="org.openscada.core.client,
-   org.openscada.da.core.browser,
-   org.openscada.core,
-   org.openscada.core.subscription,
-   org.openscada.da.core",
+   org.eclipse.core.runtime,
+   org.osgi.framework,
+   org.openscada.core",
+ org.openscada.da.client.connector;uses:="org.openscada.core.client,org.eclipse.core.runtime,org.openscada.core",
  org.openscada.da.core,
  org.openscada.da.core.browser,
  org.openscada.da.core.server;
@@ -25,12 +25,6 @@ Export-Package: org.openscada.core,
    org.openscada.da.core,
    org.openscada.core.subscription",
  org.openscada.da.core.server.browser;uses:="org.openscada.da.core.server,org.openscada.da.core",
- org.openscada.rcp.da.client;
-  uses:="org.openscada.core.client,
-   org.eclipse.core.runtime,
-   org.osgi.framework,
-   org.openscada.core",
- org.openscada.rcp.da.client.connector;uses:="org.openscada.core.client,org.eclipse.core.runtime,org.openscada.core",
  org.openscada.utils.collection;uses:="org.openscada.utils.lang",
  org.openscada.utils.exec;uses:="new org.openscada.utils.exec",
  org.openscada.utils.jobqueue,
@@ -40,5 +34,5 @@ Export-Package: org.openscada.core,
 Require-Bundle: org.eclipse.core.runtime,
  org.openscada.external.org.apache.log4j;bundle-version="1.2.15"
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: org.openscada.rcp.da.client.Activator
+Bundle-Activator: org.openscada.da.client.Activator
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

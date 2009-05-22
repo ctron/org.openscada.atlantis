@@ -39,8 +39,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.openscada.core.ConnectionInformation;
-import org.openscada.rcp.da.client.connector.ConnectorHelper;
-import org.openscada.rcp.da.client.connector.DriverAdapterInformation;
+import org.openscada.da.client.connector.ConnectorHelper;
+import org.openscada.da.client.connector.DriverAdapterInformation;
 
 class NewHiveWizardConnectionPage extends WizardPage implements IWizardPage
 {

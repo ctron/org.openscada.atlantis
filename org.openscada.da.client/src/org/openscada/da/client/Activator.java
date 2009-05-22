@@ -1,11 +1,11 @@
-package org.openscada.rcp.da.client;
+package org.openscada.da.client;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
-import org.openscada.rcp.da.client.connector.ConnectorHelper;
+import org.openscada.da.client.connector.ConnectorHelper;
 import org.osgi.framework.BundleContext;
 
 public class Activator extends Plugin

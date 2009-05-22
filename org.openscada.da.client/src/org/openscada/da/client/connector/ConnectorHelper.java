@@ -1,4 +1,4 @@
-package org.openscada.rcp.da.client.connector;
+package org.openscada.da.client.connector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
