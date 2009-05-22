@@ -90,7 +90,7 @@ public abstract class AbstractStepGeneratorPage implements GeneratorPage
         }
         catch ( final Throwable e )
         {
-            Activator.getDefault ().getLog ().log ( new Status ( Status.ERROR, Activator.PLUGIN_ID, "Failed to step", e ) );
+            Activator.getDefault ().getLog ().log ( new Status ( Status.ERROR, Activator.PLUGIN_ID, "Failed to step", e ) ); //$NON-NLS-1$
             e.printStackTrace ();
         }
         finally

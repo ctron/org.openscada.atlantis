@@ -25,7 +25,7 @@ import org.openscada.core.Variant;
 
 public enum AnalogType
 {
-    SINE ( "Sine" )
+    SINE ( Messages.getString("AnalogType.TypeSine.label") ) //$NON-NLS-1$
     {
         public Variant generate ( final double timeIndex, final double min, final double max, final double period )
         {
@@ -35,7 +35,7 @@ public enum AnalogType
         }
 
     },
-    COSINE ( "Cosine" )
+    COSINE ( Messages.getString("AnalogType.TypeCosine.label") ) //$NON-NLS-1$
     {
         public Variant generate ( final double timeIndex, final double min, final double max, final double period )
         {
@@ -45,7 +45,7 @@ public enum AnalogType
         }
 
     },
-    RANDOM_NORMAL ( "Random (standard)" )
+    RANDOM_NORMAL ( Messages.getString("AnalogType.TypeRandom.label") ) //$NON-NLS-1$
     {
         private final Random r = new Random ();
 
@@ -55,7 +55,7 @@ public enum AnalogType
             return new Variant ( this.r.nextDouble () * range + min );
         }
     },
-    RANDOM_GAUSSIAN ( "Random (gaussian)" )
+    RANDOM_GAUSSIAN ( Messages.getString("AnalogType.TypeRandomGaussian.label") ) //$NON-NLS-1$
     {
         private final Random r = new Random ();
 
@@ -64,7 +64,7 @@ public enum AnalogType
             return new Variant ( scale ( min, max, this.r.nextGaussian () / 2.0 ) );
         }
     },
-    TRIANGLE ( "Triangle" )
+    TRIANGLE ( Messages.getString("AnalogType.TypeTriangle.label") ) //$NON-NLS-1$
     {
         public Variant generate ( final double timeIndex, final double min, final double max, final double period )
         {
@@ -74,7 +74,7 @@ public enum AnalogType
             return new Variant ( val );
         }
     },
-    SQUARE ( "Square" )
+    SQUARE ( Messages.getString("AnalogType.TypeSquare.label") ) //$NON-NLS-1$
     {
         public Variant generate ( final double timeIndex, final double min, final double max, final double period )
         {

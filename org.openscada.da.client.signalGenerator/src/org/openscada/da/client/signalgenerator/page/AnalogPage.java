@@ -78,31 +78,31 @@ public class AnalogPage extends AbstractStepGeneratorPage implements GeneratorPa
 
         // min
         label = new Label ( comp, SWT.NONE );
-        label.setText ( "Minimum:" );
+        label.setText ( Messages.getString("AnalogPage.PresetMin") ); //$NON-NLS-1$
         this.minText = new Text ( comp, SWT.BORDER | SWT.SINGLE );
-        this.minText.setText ( "-20" );
+        this.minText.setText ( "-20" ); //$NON-NLS-1$
         this.minText.addSelectionListener ( updateAdapter );
         this.minText.setLayoutData ( labelData () );
 
         // max
         label = new Label ( comp, SWT.NONE );
-        label.setText ( "Maximum:" );
+        label.setText ( Messages.getString("AnalogPage.PresetMax") ); //$NON-NLS-1$
         this.maxText = new Text ( comp, SWT.BORDER | SWT.SINGLE );
-        this.maxText.setText ( "20" );
+        this.maxText.setText ( "20" ); //$NON-NLS-1$
         this.maxText.addSelectionListener ( updateAdapter );
         this.maxText.setLayoutData ( labelData () );
 
         // frequency
         label = new Label ( comp, SWT.NONE );
-        label.setText ( "Period:" );
+        label.setText ( Messages.getString("AnalogPage.PresetPeriod") ); //$NON-NLS-1$
         this.perText = new Text ( comp, SWT.BORDER | SWT.SINGLE );
-        this.perText.setText ( "2000" );
+        this.perText.setText ( "2000" ); //$NON-NLS-1$
         this.perText.addSelectionListener ( updateAdapter );
         this.perText.setLayoutData ( labelData () );
 
         // function
         label = new Label ( comp, SWT.NONE );
-        label.setText ( "Function:" );
+        label.setText ( Messages.getString("AnalogPage.PresetFunction") ); //$NON-NLS-1$
         this.functionCombo = new Combo ( comp, SWT.DROP_DOWN | SWT.READ_ONLY );
         this.functionCombo.setLayoutData ( labelData () );
         this.functionComboViewer = new ComboViewer ( this.functionCombo );
