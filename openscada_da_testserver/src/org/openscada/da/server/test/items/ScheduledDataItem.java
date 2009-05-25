@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,18 +19,26 @@
 
 package org.openscada.da.server.test.items;
 
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.openscada.da.server.common.DataItemInputCommon;
-import org.openscada.utils.timing.Scheduler;
 
-public abstract class ScheduledDataItem extends DataItemInputCommon implements Runnable {
+public abstract class ScheduledDataItem extends DataItemInputCommon implements Runnable
+{
+    private final Timer timer;
 
-	private Scheduler _scheduler;
-	
-	public ScheduledDataItem(String name, Scheduler scheduler, int period) {
-		super(name);
-		_scheduler = scheduler;
-		_scheduler.addJob(this,period);
-	}
-	
+    public ScheduledDataItem ( final String name, final Timer timer, final int period )
+    {
+        super ( name );
+        this.timer = timer;
+        this.timer.scheduleAtFixedRate ( new TimerTask () {
+
+            @Override
+            public void run ()
+            {
+                ScheduledDataItem.this.run ();
+            }
+        }, 0, period );
+    }
 }

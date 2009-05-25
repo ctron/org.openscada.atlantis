@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
 
 import org.apache.xmlbeans.XmlException;
 import org.openscada.core.Variant;
@@ -55,23 +56,22 @@ import org.openscada.da.server.test.items.TestItem2;
 import org.openscada.da.server.test.items.TimeDataItem;
 import org.openscada.da.server.test.items.WriteDelayItem;
 import org.openscada.utils.collection.MapBuilder;
-import org.openscada.utils.timing.Scheduler;
 
 public class Hive extends HiveCommon
 {
 
-    private final Scheduler _scheduler = new Scheduler ( "TestHiveScheduler" );
+    private final List<ItemDescriptor> changingItems = new LinkedList<ItemDescriptor> ();
 
-    private final List<ItemDescriptor> _changingItems = new LinkedList<ItemDescriptor> ();
+    private QueryFolder queryFolderFactory = null;
 
-    private QueryFolder _queryFolderFactory = null;
+    private final List<DataItem> transientItems = new LinkedList<DataItem> ();
 
-    private final List<DataItem> _transientItems = new LinkedList<DataItem> ();
-
-    private FolderCommon _testFolder = null;
+    private FolderCommon testFolder = null;
 
     @SuppressWarnings ( "unused" )
     private FolderItemFactory itemFactory;
+
+    private final Timer timer;
 
     // private ObjectExporter objectExporter;
 
@@ -86,13 +86,15 @@ public class Hive extends HiveCommon
 
         ChainStorageServiceHelper.registerDefaultPropertyService ( this );
 
+        this.timer = new Timer ( true );
+
         // create root folder
         final FolderCommon rootFolder = new FolderCommon ();
         setRootFolder ( rootFolder );
 
         // create and register test folder
-        this._testFolder = new FolderCommon ();
-        rootFolder.add ( "test", this._testFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This folder contains numerous test data items!" ) ).getMap () );
+        this.testFolder = new FolderCommon ();
+        rootFolder.add ( "test", this.testFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This folder contains numerous test data items!" ) ).getMap () );
         final FolderCommon helloWorldFolder = new FolderCommon ();
         rootFolder.add ( "Hello World!", helloWorldFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This folder hello world items! Actually there are several tree entries that point to one item instance!" ) ).getMap () );
 
@@ -113,17 +115,17 @@ public class Hive extends HiveCommon
         }, new IDNameProvider () );
 
         queryFolderRoot.addChild ( "query", queryFolder1, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "contains items the have an 'e' in their id" ) ).getMap () );
-        this._testFolder.add ( "storage", queryFolderRoot, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "storage based folder for grouping and query folders" ) ).getMap () );
+        this.testFolder.add ( "storage", queryFolderRoot, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "storage based folder for grouping and query folders" ) ).getMap () );
 
         // memory cell factory
-        this._queryFolderFactory = new QueryFolder ( new Matcher () {
+        this.queryFolderFactory = new QueryFolder ( new Matcher () {
 
             public boolean matches ( final ItemDescriptor desc )
             {
                 return desc.getItem ().getInformation ().getName ().matches ( "memory\\.[a-z0-9]+" );
             }
         }, new IDNameProvider () );
-        this._testFolder.add ( "memory-factory", this._queryFolderFactory, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "storage folder for items automatically created by the memory cell factory" ) ).getMap () );
+        this.testFolder.add ( "memory-factory", this.queryFolderFactory, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "storage folder for items automatically created by the memory cell factory" ) ).getMap () );
 
         // Group Folders
         final GroupFolder groupFolder = new GroupFolder ( new GroupProvider () {
@@ -147,13 +149,13 @@ public class Hive extends HiveCommon
         final MapBuilder<String, Variant> builder = new MapBuilder<String, Variant> ();
 
         registerItem ( item = new MemoryDataItem ( "memory" ) );
-        this._testFolder.add ( "memory", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "A memory cell that simply maps the output to its input." ) ).getMap () );
+        this.testFolder.add ( "memory", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "A memory cell that simply maps the output to its input." ) ).getMap () );
 
         registerItem ( item = new TestItem2 ( this, "memory-chained" ) );
-        this._testFolder.add ( "memory-chained", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "A memory cell that simply maps the output to its input using a chain." ) ).getMap () );
+        this.testFolder.add ( "memory-chained", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "A memory cell that simply maps the output to its input using a chain." ) ).getMap () );
 
         registerItem ( item = new TestItem1 ( "test-1" ) );
-        this._testFolder.add ( "test-1", item, new MapBuilder<String, Variant> ().getMap () );
+        this.testFolder.add ( "test-1", item, new MapBuilder<String, Variant> ().getMap () );
 
         DataItemCommand cmd;
         cmd = new DataItemCommand ( "hello" );
@@ -180,28 +182,28 @@ public class Hive extends HiveCommon
             }
         } );
         registerItem ( item = cmd );
-        this._testFolder.add ( "command", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Like the 'hello world' item it will print out something on the server. Instead of using a fixed string the value that was written to it is used." ) ).getMap () );
+        this.testFolder.add ( "command", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Like the 'hello world' item it will print out something on the server. Instead of using a fixed string the value that was written to it is used." ) ).getMap () );
 
-        registerItem ( item = new TimeDataItem ( "time", this._scheduler ) );
+        registerItem ( item = new TimeDataItem ( "time", this.timer ) );
         builder.clear ();
         builder.put ( "description", new Variant ( "Need the unix time in microseconds? You get it here!" ) );
-        this._testFolder.add ( "time", item, builder.getMap () );
-        this._changingItems.add ( new ItemDescriptor ( item, builder.getMap () ) );
+        this.testFolder.add ( "time", item, builder.getMap () );
+        this.changingItems.add ( new ItemDescriptor ( item, builder.getMap () ) );
 
-        this._testFolder.add ( String.valueOf ( System.currentTimeMillis () ), item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Alias to 'time' but with a name that will change every server startup." ) ).getMap () );
+        this.testFolder.add ( String.valueOf ( System.currentTimeMillis () ), item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Alias to 'time' but with a name that will change every server startup." ) ).getMap () );
 
         final MemoryChainedItem memoryChainedItem = new MemoryChainedItem ( this, "chained" );
         registerItem ( memoryChainedItem );
-        this._testFolder.add ( "chained", memoryChainedItem, new MapBuilder<String, Variant> ().getMap () );
+        this.testFolder.add ( "chained", memoryChainedItem, new MapBuilder<String, Variant> ().getMap () );
 
         registerItem ( item = new WriteDelayItem ( "write-delay" ) );
-        this._testFolder.add ( "write delay", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Simulate a long running write operation here. The value written to the data item is used as microsecond delay that the write operation will take." ) ).getMap () );
+        this.testFolder.add ( "write delay", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Simulate a long running write operation here. The value written to the data item is used as microsecond delay that the write operation will take." ) ).getMap () );
 
         registerItem ( item = new SuspendItem ( "suspendable" ) );
         builder.clear ();
         builder.put ( "description", new Variant ( "This item is suspendable and will print is suspend status when it changes. WriteAttributeResult can only be seen on the server itself." ) );
-        this._testFolder.add ( "suspendable", item, builder.getMap () );
-        this._changingItems.add ( new ItemDescriptor ( item, builder.getMap () ) );
+        this.testFolder.add ( "suspendable", item, builder.getMap () );
+        this.changingItems.add ( new ItemDescriptor ( item, builder.getMap () ) );
 
         final FolderCommon memoryFolder = new FolderCommon ();
         rootFolder.add ( "memory-cell", memoryFolder, new HashMap<String, Variant> () );
@@ -222,7 +224,7 @@ public class Hive extends HiveCommon
             {
                 while ( true )
                 {
-                    for ( final ItemDescriptor desc : Hive.this._changingItems )
+                    for ( final ItemDescriptor desc : Hive.this.changingItems )
                     {
                         queryFolderRoot.added ( desc );
                     }
@@ -235,7 +237,7 @@ public class Hive extends HiveCommon
                     {
                         e.printStackTrace ();
                     }
-                    for ( final ItemDescriptor desc : Hive.this._changingItems )
+                    for ( final ItemDescriptor desc : Hive.this.changingItems )
                     {
                         queryFolderRoot.removed ( desc );
                     }
@@ -288,13 +290,13 @@ public class Hive extends HiveCommon
     public void addMemoryFactoryItem ( final FactoryMemoryCell item, final Map<String, Variant> browserAttributes )
     {
         final ItemDescriptor desc = new ItemDescriptor ( item, browserAttributes );
-        this._queryFolderFactory.added ( desc );
+        this.queryFolderFactory.added ( desc );
     }
 
     public void removeMemoryFactoryItem ( final FactoryMemoryCell item )
     {
         unregisterItem ( item );
-        this._queryFolderFactory.removeAllForItem ( item );
+        this.queryFolderFactory.removeAllForItem ( item );
     }
 
     protected void addTransientItems ()
@@ -303,23 +305,23 @@ public class Hive extends HiveCommon
 
         transientItem = new FactoryMemoryCell ( this, "transient-memory-cell-1" );
         registerItem ( transientItem );
-        this._testFolder.add ( "transient", transientItem, new HashMap<String, Variant> () );
-        this._transientItems.add ( transientItem );
+        this.testFolder.add ( "transient", transientItem, new HashMap<String, Variant> () );
+        this.transientItems.add ( transientItem );
 
-        transientItem = new TimeDataItem ( "transient-time", this._scheduler );
+        transientItem = new TimeDataItem ( "transient-time", this.timer );
         registerItem ( transientItem );
-        this._testFolder.add ( "transient-time", transientItem, new HashMap<String, Variant> () );
-        this._transientItems.add ( transientItem );
+        this.testFolder.add ( "transient-time", transientItem, new HashMap<String, Variant> () );
+        this.transientItems.add ( transientItem );
     }
 
     protected void removeTransientItems ()
     {
-        for ( DataItem transientItem : this._transientItems )
+        for ( DataItem transientItem : this.transientItems )
         {
-            this._testFolder.remove ( transientItem );
+            this.testFolder.remove ( transientItem );
             unregisterItem ( transientItem );
             transientItem = null;
         }
-        this._transientItems.clear ();
+        this.transientItems.clear ();
     }
 }

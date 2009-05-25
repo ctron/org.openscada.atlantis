@@ -21,22 +21,22 @@ package org.openscada.da.server.test.items;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Timer;
 
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.test.utils.FileUtils;
 import org.openscada.utils.collection.MapBuilder;
-import org.openscada.utils.timing.Scheduler;
 
 public class PlainFileDataItem extends ScheduledDataItem
 {
 
-    private File _file;
+    private final File _file;
 
-    public PlainFileDataItem ( String name, File file, Scheduler scheduler, int period )
+    public PlainFileDataItem ( final String name, final File file, final Timer timer, final int period )
     {
-        super ( name, scheduler, period );
-        _file = file;
+        super ( name, timer, period );
+        this._file = file;
     }
 
     public void run ()
@@ -46,7 +46,7 @@ public class PlainFileDataItem extends ScheduledDataItem
             read ();
             updateData ( null, new MapBuilder<String, Variant> ().put ( "error-message", new Variant () ).getMap (), AttributeMode.UPDATE );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             // handle error
             updateData ( null, new MapBuilder<String, Variant> ().put ( "error-message", new Variant ( e.getMessage () ) ).getMap (), AttributeMode.UPDATE );
@@ -56,7 +56,7 @@ public class PlainFileDataItem extends ScheduledDataItem
 
     private void read () throws IOException
     {
-        String[] data = FileUtils.readFile ( _file );
+        final String[] data = FileUtils.readFile ( this._file );
         updateData ( new Variant ( data[0] ), null, null );
     }
 

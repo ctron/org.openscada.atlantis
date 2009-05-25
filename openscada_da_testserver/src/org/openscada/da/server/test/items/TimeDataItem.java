@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +19,16 @@
 
 package org.openscada.da.server.test.items;
 
+import java.util.Timer;
+
 import org.openscada.core.Variant;
-import org.openscada.utils.timing.Scheduler;
 
 public class TimeDataItem extends ScheduledDataItem
 {
 
-    public TimeDataItem ( String name, Scheduler scheduler )
+    public TimeDataItem ( final String name, final Timer timer )
     {
-        super ( name, scheduler, 1000 );
+        super ( name, timer, 1000 );
     }
 
     public void run ()
