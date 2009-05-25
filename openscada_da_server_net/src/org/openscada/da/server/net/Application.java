@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,7 @@ import org.openscada.da.core.server.Hive;
 
 /**
  * Application to export a hive using the OpenSCADA NET protocol
- * @author jens
+ * @author Jens Reimann
  *
  */
 public class Application
@@ -53,8 +53,8 @@ public class Application
             }
 
             // create exporter
-            Class hiveClass = Class.forName ( args[0] );
-            Hive hive = (Hive)hiveClass.newInstance ();
+            final Class<?> hiveClass = Class.forName ( args[0] );
+            final Hive hive = (Hive)hiveClass.newInstance ();
             final Exporter exporter = new Exporter ( hive, ci );
             hive.start ();
             exporter.start ();
@@ -62,7 +62,7 @@ public class Application
             // run the lizzard
             _log.info ( "Running exporter (hive class: " + exporter.getHiveClass ().getCanonicalName () + ")..." );
         }
-        catch ( final Exception e )
+        catch ( final Throwable e )
         {
             // ops
             _log.fatal ( "Error in OpenSCADA DA[NET] Server", e );
