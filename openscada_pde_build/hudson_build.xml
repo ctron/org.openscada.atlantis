@@ -14,6 +14,8 @@
 	<property name="buildType" value="I"/>
 	<property name="buildId" value="Integration"/>
 	<property name="eclipse.pack.dir" value="/home/user/eclipse.pack"/>
+	<property name="publish.type" value="integration"/>
+	<property name="publish.id" value="${env.BUILD_ID}"/>
 	
 	<!-- eclipse stuff -->
 	
@@ -36,7 +38,7 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="check">
     	<fail unless="env.WORKSPACE" message="Please set the environment variable 'WORKSPACE'"/>
-    	<fail unless="env.BUILD_ID" message="Please set the environment variable 'BUILD_ID'"/>
+    	<fail unless="publish.id" message="Please set the environment variable 'publish.id'"/>
     	<fail unless="publish.base" message="Please set the publish target 'publish.base'"/>
     	<mkdir dir="${env.WORKSPACE}"/>
     </target>
@@ -72,15 +74,15 @@
           target: publish              
          ================================= -->
     <target name="publish" depends="check" description="Publish">
-    	<mkdir dir="${publish.base}/atlantis/integration/${env.BUILD_ID}/ostc"/>
-    	<copy todir="${publish.base}/atlantis/integration/${env.BUILD_ID}/ostc">
+    	<mkdir dir="${publish.base}/atlantis/${publish.type}/${publish.id}/ostc"/>
+    	<copy todir="${publish.base}/atlantis/${publish.type}/${publish.id}/ostc">
     		<fileset dir="${deploy.base}/deploy/ostc">
     			<include name="*.zip"/>
     		</fileset>
     	</copy>
     	
-    	<mkdir dir="${publish.base}/atlantis/integration/${env.BUILD_ID}/ide"/>
-    	<copy todir="${publish.base}/atlantis/integration/${env.BUILD_ID}/ide">
+    	<mkdir dir="${publish.base}/atlantis/${publish.type}/${publish.id}/ide"/>
+    	<copy todir="${publish.base}/atlantis/${publish.type}/${publish.id}/ide">
     		<fileset dir="${deploy.base}/deploy/ide">
     			<include name="*.zip"/>
     		</fileset>
