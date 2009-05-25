@@ -61,4 +61,5 @@ Export-Package: org.apache.mina.core,
  org.apache.mina.transport.vmpipe,
  org.apache.mina.util,
  org.apache.mina.util.byteaccess
-Require-Bundle: org.openscada.external.org.apache.log4j;bundle-version="1.2.15"
+Require-Bundle: org.openscada.external.org.apache.log4j;bundle-version="1.2.15",
+ org.openscada.external.org.slf4j;bundle-version="1.5.0"
