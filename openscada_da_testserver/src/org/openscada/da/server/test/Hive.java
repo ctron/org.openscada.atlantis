@@ -43,6 +43,7 @@ import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.configuration.Configurator;
 import org.openscada.da.server.common.configuration.xml.XMLConfigurator;
+import org.openscada.da.server.common.factory.DataItemValidator;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.test.items.FactoryMemoryCell;
@@ -206,6 +207,13 @@ public class Hive extends HiveCommon
         rootFolder.add ( "memory-cell", memoryFolder, new HashMap<String, Variant> () );
         registerItem ( item = new MemoryCellItem ( this, "memory-cell", memoryFolder ) );
         memoryFolder.add ( "control", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This is the control item of the data cell. Write to number of cells you want to this item. The memory cells wil be created dynamically." ) ).getMap () );
+        addDataItemValidator ( new DataItemValidator () {
+
+            public boolean isValid ( final String itemId )
+            {
+                return itemId.matches ( "memory-cell-[0-9]+" );
+            }
+        } );
 
         // do some stuff in the query folders
         final Thread changeThread = new Thread ( new Runnable () {
