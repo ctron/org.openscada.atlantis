@@ -19,9 +19,6 @@
 	<property name="publish.type" value="integration"/>
 	
 	<property name="publish.id" value="${env.BUILD_ID}" />
-	<!--
-	<property name="publish.id" value="${env.RELEASE_VERSION}" />
-	-->
 	
 	<!-- eclipse stuff -->
 	
@@ -35,7 +32,14 @@
 	<!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="check,unpackEclipse,build,publish" description="Integration Build">
+    <target name="default" depends="init,check,unpackEclipse,build,publish" description="Integration Build">
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: init                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="init">
+    	<echo message="Build type: ${publish.type} - ${env.RELEASE_VERSION}"/>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
