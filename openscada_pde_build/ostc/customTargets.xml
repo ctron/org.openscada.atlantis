@@ -74,6 +74,7 @@
 	
 	<fetch-module src="${svn.base}/org.openscada.da.client" type="plugin" name="org.openscada.da.client"/>
   	<fetch-module src="${svn.base}/org.openscada.external.org.apache.log4j" type="plugin" name="org.openscada.external.org.apache.log4j"/>
+  	<fetch-module src="${svn.base}/org.openscada.external.org.slf4j" type="plugin" name="org.openscada.external.org.slf4j"/>
 	<fetch-module src="${svn.base}/org.apache.mina" type="plugin" name="org.apache.mina"/>
 	<fetch-module src="${svn.base}/org.openscada.rcp.update" type="plugin" name="org.openscada.rcp.update"/>
   	<fetch-module src="${svn.base}/org.openscada.da.client.test" type="plugin" name="org.openscada.da.client.test"/>
