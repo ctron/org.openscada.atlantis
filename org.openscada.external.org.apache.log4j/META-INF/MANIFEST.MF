@@ -25,5 +25,5 @@ Export-Package: org.apache.log4j,
  org.apache.log4j.varia,
  org.apache.log4j.xml
 Bundle-Vendor: inavare GmbH
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
