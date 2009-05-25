@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA SignalGenerator Plug-in
 Bundle-SymbolicName: org.openscada.da.client.signalGenerator;singleton:=true
-Bundle-Version: 0.13.0
+Bundle-Version: 0.13.1
 Bundle-Activator: org.openscada.da.client.signalgenerator.Activator
 Bundle-Vendor: inavare GmbH
 Require-Bundle: org.eclipse.ui,

@@ -27,8 +27,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -68,9 +68,8 @@ public class AnalogPage extends AbstractStepGeneratorPage implements GeneratorPa
 
         Label label;
 
-        final SelectionAdapter updateAdapter = new SelectionAdapter () {
-            @Override
-            public void widgetSelected ( final SelectionEvent e )
+        final ModifyListener updateAdapter = new ModifyListener () {
+            public void modifyText ( final ModifyEvent e )
             {
                 updateSelection ();
             }
@@ -81,7 +80,7 @@ public class AnalogPage extends AbstractStepGeneratorPage implements GeneratorPa
         label.setText ( Messages.getString ( "AnalogPage.PresetMin" ) ); //$NON-NLS-1$
         this.minText = new Text ( comp, SWT.BORDER | SWT.SINGLE );
         this.minText.setText ( "-20" ); //$NON-NLS-1$
-        this.minText.addSelectionListener ( updateAdapter );
+        this.minText.addModifyListener ( updateAdapter );
         this.minText.setLayoutData ( labelData () );
 
         // max
@@ -89,7 +88,7 @@ public class AnalogPage extends AbstractStepGeneratorPage implements GeneratorPa
         label.setText ( Messages.getString ( "AnalogPage.PresetMax" ) ); //$NON-NLS-1$
         this.maxText = new Text ( comp, SWT.BORDER | SWT.SINGLE );
         this.maxText.setText ( "20" ); //$NON-NLS-1$
-        this.maxText.addSelectionListener ( updateAdapter );
+        this.maxText.addModifyListener ( updateAdapter );
         this.maxText.setLayoutData ( labelData () );
 
         // frequency
@@ -97,7 +96,7 @@ public class AnalogPage extends AbstractStepGeneratorPage implements GeneratorPa
         label.setText ( Messages.getString ( "AnalogPage.PresetPeriod" ) ); //$NON-NLS-1$
         this.perText = new Text ( comp, SWT.BORDER | SWT.SINGLE );
         this.perText.setText ( "2000" ); //$NON-NLS-1$
-        this.perText.addSelectionListener ( updateAdapter );
+        this.perText.addModifyListener ( updateAdapter );
         this.perText.setLayoutData ( labelData () );
 
         // function

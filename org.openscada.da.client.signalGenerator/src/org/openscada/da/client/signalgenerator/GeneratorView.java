@@ -119,8 +119,8 @@ public class GeneratorView extends ViewPart implements SimulationTarget
 
         this.header.setLayout ( new RowLayout () );
 
-        this.startButton = new Button ( this.header, SWT.BORDER | SWT.TOGGLE );
-        this.startButton.setText ( Messages.getString("GeneratorView.ButtonGo") ); //$NON-NLS-1$
+        this.startButton = new Button ( this.header, SWT.TOGGLE );
+        this.startButton.setText ( Messages.getString ( "GeneratorView.ButtonGo" ) ); //$NON-NLS-1$
         this.startButton.addSelectionListener ( new SelectionAdapter () {
             @Override
             public void widgetSelected ( final SelectionEvent e )

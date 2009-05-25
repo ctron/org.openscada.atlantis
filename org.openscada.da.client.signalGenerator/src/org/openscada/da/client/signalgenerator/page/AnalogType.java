@@ -25,7 +25,7 @@ import org.openscada.core.Variant;
 
 public enum AnalogType
 {
-    SINE ( Messages.getString("AnalogType.TypeSine.label") ) //$NON-NLS-1$
+    SINE ( Messages.getString ( "AnalogType.TypeSine.label" ) ) //$NON-NLS-1$
     {
         public Variant generate ( final double timeIndex, final double min, final double max, final double period )
         {
@@ -35,17 +35,17 @@ public enum AnalogType
         }
 
     },
-    COSINE ( Messages.getString("AnalogType.TypeCosine.label") ) //$NON-NLS-1$
+    COSINE ( Messages.getString ( "AnalogType.TypeCosine.label" ) ) //$NON-NLS-1$
     {
         public Variant generate ( final double timeIndex, final double min, final double max, final double period )
         {
-            double val = Math.sin ( timeIndex * 1.0 / period );
+            double val = Math.cos ( timeIndex * 1.0 / period );
             val = scale ( min, max, val );
             return new Variant ( val );
         }
 
     },
-    RANDOM_NORMAL ( Messages.getString("AnalogType.TypeRandom.label") ) //$NON-NLS-1$
+    RANDOM_NORMAL ( Messages.getString ( "AnalogType.TypeRandom.label" ) ) //$NON-NLS-1$
     {
         private final Random r = new Random ();
 
@@ -55,7 +55,7 @@ public enum AnalogType
             return new Variant ( this.r.nextDouble () * range + min );
         }
     },
-    RANDOM_GAUSSIAN ( Messages.getString("AnalogType.TypeRandomGaussian.label") ) //$NON-NLS-1$
+    RANDOM_GAUSSIAN ( Messages.getString ( "AnalogType.TypeRandomGaussian.label" ) ) //$NON-NLS-1$
     {
         private final Random r = new Random ();
 
@@ -64,7 +64,7 @@ public enum AnalogType
             return new Variant ( scale ( min, max, this.r.nextGaussian () / 2.0 ) );
         }
     },
-    TRIANGLE ( Messages.getString("AnalogType.TypeTriangle.label") ) //$NON-NLS-1$
+    TRIANGLE ( Messages.getString ( "AnalogType.TypeTriangle.label" ) ) //$NON-NLS-1$
     {
         public Variant generate ( final double timeIndex, final double min, final double max, final double period )
         {
@@ -74,7 +74,7 @@ public enum AnalogType
             return new Variant ( val );
         }
     },
-    SQUARE ( Messages.getString("AnalogType.TypeSquare.label") ) //$NON-NLS-1$
+    SQUARE ( Messages.getString ( "AnalogType.TypeSquare.label" ) ) //$NON-NLS-1$
     {
         public Variant generate ( final double timeIndex, final double min, final double max, final double period )
         {
