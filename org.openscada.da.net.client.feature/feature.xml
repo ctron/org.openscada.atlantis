@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.net.client"
       label="OpenSCADA DA NET Client Connector"
-      version="0.12.2"
+      version="0.13.0"
       provider-name="inavare GmbH"
       plugin="org.openscada.da.net.client">
 
@@ -524,6 +524,13 @@ DAMAGES.
 
    <plugin
          id="org.openscada.external.org.apache.log4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.external.org.slf4j"
          download-size="0"
          install-size="0"
          version="0.0.0"
