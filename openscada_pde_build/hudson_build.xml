@@ -28,7 +28,7 @@
 	<!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="check,unpackEclipse,build" description="Integration Build">
+    <target name="default" depends="check,unpackEclipse,build,deploy" description="Integration Build">
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -64,6 +64,25 @@
         <ant>
         	<property name="maven.repository" value="${maven.repository}"/>
     	</ant>
+    </target>
+    
+    <!-- ================================= 
+          target: deploy              
+         ================================= -->
+    <target name="deploy" depends="" description="Deploy">
+    	<mkdir dir="${deploy.base}/atlantis/integration/${ENV.BUILD_ID}/ostc"/>
+    	<copy todir="${deploy.base}/atlantis/integration/${ENV.BUILD_ID}/ostc">
+    		<fileset dir="${deploy.base}/deploy/ostc">
+    			<include name="*.zip"/>
+    		</fileset>
+    	</copy>
+    	
+    	<mkdir dir="${deploy.base}/atlantis/integration/${ENV.BUILD_ID}/ide"/>
+    	<copy todir="${deploy.base}/atlantis/integration/${ENV.BUILD_ID}/ide">
+    		<fileset dir="${deploy.base}/deploy/ide">
+    			<include name="*.zip"/>
+    		</fileset>
+    	</copy>
     </target>
 
 	
