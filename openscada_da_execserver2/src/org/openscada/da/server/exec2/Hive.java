@@ -106,7 +106,7 @@ public class Hive extends HiveCommon
      * Stops all running command queues and destroy them
      */
     @Override
-    public void dispose ()
+    public void stop ()
     {
         for ( final CommandQueue queue : this.queues )
         {
