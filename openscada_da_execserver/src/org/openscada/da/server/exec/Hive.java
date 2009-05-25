@@ -188,9 +188,10 @@ public class Hive extends HiveCommon
 
     /**
      * Stops all running command queues
+     * @throws Exception 
      */
     @Override
-    public void dispose ()
+    public void stop () throws Exception
     {
         // Send stop request
         for ( final Timer executor : this.threads )
@@ -200,5 +201,7 @@ public class Hive extends HiveCommon
 
         // Remove all threads from the list
         this.threads.clear ();
+
+        super.stop ();
     }
 }
