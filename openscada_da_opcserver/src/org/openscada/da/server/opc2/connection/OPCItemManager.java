@@ -93,7 +93,7 @@ public class OPCItemManager extends AbstractPropertyChange implements ItemSource
         this.allItemsFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "opc.itemId" ), "\\.", 0, 1 ), new PatternNameProvider ( new AttributeNameProvider ( "opc.itemId" ), Pattern.compile ( ".*\\.(.*?)$" ), 1 ) );
         this.allItemsStorage.addChild ( this.allItemsFolder );
 
-        this.parentItemFactory.getFolder ().add ( "registeredItems", this.allItemsFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Contains all items that are known by this OPC connection" ) ).getMap () );
+        this.parentItemFactory.getFolder ().add ( "registeredItems", this.allItemsFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Contains all items that are registered with the OPC server" ) ).getMap () );
     }
 
     public int getRegisteredItemCount ()
