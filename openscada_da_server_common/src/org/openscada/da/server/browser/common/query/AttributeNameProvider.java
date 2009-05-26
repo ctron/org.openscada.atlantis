@@ -19,6 +19,11 @@
 
 package org.openscada.da.server.browser.common.query;
 
+/**
+ * Return an attribute as the name
+ * @author Jens Reimann
+ *
+ */
 public class AttributeNameProvider implements NameProvider
 {
     private String attribute = null;
