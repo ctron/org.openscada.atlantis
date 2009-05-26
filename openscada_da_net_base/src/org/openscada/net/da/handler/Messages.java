@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ package org.openscada.net.da.handler;
 
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
@@ -124,7 +125,7 @@ public class Messages extends org.openscada.core.net.MessageHelper
         return msg;
     }
 
-    public static int encodeIO ( final EnumSet<IODirection> io )
+    public static int encodeIO ( final Set<IODirection> io )
     {
         int bits = 0;
         if ( io.contains ( IODirection.INPUT ) )
@@ -139,7 +140,7 @@ public class Messages extends org.openscada.core.net.MessageHelper
         return bits;
     }
 
-    public static EnumSet<IODirection> decodeIO ( final int bits )
+    public static Set<IODirection> decodeIO ( final int bits )
     {
         final EnumSet<IODirection> ioDirection = EnumSet.noneOf ( IODirection.class );
 
