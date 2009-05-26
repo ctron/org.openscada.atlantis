@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,21 +21,21 @@ package org.openscada.da.server.browser.common.query;
 
 public class AttributeNameProvider implements NameProvider
 {
-    private String _attribute = null;
+    private String attribute = null;
 
     public AttributeNameProvider ( final String attribute )
     {
-        this._attribute = attribute;
+        this.attribute = attribute;
     }
 
     public String getName ( final ItemDescriptor descriptor )
     {
-        if ( this._attribute == null )
+        if ( this.attribute == null )
         {
             return null;
         }
 
-        return descriptor.getAttributes ().get ( this._attribute ).asString ( null );
+        return descriptor.getAttributes ().get ( this.attribute ).asString ( null );
     }
 
 }
