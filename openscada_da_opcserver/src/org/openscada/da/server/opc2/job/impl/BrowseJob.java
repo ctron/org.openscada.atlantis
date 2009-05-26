@@ -62,7 +62,10 @@ public class BrowseJob extends ThreadJob implements JobResult<BrowseResult>
     @Override
     protected void perform () throws Exception
     {
-        logger.info ( String.format ( "Browsing folder: %s", StringHelper.join ( this.request.getPath (), "/" ) ) );
+        if ( logger.isInfoEnabled () )
+        {
+            logger.info ( String.format ( "Browsing folder: %s", StringHelper.join ( this.request.getPath (), "/" ) ) );
+        }
 
         final OPCBrowseServerAddressSpace browser = this.model.getServer ().getBrowser ();
         if ( browser == null )

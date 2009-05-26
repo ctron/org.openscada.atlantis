@@ -83,7 +83,10 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
             {
                 return;
             }
-            logger.info ( String.format ( "Need to refresh folder (%s)", getPath () ) );
+            if ( logger.isInfoEnabled () )
+            {
+                logger.info ( String.format ( "Need to refresh folder (%s)", getPath () ) );
+            }
             this.refreshed = true;
         }
         refresh ();
@@ -136,11 +139,6 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
             // create the openscada item id from the opc item id
             final String itemId = this.controller.getItemManager ().createItemId ( entry.getItemId () );
             final DataItemInformation itemInformation = new DataItemInformationBase ( itemId, entry.getIoDirections () );
-
-            /*
-            final OPCItem item = this.controller.getItemManager ().registerItem ( entry.getItemId (), entry.getIoDirections (), null );
-            items.put ( entry.getEntryName (), item );
-            */
 
             items.put ( entry.getEntryName (), itemInformation );
         }
