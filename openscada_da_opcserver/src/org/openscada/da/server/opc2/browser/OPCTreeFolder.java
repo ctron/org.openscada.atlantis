@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import org.apache.log4j.Logger;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.da.server.browser.common.Folder;
@@ -33,9 +34,11 @@ import org.openscada.da.server.browser.common.FolderListener;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.opc2.connection.OPCController;
 import org.openscada.da.server.opc2.connection.OPCItem;
+import org.openscada.utils.str.StringHelper;
 
 public class OPCTreeFolder implements org.openscada.da.server.browser.common.Folder, BrowseRequestListener
 {
+    private static Logger logger = Logger.getLogger ( OPCTreeFolder.class );
 
     protected FolderCommon folderImpl = new FolderCommon ();
 
@@ -80,6 +83,7 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
             {
                 return;
             }
+            logger.info ( String.format ( "Need to refresh folder (%s)", getPath () ) );
             this.refreshed = true;
         }
         refresh ();
@@ -92,7 +96,27 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
 
     public void unsubscribe ( final Stack<String> path, final Object tag ) throws NoSuchFolderException
     {
-        this.folderImpl.unsubscribe ( path, tag );
+        try
+        {
+            this.folderImpl.unsubscribe ( path, tag );
+        }
+        finally
+        {
+            checkCleanUp ();
+        }
+    }
+
+    protected void checkCleanUp ()
+    {
+        synchronized ( this )
+        {
+            if ( !this.folderImpl.hasSubribers () && this.refreshed )
+            {
+                logger.info ( String.format ( "No more subscribers. Clearing folder. (%s)", getPath () ) );
+                this.refreshed = false;
+                this.folderImpl.clear ();
+            }
+        }
     }
 
     public void browseComplete ( final BrowseResult result )
@@ -113,11 +137,17 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
             items.put ( entry.getEntryName (), item );
         }
 
-        // bulkd add entries
+        // bulk add entries
         this.folderImpl.add ( folders, items );
     }
 
     public void browseError ( final Throwable error )
     {
+        logger.info ( "Failed to browse", error );
+    }
+
+    protected String getPath ()
+    {
+        return StringHelper.join ( this.path, "/" );
     }
 }
