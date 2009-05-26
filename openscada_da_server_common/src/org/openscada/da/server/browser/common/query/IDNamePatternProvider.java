@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,18 +28,18 @@ public class IDNamePatternProvider extends IDNameProvider
      * A name pattern. If set the name will be built from the group #0
      * match of this pattern.
      */
-    private Pattern _namePattern;
+    private Pattern namePattern;
 
-    private int _matchGroup = 0;
+    private int matchGroup = 0;
 
     public void setNamePattern ( final Pattern namePattern )
     {
-        this._namePattern = namePattern;
+        this.namePattern = namePattern;
     }
 
     public void setMatchGroup ( final int matchGroup )
     {
-        this._matchGroup = matchGroup;
+        this.matchGroup = matchGroup;
     }
 
     @Override
@@ -51,10 +51,10 @@ public class IDNamePatternProvider extends IDNameProvider
             return null;
         }
 
-        final Matcher m = this._namePattern.matcher ( name );
+        final Matcher m = this.namePattern.matcher ( name );
         if ( m.matches () )
         {
-            return m.group ( this._matchGroup );
+            return m.group ( this.matchGroup );
         }
         else
         {
