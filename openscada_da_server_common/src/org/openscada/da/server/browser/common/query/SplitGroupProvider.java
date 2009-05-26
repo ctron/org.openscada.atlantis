@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,18 +21,26 @@ package org.openscada.da.server.browser.common.query;
 
 public class SplitGroupProvider implements GroupProvider
 {
-    private NameProvider _nameProvider = null;
+    private NameProvider nameProvider = null;
 
-    private String _regex = "";
+    private String regex = "";
 
-    private int _skipPrefix = 0;
+    private int skipPrefix = 0;
 
-    private int _skipSuffix = 0;
+    private int skipSuffix = 0;
 
     public SplitGroupProvider ( final NameProvider nameProvider, final String regex )
     {
-        this._nameProvider = nameProvider;
-        this._regex = regex;
+        this.nameProvider = nameProvider;
+        this.regex = regex;
+    }
+
+    public SplitGroupProvider ( final NameProvider nameProvider, final String regex, final int skipPrefix, final int skipSuffix )
+    {
+        this.nameProvider = nameProvider;
+        this.regex = regex;
+        this.skipPrefix = skipPrefix;
+        this.skipSuffix = skipSuffix;
     }
 
     public SplitGroupProvider ()
@@ -41,12 +49,12 @@ public class SplitGroupProvider implements GroupProvider
 
     public String[] getGrouping ( final ItemDescriptor descriptor )
     {
-        if ( this._nameProvider == null )
+        if ( this.nameProvider == null )
         {
             return null;
         }
 
-        final String name = this._nameProvider.getName ( descriptor );
+        final String name = this.nameProvider.getName ( descriptor );
 
         if ( name == null )
         {
@@ -55,15 +63,15 @@ public class SplitGroupProvider implements GroupProvider
 
         try
         {
-            final String[] tok = name.split ( this._regex );
-            if ( this._skipPrefix + this._skipSuffix >= tok.length )
+            final String[] tok = name.split ( this.regex );
+            if ( this.skipPrefix + this.skipSuffix >= tok.length )
             {
                 return null;
             }
-            final String[] result = new String[tok.length - ( this._skipPrefix + this._skipSuffix )];
-            for ( int i = this._skipPrefix; i < tok.length - this._skipSuffix; i++ )
+            final String[] result = new String[tok.length - ( this.skipPrefix + this.skipSuffix )];
+            for ( int i = this.skipPrefix; i < tok.length - this.skipSuffix; i++ )
             {
-                result[i - this._skipPrefix] = tok[i];
+                result[i - this.skipPrefix] = tok[i];
             }
             return result;
         }
@@ -75,22 +83,22 @@ public class SplitGroupProvider implements GroupProvider
 
     public void setNameProvider ( final NameProvider nameProvider )
     {
-        this._nameProvider = nameProvider;
+        this.nameProvider = nameProvider;
     }
 
     public void setRegex ( final String regex )
     {
-        this._regex = regex;
+        this.regex = regex;
     }
 
     public void setSkipPrefix ( final int skipPrefix )
     {
-        this._skipPrefix = skipPrefix;
+        this.skipPrefix = skipPrefix;
     }
 
     public void setSkipSuffix ( final int skipSuffix )
     {
-        this._skipSuffix = skipSuffix;
+        this.skipSuffix = skipSuffix;
     }
 
 }
