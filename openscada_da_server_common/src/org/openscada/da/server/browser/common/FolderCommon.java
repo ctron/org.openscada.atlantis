@@ -78,7 +78,7 @@ public class FolderCommon implements Folder, ConfigurableFolder
         }
         else
         {
-            throw new NoSuchFolderException ();
+            throw new NoSuchFolderException ( new String[] { name } );
         }
 
     }
@@ -310,6 +310,15 @@ public class FolderCommon implements Folder, ConfigurableFolder
     public synchronized void clearListeners ()
     {
         this.listeners.clear ();
+    }
+
+    /**
+     * Check if there are subscribers
+     * @return <code>true</code> if there are active subscribers
+     */
+    public synchronized boolean hasSubribers ()
+    {
+        return !this.listeners.isEmpty ();
     }
 
     private synchronized void sendCurrentList ( final FolderListener listener, final Object tag )
