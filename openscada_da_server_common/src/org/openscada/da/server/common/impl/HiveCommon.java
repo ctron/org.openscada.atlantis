@@ -192,7 +192,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
                 {
                     listener.destroy ( session );
                 }
-                catch ( final Exception e )
+                catch ( final Throwable e )
                 {
                 }
             }
