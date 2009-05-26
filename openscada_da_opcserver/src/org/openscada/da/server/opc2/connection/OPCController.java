@@ -45,7 +45,7 @@ public class OPCController implements Runnable
 
     private static Logger logger = Logger.getLogger ( OPCController.class );
 
-    private boolean running = true;
+    private volatile boolean running = true;
 
     private final Worker worker;
 
@@ -140,19 +140,6 @@ public class OPCController implements Runnable
 
                 final OPCIoContext ctx = this.ioManager.prepareProcessing ();
                 this.ioManager.performProcessing ( ctx, OPCDATASOURCE.OPC_DS_CACHE );
-
-                /*
-                ioManager.processRequests ();
-
-                setControllerState ( ControllerState.ACTIVATING );
-                ioManager.processActivations ();
-
-                setControllerState ( ControllerState.WRITING );
-                ioManager.processWriteRequests ();
-
-                setControllerState ( ControllerState.READING );
-                ioManager.read ( OPCDATASOURCE.OPC_DS_CACHE );
-                */
 
                 setControllerState ( ControllerState.BROWSING );
                 this.browserManager.performBrowse ();
