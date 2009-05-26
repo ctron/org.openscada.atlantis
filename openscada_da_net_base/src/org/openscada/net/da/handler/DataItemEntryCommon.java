@@ -21,6 +21,7 @@ package org.openscada.net.da.handler;
 
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
@@ -30,9 +31,9 @@ public class DataItemEntryCommon extends EntryCommon implements DataItemEntry
 {
     private String id = "";
 
-    private EnumSet<IODirection> directions = EnumSet.noneOf ( IODirection.class );
+    private Set<IODirection> directions = EnumSet.noneOf ( IODirection.class );
 
-    public DataItemEntryCommon ( final String name, final EnumSet<IODirection> directions, final Map<String, Variant> attributes, final String id )
+    public DataItemEntryCommon ( final String name, final Set<IODirection> directions, final Map<String, Variant> attributes, final String id )
     {
         super ( name, attributes );
         this.directions = directions;
@@ -44,7 +45,7 @@ public class DataItemEntryCommon extends EntryCommon implements DataItemEntry
         return this.id;
     }
 
-    public EnumSet<IODirection> getIODirections ()
+    public Set<IODirection> getIODirections ()
     {
         return this.directions;
     }
