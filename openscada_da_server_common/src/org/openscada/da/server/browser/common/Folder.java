@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,20 +26,20 @@ import org.openscada.da.core.server.browser.NoSuchFolderException;
 
 public interface Folder
 {
-    Entry[] list ( Stack<String> path ) throws NoSuchFolderException;
+    public Entry[] list ( Stack<String> path ) throws NoSuchFolderException;
 
-    void subscribe ( Stack<String> path, FolderListener listener, Object tag ) throws NoSuchFolderException;
+    public void subscribe ( Stack<String> path, FolderListener listener, Object tag ) throws NoSuchFolderException;
 
-    void unsubscribe ( Stack<String> path, Object tag ) throws NoSuchFolderException;
+    public void unsubscribe ( Stack<String> path, Object tag ) throws NoSuchFolderException;
 
     /**
      * Called when the folder was added to the browser space
      */
-    void added ();
+    public void added ();
 
     /**
      * Called when the folder was removed from the browser space
      *
      */
-    void removed ();
+    public void removed ();
 }
