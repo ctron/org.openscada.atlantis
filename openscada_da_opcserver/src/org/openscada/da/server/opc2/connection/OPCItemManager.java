@@ -71,7 +71,7 @@ public class OPCItemManager extends AbstractPropertyChange implements ItemSource
 
     private final InvisibleStorage allItemsStorage = new InvisibleStorage ();
 
-    private final GroupFolder knownItemsFolder;
+    private final GroupFolder allItemsFolder;
 
     private final ConnectionSetup configuration;
 
@@ -90,10 +90,10 @@ public class OPCItemManager extends AbstractPropertyChange implements ItemSource
 
         this.itemIdPrefix = this.configuration.getItemIdPrefix ();
 
-        this.knownItemsFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "opc.itemId" ), "\\.", 0, 1 ), new PatternNameProvider ( new AttributeNameProvider ( "opc.itemId" ), Pattern.compile ( ".*\\.(.*?)$" ), 1 ) );
-        this.allItemsStorage.addChild ( this.knownItemsFolder );
+        this.allItemsFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "opc.itemId" ), "\\.", 0, 1 ), new PatternNameProvider ( new AttributeNameProvider ( "opc.itemId" ), Pattern.compile ( ".*\\.(.*?)$" ), 1 ) );
+        this.allItemsStorage.addChild ( this.allItemsFolder );
 
-        this.parentItemFactory.getFolder ().add ( "knownItems", this.knownItemsFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Contains all items that are known by this OPC connection" ) ).getMap () );
+        this.parentItemFactory.getFolder ().add ( "allItems", this.allItemsFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Contains all items that are known by this OPC connection" ) ).getMap () );
     }
 
     public int getRegisteredItemCount ()
@@ -115,7 +115,7 @@ public class OPCItemManager extends AbstractPropertyChange implements ItemSource
         final FolderCommon folder = this.parentItemFactory.getFolder ();
         if ( folder != null )
         {
-            folder.remove ( this.knownItemsFolder );
+            folder.remove ( this.allItemsFolder );
         }
     }
 
