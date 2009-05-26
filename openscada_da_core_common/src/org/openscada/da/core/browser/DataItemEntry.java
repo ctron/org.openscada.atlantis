@@ -19,7 +19,7 @@
 
 package org.openscada.da.core.browser;
 
-import java.util.EnumSet;
+import java.util.Set;
 
 import org.openscada.da.core.IODirection;
 
@@ -27,5 +27,5 @@ public interface DataItemEntry extends Entry
 {
     public String getId ();
 
-    public EnumSet<IODirection> getIODirections ();
+    public Set<IODirection> getIODirections ();
 }
