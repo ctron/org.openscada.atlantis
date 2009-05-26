@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,24 +28,24 @@ import org.openscada.da.core.browser.DataItemEntry;
 
 public class DataItemEntryCommon extends EntryCommon implements DataItemEntry
 {
-    private String _id = "";
+    private String id = "";
 
-    private EnumSet<IODirection> _directions = EnumSet.noneOf ( IODirection.class );
+    private EnumSet<IODirection> directions = EnumSet.noneOf ( IODirection.class );
 
     public DataItemEntryCommon ( final String name, final EnumSet<IODirection> directions, final Map<String, Variant> attributes, final String id )
     {
         super ( name, attributes );
-        this._directions = directions;
-        this._id = id;
+        this.directions = directions;
+        this.id = id;
     }
 
     public String getId ()
     {
-        return this._id;
+        return this.id;
     }
 
     public EnumSet<IODirection> getIODirections ()
     {
-        return this._directions;
+        return this.directions;
     }
 }
