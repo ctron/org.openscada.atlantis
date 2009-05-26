@@ -37,7 +37,7 @@ import org.openscada.opc.lib.da.browser.Access;
 
 public class Helper
 {
-    private static Logger _log = Logger.getLogger ( Helper.class );
+    private static Logger logger = Logger.getLogger ( Helper.class );
 
     public static Variant theirs2ours ( final JIVariant variant )
     {
@@ -100,7 +100,7 @@ public class Helper
         }
         catch ( final JIException e )
         {
-            _log.warn ( "Failed to convert", e );
+            logger.warn ( "Failed to convert", e );
             return null;
         }
     }
@@ -136,7 +136,7 @@ public class Helper
         }
         catch ( final Exception e )
         {
-            _log.warn ( "Unable to convert write value", e );
+            logger.warn ( "Unable to convert write value", e );
             return null;
         }
         return null;

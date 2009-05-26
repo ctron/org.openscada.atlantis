@@ -80,7 +80,6 @@ public class Hive extends HiveCommon
         }
         JISystem.setJavaCoClassAutoCollection ( !Boolean.getBoolean ( "dcom.disableAutoCollection" ) );
         logger.info ( "DCOM auto collection: " + JISystem.isJavaCoClassAutoCollectionSet () );
-
     }
 
     public void addConnection ( final ConnectionSetup setup, final boolean connect, final Collection<String> initialOpcItems )
