@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,16 +19,19 @@
 
 package org.openscada.da.core.server.browser;
 
-public class NoSuchFolderException extends Exception
+import org.openscada.utils.statuscodes.CodedException;
+import org.openscada.utils.str.StringHelper;
+
+public class NoSuchFolderException extends CodedException
 {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -3884575549921027507L;
+    private static final long serialVersionUID = -2354532100658455884L;
 
-    public NoSuchFolderException ()
+    public NoSuchFolderException ( final String[] path )
     {
-        super ( "No such folder" );
+        super ( StatusCodes.NO_SUCH_FOLDER, String.format ( "No such folder (%s)", StringHelper.join ( path, "/" ) ) );
     }
 }
