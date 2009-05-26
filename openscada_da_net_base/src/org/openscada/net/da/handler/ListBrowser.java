@@ -22,9 +22,9 @@ package org.openscada.net.da.handler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
@@ -212,7 +212,7 @@ public class ListBrowser
 
                 final String id = mapValue.get ( "item-id" ).toString ();
 
-                final EnumSet<IODirection> io = Messages.decodeIO ( ValueTools.toInteger ( mapValue.get ( "io-direction" ), 0 ) );
+                final Set<IODirection> io = Messages.decodeIO ( ValueTools.toInteger ( mapValue.get ( "io-direction" ), 0 ) );
 
                 entry = new DataItemEntryCommon ( mapValue.get ( "name" ).toString (), io, attributes, id );
             }
