@@ -65,7 +65,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
                 {
                     if ( getRootFolder () == null )
                     {
-                        throw new NoSuchFolderException ();
+                        throw new NoSuchFolderException ( location.asArray () );
                     }
                     final Entry[] entry = getRootFolder ().list ( location.getPathStack () );
                     if ( !isCanceled () )
@@ -93,7 +93,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
         if ( getRootFolder () == null )
         {
             logger.warn ( "Having a brower interface without root folder" );
-            throw new NoSuchFolderException ();
+            throw new NoSuchFolderException ( location.asArray () );
         }
 
         final Stack<String> pathStack = location.getPathStack ();
@@ -132,7 +132,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
         if ( getRootFolder () == null )
         {
             logger.warn ( "Having a brower interface without root folder" );
-            throw new NoSuchFolderException ();
+            throw new NoSuchFolderException ( location.asArray () );
         }
 
         unsubscribePath ( (SessionCommon)session, location );
