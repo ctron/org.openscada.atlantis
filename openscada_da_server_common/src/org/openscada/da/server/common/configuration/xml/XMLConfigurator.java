@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -267,7 +267,7 @@ public class XMLConfigurator implements Configurator
             final Map<String, Variant> browserAttributes = new HashMap<String, Variant> ( item.getBrowserAttributes () );
             browserAttributes.putAll ( attributes );
 
-            configurableFolder.add ( name, item.getItem (), browserAttributes );
+            configurableFolder.add ( name, item.getItem ().getInformation (), browserAttributes );
         }
         else if ( itemReference.getWeakRef () != null )
         {
@@ -278,7 +278,7 @@ public class XMLConfigurator implements Configurator
 
             if ( dataItem != null )
             {
-                configurableFolder.add ( name, dataItem, attributes );
+                configurableFolder.add ( name, dataItem.getInformation (), attributes );
             }
             else
             {

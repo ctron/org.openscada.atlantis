@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,57 +20,56 @@
 package org.openscada.da.server.browser.common;
 
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.openscada.core.Variant;
+import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.browser.DataItemEntry;
-import org.openscada.da.server.common.DataItem;
 
 public class DataItemEntryCommon implements DataItemEntry
 {
 
-    private String _name = null;
+    private final String name;
 
-    private DataItem _item = null;
+    private final DataItemInformation itemInformation;
 
-    private Map<String, Variant> _attributes = null;
+    private final Map<String, Variant> attributes;
 
-    public DataItemEntryCommon ( final String name, final DataItem item, final Map<String, Variant> attributes )
+    public DataItemEntryCommon ( final String name, final DataItemInformation itemInformation, final Map<String, Variant> attributes )
     {
-        this._name = name;
-        this._item = item;
-        this._attributes = attributes;
-        if ( this._attributes == null )
+        this.name = name;
+        this.itemInformation = itemInformation;
+
+        if ( attributes == null )
         {
-            this._attributes = Collections.emptyMap ();
+            this.attributes = Collections.emptyMap ();
+        }
+        else
+        {
+            this.attributes = attributes;
         }
     }
 
     public String getId ()
     {
-        return this._item.getInformation ().getName ();
+        return this.itemInformation.getName ();
     }
 
     public String getName ()
     {
-        return this._name;
-    }
-
-    public DataItem getItem ()
-    {
-        return this._item;
+        return this.name;
     }
 
     public Map<String, Variant> getAttributes ()
     {
-        return this._attributes;
+        return this.attributes;
     }
 
-    public EnumSet<IODirection> getIODirections ()
+    public Set<IODirection> getIODirections ()
     {
-        return this._item.getInformation ().getIODirection ().clone ();
+        return Collections.unmodifiableSet ( this.itemInformation.getIODirection () );
     }
 
 }

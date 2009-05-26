@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.openscada.core.Variant;
+import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.da.server.common.DataItem;
@@ -89,7 +90,7 @@ public class FolderCommon implements Folder, ConfigurableFolder
      * @param items items to register or <code>null</code> if no item should be registered
      * @return number of items added
      */
-    public synchronized int add ( final Map<String, Folder> folders, final Map<String, DataItem> items )
+    public synchronized int add ( final Map<String, Folder> folders, final Map<String, DataItemInformation> items )
     {
         final Collection<Entry> entries = new ArrayList<Entry> ( folders.size () + items.size () );
 
@@ -111,16 +112,16 @@ public class FolderCommon implements Folder, ConfigurableFolder
             }
         }
 
-        // add entries
+        // add items
         if ( items != null )
         {
-            for ( final Map.Entry<String, DataItem> itemEntry : items.entrySet () )
+            for ( final Map.Entry<String, DataItemInformation> itemEntry : items.entrySet () )
             {
                 final String name = itemEntry.getKey ();
-                final DataItem dataItem = itemEntry.getValue ();
+                final DataItemInformation itemInformation = itemEntry.getValue ();
                 if ( !this.entryMap.containsKey ( name ) )
                 {
-                    final Entry entry = new DataItemEntryCommon ( name, dataItem, null );
+                    final Entry entry = new DataItemEntryCommon ( name, itemInformation, null );
                     this.entryMap.put ( name, entry );
                     entries.add ( entry );
                 }
@@ -158,12 +159,14 @@ public class FolderCommon implements Folder, ConfigurableFolder
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.openscada.da.server.browser.common.ConfigurableFolder#add(java.lang.String, org.openscada.da.server.common.DataItem, java.util.Map)
-     */
-    public boolean add ( final String name, final DataItem item, final Map<String, Variant> attributes )
+    public boolean add ( final String name, final DataItem dataItem, final Map<String, Variant> attributes )
     {
-        if ( item.getInformation ().getName () == null )
+        return add ( name, dataItem.getInformation (), attributes );
+    }
+
+    public boolean add ( final String name, final DataItemInformation itemInformation, final Map<String, Variant> attributes )
+    {
+        if ( itemInformation == null || itemInformation.getName () == null )
         {
             throw new NullPointerException ( "Item must have an id" );
         }
@@ -172,7 +175,7 @@ public class FolderCommon implements Folder, ConfigurableFolder
         {
             if ( !this.entryMap.containsKey ( name ) )
             {
-                final Entry entry = new DataItemEntryCommon ( name, item, attributes );
+                final Entry entry = new DataItemEntryCommon ( name, itemInformation, attributes );
                 this.entryMap.put ( name, entry );
                 notifyAdd ( entry );
                 return true;
@@ -207,10 +210,11 @@ public class FolderCommon implements Folder, ConfigurableFolder
     {
         for ( final Iterator<Map.Entry<String, Entry>> i = this.entryMap.entrySet ().iterator (); i.hasNext (); )
         {
+            final String itemId = item.getInformation ().getName ();
             final Map.Entry<String, Entry> entry = i.next ();
             if ( entry.getValue () instanceof DataItemEntryCommon )
             {
-                if ( ( (DataItemEntryCommon)entry.getValue () ).getItem () == item )
+                if ( ( (DataItemEntryCommon)entry.getValue () ).getId () == itemId )
                 {
                     return entry.getKey ();
                 }
@@ -258,10 +262,11 @@ public class FolderCommon implements Folder, ConfigurableFolder
     {
         for ( final Iterator<Map.Entry<String, Entry>> i = this.entryMap.entrySet ().iterator (); i.hasNext (); )
         {
+            final String itemId = item.getInformation ().getName ();
             final Map.Entry<String, Entry> entry = i.next ();
             if ( entry.getValue () instanceof DataItemEntryCommon )
             {
-                if ( ( (DataItemEntryCommon)entry.getValue () ).getItem () == item )
+                if ( ( (DataItemEntryCommon)entry.getValue () ).getId () == itemId )
                 {
                     i.remove ();
                     notifyRemove ( entry.getKey () );
@@ -316,7 +321,7 @@ public class FolderCommon implements Folder, ConfigurableFolder
      * Check if there are subscribers
      * @return <code>true</code> if there are active subscribers
      */
-    public synchronized boolean hasSubribers ()
+    public synchronized boolean hasSubscribers ()
     {
         return !this.listeners.isEmpty ();
     }

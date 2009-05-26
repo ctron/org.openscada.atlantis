@@ -117,7 +117,7 @@ public class FolderItemFactory extends HiveItemFactory
         {
             return;
         }
-        this.folder.add ( name, item, attributes );
+        this.folder.add ( name, item.getInformation (), attributes );
     }
 
     public FolderCommon getFolder ()
