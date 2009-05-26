@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
+import org.openscada.da.server.browser.common.query.AttributeNameProvider;
+import org.openscada.da.server.browser.common.query.GroupFolder;
+import org.openscada.da.server.browser.common.query.InvisibleStorage;
+import org.openscada.da.server.browser.common.query.ItemDescriptor;
+import org.openscada.da.server.browser.common.query.PatternNameProvider;
+import org.openscada.da.server.browser.common.query.SplitGroupProvider;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.exporter.AbstractPropertyChange;
@@ -52,6 +59,8 @@ import org.openscada.utils.collection.MapBuilder;
 
 public class OPCItemManager extends AbstractPropertyChange implements ItemSourceListener, IOListener
 {
+    private static final String PROP_REGISTERED_ITEM_COUNT = "registeredItemCount";
+
     private static Logger logger = Logger.getLogger ( OPCItemManager.class );
 
     private final Map<String, OPCItem> itemMap = new HashMap<String, OPCItem> ();
@@ -60,13 +69,17 @@ public class OPCItemManager extends AbstractPropertyChange implements ItemSource
 
     private final Hive hive;
 
-    private final FolderCommon knownItemsFolder;
+    private final InvisibleStorage allItemsStorage = new InvisibleStorage ();
+
+    private final GroupFolder knownItemsFolder;
 
     private final ConnectionSetup configuration;
 
     private final FolderItemFactory parentItemFactory;
 
     private final OPCController controller;
+
+    private int registeredItemCount = 0;
 
     public OPCItemManager ( final Worker worker, final ConnectionSetup configuration, final OPCModel model, final OPCController controller, final Hive hive, final FolderItemFactory parentItemFactory )
     {
@@ -77,8 +90,22 @@ public class OPCItemManager extends AbstractPropertyChange implements ItemSource
 
         this.itemIdPrefix = this.configuration.getItemIdPrefix ();
 
-        this.knownItemsFolder = new FolderCommon ();
+        this.knownItemsFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "opc.itemId" ), "\\.", 0, 1 ), new PatternNameProvider ( new AttributeNameProvider ( "opc.itemId" ), Pattern.compile ( ".*\\.(.*?)$" ), 1 ) );
+        this.allItemsStorage.addChild ( this.knownItemsFolder );
+
         this.parentItemFactory.getFolder ().add ( "knownItems", this.knownItemsFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Contains all items that are known by this OPC connection" ) ).getMap () );
+    }
+
+    public int getRegisteredItemCount ()
+    {
+        return this.registeredItemCount;
+    }
+
+    protected void setRegisteredItemCount ( final int registeredItemCount )
+    {
+        final int oldRegisteredItemCount = this.registeredItemCount;
+        this.registeredItemCount = registeredItemCount;
+        this.listeners.firePropertyChange ( PROP_REGISTERED_ITEM_COUNT, oldRegisteredItemCount, registeredItemCount );
     }
 
     public void shutdown ()
@@ -158,6 +185,8 @@ public class OPCItemManager extends AbstractPropertyChange implements ItemSource
 
             // add the item to the local map
             this.itemMap.put ( opcItemId, item );
+
+            setRegisteredItemCount ( this.itemMap.size () );
         }
 
         // apply the chain items
@@ -174,7 +203,8 @@ public class OPCItemManager extends AbstractPropertyChange implements ItemSource
             browserMap.putAll ( additionalBrowserAttributes );
         }
         // add to "allItems" folder
-        this.knownItemsFolder.add ( opcItemId, item, browserMap );
+        // this.knownItemsFolder.add ( opcItemId, item, browserMap );
+        this.allItemsStorage.added ( new ItemDescriptor ( item, new HashMap<String, Variant> ( browserMap ) ) );
 
         // return new item
         return item;
@@ -204,7 +234,7 @@ public class OPCItemManager extends AbstractPropertyChange implements ItemSource
         }
     }
 
-    private String createItemId ( final String opcItemId )
+    public String createItemId ( final String opcItemId )
     {
         return getItemPrefix () + "." + opcItemId;
     }

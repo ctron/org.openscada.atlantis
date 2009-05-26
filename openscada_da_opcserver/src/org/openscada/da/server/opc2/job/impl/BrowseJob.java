@@ -24,6 +24,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.da.core.IODirection;
@@ -37,9 +38,11 @@ import org.openscada.opc.dcom.da.OPCBROWSEDIRECTION;
 import org.openscada.opc.dcom.da.OPCBROWSETYPE;
 import org.openscada.opc.dcom.da.impl.OPCBrowseServerAddressSpace;
 import org.openscada.opc.lib.da.browser.Access;
+import org.openscada.utils.str.StringHelper;
 
 public class BrowseJob extends ThreadJob implements JobResult<BrowseResult>
 {
+    private static Logger logger = Logger.getLogger ( BrowseJob.class );
 
     private final OPCModel model;
 
@@ -59,9 +62,12 @@ public class BrowseJob extends ThreadJob implements JobResult<BrowseResult>
     @Override
     protected void perform () throws Exception
     {
+        logger.info ( String.format ( "Browsing folder: %s", StringHelper.join ( this.request.getPath (), "/" ) ) );
+
         final OPCBrowseServerAddressSpace browser = this.model.getServer ().getBrowser ();
         if ( browser == null )
         {
+            logger.warn ( "Unable to fetch browser" );
             return;
         }
 
@@ -85,6 +91,10 @@ public class BrowseJob extends ThreadJob implements JobResult<BrowseResult>
 
         // result
         this.result = result;
+        if ( logger.isInfoEnabled () )
+        {
+            logger.info ( String.format ( "Completed (Leaves: %s, Branches: %s)", result.getLeaves ().size (), result.getBranches ().size () ) );
+        }
     }
 
     private void processLeaves ( final BrowseResult result, final OPCBrowseServerAddressSpace browser, final Collection<String> readLeaves, final Collection<String> writeLeaves ) throws JIException
@@ -109,6 +119,7 @@ public class BrowseJob extends ThreadJob implements JobResult<BrowseResult>
             BrowseResultEntry entry = leavesResult.get ( leaf );
             if ( entry != null )
             {
+                // if we already found it as a read leaf we simply add "output"
                 entry.getIoDirections ().add ( IODirection.OUTPUT );
             }
             else

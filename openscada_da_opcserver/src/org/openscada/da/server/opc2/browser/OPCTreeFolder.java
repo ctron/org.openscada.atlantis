@@ -26,14 +26,14 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.FolderListener;
-import org.openscada.da.server.common.DataItem;
+import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.opc2.connection.OPCController;
-import org.openscada.da.server.opc2.connection.OPCItem;
 import org.openscada.utils.str.StringHelper;
 
 public class OPCTreeFolder implements org.openscada.da.server.browser.common.Folder, BrowseRequestListener
@@ -110,7 +110,7 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
     {
         synchronized ( this )
         {
-            if ( !this.folderImpl.hasSubribers () && this.refreshed )
+            if ( !this.folderImpl.hasSubscribers () && this.refreshed )
             {
                 logger.info ( String.format ( "No more subscribers. Clearing folder. (%s)", getPath () ) );
                 this.refreshed = false;
@@ -122,7 +122,7 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
     public void browseComplete ( final BrowseResult result )
     {
         final Map<String, Folder> folders = new HashMap<String, Folder> ();
-        final Map<String, DataItem> items = new HashMap<String, DataItem> ();
+        final Map<String, DataItemInformation> items = new HashMap<String, DataItemInformation> ();
 
         for ( final String branch : result.getBranches () )
         {
@@ -133,8 +133,16 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
 
         for ( final BrowseResultEntry entry : result.getLeaves () )
         {
+            // create the openscada item id from the opc item id
+            final String itemId = this.controller.getItemManager ().createItemId ( entry.getItemId () );
+            final DataItemInformation itemInformation = new DataItemInformationBase ( itemId, entry.getIoDirections () );
+
+            /*
             final OPCItem item = this.controller.getItemManager ().registerItem ( entry.getItemId (), entry.getIoDirections (), null );
             items.put ( entry.getEntryName (), item );
+            */
+
+            items.put ( entry.getEntryName (), itemInformation );
         }
 
         // bulk add entries

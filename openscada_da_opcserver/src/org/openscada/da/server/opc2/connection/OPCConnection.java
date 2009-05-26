@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,6 +104,8 @@ public class OPCConnection implements PropertyChangeListener
     private ObjectExporter ioManagerExporter;
 
     private ObjectExporter itemManagerExporter;
+
+    private ObjectExporter browserManagerExporter;
 
     public OPCConnection ( final Hive hive, final FolderCommon rootFolder, final ConnectionSetup setup, final Collection<String> initialOpcItems )
     {
@@ -279,6 +281,9 @@ public class OPCConnection implements PropertyChangeListener
 
         this.itemManagerExporter = new ObjectExporter ( "itemManager", this.connectionItemFactory );
         this.itemManagerExporter.attachTarget ( this.controller.getItemManager () );
+
+        this.browserManagerExporter = new ObjectExporter ( "browserManager", this.connectionItemFactory );
+        this.browserManagerExporter.attachTarget ( this.controller.getBrowserManager () );
     }
 
     protected void reconnect ()
@@ -341,6 +346,8 @@ public class OPCConnection implements PropertyChangeListener
         disconnect ();
 
         this.modelExporter.detachTarget ();
+        this.itemManagerExporter.detachTarget ();
+        this.browserManagerExporter.detachTarget ();
 
         this.itemFactory.dispose ();
         this.itemFactory = null;

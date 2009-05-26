@@ -24,13 +24,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.openscada.da.server.common.exporter.AbstractPropertyChange;
 import org.openscada.da.server.opc2.Hive;
 import org.openscada.da.server.opc2.connection.ConnectionSetup;
 import org.openscada.da.server.opc2.connection.OPCModel;
 import org.openscada.da.server.opc2.job.Worker;
 import org.openscada.da.server.opc2.job.impl.BrowseJob;
 
-public class OPCBrowserManager
+public class OPCBrowserManager extends AbstractPropertyChange
 {
 
     private static class Request
@@ -46,16 +47,48 @@ public class OPCBrowserManager
         }
     }
 
+    private static final String PROP_ACTIVE_REQUESTS = "activeRequests";
+
+    private static final String PROP_QUEUED_REQUESTS = "queuedRequests";
+
     private final Worker worker;
 
     private final OPCModel model;
 
     private final List<Request> requests = new LinkedList<Request> ();
 
+    private int activeRequests = 0;
+
+    private int queuedRequests = 0;
+
     public OPCBrowserManager ( final Worker worker, final ConnectionSetup configuration, final OPCModel model, final Hive hive )
     {
         this.worker = worker;
         this.model = model;
+    }
+
+    public int getQueuedRequests ()
+    {
+        return this.queuedRequests;
+    }
+
+    protected void setQueuedRequests ( final int queuedRequests )
+    {
+        final int oldQueuedRequests = this.queuedRequests;
+        this.queuedRequests = queuedRequests;
+        this.listeners.firePropertyChange ( PROP_QUEUED_REQUESTS, oldQueuedRequests, queuedRequests );
+    }
+
+    public int getActiveRequests ()
+    {
+        return this.activeRequests;
+    }
+
+    protected void setActiveRequests ( final int activeRequests )
+    {
+        final int oldActiveRequests = this.activeRequests;
+        this.activeRequests = activeRequests;
+        this.listeners.firePropertyChange ( PROP_ACTIVE_REQUESTS, oldActiveRequests, activeRequests );
     }
 
     /**
@@ -69,11 +102,18 @@ public class OPCBrowserManager
         {
             currentRequests = new ArrayList<Request> ( this.requests );
             this.requests.clear ();
+            setQueuedRequests ( 0 );
         }
 
-        for ( final Request request : currentRequests )
+        if ( !currentRequests.isEmpty () )
         {
-            processRequest ( request );
+            int len = currentRequests.size ();
+            for ( final Request request : currentRequests )
+            {
+                setActiveRequests ( len-- );
+                processRequest ( request );
+            }
+            setActiveRequests ( 0 );
         }
     }
 
@@ -109,6 +149,7 @@ public class OPCBrowserManager
         synchronized ( this.requests )
         {
             this.requests.add ( new Request ( request, listener ) );
+            setQueuedRequests ( this.requests.size () );
         }
     }
 
