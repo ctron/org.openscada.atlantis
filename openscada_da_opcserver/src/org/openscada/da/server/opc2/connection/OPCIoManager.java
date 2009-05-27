@@ -158,12 +158,9 @@ public class OPCIoManager extends AbstractPropertyChange
 
     }
 
-    public void unrequestItem ( final String itemId )
+    public synchronized void unrequestItem ( final String itemId )
     {
-        synchronized ( this )
-        {
-            this.itemUnregistrations.add ( itemId );
-        }
+        this.itemUnregistrations.add ( itemId );
     }
 
     public void requestItem ( final ItemRegistrationRequest itemDef )
