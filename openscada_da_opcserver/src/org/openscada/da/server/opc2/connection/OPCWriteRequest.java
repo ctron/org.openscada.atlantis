@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,9 @@ import org.jinterop.dcom.core.JIVariant;
 
 public class OPCWriteRequest
 {
-    private JIVariant value;
+    private final JIVariant value;
 
-    private String itemId;
-
-    public OPCWriteRequest ()
-    {
-    }
+    private final String itemId;
 
     public OPCWriteRequest ( final String itemId, final JIVariant value )
     {
@@ -42,18 +38,8 @@ public class OPCWriteRequest
         return this.value;
     }
 
-    public void setValue ( final JIVariant value )
-    {
-        this.value = value;
-    }
-
     public String getItemId ()
     {
         return this.itemId;
-    }
-
-    public void setItemId ( final String itemId )
-    {
-        this.itemId = itemId;
     }
 }
