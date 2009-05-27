@@ -53,7 +53,7 @@ public class OPCController implements Runnable
 
     private final OPCItemManager itemManager;
 
-    private final OPCIoManager ioManager;
+    private final OPCSyncIoManager ioManager;
 
     private final OPCBrowserManager browserManager;
 
@@ -68,7 +68,7 @@ public class OPCController implements Runnable
         this.model = new OPCModel ();
         this.model.setIgnoreTimestampOnlyChange ( config.isIgnoreTimestampOnlyChange () );
 
-        this.ioManager = new OPCIoManager ( this.worker, this.model, this );
+        this.ioManager = new OPCSyncIoManager ( this.worker, this.model, this );
         this.itemManager = new OPCItemManager ( this.worker, this.configuration, this.model, this, hive, itemFactory );
         this.browserManager = new OPCBrowserManager ( this.worker, this.configuration, this.model, hive );
     }
@@ -298,7 +298,7 @@ public class OPCController implements Runnable
         return this.itemManager;
     }
 
-    public OPCIoManager getIoManager ()
+    public OPCSyncIoManager getIoManager ()
     {
         return this.ioManager;
     }

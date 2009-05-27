@@ -145,7 +145,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
     }
 
     /**
-     * Register a new OPC item which is already realized by the {@link OPCIoManager}
+     * Register a new OPC item which is already realized by the {@link OPCSyncIoManager}
      * @param opcItemId the OPC item id
      * @return the new item
      */

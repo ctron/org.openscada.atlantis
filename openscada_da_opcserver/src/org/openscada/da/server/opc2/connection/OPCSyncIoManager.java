@@ -54,7 +54,7 @@ import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.OPCITEMSTATE;
 import org.openscada.opc.dcom.da.WriteRequest;
 
-public class OPCIoManager extends AbstractPropertyChange
+public class OPCSyncIoManager extends AbstractPropertyChange
 {
     private static final String PROP_SERVER_HANDLE_COUNT = "serverHandleCount";
 
@@ -68,7 +68,7 @@ public class OPCIoManager extends AbstractPropertyChange
 
     private long writeRequestTotal = 0;
 
-    private static Logger logger = Logger.getLogger ( OPCIoManager.class );
+    private static Logger logger = Logger.getLogger ( OPCSyncIoManager.class );
 
     private final Map<String, ItemRegistrationRequest> requestMap = new HashMap<String, ItemRegistrationRequest> ();
 
@@ -98,7 +98,7 @@ public class OPCIoManager extends AbstractPropertyChange
 
     private final Map<Integer, String> errorCodeCache = new HashMap<Integer, String> ();
 
-    public OPCIoManager ( final Worker worker, final OPCModel model, final OPCController controller )
+    public OPCSyncIoManager ( final Worker worker, final OPCModel model, final OPCController controller )
     {
         this.worker = worker;
         this.model = model;
