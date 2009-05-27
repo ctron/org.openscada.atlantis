@@ -41,8 +41,7 @@ import org.openscada.da.server.common.exporter.ObjectExporter;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc2.Hive;
 import org.openscada.da.server.opc2.browser.OPCRootTreeFolder;
-import org.openscada.da.server.opc2.configuration.AbstractXMLItemSource;
-import org.openscada.da.server.opc2.configuration.FileXMLItemSource;
+import org.openscada.da.server.opc2.preload.ItemSource;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 import org.openscada.utils.collection.MapBuilder;
 
@@ -53,8 +52,6 @@ public class OPCConnection implements PropertyChangeListener
     private Hive hive;
 
     private final ConnectionSetup connectionSetup;
-
-    private final Collection<String> initialItems;
 
     private final long socketTimeout = 5000L;
 
@@ -88,7 +85,7 @@ public class OPCConnection implements PropertyChangeListener
 
     private DataItemInputChained controllerStateDataItem;
 
-    private AbstractXMLItemSource xmlItemSource;
+    // private AbstractXMLItemSource xmlItemSource;
 
     private FolderItemFactory itemFactory;
 
@@ -107,12 +104,16 @@ public class OPCConnection implements PropertyChangeListener
 
     private ObjectExporter browserManagerExporter;
 
-    public OPCConnection ( final Hive hive, final FolderCommon rootFolder, final ConnectionSetup setup, final Collection<String> initialOpcItems )
+    private final Collection<ItemSource> itemSources;
+
+    private FolderItemFactory itemSourcesFactory;
+
+    public OPCConnection ( final Hive hive, final FolderCommon rootFolder, final ConnectionSetup setup, final Collection<ItemSource> itemSources )
     {
         this.hive = hive;
         this.connectionSetup = setup;
-        this.initialItems = initialOpcItems;
         this.rootFolder = rootFolder;
+        this.itemSources = itemSources;
 
         this.hiveItemFactory = new OPCConnectionDataItemFactory ( this );
 
@@ -241,9 +242,8 @@ public class OPCConnection implements PropertyChangeListener
         t.setDaemon ( true );
         t.start ();
 
-        this.controller.getIoManager ().requestItemsById ( this.initialItems );
-
         // Hook up item source if we have one
+        /*
         if ( this.connectionSetup.getFileSourceUri () != null )
         {
             try
@@ -259,7 +259,8 @@ public class OPCConnection implements PropertyChangeListener
                 logger.warn ( "Failed to initialized XML file item source", e );
             }
 
-        }
+        }*/
+        startItemSources ();
 
         // fill initial values
         updateBaseModel ();
@@ -284,6 +285,25 @@ public class OPCConnection implements PropertyChangeListener
 
         this.browserManagerExporter = new ObjectExporter ( "browserManager", this.connectionItemFactory );
         this.browserManagerExporter.attachTarget ( this.controller.getBrowserManager () );
+    }
+
+    private void startItemSources ()
+    {
+        this.itemSourcesFactory = this.itemFactory.createSubFolderFactory ( "itemSources" );
+
+        for ( final ItemSource itemSource : this.itemSources )
+        {
+            itemSource.activate ( this.itemSourcesFactory.createSubFolderFactory ( itemSource.getId () ), this.controller.getItemManager () );
+        }
+    }
+
+    private void stopItemSources ()
+    {
+        for ( final ItemSource itemSource : this.itemSources )
+        {
+            itemSource.deactivate ();
+        }
+        this.itemSourcesFactory.dispose ();
     }
 
     protected void reconnect ()
@@ -353,11 +373,7 @@ public class OPCConnection implements PropertyChangeListener
         this.itemFactory = null;
         this.connectionItemFactory = null;
 
-        if ( this.xmlItemSource != null )
-        {
-            this.xmlItemSource.deactivate ();
-            this.xmlItemSource = null;
-        }
+        stopItemSources ();
 
         this.controller.getModel ().removePropertyChangeListener ( this );
 

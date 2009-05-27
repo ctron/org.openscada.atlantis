@@ -39,8 +39,6 @@ public class ConnectionSetup
 
     private String itemIdPrefix = null;
 
-    private String fileSourceUri = null;
-
     private boolean ignoreTimestampOnlyChange = false;
 
     private int reconnectDelay;
@@ -154,16 +152,6 @@ public class ConnectionSetup
     public void setItemIdPrefix ( final String itemIdPrefix )
     {
         this.itemIdPrefix = itemIdPrefix;
-    }
-
-    public String getFileSourceUri ()
-    {
-        return this.fileSourceUri;
-    }
-
-    public void setFileSourceUri ( final String fileSourceUri )
-    {
-        this.fileSourceUri = fileSourceUri;
     }
 
 }

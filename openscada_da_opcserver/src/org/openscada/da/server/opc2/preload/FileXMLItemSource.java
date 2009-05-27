@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,29 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.server.opc2.configuration;
+package org.openscada.da.server.opc2.preload;
 
-import java.util.Set;
+import java.io.File;
+import java.io.IOException;
 
-public interface ItemSourceListener
+import org.apache.xmlbeans.XmlException;
+import org.openscada.da.opc.configuration.InitialItemsType;
+import org.openscada.da.opc.configuration.ItemsDocument;
+
+public class FileXMLItemSource extends AbstractXMLItemSource
 {
-    /**
-     * Notifies the item source listener that the set of available items has changed
-     * @param availableItems the new set of available items
-     */
-    public void availableItemsChanged ( Set<ItemDescription> availableItems );
+    private final File file;
+
+    public FileXMLItemSource ( final String id, final String file )
+    {
+        super ( id );
+        this.file = new File ( file );
+    }
+
+    @Override
+    protected InitialItemsType parse () throws XmlException, IOException
+    {
+        return ItemsDocument.Factory.parse ( this.file ).getItems ();
+    }
+
 }

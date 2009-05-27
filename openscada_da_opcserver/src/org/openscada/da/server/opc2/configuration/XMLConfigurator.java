@@ -21,6 +21,9 @@ package org.openscada.da.server.opc2.configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 import org.apache.xmlbeans.XmlException;
 import org.openscada.da.opc.configuration.ConfigurationType;
@@ -29,11 +32,16 @@ import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.opc2.Hive;
 import org.openscada.da.server.opc2.connection.AccessMethod;
 import org.openscada.da.server.opc2.connection.ConnectionSetup;
+import org.openscada.da.server.opc2.preload.FileXMLItemSource;
+import org.openscada.da.server.opc2.preload.InMemoryAbstractItemSource;
+import org.openscada.da.server.opc2.preload.ItemSource;
 import org.openscada.opc.lib.common.ConnectionInformation;
 import org.w3c.dom.Node;
 
 public class XMLConfigurator
 {
+
+    private static final int DEFAULT_RECONNECT_DELAY = 5000;
 
     private RootDocument rootDocument = null;
 
@@ -62,6 +70,7 @@ public class XMLConfigurator
         {
             if ( !configuration.getEnabled () )
             {
+                // skip configuration since it is disabled
                 continue;
             }
 
@@ -86,7 +95,7 @@ public class XMLConfigurator
             }
             else
             {
-                setup.setReconnectDelay ( 5000 );
+                setup.setReconnectDelay ( DEFAULT_RECONNECT_DELAY );
             }
 
             final String access = configuration.getAccess ();
@@ -111,17 +120,24 @@ public class XMLConfigurator
             setup.setDeviceTag ( configuration.getAlias () );
 
             setup.setItemIdPrefix ( configuration.getItemIdPrefix () );
-            if ( configuration.isSetInitialItemResource () )
-            {
-                setup.setFileSourceUri ( configuration.getInitialItemResource () );
-            }
 
             if ( setup.getDeviceTag () == null )
             {
                 setup.setDeviceTag ( setup.getConnectionInformation ().getHost () + ":" + setup.getConnectionInformation ().getClsOrProgId () );
             }
 
-            hive.addConnection ( setup, configuration.getConnected (), configuration.getInitialItemList () );
+            final Collection<ItemSource> itemSources = new LinkedList<ItemSource> ();
+
+            if ( configuration.getInitialItemList () != null )
+            {
+                itemSources.add ( new InMemoryAbstractItemSource ( "initialItems", new HashSet<String> ( configuration.getInitialItemList () ) ) );
+            }
+            if ( configuration.isSetInitialItemResource () )
+            {
+                itemSources.add ( new FileXMLItemSource ( "initialItemResource", configuration.getInitialItemResource () ) );
+            }
+
+            hive.addConnection ( setup, configuration.getConnected (), itemSources );
         }
     }
 }

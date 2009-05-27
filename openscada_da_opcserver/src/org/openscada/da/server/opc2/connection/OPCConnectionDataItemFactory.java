@@ -23,6 +23,12 @@ import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 
+/**
+ * A data item factory which creates items bases on the
+ * assigned OPC connection
+ * @author Jens Reimann
+ *
+ */
 public class OPCConnectionDataItemFactory implements DataItemFactory
 {
 

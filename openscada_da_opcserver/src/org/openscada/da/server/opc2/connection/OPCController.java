@@ -37,13 +37,13 @@ import org.openscada.opc.lib.common.ConnectionInformation;
 
 public class OPCController implements Runnable
 {
+    private static Logger logger = Logger.getLogger ( OPCController.class );
+
     private static final long LOOP_DELAY_MIN = 50;
 
     private static final long LOOP_DELAY_MAX = 10 * 1000;
 
     private ConnectionInformation connectionInformation;
-
-    private static Logger logger = Logger.getLogger ( OPCController.class );
 
     private volatile boolean running = true;
 
@@ -95,7 +95,6 @@ public class OPCController implements Runnable
             }
             catch ( final InterruptedException e )
             {
-                logger.warn ( "Sleep failed", e );
             }
 
             if ( !this.running )

@@ -35,6 +35,7 @@ import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.opc2.configuration.XMLConfigurator;
 import org.openscada.da.server.opc2.connection.ConnectionSetup;
 import org.openscada.da.server.opc2.connection.OPCConnection;
+import org.openscada.da.server.opc2.preload.ItemSource;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
@@ -82,9 +83,9 @@ public class Hive extends HiveCommon
         logger.info ( "DCOM auto collection: " + JISystem.isJavaCoClassAutoCollectionSet () );
     }
 
-    public void addConnection ( final ConnectionSetup setup, final boolean connect, final Collection<String> initialOpcItems )
+    public void addConnection ( final ConnectionSetup setup, final boolean connect, final Collection<ItemSource> itemSources )
     {
-        final OPCConnection connection = new OPCConnection ( this, this.rootFolder, setup, initialOpcItems );
+        final OPCConnection connection = new OPCConnection ( this, this.rootFolder, setup, itemSources );
 
         this.connections.add ( connection );
 

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
 	targetNamespace="http://openscada.org/DA/OPC/Configuration"
-	xmlns:components="http://openscada.org/DA/OPC/Configuration"
+	xmlns:opc="http://openscada.org/DA/OPC/Configuration"
 	elementFormDefault="qualified" xmlns:hive="http://openscada.org/DA/Hive" xmlns:Q1="http://openscada.org/Common">
 
     <import schemaLocation="da_server_common/Hive.xsd" namespace="http://openscada.org/DA/Hive"/>
 	
-	<element name="root" type="components:RootType"></element>
+	<element name="root" type="opc:RootType"></element>
 
 	<complexType name="RootType">
 		<sequence>
 			<element name="connections"
-				type="components:ConnectionsType" maxOccurs="1" minOccurs="0">
+				type="opc:ConnectionsType" maxOccurs="1" minOccurs="0">
 			</element>
 			<element name="item-templates" type="hive:ItemTemplatesType"
 				maxOccurs="1" minOccurs="0">
@@ -23,7 +23,7 @@
 	<complexType name="ConnectionsType">
 		<sequence>
 			<element name="configuration"
-				type="components:ConfigurationType" maxOccurs="unbounded"
+				type="opc:ConfigurationType" maxOccurs="unbounded"
 				minOccurs="0">
 			</element>
 		</sequence>
@@ -32,10 +32,10 @@
 	<complexType name="ConfigurationType">
 		<sequence>
 			<choice>
-				<element name="progid" type="components:ProgIdType"
+				<element name="progid" type="opc:ProgIdType"
 					maxOccurs="1" minOccurs="1">
 				</element>
-				<element name="clsid" type="components:UUIDType"
+				<element name="clsid" type="opc:UUIDType"
 					maxOccurs="1" minOccurs="1">
 				</element>
 			</choice>
@@ -92,11 +92,11 @@
 		</restriction>
 	</simpleType>
 
-	<element name="items" type="components:InitialItemsType"></element>
+	<element name="items" type="opc:InitialItemsType"></element>
 
 	<complexType name="InitialItemsType">
 		<sequence>
-			<element name="item" type="components:InitialItemType" maxOccurs="unbounded" minOccurs="0"></element>
+			<element name="item" type="opc:InitialItemType" maxOccurs="unbounded" minOccurs="0"></element>
 		</sequence>
 	</complexType>
 

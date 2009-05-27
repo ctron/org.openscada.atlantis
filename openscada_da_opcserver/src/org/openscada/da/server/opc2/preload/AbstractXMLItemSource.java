@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.server.opc2.configuration;
+package org.openscada.da.server.opc2.preload;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +33,8 @@ import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.DataItemCommand.Listener;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
+import org.openscada.da.server.opc2.configuration.ItemDescription;
+import org.openscada.da.server.opc2.connection.OPCItemManager;
 
 public abstract class AbstractXMLItemSource extends AbstractItemSource
 {
@@ -40,32 +42,24 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
 
     private boolean active = false;
 
-    private final FolderItemFactory parentItemFactory;
-
-    protected FolderItemFactory itemFactory;
-
-    private final String baseId;
-
     private DataItemCommand reloadCommandItem;
 
     private DataItemInputChained stateItem;
 
     private Listener reloadListener;
 
-    public AbstractXMLItemSource ( final FolderItemFactory parentItemFactory, final String baseId )
+    public AbstractXMLItemSource ( final String id )
     {
-        super ();
-        this.parentItemFactory = parentItemFactory;
-        this.baseId = baseId;
+        super ( id );
     }
 
     @Override
-    public void activate ()
+    public void activate ( final FolderItemFactory factory, final OPCItemManager itemManager )
     {
-        this.itemFactory = this.parentItemFactory.createSubFolderFactory ( this.baseId );
+        super.activate ( factory, itemManager );
 
-        this.reloadCommandItem = this.itemFactory.createCommand ( "reload" );
-        this.stateItem = this.itemFactory.createInput ( "state" );
+        this.reloadCommandItem = this.factory.createCommand ( "reload" );
+        this.stateItem = this.factory.createInput ( "state" );
 
         this.reloadCommandItem.addListener ( this.reloadListener = new DataItemCommand.Listener () {
 
@@ -84,16 +78,13 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
     @Override
     public void deactivate ()
     {
-        super.deactivate ();
-
         this.active = false;
-
-        this.itemFactory.dispose ();
-        this.itemFactory = null;
 
         this.reloadCommandItem.removeListener ( this.reloadListener );
         this.reloadCommandItem = null;
         this.stateItem = null;
+
+        super.deactivate ();
     }
 
     protected void reload ()
@@ -129,10 +120,7 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
         {
             logger.debug ( "Found new item: " + item.getId () );
 
-            final ItemDescription newItem = new ItemDescription ();
-            newItem.setId ( item.getId () );
-            newItem.setDescription ( item.getDescription () );
-            newItem.setAccessPath ( item.getAccessPath () );
+            final ItemDescription newItem = new ItemDescription ( item.getId (), item.getDescription (), item.getAccessPath () );
 
             if ( newItem.getId () != null )
             {

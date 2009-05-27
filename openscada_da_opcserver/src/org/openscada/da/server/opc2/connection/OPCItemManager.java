@@ -20,12 +20,9 @@
 package org.openscada.da.server.opc2.connection;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
@@ -46,8 +43,6 @@ import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc2.Helper;
 import org.openscada.da.server.opc2.Hive;
-import org.openscada.da.server.opc2.configuration.ItemDescription;
-import org.openscada.da.server.opc2.configuration.ItemSourceListener;
 import org.openscada.da.server.opc2.job.Worker;
 import org.openscada.opc.dcom.common.KeyedResult;
 import org.openscada.opc.dcom.common.Result;
@@ -57,7 +52,7 @@ import org.openscada.opc.dcom.da.OPCITEMSTATE;
 import org.openscada.opc.dcom.da.WriteRequest;
 import org.openscada.utils.collection.MapBuilder;
 
-public class OPCItemManager extends AbstractPropertyChange implements ItemSourceListener, IOListener
+public class OPCItemManager extends AbstractPropertyChange implements IOListener
 {
     private static final String PROP_REGISTERED_ITEM_COUNT = "registeredItemCount";
 
@@ -249,28 +244,6 @@ public class OPCItemManager extends AbstractPropertyChange implements ItemSource
         {
             return this.configuration.getDeviceTag () + "." + this.itemIdPrefix;
         }
-    }
-
-    public void availableItemsChanged ( final Set<ItemDescription> availableItems )
-    {
-        final List<ItemRequest> requests = new ArrayList<ItemRequest> ( availableItems.size () );
-
-        for ( final ItemDescription item : availableItems )
-        {
-            final ItemRequest req = new ItemRequest ();
-
-            final OPCITEMDEF def = new OPCITEMDEF ();
-            def.setItemID ( item.getId () );
-            req.setItemDefinition ( def );
-
-            final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-            attributes.put ( "description", new Variant ( item.getDescription () ) );
-            req.setAttributes ( attributes );
-
-            requests.add ( req );
-        }
-
-        this.controller.getIoManager ().requestItems ( requests );
     }
 
     public void dataRead ( final String itemId, final KeyedResult<Integer, OPCITEMSTATE> entry, final String errorMessage )

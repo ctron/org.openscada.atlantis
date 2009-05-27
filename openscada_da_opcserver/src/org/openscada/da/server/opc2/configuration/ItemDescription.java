@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,30 +21,34 @@ package org.openscada.da.server.opc2.configuration;
 
 public class ItemDescription
 {
-    private String id;
+    private final String id;
 
-    private String description;
+    private final String description;
 
-    private String accessPath;
+    private final String accessPath;
+
+    public ItemDescription ( final String id, final String description, final String accessPath )
+    {
+        this.id = id;
+        this.description = description;
+        this.accessPath = accessPath;
+    }
+
+    public ItemDescription ( final String id )
+    {
+        this.id = id;
+        this.description = null;
+        this.accessPath = null;
+    }
 
     public String getId ()
     {
         return this.id;
     }
 
-    public void setId ( final String id )
-    {
-        this.id = id;
-    }
-
     public String getDescription ()
     {
         return this.description;
-    }
-
-    public void setDescription ( final String description )
-    {
-        this.description = description;
     }
 
     @Override
@@ -89,10 +93,5 @@ public class ItemDescription
     public String getAccessPath ()
     {
         return this.accessPath;
-    }
-
-    public void setAccessPath ( final String accessPath )
-    {
-        this.accessPath = accessPath;
     }
 }
