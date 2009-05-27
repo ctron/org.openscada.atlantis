@@ -26,6 +26,7 @@ import java.util.Map;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
+import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.core.DataItemInformation;
@@ -129,7 +130,7 @@ public class DataItemInputChained extends DataItemBaseChained
         return new Variant ( this._secondaryValue );
     }
 
-    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
         throw new InvalidOperationException ();
     }
