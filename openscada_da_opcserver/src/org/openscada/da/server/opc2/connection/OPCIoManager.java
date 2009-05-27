@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 import org.apache.log4j.Logger;
 import org.jinterop.dcom.core.JIVariant;
@@ -53,6 +55,31 @@ import org.openscada.opc.dcom.da.WriteRequest;
 
 public abstract class OPCIoManager extends AbstractPropertyChange
 {
+
+    private final static class ErrorFutureTask<T> extends FutureTask<T>
+    {
+
+        private final static class RunnableImplementation implements Runnable
+        {
+            private final String message;
+
+            public RunnableImplementation ( final String message )
+            {
+                this.message = message;
+            }
+
+            public void run ()
+            {
+                throw new RuntimeException ( this.message );
+            }
+        }
+
+        public ErrorFutureTask ( final String message )
+        {
+            super ( new RunnableImplementation ( message ), null );
+        }
+
+    }
 
     private static final String PROP_SERVER_HANDLE_COUNT = "serverHandleCount";
 
@@ -87,7 +114,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     private final Set<String> activeSet = new HashSet<String> ();
 
-    private final Queue<OPCWriteRequest> writeRequests = new LinkedList<OPCWriteRequest> ();
+    private final Queue<FutureTask<Result<WriteRequest>>> writeRequests = new LinkedList<FutureTask<Result<WriteRequest>>> ();
 
     private final Set<String> itemUnregistrations = new HashSet<String> ();
 
@@ -177,7 +204,13 @@ public abstract class OPCIoManager extends AbstractPropertyChange
     {
         this.itemUnregistrations.clear ();
 
+        for ( final FutureTask<Result<WriteRequest>> request : this.writeRequests )
+        {
+            request.cancel ( true );
+        }
+
         this.writeRequests.clear ();
+
         this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, this.writeRequests.size () );
 
         this.clientHandleMap.clear ();
@@ -369,7 +402,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         // write
         if ( !this.writeRequests.isEmpty () )
         {
-            ctx.setWriteRequests ( new ArrayList<OPCWriteRequest> ( this.writeRequests ) );
+            ctx.setWriteRequests ( new ArrayList<FutureTask<Result<WriteRequest>>> ( this.writeRequests ) );
             this.writeRequests.clear ();
             this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, this.writeRequests.size () );
         }
@@ -544,13 +577,13 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         return message;
     }
 
-    public void addWriteRequest ( final String itemId, final Variant value )
+    public Future<Result<WriteRequest>> addWriteRequest ( final String itemId, final Variant value )
     {
         if ( !this.model.isConnected () )
         {
             // discard write request
             logger.warn ( String.format ( "OPC is not connected", value ) );
-            return;
+            return new ErrorFutureTask<Result<WriteRequest>> ( "OPC is not connected" );
         }
 
         // request the item first ... nothing happens if we already did that
@@ -561,26 +594,33 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         if ( variant == null )
         {
             logger.warn ( String.format ( "Failed to convert %s to variant", value ) );
-            return;
+            return new ErrorFutureTask<Result<WriteRequest>> ( String.format ( "Failed to convert %s to variant", value ) );
         }
 
-        addWriteRequest ( new OPCWriteRequest ( itemId, variant ) );
+        return addWriteRequest ( new OPCWriteRequest ( itemId, variant ) );
     }
 
-    protected void addWriteRequest ( final OPCWriteRequest request )
+    protected abstract FutureTask<Result<WriteRequest>> newWriteFuture ( final OPCWriteRequest request );
+
+    protected Future<Result<WriteRequest>> addWriteRequest ( final OPCWriteRequest request )
     {
+        final FutureTask<Result<WriteRequest>> future;
+
         synchronized ( this )
         {
-            this.writeRequests.add ( request );
+            future = newWriteFuture ( request );
+            this.writeRequests.add ( future );
         }
 
-        // update site
+        // update stats
         final int size = this.writeRequests.size ();
         this.writeRequestMax = Math.max ( this.writeRequestMax, size );
         this.writeRequestTotal++;
         this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, size );
         this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_MAX, null, size );
         this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_TOTAL, null, this.writeRequestTotal );
+
+        return future;
     }
 
     /**
@@ -590,41 +630,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
      * @param requests 
      * @throws InvocationTargetException
      */
-    protected abstract void performWriteRequests ( final Collection<OPCWriteRequest> requests ) throws InvocationTargetException;
-
-    /**
-     * handle the case a critical write error occurred
-     * @param e the exception
-     * @param request the request that caused the error
-     */
-    protected void handleWriteException ( final Throwable e, final OPCWriteRequest request )
-    {
-        final String itemId = request.getItemId ();
-        logger.warn ( String.format ( "Failed to perform write request for item %s => %s", itemId, request.getValue () ), e );
-
-        if ( itemId == null )
-        {
-            return;
-        }
-
-        this.controller.getItemManager ().dataWritten ( itemId, null, e );
-    }
-
-    /**
-     * handle a successful write operation
-     * @param request the original write request
-     * @param result the result
-     */
-    protected void handleWriteResult ( final OPCWriteRequest request, final Result<WriteRequest> result )
-    {
-        final String itemId = this.serverHandleMapRev.get ( result.getValue ().getServerHandle () );
-        if ( itemId == null )
-        {
-            return;
-        }
-
-        this.controller.getItemManager ().dataWritten ( itemId, result, null );
-    }
+    protected abstract void performWriteRequests ( final Collection<FutureTask<Result<WriteRequest>>> requests ) throws InvocationTargetException;
 
     public int getServerHandleCount ()
     {

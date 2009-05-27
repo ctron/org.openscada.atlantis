@@ -25,6 +25,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.server.opc2.job.Worker;
@@ -33,6 +36,7 @@ import org.openscada.da.server.opc2.job.impl.DetachGroupJob;
 import org.openscada.da.server.opc2.job.impl.SyncWriteJob;
 import org.openscada.opc.dcom.common.EventHandler;
 import org.openscada.opc.dcom.common.KeyedResultSet;
+import org.openscada.opc.dcom.common.Result;
 import org.openscada.opc.dcom.common.ResultSet;
 import org.openscada.opc.dcom.da.IOPCDataCallback;
 import org.openscada.opc.dcom.da.OPCDATASOURCE;
@@ -41,6 +45,7 @@ import org.openscada.opc.dcom.da.WriteRequest;
 
 public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
 {
+
     private static Logger logger = Logger.getLogger ( OPCAsync2IoManager.class );
 
     private EventHandler eventHandler;
@@ -146,48 +151,53 @@ public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
         }
     }
 
-    @Override
-    protected void performWriteRequests ( final Collection<OPCWriteRequest> requests ) throws InvocationTargetException
+    protected FutureTask<Result<WriteRequest>> newWriteFuture ( final OPCWriteRequest request )
     {
-        // if one write call fails here all other won't be written
-        // this is ok, since all others will fail as well
-        // specific item write errors are handled specifically using the result value
-        for ( final OPCWriteRequest request : requests )
-        {
-            try
+        return new FutureTask<Result<WriteRequest>> ( new Callable<Result<WriteRequest>> () {
+
+            public Result<WriteRequest> call () throws Exception
             {
-                final Integer serverHandle = this.serverHandleMap.get ( request.getItemId () );
+
+                final Integer serverHandle = OPCAsync2IoManager.this.serverHandleMap.get ( request.getItemId () );
 
                 if ( serverHandle == null )
                 {
                     throw new RuntimeException ( String.format ( "Item '%s' is not realized.", request.getItemId () ) );
                 }
 
-                final SyncWriteJob job = new SyncWriteJob ( this.model.getWriteJobTimeout (), this.model, new WriteRequest[] { new WriteRequest ( serverHandle, request.getValue () ) } );
+                final SyncWriteJob job = new SyncWriteJob ( OPCAsync2IoManager.this.model.getWriteJobTimeout (), OPCAsync2IoManager.this.model, new WriteRequest[] { new WriteRequest ( serverHandle, request.getValue () ) } );
 
-                final ResultSet<WriteRequest> result = this.worker.execute ( job, job );
-                // if we have a result...
+                final Result<WriteRequest> result = OPCAsync2IoManager.this.worker.execute ( job, job ).get ( 0 );
                 if ( result != null )
                 {
-                    // ... process it
-                    handleWriteResult ( request, result.get ( 0 ) );
+                    return result;
                 }
-                else
-                {
-                    // ... otherwise we don't have a connection
-                    handleWriteException ( new RuntimeException ( "No connection to OPC server" ), request );
-                }
+                throw new RuntimeException ( "No connection to the OPC server" );
             }
-            catch ( final InvocationTargetException e )
+        } );
+    }
+
+    protected void performWriteRequests ( final Collection<FutureTask<Result<WriteRequest>>> requests ) throws InvocationTargetException
+    {
+        for ( final FutureTask<Result<WriteRequest>> task : requests )
+        {
+            task.run ();
+
+            try
             {
-                handleWriteException ( e, request );
-                throw e;
+                task.get ();
+            }
+            catch ( final ExecutionException e )
+            {
+                if ( e.getCause () instanceof InvocationTargetException )
+                {
+                    logger.warn ( "Re-throwing opc exception" );
+                    throw (InvocationTargetException)e.getCause ();
+                }
             }
             catch ( final Throwable e )
             {
-                handleWriteException ( e, request );
             }
         }
     }
-
 }

@@ -45,11 +45,9 @@ import org.openscada.da.server.opc2.Helper;
 import org.openscada.da.server.opc2.Hive;
 import org.openscada.da.server.opc2.job.Worker;
 import org.openscada.opc.dcom.common.KeyedResult;
-import org.openscada.opc.dcom.common.Result;
 import org.openscada.opc.dcom.da.OPCITEMDEF;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.ValueData;
-import org.openscada.opc.dcom.da.WriteRequest;
 import org.openscada.utils.collection.MapBuilder;
 
 public class OPCItemManager extends AbstractPropertyChange implements IOListener
@@ -255,17 +253,6 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
         }
 
         item.updateStatus ( entry, errorMessage );
-    }
-
-    public void dataWritten ( final String itemId, final Result<WriteRequest> result, final Throwable e )
-    {
-        final OPCItem item = this.itemMap.get ( itemId );
-        if ( item == null )
-        {
-            return;
-        }
-
-        item.setLastWriteResult ( result );
     }
 
     public void itemRealized ( final String itemId, final KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )

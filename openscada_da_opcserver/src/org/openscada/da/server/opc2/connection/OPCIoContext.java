@@ -19,17 +19,22 @@
 
 package org.openscada.da.server.opc2.connection;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.FutureTask;
+
+import org.openscada.opc.dcom.common.Result;
+import org.openscada.opc.dcom.da.WriteRequest;
 
 public class OPCIoContext
 {
     private Map<String, Boolean> activations;
 
-    private List<ItemRegistrationRequest> registrations;
+    private Collection<ItemRegistrationRequest> registrations;
 
-    private List<OPCWriteRequest> writeRequests;
+    private Collection<FutureTask<Result<WriteRequest>>> writeRequests;
 
     private Set<String> unregistrations;
 
@@ -45,22 +50,22 @@ public class OPCIoContext
         this.activations = activations;
     }
 
-    public List<ItemRegistrationRequest> getRegistrations ()
+    public Collection<ItemRegistrationRequest> getRegistrations ()
     {
         return this.registrations;
     }
 
-    public void setRegistrations ( final List<ItemRegistrationRequest> registrations )
+    public void setRegistrations ( final Collection<ItemRegistrationRequest> registrations )
     {
         this.registrations = registrations;
     }
 
-    public List<OPCWriteRequest> getWriteRequests ()
+    public Collection<FutureTask<Result<WriteRequest>>> getWriteRequests ()
     {
         return this.writeRequests;
     }
 
-    public void setWriteRequests ( final List<OPCWriteRequest> writeRequests )
+    public void setWriteRequests ( final List<FutureTask<Result<WriteRequest>>> writeRequests )
     {
         this.writeRequests = writeRequests;
     }

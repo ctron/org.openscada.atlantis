@@ -22,11 +22,13 @@ package org.openscada.da.server.opc2.connection;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
+import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
@@ -69,7 +71,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
     }
 
     @Override
-    protected void writeCalculatedValue ( final Variant value ) throws NotConvertableException, InvalidOperationException
+    protected void writeCalculatedValue ( final Variant value ) throws NotConvertableException, InvalidOperationException, OperationException
     {
         if ( !this.getInformation ().getIODirection ().contains ( IODirection.OUTPUT ) )
         {
@@ -87,7 +89,26 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             throw new NotConvertableException ();
         }
 
-        this.controller.getIoManager ().addWriteRequest ( this.opcItemId, value );
+        final Future<Result<WriteRequest>> future = this.controller.getIoManager ().addWriteRequest ( this.opcItemId, value );
+
+        final Result<WriteRequest> result;
+        try
+        {
+            result = future.get ();
+            logger.info ( "Write returned" );
+        }
+        catch ( final Throwable e )
+        {
+            logger.info ( "Failed to write", e );
+            setLastWriteError ( null );
+            throw new OperationException ( "Failed to write", e );
+        }
+
+        if ( result.isFailed () )
+        {
+            setLastWriteError ( result );
+            throw new OperationException ( String.format ( "Write returned with failure: 0x%08X", result.getErrorCode () ) );
+        }
     }
 
     public void suspend ()
@@ -190,7 +211,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
      * Setting the last write error information
      * @param result the write result that caused the error or <code>null</code> in case the reason is unknown
      */
-    public void setLastWriteResult ( final Result<WriteRequest> result )
+    public void setLastWriteError ( final Result<WriteRequest> result )
     {
         final Calendar c = Calendar.getInstance ();
 
