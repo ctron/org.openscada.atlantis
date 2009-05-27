@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,23 +27,23 @@ import org.openscada.da.server.common.DataItem;
 
 public class ItemDescriptor
 {
-    private Map<String, Variant> _attributes = new HashMap<String, Variant> ();
+    private Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-    private DataItem _item = null;
+    private DataItem item = null;
 
     public ItemDescriptor ( final DataItem item, final Map<String, Variant> attributes )
     {
-        this._item = item;
-        this._attributes = attributes;
+        this.item = item;
+        this.attributes = attributes;
     }
 
     public Map<String, Variant> getAttributes ()
     {
-        return this._attributes;
+        return this.attributes;
     }
 
     public DataItem getItem ()
     {
-        return this._item;
+        return this.item;
     }
 }
