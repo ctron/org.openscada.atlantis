@@ -22,14 +22,14 @@ package org.openscada.da.core;
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
-public class WriteAttributeResult
+public class WriteResult
 {
     private Throwable error = null;
 
     /**
      * Create an "OK" result
      */
-    public WriteAttributeResult ()
+    public WriteResult ()
     {
     }
 
@@ -37,7 +37,7 @@ public class WriteAttributeResult
      * Create a result with error information
      * @param error the error or <code>null</code> if the result is "ok"
      */
-    public WriteAttributeResult ( final Throwable error )
+    public WriteResult ( final Throwable error )
     {
         this.error = error;
     }
