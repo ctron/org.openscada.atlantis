@@ -92,12 +92,17 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
     public void suspend ()
     {
+        logger.info ( "Suspend item: " + this.getInformation ().getName () );
+
         this.suspended = true;
         this.controller.getIoManager ().suspendItem ( this.opcItemId );
+        this.controller.getIoManager ().unrequestItem ( this.opcItemId );
     }
 
     public void wakeup ()
     {
+        logger.info ( "Wakeup item: " + this.getInformation ().getName () );
+
         this.suspended = false;
         this.controller.getIoManager ().wakeupItem ( this.opcItemId );
     }

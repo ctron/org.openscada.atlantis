@@ -32,11 +32,11 @@ public class Worker implements GuardianHandler
 {
     private static Logger log = Logger.getLogger ( Worker.class );
 
-    private WorkUnit currentWorkUnit;
+    private volatile WorkUnit currentWorkUnit;
 
     private final Guardian guardian;
 
-    private Thread guardianThread;
+    private final Thread guardianThread;
 
     protected static class OPCResultJobHandler<T> implements JobHandler
     {

@@ -119,15 +119,14 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
      */
     protected void unregisterAllItems ()
     {
-        /*
-        for ( Map.Entry<String, OPCItem> entry : this.itemMap.entrySet () )
+        for ( final Map.Entry<String, OPCItem> entry : this.itemMap.entrySet () )
         {
-            this.hive.unregisterItem ( entry.getValue () );
-            this.flatItemFolder.remove ( entry.getKey () );
+            final OPCItem item = entry.getValue ();
+            this.hive.unregisterItem ( item );
+            this.allItemsStorage.removed ( new ItemDescriptor ( item, new HashMap<String, Variant> () ) );
         }
 
         this.itemMap.clear ();
-        */
     }
 
     /**
@@ -181,6 +180,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
             // add the item to the local map
             this.itemMap.put ( opcItemId, item );
 
+            // statistics
             setRegisteredItemCount ( this.itemMap.size () );
         }
 
@@ -283,11 +283,34 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
     public void itemUnrealized ( final String itemId )
     {
         final OPCItem item = this.itemMap.get ( itemId );
+
         if ( item == null )
         {
             return;
         }
 
         item.itemUnrealized ();
+
+        unregisterItem ( itemId );
+    }
+
+    private void unregisterItem ( final String itemId )
+    {
+        logger.info ( "Unregistering item: " + itemId );
+
+        final OPCItem item;
+        synchronized ( this )
+        {
+            item = this.itemMap.remove ( itemId );
+            if ( item == null )
+            {
+                return;
+            }
+            setRegisteredItemCount ( this.itemMap.size () );
+        }
+        item.itemUnrealized ();
+
+        this.hive.unregisterItem ( item );
+        this.allItemsStorage.removed ( new ItemDescriptor ( item, new HashMap<String, Variant> () ) );
     }
 }

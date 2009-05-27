@@ -43,6 +43,7 @@ import org.openscada.da.server.opc2.job.impl.ItemActivationJob;
 import org.openscada.da.server.opc2.job.impl.RealizeItemsJob;
 import org.openscada.da.server.opc2.job.impl.SyncReadJob;
 import org.openscada.da.server.opc2.job.impl.SyncWriteJob;
+import org.openscada.da.server.opc2.job.impl.UnrealizeItemsJob;
 import org.openscada.opc.dcom.common.KeyedResult;
 import org.openscada.opc.dcom.common.KeyedResultSet;
 import org.openscada.opc.dcom.common.Result;
@@ -69,9 +70,9 @@ public class OPCIoManager extends AbstractPropertyChange
 
     private static Logger logger = Logger.getLogger ( OPCIoManager.class );
 
-    private final Map<String, ItemRequest> requestMap = new HashMap<String, ItemRequest> ();
+    private final Map<String, ItemRegistrationRequest> requestMap = new HashMap<String, ItemRegistrationRequest> ();
 
-    private final Map<String, ItemRequest> requestedMap = new HashMap<String, ItemRequest> ();
+    private final Map<String, ItemRegistrationRequest> requestedMap = new HashMap<String, ItemRegistrationRequest> ();
 
     private final Map<String, Integer> clientHandleMap = new HashMap<String, Integer> ();
 
@@ -86,6 +87,8 @@ public class OPCIoManager extends AbstractPropertyChange
     private final Set<String> activeSet = new HashSet<String> ();
 
     private final Queue<OPCWriteRequest> writeRequests = new LinkedList<OPCWriteRequest> ();
+
+    private final Set<String> itemUnregistrations = new HashSet<String> ();
 
     private final Worker worker;
 
@@ -110,12 +113,9 @@ public class OPCIoManager extends AbstractPropertyChange
     /**
      * Unregister everything from the hive
      */
-    protected void unregisterAllItems ()
+    protected synchronized void unregisterAllItems ()
     {
-        for ( final ItemRequest request : this.requestedMap.values () )
-        {
-            this.controller.getItemManager ().itemUnrealized ( request.getItemDefinition ().getItemID () );
-        }
+        this.itemUnregistrations.clear ();
 
         this.writeRequests.clear ();
         this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, this.writeRequests.size () );
@@ -130,10 +130,10 @@ public class OPCIoManager extends AbstractPropertyChange
 
     public void requestItemsById ( final Collection<String> requestItems )
     {
-        final List<ItemRequest> reqs = new ArrayList<ItemRequest> ( requestItems.size () );
+        final List<ItemRegistrationRequest> reqs = new ArrayList<ItemRegistrationRequest> ( requestItems.size () );
         for ( final String itemId : requestItems )
         {
-            final ItemRequest req = new ItemRequest ();
+            final ItemRegistrationRequest req = new ItemRegistrationRequest ();
             final OPCITEMDEF def = new OPCITEMDEF ();
             def.setItemID ( itemId );
             def.setActive ( false );
@@ -144,9 +144,9 @@ public class OPCIoManager extends AbstractPropertyChange
         requestItems ( reqs );
     }
 
-    public synchronized void requestItems ( final Collection<ItemRequest> items )
+    public synchronized void requestItems ( final Collection<ItemRegistrationRequest> items )
     {
-        for ( final ItemRequest itemDef : items )
+        for ( final ItemRegistrationRequest itemDef : items )
         {
             final String itemId = itemDef.getItemDefinition ().getItemID ();
             if ( this.requestMap.containsKey ( itemId ) || this.requestedMap.containsKey ( itemId ) )
@@ -158,7 +158,15 @@ public class OPCIoManager extends AbstractPropertyChange
 
     }
 
-    public void requestItem ( final ItemRequest itemDef )
+    public void unrequestItem ( final String itemId )
+    {
+        synchronized ( this )
+        {
+            this.itemUnregistrations.add ( itemId );
+        }
+    }
+
+    public void requestItem ( final ItemRegistrationRequest itemDef )
     {
         requestItems ( Arrays.asList ( itemDef ) );
     }
@@ -190,11 +198,81 @@ public class OPCIoManager extends AbstractPropertyChange
      */
     private void registerAllItems () throws InvocationTargetException
     {
-        realizeItems ( this.requestedMap.values () );
+        performRealizeItems ( this.requestedMap.values () );
         setActive ( true, this.activeSet );
     }
 
-    private void realizeItems ( final Collection<ItemRequest> newItems ) throws InvocationTargetException
+    private void performUnrealizeItems ( final Collection<String> items ) throws InvocationTargetException
+    {
+        if ( items.isEmpty () )
+        {
+            return;
+        }
+
+        // first convert item ids to server handles
+        final Set<Integer> itemHandles = new HashSet<Integer> ();
+
+        for ( final String itemId : items )
+        {
+            final Integer serverHandle = this.serverHandleMap.get ( itemId );
+            if ( serverHandle != null )
+            {
+                itemHandles.add ( serverHandle );
+            }
+        }
+
+        // perform the operation
+        final UnrealizeItemsJob job = new UnrealizeItemsJob ( this.model.getConnectJobTimeout (), this.model.getItemMgt (), itemHandles.toArray ( new Integer[itemHandles.size ()] ) );
+        final ResultSet<Integer> result = this.worker.execute ( job, job );
+
+        for ( final Result<Integer> entry : result )
+        {
+            if ( !entry.isFailed () )
+            {
+                final Integer serverHandle = entry.getValue ();
+                final String itemId = this.serverHandleMapRev.get ( serverHandle );
+
+                removeByServerHandle ( serverHandle );
+
+                if ( itemId != null )
+                {
+                    try
+                    {
+                        this.controller.getItemManager ().itemUnrealized ( itemId );
+                    }
+                    catch ( final Throwable e )
+                    {
+                        logger.warn ( "Failed to notify item of unrealize", e );
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove an item form the internal structure by server handle
+     * @param serverHandle the server handle of the item to remove 
+     */
+    private void removeByServerHandle ( final Integer serverHandle )
+    {
+        if ( serverHandle != null )
+        {
+            final String itemId = this.serverHandleMapRev.get ( serverHandle );
+            if ( itemId != null )
+            {
+                final Integer clientHandle = this.clientHandleMap.get ( itemId );
+                if ( clientHandle != null )
+                {
+                    this.clientHandleMapRev.remove ( clientHandle );
+                }
+                this.clientHandleMap.remove ( itemId );
+                this.serverHandleMap.remove ( itemId );
+                this.serverHandleMapRev.remove ( serverHandle );
+            }
+        }
+    }
+
+    private void performRealizeItems ( final Collection<ItemRegistrationRequest> newItems ) throws InvocationTargetException
     {
         if ( newItems.isEmpty () )
         {
@@ -204,7 +282,7 @@ public class OPCIoManager extends AbstractPropertyChange
         final Random r = new Random ();
         synchronized ( this.clientHandleMap )
         {
-            for ( final ItemRequest def : newItems )
+            for ( final ItemRegistrationRequest def : newItems )
             {
                 Integer i = r.nextInt ();
                 while ( this.clientHandleMapRev.containsKey ( i ) )
@@ -218,7 +296,7 @@ public class OPCIoManager extends AbstractPropertyChange
         }
 
         // for now do it one by one .. since packets that get too big cause an error
-        for ( final ItemRequest def : newItems )
+        for ( final ItemRegistrationRequest def : newItems )
         {
             //RealizeItemsJob job = new RealizeItemsJob ( this.model.getItemMgt (), newItems.toArray ( new OPCITEMDEF[0] ) );
             final RealizeItemsJob job = new RealizeItemsJob ( this.model.getConnectJobTimeout (), this.model.getItemMgt (), new OPCITEMDEF[] { def.getItemDefinition () } );
@@ -273,10 +351,10 @@ public class OPCIoManager extends AbstractPropertyChange
         // registrations
         if ( !this.requestMap.isEmpty () )
         {
-            List<ItemRequest> newItems = null;
+            List<ItemRegistrationRequest> newItems = null;
 
-            newItems = new ArrayList<ItemRequest> ( this.requestMap.size () );
-            for ( final Map.Entry<String, ItemRequest> def : this.requestMap.entrySet () )
+            newItems = new ArrayList<ItemRegistrationRequest> ( this.requestMap.size () );
+            for ( final Map.Entry<String, ItemRegistrationRequest> def : this.requestMap.entrySet () )
             {
                 newItems.add ( def.getValue () );
                 this.requestedMap.put ( def.getKey (), def.getValue () );
@@ -304,7 +382,14 @@ public class OPCIoManager extends AbstractPropertyChange
         if ( !this.activeSet.isEmpty () )
         {
             ctx.setReadItems ( new HashSet<String> ( this.activeSet ) );
-            // don't clear the active set
+            // don't clear the active set, we only use it to check what we need to read
+        }
+
+        // unrealize
+        if ( !this.itemUnregistrations.isEmpty () )
+        {
+            ctx.setUnregistrations ( new HashSet<String> ( this.itemUnregistrations ) );
+            this.itemUnregistrations.clear ();
         }
 
         return ctx;
@@ -315,7 +400,7 @@ public class OPCIoManager extends AbstractPropertyChange
         if ( ctx.getRegistrations () != null )
         {
             this.controller.setControllerState ( ControllerState.REGISTERING );
-            realizeItems ( ctx.getRegistrations () );
+            performRealizeItems ( ctx.getRegistrations () );
         }
         if ( ctx.getActivations () != null )
         {
@@ -331,6 +416,11 @@ public class OPCIoManager extends AbstractPropertyChange
         {
             this.controller.setControllerState ( ControllerState.READING );
             performRead ( ctx.getReadItems (), dataSource );
+        }
+        if ( ctx.getUnregistrations () != null )
+        {
+            this.controller.setControllerState ( ControllerState.UNREGISTERING );
+            performUnrealizeItems ( ctx.getUnregistrations () );
         }
     }
 

@@ -27,9 +27,11 @@ public class OPCIoContext
 {
     private Map<String, Boolean> activations;
 
-    private List<ItemRequest> registrations;
+    private List<ItemRegistrationRequest> registrations;
 
     private List<OPCWriteRequest> writeRequests;
+
+    private Set<String> unregistrations;
 
     private Set<String> readItems;
 
@@ -43,12 +45,12 @@ public class OPCIoContext
         this.activations = activations;
     }
 
-    public List<ItemRequest> getRegistrations ()
+    public List<ItemRegistrationRequest> getRegistrations ()
     {
         return this.registrations;
     }
 
-    public void setRegistrations ( final List<ItemRequest> registrations )
+    public void setRegistrations ( final List<ItemRegistrationRequest> registrations )
     {
         this.registrations = registrations;
     }
@@ -71,6 +73,16 @@ public class OPCIoContext
     public void setReadItems ( final Set<String> readItems )
     {
         this.readItems = readItems;
+    }
+
+    public Set<String> getUnregistrations ()
+    {
+        return this.unregistrations;
+    }
+
+    public void setUnregistrations ( final Set<String> unregistrations )
+    {
+        this.unregistrations = unregistrations;
     }
 
 }

@@ -30,4 +30,5 @@ public enum ControllerState
     DISCONNECTING,
     REGISTERING,
     BROWSING,
+    UNREGISTERING
 }

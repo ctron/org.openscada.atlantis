@@ -65,8 +65,6 @@ public class OPCConnection implements PropertyChangeListener
 
     private DataItemInputChained connectingItem;
 
-    private DataItemCommand addItemCommandItem;
-
     private DataItemCommand connectDataItem;
 
     private DataItemCommand disconnectDataItem;
@@ -161,15 +159,6 @@ public class OPCConnection implements PropertyChangeListener
         this.numDisposersRunningDataItem = this.connectionItemFactory.createInput ( "numDisposersRunning" );
 
         this.controllerStateDataItem = this.connectionItemFactory.createInput ( "controllerStateDataItem" );
-
-        this.addItemCommandItem = this.connectionItemFactory.createCommand ( "addItem" );
-        this.addItemCommandItem.addListener ( new DataItemCommand.Listener () {
-
-            public void command ( final Variant value )
-            {
-                addItem ( value.asString ( null ) );
-            }
-        } );
 
         this.connectDataItem = this.connectionItemFactory.createCommand ( "connect" );
         this.connectDataItem.addListener ( new DataItemCommand.Listener () {
@@ -341,6 +330,7 @@ public class OPCConnection implements PropertyChangeListener
      */
     public void connect ()
     {
+        logger.warn ( "Requested connect" );
         this.controller.connect ( this.connectionSetup.getConnectionInformation () );
     }
 
@@ -349,6 +339,7 @@ public class OPCConnection implements PropertyChangeListener
      */
     public void disconnect ()
     {
+        logger.warn ( "Requested disconnect" );
         this.controller.disconnect ();
     }
 
@@ -513,21 +504,6 @@ public class OPCConnection implements PropertyChangeListener
         }
 
         this.serverStateItem.updateData ( null, attributes, AttributeMode.UPDATE );
-    }
-
-    /**
-     * Allow the command item "addItem" to add a new opc item
-     * @param itemId
-     */
-    public void addItem ( final String itemId )
-    {
-        if ( itemId == null )
-        {
-            return;
-        }
-
-        logger.info ( String.format ( "Request to add item '%s'", itemId ) );
-        this.controller.getIoManager ().requestItemById ( itemId );
     }
 
     public OPCItem addUnrealizedItem ( final String opcItemId )

@@ -29,7 +29,7 @@ import org.openscada.opc.dcom.da.OPCITEMDEF;
  * @author jens
  *
  */
-public class ItemRequest
+public class ItemRegistrationRequest
 {
     private OPCITEMDEF itemDefinition;
 

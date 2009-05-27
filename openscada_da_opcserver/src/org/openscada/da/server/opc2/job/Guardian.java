@@ -37,7 +37,7 @@ public class Guardian implements Runnable
 
     private static Logger log = Logger.getLogger ( Guardian.class );
 
-    private boolean running = true;
+    private volatile boolean running = true;
 
     private Job currentJob;
 

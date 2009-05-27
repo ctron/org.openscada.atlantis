@@ -22,6 +22,8 @@ package org.openscada.da.server.opc2.preload;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.openscada.core.Variant;
+import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc2.configuration.ItemDescription;
 import org.openscada.da.server.opc2.connection.OPCItemManager;
@@ -46,6 +48,23 @@ public class InMemoryAbstractItemSource extends AbstractItemSource
     {
         super.activate ( factory, itemManager );
         fireAvailableItemsChanged ( this.items );
+
+        this.factory.createCommand ( "addItem" ).addListener ( new DataItemCommand.Listener () {
+
+            public void command ( final Variant value ) throws Exception
+            {
+                InMemoryAbstractItemSource.this.addItem ( value.asString ( null ) );
+            }
+        } );
     }
 
+    protected void addItem ( final String opcItemId )
+    {
+        if ( opcItemId == null )
+        {
+            return;
+        }
+        this.items.add ( new ItemDescription ( opcItemId ) );
+        fireAvailableItemsChanged ( this.items );
+    }
 }
