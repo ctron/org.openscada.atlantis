@@ -83,8 +83,6 @@ public class OPCConnection implements PropertyChangeListener
 
     private DataItemInputChained controllerStateDataItem;
 
-    // private AbstractXMLItemSource xmlItemSource;
-
     private FolderItemFactory itemFactory;
 
     /**
