@@ -26,6 +26,7 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.openscada.da.server.opc2.job.ThreadJob;
 import org.openscada.opc.dcom.common.impl.OPCCommon;
+import org.openscada.opc.dcom.da.impl.OPCAsyncIO2;
 import org.openscada.opc.dcom.da.impl.OPCGroupStateMgt;
 import org.openscada.opc.dcom.da.impl.OPCItemMgt;
 import org.openscada.opc.dcom.da.impl.OPCServer;
@@ -61,6 +62,8 @@ public class ConnectJob extends ThreadJob
     private OPCItemMgt itemMgt;
 
     private OPCSyncIO syncIo;
+
+    private OPCAsyncIO2 asyncIo2;
 
     private OPCCommon common;
 
@@ -109,7 +112,7 @@ public class ConnectJob extends ThreadJob
         this.group = this.server.addGroup ( null, true, this.updateRate, 0, null, null, 0 );
         this.itemMgt = this.group.getItemManagement ();
         this.syncIo = this.group.getSyncIO ();
-
+        this.asyncIo2 = this.group.getAsyncIO2 ();
     }
 
     public JISession getSession ()
@@ -150,5 +153,10 @@ public class ConnectJob extends ThreadJob
     public OPCCommon getCommon ()
     {
         return this.common;
+    }
+
+    public OPCAsyncIO2 getAsyncIo2 ()
+    {
+        return this.asyncIo2;
     }
 }

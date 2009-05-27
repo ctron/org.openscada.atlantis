@@ -94,6 +94,9 @@ public class OPCController implements Runnable
         this.connectionInformation = null;
     }
 
+    /**
+     * The controller main loop
+     */
     public void run ()
     {
         while ( this.running )
@@ -118,6 +121,10 @@ public class OPCController implements Runnable
 
     protected void setControllerState ( final ControllerState state )
     {
+        if ( logger.isDebugEnabled () )
+        {
+            logger.debug ( String.format ( "Controller state: %s", state ) );
+        }
         this.model.setControllerState ( state );
     }
 
@@ -205,6 +212,7 @@ public class OPCController implements Runnable
                     model.setGroup ( job.getGroup () );
                     model.setSyncIo ( job.getSyncIo () );
                     model.setItemMgt ( job.getItemMgt () );
+                    model.setAsyncIo2 ( job.getAsyncIo2 () );
 
                     model.setConnectionState ( ConnectionState.CONNECTED );
                 }
@@ -285,6 +293,7 @@ public class OPCController implements Runnable
         this.model.setGroup ( null );
         this.model.setItemMgt ( null );
         this.model.setSyncIo ( null );
+        this.model.setAsyncIo2 ( null );
         this.model.setCommon ( null );
 
         this.model.setConnectionState ( ConnectionState.DISCONNECTED );

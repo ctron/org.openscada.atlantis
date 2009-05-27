@@ -48,7 +48,7 @@ import org.openscada.opc.dcom.common.KeyedResult;
 import org.openscada.opc.dcom.common.Result;
 import org.openscada.opc.dcom.da.OPCITEMDEF;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
-import org.openscada.opc.dcom.da.OPCITEMSTATE;
+import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.WriteRequest;
 import org.openscada.utils.collection.MapBuilder;
 
@@ -246,7 +246,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
         }
     }
 
-    public void dataRead ( final String itemId, final KeyedResult<Integer, OPCITEMSTATE> entry, final String errorMessage )
+    public void dataRead ( final String itemId, final KeyedResult<Integer, ValueData> entry, final String errorMessage )
     {
         final OPCItem item = this.itemMap.get ( itemId );
         if ( item == null )

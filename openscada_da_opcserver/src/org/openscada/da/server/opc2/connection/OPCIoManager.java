@@ -40,8 +40,6 @@ import org.openscada.da.server.opc2.job.Worker;
 import org.openscada.da.server.opc2.job.impl.ErrorMessageJob;
 import org.openscada.da.server.opc2.job.impl.ItemActivationJob;
 import org.openscada.da.server.opc2.job.impl.RealizeItemsJob;
-import org.openscada.da.server.opc2.job.impl.SyncReadJob;
-import org.openscada.da.server.opc2.job.impl.SyncWriteJob;
 import org.openscada.da.server.opc2.job.impl.UnrealizeItemsJob;
 import org.openscada.opc.dcom.common.KeyedResult;
 import org.openscada.opc.dcom.common.KeyedResultSet;
@@ -50,10 +48,10 @@ import org.openscada.opc.dcom.common.ResultSet;
 import org.openscada.opc.dcom.da.OPCDATASOURCE;
 import org.openscada.opc.dcom.da.OPCITEMDEF;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
-import org.openscada.opc.dcom.da.OPCITEMSTATE;
+import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.WriteRequest;
 
-public class OPCIoManager extends AbstractPropertyChange
+public abstract class OPCIoManager extends AbstractPropertyChange
 {
 
     private static final String PROP_SERVER_HANDLE_COUNT = "serverHandleCount";
@@ -68,19 +66,22 @@ public class OPCIoManager extends AbstractPropertyChange
 
     private long writeRequestTotal = 0;
 
-    private static Logger logger = Logger.getLogger ( OPCSyncIoManager.class );
+    private static Logger logger = Logger.getLogger ( OPCIoManager.class );
 
+    /**
+     * The request queue
+     */
     private final Map<String, ItemRegistrationRequest> requestMap = new HashMap<String, ItemRegistrationRequest> ();
 
     private final Map<String, ItemRegistrationRequest> requestedMap = new HashMap<String, ItemRegistrationRequest> ();
 
-    private final Map<String, Integer> clientHandleMap = new HashMap<String, Integer> ();
+    protected final Map<String, Integer> clientHandleMap = new HashMap<String, Integer> ();
 
-    private final Map<Integer, String> clientHandleMapRev = new HashMap<Integer, String> ();
+    protected final Map<Integer, String> clientHandleMapRev = new HashMap<Integer, String> ();
 
-    private final Map<String, Integer> serverHandleMap = new HashMap<String, Integer> ();
+    protected final Map<String, Integer> serverHandleMap = new HashMap<String, Integer> ();
 
-    private final Map<Integer, String> serverHandleMapRev = new HashMap<Integer, String> ();
+    protected final Map<Integer, String> serverHandleMapRev = new HashMap<Integer, String> ();
 
     private final Map<String, Boolean> activationRequestMap = new HashMap<String, Boolean> ();
 
@@ -111,24 +112,6 @@ public class OPCIoManager extends AbstractPropertyChange
         handleDisconnected ();
     }
 
-    /**
-     * Unregister everything from the hive
-     */
-    protected synchronized void unregisterAllItems ()
-    {
-        this.itemUnregistrations.clear ();
-
-        this.writeRequests.clear ();
-        this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, this.writeRequests.size () );
-
-        this.clientHandleMap.clear ();
-        this.clientHandleMapRev.clear ();
-
-        this.serverHandleMap.clear ();
-        this.serverHandleMapRev.clear ();
-        this.listeners.firePropertyChange ( PROP_SERVER_HANDLE_COUNT, null, this.serverHandleMap.size () );
-    }
-
     public void requestItemsById ( final Collection<String> requestItems )
     {
         final List<ItemRegistrationRequest> reqs = new ArrayList<ItemRegistrationRequest> ( requestItems.size () );
@@ -150,13 +133,18 @@ public class OPCIoManager extends AbstractPropertyChange
         for ( final ItemRegistrationRequest itemDef : items )
         {
             final String itemId = itemDef.getItemDefinition ().getItemID ();
-            if ( this.requestMap.containsKey ( itemId ) || this.requestedMap.containsKey ( itemId ) )
+            if ( this.requestMap.containsKey ( itemId ) )
             {
+                logger.info ( "Item already in request queue" );
+                continue;
+            }
+            if ( this.requestedMap.containsKey ( itemId ) )
+            {
+                logger.info ( "Item already requested" );
                 continue;
             }
             this.requestMap.put ( itemDef.getItemDefinition ().getItemID (), itemDef );
         }
-
     }
 
     public synchronized void unrequestItem ( final String itemId )
@@ -185,9 +173,20 @@ public class OPCIoManager extends AbstractPropertyChange
     /**
      * May only be called by the controller
      */
-    public void handleDisconnected ()
+    public synchronized void handleDisconnected ()
     {
-        unregisterAllItems ();
+        this.itemUnregistrations.clear ();
+
+        this.writeRequests.clear ();
+        this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, this.writeRequests.size () );
+
+        this.clientHandleMap.clear ();
+        this.clientHandleMapRev.clear ();
+
+        this.serverHandleMap.clear ();
+        this.serverHandleMapRev.clear ();
+        this.listeners.firePropertyChange ( PROP_SERVER_HANDLE_COUNT, null, this.serverHandleMap.size () );
+
     }
 
     /**
@@ -306,7 +305,7 @@ public class OPCIoManager extends AbstractPropertyChange
 
                 if ( entry.isFailed () )
                 {
-                    logger.debug ( String.format ( "Revoking client handle %d for item %s", entry.getKey ().getClientHandle (), itemId ) );
+                    logger.info ( String.format ( "Revoking client handle %d for item %s", entry.getKey ().getClientHandle (), itemId ) );
                     this.clientHandleMap.remove ( itemId );
                     this.clientHandleMapRev.remove ( entry.getKey ().getClientHandle () );
                 }
@@ -349,8 +348,7 @@ public class OPCIoManager extends AbstractPropertyChange
         // registrations
         if ( !this.requestMap.isEmpty () )
         {
-            List<ItemRegistrationRequest> newItems = null;
-
+            final List<ItemRegistrationRequest> newItems;
             newItems = new ArrayList<ItemRegistrationRequest> ( this.requestMap.size () );
             for ( final Map.Entry<String, ItemRegistrationRequest> def : this.requestMap.entrySet () )
             {
@@ -388,6 +386,10 @@ public class OPCIoManager extends AbstractPropertyChange
         {
             ctx.setUnregistrations ( new HashSet<String> ( this.itemUnregistrations ) );
             this.itemUnregistrations.clear ();
+            for ( final String itemId : ctx.getUnregistrations () )
+            {
+                this.requestedMap.remove ( itemId );
+            }
         }
 
         return ctx;
@@ -489,50 +491,33 @@ public class OPCIoManager extends AbstractPropertyChange
      * @param dataSource the datasource to read from (cache or device)
      * @throws InvocationTargetException
      */
-    public void performRead ( final Set<String> readSet, final OPCDATASOURCE dataSource ) throws InvocationTargetException
-    {
-        if ( readSet.isEmpty () )
-        {
-            // we are lucky
-            return;
-        }
-
-        final Set<Integer> handles = new HashSet<Integer> ();
-        for ( final String itemId : readSet )
-        {
-            final Integer handle = this.serverHandleMap.get ( itemId );
-            if ( handle != null )
-            {
-                handles.add ( handle );
-            }
-        }
-
-        if ( handles.isEmpty () )
-        {
-            // we are lucky ... better late than never
-            return;
-        }
-
-        final SyncReadJob job = new SyncReadJob ( this.model.getReadJobTimeout (), this.model, dataSource, handles.toArray ( new Integer[0] ) );
-        final KeyedResultSet<Integer, OPCITEMSTATE> result = this.worker.execute ( job, job );
-
-        // we have the read result, so now we distribute the result to the items
-        handleReadResult ( result );
-    }
+    protected abstract void performRead ( final Set<String> readSet, final OPCDATASOURCE dataSource ) throws InvocationTargetException;
 
     /**
      * Provide the registers items with the read result
      * @param result the read result
+     * @param useServerHandles <code>true</code> if the result uses server handle, <code>false</code> if it uses client handles
      * @throws InvocationTargetException
      */
-    private void handleReadResult ( final KeyedResultSet<Integer, OPCITEMSTATE> result ) throws InvocationTargetException
+    protected void handleReadResult ( final KeyedResultSet<Integer, ValueData> result, final boolean useServerHandles ) throws InvocationTargetException
     {
-        for ( final KeyedResult<Integer, OPCITEMSTATE> entry : result )
+        for ( final KeyedResult<Integer, ValueData> entry : result )
         {
-            final String itemId = this.serverHandleMapRev.get ( entry.getKey () );
+            final String itemId;
+
+            // get the item id
+            if ( useServerHandles )
+            {
+                itemId = this.serverHandleMapRev.get ( entry.getKey () );
+            }
+            else
+            {
+                itemId = this.clientHandleMapRev.get ( entry.getKey () );
+            }
+
             if ( itemId == null )
             {
-                logger.info ( String.format ( "Got read reply for invalid item - client handle: '%s'", entry.getKey () ) );
+                logger.info ( String.format ( "Got read reply for invalid item - server handle: '%s'", entry.getKey () ) );
                 continue;
             }
 
@@ -605,55 +590,14 @@ public class OPCIoManager extends AbstractPropertyChange
      * @param requests 
      * @throws InvocationTargetException
      */
-    protected void performWriteRequests ( final Collection<OPCWriteRequest> requests ) throws InvocationTargetException
-    {
-        // if one write call fails here all other won't be written
-        // this is ok, since all others will fail as well
-        // specific item write errors are handled specifically using the result value
-        for ( final OPCWriteRequest request : requests )
-        {
-            try
-            {
-                final Integer serverHandle = this.serverHandleMap.get ( request.getItemId () );
-
-                if ( serverHandle == null )
-                {
-                    throw new RuntimeException ( String.format ( "Item '%s' is not realized.", request.getItemId () ) );
-                }
-
-                final SyncWriteJob job = new SyncWriteJob ( this.model.getWriteJobTimeout (), this.model, new WriteRequest[] { new WriteRequest ( serverHandle, request.getValue () ) } );
-
-                final ResultSet<WriteRequest> result = this.worker.execute ( job, job );
-                // if we have a result...
-                if ( result != null )
-                {
-                    // ... process it
-                    handleWriteResult ( result.get ( 0 ) );
-                }
-                else
-                {
-                    // ... otherwise we don't have a connection
-                    handleWriteException ( new RuntimeException ( "No connection to OPC server" ), request );
-                }
-            }
-            catch ( final InvocationTargetException e )
-            {
-                handleWriteException ( e, request );
-                throw e;
-            }
-            catch ( final Throwable e )
-            {
-                handleWriteException ( e, request );
-            }
-        }
-    }
+    protected abstract void performWriteRequests ( final Collection<OPCWriteRequest> requests ) throws InvocationTargetException;
 
     /**
      * handle the case a critical write error occurred
      * @param e the exception
      * @param request the request that caused the error
      */
-    private void handleWriteException ( final Throwable e, final OPCWriteRequest request )
+    protected void handleWriteException ( final Throwable e, final OPCWriteRequest request )
     {
         final String itemId = request.getItemId ();
         logger.warn ( String.format ( "Failed to perform write request for item %s => %s", itemId, request.getValue () ), e );
@@ -670,7 +614,7 @@ public class OPCIoManager extends AbstractPropertyChange
      * handle a successful write operation
      * @param result the result
      */
-    private void handleWriteResult ( final Result<WriteRequest> result )
+    protected void handleWriteResult ( final Result<WriteRequest> result )
     {
         final String itemId = this.serverHandleMapRev.get ( result.getValue ().getServerHandle () );
         if ( itemId == null )

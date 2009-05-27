@@ -39,7 +39,7 @@ import org.openscada.opc.dcom.common.KeyedResult;
 import org.openscada.opc.dcom.common.Result;
 import org.openscada.opc.dcom.da.OPCITEMDEF;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
-import org.openscada.opc.dcom.da.OPCITEMSTATE;
+import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.WriteRequest;
 import org.openscada.utils.collection.MapBuilder;
 
@@ -107,7 +107,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         this.controller.getIoManager ().wakeupItem ( this.opcItemId );
     }
 
-    public void updateStatus ( final KeyedResult<Integer, OPCITEMSTATE> entry, final String errorMessage )
+    public void updateStatus ( final KeyedResult<Integer, ValueData> entry, final String errorMessage )
     {
         if ( this.suspended )
         {
@@ -116,7 +116,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        final OPCITEMSTATE state = entry.getValue ();
+        final ValueData state = entry.getValue ();
         attributes.put ( "opc.connection.error", null );
 
         if ( entry.isFailed () )
@@ -174,8 +174,8 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
                 if ( !this.ignoreTimestampOnlyChange || this.lastValue == null || !this.lastValue.equals ( value ) )
                 {
-                    attributes.put ( "timestamp", new Variant ( state.getTimestamp ().asCalendar ().getTimeInMillis () ) );
-                    attributes.put ( "timestamp.message", new Variant ( String.format ( "%tc", state.getTimestamp ().asCalendar () ) ) );
+                    attributes.put ( "timestamp", new Variant ( state.getTimestamp ().getTimeInMillis () ) );
+                    attributes.put ( "timestamp.message", new Variant ( String.format ( "%tc", state.getTimestamp () ) ) );
                 }
 
             }

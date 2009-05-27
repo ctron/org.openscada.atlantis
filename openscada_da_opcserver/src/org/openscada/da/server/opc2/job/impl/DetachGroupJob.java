@@ -17,22 +17,36 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.server.opc2.connection;
+package org.openscada.da.server.opc2.job.impl;
 
-import org.openscada.opc.dcom.common.KeyedResult;
-import org.openscada.opc.dcom.common.Result;
-import org.openscada.opc.dcom.da.OPCITEMDEF;
-import org.openscada.opc.dcom.da.OPCITEMRESULT;
-import org.openscada.opc.dcom.da.ValueData;
-import org.openscada.opc.dcom.da.WriteRequest;
+import org.apache.log4j.Logger;
+import org.openscada.da.server.opc2.job.ThreadJob;
+import org.openscada.opc.dcom.common.EventHandler;
 
-public interface IOListener
+/**
+ * Detach from the connection point of a group
+ * @author Jens Reimann &lt;jens.reimann@inavare.net&gt;
+ *
+ */
+public class DetachGroupJob extends ThreadJob
 {
-    public void itemRealized ( String itemId, KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry );
+    public static final long DEFAULT_TIMEOUT = 5000L;
 
-    public void itemUnrealized ( String itemId );
+    private static Logger log = Logger.getLogger ( DetachGroupJob.class );
 
-    public void dataWritten ( String itemId, Result<WriteRequest> result, Throwable e );
+    private final EventHandler eventHandler;
 
-    public void dataRead ( String itemId, KeyedResult<Integer, ValueData> entry, String errorMessage );
+    public DetachGroupJob ( final long timeout, final EventHandler eventHandler )
+    {
+        super ( timeout );
+        this.eventHandler = eventHandler;
+    }
+
+    @Override
+    protected void perform () throws Exception
+    {
+        log.info ( "Perform group detach" );
+        this.eventHandler.detach ();
+    }
+
 }

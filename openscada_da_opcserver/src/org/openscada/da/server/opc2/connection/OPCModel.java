@@ -26,6 +26,7 @@ import org.jinterop.dcom.core.JISession;
 import org.openscada.da.server.common.exporter.AbstractPropertyChange;
 import org.openscada.opc.dcom.common.impl.OPCCommon;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
+import org.openscada.opc.dcom.da.impl.OPCAsyncIO2;
 import org.openscada.opc.dcom.da.impl.OPCGroupStateMgt;
 import org.openscada.opc.dcom.da.impl.OPCItemMgt;
 import org.openscada.opc.dcom.da.impl.OPCServer;
@@ -52,6 +53,8 @@ public class OPCModel extends AbstractPropertyChange
     private OPCItemMgt itemMgt;
 
     private OPCSyncIO syncIo;
+
+    private OPCAsyncIO2 asyncIo2;
 
     private OPCCommon common;
 
@@ -415,5 +418,15 @@ public class OPCModel extends AbstractPropertyChange
     public void setWriteJobTimeout ( final Long writeJobTimeout )
     {
         this.writeJobTimeout = writeJobTimeout;
+    }
+
+    public OPCAsyncIO2 getAsyncIo2 ()
+    {
+        return this.asyncIo2;
+    }
+
+    public void setAsyncIo2 ( final OPCAsyncIO2 asyncIo2 )
+    {
+        this.asyncIo2 = asyncIo2;
     }
 }
