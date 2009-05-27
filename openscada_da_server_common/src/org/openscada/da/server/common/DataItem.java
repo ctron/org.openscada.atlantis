@@ -24,6 +24,7 @@ import java.util.Map;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
+import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteAttributeResults;
@@ -42,11 +43,12 @@ public interface DataItem
     /**
      * The write operation of a data item.
      * @param value The value to write to the subsystem
-     * @throws InvalidOperationException Raised if "write" is not a valid operation for htis item
+     * @throws InvalidOperationException Raised if "write" is not a valid operation for this item
      * @throws NullValueException Raised if a null value was passed but the subsystem does not allow null values to be written
      * @throws NotConvertableException Raised if a value was passed that cannot be converted in a variant type suitable for the subsystem
+     * @throws OperationException Raised if the value could not be written due to some subsystem error
      */
-    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException;
+    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException;
 
     public Map<String, Variant> getAttributes ();
 
