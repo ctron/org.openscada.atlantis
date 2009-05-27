@@ -92,7 +92,17 @@ public class FolderCommon implements Folder, ConfigurableFolder
      */
     public synchronized int add ( final Map<String, Folder> folders, final Map<String, DataItemInformation> items )
     {
-        final Collection<Entry> entries = new ArrayList<Entry> ( folders.size () + items.size () );
+        int size = 0;
+        if ( folders != null )
+        {
+            size += folders.size ();
+        }
+        if ( items != null )
+        {
+            size += items.size ();
+        }
+
+        final Collection<Entry> entries = new ArrayList<Entry> ( size );
 
         // add folders
         if ( folders != null )
