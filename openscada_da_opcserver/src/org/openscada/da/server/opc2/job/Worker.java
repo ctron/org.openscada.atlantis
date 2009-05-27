@@ -156,6 +156,12 @@ public class Worker implements GuardianHandler
         return handler.getResult ();
     }
 
+    /**
+     * Execute the job and run the runnable if the job was completed without error
+     * @param job the job to run
+     * @param runnable the runnable to run in the case of no error
+     * @throws InvocationTargetException an exception if something went wrong
+     */
     public void execute ( final Job job, final Runnable runnable ) throws InvocationTargetException
     {
         final OPCRunnableJobHandler handler = new OPCRunnableJobHandler ( runnable );
