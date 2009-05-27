@@ -612,9 +612,10 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     /**
      * handle a successful write operation
+     * @param request the original write request
      * @param result the result
      */
-    protected void handleWriteResult ( final Result<WriteRequest> result )
+    protected void handleWriteResult ( final OPCWriteRequest request, final Result<WriteRequest> result )
     {
         final String itemId = this.serverHandleMapRev.get ( result.getValue ().getServerHandle () );
         if ( itemId == null )

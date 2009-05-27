@@ -110,7 +110,7 @@ public class OPCSyncIoManager extends OPCIoManager
                 if ( result != null )
                 {
                     // ... process it
-                    handleWriteResult ( result.get ( 0 ) );
+                    handleWriteResult ( request, result.get ( 0 ) );
                 }
                 else
                 {

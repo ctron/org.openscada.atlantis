@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.opc2.connection;
 
+import org.apache.log4j.Logger;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.common.factory.DataItemFactoryRequest;
@@ -31,6 +32,7 @@ import org.openscada.da.server.common.factory.DataItemFactoryRequest;
  */
 public class OPCConnectionDataItemFactory implements DataItemFactory
 {
+    private static Logger logger = Logger.getLogger ( OPCConnectionDataItemFactory.class );
 
     private final OPCConnection connection;
 
@@ -47,6 +49,8 @@ public class OPCConnectionDataItemFactory implements DataItemFactory
 
     public DataItem create ( final DataItemFactoryRequest request )
     {
+        logger.info ( "Requested: " + request.getId () );
+
         final String itemId = request.getId ();
         final String opcItemId = itemId.substring ( this.connection.getItemPrefix ().length () + 1 );
 

@@ -170,7 +170,7 @@ public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
                 if ( result != null )
                 {
                     // ... process it
-                    handleWriteResult ( result.get ( 0 ) );
+                    handleWriteResult ( request, result.get ( 0 ) );
                 }
                 else
                 {
