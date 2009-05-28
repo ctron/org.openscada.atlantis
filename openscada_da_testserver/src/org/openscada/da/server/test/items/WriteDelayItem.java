@@ -25,6 +25,7 @@ import java.util.Map;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
+import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.server.common.DataItemOutput;
@@ -33,37 +34,38 @@ import org.openscada.da.server.common.WriteAttributesHelper;
 public class WriteDelayItem extends DataItemOutput
 {
 
-    public WriteDelayItem ( String name )
+    public WriteDelayItem ( final String name )
     {
         super ( name );
     }
 
     public Map<String, Variant> getAttributes ()
     {
-        return new HashMap<String, Variant>();
+        return new HashMap<String, Variant> ();
     }
 
-    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes )
+    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
     {
         return WriteAttributesHelper.errorUnhandled ( null, attributes );
     }
 
-    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
-       int delay = value.asInteger ();
-       
-       System.out.println ( "Start write: " + delay + "ms" );
-       try
-       {
-           Thread.sleep ( delay );
-           System.out.println ( "End write" );
-       }
-       catch ( InterruptedException e )
-       {
-           System.err.println ( "Write failed" );
-           e.printStackTrace();
-       }
-       
+        final int delay = value.asInteger ();
+
+        System.out.println ( "Start write: " + delay + "ms" );
+        try
+        {
+            Thread.sleep ( delay );
+            System.out.println ( "End write" );
+        }
+        catch ( final InterruptedException e )
+        {
+            System.err.println ( "Write failed" );
+            e.printStackTrace ();
+            throw new OperationException ( "Interrupted" );
+        }
+
     }
 
 }
