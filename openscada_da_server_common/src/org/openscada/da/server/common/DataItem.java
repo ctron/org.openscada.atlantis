@@ -48,11 +48,20 @@ public interface DataItem
      * @throws NullValueException Raised if a null value was passed but the subsystem does not allow null values to be written
      * @throws NotConvertableException Raised if a value was passed that cannot be converted in a variant type suitable for the subsystem
      * @throws OperationException Raised if the value could not be written due to some subsystem error
+     * @deprecated use {@link FutureDataItem#startWriteValue(Variant)} instead
      */
+    @Deprecated
     public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException;
 
     public Map<String, Variant> getAttributes ();
 
+    /**
+     * 
+     * @param attributes attributes to set
+     * @return the result
+     * @deprecated use {@link FutureDataItem#startSetAttributes(Map)} instead
+     */
+    @Deprecated
     public WriteAttributeResults setAttributes ( Map<String, Variant> attributes );
 
     /**

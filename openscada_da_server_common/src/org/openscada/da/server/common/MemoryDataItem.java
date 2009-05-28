@@ -23,16 +23,15 @@ import java.util.EnumSet;
 import java.util.Map;
 
 import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 
-public class MemoryDataItem extends DataItemBase
+public class MemoryDataItem extends FutureDataItemBase
 {
     private volatile Variant value = new Variant ();
 
@@ -54,13 +53,16 @@ public class MemoryDataItem extends DataItemBase
         return new InstantFuture<Variant> ( this.value );
     }
 
-    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
     {
         if ( !this.value.equals ( value ) )
         {
             this.value = new Variant ( value );
             notifyData ( value, null );
         }
+
+        // we can handle this directly
+        return new InstantFuture<WriteResult> ( new WriteResult () );
     }
 
     public Map<String, Variant> getAttributes ()
@@ -80,7 +82,7 @@ public class MemoryDataItem extends DataItemBase
         return this.value;
     }
 
-    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes )
     {
         final WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
 
@@ -91,7 +93,8 @@ public class MemoryDataItem extends DataItemBase
             writeAttributeResults.put ( entry.getKey (), new WriteAttributeResult () );
         }
 
-        return writeAttributeResults;
+        return new InstantFuture<WriteAttributeResults> ( writeAttributeResults );
+
     }
 
 }
