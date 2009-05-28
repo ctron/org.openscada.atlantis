@@ -19,10 +19,7 @@
 
 package org.openscada.da.server.exporter;
 
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
-import org.apache.xmlbeans.XmlException;
 
 /**
  * The server exporter application starts a {@link Controller} with a specified configuration
@@ -34,7 +31,7 @@ public class Application
 {
     private static Logger _log = Logger.getLogger ( Application.class );
 
-    public static void main ( final String[] args ) throws XmlException, IOException, ConfigurationException
+    public static void main ( final String[] args ) throws Exception
     {
         String configurationFile = "configuration.xml";
 

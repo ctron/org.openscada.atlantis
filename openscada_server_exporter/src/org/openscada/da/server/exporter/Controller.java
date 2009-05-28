@@ -120,8 +120,9 @@ public class Controller
 
     /**
      * Export all hives
+     * @throws Exception 
      */
-    public synchronized void start ()
+    public synchronized void start () throws Exception
     {
         for ( final HiveExport hive : this.hives )
         {
@@ -131,8 +132,9 @@ public class Controller
 
     /**
      * Stop exporting all hives
+     * @throws Exception 
      */
-    public synchronized void stop ()
+    public synchronized void stop () throws Exception
     {
         for ( final HiveExport hive : this.hives )
         {

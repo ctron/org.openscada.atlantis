@@ -41,9 +41,11 @@ public class HiveExport
         this.hive = hive;
     }
 
-    public synchronized void start ()
+    public synchronized void start () throws Exception
     {
         log.info ( String.format ( "Starting hive: %s", this.hive ) );
+
+        this.hive.start ();
 
         for ( final Export export : this.exports )
         {
@@ -58,7 +60,7 @@ public class HiveExport
         }
     }
 
-    public synchronized void stop ()
+    public synchronized void stop () throws Exception
     {
         log.info ( String.format ( "Stopping hive: %s", this.hive ) );
 
@@ -73,6 +75,8 @@ public class HiveExport
                 log.error ( "Failed to stop export", e );
             }
         }
+
+        this.hive.stop ();
     }
 
     public Export addExport ( final String endpointUri ) throws ConfigurationError
