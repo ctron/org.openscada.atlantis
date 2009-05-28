@@ -48,12 +48,15 @@ public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
 
     private DataItemCounterOutput valueEventsOutput;
 
+    private DataItemCounterOutput futureItemsOutput;
+
     public HiveCommonStatisticsGenerator ( final String itemPrefix )
     {
         this.itemPrefix = itemPrefix;
         this.attributeWritesCounter.setOutput ( this.attributeWritesOutput = new DataItemCounterOutput ( getId ( "attributeWrites" ) ) );
         this.valueWritesCounter.setOutput ( this.valuesWritesOutput = new DataItemCounterOutput ( getId ( "valueWrites" ) ) );
         this.itemsValue.setOutput ( this.itemsOutput = new DataItemCounterOutput ( getId ( "items" ) ) );
+        this.futureWrapperCounter.setOutput ( this.futureItemsOutput = new DataItemCounterOutput ( getId ( "futureWrappers" ) ) );
         this.sessionsValue.setOutput ( this.sessionsOutput = new DataItemCounterOutput ( getId ( "sessions" ) ) );
         this.attributeEventsCounter.setOutput ( this.attributeEventsOutput = new DataItemCounterOutput ( getId ( "attributeEvents" ) ) );
         this.valueEventsCounter.setOutput ( this.valueEventsOutput = new DataItemCounterOutput ( getId ( "valueEvents" ) ) );
@@ -71,6 +74,7 @@ public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
 
         registerOutput ( "sessions", this.sessionsOutput, "Number of connected sessions" );
         registerOutput ( "items", this.itemsOutput, "Number of registered items" );
+        registerOutput ( "futureWrappers", this.futureItemsOutput, "Number of items that are future wrapped" );
         registerOutput ( "attributeWrites", this.attributeWritesOutput, "Number of attribute write operations" );
         registerOutput ( "valueWrites", this.valuesWritesOutput, "Number of value write operations" );
         registerOutput ( "valueEvents", this.valueEventsOutput, "Number of value events" );
@@ -89,11 +93,6 @@ public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
 
     protected void registerOutput ( final String name, final CounterOutput output, final String description )
     {
-        /*
-        FolderCommon localFolder = new FolderCommon ();
-        folder.add ( name, localFolder, new MapBuilder<String,Variant> ().getMap () );
-        */
-
         output.register ( this.hive, this.folder, description );
     }
 
@@ -111,6 +110,7 @@ public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
         {
             unregisterOutput ( "sessions", this.sessionsOutput );
             unregisterOutput ( "items", this.itemsOutput );
+            unregisterOutput ( "futureWrappers", this.itemsOutput );
             unregisterOutput ( "attributeWrites", this.attributeWritesOutput );
             unregisterOutput ( "valueWrites", this.valuesWritesOutput );
             unregisterOutput ( "attributeEvents", this.attributeEventsOutput );

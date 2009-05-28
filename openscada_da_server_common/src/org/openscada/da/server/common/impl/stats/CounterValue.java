@@ -23,21 +23,21 @@ import org.apache.log4j.Logger;
 
 public class CounterValue implements Tickable
 {
-    private static Logger _log = Logger.getLogger ( CounterValue.class );
+    private static Logger log = Logger.getLogger ( CounterValue.class );
 
-    private long _total = 0;
+    private long total = 0;
 
-    private long _lastTickValue = 0;
+    private long lastTickValue = 0;
 
-    private long _lastTimestamp = 0;
+    private long lastTimestamp = 0;
 
-    private CounterOutput _output;
+    private CounterOutput output;
 
     public synchronized void add ( final long value )
     {
-        this._total += value;
-        this._lastTickValue = this._lastTickValue + Math.abs ( value );
-        _log.debug ( String.format ( "Adding: %s, LastTickValue: %s", value, this._lastTickValue ) );
+        this.total += value;
+        this.lastTickValue = this.lastTickValue + Math.abs ( value );
+        log.debug ( String.format ( "Adding: %s, LastTickValue: %s", value, this.lastTickValue ) );
     }
 
     public synchronized void tick ()
@@ -46,8 +46,8 @@ public class CounterValue implements Tickable
         final long ts = System.currentTimeMillis ();
 
         // get the difference ( in seconds )
-        long diff = ( ts - this._lastTimestamp ) / 1000;
-        this._lastTimestamp = ts;
+        long diff = ( ts - this.lastTimestamp ) / 1000;
+        this.lastTimestamp = ts;
 
         // just in case
         if ( diff == 0 )
@@ -58,17 +58,17 @@ public class CounterValue implements Tickable
         // we need to do this here ... since otherwise the update call later will
         // increment the counter and setting the tickValue to null will discard
         // this information
-        final long lastTickValue = this._lastTickValue;
-        this._lastTickValue = 0;
+        final long lastTickValue = this.lastTickValue;
+        this.lastTickValue = 0;
 
         // calculate the average
         final double avg = (double)lastTickValue / (double)diff;
-        _log.debug ( String.format ( "LastTickValue: %s, Diff: %s, Avg: %s", lastTickValue, diff, avg ) );
-        this._output.setTickValue ( avg, this._total );
+        log.debug ( String.format ( "LastTickValue: %s, Diff: %s, Avg: %s", lastTickValue, diff, avg ) );
+        this.output.setTickValue ( avg, this.total );
     }
 
     public void setOutput ( final CounterOutput output )
     {
-        this._output = output;
+        this.output = output;
     }
 }

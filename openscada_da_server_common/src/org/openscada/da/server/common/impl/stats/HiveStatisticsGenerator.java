@@ -22,6 +22,7 @@ package org.openscada.da.server.common.impl.stats;
 import org.openscada.core.Variant;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.server.common.DataItem;
+import org.openscada.da.server.common.impl.FutureWrapperItem;
 import org.openscada.da.server.common.impl.SessionCommon;
 
 public class HiveStatisticsGenerator implements HiveEventListener, Tickable
@@ -38,9 +39,15 @@ public class HiveStatisticsGenerator implements HiveEventListener, Tickable
 
     protected CounterValue attributeEventsCounter = new CounterValue ();
 
+    protected CounterValue futureWrapperCounter = new CounterValue ();
+
     public void itemRegistered ( final DataItem item )
     {
         this.itemsValue.add ( 1 );
+        if ( item instanceof FutureWrapperItem )
+        {
+            this.futureWrapperCounter.add ( 1 );
+        }
     }
 
     public void sessionCreated ( final SessionCommon session )
@@ -86,6 +93,10 @@ public class HiveStatisticsGenerator implements HiveEventListener, Tickable
     public void itemUnregistered ( final DataItem item )
     {
         this.itemsValue.add ( -1 );
+        if ( item instanceof FutureWrapperItem )
+        {
+            this.futureWrapperCounter.add ( -1 );
+        }
     }
 
 }
