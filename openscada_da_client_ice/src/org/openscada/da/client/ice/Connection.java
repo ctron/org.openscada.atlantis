@@ -75,9 +75,9 @@ public class Connection implements org.openscada.da.client.Connection
 
     private final Scheduler scheduler = new Scheduler ( true, "IceConnectionScheduler" );
 
-    protected ConnectionState _state = ConnectionState.CLOSED;
+    protected ConnectionState state = ConnectionState.CLOSED;
 
-    protected Communicator _communicator = null;
+    protected Communicator communicator = null;
 
     private HivePrx hive = null;
 
@@ -432,9 +432,9 @@ public class Connection implements org.openscada.da.client.Connection
 
     protected synchronized void setState ( final ConnectionState state, final Throwable error )
     {
-        if ( !this._state.equals ( state ) )
+        if ( !this.state.equals ( state ) )
         {
-            this._state = state;
+            this.state = state;
             notifyStateChange ( state, error );
         }
     }
@@ -468,7 +468,7 @@ public class Connection implements org.openscada.da.client.Connection
 
     public synchronized void connect ()
     {
-        switch ( this._state )
+        switch ( this.state )
         {
         case CLOSED:
             break;
@@ -479,13 +479,14 @@ public class Connection implements org.openscada.da.client.Connection
         this.connectionRequested = true;
         setState ( ConnectionState.CONNECTING, null );
 
-        this._communicator = Util.initialize ( this.args, this.initData );
-        this.adapter = this._communicator.createObjectAdapter ( "Client" );
+        this.communicator = Util.initialize ( this.args, this.initData );
+        // this.adapter = this.communicator.createObjectAdapter ( "Client" );
+        this.adapter = this.communicator.createObjectAdapterWithEndpoints ( "Client", "tcp" );
         this.adapter.activate ();
 
         try
         {
-            final ObjectPrx prx = this._communicator.stringToProxy ( getTarget () ).ice_secure ( isSecure () ).ice_timeout ( getTimeout () ).ice_twoway ();
+            final ObjectPrx prx = this.communicator.stringToProxy ( getTarget () ).ice_secure ( isSecure () ).ice_timeout ( getTimeout () ).ice_twoway ();
             this.hive = HivePrxHelper.checkedCast ( prx );
 
             setState ( ConnectionState.CONNECTED, null );
@@ -529,13 +530,13 @@ public class Connection implements org.openscada.da.client.Connection
         this.hive = null;
         this.session = null;
         this.adapter.deactivate ();
-        this._communicator.destroy ();
+        this.communicator.destroy ();
 
         this.dataCallback = null;
         this.folderCallback = null;
 
         this.adapter = null;
-        this._communicator = null;
+        this.communicator = null;
 
         setState ( ConnectionState.CLOSED, e );
 
@@ -547,7 +548,7 @@ public class Connection implements org.openscada.da.client.Connection
 
     public synchronized void disconnect ()
     {
-        switch ( this._state )
+        switch ( this.state )
         {
         case BOUND:
             break;
@@ -572,7 +573,7 @@ public class Connection implements org.openscada.da.client.Connection
 
     public ConnectionState getState ()
     {
-        return this._state;
+        return this.state;
     }
 
     public synchronized void removeConnectionStateListener ( final ConnectionStateListener connectionStateListener )
