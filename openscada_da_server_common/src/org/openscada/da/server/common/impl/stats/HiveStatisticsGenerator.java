@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,66 +26,66 @@ import org.openscada.da.server.common.impl.SessionCommon;
 
 public class HiveStatisticsGenerator implements HiveEventListener, Tickable
 {
-    protected CounterValue _itemsValue = new CounterValue ();
+    protected CounterValue itemsValue = new CounterValue ();
 
-    protected CounterValue _sessionsValue = new CounterValue ();
+    protected CounterValue sessionsValue = new CounterValue ();
 
-    protected CounterValue _valueWritesCounter = new CounterValue ();
+    protected CounterValue valueWritesCounter = new CounterValue ();
 
-    protected CounterValue _attributeWritesCounter = new CounterValue ();
+    protected CounterValue attributeWritesCounter = new CounterValue ();
 
-    protected CounterValue _valueEventsCounter = new CounterValue ();
+    protected CounterValue valueEventsCounter = new CounterValue ();
 
-    protected CounterValue _attributeEventsCounter = new CounterValue ();
+    protected CounterValue attributeEventsCounter = new CounterValue ();
 
     public void itemRegistered ( final DataItem item )
     {
-        this._itemsValue.add ( 1 );
+        this.itemsValue.add ( 1 );
     }
 
     public void sessionCreated ( final SessionCommon session )
     {
-        this._sessionsValue.add ( 1 );
+        this.sessionsValue.add ( 1 );
     }
 
     public void sessionDestroyed ( final SessionCommon session )
     {
-        this._sessionsValue.add ( -1 );
+        this.sessionsValue.add ( -1 );
     }
 
     public void startWrite ( final Session session, final String itemName, final Variant value )
     {
-        this._valueWritesCounter.add ( 1 );
+        this.valueWritesCounter.add ( 1 );
     }
 
     public void startWriteAttributes ( final Session session, final String itemId, final int size )
     {
-        this._attributeWritesCounter.add ( size );
+        this.attributeWritesCounter.add ( size );
     }
 
     public void attributesChanged ( final DataItem item, final int size )
     {
-        this._attributeEventsCounter.add ( size );
+        this.attributeEventsCounter.add ( size );
     }
 
     public void valueChanged ( final DataItem item, final Variant variant, final boolean cache )
     {
-        this._valueEventsCounter.add ( 1 );
+        this.valueEventsCounter.add ( 1 );
     }
 
     public void tick ()
     {
-        this._attributeWritesCounter.tick ();
-        this._itemsValue.tick ();
-        this._sessionsValue.tick ();
-        this._valueWritesCounter.tick ();
-        this._valueEventsCounter.tick ();
-        this._attributeEventsCounter.tick ();
+        this.attributeWritesCounter.tick ();
+        this.itemsValue.tick ();
+        this.sessionsValue.tick ();
+        this.valueWritesCounter.tick ();
+        this.valueEventsCounter.tick ();
+        this.attributeEventsCounter.tick ();
     }
 
     public void itemUnregistered ( final DataItem item )
     {
-        this._itemsValue.add ( -1 );
+        this.itemsValue.add ( -1 );
     }
 
 }

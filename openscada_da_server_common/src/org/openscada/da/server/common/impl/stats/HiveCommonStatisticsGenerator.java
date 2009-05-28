@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,35 +28,35 @@ import org.openscada.da.server.common.impl.HiveCommon;
 
 public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
 {
-    private HiveCommon _hive;
+    private HiveCommon hive;
 
-    private final String _itemPrefix;
+    private final String itemPrefix;
 
-    private FolderCommon _folder;
+    private FolderCommon folder;
 
-    private DataItemCounterOutput _attributeWritesOutput;
+    private DataItemCounterOutput attributeWritesOutput;
 
-    private DataItemCounterOutput _valuesWritesOutput;
+    private DataItemCounterOutput valuesWritesOutput;
 
-    private DataItemCounterOutput _itemsOutput;
+    private DataItemCounterOutput itemsOutput;
 
-    private DataItemCounterOutput _sessionsOutput;
+    private DataItemCounterOutput sessionsOutput;
 
-    private Timer _timer;
+    private Timer timer;
 
-    private DataItemCounterOutput _attributeEventsOutput;
+    private DataItemCounterOutput attributeEventsOutput;
 
-    private DataItemCounterOutput _valueEventsOutput;
+    private DataItemCounterOutput valueEventsOutput;
 
     public HiveCommonStatisticsGenerator ( final String itemPrefix )
     {
-        this._itemPrefix = itemPrefix;
-        this._attributeWritesCounter.setOutput ( this._attributeWritesOutput = new DataItemCounterOutput ( getId ( "attributeWrites" ) ) );
-        this._valueWritesCounter.setOutput ( this._valuesWritesOutput = new DataItemCounterOutput ( getId ( "valueWrites" ) ) );
-        this._itemsValue.setOutput ( this._itemsOutput = new DataItemCounterOutput ( getId ( "items" ) ) );
-        this._sessionsValue.setOutput ( this._sessionsOutput = new DataItemCounterOutput ( getId ( "sessions" ) ) );
-        this._attributeEventsCounter.setOutput ( this._attributeEventsOutput = new DataItemCounterOutput ( getId ( "attributeEvents" ) ) );
-        this._valueEventsCounter.setOutput ( this._valueEventsOutput = new DataItemCounterOutput ( getId ( "valueEvents" ) ) );
+        this.itemPrefix = itemPrefix;
+        this.attributeWritesCounter.setOutput ( this.attributeWritesOutput = new DataItemCounterOutput ( getId ( "attributeWrites" ) ) );
+        this.valueWritesCounter.setOutput ( this.valuesWritesOutput = new DataItemCounterOutput ( getId ( "valueWrites" ) ) );
+        this.itemsValue.setOutput ( this.itemsOutput = new DataItemCounterOutput ( getId ( "items" ) ) );
+        this.sessionsValue.setOutput ( this.sessionsOutput = new DataItemCounterOutput ( getId ( "sessions" ) ) );
+        this.attributeEventsCounter.setOutput ( this.attributeEventsOutput = new DataItemCounterOutput ( getId ( "attributeEvents" ) ) );
+        this.valueEventsCounter.setOutput ( this.valueEventsOutput = new DataItemCounterOutput ( getId ( "valueEvents" ) ) );
     }
 
     /**
@@ -66,18 +66,18 @@ public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
     {
         unregister ();
 
-        this._hive = hive;
-        this._folder = folder;
+        this.hive = hive;
+        this.folder = folder;
 
-        registerOutput ( "sessions", this._sessionsOutput, "Number of connected sessions" );
-        registerOutput ( "items", this._itemsOutput, "Number of registered items" );
-        registerOutput ( "attributeWrites", this._attributeWritesOutput, "Number of attribute write operations" );
-        registerOutput ( "valueWrites", this._valuesWritesOutput, "Number of value write operations" );
-        registerOutput ( "valueEvents", this._valueEventsOutput, "Number of value events" );
-        registerOutput ( "attributeEvents", this._attributeEventsOutput, "Number of attribute events" );
+        registerOutput ( "sessions", this.sessionsOutput, "Number of connected sessions" );
+        registerOutput ( "items", this.itemsOutput, "Number of registered items" );
+        registerOutput ( "attributeWrites", this.attributeWritesOutput, "Number of attribute write operations" );
+        registerOutput ( "valueWrites", this.valuesWritesOutput, "Number of value write operations" );
+        registerOutput ( "valueEvents", this.valueEventsOutput, "Number of value events" );
+        registerOutput ( "attributeEvents", this.attributeEventsOutput, "Number of attribute events" );
 
-        this._timer = new Timer ( "HiveStatsTimer", true );
-        this._timer.scheduleAtFixedRate ( new TimerTask () {
+        this.timer = new Timer ( "HiveStatsTimer", true );
+        this.timer.scheduleAtFixedRate ( new TimerTask () {
 
             @Override
             public void run ()
@@ -91,15 +91,15 @@ public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
     {
         /*
         FolderCommon localFolder = new FolderCommon ();
-        _folder.add ( name, localFolder, new MapBuilder<String,Variant> ().getMap () );
+        folder.add ( name, localFolder, new MapBuilder<String,Variant> ().getMap () );
         */
 
-        output.register ( this._hive, this._folder, description );
+        output.register ( this.hive, this.folder, description );
     }
 
     protected void unregisterOutput ( final String name, final CounterOutput output )
     {
-        output.unregister ( this._hive, this._folder );
+        output.unregister ( this.hive, this.folder );
     }
 
     /**
@@ -107,30 +107,30 @@ public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
      */
     public void unregister ()
     {
-        if ( this._hive != null )
+        if ( this.hive != null )
         {
-            unregisterOutput ( "sessions", this._sessionsOutput );
-            unregisterOutput ( "items", this._itemsOutput );
-            unregisterOutput ( "attributeWrites", this._attributeWritesOutput );
-            unregisterOutput ( "valueWrites", this._valuesWritesOutput );
-            unregisterOutput ( "attributeEvents", this._attributeEventsOutput );
-            unregisterOutput ( "valueEvents", this._valueEventsOutput );
-            this._hive = null;
+            unregisterOutput ( "sessions", this.sessionsOutput );
+            unregisterOutput ( "items", this.itemsOutput );
+            unregisterOutput ( "attributeWrites", this.attributeWritesOutput );
+            unregisterOutput ( "valueWrites", this.valuesWritesOutput );
+            unregisterOutput ( "attributeEvents", this.attributeEventsOutput );
+            unregisterOutput ( "valueEvents", this.valueEventsOutput );
+            this.hive = null;
         }
-        if ( this._folder != null )
+        if ( this.folder != null )
         {
-            this._folder = null;
+            this.folder = null;
         }
-        if ( this._timer != null )
+        if ( this.timer != null )
         {
-            this._timer.cancel ();
-            this._timer = null;
+            this.timer.cancel ();
+            this.timer = null;
         }
     }
 
     protected String getId ( final String itemId )
     {
-        return this._itemPrefix + "." + itemId;
+        return this.itemPrefix + "." + itemId;
     }
 
 }
