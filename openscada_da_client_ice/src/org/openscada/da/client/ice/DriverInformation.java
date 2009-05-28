@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,19 +25,19 @@ import org.openscada.core.client.Connection;
 public class DriverInformation implements org.openscada.core.client.DriverInformation
 {
 
-    public Connection create ( ConnectionInformation connectionInformation )
+    public Connection create ( final ConnectionInformation connectionInformation )
     {
         return new org.openscada.da.client.ice.Connection ( connectionInformation );
     }
 
-    public Class getConnectionClass ()
+    public Class<?> getConnectionClass ()
     {
         return org.openscada.da.client.ice.Connection.class;
     }
 
-    public void validate ( ConnectionInformation connectionInformation ) throws Throwable
+    public void validate ( final ConnectionInformation connectionInformation ) throws Throwable
     {
-        String str = connectionInformation.getProperties ().get ( connectionInformation.getTarget () );
+        final String str = connectionInformation.getProperties ().get ( connectionInformation.getTarget () );
         if ( str == null )
         {
             throw new Exception ( String.format ( "Property with key of target is missing (target: '%s')", connectionInformation.getTarget () ) );
