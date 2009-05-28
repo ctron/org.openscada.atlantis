@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ package org.openscada.da.server.common;
 
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
@@ -29,12 +30,13 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.utils.concurrent.InstantFuture;
 
 public class MemoryDataItem extends DataItemBase
 {
-    private Variant _value = new Variant ();
+    private volatile Variant value = new Variant ();
 
-    private AttributeManager _attributes = null;
+    private AttributeManager attributes = null;
 
     public MemoryDataItem ( final String name )
     {
@@ -44,45 +46,45 @@ public class MemoryDataItem extends DataItemBase
     protected MemoryDataItem ( final String name, final EnumSet<IODirection> ioDirection )
     {
         super ( new DataItemInformationBase ( name, ioDirection ) );
-        this._attributes = new AttributeManager ( this );
+        this.attributes = new AttributeManager ( this );
     }
 
-    public Variant readValue () throws InvalidOperationException
+    public Future<Variant> readValue () throws InvalidOperationException
     {
-        return new Variant ( this._value );
+        return new InstantFuture<Variant> ( this.value );
     }
 
     public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        if ( !this._value.equals ( value ) )
+        if ( !this.value.equals ( value ) )
         {
-            this._value = new Variant ( value );
+            this.value = new Variant ( value );
             notifyData ( value, null );
         }
     }
 
     public Map<String, Variant> getAttributes ()
     {
-        return this._attributes.get ();
+        return this.attributes.get ();
     }
 
     @Override
     protected Map<String, Variant> getCacheAttributes ()
     {
-        return this._attributes.get ();
+        return this.attributes.get ();
     }
 
     @Override
     protected Variant getCacheValue ()
     {
-        return this._value;
+        return this.value;
     }
 
     public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
     {
         final WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
 
-        this._attributes.update ( null, attributes );
+        this.attributes.update ( null, attributes );
 
         for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
         {

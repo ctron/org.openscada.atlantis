@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 package org.openscada.da.server.common;
 
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
@@ -38,7 +39,7 @@ public interface DataItem
      * @return The value read from the subsystem.
      * @throws InvalidOperationException Raised if "read" is not a valid operation for this item
      */
-    public Variant readValue () throws InvalidOperationException;
+    public Future<Variant> readValue () throws InvalidOperationException;
 
     /**
      * The write operation of a data item.

@@ -22,6 +22,7 @@ package org.openscada.da.server.common.chain;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
@@ -33,6 +34,7 @@ import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.utils.concurrent.InstantFuture;
 
 public class DataItemInputChained extends DataItemBaseChained
 {
@@ -125,9 +127,9 @@ public class DataItemInputChained extends DataItemBaseChained
         this._secondaryAttributes.set ( newValue, primaryAttributes );
     }
 
-    public Variant readValue () throws InvalidOperationException
+    public Future<Variant> readValue () throws InvalidOperationException
     {
-        return new Variant ( this._secondaryValue );
+        return new InstantFuture<Variant> ( this._secondaryValue );
     }
 
     public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException

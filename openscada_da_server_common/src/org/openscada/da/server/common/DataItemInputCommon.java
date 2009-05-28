@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,31 +20,33 @@
 package org.openscada.da.server.common;
 
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.utils.concurrent.InstantFuture;
 
 public class DataItemInputCommon extends DataItemInput
 {
-    private Variant _value = new Variant ();
+    private volatile Variant value = new Variant ();
 
-    private AttributeManager _attributes = null;
+    private AttributeManager attributes = null;
 
     public DataItemInputCommon ( final String name )
     {
         super ( name );
-        this._attributes = new AttributeManager ( this );
+        this.attributes = new AttributeManager ( this );
     }
 
-    synchronized public Variant readValue () throws InvalidOperationException
+    public Future<Variant> readValue () throws InvalidOperationException
     {
-        return this._value;
+        return new InstantFuture<Variant> ( this.value );
     }
 
     public Map<String, Variant> getAttributes ()
     {
-        return this._attributes.get ();
+        return this.attributes.get ();
     }
 
     /**
@@ -75,27 +77,27 @@ public class DataItemInputCommon extends DataItemInput
      */
     synchronized public void updateData ( Variant value, final Map<String, Variant> attributes, final AttributeMode mode )
     {
-        if ( !this._value.equals ( value ) )
+        if ( !this.value.equals ( value ) )
         {
-            this._value = new Variant ( value );
+            this.value = new Variant ( value );
         }
         else
         {
             value = null;
         }
 
-        this._attributes.update ( value, attributes, mode );
+        this.attributes.update ( value, attributes, mode );
     }
 
     @Override
     protected Map<String, Variant> getCacheAttributes ()
     {
-        return this._attributes.get ();
+        return this.attributes.get ();
     }
 
     @Override
     protected Variant getCacheValue ()
     {
-        return this._value;
+        return this.value;
     }
 }
