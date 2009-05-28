@@ -24,6 +24,7 @@ import java.util.EnumSet;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
+import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
@@ -39,8 +40,8 @@ public class CSVDataItem extends MemoryItemChained
 {
 
     protected CSVControllerDataItem _controllerItem;
-    
-    public CSVDataItem ( Hive hive, String name, EnumSet<IODirection> ioDirection )
+
+    public CSVDataItem ( final Hive hive, final String name, final EnumSet<IODirection> ioDirection )
     {
         super ( new DataItemInformationBase ( name, ioDirection ) );
         this.addChainElement ( IODirection.INPUT, new TestErrorChainItem () );
@@ -61,7 +62,7 @@ public class CSVDataItem extends MemoryItemChained
     }
 
     @Override
-    protected void writeCalculatedValue ( Variant value )
+    protected void writeCalculatedValue ( final Variant value )
     {
         fireWrite ( value );
         if ( isReadable () )
@@ -71,7 +72,7 @@ public class CSVDataItem extends MemoryItemChained
     }
 
     @Override
-    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
         if ( !isWriteable () )
         {
@@ -80,18 +81,18 @@ public class CSVDataItem extends MemoryItemChained
         super.writeValue ( value );
     }
 
-    private void fireWrite ( Variant value )
+    private void fireWrite ( final Variant value )
     {
-        CSVControllerDataItem controllerItem = _controllerItem;
+        final CSVControllerDataItem controllerItem = this._controllerItem;
         if ( controllerItem != null )
         {
             controllerItem.handleWrite ( value );
         }
     }
 
-    public void setController ( CSVControllerDataItem controllerItem )
+    public void setController ( final CSVControllerDataItem controllerItem )
     {
-        _controllerItem = controllerItem;
+        this._controllerItem = controllerItem;
     }
 
     public boolean isReadable ()
