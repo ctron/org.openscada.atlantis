@@ -20,8 +20,10 @@
 package org.openscada.da.server.net;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.mina.core.session.IoSession;
@@ -33,6 +35,8 @@ import org.openscada.core.net.MessageHelper;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.core.Location;
+import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
@@ -42,15 +46,25 @@ import org.openscada.da.core.server.browser.FolderListener;
 import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.net.base.MessageListener;
+import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
+import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.da.handler.ListBrowser;
 import org.openscada.net.da.handler.Messages;
+import org.openscada.net.da.handler.WriteAttributesOperation;
 import org.openscada.net.utils.MessageCreator;
+import org.openscada.utils.concurrent.NotifyFuture;
+import org.openscada.utils.concurrent.ResultHandler;
+import org.openscada.utils.concurrent.task.DefaultTaskHandler;
+import org.openscada.utils.concurrent.task.ResultFutureHandler;
+import org.openscada.utils.concurrent.task.TaskHandler;
+import org.openscada.utils.lang.Holder;
 
 public class ServerConnectionHandler extends AbstractServerConnectionHandler implements ItemChangeListener, FolderListener
 {
+
     public final static String VERSION = "0.1.8";
 
     private static Logger logger = Logger.getLogger ( ServerConnectionHandler.class );
@@ -58,6 +72,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
     private Hive hive = null;
 
     private Session session = null;
+
+    private final TaskHandler taskHandler = new DefaultTaskHandler ();
 
     public ServerConnectionHandler ( final Hive hive, final IoSession ioSession, final ConnectionInformation connectionInformation )
     {
@@ -288,22 +304,170 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         this.messenger.sendMessage ( Messages.notifySubscriptionChange ( item, subscriptionState ) );
     }
 
-    private void performWrite ( final Message message )
+    private final Set<Long> taskMap = new HashSet<Long> ();
+
+    private void performWrite ( final Message request )
     {
-        final WriteValueController c = new WriteValueController ( this.hive, this.session, this.messenger );
-        c.run ( message );
+        final Holder<String> itemId = new Holder<String> ();
+        final Holder<Variant> value = new Holder<Variant> ();
+
+        org.openscada.net.da.handler.WriteOperation.parse ( request, itemId, value );
+
+        try
+        {
+            final NotifyFuture<WriteResult> task = this.hive.startWrite ( this.session, itemId.value, value.value );
+            final TaskHandler.Handle handle = this.taskHandler.addTask ( task );
+
+            try
+            {
+                final Message reply = MessageCreator.createACK ( request );
+                reply.getValues ().put ( "id", new LongValue ( handle.getId () ) );
+                this.messenger.sendMessage ( reply );
+            }
+            catch ( final Throwable e )
+            {
+                task.cancel ( true );
+                throw e;
+            }
+
+            scheduleTask ( task, handle.getId (), new ResultHandler<WriteResult> () {
+
+                public void completed ( final WriteResult result )
+                {
+                    final Message replyMessage = new Message ( Messages.CC_WRITE_OPERATION_RESULT );
+                    replyMessage.getValues ().put ( "id", new LongValue ( handle.getId () ) );
+                    ServerConnectionHandler.this.messenger.sendMessage ( replyMessage );
+                    handle.dispose ();
+                }
+
+                public void failed ( final Throwable e )
+                {
+                    final Message replyMessage = new Message ( Messages.CC_WRITE_OPERATION_RESULT );
+                    replyMessage.getValues ().put ( Message.FIELD_ERROR_INFO, new StringValue ( e.getMessage () ) );
+                    replyMessage.getValues ().put ( "id", new LongValue ( handle.getId () ) );
+                    ServerConnectionHandler.this.messenger.sendMessage ( replyMessage );
+                    handle.dispose ();
+                }
+            } );
+
+        }
+        catch ( final Throwable e )
+        {
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( request, e ) );
+        }
     }
 
-    private void performWriteAttributes ( final Message message )
+    private <T> void scheduleTask ( final NotifyFuture<T> task, final long id, final ResultHandler<T> resultHandler )
     {
-        final WriteAttributesController c = new WriteAttributesController ( this.hive, this.session, this.messenger );
-        c.run ( message );
+        task.addListener ( new ResultFutureHandler<T> ( resultHandler ) );
     }
 
-    private void performBrowse ( final Message message )
+    private void removeTask ( final long id )
     {
-        final BrowseController c = new BrowseController ( this.hive, this.session, this.messenger );
-        c.run ( message );
+        synchronized ( this.taskMap )
+        {
+            this.taskMap.remove ( id );
+        }
+    }
+
+    private void performWriteAttributes ( final Message request )
+    {
+        final Holder<String> itemId = new Holder<String> ();
+        final Holder<Map<String, Variant>> attributes = new Holder<Map<String, Variant>> ();
+
+        WriteAttributesOperation.parseRequest ( request, itemId, attributes );
+
+        try
+        {
+            final NotifyFuture<WriteAttributeResults> task = this.hive.startWriteAttributes ( this.session, itemId.value, attributes.value );
+            final TaskHandler.Handle handle = this.taskHandler.addTask ( task );
+
+            try
+            {
+                final Message reply = MessageCreator.createACK ( request );
+                reply.getValues ().put ( "id", new LongValue ( handle.getId () ) );
+                this.messenger.sendMessage ( reply );
+            }
+            catch ( final Throwable e )
+            {
+                task.cancel ( true );
+                throw e;
+            }
+
+            scheduleTask ( task, handle.getId (), new ResultHandler<WriteAttributeResults> () {
+
+                public void completed ( final WriteAttributeResults result )
+                {
+                    final Message message = WriteAttributesOperation.createResponse ( handle.getId (), result );
+                    ServerConnectionHandler.this.messenger.sendMessage ( message );
+                    handle.dispose ();
+                }
+
+                public void failed ( final Throwable e )
+                {
+                    final Message message = WriteAttributesOperation.createResponse ( handle.getId (), e );
+                    ServerConnectionHandler.this.messenger.sendMessage ( message );
+                    handle.dispose ();
+                }
+            } );
+
+        }
+        catch ( final Throwable e )
+        {
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( request, e ) );
+        }
+    }
+
+    private void performBrowse ( final Message request )
+    {
+        final String[] location = ListBrowser.parseRequest ( request );
+
+        final HiveBrowser browser = this.hive.getBrowser ();
+        if ( browser == null )
+        {
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( request, "Browsing not supported" ) );
+            return;
+        }
+
+        try
+        {
+            final NotifyFuture<Entry[]> task = browser.startBrowse ( this.session, new Location ( location ) );
+
+            final TaskHandler.Handle handle = this.taskHandler.addTask ( task );
+
+            try
+            {
+                final Message reply = MessageCreator.createACK ( request );
+                reply.getValues ().put ( "id", new LongValue ( handle.getId () ) );
+                this.messenger.sendMessage ( reply );
+            }
+            catch ( final Throwable e )
+            {
+                removeTask ( handle.getId () );
+                task.cancel ( true );
+                throw e;
+            }
+
+            scheduleTask ( task, handle.getId (), new ResultHandler<Entry[]> () {
+
+                public void completed ( final Entry[] result )
+                {
+                    ServerConnectionHandler.this.messenger.sendMessage ( ListBrowser.createResponse ( handle.getId (), result ) );
+                    handle.dispose ();
+                }
+
+                public void failed ( final Throwable e )
+                {
+                    ServerConnectionHandler.this.messenger.sendMessage ( ListBrowser.createResponse ( handle.getId (), e.getMessage () ) );
+                    handle.dispose ();
+                }
+            } );
+
+        }
+        catch ( final Throwable e )
+        {
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( request, e ) );
+        }
     }
 
     public void folderChanged ( final Location location, final Collection<Entry> added, final Collection<String> removed, final boolean full )

@@ -37,13 +37,25 @@ public class Application extends Ice.Application
         {
             log.debug ( String.format ( "Try to export hive '%s'", args[0] ) );
 
-            final ConnectionInformation ci = ConnectionInformation.fromURI ( "da:ice://Hive" );
+            final ConnectionInformation ci;
 
-            Class hiveClass = Class.forName ( args[0] );
-            Hive hive = (Hive)hiveClass.newInstance ();
+            if ( args.length > 1 )
+            {
+                ci = ConnectionInformation.fromURI ( args[1] );
+            }
+            else
+            {
+                ci = ConnectionInformation.fromURI ( "da:ice://Hive" );
+            }
+
+            final Class<?> hiveClass = Class.forName ( args[0] );
+            final Hive hive = (Hive)hiveClass.newInstance ();
+            hive.start ();
             this.e = new Exporter ( hive, communicator (), ci );
 
             communicator ().waitForShutdown ();
+
+            hive.stop ();
 
             return 0;
         }

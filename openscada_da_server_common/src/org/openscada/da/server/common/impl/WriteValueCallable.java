@@ -17,19 +17,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.server.browser;
+package org.openscada.da.server.common.impl;
 
-import org.openscada.core.InvalidSessionException;
-import org.openscada.da.core.Location;
-import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.server.Session;
-import org.openscada.utils.concurrent.NotifyFuture;
+import java.util.concurrent.Callable;
 
-public interface HiveBrowser
+import org.openscada.core.Variant;
+import org.openscada.da.core.WriteResult;
+import org.openscada.da.server.common.DataItem;
+
+public class WriteValueCallable implements Callable<WriteResult>
 {
-    public abstract void subscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException;
+    private final DataItem item;
 
-    public abstract void unsubscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException;
+    private final Variant value;
 
-    public NotifyFuture<Entry[]> startBrowse ( Session session, Location location ) throws InvalidSessionException;
+    public WriteValueCallable ( final DataItem item, final Variant value )
+    {
+        super ();
+        this.item = item;
+        this.value = value;
+    }
+
+    public WriteResult call () throws Exception
+    {
+        this.item.writeValue ( this.value );
+        return new WriteResult ();
+    }
+
 }

@@ -79,7 +79,8 @@ public class Exporter extends ExporterBase
 
     private String getEndpoints ()
     {
-        return this.connectionInformation.getTarget ();
+        final String name = this.connectionInformation.getTarget ();
+        return this.connectionInformation.getProperties ().get ( name );
     }
 
     public synchronized void stop ()

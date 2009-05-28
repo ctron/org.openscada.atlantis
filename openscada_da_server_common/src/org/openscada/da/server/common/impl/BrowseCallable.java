@@ -16,20 +16,35 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+package org.openscada.da.server.common.impl;
 
-package org.openscada.da.core.server.browser;
+import java.util.concurrent.Callable;
 
-import org.openscada.core.InvalidSessionException;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.server.Session;
-import org.openscada.utils.concurrent.NotifyFuture;
+import org.openscada.da.core.server.browser.NoSuchFolderException;
+import org.openscada.da.server.browser.common.Folder;
 
-public interface HiveBrowser
+public class BrowseCallable implements Callable<Entry[]>
 {
-    public abstract void subscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException;
+    private final Folder folder;
 
-    public abstract void unsubscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException;
+    private final Location location;
 
-    public NotifyFuture<Entry[]> startBrowse ( Session session, Location location ) throws InvalidSessionException;
+    public BrowseCallable ( final Folder folder, final Location location )
+    {
+        super ();
+        this.folder = folder;
+        this.location = location;
+    }
+
+    public Entry[] call () throws Exception
+    {
+        if ( this.folder == null )
+        {
+            throw new NoSuchFolderException ( this.location.asArray () );
+        }
+        return this.folder.list ( this.location.getPathStack () );
+    }
+
 }

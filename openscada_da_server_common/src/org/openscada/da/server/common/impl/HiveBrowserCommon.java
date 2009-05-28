@@ -23,19 +23,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.server.BrowseOperationListener;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderListener;
-import org.openscada.utils.jobqueue.RunnableCancelOperation;
-import org.openscada.utils.jobqueue.OperationManager.Handle;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, SessionListener
 {
@@ -45,12 +45,38 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
 
     private final Map<Object, SessionCommon> subscriberMap = new HashMap<Object, SessionCommon> ();
 
+    private ExecutorService operationService;
+
     public HiveBrowserCommon ( final HiveCommon hive )
     {
         this.hive = hive;
         this.hive.addSessionListener ( this );
     }
 
+    public void start ()
+    {
+        this.operationService = Executors.newFixedThreadPool ( 1 );
+    }
+
+    public void stop ()
+    {
+        this.operationService.shutdown ();
+    }
+
+    public NotifyFuture<Entry[]> startBrowse ( final Session session, final Location location ) throws InvalidSessionException
+    {
+        logger.debug ( "List request for: " + location.toString () );
+
+        final SessionCommon sessionCommon = this.hive.validateSession ( session );
+
+        final Folder folder = getRootFolder ();
+
+        final SessionFutureTask<Entry[]> future = new SessionFutureTask<Entry[]> ( sessionCommon, new BrowseCallable ( folder, location ) );
+        this.operationService.execute ( future );
+        return future;
+    }
+
+    /*
     public long startBrowse ( final Session session, final Location location, final BrowseOperationListener listener ) throws InvalidSessionException
     {
         logger.debug ( "List request for: " + location.toString () );
@@ -85,6 +111,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
 
         return handle.getId ();
     }
+    */
 
     public void subscribe ( final Session session, final Location location ) throws NoSuchFolderException, InvalidSessionException
     {

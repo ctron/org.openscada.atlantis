@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,11 +19,13 @@
 
 package org.openscada.da.server.ice.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.InvalidSessionException;
@@ -34,13 +36,13 @@ import org.openscada.core.ice.VariantHelper;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
-import org.openscada.da.core.server.WriteAttributesOperationListener;
-import org.openscada.da.core.server.WriteOperationListener;
 import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.da.ice.BrowserEntryHelper;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 import Ice.Current;
 import Ice.ObjectAdapter;
@@ -57,32 +59,45 @@ import OpenSCADA.DA.Browser.InvalidLocationException;
 
 public class HiveImpl extends _HiveDisp implements Runnable
 {
-    private static Logger _log = Logger.getLogger ( HiveImpl.class );
+    private static Logger logger = Logger.getLogger ( HiveImpl.class );
 
-    private Hive _hive = null;
+    private Hive hive = null;
 
-    private final Map<SessionPrx, SessionImpl> _sessionMap = new HashMap<SessionPrx, SessionImpl> ();
+    private final Map<SessionPrx, SessionImpl> sessionMap = new HashMap<SessionPrx, SessionImpl> ();
 
-    private final Map<SessionImpl, SessionPrx> _sessionMapRev = new HashMap<SessionImpl, SessionPrx> ();
+    private final Map<SessionImpl, SessionPrx> sessionMapRev = new HashMap<SessionImpl, SessionPrx> ();
 
-    private Thread _pingThread = null;
+    private Thread pingThread = null;
 
-    private ObjectAdapter _adapter = null;
+    private ObjectAdapter adapter = null;
+
+    private volatile boolean running = true;
 
     public HiveImpl ( final Hive hive, final ObjectAdapter adapter )
     {
         super ();
-        this._hive = hive;
-        this._adapter = adapter;
+        this.hive = hive;
+        this.adapter = adapter;
 
-        this._pingThread = new Thread ( this );
-        this._pingThread.setDaemon ( true );
-        this._pingThread.start ();
+        start ();
+    }
+
+    public void start ()
+    {
+        this.running = true;
+        this.pingThread = new Thread ( this );
+        this.pingThread.setDaemon ( true );
+        this.pingThread.start ();
+    }
+
+    public void stop ()
+    {
+        this.running = false;
     }
 
     public void run ()
     {
-        while ( true )
+        while ( this.running )
         {
             try
             {
@@ -94,7 +109,7 @@ public class HiveImpl extends _HiveDisp implements Runnable
 
             synchronized ( this )
             {
-                for ( final SessionImpl session : this._sessionMapRev.keySet () )
+                for ( final SessionImpl session : this.sessionMapRev.keySet () )
                 {
                     session.ping ();
                 }
@@ -102,6 +117,7 @@ public class HiveImpl extends _HiveDisp implements Runnable
         }
     }
 
+    @SuppressWarnings ( "unchecked" )
     public SessionPrx createSession ( final Map properties, final Current __current ) throws OpenSCADA.DA.UnableToCreateSession
     {
         final Properties props = new Properties ();
@@ -113,10 +129,10 @@ public class HiveImpl extends _HiveDisp implements Runnable
 
         try
         {
-            final SessionImpl session = new SessionImpl ( this, this._hive.createSession ( props ) );
+            final SessionImpl session = new SessionImpl ( this, this.hive.createSession ( props ) );
             final SessionPrx sessionProxy = SessionPrxHelper.uncheckedCast ( __current.adapter.addWithUUID ( session ) );
-            this._sessionMap.put ( sessionProxy, session );
-            this._sessionMapRev.put ( session, sessionProxy );
+            this.sessionMap.put ( sessionProxy, session );
+            this.sessionMapRev.put ( session, sessionProxy );
             return sessionProxy;
         }
         catch ( final UnableToCreateSessionException e )
@@ -127,12 +143,12 @@ public class HiveImpl extends _HiveDisp implements Runnable
 
     public void subscribeItem ( final OpenSCADA.DA.SessionPrx session, final String item, final Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
     {
-        _log.debug ( String.format ( "Register for item '%s'", item ) );
+        logger.debug ( String.format ( "Register for item '%s'", item ) );
 
         final SessionImpl sessionImpl = getSession ( session );
         try
         {
-            this._hive.subscribeItem ( sessionImpl.getSession (), item );
+            this.hive.subscribeItem ( sessionImpl.getSession (), item );
         }
         catch ( final InvalidSessionException e )
         {
@@ -146,12 +162,12 @@ public class HiveImpl extends _HiveDisp implements Runnable
 
     public void unsubscribeItem ( final OpenSCADA.DA.SessionPrx session, final String item, final Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
     {
-        _log.debug ( String.format ( "Un-Register for item '%s'", item ) );
+        logger.debug ( String.format ( "Un-Register for item '%s'", item ) );
 
         final SessionImpl sessionImpl = getSession ( session );
         try
         {
-            this._hive.unsubscribeItem ( sessionImpl.getSession (), item );
+            this.hive.unsubscribeItem ( sessionImpl.getSession (), item );
         }
         catch ( final InvalidSessionException e )
         {
@@ -165,7 +181,7 @@ public class HiveImpl extends _HiveDisp implements Runnable
 
     public void write_async ( final AMD_Hive_write __cb, final OpenSCADA.DA.SessionPrx session, final String item, final VariantBase value, final Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
     {
-        _log.debug ( String.format ( "write request: item - '%s'", item ) );
+        logger.debug ( String.format ( "write request: item - '%s'", item ) );
 
         final SessionImpl sessionImpl = getSession ( session );
 
@@ -175,19 +191,17 @@ public class HiveImpl extends _HiveDisp implements Runnable
 
         try
         {
-            final long id = this._hive.startWrite ( sessionImpl.getSession (), item, variant, new WriteOperationListener () {
+            final WriteResult result = this.hive.startWrite ( sessionImpl.getSession (), item, variant ).get ();
 
-                public void failure ( final Throwable throwable )
-                {
-                    cb.ice_exception ( new Exception ( throwable ) );
-                }
+            if ( result.isSuccess () )
+            {
+                cb.ice_response ();
+            }
+            else
+            {
+                cb.ice_exception ( new InvocationTargetException ( result.getError () ) );
+            }
 
-                public void success ()
-                {
-                    cb.ice_response ();
-                }
-            } );
-            this._hive.thawOperation ( sessionImpl.getSession (), id );
         }
         catch ( final InvalidSessionException e )
         {
@@ -197,11 +211,16 @@ public class HiveImpl extends _HiveDisp implements Runnable
         {
             throw new OpenSCADA.DA.InvalidItemException ();
         }
+        catch ( final Throwable e )
+        {
+            cb.ice_exception ( new InvocationTargetException ( e ) );
+        }
     }
 
+    @SuppressWarnings ( "unchecked" )
     public void writeAttributes_async ( final AMD_Hive_writeAttributes __cb, final OpenSCADA.DA.SessionPrx session, final String item, final Map attributes, final Current __current ) throws OpenSCADA.Core.InvalidSessionException, OpenSCADA.DA.InvalidItemException
     {
-        _log.debug ( String.format ( "write attribute request: item - '%s'", item ) );
+        logger.debug ( String.format ( "write attribute request: item - '%s'", item ) );
 
         final SessionImpl sessionImpl = getSession ( session );
 
@@ -211,32 +230,25 @@ public class HiveImpl extends _HiveDisp implements Runnable
 
         try
         {
-            final long id = this._hive.startWriteAttributes ( sessionImpl.getSession (), item, attr, new WriteAttributesOperationListener () {
+            final NotifyFuture<WriteAttributeResults> task = this.hive.startWriteAttributes ( sessionImpl.getSession (), item, attr );
 
-                public void complete ( final WriteAttributeResults writeAttributeResults )
-                {
-                    final List<WriteAttributesResultEntry> result = new LinkedList<WriteAttributesResultEntry> ();
-                    for ( final Map.Entry<String, WriteAttributeResult> entry : writeAttributeResults.entrySet () )
-                    {
-                        if ( entry.getValue ().isError () )
-                        {
-                            _log.debug ( String.format ( "Failed to write attribute '%s': '%s'", entry.getKey (), entry.getValue ().getError ().getMessage () ) );
-                            result.add ( new WriteAttributesResultEntry ( entry.getKey (), entry.getValue ().getError ().getMessage () ) );
-                        }
-                        else
-                        {
-                            result.add ( new WriteAttributesResultEntry ( entry.getKey (), null ) );
-                        }
-                    }
-                    cb.ice_response ( result.toArray ( new WriteAttributesResultEntry[0] ) );
-                }
+            final WriteAttributeResults writeAttributeResults = task.get ();
 
-                public void failed ( final Throwable error )
+            final List<WriteAttributesResultEntry> result = new LinkedList<WriteAttributesResultEntry> ();
+            for ( final Map.Entry<String, WriteAttributeResult> entry : writeAttributeResults.entrySet () )
+            {
+                if ( entry.getValue ().isError () )
                 {
-                    cb.ice_exception ( new Exception ( error ) );
+                    logger.debug ( String.format ( "Failed to write attribute '%s': '%s'", entry.getKey (), entry.getValue ().getError ().getMessage () ) );
+                    result.add ( new WriteAttributesResultEntry ( entry.getKey (), entry.getValue ().getError ().getMessage () ) );
                 }
-            } );
-            this._hive.thawOperation ( sessionImpl.getSession (), id );
+                else
+                {
+                    result.add ( new WriteAttributesResultEntry ( entry.getKey (), null ) );
+                }
+            }
+            cb.ice_response ( result.toArray ( new WriteAttributesResultEntry[0] ) );
+
         }
         catch ( final InvalidSessionException e )
         {
@@ -246,11 +258,16 @@ public class HiveImpl extends _HiveDisp implements Runnable
         {
             throw new OpenSCADA.DA.InvalidItemException ();
         }
+        catch ( final Exception e )
+        {
+            cb.ice_exception ( e );
+        }
+
     }
 
     protected SessionImpl getSession ( final OpenSCADA.Core.SessionPrx session ) throws OpenSCADA.Core.InvalidSessionException
     {
-        final SessionImpl sessionImpl = this._sessionMap.get ( session );
+        final SessionImpl sessionImpl = this.sessionMap.get ( session );
 
         if ( sessionImpl == null )
         {
@@ -271,7 +288,7 @@ public class HiveImpl extends _HiveDisp implements Runnable
     {
         final SessionImpl sessionImpl = getSession ( session );
 
-        final HiveBrowser browser = this._hive.getBrowser ();
+        final HiveBrowser browser = this.hive.getBrowser ();
         if ( browser == null )
         {
             throw new OpenSCADA.Core.OperationNotSupportedException ( "The hive has no root folder registered" );
@@ -279,30 +296,18 @@ public class HiveImpl extends _HiveDisp implements Runnable
 
         try
         {
-            final BrowseOperationListenerImpl listener = new BrowseOperationListenerImpl ();
-            final long id = browser.startBrowse ( sessionImpl.getSession (), new Location ( location ), listener );
-
-            this._hive.thawOperation ( sessionImpl.getSession (), id );
-
-            listener.waitForCompletion ();
-
-            if ( listener.getError () != null )
+            final NotifyFuture<org.openscada.da.core.browser.Entry[]> task = browser.startBrowse ( sessionImpl.getSession (), new Location ( location ) );
+            return BrowserEntryHelper.toIce ( task.get () );
+        }
+        catch ( final ExecutionException e )
+        {
+            if ( e.getCause () instanceof NoSuchFolderException )
             {
-                final Throwable e = listener.getError ();
-                if ( e instanceof NoSuchFolderException )
-                {
-                    throw new OpenSCADA.DA.Browser.InvalidLocationException ();
-                }
-                else
-                {
-                    _log.warn ( "Failed to browse", e );
-                    throw new OpenSCADA.Core.OperationNotSupportedException ( e.toString () );
-                }
+                throw new OpenSCADA.DA.Browser.InvalidLocationException ();
             }
             else
             {
-                // handle success
-                return BrowserEntryHelper.toIce ( listener.getResult () );
+                throw new OpenSCADA.Core.OperationNotSupportedException ( e.getMessage () );
             }
         }
         catch ( final InvalidSessionException e )
@@ -313,13 +318,17 @@ public class HiveImpl extends _HiveDisp implements Runnable
         {
             throw new OpenSCADA.Core.OperationNotSupportedException ( e.getMessage () );
         }
+        finally
+        {
+
+        }
     }
 
     public void subscribeFolder ( final SessionPrx session, final String[] location, final Current __current ) throws OpenSCADA.Core.InvalidSessionException, InvalidLocationException, OperationNotSupportedException
     {
         final SessionImpl sessionImpl = getSession ( session );
 
-        final HiveBrowser browser = this._hive.getBrowser ();
+        final HiveBrowser browser = this.hive.getBrowser ();
         if ( browser == null )
         {
             throw new OpenSCADA.Core.OperationNotSupportedException ();
@@ -343,7 +352,7 @@ public class HiveImpl extends _HiveDisp implements Runnable
     {
         final SessionImpl sessionImpl = getSession ( session );
 
-        final HiveBrowser browser = this._hive.getBrowser ();
+        final HiveBrowser browser = this.hive.getBrowser ();
         if ( browser == null )
         {
             throw new OpenSCADA.Core.OperationNotSupportedException ();
@@ -365,24 +374,24 @@ public class HiveImpl extends _HiveDisp implements Runnable
 
     public void closeSession ( final SessionImpl session ) throws OpenSCADA.Core.InvalidSessionException
     {
-        _log.debug ( "Close session" );
+        logger.debug ( "Close session" );
 
         try
         {
-            final SessionPrx sessionProxy = this._sessionMapRev.get ( session );
+            final SessionPrx sessionProxy = this.sessionMapRev.get ( session );
             if ( sessionProxy == null )
             {
-                _log.debug ( "No session proxy found" );
+                logger.debug ( "No session proxy found" );
                 return;
             }
 
             // remove the session object from ice
-            this._adapter.remove ( sessionProxy.ice_getIdentity () );
+            this.adapter.remove ( sessionProxy.ice_getIdentity () );
 
-            this._sessionMap.remove ( sessionProxy );
-            this._sessionMapRev.remove ( session );
+            this.sessionMap.remove ( sessionProxy );
+            this.sessionMapRev.remove ( session );
 
-            this._hive.closeSession ( session.getSession () );
+            this.hive.closeSession ( session.getSession () );
 
             session.destroy ();
         }

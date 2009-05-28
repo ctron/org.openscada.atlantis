@@ -27,6 +27,7 @@ import java.util.Map;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
+import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
@@ -45,25 +46,27 @@ public abstract class DataItemInputOutputChained extends DataItemInputChained
     }
 
     @Override
-    synchronized public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
-        final Collection<ChainProcessEntry> chain = getChainCopy ();
-
-        final Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( this._primaryAttributes );
-
-        for ( final ChainProcessEntry entry : chain )
+        synchronized ( this )
         {
-            if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
+            final Collection<ChainProcessEntry> chain = getChainCopy ();
+
+            final Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( this._primaryAttributes );
+
+            for ( final ChainProcessEntry entry : chain )
             {
-                entry.getWhat ().process ( value, primaryAttributes );
+                if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
+                {
+                    entry.getWhat ().process ( value, primaryAttributes );
+                }
             }
         }
-
         // FIXME: for the moment output chain item don't show up in the attribute list
         // _secondaryAttributes.set ( primaryAttributes );
 
         writeCalculatedValue ( value );
     }
 
-    protected abstract void writeCalculatedValue ( Variant value ) throws NotConvertableException, InvalidOperationException;
+    protected abstract void writeCalculatedValue ( Variant value ) throws NotConvertableException, InvalidOperationException, OperationException;
 }

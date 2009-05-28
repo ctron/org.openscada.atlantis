@@ -31,10 +31,13 @@ public class ItemDescriptor
 
     private DataItem item = null;
 
+    private final String itemId;
+
     public ItemDescriptor ( final DataItem item, final Map<String, Variant> attributes )
     {
         this.item = item;
         this.attributes = attributes;
+        this.itemId = item.getInformation ().getName ();
     }
 
     public Map<String, Variant> getAttributes ()
@@ -46,4 +49,44 @@ public class ItemDescriptor
     {
         return this.item;
     }
+
+    @Override
+    public int hashCode ()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( this.itemId == null ? 0 : this.itemId.hashCode () );
+        return result;
+    }
+
+    @Override
+    public boolean equals ( final Object obj )
+    {
+        if ( this == obj )
+        {
+            return true;
+        }
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( ! ( obj instanceof ItemDescriptor ) )
+        {
+            return false;
+        }
+        final ItemDescriptor other = (ItemDescriptor)obj;
+        if ( this.itemId == null )
+        {
+            if ( other.itemId != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.itemId.equals ( other.itemId ) )
+        {
+            return false;
+        }
+        return true;
+    }
+
 }

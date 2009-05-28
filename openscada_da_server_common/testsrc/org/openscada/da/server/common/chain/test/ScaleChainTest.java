@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
+import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.server.common.HiveServiceRegistry;
@@ -60,13 +61,13 @@ public class ScaleChainTest
     }
 
     @Test
-    public void testNoop () throws InvalidOperationException, NullValueException, NotConvertableException
+    public void testNoop () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
         setAndTest ( 2, 2 );
     }
 
     @Test
-    public void testInput1 () throws InvalidOperationException, NullValueException, NotConvertableException
+    public void testInput1 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
@@ -77,7 +78,7 @@ public class ScaleChainTest
     }
 
     @Test
-    public void testInput2 () throws InvalidOperationException, NullValueException, NotConvertableException
+    public void testInput2 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
@@ -89,7 +90,7 @@ public class ScaleChainTest
     }
 
     @Test
-    public void testInput3 () throws InvalidOperationException, NullValueException, NotConvertableException
+    public void testInput3 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
@@ -106,7 +107,7 @@ public class ScaleChainTest
     }
 
     @Test
-    public void testOutput1 () throws InvalidOperationException, NullValueException, NotConvertableException
+    public void testOutput1 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
@@ -117,7 +118,7 @@ public class ScaleChainTest
     }
 
     @Test
-    public void testInputOutput1 () throws InvalidOperationException, NullValueException, NotConvertableException
+    public void testInputOutput1 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
@@ -140,7 +141,7 @@ public class ScaleChainTest
     }
 
     @Test
-    public void testInputOutput2 () throws InvalidOperationException, NullValueException, NotConvertableException
+    public void testInputOutput2 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
@@ -161,7 +162,7 @@ public class ScaleChainTest
         setAndTest ( 2, 2 );
     }
 
-    public void setValue ( final double value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void setValue ( final double value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
         this._item.writeValue ( new Variant ( value ) );
     }
@@ -171,7 +172,7 @@ public class ScaleChainTest
         Assert.assertEquals ( new Variant ( value ), this._item.readValue () );
     }
 
-    public void setAndTest ( final double writeValue, final double expectedValue ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public void setAndTest ( final double writeValue, final double expectedValue ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
         setValue ( writeValue );
         testValue ( expectedValue );

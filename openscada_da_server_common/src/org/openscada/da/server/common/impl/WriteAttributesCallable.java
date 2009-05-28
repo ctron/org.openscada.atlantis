@@ -17,19 +17,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.server.browser;
+package org.openscada.da.server.common.impl;
 
-import org.openscada.core.InvalidSessionException;
-import org.openscada.da.core.Location;
-import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.server.Session;
-import org.openscada.utils.concurrent.NotifyFuture;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
-public interface HiveBrowser
+import org.openscada.core.Variant;
+import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.server.common.DataItem;
+
+public class WriteAttributesCallable implements Callable<WriteAttributeResults>
 {
-    public abstract void subscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException;
+    private final DataItem item;
 
-    public abstract void unsubscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException;
+    private final Map<String, Variant> attributes;
 
-    public NotifyFuture<Entry[]> startBrowse ( Session session, Location location ) throws InvalidSessionException;
+    public WriteAttributesCallable ( final DataItem item, final Map<String, Variant> attributes )
+    {
+        this.item = item;
+        this.attributes = attributes;
+    }
+
+    public WriteAttributeResults call () throws Exception
+    {
+        return this.item.setAttributes ( this.attributes );
+    }
+
 }

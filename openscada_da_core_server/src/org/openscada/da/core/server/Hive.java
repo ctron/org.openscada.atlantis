@@ -22,11 +22,13 @@ package org.openscada.da.core.server;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openscada.core.CancellationNotSupportedException;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
+import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.server.browser.HiveBrowser;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.lifecycle.LifecycleAware;
 
 public interface Hive extends LifecycleAware
@@ -74,15 +76,14 @@ public interface Hive extends LifecycleAware
      * The operation is not started unless {@link #thawOperation(Session, long)} is called. 
      * 
      * @param session the session to use 
-     * @param item The item to write to
+     * @param itemId The item to write to
      * @param value The value to write
-     * @param listener The listener which receives status changes
      * @return An operation ID which can be used to cancel or run the operation
      * @throws InvalidSessionException In the case the session is not a valid session
      * @throws InvalidItemException In the case the item is not valid
      */
 
-    public long startWrite ( Session session, String item, Variant value, WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException;
+    public NotifyFuture<WriteResult> startWrite ( Session session, String itemId, Variant value ) throws InvalidSessionException, InvalidItemException;;
 
     /**
      * Start a write attributes operation
@@ -90,51 +91,14 @@ public interface Hive extends LifecycleAware
      * The operation is not started unless {@link #thawOperation(Session, long)} is called.
      * 
      * @param session the session to use 
-     * @param item The item to write to
+     * @param itemId The item to write to
      * @param attribute The attributes to write
-     * @param listener The listener which receives status changes
      * @return An operation ID which can be used to cancel or run the operation
      * @throws InvalidSessionException In the case the session is not a valid session
      * @throws InvalidItemException In the case the item is not valid
      */
 
-    public long startWriteAttributes ( Session session, String item, Map<String, Variant> attribute, WriteAttributesOperationListener listener ) throws InvalidSessionException, InvalidItemException;
-
-    //public void startRead ( Session session, String item, Variant value, ReadOperationListener listener );
-
-    /**
-     * Thaw a long running operation.
-     * 
-     * All long running operations (like {@link #startWrite(Session, String, Variant, WriteOperationListener)})
-     * created frozen and must be thawed in order to run. Instead of thawing you could also cancel the operation
-     * before it gets a chance to run.
-     * 
-     * Thawing an operation does not mean that it will be executed at once. It
-     * is possible to place the operation in some kind of work-queue. The method only
-     * releases the lock on the operation so it <em>may</em> run. Upon returning the
-     * operation will in the most cases not be complete.
-     * 
-     * @param session the session to use 
-     * @param id The operation ID to thaw
-     * @throws InvalidSessionException In the case the session is not a valid session
-     */
-    public void thawOperation ( Session session, long id ) throws InvalidSessionException;
-
-    /**
-     * Cancel a long running operation
-     *
-     * Cancels a long running operation. If the operation is still frozen cancelling will
-     * always succeed. Otherwise if the operation does not support cancellation it might throw
-     * an exception.
-     *
-     * After the call returned you will not get any more notifications.
-     * 
-     * @param session the session to use 
-     * @param id The operation ID to cancel
-     * @throws InvalidSessionException In the case the session is not a valid session
-     * @throws CancellationNotSupportedException Thrown in the case the operation does not support cancellation
-     */
-    public void cancelOperation ( Session session, long id ) throws InvalidSessionException, CancellationNotSupportedException;
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( Session session, String itemId, Map<String, Variant> attribute ) throws InvalidSessionException, InvalidItemException;
 
     public HiveBrowser getBrowser ();
 

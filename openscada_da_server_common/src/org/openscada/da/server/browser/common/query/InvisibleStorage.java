@@ -26,20 +26,20 @@ import java.util.Set;
 
 public class InvisibleStorage implements SubscribeableStorage
 {
-    private final Set<ItemDescriptor> _items = new HashSet<ItemDescriptor> ();
+    private final Set<ItemDescriptor> items = new HashSet<ItemDescriptor> ();
 
-    private final Collection<ItemStorage> _childs = new LinkedList<ItemStorage> ();
+    private final Collection<ItemStorage> childs = new LinkedList<ItemStorage> ();
 
     public void added ( final ItemDescriptor descriptor )
     {
         synchronized ( this )
         {
-            if ( this._items.contains ( descriptor ) )
+            if ( this.items.contains ( descriptor ) )
             {
                 return;
             }
 
-            this._items.add ( descriptor );
+            this.items.add ( descriptor );
             notifyAdd ( descriptor );
         }
     }
@@ -48,12 +48,11 @@ public class InvisibleStorage implements SubscribeableStorage
     {
         synchronized ( this )
         {
-            if ( !this._items.contains ( descriptor ) )
+            if ( !this.items.remove ( descriptor ) )
             {
                 return;
             }
 
-            this._items.remove ( descriptor );
             notifyRemove ( descriptor );
         }
     }
@@ -62,10 +61,10 @@ public class InvisibleStorage implements SubscribeableStorage
     {
         synchronized ( this )
         {
-            this._childs.add ( child );
+            this.childs.add ( child );
 
             // now push all possible descriptors
-            for ( final ItemDescriptor desc : this._items )
+            for ( final ItemDescriptor desc : this.items )
             {
                 child.added ( desc );
             }
@@ -76,14 +75,14 @@ public class InvisibleStorage implements SubscribeableStorage
     {
         synchronized ( this )
         {
-            this._childs.remove ( child );
+            this.childs.remove ( child );
         }
     }
 
     private void notifyAdd ( final ItemDescriptor desc )
     {
         // notify childs
-        for ( final ItemStorage child : this._childs )
+        for ( final ItemStorage child : this.childs )
         {
             child.added ( desc );
         }
@@ -92,7 +91,7 @@ public class InvisibleStorage implements SubscribeableStorage
     private void notifyRemove ( final ItemDescriptor desc )
     {
         // notify childs
-        for ( final ItemStorage child : this._childs )
+        for ( final ItemStorage child : this.childs )
         {
             child.removed ( desc );
         }
@@ -102,11 +101,11 @@ public class InvisibleStorage implements SubscribeableStorage
     {
         synchronized ( this )
         {
-            for ( final ItemDescriptor desc : this._items )
+            for ( final ItemDescriptor desc : this.items )
             {
                 notifyRemove ( desc );
             }
-            this._items.clear ();
+            this.items.clear ();
         }
     }
 

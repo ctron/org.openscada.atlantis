@@ -17,19 +17,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.server.browser;
+package org.openscada.da.server.common.impl;
+
+import java.util.concurrent.Callable;
 
 import org.openscada.core.InvalidSessionException;
-import org.openscada.da.core.Location;
-import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.server.Session;
-import org.openscada.utils.concurrent.NotifyFuture;
+import org.openscada.utils.concurrent.FutureTask;
 
-public interface HiveBrowser
+public class SessionFutureTask<T> extends FutureTask<T>
 {
-    public abstract void subscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException;
+    private final SessionCommon session;
 
-    public abstract void unsubscribe ( Session session, Location location ) throws NoSuchFolderException, InvalidSessionException;
+    public SessionFutureTask ( final SessionCommon session, final Callable<T> callable ) throws InvalidSessionException
+    {
+        super ( callable );
+        this.session = session;
+        this.session.addFuture ( this );
+    }
 
-    public NotifyFuture<Entry[]> startBrowse ( Session session, Location location ) throws InvalidSessionException;
+    public SessionFutureTask ( final SessionCommon session, final Runnable runnable, final T result ) throws InvalidSessionException
+    {
+        super ( runnable, result );
+        this.session = session;
+        this.session.addFuture ( this );
+    }
+
+    @Override
+    protected void done ()
+    {
+        this.session.removeFuture ( this );
+        super.done ();
+    }
+
 }

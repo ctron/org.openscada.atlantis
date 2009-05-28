@@ -98,7 +98,6 @@ public class SessionImpl extends _SessionDisp implements ItemChangeListener, Fol
         return this._session;
     }
 
-    @SuppressWarnings ( "unchecked" )
     public void dataChanged ( final String itemId, final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         _log.debug ( String.format ( "Data changed for '%s'", itemId ) );

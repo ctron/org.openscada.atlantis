@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,13 @@
 
 package org.openscada.da.server.common.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Future;
 
+import org.openscada.core.InvalidSessionException;
 import org.openscada.core.Variant;
 import org.openscada.core.server.common.SessionCommonOperations;
 import org.openscada.core.subscription.SubscriptionState;
@@ -31,34 +36,38 @@ import org.openscada.da.server.common.DataItem;
 
 public class SessionCommon implements Session, DataItemSubscriptionListener
 {
-    private final HiveCommon _hive;
+    private final HiveCommon hive;
 
-    private ItemChangeListener _listener;
+    private volatile ItemChangeListener listener;
 
     private final SessionCommonData _data = new SessionCommonData ();
 
-    private final SessionCommonOperations _operations = new SessionCommonOperations ();
+    private final SessionCommonOperations operations = new SessionCommonOperations ();
 
-    private FolderListener _folderListener = null;
+    private volatile FolderListener folderListener = null;
+
+    private boolean disposed = false;
+
+    private final Collection<Future<?>> tasks = new ConcurrentLinkedQueue<Future<?>> ();
 
     public SessionCommon ( final HiveCommon hive )
     {
-        this._hive = hive;
+        this.hive = hive;
     }
 
     public HiveCommon getHive ()
     {
-        return this._hive;
+        return this.hive;
     }
 
     public void setListener ( final ItemChangeListener listener )
     {
-        this._listener = listener;
+        this.listener = listener;
     }
 
     public ItemChangeListener getListener ()
     {
-        return this._listener;
+        return this.listener;
     }
 
     public SessionCommonData getData ()
@@ -68,17 +77,17 @@ public class SessionCommon implements Session, DataItemSubscriptionListener
 
     public FolderListener getFolderListener ()
     {
-        return this._folderListener;
+        return this.folderListener;
     }
 
     public void setListener ( final FolderListener folderListener )
     {
-        this._folderListener = folderListener;
+        this.folderListener = folderListener;
     }
 
     public SessionCommonOperations getOperations ()
     {
-        return this._operations;
+        return this.operations;
     }
 
     // Data item listener stuff
@@ -86,7 +95,7 @@ public class SessionCommon implements Session, DataItemSubscriptionListener
     {
         ItemChangeListener listener;
 
-        if ( ( listener = this._listener ) != null )
+        if ( ( listener = this.listener ) != null )
         {
             listener.subscriptionChanged ( topic.toString (), subscriptionState );
         }
@@ -96,14 +105,57 @@ public class SessionCommon implements Session, DataItemSubscriptionListener
     {
         ItemChangeListener listener;
 
-        if ( ( listener = this._listener ) != null )
+        if ( ( listener = this.listener ) != null )
         {
             listener.dataChanged ( item.getInformation ().getName (), value, attributes, cache );
         }
     }
 
-    public Object getSubscriptionHint ()
+    public void addFuture ( final Future<?> future ) throws InvalidSessionException
     {
-        return null;
+        synchronized ( this.tasks )
+        {
+            if ( !this.disposed )
+            {
+                this.tasks.add ( future );
+            }
+            else
+            {
+                throw new InvalidSessionException ();
+            }
+        }
+    }
+
+    public void removeFuture ( final Future<?> future )
+    {
+        synchronized ( this.tasks )
+        {
+            if ( !this.disposed )
+            {
+                this.tasks.remove ( future );
+            }
+        }
+    }
+
+    /**
+     * Dispose the session
+     */
+    public void dispose ()
+    {
+        getOperations ().cancelAll ();
+
+        final Collection<Future<?>> tasks;
+        synchronized ( this.tasks )
+        {
+            this.disposed = true;
+
+            tasks = new ArrayList<Future<?>> ( this.tasks );
+            this.tasks.clear ();
+        }
+
+        for ( final Future<?> task : tasks )
+        {
+            task.cancel ( true );
+        }
     }
 }
