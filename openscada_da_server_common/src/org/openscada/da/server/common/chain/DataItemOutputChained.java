@@ -22,7 +22,6 @@ package org.openscada.da.server.common.chain;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
@@ -32,6 +31,7 @@ import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.SuspendableDataItem;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class DataItemOutputChained extends DataItemBaseChained implements SuspendableDataItem
 {
@@ -46,7 +46,7 @@ public abstract class DataItemOutputChained extends DataItemBaseChained implemen
         this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.OUTPUT ) ) );
     }
 
-    public Future<Variant> readValue () throws InvalidOperationException
+    public NotifyFuture<Variant> readValue () throws InvalidOperationException
     {
         throw new InvalidOperationException ();
     }

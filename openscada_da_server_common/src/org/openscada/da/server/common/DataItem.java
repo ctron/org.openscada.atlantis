@@ -20,7 +20,6 @@
 package org.openscada.da.server.common;
 
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
@@ -29,6 +28,7 @@ import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public interface DataItem
 {
@@ -39,7 +39,7 @@ public interface DataItem
      * @return The value read from the subsystem.
      * @throws InvalidOperationException Raised if "read" is not a valid operation for this item
      */
-    public Future<Variant> readValue () throws InvalidOperationException;
+    public NotifyFuture<Variant> readValue () throws InvalidOperationException;
 
     /**
      * The write operation of a data item.

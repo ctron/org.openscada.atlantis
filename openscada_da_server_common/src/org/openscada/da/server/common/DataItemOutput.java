@@ -20,11 +20,11 @@
 package org.openscada.da.server.common;
 
 import java.util.EnumSet;
-import java.util.concurrent.Future;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class DataItemOutput extends DataItemBase
 {
@@ -34,7 +34,7 @@ public abstract class DataItemOutput extends DataItemBase
         super ( new DataItemInformationBase ( name, EnumSet.of ( IODirection.OUTPUT ) ) );
     }
 
-    public Future<Variant> readValue () throws InvalidOperationException
+    public NotifyFuture<Variant> readValue () throws InvalidOperationException
     {
         throw new InvalidOperationException ();
     }

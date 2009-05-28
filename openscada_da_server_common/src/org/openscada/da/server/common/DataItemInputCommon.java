@@ -20,12 +20,12 @@
 package org.openscada.da.server.common;
 
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.utils.concurrent.InstantFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public class DataItemInputCommon extends DataItemInput
 {
@@ -39,7 +39,7 @@ public class DataItemInputCommon extends DataItemInput
         this.attributes = new AttributeManager ( this );
     }
 
-    public Future<Variant> readValue () throws InvalidOperationException
+    public NotifyFuture<Variant> readValue () throws InvalidOperationException
     {
         return new InstantFuture<Variant> ( this.value );
     }
