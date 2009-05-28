@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Client
 Bundle-SymbolicName: org.openscada.da.client;singleton:=true
-Bundle-Version: 0.13.0
+Bundle-Version: 0.13.1
 Bundle-Vendor: inavare GmbH
 Bundle-ClassPath: .,
  lib.jar
@@ -32,7 +32,8 @@ Export-Package: org.openscada.core,
  org.openscada.utils.str,
  org.openscada.utils.timing;uses:="org.apache.log4j,org.openscada.utils.statuscodes"
 Require-Bundle: org.eclipse.core.runtime,
- org.openscada.external.org.apache.log4j;bundle-version="1.2.15"
+ org.openscada.external.org.apache.log4j;bundle-version="1.2.15",
+ org.openscada.external.org.slf4j;bundle-version="1.5.6"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.openscada.da.client.Activator
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
