@@ -88,6 +88,7 @@ public class HiveStatisticsGenerator implements HiveEventListener, Tickable
         this.valueWritesCounter.tick ();
         this.valueEventsCounter.tick ();
         this.attributeEventsCounter.tick ();
+        this.futureWrapperCounter.tick ();
     }
 
     public void itemUnregistered ( final DataItem item )
