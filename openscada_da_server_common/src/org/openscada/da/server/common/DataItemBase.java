@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,16 +35,16 @@ public abstract class DataItemBase implements DataItem
 {
     protected ItemListener listener;
 
-    private final DataItemInformation _information;
+    private final DataItemInformation information;
 
     public DataItemBase ( final DataItemInformation information )
     {
-        this._information = information;
+        this.information = information;
     }
 
     public DataItemInformation getInformation ()
     {
-        return this._information;
+        return this.information;
     }
 
     public synchronized void setListener ( final ItemListener listener )
@@ -130,9 +130,15 @@ public abstract class DataItemBase implements DataItem
      * @param attributes the attributes to send
      * @param cache cache bit
      */
-    public synchronized void notifyData ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
+    public void notifyData ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        final ItemListener listener = this.listener;
+        final ItemListener listener;
+
+        synchronized ( this )
+        {
+            listener = this.listener;
+        }
+
         if ( listener != null )
         {
             listener.dataChanged ( this, value, attributes, cache );
