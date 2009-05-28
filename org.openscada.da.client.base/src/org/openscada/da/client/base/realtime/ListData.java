@@ -85,6 +85,7 @@ public class ListData implements Observer
         if ( this._items.remove ( entry ) )
         {
             entry.deleteObserver ( this );
+            entry.clear ();
             fireRemoved ( new ListEntry[] { entry } );
         }
     }
