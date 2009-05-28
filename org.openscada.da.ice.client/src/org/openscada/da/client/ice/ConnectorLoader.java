@@ -28,10 +28,9 @@ public class ConnectorLoader implements org.openscada.da.client.ConnectorLoader
         {
             Class.forName ( "org.openscada.da.client.ice.Connection" );
         }
-        catch ( ClassNotFoundException e )
+        catch ( final ClassNotFoundException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.printStackTrace ();
         }
     }
 
