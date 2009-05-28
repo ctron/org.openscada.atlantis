@@ -35,6 +35,7 @@ import org.openscada.da.server.common.chain.item.ManualOverrideChainItem;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
 import org.openscada.da.server.spring.Hive;
 import org.openscada.da.server.spring.TestErrorChainItem;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public class CSVDataItem extends MemoryItemChained
 {
@@ -52,7 +53,7 @@ public class CSVDataItem extends MemoryItemChained
     }
 
     @Override
-    public Variant readValue () throws InvalidOperationException
+    public NotifyFuture<Variant> readValue () throws InvalidOperationException
     {
         if ( !isReadable () )
         {
