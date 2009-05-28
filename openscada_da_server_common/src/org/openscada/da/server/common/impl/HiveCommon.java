@@ -30,6 +30,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -51,6 +52,7 @@ import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.da.server.common.FutureDataItem;
 import org.openscada.da.server.common.HiveService;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.ValidationStrategy;
@@ -69,11 +71,19 @@ import org.openscada.utils.concurrent.NotifyFuture;
 public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 {
 
+    private final class HiveExecutor implements Executor
+    {
+        public void execute ( final Runnable command )
+        {
+            getOperationService ().execute ( command );
+        }
+    }
+
     private static Logger logger = Logger.getLogger ( HiveCommon.class );
 
     private final Set<SessionCommon> sessions = new HashSet<SessionCommon> ();
 
-    private final Map<DataItemInformation, DataItem> itemMap = new HashMap<DataItemInformation, DataItem> ();
+    private final Map<DataItemInformation, FutureDataItem> itemMap = new HashMap<DataItemInformation, FutureDataItem> ();
 
     private HiveBrowserCommon browser = null;
 
@@ -325,7 +335,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      * Register a new item with the hive
      * @param item the item to register
      */
-    public void registerItem ( final DataItem item )
+    public void registerItem ( final FutureDataItem item )
     {
         synchronized ( this.itemMap )
         {
@@ -345,6 +355,22 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
             // add new topic to the new item subscription manager
             this.itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( item, this.hiveEventListener ) );
         }
+    }
+
+    /**
+     * Register a new item with the hive
+     * @param item the item to register
+     */
+    public FutureDataItem registerItem ( final DataItem item )
+    {
+        final FutureWrapperItem futureItem = new FutureWrapperItem ( item, new HiveExecutor () );
+        registerItem ( futureItem );
+        return futureItem;
+    }
+
+    protected ExecutorService getOperationService ()
+    {
+        return this.operationService;
     }
 
     /**
@@ -383,16 +409,32 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         }
     }
 
-    private DataItem factoryCreate ( final DataItemFactoryRequest request )
+    private FutureDataItem factoryCreate ( final DataItemFactoryRequest request )
     {
         for ( final DataItemFactory factory : this.factoryList )
         {
             if ( factory.canCreate ( request ) )
             {
+                // we can create the item
+
                 final DataItem dataItem = factory.create ( request );
-                registerItem ( dataItem );
+
+                // stats
                 fireDataItemCreated ( dataItem );
-                return dataItem;
+
+                // if we already have a future data item
+                if ( dataItem instanceof FutureDataItem )
+                {
+                    // use it
+                    final FutureDataItem futureItem = (FutureDataItem)dataItem;
+                    registerItem ( futureItem );
+                    return futureItem;
+                }
+                else
+                {
+                    // wrap with FutureWrapperItem
+                    return registerItem ( dataItem );
+                }
             }
         }
         return null;
@@ -445,7 +487,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         return false;
     }
 
-    public DataItem lookupItem ( final String id )
+    public FutureDataItem lookupItem ( final String id )
     {
         return this.itemMap.get ( new DataItemInformationBase ( id ) );
     }
@@ -465,10 +507,10 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         return null;
     }
 
-    public DataItem retrieveItem ( final String id )
+    public FutureDataItem retrieveItem ( final String id )
     {
         // if we already have the item we don't need to create it
-        final DataItem dataItem = lookupItem ( id );
+        final FutureDataItem dataItem = lookupItem ( id );
         if ( dataItem != null )
         {
             return dataItem;
@@ -496,11 +538,11 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         return retrieveItem ( request );
     }
 
-    public DataItem retrieveItem ( final DataItemFactoryRequest request )
+    public FutureDataItem retrieveItem ( final DataItemFactoryRequest request )
     {
         synchronized ( this.itemMap )
         {
-            DataItem dataItem = lookupItem ( request.getId () );
+            FutureDataItem dataItem = lookupItem ( request.getId () );
             if ( dataItem == null )
             {
                 dataItem = factoryCreate ( request );
@@ -513,7 +555,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
     {
         final SessionCommon sessionCommon = validateSession ( session );
 
-        final DataItem item = retrieveItem ( itemId );
+        final FutureDataItem item = retrieveItem ( itemId );
 
         if ( item == null )
         {
@@ -527,51 +569,17 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         }
 
         // go
-        final SessionFutureTask<WriteAttributeResults> future = new SessionFutureTask<WriteAttributeResults> ( sessionCommon, new WriteAttributesCallable ( item, attributes ) );
-        this.operationService.execute ( future );
+        final NotifyFuture<WriteAttributeResults> future = item.startSetAttributes ( attributes );
+        sessionCommon.addFuture ( future );
+
         return future;
     }
-
-    /*
-    public long startWriteAttributes ( final Session session, final String itemId, final Map<String, Variant> attributes, final WriteAttributesOperationListener listener ) throws InvalidSessionException, InvalidItemException
-    {
-        final SessionCommon sessionCommon = validateSession ( session );
-
-        final DataItem item = retrieveItem ( itemId );
-
-        if ( item == null )
-        {
-            throw new InvalidItemException ( itemId );
-        }
-
-        if ( listener == null )
-        {
-            throw new NullPointerException ();
-        }
-
-        final WriteAttributesOperation op = new WriteAttributesOperation ( item, listener, attributes );
-        final Handle handle = this.opManager.schedule ( op );
-
-        synchronized ( sessionCommon )
-        {
-            sessionCommon.getOperations ().addOperation ( handle );
-        }
-
-        // stats
-        if ( this.hiveEventListener != null )
-        {
-            this.hiveEventListener.startWriteAttributes ( session, itemId, attributes.size () );
-        }
-
-        return handle.getId ();
-    }
-    */
 
     public NotifyFuture<WriteResult> startWrite ( final Session session, final String itemId, final Variant value ) throws InvalidSessionException, InvalidItemException
     {
         final SessionCommon sessionCommon = validateSession ( session );
 
-        final DataItem item = retrieveItem ( itemId );
+        final FutureDataItem item = retrieveItem ( itemId );
 
         if ( item == null )
         {
@@ -585,74 +593,10 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         }
 
         // go
-        final SessionFutureTask<WriteResult> future = new SessionFutureTask<WriteResult> ( sessionCommon, new WriteValueCallable ( item, value ) );
-        this.operationService.execute ( future );
+        final NotifyFuture<WriteResult> future = item.startWriteValue ( value );
+        sessionCommon.addFuture ( future );
         return future;
     }
-
-    /*
-    public long startWrite ( final Session session, final String itemName, final Variant value, final WriteOperationListener listener ) throws InvalidSessionException, InvalidItemException
-    {
-        final SessionCommon sessionCommon = validateSession ( session );
-
-        final DataItem item = retrieveItem ( itemName );
-
-        if ( item == null )
-        {
-            throw new InvalidItemException ( itemName );
-        }
-
-        if ( listener == null )
-        {
-            throw new NullPointerException ();
-        }
-
-        final Handle handle = scheduleOperation ( sessionCommon, new RunnableCancelOperation () {
-
-            public void run ()
-            {
-                try
-                {
-                    item.writeValue ( value );
-                    if ( !isCanceled () )
-                    {
-                        listener.success ();
-                    }
-                }
-                catch ( final Throwable e )
-                {
-                    if ( !isCanceled () )
-                    {
-                        listener.failure ( e );
-                    }
-                }
-            }
-        } );
-
-        // stats
-        if ( this.hiveEventListener != null )
-        {
-            this.hiveEventListener.startWrite ( session, itemName, value );
-        }
-
-        return handle.getId ();
-    }
-    */
-
-    /**
-     * Schedule an operation for this session
-     * @param sessionCommon The session to which this operation is attached
-     * @param operation The operation to perform
-     * @return The operation handle
-     */
-    /*
-    public synchronized Handle scheduleOperation ( final SessionCommon sessionCommon, final Operation operation )
-    {
-        final Handle handle = this.opManager.schedule ( operation );
-        sessionCommon.getOperations ().addOperation ( handle );
-        return handle;
-    }
-    */
 
     public synchronized HiveBrowser getBrowser ()
     {
@@ -674,57 +618,6 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 
         return this.browser;
     }
-
-    /*
-    public void cancelOperation ( final Session session, final long id ) throws CancellationNotSupportedException, InvalidSessionException
-    {
-        final SessionCommon sessionCommon = validateSession ( session );
-
-        synchronized ( sessionCommon )
-        {
-            logger.info ( String.format ( "Cancelling operation: %d", id ) );
-
-            final Handle handle = this.opManager.get ( id );
-            if ( handle != null )
-            {
-                if ( sessionCommon.getOperations ().containsOperation ( handle ) )
-                {
-                    try
-                    {
-                        handle.cancel ();
-                    }
-                    catch ( final CancelNotSupportedException e )
-                    {
-                        throw new CancellationNotSupportedException ();
-                    }
-                }
-            }
-        }
-    }
-
-    public void thawOperation ( final Session session, final long id ) throws InvalidSessionException
-    {
-        final SessionCommon sessionCommon = validateSession ( session );
-
-        synchronized ( sessionCommon )
-        {
-            logger.debug ( String.format ( "Thawing operation %d", id ) );
-
-            final Handle handle = this.opManager.get ( id );
-            if ( handle != null )
-            {
-                if ( sessionCommon.getOperations ().containsOperation ( handle ) )
-                {
-                    this.opProcessor.add ( handle );
-                }
-            }
-            else
-            {
-                logger.warn ( String.format ( "%d is not a valid operation id", id ) );
-            }
-        }
-    }
-    */
 
     /* (non-Javadoc)
      * @see org.openscada.da.server.common.impl.ConfigurableHive#addItemFactory(org.openscada.da.server.common.DataItemFactory)

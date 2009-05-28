@@ -33,6 +33,7 @@ import org.openscada.da.core.server.ItemChangeListener;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.FolderListener;
 import org.openscada.da.server.common.DataItem;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public class SessionCommon implements Session, DataItemSubscriptionListener
 {
@@ -111,7 +112,16 @@ public class SessionCommon implements Session, DataItemSubscriptionListener
         }
     }
 
-    public void addFuture ( final Future<?> future ) throws InvalidSessionException
+    /**
+     * Add a future to the session.
+     * <p>The future will be canceled when the session is completed.
+     * The session subscribes to the future state in order to remove
+     * the future from the session one it is completed.
+     * </p> 
+     * @param future the future to add
+     * @throws InvalidSessionException in case the session was already disposed
+     */
+    public void addFuture ( final NotifyFuture<?> future ) throws InvalidSessionException
     {
         synchronized ( this.tasks )
         {
@@ -124,9 +134,18 @@ public class SessionCommon implements Session, DataItemSubscriptionListener
                 throw new InvalidSessionException ();
             }
         }
+
+        // now add the listener
+        future.addListener ( new Runnable () {
+
+            public void run ()
+            {
+                removeFuture ( future );
+            }
+        } );
     }
 
-    public void removeFuture ( final Future<?> future )
+    public void removeFuture ( final NotifyFuture<?> future )
     {
         synchronized ( this.tasks )
         {

@@ -35,6 +35,7 @@ import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderListener;
+import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, SessionListener
@@ -71,47 +72,12 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
 
         final Folder folder = getRootFolder ();
 
-        final SessionFutureTask<Entry[]> future = new SessionFutureTask<Entry[]> ( sessionCommon, new BrowseCallable ( folder, location ) );
+        // create the future and pass it to the default operation service
+        final FutureTask<Entry[]> future = new FutureTask<Entry[]> ( new BrowseCallable ( folder, location ) );
+        sessionCommon.addFuture ( future );
         this.operationService.execute ( future );
         return future;
     }
-
-    /*
-    public long startBrowse ( final Session session, final Location location, final BrowseOperationListener listener ) throws InvalidSessionException
-    {
-        logger.debug ( "List request for: " + location.toString () );
-
-        final SessionCommon sessionCommon = this.hive.validateSession ( session );
-
-        final Handle handle = this.hive.scheduleOperation ( sessionCommon, new RunnableCancelOperation () {
-
-            public void run ()
-            {
-                try
-                {
-                    if ( getRootFolder () == null )
-                    {
-                        throw new NoSuchFolderException ( location.asArray () );
-                    }
-                    final Entry[] entry = getRootFolder ().list ( location.getPathStack () );
-                    if ( !isCanceled () )
-                    {
-                        listener.success ( entry );
-                    }
-                }
-                catch ( final NoSuchFolderException e )
-                {
-                    if ( !isCanceled () )
-                    {
-                        listener.failure ( e );
-                    }
-                }
-            }
-        } );
-
-        return handle.getId ();
-    }
-    */
 
     public void subscribe ( final Session session, final Location location ) throws NoSuchFolderException, InvalidSessionException
     {

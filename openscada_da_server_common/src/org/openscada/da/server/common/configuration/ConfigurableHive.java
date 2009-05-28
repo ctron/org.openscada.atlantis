@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ package org.openscada.da.server.common.configuration;
 
 import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.common.DataItem;
+import org.openscada.da.server.common.FutureDataItem;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.common.factory.DataItemFactoryRequest;
@@ -30,7 +31,7 @@ public interface ConfigurableHive extends HiveServiceRegistry
 {
 
     // data item
-    public abstract void registerItem ( DataItem item );
+    public abstract FutureDataItem registerItem ( DataItem item );
 
     public abstract void addItemFactory ( DataItemFactory factory );
 
@@ -41,7 +42,7 @@ public interface ConfigurableHive extends HiveServiceRegistry
      * @param id the item id
      * @return the data item or <code>null</code> if the item does not exists and cannot be created
      */
-    public abstract DataItem retrieveItem ( DataItemFactoryRequest request );
+    public abstract FutureDataItem retrieveItem ( DataItemFactoryRequest request );
 
     /**
      * lookup a data item by id. Just look it up in the internal item list, do not
@@ -49,7 +50,7 @@ public interface ConfigurableHive extends HiveServiceRegistry
      * @param id the item id
      * @return the data item or <code>null</code> if the item does not exist
      */
-    public abstract DataItem lookupItem ( String id );
+    public abstract FutureDataItem lookupItem ( String id );
 
     public abstract Folder getRootFolder ();
 
