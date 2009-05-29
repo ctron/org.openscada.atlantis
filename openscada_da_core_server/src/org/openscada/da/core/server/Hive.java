@@ -83,7 +83,7 @@ public interface Hive extends LifecycleAware
      * @throws InvalidItemException In the case the item is not valid
      */
 
-    public NotifyFuture<WriteResult> startWrite ( Session session, String itemId, Variant value ) throws InvalidSessionException, InvalidItemException;;
+    public NotifyFuture<WriteResult> startWrite ( Session session, String itemId, Variant value ) throws InvalidSessionException, InvalidItemException;
 
     /**
      * Start a write attributes operation
