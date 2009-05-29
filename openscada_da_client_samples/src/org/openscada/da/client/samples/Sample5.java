@@ -84,7 +84,7 @@ public class Sample5 extends SampleBase implements Observer
 
     public void update ( final Observable o, final Object arg )
     {
-        // you can either use the _dataItem field or the observable
+        // you can either use the dataItem field or the observable
         // passed on the method call
         final DataItemValue value = this.dataItem.getSnapshotValue ();
 
