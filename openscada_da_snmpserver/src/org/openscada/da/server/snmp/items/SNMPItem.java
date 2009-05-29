@@ -33,6 +33,7 @@ import org.openscada.da.server.common.SuspendableDataItem;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.snmp.SNMPNode;
 import org.openscada.utils.collection.MapBuilder;
+import org.openscada.utils.concurrent.DirectExecutor;
 import org.snmp4j.PDU;
 import org.snmp4j.event.ResponseEvent;
 import org.snmp4j.smi.Counter64;
@@ -62,7 +63,7 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
 
     public SNMPItem ( final SNMPNode node, final String id, final OID oid )
     {
-        super ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
+        super ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ), DirectExecutor.INSTANCE );
 
         this._node = node;
         this._oid = oid;
