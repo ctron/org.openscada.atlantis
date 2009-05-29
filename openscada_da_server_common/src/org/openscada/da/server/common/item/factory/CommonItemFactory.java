@@ -52,7 +52,7 @@ public class CommonItemFactory implements ItemFactory
 
     private final ItemFactory parentItemFactory;
 
-    private Executor executor;
+    private final Executor executor;
 
     public CommonItemFactory ( final Executor executor )
     {
@@ -61,6 +61,7 @@ public class CommonItemFactory implements ItemFactory
 
     public CommonItemFactory ( final Executor executor, final ItemFactory parentItemFactory, final String baseId, final String idDelimiter )
     {
+        this.executor = executor;
         this.parentItemFactory = parentItemFactory;
         if ( parentItemFactory != null )
         {
