@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,10 +22,11 @@ package org.openscada.da.server.common;
 import java.util.EnumSet;
 
 import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.WriteResult;
+import org.openscada.utils.concurrent.InstantErrorFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class DataItemInput extends DataItemBase
 {
@@ -35,9 +36,9 @@ public abstract class DataItemInput extends DataItemBase
         super ( new DataItemInformationBase ( name, EnumSet.of ( IODirection.INPUT ) ) );
     }
 
-    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
     {
-        throw new InvalidOperationException ();
+        return new InstantErrorFuture<WriteResult> ( new InvalidOperationException () );
     }
 
 }

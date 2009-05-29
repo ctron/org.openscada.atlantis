@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.common.chain.test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.Variant;
@@ -29,17 +30,25 @@ public class EventEntry
     /**
      * 
      */
-    private DataItem _item = null;
+    private DataItem item = null;
 
-    private Variant _value = null;
+    private Variant value = null;
 
-    private Map<String, Variant> _attributes = null;
+    private Map<String, Variant> attributes = null;
 
     public EventEntry ( final DataItem item, final Variant value, final Map<String, Variant> attributes )
     {
-        this._item = item;
-        this._value = value;
-        this._attributes = attributes;
+        this.item = item;
+        this.value = value;
+
+        if ( attributes == null )
+        {
+            this.attributes = new HashMap<String, Variant> ();
+        }
+        else
+        {
+            this.attributes = attributes;
+        }
     }
 
     @Override
@@ -47,9 +56,9 @@ public class EventEntry
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ( this._attributes == null ? 0 : this._attributes.hashCode () );
-        result = PRIME * result + ( this._item == null ? 0 : this._item.hashCode () );
-        result = PRIME * result + ( this._value == null ? 0 : this._value.hashCode () );
+        result = PRIME * result + ( this.attributes == null ? 0 : this.attributes.hashCode () );
+        result = PRIME * result + ( this.item == null ? 0 : this.item.hashCode () );
+        result = PRIME * result + ( this.value == null ? 0 : this.value.hashCode () );
         return result;
     }
 
@@ -65,36 +74,36 @@ public class EventEntry
             return false;
         }
         final EventEntry other = (EventEntry)obj;
-        if ( this._attributes == null )
+        if ( this.attributes == null )
         {
-            if ( other._attributes != null )
+            if ( other.attributes != null )
             {
                 return false;
             }
         }
-        else if ( !this._attributes.equals ( other._attributes ) )
+        else if ( !this.attributes.equals ( other.attributes ) )
         {
             return false;
         }
-        if ( this._item == null )
+        if ( this.item == null )
         {
-            if ( other._item != null )
+            if ( other.item != null )
             {
                 return false;
             }
         }
-        else if ( !this._item.equals ( other._item ) )
+        else if ( !this.item.equals ( other.item ) )
         {
             return false;
         }
-        if ( this._value == null )
+        if ( this.value == null )
         {
-            if ( other._value != null )
+            if ( other.value != null )
             {
                 return false;
             }
         }
-        else if ( !this._value.equals ( other._value ) )
+        else if ( !this.value.equals ( other.value ) )
         {
             return false;
         }
@@ -106,11 +115,11 @@ public class EventEntry
     {
         final StringBuilder sb = new StringBuilder ();
 
-        sb.append ( String.format ( "Value: %s, ", this._value ) );
+        sb.append ( String.format ( "Value: %s, ", this.value ) );
 
-        if ( this._attributes != null )
+        if ( this.attributes != null )
         {
-            for ( final Map.Entry<String, Variant> entry : this._attributes.entrySet () )
+            for ( final Map.Entry<String, Variant> entry : this.attributes.entrySet () )
             {
                 sb.append ( String.format ( "'%s'=>'%s', ", entry.getKey (), entry.getValue () ) );
             }

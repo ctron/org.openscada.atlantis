@@ -39,12 +39,13 @@ public class HiveItemFactory extends CommonItemFactory
 
     public HiveItemFactory ( final HiveCommon hive )
     {
+        super ( hive.getOperationService () );
         this.hive = hive;
     }
 
     public HiveItemFactory ( final ItemFactory parentItemFactory, final HiveCommon hive, final String baseId, final String idDelimiter )
     {
-        super ( parentItemFactory, baseId, idDelimiter );
+        super ( hive.getOperationService (), parentItemFactory, baseId, idDelimiter );
         this.hive = hive;
     }
 

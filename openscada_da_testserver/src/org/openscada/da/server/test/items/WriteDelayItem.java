@@ -21,6 +21,8 @@ package org.openscada.da.server.test.items;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
@@ -28,15 +30,22 @@ import org.openscada.core.NullValueException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.DataItemOutput;
 import org.openscada.da.server.common.WriteAttributesHelper;
+import org.openscada.utils.concurrent.FutureTask;
+import org.openscada.utils.concurrent.InstantFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public class WriteDelayItem extends DataItemOutput
 {
 
-    public WriteDelayItem ( final String name )
+    private final Executor executor;
+
+    public WriteDelayItem ( final String name, final Executor executor )
     {
         super ( name );
+        this.executor = executor;
     }
 
     public Map<String, Variant> getAttributes ()
@@ -44,12 +53,28 @@ public class WriteDelayItem extends DataItemOutput
         return new HashMap<String, Variant> ();
     }
 
-    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes )
     {
-        return WriteAttributesHelper.errorUnhandled ( null, attributes );
+        return new InstantFuture<WriteAttributeResults> ( WriteAttributesHelper.errorUnhandled ( null, attributes ) );
     }
 
-    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    {
+        final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
+
+            public WriteResult call () throws Exception
+            {
+                WriteDelayItem.this.processWrite ( value );
+                return new WriteResult ();
+            }
+        } );
+
+        this.executor.execute ( task );
+
+        return task;
+    }
+
+    public void processWrite ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
         final int delay = value.asInteger ();
 
@@ -64,6 +89,10 @@ public class WriteDelayItem extends DataItemOutput
             System.err.println ( "Write failed" );
             e.printStackTrace ();
             throw new OperationException ( "Interrupted" );
+        }
+        finally
+        {
+            System.out.println ( "leave write" );
         }
 
     }

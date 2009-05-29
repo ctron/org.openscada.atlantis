@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,17 +26,19 @@ import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.utils.concurrent.DirectExecutor;
 
 public class DataItemCounterOutput implements CounterOutput
 {
+
     private final DataItemInputChained _valueItem;
 
     private final DataItemInputChained _totalItem;
 
     public DataItemCounterOutput ( final String itemId )
     {
-        this._valueItem = new DataItemInputChained ( itemId + ".average" );
-        this._totalItem = new DataItemInputChained ( itemId + ".total" );
+        this._valueItem = new DataItemInputChained ( itemId + ".average", DirectExecutor.INSTANCE );
+        this._totalItem = new DataItemInputChained ( itemId + ".total", DirectExecutor.INSTANCE );
     }
 
     public void register ( final HiveCommon hive, final FolderCommon rootFolder, final String description )

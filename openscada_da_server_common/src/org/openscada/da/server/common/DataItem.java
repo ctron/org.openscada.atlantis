@@ -28,6 +28,7 @@ import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
 import org.openscada.utils.concurrent.NotifyFuture;
 
 public interface DataItem
@@ -41,28 +42,7 @@ public interface DataItem
      */
     public NotifyFuture<Variant> readValue () throws InvalidOperationException;
 
-    /**
-     * The write operation of a data item.
-     * @param value The value to write to the subsystem
-     * @throws InvalidOperationException Raised if "write" is not a valid operation for this item
-     * @throws NullValueException Raised if a null value was passed but the subsystem does not allow null values to be written
-     * @throws NotConvertableException Raised if a value was passed that cannot be converted in a variant type suitable for the subsystem
-     * @throws OperationException Raised if the value could not be written due to some subsystem error
-     * @deprecated use {@link FutureDataItem#startWriteValue(Variant)} instead
-     */
-    @Deprecated
-    public void writeValue ( Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException;
-
     public Map<String, Variant> getAttributes ();
-
-    /**
-     * 
-     * @param attributes attributes to set
-     * @return the result
-     * @deprecated use {@link FutureDataItem#startSetAttributes(Map)} instead
-     */
-    @Deprecated
-    public WriteAttributeResults setAttributes ( Map<String, Variant> attributes );
 
     /**
      * Sets the listener for this item.
@@ -74,4 +54,21 @@ public interface DataItem
      * 
      */
     public void setListener ( ItemListener listener );
+
+    /**
+     * The write operation of a data item.
+     * @param value The value to write to the subsystem
+     * @throws InvalidOperationException Raised if "write" is not a valid operation for this item
+     * @throws NullValueException Raised if a null value was passed but the subsystem does not allow null values to be written
+     * @throws NotConvertableException Raised if a value was passed that cannot be converted in a variant type suitable for the subsystem
+     * @throws OperationException Raised if the value could not be written due to some subsystem error
+     */
+    public NotifyFuture<WriteResult> startWriteValue ( Variant value );
+
+    /**
+     * 
+     * @param attributes attributes to set
+     * @return the result
+     */
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( Map<String, Variant> attributes );
 }

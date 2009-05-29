@@ -26,7 +26,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
@@ -36,6 +38,8 @@ import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.server.common.AttributeManager;
 import org.openscada.da.server.common.DataItemBase;
 import org.openscada.da.server.common.WriteAttributesHelper;
+import org.openscada.utils.concurrent.FutureTask;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class DataItemBaseChained extends DataItemBase
 {
@@ -46,49 +50,18 @@ public abstract class DataItemBaseChained extends DataItemBase
     /**
      * The chain if items used for calculation
      */
-    protected Set<ChainProcessEntry> _chain = new CopyOnWriteArraySet<ChainProcessEntry> ();
+    protected volatile Set<ChainProcessEntry> chain = new CopyOnWriteArraySet<ChainProcessEntry> ();
 
-    public DataItemBaseChained ( final DataItemInformation dataItemInformation )
+    protected final Executor executor;
+
+    public DataItemBaseChained ( final DataItemInformation dataItemInformation, final Executor executor )
     {
         super ( dataItemInformation );
+        this.executor = executor;
 
         this._primaryAttributes = new HashMap<String, Variant> ();
         this._secondaryAttributes = new AttributeManager ( this );
     }
-
-    /*
-    public void updateAttributes ( Map<String, Variant> attributes )
-    {
-        synchronized ( _primaryAttributes )
-        {
-            Map<String, Variant> diff = new HashMap<String, Variant> ();
-            AttributesHelper.mergeAttributes ( _primaryAttributes, attributes, diff );
-
-            if ( diff.size () > 0 )
-            {
-                process ();
-            }
-        }
-    }
-    */
-
-    /**
-     * Remove all attributes
-     *
-     */
-    /*
-    public void clearAttributes ()
-    {
-        synchronized ( _primaryAttributes )
-        {
-            if ( _primaryAttributes.size () > 0 )
-            {
-                _primaryAttributes.clear ();
-                process ();
-            }
-        }
-    }
-    */
 
     public Map<String, Variant> getAttributes ()
     {
@@ -105,15 +78,30 @@ public abstract class DataItemBaseChained extends DataItemBase
      * @param attributes Attributes to set
      * @return status for the attribute write request  
      */
-    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes )
+    {
+        final FutureTask<WriteAttributeResults> task = new FutureTask<WriteAttributeResults> ( new Callable<WriteAttributeResults> () {
+
+            public WriteAttributeResults call () throws Exception
+            {
+                return DataItemBaseChained.this.processSetAttributes ( attributes );
+            }
+        } );
+
+        this.executor.execute ( task );
+
+        return task;
+    }
+
+    protected WriteAttributeResults processSetAttributes ( final Map<String, Variant> attributes )
     {
         final WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
 
-        for ( final ChainProcessEntry chainEntry : getChainCopy () )
+        for ( final ChainProcessEntry chainEntry : this.chain )
         {
-            final ChainItem item = chainEntry.getWhat ();
+            final ChainItem chainItem = chainEntry.getWhat ();
 
-            final WriteAttributeResults partialResult = item.setAttributes ( attributes );
+            final WriteAttributeResults partialResult = chainItem.setAttributes ( attributes );
             if ( partialResult != null )
             {
                 for ( final Map.Entry<String, WriteAttributeResult> entry : partialResult.entrySet () )
@@ -140,14 +128,14 @@ public abstract class DataItemBaseChained extends DataItemBase
      */
     public void setChain ( final Collection<ChainProcessEntry> chain )
     {
-        for ( final ChainProcessEntry entry : this._chain )
+        for ( final ChainProcessEntry entry : this.chain )
         {
             entry.getWhat ().dataItemChanged ( this );
         }
 
         if ( chain == null )
         {
-            this._chain = new CopyOnWriteArraySet<ChainProcessEntry> ();
+            this.chain = new CopyOnWriteArraySet<ChainProcessEntry> ();
         }
         else
         {
@@ -156,14 +144,14 @@ public abstract class DataItemBaseChained extends DataItemBase
             {
                 entry.getWhat ().dataItemChanged ( this );
             }
-            this._chain = newChain;
+            this.chain = newChain;
         }
         process ();
     }
 
     public void addChainElement ( final EnumSet<IODirection> when, final ChainItem item )
     {
-        if ( this._chain.add ( new ChainProcessEntry ( when, item ) ) )
+        if ( this.chain.add ( new ChainProcessEntry ( when, item ) ) )
         {
             item.dataItemChanged ( this );
             process ();
@@ -172,7 +160,7 @@ public abstract class DataItemBaseChained extends DataItemBase
 
     public void addChainElement ( final IODirection when, final ChainItem item )
     {
-        if ( this._chain.add ( new ChainProcessEntry ( EnumSet.of ( when ), item ) ) )
+        if ( this.chain.add ( new ChainProcessEntry ( EnumSet.of ( when ), item ) ) )
         {
             item.dataItemChanged ( this );
             process ();
@@ -183,7 +171,7 @@ public abstract class DataItemBaseChained extends DataItemBase
     {
         int n = 0;
 
-        for ( final Iterator<ChainProcessEntry> i = this._chain.iterator (); i.hasNext (); )
+        for ( final Iterator<ChainProcessEntry> i = this.chain.iterator (); i.hasNext (); )
         {
             final ChainProcessEntry entry = i.next ();
 
@@ -206,7 +194,7 @@ public abstract class DataItemBaseChained extends DataItemBase
 
     protected Collection<ChainProcessEntry> getChainCopy ()
     {
-        return new ArrayList<ChainProcessEntry> ( this._chain );
+        return new ArrayList<ChainProcessEntry> ( this.chain );
     }
 
 }

@@ -22,14 +22,18 @@ package org.openscada.da.server.common;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executor;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
+import org.openscada.utils.concurrent.FutureTask;
+import org.openscada.utils.concurrent.InstantFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public class DataItemCommand extends DataItemOutput
 {
@@ -46,14 +50,27 @@ public class DataItemCommand extends DataItemOutput
         public void command ( Variant value ) throws Exception;
     }
 
-    public DataItemCommand ( final String name )
+    private final List<Listener> listeners = new CopyOnWriteArrayList<Listener> ();
+
+    public DataItemCommand ( final String name, final Executor executor )
     {
         super ( name );
     }
 
-    private final List<Listener> listeners = new CopyOnWriteArrayList<Listener> ();
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    {
+        final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 
-    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+            public WriteResult call () throws Exception
+            {
+                processWrite ( value );
+                return null;
+            }
+        } );
+        return task;
+    }
+
+    public void processWrite ( final Variant value ) throws InvalidOperationException
     {
         for ( final Listener listener : this.listeners )
         {
@@ -92,9 +109,9 @@ public class DataItemCommand extends DataItemOutput
         return new HashMap<String, Variant> ();
     }
 
-    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes )
     {
-        return WriteAttributesHelper.errorUnhandled ( null, attributes );
+        return new InstantFuture<WriteAttributeResults> ( WriteAttributesHelper.errorUnhandled ( null, attributes ) );
     }
 
 }

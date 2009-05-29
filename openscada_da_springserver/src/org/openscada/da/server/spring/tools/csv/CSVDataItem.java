@@ -22,34 +22,27 @@ package org.openscada.da.server.spring.tools.csv;
 import java.util.EnumSet;
 
 import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
-import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.MemoryItemChained;
-import org.openscada.da.server.common.chain.item.LevelAlarmChainItem;
-import org.openscada.da.server.common.chain.item.ManualErrorOverrideChainItem;
-import org.openscada.da.server.common.chain.item.ManualOverrideChainItem;
-import org.openscada.da.server.common.chain.item.SumErrorChainItem;
+import org.openscada.da.server.common.chain.item.ChainCreator;
 import org.openscada.da.server.spring.Hive;
 import org.openscada.da.server.spring.TestErrorChainItem;
+import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 
 public class CSVDataItem extends MemoryItemChained
 {
 
-    protected CSVControllerDataItem _controllerItem;
+    protected CSVControllerDataItem controllerItem;
 
     public CSVDataItem ( final Hive hive, final String name, final EnumSet<IODirection> ioDirection )
     {
         super ( new DataItemInformationBase ( name, ioDirection ) );
         this.addChainElement ( IODirection.INPUT, new TestErrorChainItem () );
-        this.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
-        this.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( hive ) );
-        this.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
-        this.addChainElement ( IODirection.INPUT, new LevelAlarmChainItem ( hive ) );
+        ChainCreator.applyDefaultInputChain ( this, hive );
     }
 
     @Override
@@ -63,28 +56,29 @@ public class CSVDataItem extends MemoryItemChained
     }
 
     @Override
-    protected void writeCalculatedValue ( final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
     {
         fireWrite ( value );
         if ( isReadable () )
         {
-            super.writeCalculatedValue ( value );
+            return super.startWriteCalculatedValue ( value );
         }
+        return new InstantErrorFuture<WriteResult> ( new InvalidOperationException ().fillInStackTrace () );
     }
 
     @Override
-    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
     {
         if ( !isWriteable () )
         {
-            throw new InvalidOperationException ();
+            return new InstantErrorFuture<WriteResult> ( new InvalidOperationException ().fillInStackTrace () );
         }
-        super.writeValue ( value );
+        return super.startWriteValue ( value );
     }
 
     private void fireWrite ( final Variant value )
     {
-        final CSVControllerDataItem controllerItem = this._controllerItem;
+        final CSVControllerDataItem controllerItem = this.controllerItem;
         if ( controllerItem != null )
         {
             controllerItem.handleWrite ( value );
@@ -93,7 +87,7 @@ public class CSVDataItem extends MemoryItemChained
 
     public void setController ( final CSVControllerDataItem controllerItem )
     {
-        this._controllerItem = controllerItem;
+        this.controllerItem = controllerItem;
     }
 
     public boolean isReadable ()

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,25 +19,31 @@
 
 package org.openscada.da.server.common.chain;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+
 import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.WriteResult;
+import org.openscada.utils.concurrent.FutureTask;
+import org.openscada.utils.concurrent.InstantErrorFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public class WriteHandlerItem extends DataItemInputOutputChained
 {
 
-    private WriteHandler writeHandler;
+    private volatile WriteHandler writeHandler;
 
-    public WriteHandlerItem ( final DataItemInformation di, final WriteHandler writeHandler )
+    public WriteHandlerItem ( final DataItemInformation di, final WriteHandler writeHandler, final Executor executor )
     {
-        super ( di );
+        super ( di, executor );
         this.writeHandler = writeHandler;
     }
 
-    public WriteHandlerItem ( final String itemId, final WriteHandler writeHandler )
+    public WriteHandlerItem ( final String itemId, final WriteHandler writeHandler, final Executor executor )
     {
-        super ( itemId );
+        super ( itemId, executor );
         this.writeHandler = writeHandler;
     }
 
@@ -55,33 +61,28 @@ public class WriteHandlerItem extends DataItemInputOutputChained
     }
 
     @Override
-    protected void writeCalculatedValue ( final Variant value ) throws NotConvertableException, InvalidOperationException
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
     {
         final WriteHandler writeHandler = this.writeHandler;
 
         // if we don't have a write handler this is not allowed
         if ( writeHandler == null )
         {
-            throw new InvalidOperationException ();
+            return new InstantErrorFuture<WriteResult> ( new InvalidOperationException ().fillInStackTrace () );
         }
 
-        try
-        {
-            writeHandler.handleWrite ( value );
-        }
-        catch ( final NotConvertableException e )
-        {
-            throw e;
-        }
-        catch ( final InvalidOperationException e )
-        {
-            throw e;
-        }
-        catch ( final Throwable e )
-        {
-            // FIXME: should be a separate "write failed" exception
-            throw new InvalidOperationException ();
-        }
+        final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
+
+            public WriteResult call () throws Exception
+            {
+                writeHandler.handleWrite ( value );
+                return new WriteResult ();
+            }
+        } );
+
+        this.executor.execute ( task );
+
+        return task;
     }
 
 }

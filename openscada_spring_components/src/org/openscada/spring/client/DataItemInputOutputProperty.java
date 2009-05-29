@@ -1,6 +1,8 @@
 package org.openscada.spring.client;
 
 import java.util.HashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -10,8 +12,12 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantType;
 import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
+import org.openscada.utils.concurrent.DirectExecutor;
+import org.openscada.utils.concurrent.FutureTask;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
@@ -30,19 +36,29 @@ public class DataItemInputOutputProperty extends DataItemInputOutputChained impl
     /**
      * @param di
      */
-    public DataItemInputOutputProperty ( final DataItemInformation di )
+    public DataItemInputOutputProperty ( final DataItemInformation di, final Executor executor )
     {
-        super ( di );
+        super ( di, executor );
 
     }
 
     /**
-     * @param id
+     * @param id item id
+     */
+    public DataItemInputOutputProperty ( final String id, final Executor executor )
+    {
+        super ( id, executor );
+
+    }
+
+    /**
+     * will create a dataitem with a sync executor set
+     * @param id the item id
+     * @deprecated use one of the constructors with the executor
      */
     public DataItemInputOutputProperty ( final String id )
     {
-        super ( id );
-
+        super ( id, DirectExecutor.INSTANCE );
     }
 
     public void afterPropertiesSet () throws Exception
@@ -58,7 +74,21 @@ public class DataItemInputOutputProperty extends DataItemInputOutputChained impl
     }
 
     @Override
-    protected void writeCalculatedValue ( final Variant value ) throws NotConvertableException, InvalidOperationException
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
+    {
+        final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
+
+            public WriteResult call () throws Exception
+            {
+                processWriteCalculatedValue ( value );
+                return new WriteResult ();
+            }
+        } );
+        this.executor.execute ( task );
+        return task;
+    }
+
+    protected void processWriteCalculatedValue ( final Variant value ) throws NotConvertableException, InvalidOperationException
     {
         try
         {

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,9 @@ package org.openscada.da.server.test.items;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeManager;
 import org.openscada.da.server.common.DataItemOutput;
@@ -34,48 +32,59 @@ import org.openscada.da.server.common.WriteAttributesHelper;
 import org.openscada.da.server.common.chain.MemoryItemChained;
 import org.openscada.da.server.test.Hive;
 import org.openscada.utils.collection.MapBuilder;
+import org.openscada.utils.concurrent.InstantErrorFuture;
+import org.openscada.utils.concurrent.InstantFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public class MemoryCellItem extends DataItemOutput
 {
-    private final Hive _hive;
+    private final Hive hive;
 
-    private Map<Integer, MemoryItemChained> _items = new HashMap<Integer, MemoryItemChained> ();
+    private Map<Integer, MemoryItemChained> items = new HashMap<Integer, MemoryItemChained> ();
 
-    private AttributeManager _attributes = null;
+    private AttributeManager attributes = null;
 
-    private FolderCommon _folder = null;
+    private FolderCommon folder = null;
 
     public MemoryCellItem ( final Hive hive, final String name, final FolderCommon folder )
     {
         super ( name );
-        this._hive = hive;
-        this._folder = folder;
+        this.hive = hive;
+        this.folder = folder;
 
-        this._attributes = new AttributeManager ( this );
+        this.attributes = new AttributeManager ( this );
 
         updateCells ( 0 );
     }
 
     public Map<String, Variant> getAttributes ()
     {
-        return this._attributes.getCopy ();
+        return this.attributes.getCopy ();
     }
 
-    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes )
     {
-        return WriteAttributesHelper.errorUnhandled ( null, attributes );
+        return new InstantFuture<WriteAttributeResults> ( WriteAttributesHelper.errorUnhandled ( null, attributes ) );
     }
 
-    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
     {
-        final int num = value.asInteger ();
-
-        updateCells ( num );
+        int num;
+        try
+        {
+            num = value.asInteger ();
+            updateCells ( num );
+            return new InstantFuture<WriteResult> ( new WriteResult () );
+        }
+        catch ( final Throwable e )
+        {
+            return new InstantErrorFuture<WriteResult> ( e );
+        }
     }
 
     private void setSizeAttribute ( final int num )
     {
-        this._attributes.update ( "size", new Variant ( num ) );
+        this.attributes.update ( "size", new Variant ( num ) );
     }
 
     private void updateCells ( int num )
@@ -85,38 +94,38 @@ public class MemoryCellItem extends DataItemOutput
             num = 0;
         }
 
-        synchronized ( this._items )
+        synchronized ( this.items )
         {
             final Map<Integer, MemoryItemChained> newItems = new HashMap<Integer, MemoryItemChained> ( num );
 
             int pos;
-            for ( pos = 0; pos < num && pos < this._items.size (); pos++ )
+            for ( pos = 0; pos < num && pos < this.items.size (); pos++ )
             {
-                if ( this._items.containsKey ( pos ) )
+                if ( this.items.containsKey ( pos ) )
                 {
-                    newItems.put ( pos, this._items.get ( pos ) );
-                    this._items.remove ( pos );
+                    newItems.put ( pos, this.items.get ( pos ) );
+                    this.items.remove ( pos );
                 }
             }
 
-            for ( final Map.Entry<Integer, MemoryItemChained> entry : this._items.entrySet () )
+            for ( final Map.Entry<Integer, MemoryItemChained> entry : this.items.entrySet () )
             {
-                this._folder.remove ( entry.getKey ().toString () );
-                this._hive.unregisterItem ( entry.getValue () );
+                this.folder.remove ( entry.getKey ().toString () );
+                this.hive.unregisterItem ( entry.getValue () );
             }
 
             for ( int i = pos; i < num; i++ )
             {
                 final MemoryItemChained item = new MemoryItemChained ( getInformation ().getName () + "-" + i );
 
-                MemoryChainedItem.applyDefaultInputChain ( this._hive, item );
+                MemoryChainedItem.applyDefaultInputChain ( this.hive, item );
 
-                this._hive.registerItem ( item );
-                this._folder.add ( String.valueOf ( i ), item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Cell #" + i + " of " + num + " automaticall provided memory cells." ) ).getMap () );
+                this.hive.registerItem ( item );
+                this.folder.add ( String.valueOf ( i ), item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Cell #" + i + " of " + num + " automaticall provided memory cells." ) ).getMap () );
                 newItems.put ( i, item );
             }
 
-            this._items = newItems;
+            this.items = newItems;
 
             setSizeAttribute ( num );
         }

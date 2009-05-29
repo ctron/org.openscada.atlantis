@@ -28,6 +28,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
@@ -36,6 +37,9 @@ import org.openscada.da.server.browser.common.query.ItemStorage;
 import org.openscada.da.server.spring.Loader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.core.task.support.ConcurrentExecutorAdapter;
 import org.springframework.util.Assert;
 
 import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
@@ -43,55 +47,70 @@ import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
 public class CSVLoader extends Loader implements InitializingBean
 {
     private static Logger logger = Logger.getLogger ( CSVLoader.class );
-    
+
     private Resource _resource;
+
     private String _data;
-    private String [] _mapping = new String[] { "id", "readable", "writable", "description", "initialValue" };
+
+    private String[] _mapping = new String[] { "id", "readable", "writable", "description", "initialValue" };
+
     private int _skipLines = 0;
-    
+
     private Collection<ItemStorage> _controllerStorages = new LinkedList<ItemStorage> ();
 
-    public void setResource ( Resource resource )
+    private Executor executor = new ConcurrentExecutorAdapter ( new SimpleAsyncTaskExecutor () );
+
+    public void setExecutor ( final TaskExecutor executor )
+    {
+        this.executor = new ConcurrentExecutorAdapter ( executor );
+    }
+
+    public void setExecutor ( final Executor executor )
+    {
+        this.executor = executor;
+    }
+
+    public void setResource ( final Resource resource )
     {
         this._resource = resource;
     }
 
-    public void setData ( String data )
+    public void setData ( final String data )
     {
-        _data = data;
+        this._data = data;
     }
-    
-    public void setSkipLines ( int skipLines )
+
+    public void setSkipLines ( final int skipLines )
     {
-        _skipLines = skipLines;
+        this._skipLines = skipLines;
     }
-    
-    public void setControllerStorages ( Collection<ItemStorage> controllerStorages )
+
+    public void setControllerStorages ( final Collection<ItemStorage> controllerStorages )
     {
-        _controllerStorages = controllerStorages;
+        this._controllerStorages = controllerStorages;
     }
 
     public void afterPropertiesSet () throws Exception
     {
-        Assert.notNull ( _hive, "'hive' must not be null" );
-        Assert.state ( _resource != null || _data != null, "'resource' and 'data' are both unset. One must be set!" );
-        Assert.notNull ( _storages, "'storages' must not be null" );
+        Assert.notNull ( this._hive, "'hive' must not be null" );
+        Assert.state ( this._resource != null || this._data != null, "'resource' and 'data' are both unset. One must be set!" );
+        Assert.notNull ( this._storages, "'storages' must not be null" );
 
         load ();
     }
 
-    protected void load ( Reader reader, String sourceName )
+    protected void load ( final Reader reader, final String sourceName )
     {
-        ColumnPositionMappingStrategy strat = new ColumnPositionMappingStrategy ();
-        strat.setColumnMapping ( _mapping );
+        final ColumnPositionMappingStrategy strat = new ColumnPositionMappingStrategy ();
+        strat.setColumnMapping ( this._mapping );
         strat.setType ( ItemEntry.class );
-        
-        CsvToBean<ItemEntry> bean = new CsvToBean<ItemEntry> ();
-        Collection<ItemEntry> beans = bean.parse ( _skipLines, strat, reader );
-        for ( ItemEntry entry : beans )
+
+        final CsvToBean<ItemEntry> bean = new CsvToBean<ItemEntry> ();
+        final Collection<ItemEntry> beans = bean.parse ( this._skipLines, strat, reader );
+        for ( final ItemEntry entry : beans )
         {
             entry.setId ( entry.getId ().trim () );
-            if ( entry.getId ().length () > 0)
+            if ( entry.getId ().length () > 0 )
             {
                 createItem ( entry, sourceName );
             }
@@ -100,23 +119,23 @@ public class CSVLoader extends Loader implements InitializingBean
 
     private void load () throws IOException
     {
-        if ( _resource != null )
+        if ( this._resource != null )
         {
-            Reader reader = new InputStreamReader ( this._resource.getInputStream () );
-            load ( reader, _resource.toString () );
+            final Reader reader = new InputStreamReader ( this._resource.getInputStream () );
+            load ( reader, this._resource.toString () );
             reader.close ();
         }
-        if ( _data != null  )
+        if ( this._data != null )
         {
-            Reader reader = new StringReader ( _data );
+            final Reader reader = new StringReader ( this._data );
             load ( reader, "inline data" );
             reader.close ();
         }
     }
 
-    private void createItem ( ItemEntry entry, String sourceName )
+    private void createItem ( final ItemEntry entry, final String sourceName )
     {
-        EnumSet<IODirection> io = EnumSet.noneOf ( IODirection.class );
+        final EnumSet<IODirection> io = EnumSet.noneOf ( IODirection.class );
         if ( entry.isReadable () )
         {
             io.add ( IODirection.INPUT );
@@ -126,32 +145,32 @@ public class CSVLoader extends Loader implements InitializingBean
             io.add ( IODirection.OUTPUT );
         }
 
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "description", new Variant ( entry.getDescription () ) );
         attributes.put ( "loader.csv.source", new Variant ( sourceName ) );
         attributes.put ( "initialValue", new Variant ( entry.getInitialValue () ) );
 
-        CSVDataItem item = new CSVDataItem ( _hive, _itemPrefix + entry.getId (), io );
+        final CSVDataItem item = new CSVDataItem ( this._hive, this._itemPrefix + entry.getId (), io );
         injectItem ( item, attributes );
 
         // create and inject the controller item
-        attributes.put ( "loader.csv.controllerFor", new Variant ( _itemPrefix + entry.getId () ) );
-        CSVControllerDataItem controllerItem = new CSVControllerDataItem ( item );
-        Loader.injectItem ( _hive, _controllerStorages, controllerItem, attributes );
-        
+        attributes.put ( "loader.csv.controllerFor", new Variant ( this._itemPrefix + entry.getId () ) );
+        final CSVControllerDataItem controllerItem = new CSVControllerDataItem ( item, this.executor );
+        Loader.injectItem ( this._hive, this._controllerStorages, controllerItem, attributes );
+
         // set the initial value
         try
         {
-            controllerItem.writeValue ( entry.getInitialValue () );
+            controllerItem.startWriteValue ( entry.getInitialValue () ).get ();
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             logger.warn ( "Failed to set initial value: " + entry.getInitialValue (), e );
         }
     }
 
-    public void setMapping ( String[] mapping )
+    public void setMapping ( final String[] mapping )
     {
-        _mapping = mapping;
+        this._mapping = mapping;
     }
 }

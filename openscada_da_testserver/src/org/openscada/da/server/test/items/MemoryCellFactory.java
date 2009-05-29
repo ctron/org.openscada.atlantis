@@ -27,29 +27,35 @@ import org.openscada.da.server.test.Hive;
 
 public class MemoryCellFactory implements DataItemFactory
 {
-    private Hive _hive = null;
-    
-    public MemoryCellFactory ( Hive hive )
+    private Hive hive = null;
+
+    public MemoryCellFactory ( final Hive hive )
     {
-        _hive = hive;
+        this.hive = hive;
     }
-    
-    public boolean canCreate ( DataItemFactoryRequest request )
+
+    public boolean canCreate ( final DataItemFactoryRequest request )
     {
         return request.getId ().matches ( "memory\\..*" );
     }
 
-    public DataItem create ( DataItemFactoryRequest request )
+    public DataItem create ( final DataItemFactoryRequest request )
     {
-        FactoryMemoryCell item = new FactoryMemoryCell ( _hive, request.getId () );
-        
-        for ( ChainProcessEntry entry : request.getItemChain () )
+        final FactoryMemoryCell item = new FactoryMemoryCell ( this.hive, request.getId () );
+
+        for ( final ChainProcessEntry entry : request.getItemChain () )
         {
             item.addChainElement ( entry.getWhen (), entry.getWhat () );
         }
-        
-        item.setAttributes ( request.getItemAttributes () );
-        _hive.addMemoryFactoryItem ( item, request.getBrowserAttributes () );
+
+        try
+        {
+            item.startSetAttributes ( request.getItemAttributes () ).get ();
+        }
+        catch ( final Throwable e )
+        {
+        }
+        this.hive.addMemoryFactoryItem ( item, request.getBrowserAttributes () );
         return item;
     }
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,30 +23,29 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
-import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class DataItemInputOutputChained extends DataItemInputChained
 {
-    public DataItemInputOutputChained ( final DataItemInformation di )
+    public DataItemInputOutputChained ( final DataItemInformation di, final Executor executor )
     {
-        super ( di );
+        super ( di, executor );
     }
 
-    public DataItemInputOutputChained ( final String id )
+    public DataItemInputOutputChained ( final String id, final Executor executor )
     {
-        this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
+        this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ), executor );
     }
 
     @Override
-    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
     {
         synchronized ( this )
         {
@@ -65,8 +64,8 @@ public abstract class DataItemInputOutputChained extends DataItemInputChained
         // FIXME: for the moment output chain item don't show up in the attribute list
         // _secondaryAttributes.set ( primaryAttributes );
 
-        writeCalculatedValue ( value );
+        return startWriteCalculatedValue ( value );
     }
 
-    protected abstract void writeCalculatedValue ( Variant value ) throws NotConvertableException, InvalidOperationException, OperationException;
+    protected abstract NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value );
 }

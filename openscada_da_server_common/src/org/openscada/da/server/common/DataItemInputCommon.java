@@ -65,9 +65,9 @@ public class DataItemInputCommon extends DataItemInput
      * to get the attribute manager which allows you so tweak the
      * items attributes from the side of the item implementation.
      */
-    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes )
     {
-        return WriteAttributesHelper.errorUnhandled ( null, attributes );
+        return new InstantFuture<WriteAttributeResults> ( WriteAttributesHelper.errorUnhandled ( null, attributes ) );
     }
 
     /**
@@ -75,7 +75,7 @@ public class DataItemInputCommon extends DataItemInput
      * 
      * @param value the new value
      */
-    synchronized public void updateData ( Variant value, final Map<String, Variant> attributes, final AttributeMode mode )
+    public synchronized void updateData ( Variant value, final Map<String, Variant> attributes, final AttributeMode mode )
     {
         if ( !this.value.equals ( value ) )
         {

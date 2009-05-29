@@ -19,30 +19,48 @@
 
 package org.openscada.da.server.spring.tools.csv;
 
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+
 import org.openscada.core.Variant;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
+import org.openscada.utils.concurrent.FutureTask;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public class CSVControllerDataItem extends DataItemInputOutputChained
 {
-    private CSVDataItem _item;
+    private final CSVDataItem _item;
 
-    public CSVControllerDataItem ( CSVDataItem item )
+    public CSVControllerDataItem ( final CSVDataItem item, final Executor executor )
     {
-        super ( item.getInformation ().getName () + "#controller" );
-        _item = item;
-        _item.setController ( this );
+        super ( item.getInformation ().getName () + "#controller", executor );
+        this._item = item;
+        this._item.setController ( this );
     }
 
-    public void handleWrite ( Variant value )
+    public void handleWrite ( final Variant value )
     {
         updateData ( value, null, null );
     }
 
     @Override
-    protected void writeCalculatedValue ( Variant value ) throws NotConvertableException, InvalidOperationException
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
     {
-        _item.updateData ( value, null, null );
+        final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
+
+            public WriteResult call () throws Exception
+            {
+                performUpdate ( value );
+                return new WriteResult ();
+            }
+        } );
+        this.executor.execute ( task );
+        return task;
+    }
+
+    protected void performUpdate ( final Variant value )
+    {
+        this._item.updateData ( value, null, null );
     }
 }

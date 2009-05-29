@@ -21,6 +21,7 @@ package org.openscada.da.server.common.chain.test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -61,76 +62,76 @@ public class ScaleChainTest
     }
 
     @Test
-    public void testNoop () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
+    public void testNoop () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException, InterruptedException, ExecutionException
     {
         setAndTest ( 2, 2 );
     }
 
     @Test
-    public void testInput1 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
+    public void testInput1 () throws ExecutionException, InterruptedException, InvalidOperationException, NullValueException, NotConvertableException, OperationException
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         attributes.put ( INPUT_FACTOR, new Variant ( 3 ) );
-        this._item.setAttributes ( attributes );
+        this._item.startSetAttributes ( attributes ).get ();
 
         setAndTest ( 2, 6 );
     }
 
     @Test
-    public void testInput2 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
+    public void testInput2 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException, InterruptedException, ExecutionException
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         setValue ( 2 );
         attributes.put ( INPUT_FACTOR, new Variant ( 3 ) );
-        this._item.setAttributes ( attributes );
+        this._item.startSetAttributes ( attributes ).get ();
 
         testValue ( 6 );
     }
 
     @Test
-    public void testInput3 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
+    public void testInput3 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException, InterruptedException, ExecutionException
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         setValue ( 2 );
         attributes.put ( INPUT_FACTOR, new Variant ( 3 ) );
-        this._item.setAttributes ( attributes );
+        this._item.startSetAttributes ( attributes ).get ();
 
         testValue ( 6 );
 
         attributes.put ( INPUT_FACTOR, new Variant () );
-        this._item.setAttributes ( attributes );
+        this._item.startSetAttributes ( attributes ).get ();
 
         testValue ( 2 );
     }
 
     @Test
-    public void testOutput1 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
+    public void testOutput1 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException, InterruptedException, ExecutionException
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         attributes.put ( OUTPUT_FACTOR, new Variant ( 3 ) );
-        this._item.setAttributes ( attributes );
+        this._item.startSetAttributes ( attributes ).get ();
 
         setAndTest ( 2, 6 );
     }
 
     @Test
-    public void testInputOutput1 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
+    public void testInputOutput1 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException, InterruptedException, ExecutionException
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         attributes.put ( OUTPUT_FACTOR, new Variant ( 3 ) );
         attributes.put ( INPUT_FACTOR, new Variant ( 5 ) );
-        this._item.setAttributes ( attributes );
+        this._item.startSetAttributes ( attributes ).get ();
 
         setAndTest ( 2, 2 * 3 * 5 );
 
         attributes.put ( OUTPUT_FACTOR, new Variant () );
         attributes.put ( INPUT_FACTOR, new Variant () );
-        this._item.setAttributes ( attributes );
+        this._item.startSetAttributes ( attributes ).get ();
 
         // Output filter is still active since the value was not re-written
         testValue ( 6 );
@@ -141,7 +142,7 @@ public class ScaleChainTest
     }
 
     @Test
-    public void testInputOutput2 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
+    public void testInputOutput2 () throws InvalidOperationException, NullValueException, NotConvertableException, OperationException, InterruptedException, ExecutionException
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
@@ -149,30 +150,30 @@ public class ScaleChainTest
 
         attributes.put ( OUTPUT_FACTOR, new Variant ( 3 ) );
         attributes.put ( INPUT_FACTOR, new Variant ( 5 ) );
-        this._item.setAttributes ( attributes );
+        this._item.startSetAttributes ( attributes ).get ();
 
         testValue ( 2 * 5 );
         setAndTest ( 2, 2 * 3 * 5 );
 
         attributes.put ( OUTPUT_FACTOR, new Variant () );
         attributes.put ( INPUT_FACTOR, new Variant () );
-        this._item.setAttributes ( attributes );
+        this._item.startSetAttributes ( attributes ).get ();
 
         testValue ( 2 * 3 );
         setAndTest ( 2, 2 );
     }
 
-    public void setValue ( final double value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
+    public void setValue ( final double value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException, InterruptedException, ExecutionException
     {
-        this._item.writeValue ( new Variant ( value ) );
+        this._item.startWriteValue ( new Variant ( value ) ).get ();
     }
 
-    public void testValue ( final double value ) throws InvalidOperationException
+    public void testValue ( final double value ) throws InvalidOperationException, InterruptedException, ExecutionException
     {
-        Assert.assertEquals ( new Variant ( value ), this._item.readValue () );
+        Assert.assertEquals ( new Variant ( value ), this._item.readValue ().get () );
     }
 
-    public void setAndTest ( final double writeValue, final double expectedValue ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
+    public void setAndTest ( final double writeValue, final double expectedValue ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException, InterruptedException, ExecutionException
     {
         setValue ( writeValue );
         testValue ( expectedValue );

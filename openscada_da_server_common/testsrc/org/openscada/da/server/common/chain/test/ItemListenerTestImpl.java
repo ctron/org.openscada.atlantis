@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,23 +34,27 @@ public class ItemListenerTestImpl implements ItemListener
 {
     private static Logger logger = Logger.getLogger ( ItemListenerTestImpl.class );
 
-    private final List<EventEntry> _events = new LinkedList<EventEntry> ();
+    private final List<EventEntry> events = new LinkedList<EventEntry> ();
 
     public void dataChanged ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache )
     {
         final int size = attributes != null ? attributes.size () : 0;
         logger.info ( String.format ( "Data changed: %s, %s", variant, size ) );
-        this._events.add ( new EventEntry ( item, variant, attributes ) );
+
+        // remove the timestamp attribute. It can never be used for comparing!
+        attributes.remove ( "timestamp" );
+
+        this.events.add ( new EventEntry ( item, variant, attributes ) );
     }
 
     public void assertEquals ( final EventEntry[] events )
     {
-        Assert.assertArrayEquals ( "Events are not the same", events, this._events.toArray ( new EventEntry[this._events.size ()] ) );
+        Assert.assertArrayEquals ( "Events are not the same", events, this.events.toArray ( new EventEntry[this.events.size ()] ) );
     }
 
     public void assertEquals ( final Collection<EventEntry> events )
     {
-        Assert.assertArrayEquals ( "Events are not the same", events.toArray ( new EventEntry[events.size ()] ), this._events.toArray ( new EventEntry[this._events.size ()] ) );
+        Assert.assertArrayEquals ( "Events are not the same", events.toArray ( new EventEntry[events.size ()] ), this.events.toArray ( new EventEntry[this.events.size ()] ) );
     }
 
 }

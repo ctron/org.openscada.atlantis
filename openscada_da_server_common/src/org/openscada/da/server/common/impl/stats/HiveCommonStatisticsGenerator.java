@@ -56,7 +56,6 @@ public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
         this.attributeWritesCounter.setOutput ( this.attributeWritesOutput = new DataItemCounterOutput ( getId ( "attributeWrites" ) ) );
         this.valueWritesCounter.setOutput ( this.valuesWritesOutput = new DataItemCounterOutput ( getId ( "valueWrites" ) ) );
         this.itemsValue.setOutput ( this.itemsOutput = new DataItemCounterOutput ( getId ( "items" ) ) );
-        this.futureWrapperCounter.setOutput ( this.futureItemsOutput = new DataItemCounterOutput ( getId ( "futureWrappers" ) ) );
         this.sessionsValue.setOutput ( this.sessionsOutput = new DataItemCounterOutput ( getId ( "sessions" ) ) );
         this.attributeEventsCounter.setOutput ( this.attributeEventsOutput = new DataItemCounterOutput ( getId ( "attributeEvents" ) ) );
         this.valueEventsCounter.setOutput ( this.valueEventsOutput = new DataItemCounterOutput ( getId ( "valueEvents" ) ) );

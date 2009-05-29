@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
@@ -51,12 +52,14 @@ public class CommonItemFactory implements ItemFactory
 
     private final ItemFactory parentItemFactory;
 
-    public CommonItemFactory ()
+    private Executor executor;
+
+    public CommonItemFactory ( final Executor executor )
     {
-        this ( null, null, DEFAULT_ID_DELIMITER );
+        this ( executor, null, null, DEFAULT_ID_DELIMITER );
     }
 
-    public CommonItemFactory ( final ItemFactory parentItemFactory, final String baseId, final String idDelimiter )
+    public CommonItemFactory ( final Executor executor, final ItemFactory parentItemFactory, final String baseId, final String idDelimiter )
     {
         this.parentItemFactory = parentItemFactory;
         if ( parentItemFactory != null )
@@ -132,21 +135,21 @@ public class CommonItemFactory implements ItemFactory
 
     protected DataItemCommand constructCommand ( final String localId )
     {
-        final DataItemCommand commandItem = new DataItemCommand ( generateId ( localId ) );
+        final DataItemCommand commandItem = new DataItemCommand ( generateId ( localId ), this.executor );
         registerItem ( commandItem );
         return commandItem;
     }
 
     protected DataItemInputChained constructInput ( final String localId )
     {
-        final DataItemInputChained inputItem = new DataItemInputChained ( generateId ( localId ) );
+        final DataItemInputChained inputItem = new DataItemInputChained ( generateId ( localId ), this.executor );
         registerItem ( inputItem );
         return inputItem;
     }
 
     protected WriteHandlerItem constructInputOutput ( final String localId, final WriteHandler writeHandler )
     {
-        final WriteHandlerItem ioItem = new WriteHandlerItem ( generateId ( localId ), writeHandler );
+        final WriteHandlerItem ioItem = new WriteHandlerItem ( generateId ( localId ), writeHandler, this.executor );
         registerItem ( ioItem );
         return ioItem;
     }

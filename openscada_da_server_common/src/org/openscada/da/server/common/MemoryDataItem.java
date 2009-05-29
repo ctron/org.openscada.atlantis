@@ -31,7 +31,7 @@ import org.openscada.da.core.WriteResult;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 
-public class MemoryDataItem extends FutureDataItemBase
+public class MemoryDataItem extends DataItemBase
 {
     private volatile Variant value = new Variant ();
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,51 +26,51 @@ import org.openscada.da.core.IODirection;
 
 public class DataItemInformationBase implements org.openscada.da.core.DataItemInformation
 {
-    private String _name = "";
+    private String name = "";
 
-    private EnumSet<IODirection> _ioDirection = EnumSet.noneOf ( IODirection.class );
+    private EnumSet<IODirection> ioDirection = EnumSet.noneOf ( IODirection.class );
 
     public DataItemInformationBase ( final String name, final EnumSet<IODirection> ioDirection )
     {
         super ();
-        this._name = new String ( name );
-        this._ioDirection = ioDirection.clone ();
+        this.name = new String ( name );
+        this.ioDirection = ioDirection.clone ();
     }
 
     public DataItemInformationBase ( final String name )
     {
         super ();
-        this._name = new String ( name );
+        this.name = new String ( name );
     }
 
     public DataItemInformationBase ( final DataItemInformation information )
     {
         super ();
 
-        this._name = new String ( information.getName () );
-        this._ioDirection = information.getIODirection ().clone ();
+        this.name = new String ( information.getName () );
+        this.ioDirection = information.getIODirection ().clone ();
     }
 
     public EnumSet<IODirection> getIODirection ()
     {
-        return this._ioDirection;
+        return this.ioDirection;
     }
 
     public String getName ()
     {
-        return this._name;
+        return this.name;
     }
 
     @Override
     public int hashCode ()
     {
-        if ( this._name == null )
+        if ( this.name == null )
         {
             return "".hashCode ();
         }
         else
         {
-            return this._name.hashCode ();
+            return this.name.hashCode ();
         }
     }
 
@@ -91,14 +91,14 @@ public class DataItemInformationBase implements org.openscada.da.core.DataItemIn
         }
 
         final DataItemInformation other = (DataItemInformation)obj;
-        if ( this._name == null )
+        if ( this.name == null )
         {
             if ( other.getName () != null )
             {
                 return false;
             }
         }
-        else if ( !this._name.equals ( other.getName () ) )
+        else if ( !this.name.equals ( other.getName () ) )
         {
             return false;
         }

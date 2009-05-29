@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,13 +24,17 @@ import java.util.EnumSet;
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.utils.concurrent.DirectExecutor;
+import org.openscada.utils.concurrent.InstantFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public class MemoryItemChained extends DataItemInputOutputChained
 {
     public MemoryItemChained ( final DataItemInformation di )
     {
-        super ( di );
+        super ( di, DirectExecutor.INSTANCE );
     }
 
     public MemoryItemChained ( final String id )
@@ -39,8 +43,9 @@ public class MemoryItemChained extends DataItemInputOutputChained
     }
 
     @Override
-    protected void writeCalculatedValue ( final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
     {
         updateData ( value, null, null );
+        return new InstantFuture<WriteResult> ( new WriteResult () );
     }
 }

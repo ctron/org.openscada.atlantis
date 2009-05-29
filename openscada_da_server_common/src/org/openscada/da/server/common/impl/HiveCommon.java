@@ -52,7 +52,6 @@ import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.FutureDataItem;
 import org.openscada.da.server.common.HiveService;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.ValidationStrategy;
@@ -71,19 +70,11 @@ import org.openscada.utils.concurrent.NotifyFuture;
 public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 {
 
-    private final class HiveExecutor implements Executor
-    {
-        public void execute ( final Runnable command )
-        {
-            getOperationService ().execute ( command );
-        }
-    }
-
     private static Logger logger = Logger.getLogger ( HiveCommon.class );
 
     private final Set<SessionCommon> sessions = new HashSet<SessionCommon> ();
 
-    private final Map<DataItemInformation, FutureDataItem> itemMap = new HashMap<DataItemInformation, FutureDataItem> ();
+    private final Map<DataItemInformation, DataItem> itemMap = new HashMap<DataItemInformation, DataItem> ();
 
     private HiveBrowserCommon browser = null;
 
@@ -335,7 +326,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      * Register a new item with the hive
      * @param item the item to register
      */
-    public void registerItem ( final FutureDataItem item )
+    public void registerItem ( final DataItem item )
     {
         synchronized ( this.itemMap )
         {
@@ -357,20 +348,19 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         }
     }
 
-    /**
-     * Register a new item with the hive
-     * @param item the item to register
-     */
-    public FutureDataItem registerItem ( final DataItem item )
-    {
-        final FutureWrapperItem futureItem = new FutureWrapperItem ( item, new HiveExecutor () );
-        registerItem ( futureItem );
-        return futureItem;
-    }
-
-    protected ExecutorService getOperationService ()
+    private Executor getOperationServiceInstance ()
     {
         return this.operationService;
+    }
+
+    public Executor getOperationService ()
+    {
+        return new Executor () {
+            public void execute ( final Runnable command )
+            {
+                getOperationServiceInstance ().execute ( command );
+            }
+        };
     }
 
     /**
@@ -409,7 +399,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         }
     }
 
-    private FutureDataItem factoryCreate ( final DataItemFactoryRequest request )
+    private DataItem factoryCreate ( final DataItemFactoryRequest request )
     {
         for ( final DataItemFactory factory : this.factoryList )
         {
@@ -421,20 +411,8 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 
                 // stats
                 fireDataItemCreated ( dataItem );
-
-                // if we already have a future data item
-                if ( dataItem instanceof FutureDataItem )
-                {
-                    // use it
-                    final FutureDataItem futureItem = (FutureDataItem)dataItem;
-                    registerItem ( futureItem );
-                    return futureItem;
-                }
-                else
-                {
-                    // wrap with FutureWrapperItem
-                    return registerItem ( dataItem );
-                }
+                registerItem ( dataItem );
+                return dataItem;
             }
         }
         return null;
@@ -487,7 +465,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         return false;
     }
 
-    public FutureDataItem lookupItem ( final String id )
+    public DataItem lookupItem ( final String id )
     {
         return this.itemMap.get ( new DataItemInformationBase ( id ) );
     }
@@ -507,10 +485,10 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         return null;
     }
 
-    public FutureDataItem retrieveItem ( final String id )
+    public DataItem retrieveItem ( final String id )
     {
         // if we already have the item we don't need to create it
-        final FutureDataItem dataItem = lookupItem ( id );
+        final DataItem dataItem = lookupItem ( id );
         if ( dataItem != null )
         {
             return dataItem;
@@ -538,11 +516,11 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
         return retrieveItem ( request );
     }
 
-    public FutureDataItem retrieveItem ( final DataItemFactoryRequest request )
+    public DataItem retrieveItem ( final DataItemFactoryRequest request )
     {
         synchronized ( this.itemMap )
         {
-            FutureDataItem dataItem = lookupItem ( request.getId () );
+            DataItem dataItem = lookupItem ( request.getId () );
             if ( dataItem == null )
             {
                 dataItem = factoryCreate ( request );
@@ -555,7 +533,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
     {
         final SessionCommon sessionCommon = validateSession ( session );
 
-        final FutureDataItem item = retrieveItem ( itemId );
+        final DataItem item = retrieveItem ( itemId );
 
         if ( item == null )
         {
@@ -579,7 +557,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
     {
         final SessionCommon sessionCommon = validateSession ( session );
 
-        final FutureDataItem item = retrieveItem ( itemId );
+        final DataItem item = retrieveItem ( itemId );
 
         if ( item == null )
         {

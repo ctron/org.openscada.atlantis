@@ -158,7 +158,7 @@ public class Hive extends HiveCommon
         this.testFolder.add ( "test-1", item, new MapBuilder<String, Variant> ().getMap () );
 
         DataItemCommand cmd;
-        cmd = new DataItemCommand ( "hello" );
+        cmd = new DataItemCommand ( "hello", this.getOperationService () );
         cmd.addListener ( new DataItemCommand.Listener () {
 
             public void command ( final Variant value )
@@ -173,7 +173,7 @@ public class Hive extends HiveCommon
         helloWorldFolder.add ( "नमस्ते", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This cell triggers a command on the server. On the server it will print out 'Hello World'. On the client side you will see nothing ;-)" ) ).put ( "lang", new Variant ( "hi" ) ).getMap () );
         helloWorldFolder.add ( "Hallo Welt!", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This cell triggers a command on the server. On the server it will print out 'Hello World'. On the client side you will see nothing ;-)" ) ).put ( "lang", new Variant ( "de" ) ).getMap () );
 
-        cmd = new DataItemCommand ( "command" );
+        cmd = new DataItemCommand ( "command", this.getOperationService () );
         cmd.addListener ( new DataItemCommand.Listener () {
 
             public void command ( final Variant value )
@@ -196,7 +196,7 @@ public class Hive extends HiveCommon
         registerItem ( memoryChainedItem );
         this.testFolder.add ( "chained", memoryChainedItem, new MapBuilder<String, Variant> ().getMap () );
 
-        registerItem ( item = new WriteDelayItem ( "write-delay" ) );
+        registerItem ( item = new WriteDelayItem ( "write-delay", getOperationService () ) );
         this.testFolder.add ( "write delay", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Simulate a long running write operation here. The value written to the data item is used as microsecond delay that the write operation will take." ) ).getMap () );
 
         registerItem ( item = new SuspendItem ( "suspendable" ) );

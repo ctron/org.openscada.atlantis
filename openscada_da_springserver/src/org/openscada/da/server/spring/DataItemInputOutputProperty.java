@@ -20,6 +20,8 @@
 package org.openscada.da.server.spring;
 
 import java.util.HashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -29,8 +31,11 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantType;
 import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
+import org.openscada.utils.concurrent.FutureTask;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
@@ -42,25 +47,25 @@ public class DataItemInputOutputProperty extends DataItemInputOutputChained impl
 {
     private static Logger logger = Logger.getLogger ( DataItemInputOutputProperty.class );
 
-    private Object bean;
+    private volatile Object bean;
 
-    private String property;
+    private volatile String property;
 
     /**
      * @param di
      */
-    public DataItemInputOutputProperty ( final DataItemInformation di )
+    public DataItemInputOutputProperty ( final DataItemInformation di, final Executor executor )
     {
-        super ( di );
+        super ( di, executor );
 
     }
 
     /**
-     * @param id
+     * @param id the item id
      */
-    public DataItemInputOutputProperty ( final String id )
+    public DataItemInputOutputProperty ( final String id, final Executor executor )
     {
-        super ( id );
+        super ( id, executor );
 
     }
 
@@ -76,7 +81,22 @@ public class DataItemInputOutputProperty extends DataItemInputOutputChained impl
         notifyData ( new Variant ( value ), new HashMap<String, Variant> (), true );
     }
 
-    protected void writeCalculatedValue ( final Variant value ) throws NotConvertableException, InvalidOperationException
+    @Override
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
+    {
+        final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
+
+            public WriteResult call () throws Exception
+            {
+                processWriteCalculatedValue ( value );
+                return new WriteResult ();
+            }
+        } );
+        this.executor.execute ( task );
+        return task;
+    }
+
+    protected void processWriteCalculatedValue ( final Variant value ) throws NotConvertableException, InvalidOperationException
     {
         try
         {

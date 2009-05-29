@@ -22,17 +22,17 @@ package org.openscada.da.server.common.chain;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
-import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 
@@ -42,23 +42,23 @@ public class DataItemInputChained extends DataItemBaseChained
 
     protected Variant _secondaryValue = new Variant ();
 
-    public DataItemInputChained ( final DataItemInformation dataItemInformation )
+    public DataItemInputChained ( final DataItemInformation dataItemInformation, final Executor executor )
     {
-        this ( dataItemInformation, true );
+        this ( dataItemInformation, true, executor );
     }
 
-    public DataItemInputChained ( final DataItemInformation dataItemInformation, final boolean autoTimestamp )
+    public DataItemInputChained ( final DataItemInformation dataItemInformation, final boolean autoTimestamp, final Executor executor )
     {
-        super ( dataItemInformation );
+        super ( dataItemInformation, executor );
         if ( autoTimestamp )
         {
             addChainElement ( IODirection.INPUT, new AutoTimestampChainItem () );
         }
     }
 
-    public DataItemInputChained ( final String id )
+    public DataItemInputChained ( final String id, final Executor executor )
     {
-        this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT ) ), true );
+        this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT ) ), true, executor );
     }
 
     /**
@@ -132,9 +132,9 @@ public class DataItemInputChained extends DataItemBaseChained
         return new InstantFuture<Variant> ( this._secondaryValue );
     }
 
-    public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException, OperationException
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
     {
-        throw new InvalidOperationException ();
+        return new InstantErrorFuture<WriteResult> ( new InvalidOperationException () );
     }
 
     @Override

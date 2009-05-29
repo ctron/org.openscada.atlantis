@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,14 +30,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.openscada.utils.concurrent.DirectExecutor;
 
 public class TestInputChain
 {
     protected ItemListenerTestImpl _listener = null;
 
-    protected DataItemInputChained _dataItem = null;
+    protected DataItemInputChained dataItem = null;
 
-    protected List<EventEntry> _expectedEvents = new LinkedList<EventEntry> ();
+    protected List<EventEntry> expectedEvents = new LinkedList<EventEntry> ();
 
     @BeforeClass
     public static void setupLog4j ()
@@ -49,14 +50,14 @@ public class TestInputChain
     public void init ()
     {
         this._listener = new ItemListenerTestImpl ();
-        this._dataItem = new DataItemInputChained ( "test-id" );
-        this._dataItem.setListener ( this._listener );
+        this.dataItem = new DataItemInputChained ( "test-id", DirectExecutor.INSTANCE );
+        this.dataItem.setListener ( this._listener );
     }
 
     @Test
     public void testValueEvent () throws Exception
     {
-        this._dataItem.updateData ( new Variant ( 1 ), null, null );
+        this.dataItem.updateData ( new Variant ( 1 ), null, null );
         addEvent ( new Variant ( 1 ), null );
         assertEvents ();
     }
@@ -67,7 +68,7 @@ public class TestInputChain
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "name", new Variant ( "value" ) );
 
-        this._dataItem.updateData ( null, attributes, null );
+        this.dataItem.updateData ( null, attributes, null );
         addEvent ( null, attributes );
 
         assertEvents ();
@@ -76,12 +77,12 @@ public class TestInputChain
     @Test
     public void testPreSetValue () throws Exception
     {
-        this._dataItem.setListener ( null );
-        this._dataItem.updateData ( new Variant ( true ), null, null );
+        this.dataItem.setListener ( null );
+        this.dataItem.updateData ( new Variant ( true ), null, null );
         assertEvents ();
 
         addEvent ( new Variant ( true ), null );
-        this._dataItem.setListener ( this._listener );
+        this.dataItem.setListener ( this._listener );
         assertEvents ();
     }
 
@@ -91,18 +92,18 @@ public class TestInputChain
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "test", new Variant ( "test" ) );
 
-        this._dataItem.setListener ( null );
-        this._dataItem.updateData ( null, attributes, null );
+        this.dataItem.setListener ( null );
+        this.dataItem.updateData ( null, attributes, null );
         assertEvents ();
 
         addEvent ( null, attributes );
-        this._dataItem.setListener ( this._listener );
+        this.dataItem.setListener ( this._listener );
         assertEvents ();
     }
 
     protected void assertEvents ()
     {
-        this._listener.assertEquals ( this._expectedEvents );
+        this._listener.assertEquals ( this.expectedEvents );
     }
 
     protected void addEvent ( final Variant value, final Map<String, Variant> attributes )
@@ -117,7 +118,7 @@ public class TestInputChain
         {
             copyAttributes = new HashMap<String, Variant> ( attributes );
         }
-        this._expectedEvents.add ( new EventEntry ( this._dataItem, copyValue, copyAttributes ) );
+        this.expectedEvents.add ( new EventEntry ( this.dataItem, copyValue, copyAttributes ) );
     }
 
 }
