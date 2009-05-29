@@ -28,13 +28,11 @@
 			<groupId>org.openscada.atlantis</groupId>
 			<artifactId>org.openscada.atlantis.da.client.net</artifactId>
 			<version>${project.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
 			<artifactId>org.openscada.atlantis.da.client.ice</artifactId>
 			<version>${project.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 </project>
