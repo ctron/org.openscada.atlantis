@@ -52,9 +52,12 @@ public class DataItemCommand extends DataItemOutput
 
     private final List<Listener> listeners = new CopyOnWriteArrayList<Listener> ();
 
+    private final Executor executor;
+
     public DataItemCommand ( final String name, final Executor executor )
     {
         super ( name );
+        this.executor = executor;
     }
 
     public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
@@ -67,6 +70,9 @@ public class DataItemCommand extends DataItemOutput
                 return null;
             }
         } );
+
+        this.executor.execute ( task );
+
         return task;
     }
 
