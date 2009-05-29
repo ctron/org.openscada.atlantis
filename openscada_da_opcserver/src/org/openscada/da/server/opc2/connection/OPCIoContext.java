@@ -23,10 +23,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.FutureTask;
 
 import org.openscada.opc.dcom.common.Result;
 import org.openscada.opc.dcom.da.WriteRequest;
+import org.openscada.utils.concurrent.FutureTask;
 
 public class OPCIoContext
 {

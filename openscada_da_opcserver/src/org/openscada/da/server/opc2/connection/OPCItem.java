@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,16 @@ package org.openscada.da.server.opc2.connection;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
-import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.SuspendableDataItem;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
@@ -44,12 +44,15 @@ import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.WriteRequest;
 import org.openscada.utils.collection.MapBuilder;
+import org.openscada.utils.concurrent.DirectExecutor;
+import org.openscada.utils.concurrent.InstantErrorFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public class OPCItem extends DataItemInputOutputChained implements SuspendableDataItem
 {
     private static Logger logger = Logger.getLogger ( OPCItem.class );
 
-    private boolean suspended = true;
+    private volatile boolean suspended = true;
 
     private Variant lastValue;
 
@@ -61,7 +64,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
     public OPCItem ( final Hive hive, final OPCController controller, final DataItemInformation di, final String opcItemId )
     {
-        super ( di );
+        super ( di, DirectExecutor.INSTANCE );
         this.controller = controller;
         this.opcItemId = opcItemId;
 
@@ -71,12 +74,12 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
     }
 
     @Override
-    protected void writeCalculatedValue ( final Variant value ) throws NotConvertableException, InvalidOperationException, OperationException
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
     {
         if ( !this.getInformation ().getIODirection ().contains ( IODirection.OUTPUT ) )
         {
             logger.warn ( String.format ( "Failed to write to read-only item ()", this.opcItemId ) );
-            throw new InvalidOperationException ();
+            return new InstantErrorFuture<WriteResult> ( new InvalidOperationException ().fillInStackTrace () );
         }
 
         // check if the conversion works ... will be performed again by the addWriteRequest call
@@ -86,29 +89,16 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         {
             // unable to convert write request
             logger.info ( "Unable to convert write request" );
-            throw new NotConvertableException ();
+            return new InstantErrorFuture<WriteResult> ( new NotConvertableException ().fillInStackTrace () );
         }
 
-        final Future<Result<WriteRequest>> future = this.controller.getIoManager ().addWriteRequest ( this.opcItemId, value );
+        return processWriteRequest ( value );
+    }
 
-        final Result<WriteRequest> result;
-        try
-        {
-            result = future.get ();
-            logger.info ( "Write returned" );
-        }
-        catch ( final Throwable e )
-        {
-            logger.info ( "Failed to write", e );
-            setLastWriteError ( null );
-            throw new OperationException ( "Failed to write", e );
-        }
-
-        if ( result.isFailed () )
-        {
-            setLastWriteError ( result );
-            throw new OperationException ( String.format ( "Write returned with failure: 0x%08X", result.getErrorCode () ) );
-        }
+    private NotifyFuture<WriteResult> processWriteRequest ( final Variant value )
+    {
+        final NotifyFuture<Result<WriteRequest>> future = this.controller.getIoManager ().addWriteRequest ( this.opcItemId, value );
+        return new WriteFuture ( this, future );
     }
 
     public void suspend ()
@@ -247,6 +237,12 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         final Map<String, Variant> attributes = Helper.clearAttributes ();
         attributes.put ( "opc.connection.error", new Variant ( true ) );
         this.updateData ( null, attributes, AttributeMode.UPDATE );
+    }
+
+    @Override
+    public WriteAttributeResults processSetAttributes ( final Map<String, Variant> attributes )
+    {
+        return super.processSetAttributes ( attributes );
     }
 
 }

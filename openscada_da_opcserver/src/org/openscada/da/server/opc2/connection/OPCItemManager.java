@@ -223,7 +223,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
             {
                 logger.warn ( "Failed to apply item template", e );
             }
-            item.setAttributes ( ft.getItemAttributes () );
+            item.processSetAttributes ( ft.getItemAttributes () );
         }
     }
 

@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.server.opc2.job.Worker;
@@ -38,6 +37,7 @@ import org.openscada.opc.dcom.da.OPCDATASOURCE;
 import org.openscada.opc.dcom.da.OPCITEMSTATE;
 import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.WriteRequest;
+import org.openscada.utils.concurrent.FutureTask;
 
 public class OPCSyncIoManager extends OPCIoManager
 {

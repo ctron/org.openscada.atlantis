@@ -30,8 +30,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 
 import org.apache.log4j.Logger;
 import org.jinterop.dcom.core.JIVariant;
@@ -52,34 +50,12 @@ import org.openscada.opc.dcom.da.OPCITEMDEF;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.WriteRequest;
+import org.openscada.utils.concurrent.FutureTask;
+import org.openscada.utils.concurrent.InstantErrorFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class OPCIoManager extends AbstractPropertyChange
 {
-
-    private final static class ErrorFutureTask<T> extends FutureTask<T>
-    {
-
-        private final static class RunnableImplementation implements Runnable
-        {
-            private final String message;
-
-            public RunnableImplementation ( final String message )
-            {
-                this.message = message;
-            }
-
-            public void run ()
-            {
-                throw new RuntimeException ( this.message );
-            }
-        }
-
-        public ErrorFutureTask ( final String message )
-        {
-            super ( new RunnableImplementation ( message ), null );
-        }
-
-    }
 
     private static final String PROP_SERVER_HANDLE_COUNT = "serverHandleCount";
 
@@ -577,13 +553,13 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         return message;
     }
 
-    public Future<Result<WriteRequest>> addWriteRequest ( final String itemId, final Variant value )
+    public NotifyFuture<Result<WriteRequest>> addWriteRequest ( final String itemId, final Variant value )
     {
         if ( !this.model.isConnected () )
         {
             // discard write request
             logger.warn ( String.format ( "OPC is not connected", value ) );
-            return new ErrorFutureTask<Result<WriteRequest>> ( "OPC is not connected" );
+            return new InstantErrorFuture<Result<WriteRequest>> ( new RuntimeException ( "OPC is not connected" ).fillInStackTrace () );
         }
 
         // request the item first ... nothing happens if we already did that
@@ -594,7 +570,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         if ( variant == null )
         {
             logger.warn ( String.format ( "Failed to convert %s to variant", value ) );
-            return new ErrorFutureTask<Result<WriteRequest>> ( String.format ( "Failed to convert %s to variant", value ) );
+            return new InstantErrorFuture<Result<WriteRequest>> ( new RuntimeException ( String.format ( "Failed to convert %s to variant", value ) ).fillInStackTrace () );
         }
 
         return addWriteRequest ( new OPCWriteRequest ( itemId, variant ) );
@@ -602,7 +578,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     protected abstract FutureTask<Result<WriteRequest>> newWriteFuture ( final OPCWriteRequest request );
 
-    protected Future<Result<WriteRequest>> addWriteRequest ( final OPCWriteRequest request )
+    protected NotifyFuture<Result<WriteRequest>> addWriteRequest ( final OPCWriteRequest request )
     {
         final FutureTask<Result<WriteRequest>> future;
 

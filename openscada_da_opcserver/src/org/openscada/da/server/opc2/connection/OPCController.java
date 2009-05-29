@@ -21,7 +21,10 @@ package org.openscada.da.server.opc2.connection;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.jinterop.dcom.core.JISession;
@@ -61,6 +64,8 @@ public class OPCController implements Runnable
 
     private final Collection<OPCStateListener> stateListener = new CopyOnWriteArraySet<OPCStateListener> ();
 
+    private final BlockingQueue<Runnable> jobQueue = new LinkedBlockingQueue<Runnable> ();
+
     public OPCController ( final ConnectionSetup config, final Hive hive, final FolderItemFactory itemFactory )
     {
         this.configuration = config;
@@ -94,6 +99,11 @@ public class OPCController implements Runnable
         this.connectionInformation = null;
     }
 
+    public void submitJob ( final Runnable runnable )
+    {
+        this.jobQueue.add ( runnable );
+    }
+
     /**
      * The controller main loop
      */
@@ -101,21 +111,40 @@ public class OPCController implements Runnable
     {
         while ( this.running )
         {
+
             try
             {
-                Thread.sleep ( this.getModel ().getLoopDelay () );
+                final Runnable runnable = this.jobQueue.poll ( this.getModel ().getLoopDelay (), TimeUnit.MILLISECONDS );
+
+                if ( !this.running )
+                {
+                    // check after sleep
+                    return;
+                }
+
+                if ( runnable != null )
+                {
+                    try
+                    {
+                        logger.debug ( "Running runnable" );
+                        runnable.run ();
+                    }
+                    catch ( final Throwable e )
+                    {
+                        logger.warn ( "Runnable failed", e );
+                        disposeSession ();
+                    }
+                }
+                else
+                {
+                    logger.debug ( "Running normal queue" );
+                    runOnce ();
+                }
             }
             catch ( final InterruptedException e )
             {
             }
 
-            if ( !this.running )
-            {
-                // check after sleep
-                return;
-            }
-
-            runOnce ();
         }
     }
 

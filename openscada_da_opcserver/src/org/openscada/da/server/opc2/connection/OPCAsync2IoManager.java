@@ -27,7 +27,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.server.opc2.job.Worker;
@@ -42,6 +41,7 @@ import org.openscada.opc.dcom.da.IOPCDataCallback;
 import org.openscada.opc.dcom.da.OPCDATASOURCE;
 import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.WriteRequest;
+import org.openscada.utils.concurrent.FutureTask;
 
 public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
 {
@@ -113,10 +113,28 @@ public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
             logger.warn ( "Incoming data change although disconnected" );
             return;
         }
+
         synchronized ( this )
         {
             this.incomingChanges.add ( result );
         }
+
+        // submit a job to the main thread which picks up the data 
+        this.controller.submitJob ( new Runnable () {
+
+            public void run ()
+            {
+                try
+                {
+                    handleValueUpdates ();
+                }
+                catch ( final InvocationTargetException e )
+                {
+                    throw new RuntimeException ( "Failed to handle value updates", e );
+                }
+            }
+        } );
+
     }
 
     public void readComplete ( final int transactionId, final int serverGroupHandle, final int masterQuality, final int masterErrorCode, final KeyedResultSet<Integer, ValueData> result )
@@ -127,15 +145,20 @@ public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
     {
     }
 
-    @Override
     protected void performRead ( final Set<String> readSet, final OPCDATASOURCE dataSource ) throws InvocationTargetException
     {
-        if ( readSet.isEmpty () )
-        {
-            // we are lucky
-            return;
-        }
+        // nothing to do
+    }
 
+    /**
+     * Pick up value information
+     * <p>
+     * This method may only be called from the controller thread
+     * </p>
+     * @throws InvocationTargetException
+     */
+    protected void handleValueUpdates () throws InvocationTargetException
+    {
         // get a copy of the incoming events
         final Collection<KeyedResultSet<Integer, ValueData>> changes;
         synchronized ( this )
