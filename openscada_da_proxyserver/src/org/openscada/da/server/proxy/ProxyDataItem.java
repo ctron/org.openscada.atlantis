@@ -22,6 +22,8 @@ package org.openscada.da.server.proxy;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
@@ -33,9 +35,12 @@ import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
+import org.openscada.utils.concurrent.FutureTask;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
@@ -50,10 +55,11 @@ public class ProxyDataItem extends DataItemInputOutputChained
     /**
      * @param id
      * @param proxyValueHolder
+     * @param executor the executor to use for write calls
      */
-    public ProxyDataItem ( final String id, final ProxyValueHolder proxyValueHolder, final ProxyWriteHandler writeHandler )
+    public ProxyDataItem ( final String id, final ProxyValueHolder proxyValueHolder, final ProxyWriteHandler writeHandler, final Executor executor )
     {
-        super ( new DataItemInformationBase ( id, EnumSet.allOf ( IODirection.class ) ) );
+        super ( new DataItemInformationBase ( id, EnumSet.allOf ( IODirection.class ) ), executor );
         this.proxyValueHolder = proxyValueHolder;
         this.proxyValueHolder.setListener ( new ItemUpdateListener () {
             public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
@@ -79,9 +85,22 @@ public class ProxyDataItem extends DataItemInputOutputChained
     }
 
     @Override
-    public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes )
     {
-        final WriteAttributeResults writeAttributeResults = super.setAttributes ( attributes );
+        final FutureTask<WriteAttributeResults> task = new FutureTask<WriteAttributeResults> ( new Callable<WriteAttributeResults> () {
+
+            public WriteAttributeResults call () throws Exception
+            {
+                return processSetAttributes ( attributes );
+            }
+        } );
+        this.executor.execute ( task );
+        return task;
+    }
+
+    protected WriteAttributeResults processSetAttributes ( final Map<String, Variant> attributes )
+    {
+        final WriteAttributeResults writeAttributeResults = super.processSetAttributes ( attributes );
         // all attributes which could be successfully processed by chain must be ignored
         for ( final Entry<String, WriteAttributeResult> entry : writeAttributeResults.entrySet () )
         {
@@ -99,11 +118,25 @@ public class ProxyDataItem extends DataItemInputOutputChained
      */
     public void setTemplateAttributes ( final Map<String, Variant> attributes )
     {
-        super.setAttributes ( attributes );
+        super.processSetAttributes ( attributes );
     }
 
     @Override
-    protected void writeCalculatedValue ( final Variant value ) throws NotConvertableException, InvalidOperationException
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
+    {
+        final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
+
+            public WriteResult call () throws Exception
+            {
+                processWriteCalculatedValue ( value );
+                return new WriteResult ();
+            }
+        } );
+        this.executor.execute ( task );
+        return task;
+    }
+
+    protected void processWriteCalculatedValue ( final Variant value ) throws NotConvertableException, InvalidOperationException
     {
         try
         {

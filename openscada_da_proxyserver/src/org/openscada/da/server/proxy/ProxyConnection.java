@@ -91,7 +91,7 @@ public class ProxyConnection
 
     protected DataItemInputChained createItem ( final String localId )
     {
-        final DataItemInputChained item = new DataItemInputChained ( itemName ( localId ) );
+        final DataItemInputChained item = new DataItemInputChained ( itemName ( localId ), this.hive.getOperationService () );
 
         this.hive.registerItem ( item );
         this.connectionFolder.add ( localId, item, new MapBuilder<String, Variant> ().getMap () );
@@ -122,7 +122,7 @@ public class ProxyConnection
                 final String newId = value.asString ( null );
                 ProxyConnection.this.switchTo ( newId );
             }
-        } );
+        }, this.hive.getOperationService () );
         this.hive.registerItem ( this.activeConnectionItem );
 
         // fill active connection information
@@ -135,7 +135,7 @@ public class ProxyConnection
 
         this.activeConnectionItem.updateData ( new Variant ( this.group.getCurrentConnection ().toString () ), availableConnections, AttributeMode.SET );
 
-        this.connectItem = new DataItemCommand ( itemName ( "connect" ) );
+        this.connectItem = new DataItemCommand ( itemName ( "connect" ), this.hive.getOperationService () );
         this.connectItem.addListener ( new DataItemCommand.Listener () {
 
             public void command ( final Variant value ) throws Exception
@@ -146,7 +146,7 @@ public class ProxyConnection
         this.hive.registerItem ( this.connectItem );
         this.connectionFolder.add ( "connect", this.connectItem, new MapBuilder<String, Variant> ().getMap () );
 
-        this.disconnectItem = new DataItemCommand ( itemName ( "disconnect" ) );
+        this.disconnectItem = new DataItemCommand ( itemName ( "disconnect" ), this.hive.getOperationService () );
         this.disconnectItem.addListener ( new DataItemCommand.Listener () {
 
             public void command ( final Variant value ) throws Exception

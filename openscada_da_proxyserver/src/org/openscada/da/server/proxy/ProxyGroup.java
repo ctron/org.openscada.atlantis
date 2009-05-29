@@ -276,7 +276,7 @@ public class ProxyGroup
             // create actual item
             final ProxyValueHolder pvh = new ProxyValueHolder ( this.hive.getSeparator (), this.getPrefix (), this.getCurrentConnection (), id );
             final ProxyWriteHandler pwh = new ProxyWriteHandlerImpl ( this.hive.getSeparator (), this.getPrefix (), this.getSubConnections (), this.getCurrentConnection (), id );
-            item = new ProxyDataItem ( id, pvh, pwh );
+            item = new ProxyDataItem ( id, pvh, pwh, this.hive.getOperationService () );
             this.registeredItems.put ( id, item );
 
             setUpItem ( item, id );
