@@ -48,8 +48,6 @@ public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
 
     private DataItemCounterOutput valueEventsOutput;
 
-    private DataItemCounterOutput futureItemsOutput;
-
     public HiveCommonStatisticsGenerator ( final String itemPrefix )
     {
         this.itemPrefix = itemPrefix;
@@ -73,7 +71,6 @@ public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
 
         registerOutput ( "sessions", this.sessionsOutput, "Number of connected sessions" );
         registerOutput ( "items", this.itemsOutput, "Number of registered items" );
-        registerOutput ( "futureWrappers", this.futureItemsOutput, "Number of items that are future wrapped" );
         registerOutput ( "attributeWrites", this.attributeWritesOutput, "Number of attribute write operations" );
         registerOutput ( "valueWrites", this.valuesWritesOutput, "Number of value write operations" );
         registerOutput ( "valueEvents", this.valueEventsOutput, "Number of value events" );
