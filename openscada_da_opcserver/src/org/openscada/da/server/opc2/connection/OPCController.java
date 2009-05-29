@@ -33,8 +33,10 @@ import org.openscada.da.server.opc2.Hive;
 import org.openscada.da.server.opc2.browser.OPCBrowserManager;
 import org.openscada.da.server.opc2.job.Worker;
 import org.openscada.da.server.opc2.job.impl.ConnectJob;
+import org.openscada.da.server.opc2.job.impl.GetGroupStateJob;
 import org.openscada.da.server.opc2.job.impl.ServerStatusJob;
 import org.openscada.opc.dcom.da.OPCDATASOURCE;
+import org.openscada.opc.dcom.da.OPCGroupState;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 import org.openscada.opc.lib.common.ConnectionInformation;
 
@@ -65,6 +67,8 @@ public class OPCController implements Runnable
     private final Collection<OPCStateListener> stateListener = new CopyOnWriteArraySet<OPCStateListener> ();
 
     private final BlockingQueue<Runnable> jobQueue = new LinkedBlockingQueue<Runnable> ();
+
+    private final GroupState groupState = new GroupState ();
 
     public OPCController ( final ConnectionSetup config, final Hive hive, final FolderItemFactory itemFactory )
     {
@@ -181,6 +185,8 @@ public class OPCController implements Runnable
             {
                 setControllerState ( ControllerState.READING_STATUS );
                 updateStatus ();
+                setControllerState ( ControllerState.GET_GROUP_STATUS );
+                updateGroupStatus ();
 
                 final OPCIoContext ctx = this.ioManager.prepareProcessing ();
                 this.ioManager.performProcessing ( ctx, OPCDATASOURCE.OPC_DS_CACHE );
@@ -213,6 +219,18 @@ public class OPCController implements Runnable
         {
             disposeSession ();
         }
+    }
+
+    private void updateGroupStatus () throws InvocationTargetException
+    {
+        final GetGroupStateJob job = new GetGroupStateJob ( this.model.getStatusJobTimeout (), this.model );
+        setGroupState ( this.worker.execute ( job, job ) );
+    }
+
+    private void setGroupState ( final OPCGroupState state )
+    {
+        this.groupState.update ( state );
+
     }
 
     protected void setServerState ( final OPCSERVERSTATUS state )
@@ -326,6 +344,7 @@ public class OPCController implements Runnable
         this.model.setCommon ( null );
 
         this.model.setConnectionState ( ConnectionState.DISCONNECTED );
+        setGroupState ( null );
     }
 
     public void shutdown ()
@@ -392,5 +411,10 @@ public class OPCController implements Runnable
         {
             listener.connectionLost ();
         }
+    }
+
+    public GroupState getGroupState ()
+    {
+        return this.groupState;
     }
 }

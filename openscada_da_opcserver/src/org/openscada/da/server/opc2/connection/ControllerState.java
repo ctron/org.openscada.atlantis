@@ -30,5 +30,6 @@ public enum ControllerState
     DISCONNECTING,
     REGISTERING,
     BROWSING,
-    UNREGISTERING
+    UNREGISTERING,
+    GET_GROUP_STATUS
 }

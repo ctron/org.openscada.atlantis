@@ -104,6 +104,8 @@ public class OPCConnection implements PropertyChangeListener
 
     private FolderItemFactory itemSourcesFactory;
 
+    private ObjectExporter groupStateExporter;
+
     public OPCConnection ( final Hive hive, final FolderCommon rootFolder, final ConnectionSetup setup, final Collection<ItemSource> itemSources )
     {
         this.hive = hive;
@@ -229,24 +231,6 @@ public class OPCConnection implements PropertyChangeListener
         t.setDaemon ( true );
         t.start ();
 
-        // Hook up item source if we have one
-        /*
-        if ( this.connectionSetup.getFileSourceUri () != null )
-        {
-            try
-            {
-                // this.xmlItemSourceFolder = new FolderCommon ();
-                this.xmlItemSource = new FileXMLItemSource ( this.connectionSetup.getFileSourceUri (), this.itemFactory, getDeviceTag () + ".itemSource.file" );
-                this.xmlItemSource.addListener ( this.controller.getItemManager () );
-                // this.connectionFolder.add ( "fileItemSource", this.xmlItemSourceFolder, new HashMap<String, Variant> () );
-                this.xmlItemSource.activate ();
-            }
-            catch ( final Throwable e )
-            {
-                logger.warn ( "Failed to initialized XML file item source", e );
-            }
-
-        }*/
         startItemSources ();
 
         // fill initial values
@@ -272,6 +256,9 @@ public class OPCConnection implements PropertyChangeListener
 
         this.browserManagerExporter = new ObjectExporter ( "browserManager", this.connectionItemFactory );
         this.browserManagerExporter.attachTarget ( this.controller.getBrowserManager () );
+
+        this.groupStateExporter = new ObjectExporter ( "group", this.connectionItemFactory );
+        this.groupStateExporter.attachTarget ( this.controller.getGroupState () );
     }
 
     private void startItemSources ()
