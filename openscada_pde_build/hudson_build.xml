@@ -83,6 +83,16 @@
           target: publish              
          ================================= -->
     <target name="publish" depends="check" description="Publish">
+    	
+    	<!-- make latest link -->
+    	<delete file="${publish.base}/atlantis/${publish.type}/latest"/>
+    	
+    	<exec executable="ln">
+    		<arg value="-f"/>
+    		<arg value="${publish.base}/atlantis/${publish.type}/${publish.id}"/>
+    		<arg value="${publish.base}/atlantis/${publish.type}/latest"/>
+    	</exec>
+    	
     	<mkdir dir="${publish.base}/atlantis/${publish.type}/${publish.id}/ostc"/>
     	<copy todir="${publish.base}/atlantis/${publish.type}/${publish.id}/ostc">
     		<fileset dir="${deploy.base}/deploy/ostc">
