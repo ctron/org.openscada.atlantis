@@ -90,7 +90,9 @@ public class Variant
      * <p>
      * If the value object is not know it is converted to a string
      * @param value the value to set
+     * @deprecated Variant will become immutable in the next release
      */
+    @Deprecated
     public void setValue ( final Object value )
     {
         if ( value == null )
@@ -139,21 +141,41 @@ public class Variant
         }
     }
 
+    /**
+     * 
+     * @deprecated Variant will become immutable in the next release
+     */
+    @Deprecated
     public void setValue ( final boolean value )
     {
         this.value = new Boolean ( value );
     }
 
+    /**
+     * 
+     * @deprecated Variant will become immutable in the next release
+     */
+    @Deprecated
     public void setValue ( final int value )
     {
         this.value = new Integer ( value );
     }
 
+    /**
+     * 
+     * @deprecated Variant will become immutable in the next release
+     */
+    @Deprecated
     public void setValue ( final long value )
     {
         this.value = new Long ( value );
     }
 
+    /**
+     * 
+     * @deprecated Variant will become immutable in the next release
+     */
+    @Deprecated
     public void setValue ( final String value )
     {
         if ( value != null )
@@ -166,6 +188,11 @@ public class Variant
         }
     }
 
+    /**
+     * 
+     * @deprecated Variant will become immutable in the next release
+     */
+    @Deprecated
     public void setValue ( final double value )
     {
         this.value = new Double ( value );
