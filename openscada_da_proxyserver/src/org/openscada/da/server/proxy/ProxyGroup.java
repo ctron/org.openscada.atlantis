@@ -50,6 +50,23 @@ import org.openscada.da.server.common.factory.FactoryTemplate;
  */
 public class ProxyGroup
 {
+    private final static class ThreadFactoryImplementation implements ThreadFactory
+    {
+        private final String name;
+
+        public ThreadFactoryImplementation ( final String name )
+        {
+            this.name = name;
+        }
+
+        public Thread newThread ( final Runnable r )
+        {
+            final Thread t = new Thread ( r, "ProxyItemListener/" + this.name );
+            t.setDaemon ( true );
+            return t;
+        }
+    }
+
     private static Executor defaultExecutor = new Executor () {
         public void execute ( final Runnable r )
         {
@@ -92,15 +109,7 @@ public class ProxyGroup
 
         if ( Boolean.getBoolean ( "org.openscada.da.server.proxy.asyncListener" ) )
         {
-            final ThreadFactory tf = new ThreadFactory () {
-
-                public Thread newThread ( final Runnable r )
-                {
-                    final Thread t = new Thread ( r, "ProxyItemListener/" + ProxyGroup.this.prefix.getName () );
-                    t.setDaemon ( true );
-                    return t;
-                }
-            };
+            final ThreadFactory tf = new ThreadFactoryImplementation ( prefix.getName () );
             this.itemListenerExecutor = Executors.newSingleThreadExecutor ( tf );
         }
     }
