@@ -29,8 +29,8 @@ import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.proxy.connection.ProxySubConnectionId;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
+import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;

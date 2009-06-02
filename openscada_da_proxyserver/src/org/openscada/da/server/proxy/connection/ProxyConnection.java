@@ -36,6 +36,7 @@ import org.openscada.da.server.common.chain.WriteHandlerItem;
 import org.openscada.da.server.proxy.Hive;
 import org.openscada.da.server.proxy.item.ProxyDataItem;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
+import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 import org.openscada.utils.collection.MapBuilder;
 
 /**

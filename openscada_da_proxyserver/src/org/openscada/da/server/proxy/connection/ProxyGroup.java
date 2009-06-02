@@ -50,6 +50,7 @@ import org.openscada.da.server.proxy.item.ProxyValueHolder;
 import org.openscada.da.server.proxy.item.ProxyWriteHandler;
 import org.openscada.da.server.proxy.item.ProxyWriteHandlerImpl;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
+import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 import org.openscada.da.server.proxy.utils.ProxyUtils;
 
 /**

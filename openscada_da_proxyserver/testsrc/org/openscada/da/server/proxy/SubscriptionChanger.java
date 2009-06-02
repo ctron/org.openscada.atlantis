@@ -6,8 +6,8 @@ package org.openscada.da.server.proxy;
 import java.util.concurrent.Callable;
 
 import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.da.server.proxy.connection.ProxySubConnectionId;
 import org.openscada.da.server.proxy.item.ProxyValueHolder;
+import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 
 final class SubscriptionChanger implements Callable<Object>
 {

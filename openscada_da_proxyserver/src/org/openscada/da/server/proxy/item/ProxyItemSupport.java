@@ -19,8 +19,8 @@
 
 package org.openscada.da.server.proxy.item;
 
-import org.openscada.da.server.proxy.connection.ProxySubConnectionId;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
+import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 
 
 public class ProxyItemSupport

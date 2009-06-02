@@ -56,6 +56,8 @@ public class Hive extends HiveCommon
 
     private FolderCommon connectionsFolder;
 
+    private final XMLConfigurator configurator;
+
     /**
      * @throws XmlException
      * @throws IOException
@@ -83,9 +85,10 @@ public class Hive extends HiveCommon
         // enable chain storage for this hive
         ChainStorageServiceHelper.registerDefaultPropertyService ( this );
 
+        this.configurator = configurator;
+
         this.rootFolder = new FolderCommon ();
         setRootFolder ( this.rootFolder );
-        initialize ( configurator );
     }
 
     /**
@@ -131,15 +134,16 @@ public class Hive extends HiveCommon
      * @throws ConfigurationError 
      * 
      */
-    public void initialize ( final XMLConfigurator configurator ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
+    @Override
+    public void start () throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
     {
         // create connections folder
         this.connectionsFolder = new FolderCommon ();
         this.rootFolder.add ( "connections", this.connectionsFolder, new HashMap<String, Variant> () );
 
-        if ( configurator != null )
+        if ( this.configurator != null )
         {
-            configurator.configure ( this );
+            this.configurator.configure ( this );
 
         }
 
