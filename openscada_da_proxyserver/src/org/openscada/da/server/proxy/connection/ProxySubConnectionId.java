@@ -17,21 +17,21 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.server.proxy;
+package org.openscada.da.server.proxy.connection;
 
 /**
- * typesafe indicator of proxy prefix name
+ * typesafe indicator of subconnection name
  * 
  * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
  */
-public class ProxyPrefixName
+public final class ProxySubConnectionId
 {
     private final String name;
 
     /**
      * @param name
      */
-    public ProxyPrefixName ( final String name )
+    public ProxySubConnectionId ( final String name )
     {
         this.name = name;
     }
@@ -60,7 +60,7 @@ public class ProxyPrefixName
         {
             return false;
         }
-        final ProxyPrefixName other = (ProxyPrefixName)obj;
+        final ProxySubConnectionId other = (ProxySubConnectionId)obj;
         if ( this.name == null )
         {
             if ( other.name != null )
@@ -82,7 +82,7 @@ public class ProxyPrefixName
     }
 
     /**
-     * @return name (the same as toString())
+     * @return name (the same a toString())
      */
     public String getName ()
     {

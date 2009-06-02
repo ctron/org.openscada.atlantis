@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.server.proxy;
+package org.openscada.da.server.proxy.item;
 
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -26,8 +26,9 @@ import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.server.common.AttributeMode;
+import org.openscada.da.server.proxy.connection.ProxySubConnection;
 
-class ProxyItemUpdateListener implements ItemUpdateListener
+public class ProxyItemUpdateListener implements ItemUpdateListener
 {
     private final ProxyDataItem item;
 

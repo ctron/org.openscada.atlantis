@@ -10,6 +10,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
+import org.openscada.da.server.proxy.connection.ProxySubConnectionId;
+import org.openscada.da.server.proxy.item.ProxyValueHolder;
+import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 
 public class ApplicationRunner2
 {

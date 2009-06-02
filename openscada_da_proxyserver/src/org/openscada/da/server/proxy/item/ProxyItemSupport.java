@@ -17,7 +17,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.server.proxy;
+package org.openscada.da.server.proxy.item;
+
+import org.openscada.da.server.proxy.connection.ProxySubConnectionId;
+import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 
 
 public class ProxyItemSupport

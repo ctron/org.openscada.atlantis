@@ -6,6 +6,8 @@ package org.openscada.da.server.proxy;
 import java.util.concurrent.Callable;
 
 import org.openscada.core.Variant;
+import org.openscada.da.server.proxy.connection.ProxySubConnectionId;
+import org.openscada.da.server.proxy.item.ProxyValueHolder;
 
 final class Writer implements Callable<Object>
 {

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.openscada.da.server.proxy;
+package org.openscada.da.server.proxy.connection;
 
 import java.util.HashMap;
 
@@ -33,6 +33,9 @@ import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
+import org.openscada.da.server.proxy.Hive;
+import org.openscada.da.server.proxy.item.ProxyDataItem;
+import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.openscada.utils.collection.MapBuilder;
 
 /**

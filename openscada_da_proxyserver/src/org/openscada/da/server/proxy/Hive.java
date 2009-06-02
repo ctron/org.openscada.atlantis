@@ -34,6 +34,10 @@ import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.proxy.configuration.XMLConfigurator;
+import org.openscada.da.server.proxy.connection.ProxyConnection;
+import org.openscada.da.server.proxy.connection.ProxyDataItemFactory;
+import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.w3c.dom.Node;
 
 /**

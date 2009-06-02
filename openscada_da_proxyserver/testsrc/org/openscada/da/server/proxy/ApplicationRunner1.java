@@ -13,6 +13,9 @@ import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.ItemUpdateListener;
+import org.openscada.da.server.proxy.connection.ProxySubConnectionId;
+import org.openscada.da.server.proxy.item.ProxyValueHolder;
+import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 
 public class ApplicationRunner1
 {
