@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 to 2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006 to 2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,23 +30,23 @@ import org.openscada.utils.jobqueue.OperationManager.Handle;
 
 public class SessionCommonOperations implements OperationManager.Listener
 {
-    private static Logger _log = Logger.getLogger ( SessionCommonOperations.class );
+    private static Logger logger = Logger.getLogger ( SessionCommonOperations.class );
 
-    private final Set<Handle> _operations = new CopyOnWriteArraySet<Handle> ();
+    private final Set<Handle> operations = new CopyOnWriteArraySet<Handle> ();
 
     public boolean addOperation ( Handle handle )
     {
-        return _operations.add ( handle );
+        return operations.add ( handle );
     }
 
     public boolean removeOperation ( Handle handle )
     {
-        return _operations.remove ( handle );
+        return operations.remove ( handle );
     }
 
     public boolean containsOperation ( Handle handle )
     {
-        return _operations.contains ( handle );
+        return operations.contains ( handle );
     }
 
     public void removedHandle ( Handle handle )
@@ -56,30 +56,30 @@ public class SessionCommonOperations implements OperationManager.Listener
 
     public Set<Handle> getOperations ()
     {
-        return new HashSet<Handle> ( _operations );
+        return new HashSet<Handle> ( operations );
     }
 
     public void clear ()
     {
-        _operations.clear ();
+        operations.clear ();
     }
 
     public void cancelAll ()
     {
-        Set<Handle> operations = new HashSet<Handle> ( _operations );
-        _operations.clear ();
+        Set<Handle> ops = new HashSet<Handle> ( operations );
+        operations.clear ();
 
         // cancel all pending operations
-        for ( Handle handle : operations )
+        for ( Handle handle : ops )
         {
             try
             {
-                _log.info ( "Stopping operation: " + handle );
+                logger.info ( "Stopping operation: " + handle );
                 handle.cancel ();
             }
             catch ( CancelNotSupportedException e )
             {
-                _log.warn ( "Failed to cancel job on session destruction", e );
+                logger.warn ( "Failed to cancel job on session destruction", e );
                 // ignore it .. we can't do anything
             }
         }
