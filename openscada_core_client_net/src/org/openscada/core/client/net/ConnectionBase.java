@@ -344,9 +344,19 @@ public abstract class ConnectionBase implements Connection, IoHandler
         return this.session != null;
     }
 
-    public void connect ()
+    public synchronized void connect ()
     {
-        switchState ( ConnectionState.CONNECTING, null );
+        switch ( this.connectionState )
+        {
+        case LOOKUP:
+        case CONNECTING:
+        case CONNECTED:
+            // no-op
+            break;
+        default:
+            switchState ( ConnectionState.CONNECTING, null );
+            break;
+        }
     }
 
     protected synchronized void performLookup ()
