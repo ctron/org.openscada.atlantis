@@ -19,27 +19,35 @@
 
 package org.openscada.da.server.proxy.connection;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
+import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.core.Location;
 import org.openscada.da.server.browser.common.FolderCommon;
+import org.openscada.da.server.browser.common.query.GroupFolder;
+import org.openscada.da.server.browser.common.query.IDNameProvider;
+import org.openscada.da.server.browser.common.query.InvisibleStorage;
+import org.openscada.da.server.browser.common.query.ItemDescriptor;
+import org.openscada.da.server.browser.common.query.PatternNameProvider;
+import org.openscada.da.server.browser.common.query.SplitGroupProvider;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
@@ -52,13 +60,17 @@ import org.openscada.da.server.proxy.item.ProxyWriteHandlerImpl;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 import org.openscada.da.server.proxy.utils.ProxyUtils;
+import org.openscada.utils.collection.MapBuilder;
+import org.openscada.utils.lifecycle.LifecycleAware;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
  *
  */
-public class ProxyGroup
+public class ProxyGroup implements LifecycleAware
 {
+    private static final String FOLDER_NAME_REGISTERED_ITEMS = "registeredItems";
+
     private final static class ThreadFactoryImplementation implements ThreadFactory
     {
         private final String name;
@@ -85,13 +97,13 @@ public class ProxyGroup
 
     private static Logger logger = Logger.getLogger ( ProxyGroup.class );
 
-    private final List<ConnectionStateListener> connectionStateListeners = Collections.synchronizedList ( new ArrayList<ConnectionStateListener> () );
+    private final Set<ConnectionStateListener> connectionStateListeners = new CopyOnWriteArraySet<ConnectionStateListener> ();
 
     private ProxySubConnectionId currentConnection;
 
     private ProxyPrefixName prefix;
 
-    private final Map<String, ProxyDataItem> registeredItems = Collections.synchronizedMap ( new HashMap<String, ProxyDataItem> () );
+    private final Map<String, ProxyDataItem> registeredItems = new ConcurrentHashMap<String, ProxyDataItem> ();
 
     private FolderCommon connectionFolder;
 
@@ -103,9 +115,15 @@ public class ProxyGroup
 
     private final Map<ProxySubConnectionId, ProxySubConnection> subConnections = new HashMap<ProxySubConnectionId, ProxySubConnection> ();
 
-    private Integer wait = 0;
+    private int wait;
 
     private ProxyFolder proxyFolder;
+
+    private final Object realizeMutex = new Object ();
+
+    private InvisibleStorage registeredItemsStorage;
+
+    private GroupFolder registeredItemsFolder;
 
     /**
      * @param hive
@@ -126,10 +144,20 @@ public class ProxyGroup
     public void start ()
     {
         createProxyFolder ();
+
+        this.registeredItemsStorage = new InvisibleStorage ();
+        this.registeredItemsFolder = new GroupFolder ( new SplitGroupProvider ( new IDNameProvider (), Pattern.quote ( this.hive.getSeparator () ) ), new PatternNameProvider ( new IDNameProvider (), Pattern.compile ( "^.*" + Pattern.quote ( this.hive.getSeparator () ) + "(.*?)$" ), 1 ) );
+        this.connectionFolder.add ( FOLDER_NAME_REGISTERED_ITEMS, this.registeredItemsFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "The folder which contains all realized items" ) ).getMap () );
+        this.registeredItemsStorage.addChild ( this.registeredItemsFolder );
     }
 
     public void stop ()
     {
+
+        this.connectionFolder.remove ( FOLDER_NAME_REGISTERED_ITEMS );
+        this.registeredItemsStorage.removeChild ( this.registeredItemsFolder );
+        this.registeredItemsStorage = null;
+        this.registeredItemsFolder = null;
         destroyProxyFolder ();
     }
 
@@ -244,7 +272,7 @@ public class ProxyGroup
      * @return time how long proxy should wait if subconnection is lost,
      * before item is set on error
      */
-    public Integer getWait ()
+    public int getWait ()
     {
         return this.wait;
     }
@@ -293,24 +321,30 @@ public class ProxyGroup
      */
     public ProxyDataItem realizeItem ( final String id )
     {
-        ProxyDataItem item = this.registeredItems.get ( id );
-        if ( item == null )
+        synchronized ( this.realizeMutex )
         {
-            // create actual item
-            final ProxyValueHolder pvh = new ProxyValueHolder ( this.hive.getSeparator (), this.getPrefix (), this.getCurrentConnection (), id );
-            final ProxyWriteHandler pwh = new ProxyWriteHandlerImpl ( this.hive.getSeparator (), this.getPrefix (), this.getSubConnections (), this.getCurrentConnection (), id );
-            item = new ProxyDataItem ( id, pvh, pwh, this.hive.getOperationService () );
-            this.registeredItems.put ( id, item );
+            ProxyDataItem item = this.registeredItems.get ( id );
+            if ( item == null )
+            {
+                // create actual item
+                final ProxyValueHolder pvh = new ProxyValueHolder ( this.hive.getSeparator (), this.getPrefix (), this.getCurrentConnection (), id );
+                final ProxyWriteHandler pwh = new ProxyWriteHandlerImpl ( this.hive.getSeparator (), this.getPrefix (), this.getSubConnections (), this.getCurrentConnection (), id );
+                item = new ProxyDataItem ( id, pvh, pwh, this.hive.getOperationService () );
+                this.registeredItems.put ( id, item );
 
-            setUpItem ( item, id );
+                setUpItem ( item, id );
+            }
+            return item;
         }
-        return item;
     }
 
     private void setUpItem ( final ProxyDataItem item, final String requestId )
     {
         // add item chains
         applyTemplate ( item );
+
+        // add to storage
+        this.registeredItemsStorage.added ( new ItemDescriptor ( item, new MapBuilder<String, Variant> ().getMap () ) );
 
         // hook up item
         for ( final ProxySubConnection subConnection : getSubConnections ().values () )
@@ -365,7 +399,7 @@ public class ProxyGroup
     /**
      * @param wait
      */
-    public void setWait ( final Integer wait )
+    public void setWait ( final int wait )
     {
         this.wait = wait;
     }
