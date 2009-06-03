@@ -26,6 +26,11 @@ import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.utils.lang.Immutable;
 
+/**
+ * Default implementation of data {@link DataItemInformation}
+ * @author Jens Reimann
+ *
+ */
 @Immutable
 public class DataItemInformationBase implements org.openscada.da.core.DataItemInformation
 {
