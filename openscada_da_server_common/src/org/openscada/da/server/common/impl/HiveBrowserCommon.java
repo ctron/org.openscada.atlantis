@@ -188,7 +188,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
             }
             catch ( final NoSuchFolderException e )
             {
-                // just warn as debug since this doesnt matter anyway
+                // just warn as debug since this doesn't matter anyway
                 logger.debug ( "Unable to unsubscribe form path", e );
             }
         }
