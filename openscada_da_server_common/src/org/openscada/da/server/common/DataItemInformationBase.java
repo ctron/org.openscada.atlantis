@@ -20,27 +20,31 @@
 package org.openscada.da.server.common;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
+import org.openscada.utils.lang.Immutable;
 
+@Immutable
 public class DataItemInformationBase implements org.openscada.da.core.DataItemInformation
 {
-    private String name = "";
+    private final String name;
 
-    private EnumSet<IODirection> ioDirection = EnumSet.noneOf ( IODirection.class );
+    private final Set<IODirection> ioDirection;
 
-    public DataItemInformationBase ( final String name, final EnumSet<IODirection> ioDirection )
+    public DataItemInformationBase ( final String name, final Set<IODirection> ioDirection )
     {
         super ();
         this.name = new String ( name );
-        this.ioDirection = ioDirection.clone ();
+        this.ioDirection = EnumSet.copyOf ( ioDirection );
     }
 
     public DataItemInformationBase ( final String name )
     {
         super ();
         this.name = new String ( name );
+        this.ioDirection = EnumSet.allOf ( IODirection.class );
     }
 
     public DataItemInformationBase ( final DataItemInformation information )
@@ -48,10 +52,10 @@ public class DataItemInformationBase implements org.openscada.da.core.DataItemIn
         super ();
 
         this.name = new String ( information.getName () );
-        this.ioDirection = information.getIODirection ().clone ();
+        this.ioDirection = EnumSet.copyOf ( information.getIODirection () );
     }
 
-    public EnumSet<IODirection> getIODirection ()
+    public Set<IODirection> getIODirection ()
     {
         return this.ioDirection;
     }
