@@ -27,7 +27,6 @@ import java.util.concurrent.Future;
 
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.SessionCommonOperations;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.core.server.ItemChangeListener;
 import org.openscada.da.core.server.Session;
@@ -41,9 +40,7 @@ public class SessionCommon implements Session, DataItemSubscriptionListener
 
     private volatile ItemChangeListener listener;
 
-    private final SessionCommonData _data = new SessionCommonData ();
-
-    private final SessionCommonOperations operations = new SessionCommonOperations ();
+    private final SessionCommonData data = new SessionCommonData ();
 
     private volatile FolderListener folderListener = null;
 
@@ -73,7 +70,7 @@ public class SessionCommon implements Session, DataItemSubscriptionListener
 
     public SessionCommonData getData ()
     {
-        return this._data;
+        return this.data;
     }
 
     public FolderListener getFolderListener ()
@@ -84,11 +81,6 @@ public class SessionCommon implements Session, DataItemSubscriptionListener
     public void setListener ( final FolderListener folderListener )
     {
         this.folderListener = folderListener;
-    }
-
-    public SessionCommonOperations getOperations ()
-    {
-        return this.operations;
     }
 
     // Data item listener stuff
@@ -161,8 +153,6 @@ public class SessionCommon implements Session, DataItemSubscriptionListener
      */
     public void dispose ()
     {
-        getOperations ().cancelAll ();
-
         final Collection<Future<?>> tasks;
         synchronized ( this.tasks )
         {
