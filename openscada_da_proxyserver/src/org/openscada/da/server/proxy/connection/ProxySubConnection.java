@@ -20,6 +20,7 @@
 package org.openscada.da.server.proxy.connection;
 
 import org.openscada.core.Variant;
+import org.openscada.core.client.AutoReconnectController;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.da.client.Connection;
@@ -59,6 +60,8 @@ public class ProxySubConnection implements ConnectionStateListener
 
     private final DataItemCommand disconnectItem;
 
+    private final AutoReconnectController controller;
+
     /**
      * @param connection
      * @param id
@@ -97,16 +100,19 @@ public class ProxySubConnection implements ConnectionStateListener
                 ProxySubConnection.this.disconnect ();
             }
         } );
+
+        this.controller = new AutoReconnectController ( this.connection );
+        connect ();
     }
 
     protected void disconnect ()
     {
-        this.connection.disconnect ();
+        this.controller.disconnect ();
     }
 
     protected void connect ()
     {
-        this.connection.connect ();
+        this.controller.connect ();
     }
 
     /**
@@ -151,6 +157,7 @@ public class ProxySubConnection implements ConnectionStateListener
 
     public void dispose ()
     {
+        disconnect ();
         this.itemFactory.dispose ();
     }
 

@@ -50,4 +50,16 @@ public class ProxyUtils
     {
         return itemId.replaceFirst ( Pattern.quote ( originalPrefix.getName () + separator ), proxyPrefix.getName () + separator );
     }
+
+    /**
+     * checks if an item id matches the sub connection prefix and may be put into the proxy group
+     * @param itemId
+     * @param separator
+     * @param originalPrefix
+     * @return
+     */
+    public static boolean isOriginalItemForProxyGroup ( final String itemId, final String separator, final ProxyPrefixName originalPrefix )
+    {
+        return itemId.startsWith ( originalPrefix.getName () + separator );
+    }
 }

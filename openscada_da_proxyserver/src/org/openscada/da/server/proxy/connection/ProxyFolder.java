@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.apache.log4j.Logger;
 import org.openscada.da.client.FolderManager;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.Location;
@@ -36,7 +37,6 @@ import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.FolderListener;
-import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
 
 /**
@@ -45,6 +45,8 @@ import org.openscada.da.server.common.DataItemInformationBase;
  */
 public class ProxyFolder implements Folder, org.openscada.da.client.FolderListener
 {
+    private final static Logger logger = Logger.getLogger ( ProxyFolder.class );
+
     private final FolderCommon folder = new FolderCommon ();
 
     private final Location location;
@@ -79,18 +81,28 @@ public class ProxyFolder implements Folder, org.openscada.da.client.FolderListen
 
     public void removed ()
     {
-        disconnect ();
+        checkDisconnect ( true );
         this.folder.removed ();
     }
 
-    private void disconnect ()
+    private void checkDisconnect ( final boolean force )
     {
-        if ( this.initialized )
+        synchronized ( this )
         {
+            if ( !this.initialized )
+            {
+                return;
+            }
+            if ( !force && this.folder.hasSubscribers () )
+            {
+                return;
+            }
+
             this.initialized = false;
-            this.folderManager.removeFolderListener ( this, this.location );
-            this.folder.clear ();
+            logger.info ( String.format ( "Disconnect folder for location: %s", this.location ) );
         }
+        this.folderManager.removeFolderListener ( this, this.location );
+        this.folder.clear ();
     }
 
     public void subscribe ( final Stack<String> path, final FolderListener listener, final Object tag ) throws NoSuchFolderException
@@ -101,16 +113,23 @@ public class ProxyFolder implements Folder, org.openscada.da.client.FolderListen
 
     private void connect ()
     {
-        if ( !this.initialized )
+        synchronized ( this )
         {
+            if ( this.initialized )
+            {
+                return;
+            }
             this.initialized = true;
-            this.folderManager.addFolderListener ( this, this.location );
         }
+        this.folderManager.addFolderListener ( this, this.location );
     }
 
     public void unsubscribe ( final Stack<String> path, final Object tag ) throws NoSuchFolderException
     {
         this.folder.unsubscribe ( path, tag );
+
+        // check if we can disconnect
+        checkDisconnect ( false );
     }
 
     public void folderChanged ( final Collection<Entry> added, final Collection<String> removed, final boolean full )
@@ -121,7 +140,7 @@ public class ProxyFolder implements Folder, org.openscada.da.client.FolderListen
         }
         catch ( final Throwable e )
         {
-            e.printStackTrace ();
+            logger.warn ( "Failed to handle folder change", e );
         }
     }
 
@@ -147,9 +166,12 @@ public class ProxyFolder implements Folder, org.openscada.da.client.FolderListen
             if ( entry instanceof DataItemEntry )
             {
                 final DataItemEntry dataItemEntry = (DataItemEntry)entry;
-                final DataItem proxyItem = this.proxyGroup.realizeItem ( this.proxyGroup.convertToProxyId ( dataItemEntry.getId () ) );
-                final DataItemInformation itemInformation = new DataItemInformationBase ( proxyItem.getInformation () );
-                items.put ( entry.getName (), itemInformation );
+                final String itemId = this.proxyGroup.convertToProxyId ( dataItemEntry.getId () );
+                if ( itemId != null )
+                {
+                    final DataItemInformation itemInformation = new DataItemInformationBase ( itemId, dataItemEntry.getIODirections () );
+                    items.put ( entry.getName (), itemInformation );
+                }
             }
             else if ( entry instanceof FolderEntry )
             {

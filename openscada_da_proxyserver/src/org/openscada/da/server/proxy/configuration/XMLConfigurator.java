@@ -74,15 +74,13 @@ public class XMLConfigurator
         for ( final ProxyType proxyConf : this.document.getRoot ().getProxyList () )
         {
             final ProxyConnection proxyConnection = hive.addConnection ( new ProxyPrefixName ( proxyConf.getPrefix () ) );
+            proxyConnection.setWait ( proxyConf.getWait () );
 
             for ( final ConnectionType connectionConf : proxyConf.getConnectionList () )
             {
                 final Connection connection = createConnection ( connectionConf.getUri (), connectionConf.getClassName () );
                 proxyConnection.addConnection ( connection, connectionConf.getId (), new ProxyPrefixName ( connectionConf.getPrefix () ) );
-                connection.connect ();
             }
-            proxyConnection.setWait ( proxyConf.getWait () );
-            proxyConnection.init ();
         }
     }
 

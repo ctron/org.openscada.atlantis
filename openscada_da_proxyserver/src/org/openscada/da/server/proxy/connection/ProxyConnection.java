@@ -38,12 +38,13 @@ import org.openscada.da.server.proxy.item.ProxyDataItem;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 import org.openscada.utils.collection.MapBuilder;
+import org.openscada.utils.lifecycle.LifecycleAware;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
  *
  */
-public class ProxyConnection
+public class ProxyConnection implements LifecycleAware
 {
     private static Logger logger = Logger.getLogger ( ProxyConnection.class );
 
@@ -76,6 +77,8 @@ public class ProxyConnection
 
     private DataItemCommand disconnectItem;
 
+    private final ProxyDataItemFactory factory;
+
     /**
      * @param hive
      * @param prefix 
@@ -91,6 +94,8 @@ public class ProxyConnection
         this.connectionFolder = new FolderCommon ();
         this.group.setConnectionFolder ( this.connectionFolder );
         this.connectionsFolder.add ( this.group.getPrefix ().getName (), this.connectionFolder, new HashMap<String, Variant> () );
+
+        this.factory = new ProxyDataItemFactory ( prefix, this, this.separator );
     }
 
     protected DataItemInputChained createItem ( final String localId )
@@ -111,7 +116,7 @@ public class ProxyConnection
     /**
      * 
      */
-    public void init ()
+    public void start ()
     {
         this.switchStarted = createItem ( "switch.started" );
         this.switchEnded = createItem ( "switch.ended" );
@@ -165,6 +170,9 @@ public class ProxyConnection
 
         // add proxy folder for actual items
         this.group.start ();
+
+        // add our factory to the hive
+        this.hive.addItemFactory ( this.factory );
     }
 
     protected void switchTo ( final String newId )
@@ -218,8 +226,9 @@ public class ProxyConnection
     /**
      * 
      */
-    public void dispose ()
+    public void stop ()
     {
+        this.hive.removeItemFactory ( this.factory );
         this.group.stop ();
     }
 
@@ -236,5 +245,6 @@ public class ProxyConnection
     public void addConnection ( final Connection connection, final String id, final ProxyPrefixName proxyPrefixName ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
         this.group.addConnection ( connection, id, proxyPrefixName, this.connectionFolder );
+
     }
 }

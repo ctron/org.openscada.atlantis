@@ -181,6 +181,7 @@ public class ProxyGroup
         {
             throw new IllegalArgumentException ( "connection with id " + proxySubConnectionId + " already exists!" );
         }
+        logger.info ( String.format ( "Adding new connection: %s -> %s", id, connection.getConnectionInformation () ) );
         final ProxySubConnection proxySubConnection = new ProxySubConnection ( connection, this.prefix, proxySubConnectionId, prefix, this.hive, connectionFolder );
         this.subConnections.put ( proxySubConnectionId, proxySubConnection );
 
@@ -258,12 +259,16 @@ public class ProxyGroup
     }
 
     /**
-     * @param itemId
-     * @return return name of item in proxy
+     * @param itemId the item id to convert (from the original source)
+     * @return return name of item in proxy or <code>null</code> if the item does not match the proxy group
      */
     public String convertToProxyId ( final String itemId )
     {
-        return ProxyUtils.proxyItemId ( itemId, this.hive.getSeparator (), getPrefix (), currentSubConnection ().getPrefix () );
+        if ( ProxyUtils.isOriginalItemForProxyGroup ( itemId, this.hive.getSeparator (), currentSubConnection ().getPrefix () ) )
+        {
+            return ProxyUtils.proxyItemId ( itemId, this.hive.getSeparator (), getPrefix (), currentSubConnection ().getPrefix () );
+        }
+        return null;
     }
 
     /**
@@ -271,7 +276,7 @@ public class ProxyGroup
      */
     public void disconnectCurrentConnection ()
     {
-        currentConnection ().disconnect ();
+        currentSubConnection ().disconnect ();
     }
 
     /**
@@ -279,7 +284,7 @@ public class ProxyGroup
      */
     public void connectCurrentConnection ()
     {
-        currentConnection ().connect ();
+        currentSubConnection ().connect ();
     }
 
     /**
@@ -412,6 +417,7 @@ public class ProxyGroup
         }
         finally
         {
+            logger.info ( "Release switch lock" );
             this.switchLock.unlock ();
         }
 

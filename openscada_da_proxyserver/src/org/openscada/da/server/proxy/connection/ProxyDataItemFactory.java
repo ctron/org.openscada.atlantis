@@ -19,13 +19,10 @@
 
 package org.openscada.da.server.proxy.connection;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.apache.log4j.Logger;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.common.factory.DataItemFactoryRequest;
-import org.openscada.da.server.proxy.item.ProxyDataItem;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 
 /**
@@ -34,53 +31,40 @@ import org.openscada.da.server.proxy.utils.ProxyPrefixName;
  */
 public class ProxyDataItemFactory implements DataItemFactory
 {
-    final Map<ProxyPrefixName, ProxyConnection> connections = new HashMap<ProxyPrefixName, ProxyConnection> ();
+    private final static Logger logger = Logger.getLogger ( ProxyDataItemFactory.class );
 
-    private String separator = ".";
+    private final String separator;
 
-    /**
-     * @param connections
-     * @param separator
-     */
-    public ProxyDataItemFactory ( final Map<ProxyPrefixName, ProxyConnection> connections, final String separator )
+    private final ProxyPrefixName prefix;
+
+    private final ProxyConnection connection;
+
+    public ProxyDataItemFactory ( final ProxyPrefixName prefix, final ProxyConnection connection, final String separator )
     {
         this.separator = separator;
-        this.connections.putAll ( connections );
+        this.prefix = prefix;
+        this.connection = connection;
     }
 
     public boolean canCreate ( final DataItemFactoryRequest request )
     {
-        return findConnection ( request ) != null;
-    }
+        final String requestItemId = request.getId ();
 
-    protected ProxyConnection findConnection ( final DataItemFactoryRequest request )
-    {
-        if ( request == null )
+        if ( logger.isInfoEnabled () )
         {
-            return null;
+            logger.info ( String.format ( "Checking request: %s for %s", requestItemId, this.prefix ) );
         }
 
-        for ( final Map.Entry<ProxyPrefixName, ProxyConnection> entry : this.connections.entrySet () )
-        {
-            if ( request.getId ().startsWith ( entry.getKey ().getName () + this.separator ) )
-            {
-                return entry.getValue ();
-            }
-        }
-        return null;
+        return requestItemId.startsWith ( this.prefix.getName () + this.separator );
     }
 
     public DataItem create ( final DataItemFactoryRequest request )
     {
-        final ProxyConnection connection = findConnection ( request );
-
-        if ( connection == null )
+        if ( !canCreate ( request ) )
         {
             return null;
         }
 
-        final ProxyDataItem item = connection.realizeItem ( request.getId () );
-
-        return item;
+        return this.connection.realizeItem ( request.getId () );
     }
 }

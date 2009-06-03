@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
@@ -36,7 +37,6 @@ import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.proxy.configuration.XMLConfigurator;
 import org.openscada.da.server.proxy.connection.ProxyConnection;
-import org.openscada.da.server.proxy.connection.ProxyDataItemFactory;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.w3c.dom.Node;
 
@@ -46,6 +46,8 @@ import org.w3c.dom.Node;
  */
 public class Hive extends HiveCommon
 {
+    private final static Logger logger = Logger.getLogger ( Hive.class );
+
     private final FolderCommon rootFolder;
 
     private final Map<ProxyPrefixName, ProxyConnection> connections = new HashMap<ProxyPrefixName, ProxyConnection> ();
@@ -127,16 +129,16 @@ public class Hive extends HiveCommon
 
     /**
      * @param configurator 
-     * @throws NotConvertableException 
-     * @throws NullValueException 
-     * @throws InvalidOperationException 
-     * @throws ClassNotFoundException 
-     * @throws ConfigurationError 
+     * @throws Exception 
      * 
      */
     @Override
-    public void start () throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
+    public void start () throws Exception
     {
+        super.start ();
+
+        logger.info ( "Starting hive" );
+
         // create connections folder
         this.connectionsFolder = new FolderCommon ();
         this.rootFolder.add ( "connections", this.connectionsFolder, new HashMap<String, Variant> () );
@@ -144,12 +146,26 @@ public class Hive extends HiveCommon
         if ( this.configurator != null )
         {
             this.configurator.configure ( this );
-
         }
 
-        addItemFactory ( new ProxyDataItemFactory ( this.connections, this.separator ) );
+        for ( final ProxyConnection connection : this.connections.values () )
+        {
+            connection.start ();
+        }
+
+        // addItemFactory ( new ProxyDataItemFactory ( this.connections, this.separator ) );
 
         this.initialized = true;
+    }
+
+    @Override
+    public void stop () throws Exception
+    {
+        for ( final ProxyConnection connection : this.connections.values () )
+        {
+            connection.stop ();
+        }
+        super.stop ();
     }
 
     /**
