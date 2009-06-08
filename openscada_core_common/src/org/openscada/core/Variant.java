@@ -315,15 +315,15 @@ public class Variant
         {
             if ( this.value instanceof Boolean )
             {
-                return ( (Boolean)this.value ).booleanValue () ? 1 : 0;
+                return ( (Boolean)this.value ).booleanValue () ? 1L : 0L;
             }
             if ( this.value instanceof Double )
             {
-                return ( (Double)this.value ).intValue ();
+                return ( (Double)this.value ).longValue ();
             }
             if ( this.value instanceof Integer )
             {
-                return ( (Integer)this.value ).intValue ();
+                return ( (Integer)this.value ).longValue ();
             }
             if ( this.value instanceof Long )
             {
