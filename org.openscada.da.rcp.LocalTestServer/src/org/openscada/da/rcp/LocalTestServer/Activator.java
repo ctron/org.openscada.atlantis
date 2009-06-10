@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IStatus;
@@ -41,6 +42,7 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends AbstractUIPlugin
 {
+    private final static Logger logger = Logger.getLogger ( Activator.class );
 
     // The plug-in ID
     public static final String PLUGIN_ID = "org.openscada.da.rcp.LocalTestServer";
@@ -128,8 +130,9 @@ public class Activator extends AbstractUIPlugin
             {
                 exportServer ( testHive, TEST_PORT );
             }
-            catch ( final Exception e )
+            catch ( final Throwable e )
             {
+                logger.error ( "failed to start", e );
                 notifyServerError ( e );
             }
         }
