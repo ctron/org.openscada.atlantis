@@ -1,4 +1,5 @@
-<?xml version="1.0" ?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
@@ -29,6 +30,7 @@
 
 	<properties>
 		<update.policy>interval:10080</update.policy>
+		<version.mina>2.0.0-M6</version.mina>
 	</properties>
 	
 	<scm>
@@ -171,17 +173,17 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>com.springsource.slf4j.api</artifactId>
-				<version>1.5.6</version>
+				<version>[1.5.0,1.6.0)</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>com.springsource.slf4j.log4j</artifactId>
-				<version>1.5.6</version>
+				<version>[1.5.0,1.6.0)</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.log4j</groupId>
 				<artifactId>com.springsource.org.apache.log4j</artifactId>
-				<version>1.2.15</version>
+				<version>[1.2.0,1.3.0)</version>
 			</dependency>
 			<dependency>
 				<groupId>org.openscada.aurora</groupId>
@@ -191,12 +193,12 @@
 			<dependency>
 				<groupId>org.openscada.utgard</groupId>
 				<artifactId>org.openscada.utgard.opc.lib</artifactId>
-				<version>0.4.2</version>
+				<version>0.5.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.mina</groupId>
 				<artifactId>mina-core</artifactId>
-				<version>2.0.0-M5</version>
+				<version>${version.mina}</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>slf4j-api</artifactId>
@@ -207,7 +209,7 @@
 			<dependency>
 				<groupId>org.apache.mina</groupId>
 				<artifactId>mina-transport-apr</artifactId>
-				<version>2.0.0-M5</version>
+				<version>${version.mina}</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>slf4j-api</artifactId>
@@ -218,7 +220,7 @@
 			<dependency>
 				<groupId>org.apache.mina</groupId>
 				<artifactId>mina-filter-compression</artifactId>
-				<version>2.0.0-M5</version>
+				<version>${version.mina}</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>slf4j-api</artifactId>
