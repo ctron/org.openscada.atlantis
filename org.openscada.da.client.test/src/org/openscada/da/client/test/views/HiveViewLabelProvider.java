@@ -4,6 +4,7 @@
 package org.openscada.da.client.test.views;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -87,7 +88,7 @@ class HiveViewLabelProvider extends LabelProvider
         else if ( obj instanceof DataItemEntry )
         {
             final DataItemEntry hiveItem = (DataItemEntry)obj;
-            final EnumSet<IODirection> io = hiveItem.getIoDirection ();
+            final Set<IODirection> io = hiveItem.getIoDirection ();
             if ( io.containsAll ( EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) )
             {
                 imageKey = ISharedImages.IMG_HIVE_ITEM_IO;
