@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
 
 package org.openscada.da.client.base.browser;
 
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -34,7 +34,7 @@ public class DataItemEntry extends BrowserEntry implements IAdaptable
 {
     private String _id = null;
 
-    private EnumSet<IODirection> _ioDirection = EnumSet.noneOf ( IODirection.class );
+    private final Set<IODirection> _ioDirection;
 
     private enum Properties
     {
@@ -42,7 +42,7 @@ public class DataItemEntry extends BrowserEntry implements IAdaptable
         IO_DIRECTION
     }
 
-    public DataItemEntry ( final String name, final Map<String, Variant> attributes, final FolderEntry parent, final HiveConnection connection, final String id, final EnumSet<IODirection> ioDirection )
+    public DataItemEntry ( final String name, final Map<String, Variant> attributes, final FolderEntry parent, final HiveConnection connection, final String id, final Set<IODirection> ioDirection )
     {
         super ( name, attributes, connection, parent );
         this._id = id;
@@ -91,7 +91,7 @@ public class DataItemEntry extends BrowserEntry implements IAdaptable
         return super.getPropertyValue ( id );
     }
 
-    public EnumSet<IODirection> getIoDirection ()
+    public Set<IODirection> getIoDirection ()
     {
         return this._ioDirection;
     }
