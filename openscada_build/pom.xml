@@ -299,7 +299,7 @@
 				<pluginRepository>
 					<id>openscada-public-repos</id>
 					<name>openscada-public-repos</name>
-					<url>http://openscada.org/download/maven-repo/</url>
+					<url>http://repo.openscada.org/maven2/</url>
 					<releases>
 						<enabled>true</enabled>
 						<updatePolicy>${update.policy}</updatePolicy>
@@ -316,7 +316,7 @@
 				<repository>
 					<id>openscada-public-repos</id>
 					<name>openscada-public-repos</name>
-					<url>http://openscada.org/download/maven-repo/</url>
+					<url>http://repo.openscada.org/maven2/</url>
 					<releases>
 						<enabled>true</enabled>
 						<updatePolicy>${update.policy}</updatePolicy>
