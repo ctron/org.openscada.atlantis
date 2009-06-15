@@ -57,7 +57,6 @@ Export-Package: org.openscada.ae.client;uses:="org.openscada.core.client,org.ope
  org.openscada.utils.collection;uses:="org.openscada.utils.lang",
  org.openscada.utils.exec,
  org.openscada.utils.factory;uses:="org.openscada.utils.statuscodes",
- org.openscada.utils.jobqueue,
  org.openscada.utils.lang,
  org.openscada.utils.statuscodes,
  org.openscada.utils.str,
