@@ -102,6 +102,7 @@
         		<arg value="-Dversion=${version}"/>
         		<arg value="-Drelease=${release}"/>
         		<arg value="-Dmaven.repository=${maven.repository}"/>
+        		<arg value="-Dmaven.local.repository=${maven.local.repository}"/>
 			</java>
         	
         	<mkdir dir="${deploy.dir}/@{builderDir}"/>
