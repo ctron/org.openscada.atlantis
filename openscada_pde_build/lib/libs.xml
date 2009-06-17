@@ -38,5 +38,4 @@
 	  </classpath>
 	</taskdef>
 
-	<property environment="env" />
 </project>
