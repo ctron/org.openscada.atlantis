@@ -27,7 +27,6 @@ Export-Package: org.openscada.core,
  org.openscada.da.core.server.browser;uses:="org.openscada.da.core.server,org.openscada.da.core",
  org.openscada.utils.collection;uses:="org.openscada.utils.lang",
  org.openscada.utils.exec;uses:="new org.openscada.utils.exec",
- org.openscada.utils.jobqueue,
  org.openscada.utils.lang,
  org.openscada.utils.str,
  org.openscada.utils.timing;uses:="org.apache.log4j,org.openscada.utils.statuscodes"
