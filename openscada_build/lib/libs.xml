@@ -59,4 +59,6 @@
 	<path id="saxon.classpath">
 		<pathelement location="${builddir}/saxon8.jar"/>
 	</path>
+
+	<property environment="env"/>
 </project>

@@ -13,6 +13,7 @@
 
 	<import file="libs.xml"/>
 	<import file="append-line.xml"/>
+	<property name="maven.local.repository" value="${user.home}/.m2/repository" />
 	<dirname property="datadir1" file="${ant.file.tools}"/>
 	<property name="datadir" location="${datadir1}/../data"/>
 	<property name="xmlbeansdir" location="${datadir1}/../xmlbeans"/>
@@ -473,6 +474,7 @@
         <sequential>
     		<artifact:dependencies pathId="@{prefix}.runtime.classpath" filesetId="@{prefix}.runtime.fileset" useScope="runtime">
     			<remoteRepository id="openscada-repos" url="${maven.repository}" />
+    			<localRepository path="${maven.local.repository}" />
     			<artifact:dependency groupId="@{groupId}" artifactId="@{artifactId}" version="@{version}" scope="runtime" />
     		</artifact:dependencies>
 			<delete dir="extract-module"/>

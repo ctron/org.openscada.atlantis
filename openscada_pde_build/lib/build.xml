@@ -6,14 +6,17 @@
 	 Jens Reimann <jens.reimann@inavare.net>
      ====================================================================== -->
 
-<project name="tools" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+<project name="build" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
     <description>
     	Providing common build targets for all other ant-scripts
     </description>
 
+	<dirname file="${ant.file.build}" property="pde.build.lib.dir"/>
+	<property file="${pde.build.lib.dir}/../config/local.properties"/>
+	<property file="${pde.build.lib.dir}/../config/build.properties"/>
+	
 	<import file="libs.xml"/>
-	<property file="../config/local.properties"/>
-	<property name="maven.local.repository" value="${env.user.home}/.m2/repository" />
+	<property name="maven.local.repository" value="${user.home}/.m2/repository" />
 
 	<!-- = = = = = = = = = = = = = = = = =
           macrodef: openscada.pde.import-module.init
@@ -67,6 +70,10 @@
         <sequential>
     		<artifact:dependencies pathId="@{prefix}.runtime.classpath" filesetId="@{prefix}.runtime.fileset" useScope="runtime">
     			<remoteRepository id="openscada-repos" url="${maven.repository}" />
+    			<remoteRepository id="spring-repository-1" url="http://repository.springsource.com/maven/bundles/releases" />
+    			<remoteRepository id="spring-repository-2" url="http://repository.springsource.com/maven/bundles/external" />
+    			<remoteRepository id="spring-repository-3" url="http://repository.springsource.com/maven/libraries/releases" />
+    			<remoteRepository id="spring-repository-4" url="http://repository.springsource.com/maven/libraries/external" />
     			<localRepository path="${maven.local.repository}" />
     			<artifact:dependency groupId="@{groupId}" artifactId="@{artifactId}" version="@{version}" scope="runtime" />
     		</artifact:dependencies>

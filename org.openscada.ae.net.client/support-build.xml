@@ -22,13 +22,13 @@
    	<!-- ================================= 
           target: genjar              
          ================================= -->
-    <target name="genjar" depends="" description="--> Generate the JAR file" unless="use.maven.dependecies">
+    <target name="genjar" depends="" description="--> Generate the JAR file" unless="use.maven.dependencies">
 		<openscada.pde.import-module.init/>
 		<openscada.pde.import-module.add-module name="ae-client-net"/>
 		<openscada.pde.import-module.finalize destfile="${libjar}"/>
     </target>
 
-    <target name="genjar-maven" depends="" description="--> Generate the JAR file" if="use.maven.dependecies">
+    <target name="genjar-maven" depends="" description="--> Generate the JAR file" if="use.maven.dependencies">
 		<openscada.pde.import-module.init/>
 		<openscada.pde.import-module.add-maven-dependency groupid="org.openscada.atlantis" groupIdBase="org.openscada" artifactid="org.openscada.atlantis.ae.client.net" version="${version}${release}"/>
 		<openscada.pde.import-module.finalize destfile="${libjar}"/>
