@@ -13,6 +13,7 @@
 
 	<import file="libs.xml"/>
 	<property file="../config/local.properties"/>
+	<property name="maven.local.repository" value="${env.user.home}/.m2/repository" />
 
 	<!-- = = = = = = = = = = = = = = = = =
           macrodef: openscada.pde.import-module.init
@@ -66,6 +67,7 @@
         <sequential>
     		<artifact:dependencies pathId="@{prefix}.runtime.classpath" filesetId="@{prefix}.runtime.fileset" useScope="runtime">
     			<remoteRepository id="openscada-repos" url="${maven.repository}" />
+    			<localRepository path="${maven.local.repository}" />
     			<artifact:dependency groupId="@{groupId}" artifactId="@{artifactId}" version="@{version}" scope="runtime" />
     		</artifact:dependencies>
 			<delete dir="extract-module"/>
