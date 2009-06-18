@@ -26,11 +26,12 @@
 		</classpath>
 	</taskdef>
 	
-	<taskdef resource="svntask.properties">
+	<taskdef resource="org/tigris/subversion/svnant/svnantlib.xml">
 		<classpath>
 			<pathelement location="${builddir}/svnant.jar"/>
 			<pathelement location="${builddir}/svnClientAdapter.jar"/>
 			<pathelement location="${builddir}/svnjavahl.jar"/>
+			<pathelement location="${builddir}/ganymed.jar"/>
 		</classpath>
 	</taskdef>
 
