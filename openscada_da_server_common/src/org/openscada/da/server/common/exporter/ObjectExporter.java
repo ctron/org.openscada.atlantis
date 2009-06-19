@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -274,7 +274,7 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
     /**
      * detach from the current target if we have one
      */
-    public void detachTarget ()
+    public synchronized void detachTarget ()
     {
         if ( this.target == null )
         {
