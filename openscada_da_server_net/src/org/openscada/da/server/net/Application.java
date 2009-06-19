@@ -30,7 +30,7 @@ import org.openscada.da.core.server.Hive;
  */
 public class Application
 {
-    private static Logger _log = Logger.getLogger ( Application.class );
+    private static Logger logger = Logger.getLogger ( Application.class );
 
     public static void main ( final String[] args )
     {
@@ -60,12 +60,12 @@ public class Application
             exporter.start ();
 
             // run the lizzard
-            _log.info ( "Running exporter (hive class: " + exporter.getHiveClass ().getCanonicalName () + ")..." );
+            logger.info ( "Running exporter (hive class: " + exporter.getHiveClass ().getCanonicalName () + ")..." );
         }
         catch ( final Throwable e )
         {
             // ops
-            _log.fatal ( "Error in OpenSCADA DA[NET] Server", e );
+            logger.fatal ( "Error in OpenSCADA DA[NET] Server", e );
             System.exit ( 1 );
         }
     }
