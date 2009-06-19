@@ -37,24 +37,30 @@ public class Hive extends HiveCommon
 {
     private ScheduledExecutorService scheduler;
 
-    private final FolderCommon loadFolder;
+    private FolderCommon loadFolder;
+
+    private final FolderCommon rootFolder;
 
     public Hive ()
     {
         super ();
 
-        final FolderCommon rootFolder = new FolderCommon ();
-        setRootFolder ( rootFolder );
+        this.rootFolder = new FolderCommon ();
+        setRootFolder ( this.rootFolder );
 
+    }
+
+    private void createModel ()
+    {
         DataItem item;
         registerItem ( item = new TimeDataItem ( "time", this.scheduler ) );
-        rootFolder.add ( "time", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Time since the epoc in milliseconds!" ) ).getMap () );
+        this.rootFolder.add ( "time", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Time since the epoc in milliseconds!" ) ).getMap () );
 
         registerItem ( item = new PlainFileDataItem ( "hostname", new File ( "/proc/sys/kernel/hostname" ), this.scheduler, 1000 * 10 ) );
-        rootFolder.add ( "hostname", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Hostname of the computer the server is running on." ) ).getMap () );
+        this.rootFolder.add ( "hostname", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Hostname of the computer the server is running on." ) ).getMap () );
 
         this.loadFolder = new FolderCommon ();
-        rootFolder.add ( "loadavg", this.loadFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Load avarage information" ) ).getMap () );
+        this.rootFolder.add ( "loadavg", this.loadFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Load avarage information" ) ).getMap () );
     }
 
     @Override
@@ -62,6 +68,8 @@ public class Hive extends HiveCommon
     {
         super.start ();
         this.scheduler = new ScheduledThreadPoolExecutor ( 1 );
+
+        createModel ();
 
         this.scheduler.scheduleAtFixedRate ( new LoadAverageJob ( this, this.loadFolder ), 1000, 1000, TimeUnit.MILLISECONDS );
     }

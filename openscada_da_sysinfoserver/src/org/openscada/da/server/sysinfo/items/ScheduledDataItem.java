@@ -49,7 +49,7 @@ public abstract class ScheduledDataItem extends DataItemInputCommon implements R
 
     public void wakeup ()
     {
-        this.future = this.scheduler.scheduleAtFixedRate ( this, this.period, this.period, TimeUnit.MILLISECONDS );
+        this.future = this.scheduler.scheduleAtFixedRate ( this, 0, this.period, TimeUnit.MILLISECONDS );
     }
 
 }
