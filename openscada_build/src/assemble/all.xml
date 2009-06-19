@@ -27,6 +27,12 @@
 			<includes>
 				<include>*:*</include>
 			</includes>
+			<excludes>
+				<!--  I don't know why, but the sources are missing in build -->
+				<exclude>
+					org.openscada.atlantis:org.openscada.atlantis.da.client.samples
+				</exclude>
+			</excludes>
 			<binaries>
 				<attachmentClassifier>javadoc</attachmentClassifier>
 				<unpack>false</unpack>
