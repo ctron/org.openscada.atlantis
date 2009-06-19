@@ -100,6 +100,7 @@
 					</descriptors>
 				</configuration>
 			</plugin>
+			<!-- 
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -111,6 +112,7 @@
 					</instructions>
 				</configuration>
 			</plugin>
+			 -->
 		</plugins>
 
 		<pluginManagement>
@@ -164,7 +166,9 @@
 		<module>../openscada_server_exporter_spring</module>
 		<module>../openscada_ae_core_common</module>
 		<module>../openscada_ae_net_base</module>
+		<!-- 
 		<module>../openscada_ae_submitter_net</module>
+		 -->
 		<module>../openscada_ae_client_common</module>
 		<module>../openscada_ae_client_net</module>
 		<module>../openscada_ae_storage_common</module>
