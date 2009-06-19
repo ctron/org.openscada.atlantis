@@ -24,11 +24,6 @@ import org.openscada.core.client.Connection;
 
 public class DriverInformation implements org.openscada.core.client.DriverInformation
 {
-
-    public static final String PROP_RECONNECT_DELAY = "reconnect-delay";
-
-    public static final String PROP_AUTO_RECONNECT = "auto-reconnect";
-
     public static final String PROP_DEFAULT_ASYNC = "defaultAsyncExecutor";
 
     public Connection create ( final ConnectionInformation connectionInformation )
