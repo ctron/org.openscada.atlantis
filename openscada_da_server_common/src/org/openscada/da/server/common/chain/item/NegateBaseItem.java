@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,26 +32,28 @@ public abstract class NegateBaseItem extends BaseChainItemCommon
 
     public static final String NEGATE_ERROR = ".error";
 
-    private final VariantBinder _negateActive = new VariantBinder ( new Variant () );
+    private final VariantBinder negateActive = new VariantBinder ( new Variant () );
 
     public NegateBaseItem ( final HiveServiceRegistry serviceRegistry )
     {
         super ( serviceRegistry );
 
-        addBinder ( getActiveName (), this._negateActive );
+        addBinder ( getActiveName (), this.negateActive );
         setReservedAttributes ( getErrorName () );
     }
 
-    public void process ( final Variant value, final Map<String, Variant> attributes )
+    public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
+        Variant newValue = null;
+
         attributes.put ( getErrorName (), null );
         try
         {
-            final Variant activeFlag = this._negateActive.getValue ();
+            final Variant activeFlag = this.negateActive.getValue ();
             // only process if we are active
             if ( !activeFlag.isNull () )
             {
-                value.setValue ( !value.asBoolean () );
+                newValue = new Variant ( !value.asBoolean () );
             }
         }
         catch ( final Exception e )
@@ -60,6 +62,8 @@ public abstract class NegateBaseItem extends BaseChainItemCommon
         }
 
         addAttributes ( attributes );
+
+        return newValue;
     }
 
     private String getActiveName ()

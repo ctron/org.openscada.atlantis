@@ -43,9 +43,9 @@ import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class DataItemBaseChained extends DataItemBase
 {
-    protected Map<String, Variant> _primaryAttributes = null;
+    protected Map<String, Variant> primaryAttributes = null;
 
-    protected AttributeManager _secondaryAttributes = null;
+    protected AttributeManager secondaryAttributes = null;
 
     /**
      * The chain if items used for calculation
@@ -59,13 +59,13 @@ public abstract class DataItemBaseChained extends DataItemBase
         super ( dataItemInformation );
         this.executor = executor;
 
-        this._primaryAttributes = new HashMap<String, Variant> ();
-        this._secondaryAttributes = new AttributeManager ( this );
+        this.primaryAttributes = new HashMap<String, Variant> ();
+        this.secondaryAttributes = new AttributeManager ( this );
     }
 
     public Map<String, Variant> getAttributes ()
     {
-        return this._secondaryAttributes.get ();
+        return this.secondaryAttributes.get ();
     }
 
     /**

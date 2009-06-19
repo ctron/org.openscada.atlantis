@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,8 +44,10 @@ public abstract class ScaleBaseItem extends BaseChainItemCommon
         setReservedAttributes ( getRawName (), getErrorName () );
     }
 
-    public void process ( final Variant value, final Map<String, Variant> attributes )
+    public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
+        Variant newValue = null;
+
         attributes.put ( getRawName (), null );
         attributes.put ( getErrorName (), null );
         try
@@ -55,7 +57,7 @@ public abstract class ScaleBaseItem extends BaseChainItemCommon
             if ( !scaleFactor.isNull () )
             {
                 attributes.put ( getRawName (), new Variant ( value ) );
-                value.setValue ( value.asDouble () * scaleFactor.asDouble () );
+                newValue = new Variant ( value.asDouble () * scaleFactor.asDouble () );
             }
         }
         catch ( final Exception e )
@@ -64,6 +66,8 @@ public abstract class ScaleBaseItem extends BaseChainItemCommon
         }
 
         addAttributes ( attributes );
+
+        return newValue;
     }
 
     private String getFactorName ()

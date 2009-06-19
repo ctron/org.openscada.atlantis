@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,7 +61,7 @@ public class RoundChainItem extends BaseChainItemCommon
         setReservedAttributes ( ORIGINAL_VALUE, ROUND_ACTIVE, ROUND_ERROR );
     }
 
-    public void process ( final Variant value, final Map<String, Variant> attributes )
+    public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
         attributes.put ( ROUND_ACTIVE, null );
         attributes.put ( ORIGINAL_VALUE, null );
@@ -90,10 +90,12 @@ public class RoundChainItem extends BaseChainItemCommon
         // add binder attributes
         addAttributes ( attributes );
 
+        Variant newValue = null;
+
         // common section
         if ( type != RoundType.NONE && doubleValue != null )
         {
-            performRound ( type, doubleValue, value, attributes );
+            newValue = performRound ( type, doubleValue, value, attributes );
             attributes.put ( ROUND_ACTIVE, new Variant ( true ) );
             attributes.put ( ORIGINAL_VALUE, originalValue );
             attributes.put ( ROUND_TYPE, new Variant ( type.toString () ) );
@@ -103,26 +105,25 @@ public class RoundChainItem extends BaseChainItemCommon
             attributes.put ( ROUND_TYPE, null );
         }
 
+        return newValue;
     }
 
-    private void performRound ( final RoundType type, final double doubleValue, final Variant value, final Map<String, Variant> attributes )
+    private Variant performRound ( final RoundType type, final double doubleValue, final Variant value, final Map<String, Variant> attributes )
     {
         // round
         switch ( type )
         {
         case NONE:
-            // no-op
-            break;
+            return null;
         case CEIL:
-            value.setValue ( Math.ceil ( doubleValue ) );
-            break;
+            return new Variant ( Math.ceil ( doubleValue ) );
         case FLOOR:
-            value.setValue ( Math.floor ( doubleValue ) );
-            break;
+            return new Variant ( Math.floor ( doubleValue ) );
         case ROUND:
-            value.setValue ( (double)Math.round ( doubleValue ) );
-            break;
+            return new Variant ( (double)Math.round ( doubleValue ) );
         }
+
+        return null;
     }
 
     private RoundType checkRoundType ( final Map<String, Variant> attributes )

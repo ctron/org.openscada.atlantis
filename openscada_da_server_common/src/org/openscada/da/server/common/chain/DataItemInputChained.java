@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,15 +32,16 @@ import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.da.server.common.chain.item.AutoTimestampChainItem;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 
 public class DataItemInputChained extends DataItemBaseChained
 {
-    protected Variant _primaryValue = new Variant ();
+    protected Variant primaryValue = new Variant ();
 
-    protected Variant _secondaryValue = new Variant ();
+    protected Variant secondaryValue = new Variant ();
 
     public DataItemInputChained ( final DataItemInformation dataItemInformation, final Executor executor )
     {
@@ -72,9 +73,9 @@ public class DataItemInputChained extends DataItemBaseChained
         boolean changed = false;
 
         // handle value change
-        if ( value != null && !this._primaryValue.equals ( value ) )
+        if ( value != null && !this.primaryValue.equals ( value ) )
         {
-            this._primaryValue = new Variant ( value );
+            this.primaryValue = new Variant ( value );
             changed = true;
         }
 
@@ -89,11 +90,11 @@ public class DataItemInputChained extends DataItemBaseChained
             final Map<String, Variant> diff = new HashMap<String, Variant> ();
             if ( mode == AttributeMode.SET )
             {
-                AttributesHelper.set ( this._primaryAttributes, attributes, diff );
+                AttributesHelper.set ( this.primaryAttributes, attributes, diff );
             }
             else
             {
-                AttributesHelper.mergeAttributes ( this._primaryAttributes, attributes, diff );
+                AttributesHelper.mergeAttributes ( this.primaryAttributes, attributes, diff );
             }
             changed = changed || !diff.isEmpty ();
         }
@@ -107,29 +108,33 @@ public class DataItemInputChained extends DataItemBaseChained
     @Override
     protected void process ()
     {
-        final Variant newSecondaryValue = new Variant ( this._primaryValue );
-        final Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( this._primaryAttributes );
+        Variant newSecondaryValue = new Variant ( this.primaryValue );
+        final Map<String, Variant> newAttributes = new HashMap<String, Variant> ( this.primaryAttributes );
 
         for ( final ChainProcessEntry entry : getChainCopy () )
         {
             if ( entry.getWhen ().contains ( IODirection.INPUT ) )
             {
-                entry.getWhat ().process ( newSecondaryValue, primaryAttributes );
+                final Variant newValue = entry.getWhat ().process ( newSecondaryValue, newAttributes );
+                if ( newValue != null )
+                {
+                    newSecondaryValue = newValue;
+                }
             }
         }
 
         Variant newValue = null;
-        if ( !this._secondaryValue.equals ( newSecondaryValue ) )
+        if ( !this.secondaryValue.equals ( newSecondaryValue ) )
         {
-            newValue = this._secondaryValue = new Variant ( newSecondaryValue );
+            newValue = this.secondaryValue = new Variant ( newSecondaryValue );
         }
 
-        this._secondaryAttributes.set ( newValue, primaryAttributes );
+        this.secondaryAttributes.set ( newValue, newAttributes );
     }
 
     public NotifyFuture<Variant> readValue () throws InvalidOperationException
     {
-        return new InstantFuture<Variant> ( this._secondaryValue );
+        return new InstantFuture<Variant> ( this.secondaryValue );
     }
 
     public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
@@ -140,13 +145,13 @@ public class DataItemInputChained extends DataItemBaseChained
     @Override
     protected Map<String, Variant> getCacheAttributes ()
     {
-        return this._secondaryAttributes.get ();
+        return this.secondaryAttributes.get ();
     }
 
     @Override
     protected Variant getCacheValue ()
     {
-        return this._secondaryValue;
+        return this.secondaryValue;
     }
 
 }

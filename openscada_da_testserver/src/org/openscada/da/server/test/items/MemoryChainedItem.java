@@ -127,7 +127,7 @@ public class MemoryChainedItem extends MemoryItemChained
             return false;
         }
 
-        public void process ( final Variant value, final Map<String, Variant> attributes )
+        public Variant process ( final Variant value, final Map<String, Variant> attributes )
         {
             int i = 0;
             final StringBuilder str = new StringBuilder ();
@@ -146,6 +146,8 @@ public class MemoryChainedItem extends MemoryItemChained
                 i++;
             }
             attributes.put ( "org.openscada.da.test.chain.value", new Variant ( str.toString () ) );
+
+            return null;
         }
 
     }

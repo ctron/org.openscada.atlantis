@@ -10,7 +10,7 @@ import org.openscada.da.server.common.chain.VariantBinder;
 public class TestErrorChainItem extends BaseChainItemCommon
 {
 
-    private AttributeBinder testErrorFlagBinder = new VariantBinder ( new Variant () );
+    private final AttributeBinder testErrorFlagBinder = new VariantBinder ( new Variant () );
 
     public TestErrorChainItem ()
     {
@@ -24,11 +24,13 @@ public class TestErrorChainItem extends BaseChainItemCommon
         return false;
     }
 
-    public void process ( Variant value, Map<String, Variant> attributes )
+    public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
         // do nothing
-        
+
         // add my attributes
         addAttributes ( attributes );
+
+        return null;
     }
 }

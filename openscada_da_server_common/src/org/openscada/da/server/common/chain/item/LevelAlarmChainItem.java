@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ import org.openscada.da.server.common.chain.VariantBinder;
 
 public class LevelAlarmChainItem extends BaseChainItemCommon
 {
-    private static Logger _log = Logger.getLogger ( LevelAlarmChainItem.class );
+    private static Logger logger = Logger.getLogger ( LevelAlarmChainItem.class );
 
     public static final String HIGH_PRESET = "org.openscada.da.level.high.preset";
 
@@ -75,7 +75,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         setReservedAttributes ( HIGH_ALARM, LOW_ALARM, HIGHHIGH_ALARM, LOWLOW_ALARM );
     }
 
-    public void process ( final Variant value, final Map<String, Variant> attributes )
+    public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
         attributes.put ( HIGH_ALARM, null );
         attributes.put ( LOW_ALARM, null );
@@ -98,7 +98,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         }
         catch ( final Throwable e )
         {
-            _log.info ( "Failed to evaluate high level alarm", e );
+            logger.info ( "Failed to evaluate high level alarm", e );
             attributes.put ( HIGH_ERROR, new Variant ( e.getMessage () ) );
         }
 
@@ -112,7 +112,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         }
         catch ( final Throwable e )
         {
-            _log.info ( "Failed to evaluate low level alarm", e );
+            logger.info ( "Failed to evaluate low level alarm", e );
             attributes.put ( LOW_ERROR, new Variant ( e.getMessage () ) );
         }
 
@@ -127,7 +127,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         }
         catch ( final Throwable e )
         {
-            _log.info ( "Failed to evaluate high high level alarm", e );
+            logger.info ( "Failed to evaluate high high level alarm", e );
             attributes.put ( HIGHHIGH_ERROR, new Variant ( e.getMessage () ) );
         }
 
@@ -141,11 +141,14 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         }
         catch ( final Throwable e )
         {
-            _log.info ( "Failed to evaluate low low level alarm", e );
+            logger.info ( "Failed to evaluate low low level alarm", e );
             attributes.put ( LOWLOW_ERROR, new Variant ( e.getMessage () ) );
         }
 
         // add our attributes
         addAttributes ( attributes );
+
+        // no change
+        return null;
     }
 }

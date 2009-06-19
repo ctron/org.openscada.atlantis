@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,11 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.server.common.chain;
+package org.openscada.da.server.common.chain.item;
 
 import java.util.Map;
 
 import org.openscada.core.Variant;
+import org.openscada.da.server.common.chain.BaseChainItemCommon;
 
 /**
  * A chain item which will add a timestamp by default it none is provided.
@@ -37,8 +38,14 @@ public class AutoTimestampChainItem extends BaseChainItemCommon
         super ( null );
     }
 
-    public void process ( final Variant value, final Map<String, Variant> attributes )
+    public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
+        if ( value == null )
+        {
+            // no value change
+            return null;
+        }
+
         if ( !this.lastValue.equals ( value ) )
         {
             if ( !attributes.containsKey ( "timestamp" ) )
@@ -47,6 +54,7 @@ public class AutoTimestampChainItem extends BaseChainItemCommon
             }
             this.lastValue = value;
         }
+        return null;
     }
 
 }

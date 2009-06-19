@@ -45,24 +45,28 @@ public abstract class DataItemInputOutputChained extends DataItemInputChained
     }
 
     @Override
-    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( Variant value )
     {
         synchronized ( this )
         {
             final Collection<ChainProcessEntry> chain = getChainCopy ();
 
-            final Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( this._primaryAttributes );
+            final Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( this.primaryAttributes );
 
             for ( final ChainProcessEntry entry : chain )
             {
                 if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
                 {
-                    entry.getWhat ().process ( value, primaryAttributes );
+                    final Variant newValue = entry.getWhat ().process ( value, primaryAttributes );
+                    if ( newValue != null )
+                    {
+                        value = newValue;
+                    }
                 }
             }
         }
         // FIXME: for the moment output chain item don't show up in the attribute list
-        // _secondaryAttributes.set ( primaryAttributes );
+        // secondaryAttributes.set ( primaryAttributes );
 
         return startWriteCalculatedValue ( value );
     }

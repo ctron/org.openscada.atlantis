@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,10 +43,11 @@ public interface ChainItem
 
     /**
      * Process the chain item
+     * @return the new result or <code>null</code> if the chain item does not change the input value
      * @param value the value to process or <code>null</code> if a output item changed only the attributes 
      * @param attributes The current primary attributes
      */
-    public abstract void process ( Variant value, Map<String, Variant> attributes );
+    public abstract Variant process ( Variant value, Map<String, Variant> attributes );
 
     /**
      * Called when the chain item is set to a data item

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,7 @@ import org.openscada.utils.str.StringHelper;
  */
 public abstract class SummarizeChainItem extends BaseChainItemCommon
 {
-    private static Logger _log = Logger.getLogger ( SummarizeChainItem.class );
+    private static Logger logger = Logger.getLogger ( SummarizeChainItem.class );
 
     private final String _sumStateName;
 
@@ -77,7 +77,7 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
      */
     protected abstract boolean matches ( Variant value, String attributeName, Variant attributeValue );
 
-    public void process ( final Variant value, final Map<String, Variant> attributes )
+    public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
         attributes.put ( this._sumStateName, null );
         attributes.put ( this._sumCountName, null );
@@ -107,7 +107,7 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
                 }
                 catch ( final Exception e )
                 {
-                    _log.warn ( String.format ( "Failed to summarize item '%s'", attributeName ), e );
+                    logger.warn ( String.format ( "Failed to summarize item '%s'", attributeName ), e );
                 }
             }
         }
@@ -117,6 +117,9 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
         attributes.put ( this._sumListName, new Variant ( StringHelper.join ( items, ", " ) ) );
 
         addAttributes ( attributes );
+
+        // no change
+        return null;
     }
 
     protected Set<String> getIgnoreItems ()

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -136,17 +136,19 @@ public class ManualOverrideChainItem extends BaseChainItemCommon
         super.performWriteBinders ( attributes );
     }
 
-    public void process ( final Variant value, final Map<String, Variant> attributes )
+    public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
         attributes.put ( MANUAL_ACTIVE, null );
         attributes.put ( ORIGINAL_VALUE, null );
         attributes.put ( ORIGINAL_TIMESTAMP, null );
         attributes.put ( MANUAL_TIMESTAMP, null );
 
+        Variant newValue = null;
+
         if ( !this.manualValue.getValue ().isNull () )
         {
             attributes.put ( ORIGINAL_VALUE, new Variant ( value ) );
-            value.setValue ( new Variant ( this.manualValue.getValue () ) );
+            newValue = this.manualValue.getValue ();
             attributes.put ( MANUAL_ACTIVE, new Variant ( true ) );
             attributes.put ( MANUAL_TIMESTAMP, new Variant ( this.manualTimestamp.getTimeInMillis () ) );
 
@@ -159,5 +161,7 @@ public class ManualOverrideChainItem extends BaseChainItemCommon
             attributes.put ( "timestamp", new Variant ( this.manualTimestamp.getTimeInMillis () ) );
         }
         addAttributes ( attributes );
+
+        return newValue;
     }
 }

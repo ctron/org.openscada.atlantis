@@ -52,11 +52,14 @@ public abstract class DataItemOutputChained extends DataItemBaseChained implemen
         throw new InvalidOperationException ();
     }
 
-    synchronized public void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
+    public synchronized void writeValue ( final Variant value ) throws InvalidOperationException, NullValueException, NotConvertableException
     {
-        process ( value );
+        final Variant newValue = process ( value );
 
-        writeCalculatedValue ( value );
+        if ( newValue != null )
+        {
+            writeCalculatedValue ( newValue );
+        }
     }
 
     @Override
@@ -65,19 +68,25 @@ public abstract class DataItemOutputChained extends DataItemBaseChained implemen
         process ( null );
     }
 
-    protected void process ( final Variant value )
+    protected Variant process ( Variant value )
     {
-        final Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( this._primaryAttributes );
+        final Map<String, Variant> primaryAttributes = new HashMap<String, Variant> ( this.primaryAttributes );
 
         for ( final ChainProcessEntry entry : getChainCopy () )
         {
             if ( entry.getWhen ().contains ( IODirection.OUTPUT ) )
             {
-                entry.getWhat ().process ( value, primaryAttributes );
+                final Variant newValue = entry.getWhat ().process ( value, primaryAttributes );
+                if ( newValue != null )
+                {
+                    value = newValue;
+                }
             }
         }
 
-        this._secondaryAttributes.set ( null, primaryAttributes );
+        this.secondaryAttributes.set ( null, primaryAttributes );
+
+        return value;
     }
 
     public void suspend ()
@@ -86,9 +95,9 @@ public abstract class DataItemOutputChained extends DataItemBaseChained implemen
 
     public void wakeup ()
     {
-        if ( this._secondaryAttributes.get ().size () > 0 )
+        if ( this.secondaryAttributes.get ().size () > 0 )
         {
-            notifyData ( null, this._secondaryAttributes.get () );
+            notifyData ( null, this.secondaryAttributes.get () );
         }
     }
 
