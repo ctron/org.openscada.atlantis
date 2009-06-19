@@ -37,6 +37,9 @@
 				<exclude>
 					org.openscada.atlantis:org.openscada.atlantis.da.client.samples
 				</exclude>
+				<exclude>
+					org.openscada.atlantis:org.openscada.atlantis.core.server.common
+				</exclude>
 			</excludes>
 			<binaries>
 				<attachmentClassifier>javadoc</attachmentClassifier>
@@ -49,11 +52,6 @@
 			<includes>
 				<include>*:*</include>
 			</includes>
-			<excludes>
-				<exclude>
-					org.openscada.atlantis:org.openscada.atlantis.da.client.samples
-				</exclude>
-			</excludes>
 			<binaries>
 				<attachmentClassifier>sources</attachmentClassifier>
 				<unpack>false</unpack>
