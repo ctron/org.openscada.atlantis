@@ -20,6 +20,9 @@
 package org.openscada.da.server.sysinfo;
 
 import java.io.File;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
@@ -29,34 +32,43 @@ import org.openscada.da.server.sysinfo.items.LoadAverageJob;
 import org.openscada.da.server.sysinfo.items.PlainFileDataItem;
 import org.openscada.da.server.sysinfo.items.TimeDataItem;
 import org.openscada.utils.collection.MapBuilder;
-import org.openscada.utils.timing.Scheduler;
 
 public class Hive extends HiveCommon
 {
-
-    private Scheduler _scheduler = new Scheduler ( "SysInfoHiveScheduler" );
+    private ScheduledExecutorService scheduler;
 
     public Hive ()
     {
         super ();
 
-        FolderCommon rootFolder = new FolderCommon ();
+        final FolderCommon rootFolder = new FolderCommon ();
         setRootFolder ( rootFolder );
 
         DataItem item;
-        registerItem ( item = new TimeDataItem ( "time", _scheduler ) );
-        rootFolder.add ( "time", item, new MapBuilder<String, Variant> ().put ( "description",
-                new Variant ( "Time since the epoc in milliseconds!" ) ).getMap () );
+        registerItem ( item = new TimeDataItem ( "time", this.scheduler ) );
+        rootFolder.add ( "time", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Time since the epoc in milliseconds!" ) ).getMap () );
 
-        registerItem ( item = new PlainFileDataItem ( "hostname", new File ( "/proc/sys/kernel/hostname" ), _scheduler,
-                1000 * 10 ) );
-        rootFolder.add ( "hostname", item, new MapBuilder<String, Variant> ().put ( "description",
-                new Variant ( "Hostname of the computer the server is running on." ) ).getMap () );
+        registerItem ( item = new PlainFileDataItem ( "hostname", new File ( "/proc/sys/kernel/hostname" ), this.scheduler, 1000 * 10 ) );
+        rootFolder.add ( "hostname", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Hostname of the computer the server is running on." ) ).getMap () );
 
-        FolderCommon loadFolder = new FolderCommon ();
-        rootFolder.add ( "loadavg", loadFolder, new MapBuilder<String, Variant> ().put ( "description",
-                new Variant ( "Load avarage information" ) ).getMap () );
-        _scheduler.addJob ( new LoadAverageJob ( this, loadFolder ), 1000 );
+        final FolderCommon loadFolder = new FolderCommon ();
+        rootFolder.add ( "loadavg", loadFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Load avarage information" ) ).getMap () );
 
+        this.scheduler.scheduleAtFixedRate ( new LoadAverageJob ( this, loadFolder ), 1000, 1000, TimeUnit.MILLISECONDS );
+
+    }
+
+    @Override
+    public void start () throws Exception
+    {
+        super.start ();
+        this.scheduler = new ScheduledThreadPoolExecutor ( 1 );
+    }
+
+    @Override
+    public void stop () throws Exception
+    {
+        this.scheduler.shutdown ();
+        super.stop ();
     }
 }

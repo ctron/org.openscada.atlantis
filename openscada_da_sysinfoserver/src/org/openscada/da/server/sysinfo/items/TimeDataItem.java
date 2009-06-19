@@ -19,19 +19,21 @@
 
 package org.openscada.da.server.sysinfo.items;
 
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.openscada.core.Variant;
-import org.openscada.utils.timing.Scheduler;
 
-public class TimeDataItem extends ScheduledDataItem {
+public class TimeDataItem extends ScheduledDataItem
+{
 
-	public TimeDataItem ( String name, Scheduler scheduler )
+    public TimeDataItem ( final String name, final ScheduledExecutorService scheduler )
     {
-		super ( name, scheduler, 1000 );
-	}
+        super ( name, scheduler, 1000 );
+    }
 
-	public void run()
+    public void run ()
     {
-		updateData ( new Variant ( System.currentTimeMillis() ), null, null );
-	}
+        updateData ( new Variant ( System.currentTimeMillis () ), null, null );
+    }
 
 }
