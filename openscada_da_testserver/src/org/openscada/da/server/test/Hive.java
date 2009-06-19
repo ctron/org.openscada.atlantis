@@ -44,6 +44,7 @@ import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.configuration.Configurator;
 import org.openscada.da.server.common.configuration.xml.XMLConfigurator;
+import org.openscada.da.server.common.exporter.ObjectExporter;
 import org.openscada.da.server.common.factory.DataItemValidator;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
@@ -55,6 +56,7 @@ import org.openscada.da.server.test.items.TestItem1;
 import org.openscada.da.server.test.items.TestItem2;
 import org.openscada.da.server.test.items.TimeDataItem;
 import org.openscada.da.server.test.items.WriteDelayItem;
+import org.openscada.da.server.test.model.TestModelObject;
 import org.openscada.utils.collection.MapBuilder;
 
 public class Hive extends HiveCommon
@@ -73,7 +75,9 @@ public class Hive extends HiveCommon
 
     private final Timer timer;
 
-    // private ObjectExporter objectExporter;
+    private ObjectExporter objectExporter;
+
+    private TestModelObject testObject;
 
     public Hive () throws ConfigurationError, IOException, XmlException
     {
@@ -256,11 +260,7 @@ public class Hive extends HiveCommon
         changeThread.setDaemon ( true );
         changeThread.start ();
 
-        /*
-        this.itemFactory = new FolderItemFactory ( this, rootFolder, "itemFactory", "itemFactory");
-        this.objectExporter = new ObjectExporter ( itemFactory );
-        this.objectExporter.setInput ( new TestModelObject () );
-        */
+        setupExporter ( rootFolder );
 
         if ( configurator == null )
         {
@@ -270,6 +270,13 @@ public class Hive extends HiveCommon
         {
             configurator.configure ( this );
         }
+    }
+
+    private void setupExporter ( final FolderCommon rootFolder )
+    {
+        this.objectExporter = new ObjectExporter ( "objectExporter", this, rootFolder );
+        this.objectExporter.attachTarget ( this.testObject = new TestModelObject () );
+        this.testObject.setLongValue ( 1234 );
     }
 
     private void xmlConfigure () throws ConfigurationError, IOException, XmlException
