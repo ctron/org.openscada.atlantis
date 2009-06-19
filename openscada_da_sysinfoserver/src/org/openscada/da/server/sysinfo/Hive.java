@@ -37,6 +37,8 @@ public class Hive extends HiveCommon
 {
     private ScheduledExecutorService scheduler;
 
+    private final FolderCommon loadFolder;
+
     public Hive ()
     {
         super ();
@@ -51,11 +53,8 @@ public class Hive extends HiveCommon
         registerItem ( item = new PlainFileDataItem ( "hostname", new File ( "/proc/sys/kernel/hostname" ), this.scheduler, 1000 * 10 ) );
         rootFolder.add ( "hostname", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Hostname of the computer the server is running on." ) ).getMap () );
 
-        final FolderCommon loadFolder = new FolderCommon ();
-        rootFolder.add ( "loadavg", loadFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Load avarage information" ) ).getMap () );
-
-        this.scheduler.scheduleAtFixedRate ( new LoadAverageJob ( this, loadFolder ), 1000, 1000, TimeUnit.MILLISECONDS );
-
+        this.loadFolder = new FolderCommon ();
+        rootFolder.add ( "loadavg", this.loadFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Load avarage information" ) ).getMap () );
     }
 
     @Override
@@ -63,6 +62,8 @@ public class Hive extends HiveCommon
     {
         super.start ();
         this.scheduler = new ScheduledThreadPoolExecutor ( 1 );
+
+        this.scheduler.scheduleAtFixedRate ( new LoadAverageJob ( this, this.loadFolder ), 1000, 1000, TimeUnit.MILLISECONDS );
     }
 
     @Override
