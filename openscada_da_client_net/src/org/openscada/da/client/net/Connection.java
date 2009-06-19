@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -209,12 +209,12 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         Variant value = decodeValueChange ( message );
         Map<String, Variant> attributes = decodeAttributeChange ( message );
 
-        if ( cache && value == null )
+        if ( cache && ( value == null ) )
         {
             // we need a value if we read from cache
             value = new Variant ();
         }
-        if ( cache && attributes == null )
+        if ( cache && ( attributes == null ) )
         {
             // we need attributes if we read from cache
             attributes = new HashMap<String, Variant> ();
