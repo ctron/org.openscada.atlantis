@@ -35,6 +35,7 @@ import org.openscada.da.server.common.chain.MemoryItemChained;
 import org.openscada.da.server.common.chain.item.LevelAlarmChainItem;
 import org.openscada.da.server.common.chain.item.ManualErrorOverrideChainItem;
 import org.openscada.da.server.common.chain.item.ManualOverrideChainItem;
+import org.openscada.da.server.common.chain.item.RoundChainItem;
 import org.openscada.da.server.common.chain.item.ScaleInputItem;
 import org.openscada.da.server.common.chain.item.SumAlarmChainItem;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
@@ -154,10 +155,28 @@ public class MemoryChainedItem extends MemoryItemChained
 
     private final HiveCommon hive;
 
+    /**
+     * Add some default chain items to the item
+     * <p>
+     * Adds the following chain items:
+     * <ul>
+     * <li>{@link SumErrorChainItem}</li>
+     * <li>{@link ScaleInputItem}</li>
+     * <li>{@link RoundChainItem}</li>
+     * <li>{@link ManualOverrideChainItem}</li>
+     * <li>{@link ManualErrorOverrideChainItem}</li>
+     * <li>{@link LevelAlarmChainItem}</li>
+     * <li>{@link SUmAlarmChainItem}</li>
+     * </ul>
+     * </p>
+     * @param hive the hive to use
+     * @param item the item to modify
+     */
     public static void applyDefaultInputChain ( final HiveCommon hive, final DataItemInputChained item )
     {
         item.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
         item.addChainElement ( IODirection.INPUT, new ScaleInputItem ( hive ) );
+        item.addChainElement ( IODirection.INPUT, new RoundChainItem ( hive ) );
         item.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( hive ) );
         item.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
         item.addChainElement ( IODirection.INPUT, new LevelAlarmChainItem ( hive ) );
