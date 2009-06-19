@@ -1,5 +1,5 @@
 <assembly>
-	<id>${ci.build.id}-all</id>
+	<id>${ci.build.id}all</id>
 	<formats>
 		<format>zip</format>
 	</formats>
