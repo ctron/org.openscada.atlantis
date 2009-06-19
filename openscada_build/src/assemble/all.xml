@@ -9,6 +9,11 @@
 			<includes>
 				<include>*:*</include>
 			</includes>
+			<excludes>
+				<exclude>
+					org.openscada.atlantis:org.openscada.atlantis.da.client.samples
+				</exclude>
+			</excludes>
 			<binaries>
 				<includeDependencies>true</includeDependencies>
 				<outputDirectory>bin</outputDirectory>
@@ -44,6 +49,11 @@
 			<includes>
 				<include>*:*</include>
 			</includes>
+			<excludes>
+				<exclude>
+					org.openscada.atlantis:org.openscada.atlantis.da.client.samples
+				</exclude>
+			</excludes>
 			<binaries>
 				<attachmentClassifier>sources</attachmentClassifier>
 				<unpack>false</unpack>
