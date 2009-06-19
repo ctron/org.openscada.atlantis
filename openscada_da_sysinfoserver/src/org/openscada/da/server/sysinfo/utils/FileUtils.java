@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,19 +26,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileUtils {
-	public static String[] readFile ( File file ) throws IOException
-	{
-		BufferedReader reader = new BufferedReader ( new FileReader ( file ) );
-		
-		List<String> content = new ArrayList<String>();
-		
-		String line = null;
-		while ( (line = reader.readLine()) != null )
-		{
-			content.add ( line );
-		}
-		
-		return content.toArray(new String[content.size()]);
-	}
+public class FileUtils
+{
+    public static String[] readFile ( final File file ) throws IOException
+    {
+        final BufferedReader reader = new BufferedReader ( new FileReader ( file ) );
+
+        final List<String> content = new ArrayList<String> ();
+
+        String line = null;
+        while ( ( line = reader.readLine () ) != null )
+        {
+            content.add ( line );
+        }
+
+        return content.toArray ( new String[content.size ()] );
+    }
 }
