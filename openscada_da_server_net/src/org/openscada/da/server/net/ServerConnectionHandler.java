@@ -75,6 +75,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     private final TaskHandler taskHandler = new DefaultTaskHandler ();
 
+    private final Set<Long> taskMap = new HashSet<Long> ();
+
     public ServerConnectionHandler ( final Hive hive, final IoSession ioSession, final ConnectionInformation connectionInformation )
     {
         super ( ioSession, connectionInformation );
@@ -303,8 +305,6 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
     {
         this.messenger.sendMessage ( Messages.notifySubscriptionChange ( item, subscriptionState ) );
     }
-
-    private final Set<Long> taskMap = new HashSet<Long> ();
 
     private void performWrite ( final Message request )
     {
