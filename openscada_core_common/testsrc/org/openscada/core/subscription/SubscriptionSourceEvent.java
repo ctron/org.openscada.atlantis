@@ -1,38 +1,56 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.core.subscription;
 
-import org.openscada.core.subscription.SubscriptionSource;
 
 public class SubscriptionSourceEvent
 {
     private Boolean _added = null;
 
     private SubscriptionSource _source = null;
-    
-    public SubscriptionSourceEvent ( boolean added, SubscriptionSource source )
+
+    public SubscriptionSourceEvent ( final boolean added, final SubscriptionSource source )
     {
         super ();
-        _added = added;
-        _source = source;
+        this._added = added;
+        this._source = source;
     }
 
     public Boolean getAdded ()
     {
-        return _added;
+        return this._added;
     }
 
-    public void setAdded ( Boolean added )
+    public void setAdded ( final Boolean added )
     {
-        _added = added;
+        this._added = added;
     }
 
     public SubscriptionSource getSource ()
     {
-        return _source;
+        return this._source;
     }
 
-    public void setSource ( SubscriptionSource source )
+    public void setSource ( final SubscriptionSource source )
     {
-        _source = source;
+        this._source = source;
     }
 
     @Override
@@ -40,35 +58,49 @@ public class SubscriptionSourceEvent
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ( ( _added == null ) ? 0 : _added.hashCode () );
-        result = PRIME * result + ( ( _source == null ) ? 0 : _source.hashCode () );
+        result = PRIME * result + ( this._added == null ? 0 : this._added.hashCode () );
+        result = PRIME * result + ( this._source == null ? 0 : this._source.hashCode () );
         return result;
     }
 
     @Override
-    public boolean equals ( Object obj )
+    public boolean equals ( final Object obj )
     {
         if ( this == obj )
+        {
             return true;
+        }
         if ( obj == null )
+        {
             return false;
+        }
         if ( getClass () != obj.getClass () )
+        {
             return false;
+        }
         final SubscriptionSourceEvent other = (SubscriptionSourceEvent)obj;
-        if ( _added == null )
+        if ( this._added == null )
         {
             if ( other._added != null )
+            {
                 return false;
+            }
         }
-        else if ( !_added.equals ( other._added ) )
+        else if ( !this._added.equals ( other._added ) )
+        {
             return false;
-        if ( _source == null )
+        }
+        if ( this._source == null )
         {
             if ( other._source != null )
+            {
                 return false;
+            }
         }
-        else if ( !_source.equals ( other._source ) )
+        else if ( !this._source.equals ( other._source ) )
+        {
             return false;
+        }
         return true;
     }
 }

@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.core.subscription;
 
 import java.util.Collections;
@@ -11,35 +30,35 @@ import org.junit.Test;
 
 public class Test1
 {
-    private SubscriptionManager _manager = null;
+    private SubscriptionManager manager = null;
 
     @Before
     public void setup ()
     {
-        this._manager = new SubscriptionManager ();
+        this.manager = new SubscriptionManager ();
     }
 
     @After
     public void cleanup ()
     {
-        this._manager = null;
+        this.manager = null;
     }
 
     /**
-     * Perfom a simple subscribe/unsubscribe without a subscription source attached
+     * Perform a simple subscribe/unsubscribe without a subscription source attached
      * @throws Exception
      */
     @Test
     public void test1 () throws Exception
     {
-        SubscriptionRecorder recorder = new SubscriptionRecorder ();
+        final SubscriptionRecorder recorder = new SubscriptionRecorder ();
 
-        this._manager.subscribe ( "", recorder );
-        this._manager.unsubscribe ( "", recorder );
+        this.manager.subscribe ( "", recorder );
+        this.manager.unsubscribe ( "", recorder );
 
         Assert.assertArrayEquals ( "Events are not the same", new SubscriptionStateEvent[] { new SubscriptionStateEvent ( SubscriptionState.GRANTED ), new SubscriptionStateEvent ( SubscriptionState.DISCONNECTED ) }, recorder.getList ().toArray ( new SubscriptionStateEvent[0] ) );
 
-        Assert.assertEquals ( "Number of subscriptions does not match", 0, this._manager.getSubscriptionCount () );
+        Assert.assertEquals ( "Number of subscriptions does not match", 0, this.manager.getSubscriptionCount () );
     }
 
     /**
@@ -49,17 +68,17 @@ public class Test1
     @Test
     public void test2 () throws Exception
     {
-        SubscriptionRecorder recorder = new SubscriptionRecorder ();
-        SubscriptionSourceTestImpl source = new SubscriptionSourceTestImpl ();
+        final SubscriptionRecorder recorder = new SubscriptionRecorder ();
+        final SubscriptionSourceTestImpl source = new SubscriptionSourceTestImpl ();
 
-        this._manager.subscribe ( "", recorder );
-        this._manager.setSource ( "", source );
-        this._manager.setSource ( "", null );
-        this._manager.unsubscribe ( "", recorder );
+        this.manager.subscribe ( "", recorder );
+        this.manager.setSource ( "", source );
+        this.manager.setSource ( "", null );
+        this.manager.unsubscribe ( "", recorder );
 
         Assert.assertArrayEquals ( "Events are not the same", new Object[] { new SubscriptionStateEvent ( SubscriptionState.GRANTED ), new SubscriptionStateEvent ( SubscriptionState.CONNECTED ), new SubscriptionSourceEvent ( true, source ), new SubscriptionSourceEvent ( false, source ), new SubscriptionStateEvent ( SubscriptionState.GRANTED ), new SubscriptionStateEvent ( SubscriptionState.DISCONNECTED ) }, recorder.getList ().toArray ( new Object[0] ) );
 
-        Assert.assertEquals ( "Number of subscriptions does not match", 0, this._manager.getSubscriptionCount () );
+        Assert.assertEquals ( "Number of subscriptions does not match", 0, this.manager.getSubscriptionCount () );
     }
 
     /**
@@ -70,17 +89,17 @@ public class Test1
     @Test
     public void test3 () throws Exception
     {
-        SubscriptionRecorder recorder = new SubscriptionRecorder ();
-        SubscriptionSourceTestImpl source = new SubscriptionSourceTestImpl ();
+        final SubscriptionRecorder recorder = new SubscriptionRecorder ();
+        final SubscriptionSourceTestImpl source = new SubscriptionSourceTestImpl ();
 
-        this._manager.setSource ( "", source );
-        this._manager.subscribe ( "", recorder );
-        this._manager.unsubscribe ( "", recorder );
-        this._manager.setSource ( "", null );
+        this.manager.setSource ( "", source );
+        this.manager.subscribe ( "", recorder );
+        this.manager.unsubscribe ( "", recorder );
+        this.manager.setSource ( "", null );
 
         Assert.assertArrayEquals ( "Events are not the same", new Object[] { new SubscriptionStateEvent ( SubscriptionState.CONNECTED ), new SubscriptionSourceEvent ( true, source ), new SubscriptionSourceEvent ( false, source ), new SubscriptionStateEvent ( SubscriptionState.DISCONNECTED ) }, recorder.getList ().toArray ( new Object[0] ) );
 
-        Assert.assertEquals ( "Number of subscriptions does not match", 0, this._manager.getSubscriptionCount () );
+        Assert.assertEquals ( "Number of subscriptions does not match", 0, this.manager.getSubscriptionCount () );
     }
 
     /**
@@ -92,17 +111,17 @@ public class Test1
     @Test
     public void test4 () throws Exception
     {
-        SubscriptionRecorder recorder = new SubscriptionRecorder ();
-        SubscriptionSourceTestImpl source = new SubscriptionSourceTestImpl ();
+        final SubscriptionRecorder recorder = new SubscriptionRecorder ();
+        final SubscriptionSourceTestImpl source = new SubscriptionSourceTestImpl ();
 
-        this._manager.setSource ( "", source );
-        this._manager.subscribe ( "", recorder );
-        this._manager.setSource ( "", null );
-        this._manager.unsubscribe ( "", recorder );
+        this.manager.setSource ( "", source );
+        this.manager.subscribe ( "", recorder );
+        this.manager.setSource ( "", null );
+        this.manager.unsubscribe ( "", recorder );
 
         Assert.assertArrayEquals ( "Events are not the same", new Object[] { new SubscriptionStateEvent ( SubscriptionState.CONNECTED ), new SubscriptionSourceEvent ( true, source ), new SubscriptionSourceEvent ( false, source ), new SubscriptionStateEvent ( SubscriptionState.GRANTED ), new SubscriptionStateEvent ( SubscriptionState.DISCONNECTED ) }, recorder.getList ().toArray ( new Object[0] ) );
 
-        Assert.assertEquals ( "Number of subscriptions does not match", 0, this._manager.getSubscriptionCount () );
+        Assert.assertEquals ( "Number of subscriptions does not match", 0, this.manager.getSubscriptionCount () );
     }
 
     /**
@@ -113,24 +132,24 @@ public class Test1
     @Test
     public void test5 () throws Exception
     {
-        SubscriptionRecorder recorder = new SubscriptionRecorder ();
+        final SubscriptionRecorder recorder = new SubscriptionRecorder ();
 
-        this._manager.subscribe ( "1", recorder );
-        this._manager.subscribe ( "2", recorder );
+        this.manager.subscribe ( "1", recorder );
+        this.manager.subscribe ( "2", recorder );
 
-        List<Object> topics = new LinkedList<Object> ();
+        final List<Object> topics = new LinkedList<Object> ();
         topics.add ( "1" );
         topics.add ( "2" );
         Collections.sort ( (List)topics );
 
-        List<Object> actualTopics = this._manager.getAllGrantedTopics ();
+        final List<Object> actualTopics = this.manager.getAllGrantedTopics ();
         Collections.sort ( (List)actualTopics );
 
         Assert.assertEquals ( "Topics do not match", topics, actualTopics );
 
-        this._manager.unsubscribe ( "1", recorder );
-        this._manager.unsubscribe ( "2", recorder );
+        this.manager.unsubscribe ( "1", recorder );
+        this.manager.unsubscribe ( "2", recorder );
 
-        Assert.assertEquals ( "Topics do not match", new LinkedList<Object> (), this._manager.getAllGrantedTopics () );
+        Assert.assertEquals ( "Topics do not match", new LinkedList<Object> (), this.manager.getAllGrantedTopics () );
     }
 }

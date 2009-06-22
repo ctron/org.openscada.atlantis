@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.core.subscription;
 
 /**
@@ -11,6 +30,7 @@ package org.openscada.core.subscription;
 public class SubscriptionInformation
 {
     private SubscriptionListener _listener = null;
+
     private Object _hint = null;
 
     public SubscriptionInformation ()
@@ -18,30 +38,30 @@ public class SubscriptionInformation
         super ();
     }
 
-    public SubscriptionInformation ( SubscriptionListener listener, Object hint )
+    public SubscriptionInformation ( final SubscriptionListener listener, final Object hint )
     {
-        _listener = listener;
-        _hint = hint;
+        this._listener = listener;
+        this._hint = hint;
     }
 
     public Object getHint ()
     {
-        return _hint;
+        return this._hint;
     }
-    
-    public void setHint ( Object hint )
+
+    public void setHint ( final Object hint )
     {
-        _hint = hint;
+        this._hint = hint;
     }
-    
+
     public SubscriptionListener getListener ()
     {
-        return _listener;
+        return this._listener;
     }
-    
-    public void setListener ( SubscriptionListener listener )
+
+    public void setListener ( final SubscriptionListener listener )
     {
-        _listener = listener;
+        this._listener = listener;
     }
 
     @Override
@@ -49,27 +69,37 @@ public class SubscriptionInformation
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ( ( _listener == null ) ? 0 : _listener.hashCode () );
+        result = PRIME * result + ( this._listener == null ? 0 : this._listener.hashCode () );
         return result;
     }
 
     @Override
-    public boolean equals ( Object obj )
+    public boolean equals ( final Object obj )
     {
         if ( this == obj )
+        {
             return true;
+        }
         if ( obj == null )
+        {
             return false;
+        }
         if ( getClass () != obj.getClass () )
+        {
             return false;
+        }
         final SubscriptionInformation other = (SubscriptionInformation)obj;
-        if ( _listener == null )
+        if ( this._listener == null )
         {
             if ( other._listener != null )
+            {
                 return false;
+            }
         }
-        else if ( !_listener.equals ( other._listener ) )
+        else if ( !this._listener.equals ( other._listener ) )
+        {
             return false;
+        }
         return true;
     }
 }

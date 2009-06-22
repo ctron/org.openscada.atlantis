@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.core.subscription;
 
 import java.util.HashMap;
@@ -14,20 +33,21 @@ import java.util.Map;
  */
 public class SubscriptionManager
 {
-    private Map<Object, Subscription> _subscriptions = new HashMap<Object, Subscription> ();
+    private final Map<Object, Subscription> _subscriptions = new HashMap<Object, Subscription> ();
+
     private SubscriptionValidator _validator = null;
 
     /**
      * Unsibscribe from all subscriptions that the listener has subscribed to
      * @param listener the listener to unsubscribe
      */
-    public synchronized void unsubscribeAll ( SubscriptionListener listener )
+    public synchronized void unsubscribeAll ( final SubscriptionListener listener )
     {
-        for ( Iterator<Map.Entry<Object, Subscription>> i = _subscriptions.entrySet ().iterator (); i.hasNext (); )
+        for ( final Iterator<Map.Entry<Object, Subscription>> i = this._subscriptions.entrySet ().iterator (); i.hasNext (); )
         {
-            Map.Entry<Object, Subscription> entry = i.next ();
+            final Map.Entry<Object, Subscription> entry = i.next ();
             entry.getValue ().unsubscribe ( listener );
-            
+
             if ( entry.getValue ().isEmpty () )
             {
                 i.remove ();
@@ -41,11 +61,11 @@ public class SubscriptionManager
      * @param listener The listener which will receive the events
      * @throws ValidationException thrown if the subscription cannot be establed (e.g. the topic is invalid)
      */
-    public synchronized void subscribe ( Object topic, SubscriptionListener listener ) throws ValidationException
+    public synchronized void subscribe ( final Object topic, final SubscriptionListener listener ) throws ValidationException
     {
         subscribe ( topic, listener, null );
     }
-    
+
     /**
      * Subscribe to a topic with a hint
      * @param topic The topic to which the subscription should be made
@@ -53,11 +73,11 @@ public class SubscriptionManager
      * @param hint The hint is specific to the topic
      * @throws ValidationException thrown if the subscription cannot be established (e.g. the topic is invalid)
      */
-    public synchronized void subscribe ( Object topic, SubscriptionListener listener, Object hint ) throws ValidationException
+    public synchronized void subscribe ( final Object topic, final SubscriptionListener listener, final Object hint ) throws ValidationException
     {
         // If we have a validator then do validate
         SubscriptionValidator v;
-        if ( ( v = _validator ) != null )
+        if ( ( v = this._validator ) != null )
         {
             if ( !v.validate ( listener, topic ) )
             {
@@ -66,19 +86,19 @@ public class SubscriptionManager
         }
 
         // Get subscription or create one if there is none
-        Subscription s = _subscriptions.get ( topic );
+        Subscription s = this._subscriptions.get ( topic );
         if ( s == null )
         {
             s = new Subscription ( topic );
-            _subscriptions.put ( topic, s );
+            this._subscriptions.put ( topic, s );
         }
 
         s.subscribe ( listener, hint );
     }
 
-    public synchronized void unsubscribe ( Object topic, SubscriptionListener listener )
+    public synchronized void unsubscribe ( final Object topic, final SubscriptionListener listener )
     {
-        Subscription s = _subscriptions.get ( topic );
+        final Subscription s = this._subscriptions.get ( topic );
         if ( s == null )
         {
             return;
@@ -89,13 +109,13 @@ public class SubscriptionManager
         // if the subscription is empty we can erase it
         if ( s.isEmpty () )
         {
-            _subscriptions.remove ( topic );
+            this._subscriptions.remove ( topic );
         }
     }
 
-    public void setValidator ( SubscriptionValidator validator )
+    public void setValidator ( final SubscriptionValidator validator )
     {
-        _validator = validator;
+        this._validator = validator;
     }
 
     /**
@@ -105,9 +125,9 @@ public class SubscriptionManager
      * @param topic the topic
      * @param source the source to set
      */
-    public synchronized void setSource ( Object topic, SubscriptionSource source )
+    public synchronized void setSource ( final Object topic, final SubscriptionSource source )
     {
-        Subscription s = _subscriptions.get ( topic );
+        Subscription s = this._subscriptions.get ( topic );
         if ( s == null && source == null )
         {
             return;
@@ -116,14 +136,14 @@ public class SubscriptionManager
         if ( s == null )
         {
             s = new Subscription ( topic );
-            _subscriptions.put ( topic, s );
+            this._subscriptions.put ( topic, s );
         }
 
         s.setSource ( source );
 
         if ( s.isEmpty () )
         {
-            _subscriptions.remove ( topic );
+            this._subscriptions.remove ( topic );
         }
     }
 
@@ -133,7 +153,7 @@ public class SubscriptionManager
      */
     public int getSubscriptionCount ()
     {
-        return _subscriptions.size ();
+        return this._subscriptions.size ();
     }
 
     /**
@@ -142,16 +162,16 @@ public class SubscriptionManager
      */
     public synchronized List<Object> getAllGrantedTopics ()
     {
-        List<Object> topicList = new LinkedList<Object> ();
-        
-        for ( Map.Entry<Object, Subscription> entry : _subscriptions.entrySet () )
+        final List<Object> topicList = new LinkedList<Object> ();
+
+        for ( final Map.Entry<Object, Subscription> entry : this._subscriptions.entrySet () )
         {
             if ( entry.getValue ().isGranted () )
             {
                 topicList.add ( entry.getKey () );
             }
         }
-        
+
         return topicList;
     }
 }

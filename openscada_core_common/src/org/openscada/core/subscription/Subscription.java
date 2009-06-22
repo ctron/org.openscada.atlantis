@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.core.subscription;
 
 import java.util.Arrays;
@@ -7,15 +26,16 @@ import java.util.Set;
 
 public class Subscription
 {
-    private Map<SubscriptionInformation, Object> _listeners = new HashMap<SubscriptionInformation, Object> ();
+    private final Map<SubscriptionInformation, Object> _listeners = new HashMap<SubscriptionInformation, Object> ();
 
     private SubscriptionSource _source = null;
+
     private Object _topic = null;
 
-    public Subscription ( Object topic )
+    public Subscription ( final Object topic )
     {
         super ();
-        _topic = topic;
+        this._topic = topic;
     }
 
     /**
@@ -28,7 +48,7 @@ public class Subscription
      */
     public synchronized boolean isEmpty ()
     {
-        return ( _source == null ) && _listeners.isEmpty ();
+        return this._source == null && this._listeners.isEmpty ();
     }
 
     /**
@@ -38,77 +58,77 @@ public class Subscription
      */
     public synchronized boolean isGranted ()
     {
-        return ( _source == null ) && !_listeners.isEmpty ();
+        return this._source == null && !this._listeners.isEmpty ();
     }
 
-    public synchronized void subscribe ( SubscriptionListener listener, Object hint )
+    public synchronized void subscribe ( final SubscriptionListener listener, final Object hint )
     {
-        SubscriptionInformation subscriptionInformation = new SubscriptionInformation ( listener, hint );
+        final SubscriptionInformation subscriptionInformation = new SubscriptionInformation ( listener, hint );
 
-        if ( _listeners.containsKey ( subscriptionInformation ) )
+        if ( this._listeners.containsKey ( subscriptionInformation ) )
         {
             return;
         }
-        _listeners.put ( subscriptionInformation, hint );
+        this._listeners.put ( subscriptionInformation, hint );
 
-        if ( _source == null )
+        if ( this._source == null )
         {
-            listener.updateStatus ( _topic, SubscriptionState.GRANTED );
+            listener.updateStatus ( this._topic, SubscriptionState.GRANTED );
         }
         else
         {
-            listener.updateStatus ( _topic, SubscriptionState.CONNECTED );
-            _source.addListener ( Arrays.asList ( new SubscriptionInformation[] { subscriptionInformation } ) );
+            listener.updateStatus ( this._topic, SubscriptionState.CONNECTED );
+            this._source.addListener ( Arrays.asList ( new SubscriptionInformation[] { subscriptionInformation } ) );
         }
     }
 
-    public synchronized void unsubscribe ( SubscriptionListener listener )
+    public synchronized void unsubscribe ( final SubscriptionListener listener )
     {
-        SubscriptionInformation subscriptionInformation = new SubscriptionInformation ( listener, null );
-        if ( _listeners.containsKey ( subscriptionInformation ) )
+        final SubscriptionInformation subscriptionInformation = new SubscriptionInformation ( listener, null );
+        if ( this._listeners.containsKey ( subscriptionInformation ) )
         {
-            Object hint = _listeners.remove ( subscriptionInformation );
+            final Object hint = this._listeners.remove ( subscriptionInformation );
             subscriptionInformation.setHint ( hint );
 
-            if ( _source != null )
+            if ( this._source != null )
             {
-                _source.removeListener ( Arrays.asList ( new SubscriptionInformation[] { subscriptionInformation } ) );
+                this._source.removeListener ( Arrays.asList ( new SubscriptionInformation[] { subscriptionInformation } ) );
             }
-            
-            listener.updateStatus ( _topic, SubscriptionState.DISCONNECTED );
+
+            listener.updateStatus ( this._topic, SubscriptionState.DISCONNECTED );
         }
     }
 
-    public synchronized void setSource ( SubscriptionSource source )
+    public synchronized void setSource ( final SubscriptionSource source )
     {
         // We only act on changes
-        if ( _source == source )
+        if ( this._source == source )
         {
             return;
         }
 
-        if ( _source != null )
+        if ( this._source != null )
         {
-            _source.removeListener ( _listeners.keySet () );
+            this._source.removeListener ( this._listeners.keySet () );
         }
 
-        Set<SubscriptionInformation> keys = _listeners.keySet ();
+        final Set<SubscriptionInformation> keys = this._listeners.keySet ();
         if ( source != null )
         {
-            for ( SubscriptionInformation information : keys )
+            for ( final SubscriptionInformation information : keys )
             {
-                information.getListener ().updateStatus ( _topic, SubscriptionState.CONNECTED );
+                information.getListener ().updateStatus ( this._topic, SubscriptionState.CONNECTED );
             }
             source.addListener ( keys );
         }
         else
         {
-            for ( SubscriptionInformation information : keys )
+            for ( final SubscriptionInformation information : keys )
             {
-                information.getListener ().updateStatus ( _topic, SubscriptionState.GRANTED );
+                information.getListener ().updateStatus ( this._topic, SubscriptionState.GRANTED );
             }
         }
 
-        _source = source;
+        this._source = source;
     }
 }

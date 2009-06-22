@@ -1,38 +1,53 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.core.subscription;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import org.openscada.core.subscription.SubscriptionListener;
-import org.openscada.core.subscription.SubscriptionSource;
-import org.openscada.core.subscription.SubscriptionState;
-
 public class SubscriptionRecorder implements SubscriptionListener
 {
     private List<Object> _list = new LinkedList<Object> ();
 
-    public void updateStatus ( Object topic, SubscriptionState subscriptionState )
+    public void updateStatus ( final Object topic, final SubscriptionState subscriptionState )
     {
-        _list.add ( new SubscriptionStateEvent ( subscriptionState ) );
+        this._list.add ( new SubscriptionStateEvent ( subscriptionState ) );
     }
-    
-    public void added ( SubscriptionSource source )
+
+    public void added ( final SubscriptionSource source )
     {
-        _list.add ( new SubscriptionSourceEvent ( true, source ) );
+        this._list.add ( new SubscriptionSourceEvent ( true, source ) );
     }
-    
-    public void removed ( SubscriptionSource source )
+
+    public void removed ( final SubscriptionSource source )
     {
-        _list.add ( new SubscriptionSourceEvent ( false, source ) );    
+        this._list.add ( new SubscriptionSourceEvent ( false, source ) );
     }
 
     public List<Object> getList ()
     {
-        return _list;
+        return this._list;
     }
 
-    public void setList ( List<Object> list )
+    public void setList ( final List<Object> list )
     {
-        _list = list;
+        this._list = list;
     }
 }
