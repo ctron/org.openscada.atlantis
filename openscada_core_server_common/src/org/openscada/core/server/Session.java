@@ -17,13 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.core.server;
+package org.openscada.core.server;
 
-import org.openscada.da.core.server.browser.FolderListener;
-
-public interface Session extends org.openscada.core.server.Session
+public interface Session
 {
-    public void setListener ( ItemChangeListener listener );
 
-    public void setListener ( FolderListener listener );
 }

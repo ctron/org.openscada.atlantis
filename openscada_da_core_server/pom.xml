@@ -23,5 +23,10 @@
 			<artifactId>org.openscada.atlantis.da.core.common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.openscada.atlantis</groupId>
+			<artifactId>org.openscada.atlantis.core.server.common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

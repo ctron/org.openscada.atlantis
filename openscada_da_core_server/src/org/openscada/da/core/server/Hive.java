@@ -20,36 +20,17 @@
 package org.openscada.da.core.server;
 
 import java.util.Map;
-import java.util.Properties;
 
 import org.openscada.core.InvalidSessionException;
-import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.Service;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.lifecycle.LifecycleAware;
 
-public interface Hive extends LifecycleAware
+public interface Hive extends Service
 {
-    /**
-     * Create a new session for further accessing the hive
-     * @param props properties used to create the session
-     * @return a new session
-     * @throws UnableToCreateSessionException in the case the session could not be created
-     */
-    public Session createSession ( Properties props ) throws UnableToCreateSessionException;
-
-    /**
-     * Close the provided session
-     * 
-     * Closing the session includes: unregistering from all items, canceling all running operations
-     * 
-     * @param session the session to close
-     * @throws InvalidSessionException In the case the session is not a valid session
-     */
-    public void closeSession ( Session session ) throws InvalidSessionException;
 
     /**
      * Register to an item for event notification
