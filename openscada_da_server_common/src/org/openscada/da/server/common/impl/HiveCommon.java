@@ -235,7 +235,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      * @return the session common instance
      * @throws InvalidSessionException in the case of an invalid session
      */
-    public SessionCommon validateSession ( final Session session ) throws InvalidSessionException
+    public SessionCommon validateSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
     {
         if ( ! ( session instanceof SessionCommon ) )
         {
@@ -275,7 +275,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
      * The session will be invalid after it has been closed. All subscriptions
      * will become invalid. All pending operation will get canceled. 
      */
-    public void closeSession ( final Session session ) throws InvalidSessionException
+    public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
     {
         final SessionCommon sessionCommon = validateSession ( session );
 
