@@ -227,7 +227,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             }
             catch ( final InvalidSessionException e )
             {
-                e.printStackTrace ();
+                logger.warn ( "Failed to close session", e );
             }
         }
     }
