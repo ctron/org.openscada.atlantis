@@ -39,6 +39,7 @@ import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.InvalidItemException;
+import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.da.ice.BrowserEntryHelper;
@@ -129,7 +130,7 @@ public class HiveImpl extends _HiveDisp implements Runnable
 
         try
         {
-            final SessionImpl session = new SessionImpl ( this, this.hive.createSession ( props ) );
+            final SessionImpl session = new SessionImpl ( this, (Session)this.hive.createSession ( props ) );
             final SessionPrx sessionProxy = SessionPrxHelper.uncheckedCast ( __current.adapter.addWithUUID ( session ) );
             this.sessionMap.put ( sessionProxy, session );
             this.sessionMapRev.put ( session, sessionProxy );

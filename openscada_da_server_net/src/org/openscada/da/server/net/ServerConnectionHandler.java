@@ -191,7 +191,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         try
         {
-            this.session = this.hive.createSession ( props );
+            this.session = (Session)this.hive.createSession ( props );
         }
         catch ( final UnableToCreateSessionException e )
         {
