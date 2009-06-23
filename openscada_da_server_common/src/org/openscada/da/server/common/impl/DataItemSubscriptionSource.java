@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,23 +42,23 @@ import org.openscada.da.server.common.impl.stats.HiveEventListener;
  */
 public class DataItemSubscriptionSource implements SubscriptionSource, ItemListener
 {
-    private DataItem _dataItem = null;
+    private DataItem dataItem = null;
 
-    private final Set<DataItemSubscriptionListener> _listeners = new CopyOnWriteArraySet<DataItemSubscriptionListener> ();
+    private final Set<DataItemSubscriptionListener> listeners = new CopyOnWriteArraySet<DataItemSubscriptionListener> ();
 
-    private boolean _bound = false;
+    private boolean bound = false;
 
-    private Variant _cacheValue = null;
+    private Variant cacheValue = null;
 
-    private final Map<String, Variant> _cacheAttributes = new HashMap<String, Variant> ();
+    private final Map<String, Variant> cacheAttributes = new HashMap<String, Variant> ();
 
-    private final HiveEventListener _hiveEventListener;
+    private final HiveEventListener hiveEventListener;
 
     public DataItemSubscriptionSource ( final DataItem dataItem, final HiveEventListener hiveEventListener )
     {
         super ();
-        this._dataItem = dataItem;
-        this._hiveEventListener = hiveEventListener;
+        this.dataItem = dataItem;
+        this.hiveEventListener = hiveEventListener;
     }
 
     /**
@@ -67,13 +67,13 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
      */
     private synchronized void bind ()
     {
-        if ( this._bound )
+        if ( this.bound )
         {
             return;
         }
 
-        this._bound = true;
-        this._dataItem.setListener ( this );
+        this.bound = true;
+        this.dataItem.setListener ( this );
     }
 
     /**
@@ -82,27 +82,27 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
      */
     private synchronized void unbind ()
     {
-        if ( !this._bound )
+        if ( !this.bound )
         {
             return;
         }
 
-        this._cacheValue = null;
-        this._cacheAttributes.clear ();
-        this._bound = false;
-        this._dataItem.setListener ( null );
+        this.cacheValue = null;
+        this.cacheAttributes.clear ();
+        this.bound = false;
+        this.dataItem.setListener ( null );
     }
 
     public synchronized void addListener ( final Collection<SubscriptionInformation> listeners )
     {
         for ( final SubscriptionInformation listener : listeners )
         {
-            this._listeners.add ( (DataItemSubscriptionListener)listener.getListener () );
+            this.listeners.add ( (DataItemSubscriptionListener)listener.getListener () );
             // send current state
-            ( (DataItemSubscriptionListener)listener.getListener () ).dataChanged ( this._dataItem, this._cacheValue, this._cacheAttributes, true );
+            ( (DataItemSubscriptionListener)listener.getListener () ).dataChanged ( this.dataItem, this.cacheValue, this.cacheAttributes, true );
         }
 
-        if ( !this._listeners.isEmpty () )
+        if ( !this.listeners.isEmpty () )
         {
             bind ();
         }
@@ -112,10 +112,10 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
     {
         for ( final SubscriptionInformation listener : listeners )
         {
-            this._listeners.remove ( listener.getListener () );
+            this.listeners.remove ( listener.getListener () );
         }
 
-        if ( this._listeners.isEmpty () )
+        if ( this.listeners.isEmpty () )
         {
             unbind ();
         }
@@ -131,32 +131,32 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         // update cache
         if ( attributes != null )
         {
-            synchronized ( this._cacheAttributes )
+            synchronized ( this.cacheAttributes )
             {
-                AttributesHelper.mergeAttributes ( this._cacheAttributes, attributes );
+                AttributesHelper.mergeAttributes ( this.cacheAttributes, attributes );
             }
         }
         if ( variant != null )
         {
-            this._cacheValue = variant;
+            this.cacheValue = variant;
         }
 
         // send out the events
-        for ( final DataItemSubscriptionListener listener : this._listeners )
+        for ( final DataItemSubscriptionListener listener : this.listeners )
         {
             listener.dataChanged ( item, variant, attributes, cache );
         }
 
         // send out the hive events
-        if ( this._hiveEventListener != null )
+        if ( this.hiveEventListener != null )
         {
             if ( variant != null )
             {
-                this._hiveEventListener.valueChanged ( item, variant, cache );
+                this.hiveEventListener.valueChanged ( item, variant, cache );
             }
             if ( attributes != null )
             {
-                this._hiveEventListener.attributesChanged ( item, attributes.size () );
+                this.hiveEventListener.attributesChanged ( item, attributes.size () );
             }
         }
     }
