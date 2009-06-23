@@ -29,7 +29,7 @@ import org.openscada.da.server.common.DataItem;
 /**
  * A subscription listener for data items
  * <p>
- * Interface is analogues to {@link ItemChangeListener}
+ * Interface is analog to {@link ItemChangeListener}
  * @author Jens Reimann
  *
  */
