@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,16 +26,16 @@ import java.util.Set;
 
 public class Subscription
 {
-    private final Map<SubscriptionInformation, Object> _listeners = new HashMap<SubscriptionInformation, Object> ();
+    private final Map<SubscriptionInformation, Object> listeners = new HashMap<SubscriptionInformation, Object> ();
 
-    private SubscriptionSource _source = null;
+    private SubscriptionSource source = null;
 
-    private Object _topic = null;
+    private Object topic = null;
 
     public Subscription ( final Object topic )
     {
         super ();
-        this._topic = topic;
+        this.topic = topic;
     }
 
     /**
@@ -48,7 +48,7 @@ public class Subscription
      */
     public synchronized boolean isEmpty ()
     {
-        return this._source == null && this._listeners.isEmpty ();
+        return ( this.source == null ) && this.listeners.isEmpty ();
     }
 
     /**
@@ -58,77 +58,80 @@ public class Subscription
      */
     public synchronized boolean isGranted ()
     {
-        return this._source == null && !this._listeners.isEmpty ();
+        return ( this.source == null ) && !this.listeners.isEmpty ();
     }
 
     public synchronized void subscribe ( final SubscriptionListener listener, final Object hint )
     {
         final SubscriptionInformation subscriptionInformation = new SubscriptionInformation ( listener, hint );
 
-        if ( this._listeners.containsKey ( subscriptionInformation ) )
+        if ( this.listeners.containsKey ( subscriptionInformation ) )
         {
             return;
         }
-        this._listeners.put ( subscriptionInformation, hint );
+        this.listeners.put ( subscriptionInformation, hint );
 
-        if ( this._source == null )
+        if ( this.source == null )
         {
-            listener.updateStatus ( this._topic, SubscriptionState.GRANTED );
+            listener.updateStatus ( this.topic, SubscriptionState.GRANTED );
         }
         else
         {
-            listener.updateStatus ( this._topic, SubscriptionState.CONNECTED );
-            this._source.addListener ( Arrays.asList ( new SubscriptionInformation[] { subscriptionInformation } ) );
+            listener.updateStatus ( this.topic, SubscriptionState.CONNECTED );
+            this.source.addListener ( Arrays.asList ( new SubscriptionInformation[] { subscriptionInformation } ) );
         }
     }
 
     public synchronized void unsubscribe ( final SubscriptionListener listener )
     {
         final SubscriptionInformation subscriptionInformation = new SubscriptionInformation ( listener, null );
-        if ( this._listeners.containsKey ( subscriptionInformation ) )
+        if ( this.listeners.containsKey ( subscriptionInformation ) )
         {
-            final Object hint = this._listeners.remove ( subscriptionInformation );
+            final Object hint = this.listeners.remove ( subscriptionInformation );
             subscriptionInformation.setHint ( hint );
 
-            if ( this._source != null )
+            if ( this.source != null )
             {
-                this._source.removeListener ( Arrays.asList ( new SubscriptionInformation[] { subscriptionInformation } ) );
+                this.source.removeListener ( Arrays.asList ( new SubscriptionInformation[] { subscriptionInformation } ) );
             }
 
-            listener.updateStatus ( this._topic, SubscriptionState.DISCONNECTED );
+            listener.updateStatus ( this.topic, SubscriptionState.DISCONNECTED );
         }
     }
 
     public synchronized void setSource ( final SubscriptionSource source )
     {
         // We only act on changes
-        if ( this._source == source )
+        if ( this.source == source )
         {
             return;
         }
 
-        if ( this._source != null )
+        if ( this.source != null )
         {
-            this._source.removeListener ( this._listeners.keySet () );
+            this.source.removeListener ( this.listeners.keySet () );
         }
 
-        final Set<SubscriptionInformation> keys = this._listeners.keySet ();
+        final Set<SubscriptionInformation> keys = this.listeners.keySet ();
         if ( source != null )
         {
             for ( final SubscriptionInformation information : keys )
             {
-                information.getListener ().updateStatus ( this._topic, SubscriptionState.CONNECTED );
+                information.getListener ().updateStatus ( this.topic, SubscriptionState.CONNECTED );
             }
-            source.addListener ( keys );
+            if ( !keys.isEmpty () )
+            {
+                source.addListener ( keys );
+            }
         }
         else
         {
             for ( final SubscriptionInformation information : keys )
             {
-                information.getListener ().updateStatus ( this._topic, SubscriptionState.GRANTED );
+                information.getListener ().updateStatus ( this.topic, SubscriptionState.GRANTED );
             }
         }
 
-        this._source = source;
+        this.source = source;
     }
 }
