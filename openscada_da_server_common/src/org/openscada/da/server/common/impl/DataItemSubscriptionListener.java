@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionListener;
-import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.core.server.ItemChangeListener;
 import org.openscada.da.server.common.DataItem;
 
@@ -36,7 +35,5 @@ import org.openscada.da.server.common.DataItem;
  */
 public interface DataItemSubscriptionListener extends SubscriptionListener
 {
-    public void updateStatus ( Object topic, SubscriptionState subscriptionState );
-
     public void dataChanged ( DataItem item, Variant value, Map<String, Variant> attributes, boolean cache );
 }
