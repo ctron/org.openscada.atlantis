@@ -220,6 +220,7 @@ public class GMPPProtocolEncoder implements ProtocolEncoder, GMPPProtocol
         {
             if ( value == null )
             {
+                // at least provide some more information
                 throw new NullPointerException ( "Trying to encode a 'null' value. Use VoidValue instead!" );
             }
             throw new InvalidValueTypeException ( String.format ( "The type '%s' is unknown", value.getClass ().getName () ) );
