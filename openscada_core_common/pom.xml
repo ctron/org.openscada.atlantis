@@ -1,9 +1,14 @@
 <?xml version="1.0" ?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
-	<artifactId>org.openscada.atlantis.core.common</artifactId>
+	<artifactId>org.openscada.core.common</artifactId>
 	<name>OpenSCADA-Core-Common</name>
+	<packaging>bundle</packaging>
 	<description/>
+
+	<properties>
+		<bundle.namespace>org.openscada.core</bundle.namespace>
+	</properties>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
