@@ -142,6 +142,7 @@
 		<module>../openscada_core_client_common</module>
 		<module>../openscada_core_client_net</module>
 		<module>../openscada_core_server_common</module>
+		<module>../openscada_core_server_net</module>
 		<module>../openscada_da_core_common</module>
 		<module>../openscada_da_core_server</module>
 		<module>../openscada_da_client_common</module>
@@ -167,19 +168,18 @@
 		<module>../openscada_da_server_ice</module>
 		<module>../openscada_server_exporter</module>
 		<module>../openscada_server_exporter_spring</module>
+		<module>../openscada_spring_components</module>
+		<!-- 
 		<module>../openscada_ae_core_common</module>
 		<module>../openscada_ae_net_base</module>
-		<!-- 
 		<module>../openscada_ae_submitter_net</module>
-		 -->
 		<module>../openscada_ae_client_common</module>
 		<module>../openscada_ae_client_net</module>
 		<module>../openscada_ae_storage_common</module>
 		<module>../openscada_ae_storage_test</module>
 		<module>../openscada_ae_storage_syslog</module>
 		<module>../openscada_ae_storage_net</module>
-		<module>../openscada_core_server_net</module>
-		<module>../openscada_spring_components</module>
+		 -->
 	</modules>
 
 	<dependencyManagement>
@@ -223,8 +223,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.openscada.aurora</groupId>
-				<artifactId>org.openscada.aurora.utils
-				</artifactId>
+				<artifactId>org.openscada.utils</artifactId>
 				<version>0.13.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
@@ -453,6 +452,7 @@
 						<groupId>org.apache.maven.plugins
 						</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.5</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -462,6 +462,9 @@
 								</goals>
 							</execution>
 						</executions>
+						<configuration>
+							<failOnError>false</failOnError>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
