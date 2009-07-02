@@ -25,7 +25,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.openscada.aurora</groupId>
-			<artifactId>org.openscada.aurora.utils</artifactId>
+			<artifactId>org.openscada.utils</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.junit</groupId>
