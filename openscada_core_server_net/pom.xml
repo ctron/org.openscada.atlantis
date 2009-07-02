@@ -1,8 +1,15 @@
 <?xml version="1.0" ?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
-	<artifactId>org.openscada.atlantis.core.server.net</artifactId>
+	<artifactId>org.openscada.core.server.net</artifactId>
 	<name>OpenSCADA Core Server NET</name>
+	<packaging>bundle</packaging>
+	<description/>
+
+	<properties>
+		<bundle.namespace>org.openscada.core.server.net</bundle.namespace>
+	</properties>
+
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
@@ -21,12 +28,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
-			<artifactId>org.openscada.atlantis.core.net.base</artifactId>
+			<artifactId>org.openscada.core.net.base</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
-			<artifactId>org.openscada.atlantis.net.base</artifactId>
+			<artifactId>org.openscada.net.base</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
