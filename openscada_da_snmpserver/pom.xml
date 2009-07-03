@@ -26,6 +26,23 @@
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/dependencies</outputDirectory>
+							<includeArtifactIds>snmp4j,mibble-mibs,mibble-parser,grammatica-bin</includeArtifactIds>
+							<stripVersion>true</stripVersion>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.felix</groupId>
 		        <artifactId>maven-bundle-plugin</artifactId>
 		        <extensions>true</extensions>
@@ -33,10 +50,11 @@
 		        	<manifestLocation>META-INF</manifestLocation>
 		        	<instructions>
 		        		<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,org.openscada.common.*;version="${pom.version}",org.openscada.da.hive.*;version="${pom.version}",${bundle.namespace}.*;version="${pom.version}",net.percederberg.mibble.*;version="${pom.version}",org.snmp4j.*;version="${pom.version}"</Export-Package>
+		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}"</Export-Package>
+		        		<Import-Package>org.w3c.dom,org.openscada.*,org.apache.*,uk.co.westhawk.snmp*;resolution:=optional,javax.*;resolution:=optional</Import-Package>
 		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
 		        		<Include-Resource>target/generated-classes/xmlbeans/</Include-Resource>	        		
-						<Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+						<Embed-Dependency>snmp4j;scope=compile|runtime,mibble*;scope=compile|runtime,grammatica*;scope=compile|runtime</Embed-Dependency>
 		        	</instructions>
 		        </configuration>
 			</plugin>
