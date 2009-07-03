@@ -24,7 +24,9 @@
 	<!-- eclipse stuff -->
 	
 	<property name="eclipse.home.base" value="${env.WORKSPACE}"/>
-	<property name="eclipse.home" value="${eclipse.home.base}/eclipse"/>
+	<!-- eclipse.home.dir may not be changed -->
+	<property name="eclipse.home.dir" value="${eclipse.home.base}/eclipse"/>
+	
 	<property name="eclipse.launcher.version" value="_1.0.100.v20080509-1800"/>
 
 	<available file="${eclipse.download}" property="haveEclipseDownload"/>
@@ -41,8 +43,10 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="init">
     	<echo message="Build type: ${publish.type} - ${env.RELEASE_VERSION}"/>
+    	<echo message="Eclipse Target: ${eclipse.home.dir}"/>
     	
-    	<provideEclipseDownload dropFile="eclipse-SDK-3.5-linux-gtk.tar.gz" dropId="R-3.5-200906111540"/>
+    	<delete dir="${eclipse.home.base}" failonerror="false"/>
+    	<provideEclipseDownload.tar dropFile="eclipse-SDK-3.5-linux-gtk.tar.gz" dropId="R-3.5-200906111540"/>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -58,18 +62,21 @@
           target: build              
          ================================= -->
     <target name="build" depends="" description="Build">
-        <ant antfile="p2build.xml"/>
+        <ant antfile="p2build.xml">
+    	</ant>
     </target>
-	
+		
 	<!-- = = = = = = = = = = = = = = = = =
           macrodef: provideEclipseDownload          
          = = = = = = = = = = = = = = = = = -->
-    <macrodef name="provideEclipseDownload">
+    <macrodef name="provideEclipseDownload.tar">
     	<attribute name="dropId"/>
     	<attribute name="dropFile"/>
+    	<attribute name="compression" default="gzip"/>
         <sequential>
         	<mkdir dir="${eclipse.pack.dir}"/>
-        	<get usetimestamp="true" dest="${eclipse.pack.dir}/@{dropFile}" src="${eclipse.download.base}/@{dropId}/@{dropFile}" verbose="true"/>
+        	<get usetimestamp="true" dest="${eclipse.pack.dir}/@{dropFile}" src="${eclipse.download.base}/@{dropId}/@{dropFile}" />
+        	<untar src="${eclipse.pack.dir}/@{dropFile}" dest="${eclipse.home.base}" compression="@{compression}" />
         </sequential>
     </macrodef>
 
