@@ -65,7 +65,7 @@
     <target name="build" depends="" description="Build">
     	<provideEclipseDownload.tar dropFile="eclipse-SDK-3.5-linux-gtk.tar.gz" dropId="${eclipse.dropId}"/>
         <ant antfile="p2build.xml">
-        	<property name="deploy.repo.dir" location=""/>
+        	<property name="deploy.repo.dir" location="${deploy.repo.root}/${publish.type}/${publish.id}/base"/>
     	</ant>
     	
     	<!-- the delta pack must be expanded _after_ the p2 generator has run -->

@@ -10,6 +10,7 @@
     </description>
 	
 	<property environment="env" />
+	<property file="config/build.properties"/>
 	<property file="config/local.properties"/>
 
 	<property name="eclipse.home.dir" value="/home/user/eclipse"/>
