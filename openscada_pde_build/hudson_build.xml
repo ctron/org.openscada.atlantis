@@ -16,9 +16,9 @@
 	<property name="buildType" value="I"/>
 	<property name="buildId" value="Integration"/>
 	<property name="eclipse.pack.dir" value="/home/user/eclipse.pack"/>
-	<property name="publish.type" value="integration"/>
 	
-	<property name="publish.id" value="${env.BUILD_ID}" />
+	<property name="publish.type" value="integration"/>	
+	<property name="publish.id" value="${build.version.osgi}" />
 	
 	<!-- eclipse stuff -->
 	
@@ -39,7 +39,7 @@
           target: init                      
          - - - - - - - - - - - - - - - - - -->
     <target name="init">
-    	<echo message="Build type: ${publish.type} - ${env.RELEASE_VERSION}"/>
+    	<echo message="Build type: ${publish.type}"/>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
