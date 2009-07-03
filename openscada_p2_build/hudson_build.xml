@@ -23,7 +23,7 @@
 	
 	<!-- eclipse stuff -->
 	
-	<property name="eclipse.home.base" value="${env.WORKSPACE}/eclipse"/>
+	<property name="eclipse.home.base" value="${env.WORKSPACE}"/>
 	
 	<!-- eclipse.home.dir may not be changed -->
 	<property name="eclipse.home.dir" value="${eclipse.home.base}/eclipse"/>
@@ -46,7 +46,7 @@
     	<echo message="Build type: ${publish.type} - ${env.RELEASE_VERSION}"/>
     	<echo message="Eclipse Target: ${eclipse.home.dir}"/>
     	
-    	<delete dir="${eclipse.home.base}" failonerror="false"/>
+    	<delete dir="${eclipse.home.dir}" failonerror="false"/>
     	<provideEclipseDownload.tar dropFile="eclipse-SDK-3.5-linux-gtk.tar.gz" dropId="R-3.5-200906111540"/>
     </target>
 	
