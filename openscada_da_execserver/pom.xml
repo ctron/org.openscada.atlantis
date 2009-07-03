@@ -3,7 +3,13 @@
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.da.server.exec</artifactId>
 	<name>OpenSCADA-DA-Server-Exec</name>
+	<packaging>bundle</packaging>
+	<description/>
 
+	<properties>
+		<bundle.namespace>org.openscada.da.server.exec</bundle.namespace>
+	</properties>
+	
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
 		<artifactId>org.openscada.atlantis</artifactId>
