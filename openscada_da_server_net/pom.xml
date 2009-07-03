@@ -3,6 +3,12 @@
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.da.server.net</artifactId>
 	<name>OpenSCADA-DA-Server-Exporter-Net</name>
+	<packaging>bundle</packaging>
+	<description/>
+
+	<properties>
+		<bundle.namespace>org.openscada.da.server.net</bundle.namespace>
+	</properties>
 
 	<parent>
 		<artifactId>org.openscada.atlantis</artifactId>
@@ -19,12 +25,22 @@
 		</dependency>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
+			<artifactId>org.openscada.core.server.net</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openscada.atlantis</groupId>
 			<artifactId>org.openscada.da.net.base</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
-			<artifactId>org.openscada.core.server.net</artifactId>
+			<artifactId>org.openscada.da.core.common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openscada.atlantis</groupId>
+			<artifactId>org.openscada.da.server.common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
