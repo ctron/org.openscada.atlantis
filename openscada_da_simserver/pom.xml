@@ -29,6 +29,23 @@
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/dependencies</outputDirectory>
+							<includeArtifactIds>jOpenDocument,jxl</includeArtifactIds>
+							<stripVersion>true</stripVersion>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.felix</groupId>
 		        <artifactId>maven-bundle-plugin</artifactId>
 		        <extensions>true</extensions>
@@ -37,9 +54,10 @@
 		        	<instructions>
 		        		<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,org.openscada.common.*;version="${pom.version}",org.openscada.da.hive.*;version="${pom.version}",${bundle.namespace}.*;version="${pom.version}"</Export-Package>
+		        		<Import-Package>org.openscada.*,*;resolution:=optional</Import-Package>
 		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
-		        		<Include-Resource>target/generated-classes/xmlbeans/</Include-Resource>	        		
 						<Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+		        		<Include-Resource>target/generated-classes/xmlbeans</Include-Resource>	        		
 		        	</instructions>
 		        </configuration>
 			</plugin>
