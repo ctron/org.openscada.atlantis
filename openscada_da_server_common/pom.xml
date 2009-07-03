@@ -33,10 +33,7 @@
 		        	<manifestLocation>META-INF</manifestLocation>
 		        	<instructions>
 		        		<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-		        		<!-- 
-		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,org.openscada.common.*;version="${pom.version}",org.openscada.da.hive.*;version="${pom.version}",${bundle.namespace}.*;version="${pom.version}"</Export-Package>
-		        		 -->
-		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}"</Export-Package>
+		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}",org.openscada.common.*;version="${pom.version}",org.openscada.da.hive.*;version="${pom.version}"</Export-Package>
 		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
 		        		<Include-Resource>target/generated-classes/xmlbeans</Include-Resource>	        		
 		        	</instructions>
