@@ -2,7 +2,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
-	<artifactId>org.openscada.atlantis.da.server.simulation</artifactId>
+	<artifactId>org.openscada.da.server.simulation</artifactId>
 	<name>OpenSCADA-DA-Server-Simulation</name>
 
 	<parent>
@@ -21,7 +21,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
-			<artifactId>org.openscada.atlantis.da.server.common</artifactId>
+			<artifactId>org.openscada.da.server.common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

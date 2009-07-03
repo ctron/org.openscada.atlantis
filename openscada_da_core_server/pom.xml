@@ -31,7 +31,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
-			<artifactId>org.openscada.atlantis.core.server.common</artifactId>
+			<artifactId>org.openscada.core.server.common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

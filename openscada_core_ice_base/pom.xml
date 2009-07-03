@@ -1,7 +1,7 @@
 <?xml version="1.0" ?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
-	<artifactId>org.openscada.atlantis.core.ice.base</artifactId>
+	<artifactId>org.openscada.core.ice.base</artifactId>
 	<name>OpenSCADA-Core-Ice-Base</name>
 
 	<parent>
@@ -62,7 +62,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
-			<artifactId>org.openscada.atlantis.core.common</artifactId>
+			<artifactId>org.openscada.core.common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
