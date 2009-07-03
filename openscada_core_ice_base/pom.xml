@@ -84,8 +84,8 @@
 		        	<manifestLocation>META-INF</manifestLocation>
 		        	<instructions>
 		        		<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}",OpenSCADA.Core;version="${pom.version}"</Export-Package>
-		        		<Import-Package>OpenSCADA.*,org.openscada.*,*;resolution:=optional</Import-Package>
+		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}",OpenSCADA.Core;version="${pom.version}",Ice*;version="${pom.version}"</Export-Package>
+		        		<Import-Package>Ice*,OpenSCADA.*,org.openscada.*,*;resolution:=optional</Import-Package>
 		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
 						<Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
 		        	</instructions>
