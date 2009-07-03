@@ -46,7 +46,7 @@
     	
     	<delete dir="${eclipse.home.dir}" failonerror="false"/>
     	<provideEclipseDownload.tar dropFile="eclipse-SDK-3.5-linux-gtk.tar.gz" dropId="${eclipse.dropId}"/>
-    	<provideEclipseDownload.tar dropFile="eclipse-3.5-delta-pack.zip" dropId="${eclipse.dropId}"/>
+    	<provideEclipseDownload.zip dropFile="eclipse-3.5-delta-pack.zip" dropId="${eclipse.dropId}"/>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
