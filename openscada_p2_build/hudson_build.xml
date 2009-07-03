@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     OpenSCADA P2 (Hudson)
+                   
+     Jens Reimann                                                                
+     ====================================================================== -->
+<project name="OpenSCADA P2 (Hudson)" default="default" basedir=".">
+    <description>
+    	"OpenSCADA P2 (Hudson)"
+    </description>
+
+	<property environment="env"/>
+	
+	<property file="config/build.properties"/>
+
+	<property name="eclipse.pack.dir" value="/home/user/eclipse.pack"/>
+	<property name="publish.type" value="integration"/>
+	
+	<property name="publish.id" value="${env.BUILD_ID}" />
+	
+	<!-- eclipse stuff -->
+	
+	<property name="eclipse.home.base" value="${env.WORKSPACE}"/>
+	<property name="eclipse.home" value="${eclipse.home.base}/eclipse"/>
+	<property name="eclipse.launcher.version" value="_1.0.100.v20080509-1800"/>
+
+	<available file="${eclipse.home}" property="haveEclipse"/>
+	
+	<!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="init,check,unpackEclipse,build" description="Integration Build">
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: init                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="init">
+    	<echo message="Build type: ${publish.type} - ${env.RELEASE_VERSION}"/>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: check                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="check">
+    	<fail unless="env.WORKSPACE" message="Please set the environment variable 'WORKSPACE'"/>
+    	<fail unless="publish.id" message="Please set the environment variable 'publish.id'"/>
+    	<fail unless="publish.base" message="Please set the publish target 'publish.base'"/>
+    	<mkdir dir="${env.WORKSPACE}"/>
+    </target>
+
+
+	<!-- ================================= 
+          target: unpackEclipse              
+         ================================= -->
+    <target name="unpackEclipse" depends="" description="Unpack the eclipse distribution" unless="haveEclipse">
+        <unzip dest="${eclipse.home.base}">
+        	<fileset dir="${eclipse.pack.dir}">
+        		<include name="*.zip"/>
+        	</fileset>
+        </unzip>
+    	<untar dest="${eclipse.home.base}" compression="gzip">
+    		<fileset dir="${eclipse.pack.dir}">
+        		<include name="*.tar.gz"/>
+        	</fileset>
+    	</untar>
+    </target>
+
+	
+	<!-- ================================= 
+          target: build              
+         ================================= -->
+    <target name="build" depends="" description="Build">
+        <ant antfile="p2build.xml"/>
+    </target>
+
+</project>
