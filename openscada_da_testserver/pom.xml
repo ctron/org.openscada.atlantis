@@ -3,6 +3,12 @@
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.da.server.test</artifactId>
 	<name>OpenSCADA-DA-Server-Test</name>
+	<packaging>bundle</packaging>
+	<description/>
+
+	<properties>
+		<bundle.namespace>org.openscada.da.server.test</bundle.namespace>
+	</properties>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
