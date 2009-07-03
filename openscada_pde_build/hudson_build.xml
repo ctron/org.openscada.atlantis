@@ -25,7 +25,7 @@
 	<property name="eclipse.dropId" value="R-3.5-200906111540"/>
 	
 	<property name="eclipse.home.base" value="${env.WORKSPACE}"/>
-	<property name="eclipse.home" value="${eclipse.home.base}/eclipse"/>
+	<property name="eclipse.home.dir" value="${eclipse.home.base}/eclipse"/>
 	<property name="eclipse.builder.version" value="_3.4.0.v20080604"/>
 	<property name="eclipse.launcher.version" value="_1.0.100.v20080509-1800"/>
 
