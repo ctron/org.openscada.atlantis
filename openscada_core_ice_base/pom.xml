@@ -3,6 +3,8 @@
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.core.ice.base</artifactId>
 	<name>OpenSCADA-Core-Ice-Base</name>
+	<packaging>bundle</packaging>
+	<description/>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
@@ -13,6 +15,7 @@
 	
 	<properties>
 		<ice.version>3.3</ice.version>
+		<bundle.namespace>org.openscada.core.ice</bundle.namespace>
 	</properties>
 
 	<scm>
@@ -55,6 +58,38 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/dependencies</outputDirectory>
+							<includeArtifactIds>Ice</includeArtifactIds>
+							<stripVersion>true</stripVersion>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+		        <artifactId>maven-bundle-plugin</artifactId>
+		        <extensions>true</extensions>
+		        <configuration>
+		        	<manifestLocation>META-INF</manifestLocation>
+		        	<instructions>
+		        		<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}",OpenSCADA.Core;version="${pom.version}"</Export-Package>
+		        		<Import-Package>OpenSCADA.*,org.openscada.*,*;resolution:=optional</Import-Package>
+		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
+						<Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+		        	</instructions>
+		        </configuration>
 			</plugin>
 		</plugins>
 	</build>
