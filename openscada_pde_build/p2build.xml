@@ -104,9 +104,6 @@
         		<arg value="@{root}"/>
         		<arg value="-rootVersion"/>
         		<arg value="@{rootVersion}"/>
-        		
-        		<arg value="-p2.os"/>
-    			<arg value="linux"/>
 			</java>
         	
         </sequential>
