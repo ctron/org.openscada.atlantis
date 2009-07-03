@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     OpenSCADA Atlantis
+                   
+     Jens Reimann
+     ====================================================================== -->
+<project name="OpenSCADA" default="default" xmlns:antelope="openscada:/antelope">
+    <description>
+            OpenSCADA
+    </description>
+	
+	<property environment="env" />
+	<property file="config/local.properties"/>
+
+	<property name="eclipse.home" value="/home/user/eclipse"/>
+	<property name="eclipse.launcher.version" value="_1.0.100.v20080509-1800"/>
+	<property name="startup" value="${eclipse.home}/plugins/org.eclipse.equinox.launcher${eclipse.launcher.version}.jar"/>
+	<property name="build.dir" value="${java.io.tmpdir}/p2build"/>
+	<property name="deploy.dir" value="${java.io.tmpdir}/p2deploy"/>
+	
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="init, clean, build, deploy" description="--> The OpenSCADA RCP Client">
+    </target>
+	
+	<target name="init">
+		<tstamp/>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${build.dir}" failonerror="false"/>
+		<delete dir="${deploy.dir}" failonerror="false"/>
+	</target>
+	
+	<target name="build" depends="init">
+		<property name="file" location="${build.dir}/all.zip"/>
+		
+		<mkdir dir="${build.dir}"/>
+		<get usetimestamp="true" src="http://download.openscada.org/atlantis/integration/2009-07-01_19-01-13/org.openscada.atlantis-0.13.0-SNAPSHOT-all.zip" dest="${file}" />
+		<mkdir dir="${build.dir}/unpack/plugins"/>
+		<unzip src="${file}" dest="${build.dir}/unpack/plugins">
+			<patternset>
+				<include name="**/*.jar"/>
+			</patternset>
+			<mapper type="flatten"/>
+		</unzip>
+		
+		<mkdir dir="${build.dir}/repo"/>
+		<eclipse.p2 source="${build.dir}/unpack" target="${build.dir}/repo"
+			root="org.openscada" rootVersion="0.0.0"/>
+	</target>
+	
+	<!-- ================================= 
+          target: deploy              
+         ================================= -->
+    <target name="deploy" depends="build" description="Deploy Repository">
+        <mkdir dir="${deploy.dir}"/>
+    	<copy todir="${deploy.dir}">
+    		<fileset dir="${build.dir}/repo">
+    		</fileset>
+    	</copy>
+    </target>
+
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: eclipse.p2          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="eclipse.p2">
+    	<attribute name="source"/>
+    	<attribute name="target"/>
+    	<attribute name="root"/>
+    	<attribute name="rootVersion"/>
+        <sequential>
+        	<java jar="${startup}" failonerror="true" maxmemory="1024m" fork="true">
+	    		<jvmarg value="-XX:MaxPermSize=256m"/>
+	    		
+				<arg value="-application" />
+			    <arg value="org.eclipse.equinox.p2.metadata.generator.EclipseGenerator" />
+        		
+        		<arg value="-console"/>
+        		<arg value="-consoleLog"/>
+        		
+        		<arg value="-source"/>
+        		<arg value="@{source}"/>
+
+				<arg value="-metadataRepository"/>
+        		<arg value="file://@{target}"/>
+        		
+        		<arg value="-artifactRepository"/>
+        		<arg value="file://@{target}"/>
+        		
+        		<arg value="-publishArtifacts"/>
+        		<arg value="-publishArtifactRepository"/>
+        		
+        		<arg value="-root"/>
+        		<arg value="@{root}"/>
+        		<arg value="-rootVersion"/>
+        		<arg value="@{rootVersion}"/>
+			</java>
+        	
+        </sequential>
+    </macrodef>
+
+</project>
