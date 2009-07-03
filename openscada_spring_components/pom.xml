@@ -2,8 +2,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.spring.components</artifactId>
-	<packaging>jar</packaging>
-	<name>OpenSCADA-DA-Server-Exporter</name>
+	<name>OpenSCADA-Spring-Components</name>
+	<packaging>bundle</packaging>
+	<description/>
+
+	<properties>
+		<bundle.namespace>org.openscada.spring.client</bundle.namespace>
+	</properties>
 
 	<parent>
 		<artifactId>org.openscada.atlantis</artifactId>
@@ -38,6 +43,7 @@
 		<dependency>
 			<groupId>org.junit</groupId>
 			<artifactId>com.springsource.org.junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
