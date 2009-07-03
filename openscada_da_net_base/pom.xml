@@ -27,11 +27,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
-			<artifactId>org.openscada.da.server.common</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openscada.atlantis</groupId>
 			<artifactId>org.openscada.core.net.base</artifactId>
 			<version>${project.version}</version>
 		</dependency>
