@@ -23,6 +23,25 @@
 		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_execserver</url>
 	</scm>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+		        <artifactId>maven-bundle-plugin</artifactId>
+		        <extensions>true</extensions>
+		        <configuration>
+		        	<manifestLocation>META-INF</manifestLocation>
+		        	<instructions>
+		        		<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,org.openscada.common.*;version="${pom.version}",org.openscada.da.hive.*;version="${pom.version}",${bundle.namespace}.*;version="${pom.version}"</Export-Package>
+		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
+		        		<Include-Resource>target/generated-classes/xmlbeans/</Include-Resource>	        		
+		        	</instructions>
+		        </configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
