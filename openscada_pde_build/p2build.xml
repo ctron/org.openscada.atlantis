@@ -17,7 +17,7 @@
 	<property name="eclipse.launcher.version" value="_1.0.100.v20080509-1800"/>
 	<property name="startup" value="${eclipse.home.dir}/plugins/org.eclipse.equinox.launcher${eclipse.launcher.version}.jar"/>
 	<property name="build.dir" value="${java.io.tmpdir}/p2build"/>
-	<property name="deploy.dir" value="${java.io.tmpdir}/p2deploy"/>
+	<property name="deploy.repo.dir" value="${java.io.tmpdir}/p2deploy"/>
 	
     <!-- ================================= 
           target: default              
@@ -31,7 +31,7 @@
 	
 	<target name="clean">
 		<delete dir="${build.dir}" failonerror="false"/>
-		<delete dir="${deploy.dir}" failonerror="false"/>
+		<delete dir="${deploy.repo.dir}" failonerror="false"/>
 	</target>
 	
 	<target name="build" depends="init">
@@ -56,8 +56,8 @@
           target: deploy              
          ================================= -->
     <target name="deploy" depends="build" description="Deploy Repository">
-        <mkdir dir="${deploy.dir}"/>
-    	<copy todir="${deploy.dir}">
+        <mkdir dir="${deploy.repo.dir}"/>
+    	<copy todir="${deploy.repo.dir}">
     		<fileset dir="${build.dir}/repo">
     		</fileset>
     	</copy>
