@@ -40,7 +40,7 @@
 		<mkdir dir="${build.dir}"/>
 		<get usetimestamp="true" src="http://download.openscada.org/atlantis/integration/2009-07-01_19-01-13/org.openscada.atlantis-0.13.0-SNAPSHOT-all.zip" dest="${file}" />
 		<mkdir dir="${build.dir}/unpack/plugins"/>
-		<unzip src="${file}" dest="${build.dir}/unpack/plugins">
+		<unzip src="${file}" dest="${build.dir}/unpack/plugins" overwrite="true">
 			<patternset>
 				<include name="**/*.jar"/>
 			</patternset>
@@ -88,6 +88,12 @@
 				<arg value="-metadataRepository"/>
         		<arg value="file://@{target}"/>
         		
+        		<arg value="-metadataRepositoryName"/>
+        		<arg value="OpenSCADA Base Repository"/>
+        		
+        		<arg value="-artifactRepositoryName"/>
+        		<arg value="OpenSCADA Base Repository"/>
+        			
         		<arg value="-artifactRepository"/>
         		<arg value="file://@{target}"/>
         		
