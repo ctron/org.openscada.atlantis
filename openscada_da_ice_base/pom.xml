@@ -3,7 +3,13 @@
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.da.ice.base</artifactId>
 	<name>OpenSCADA-DA-Ice-Base</name>
+	<packaging>bundle</packaging>
+	<description/>
 
+	<properties>
+		<bundle.namespace>org.openscada.da.ice</bundle.namespace>
+	</properties>
+	
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
 		<artifactId>org.openscada.atlantis</artifactId>
@@ -51,6 +57,19 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+		        <artifactId>maven-bundle-plugin</artifactId>
+		        <extensions>true</extensions>
+		        <configuration>
+		        	<manifestLocation>META-INF</manifestLocation>
+		        	<instructions>
+		        		<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}",OpenSCADA.DA.*;version="${pom.version}"</Export-Package>
+		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
+		        	</instructions>
+		        </configuration>
 			</plugin>
 		</plugins>
 	</build>
