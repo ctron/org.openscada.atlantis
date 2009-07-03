@@ -23,7 +23,8 @@
 	
 	<!-- eclipse stuff -->
 	
-	<property name="eclipse.home.base" value="${env.WORKSPACE}"/>
+	<property name="eclipse.home.base" value="${env.WORKSPACE}/eclipse"/>
+	
 	<!-- eclipse.home.dir may not be changed -->
 	<property name="eclipse.home.dir" value="${eclipse.home.base}/eclipse"/>
 	
