@@ -3,6 +3,12 @@
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.da.server.sysinfo</artifactId>
 	<name>OpenSCADA-DA-Server-Sysinfo</name>
+	<packaging>bundle</packaging>
+	<description/>
+
+	<properties>
+		<bundle.namespace>org.openscada.da.server.sysinfo</bundle.namespace>
+	</properties>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
