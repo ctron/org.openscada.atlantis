@@ -18,4 +18,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.openscada.da.client.samples.Sample3"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="da:net://localhost:1202&#10;org.openscada.da.client.net.Connection"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="openscada_da_client_samples"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.maven.ide.eclipse.launchconfig.sourcepathProvider"/>
 </launchConfiguration>
