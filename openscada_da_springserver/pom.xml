@@ -3,6 +3,12 @@
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.da.server.spring</artifactId>
 	<name>OpenSCADA-DA-Server-Spring</name>
+	<packaging>bundle</packaging>
+	<description/>
+
+	<properties>
+		<bundle.namespace>org.openscada.da.server.spring</bundle.namespace>
+	</properties>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
@@ -17,6 +23,26 @@
 		<url>http://pubsvn.inavare.net/openscada/modules/atlantis/trunk/openscada_da_springserver</url>
 	</scm>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+		        <artifactId>maven-bundle-plugin</artifactId>
+		        <extensions>true</extensions>
+		        <inherited>true</inherited>
+		        <configuration>
+		        	<manifestLocation>META-INF</manifestLocation>
+		        	<instructions>
+		        		<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}"</Export-Package>
+		        		<Import-Package>au.com.bytecode.opencsv.*;resolution:=optional,org.openscada.*,org.apache.commons.beanutils.*,org.apache.log4j*,,org.springframework.*</Import-Package>
+		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
+		        	</instructions>
+		        </configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
@@ -36,7 +62,6 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>com.springsource.org.apache.commons.beanutils</artifactId>
-			<version>1.7.0</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
