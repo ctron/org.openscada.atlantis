@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.4"?>
 
-<product name="OpenSCADA Test Client" id="org.openscada.rcp.client.product" application="org.openscada.rcp.client.application" version="0.12.0" useFeatures="true">
+<product name="OpenSCADA Test Client" id="org.openscada.rcp.client.product" application="org.openscada.rcp.client.application" version="0.13.0" useFeatures="true">
 
    <aboutInfo>
       <image path="about.png"/>
