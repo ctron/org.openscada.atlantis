@@ -9,9 +9,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.draw2d,
  ext_plugin_xmlbeans,
- org.openscada.da.client,
- org.openscada.external.org.apache.log4j;bundle-version="1.2.15"
+ org.openscada.da.client
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: schemasrc/,
  .
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Import-Package: org.apache.log4j
