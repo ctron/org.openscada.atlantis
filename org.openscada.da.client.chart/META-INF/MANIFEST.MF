@@ -9,8 +9,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  ext_plugin_jfreechart,
  org.openscada.da.client;bundle-version="0.13.0",
- org.openscada.da.client.base;bundle-version="0.13.0",
- org.openscada.external.org.apache.log4j;bundle-version="1.2.15"
+ org.openscada.da.client.base;bundle-version="0.13.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Localization: plugin
+Import-Package: org.apache.log4j
