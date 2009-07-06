@@ -4,9 +4,9 @@
                    
      Jens Reimann
      ====================================================================== -->
-<project name="OpenSCADA" default="default" xmlns:antelope="openscada:/antelope">
+<project name="OpenSCADA P2 Repository" default="default" xmlns:antelope="openscada:/antelope">
     <description>
-            OpenSCADA
+            OpenSCADA P2 Repository
     </description>
 	
 	<property environment="env" />
@@ -36,19 +36,35 @@
 	
 	<target name="build" depends="init">
 		<property name="file" location="${build.dir}/all.zip"/>
-		
+			
 		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${build.dir}/repo"/>
+			
 		<get usetimestamp="true" src="http://download.openscada.org/atlantis/integration/latest/org.openscada.atlantis-${build.version.maven}-all.zip" dest="${file}" />
 		<mkdir dir="${build.dir}/unpack/plugins"/>
+			
+		<!-- generate externals -->
+			<delete dir="${build.dir}/unpack/plugins" failonerror="false"/>
 		<unzip src="${file}" dest="${build.dir}/unpack/plugins" overwrite="true">
 			<patternset>
-				<include name="**/*.jar"/>
+				<include name="**/lib/*.jar"/>
 			</patternset>
 			<mapper type="flatten"/>
 		</unzip>
 		
-		<mkdir dir="${build.dir}/repo"/>
-		<eclipse.p2 source="${build.dir}/unpack" target="${build.dir}/repo"
+		<eclipse.p2generator source="${build.dir}/unpack" target="${build.dir}/repo"
+			root="org.openscada.externals" rootVersion="${build.version.osgi}"/>
+	
+		<!-- generate externals -->
+		<delete dir="${build.dir}/unpack/plugins" failonerror="false"/>
+		<unzip src="${file}" dest="${build.dir}/unpack/plugins" overwrite="true">
+			<patternset>
+				<include name="**/bin/*.jar"/>
+			</patternset>
+			<mapper type="flatten"/>
+		</unzip>
+		
+		<eclipse.p2generator source="${build.dir}/unpack" target="${build.dir}/repo"
 			root="org.openscada" rootVersion="${build.version.osgi}"/>
 	</target>
 	
@@ -65,9 +81,9 @@
 
 	
 	<!-- = = = = = = = = = = = = = = = = =
-          macrodef: eclipse.p2          
+          macrodef: eclipse.p2generator          
          = = = = = = = = = = = = = = = = = -->
-    <macrodef name="eclipse.p2">
+    <macrodef name="eclipse.p2generator">
     	<attribute name="source"/>
     	<attribute name="target"/>
     	<attribute name="root"/>
@@ -104,6 +120,53 @@
         		<arg value="@{root}"/>
         		<arg value="-rootVersion"/>
         		<arg value="@{rootVersion}"/>
+
+				<arg value="-append"/>
+			</java>
+        	
+        </sequential>
+    </macrodef>
+
+<!-- = = = = = = = = = = = = = = = = =
+          macrodef: eclipse.p2publisher          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="eclipse.p2publisher">
+    	<attribute name="source"/>
+    	<attribute name="target"/>
+    	<attribute name="root"/>
+    	<attribute name="rootVersion" />
+        <sequential>
+        	<java jar="${startup}" failonerror="true" maxmemory="1024m" fork="true">
+	    		<jvmarg value="-XX:MaxPermSize=256m"/>
+	    		
+				<arg value="-application" />
+			    <arg value="org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher" />
+
+        		<arg value="-console"/>
+        		<arg value="-consoleLog"/>
+        		
+        		<arg value="-source"/>
+        		<arg value="@{source}"/>
+
+				<arg value="-metadataRepository"/>
+        		<arg value="file://@{target}"/>
+        		
+        		<arg value="-metadataRepositoryName"/>
+        		<arg value="OpenSCADA Base Repository"/>
+        		
+        		<arg value="-artifactRepositoryName"/>
+        		<arg value="OpenSCADA Base Repository"/>
+        			
+        		<arg value="-artifactRepository"/>
+        		<arg value="file://@{target}"/>
+        		
+        		<arg value="-publishArtifacts"/>
+        		<arg value="-root"/>
+        		<arg value="@{root}"/>
+        		<arg value="-rootVersion"/>
+        		<arg value="@{rootVersion}"/>
+
+				<arg value="-append"/>
 			</java>
         	
         </sequential>
