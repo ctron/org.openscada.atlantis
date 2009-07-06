@@ -7,7 +7,7 @@
       plugin="org.openscada.rcp.client">
 
    <description url="http://openscada.org">
-      The OpenSCADA RCP Client Feature
+      The OpenSCADA Test Client Feature
    </description>
 
    <copyright url="http://www.gnu.org/licenses/lgpl.txt">
@@ -496,6 +496,10 @@ DAMAGES.
       <update label="OpenSCADA RCP Client" url="http://openscada.org/ostc"/>
    </url>
 
+   <includes
+         id="org.eclipse.rcp"
+         version="0.0.0"/>
+
    <plugin
          id="org.openscada.rcp.client"
          download-size="0"
@@ -525,19 +529,6 @@ DAMAGES.
 
    <plugin
          id="org.eclipse.ui.forms"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="ext_plugin_xmlbeans"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.draw2d"
          download-size="0"
          install-size="0"
          version="0.0.0"
