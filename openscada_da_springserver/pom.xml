@@ -35,7 +35,7 @@
 		        	<instructions>
 		        		<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}"</Export-Package>
-		        		<Import-Package>au.com.bytecode.opencsv.*;resolution:=optional,org.openscada.*,org.apache.commons.beanutils.*,org.apache.log4j*,,org.springframework.*</Import-Package>
+		        		<Import-Package>au.com.bytecode.opencsv.*;resolution:=optional,org.openscada.*,org.apache.commons.beanutils.*,org.apache.log4j*,org.springframework.*,org.openscada.da.server.*</Import-Package>
 		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
 		        	</instructions>
 		        </configuration>
