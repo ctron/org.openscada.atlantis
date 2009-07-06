@@ -80,8 +80,10 @@
     <target name="publish" depends="check" description="Publish">
     	
     	<!-- make latest link -->
-    	<delete file="${publish.base}/atlantis/${publish.type}/latest"/>
-    	
+    	<exec executable="rm">
+    		<arg value="-f"/>
+    		<arg value="${publish.base}/atlantis/${publish.type}/latest"/>
+    	</exec>    	
     	<exec executable="ln">
     		<arg value="-f"/>
     		<arg value="${publish.base}/atlantis/${publish.type}/${publish.id}"/>
