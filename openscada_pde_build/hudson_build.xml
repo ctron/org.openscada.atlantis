@@ -40,7 +40,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: init                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="init">
+    <target name="init" depends="check">
     	<echo message="Build type: ${publish.type}"/>
     	<echo message="Eclipse Target: ${eclipse.home.dir}"/>
     	
