@@ -22,8 +22,6 @@
 	<property name="configs" value="win32,win32,x86&amp;linux,gtk,x86&amp;linux,gtk,x86_64&amp;macosx,carbon,ppc&amp;solaris,gtk,sparc"/>
 	<property name="buildType" value="I"/>
 	<property name="buildId" value="AutoBuild"/>
-	<property name="version" value="0.12"/>
-	<property name="release" value=".0"/>
 	<property name="maven.repository" value="http://repo.openscada.org/maven2"/>
 	
 	<property name="deploy.dir" location="${deploy.base}/deploy"/>
@@ -56,8 +54,7 @@
 		<delete dir="nsis.out"/>
 		<mkdir dir="nsis.out"/>
 		<exec failonerror="true" executable="makensis">
-			<arg value="-DVERSION=${version}"/>
-			<arg value="-DRELEASE=${release}"/>
+       		<arg value="-DVERSION=${build.version.osgi}"/>
 			<arg value="-DDEPLOY=nsis.build"/>
 			<arg value="-DMEDIA=media"/>
 			<arg value="-DOUT=nsis.out"/>
@@ -100,8 +97,8 @@
         		
         		<!-- pass on -->
         		<arg value="-Dlibfile=${libfile}"/>
-        		<arg value="-Dversion=${version}"/>
-        		<arg value="-Drelease=${release}"/>
+        		<arg value="-Dbuild.version.osgi=${build.version.osgi}"/>
+        		<arg value="-Dbuild.version.maven=${build.version.maven}"/>
         		<arg value="-Dmaven.repository=${maven.repository}"/>
         		<arg value="-Dmaven.local.repository=${maven.local.repository}"/>
 			</java>
@@ -139,8 +136,8 @@
 	    		
         		<!-- pass on -->
         		<arg value="-Dlibfile=${libfile}"/>
-        		<arg value="-Dversion=${version}"/>
-        		<arg value="-Drelease=${release}"/>
+           		<arg value="-Dbuild.version.osgi=${build.version.osgi}"/>
+           		<arg value="-Dbuild.version.maven=${build.version.maven}"/>
         		<arg value="-Dmaven.repository=${maven.repository}"/>
         		<arg value="-Dmaven.local.repository=${maven.local.repository}"/>
 			</java>
