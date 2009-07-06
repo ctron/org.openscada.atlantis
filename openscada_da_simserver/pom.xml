@@ -56,7 +56,7 @@
 		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,org.openscada.da.simulation.*;version="${pom.version}",${bundle.namespace}.*;version="${pom.version}"</Export-Package>
 		        		<Import-Package>org.openscada.*,*;resolution:=optional</Import-Package>
 		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
-						<Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+						<Embed-Dependency>jOpenDocument;scope=compile|runtime,jxl;scope=compile|runtime</Embed-Dependency>
 		        		<Include-Resource>target/generated-classes/xmlbeans</Include-Resource>	        		
 		        	</instructions>
 		        </configuration>
