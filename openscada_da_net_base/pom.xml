@@ -32,6 +32,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
+			<artifactId>org.openscada.core.net.base</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openscada.atlantis</groupId>
 			<artifactId>org.openscada.net.base</artifactId>
 			<version>${project.version}</version>
 		</dependency>
