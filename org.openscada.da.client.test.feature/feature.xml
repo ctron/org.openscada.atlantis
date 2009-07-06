@@ -331,11 +331,29 @@ POSSIBILITY OF SUCH DAMAGES.
       <import plugin="org.eclipse.osgi" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.core.runtime" version="3.1.0" match="compatible"/>
       <import plugin="org.eclipse.update.configurator" version="3.1.0" match="compatible"/>
+      <import plugin="ext_plugin_xmlbeans"/>
       <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.help" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.ui" version="3.2.0" match="compatible"/>
-      <import plugin="ext_plugin_xmlbeans"/>
-      <import plugin="org.eclipse.draw2d"/>
+      <import plugin="org.openscada.da.client.base" version="0.10.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.external.org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.net" version="1.0.0" match="compatible"/>
+      <import plugin="org.apache.mina" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.external.org.slf4j" version="1.5.6" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.3.0" match="compatible"/>
+      <import plugin="org.openscada.da.client" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.base" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.draw2d" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client" version="0.8.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views" version="3.3.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.base" version="0.10.2" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client" version="0.10.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding.beans" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.databinding" version="1.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.swt" version="3.2.0" match="compatible"/>
+      <import plugin="com.ibm.icu"/>
    </requires>
 
    <plugin
@@ -480,6 +498,13 @@ POSSIBILITY OF SUCH DAMAGES.
 
    <plugin
          id="org.apache.mina"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.draw2d"
          download-size="0"
          install-size="0"
          version="0.0.0"
