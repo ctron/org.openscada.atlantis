@@ -30,8 +30,6 @@
 	<property name="eclipse.home.dir" value="${eclipse.home.base}/eclipse"/>
 	<property name="eclipse.builder.version" value="_3.4.0.v20080604"/>
 	<property name="eclipse.launcher.version" value="_1.0.100.v20080509-1800"/>
-
-	<available file="${eclipse.home}" property="haveEclipse"/>
 	
 	<!-- ================================= 
           target: default              
