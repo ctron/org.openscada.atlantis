@@ -49,7 +49,7 @@
 		
 		<mkdir dir="${build.dir}/repo"/>
 		<eclipse.p2 source="${build.dir}/unpack" target="${build.dir}/repo"
-			root="org.openscada" rootVersion="0.0.0"/>
+			root="org.openscada" rootVersion="${build.version.osgi}"/>
 	</target>
 	
 	<!-- ================================= 
