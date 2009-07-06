@@ -34,8 +34,8 @@
     <target name="genjar-maven" depends="" description="--> Generate the JAR file" if="use.maven.dependencies">
 		<openscada.pde.import-module.init/>
     	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.aurora.utils" groupid="org.openscada.aurora" groupIdBase="org.openscada" version="0.13.0-SNAPSHOT"/>
-    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.core.server" groupid="org.openscada.atlantis" groupIdBase="org.openscada"  version="${version}${release}"/>
-    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.client.common" groupid="org.openscada.atlantis" groupIdBase="org.openscada"  version="${version}${release}"/>
+    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.core.server" groupid="org.openscada.atlantis" groupIdBase="org.openscada"  version="${build.version.maven}"/>
+    	<openscada.pde.import-module.add-maven-dependency artifactid="org.openscada.atlantis.da.client.common" groupid="org.openscada.atlantis" groupIdBase="org.openscada"  version="${build.version.maven}"/>
 		<openscada.pde.import-module.finalize destfile="${libjar}"/>
     </target>
 
