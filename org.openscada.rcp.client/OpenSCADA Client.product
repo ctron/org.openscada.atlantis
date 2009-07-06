@@ -49,7 +49,6 @@
       <feature id="org.openscada.da.client.test" version="0.13.0"/>
       <feature id="org.openscada.da.ice.client" version="0.13.0"/>
       <feature id="org.openscada.da.net.client" version="0.13.0"/>
-      <feature id="org.eclipse.rcp" version="3.4.0.v20080324a-989JERhEk-jWnd5IY8K5tjxB"/>
    </features>
 
 </product>
