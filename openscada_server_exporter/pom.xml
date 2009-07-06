@@ -3,7 +3,13 @@
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.da.server.exporter</artifactId>
 	<name>OpenSCADA-DA-Server-Exporter</name>
-
+	<packaging>bundle</packaging>
+	<description />
+	
+	<properties>
+		<bundle.namespace>org.openscada.da.server.exporter</bundle.namespace>
+	</properties>
+	
 	<parent>
 		<artifactId>org.openscada.atlantis</artifactId>
 		<groupId>org.openscada.atlantis</groupId>
