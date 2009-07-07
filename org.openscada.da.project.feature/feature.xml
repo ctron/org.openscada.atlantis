@@ -22,6 +22,18 @@
       <update label="OpenSCADA IDE Update Site" url="http://openscada.org/ide/update_site"/>
    </url>
 
+   <includes
+         id="org.openscada.da.client"
+         version="0.0.0"/>
+
+   <includes
+         id="org.openscada.da.ice.client"
+         version="0.0.0"/>
+
+   <includes
+         id="org.openscada.da.net.client"
+         version="0.0.0"/>
+
    <plugin
          id="ext_plugin_icej"
          download-size="0"
@@ -34,13 +46,6 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-
-   <plugin
-         id="org.openscada.da.client"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="org.openscada.da.project"
@@ -58,13 +63,6 @@
 
    <plugin
          id="org.openscada.da.client.connection.manager.view"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.external.org.apache.log4j"
          download-size="0"
          install-size="0"
          version="0.0.0"
