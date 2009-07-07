@@ -33,6 +33,7 @@
     </target>
 
     <target name="genjar-maven" depends="" description="--> Generate the JAR file" if="use.maven.dependencies">
+    	<!--
 		<openscada.pde.import-module.init/>
 		<openscada.pde.import-module.add-maven-dependency groupid="org.openscada.atlantis" groupIdBase="org.openscada" artifactid="org.openscada.atlantis.da.server.net" version="${build.version.maven}"/>
 		<openscada.pde.import-module.add-maven-dependency groupid="org.openscada.atlantis" groupIdBase="org.openscada" artifactid="org.openscada.atlantis.da.server.simulation" version="${build.version.maven}"/>
@@ -41,6 +42,7 @@
 		<openscada.pde.import-module.add-maven-dependency groupid="org.openscada.atlantis" groupIdBase="org.openscada" artifactid="org.openscada.atlantis.da.server.net" version="${build.version.maven}"/>
 		<openscada.pde.import-module.add-maven-dependency groupid="org.openscada.atlantis" groupIdBase="org.openscada" artifactid="org.openscada.atlantis.da.server.test" version="${build.version.maven}"/>		
 		<openscada.pde.import-module.finalize destfile="openscada_net_server_test.jar"/>
+		-->
     </target>
 
 </project>
