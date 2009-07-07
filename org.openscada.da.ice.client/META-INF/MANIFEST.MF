@@ -2,19 +2,18 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Client ICE Connector
 Bundle-SymbolicName: org.openscada.da.ice.client;singleton:=true
-Bundle-Version: 0.13.1
-Bundle-ClassPath: lib.jar,
- Ice.jar,
- .
+Bundle-Version: 0.13.2
+Bundle-ClassPath: .
 Bundle-Vendor: inavare GmbH
-Export-Package: OpenSCADA.Core,
- OpenSCADA.DA,
- OpenSCADA.DA.Browser,
- org.openscada.da.client.ice,
- org.openscada.da.ice
-Require-Bundle: org.openscada.da.client;bundle-version="0.13.0",
- org.openscada.external.org.apache.log4j;bundle-version="1.2.15",
- org.openscada.external.org.slf4j;bundle-version="1.5.6"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
+Require-Bundle: org.openscada.core.client.common;bundle-version="0.13.0",
+ org.openscada.core.common;bundle-version="0.13.0",
+ org.openscada.core.ice.base;bundle-version="0.13.0",
+ org.openscada.da.client.base;bundle-version="0.13.2",
+ org.openscada.da.client.common;bundle-version="0.13.0",
+ org.openscada.da.client.connector;bundle-version="0.13.3",
+ org.openscada.da.core.common;bundle-version="0.13.0",
+ org.openscada.da.ice.base;bundle-version="0.13.0",
+ org.openscada.da.client.ice;bundle-version="0.13.0"
 

@@ -19,7 +19,7 @@
 
 package org.openscada.da.client.ice;
 
-public class ConnectorLoader implements org.openscada.da.client.ConnectorLoader
+public class ConnectorLoader implements org.openscada.da.client.connector.ConnectorLoader
 {
 
     public void load ()
