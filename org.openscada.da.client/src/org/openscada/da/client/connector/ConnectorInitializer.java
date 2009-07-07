@@ -1,4 +1,4 @@
-package org.openscada.da.client;
+package org.openscada.da.client.connector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;

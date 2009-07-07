@@ -1,11 +1,10 @@
-package org.openscada.da.client;
+package org.openscada.da.client.connector;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
-import org.openscada.da.client.connector.ConnectorHelper;
 import org.osgi.framework.BundleContext;
 
 public class Activator extends Plugin
