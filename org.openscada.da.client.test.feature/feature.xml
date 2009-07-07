@@ -323,32 +323,40 @@ POSSIBILITY OF SUCH DAMAGES.
       <discovery label="OpenSCADA Update Site" url="http://openscada.de/ostc"/>
    </url>
 
+   <includes
+         id="org.openscada.da.client"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="org.eclipse.rcp"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.openscada.da.client.base" version="0.10.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.client.common" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.common" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.common" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.core.common" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.connector" version="0.13.3" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.common" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.osgi" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.core.runtime" version="3.1.0" match="compatible"/>
+      <import plugin="org.eclipse.core.runtime" version="3.4.0" match="compatible"/>
       <import plugin="org.eclipse.update.configurator" version="3.1.0" match="compatible"/>
+      <import plugin="org.eclipse.core.net" version="1.0.0" match="compatible"/>
       <import plugin="ext_plugin_xmlbeans"/>
       <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.help" version="3.2.0" match="compatible"/>
-      <import plugin="org.openscada.da.client.base" version="0.10.0" match="greaterOrEqual"/>
-      <import plugin="org.openscada.external.org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.net" version="1.0.0" match="compatible"/>
-      <import plugin="org.apache.mina" version="2.0.0" match="greaterOrEqual"/>
-      <import plugin="org.openscada.external.org.slf4j" version="1.5.6" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.3.0" match="compatible"/>
-      <import plugin="org.openscada.da.client" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.base" version="0.13.2" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.ice.base" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.ice.base" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.ice" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.net" version="0.13.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.da.client.base" version="0.13.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.draw2d" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.openscada.da.client" version="0.8.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.4.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.views" version="3.3.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.da.client.base" version="0.10.2" match="greaterOrEqual"/>
-      <import plugin="org.openscada.da.client" version="0.10.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.databinding" version="1.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.databinding.beans" version="1.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface.databinding" version="1.2.0" match="greaterOrEqual"/>
@@ -427,13 +435,6 @@ POSSIBILITY OF SUCH DAMAGES.
          unpack="false"/>
 
    <plugin
-         id="org.openscada.da.client"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.openscada.da.client.chart"
          download-size="0"
          install-size="0"
@@ -476,13 +477,6 @@ POSSIBILITY OF SUCH DAMAGES.
          unpack="false"/>
 
    <plugin
-         id="org.openscada.external.org.apache.log4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.openscada.da.client.signalGenerator"
          download-size="0"
          install-size="0"
@@ -490,21 +484,21 @@ POSSIBILITY OF SUCH DAMAGES.
          unpack="false"/>
 
    <plugin
-         id="org.openscada.external.org.slf4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.apache.mina"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.draw2d"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.springsource.org.apache.log4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.springsource.javax.jms"
          download-size="0"
          install-size="0"
          version="0.0.0"
