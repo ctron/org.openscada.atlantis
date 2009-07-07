@@ -18,4 +18,6 @@ Require-Bundle: com.springsource.org.apache.xmlbeans;bundle-version="2.4.0",
  org.openscada.da.core.common;bundle-version="0.13.0",
  org.openscada.da.core.server;bundle-version="0.13.0",
  org.openscada.da.server.net;bundle-version="0.13.0",
- org.openscada.da.server.common;bundle-version="0.13.0"
+ org.openscada.da.server.common;bundle-version="0.13.0",
+ org.openscada.da.server.simulation;bundle-version="0.13.0",
+ org.openscada.da.server.test;bundle-version="0.13.0"
