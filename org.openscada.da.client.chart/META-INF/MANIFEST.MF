@@ -2,14 +2,17 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Client Chart
 Bundle-SymbolicName: org.openscada.da.client.chart;singleton:=true
-Bundle-Version: 0.13.0
+Bundle-Version: 0.13.1
 Bundle-Activator: org.openscada.da.client.chart.Activator
 Bundle-Vendor: inavare GmbH
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  ext_plugin_jfreechart,
- org.openscada.da.client;bundle-version="0.13.0",
- org.openscada.da.client.base;bundle-version="0.13.0"
+ org.openscada.da.client.base;bundle-version="0.13.0",
+ org.openscada.core.client.common;bundle-version="0.13.0",
+ org.openscada.core.common;bundle-version="0.13.0",
+ org.openscada.da.client.common;bundle-version="0.13.0",
+ org.openscada.da.core.common;bundle-version="0.13.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Localization: plugin
