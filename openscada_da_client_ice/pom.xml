@@ -3,6 +3,11 @@
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.da.client.ice</artifactId>
 	<name>OpenSCADA-DA-Client-Ice</name>
+	<packaging>bundle</packaging>
+	
+	<properties>
+		<bundle.namespace>org.openscada.da.client.ice</bundle.namespace>
+	</properties>
 
 	<parent>
 		<groupId>org.openscada.atlantis</groupId>
