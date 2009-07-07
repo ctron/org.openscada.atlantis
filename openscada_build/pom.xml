@@ -260,7 +260,16 @@
 						<artifactId>slf4j-api</artifactId>
 						<groupId>org.slf4j</groupId>
 					</exclusion>
+					<exclusion>
+						<groupId>com.jcraft</groupId>
+						<artifactId>jzlib</artifactId>
+					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.jcraft.jzlib</groupId>
+				<artifactId>com.springsource.com.jcraft.jzlib</artifactId>
+				<version>1.0.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
