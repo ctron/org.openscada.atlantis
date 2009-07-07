@@ -23,9 +23,9 @@ import java.util.concurrent.Executors;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.AutoReconnectController;
-import org.openscada.da.client.Activator;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;
+import org.openscada.da.client.connector.Activator;
 
 public class AutoReconnectEntryBuilder implements EntryBuilder
 {

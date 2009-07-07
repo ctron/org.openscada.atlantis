@@ -3,7 +3,7 @@ package org.openscada.da.client.base.browser;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.da.client.Activator;
+import org.openscada.da.client.connector.Activator;
 
 /**
  * value types used for visual input purposes

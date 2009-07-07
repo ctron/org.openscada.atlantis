@@ -22,9 +22,9 @@ package org.openscada.da.client.base.connection;
 import java.util.concurrent.Executors;
 
 import org.openscada.core.ConnectionInformation;
-import org.openscada.da.client.Activator;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;
+import org.openscada.da.client.connector.Activator;
 
 /**
  * Build a simple connection
