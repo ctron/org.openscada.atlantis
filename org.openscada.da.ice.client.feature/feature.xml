@@ -496,10 +496,15 @@ DAMAGES.
    </url>
 
    <requires>
+      <import plugin="org.openscada.core.client.common" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.common" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.base" version="0.13.2" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.common" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.connector" version="0.13.3" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.core.common" version="0.13.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.views" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.openscada.external.org.slf4j"/>
+      <import plugin="org.openscada.utils" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi"/>
    </requires>
 
    <plugin
@@ -510,14 +515,49 @@ DAMAGES.
          unpack="false"/>
 
    <plugin
-         id="org.openscada.da.client"
+         id="org.openscada.da.client.connector"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.openscada.external.org.apache.log4j"
+         id="com.springsource.org.apache.log4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.core.ice.base"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.client.ice"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.ice.base"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.springsource.javax.jms"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="slf4j.api"
          download-size="0"
          install-size="0"
          version="0.0.0"
