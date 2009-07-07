@@ -550,14 +550,6 @@ DAMAGES.
          unpack="false"/>
 
    <plugin
-         id="slf4j.log4j12"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
          id="org.openscada.core.client.common"
          download-size="0"
          install-size="0"
@@ -629,13 +621,6 @@ DAMAGES.
 
    <plugin
          id="com.springsource.slf4j.api"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="slf4j.api"
          download-size="0"
          install-size="0"
          version="0.0.0"
