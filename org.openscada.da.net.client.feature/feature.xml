@@ -501,9 +501,6 @@ DAMAGES.
       <import plugin="org.openscada.core.common" version="0.13.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.da.client.net" version="0.13.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="slf4j.api"/>
-      <import plugin="com.springsource.javax.jms"/>
-      <import plugin="com.springsource.slf4j.api"/>
       <import plugin="org.openscada.net.base"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.openscada.utils" version="0.13.0" match="greaterOrEqual"/>
@@ -625,6 +622,27 @@ DAMAGES.
 
    <plugin
          id="org.openscada.utils"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.springsource.javax.jms"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.springsource.slf4j.api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="slf4j.api"
          download-size="0"
          install-size="0"
          version="0.0.0"
