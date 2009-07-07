@@ -91,7 +91,6 @@
       <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
          <newWizardShortcut id="org.openscada.da.client.test.newWizards.NewHive"/>
          <newWizardShortcut id="org.openscada.da.client.test.newWizards.NewWatch"/>
-         <perspectiveShortcut id="org.openscada.ae.client.test.perspective"/>
          <viewShortcut id="org.openscada.da.test.views.RealTimeList"/>
       </perspectiveExtension>
    </extension>
