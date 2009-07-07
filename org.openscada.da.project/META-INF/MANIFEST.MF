@@ -19,12 +19,11 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.4.0",
  org.openscada.da.client.base;bundle-version="0.10.0",
  org.openscada.core.client.common;bundle-version="0.13.0",
  org.openscada.core.common;bundle-version="0.13.0",
- org.openscada.da.client.common;bundle-version="0.13.0"
+ org.openscada.da.client.common;bundle-version="0.13.0",
+ com.springsource.org.apache.xmlbeans;bundle-version="2.4.0"
 Bundle-Vendor: inavare GmbH
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.openscada.da.project.Activator
 Bundle-ClassPath: schemabin/,
- .,
- lib/jsr173_1.0_api.jar,
- lib/xbean.jar
+ .
 Import-Package: org.apache.log4j
