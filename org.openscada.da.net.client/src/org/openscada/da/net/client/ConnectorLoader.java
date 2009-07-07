@@ -1,6 +1,6 @@
 package org.openscada.da.net.client;
 
-public class ConnectorLoader implements org.openscada.da.client.ConnectorLoader
+public class ConnectorLoader implements org.openscada.da.client.connector.ConnectorLoader
 {
 
     public void load ()

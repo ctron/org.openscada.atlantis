@@ -2,23 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Client NET Connector
 Bundle-SymbolicName: org.openscada.da.net.client;singleton:=true
-Bundle-Version: 0.13.0
-Bundle-ClassPath: lib.jar, .
+Bundle-Version: 0.13.1
+Bundle-ClassPath: .
 Bundle-Vendor: inavare GmbH
-Export-Package: org.openscada.core.client.net,
- org.openscada.core.net,
- org.openscada.da.client.net,
- org.openscada.da.client.net.operations,
- org.openscada.da.net.client,
- org.openscada.net.base,
- org.openscada.net.base.data,
- org.openscada.net.base.handlers,
- org.openscada.net.codec,
- org.openscada.net.da.handler,
- org.openscada.net.mina,
- org.openscada.net.utils
-Require-Bundle: org.openscada.da.client;bundle-version="0.13.0",
- org.apache.mina;bundle-version="2.0.0",
- org.openscada.external.org.apache.log4j;bundle-version="1.2.15"
+Export-Package: org.openscada.da.net.client
+Require-Bundle: org.openscada.core.client.common;bundle-version="0.13.0",
+ org.openscada.da.client.connector;bundle-version="0.13.3",
+ org.openscada.core.common;bundle-version="0.13.0",
+ org.openscada.da.client.net;bundle-version="0.13.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
