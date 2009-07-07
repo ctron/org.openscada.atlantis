@@ -5,14 +5,17 @@ Bundle-SymbolicName: org.openscada.da.rcp.LocalTestServer;singleton:=true
 Bundle-Version: 0.13.1
 Bundle-Activator: org.openscada.da.rcp.LocalTestServer.Activator
 Bundle-Vendor: inavare GmbH
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- ext_plugin_xmlbeans,
- org.apache.mina;bundle-version="2.0.0",
- org.openscada.external.org.apache.log4j;bundle-version="1.2.15",
- org.openscada.external.org.slf4j;bundle-version="1.5.6"
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: openscada_net_server_test.jar,
- .,
- openscada_net_server_sim.jar
+Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Import-Package: org.apache.log4j;version="1.2.15"
+Require-Bundle: com.springsource.org.apache.xmlbeans;bundle-version="2.4.0",
+ org.eclipse.core.runtime;bundle-version="3.5.0",
+ org.eclipse.ui;bundle-version="3.5.0",
+ org.openscada.utils;bundle-version="0.13.0",
+ org.openscada.core.common;bundle-version="0.13.0",
+ org.openscada.core.server.common;bundle-version="0.13.0",
+ org.openscada.da.core.common;bundle-version="0.13.0",
+ org.openscada.da.core.server;bundle-version="0.13.0",
+ org.openscada.da.server.net;bundle-version="0.13.0",
+ org.openscada.da.server.common;bundle-version="0.13.0"
