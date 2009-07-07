@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.net.base</artifactId>
@@ -11,7 +13,7 @@
 		<relativePath>../openscada_build</relativePath>
 		<version>0.13.0-SNAPSHOT</version>
 	</parent>
-	
+
 	<properties>
 		<bundle.namespace>org.openscada.net</bundle.namespace>
 	</properties>
@@ -47,6 +49,16 @@
 		<dependency>
 			<groupId>org.apache.mina</groupId>
 			<artifactId>mina-transport-apr</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>tomcat</groupId>
+					<artifactId>tomcat-apr</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.openscada.external</groupId>
+			<artifactId>tomcat-apr</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.mina</groupId>

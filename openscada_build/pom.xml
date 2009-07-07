@@ -56,6 +56,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>xmlbeans-maven-plugin</artifactId>
+				<inherited>true</inherited>
 				<executions>
 					<execution>
 						<id>xmlbeans</id>
@@ -65,14 +66,12 @@
 						</goals>
 						<configuration>
 							<schemaDirectory>${basedir}/schema</schemaDirectory>
-							<classGenerationDirectory>${outputDirectory}</classGenerationDirectory>
 							<javaSource>1.5</javaSource>
 							<javasource>1.5</javasource>
 							<verbose>true</verbose>
 						</configuration>
 					</execution>
 				</executions>
-				<inherited>true</inherited>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -99,22 +98,22 @@
 					</descriptors>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.felix</groupId>
-		        <artifactId>maven-bundle-plugin</artifactId>
-		        <extensions>true</extensions>
-		        <inherited>true</inherited>
-		        <configuration>
-		        	<manifestLocation>META-INF</manifestLocation>
-		        	<instructions>
-		        		<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}"</Export-Package>
-		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
-		        	</instructions>
-		        </configuration>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<inherited>true</inherited>
+				<configuration>
+					<manifestLocation>META-INF</manifestLocation>
+					<instructions>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}"</Export-Package>
+						<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
+					</instructions>
+				</configuration>
 			</plugin>
-			
+
 		</plugins>
 
 		<pluginManagement>
@@ -168,27 +167,16 @@
 		<module>../openscada_server_exporter</module>
 		<module>../openscada_server_exporter_spring</module>
 		<module>../openscada_spring_components</module>
-		<!-- 
-		<module>../openscada_ae_core_common</module>
-		<module>../openscada_ae_net_base</module>
-		<module>../openscada_ae_submitter_net</module>
-		<module>../openscada_ae_client_common</module>
-		<module>../openscada_ae_client_net</module>
-		<module>../openscada_ae_storage_common</module>
-		<module>../openscada_ae_storage_test</module>
-		<module>../openscada_ae_storage_syslog</module>
-		<module>../openscada_ae_storage_net</module>
-		 -->
 	</modules>
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-		      <groupId>org.apache.felix</groupId>
-		      <artifactId>org.osgi.core</artifactId>
-		      <version>1.0.0</version>
-		      <scope>provided</scope>
-		    </dependency>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>org.osgi.core</artifactId>
+				<version>1.0.0</version>
+				<scope>provided</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.junit</groupId>
 				<artifactId>com.springsource.org.junit
@@ -251,7 +239,16 @@
 						<artifactId>slf4j-api</artifactId>
 						<groupId>org.slf4j</groupId>
 					</exclusion>
+					<exclusion>
+						<artifactId>tomcat</artifactId>
+						<groupId>tomcat-apr</groupId>
+					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.openscada.external</groupId>
+				<artifactId>tomcat-apr</artifactId>
+				<version>5.5.23</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.mina</groupId>
