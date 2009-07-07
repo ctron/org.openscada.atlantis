@@ -42,12 +42,6 @@
          unpack="false"/>
 
    <plugin
-         id="ext_plugin_xmlbeans"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.openscada.da.project"
          download-size="0"
          install-size="0"
@@ -70,6 +64,13 @@
 
    <plugin
          id="org.openscada.da.client.signalGenerator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.springsource.org.apache.xmlbeans"
          download-size="0"
          install-size="0"
          version="0.0.0"
