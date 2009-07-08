@@ -17,12 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.server.exporter;
+package org.openscada.da.server.exporter.spring;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.da.core.server.Hive;
+import org.openscada.da.server.exporter.ConfigurationException;
+import org.openscada.da.server.exporter.HiveFactory;
+import org.openscada.da.server.exporter.HiveConfigurationType;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 

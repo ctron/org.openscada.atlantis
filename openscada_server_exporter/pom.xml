@@ -17,6 +17,53 @@
 		<relativePath>../openscada_build/pom.xml</relativePath>
 	</parent>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				 <version>1.1.1</version>
+				
+				<executions>
+				<execution>
+					<phase>generate-sources</phase>
+					<configuration>
+						<executable>ant</executable>
+						<arguments>
+							<argument>-f</argument>
+							<argument>schema_build.xml</argument>
+						</arguments>
+					</configuration>
+					<goals>
+						<goal>exec</goal>
+					</goals>
+				</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin
+				</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>target/generated-classes/xmlbeans</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.openscada.atlantis</groupId>
