@@ -35,6 +35,7 @@
 	
 	<target name="init">
 		<tstamp/>
+		<echo message="DeployRepoDir: ${deploy.repo.dir}"/>
 	</target>
 	
 	<target name="clean">
@@ -43,8 +44,8 @@
 	</target>
 	
 	<target name="build">
-		<eclipse.productBuild builderDir="ostc" />
 		<eclipse.bundleBuild builderDir="ide" />
+		<eclipse.productBuild builderDir="ostc" />
 	</target>
 	
 	<target name="win32installer">
@@ -83,6 +84,7 @@
 	    		
 				<arg value="-application" />
 			    <arg value="org.eclipse.ant.core.antRunner" />
+        		<!--<arg value="-verbose"/>-->
 			    <arg value="-buildfile" />
 		   		<arg value="${eclipse.home.dir}/plugins/org.eclipse.pde.build${eclipse.builder.version}/scripts/productBuild/productBuild.xml" />
 				<arg value="-Dbuilder=${basedir}/@{builderDir}"/>
@@ -103,6 +105,8 @@
         		<arg value="-Dmaven.repository=${maven.repository}"/>
         		<arg value="-Dmaven.local.repository=${maven.local.repository}"/>
         		<arg value="-Ddeploy.repo.dir=${deploy.repo.dir}"/>
+        		<arg value="-Declipse.pack.dir=${eclipse.pack.dir}"/>
+        		<arg value="-DrepoBaseLocation=${repoBaseLocation}"/>
 			</java>
         	
         	<mkdir dir="${deploy.dir}/@{builderDir}"/>
@@ -128,6 +132,9 @@
 	    		
 				<arg value="-application" />
 			    <arg value="org.eclipse.ant.core.antRunner" />
+        		
+        		<!--<arg value="-verbose"/>-->
+        		
 				<arg value="-Dbuilder=${basedir}/@{builderDir}"/>
 	    		<arg value="-DbaseLocation=${eclipse.home.dir}"/>
 				<arg value="-DbuildDirectory=${buildDirectory}"/>
@@ -143,6 +150,8 @@
         		<arg value="-Dmaven.repository=${maven.repository}"/>
         		<arg value="-Dmaven.local.repository=${maven.local.repository}"/>
         		<arg value="-Ddeploy.repo.dir=${deploy.repo.dir}"/>
+        		<arg value="-Declipse.pack.dir=${eclipse.pack.dir}"/>
+        		<arg value="-DrepoBaseLocation=${repoBaseLocation}"/>
 			</java>
         	
         	<mkdir dir="${deploy.dir}/@{builderDir}"/>

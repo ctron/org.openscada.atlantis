@@ -34,7 +34,7 @@
 	<!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="init,check,build,publish" description="Build">
+    <target name="default" depends="build,publish" description="Build">
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -44,7 +44,7 @@
     	<echo message="Build type: ${publish.type}"/>
     	<echo message="Eclipse Target: ${eclipse.home.dir}"/>
     	
-    	<delete dir="${eclipse.home.dir}" failonerror="false"/>
+    	<echo message="DeployRepoDir: ${deploy.repo.dir}"/>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -58,22 +58,42 @@
     </target>
 
 	<!-- ================================= 
-          target: build              
+          target: unpackEclipse              
          ================================= -->
-    <target name="build" depends="" description="Build">
+    <target name="unpackEclipse" depends="init" description="description" unless="skipUnpack">
+    	<delete dir="${eclipse.home.dir}" failonerror="false"/>
     	<provideEclipseDownload.tar dropFile="eclipse-SDK-3.5-linux-gtk.tar.gz" dropId="${eclipse.dropId}"/>
-        <ant antfile="p2build.xml">
-        	<property name="deploy.repo.dir" location="${deploy.repo.root}/${publish.type}/${publish.id}/base"/>
-    	</ant>
-    	
-    	<!-- the delta pack must be expanded _after_ the p2 generator has run -->
     	<provideEclipseDownload.zip dropFile="eclipse-3.5-delta-pack.zip" dropId="${eclipse.dropId}"/>
     	<provideEclipseDownload.zip dropFile="GEF-ALL-3.5.0.zip" dropId="3.5.0/R200906221200" project="tools/gef"/>
-        <ant antfile="pdebuild.xml">
-        	<property name="maven.repository" value="${maven.repository}"/>
+    </target>
+
+	
+	<!-- ================================= 
+          target: build              
+         ================================= -->
+    <target name="build" depends="build.p2,build.pde" description="Build all">
+        
+    </target>
+
+	
+	<!-- ================================= 
+          target: build              
+         ================================= -->
+    <target name="build.p2" depends="unpackEclipse" description="Build P2">
+        <ant antfile="p2build.xml">
     	</ant>
     </target>
     
+	<!-- ================================= 
+          target: build.pde              
+         ================================= -->
+    <target name="build.pde" depends="unpackEclipse" description="Build PDE stuff">
+        <ant antfile="pdebuild.xml">
+        	<property name="maven.repository" value="${maven.repository}"/>
+    	</ant>        
+    </target>
+
+	
     <!-- ================================= 
           target: publish              
          ================================= -->

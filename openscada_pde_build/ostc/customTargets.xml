@@ -6,11 +6,13 @@
   <!-- Run a given ${target} on all elements being built -->
   <!-- Add on <ant> task for each top level element being built. -->
   <!-- ===================================================================== -->
-  <property name="allElementsFile" value="${builder}/allElements.xml"/>
-  <import file="${allElementsFile}" />
-  <target name="allElements">
-    <antcall target="allElementsDelegator" />
-  </target>
+	<!--<available property="allElementsFile" file="${builder}/allElements.xml" value="${builder}/allElements.xml"/>-->
+	<property name="allElementsFile" location="${eclipse.pdebuild.templates}/headless-build/allElements.xml"/>
+
+	<import file="${allElementsFile}" />
+	<target name="allElements">
+		<antcall target="allElementsDelegator" />
+	</target>
   
   <!-- ===================================================================== -->
   <!-- ===================================================================== -->
@@ -71,17 +73,24 @@
   <!-- ===================================================================== -->
   <target name="postSetup">
     <antcall target="getBaseComponents" />
+  	
+	<mkdir dir="${repoBaseLocation}"/>
+  	<parallel>
+  	<get usetimestamp="true" dest="${repoBaseLocation}/GEF-Update-3.5.0.zip" src="http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/tools/gef/downloads/drops/3.5.0/R200906221200/GEF-Update-3.5.0.zip" />
+  	<get usetimestamp="true" dest="${repoBaseLocation}/org.eclipse.rcp-p2repo-3.5.zip" src="http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse//eclipse/downloads/drops/R-3.5-200906111540/org.eclipse.rcp-p2repo-3.5.zip" />
+	</parallel>
 	
-	<fetch-module src="${svn.base}/org.openscada.da.client" type="plugin" name="org.openscada.da.client"/>
+  	<parallel>
+	<fetch-module src="${svn.base}/org.openscada.da.client.feature" type="feature" name="org.openscada.da.client"/>
+	<fetch-module src="${svn.base}/org.openscada.da.client.connector" type="plugin" name="org.openscada.da.client.connector"/>
+  		
   	<fetch-module src="${svn.base}/org.openscada.external.org.apache.log4j" type="plugin" name="org.openscada.external.org.apache.log4j"/>
   	<fetch-module src="${svn.base}/org.openscada.external.org.slf4j" type="plugin" name="org.openscada.external.org.slf4j"/>
-	<fetch-module src="${svn.base}/org.apache.mina" type="plugin" name="org.apache.mina"/>
 	<fetch-module src="${svn.base}/org.openscada.rcp.update" type="plugin" name="org.openscada.rcp.update"/>
   	<fetch-module src="${svn.base}/org.openscada.da.client.test" type="plugin" name="org.openscada.da.client.test"/>
   	<fetch-module src="${svn.base}/org.openscada.da.client.test.feature" type="feature" name="org.openscada.da.client.test"/>
   	<fetch-module src="${svn.base}/org.openscada.da.net.client.feature" type="feature" name="org.openscada.da.net.client"/>
 	<fetch-module src="${svn.base}/org.openscada.da.ice.client.feature" type="feature" name="org.openscada.da.ice.client"/>
-  	<fetch-module src="${svn.ext.base}/xmlbeans_plugin" type="plugin" name="ext_plugin_xmlbeans"/>  	
   	<fetch-module src="${svn.ext.base}/plugins/icej" type="plugin" name="ext_plugin_icej"/>
 	<fetch-module src="${svn.ext.base}/plugins/jfreechart" type="plugin" name="ext_plugin_jfreechart"/>
   	
@@ -96,15 +105,16 @@
 	<fetch-module src="${svn.base}/org.openscada.ae.client.test" type="plugin" name="org.openscada.ae.client.test"/>
 	<fetch-module src="${svn.base}/org.openscada.ae.client.test.feature" type="feature" name="org.openscada.ae.client.test"/>
 	<fetch-module src="${svn.base}/org.openscada.ae.rcp.LocalTestServer" type="plugin" name="org.openscada.ae.rcp.LocalTestServer"/>
-	-->
 	<fetch-module src="${svn.base}/org.openscada.da.client.viewer" type="plugin" name="org.openscada.da.client.viewer"/>
+	-->
+	
 	<fetch-module src="${svn.base}/org.openscada.da.client.chart" type="plugin" name="org.openscada.da.client.chart"/>
   	<fetch-module src="${svn.base}/org.openscada.da.client.base" type="plugin" name="org.openscada.da.client.base"/>
   	<fetch-module src="${svn.base}/org.openscada.da.client.dataitem.details" type="plugin" name="org.openscada.da.client.dataitem.details"/>
   	<fetch-module src="${svn.base}/org.openscada.da.client.dataitem.details.extra" type="plugin" name="org.openscada.da.client.dataitem.details.extra"/>
   	<fetch-module src="${svn.base}/org.openscada.da.client.connection.manager.view" type="plugin" name="org.openscada.da.client.connection.manager.view"/>
   	<fetch-module src="${svn.base}/org.openscada.da.client.signalGenerator" type="plugin" name="org.openscada.da.client.signalGenerator"/>
-  	
+  	</parallel>
   </target>
 
   <!-- ===================================================================== -->
@@ -118,6 +128,19 @@
   <!-- ===================================================================== -->
   <target name="postFetch">
   </target>
+	
+	<target name="preProcessRepos">
+		<mkdir dir="${transformedRepoLocation}"/>
+		<p2.repo2runnable destination="${transformedRepoLocation}">
+			<source location="${deploy.repo.dir}/"/>
+		</p2.repo2runnable>
+	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+	      target: postProcessRepos                      
+	     - - - - - - - - - - - - - - - - - -->
+	<target name="postProcessRepos">
+	</target>
 
   <!-- ===================================================================== -->
   <!-- Steps to do before generating the build scripts. -->
@@ -136,8 +159,10 @@
   <!-- Steps to do before running the build.xmls for the elements being built. -->
   <!-- ===================================================================== -->
   <target name="preProcess">
+  	<!--
 	<ant antfile="schema_build.xml" dir="${buildDirectory}/plugins/org.openscada.da.client.viewer">
 	</ant>
+	-->
   </target>
 
   <!-- ===================================================================== -->
