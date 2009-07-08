@@ -53,6 +53,7 @@
 		<testOutputDirectory>${basedir}/testbin
 		</testOutputDirectory>
 		<plugins>
+		<!-- 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>xmlbeans-maven-plugin</artifactId>
@@ -73,6 +74,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -123,11 +125,6 @@
 					<artifactId>org.openscada.aurora.slice.plugin
 					</artifactId>
 					<version>0.12.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>xmlbeans-maven-plugin</artifactId>
-					<version>2.3.2</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>

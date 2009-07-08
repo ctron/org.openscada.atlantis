@@ -6,7 +6,6 @@
 		 <classpath id="xmlbeanspath">
             <pathelement location="../openscada_build/xmlbeans/xbean.jar"/>
             <pathelement location="../openscada_build/xmlbeans/jsr173_1.0_api.jar"/>
-		 	<pathelement location="../openscada_da_server_common/target/generated-classes/xmlbeans"/>
          </classpath>
 	</taskdef>
 
@@ -23,7 +22,7 @@
 			verbose="true"
             classpathref="xmlbeanspath"
 			>
-			<fileset dir="schema" includes="*.xsd"/>
+				<fileset dir="schema" includes="*.xsd"/>
         </xmlbean>
   	</target>
   

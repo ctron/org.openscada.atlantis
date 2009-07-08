@@ -28,18 +28,46 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.felix</groupId>
-		        <artifactId>maven-bundle-plugin</artifactId>
-		        <extensions>true</extensions>
-		        <configuration>
-		        	<manifestLocation>META-INF</manifestLocation>
-		        	<instructions>
-		        		<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,org.openscada.common.*;version="${pom.version}",org.openscada.da.hive.*;version="${pom.version}",${bundle.namespace}.*;version="${pom.version}"</Export-Package>
-		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
-		        		<Include-Resource>target/generated-classes/xmlbeans/</Include-Resource>	        		
-		        	</instructions>
-		        </configuration>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				 <version>1.1.1</version>
+				
+				<executions>
+				<execution>
+					<phase>generate-sources</phase>
+					<configuration>
+						<executable>ant</executable>
+						<arguments>
+							<argument>-f</argument>
+							<argument>schema_build.xml</argument>
+						</arguments>
+					</configuration>
+					<goals>
+						<goal>exec</goal>
+					</goals>
+				</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin
+				</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>target/generated-classes/xmlbeans</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

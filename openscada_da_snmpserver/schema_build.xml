@@ -1,37 +1,30 @@
 <?xml version="1.0"?>
 
-<project name="openscada_da_snmpserver_schema" default="main" basedir=".">
+<project name="xmlbeans" default="main" basedir=".">
 
 	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
 		 <classpath id="xmlbeanspath">
-            <pathelement location="../ext_plugin_xmlbeans/xbean.jar"/>
-            <pathelement location="../ext_plugin_xmlbeans/jsr173_1.0_api.jar"/>
+            <pathelement location="../openscada_build/xmlbeans/xbean.jar"/>
+            <pathelement location="../openscada_build/xmlbeans/jsr173_1.0_api.jar"/>
+		 	<pathelement location="../openscada_da_server_common/target/generated-classes/xmlbeans"/>
          </classpath>
 	</taskdef>
 
 	<target name="clean">
-		<delete failonerror="false">
-			<fileset dir="schemasrc" >
-				<include name="**"/>
-			</fileset>
-        </delete>
-
+		<delete failonerror="false" dir="schemabin"/>
 	</target>
 	
 	<target name="main" depends="clean">
-		<mkdir dir="schemasrc"/>
 		<xmlbean
 			failonerror="true"
-			download="true"
-			classgendir="schemasrc"
-			schema="schema/SNMPServerSchema.xsd"
+			download="false"
+			classgendir="target/generated-classes/xmlbeans"
 			javasource="1.5"
+			verbose="true"
             classpathref="xmlbeanspath"
 			>
-				<fileset dir="schema" includes="*.xsd"/>
+			<fileset dir="schema" includes="*.xsd"/>
         </xmlbean>
-
-
   	</target>
   
 </project>
