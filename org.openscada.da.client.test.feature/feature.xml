@@ -336,7 +336,6 @@ POSSIBILITY OF SUCH DAMAGES.
       <import plugin="org.openscada.da.client.connector" version="0.13.3" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.common" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.osgi" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.update.configurator" version="3.1.0" match="compatible"/>
       <import plugin="org.eclipse.help" version="3.2.0" match="compatible"/>
       <import plugin="org.openscada.core.ice.base" version="0.13.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.da.ice.base" version="0.13.0" match="greaterOrEqual"/>
@@ -365,13 +364,6 @@ POSSIBILITY OF SUCH DAMAGES.
 
    <plugin
          id="org.openscada.da.client.test"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.rcp.update"
          download-size="0"
          install-size="0"
          version="0.0.0"
