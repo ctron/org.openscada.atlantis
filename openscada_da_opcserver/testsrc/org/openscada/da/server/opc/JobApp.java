@@ -22,9 +22,9 @@ package org.openscada.da.server.opc;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.server.opc2.job.JobHandler;
-import org.openscada.da.server.opc2.job.WorkUnit;
-import org.openscada.da.server.opc2.job.Worker;
+import org.openscada.da.server.opc.job.JobHandler;
+import org.openscada.da.server.opc.job.WorkUnit;
+import org.openscada.da.server.opc.job.Worker;
 
 public class JobApp implements JobHandler
 {

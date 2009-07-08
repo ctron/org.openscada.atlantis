@@ -20,7 +20,7 @@
 package org.openscada.da.server.opc;
 
 import org.apache.log4j.Logger;
-import org.openscada.da.server.opc2.job.ThreadJob;
+import org.openscada.da.server.opc.job.ThreadJob;
 
 public class SampleJob extends ThreadJob
 {
