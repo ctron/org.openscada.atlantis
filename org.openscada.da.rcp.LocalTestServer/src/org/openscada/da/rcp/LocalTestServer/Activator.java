@@ -19,12 +19,10 @@
 
 package org.openscada.da.rcp.LocalTestServer;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.xmlbeans.XmlException;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -33,7 +31,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.core.server.Hive;
-import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.net.Exporter;
 import org.osgi.framework.BundleContext;
 
@@ -61,7 +58,7 @@ public class Activator extends AbstractUIPlugin
         Exporter exporter2 = null;
     }
 
-    private final Map<Integer, Server> _exportMap = new HashMap<Integer, Server> ();
+    private final Map<Integer, Server> exportMap = new HashMap<Integer, Server> ();
 
     /**
      * The constructor
@@ -114,17 +111,13 @@ public class Activator extends AbstractUIPlugin
         return imageDescriptorFromPlugin ( PLUGIN_ID, path );
     }
 
-    public void startLocalServer () throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException, AlreadyStartedException, ConfigurationError, XmlException
+    public void startLocalServer () throws Exception
     {
         synchronized ( this )
         {
             checkRunning ( TEST_PORT );
-
-            // final Path path = new Path ( "hive.xml" );
-
-            // final Configurator configurator = new XMLConfigurator ( FileLocator.openStream ( getBundle (), path, true ) );
             final org.openscada.da.server.test.Hive testHive = new org.openscada.da.server.test.Hive ();
-            // configurator.configure ( testHive );
+            testHive.start ();
 
             try
             {
@@ -144,13 +137,14 @@ public class Activator extends AbstractUIPlugin
         {
             checkRunning ( SIM_PORT );
             final org.openscada.da.core.server.Hive hive = new org.openscada.da.server.simulation.component.Hive ();
+            hive.start ();
             exportServer ( hive, SIM_PORT );
         }
     }
 
     private void checkRunning ( final int port ) throws AlreadyStartedException
     {
-        if ( this._exportMap.containsKey ( port ) )
+        if ( this.exportMap.containsKey ( port ) )
         {
             throw new AlreadyStartedException ();
         }
@@ -163,7 +157,7 @@ public class Activator extends AbstractUIPlugin
         server.exporter.start ();
         server.exporter2 = new Exporter ( hive, ConnectionInformation.fromURI ( "da:net://0.0.0.0:" + port + "?socketImpl=VMPIPE" ) );
         server.exporter2.start ();
-        this._exportMap.put ( port, server );
+        this.exportMap.put ( port, server );
     }
 
     private void notifyServerError ( final Throwable t )
