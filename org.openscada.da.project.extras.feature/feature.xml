@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.project.extras"
       label="OpenSCADA DA Project Extras Feature"
-      version="0.13.0"
+      version="0.13.1"
       provider-name="OpenSCADA"
       plugin="org.openscada.da.project">
 
@@ -323,13 +323,6 @@ POSSIBILITY OF SUCH DAMAGES.
    </url>
 
    <plugin
-         id="ext_plugin_jfreechart"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.openscada.da.client.dataitem.details"
          download-size="0"
          install-size="0"
@@ -345,6 +338,13 @@ POSSIBILITY OF SUCH DAMAGES.
 
    <plugin
          id="org.openscada.da.client.chart"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.external.jfreechart"
          download-size="0"
          install-size="0"
          version="0.0.0"
