@@ -32,9 +32,11 @@
 			includes="main.xml"
 			out=""
 			>
+			<!--
 			<factory name="org.apache.xalan.processor.TransformerFactoryImpl">
 			    <attribute name="http://xml.apache.org/xalan/features/optimize" value="true"/>
             </factory>
+            -->
 			<param name="base.dir" expression=""/>
 			<param name="use.extensions" expression="1"/>
 			<param name="prj.dir" expression="${prj.dir}"/>
@@ -46,9 +48,11 @@
 					in="main.xml"
 					out="main.fo"
 					>
+					<!--
 					<factory name="org.apache.xalan.processor.TransformerFactoryImpl">
 					    <attribute name="http://xml.apache.org/xalan/features/optimize" value="true"/>
 				    </factory>
+				    -->
 					<param name="use.extensions" expression="1"/>
 					<param name="fop.extensions" expression="1"/>
 					<param name="prj.dir" expression="${prj.dir}"/>

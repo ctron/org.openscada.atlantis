@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<sect1 id="overview"><title>Overview and Purpose</title>
+	<para>
+  		This document describes the OpenSCADA DA NET interface.
+  	</para>
+  	<note>
+  		<para>Don't play with nukes</para>
+  	</note>
+</sect1>
