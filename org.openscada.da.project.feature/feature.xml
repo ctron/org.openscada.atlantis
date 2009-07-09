@@ -3,10 +3,10 @@
       id="org.openscada.da.project"
       label="OpenSCADA DA Project Feature"
       version="0.13.0"
-      provider-name="OpenSCADA"
+      provider-name="inavare GmbH"
       plugin="org.openscada.da.project">
 
-   <description>
+   <description url="http://openscada.org">
       OpenSCADA DA Project Feature
    </description>
 
@@ -319,7 +319,7 @@ POSSIBILITY OF SUCH DAMAGES.
    </license>
 
    <url>
-      <update label="OpenSCADA IDE Update Site" url="http://openscada.org/ide/update_site"/>
+      <update label="OpenSCADA IDE Update Site" url="http://repo.openscada.org/p2/release/ide"/>
    </url>
 
    <includes
