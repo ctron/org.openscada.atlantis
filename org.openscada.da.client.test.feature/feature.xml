@@ -362,21 +362,7 @@ POSSIBILITY OF SUCH DAMAGES.
          unpack="false"/>
 
    <plugin
-         id="ext_plugin_icej"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.openscada.da.client.chart"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="ext_plugin_jfreechart"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -433,6 +419,13 @@ POSSIBILITY OF SUCH DAMAGES.
 
    <plugin
          id="com.springsource.org.apache.xmlbeans"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.external.jfreechart"
          download-size="0"
          install-size="0"
          version="0.0.0"
