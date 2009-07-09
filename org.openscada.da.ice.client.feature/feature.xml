@@ -492,7 +492,7 @@ DAMAGES.
    </license>
 
    <url>
-      <update label="OpenSCADA DA Test Client" url="http://openscada.org/ostc"/>
+      <update label="OpenSCADA Core Repository" url="http://repo.openscada.org/p2/integration/core"/>
    </url>
 
    <requires>
