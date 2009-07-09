@@ -21,7 +21,6 @@
       </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="driver"/>
             <element ref="driverAdapter"/>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -45,29 +44,6 @@
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="driver">
-      <annotation>
-         <appinfo>
-            <meta.element deprecated="true"/>
-         </appinfo>
-         <documentation>
-            The definition of the connection driver to use
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The class name of the ConnectorLoader class
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn="org.openscada.da.client.ConnectorLoader"/>
                </appinfo>
             </annotation>
          </attribute>

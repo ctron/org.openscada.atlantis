@@ -3,7 +3,6 @@
 <plugin>
    <extension
          point="org.openscada.da.client.connector">
-      <driver class="org.openscada.da.client.ice.ConnectorLoader"/>
       <driverAdapter
             class="org.openscada.da.client.ice.DriverAdapter"
             interface="da"
