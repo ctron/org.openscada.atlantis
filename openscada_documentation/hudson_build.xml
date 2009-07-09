@@ -12,7 +12,7 @@
     <target name="publish" depends="clean" description="Publish Documentation">
     	
     	<mkdir dir="${publish.base}/atlantis/${publish.type}/${publish.id}/doc"/>
-    	<ant target="all">
+    	<ant target="all" antfile="build.xml">
     		<property name="deploy.dir" location="${publish.base}/atlantis/${publish.type}/${publish.id}/doc"/>
     	</ant>
     	
