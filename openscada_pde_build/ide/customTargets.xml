@@ -122,7 +122,7 @@
   	<fetch-module src="${svn.ext.base}/xmlbeans_plugin" type="plugin" name="ext_plugin_xmlbeans"/>
   	-->  	
   	<fetch-module src="${svn.ext.base}/plugins/icej" type="plugin" name="ext_plugin_icej"/>
-	<fetch-module src="${svn.ext.base}/plugins/jfreechart" type="plugin" name="ext_plugin_jfreechart"/>
+	<fetch-module src="${svn.base}/org.openscada.external.jfreechart" type="plugin" name="org.openscada.external.jfreechart"/>
   	<fetch-module src="${svn.base}/org.openscada.da.client.connector" type="plugin" name="org.openscada.da.client.connector"/>
   	<fetch-module src="${svn.base}/org.openscada.da.ice.client" type="plugin" name="org.openscada.da.ice.client"/>
 	<fetch-module src="${svn.base}/org.openscada.da.net.client" type="plugin" name="org.openscada.da.net.client"/>
