@@ -335,13 +335,6 @@ POSSIBILITY OF SUCH DAMAGES.
          version="0.0.0"/>
 
    <plugin
-         id="ext_plugin_icej"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.openscada.da.project"
          download-size="0"
          install-size="0"
