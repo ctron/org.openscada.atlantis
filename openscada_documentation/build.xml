@@ -121,7 +121,7 @@
         <sequential>
 
         	<docbook index="@{dir}/src/index.xml" style="@{dir}/style/fopdf.xsl" output="@{output}" options="-o @{outputName}.fo" params="double.sided=false"/>
-        	<copyImages dir="@{dir}" output="@{output}" outputName="@{outputName}"/>
+        	<copyImages dir="@{dir}" output="@{output}" outputName=""/>
         	
 			<antcall target="fop">
 				<param name="output" value="@{output}"/>

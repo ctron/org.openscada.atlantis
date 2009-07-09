@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="OpenSCADADocumentation" default="publish">
+
+	<property name="publish.base" value="/tmp/publish"/>
+	<property name="publish.type" value="integration"/>
+	<property name="publish.id" value="0.13.0.SNAPSHOT"/>
+	
+	<!-- ================================= 
+          target: publish              
+         ================================= -->
+    <target name="publish" depends="clean" description="Publish Documentation">
+    	
+    	<mkdir dir="${publish.base}/atlantis/${publish.type}/${publish.id}/doc"/>
+    	<ant target="all">
+    		<property name="deploy.dir" location="${publish.base}/atlantis/${publish.type}/${publish.id}/doc"/>
+    	</ant>
+    	
+    	<!-- make latest link -->
+    	<exec executable="rm">
+    		<arg value="-f"/>
+    		<arg value="${publish.base}/atlantis/${publish.type}/latest"/>
+    	</exec>    	
+    	<exec executable="ln">
+    		<arg value="-fs"/>
+    		<arg value="${publish.base}/atlantis/${publish.type}/${publish.id}"/>
+    		<arg value="${publish.base}/atlantis/${publish.type}/latest"/>
+    	</exec>
+    </target>
+	
+	<!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" depends="" description="Clean up">
+        
+    </target>
+
+
+</project>
