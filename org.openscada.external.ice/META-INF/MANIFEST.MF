@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ICEJ Wrapper Plug-In
-Bundle-SymbolicName: ext_plugin_icej
+Bundle-SymbolicName: org.openscada.external.ice
 Bundle-Version: 3.1.1
 Bundle-Vendor: ZeroC
 Bundle-ClassPath: Ice.jar,

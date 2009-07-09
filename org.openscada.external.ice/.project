@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ext_plugin_icej</name>
+	<name>org.openscada.external.ice</name>
 	<comment></comment>
 	<projects>
 	</projects>
