@@ -4,6 +4,7 @@
   <xsl:param name="admon.graphics" select="1"/>
   <xsl:param name="admon.graphics.extension">.svg</xsl:param>
   <xsl:param name="admon.graphics.path">docbook/images/</xsl:param>
+  <xsl:param name="callout.unicode">1</xsl:param>
   <xsl:param name="section.autolabel" select="1"/>
   <xsl:param name="section.label.includes.component.label" select="1"/>
   <xsl:param name="paper.type">A4</xsl:param>
