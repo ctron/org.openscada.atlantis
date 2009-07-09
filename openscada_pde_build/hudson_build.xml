@@ -105,7 +105,7 @@
     		<arg value="${publish.base}/atlantis/${publish.type}/latest"/>
     	</exec>    	
     	<exec executable="ln">
-    		<arg value="-f"/>
+    		<arg value="-fs"/>
     		<arg value="${publish.base}/atlantis/${publish.type}/${publish.id}"/>
     		<arg value="${publish.base}/atlantis/${publish.type}/latest"/>
     	</exec>
