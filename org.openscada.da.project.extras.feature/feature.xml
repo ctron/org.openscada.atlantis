@@ -319,7 +319,7 @@ POSSIBILITY OF SUCH DAMAGES.
    </license>
 
    <url>
-      <update label="OpenSCADA IDE Update Site" url="http://openscada.org/ide/update_site"/>
+      <update label="OpenSCADA IDE Update Site" url="http://repo.openscada.org/p2/release/ide"/>
    </url>
 
    <plugin
