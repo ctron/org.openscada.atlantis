@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ext_plugin_jfreechart</name>
+	<name>org.openscada.external.jfreechart</name>
 	<comment></comment>
 	<projects>
 	</projects>

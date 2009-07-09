@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JFreeChart
-Bundle-SymbolicName: ext_plugin_jfreechart
+Bundle-SymbolicName: org.openscada.external.jfreechart
 Bundle-Version: 1.0.4
 Bundle-Vendor: Object Refinery Limited
 Bundle-ClassPath: gnujaxp.jar,
