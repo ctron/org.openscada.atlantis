@@ -7,4 +7,11 @@
   <xsl:param name="section.autolabel" select="1"/>
   <xsl:param name="section.label.includes.component.label" select="1"/>
   <xsl:param name="callout.unicode">1</xsl:param>
+  
+  	<!-- custom logo -->
+	<xsl:template name="article.titlepage.before.recto">
+		<div align="center">
+    		<img src="docbook/images/logo-openscada-web.png"/>
+  		</div>
+	</xsl:template>
 </xsl:stylesheet>

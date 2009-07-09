@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0'>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:fo="http://www.w3.org/1999/XSL/Format" 
+	version='1.0'>
   <xsl:import href="../../../docbook/fo/docbook.xsl"/>
   <xsl:param name="admon.graphics" select="1"/>
   <xsl:param name="admon.graphics.extension">.svg</xsl:param>
@@ -17,5 +19,12 @@
   <!-- FOP provide only PDF Bookmarks at the moment -->
   <xsl:param name="fop.extensions">0</xsl:param>
   <xsl:param name="fop1.extensions">1</xsl:param>
+  
+  	<!-- custom logo -->
+	<xsl:template name="article.titlepage.before.recto">
+		<fo:block text-align="center">
+    		<fo:external-graphic src="docbook/images/logo-openscada-pdf.png"/>
+  		</fo:block>
+	</xsl:template>
   
 </xsl:stylesheet>
