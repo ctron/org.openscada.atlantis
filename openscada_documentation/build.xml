@@ -102,12 +102,14 @@
 	<target name="render_html">
 		<mkdir dir="${deploy.dir}/html"/>
 		<docbook.xhtml dir="${basedir}/docs/reference" output="${deploy.dir}/html" outputName="reference"/>
+		<docbook.xhtml dir="${basedir}/docs/userguide" output="${deploy.dir}/html" outputName="userguide"/>
 	</target>
 	
 
 	<target name="render_pdf">
 		<mkdir dir="${deploy.dir}/pdf"/>
 		<docbook.pdf dir="${basedir}/docs/reference" output="${deploy.dir}/pdf" outputName="reference"/>
+		<docbook.pdf dir="${basedir}/docs/userguide" output="${deploy.dir}/pdf" outputName="userguide"/>
 	</target>
 	
 	
