@@ -1,10 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" [
+]>
 <sect1 id="overview"><title>Overview and Purpose</title>
 	<para>
-  		This document describes the OpenSCADA DA NET interface.
+  		This document describes the different aspects of programming with
+  		OpenSCADA.
   	</para>
-  	<note>
-  		<para>Don't play with nukes</para>
-  	</note>
+  	
+  	<sect2><title>The different modules and projects of OpenSCADA</title>
+  		<para>
+  			OpenSCADA consists of serveral different projects and modules.
+  			
+  			<variablelist><title>OpenSCADA Modules</title>
+  			
+  				<varlistentry>
+  					<term>A&amp;E</term>
+  					<listitem>
+  						<para>
+  						Alarms &amp; Events &dash; A monitoring and alarming system
+  						</para>
+  					</listitem>  					
+  				</varlistentry>
+  				
+  				<varlistentry>
+					<term>DA</term>
+  					<listitem>
+  						<para>
+  						Data Access &dash; A system to access I/Os from multiple sources
+  						</para>
+  					</listitem>
+  				</varlistentry>
+  					
+  				<varlistentry>
+					<term>HD</term>
+  					<listitem>
+  						<para>
+  						Historical Data &dash; Providing historical data originating from DA
+  						</para>
+  					</listitem>
+  				</varlistentry>
+  			</variablelist>
+  		</para>
+  	</sect2>	
+  	
 </sect1>

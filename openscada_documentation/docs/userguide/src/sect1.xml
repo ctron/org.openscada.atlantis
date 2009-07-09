@@ -2,7 +2,7 @@
 
 <sect1 id="overview"><title>Overview and Purpose</title>
 	<para>
-  		This document describes the OpenSCADA DA NET interface.
+  		This document describes the different components of OpenSCADA from a users point of view.
   	</para>
   	<note>
   		<para>Don't play with nukes</para>
