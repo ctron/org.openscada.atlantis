@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ICEJ Wrapper Plug-In
+Bundle-SymbolicName: ext_plugin_icej
+Bundle-Version: 3.1.1
+Bundle-Vendor: ZeroC
+Bundle-ClassPath: Ice.jar,
+ .
+Export-Package: Freeze,
+ Glacier2,
+ Ice,
+ IceBox,
+ IceGrid,
+ IceInternal,
+ IceSSL,
+ IceStorm,
+ IceUtil
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
