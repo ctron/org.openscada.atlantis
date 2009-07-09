@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="openscada_da_doc_net" default="pdf">
+	
+	<property name="deploy.dir" location="${basedir}/deploy"/>
+	<property name="lib.dir" location="${basedir}/lib"/>
+	
+	<property name="docbook.dir" location="${basedir}/docbook"/>
+	<property name="docbook.dir.images" location="${docbook.dir}/images"/>
+	
+	<property name="common.dir" location="${basedir}/docs/common"/>
+	<property name="common.dir.images" location="${common.dir}/images"/>
+	
+	<target name="all" depends="clean, html, pdf"/>
+	
+	<target name="clean">
+		<delete dir="${deploy.dir}" failonerror="false"/>
+	</target>
+	
+	<target name="html" depends="clean, render_html"/>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: docbook.xhtml          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="docbook.xhtml">
+        <attribute name="dir"/>
+    	<attribute name="output"/>
+    	<attribute name="outputName" />
+        <sequential>
+        	<mkdir dir="@{output}/@{outputName}"/>
+        	<docbook index="@{dir}/src/index.xml" style="@{dir}/style/xhtml.xsl" output="@{output}/@{outputName}"/>
+        	<copyImages dir="@{dir}" output="@{output}" outputName="@{outputName}"/>
+        </sequential>
+    	
+    </macrodef>
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: copyImages          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="copyImages">
+    	<attribute name="dir"/>
+    	<attribute name="output"/>
+    	<attribute name="outputName" />
+        <sequential>
+        	<mkdir dir="@{output}/@{outputName}/images"/>
+	    	<mkdir dir="@{output}/@{outputName}/docbook/images"/>
+	    	<copy todir="@{output}/@{outputName}/docbook/images">
+	    		<fileset dir="${docbook.dir.images}">
+	    			<include name="**/*.gif"/>
+	    			<include name="**/*.jpg"/>
+	    			<include name="**/*.png"/>
+	    			<include name="**/*.svg"/>
+	    		</fileset>
+	    	</copy>
+        	<copy todir="@{output}/@{outputName}}/docbook/images">
+	    		<fileset dir="${common.dir.images}">
+	    			<include name="**/*.gif"/>
+	    			<include name="**/*.jpg"/>
+	    			<include name="**/*.png"/>
+	    			<include name="**/*.svg"/>
+	    		</fileset>
+	    	</copy>
+        	<copy todir="@{output}/@{outputName}/images">
+	    		<fileset dir="@{dir}/src/images">
+	    			<include name="**/*.gif"/>
+	    			<include name="**/*.jpg"/>
+	    			<include name="**/*.png"/>
+	    			<include name="**/*.svg"/>
+	    		</fileset>
+	    	</copy>
+        </sequential>
+    </macrodef>
+
+
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: docbook          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="docbook">
+        <attribute name="index"/>
+    	<attribute name="style"/>
+    	<attribute name="output"/>
+    	<attribute name="options" default=""/>
+    	<attribute name="params" default=""/>
+        <sequential>
+        	<java classname="com.icl.saxon.StyleSheet" fork="true" dir="@{output}">
+	  			<classpath>
+	  				<fileset dir="${lib.dir}">
+	  					<include name="**/*.jar"/>
+	  				</fileset>
+	  			</classpath>
+	  			<jvmarg value="-Xmx256M"/>
+	  			<jvmarg value="-XX:MaxPermSize=128m"/>
+        		<arg line="@{options}"/>
+	  			<arg value="@{index}"/>
+	  			<arg value="@{style}"/>
+        		<arg line="@{params}"/>
+	  		</java>
+        </sequential>
+    </macrodef>
+
+	
+	<target name="render_html">
+		<mkdir dir="${deploy.dir}/html"/>
+		<docbook.xhtml dir="${basedir}/docs/reference" output="${deploy.dir}/html" outputName="reference"/>
+	</target>
+	
+
+	<target name="render_pdf">
+		<mkdir dir="${deploy.dir}/pdf"/>
+		<docbook.pdf dir="${basedir}/docs/reference" output="${deploy.dir}/pdf" outputName="reference"/>
+	</target>
+	
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: docbook.pdf          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="docbook.pdf">
+        <attribute name="dir" />
+    	<attribute name="output" />
+    	<attribute name="outputName" />
+        <sequential>
+
+        	<docbook index="@{dir}/src/index.xml" style="@{dir}/style/fopdf.xsl" output="@{output}" options="-o @{outputName}.fo" params="double.sided=false"/>
+        	<copyImages dir="@{dir}" output="@{output}" outputName="@{outputName}"/>
+        	
+			<antcall target="fop">
+				<param name="output" value="@{output}"/>
+				<param name="outputName" value="@{outputName}"/>
+        	</antcall>
+        	
+        </sequential>
+    </macrodef>
+
+	<!-- ================================= 
+          target: foponly              
+         ================================= -->
+    <target name="foponly" depends="" description="Testing fop">
+    	<antcall target="fop">
+			<param name="output" value="${deploy.dir}/pdf"/>
+			<param name="outputName" value="reference"/>
+    	</antcall>
+    </target>
+
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: fop                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="fop">
+    	<java classname="org.apache.fop.cli.Main" fork="true" maxmemory="256m" >
+  			<classpath>
+  				<fileset dir="${basedir}/fopnew">
+  					<include name="**/*.jar"/>
+				</fileset>
+  			</classpath>
+  			<arg value="${output}/${outputName}.fo"/>
+  			<arg value="${output}/${outputName}.pdf"/>
+  		</java>
+    </target>
+
+		
+	<target name="pdf" depends="clean, render_pdf"/>
+
+</project>
