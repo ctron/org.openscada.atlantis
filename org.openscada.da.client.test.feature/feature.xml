@@ -320,7 +320,7 @@ POSSIBILITY OF SUCH DAMAGES.
 
    <url>
       <update label="OpenSCADA RCP Client" url="http://openscada.org/ostc"/>
-      <discovery label="OpenSCADA Update Site" url="http://openscada.de/ostc"/>
+      <discovery label="OpenSCADA Update Site" url="http://repo.inavare.net/p2/release/ostc"/>
    </url>
 
    <includes
