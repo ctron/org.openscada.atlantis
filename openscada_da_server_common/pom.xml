@@ -91,8 +91,8 @@
 			<artifactId>com.springsource.org.apache.xmlbeans</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.junit</groupId>
-			<artifactId>com.springsource.org.junit</artifactId>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
