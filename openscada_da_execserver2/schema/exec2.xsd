@@ -15,7 +15,12 @@
         		type="exec:SplitContinuousCommandType" maxOccurs="unbounded"
         		minOccurs="0">
         	</element>
-            <element name="hiveProcess" type="exec:HiveProcessCommandType" maxOccurs="unbounded" minOccurs="0">
+        	<element name="hiveProcess"
+        		type="exec:HiveProcessCommandType" maxOccurs="unbounded"
+        		minOccurs="0">
+        	</element>
+        	<element name="trigger" type="exec:TriggerCommandType"
+        		maxOccurs="unbounded" minOccurs="0">
         	</element>
         </choice>
 
@@ -249,5 +254,19 @@
     <complexType name="EnvEntryType">
     	<attribute name="name" type="string" use="required"></attribute>
     	<attribute name="value" type="string"></attribute>
+    </complexType>
+
+    <complexType name="TriggerCommandType">
+    	<complexContent>
+    		<extension base="exec:CommandType">
+    			<attribute name="argumentPlaceholder" type="string"
+    				use="optional">
+    			</attribute>
+    			<attribute name="skipIfNull" type="boolean"
+    				use="optional">
+    			</attribute>
+    			<attribute name="fork" type="boolean" fixed="true"></attribute>
+    		</extension>
+    	</complexContent>
     </complexType>
 </schema>

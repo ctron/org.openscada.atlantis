@@ -45,6 +45,7 @@ import org.openscada.da.exec2.configuration.SingleCommandType;
 import org.openscada.da.exec2.configuration.SplitContinuousCommandType;
 import org.openscada.da.exec2.configuration.SplitterExtractorType;
 import org.openscada.da.exec2.configuration.SplitterType;
+import org.openscada.da.exec2.configuration.TriggerCommandType;
 import org.openscada.da.server.exec2.Hive;
 import org.openscada.da.server.exec2.command.CommandQueue;
 import org.openscada.da.server.exec2.command.CommandQueueImpl;
@@ -54,6 +55,7 @@ import org.openscada.da.server.exec2.command.HiveProcessCommand;
 import org.openscada.da.server.exec2.command.ProcessConfiguration;
 import org.openscada.da.server.exec2.command.SingleCommand;
 import org.openscada.da.server.exec2.command.SingleCommandImpl;
+import org.openscada.da.server.exec2.command.TriggerCommand;
 import org.openscada.da.server.exec2.extractor.AbstractArrayExtractor;
 import org.openscada.da.server.exec2.extractor.Extractor;
 import org.openscada.da.server.exec2.extractor.NagiosExtractor;
@@ -71,11 +73,21 @@ public class XmlConfigurator implements Configurator
 {
     private RootDocument document;
 
+    /**
+     * Configure based on provided root document
+     * @param document the root document
+     */
     public XmlConfigurator ( final RootDocument document )
     {
         this.document = document;
     }
 
+    /**
+     * Configure based on an XML node which will be parsed for a root
+     * document
+     * @param node the node that will be parsed
+     * @throws ConfigurationException if anything goes wrong
+     */
     public XmlConfigurator ( final Node node ) throws ConfigurationException
     {
         try
@@ -88,6 +100,11 @@ public class XmlConfigurator implements Configurator
         }
     }
 
+    /**
+     * Apply the configuration to the hive.
+     * <p>
+     * The origin of the documentation is the provided configuration
+     */
     public void configure ( final Hive hive ) throws ConfigurationException
     {
         configure ( this.document.getRoot (), hive );
@@ -123,8 +140,21 @@ public class XmlConfigurator implements Configurator
             final HiveProcessCommand command = new HiveProcessCommand ( hiveProcessType.getId (), processConfiguration, hiveProcessType.getRestartDelay (), hiveProcessType.getMaxInputBuffer () );
             hive.addContinuousCommand ( command );
         }
+
+        // create triggers
+        for ( final TriggerCommandType triggerType : root.getTriggerList () )
+        {
+            final ProcessConfiguration processConfiguration = createProcessConfiguration ( triggerType.getProcess () );
+            final TriggerCommand command = new TriggerCommand ( triggerType.getId (), processConfiguration, createExtractors ( triggerType.getExtractorList (), hive ), triggerType.getArgumentPlaceholder (), triggerType.getSkipIfNull (), triggerType.getFork () );
+            hive.addTrigger ( command );
+        }
     }
 
+    /**
+     * Construct a {@link Splitter} from the provided element
+     * @param splitterType the provided element
+     * @return the new splitter or <code>null</code> if none exists
+     */
     private Splitter createSplitter ( final SplitterType splitterType )
     {
         final String splitterTypeName = splitterType.getType ();
@@ -229,7 +259,7 @@ public class XmlConfigurator implements Configurator
         if ( ( process.getEnvList () != null ) && !process.getEnvList ().isEmpty () )
         {
             env = new HashMap<String, String> ();
-            for ( EnvEntryType entry : process.getEnvList () )
+            for ( final EnvEntryType entry : process.getEnvList () )
             {
                 if ( ( entry.getName () != null ) && ( entry.getName ().length () > 0 ) )
                 {

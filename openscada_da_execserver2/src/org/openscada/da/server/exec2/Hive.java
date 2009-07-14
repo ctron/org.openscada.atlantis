@@ -21,30 +21,39 @@ package org.openscada.da.server.exec2;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.xmlbeans.XmlException;
+import org.openscada.core.Variant;
 import org.openscada.da.exec2.configuration.RootDocument;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.exec2.command.CommandQueue;
 import org.openscada.da.server.exec2.command.ContinuousCommand;
+import org.openscada.da.server.exec2.command.TriggerCommand;
 import org.openscada.da.server.exec2.configuration.ConfigurationException;
 import org.openscada.da.server.exec2.configuration.XmlConfigurator;
+import org.openscada.utils.collection.MapBuilder;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
 {
+    private static final String TRIGGER_FOLDER_NAME = "triggers";
+
     /**
      * Root folder of the Hive
      */
     private final FolderCommon rootFolder = new FolderCommon ();
 
-    private final List<CommandQueue> queues = new LinkedList<CommandQueue> ();
+    private final Collection<CommandQueue> queues = new LinkedList<CommandQueue> ();
 
-    private final List<ContinuousCommand> continuousCommands = new LinkedList<ContinuousCommand> ();
+    private final Collection<ContinuousCommand> continuousCommands = new LinkedList<ContinuousCommand> ();
+
+    private final Collection<TriggerCommand> triggers = new LinkedList<TriggerCommand> ();
+
+    private final FolderCommon triggerFolder;
 
     /**
      * Default Constructor
@@ -80,6 +89,8 @@ public class Hive extends HiveCommon
         ChainStorageServiceHelper.registerDefaultPropertyService ( this );
 
         this.setRootFolder ( this.rootFolder );
+        this.triggerFolder = new FolderCommon ();
+        this.rootFolder.add ( TRIGGER_FOLDER_NAME, this.triggerFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Contains all triggers" ) ).getMap () );
 
         new XmlConfigurator ( document ).configure ( this );
 
@@ -100,6 +111,10 @@ public class Hive extends HiveCommon
         {
             command.start ( this, this.rootFolder );
         }
+        for ( final TriggerCommand command : this.triggers )
+        {
+            command.register ( this, this.triggerFolder );
+        }
     }
 
     /**
@@ -116,6 +131,10 @@ public class Hive extends HiveCommon
         {
             command.stop ();
         }
+        for ( final TriggerCommand command : this.triggers )
+        {
+            command.unregister ();
+        }
     }
 
     public void addQueue ( final CommandQueue queue )
@@ -126,5 +145,14 @@ public class Hive extends HiveCommon
     public void addContinuousCommand ( final ContinuousCommand command )
     {
         this.continuousCommands.add ( command );
+    }
+
+    /**
+     * Add a new trigger command
+     * @param command the new trigger command
+     */
+    public void addTrigger ( final TriggerCommand command )
+    {
+        this.triggers.add ( command );
     }
 }

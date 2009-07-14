@@ -30,7 +30,7 @@ import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
 import org.openscada.da.server.exec2.command.ExecutionResult;
-import org.openscada.da.server.exec2.command.ProcessConfiguration;
+import org.openscada.da.server.exec2.command.ProcessListener;
 
 public class CommandExecutor
 {
@@ -38,13 +38,10 @@ public class CommandExecutor
 
     /**
      * This method executes the specified command on the shell using the passed objects as information provider.
-     * @param cmd command string including arguments
-     * @param formatArguments objects that will be parsed into the command string
+     * 
      */
-    public static ExecutionResult executeCommand ( final ProcessConfiguration configuration )
+    public static ExecutionResult executeCommand ( final ProcessBuilder processBuilder, final ProcessListener listener )
     {
-        final ProcessBuilder processBuilder = configuration.asProcessBuilder ();
-
         final ExecutionResult result = new ExecutionResult ();
 
         Process p = null;
@@ -54,6 +51,12 @@ public class CommandExecutor
             // Execute and wait
             final long start = System.currentTimeMillis ();
             p = processBuilder.start ();
+
+            if ( listener != null )
+            {
+                listener.processCreated ( p );
+            }
+
             p.waitFor ();
             final long end = System.currentTimeMillis ();
 
@@ -82,6 +85,11 @@ public class CommandExecutor
                 closeStream ( p.getErrorStream () );
                 closeStream ( p.getInputStream () );
                 closeStream ( p.getOutputStream () );
+            }
+
+            if ( listener != null )
+            {
+                listener.processCompleted ();
             }
         }
 

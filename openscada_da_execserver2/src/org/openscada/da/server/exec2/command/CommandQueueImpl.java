@@ -114,9 +114,9 @@ public class CommandQueueImpl implements CommandQueue
 
     public void removeCommand ( final SingleCommand command )
     {
-        for ( Iterator<Entry> i = this.commands.iterator (); i.hasNext (); )
+        for ( final Iterator<Entry> i = this.commands.iterator (); i.hasNext (); )
         {
-            Entry entry = i.next ();
+            final Entry entry = i.next ();
             if ( entry.getCommand () == command )
             {
                 i.remove ();
