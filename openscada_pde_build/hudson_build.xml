@@ -22,7 +22,7 @@
 	<property name="publish.type" value="integration"/>	
 	<property name="publish.id" value="${build.version.osgi}" />
 	
-	<property name="deploy.zip.dir" value="${env.WORKSPACE}/deploy/p2zip"/>
+	<property name="deploy.zip.dir" value="${deploy.base}/deploy/ide"/>
 	
 	<!-- eclipse stuff -->
 	
