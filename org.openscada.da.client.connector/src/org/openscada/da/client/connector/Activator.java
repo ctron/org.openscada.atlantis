@@ -10,7 +10,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends Plugin
 {
 
-    public static final String PLUGIN_ID = "org.openscada.da.client";
+    public static final String PLUGIN_ID = "org.openscada.da.client.connector";
 
     public static final String NATIVE_LS = System.getProperty ( "line.separator", "\n" );
 
