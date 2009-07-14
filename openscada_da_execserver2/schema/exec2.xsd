@@ -265,7 +265,7 @@
     			<attribute name="skipIfNull" type="boolean"
     				use="optional">
     			</attribute>
-    			<attribute name="fork" type="boolean" fixed="true"></attribute>
+    			<attribute name="fork" type="boolean" default="true"></attribute>
     		</extension>
     	</complexContent>
     </complexType>
