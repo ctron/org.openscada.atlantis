@@ -46,7 +46,7 @@ public class ProtocolGMPPTest
         final GMPPProtocolDecoder decoder = new GMPPProtocolDecoder ();
         final GMPPProtocolEncoder encoder = new GMPPProtocolEncoder ();
 
-        final TestingInput in = new TestingInput ();
+        final InputAssertions in = new InputAssertions ();
 
         stream.run ( decoder, encoder, in );
 
@@ -175,7 +175,7 @@ public class ProtocolGMPPTest
     {
         final GMPPProtocolEncoder encoder = new GMPPProtocolEncoder ();
 
-        final TestingOutput out = new TestingOutput ();
+        final OutputAssertions out = new OutputAssertions ();
         encoder.encode ( null, message, out );
 
         final IoBuffer byteBuffer = out.getBuffer ();
@@ -345,7 +345,7 @@ public class ProtocolGMPPTest
         final long start = System.currentTimeMillis ();
         for ( int i = 0; i < 10 * 1000; i++ )
         {
-            final TestingOutput out = new TestingOutput ();
+            final OutputAssertions out = new OutputAssertions ();
             encoder.encode ( null, message, out );
         }
         final long end = System.currentTimeMillis ();

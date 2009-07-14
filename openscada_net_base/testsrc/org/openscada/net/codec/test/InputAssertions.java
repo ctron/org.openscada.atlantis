@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
+
 import org.apache.mina.core.filterchain.IoFilter.NextFilter;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
@@ -31,7 +32,7 @@ import org.junit.Assert;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
 
-public class TestingInput implements ProtocolDecoderOutput
+public class InputAssertions implements ProtocolDecoderOutput
 {
 
     private final Collection<Message> messages = new LinkedList<Message> ();
