@@ -22,6 +22,8 @@
 	<property name="publish.type" value="integration"/>	
 	<property name="publish.id" value="${build.version.osgi}" />
 	
+	<property name="deploy.zip.dir" value="${env.WORKSPACE}/deploy/p2zip"/>
+	
 	<!-- eclipse stuff -->
 	
 	<property name="eclipse.dropId" value="R-3.5-200906111540"/>
@@ -54,6 +56,8 @@
     	<fail unless="env.WORKSPACE" message="Please set the environment variable 'WORKSPACE'"/>
     	<fail unless="publish.id" message="Please set the environment variable 'publish.id'"/>
     	<fail unless="publish.base" message="Please set the publish target 'publish.base'"/>
+    	
+    	<!-- should be there in hudson, but maybe not when we test locally -->
     	<mkdir dir="${env.WORKSPACE}"/>
     </target>
 
@@ -120,6 +124,13 @@
     	<mkdir dir="${publish.base}/atlantis/${publish.type}/${publish.id}/ide"/>
     	<copy todir="${publish.base}/atlantis/${publish.type}/${publish.id}/ide">
     		<fileset dir="${deploy.base}/deploy/ide">
+    			<include name="*.zip"/>
+    		</fileset>
+    	</copy>
+    	
+    	<mkdir dir="${publish.base}/atlantis/${publish.type}/${publish.id}/p2"/>
+    	<copy todir="${publish.base}/atlantis/${publish.type}/${publish.id}/p2">
+    		<fileset dir="${deploy.zip.dir}">
     			<include name="*.zip"/>
     		</fileset>
     	</copy>

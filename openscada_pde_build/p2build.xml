@@ -18,6 +18,7 @@
 	<property name="startup" value="${eclipse.home.dir}/plugins/org.eclipse.equinox.launcher${eclipse.launcher.version}.jar"/>
 	<property name="build.dir" value="${java.io.tmpdir}/p2build"/>
 	<property name="deploy.repo.dir" value="${java.io.tmpdir}/p2deploy"/>
+	<property name="deploy.zip.dir" value="${java.io.tmpdir}/p2zip"/>
 	
     <!-- ================================= 
           target: default              
@@ -80,6 +81,13 @@
     		<fileset dir="${build.dir}/repo">
     		</fileset>
     	</copy>
+    	
+    	<mkdir dir="${deploy.zip.dir}"/>
+    	<zip destfile="${deploy.zip.dir}/org.openscada.atlantis.base-p2repo-${build.version.osgi}.zip">
+    		<fileset dir="${build.dir}/repo">
+    			<include name="**/*"/>
+    		</fileset>
+    	</zip>
     </target>
 
 	
