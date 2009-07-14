@@ -23,6 +23,7 @@
 	<property name="publish.id" value="${build.version.osgi}" />
 	
 	<property name="deploy.zip.dir" value="${deploy.base}/deploy/ide"/>
+	<property name="deploy.repo.dir" value="${deploy.repo.base}/${publish.type}/"/>
 	
 	<!-- eclipse stuff -->
 	
