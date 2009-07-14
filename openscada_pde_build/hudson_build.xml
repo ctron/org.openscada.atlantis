@@ -103,17 +103,6 @@
          ================================= -->
     <target name="publish" depends="check" description="Publish">
     	
-    	<!-- make latest link -->
-    	<exec executable="rm">
-    		<arg value="-f"/>
-    		<arg value="${publish.base}/atlantis/${publish.type}/latest"/>
-    	</exec>    	
-    	<exec executable="ln">
-    		<arg value="-fs"/>
-    		<arg value="${publish.base}/atlantis/${publish.type}/${publish.id}"/>
-    		<arg value="${publish.base}/atlantis/${publish.type}/latest"/>
-    	</exec>
-    	
     	<mkdir dir="${publish.base}/atlantis/${publish.type}/${publish.id}/ostc"/>
     	<copy todir="${publish.base}/atlantis/${publish.type}/${publish.id}/ostc">
     		<fileset dir="${deploy.base}/deploy/ostc">
@@ -134,6 +123,17 @@
     			<include name="*.zip"/>
     		</fileset>
     	</copy>
+    	
+    	<!-- make latest link -->
+    	<exec executable="rm">
+    		<arg value="-f"/>
+    		<arg value="${publish.base}/atlantis/${publish.type}/latest"/>
+    	</exec>    	
+    	<exec executable="ln">
+    		<arg value="-fs"/>
+    		<arg value="${publish.base}/atlantis/${publish.type}/${publish.id}"/>
+    		<arg value="${publish.base}/atlantis/${publish.type}/latest"/>
+    	</exec>
     </target>
 
 	<!-- = = = = = = = = = = = = = = = = =
