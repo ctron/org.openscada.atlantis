@@ -44,7 +44,7 @@
 		<mkdir dir="${build.dir}"/>
 		<mkdir dir="${build.dir}/repo"/>
 			
-		<get usetimestamp="true" src="http://download.openscada.org/atlantis/integration/latest/org.openscada.atlantis-${build.version.maven}-all.zip" dest="${file}" />
+		<get usetimestamp="true" src="http://download.openscada.org/atlantis/${publish.type}/latest/org.openscada.atlantis-${build.version.maven}-all.zip" dest="${file}" />
 		<mkdir dir="${build.dir}/unpack/plugins"/>
 			
 		<!-- generate externals -->
