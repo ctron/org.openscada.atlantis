@@ -83,7 +83,7 @@
 	<!-- ================================= 
           target: build              
          ================================= -->
-    <target name="build.p2" depends="unpackEclipse" description="Build P2">
+    <target name="build.p2" depends="unpackEclipse" description="Build P2" unless="skipP2">
         <ant antfile="p2build.xml">
     	</ant>
     </target>
@@ -91,7 +91,7 @@
 	<!-- ================================= 
           target: build.pde              
          ================================= -->
-    <target name="build.pde" depends="unpackEclipse" description="Build PDE stuff">
+    <target name="build.pde" depends="unpackEclipse" description="Build PDE stuff" unless="skipPDE">
         <ant antfile="pdebuild.xml">
         	<property name="maven.repository" value="${maven.repository}"/>
     	</ant>        
