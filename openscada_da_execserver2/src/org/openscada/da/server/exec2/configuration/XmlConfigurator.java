@@ -145,7 +145,8 @@ public class XmlConfigurator implements Configurator
         for ( final TriggerCommandType triggerType : root.getTriggerList () )
         {
             final ProcessConfiguration processConfiguration = createProcessConfiguration ( triggerType.getProcess () );
-            final TriggerCommand command = new TriggerCommand ( triggerType.getId (), processConfiguration, createExtractors ( triggerType.getExtractorList (), hive ), triggerType.getArgumentPlaceholder (), triggerType.getSkipIfNull (), triggerType.getFork () );
+            final boolean fork = triggerType.isSetFork () ? triggerType.getFork () : true;
+            final TriggerCommand command = new TriggerCommand ( triggerType.getId (), processConfiguration, createExtractors ( triggerType.getExtractorList (), hive ), triggerType.getArgumentPlaceholder (), triggerType.getSkipIfNull (), fork );
             hive.addTrigger ( command );
         }
     }
