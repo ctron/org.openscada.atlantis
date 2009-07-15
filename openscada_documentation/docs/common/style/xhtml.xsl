@@ -6,7 +6,15 @@
   <xsl:param name="admon.graphics.path">docbook/images/</xsl:param>
   <xsl:param name="section.autolabel" select="1"/>
   <xsl:param name="section.label.includes.component.label" select="1"/>
+  
+  <!-- callouts-->
+  <xsl:param name="callout.graphics">0</xsl:param>
   <xsl:param name="callout.unicode">1</xsl:param>
+  
+  <!-- These extensions are required for table printing and other stuff -->
+  <xsl:param name="use.extensions">1</xsl:param>
+  <xsl:param name="tablecolumns.extension">0</xsl:param>
+  <xsl:param name="callout.extensions">1</xsl:param>
   
   	<!-- custom logo -->
 	<xsl:template name="article.titlepage.before.recto">
