@@ -110,7 +110,23 @@
         	<property name="maven.repository" value="${maven.repository}"/>
     	</ant>        
     </target>
-
+	
+	<!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" depends="check" description="Clean up">
+    	<delete dir="${publish.download.dir}/ostc"/>
+    	<delete dir="${publish.download.dir}/ide"/>
+    	<delete dir="${publish.download.dir}/p2"/>
+    	<delete dir="${publish.repo.dir}"/>
+    	<!--
+    		for the moment we cannot delete this directory since it
+    		depends on the maven stuff
+    	-->
+    	<!--
+    	<delete dir="${publish.download.dir}"/>
+    	-->
+    </target>
 	
     <!-- ================================= 
           target: publish              
