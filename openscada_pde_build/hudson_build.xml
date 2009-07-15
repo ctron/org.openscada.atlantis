@@ -19,8 +19,6 @@
 	<property name="publish.type" value="integration"/>	
 	<property name="publish.id" value="${build.version.osgi}" />
 	
-	<property name="repoBaseLocation" value="${tmp.base}/repoBaseLocation"/>
-	
 	<!-- deploy dirs -->
 	
 	<property name="deploy.zip.dir" value="${deploy.base}/deploy/p2zip"/>
@@ -66,6 +64,7 @@
     	<fail unless="buildId"/>
     	<fail unless="eclipse.builder.version"/>
     	<fail unless="eclipse.launcher.version"/>
+    	<fail unless="repoBaseLocation"/>
     		
     	<fail unless="env.WORKSPACE" message="Please set the environment variable 'WORKSPACE'"/>
     	<fail unless="publish.id" message="Please set the environment variable 'publish.id'"/>
