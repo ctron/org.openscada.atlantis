@@ -14,13 +14,12 @@
 	<property file="config/build.properties"/>
 	<property file="config/local.properties"/>
 	
-	<property name="configs" value="win32,win32,x86&amp;linux,gtk,x86&amp;linux,gtk,x86_64&amp;macosx,carbon,ppc"/>
-	<property name="buildType" value="I"/>
-	<property name="buildId" value="Integration"/>
 	<property name="eclipse.pack.dir" value="/home/user/eclipse.pack"/>
 	
 	<property name="publish.type" value="integration"/>	
 	<property name="publish.id" value="${build.version.osgi}" />
+	
+	<property name="repoBaseLocation" value="${tmp.base}/repoBaseLocation"/>
 	
 	<!-- deploy dirs -->
 	
@@ -35,11 +34,12 @@
 	
 	<property name="eclipse.dropId" value="R-3.5-200906111540"/>
 	
+	<!-- where will the eclipse folder be placed -->
 	<property name="eclipse.home.base" value="${env.WORKSPACE}"/>
+	<!-- the eclipse folder based on ${eclipse.home.base}. The last
+	     folder must be named 'eclipse'-->  
 	<property name="eclipse.home.dir" value="${eclipse.home.base}/eclipse"/>
-	<property name="eclipse.builder.version" value="_3.4.0.v20080604"/>
-	<property name="eclipse.launcher.version" value="_1.0.100.v20080509-1800"/>
-	
+		
 	<!-- ================================= 
           target: default              
          ================================= -->
@@ -60,6 +60,12 @@
           target: check                      
          - - - - - - - - - - - - - - - - - -->
     <target name="check">
+    	<fail unless="configs"/>
+    	<fail unless="buildType"/>
+    	<fail unless="buildId"/>
+    	<fail unless="eclipse.builder.version"/>
+    	<fail unless="eclipse.launcher.version"/>
+    		
     	<fail unless="env.WORKSPACE" message="Please set the environment variable 'WORKSPACE'"/>
     	<fail unless="publish.id" message="Please set the environment variable 'publish.id'"/>
     	<fail unless="publish.download.base" message="Please set the publish target 'publish.download.base'"/>
