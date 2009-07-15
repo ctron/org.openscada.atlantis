@@ -26,7 +26,7 @@
 	
 	<!-- publish dirs -->
 	
-	<property name="publish.repo.dir" value="${publish.repo.base}/${publish.type} "/>
+	<property name="publish.repo.dir" value="${publish.repo.base}/${publish.type}"/>
 	<property name="publish.download.dir" value="${publish.download.base}/atlantis/${publish.type}/${publish.id}"/>
 	
 	<!-- eclipse stuff -->
