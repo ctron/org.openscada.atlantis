@@ -72,7 +72,7 @@
 	<target name="preProcessRepos">
 		<mkdir dir="${transformedRepoLocation}"/>
 		<p2.repo2runnable destination="${transformedRepoLocation}">
-			<source location="${deploy.repo.dir}/"/>
+			<source location="${deploy.repo.dir}/base"/>
 		</p2.repo2runnable>
   	</target>
 

@@ -30,17 +30,12 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="init, clean, build" description="--> The OpenSCADA RCP Client">
+    <target name="default" depends="init, build" description="--> The OpenSCADA RCP Client">
     </target>
 	
 	<target name="init">
 		<tstamp/>
 		<echo message="DeployRepoDir: ${deploy.repo.dir}"/>
-	</target>
-	
-	<target name="clean">
-		<delete dir="${buildDirectory}"/>
-		<delete dir="${deploy.base}"/>
 	</target>
 	
 	<target name="build">
