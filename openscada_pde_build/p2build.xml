@@ -79,8 +79,8 @@
           target: deploy              
          ================================= -->
     <target name="deploy" depends="build" description="Deploy Repository">
-        <mkdir dir="${deploy.repo.dir}"/>
-    	<copy todir="${deploy.repo.dir}">
+        <mkdir dir="${deploy.repo.dir}/base"/>
+    	<copy todir="${deploy.repo.dir}/base">
     		<fileset dir="${build.dir}/repo">
     		</fileset>
     	</copy>

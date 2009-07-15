@@ -155,9 +155,9 @@
     	</copy>
     	
     	<!-- copy p2 repository unpacked -->
-    	<mkdir dir="${publish.repo.dir}" />
-    	<copy todir="${publish.repo.dir}">
-    		<fileset dir="${deploy.repo.dir}"/>
+    	<mkdir dir="${publish.repo.dir}/base" />
+    	<copy todir="${publish.repo.dir}/base">
+    		<fileset dir="${deploy.repo.dir}/base"/>
     	</copy>
     	
     	<!-- make latest link -->
