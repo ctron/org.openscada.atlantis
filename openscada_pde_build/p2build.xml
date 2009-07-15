@@ -31,6 +31,7 @@
 			<format property="BUILD_TAG" pattern="yyyyMMddhhmm"/>
 		</tstamp>
 		<echo message="BuildTag: ${BUILD_TAG}"/>
+		<echo message="Deploy Repo Dir: ${deploy.repo.dir}"/>
 	</target>
 	
 	<target name="clean">
@@ -59,7 +60,7 @@
 		<eclipse.p2generator source="${build.dir}/unpack" target="${build.dir}/repo"
 			root="org.openscada.externals" rootVersion="${build.version.osgi}${BUILD_TAG}"/>
 	
-		<!-- generate externals -->
+		<!-- generate internals -->
 		<delete dir="${build.dir}/unpack/plugins" failonerror="false"/>
 		<unzip src="${file}" dest="${build.dir}/unpack/plugins" overwrite="true">
 			<patternset>
@@ -70,6 +71,8 @@
 		
 		<eclipse.p2generator source="${build.dir}/unpack" target="${build.dir}/repo"
 			root="org.openscada" rootVersion="${build.version.osgi}${BUILD_TAG}"/>
+		
+		<delete dir="${build.dir}/unpack/plugins" failonerror="false"/>
 	</target>
 	
 	<!-- ================================= 

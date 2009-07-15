@@ -66,6 +66,7 @@
   <!-- Steps to do before setup -->
   <!-- ===================================================================== -->
   <target name="preSetup">
+  		<echo message="repoBaseLocation: ${repoBaseLocation}"/>
   </target>
 
   <!-- ===================================================================== -->
@@ -133,6 +134,7 @@
   </target>
 	
 	<target name="preProcessRepos">
+		<echo message="Transforming: ${deploy.repo.dir} -> ${transformedRepoLocation}"/>
 		<mkdir dir="${transformedRepoLocation}"/>
 		<p2.repo2runnable destination="${transformedRepoLocation}">
 			<source location="${deploy.repo.dir}/"/>

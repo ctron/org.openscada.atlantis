@@ -24,11 +24,12 @@
 	<!-- deploy dirs -->
 	
 	<property name="deploy.zip.dir" value="${deploy.base}/deploy/p2zip"/>
-	<property name="deploy.repo.dir" value="${deploy.base}/deploy/p2reop"/>
+	<property name="deploy.repo.dir" value="${deploy.base}/deploy/p2repo"/>
 	
 	<!-- publish dirs -->
 	
 	<property name="publish.repo.dir" value="${publish.repo.base}/${publish.type} "/>
+	<property name="publish.download.dir" value="${publish.download.base}/atlantis/${publish.type}/${publish.id}"/>
 	
 	<!-- eclipse stuff -->
 	
@@ -99,8 +100,6 @@
          ================================= -->
     <target name="build.p2" depends="unpackEclipse" description="Build P2" unless="skipP2">
         <ant antfile="p2build.xml">
-        	<property name="deploy.repo.dir" value="${deploy.repo.dir}"/>
-        	<property name="deploy.zip.dir" value="${deploy.base}/deploy/p2zip"/>
     	</ant>
     </target>
     
@@ -109,7 +108,6 @@
          ================================= -->
     <target name="build.pde" depends="unpackEclipse" description="Build PDE stuff" unless="skipPDE">
         <ant antfile="pdebuild.xml">
-        	<property name="deploy.repo.dir" value="${deploy.repo.dir}"/>
         	<property name="maven.repository" value="${maven.repository}"/>
     	</ant>        
     </target>
@@ -120,22 +118,22 @@
          ================================= -->
     <target name="publish" depends="check" description="Publish">
     	
-    	<mkdir dir="${publish.download.base}/atlantis/${publish.type}/${publish.id}/ostc"/>
-    	<copy todir="${publish.download.base}/atlantis/${publish.type}/${publish.id}/ostc">
+    	<mkdir dir="${publish.download.dir}/ostc"/>
+    	<copy todir="${publish.download.dir}/ostc">
     		<fileset dir="${deploy.base}/deploy/ostc">
     			<include name="*.zip"/>
     		</fileset>
     	</copy>
     	
-    	<mkdir dir="${publish.download.base}/atlantis/${publish.type}/${publish.id}/ide"/>
-    	<copy todir="${publish.download.base}/atlantis/${publish.type}/${publish.id}/ide">
+    	<mkdir dir="${publish.download.dir}/ide"/>
+    	<copy todir="${publish.download.dir}/ide">
     		<fileset dir="${deploy.base}/deploy/ide">
     			<include name="*.zip"/>
     		</fileset>
     	</copy>
     	
-    	<mkdir dir="${publish.download.base}/atlantis/${publish.type}/${publish.id}/p2"/>
-    	<copy todir="${publish.download.base}/atlantis/${publish.type}/${publish.id}/p2">
+    	<mkdir dir="${publish.download.dir}/p2"/>
+    	<copy todir="${publish.download.dir}/p2">
     		<fileset dir="${deploy.repo.dir}">
     			<include name="*.zip"/>
     		</fileset>
