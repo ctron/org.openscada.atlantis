@@ -133,7 +133,7 @@
     	
     	<mkdir dir="${publish.download.dir}/p2"/>
     	<copy todir="${publish.download.dir}/p2">
-    		<fileset dir="${deploy.repo.dir}">
+    		<fileset dir="${deploy.zip.dir}">
     			<include name="*.zip"/>
     		</fileset>
     	</copy>
@@ -141,7 +141,7 @@
     	<!-- copy p2 repository unpacked -->
     	<mkdir dir="${publish.repo.dir}" />
     	<copy todir="${publish.repo.dir}">
-    		<fileset dir="${deploy.repo.dir}" />
+    		<fileset dir="${deploy.repo.dir}"/>
     	</copy>
     	
     	<!-- make latest link -->
