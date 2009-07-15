@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 id="getting_started"><title>Getting Started</title>
+	<para>
+		This section should aid you in getting ready to develop for or with <trademark>OpenSCADA</trademark>. 
+	</para>
+	
+	<sect2><title>Creating applications based on OpenSCADA</title>
+		<para>
+			In order to develop applications that use OpenSCADA you need some a binary distribution
+			and optionally source code attachments or JavaDoc.
+		</para>
+		<para>
+			Generally the download page for <quote>ready to build</quote> stuff is at
+			<uri>http://download.openscada.org</uri> and for repositories at
+			<uri>http://repo.openscada.org</uri>.  
+		</para>
+		<para>
+			The next few sections explain the different approaches one can take in
+			order to set up your development environment.
+		</para>
+		
+		<sect3><title>The Maven Way</title>
+			<para>
+				One word in advance: Although this section features a setup using Maven 2, it
+				is of course also possible (with some drawbacks) to use this setup using
+				Eclipse and the M2Eclipse Plugin (possibly also using the Eclipse IAM Plugin).
+			</para>
+			<para>Write more...</para>
+		</sect3>
+		
+		<sect3><title>The Eclipse Way</title>
+			<para>
+				The Eclipse way is a straight forward P2 repository setup. You will need to
+				perform the following steps:
+				<orderedlist>
+					<listitem>
+						<para>Download and Install Eclipse 3.4 or 3.5</para>
+					</listitem>
+					<listitem>
+						<para>
+							Add the P2 Repository <uri>http://repo.openscada.org/p2/integration/base</uri>
+							for the intgeration repository and
+							<uri>http://repo.openscada.org/p2/release/base</uri> for the release
+							repository
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Set up a new target platform and add all components from the P2
+							repository added in the previous step.
+						</para>
+					</listitem>
+					<listitem>
+						<para>Your are ready to work!</para>
+					</listitem>
+				</orderedlist>
+			</para>
+		</sect3>
+		
+	</sect2>
+	
+	<sect2><title>Developing for OpenSCADA</title>
+		<para>to be written</para>
+	</sect2>
+</sect1>
