@@ -6,13 +6,13 @@
 	<packaging>bundle</packaging>
 	
 	<properties>
-		<bundle.namespace>org.openscada.da.server.exporter.spring</bundle.namespace>
+		<bundle.namespace>org.openscada.da.server.exporter</bundle.namespace>
 	</properties>
 	
 	<parent>
 		<artifactId>org.openscada.atlantis</artifactId>
 		<groupId>org.openscada.atlantis</groupId>
-		<version>0.13.0-SNAPSHOT</version>
+		<version>0.13.0</version>
 		<relativePath>../openscada_build/pom.xml</relativePath>
 	</parent>
 
