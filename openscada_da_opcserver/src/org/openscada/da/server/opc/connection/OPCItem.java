@@ -89,7 +89,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         {
             // unable to convert write request
             logger.info ( "Unable to convert write request" );
-            return new InstantErrorFuture<WriteResult> ( new NotConvertableException ().fillInStackTrace () );
+            return new InstantErrorFuture<WriteResult> ( new NotConvertableException ( value.getValue () ).fillInStackTrace () );
         }
 
         return processWriteRequest ( value );
