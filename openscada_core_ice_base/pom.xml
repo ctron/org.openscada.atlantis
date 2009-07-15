@@ -10,7 +10,7 @@
 		<groupId>org.openscada.atlantis</groupId>
 		<artifactId>org.openscada.atlantis</artifactId>
 		<relativePath>../openscada_build</relativePath>
-		<version>0.13.0-SNAPSHOT</version>
+		<version>0.13.0</version>
 	</parent>
 	
 	<properties>
@@ -84,7 +84,7 @@
 		        	<manifestLocation>META-INF</manifestLocation>
 		        	<instructions>
 		        		<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}",OpenSCADA.Core;version="${pom.version}",Ice*;version="${pom.version}"</Export-Package>
+		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version=&quot;${pom.version}&quot;,OpenSCADA.Core;version=&quot;${pom.version}&quot;,Ice*;version=&quot;${pom.version}&quot;</Export-Package>
 		        		<Import-Package>Ice*,OpenSCADA.*,org.openscada.*,*;resolution:=optional</Import-Package>
 		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
 						<Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
