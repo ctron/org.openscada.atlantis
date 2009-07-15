@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 	<name>OpenSCADA</name>
 
-	<version>0.13.0-SNAPSHOT</version>
+	<version>0.13.0</version>
 	<url>http://openscada.org</url>
 
 	<organization>
