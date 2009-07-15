@@ -23,7 +23,7 @@
 	<property name="publish.id" value="${build.version.osgi}" />
 	
 	<property name="deploy.zip.dir" value="${deploy.base}/deploy/ide"/>
-	<property name="deploy.repo.dir" value="${deploy.repo.base}/${publish.type}/"/>
+	<property name="deploy.repo.dir" value="${publish.repo.base}/${publish.type}/"/>
 	
 	<!-- eclipse stuff -->
 	
@@ -56,7 +56,8 @@
     <target name="check">
     	<fail unless="env.WORKSPACE" message="Please set the environment variable 'WORKSPACE'"/>
     	<fail unless="publish.id" message="Please set the environment variable 'publish.id'"/>
-    	<fail unless="publish.base" message="Please set the publish target 'publish.base'"/>
+    	<fail unless="publish.download.base" message="Please set the publish target 'publish.download.base'"/>
+    	<fail unless="publish.repo.base" message="Please set the publish target 'publish.repo.base'"/>
     	
     	<!-- should be there in hudson, but maybe not when we test locally -->
     	<mkdir dir="${env.WORKSPACE}"/>
