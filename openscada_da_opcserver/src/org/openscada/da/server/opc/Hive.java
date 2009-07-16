@@ -21,7 +21,7 @@ package org.openscada.da.server.opc;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 import org.apache.log4j.Logger;
@@ -42,7 +42,7 @@ public class Hive extends HiveCommon
 {
     private static Logger logger = Logger.getLogger ( Hive.class );
 
-    private final Collection<OPCConnection> connections = new LinkedList<OPCConnection> ();
+    private final Collection<OPCConnection> connections = new CopyOnWriteArrayList<OPCConnection> ();
 
     private final FolderCommon rootFolder = new FolderCommon ();
 
@@ -87,12 +87,14 @@ public class Hive extends HiveCommon
     {
         final OPCConnection connection = new OPCConnection ( this, this.rootFolder, setup, itemSources );
 
-        this.connections.add ( connection );
-
-        connection.start ();
-        if ( connect )
+        if ( this.connections.add ( connection ) )
         {
-            connection.connect ();
+            connection.start ();
+            if ( connect )
+            {
+                // initially connect
+                connection.connect ();
+            }
         }
     }
 

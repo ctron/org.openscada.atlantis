@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.Logger;
 import org.jinterop.dcom.core.JIVariant;
@@ -67,7 +68,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     private int writeRequestMax = 0;
 
-    private long writeRequestTotal = 0;
+    private final AtomicLong writeRequestTotal = new AtomicLong ();
 
     private static Logger logger = Logger.getLogger ( OPCIoManager.class );
 
@@ -101,6 +102,8 @@ public abstract class OPCIoManager extends AbstractPropertyChange
     protected final OPCController controller;
 
     private final Map<Integer, String> errorCodeCache = new HashMap<Integer, String> ();
+
+    private boolean connected = false;
 
     public OPCIoManager ( final Worker worker, final OPCModel model, final OPCController controller )
     {
@@ -168,9 +171,10 @@ public abstract class OPCIoManager extends AbstractPropertyChange
     /**
      * May only be called by the controller
      */
-    public void handleConnected () throws InvocationTargetException
+    public synchronized void handleConnected () throws InvocationTargetException
     {
         registerAllItems ();
+        this.connected = true;
     }
 
     /**
@@ -178,6 +182,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
      */
     public synchronized void handleDisconnected ()
     {
+        this.connected = true;
         this.itemUnregistrations.clear ();
 
         for ( final FutureTask<Result<WriteRequest>> request : this.writeRequests )
@@ -584,6 +589,12 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
         synchronized ( this )
         {
+            // hard check if we are connected or not
+            if ( !this.connected )
+            {
+                return new InstantErrorFuture<Result<WriteRequest>> ( new RuntimeException ( "OPC is not connected" ).fillInStackTrace () );
+            }
+
             future = newWriteFuture ( request );
             this.writeRequests.add ( future );
         }
@@ -591,10 +602,10 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         // update stats
         final int size = this.writeRequests.size ();
         this.writeRequestMax = Math.max ( this.writeRequestMax, size );
-        this.writeRequestTotal++;
+        final long total = this.writeRequestTotal.incrementAndGet ();
         this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, size );
         this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_MAX, null, size );
-        this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_TOTAL, null, this.writeRequestTotal );
+        this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_TOTAL, null, total );
 
         return future;
     }
@@ -625,7 +636,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     public long getWriteRequestTotal ()
     {
-        return this.writeRequestTotal;
+        return this.writeRequestTotal.get ();
     }
 
 }
