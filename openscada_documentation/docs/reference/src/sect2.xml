@@ -62,7 +62,22 @@
 							Add the P2 Repository <uri>http://repo.openscada.org/p2/integration/base</uri>
 							for the intgeration repository and
 							<uri>http://repo.openscada.org/p2/release/base</uri> for the release
-							repository
+							repository. In order to do this open the Preferences and navigate to 
+							<guimenu>Plug-In Development</guimenu><guisubmenu>Target Platform</guisubmenu>
+							and create a new Target Platform by clicking <guibutton>Add...</guibutton>.
+							Start with a default target platform and add a new <quote>Software Site</quote>.
+							<note>
+								<para>
+								When adding the software site be sure to disable the option
+								<guilabel>Include required software</guilabel> as seen in screen
+								<mediaobject>
+									<imageobject>
+   									<imagedata fileref="images/sect2/p2_settings.png" format="PNG" scalefit="1"/>
+ 									</imageobject>
+ 									<caption>P2 Import Settings</caption>
+								</mediaobject>
+								</para>
+							</note>
 						</para>
 					</listitem>
 					<listitem>
