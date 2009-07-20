@@ -29,9 +29,9 @@ import org.apache.xmlbeans.XmlException;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.snmp.ConfigurationDocument.Configuration;
-import org.openscada.da.server.snmp.ConfigurationDocument.Configuration.Connection;
 import org.openscada.da.server.snmp.utils.MIBManager;
+import org.openscada.da.snmp.configuration.ConfigurationDocument;
+import org.openscada.da.snmp.configuration.ConfigurationDocument.Configuration.Connection;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
@@ -90,7 +90,7 @@ public class Hive extends HiveCommon
     {
         this.mibManager = new MIBManager ( doc.getConfiguration ().getMibs () );
 
-        for ( final Configuration.Connection connection : doc.getConfiguration ().getConnectionList () )
+        for ( final Connection connection : doc.getConfiguration ().getConnectionList () )
         {
             configure ( connection );
         }
