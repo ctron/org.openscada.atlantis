@@ -10,7 +10,7 @@
 		<groupId>org.openscada.atlantis</groupId>
 		<artifactId>org.openscada.atlantis</artifactId>
 		<relativePath>../openscada_build</relativePath>
-		<version>0.13.0</version>
+		<version>0.13.1</version>
 	</parent>
 	
 	<properties>

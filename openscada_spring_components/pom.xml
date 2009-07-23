@@ -13,7 +13,7 @@
 	<parent>
 		<artifactId>org.openscada.atlantis</artifactId>
 		<groupId>org.openscada.atlantis</groupId>
-		<version>0.13.0</version>
+		<version>0.13.1</version>
 		<relativePath>../openscada_build/pom.xml</relativePath>
 	</parent>
 
