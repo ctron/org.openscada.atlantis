@@ -25,7 +25,7 @@ import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 
 public class ProxyItemSupport
 {
-    protected ProxySubConnectionId currentConnection;
+    protected volatile ProxySubConnectionId currentConnection;
 
     protected String separator = ".";
 
