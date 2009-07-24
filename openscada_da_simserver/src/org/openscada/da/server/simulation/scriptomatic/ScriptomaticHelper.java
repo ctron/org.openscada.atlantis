@@ -30,7 +30,7 @@ public class ScriptomaticHelper
         updateData ( item, new Variant ( value ) );
     }
 
-    public void updateDataBoolean ( final ScriptomaticItem item, final Boolean value )
+    public void updateDataBoolean ( final ScriptomaticItem item, final boolean value )
     {
         updateData ( item, new Variant ( value ) );
     }

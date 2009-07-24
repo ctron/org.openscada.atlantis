@@ -61,6 +61,11 @@ public class ScriptomaticItem extends DataItemInputOutputChained
         this.handler.trigger ( value );
     }
 
+    public String getId ()
+    {
+        return this.getInformation ().getName ();
+    }
+
     private boolean isCyclic ()
     {
         if ( this.itemDefinition.getCycleCode () == null || this.itemDefinition.getCycleTime () <= 0 )

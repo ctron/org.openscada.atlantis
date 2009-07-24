@@ -23,7 +23,7 @@ public class OpenOfficeLoader
         final SpreadSheet spreadSheet = SpreadSheet.createFromFile ( file );
         for ( int i = 0; i < spreadSheet.getSheetCount (); i++ )
         {
-            loadSheet ( spreadSheet.getSheet ( 0 ) );
+            loadSheet ( spreadSheet.getSheet ( i ) );
         }
     }
 

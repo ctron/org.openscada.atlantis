@@ -1,0 +1,1 @@
+hive.updateDataLong ( thisItem, java.lang.System.currentTimeMillis () / 1000 );
