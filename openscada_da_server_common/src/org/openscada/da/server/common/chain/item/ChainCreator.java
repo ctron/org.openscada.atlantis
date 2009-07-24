@@ -16,10 +16,9 @@ public class ChainCreator
         item.addChainElement ( IODirection.INPUT, new NegateInputItem ( serviceRegistry ) );
         item.addChainElement ( IODirection.INPUT, new ScaleInputItem ( serviceRegistry ) );
         item.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( serviceRegistry ) );
-        item.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
         item.addChainElement ( IODirection.INPUT, new LevelAlarmChainItem ( serviceRegistry ) );
         item.addChainElement ( IODirection.INPUT, new SumAlarmChainItem ( serviceRegistry ) );
         item.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( serviceRegistry ) );
-
+        item.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
     }
 }
