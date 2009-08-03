@@ -1,6 +1,4 @@
-<?xml version="1.0" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" ?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
@@ -8,7 +6,7 @@
 	<packaging>pom</packaging>
 	<name>OpenSCADA</name>
 
-	<version>0.13.1</version>
+	<version>0.13.2</version>
 	<url>http://openscada.org</url>
 
 	<organization>
@@ -34,7 +32,7 @@
 	<properties>
 		<update.policy>interval:10080</update.policy>
 		<version.mina>2.0.0-M6</version.mina>
-		<ci.build.id></ci.build.id>
+		<ci.build.id/>
 	</properties>
 
 	<scm>
@@ -128,7 +126,7 @@
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}"</Export-Package>
+						<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version=&quot;${pom.version}&quot;</Export-Package>
 						<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
 					</instructions>
 				</configuration>
