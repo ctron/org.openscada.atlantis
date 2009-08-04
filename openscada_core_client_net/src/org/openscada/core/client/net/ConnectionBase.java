@@ -336,7 +336,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         connector.setConnectTimeoutMillis ( getConnectTimeout () );
 
         // build filter chain
-        ConnectionHelper.setupFilterChain ( connectionInformation, connector.getFilterChain () );
+        ConnectionHelper.setupFilterChain ( connectionInformation, connector.getFilterChain (), true );
     }
 
     public boolean isConnected ()
