@@ -11,6 +11,8 @@
 	<property name="common.dir" location="${basedir}/docs/common"/>
 	<property name="common.dir.images" location="${common.dir}/images"/>
 	
+	<property name="temp.dir" location="${java.io.tmpdir}"/>
+	
 	<target name="all" depends="clean, html, pdf"/>
 	
 	<target name="clean">
@@ -25,10 +27,10 @@
     <macrodef name="docbook.xhtml">
         <attribute name="dir"/>
     	<attribute name="output"/>
-    	<attribute name="outputName" />
+    	<attribute name="outputName"/>
         <sequential>
         	<mkdir dir="@{output}/@{outputName}"/>
-        	<docbook index="@{dir}/src/index.xml" style="@{dir}/style/xhtml.xsl" output="@{output}/@{outputName}"/>
+        	<docbook dir="@{dir}" style="xhtml" output="@{output}/@{outputName}"/>
         	<copyImages dir="@{dir}" output="@{output}" outputName="@{outputName}"/>
         </sequential>
     	
@@ -79,12 +81,32 @@
           macrodef: docbook          
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="docbook">
-        <attribute name="index"/>
+    	<attribute name="dir"/>
     	<attribute name="style"/>
     	<attribute name="output"/>
     	<attribute name="options" default=""/>
     	<attribute name="params" default=""/>
         <sequential>
+        	<delete dir="@{dir}.transform"/>
+        	<mkdir dir="@{dir}.transform"/>
+        	
+        	<copy todir="@{dir}.transform">
+        		<fileset dir="@{dir}">
+        		</fileset>
+        	</copy>
+        	
+        	<copy todir="@{dir}.transform" overwrite="true">
+        		<fileset dir="@{dir}">
+        			<exclude name="**/index.xml"/>
+        			<include name="**/*.xml"/>
+        		</fileset>
+        		<filterchain>
+        			<linecontains negate="true">
+        			  <contains value="-//OASIS//DTD DocBook XML V4.4//EN"/>
+        			</linecontains>
+        		</filterchain>
+        	</copy>
+        		
         	<java classname="com.icl.saxon.StyleSheet" fork="true" dir="@{output}">
 	  			<classpath>
 	  				<fileset dir="${lib.dir}">
@@ -94,13 +116,14 @@
 	  			<jvmarg value="-Xmx256M"/>
 	  			<jvmarg value="-XX:MaxPermSize=128m"/>
         		<arg line="@{options}"/>
-	  			<arg value="@{index}"/>
-	  			<arg value="@{style}"/>
+	  			<arg value="@{dir}.transform/src/index.xml"/>
+	  			<arg value="@{dir}/style/@{style}.xsl"/>
         		<arg line="@{params}"/>
 	  		</java>
+        	
+        	<delete dir="@{dir}.transform"/>
         </sequential>
     </macrodef>
-
 	
 	<target name="render_html">
 		<mkdir dir="${deploy.dir}/html"/>
@@ -125,7 +148,7 @@
     	<attribute name="outputName" />
         <sequential>
 
-        	<docbook index="@{dir}/src/index.xml" style="@{dir}/style/fopdf.xsl" output="@{output}" options="-o @{outputName}.fo" params="double.sided=false"/>
+        	<docbook dir="@{dir}" style="fopdf" output="@{output}" options="-o @{outputName}.fo" params="double.sided=false"/>
         	<copyImages dir="@{dir}" output="@{output}" outputName=""/>
         	
 			<antcall target="fop">
@@ -145,7 +168,6 @@
 			<param name="outputName" value="reference"/>
     	</antcall>
     </target>
-
 	
 	<!-- - - - - - - - - - - - - - - - - - 
           target: fop                      
