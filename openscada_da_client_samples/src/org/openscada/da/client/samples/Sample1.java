@@ -45,9 +45,12 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
 
     private ItemManager itemManager;
 
-    public Sample1 ( final String uri, final String className ) throws Exception
+    private final String itemName;
+
+    public Sample1 ( final String uri, final String className, final String itemName ) throws Exception
     {
         super ( uri, className );
+        this.itemName = itemName;
     }
 
     @Override
@@ -63,13 +66,13 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
         // since we subscribe with "initial=true" we will get the current value
         // before any other event. Setting to "false" would ignore the current
         // value of this item and wait for the first change.
-        this.itemManager.addItemUpdateListener ( "time", this );
+        this.itemManager.addItemUpdateListener ( this.itemName, this );
     }
 
     public void unsubscribe ()
     {
         // now remove the update listener
-        this.itemManager.removeItemUpdateListener ( "time", this );
+        this.itemManager.removeItemUpdateListener ( this.itemName, this );
     }
 
     public void notifyAttributeChange ( final Map<String, Variant> attributes, final boolean initial )
@@ -114,6 +117,7 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
     {
         String uri = null;
         String className = null;
+        String itemName = "time";
 
         if ( args.length > 0 )
         {
@@ -123,11 +127,15 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
         {
             className = args[1];
         }
+        if ( args.length > 2 )
+        {
+            itemName = args[2];
+        }
 
         Sample1 s = null;
         try
         {
-            s = new Sample1 ( uri, className );
+            s = new Sample1 ( uri, className, itemName );
             s.connect ();
             s.subscribe ();
             Thread.sleep ( 10 * 1000 );
