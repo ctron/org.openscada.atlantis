@@ -54,7 +54,7 @@ public class Server
         acceptor = socketImpl.createAcceptor ();
 
         // set up the filter chain
-        ConnectionHelper.setupFilterChain ( this.connectionInformation, acceptor.getFilterChain () );
+        ConnectionHelper.setupFilterChain ( this.connectionInformation, acceptor.getFilterChain (), false );
 
         // set the session handler
         acceptor.setHandler ( ioHandler );
