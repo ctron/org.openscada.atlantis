@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" [
-  <!ENTITY sect1 SYSTEM "sect1.xml">
-  <!ENTITY sect2 SYSTEM "sect2.xml">
+  <!ENTITY sect1 SYSTEM "001-sect1.xml">
+  <!ENTITY sect2 SYSTEM "002-sect2.xml">
+  <!ENTITY sect3 SYSTEM "003-connections.xml">
+  <!ENTITY glossary SYSTEM "a01-glossary.xml">
 ]>
 <article lang="en">
 	<articleinfo>
@@ -27,9 +29,9 @@
     or any later version published by the Free Software Foundation;
     with Invariant Sections being <xref linkend="overview"/>,
     with the Front-Cover Texts being
-    <quote>OpenSCADA DA NET interface specification</quote>, and no Back-Cover Texts.
-    A copy of the license is included in the section entitled "GNU
-    Free Documentation License".
+    <quote><trademark>OpenSCADA</trademark> Developer Reference</quote>,
+    and no Back-Cover Texts. A copy of the license is included in the
+    section entitled <quote>GNU Free Documentation License</quote>.
            </para>
 		</legalnotice>
 		
@@ -37,4 +39,7 @@
 	
 	&sect1;
 	&sect2;
+	&sect3;
+	
+	&glossary;
  </article>
