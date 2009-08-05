@@ -6,6 +6,9 @@
   <xsl:param name="admon.graphics" select="1"/>
   <xsl:param name="admon.graphics.extension">.svg</xsl:param>
   <xsl:param name="admon.graphics.path">docbook/images/</xsl:param>
+  
+  <!-- styles -->
+  <xsl:param name="body.font.family">sans-serif</xsl:param>
 
   <!-- callouts-->
   <xsl:param name="callout.graphics">0</xsl:param>
@@ -19,6 +22,7 @@
   <!-- These extensions are required for table printing and other stuff -->
   <xsl:param name="use.extensions">1</xsl:param>
   <xsl:param name="tablecolumns.extension">0</xsl:param>
+  
   <xsl:param name="callout.extensions">1</xsl:param>
   <!-- FOP provide only PDF Bookmarks at the moment -->
   <xsl:param name="fop.extensions">0</xsl:param>

@@ -120,7 +120,6 @@
 	  			<arg value="@{dir}/style/@{style}.xsl"/>
         		<arg line="@{params}"/>
 	  		</java>
-        	
         	<delete dir="@{dir}.transform"/>
         </sequential>
     </macrodef>
