@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:os="http://openscada.org/DA/Server/SNMP"
-    targetNamespace="http://openscada.org/DA/Server/SNMP"
+    xmlns:os="http://openscada.org/DA/SNMP/Configuration"
+    targetNamespace="http://openscada.org/DA/SNMP/Configuration"
     elementFormDefault="qualified">
     <xs:element name="configuration">
     

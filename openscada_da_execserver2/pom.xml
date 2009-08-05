@@ -1,12 +1,10 @@
-<?xml version="1.0" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" ?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.da.server.exec2</artifactId>
 	<name>OpenSCADA-DA-Server-Exec2</name>
 	<packaging>bundle</packaging>
-	<description />
+	<description/>
 
 	<properties>
 		<bundle.namespace>org.openscada.da.server.exec2</bundle.namespace>
@@ -16,7 +14,7 @@
 		<groupId>org.openscada.atlantis</groupId>
 		<artifactId>org.openscada.atlantis</artifactId>
 		<relativePath>../openscada_build/pom.xml</relativePath>
-		<version>0.13.0-SNAPSHOT</version>
+		<version>0.14.0-SNAPSHOT</version>
 	</parent>
 
 	<scm>

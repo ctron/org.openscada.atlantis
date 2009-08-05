@@ -14,7 +14,7 @@
 		<groupId>org.openscada.atlantis</groupId>
 		<artifactId>org.openscada.atlantis</artifactId>
 		<relativePath>../openscada_build/pom.xml</relativePath>
-		<version>0.13.0-SNAPSHOT</version>
+		<version>0.14.0-SNAPSHOT</version>
 	</parent>
 
 	<scm>
@@ -33,7 +33,7 @@
 		        	<manifestLocation>META-INF</manifestLocation>
 		        	<instructions>
 		        		<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version="${pom.version}",org.openscada.common.*;version="${pom.version}",org.openscada.da.hive.*;version="${pom.version}"</Export-Package>
+		        		<Export-Package>!${bundle.namespace}.internal.*,!${bundle.namespace}.impl.*,${bundle.namespace}.*;version=&quot;${pom.version}&quot;,org.openscada.common.*;version=&quot;${pom.version}&quot;,org.openscada.da.hive.*;version=&quot;${pom.version}&quot;</Export-Package>
 		        		<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
 		        		<Include-Resource>target/generated-classes/xmlbeans</Include-Resource>	        		
 		        	</instructions>
