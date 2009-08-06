@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
 
-<sect1 id="overview"><title>Overview and Purpose</title>
+<chapter id="overview"><title>Overview and Purpose</title>
 	<para>
   		This document describes the different aspects of programming with
   		OpenSCADA.
   	</para>
   	
-  	<sect2><title>The different modules and projects of OpenSCADA</title>
+  	<sect1><title>The different modules and projects of <trademark>OpenSCADA</trademark></title>
   		<para>
-  			OpenSCADA consists of several different projects and modules.
+  			<trademark>OpenSCADA</trademark> consists of several different projects and modules.
   			
-  			<variablelist><title>OpenSCADA Modules</title>
+  			<variablelist><title><trademark>OpenSCADA</trademark> Modules</title>
   			
   				<varlistentry>
   					<term>A&amp;E</term>
@@ -41,6 +41,6 @@
   				</varlistentry>
   			</variablelist>
   		</para>
-  	</sect2>	
+  	</sect1>	
   	
-</sect1>
+</chapter>

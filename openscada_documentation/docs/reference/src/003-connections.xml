@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
 
-<sect1 id="connections"><title>Connection Adapters</title>
+<chapter id="connections"><title>Connection Adapters</title>
 	<para>
 		The different interfaces of <trademark>OpenSCADA</trademark> can all be accessed
 		using different connection adapters. This ensures a greater portability across
@@ -30,7 +30,7 @@
 		to focus on implementing the protocol specification. 
 	</para>
 
-	<sect2><title>URI format</title>
+	<sect1><title>URI format</title>
 		<para>
 			<trademark>OpenSCADA</trademark> uses the known URI format for connection information. The
 			interpretation of the different components of the URI depend on the connection adapter.
@@ -59,16 +59,16 @@
 			In addition, in some cases, the fragment part can be used to add a data item to the URI.
 			This is for example used in the URI format of drag and drop operations of data items.
 		</para>
-	</sect2>
+	</sect1>
 
-	<sect2><title>GMPP / NET</title>
+	<sect1><title>GMPP / NET</title>
 		<para>
 			The <acronym>GMPP</acronym> / <acronym>NET</acronym><footnote>
 			<para>Do not mix up with <acronym>.NET</acronym></para></footnote> protocol is a plain
 			TCP client/server based protocol.
 		</para>
 		
-		<sect3><title>Connection URI</title>
+		<sect2><title>Connection URI</title>
 			<para>
 				The connection type identifier is <quote>net</quote>.
 			</para>
@@ -108,9 +108,9 @@
 				</tbody>
 				</tgroup>
 			</table>			
-		</sect3>
+		</sect2>
 		
-		<sect3><title>Connection properties</title>
+		<sect2><title>Connection properties</title>
 			<para>
 				The following connection properties are supported
 			</para>
@@ -273,11 +273,11 @@
 				<citetitle>Java&trade; Cryptography Architecture Standard Algorithm Name Documentation</citetitle>
 				</ulink> or the equivalent documentation of the virtual machine you are using. 
 			</para>
-		</sect3>
+		</sect2>
 		
-		<sect3 id="connections_socketImpl"><title>Socket implementations</title>
+		<sect2 id="connections_socketImpl"><title>Socket implementations</title>
 			<para>To be written</para>
-		</sect3>
+		</sect2>
 		
-	</sect2>
-</sect1>
+	</sect1>
+</chapter>

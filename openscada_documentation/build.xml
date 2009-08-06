@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="openscada_da_doc_net" default="pdf">
+<project name="openscada_da_doc_net" default="all">
 	
 	<property name="deploy.dir" location="${basedir}/deploy"/>
 	<property name="lib.dir" location="${basedir}/lib"/>
@@ -13,7 +13,7 @@
 	
 	<property name="temp.dir" location="${java.io.tmpdir}"/>
 	
-	<target name="all" depends="clean, html, pdf"/>
+	<target name="all" depends="clean, html, fopdf"/>
 	
 	<target name="clean">
 		<delete dir="${deploy.dir}" failonerror="false"/>
@@ -78,14 +78,10 @@
 
 
 	<!-- = = = = = = = = = = = = = = = = =
-          macrodef: docbook          
+          macrodef: prepareDocbook          
          = = = = = = = = = = = = = = = = = -->
-    <macrodef name="docbook">
-    	<attribute name="dir"/>
-    	<attribute name="style"/>
-    	<attribute name="output"/>
-    	<attribute name="options" default=""/>
-    	<attribute name="params" default=""/>
+    <macrodef name="prepareDocbook">
+        <attribute name="dir" default="" />
         <sequential>
         	<delete dir="@{dir}.transform"/>
         	<mkdir dir="@{dir}.transform"/>
@@ -106,6 +102,21 @@
         			</linecontains>
         		</filterchain>
         	</copy>
+        </sequential>
+    </macrodef>
+
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: docbook          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="docbook">
+    	<attribute name="dir"/>
+    	<attribute name="style"/>
+    	<attribute name="output"/>
+    	<attribute name="options" default=""/>
+    	<attribute name="params" default=""/>
+        <sequential>
+        	<prepareDocbook dir="@{dir}"/>
         		
         	<java classname="com.icl.saxon.StyleSheet" fork="true" dir="@{output}">
 	  			<classpath>
@@ -131,17 +142,17 @@
 	</target>
 	
 
-	<target name="render_pdf">
+	<target name="render_fopdf">
 		<mkdir dir="${deploy.dir}/pdf"/>
-		<docbook.pdf dir="${basedir}/docs/reference" output="${deploy.dir}/pdf" outputName="reference"/>
-		<docbook.pdf dir="${basedir}/docs/userguide" output="${deploy.dir}/pdf" outputName="userguide"/>
+		<docbook.fopdf dir="${basedir}/docs/reference" output="${deploy.dir}/pdf" outputName="reference"/>
+		<docbook.fopdf dir="${basedir}/docs/userguide" output="${deploy.dir}/pdf" outputName="userguide"/>
 	</target>
 	
 	
 	<!-- = = = = = = = = = = = = = = = = =
-          macrodef: docbook.pdf          
+          macrodef: docbook.fopdf          
          = = = = = = = = = = = = = = = = = -->
-    <macrodef name="docbook.pdf">
+    <macrodef name="docbook.fopdf">
         <attribute name="dir" />
     	<attribute name="output" />
     	<attribute name="outputName" />
@@ -184,6 +195,45 @@
     </target>
 
 		
-	<target name="pdf" depends="clean, render_pdf"/>
+	<target name="fopdf" depends="clean, render_fopdf"/>
+	
+	<target name="texpdf" depends="clean, render_texpdf"/>
+	
+	<target name="render_texpdf">
+		<mkdir dir="${deploy.dir}/pdf"/>
+		<docbook.texpdf dir="${basedir}/docs/reference" output="${deploy.dir}/pdf" outputName="reference"/>
+		<docbook.texpdf dir="${basedir}/docs/userguide" output="${deploy.dir}/pdf" outputName="userguide"/>
+	</target>
+	
+	
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: docbook.texpdf          
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="docbook.texpdf">
+        <attribute name="dir" />
+    	<attribute name="output" />
+    	<attribute name="outputName" />
+        <sequential>
+
+        	<prepareDocbook dir="@{dir}"/>
+        	<copyImages dir="@{dir}" output="@{output}" outputName="@{outputName}"/>
+
+        	<mkdir dir="${deploy.dir}/pdf/@{outputName}"/>
+        	
+        	<echo message="dir: @{dir}"/>
+        	
+        	<exec dir="@{dir}" executable="docbook2pdf" failonerror="true">
+        		<arg file="@{dir}.transform/src/index.xml"/>
+        		<arg value="-o"/>
+        		<arg value="${deploy.dir}/pdf/@{outputName}"/>
+        		<arg value="-d"/>
+        		<arg value="@{dir}/../common/style/driver.sgml"/>
+        	</exec>
+        	
+        	<copy file="${deploy.dir}/pdf/@{outputName}/index.pdf" tofile="${deploy.dir}/pdf/@{outputName}.pdf"/>
+        	<delete dir="${deploy.dir}/pdf/@{outputName}"/>
+        	
+        </sequential>
+    </macrodef>
 
 </project>

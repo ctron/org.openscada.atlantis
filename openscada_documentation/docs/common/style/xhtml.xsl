@@ -22,4 +22,9 @@
     		<img src="docbook/images/logo-openscada-web.png"/>
   		</div>
 	</xsl:template>
+	<xsl:template name="book.titlepage.before.recto">
+		<div align="center">
+    		<img src="docbook/images/logo-openscada-web.png"/>
+  		</div>
+	</xsl:template>
 </xsl:stylesheet>

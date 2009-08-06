@@ -34,5 +34,10 @@
     		<fo:external-graphic src="docbook/images/logo-openscada-pdf.png"/>
   		</fo:block>
 	</xsl:template>
+	<xsl:template name="book.titlepage.before.recto">
+		<fo:block text-align="center">
+    		<fo:external-graphic src="docbook/images/logo-openscada-pdf.png"/>
+  		</fo:block>
+	</xsl:template>
   
 </xsl:stylesheet>

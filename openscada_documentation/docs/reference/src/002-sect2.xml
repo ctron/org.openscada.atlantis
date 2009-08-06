@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
 
-<sect1 id="getting_started"><title>Getting Started</title>
+<chapter id="getting_started"><title>Getting Started</title>
 	<para>
 		This section should aid you in getting ready to develop for or with <trademark>OpenSCADA</trademark>. 
 	</para>
 	
-	<sect2><title>Creating applications based on OpenSCADA</title>
+	<sect1><title>Creating applications based on OpenSCADA</title>
 	
-	<sect3><title>Setting up your development environment</title>
+	<sect2><title>Setting up your development environment</title>
 		<para>
 			In order to develop applications that use OpenSCADA you need some a binary distribution
 			and optionally source code attachments or JavaDoc.
@@ -23,7 +23,7 @@
 			order to set up your development environment.
 		</para>
 		
-		<sect4><title>The Maven Way</title>
+		<sect3><title>The Maven Way</title>
 			<para>
 				One word in advance: Although this section features a setup using Maven 2, it
 				is of course also possible (with some drawbacks) to use this setup using
@@ -48,9 +48,9 @@
 				OSGi bundles might look like plain jar files!
 				</para></note>
 			</para>
-		</sect4>
+		</sect3>
 		
-		<sect4><title>The Eclipse Way</title>
+		<sect3><title>The Eclipse Way</title>
 			<para>
 				The Eclipse way is a straight forward P2 repository setup. You will need to
 				perform the following steps:
@@ -92,15 +92,15 @@
 					</listitem>
 				</orderedlist>
 			</para>
-		</sect4>
+		</sect3>
 	
-	</sect3>
+	</sect2>
 	
-	<sect3><title>Creating a first DA client application</title>
+	<sect2><title>Creating a first DA client application</title>
 		<para>
 		</para>
 		
-		<sect4><title>Dependencies</title>
+		<sect3><title>Dependencies</title>
 			<para>
 				You will need the following modules and their dependencies:
 				<itemizedlist>
@@ -112,16 +112,16 @@
 					<listitem><para>org.openscada.da.client.ice</para></listitem>
 				</itemizedlist>
 			</para>
-		</sect4>
+		</sect3>
 		
-		<sect4><title>Project setup</title>
+		<sect3><title>Project setup</title>
 			<para>
 				We just need a simple java project with a main method. Although
 				other scenarios are possible we will keep it simple.
 			</para>
-		</sect4>
+		</sect3>
 		
-		<sect4><title>Sample</title>
+		<sect3><title>Sample</title>
 			<para>
 				The following sample will create a new connection to an OpenSCADA DA Server
 				(aka <quote>Hive</quote>) and subscribe to the dataitem <filename>time</filename>.
@@ -215,16 +215,16 @@ public class Client
 			<para>
 				
 			</para>
-		</sect4>
-	</sect3>
+		</sect3>
+	</sect2>
 	
-	<sect3><title>Creating a first DA server application</title>
+	<sect2><title>Creating a first DA server application</title>
 		<para></para>
-	</sect3>
-	
 	</sect2>
 	
-	<sect2><title>Developing for OpenSCADA</title>
+	</sect1>
+	
+	<sect1><title>Developing for OpenSCADA</title>
 		<para>to be written</para>
-	</sect2>
-</sect1>
+	</sect1>
+</chapter>
