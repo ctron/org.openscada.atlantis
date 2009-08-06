@@ -141,7 +141,7 @@
 					<groupId>org.openscada.aurora</groupId>
 					<artifactId>org.openscada.aurora.slice.plugin
 					</artifactId>
-					<version>0.12.0</version>
+					<version>0.13.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
