@@ -35,8 +35,16 @@
 				</configuration>
 				<executions>
 					<execution>
+						<id>build</id>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>slice-build</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>clean</id>
+						<phase>clean</phase>
+						<goals>
 							<goal>slice-build-clean</goal>
 						</goals>
 					</execution>
