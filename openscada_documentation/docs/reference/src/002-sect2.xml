@@ -6,11 +6,11 @@
 		This section should aid you in getting ready to develop for or with <trademark>OpenSCADA</trademark>. 
 	</para>
 	
-	<sect1><title>Creating applications based on OpenSCADA</title>
+	<sect1><title>Creating applications based on <trademark>OpenSCADA</trademark></title>
 	
 	<sect2><title>Setting up your development environment</title>
 		<para>
-			In order to develop applications that use OpenSCADA you need some a binary distribution
+			In order to develop applications that use <trademark>OpenSCADA</trademark> you need some a binary distribution
 			and optionally source code attachments or JavaDoc.
 		</para>
 		<para>
@@ -224,7 +224,7 @@ public class Client
 	
 	</sect1>
 	
-	<sect1><title>Developing for OpenSCADA</title>
+	<sect1><title>Developing for <trademark>OpenSCADA</trademark></title>
 		<para>to be written</para>
 	</sect1>
 </chapter>
