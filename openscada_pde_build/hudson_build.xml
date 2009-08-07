@@ -140,12 +140,21 @@
     		</fileset>
     	</copy>
     	
+    	<!-- copy the IDE archive -->
     	<mkdir dir="${publish.download.dir}/ide"/>
     	<copy todir="${publish.download.dir}/ide">
     		<fileset dir="${deploy.base}/deploy/ide">
     			<include name="*.zip"/>
     		</fileset>
     	</copy>
+    	
+    	<!-- expand the IDE p2 archive -->
+    	<mkdir dir="${publish.repo.dir}/ide/${build.version.osgi}" />
+    	<unzip dest="${publish.repo.dir}/ide/${build.version.osgi}">
+    		<fileset dir="${deploy.base}/deploy/ide">
+				<include name="*.zip"/>
+			</fileset>
+    	</unzip>
     	
     	<mkdir dir="${publish.download.dir}/p2"/>
     	<copy todir="${publish.download.dir}/p2">
