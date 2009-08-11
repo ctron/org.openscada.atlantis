@@ -20,6 +20,7 @@
 package org.openscada.da.server.exporter;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.log4j.Logger;
@@ -43,11 +44,11 @@ public class HiveExport
 
     public synchronized void start () throws Exception
     {
-        log.info ( String.format ( "Starting hive: %s", this.hive ) );
+        log.info ( String.format ( "Starting hive: %s", hive ) );
 
-        this.hive.start ();
+        hive.start ();
 
-        for ( final Export export : this.exports )
+        for ( final Export export : exports )
         {
             try
             {
@@ -62,9 +63,9 @@ public class HiveExport
 
     public synchronized void stop () throws Exception
     {
-        log.info ( String.format ( "Stopping hive: %s", this.hive ) );
+        log.info ( String.format ( "Stopping hive: %s", hive ) );
 
-        for ( final Export export : this.exports )
+        for ( final Export export : exports )
         {
             try
             {
@@ -76,7 +77,7 @@ public class HiveExport
             }
         }
 
-        this.hive.stop ();
+        hive.stop ();
     }
 
     public Export addExport ( final String endpointUri ) throws ConfigurationError
@@ -88,7 +89,7 @@ public class HiveExport
 
         if ( export != null )
         {
-            this.exports.add ( export );
+            exports.add ( export );
         }
         else
         {
@@ -113,12 +114,12 @@ public class HiveExport
             if ( ci.getDriver ().equalsIgnoreCase ( "net" ) || ci.getDriver ().equalsIgnoreCase ( "gmpp" ) )
             {
                 log.debug ( "Create new 'net' exporter" );
-                return new NetExport ( this.hive, ci );
+                return new NetExport ( hive, ci );
             }
             else if ( ci.getDriver ().equalsIgnoreCase ( "ice" ) )
             {
                 log.debug ( "Create new 'ice' exporter" );
-                return new IceExport ( this.hive, ci );
+                return new IceExport ( hive, ci );
             }
             else
             {
@@ -129,5 +130,10 @@ public class HiveExport
         {
             throw new ConfigurationError ( "Failed to configure exporter", e );
         }
+    }
+
+    public Collection<Export> getExports ()
+    {
+        return Collections.unmodifiableCollection ( exports );
     }
 }

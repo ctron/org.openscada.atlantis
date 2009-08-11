@@ -35,6 +35,8 @@ public class Controller
 
     private final List<HiveExport> hives = new LinkedList<HiveExport> ();
 
+    private final List<String> announcers = new LinkedList<String> ();
+
     public Controller ( final ConfigurationDocument configurationDocument ) throws ConfigurationException
     {
         super ();
@@ -52,7 +54,7 @@ public class Controller
     }
 
     /**
-     * Create the hive factory 
+     * Create the hive factory
      * @param factoryClass the class to instantiate
      * @return the factory
      * @throws ConfigurationException an error occurred
@@ -82,6 +84,11 @@ public class Controller
     {
         final ConfigurationType configuration = configurationDocument.getConfiguration ();
 
+        for (final AnnouncerType announcer : configuration.getAnnouncerList () ) {
+            final String klass = announcer.getClass1 ();
+            announcers.add ( klass );
+        }
+
         for ( final HiveType hive : configuration.getHiveList () )
         {
             final String ref = hive.getRef ();
@@ -109,7 +116,7 @@ public class Controller
                         log.error ( String.format ( "Unable to configure export (%s) for hive (%s)", hive.getRef (), export.getUri () ) );
                     }
                 }
-                this.hives.add ( hiveExport );
+                hives.add ( hiveExport );
             }
             catch ( final Throwable e )
             {
@@ -120,23 +127,24 @@ public class Controller
 
     /**
      * Export all hives
-     * @throws Exception 
+     * @throws Exception
      */
     public synchronized void start () throws Exception
     {
-        for ( final HiveExport hive : this.hives )
+        for ( final HiveExport hive : hives )
         {
             hive.start ();
+            // announce hive
         }
     }
 
     /**
      * Stop exporting all hives
-     * @throws Exception 
+     * @throws Exception
      */
     public synchronized void stop () throws Exception
     {
-        for ( final HiveExport hive : this.hives )
+        for ( final HiveExport hive : hives )
         {
             hive.stop ();
         }

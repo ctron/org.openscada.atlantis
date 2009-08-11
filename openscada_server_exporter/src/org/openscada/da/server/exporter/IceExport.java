@@ -42,40 +42,44 @@ public class IceExport implements Export
     {
         super ();
         this.hive = hive;
-        this.connectionInformation = ci;
+        connectionInformation = ci;
     }
 
     public synchronized void start () throws Exception
     {
-        logger.info ( String.format ( "Starting exporter (%s) on endpoints '%s'", this.hive, this.connectionInformation ) );
+        logger.info ( String.format ( "Starting exporter (%s) on endpoints '%s'", hive, connectionInformation ) );
 
         final Ice.InitializationData initData = new Ice.InitializationData ();
         initData.properties = Ice.Util.createProperties ();
 
-        for ( final Map.Entry<String, String> entry : this.connectionInformation.getProperties ().entrySet () )
+        for ( final Map.Entry<String, String> entry : connectionInformation.getProperties ().entrySet () )
         {
             initData.properties.setProperty ( entry.getKey (), entry.getValue () );
         }
 
-        this.communicator = Ice.Util.initialize ( initData );
+        communicator = Ice.Util.initialize ( initData );
 
-        this.exporter = new Exporter ( this.hive, this.communicator, this.connectionInformation );
+        exporter = new Exporter ( hive, communicator, connectionInformation );
 
-        this.exporter.start ();
+        exporter.start ();
     }
 
     public synchronized void stop ()
     {
-        this.exporter.stop ();
-        this.communicator.shutdown ();
+        exporter.stop ();
+        communicator.shutdown ();
 
-        this.communicator = null;
-        this.exporter = null;
+        communicator = null;
+        exporter = null;
     }
 
     public Ice.Communicator getCommunicator ()
     {
-        return this.communicator;
+        return communicator;
     }
 
+    public ConnectionInformation getConnectionInformation ()
+    {
+        return connectionInformation;
+    }
 }

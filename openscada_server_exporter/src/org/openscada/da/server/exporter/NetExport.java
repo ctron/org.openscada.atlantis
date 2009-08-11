@@ -43,24 +43,28 @@ public class NetExport implements Export
 
         logger.debug ( "Instatiate exporter class" );
 
-        this.exporter = new Exporter ( this.hive, this.connectionInformation );
+        exporter = new Exporter ( this.hive, this.connectionInformation );
     }
 
     public synchronized void start () throws Exception
     {
-        if ( this.exporter == null )
+        if ( exporter == null )
         {
             return;
         }
 
-        logger.info ( String.format ( "Starting exporter (%s) on port %s", this.hive, this.connectionInformation ) );
+        logger.info ( String.format ( "Starting exporter (%s) on port %s", hive, connectionInformation ) );
 
-        this.exporter.start ();
+        exporter.start ();
     }
 
     public void stop () throws Exception
     {
-        this.exporter.stop ();
+        exporter.stop ();
     }
 
+    public ConnectionInformation getConnectionInformation ()
+    {
+        return connectionInformation;
+    }
 }

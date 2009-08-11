@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.exporter;
 
+import org.openscada.core.ConnectionInformation;
 import org.openscada.utils.lifecycle.LifecycleAware;
 
 /**
@@ -28,4 +29,5 @@ import org.openscada.utils.lifecycle.LifecycleAware;
  */
 public interface Export extends LifecycleAware
 {
+    ConnectionInformation getConnectionInformation();
 }
