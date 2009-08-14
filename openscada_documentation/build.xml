@@ -135,14 +135,14 @@
         </sequential>
     </macrodef>
 	
-	<target name="render_html">
+	<target name="render_html" unless="skip.html">
 		<mkdir dir="${deploy.dir}/html"/>
 		<docbook.xhtml dir="${basedir}/docs/reference" output="${deploy.dir}/html" outputName="reference"/>
 		<docbook.xhtml dir="${basedir}/docs/userguide" output="${deploy.dir}/html" outputName="userguide"/>
 	</target>
 	
 
-	<target name="render_fopdf">
+	<target name="render_fopdf" unless="skip.fop">
 		<mkdir dir="${deploy.dir}/pdf"/>
 		<docbook.fopdf dir="${basedir}/docs/reference" output="${deploy.dir}/pdf" outputName="reference"/>
 		<docbook.fopdf dir="${basedir}/docs/userguide" output="${deploy.dir}/pdf" outputName="userguide"/>
@@ -199,7 +199,7 @@
 	
 	<target name="texpdf" depends="clean, render_texpdf" unless="skip.tex"/>
 	
-	<target name="render_texpdf">
+	<target name="render_texpdf" unless="skip.tex">
 		<mkdir dir="${deploy.dir}/pdf"/>
 		<docbook.texpdf dir="${basedir}/docs/reference" output="${deploy.dir}/pdf" outputName="reference"/>
 		<docbook.texpdf dir="${basedir}/docs/userguide" output="${deploy.dir}/pdf" outputName="userguide"/>
