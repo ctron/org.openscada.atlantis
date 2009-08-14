@@ -13,7 +13,7 @@
 	
 	<property name="temp.dir" location="${java.io.tmpdir}"/>
 	
-	<target name="all" depends="clean, html, fopdf"/>
+	<target name="all" depends="clean, html, fopdf, texpdf"/>
 	
 	<target name="clean">
 		<delete dir="${deploy.dir}" failonerror="false"/>
@@ -195,9 +195,9 @@
     </target>
 
 		
-	<target name="fopdf" depends="clean, render_fopdf"/>
+	<target name="fopdf" depends="clean, render_fopdf" unless="skip.fop"/>
 	
-	<target name="texpdf" depends="clean, render_texpdf"/>
+	<target name="texpdf" depends="clean, render_texpdf" unless="skip.tex"/>
 	
 	<target name="render_texpdf">
 		<mkdir dir="${deploy.dir}/pdf"/>
