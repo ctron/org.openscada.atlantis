@@ -19,7 +19,7 @@
 		<delete dir="${deploy.dir}" failonerror="false"/>
 	</target>
 	
-	<target name="html" depends="clean, render_html"/>
+	<target name="html" depends="clean, render_html" unless="skip.html"/>
 	
 	<!-- = = = = = = = = = = = = = = = = =
           macrodef: docbook.xhtml          
