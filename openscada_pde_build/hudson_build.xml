@@ -182,7 +182,7 @@
     	<attribute name="compression" default="gzip"/>
         <sequential>
         	<mkdir dir="${eclipse.pack.dir}"/>
-        	<get usetimestamp="true" dest="${eclipse.pack.dir}/@{dropFile}" src="${eclipse.download.base}/@{project}/downloads/drops/@{dropId}/@{dropFile}" />
+        	<get usetimestamp="true" dest="${eclipse.pack.dir}/@{dropFile}" src="${eclipse.download.base}/@{project}/downloads/drops/@{dropId}/@{dropFile}" ignoreerrors="true" />
         	<untar src="${eclipse.pack.dir}/@{dropFile}" dest="${eclipse.home.base}" compression="@{compression}" />
         </sequential>
     </macrodef>
@@ -196,7 +196,7 @@
     	<attribute name="project" default="eclipse"/>
         <sequential>
         	<mkdir dir="${eclipse.pack.dir}"/>
-        	<get usetimestamp="true" dest="${eclipse.pack.dir}/@{dropFile}" src="${eclipse.download.base}/@{project}/downloads/drops/@{dropId}/@{dropFile}" />
+        	<get usetimestamp="true" dest="${eclipse.pack.dir}/@{dropFile}" src="${eclipse.download.base}/@{project}/downloads/drops/@{dropId}/@{dropFile}" ignoreerrors="true" />
     		<unzip src="${eclipse.pack.dir}/@{dropFile}" dest="${eclipse.home.base}" />
         </sequential>
     </macrodef>
