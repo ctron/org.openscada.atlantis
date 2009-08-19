@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.URLTransfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -55,6 +56,7 @@ import org.openscada.da.client.base.realtime.ListData;
 import org.openscada.da.client.base.realtime.ListEntry;
 import org.openscada.da.client.base.realtime.ListEntryComparator;
 import org.openscada.da.client.base.realtime.RealtimeListAdapter;
+import org.openscada.da.client.base.realtime.RealtimeListDragSourceListener;
 import org.openscada.da.client.base.realtime.RemoveAction;
 
 public class RealTimeList extends ViewPart implements RealtimeListAdapter
@@ -64,7 +66,7 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
 
     private RemoveAction _removeAction = null;
 
-    private TreeViewer _viewer;
+    private TreeViewer viewer;
 
     private final ListData list = new ListData ();
 
@@ -77,37 +79,37 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
     @Override
     public void createPartControl ( final Composite parent )
     {
-        this._viewer = new TreeViewer ( parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION );
+        this.viewer = new TreeViewer ( parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION );
 
         TreeColumn col;
 
-        col = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
+        col = new TreeColumn ( this.viewer.getTree (), SWT.NONE );
         col.setText ( "ID" );
-        col = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
+        col = new TreeColumn ( this.viewer.getTree (), SWT.NONE );
         col.setText ( "State" );
-        col = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
+        col = new TreeColumn ( this.viewer.getTree (), SWT.NONE );
         col.setText ( "Type" );
-        col = new TreeColumn ( this._viewer.getTree (), SWT.NONE );
+        col = new TreeColumn ( this.viewer.getTree (), SWT.NONE );
         col.setText ( "Value" );
 
-        this._viewer.getTree ().setHeaderVisible ( true );
+        this.viewer.getTree ().setHeaderVisible ( true );
 
         final TableLayout tableLayout = new TableLayout ();
         tableLayout.addColumnData ( new ColumnWeightData ( 100, 100, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 50, 50, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 50, 50, true ) );
         tableLayout.addColumnData ( new ColumnWeightData ( 75, 75, true ) );
-        this._viewer.getTree ().setLayout ( tableLayout );
+        this.viewer.getTree ().setLayout ( tableLayout );
 
-        this._viewer.setLabelProvider ( new ItemListLabelProvider () );
-        this._viewer.setContentProvider ( new ItemListContentProvider () );
-        this._viewer.setComparator ( new ListEntryComparator () );
-        this._viewer.setInput ( this.list );
+        this.viewer.setLabelProvider ( new ItemListLabelProvider () );
+        this.viewer.setContentProvider ( new ItemListContentProvider () );
+        this.viewer.setComparator ( new ListEntryComparator () );
+        this.viewer.setInput ( this.list );
 
-        getViewSite ().setSelectionProvider ( this._viewer );
+        getViewSite ().setSelectionProvider ( this.viewer );
 
-        this._viewer.addSelectionChangedListener ( this._removeAction );
-        this._viewer.addDoubleClickListener ( new IDoubleClickListener () {
+        this.viewer.addSelectionChangedListener ( this._removeAction );
+        this.viewer.addDoubleClickListener ( new IDoubleClickListener () {
 
             public void doubleClick ( final DoubleClickEvent event )
             {
@@ -119,6 +121,7 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
         contributeToActionBars ();
 
         addDropSupport ();
+        addDragSupport ();
     }
 
     protected void handleDoubleClick ( final DoubleClickEvent event )
@@ -182,9 +185,9 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
                 fillContextMenu ( manager );
             }
         } );
-        final Menu menu = menuMgr.createContextMenu ( this._viewer.getControl () );
-        this._viewer.getControl ().setMenu ( menu );
-        getSite ().registerContextMenu ( menuMgr, this._viewer );
+        final Menu menu = menuMgr.createContextMenu ( this.viewer.getControl () );
+        this.viewer.getControl ().setMenu ( menu );
+        getSite ().registerContextMenu ( menuMgr, this.viewer );
     }
 
     private void fillContextMenu ( final IMenuManager manager )
@@ -215,13 +218,18 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
 
     private void addDropSupport ()
     {
-        this._viewer.addDropSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance () }, new ItemDropAdapter ( this._viewer, this ) );
+        this.viewer.addDropSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance () }, new ItemDropAdapter ( this.viewer, this ) );
+    }
+
+    private void addDragSupport ()
+    {
+        this.viewer.addDragSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance (), URLTransfer.getInstance () }, new RealtimeListDragSourceListener ( this.viewer ) );
     }
 
     @Override
     public void setFocus ()
     {
-        this._viewer.getControl ().setFocus ();
+        this.viewer.getControl ().setFocus ();
     }
 
     /* (non-Javadoc)
