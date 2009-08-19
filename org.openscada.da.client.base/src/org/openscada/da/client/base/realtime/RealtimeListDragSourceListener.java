@@ -10,6 +10,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.URLTransfer;
 import org.openscada.da.client.base.dnd.ItemTransfer;
 import org.openscada.da.client.base.item.Item;
 
@@ -42,9 +44,48 @@ public class RealtimeListDragSourceListener implements DragSourceListener
                 for ( final Iterator<?> i = selection.iterator (); i.hasNext (); )
                 {
                     final ListEntry entry = (ListEntry)i.next ();
-                    items.add ( entry.getItem() );
+                    items.add ( entry.getItem () );
                 }
                 event.data = items.toArray ( new Item[items.size ()] );
+            }
+            else if ( TextTransfer.getInstance ().isSupportedType ( event.dataType ) )
+            {
+                final IStructuredSelection selection = (IStructuredSelection)LocalSelectionTransfer.getTransfer ().getSelection ();
+
+                final StringBuilder sb = new StringBuilder ();
+                int cnt = 0;
+                for ( final Iterator<?> i = selection.iterator (); i.hasNext (); )
+                {
+                    final ListEntry entry = (ListEntry)i.next ();
+                    sb.append ( entry.getDataItem ().getItemId () );
+                    if ( cnt > 0 )
+                    {
+                        sb.append ( "\n" );
+                    }
+                    cnt++;
+                }
+                event.data = sb.toString ();
+            }
+            else if ( URLTransfer.getInstance ().isSupportedType ( event.dataType ) )
+            {
+                final IStructuredSelection selection = (IStructuredSelection)LocalSelectionTransfer.getTransfer ().getSelection ();
+
+                final StringBuilder sb = new StringBuilder ();
+                int cnt = 0;
+                for ( final Iterator<?> i = selection.iterator (); i.hasNext (); )
+                {
+                    final ListEntry entry = (ListEntry)i.next ();
+                    sb.append ( entry.getItem ().getConnectionString () );
+                    sb.append ( "#" );
+                    sb.append ( entry.getItem ().getId () );
+
+                    if ( cnt > 0 )
+                    {
+                        sb.append ( "\n" );
+                    }
+                    cnt++;
+                }
+                event.data = sb.toString ();
             }
         }
         catch ( final Exception e )
