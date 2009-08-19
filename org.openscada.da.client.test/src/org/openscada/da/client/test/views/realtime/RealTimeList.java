@@ -219,12 +219,12 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
 
     private void addDropSupport ()
     {
-        this.viewer.addDropSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance () }, new ItemDropAdapter ( this.viewer, this ) );
+        this.viewer.addDropSupport ( DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK, new Transfer[] { ItemTransfer.getInstance () }, new ItemDropAdapter ( this.viewer, this ) );
     }
 
     private void addDragSupport ()
     {
-        this.viewer.addDragSupport ( DND.DROP_COPY | DND.DROP_MOVE, new Transfer[] { ItemTransfer.getInstance (), URLTransfer.getInstance (), TextTransfer.getInstance () }, new RealtimeListDragSourceListener ( this.viewer ) );
+        this.viewer.addDragSupport ( DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK, new Transfer[] { ItemTransfer.getInstance (), URLTransfer.getInstance (), TextTransfer.getInstance () }, new RealtimeListDragSourceListener ( this.viewer ) );
     }
 
     @Override
