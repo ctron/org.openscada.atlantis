@@ -129,6 +129,11 @@ public class PatternSubscribeAction implements IObjectActionDelegate
                     this.items.add ( dataItemEntry );
                 }
             }
+            else if ( entry instanceof FolderEntry )
+            {
+            	handleFolder ( ((FolderEntry)entry ));
+            }
+            	
         }
     }
 }
