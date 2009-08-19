@@ -57,11 +57,11 @@ public class RealtimeListDragSourceListener implements DragSourceListener
                 for ( final Iterator<?> i = selection.iterator (); i.hasNext (); )
                 {
                     final ListEntry entry = (ListEntry)i.next ();
-                    sb.append ( entry.getDataItem ().getItemId () );
                     if ( cnt > 0 )
                     {
                         sb.append ( "\n" );
                     }
+                    sb.append ( entry.getDataItem ().getItemId () );
                     cnt++;
                 }
                 event.data = sb.toString ();
@@ -75,14 +75,16 @@ public class RealtimeListDragSourceListener implements DragSourceListener
                 for ( final Iterator<?> i = selection.iterator (); i.hasNext (); )
                 {
                     final ListEntry entry = (ListEntry)i.next ();
-                    sb.append ( entry.getItem ().getConnectionString () );
-                    sb.append ( "#" );
-                    sb.append ( entry.getItem ().getId () );
 
                     if ( cnt > 0 )
                     {
                         sb.append ( "\n" );
                     }
+
+                    sb.append ( entry.getItem ().getConnectionString () );
+                    sb.append ( "#" );
+                    sb.append ( entry.getItem ().getId () );
+
                     cnt++;
                 }
                 event.data = sb.toString ();
