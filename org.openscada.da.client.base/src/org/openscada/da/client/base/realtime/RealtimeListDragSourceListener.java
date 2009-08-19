@@ -51,43 +51,12 @@ public class RealtimeListDragSourceListener implements DragSourceListener
             else if ( TextTransfer.getInstance ().isSupportedType ( event.dataType ) )
             {
                 final IStructuredSelection selection = (IStructuredSelection)LocalSelectionTransfer.getTransfer ().getSelection ();
-
-                final StringBuilder sb = new StringBuilder ();
-                int cnt = 0;
-                for ( final Iterator<?> i = selection.iterator (); i.hasNext (); )
-                {
-                    final ListEntry entry = (ListEntry)i.next ();
-                    if ( cnt > 0 )
-                    {
-                        sb.append ( "\n" );
-                    }
-                    sb.append ( entry.getDataItem ().getItemId () );
-                    cnt++;
-                }
-                event.data = sb.toString ();
+                setItemUriData ( event, selection );
             }
             else if ( URLTransfer.getInstance ().isSupportedType ( event.dataType ) )
             {
                 final IStructuredSelection selection = (IStructuredSelection)LocalSelectionTransfer.getTransfer ().getSelection ();
-
-                final StringBuilder sb = new StringBuilder ();
-                int cnt = 0;
-                for ( final Iterator<?> i = selection.iterator (); i.hasNext (); )
-                {
-                    final ListEntry entry = (ListEntry)i.next ();
-
-                    if ( cnt > 0 )
-                    {
-                        sb.append ( "\n" );
-                    }
-
-                    sb.append ( entry.getItem ().getConnectionString () );
-                    sb.append ( "#" );
-                    sb.append ( entry.getItem ().getId () );
-
-                    cnt++;
-                }
-                event.data = sb.toString ();
+                setItemUriData ( event, selection );
             }
         }
         catch ( final Exception e )
@@ -95,6 +64,45 @@ public class RealtimeListDragSourceListener implements DragSourceListener
             event.doit = false;
         }
 
+    }
+
+    private void setItemUriData ( final DragSourceEvent event, final IStructuredSelection selection )
+    {
+        final StringBuilder sb = new StringBuilder ();
+        int cnt = 0;
+        for ( final Iterator<?> i = selection.iterator (); i.hasNext (); )
+        {
+            final ListEntry entry = (ListEntry)i.next ();
+
+            if ( cnt > 0 )
+            {
+                sb.append ( "\n" );
+            }
+
+            sb.append ( entry.getItem ().getConnectionString () );
+            sb.append ( "#" );
+            sb.append ( entry.getItem ().getId () );
+
+            cnt++;
+        }
+        event.data = sb.toString ();
+    }
+
+    private void setItemStringData ( final DragSourceEvent event, final IStructuredSelection selection )
+    {
+        final StringBuilder sb = new StringBuilder ();
+        int cnt = 0;
+        for ( final Iterator<?> i = selection.iterator (); i.hasNext (); )
+        {
+            final ListEntry entry = (ListEntry)i.next ();
+            if ( cnt > 0 )
+            {
+                sb.append ( "\n" );
+            }
+            sb.append ( entry.getDataItem ().getItemId () );
+            cnt++;
+        }
+        event.data = sb.toString ();
     }
 
     public void dragStart ( final DragSourceEvent event )
