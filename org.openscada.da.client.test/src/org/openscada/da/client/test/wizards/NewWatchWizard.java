@@ -40,25 +40,25 @@ import org.openscada.da.core.IODirection;
 
 public class NewWatchWizard extends Wizard implements INewWizard
 {
-    private HiveConnection _connection = null;
+    private HiveConnection connection = null;
 
-    private DataItemEntry _itemEntry = null;
+    private DataItemEntry itemEntry = null;
 
-    private NewWatchWizardPage _page = null;
+    private NewWatchWizardPage page = null;
 
-    private IWorkbenchSite _site = null;
+    private IWorkbenchSite site = null;
 
     @Override
     public boolean performFinish ()
     {
-        final String dataItemID = this._page.getDataItemID ();
+        final String dataItemID = this.page.getDataItemID ();
 
         try
         {
             try
             {
-                final DataItemEntry dataItem = new DataItemEntry ( dataItemID, new HashMap<String, Variant> (), null, this._connection, dataItemID, EnumSet.noneOf ( IODirection.class ) );
-                final IViewPart viewer = this._site.getPage ().showView ( DataItemWatchView.VIEW_ID, dataItem.getAsSecondaryId (), IWorkbenchPage.VIEW_ACTIVATE );
+                final DataItemEntry dataItem = new DataItemEntry ( dataItemID, new HashMap<String, Variant> (), null, this.connection, dataItemID, EnumSet.noneOf ( IODirection.class ) );
+                final IViewPart viewer = this.site.getPage ().showView ( DataItemWatchView.VIEW_ID, dataItem.getAsSecondaryId (), IWorkbenchPage.VIEW_ACTIVATE );
                 if ( viewer instanceof DataItemWatchView )
                 {
                     ( (DataItemWatchView)viewer ).setDataItem ( dataItem );
@@ -72,7 +72,7 @@ public class NewWatchWizard extends Wizard implements INewWizard
         catch ( final InvocationTargetException e )
         {
             final Throwable realException = e.getTargetException ();
-            MessageDialog.openError ( getShell (), Messages.getString("NewWatchWizard.errorDialog.title"), realException.getMessage () ); //$NON-NLS-1$
+            MessageDialog.openError ( getShell (), Messages.getString ( "NewWatchWizard.errorDialog.title" ), realException.getMessage () ); //$NON-NLS-1$
             return false;
         }
         return true;
@@ -81,23 +81,23 @@ public class NewWatchWizard extends Wizard implements INewWizard
     public void init ( final IWorkbench workbench, final IStructuredSelection selection )
     {
         setNeedsProgressMonitor ( true );
-        setWindowTitle ( Messages.getString("NewWatchWizard.window.title") ); //$NON-NLS-1$
+        setWindowTitle ( Messages.getString ( "NewWatchWizard.window.title" ) ); //$NON-NLS-1$
 
-        this._site = workbench.getActiveWorkbenchWindow ().getActivePage ().getActivePart ().getSite ();
+        this.site = workbench.getActiveWorkbenchWindow ().getActivePage ().getActivePart ().getSite ();
 
         final Object o = selection.getFirstElement ();
         if ( o instanceof HiveConnection )
         {
-            this._connection = (HiveConnection)o;
+            this.connection = (HiveConnection)o;
         }
         else if ( o instanceof DataItemEntry )
         {
-            this._itemEntry = (DataItemEntry)o;
-            this._connection = this._itemEntry.getConnection ();
+            this.itemEntry = (DataItemEntry)o;
+            this.connection = this.itemEntry.getConnection ();
         }
         else if ( o instanceof FolderEntry )
         {
-            this._connection = ( (FolderEntry)o ).getConnection ();
+            this.connection = ( (FolderEntry)o ).getConnection ();
         }
     }
 
@@ -106,8 +106,11 @@ public class NewWatchWizard extends Wizard implements INewWizard
     {
         super.addPages ();
 
-        addPage ( this._page = new NewWatchWizardPage () );
-        this._page.setDataItemId ( this._itemEntry.getId () );
+        addPage ( this.page = new NewWatchWizardPage () );
+        if ( this.itemEntry != null )
+        {
+            this.page.setDataItemId ( this.itemEntry.getId () );
+        }
     }
 
 }
