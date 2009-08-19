@@ -19,11 +19,13 @@
 
 package org.openscada.da.client.base.realtime;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.client.ItemManager;
@@ -47,8 +49,43 @@ public class ItemDropAdapter extends ViewerDropAdapter
     @Override
     public boolean performDrop ( final Object data )
     {
-        final Item[] items = (Item[])data;
+        if ( data instanceof Item[] )
+        {
+            dropItems ( ( (Item[])data ) );
+            return true;
+        }
+        if ( data instanceof String )
+        {
+            dropString ( data );
+            return true;
+        }
+        return false;
+    }
 
+    private void dropString ( final Object data )
+    {
+        final TreeViewer viewer = (TreeViewer)getViewer ();
+        final String toks[] = ( (String)data ).split ( "[\\n\\r]+" );
+        for ( final String tok : toks )
+        {
+            try
+            {
+                final URI uri = new URI ( tok );
+                if ( uri.getFragment () != null )
+                {
+                    final Item item = new Item ( uri.toString (), uri.getFragment () );
+                    dropItem ( item, viewer );
+                }
+
+            }
+            catch ( final URISyntaxException e )
+            {
+            }
+        }
+    }
+
+    private void dropItems ( final Item[] items )
+    {
         final TreeViewer viewer = (TreeViewer)getViewer ();
 
         for ( final Item item : items )
@@ -62,8 +99,6 @@ public class ItemDropAdapter extends ViewerDropAdapter
                 e.printStackTrace ();
             }
         }
-
-        return true;
     }
 
     private void dropItem ( final Item item, final TreeViewer viewer ) throws URISyntaxException
@@ -80,9 +115,9 @@ public class ItemDropAdapter extends ViewerDropAdapter
     }
 
     @Override
-    public boolean validateDrop ( final Object target, final int operation, final TransferData transferType )
+    public boolean validateDrop ( final Object target, final int operation, final TransferData transferData )
     {
-        return ItemTransfer.getInstance ().isSupportedType ( transferType );
+        return ItemTransfer.getInstance ().isSupportedType ( transferData ) || TextTransfer.getInstance ().isSupportedType ( transferData );
     }
 
 }
