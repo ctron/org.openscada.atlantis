@@ -161,7 +161,7 @@ public class ConnectionSetup
 		return qualityErrorIfLessThen;
 	}
 
-	public void setQualityErrorIfLessThen(short qualityErrorIfLessThen) 
+	public void setQualityErrorIfLessThen(final short qualityErrorIfLessThen) 
 	{
 		this.qualityErrorIfLessThen = qualityErrorIfLessThen;
 	}
