@@ -81,11 +81,21 @@ public class OPCModel extends AbstractPropertyChange
     private Long readJobTimeout = null;
 
     private int updateRate = 250;
-
-    /**
+    
+	/**
      * Flag that indicates if the driver should ignore timestamp only changes completly
      */
     private boolean ignoreTimestampOnlyChange = false;
+
+    private short qualityErrorIfLessThen = 192;
+
+    public short getQualityErrorIfLessThen() {
+		return qualityErrorIfLessThen;
+	}
+
+	public void setQualityErrorIfLessThen(short qualityErrorIfLessThen) {
+		this.qualityErrorIfLessThen = qualityErrorIfLessThen;
+	}
 
     public boolean isIgnoreTimestampOnlyChange ()
     {

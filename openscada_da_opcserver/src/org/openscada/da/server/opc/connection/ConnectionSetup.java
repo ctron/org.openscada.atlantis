@@ -43,7 +43,9 @@ public class ConnectionSetup
 
     private int reconnectDelay;
 
-    public ConnectionSetup ()
+    private short qualityErrorIfLessThen = 192;
+
+	public ConnectionSetup ()
     {
         super ();
     }
@@ -153,5 +155,15 @@ public class ConnectionSetup
     {
         this.itemIdPrefix = itemIdPrefix;
     }
+
+    public short getQualityErrorIfLessThen() 
+    {
+		return qualityErrorIfLessThen;
+	}
+
+	public void setQualityErrorIfLessThen(short qualityErrorIfLessThen) 
+	{
+		this.qualityErrorIfLessThen = qualityErrorIfLessThen;
+	}
 
 }
