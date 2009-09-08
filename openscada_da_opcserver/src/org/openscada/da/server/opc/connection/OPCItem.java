@@ -61,6 +61,8 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
     private final String opcItemId;
 
     private boolean ignoreTimestampOnlyChange = false;
+    
+    private short qualityErrorIfLessThen = 192;
 
     public OPCItem ( final Hive hive, final OPCController controller, final DataItemInformation di, final String opcItemId )
     {
@@ -69,6 +71,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         this.opcItemId = opcItemId;
 
         this.ignoreTimestampOnlyChange = controller.getModel ().isIgnoreTimestampOnlyChange ();
+        this.qualityErrorIfLessThen = controller.getModel ().getQualityErrorIfLessThen ();
 
         this.updateData ( null, new MapBuilder<String, Variant> ().put ( "opc.connection.error", new Variant ( true ) ).put ( "opc.itemId", new Variant ( opcItemId ) ).getMap (), AttributeMode.SET );
     }
@@ -157,7 +160,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             final short quality = state.getQuality ();
             attributes.put ( "opc.quality", new Variant ( quality ) );
 
-            attributes.put ( "opc.quality.error", new Variant ( quality < 192 ) );
+            attributes.put ( "opc.quality.error", new Variant ( quality < qualityErrorIfLessThen ) );
             attributes.put ( "opc.quality.manual", new Variant ( quality == 216 ) );
             attributes.put ( "org.openscada.da.manual.active", new Variant ( quality == 216 ) );
 

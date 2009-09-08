@@ -35,8 +35,8 @@
 				<element name="progid" type="opc:ProgIdType"
 					maxOccurs="1" minOccurs="1">
 				</element>
-				<element name="clsid" type="opc:UUIDType"
-					maxOccurs="1" minOccurs="1">
+				<element name="clsid" type="opc:UUIDType" maxOccurs="1"
+					minOccurs="1">
 				</element>
 			</choice>
 			<element name="initialItem" type="string"
@@ -75,6 +75,7 @@
 		</attribute>
 		<attribute name="ignoreTimestampOnlyChange" type="boolean"></attribute>
 		<attribute name="reconnectDelay" type="int"></attribute>
+		<attribute name="qualityErrorIfLessThen" type="int"></attribute>
 	</complexType>
 
 	<simpleType name="ProgIdType">

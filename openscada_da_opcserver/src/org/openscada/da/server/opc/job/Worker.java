@@ -64,6 +64,7 @@ public class Worker implements GuardianHandler
 
         public void handleSuccess ()
         {
+        	// FIXME: isn't there a check for null necessary?
             this.result = this.jobResult.getResult ();
         }
 

@@ -76,6 +76,7 @@ public class OPCController implements Runnable
         this.worker = new Worker ();
         this.model = new OPCModel ();
         this.model.setIgnoreTimestampOnlyChange ( config.isIgnoreTimestampOnlyChange () );
+        this.model.setQualityErrorIfLessThen( config.getQualityErrorIfLessThen () );
 
         switch ( this.configuration.getAccessMethod () )
         {

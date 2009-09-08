@@ -431,7 +431,12 @@ public abstract class ConnectionBase implements Connection, IoHandler
      */
     protected synchronized void connectFailed ( final ConnectFuture future, final Throwable e )
     {
-        logger.warn ( "Connection attempt failed", e );
+    	String connection = "";
+    	if ( connectionInformation != null )
+    	{
+    		connection += " " + connectionInformation.toString();
+    	}
+        logger.warn ( "Connection attempt failed" + connection, e );
 
         if ( future == this.connectingFuture )
         {
