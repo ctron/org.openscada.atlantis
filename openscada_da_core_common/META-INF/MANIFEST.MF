@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Built-By: jens
+Created-By: Apache Maven Bundle Plugin
+Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
+Import-Package: org.openscada.core,
+ org.openscada.utils.lang,
+ org.openscada.utils.str;version="0.13"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bnd-LastModified: 1252499259332
+Export-Package: org.openscada.da.core.browser;version="0.14.0.SNAPSHOT
+ ",org.openscada.da.core;uses:="org.openscada.utils.str";version="0.14
+ .0.SNAPSHOT"
+Bundle-Version: 0.14.0.SNAPSHOT
+Bundle-Name: OpenSCADA-DA-Core-Common
+Build-Jdk: 1.5.0_18
+Private-Package: org.openscada.da.core.browser,org.openscada.da.core,
+Bundle-DocURL: http://www.inavare.net
+Bundle-ManifestVersion: 2
+Bundle-Vendor: inavare GmbH
+Bundle-SymbolicName: org.openscada.da.core.common
+Tool: Bnd-0.0.311
+
