@@ -1,0 +1,34 @@
+Manifest-Version: 1.0
+Built-By: jens
+Created-By: Apache Maven Bundle Plugin
+Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
+Import-Package: org.apache.log4j;version="1.2",
+ org.apache.mina.core.filterchain;version="2.0",
+ org.apache.mina.core.future;version="2.0",
+ org.apache.mina.core.service;version="2.0",
+ org.apache.mina.core.session;version="2.0",
+ org.openscada.core;version="0.14",
+ org.openscada.core.client;version="0.14",
+ org.openscada.core.client.net;version="0.14",
+ org.openscada.core.net;version="0.14",
+ org.openscada.net.base;version="0.14",
+ org.openscada.net.base.data;version="0.14",
+ org.openscada.net.mina;version="0.14"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bnd-LastModified: 1252499258854
+Export-Package: org.openscada.core.client.net;uses:="org.apache.mina.c
+ ore.future,org.apache.mina.core.session,org.apache.log4j,org.apache.m
+ ina.core.service,org.openscada.core,org.openscada.core.client,org.ope
+ nscada.net.base.data,org.openscada.core.net,org.openscada.net.base,or
+ g.apache.mina.core.filterchain,org.openscada.net.mina";version="0.14.
+ 0.SNAPSHOT"
+Bundle-Version: 0.14.0.SNAPSHOT
+Bundle-Name: OpenSCADA-Core-Client-Net
+Build-Jdk: 1.5.0_18
+Private-Package: org.openscada.core.client.net,
+Bundle-DocURL: http://www.inavare.net
+Bundle-ManifestVersion: 2
+Bundle-Vendor: inavare GmbH
+Bundle-SymbolicName: org.openscada.core.client.net
+Tool: Bnd-0.0.311
+
