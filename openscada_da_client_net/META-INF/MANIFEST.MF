@@ -1,0 +1,46 @@
+Manifest-Version: 1.0
+Built-By: jens
+Created-By: Apache Maven Bundle Plugin
+Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
+Bundle-Activator: org.openscada.da.client.net.Activator
+Import-Package: org.apache.log4j;version="1.2",
+ org.apache.mina.core.service;version="2.0.0.M6",
+ org.openscada.core;version="0.14",
+ org.openscada.core.client;version="0.14",
+ org.openscada.core.client.net;version="0.14",
+ org.openscada.core.net;version="0.14",
+ org.openscada.core.subscription;version="0.14",
+ org.openscada.da.client;version="0.14",
+ org.openscada.da.core;version="0.14",
+ org.openscada.da.core.browser;version="0.14",
+ org.openscada.net.base;version="0.14",
+ org.openscada.net.base.data;version="0.14",
+ org.openscada.net.da.handler;version="0.14",
+ org.openscada.net.mina;version="0.14",
+ org.openscada.utils.exec;version="0.13",
+ org.openscada.utils.lang;version="0.13",
+ org.osgi.framework;version="1.3"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bnd-LastModified: 1252499294763
+Export-Package: org.openscada.da.client.net.operations;uses:="org.open
+ scada.net.da.handler,org.openscada.net.base.data,org.openscada.net.ba
+ se,org.openscada.net.mina,org.openscada.utils.exec,org.openscada.core
+ ";version="0.14.0.SNAPSHOT",org.openscada.da.client.net;uses:="org.op
+ enscada.core.client,org.osgi.framework,org.apache.log4j,org.openscada
+ .core.subscription,org.openscada.da.client,org.openscada.core,org.ope
+ nscada.da.core.browser,org.openscada.da.core,org.openscada.utils.exec
+ ,org.openscada.net.base.data,org.openscada.net.base,org.openscada.da.
+ client.net.operations,org.openscada.net.da.handler,org.openscada.core
+ .net,org.openscada.core.client.net,org.openscada.utils.lang,org.opens
+ cada.net.mina";version="0.14.0.SNAPSHOT"
+Bundle-Version: 0.14.0.SNAPSHOT
+Bundle-Name: OpenSCADA-DA-Client-Net
+Build-Jdk: 1.5.0_18
+Private-Package: org.openscada.da.client.net.operations,org.openscada.
+ da.client.net,
+Bundle-DocURL: http://www.inavare.net
+Bundle-ManifestVersion: 2
+Bundle-Vendor: inavare GmbH
+Bundle-SymbolicName: org.openscada.da.client.net
+Tool: Bnd-0.0.311
+
