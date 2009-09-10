@@ -76,13 +76,9 @@
 
 	
 	<target name="preProcessRepos">
-		<mkdir dir="${repoBaseLocation}"/>
-		<copy todir="${repoBaseLocation}">
-			<fileset dir="${deploy.repo.root}" >
-				<include name="*p2repo.zip"/>
-			</fileset>
-		</copy>
-  	</target>
+		<openscada.import.repository id="org.openscada.external" version="0.14.0"/>
+		<openscada.import.repository id="org.openscada.utils" version="0.14.0"/>
+	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
           target: postProcessRepos                      
@@ -106,8 +102,8 @@
   <target name="postSetup">
     <antcall target="getBaseComponents" />
 
-  	<openscada.builder.copyPlugin id="org.openscada.utils" />
-  	<openscada.builder.copyFeature id="org.openscada.utils" />
+  	<openscada.builder.copyPlugin id="org.openscada.core.common" project="openscada_core_common"/>
+  	<openscada.builder.copyFeature id="org.openscada.atlantis" />
   </target>
 
   <!-- ===================================================================== -->
@@ -176,7 +172,7 @@
   <!-- ===================================================================== -->
   <target name="postBuild">
     <antcall target="gatherLogs" />
-  	<openscada.deploy.repository name="org.openscada.utils"/>
+  	<openscada.deploy.repository name="org.openscada.atlantis"/>
   </target>
 
   <!-- ===================================================================== -->
