@@ -18,8 +18,6 @@
    </license>
 
    <requires>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="javax.xml.stream"/>
       <import plugin="org.openscada.utils"/>
       <import plugin="org.openscada.external.log4j"/>
    </requires>
@@ -40,6 +38,13 @@
 
    <plugin
          id="org.openscada.core.server.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.net.base"
          download-size="0"
          install-size="0"
          version="0.0.0"
