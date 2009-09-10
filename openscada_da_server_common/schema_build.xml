@@ -4,8 +4,8 @@
 
 	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
 		 <classpath id="xmlbeanspath">
-            <pathelement location="../openscada_build/xmlbeans/xbean.jar"/>
-            <pathelement location="../openscada_build/xmlbeans/jsr173_1.0_api.jar"/>
+            <pathelement location="../builder_atlantis/common/lib/xmlbeans/xbean.jar"/>
+            <pathelement location="../builder_atlantis/common/lib/xmlbeans/jsr173_1.0_api.jar"/>
          </classpath>
 	</taskdef>
 
@@ -17,7 +17,7 @@
 		<xmlbean
 			failonerror="true"
 			download="false"
-			classgendir="target/generated-classes/xmlbeans"
+			classgendir="schemabin"
 			javasource="1.5"
 			verbose="true"
             classpathref="xmlbeanspath"
