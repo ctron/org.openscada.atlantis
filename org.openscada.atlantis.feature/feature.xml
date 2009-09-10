@@ -18,8 +18,12 @@
    </license>
 
    <requires>
-      <import plugin="org.openscada.utils"/>
       <import plugin="org.openscada.external.log4j"/>
+      <import plugin="org.openscada.utils"/>
+      <import plugin="org.apache.mina.core"/>
+      <import plugin="org.apache.mina.transport.socket.apr"/>
+      <import plugin="org.apache.mina.filter.compression"/>
+      <import plugin="org.eclipse.osgi"/>
    </requires>
 
    <plugin
