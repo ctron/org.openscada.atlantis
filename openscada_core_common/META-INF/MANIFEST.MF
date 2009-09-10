@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Built-By: jens
+Created-By: Apache Maven Bundle Plugin
+Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
+Import-Package: javax.crypto;resolution:=optional,javax.crypto.spec;re
+ solution:=optional,javax.net.ssl;resolution:=optional,javax.xml.names
+ pace;resolution:=optional,javax.xml.stream;resolution:=optional,org.o
+ penscada.core;version="0.14",org.openscada.core.subscription;version=
+ "0.14",org.openscada.core.utils;version="0.14",org.w3c.dom;resolution
+ :=optional
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bnd-LastModified: 1252499257865
+Export-Package: org.openscada.core.subscription;version="0.14.0.SNAPSH
+ OT",org.openscada.core.utils;uses:="org.openscada.core";version="0.14
+ .0.SNAPSHOT",org.openscada.core;version="0.14.0.SNAPSHOT"
+Bundle-Version: 0.14.0.SNAPSHOT
+Bundle-Name: OpenSCADA-Core-Common
+Build-Jdk: 1.5.0_18
+Private-Package: org.openscada.core.subscription,org.openscada.core.ut
+ ils,org.openscada.core,
+Bundle-DocURL: http://www.inavare.net
+Bundle-ManifestVersion: 2
+Bundle-Vendor: inavare GmbH
+Bundle-SymbolicName: org.openscada.core.common
+Tool: Bnd-0.0.311
+
