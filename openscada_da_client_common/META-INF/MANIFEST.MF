@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Built-By: jens
+Created-By: Apache Maven Bundle Plugin
+Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
+Import-Package: javax.crypto;resolution:=optional,javax.crypto.spec;re
+ solution:=optional,javax.net.ssl;resolution:=optional,javax.xml.names
+ pace;resolution:=optional,javax.xml.stream;resolution:=optional,org.a
+ pache.log4j;version="1.2",org.openscada.core;version="0.14",org.opens
+ cada.core.client;version="0.14",org.openscada.core.subscription;versi
+ on="0.14",org.openscada.core.utils;version="0.14",org.openscada.da.cl
+ ient;version="0.14",org.openscada.da.core;version="0.14",org.openscad
+ a.da.core.browser;version="0.14",org.w3c.dom;resolution:=optional
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bnd-LastModified: 1252499259760
+Export-Package: org.openscada.da.client;uses:="org.openscada.core,org.
+ openscada.core.subscription,org.openscada.da.core.browser,org.opensca
+ da.core.client,org.openscada.da.core,org.openscada.core.utils,org.apa
+ che.log4j";version="0.14.0.SNAPSHOT"
+Bundle-Version: 0.14.0.SNAPSHOT
+Bundle-Name: OpenSCADA-DA-Client-Common
+Build-Jdk: 1.5.0_18
+Private-Package: org.openscada.da.client,
+Bundle-DocURL: http://www.inavare.net
+Bundle-ManifestVersion: 2
+Bundle-Vendor: inavare GmbH
+Bundle-SymbolicName: org.openscada.da.client.common
+Tool: Bnd-0.0.311
+
