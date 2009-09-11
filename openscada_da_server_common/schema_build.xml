@@ -2,10 +2,12 @@
 
 <project name="xmlbeans" default="main" basedir=".">
 
+	<property name="xmlbeans.root" location="../builder_atlantis/common/lib/xmlbeans"/>
+	
 	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
 		 <classpath id="xmlbeanspath">
-            <pathelement location="../builder_atlantis/common/lib/xmlbeans/xbean.jar"/>
-            <pathelement location="../builder_atlantis/common/lib/xmlbeans/jsr173_1.0_api.jar"/>
+            <pathelement location="${xmlbeans.root}/xbean.jar"/>
+            <pathelement location="${xmlbeans.root}/jsr173_1.0_api.jar"/>
          </classpath>
 	</taskdef>
 
