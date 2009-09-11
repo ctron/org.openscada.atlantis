@@ -10,8 +10,8 @@
             OpenSCADA Atlantis Project
     </description>
 	
-	<property name="libfile" location="../openscada_build/lib/libs.xml"/>
-	<import file="${libfile}"/>
+	<property name="build.root" location="../builder_atlantis"/>
+	<import file="${build.root}/lib/lib.xml"/>
 	
 	<!-- ================================= 
           target: default              
