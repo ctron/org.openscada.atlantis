@@ -1,0 +1,37 @@
+Manifest-Version: 1.0
+Built-By: jens
+Created-By: Apache Maven Bundle Plugin
+Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
+Import-Package: Ice;version="0.14",
+ OpenSCADA.Core;version="0.14",
+ OpenSCADA.DA;version="0.14",
+ OpenSCADA.DA.Browser;version="0.14",
+ org.apache.log4j;version="1.2",
+ org.openscada.core;version="0.14",
+ org.openscada.core.ice;version="0.14",
+ org.openscada.core.server;version="0.14",
+ org.openscada.core.subscription;version="0.14",
+ org.openscada.da.core;version="0.14",
+ org.openscada.da.core.browser;version="0.14",
+ org.openscada.da.core.server;version="0.14",
+ org.openscada.da.core.server.browser;version="0.14",
+ org.openscada.da.ice;version="0.14",
+ org.openscada.da.server.common.impl;version="0.14",
+ org.openscada.da.server.ice;version="0.14",
+ org.openscada.utils.concurrent;version="0.13",
+ org.openscada.utils.lifecycle;version="0.13.1"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bnd-LastModified: 1252499298043
+Export-Package: org.openscada.da.server.ice;uses:="org.openscada.core,
+ org.apache.log4j,Ice,org.openscada.da.core.server,org.openscada.da.se
+ rver.common.impl";version="0.14.0.SNAPSHOT"
+Bundle-Version: 0.14.0.SNAPSHOT
+Bundle-Name: OpenSCADA-DA-Server-Ice
+Build-Jdk: 1.5.0_18
+Private-Package: org.openscada.da.server.ice.impl
+Bundle-DocURL: http://www.inavare.net
+Bundle-ManifestVersion: 2
+Bundle-Vendor: inavare GmbH
+Bundle-SymbolicName: org.openscada.da.server.ice
+Tool: Bnd-0.0.311
+
