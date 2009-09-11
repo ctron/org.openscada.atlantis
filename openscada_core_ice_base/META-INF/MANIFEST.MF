@@ -29,8 +29,8 @@ Export-Package: org.openscada.core.ice;uses:="OpenSCADA.Core";version=
  avax.security.auth.x500";version="0.14.0.SNAPSHOT"
 Bundle-Version: 0.14.0.SNAPSHOT
 Bundle-Name: OpenSCADA-Core-Ice-Base
-Bundle-ClassPath: .,Ice-3.3.jar,org.openscada.core.common-0.14.0-SNAPS
- HOT.jar
+Bundle-ClassPath: .,
+ lib/Ice.jar
 Build-Jdk: 1.5.0_18
 Private-Package: Freeze,Glacier2,org.openscada.core.utils,org.openscad
  a.core.subscription,org.openscada.core,.
