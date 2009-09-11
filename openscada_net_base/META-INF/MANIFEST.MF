@@ -1,0 +1,43 @@
+Manifest-Version: 1.0
+Built-By: jens
+Created-By: Apache Maven Bundle Plugin
+Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
+Import-Package: org.apache.log4j;version="1.2.0",
+ org.apache.mina.core.buffer;version="2.0",
+ org.apache.mina.core.future;version="2.0",
+ org.apache.mina.core.service;version="2.0",
+ org.apache.mina.core.session;version="2.0",
+ org.apache.mina.filter.codec;version="2.0",
+ org.apache.mina.transport.socket.apr;version="2.0",
+ org.apache.mina.transport.socket.nio;version="2.0",
+ org.apache.mina.transport.vmpipe;version="2.0",
+ org.openscada.utils.exec;version="0.13"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bnd-LastModified: 1252499258078
+Export-Package: org.openscada.net.base.handlers;uses:="org.apache.log4
+ j,org.openscada.net.base.data,org.openscada.net.base,org.openscada.ne
+ t.mina,org.openscada.net.utils";version="0.14.0.SNAPSHOT",org.opensca
+ da.net.base.data;version="0.14.0.SNAPSHOT",org.openscada.net.codec;ve
+ rsion="0.14.0.SNAPSHOT",org.openscada.net.base;uses:="org.openscada.n
+ et.base.data,org.openscada.utils.exec,org.apache.log4j,org.openscada.
+ net.mina,org.openscada.net.base.handlers,org.openscada.net.utils";ver
+ sion="0.14.0.SNAPSHOT",org.openscada.net.mina;uses:="org.apache.log4j
+ ,org.apache.mina.core.buffer,org.openscada.net.base.data,org.apache.m
+ ina.core.session,org.apache.mina.filter.codec,org.openscada.net.codec
+ ,org.apache.mina.core.future,org.openscada.net.base,org.openscada.net
+ .utils,org.apache.mina.core.service,org.apache.mina.transport.socket.
+ apr,org.apache.mina.transport.socket.nio,org.apache.mina.transport.vm
+ pipe";version="0.14.0.SNAPSHOT",org.openscada.net.utils;uses:="org.op
+ enscada.net.base.data";version="0.14.0.SNAPSHOT"
+Bundle-Version: 0.14.0
+Bundle-Name: OpenSCADA-Net-Base
+Build-Jdk: 1.5.0_18
+Private-Package: org.openscada.net.base.handlers,org.openscada.net.bas
+ e.data,org.openscada.net.codec,org.openscada.net.base,org.openscada.n
+ et.mina,org.openscada.net.utils,
+Bundle-DocURL: http://www.inavare.net
+Bundle-ManifestVersion: 2
+Bundle-Vendor: inavare GmbH
+Bundle-SymbolicName: org.openscada.net.base
+Tool: Bnd-0.0.311
+
