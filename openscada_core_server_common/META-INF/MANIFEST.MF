@@ -6,9 +6,8 @@ Import-Package: org.openscada.core;version="0.14.0",
  org.openscada.utils.lifecycle;version="0.13.1"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bnd-LastModified: 1252499259010
-Export-Package: org.openscada.core.server;uses:="org.openscada.core,or
- g.openscada.utils.lifecycle";version="0.14.0.SNAPSHOT"
-Bundle-Version: 0.14.0.SNAPSHOT
+Export-Package: org.openscada.core.server;version="0.14.0";uses:="org.openscada.core,org.openscada.utils.lifecycle"
+Bundle-Version: 0.14.0
 Bundle-Name: OpenSCADA-Core-Server-Common
 Build-Jdk: 1.5.0_18
 Private-Package: org.openscada.core.server,
