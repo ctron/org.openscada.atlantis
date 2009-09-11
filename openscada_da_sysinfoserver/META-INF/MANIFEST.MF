@@ -3,11 +3,11 @@ Built-By: jens
 Created-By: Apache Maven Bundle Plugin
 Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: org.openscada.core;version="0.14",
- org.openscada.core.server;version="0.14.0.SNAPSHOT",
- org.openscada.da.core;version="0.14.0.SNAPSHOT",
- org.openscada.da.core.server;version="0.14.0.SNAPSHOT",
+ org.openscada.core.server;version="0.14.0",
+ org.openscada.da.core;version="0.14.0",
+ org.openscada.da.core.server;version="0.14.0",
  org.openscada.da.server.browser.common;version="0.14",
- org.openscada.da.server.common;version="0.14.0.SNAPSHOT",
+ org.openscada.da.server.common;version="0.14.0",
  org.openscada.da.server.common.impl,
  org.openscada.utils.collection;version="0.13"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
