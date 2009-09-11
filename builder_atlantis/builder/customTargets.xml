@@ -120,6 +120,8 @@
   	
   	<openscada.builder.copyPlugin id="org.openscada.core.ice.base" project="openscada_core_ice_base"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.ice.base" project="openscada_da_ice_base"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.ice" project="openscada_da_server_ice"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.client.ice" project="openscada_da_client_ice"/>
   	
   	<openscada.builder.copyFeature id="org.openscada.atlantis" />
   </target>
