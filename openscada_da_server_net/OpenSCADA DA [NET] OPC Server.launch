@@ -13,12 +13,10 @@
 <stringAttribute key="org.eclipse.hyades.trace.ui.ATTR_DESTINATION_PROJECT" value="ProfileProject"/>
 <booleanAttribute key="org.eclipse.hyades.trace.ui.ATTR_PROFILE_TO_FILE" value="false"/>
 <stringAttribute key="org.eclipse.hyades.trace.ui.ATTR_PROFILING_SET" value="tptp-dummy-profiling-set-OpenSCADA DA [NET] OPC Server"/>
-<stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.maven.ide.eclipse.launchconfig.classpathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-6-sun-1.6.0.13"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.openscada.da.server.net.Application"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="org.openscada.da.server.opc2.Hive"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="server_starter_opc"/>
-<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.maven.ide.eclipse.launchconfig.sourcepathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dcom.sun.management.jmxremote.port=9013&#10;-Dcom.sun.management.jmxremote.authenticate=false&#10;-Dcom.sun.management.jmxremote.ssl=false&#10;-Dopenscada.da.net.server.port=12027&#10;-Drpc.socketTimeout=5000"/>
 <booleanAttribute key="org.eclipse.tptp.monitoring.instrumentation.ui.CBE_STATUS_AFTERCALL" value="false"/>
 <booleanAttribute key="org.eclipse.tptp.monitoring.instrumentation.ui.CBE_STATUS_BEFORECALL" value="false"/>
