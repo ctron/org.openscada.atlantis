@@ -129,8 +129,10 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.jdbc" project="openscada_da_jdbcserver"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.proxy" project="openscada_da_proxyserver"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.snmp" project="openscada_da_snmpserver"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.exec2" project="openscada_da_exec2server"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter" project="openscada_server_exporter"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter.spring" project="openscada_server_exporter_spring"/>
   	
   	<openscada.builder.copyFeature id="org.openscada.atlantis" />
   </target>
