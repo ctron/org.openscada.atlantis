@@ -1,0 +1,44 @@
+Manifest-Version: 1.0
+Built-By: jens
+Created-By: Apache Maven Bundle Plugin
+Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
+Import-Package: Ice;version="0.14",
+ IceBox;version="0.14",
+ IceGrid;version="0.14",
+ IceInternal;version="0.14",
+ IceSSL;version="0.14",
+ IceStorm;version="0.14",
+ IceUtil;version="0.14",
+ IceUtilInternal;version="0.14",
+ OpenSCADA.Core;version="0.14",
+ com.sleepycat.db;resolution:=optional,
+ javax.net.ssl;resolution:=optional,
+ javax.security.auth.x500;resolution:=optional,
+ org.openscada.core,
+ org.openscada.core.ice;version="0.14"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bnd-LastModified: 1252499295924
+Export-Package: org.openscada.core.ice;uses:="OpenSCADA.Core";version=
+ "0.14.0.SNAPSHOT",OpenSCADA.Core;uses:="IceInternal,Ice";version="0.1
+ 4.0.SNAPSHOT",IceUtilInternal;uses:=Ice;version="0.14.0.SNAPSHOT",Ice
+ Grid;uses:="Ice,IceInternal";version="0.14.0.SNAPSHOT",IceInternal;us
+ es:="Ice,IceUtilInternal";version="0.14.0.SNAPSHOT",IceStorm;uses:="I
+ ceInternal,Ice";version="0.14.0.SNAPSHOT",IceBox;uses:="IceInternal,I
+ ce,IceUtilInternal";version="0.14.0.SNAPSHOT",Ice;uses:="IceInternal,
+ IceUtilInternal";version="0.14.0.SNAPSHOT",IceUtil;version="0.14.0.SN
+ APSHOT",IceSSL;uses:="IceUtilInternal,Ice,IceInternal,javax.net.ssl,j
+ avax.security.auth.x500";version="0.14.0.SNAPSHOT"
+Bundle-Version: 0.14.0.SNAPSHOT
+Bundle-Name: OpenSCADA-Core-Ice-Base
+Bundle-ClassPath: .,Ice-3.3.jar,org.openscada.core.common-0.14.0-SNAPS
+ HOT.jar
+Build-Jdk: 1.5.0_18
+Private-Package: Freeze,Glacier2,org.openscada.core.utils,org.openscad
+ a.core.subscription,org.openscada.core,.
+Bundle-DocURL: http://www.inavare.net
+Bundle-Vendor: inavare GmbH
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.openscada.core.ice.base
+Tool: Bnd-0.0.311
+Embed-Dependency: *;scope=compile|runtime
+
