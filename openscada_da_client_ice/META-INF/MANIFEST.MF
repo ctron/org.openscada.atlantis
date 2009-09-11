@@ -1,0 +1,34 @@
+Manifest-Version: 1.0
+Built-By: jens
+Created-By: Apache Maven Bundle Plugin
+Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
+Import-Package: Ice;version="0.14",OpenSCADA.Core;version="0.14",OpenS
+ CADA.DA;version="0.14",OpenSCADA.DA.Browser;version="0.14",javax.cryp
+ to;resolution:=optional,javax.crypto.spec;resolution:=optional,javax.
+ net.ssl;resolution:=optional,javax.xml.namespace;resolution:=optional
+ ,javax.xml.stream;resolution:=optional,org.apache.log4j;version="1.2"
+ ,org.openscada.core;version="0.14",org.openscada.core.client;version=
+ "0.14",org.openscada.core.ice;version="0.14",org.openscada.core.subsc
+ ription;version="0.14",org.openscada.da.client;version="0.14",org.ope
+ nscada.da.client.ice;version="0.14",org.openscada.da.core;version="0.
+ 14",org.openscada.da.core.browser;version="0.14",org.openscada.da.ice
+ ;version="0.14",org.openscada.utils.timing;version="0.13",org.w3c.dom
+ ;resolution:=optional
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bnd-LastModified: 1252499297410
+Export-Package: org.openscada.da.client.ice;uses:="org.openscada.da.co
+ re.browser,OpenSCADA.DA,Ice,org.openscada.da.ice,OpenSCADA.DA.Browser
+ ,org.openscada.da.client,org.openscada.da.core,org.apache.log4j,org.o
+ penscada.core,org.openscada.core.subscription,org.openscada.core.clie
+ nt,org.openscada.utils.timing,OpenSCADA.Core,org.openscada.core.ice";
+ version="0.14.0.SNAPSHOT"
+Bundle-Version: 0.14.0.SNAPSHOT
+Bundle-Name: OpenSCADA-DA-Client-Ice
+Build-Jdk: 1.5.0_18
+Private-Package: org.openscada.da.client.ice,
+Bundle-DocURL: http://www.inavare.net
+Bundle-ManifestVersion: 2
+Bundle-Vendor: inavare GmbH
+Bundle-SymbolicName: org.openscada.da.client.ice
+Tool: Bnd-0.0.311
+
