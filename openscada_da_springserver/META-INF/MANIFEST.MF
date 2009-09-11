@@ -2,9 +2,7 @@ Manifest-Version: 1.0
 Built-By: jens
 Created-By: Apache Maven Bundle Plugin
 Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
-Import-Package: au.com.bytecode.opencsv;resolution:=optional,
- au.com.bytecode.opencsv.bean;resolution:=optional,
- org.apache.commons.beanutils;version="1.8",
+Import-Package: org.apache.commons.beanutils;version="1.8",
  org.apache.log4j;version="1.2",
  org.openscada.core;version="0.14",
  org.openscada.core.server;version="0.14.0",
