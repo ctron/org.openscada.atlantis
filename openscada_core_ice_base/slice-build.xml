@@ -10,21 +10,29 @@
             OpenSCADA Atlantis Project
     </description>
 	
-	<property name="libfile" location="../openscada_build/lib/libs.xml"/>
-	<import file="${libfile}"/>
+	<property name="build.root" location="../builder_atlantis"/>
+	<import file="${build.root}/lib/lib.xml"/>
 	
 	<!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="" description="--> Build SLICE">
+    <target name="default" depends="clean" description="--> Build SLICE">
 		<delete dir="gensrc"/>
 		<mkdir dir="gensrc"/>
     	<slice2java outputdir="gensrc" casesensitive="true">
 			<meta value="true"/>
-			<fileset dir="../openscada_interface_ice">
+			<fileset dir="${source.root}/openscada_interface_ice">
 				<include name="core/*.ice"/>
 			</fileset>
 		</slice2java>
     </target>
+	
+	<!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" depends="" description="Clean up">
+        <delete dir="gensrc"/>
+    </target>
+
 
 </project>
