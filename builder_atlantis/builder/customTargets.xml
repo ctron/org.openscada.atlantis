@@ -78,6 +78,7 @@
 	<target name="preProcessRepos">
 		<openscada.import.repository id="org.openscada.external" version="0.14.0"/>
 		<openscada.import.repository id="org.openscada.utils" version="0.14.0"/>
+		<openscada.import.repository id="org.openscada.utgard" version="0.14.0"/>
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
