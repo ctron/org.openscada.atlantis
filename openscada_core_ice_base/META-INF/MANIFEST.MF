@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Built-By: jens
 Created-By: Apache Maven Bundle Plugin
 Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
-Import-Package: Ice;version="0.14",
- IceBox;version="0.14",
- IceGrid;version="0.14",
- IceInternal;version="0.14",
- IceSSL;version="0.14",
- IceStorm;version="0.14",
- IceUtil;version="0.14",
- IceUtilInternal;version="0.14",
+Import-Package: Ice,
+ IceBox,
+ IceGrid,
+ IceInternal,
+ IceSSL,
+ IceStorm,
+ IceUtil,
+ IceUtilInternal,
  OpenSCADA.Core;version="0.14",
  javax.net.ssl;resolution:=optional,
  javax.security.auth.x500;resolution:=optional,
@@ -17,17 +17,22 @@ Import-Package: Ice;version="0.14",
  org.openscada.core.ice;version="0.14"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bnd-LastModified: 1252499295924
-Export-Package: org.openscada.core.ice;uses:="OpenSCADA.Core";version=
- "0.14.0.SNAPSHOT",OpenSCADA.Core;uses:="IceInternal,Ice";version="0.1
- 4.0.SNAPSHOT",IceUtilInternal;uses:=Ice;version="0.14.0.SNAPSHOT",Ice
- Grid;uses:="Ice,IceInternal";version="0.14.0.SNAPSHOT",IceInternal;us
- es:="Ice,IceUtilInternal";version="0.14.0.SNAPSHOT",IceStorm;uses:="I
- ceInternal,Ice";version="0.14.0.SNAPSHOT",IceBox;uses:="IceInternal,I
- ce,IceUtilInternal";version="0.14.0.SNAPSHOT",Ice;uses:="IceInternal,
- IceUtilInternal";version="0.14.0.SNAPSHOT",IceUtil;version="0.14.0.SN
- APSHOT",IceSSL;uses:="IceUtilInternal,Ice,IceInternal,javax.net.ssl,j
- avax.security.auth.x500";version="0.14.0.SNAPSHOT"
-Bundle-Version: 0.14.0.SNAPSHOT
+Export-Package: Ice;uses:="IceInternal,IceUtilInternal",
+ IceBox;uses:="IceInternal,Ice,IceUtilInternal",
+ IceGrid;uses:="Ice,IceInternal",
+ IceInternal;uses:="Ice,IceUtilInternal",
+ IceSSL;
+  uses:="IceUtilInternal,
+   Ice,
+   IceInternal,
+   javax.net.ssl,
+   javax.security.auth.x500",
+ IceStorm;uses:="IceInternal,Ice",
+ IceUtil,
+ IceUtilInternal;uses:="Ice",
+ OpenSCADA.Core;version="0.14.0";uses:="IceInternal,Ice",
+ org.openscada.core.ice;version="0.14.0";uses:="OpenSCADA.Core"
+Bundle-Version: 0.14.0
 Bundle-Name: OpenSCADA-Core-Ice-Base
 Bundle-ClassPath: .,
  lib/Ice.jar

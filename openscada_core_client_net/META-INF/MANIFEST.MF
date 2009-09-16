@@ -16,13 +16,19 @@ Import-Package: org.apache.log4j;version="1.2",
  org.openscada.net.mina;version="0.14"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bnd-LastModified: 1252499258854
-Export-Package: org.openscada.core.client.net;uses:="org.apache.mina.c
- ore.future,org.apache.mina.core.session,org.apache.log4j,org.apache.m
- ina.core.service,org.openscada.core,org.openscada.core.client,org.ope
- nscada.net.base.data,org.openscada.core.net,org.openscada.net.base,or
- g.apache.mina.core.filterchain,org.openscada.net.mina";version="0.14.
- 0.SNAPSHOT"
-Bundle-Version: 0.14.0.SNAPSHOT
+Export-Package: org.openscada.core.client.net;version="0.14.0";
+  uses:="org.apache.mina.core.future,
+   org.apache.mina.core.session,
+   org.apache.log4j,
+   org.apache.mina.core.service,
+   org.openscada.core,
+   org.openscada.core.client,
+   org.openscada.net.base.data,
+   org.openscada.core.net,
+   org.openscada.net.base,
+   org.apache.mina.core.filterchain,
+   org.openscada.net.mina"
+Bundle-Version: 0.14.0
 Bundle-Name: OpenSCADA-Core-Client-Net
 Build-Jdk: 1.5.0_18
 Private-Package: org.openscada.core.client.net,
