@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Built-By: jens
 Created-By: Apache Maven Bundle Plugin
 Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
-Import-Package: Ice;version="0.14",
+Import-Package: Ice,
  javax.xml.stream;version="1.0.1",
  org.apache.log4j;version="1.2",
  org.apache.xmlbeans;version="2.4",
