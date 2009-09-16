@@ -20,7 +20,9 @@
 	<property file="config/build.properties"/>
 	<property file="common/config/local.properties"/>
 	<property file="common/config/build.properties"/>
-			
+	
+	<property name="buildId" value="${atlantis.version}"/>
+	
 	<import file="${build.root}/common/lib/lib.xml"/>
 	
     <!-- ================================= 
@@ -47,6 +49,8 @@
          ================================= -->
     <target name="publish" depends="" description="Publish artifacts">
     	<openscada.publish.repository id="org.openscada.atlantis" project="atlantis"/>
+    	
+    	<openscada.publish.convertRepos targetpath="${publish.maven.root}"/>
     </target>
 	
 </project>
