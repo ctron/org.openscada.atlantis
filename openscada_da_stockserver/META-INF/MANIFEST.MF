@@ -43,7 +43,7 @@ Export-Package: org.openscada.da.server.stock;version="0.14.0";
    org.openscada.da.core,
    org.openscada.da.server.common,
    org.openscada.da.server.stock.business"
-Bundle-Version: 0.14.0.SNAPSHOT
+Bundle-Version: 0.14.0
 Bundle-Name: OpenSCADA-DA-Server-Stock
 Build-Jdk: 1.5.0_18
 Private-Package: org.openscada.da.server.stock.business,org.openscada.
