@@ -2,18 +2,26 @@ Manifest-Version: 1.0
 Built-By: jens
 Created-By: Apache Maven Bundle Plugin
 Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
-Import-Package: Ice;version="0.14",OpenSCADA.Core;version="0.14",OpenS
- CADA.DA;version="0.14",OpenSCADA.DA.Browser;version="0.14",javax.cryp
- to;resolution:=optional,javax.crypto.spec;resolution:=optional,javax.
- net.ssl;resolution:=optional,javax.xml.namespace;resolution:=optional
- ,javax.xml.stream;resolution:=optional,org.apache.log4j;version="1.2"
- ,org.openscada.core;version="0.14",org.openscada.core.client;version=
- "0.14",org.openscada.core.ice;version="0.14",org.openscada.core.subsc
- ription;version="0.14",org.openscada.da.client;version="0.14",org.ope
- nscada.da.client.ice;version="0.14",org.openscada.da.core;version="0.
- 14",org.openscada.da.core.browser;version="0.14",org.openscada.da.ice
- ;version="0.14",org.openscada.utils.timing;version="0.13",org.w3c.dom
- ;resolution:=optional
+Import-Package: Ice,
+ OpenSCADA.Core;version="0.14",
+ OpenSCADA.DA;version="0.14",
+ OpenSCADA.DA.Browser;version="0.14",
+ javax.crypto;resolution:=optional,
+ javax.crypto.spec;resolution:=optional,
+ javax.net.ssl;resolution:=optional,
+ javax.xml.namespace;resolution:=optional,
+ javax.xml.stream;resolution:=optional,
+ org.apache.log4j;version="1.2",
+ org.openscada.core;version="0.14",
+ org.openscada.core.client;version="0.14",
+ org.openscada.core.ice;version="0.14",
+ org.openscada.core.subscription;version="0.14",
+ org.openscada.da.client;version="0.14",
+ org.openscada.da.client.ice;version="0.14",
+ org.openscada.da.core;version="0.14",
+ org.openscada.da.core.browser;version="0.14",
+ org.openscada.da.ice;version="0.14",
+ org.openscada.utils.timing;version="0.13"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bnd-LastModified: 1252499297410
 Export-Package: org.openscada.da.client.ice;uses:="org.openscada.da.co
@@ -22,7 +30,7 @@ Export-Package: org.openscada.da.client.ice;uses:="org.openscada.da.co
  penscada.core,org.openscada.core.subscription,org.openscada.core.clie
  nt,org.openscada.utils.timing,OpenSCADA.Core,org.openscada.core.ice";
  version="0.14.0.SNAPSHOT"
-Bundle-Version: 0.14.0.SNAPSHOT
+Bundle-Version: 0.14.0
 Bundle-Name: OpenSCADA-DA-Client-Ice
 Build-Jdk: 1.5.0_18
 Private-Package: org.openscada.da.client.ice,
