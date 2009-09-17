@@ -8,7 +8,7 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bnd-LastModified: 1252499258558
 Export-Package: org.openscada.core.client;uses:="org.openscada.core,or
  g.apache.log4j";version="0.14.0.SNAPSHOT"
-Bundle-Version: 0.14.0
+Bundle-Version: 0.14.0.qualifier
 Bundle-Name: OpenSCADA-Core-Client-Common
 Build-Jdk: 1.5.0_18
 Private-Package: org.openscada.core.client,
