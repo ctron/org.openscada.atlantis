@@ -12,11 +12,15 @@ Import-Package: javax.crypto;resolution:=optional,javax.crypto.spec;re
  a.da.core.browser;version="0.14",org.w3c.dom;resolution:=optional
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bnd-LastModified: 1252499259760
-Export-Package: org.openscada.da.client;uses:="org.openscada.core,org.
- openscada.core.subscription,org.openscada.da.core.browser,org.opensca
- da.core.client,org.openscada.da.core,org.openscada.core.utils,org.apa
- che.log4j";version="0.14.0.SNAPSHOT"
-Bundle-Version: 0.14.0.SNAPSHOT
+Export-Package: org.openscada.da.client;version="0.14.0";
+  uses:="org.openscada.core,
+   org.openscada.core.subscription,
+   org.openscada.da.core.browser,
+   org.openscada.core.client,
+   org.openscada.da.core,
+   org.openscada.core.utils,
+   org.apache.log4j"
+Bundle-Version: 0.14.0
 Bundle-Name: OpenSCADA-DA-Client-Common
 Build-Jdk: 1.5.0_18
 Private-Package: org.openscada.da.client,
