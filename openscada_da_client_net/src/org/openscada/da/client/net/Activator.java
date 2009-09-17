@@ -44,8 +44,8 @@ public class Activator implements BundleActivator
         this.factory = new DriverFactory ();
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        properties.put ( "interface", "da" );
-        properties.put ( "transport", "net" );
+        properties.put ( org.openscada.core.client.DriverFactory.INTERFACE_NAME, "da" );
+        properties.put ( org.openscada.core.client.DriverFactory.DRIVER_NAME, "net" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "OpenSCADA DA NET Adapter" );
         properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
         this.handle = context.registerService ( org.openscada.core.client.DriverFactory.class.getName (), this.factory, properties );

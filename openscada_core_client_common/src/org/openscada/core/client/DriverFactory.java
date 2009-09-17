@@ -24,4 +24,8 @@ import org.openscada.core.ConnectionInformation;
 public interface DriverFactory
 {
     public abstract DriverInformation getDriverInformation ( ConnectionInformation connectionInformation );
+
+    public static final String INTERFACE_NAME = "interface";
+
+    public static final String DRIVER_NAME = "driver";
 }
