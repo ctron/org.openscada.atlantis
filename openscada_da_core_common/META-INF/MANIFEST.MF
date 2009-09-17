@@ -7,9 +7,9 @@ Import-Package: org.openscada.core,
  org.openscada.utils.str;version="0.13"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bnd-LastModified: 1252499259332
-Export-Package: org.openscada.da.core;version="0.14.0.SNAPSHOT";uses:="org.openscada.utils.str",
+Export-Package: org.openscada.da.core;version="0.14.0";uses:="org.openscada.utils.str",
  org.openscada.da.core.browser;version="0.14.0"
-Bundle-Version: 0.14.0
+Bundle-Version: 0.14.0.qualifier
 Bundle-Name: OpenSCADA-DA-Core-Common
 Build-Jdk: 1.5.0_18
 Private-Package: org.openscada.da.core.browser,org.openscada.da.core,
