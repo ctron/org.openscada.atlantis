@@ -28,7 +28,7 @@ Export-Package: org.openscada.core.client.net;version="0.14.0";
    org.openscada.net.base,
    org.apache.mina.core.filterchain,
    org.openscada.net.mina"
-Bundle-Version: 0.14.0
+Bundle-Version: 0.14.0.qualifier
 Bundle-Name: OpenSCADA-Core-Client-Net
 Build-Jdk: 1.5.0_18
 Private-Package: org.openscada.core.client.net,
