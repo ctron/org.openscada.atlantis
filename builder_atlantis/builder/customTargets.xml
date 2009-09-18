@@ -209,7 +209,7 @@
   <!-- ===================================================================== -->
   <target name="postBuild">
     <antcall target="gatherLogs" />
-  	<openscada.deploy.repository name="org.openscada.atlantis"/>
+  	<openscada.deploy.repository name="org.openscada.atlantis.sdk"/>
   </target>
 
   <!-- ===================================================================== -->
