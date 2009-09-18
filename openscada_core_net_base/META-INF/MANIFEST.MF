@@ -27,7 +27,7 @@ Export-Package: org.openscada.core.net;version="0.14.0";
    org.openscada.net.mina,
    org.openscada.net.base.data,
    org.openscada.net.utils"
-Bundle-Version: 0.14.0
+Bundle-Version: 0.14.0.qualifier
 Bundle-Name: OpenSCADA-Core-Net-Base
 Build-Jdk: 1.5.0_18
 Private-Package: org.openscada.core.net,
