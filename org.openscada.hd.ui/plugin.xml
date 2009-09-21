@@ -56,17 +56,17 @@
             id="org.openscada.hd.ui.oc.ConnectionEntry"
             objectClass="org.openscada.hd.ui.data.ConnectionEntryBean">
          <action
-               class="org.openscada.hd.ui.actions.ConnectAction"
-               enablesFor="1"
-               id="org.openscada.hd.ui.ConnectAction"
-               label="Connect"
-               menubarPath="additions">
-         </action>
-         <action
                class="org.openscada.hd.ui.actions.DisconnectAction"
                enablesFor="1"
                id="org.openscada.hd.ui.DisconnectAction"
                label="Disconnect"
+               menubarPath="additions">
+         </action>
+         <action
+               class="org.openscada.hd.ui.actions.ConnectAction"
+               enablesFor="1"
+               id="org.openscada.hd.ui.ConnectAction"
+               label="Connect"
                menubarPath="additions">
          </action>
       </objectContribution>
