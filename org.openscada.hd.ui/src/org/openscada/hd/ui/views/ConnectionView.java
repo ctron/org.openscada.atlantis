@@ -3,13 +3,13 @@ package org.openscada.hd.ui.views;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.core.databinding.observable.set.ObservableSet;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.UnionSet;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
-import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -21,14 +21,7 @@ import org.openscada.hd.ui.data.ConnectionEntryBean;
 public class ConnectionView extends ViewPart
 {
 
-    private final class TreeStructureAdvisorExtension extends TreeStructureAdvisor
-    {
-
-    }
-
     private TreeViewer viewer;
-
-    private ObservableSet connections;
 
     public ConnectionView ()
     {
@@ -37,10 +30,12 @@ public class ConnectionView extends ViewPart
     @Override
     public void createPartControl ( final Composite parent )
     {
-        this.connections = Activator.getDefault ().getConnectionSet ();
 
         this.viewer = new TreeViewer ( parent );
-        this.viewer.setContentProvider ( new ObservableSetTreeContentProvider ( new IObservableFactory () {
+
+        final ObservableSetTreeContentProvider contentProvider;
+
+        contentProvider = new ObservableSetTreeContentProvider ( new IObservableFactory () {
 
             public IObservable createObservable ( final Object target )
             {
@@ -50,13 +45,20 @@ public class ConnectionView extends ViewPart
                 }
                 else if ( target instanceof ConnectionEntryBean )
                 {
-                    return ( (ConnectionEntryBean)target ).getEntries ();
+                    return new UnionSet ( new IObservableSet[] { ( (ConnectionEntryBean)target ).getEntries (), ( (ConnectionEntryBean)target ).getQueries () } );
                 }
                 return null;
             }
-        }, new TreeStructureAdvisorExtension () ) );
-        this.viewer.setLabelProvider ( new LabelProvider ( BeansObservables.observeMap ( this.connections, ConnectionEntryBean.class, "connection" ), BeansObservables.observeMap ( this.connections, ConnectionEntryBean.class, "connectionStatus" ) ) );
-        this.viewer.setInput ( this.connections );
+        }, null );
+
+        this.viewer.setContentProvider ( contentProvider );
+
+        this.viewer.setLabelProvider ( new LabelProvider ( //
+        BeansObservables.observeMap ( contentProvider.getKnownElements (), "connection" ), //
+        BeansObservables.observeMap ( contentProvider.getKnownElements (), "connectionStatus" ), //
+        BeansObservables.observeMap ( contentProvider.getKnownElements (), "state" ) // 
+        ) );
+        this.viewer.setInput ( Activator.getDefault ().getConnectionSet () );
 
         getSite ().setSelectionProvider ( this.viewer );
 

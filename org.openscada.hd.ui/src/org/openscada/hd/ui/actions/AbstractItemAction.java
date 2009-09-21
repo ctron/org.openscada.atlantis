@@ -4,11 +4,12 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
-import org.openscada.hd.ui.data.ConnectionEntryBean;
+import org.openscada.hd.ui.data.HistoricalItemEntryBean;
 
-public class AbstractConnectionAction
+public class AbstractItemAction
 {
-    protected ConnectionEntryBean connection;
+
+    protected HistoricalItemEntryBean item;
 
     public void setActivePart ( final IAction action, final IWorkbenchPart targetPart )
     {
@@ -16,7 +17,7 @@ public class AbstractConnectionAction
 
     public void selectionChanged ( final IAction action, final ISelection selection )
     {
-        this.connection = null;
+        this.item = null;
         if ( selection.isEmpty () )
         {
             return;
@@ -24,11 +25,12 @@ public class AbstractConnectionAction
         if ( selection instanceof IStructuredSelection )
         {
             final Object o = ( (IStructuredSelection)selection ).getFirstElement ();
-            if ( o instanceof ConnectionEntryBean )
+            if ( o instanceof HistoricalItemEntryBean )
             {
-                this.connection = (ConnectionEntryBean)o;
+                this.item = (HistoricalItemEntryBean)o;
             }
         }
-        action.setEnabled ( this.connection != null );
+        action.setEnabled ( this.item != null );
     }
+
 }

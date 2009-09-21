@@ -12,8 +12,10 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.openscada.hd.ui.data.HistoricalItemEntryBean;
+import org.openscada.hd.QueryState;
 import org.openscada.hd.ui.data.ConnectionEntryBean;
+import org.openscada.hd.ui.data.HistoricalItemEntryBean;
+import org.openscada.hd.ui.data.QueryBean;
 
 final class LabelProvider extends StyledCellLabelProvider
 {
@@ -53,9 +55,10 @@ final class LabelProvider extends StyledCellLabelProvider
     @Override
     public void update ( final ViewerCell cell )
     {
-        if ( cell.getElement () instanceof ConnectionEntryBean )
+        final Object element = cell.getElement ();
+        if ( element instanceof ConnectionEntryBean )
         {
-            final ConnectionEntryBean entry = (ConnectionEntryBean)cell.getElement ();
+            final ConnectionEntryBean entry = (ConnectionEntryBean)element;
 
             final StyledString text = new StyledString ();
             text.append ( entry.getConnectionInformation ().toString () );
@@ -67,10 +70,24 @@ final class LabelProvider extends StyledCellLabelProvider
             cell.setText ( text.getString () );
             cell.setStyleRanges ( text.getStyleRanges () );
         }
-        else if ( cell.getElement () instanceof HistoricalItemEntryBean )
+        else if ( element instanceof HistoricalItemEntryBean )
         {
-            final HistoricalItemEntryBean entry = (HistoricalItemEntryBean)cell.getElement ();
+            final HistoricalItemEntryBean entry = (HistoricalItemEntryBean)element;
             cell.setText ( entry.getId () );
+        }
+        else if ( element instanceof QueryBean )
+        {
+            final QueryBean query = (QueryBean)element;
+            final StyledString text = new StyledString ();
+
+            text.append ( query.getItem ().getId () );
+            text.append ( " " + query.getParameters ().toString (), StyledString.COUNTER_STYLER );
+            final QueryState state = query.getState ();
+            text.append ( " [" + ( state != null ? state : "<unknown>" ) + "]", StyledString.DECORATIONS_STYLER );
+
+            // set text info
+            cell.setText ( text.getString () );
+            cell.setStyleRanges ( text.getStyleRanges () );
         }
         else
         {

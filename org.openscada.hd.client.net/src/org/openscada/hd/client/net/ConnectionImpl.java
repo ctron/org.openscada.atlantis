@@ -27,7 +27,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.net.SessionConnectionBase;
@@ -40,6 +39,8 @@ import org.openscada.hd.net.ItemListHelper;
 import org.openscada.hd.net.Messages;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConnectionImpl extends SessionConnectionBase implements org.openscada.hd.client.Connection
 {
@@ -51,11 +52,13 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     public static final String VERSION = "0.1.0";
 
-    private static Logger logger = Logger.getLogger ( ConnectionImpl.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ConnectionImpl.class );
 
     private final Executor executor;
 
     private final Set<ItemListListener> itemListListeners = new HashSet<ItemListListener> ();
+
+    private final Set<QueryImpl> queries = new HashSet<QueryImpl> ();
 
     @Override
     public String getRequiredVersion ()
@@ -140,6 +143,12 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         case CLOSED:
             // clear lists
             fireListChanged ( new HashSet<HistoricalItemInformation> (), null, true );
+            // clear queries
+            for ( final QueryImpl query : this.queries )
+            {
+                query.close ();
+            }
+            this.queries.clear ();
             break;
         }
     }
@@ -173,12 +182,24 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private void sendRequestItemList ( final boolean flag )
     {
+        logger.info ( "Request item list: {}", flag );
         this.messenger.sendMessage ( ItemListHelper.createRequestList ( flag ) );
     }
 
     public Query createQuery ( final String itemId, final QueryParameters parameters, final QueryListener listener )
     {
-        // TODO Auto-generated method stub
-        return null;
+        synchronized ( this )
+        {
+            if ( getState () == ConnectionState.BOUND )
+            {
+                final QueryImpl query = new QueryImpl ( this.executor, this, itemId, parameters, listener );
+                this.queries.add ( query );
+                return query;
+            }
+            else
+            {
+                return new ErrorQueryImpl ( listener );
+            }
+        }
     }
 }

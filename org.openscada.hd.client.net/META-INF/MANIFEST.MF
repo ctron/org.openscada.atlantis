@@ -18,5 +18,6 @@ Import-Package: org.apache.log4j,
  org.openscada.net.base;version="0.14.0",
  org.openscada.net.base.data;version="0.14.0",
  org.openscada.net.mina;version="0.14.0",
- org.osgi.framework;version="1.3.0"
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
 Export-Package: org.openscada.hd.client.net

@@ -4,5 +4,6 @@ public enum QueryState
 {
     LOADING,
     COMPLETE,
-    DISCONNECTED
+    DISCONNECTED,
+    REQUESTED
 }

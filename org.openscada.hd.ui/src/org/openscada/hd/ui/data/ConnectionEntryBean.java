@@ -1,6 +1,8 @@
 package org.openscada.hd.ui.data;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,7 +29,9 @@ public class ConnectionEntryBean extends AbstractPropertyChange implements Conne
 
     private ConnectionState connectionStatus;
 
-    private final WritableSet entries = new WritableSet ();
+    private final WritableSet items = new WritableSet ();
+
+    private final WritableSet queries = new WritableSet ();
 
     private final Map<String, HistoricalItemEntryBean> itemCache = new HashMap<String, HistoricalItemEntryBean> ();
 
@@ -94,26 +98,29 @@ public class ConnectionEntryBean extends AbstractPropertyChange implements Conne
 
     public ObservableSet getEntries ()
     {
-        return this.entries;
+        return this.items;
     }
 
     public void listChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
-        this.entries.getRealm ().asyncExec ( new Runnable () {
+        this.items.getRealm ().asyncExec ( new Runnable () {
 
             public void run ()
             {
                 if ( full )
                 {
-                    ConnectionEntryBean.this.entries.clear ();
+                    ConnectionEntryBean.this.items.clear ();
+                    ConnectionEntryBean.this.itemCache.clear ();
                 }
 
                 if ( removed != null )
                 {
+                    final List<HistoricalItemEntryBean> remove = new LinkedList<HistoricalItemEntryBean> ();
                     for ( final String item : removed )
                     {
-                        ConnectionEntryBean.this.itemCache.remove ( item );
+                        remove.add ( ConnectionEntryBean.this.itemCache.remove ( item ) );
                     }
+                    ConnectionEntryBean.this.items.removeAll ( remove );
                 }
                 if ( addedOrModified != null )
                 {
@@ -121,12 +128,28 @@ public class ConnectionEntryBean extends AbstractPropertyChange implements Conne
                     {
                         final HistoricalItemEntryBean entry = new HistoricalItemEntryBean ( ConnectionEntryBean.this, item );
                         ConnectionEntryBean.this.itemCache.put ( item.getId (), entry );
-                        ConnectionEntryBean.this.entries.add ( entry );
+                        ConnectionEntryBean.this.items.add ( entry );
                     }
                 }
 
             }
         } );
 
+    }
+
+    public WritableSet getQueries ()
+    {
+        return this.queries;
+    }
+
+    public void createQuery ( final HistoricalItemEntryBean item )
+    {
+        final QueryBean query = new QueryBean ( this, item );
+        this.queries.add ( query );
+    }
+
+    public void removeQuery ( final QueryBean queryBean )
+    {
+        this.queries.remove ( queryBean );
     }
 }

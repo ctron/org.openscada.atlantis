@@ -2,7 +2,7 @@ package org.openscada.hd.ui.data;
 
 import org.openscada.hd.HistoricalItemInformation;
 
-public class HistoricalItemEntryBean
+public class HistoricalItemEntryBean extends AbstractPropertyChange
 {
     private final String id;
 
