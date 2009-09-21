@@ -24,32 +24,38 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.apache.mina.core.session.IoSession;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
+import org.openscada.hd.HistoricalItemInformation;
+import org.openscada.hd.ItemListListener;
+import org.openscada.hd.net.ItemListHelper;
+import org.openscada.hd.net.Messages;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.Session;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
+import org.openscada.net.base.data.VoidValue;
 import org.openscada.net.utils.MessageCreator;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.concurrent.ResultHandler;
 import org.openscada.utils.concurrent.task.DefaultTaskHandler;
 import org.openscada.utils.concurrent.task.ResultFutureHandler;
 import org.openscada.utils.concurrent.task.TaskHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ServerConnectionHandler extends AbstractServerConnectionHandler
+public class ServerConnectionHandler extends AbstractServerConnectionHandler implements ItemListListener
 {
 
     public final static String VERSION = "0.1.0";
 
-    private static Logger logger = Logger.getLogger ( ServerConnectionHandler.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ServerConnectionHandler.class );
 
     private Service service = null;
 
@@ -81,6 +87,34 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler
             }
         } );
 
+        this.messenger.setHandler ( Messages.CC_HD_START_LIST, new MessageListener () {
+
+            public void messageReceived ( final Message message )
+            {
+                ServerConnectionHandler.this.setItemList ( true );
+            }
+        } );
+
+        this.messenger.setHandler ( Messages.CC_HD_STOP_LIST, new MessageListener () {
+
+            public void messageReceived ( final Message message )
+            {
+                ServerConnectionHandler.this.setItemList ( false );
+            }
+        } );
+
+    }
+
+    protected void setItemList ( final boolean flag )
+    {
+        if ( flag )
+        {
+            this.session.setItemListListener ( this );
+        }
+        else
+        {
+            this.session.setItemListListener ( null );
+        }
     }
 
     private void createSession ( final Message message )
@@ -182,4 +216,21 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler
         }
     }
 
+    public void listChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
+    {
+        final Message message = new Message ( Messages.CC_HD_LIST_UPDATE );
+        if ( addedOrModified != null )
+        {
+            message.getValues ().put ( ItemListHelper.FIELD_ADDED, ItemListHelper.toValueAdded ( addedOrModified ) );
+        }
+        if ( removed != null )
+        {
+            message.getValues ().put ( ItemListHelper.FIELD_REMOVED, ItemListHelper.toValueRemoved ( removed ) );
+        }
+        if ( full )
+        {
+            message.getValues ().put ( ItemListHelper.FIELD_FULL, new VoidValue () );
+        }
+        this.messenger.sendMessage ( message );
+    }
 }

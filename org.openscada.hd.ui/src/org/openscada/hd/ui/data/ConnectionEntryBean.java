@@ -2,6 +2,7 @@ package org.openscada.hd.ui.data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
@@ -9,9 +10,11 @@ import org.eclipse.ui.IActionFilter;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
+import org.openscada.hd.HistoricalItemInformation;
+import org.openscada.hd.ItemListListener;
 import org.openscada.hd.client.Connection;
 
-public class ConnectionEntryBean extends AbstractPropertyChange implements ConnectionStateListener, IActionFilter
+public class ConnectionEntryBean extends AbstractPropertyChange implements ConnectionStateListener, IActionFilter, ItemListListener
 {
 
     public static final String PROP_CONNECTION = "connection";
@@ -26,7 +29,7 @@ public class ConnectionEntryBean extends AbstractPropertyChange implements Conne
 
     private final WritableSet entries = new WritableSet ();
 
-    private final Map<String, HistoricalItemEntryBean> browserCache = new HashMap<String, HistoricalItemEntryBean> ();
+    private final Map<String, HistoricalItemEntryBean> itemCache = new HashMap<String, HistoricalItemEntryBean> ();
 
     public ConnectionEntryBean ( final ConnectionInformation connectionInformation )
     {
@@ -42,8 +45,9 @@ public class ConnectionEntryBean extends AbstractPropertyChange implements Conne
     {
         if ( this.connection == null )
         {
-            this.connection = new org.openscada.hd.client.net.ConnectionImpl ( this.connectionInformation, true );
+            this.connection = new org.openscada.hd.client.net.ConnectionImpl ( this.connectionInformation );
             this.connection.addConnectionStateListener ( this );
+            this.connection.addListListener ( this );
             firePropertyChange ( PROP_CONNECTION, null, this.connection );
         }
         this.connection.connect ();
@@ -91,5 +95,38 @@ public class ConnectionEntryBean extends AbstractPropertyChange implements Conne
     public ObservableSet getEntries ()
     {
         return this.entries;
+    }
+
+    public void listChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
+    {
+        this.entries.getRealm ().asyncExec ( new Runnable () {
+
+            public void run ()
+            {
+                if ( full )
+                {
+                    ConnectionEntryBean.this.entries.clear ();
+                }
+
+                if ( removed != null )
+                {
+                    for ( final String item : removed )
+                    {
+                        ConnectionEntryBean.this.itemCache.remove ( item );
+                    }
+                }
+                if ( addedOrModified != null )
+                {
+                    for ( final HistoricalItemInformation item : addedOrModified )
+                    {
+                        final HistoricalItemEntryBean entry = new HistoricalItemEntryBean ( ConnectionEntryBean.this, item );
+                        ConnectionEntryBean.this.itemCache.put ( item.getId (), entry );
+                        ConnectionEntryBean.this.entries.add ( entry );
+                    }
+                }
+
+            }
+        } );
+
     }
 }

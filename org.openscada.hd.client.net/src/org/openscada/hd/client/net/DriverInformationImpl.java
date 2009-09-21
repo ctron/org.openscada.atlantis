@@ -31,7 +31,7 @@ public class DriverInformationImpl implements org.openscada.core.client.DriverIn
             return null;
         }
 
-        return new org.openscada.hd.client.net.ConnectionImpl ( connectionInformation, true );
+        return new org.openscada.hd.client.net.ConnectionImpl ( connectionInformation );
     }
 
     public Class<?> getConnectionClass ()

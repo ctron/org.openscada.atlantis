@@ -19,9 +19,10 @@
 
 package org.openscada.hd.server.net;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.hd.server.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Application to export a storage using the OpenSCADA NET protocol
@@ -30,7 +31,7 @@ import org.openscada.hd.server.Service;
  */
 public class Application
 {
-    private static Logger _log = Logger.getLogger ( Application.class );
+    private final static Logger logger = LoggerFactory.getLogger ( Application.class );
 
     public static void main ( final String[] args )
     {
@@ -60,12 +61,12 @@ public class Application
             exporter.start ();
 
             // run the lizzard
-            _log.info ( "Running exporter (hive class: " + exporter.getServiceClass ().getCanonicalName () + ")..." );
+            logger.info ( "Running exporter (hive class: " + exporter.getServiceClass ().getCanonicalName () + ")..." );
         }
         catch ( final Throwable e )
         {
             // ops
-            _log.fatal ( "Error in OpenSCADA HD[NET] Server", e );
+            logger.error ( "Error in OpenSCADA HD[NET] Server", e );
             System.exit ( 1 );
         }
     }

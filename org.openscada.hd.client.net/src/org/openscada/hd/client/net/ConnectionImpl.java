@@ -28,15 +28,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
-import org.apache.mina.core.session.IoSession;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.net.SessionConnectionBase;
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.ItemListListener;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
-import org.openscada.hd.net.ListItemHelper;
+import org.openscada.hd.net.ItemListHelper;
 import org.openscada.hd.net.Messages;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
@@ -53,20 +53,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private static Logger logger = Logger.getLogger ( ConnectionImpl.class );
 
-    private Executor executor = new Executor () {
-
-        public void execute ( final Runnable command )
-        {
-            try
-            {
-                command.run ();
-            }
-            catch ( final Throwable e )
-            {
-                logger.info ( "Uncaught exception in default executor", e );
-            }
-        }
-    };
+    private final Executor executor;
 
     private final Set<ItemListListener> itemListListeners = new HashSet<ItemListListener> ();
 
@@ -76,20 +63,10 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         return VERSION;
     }
 
-    public ConnectionImpl ( final ConnectionInformation connectionInformantion, final boolean defaultExecutorAsync )
+    public ConnectionImpl ( final ConnectionInformation connectionInformantion )
     {
         super ( connectionInformantion );
 
-        if ( defaultExecutorAsync )
-        {
-            setupAsyncExecutor ();
-        }
-
-        init ();
-    }
-
-    private void setupAsyncExecutor ()
-    {
         this.executor = Executors.newSingleThreadExecutor ( new ThreadFactory () {
 
             public Thread newThread ( final Runnable r )
@@ -99,6 +76,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 return t;
             }
         } );
+
+        init ();
     }
 
     protected void init ()
@@ -107,16 +86,16 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
             public void messageReceived ( final Message message ) throws Exception
             {
-                ConnectionImpl.this.handleBrowserUpdate ( message );
+                ConnectionImpl.this.handleListUpdate ( message );
             }
         } );
     }
 
-    protected synchronized void handleBrowserUpdate ( final Message message )
+    protected synchronized void handleListUpdate ( final Message message )
     {
-        final Set<HistoricalItemInformation> addedOrModified = ListItemHelper.fromValue ( message.getValues ().get ( "added" ) );
-        final Set<String> removed = ListItemHelper.fromValueRemoved ( message.getValues ().get ( "removed" ) );
-        final boolean full = message.getValues ().containsKey ( "full" );
+        final Set<HistoricalItemInformation> addedOrModified = ItemListHelper.fromValue ( message.getValues ().get ( ItemListHelper.FIELD_ADDED ) );
+        final Set<String> removed = ItemListHelper.fromValueRemoved ( message.getValues ().get ( ItemListHelper.FIELD_REMOVED ) );
+        final boolean full = message.getValues ().containsKey ( ItemListHelper.FIELD_FULL );
 
         fireListChanged ( addedOrModified, removed, full );
     }
@@ -143,31 +122,26 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         } );
     }
 
-    public void setExecutor ( final Executor executor )
-    {
-        this.executor = executor;
-    }
-
     public Executor getExecutor ()
     {
         return this.executor;
     }
 
     @Override
-    public void sessionClosed ( final IoSession session ) throws Exception
+    protected synchronized void switchState ( final ConnectionState state, final Throwable error )
     {
-        // set states to DISCONNECTED
-
-        // clear lists
-        synchronized ( this )
+        super.switchState ( state, error );
+        switch ( state )
         {
-            for ( final ItemListListener listener : this.itemListListeners )
-            {
-                listener.listChanged ( new HashSet<HistoricalItemInformation> (), null, true );
-            }
-        }
+        case BOUND:
+            sendRequestItemList ( !this.itemListListeners.isEmpty () );
+            break;
 
-        super.sessionClosed ( session );
+        case CLOSED:
+            // clear lists
+            fireListChanged ( new HashSet<HistoricalItemInformation> (), null, true );
+            break;
+        }
     }
 
     public void addListListener ( final ItemListListener listener )
@@ -199,7 +173,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private void sendRequestItemList ( final boolean flag )
     {
-        this.messenger.sendMessage ( ListItemHelper.createRequestList ( flag ) );
+        this.messenger.sendMessage ( ItemListHelper.createRequestList ( flag ) );
     }
 
     public Query createQuery ( final String itemId, final QueryParameters parameters, final QueryListener listener )

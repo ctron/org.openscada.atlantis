@@ -1,5 +1,6 @@
 package org.openscada.hd.net;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,8 +13,14 @@ import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
 
-public class ListItemHelper
+public class ItemListHelper
 {
+
+    public static final String FIELD_ADDED = "added";
+
+    public static final String FIELD_REMOVED = "removed";
+
+    public static final String FIELD_FULL = "full";
 
     public static Set<HistoricalItemInformation> fromValue ( final Value baseValue )
     {
@@ -68,7 +75,7 @@ public class ListItemHelper
         }
     }
 
-    public static Value toValue ( final HistoricalItemInformation[] added )
+    public static Value toValueAdded ( final Collection<HistoricalItemInformation> added )
     {
         final ListValue result = new ListValue ();
 
@@ -93,7 +100,7 @@ public class ListItemHelper
         return value;
     }
 
-    public static Value toValue ( final String[] removed )
+    public static Value toValueRemoved ( final Collection<String> removed )
     {
         if ( removed == null )
         {
