@@ -19,6 +19,7 @@
 
 package org.openscada.hd.server.net;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
@@ -32,13 +33,20 @@ import org.openscada.core.net.MessageHelper;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.ItemListListener;
+import org.openscada.hd.QueryParameters;
+import org.openscada.hd.QueryState;
+import org.openscada.hd.ValueInformation;
 import org.openscada.hd.net.ItemListHelper;
 import org.openscada.hd.net.Messages;
+import org.openscada.hd.net.QueryHelper;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.Session;
 import org.openscada.net.base.MessageListener;
+import org.openscada.net.base.data.IntegerValue;
+import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
+import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
 import org.openscada.net.utils.MessageCreator;
@@ -64,6 +72,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
     private final TaskHandler taskHandler = new DefaultTaskHandler ();
 
     private final Set<Long> taskMap = new HashSet<Long> ();
+
+    private final Map<Long, QueryHandler> queries = new HashMap<Long, QueryHandler> ();
 
     public ServerConnectionHandler ( final Service service, final IoSession ioSession, final ConnectionInformation connectionInformation )
     {
@@ -103,6 +113,130 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             }
         } );
 
+        this.messenger.setHandler ( Messages.CC_HD_CREATE_QUERY, new MessageListener () {
+
+            public void messageReceived ( final Message message )
+            {
+                ServerConnectionHandler.this.handleCreateQuery ( message );
+            }
+        } );
+
+        this.messenger.setHandler ( Messages.CC_HD_CLOSE_QUERY, new MessageListener () {
+
+            public void messageReceived ( final Message message )
+            {
+                ServerConnectionHandler.this.handleCloseQuery ( message );
+            }
+        } );
+
+        this.messenger.setHandler ( Messages.CC_HD_UPDATE_QUERY_PARAMETERS, new MessageListener () {
+
+            public void messageReceived ( final Message message )
+            {
+                ServerConnectionHandler.this.handleUpdateQueryParameters ( message );
+            }
+        } );
+
+    }
+
+    protected void handleUpdateQueryParameters ( final Message message )
+    {
+        // get the query id
+        final long queryId = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
+
+        synchronized ( this )
+        {
+            final QueryHandler handler = this.queries.get ( queryId );
+            if ( handler != null )
+            {
+                handler.updateParameters ( QueryHelper.fromValue ( message.getValues ().get ( "parameters" ) ) );
+            }
+        }
+    }
+
+    protected void handleCloseQuery ( final Message message )
+    {
+        // get the query id
+        final long queryId = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
+
+        synchronized ( this )
+        {
+            final QueryHandler handler = this.queries.remove ( queryId );
+            if ( handler != null )
+            {
+                sendQueryState ( queryId, QueryState.DISCONNECTED );
+                handler.close ();
+            }
+        }
+    }
+
+    protected void handleCreateQuery ( final Message message )
+    {
+        // get the query id
+        final long queryId = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
+
+        synchronized ( this )
+        {
+            try
+            {
+                if ( this.queries.containsKey ( queryId ) )
+                {
+                    logger.warn ( "Duplicate query request: {}", queryId );
+                    this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, "Duplicate query id" ) );
+                    return;
+                }
+
+                // get the query item
+                final String itemId = ( (StringValue)message.getValues ().get ( "itemId" ) ).getValue ();
+                // get the initial query parameters
+                final QueryParameters parameters = QueryHelper.fromValue ( message.getValues ().get ( "parameters" ) );
+
+                // create the handler and set the query
+                final QueryHandler handler = new QueryHandler ( queryId, this );
+                this.queries.put ( queryId, handler );
+
+                handler.setQuery ( this.service.createQuery ( this.session, itemId, parameters, handler ) );
+
+            }
+            catch ( final Throwable e )
+            {
+                sendQueryState ( queryId, QueryState.DISCONNECTED );
+            }
+        }
+    }
+
+    public void sendQueryData ( final long queryId, final int index, final Map<String, org.openscada.hd.Value[]> values, final ValueInformation[] valueInformation )
+    {
+        synchronized ( this )
+        {
+            if ( !this.queries.containsKey ( queryId ) )
+            {
+                return;
+            }
+            final Message message = new Message ( Messages.CC_HD_UPDATE_QUERY_DATA );
+            message.getValues ().put ( "id", new LongValue ( queryId ) );
+            message.getValues ().put ( "index", new IntegerValue ( index ) );
+
+            message.getValues ().put ( "values", QueryHelper.toValueData ( values ) );
+            message.getValues ().put ( "valueInformation", QueryHelper.toValueInfo ( valueInformation ) );
+
+            this.messenger.sendMessage ( message );
+        }
+    }
+
+    public void sendQueryState ( final long queryId, final QueryState state )
+    {
+        synchronized ( this )
+        {
+            if ( !this.queries.containsKey ( queryId ) )
+            {
+                return;
+            }
+            final Message message = new Message ( Messages.CC_HD_UPDATE_QUERY_STATUS );
+            message.getValues ().put ( "id", new LongValue ( queryId ) );
+            message.getValues ().put ( "state", new StringValue ( state.toString () ) );
+            this.messenger.sendMessage ( message );
+        }
     }
 
     protected void setItemList ( final boolean flag )
@@ -233,4 +367,5 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
         this.messenger.sendMessage ( message );
     }
+
 }

@@ -93,6 +93,13 @@
                label="Close"
                menubarPath="additions">
          </action>
+         <action
+               class="org.openscada.hd.ui.actions.RemoveQuery"
+               enablesFor="1"
+               id="org.openscada.hd.ui.RemoveQueryAction"
+               label="Remove"
+               menubarPath="additions">
+         </action>
       </objectContribution>
    </extension>
 

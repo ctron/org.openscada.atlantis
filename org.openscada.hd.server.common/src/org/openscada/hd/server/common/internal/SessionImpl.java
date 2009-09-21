@@ -1,7 +1,10 @@
-package org.openscada.hd.server.common;
+package org.openscada.hd.server.common.internal;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import org.openscada.hd.HistoricalItemInformation;
@@ -12,12 +15,13 @@ import org.slf4j.LoggerFactory;
 
 public class SessionImpl implements Session, ItemListListener
 {
-
     private final static Logger logger = LoggerFactory.getLogger ( SessionImpl.class );
 
     private final String user;
 
     private final HashMap<String, HistoricalItemInformation> itemCache = new HashMap<String, HistoricalItemInformation> ();
+
+    private final Collection<QueryImpl> queries = new LinkedList<QueryImpl> ();
 
     private ItemListListener itemListListener;
 
@@ -26,12 +30,21 @@ public class SessionImpl implements Session, ItemListListener
         logger.info ( "Created new session" );
 
         this.user = user;
-
     }
 
     public void dispose ()
     {
         logger.info ( "Disposing session" );
+        synchronized ( this )
+        {
+            // close all queries
+            final Collection<QueryImpl> queries = new ArrayList<QueryImpl> ( this.queries );
+            for ( final QueryImpl query : queries )
+            {
+                query.dispose ();
+            }
+            this.queries.clear ();
+        }
     }
 
     public String getCurrentUser ()
@@ -85,6 +98,22 @@ public class SessionImpl implements Session, ItemListListener
             {
                 this.itemListListener.listChanged ( addedOrModified, removed, full );
             }
+        }
+    }
+
+    public void addQuery ( final QueryImpl query )
+    {
+        synchronized ( this )
+        {
+            this.queries.add ( query );
+        }
+    }
+
+    public void removeQuery ( final QueryImpl query )
+    {
+        synchronized ( this )
+        {
+            this.queries.remove ( query );
         }
     }
 }

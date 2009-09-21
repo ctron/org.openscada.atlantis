@@ -86,6 +86,11 @@ public class QueryBean extends AbstractPropertyChange implements QueryListener
     public void close ()
     {
         this.query.close ();
+    }
+
+    public void remove ()
+    {
+        this.query.close ();
         this.parent.removeQuery ( this );
     }
 }

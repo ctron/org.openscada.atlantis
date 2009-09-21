@@ -3,6 +3,7 @@ package org.openscada.hd.server.common;
 import java.util.Hashtable;
 
 import org.openscada.hd.server.Service;
+import org.openscada.hd.server.common.internal.ServiceImpl;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
