@@ -18,7 +18,7 @@ public class ErrorQueryImpl implements Query
         // nothing to do
     }
 
-    public void updateParameters ( final QueryParameters parameters )
+    public void changeParameters ( final QueryParameters parameters )
     {
     }
 

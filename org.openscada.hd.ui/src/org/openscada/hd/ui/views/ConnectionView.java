@@ -17,20 +17,15 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.hd.ui.Activator;
 import org.openscada.hd.ui.data.ConnectionEntryBean;
+import org.openscada.hd.ui.data.QueryBufferBean;
 
 public class ConnectionView extends ViewPart
 {
-
     private TreeViewer viewer;
-
-    public ConnectionView ()
-    {
-    }
 
     @Override
     public void createPartControl ( final Composite parent )
     {
-
         this.viewer = new TreeViewer ( parent );
 
         final ObservableSetTreeContentProvider contentProvider;
@@ -47,6 +42,11 @@ public class ConnectionView extends ViewPart
                 {
                     return new UnionSet ( new IObservableSet[] { ( (ConnectionEntryBean)target ).getEntries (), ( (ConnectionEntryBean)target ).getQueries () } );
                 }
+                else if ( target instanceof QueryBufferBean )
+                {
+                    final QueryBufferBean query = (QueryBufferBean)target;
+                    return BeansObservables.observeSet ( query, QueryBufferBean.PROP_VALUE_TYPES, String.class );
+                }
                 return null;
             }
         }, null );
@@ -56,7 +56,8 @@ public class ConnectionView extends ViewPart
         this.viewer.setLabelProvider ( new LabelProvider ( //
         BeansObservables.observeMap ( contentProvider.getKnownElements (), "connection" ), //
         BeansObservables.observeMap ( contentProvider.getKnownElements (), "connectionStatus" ), //
-        BeansObservables.observeMap ( contentProvider.getKnownElements (), "state" ) // 
+        BeansObservables.observeMap ( contentProvider.getKnownElements (), QueryBufferBean.PROP_QUERY_PARAMETERS ), //
+        BeansObservables.observeMap ( contentProvider.getKnownElements (), QueryBufferBean.PROP_STATE ) // 
         ) );
         this.viewer.setInput ( Activator.getDefault ().getConnectionSet () );
 

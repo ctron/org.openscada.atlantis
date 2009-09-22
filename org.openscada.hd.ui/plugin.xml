@@ -48,6 +48,22 @@
             id="org.openscada.hd.ui.category"
             name="Historical Data">
       </category>
+      <view
+            allowMultiple="false"
+            category="org.openscada.hd.ui.category"
+            class="org.openscada.hd.ui.views.QueryControlView"
+            id="org.openscada.hd.ui.QueryControlView"
+            name="Query Control"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="org.openscada.hd.ui.category"
+            class="org.openscada.hd.ui.views.QueryDataView"
+            id="org.openscada.hd.ui.QueryDataView"
+            name="Query Data View"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -84,8 +100,8 @@
       </objectContribution>
       <objectContribution
             adaptable="false"
-            id="org.openscada.hd.ui.oc.QueryBean"
-            objectClass="org.openscada.hd.ui.data.QueryBean">
+            id="org.openscada.hd.ui.oc.QueryBufferBean"
+            objectClass="org.openscada.hd.ui.data.QueryBufferBean">
          <action
                class="org.openscada.hd.ui.actions.CloseQuery"
                enablesFor="1"

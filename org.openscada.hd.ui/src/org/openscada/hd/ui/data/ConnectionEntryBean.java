@@ -15,6 +15,7 @@ import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.ItemListListener;
 import org.openscada.hd.client.Connection;
+import org.openscada.utils.beans.AbstractPropertyChange;
 
 public class ConnectionEntryBean extends AbstractPropertyChange implements ConnectionStateListener, IActionFilter, ItemListListener
 {
@@ -144,11 +145,11 @@ public class ConnectionEntryBean extends AbstractPropertyChange implements Conne
 
     public void createQuery ( final HistoricalItemEntryBean item )
     {
-        final QueryBean query = new QueryBean ( this, item );
+        final QueryBufferBean query = new QueryBufferBean ( this, item );
         this.queries.add ( query );
     }
 
-    public void removeQuery ( final QueryBean queryBean )
+    public void removeQuery ( final QueryBufferBean queryBean )
     {
         this.queries.remove ( queryBean );
     }

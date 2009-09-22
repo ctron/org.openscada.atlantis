@@ -1,7 +1,12 @@
 package org.openscada.hd.server.test;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,86 +41,158 @@ public class TestQueryImpl implements Query
 
         this.executor = Executors.newSingleThreadExecutor ();
 
-        startLoadData ( parameters );
+        startLoadData ( this.parameters );
     }
 
     private void startLoadData ( final QueryParameters parameters )
     {
         this.listener.updateState ( QueryState.LOADING );
 
+        if ( parameters.getEntries () == 0 )
+        {
+            this.listener.updateState ( QueryState.COMPLETE );
+            return;
+        }
+
         this.executor.execute ( new Runnable () {
 
             public void run ()
             {
-                loadData ( parameters );
+                loadData ( parameters, 10 );
             }
         } );
     }
 
-    protected void loadData ( final QueryParameters parameters )
+    protected void loadData ( final QueryParameters parameters, final int blockSize )
     {
-        this.listener.updateState ( QueryState.LOADING );
+        this.listener.updateParameters ( parameters, new HashSet<String> ( Arrays.asList ( "AVG", "MIN", "MAX" ) ) );
 
         final long startTix = parameters.getStartTimestamp ().getTimeInMillis ();
-        final long countMillis = parameters.getEndTimestamp ().getTimeInMillis () - startTix;
+        final long endTix = parameters.getEndTimestamp ().getTimeInMillis ();
+        final long countMillis = endTix - startTix;
 
-        final double step = (double)countMillis / (double)parameters.getEntries ();
+        final double step = (double)countMillis / parameters.getEntries ();
 
-        for ( int i = 0; i < parameters.getEntries (); i++ )
+        long currentTix = startTix;
+        final List<ValueInformation> next = new ArrayList<ValueInformation> ();
+        int count = 0;
+        int startCount = 0;
+        while ( true )
         {
-
-            final long startStep = (long) ( step * i );
-            final long endStep = (long) ( step * ( i + 1 ) );
             final Calendar start = Calendar.getInstance ();
-            start.setTimeInMillis ( startStep );
+            start.setTimeInMillis ( currentTix );
 
             final Calendar end = Calendar.getInstance ();
-            end.setTimeInMillis ( endStep );
-
-            final ValueInformation vi = new ValueInformation ( start, end, 1.0, 1 );
-            final Map<String, Value[]> values = generateValues ( vi );
-
-            this.listener.updateData ( i, values, new ValueInformation[] { vi } );
-
-            try
+            long nextTix = currentTix + (long)step;
+            if ( nextTix > endTix )
             {
-                Thread.sleep ( 100 );
+                nextTix = endTix;
             }
-            catch ( final InterruptedException e )
+            end.setTimeInMillis ( nextTix );
+
+            next.add ( new ValueInformation ( start, end, 1.0, 1 ) );
+
+            count++;
+            if ( nextTix == endTix )
             {
-                Thread.currentThread ().interrupt ();
-                return;
+                sendNext ( next, startCount );
+                break;
             }
+            else if ( count >= blockSize )
+            {
+                sendNext ( next, startCount );
+                startCount += count;
+                count = 0;
+                next.clear ();
+            }
+            currentTix = nextTix;
         }
+
+        /*
+        for ( int i = 0; i < blocks; i++ )
+        {
+            final long startStep = (long) ( step * i * blockSize );
+            final long endStep = (long) ( step * ( i * blockSize + 1 ) );
+
+            final Calendar start = Calendar.getInstance ();
+            start.setTimeInMillis ( startTix + startStep );
+
+            final Calendar end = Calendar.getInstance ();
+            end.setTimeInMillis ( startTix + endStep );
+
+            logger.info ( "generating block: {}", new Object[] { String.format ( "%tc - %tc", start, end ) } );
+
+            final Map<String, Value[]> values = new HashMap<String, Value[]> ();
+            values.put ( "AVG", new Value[blockSize] );
+            values.put ( "MIN", new Value[blockSize] );
+            values.put ( "MAX", new Value[blockSize] );
+
+            final ValueInformation[] infos = generateInfos ( start, end, blockSize );
+
+            for ( int x = 0; x < infos.length; x++ )
+            {
+                generateValues ( x, values, infos[x] );
+            }
+
+            this.listener.updateData ( i * blockSize, values, infos );
+
+        }
+        */
 
         this.listener.updateState ( QueryState.COMPLETE );
     }
 
-    private Map<String, Value[]> generateValues ( final ValueInformation vi )
+    private void sendNext ( final List<ValueInformation> next, final int sendIndex )
+    {
+        final int count = next.size ();
+        if ( count > 0 )
+        {
+            logger.info ( "Sending {} entries: {} - {}", new Object[] { count, next.get ( 0 ), next.get ( count - 1 ) } );
+        }
+        final ValueInformation[] valueInformation = next.toArray ( new ValueInformation[count] );
+
+        final Map<String, Value[]> values = new HashMap<String, Value[]> ();
+        values.put ( "AVG", new Value[count] );
+        values.put ( "MIN", new Value[count] );
+        values.put ( "MAX", new Value[count] );
+
+        int index = 0;
+        for ( final ValueInformation info : valueInformation )
+        {
+            generateValues ( index, values, info );
+            index++;
+        }
+
+        this.listener.updateData ( sendIndex, values, valueInformation );
+
+    }
+
+    private void generateValues ( final int index, final Map<String, Value[]> values, final ValueInformation vi )
     {
         double min = Double.MAX_VALUE;
-        double max = Double.MIN_VALUE;
-        double avg = 0.0;
+        double max = -Double.MAX_VALUE;
+        BigDecimal avg = new BigDecimal ( 0.0 );
 
-        final long count = vi.getEndTimestamp ().getTimeInMillis () - vi.getStartTimestamp ().getTimeInMillis ();
+        final long start = vi.getStartTimestamp ().getTimeInMillis ();
+        final long count = vi.getEndTimestamp ().getTimeInMillis () - start;
 
         for ( long i = 0; i < count; i++ )
         {
-            final double rad = Math.toRadians ( i ) / 1000.0;
-            final double value = Math.sin ( rad );
+
+            final double d = i + start;
+            final double value = Math.sin ( d / 100000.0 ) * 100.0;
 
             min = Math.min ( value, min );
             max = Math.max ( value, max );
-            avg += value;
+            avg = avg.add ( new BigDecimal ( value ) );
         }
 
-        avg = avg / Double.valueOf ( count );
+        avg = avg.divide ( new BigDecimal ( count ), BigDecimal.ROUND_HALF_UP );
 
-        final Map<String, Value[]> result = new HashMap<String, Value[]> ();
-        result.put ( "AVG", new Value[] { new Value ( avg ) } );
-        result.put ( "MIN", new Value[] { new Value ( min ) } );
-        result.put ( "MAX", new Value[] { new Value ( max ) } );
-        return result;
+        values.get ( "AVG" )[index] = new Value ( avg.doubleValue () );
+        values.get ( "MIN" )[index] = new Value ( min );
+        values.get ( "MAX" )[index] = new Value ( max );
+
     }
 
     public void close ()
@@ -127,7 +204,7 @@ public class TestQueryImpl implements Query
         this.listener.updateState ( QueryState.DISCONNECTED );
     }
 
-    public void updateParameters ( final QueryParameters parameters )
+    public void changeParameters ( final QueryParameters parameters )
     {
         startLoadData ( parameters );
     }

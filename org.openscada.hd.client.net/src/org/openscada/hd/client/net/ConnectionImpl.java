@@ -121,6 +121,34 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             }
         } );
 
+        this.messenger.setHandler ( Messages.CC_HD_UPDATE_QUERY_PARAMETERS, new MessageListener () {
+
+            public void messageReceived ( final Message message ) throws Exception
+            {
+                ConnectionImpl.this.handleQueryParameterUpdate ( message );
+            }
+        } );
+
+    }
+
+    protected void handleQueryParameterUpdate ( final Message message )
+    {
+        final Long queryId = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
+        final QueryParameters parameters = QueryHelper.fromValue ( message.getValues ().get ( "parameters" ) );
+        final Set<String> valueTypes = QueryHelper.fromValueTypes ( message.getValues ().get ( "valueTypes" ) );
+
+        synchronized ( this )
+        {
+            final QueryImpl query = this.queries.get ( queryId );
+            if ( query != null )
+            {
+                query.handleUpdateParameter ( parameters, valueTypes );
+            }
+            else
+            {
+                logger.warn ( "Status update for missing query: {}", queryId );
+            }
+        }
     }
 
     protected void handleQueryStatusUpdate ( final Message message )
@@ -309,7 +337,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private void sendUpdateQueryParameters ( final Long id, final QueryParameters parameters )
     {
-        final Message message = new Message ( Messages.CC_HD_UPDATE_QUERY_PARAMETERS );
+        final Message message = new Message ( Messages.CC_HD_CHANGE_QUERY_PARAMETERS );
         message.getValues ().put ( "id", new LongValue ( id ) );
         message.getValues ().put ( "parameters", QueryHelper.toValue ( parameters ) );
         this.messenger.sendMessage ( message );

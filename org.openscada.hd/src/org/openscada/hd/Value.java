@@ -56,4 +56,17 @@ public class Value
             return this.longValue;
         }
     }
+
+    @Override
+    public String toString ()
+    {
+        if ( this.doubleValue != null )
+        {
+            return String.format ( "%s", this.doubleValue );
+        }
+        else
+        {
+            return String.format ( "%s", this.longValue );
+        }
+    }
 }

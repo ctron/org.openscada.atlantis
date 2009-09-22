@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.openscada.hd.QueryState;
 import org.openscada.hd.ui.data.ConnectionEntryBean;
 import org.openscada.hd.ui.data.HistoricalItemEntryBean;
-import org.openscada.hd.ui.data.QueryBean;
+import org.openscada.hd.ui.data.QueryBufferBean;
 
 final class LabelProvider extends StyledCellLabelProvider
 {
@@ -75,13 +75,13 @@ final class LabelProvider extends StyledCellLabelProvider
             final HistoricalItemEntryBean entry = (HistoricalItemEntryBean)element;
             cell.setText ( entry.getId () );
         }
-        else if ( element instanceof QueryBean )
+        else if ( element instanceof QueryBufferBean )
         {
-            final QueryBean query = (QueryBean)element;
+            final QueryBufferBean query = (QueryBufferBean)element;
             final StyledString text = new StyledString ();
 
             text.append ( query.getItem ().getId () );
-            text.append ( " " + query.getParameters ().toString (), StyledString.COUNTER_STYLER );
+            text.append ( " " + getQueryParameterInfo ( query ), StyledString.COUNTER_STYLER );
             final QueryState state = query.getState ();
             text.append ( " [" + ( state != null ? state : "<unknown>" ) + "]", StyledString.DECORATIONS_STYLER );
 
@@ -89,9 +89,25 @@ final class LabelProvider extends StyledCellLabelProvider
             cell.setText ( text.getString () );
             cell.setStyleRanges ( text.getStyleRanges () );
         }
+        else if ( element instanceof String )
+        {
+            cell.setText ( element.toString () );
+        }
         else
         {
             super.update ( cell );
+        }
+    }
+
+    private String getQueryParameterInfo ( final QueryBufferBean query )
+    {
+        if ( query.getQueryParameters () != null )
+        {
+            return query.getQueryParameters ().toString ();
+        }
+        else
+        {
+            return "";
         }
     }
 }

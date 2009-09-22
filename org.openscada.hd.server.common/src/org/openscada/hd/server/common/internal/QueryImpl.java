@@ -1,6 +1,7 @@
 package org.openscada.hd.server.common.internal;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
@@ -35,9 +36,14 @@ public class QueryImpl implements Query, QueryListener
         this.query.close ();
     }
 
-    public void updateParameters ( final QueryParameters parameters )
+    public void changeParameters ( final QueryParameters parameters )
     {
-        this.query.updateParameters ( parameters );
+        this.query.changeParameters ( parameters );
+    }
+
+    public void updateParameters ( final QueryParameters parameters, final Set<String> valueTypes )
+    {
+        this.listener.updateParameters ( parameters, valueTypes );
     }
 
     public void updateData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )

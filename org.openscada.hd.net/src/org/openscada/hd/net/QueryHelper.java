@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.ValueInformation;
@@ -15,6 +17,7 @@ import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
+import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,6 +189,40 @@ public class QueryHelper
             result.add ( entry );
         }
 
+        return result;
+    }
+
+    public static Value toValueTypes ( final Set<String> valueTypes )
+    {
+        final ListValue result = new ListValue ();
+
+        for ( final String entry : valueTypes )
+        {
+            result.add ( new StringValue ( entry ) );
+        }
+
+        return result;
+    }
+
+    public static Set<String> fromValueTypes ( final Value value )
+    {
+        final Set<String> result = new HashSet<String> ();
+        try
+        {
+            final ListValue list = (ListValue)value;
+            for ( final Value valueEntry : list.getValues () )
+            {
+                result.add ( ( (StringValue)valueEntry ).getValue () );
+            }
+        }
+        catch ( final NullPointerException e )
+        {
+            logger.debug ( "Failed to decode", e );
+        }
+        catch ( final ClassCastException e )
+        {
+            logger.debug ( "Failed to decode", e );
+        }
         return result;
     }
 

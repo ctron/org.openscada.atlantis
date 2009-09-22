@@ -50,4 +50,10 @@ public class ValueInformation
         return this.sourceValues;
     }
 
+    @Override
+    public String toString ()
+    {
+        return String.format ( "%tc -> %tc (quality: %s, source values: %s)", this.startTimestamp, this.endTimestamp, this.quality, this.sourceValues );
+    }
+
 }

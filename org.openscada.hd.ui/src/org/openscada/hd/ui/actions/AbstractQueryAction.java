@@ -4,11 +4,11 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
-import org.openscada.hd.ui.data.QueryBean;
+import org.openscada.hd.ui.data.QueryBufferBean;
 
 public class AbstractQueryAction
 {
-    protected QueryBean query;
+    protected QueryBufferBean query;
 
     public void setActivePart ( final IAction action, final IWorkbenchPart targetPart )
     {
@@ -24,9 +24,9 @@ public class AbstractQueryAction
         if ( selection instanceof IStructuredSelection )
         {
             final Object o = ( (IStructuredSelection)selection ).getFirstElement ();
-            if ( o instanceof QueryBean )
+            if ( o instanceof QueryBufferBean )
             {
-                this.query = (QueryBean)o;
+                this.query = (QueryBufferBean)o;
             }
         }
         action.setEnabled ( this.query != null );

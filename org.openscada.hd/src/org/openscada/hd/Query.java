@@ -4,5 +4,5 @@ public interface Query
 {
     public void close ();
 
-    public void updateParameters ( QueryParameters parameters );
+    public void changeParameters ( QueryParameters parameters );
 }

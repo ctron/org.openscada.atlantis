@@ -1,6 +1,7 @@
 package org.openscada.hd.client.net;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.openscada.hd.Query;
@@ -78,6 +79,17 @@ public class QueryImpl implements Query
         } );
     }
 
+    private void fireParameterChange ( final QueryListener listener, final QueryParameters parameters, final Set<String> valueTypes )
+    {
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                listener.updateParameters ( parameters, valueTypes );
+            }
+        } );
+    }
+
     private void fireDataChange ( final QueryListener listener, final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
     {
         this.executor.execute ( new Runnable () {
@@ -90,7 +102,7 @@ public class QueryImpl implements Query
         } );
     }
 
-    public synchronized void updateParameters ( final QueryParameters parameters )
+    public synchronized void changeParameters ( final QueryParameters parameters )
     {
         if ( this.parameters != parameters )
         {
@@ -122,6 +134,14 @@ public class QueryImpl implements Query
         synchronized ( this )
         {
             fireDataChange ( this.listener, index, values, valueInformation );
+        }
+    }
+
+    public void handleUpdateParameter ( final QueryParameters parameters, final Set<String> valueTypes )
+    {
+        synchronized ( this )
+        {
+            fireParameterChange ( this.listener, parameters, valueTypes );
         }
     }
 
