@@ -129,7 +129,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             }
         } );
 
-        this.messenger.setHandler ( Messages.CC_HD_UPDATE_QUERY_PARAMETERS, new MessageListener () {
+        this.messenger.setHandler ( Messages.CC_HD_CHANGE_QUERY_PARAMETERS, new MessageListener () {
 
             public void messageReceived ( final Message message )
             {
@@ -149,7 +149,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             final QueryHandler handler = this.queries.get ( queryId );
             if ( handler != null )
             {
-                handler.updateParameters ( QueryHelper.fromValue ( message.getValues ().get ( "parameters" ) ) );
+                handler.changeParameters ( QueryHelper.fromValue ( message.getValues ().get ( "parameters" ) ) );
             }
         }
     }
@@ -220,6 +220,28 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             message.getValues ().put ( "values", QueryHelper.toValueData ( values ) );
             message.getValues ().put ( "valueInformation", QueryHelper.toValueInfo ( valueInformation ) );
 
+            this.messenger.sendMessage ( message );
+        }
+    }
+
+    public void sendQueryParameters ( final long queryId, final QueryParameters parameters, final Set<String> valueTypes )
+    {
+        synchronized ( this )
+        {
+            if ( !this.queries.containsKey ( queryId ) )
+            {
+                return;
+            }
+
+            // new message
+            final Message message = new Message ( Messages.CC_HD_UPDATE_QUERY_PARAMETERS );
+
+            // set data
+            message.getValues ().put ( "id", new LongValue ( queryId ) );
+            message.getValues ().put ( "parameters", QueryHelper.toValue ( parameters ) );
+            message.getValues ().put ( "valueTypes", QueryHelper.toValueTypes ( valueTypes ) );
+
+            // send message without feedback
             this.messenger.sendMessage ( message );
         }
     }

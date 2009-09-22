@@ -1,6 +1,7 @@
 package org.openscada.hd.server.net;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
@@ -29,6 +30,11 @@ public class QueryHandler implements QueryListener
         this.connectionHandler.sendQueryData ( this.id, index, values, valueInformation );
     }
 
+    public void updateParameters ( final QueryParameters parameters, final Set<String> valueTypes )
+    {
+        this.connectionHandler.sendQueryParameters ( this.id, parameters, valueTypes );
+    }
+
     public void updateState ( final QueryState state )
     {
         this.connectionHandler.sendQueryState ( this.id, state );
@@ -44,9 +50,9 @@ public class QueryHandler implements QueryListener
         this.query.close ();
     }
 
-    public void updateParameters ( final QueryParameters parameters )
+    public void changeParameters ( final QueryParameters parameters )
     {
-        this.query.updateParameters ( parameters );
+        this.query.changeParameters ( parameters );
     }
 
 }
