@@ -63,11 +63,11 @@ public class QueryDataView extends ViewPart implements QueryListener
 
         this.indexCol = new TableColumn ( this.table, SWT.NONE );
         this.indexCol.setText ( "Index" );
-        this.indexCol.setWidth ( 100 );
+        this.indexCol.setWidth ( 50 );
 
         this.qualityCol = new TableColumn ( this.table, SWT.NONE );
         this.qualityCol.setText ( "Quality" );
-        this.qualityCol.setWidth ( 100 );
+        this.qualityCol.setWidth ( 75 );
 
         this.invalidColor = JFaceColors.getErrorBackground ( getDisplay () );
     }
@@ -131,8 +131,10 @@ public class QueryDataView extends ViewPart implements QueryListener
         {
             final TableItem item = this.table.getItem ( i + index );
 
-            item.setText ( 0, String.format ( "%s", i ) );
-            item.setText ( 1, String.format ( "%g", valueInformation[i].getQuality () ) );
+            final double quality = valueInformation[i].getQuality ();
+
+            item.setText ( 0, String.format ( "%s", index + i ) );
+            item.setText ( 1, String.format ( "%g", quality ) );
 
             for ( int j = 0; j < this.colNames.length; j++ )
             {
@@ -142,7 +144,15 @@ public class QueryDataView extends ViewPart implements QueryListener
 
             item.setText ( this.colNames.length + FIX_COLS, valueInformation[i].toString () );
 
-            item.setBackground ( null );
+            if ( quality < 0.33 )
+            {
+                item.setBackground ( this.invalidColor );
+            }
+            else
+            {
+                item.setBackground ( null );
+            }
+
         }
     }
 
