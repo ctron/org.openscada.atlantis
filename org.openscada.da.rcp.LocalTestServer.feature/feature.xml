@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.openscada.da.rcp.LocalTestServer.feature"
+      id="org.openscada.da.rcp.LocalTestServer"
       label="OpenSCADA DA Test Server Feature"
       version="0.14.0.qualifier"
       provider-name="inavare GmbH"
