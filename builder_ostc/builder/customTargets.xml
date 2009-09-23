@@ -79,6 +79,7 @@
 		<openscada.import.repository id="org.openscada.external" version="${external.version}"/>
 		<openscada.import.repository id="org.openscada.aurora.sdk" version="${aurora.version}"/>
 		<openscada.import.repository id="org.openscada.utgard.sdk" version="${utgard.version}"/>
+		<openscada.import.repository id="org.openscada.atlantis.sdk" version="${atlantis.version}"/>
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -103,42 +104,8 @@
   <target name="postSetup">
     <antcall target="getBaseComponents" />
 
-  	<openscada.builder.copyPlugin id="org.openscada.core.common" project="openscada_core_common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.client.common" project="openscada_core_client_common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.server.common" project="openscada_core_server_common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.net.base" project="openscada_net_base"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.net.base" project="openscada_core_net_base"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.server.net" project="openscada_core_server_net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.client.net" project="openscada_core_client_net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.core" project="openscada_da_core_common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.core.server" project="openscada_da_core_server"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client" project="openscada_da_client_common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.net" project="openscada_da_client_net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.net" project="openscada_da_server_net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.net.base" project="openscada_da_net_base"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.common" project="openscada_da_server_common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.net" project="openscada_da_server_net"/>
-  	
-  	<openscada.builder.copyPlugin id="org.openscada.core.ice.base" project="openscada_core_ice_base"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.ice.base" project="openscada_da_ice_base"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.ice" project="openscada_da_server_ice"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.ice" project="openscada_da_client_ice"/>
-  	
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.test" project="openscada_da_testserver"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.sysinfo" project="openscada_da_sysinfoserver"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.stock" project="openscada_da_stockserver"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.jdbc" project="openscada_da_jdbcserver"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.proxy" project="openscada_da_proxyserver"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.snmp" project="openscada_da_snmpserver"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.exec2" project="openscada_da_execserver2"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.spring" project="openscada_da_springserver"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.opc" project="openscada_da_opcserver"/>
-  	
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter" project="openscada_server_exporter"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter.spring" project="openscada_server_exporter_spring"/>
-  	
-  	<openscada.builder.copyPlugin id="org.openscada.spring.components" project="openscada_spring_components"/>
-  	  	
+  	<openscada.builder.copyPlugin id="org.openscada." project="openscada_core_common"/>
+
   	<openscada.builder.copyFeature id="org.openscada.atlantis" />
   	<openscada.builder.copyFeature id="org.openscada.atlantis.sdk" />
   </target>

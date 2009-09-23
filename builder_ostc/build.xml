@@ -35,7 +35,7 @@
           target: build              
          ================================= -->
     <target name="build" depends="" description="OpenSCADA Aurora">
-    	<openscada.bundleBuild builder="builder"/>
+    	<openscada.productBuild builder="builder"/>
     </target>
 
 	<!-- ================================= 
@@ -48,9 +48,6 @@
           target: publish              
          ================================= -->
     <target name="publish" depends="" description="Publish artifacts">
-    	<openscada.publish.repository id="org.openscada.atlantis.sdk" project="atlantis"/>
-    	
-    	<openscada.publish.convertRepos targetpath="${publish.maven.root}"/>
     </target>
 	
 </project>
