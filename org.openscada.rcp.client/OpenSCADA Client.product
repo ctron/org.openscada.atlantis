@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="OpenSCADA Test Client" uid="org.openscada.testclient" id="org.openscada.rcp.client.product" application="org.openscada.rcp.client.application" version="0.13.0" useFeatures="true" includeLaunchers="true">
+<product name="OpenSCADA Test Client" uid="org.openscada.testclient" id="org.openscada.rcp.client.product" application="org.openscada.rcp.client.application" version="0.14.0" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="about.png"/>
@@ -47,7 +47,7 @@
       <feature id="org.openscada.da.client.test" version="0.13.0"/>
       <feature id="org.openscada.da.ice.client" version="0.13.0"/>
       <feature id="org.openscada.da.net.client" version="0.13.0"/>
-      <feature id="org.openscada.rcp.client" version="0.13.0"/>
+      <feature id="org.openscada.rcp.client" version="0.14.0.qualifier"/>
    </features>
 
 

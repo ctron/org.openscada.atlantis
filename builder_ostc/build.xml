@@ -22,8 +22,9 @@
 	<property file="common/config/build.properties"/>
 	
 	<property name="buildId" value="${atlantis.version}"/>
+	<property name="buildLabel" value="${buildType}.${buildId}"/>
 	
-	<import file="${build.root}/common/lib/lib.xml"/>
+	<import file="${build.root}/common/lib/lib.xml" />
 	
     <!-- ================================= 
           target: default              
@@ -34,7 +35,7 @@
 	<!-- ================================= 
           target: build              
          ================================= -->
-    <target name="build" depends="" description="OpenSCADA Aurora">
+    <target name="build" depends="populate" description="OpenSCADA Aurora">
     	<openscada.productBuild builder="builder"/>
     </target>
 
@@ -48,6 +49,14 @@
           target: publish              
          ================================= -->
     <target name="publish" depends="" description="Publish artifacts">
+    	<openscada.publish.product project="atlantis" name="ostc"/>
     </target>
+	
+	<!-- ================================= 
+          target: populate              
+         ================================= -->
+    <target name="populate" depends="OpenSCADA Builder Common Library.populateEclipse" description="description" unless="skipPopulate">
+    </target>
+
 	
 </project>

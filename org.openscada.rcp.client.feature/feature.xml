@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.rcp.client"
       label="OpenSCADA RCP Client Feature"
-      version="0.13.0"
+      version="0.14.0.qualifier"
       provider-name="inavare GmbH"
       plugin="org.openscada.rcp.client">
 
@@ -521,13 +521,6 @@ DAMAGES.
 
    <plugin
          id="org.openscada.rcp.client"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.rcp.update"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Base Plug-in
 Bundle-SymbolicName: org.openscada.da.client.base;singleton:=true
-Bundle-Version: 0.14.0
+Bundle-Version: 0.14.0.qualifier
 Bundle-Activator: org.openscada.da.client.base.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui;bundle-version="3.4.0",
@@ -14,11 +14,41 @@ Require-Bundle: org.eclipse.core.runtime,
  org.openscada.da.client.connector;bundle-version="0.13.3"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.da.client.base.action,
- org.openscada.da.client.base.browser,
- org.openscada.da.client.base.connection,
- org.openscada.da.client.base.dnd,
- org.openscada.da.client.base.item,
- org.openscada.da.client.base.realtime
+Export-Package: org.openscada.da.client.base.action;version="0.14.0";
+  uses:="org.eclipse.jface.action,
+   org.eclipse.core.runtime,
+   org.eclipse.ui,
+   org.eclipse.jface.viewers,
+   org.openscada.da.client.base.item",
+ org.openscada.da.client.base.browser;version="0.14.0";
+  uses:="org.eclipse.core.runtime,
+   org.eclipse.ui,
+   org.eclipse.ui.views.properties,
+   org.openscada.da.client,
+   org.openscada.core,
+   org.openscada.da.core",
+ org.openscada.da.client.base.connection;version="0.14.0";
+  uses:="org.openscada.core.client,
+   org.openscada.da.client,
+   org.openscada.da.client.base.item,
+   org.openscada.core",
+ org.openscada.da.client.base.dnd;version="0.14.0";uses:="org.eclipse.swt.dnd,org.eclipse.jface.viewers,org.eclipse.ui.part",
+ org.openscada.da.client.base.item;version="0.14.0";
+  uses:="org.eclipse.ui,
+   org.openscada.da.client,
+   org.openscada.da.client.base.connection,
+   org.eclipse.jface.viewers",
+ org.openscada.da.client.base.realtime;version="0.14.0";
+  uses:="org.eclipse.core.runtime,
+   org.eclipse.ui,
+   org.eclipse.ui.views.properties,
+   org.openscada.da.client.base.item,
+   org.openscada.core.subscription,
+   org.eclipse.jface.action,
+   org.eclipse.swt.dnd,
+   org.openscada.da.client,
+   org.eclipse.swt.graphics,
+   org.eclipse.jface.viewers,
+   org.openscada.core"
 Bundle-Localization: plugin
 Import-Package: org.apache.log4j

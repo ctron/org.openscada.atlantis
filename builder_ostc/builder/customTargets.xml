@@ -80,6 +80,8 @@
 		<openscada.import.repository id="org.openscada.aurora.sdk" version="${aurora.version}"/>
 		<openscada.import.repository id="org.openscada.utgard.sdk" version="${utgard.version}"/>
 		<openscada.import.repository id="org.openscada.atlantis.sdk" version="${atlantis.version}"/>
+		
+		<openscada.import.externalRepository file="GEF-Update-3.5.0.zip"/>
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -104,10 +106,29 @@
   <target name="postSetup">
     <antcall target="getBaseComponents" />
 
-  	<openscada.builder.copyPlugin id="org.openscada." project="openscada_core_common"/>
+	<openscada.builder.copyPlugin id="org.openscada.external.jfreechart"/>
+  	
+  	<openscada.builder.copyPlugin id="org.openscada.da.client.base"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.client.chart"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.client.connection.manager.view"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.client.connector"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.client.dataitem.details"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.client.dataitem.details.extra"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.client.signalGenerator"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.client.test"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.client.viewer"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.ice.client"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.net.client"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.rcp.LocalTestServer"/>
+  	<openscada.builder.copyPlugin id="org.openscada.rcp.client"/>
+  	<openscada.builder.copyPlugin id="org.openscada.rcp.update"/>
 
-  	<openscada.builder.copyFeature id="org.openscada.atlantis" />
-  	<openscada.builder.copyFeature id="org.openscada.atlantis.sdk" />
+  	<openscada.builder.copyFeature id="org.openscada.da.client" />
+  	<openscada.builder.copyFeature id="org.openscada.da.client.test" />
+  	<openscada.builder.copyFeature id="org.openscada.da.ice.client" />
+  	<openscada.builder.copyFeature id="org.openscada.da.net.client" />
+  	<openscada.builder.copyFeature id="org.openscada.da.rcp.LocalTestServer" />
+  	<openscada.builder.copyFeature id="org.openscada.rcp.client" />
   </target>
 
   <!-- ===================================================================== -->
@@ -176,7 +197,7 @@
   <!-- ===================================================================== -->
   <target name="postBuild">
     <antcall target="gatherLogs" />
-  	<openscada.deploy.repository name="org.openscada.atlantis.sdk"/>
+  	<openscada.deploy.product name="ostc"/>
   </target>
 
   <!-- ===================================================================== -->
