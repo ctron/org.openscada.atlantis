@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.openscada.external</groupId>
-  <artifactId>js</artifactId>
-  <version>1.0.0</version>
-  <description>Artifactory auto generated POM</description>
-</project>

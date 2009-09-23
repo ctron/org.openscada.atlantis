@@ -2,11 +2,17 @@
 
 <project name="xmlbeans" default="main" basedir=".">
 
+	<property name="xmlbeans.root" location="../builder_atlantis/common/lib/xmlbeans"/>
+	<property name="source.root" location=".."/>
+	
 	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
 		 <classpath id="xmlbeanspath">
-            <pathelement location="../openscada_build/xmlbeans/xbean.jar"/>
-            <pathelement location="../openscada_build/xmlbeans/jsr173_1.0_api.jar"/>
-		 	<pathelement location="../openscada_da_server_common/target/generated-classes/xmlbeans"/>
+            <pathelement location="${xmlbeans.root}/xbean.jar"/>
+            <pathelement location="${xmlbeans.root}/jsr173_1.0_api.jar"/>
+		 	
+		 	<!-- FIXME: duplicate entry for the moment --> 
+		 	<pathelement location="${source.root}/openscada_da_server_common/schemabin"/>
+		 	<pathelement location="../org.openscada.da.server.common/schemabin"/>
          </classpath>
 	</taskdef>
 
@@ -18,7 +24,7 @@
 		<xmlbean
 			failonerror="true"
 			download="false"
-			classgendir="target/generated-classes/xmlbeans"
+			classgendir="schemabin"
 			javasource="1.5"
 			verbose="true"
             classpathref="xmlbeanspath"
