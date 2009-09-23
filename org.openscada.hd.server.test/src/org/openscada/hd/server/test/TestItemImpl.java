@@ -1,5 +1,7 @@
 package org.openscada.hd.server.test;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,10 +32,18 @@ public class TestItemImpl implements HistoricalItem
 
     public void dispose ()
     {
-        for ( final TestQueryImpl query : this.queries )
+
+        final Collection<TestQueryImpl> queries = new ArrayList<TestQueryImpl> ( this.queries );
+
+        for ( final TestQueryImpl query : queries )
         {
             query.close ();
         }
+    }
+
+    protected void remove ( final TestQueryImpl query )
+    {
+        this.queries.remove ( query );
     }
 
 }

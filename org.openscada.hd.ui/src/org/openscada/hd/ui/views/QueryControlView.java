@@ -10,8 +10,12 @@ import java.util.Set;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -138,8 +142,53 @@ public class QueryControlView extends ViewPart implements QueryListener, Propert
 
         label = new Label ( group, SWT.NONE );
         label.setText ( "Entries: " );
-        this.entriesRequestText = new Text ( group, SWT.BORDER | SWT.READ_ONLY );
+        this.entriesRequestText = new Text ( group, SWT.BORDER );
         this.entriesRequestText.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
+        this.entriesRequestText.addVerifyListener ( new VerifyListener () {
+
+            public void verifyText ( final VerifyEvent e )
+            {
+                e.doit = false;
+                final StringBuilder text = new StringBuilder ();
+
+                final String org = QueryControlView.this.entriesRequestText.getText ();
+                text.append ( org );
+                if ( org.equals ( "" ) && e.text.equals ( "" ) )
+                {
+                    e.doit = true;
+                    return;
+                }
+
+                text.replace ( e.start, e.end, e.text );
+
+                try
+                {
+                    final String str = text.toString ();
+
+                    // empty string is ok
+                    if ( str.equals ( "" ) )
+                    {
+                        e.doit = true;
+                        return;
+                    }
+
+                    // check for int
+                    final int i = Integer.parseInt ( text.toString () );
+                    e.doit = i >= 0;
+                }
+                catch ( final NumberFormatException ex )
+                {
+                }
+            }
+        } );
+        this.entriesRequestText.addModifyListener ( new ModifyListener () {
+
+            public void modifyText ( final ModifyEvent e )
+            {
+                updateEntries ();
+            }
+        } );
+        this.controls.add ( this.entriesRequestText );
 
         // controls
         final Composite compControl1 = new Composite ( group, SWT.NONE );
@@ -157,8 +206,6 @@ public class QueryControlView extends ViewPart implements QueryListener, Propert
         final Composite compControl2 = new Composite ( group, SWT.NONE );
         compControl2.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, false, 2, 1 ) );
         compControl2.setLayout ( new FillLayout ( SWT.HORIZONTAL ) );
-
-        // ⟨⟩⟪⟫
 
         createControlButton ( compControl2, "+", 0, 30 );
         createControlButton ( compControl2, "++", 0, 60 * 5 );
@@ -224,6 +271,20 @@ public class QueryControlView extends ViewPart implements QueryListener, Propert
     protected void updateRequest ()
     {
         this.query.changeProperties ( this.requestParameters );
+    }
+
+    private boolean updateEntries ()
+    {
+        try
+        {
+            final String text = this.entriesRequestText.getText ();
+            this.requestParameters = new QueryParameters ( this.requestParameters.getStartTimestamp (), this.requestParameters.getEndTimestamp (), Integer.parseInt ( text ) );
+            return true;
+        }
+        catch ( final NumberFormatException e )
+        {
+            return false;
+        }
     }
 
     protected void setSelection ( final ISelection selection )

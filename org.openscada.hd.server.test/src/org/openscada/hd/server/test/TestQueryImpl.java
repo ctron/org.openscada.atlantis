@@ -90,7 +90,7 @@ public class TestQueryImpl implements Query
             }
             end.setTimeInMillis ( nextTix );
 
-            next.add ( new ValueInformation ( start, end, 1.0, 1 ) );
+            next.add ( new ValueInformation ( start, end, /*100% good*/1.0, nextTix - currentTix ) );
 
             count++;
             if ( nextTix == endTix )
@@ -108,37 +108,6 @@ public class TestQueryImpl implements Query
             currentTix = nextTix;
         }
 
-        /*
-        for ( int i = 0; i < blocks; i++ )
-        {
-            final long startStep = (long) ( step * i * blockSize );
-            final long endStep = (long) ( step * ( i * blockSize + 1 ) );
-
-            final Calendar start = Calendar.getInstance ();
-            start.setTimeInMillis ( startTix + startStep );
-
-            final Calendar end = Calendar.getInstance ();
-            end.setTimeInMillis ( startTix + endStep );
-
-            logger.info ( "generating block: {}", new Object[] { String.format ( "%tc - %tc", start, end ) } );
-
-            final Map<String, Value[]> values = new HashMap<String, Value[]> ();
-            values.put ( "AVG", new Value[blockSize] );
-            values.put ( "MIN", new Value[blockSize] );
-            values.put ( "MAX", new Value[blockSize] );
-
-            final ValueInformation[] infos = generateInfos ( start, end, blockSize );
-
-            for ( int x = 0; x < infos.length; x++ )
-            {
-                generateValues ( x, values, infos[x] );
-            }
-
-            this.listener.updateData ( i * blockSize, values, infos );
-
-        }
-        */
-
         this.listener.updateState ( QueryState.COMPLETE );
     }
 
@@ -149,7 +118,8 @@ public class TestQueryImpl implements Query
         {
             logger.info ( "Sending {} entries: {} - {}", new Object[] { count, next.get ( 0 ), next.get ( count - 1 ) } );
         }
-        final ValueInformation[] valueInformation = next.toArray ( new ValueInformation[count] );
+
+        final ValueInformation[] valueInformation = new ValueInformation[count];
 
         final Map<String, Value[]> values = new HashMap<String, Value[]> ();
         values.put ( "AVG", new Value[count] );
@@ -157,9 +127,11 @@ public class TestQueryImpl implements Query
         values.put ( "MAX", new Value[count] );
 
         int index = 0;
-        for ( final ValueInformation info : valueInformation )
+
+        for ( final ValueInformation info : next )
         {
-            generateValues ( index, values, info );
+            final double quality = generateValues ( index, values, info );
+            valueInformation[index] = new ValueInformation ( info.getStartTimestamp (), info.getEndTimestamp (), quality, info.getSourceValues () );
             index++;
         }
 
@@ -167,7 +139,7 @@ public class TestQueryImpl implements Query
 
     }
 
-    private void generateValues ( final int index, final Map<String, Value[]> values, final ValueInformation vi )
+    private double generateValues ( final int index, final Map<String, Value[]> values, final ValueInformation vi )
     {
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
@@ -176,23 +148,35 @@ public class TestQueryImpl implements Query
         final long start = vi.getStartTimestamp ().getTimeInMillis ();
         final long count = vi.getEndTimestamp ().getTimeInMillis () - start;
 
+        int good = 0;
         for ( long i = 0; i < count; i++ )
         {
+            if ( start + count < System.currentTimeMillis () )
+            {
+                good++;
+                final double d = i + start;
+                final double value = Math.sin ( d / 100000.0 ) * 100.0;
 
-            final double d = i + start;
-            final double value = Math.sin ( d / 100000.0 ) * 100.0;
-
-            min = Math.min ( value, min );
-            max = Math.max ( value, max );
-            avg = avg.add ( new BigDecimal ( value ) );
+                min = Math.min ( value, min );
+                max = Math.max ( value, max );
+                avg = avg.add ( new BigDecimal ( value ) );
+            }
         }
 
-        avg = avg.divide ( new BigDecimal ( count ), BigDecimal.ROUND_HALF_UP );
+        if ( good != 0 )
+        {
+            avg = avg.divide ( new BigDecimal ( good ), BigDecimal.ROUND_HALF_UP );
+        }
+        else
+        {
+            avg = new BigDecimal ( 0.0 );
+        }
 
         values.get ( "AVG" )[index] = new Value ( avg.doubleValue () );
         values.get ( "MIN" )[index] = new Value ( min );
         values.get ( "MAX" )[index] = new Value ( max );
 
+        return (double)good / (double)count;
     }
 
     public void close ()
@@ -202,6 +186,8 @@ public class TestQueryImpl implements Query
         this.executor.shutdownNow ();
 
         this.listener.updateState ( QueryState.DISCONNECTED );
+
+        this.item.remove ( this );
     }
 
     public void changeParameters ( final QueryParameters parameters )

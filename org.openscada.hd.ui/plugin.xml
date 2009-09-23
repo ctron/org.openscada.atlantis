@@ -20,12 +20,36 @@
       <perspectiveExtension
             targetID="org.openscada.hd.ui.perspective">
          <view
-               closeable="false"
+               closeable="true"
                id="org.openscada.hd.ui.ConnectionView"
                minimized="false"
                moveable="true"
                ratio="0.25"
                relationship="left"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="org.openscada.hd.ui.QueryControlView"
+               minimized="false"
+               moveable="true"
+               ratio="0.25"
+               relationship="bottom"
+               relative="org.openscada.hd.ui.ConnectionView"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="org.openscada.hd.ui.QueryDataView"
+               minimized="false"
+               moveable="true"
+               ratio="0.75"
+               relationship="stack"
                relative="org.eclipse.ui.editorss"
                showTitle="true"
                standalone="false"

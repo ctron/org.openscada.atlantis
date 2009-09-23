@@ -15,16 +15,25 @@ public class Activator implements BundleActivator
 
     private TestItemImpl service;
 
+    private Test2ItemImpl service2;
+
+    private ServiceRegistration handle2;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
     public void start ( final BundleContext context ) throws Exception
     {
-        final Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
+        Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
         properties.put ( "itemId", "test1" );
         this.service = new TestItemImpl ();
         this.handle = context.registerService ( HistoricalItem.class.getName (), this.service, properties );
+
+        properties = new Hashtable<Object, Object> ();
+        properties.put ( "itemId", "test2" );
+        this.service2 = new Test2ItemImpl ();
+        this.handle2 = context.registerService ( HistoricalItem.class.getName (), this.service2, properties );
     }
 
     /*
@@ -35,6 +44,9 @@ public class Activator implements BundleActivator
     {
         this.service.dispose ();
         this.handle.unregister ();
+
+        this.service2.dispose ();
+        this.handle2.unregister ();
     }
 
 }

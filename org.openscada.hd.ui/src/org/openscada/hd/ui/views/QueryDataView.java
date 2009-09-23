@@ -101,6 +101,7 @@ public class QueryDataView extends ViewPart implements QueryListener
         if ( this.query != null )
         {
             this.query.removeQueryListener ( this );
+            clearDataSize ();
             this.query = null;
         }
     }
@@ -158,7 +159,14 @@ public class QueryDataView extends ViewPart implements QueryListener
 
     protected Display getDisplay ()
     {
-        return getSite ().getShell ().getDisplay ();
+        try
+        {
+            return getSite ().getShell ().getDisplay ();
+        }
+        catch ( final Throwable e )
+        {
+            return null;
+        }
     }
 
     public void updateParameters ( final QueryParameters parameters, final Set<String> valueTypes )
@@ -214,6 +222,8 @@ public class QueryDataView extends ViewPart implements QueryListener
             this.infoCol.dispose ();
             this.infoCol = null;
         }
+
+        this.table.clearAll ();
     }
 
     public void updateState ( final QueryState state )

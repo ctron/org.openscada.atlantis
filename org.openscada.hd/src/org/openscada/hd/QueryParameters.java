@@ -25,9 +25,9 @@ public class QueryParameters
             throw new NullPointerException ( "'endTimestamp' must not be null" );
         }
 
-        if ( numberOfEntries <= 0 )
+        if ( numberOfEntries < 0 )
         {
-            throw new IllegalArgumentException ( "'numberOfEntries' must be greater than zero" );
+            throw new IllegalArgumentException ( "'numberOfEntries' must be greater than or equal to zero" );
         }
 
         this.startTimestamp = startTimestamp;

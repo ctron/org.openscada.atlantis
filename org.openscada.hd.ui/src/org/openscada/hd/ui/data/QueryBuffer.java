@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
@@ -21,25 +18,7 @@ import org.slf4j.LoggerFactory;
 
 public class QueryBuffer extends AbstractPropertyChange
 {
-
     private final static Logger logger = LoggerFactory.getLogger ( QueryBuffer.class );
-
-    private final static class ThreadFactoryImplementation implements ThreadFactory
-    {
-        private final String itemId;
-
-        public ThreadFactoryImplementation ( final String itemId )
-        {
-            this.itemId = itemId;
-        }
-
-        public Thread newThread ( final Runnable r )
-        {
-            final Thread t = new Thread ( r );
-            t.setName ( "QueryBufferThread/" + this.itemId );
-            return t;
-        }
-    }
 
     public static final String PROP_STATE = "state";
 
@@ -67,8 +46,6 @@ public class QueryBuffer extends AbstractPropertyChange
 
     private QueryState state;
 
-    private ExecutorService executor;
-
     private Set<String> valueTypes;
 
     private ValueInformation[] valueInformation;
@@ -91,8 +68,6 @@ public class QueryBuffer extends AbstractPropertyChange
             this.connection = connection;
             this.itemId = id;
             this.requestParameters = requestParameters;
-
-            this.executor = Executors.newSingleThreadExecutor ( new ThreadFactoryImplementation ( this.itemId ) );
 
             if ( listener != null )
             {
