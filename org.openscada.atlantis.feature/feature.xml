@@ -17,6 +17,10 @@
       [Enter License Description here.]
    </license>
 
+   <includes
+         id="org.openscada.hd"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="org.openscada.utils"/>
       <import plugin="org.apache.mina.core"/>
