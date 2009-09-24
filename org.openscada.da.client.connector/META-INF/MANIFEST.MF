@@ -7,7 +7,7 @@ Bundle-Vendor: inavare GmbH
 Bundle-ClassPath: .
 Export-Package: org.openscada.da.client.connector;uses:="org.openscada.core.client,org.eclipse.core.runtime,org.openscada.core"
 Require-Bundle: org.eclipse.core.runtime,
- org.openscada.utils;bundle-version="0.13.0"
+ org.openscada.utils;bundle-version="0.14.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.openscada.da.client.connector.Activator
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

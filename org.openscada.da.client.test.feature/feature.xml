@@ -331,20 +331,25 @@ POSSIBILITY OF SUCH DAMAGES.
       <import plugin="org.eclipse.rcp"/>
       <import plugin="org.eclipse.ui" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.openscada.core.client.common" version="0.13.0" match="greaterOrEqual"/>
-      <import plugin="org.openscada.core.common" version="0.13.0" match="greaterOrEqual"/>
-      <import plugin="org.openscada.da.client.common" version="0.13.0" match="greaterOrEqual"/>
-      <import plugin="org.openscada.da.core.common" version="0.13.0" match="greaterOrEqual"/>
-      <import plugin="org.openscada.da.client.connector" version="0.13.3" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.base" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.client.common" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.common" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.common" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.core.common" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.connector" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.help" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.draw2d" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.views" version="3.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.3.0" match="compatible"/>
+      <import plugin="org.openscada.external.jfreechart" version="1.0.4" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.databinding" version="1.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.databinding.beans" version="1.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface.databinding" version="1.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.swt" version="3.2.0" match="compatible"/>
       <import plugin="com.ibm.icu"/>
       <import plugin="org.eclipse.osgi" version="3.2.0" match="compatible"/>
+      <import plugin="org.openscada.da.client.dataitem.details" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.draw2d" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views" version="3.4.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

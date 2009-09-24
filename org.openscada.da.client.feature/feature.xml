@@ -492,6 +492,22 @@ DAMAGES.
 &lt;/pre&gt;
    </license>
 
+   <requires>
+      <import plugin="com.springsource.org.apache.log4j"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="com.springsource.javax.xml.stream"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.ui" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.client.common" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.common" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.common" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.core.common" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.connector" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.utils" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="slf4j.api"/>
+   </requires>
+
    <plugin
          id="org.openscada.core.client.common"
          download-size="0"

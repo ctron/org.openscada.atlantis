@@ -9,15 +9,14 @@ Require-Bundle: org.eclipse.rcp,
  org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.views,
- org.openscada.da.client.base;bundle-version="0.10.0",
- org.openscada.core.client.common;bundle-version="0.13.0",
- org.openscada.core.common;bundle-version="0.13.0",
- org.openscada.da.client.common;bundle-version="0.13.0",
- org.openscada.da.core.common;bundle-version="0.13.0",
- org.openscada.da.client.connector;bundle-version="0.13.3"
+ org.openscada.da.client.base;bundle-version="0.14.0",
+ org.openscada.core.client.common;bundle-version="0.14.0",
+ org.openscada.core.common;bundle-version="0.14.0",
+ org.openscada.da.client.common;bundle-version="0.14.0",
+ org.openscada.da.core.common;bundle-version="0.14.0",
+ org.openscada.da.client.connector;bundle-version="0.14.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: inavare GmbH
-Eclipse-RegisterBuddy: org.apache.log4j
 Export-Package: org.openscada.da.client.test;
   uses:="org.openscada.core,
    org.eclipse.ui.views.properties,
