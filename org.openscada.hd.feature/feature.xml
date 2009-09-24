@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.openscada.hd"
+      label="OpenSCADA HD"
+      version="0.14.0.qualifier"
+      provider-name="inavare GmbH">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import plugin="org.openscada.core.common"/>
+      <import plugin="org.openscada.core.client.common"/>
+      <import plugin="org.openscada.core.server.common"/>
+      <import plugin="org.openscada.utils"/>
+      <import plugin="com.springsource.org.apache.log4j"/>
+      <import plugin="org.apache.mina.core"/>
+      <import plugin="org.openscada.core.client.net"/>
+      <import plugin="org.openscada.net.base"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="slf4j.api"/>
+      <import plugin="org.openscada.core.net.base"/>
+      <import plugin="org.openscada.core.server.net"/>
+   </requires>
+
+   <plugin
+         id="org.openscada.hd"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.hd.client.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.hd.client.net"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.hd.net"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.hd.server.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.hd.server.exporter"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.hd.server.exporter.net"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.hd.server.net"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
