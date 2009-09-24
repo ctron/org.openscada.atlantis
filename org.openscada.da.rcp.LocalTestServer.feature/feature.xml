@@ -318,6 +318,21 @@ POSSIBILITY OF SUCH DAMAGES.
 &lt;/pre&gt;
    </license>
 
+   <requires>
+      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.server.net" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.core.common" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.core.server" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.common" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.server.common" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.server.common" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.server.test" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="com.springsource.org.apache.xmlbeans" version="2.4.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.utils" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="com.springsource.org.apache.log4j"/>
+   </requires>
+
    <plugin
          id="org.openscada.da.rcp.LocalTestServer"
          download-size="0"
