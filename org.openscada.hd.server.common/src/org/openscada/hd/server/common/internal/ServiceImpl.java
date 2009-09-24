@@ -199,6 +199,7 @@ public class ServiceImpl implements Service, ServiceTrackerCustomizer
             final HistoricalItem item = this.items.remove ( itemId );
             if ( item != null )
             {
+                this.context.ungetService ( reference );
                 this.itemInformations.remove ( item.getInformation () );
                 fireListChanged ( null, new HashSet<String> ( Arrays.asList ( itemId ) ), false );
             }
