@@ -27,22 +27,7 @@ Import-Package: jxl,
  org.openscada.utils.timing;version="0.13"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bnd-LastModified: 1252499284463
-Export-Package: org.openscada.da.server.simulation.component;version="0.14.0.qualifier";
-  uses:="org.openscada.da.server.simulation.component.modules,
-   org.openscada.da.server.browser.common.query,
-   org.openscada.da.server.browser.common,
-   org.openscada.utils.timing,
-   org.openscada.da.server.common.impl",
- org.openscada.da.server.simulation.component.modules;version="0.14.0.qualifier";
-  uses:="org.openscada.da.server.simulation.component,
-   org.openscada.da.server.browser.common.query,
-   org.openscada.da.server.common.chain,
-   org.openscada.da.server.common,
-   org.openscada.core,
-   org.openscada.utils.timing,
-   org.apache.log4j,
-   org.openscada.utils.collection",
- org.openscada.da.server.simulation.filesource;version="0.14.0.qualifier";
+Export-Package: org.openscada.da.server.simulation.filesource;version="0.14.0.qualifier";
   uses:="org.apache.log4j,
    javax.script,
    org.openscada.da.simulation.configuration,
