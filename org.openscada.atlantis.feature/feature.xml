@@ -29,33 +29,4 @@
          id="org.openscada.da"
          version="0.0.0"/>
 
-   <requires>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.openscada.utils"/>
-      <import plugin="org.apache.mina.core"/>
-      <import plugin="org.apache.mina.transport.socket.apr"/>
-      <import plugin="org.apache.mina.filter.compression"/>
-      <import plugin="com.springsource.javax.xml.stream"/>
-      <import plugin="com.springsource.org.apache.log4j"/>
-      <import plugin="com.springsource.org.apache.xmlbeans"/>
-      <import plugin="org.springframework.beans"/>
-      <import plugin="org.springframework.context"/>
-      <import plugin="org.springframework.core"/>
-      <import plugin="com.springsource.org.apache.commons.beanutils"/>
-      <import plugin="org.openscada.external.jinterop"/>
-      <import plugin="org.openscada.opc.dcom"/>
-      <import plugin="org.openscada.opc.lib"/>
-      <import plugin="com.springsource.jxl"/>
-      <import plugin="com.springsource.org.jdom"/>
-      <import plugin="org.openscada.external.jOpenDocument"/>
-      <import plugin="slf4j.api"/>
-   </requires>
-
-   <plugin
-         id="org.openscada.spring.components"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
 </feature>
