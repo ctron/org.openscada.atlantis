@@ -17,18 +17,6 @@
       [Enter License Description here.]
    </license>
 
-   <includes
-         id="org.openscada.hd"
-         version="0.0.0"/>
-
-   <includes
-         id="org.openscada.core"
-         version="0.0.0"/>
-
-   <includes
-         id="org.openscada.da"
-         version="0.0.0"/>
-
    <plugin
          id="org.openscada.core.client.common"
          download-size="0"
@@ -296,6 +284,13 @@
 
    <plugin
          id="org.openscada.hd.server.net"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.spring.components"
          download-size="0"
          install-size="0"
          version="0.0.0"
