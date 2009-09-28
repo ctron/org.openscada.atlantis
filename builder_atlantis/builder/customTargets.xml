@@ -105,6 +105,8 @@
 
     <!-- OpenSCADA Core -->
   	
+  	<openscada.builder.copyFeature id="org.openscada.core"/>
+  	
   	<openscada.builder.copyPlugin id="org.openscada.core.common" project="openscada_core_common"/>
   	<openscada.builder.copyPlugin id="org.openscada.core.client.common" project="openscada_core_client_common"/>
   	<openscada.builder.copyPlugin id="org.openscada.core.server.common" project="openscada_core_server_common"/>
@@ -115,6 +117,8 @@
   	<openscada.builder.copyPlugin id="org.openscada.core.ice.base" project="openscada_core_ice_base"/>
   		
   	<!-- OpenSCADA DA -->
+  	
+  	<openscada.builder.copyFeature id="org.openscada.da"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.core" project="openscada_da_core_common"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.core.server" project="openscada_da_core_server"/>
@@ -157,8 +161,8 @@
 	<openscada.builder.copyPlugin id="org.openscada.hd.server.net"/>
   	
   	<!-- Additional stuff -->
+  	
   	<openscada.builder.copyPlugin id="org.openscada.spring.components" project="openscada_spring_components"/>
-  	  	
   	  	
   	<openscada.builder.copyFeature id="org.openscada.atlantis" />
   	<openscada.builder.copyFeature id="org.openscada.atlantis.sdk" />
