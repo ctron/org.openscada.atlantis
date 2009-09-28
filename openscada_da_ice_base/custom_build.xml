@@ -61,7 +61,9 @@
 	</target>
 
 	<target name="pre.@dot">
-		<ant antfile="slice-build.xml">
+		<echo message="Selecting ice: ${ice.version}"/>
+		<copy file="lib/Ice-${ice.version}.jar" tofile="lib/Ice.jar"/>
+		<ant antfile="slice-build.xml" target="generate">
 		</ant>
 	</target>
 
