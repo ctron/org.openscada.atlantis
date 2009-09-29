@@ -121,7 +121,6 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.net.client"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.rcp.LocalTestServer"/>
   	<openscada.builder.copyPlugin id="org.openscada.rcp.client"/>
-  	<openscada.builder.copyPlugin id="org.openscada.rcp.update"/>
 
   	<openscada.builder.copyFeature id="org.openscada.da.client" />
   	<openscada.builder.copyFeature id="org.openscada.da.client.test" />
