@@ -120,14 +120,19 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.ice.client"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.net.client"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.rcp.LocalTestServer"/>
-  	<openscada.builder.copyPlugin id="org.openscada.rcp.client"/>
 
   	<openscada.builder.copyFeature id="org.openscada.da.client" />
   	<openscada.builder.copyFeature id="org.openscada.da.client.test" />
   	<openscada.builder.copyFeature id="org.openscada.da.ice.client" />
   	<openscada.builder.copyFeature id="org.openscada.da.net.client" />
   	<openscada.builder.copyFeature id="org.openscada.da.rcp.LocalTestServer" />
+
+  	<openscada.builder.copyFeature id="org.openscada.hd.ui"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.ui"/>
+  	
   	<openscada.builder.copyFeature id="org.openscada.rcp.client" />
+  	<openscada.builder.copyPlugin id="org.openscada.rcp.client"/>
+  	<openscada.builder.copyPlugin id="org.openscada.rcp.update"/>
   </target>
 
   <!-- ===================================================================== -->
