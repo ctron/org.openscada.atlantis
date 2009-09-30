@@ -19,6 +19,7 @@
 
 package org.openscada.hd;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.openscada.core.Variant;
@@ -45,7 +46,7 @@ public class HistoricalItemInformation
 
     public Map<String, Variant> getAttributes ()
     {
-        return this.attributes;
+        return Collections.unmodifiableMap ( this.attributes );
     }
 
     @Override
