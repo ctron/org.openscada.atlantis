@@ -96,7 +96,7 @@ public class QueryImpl implements Query
 
             public void run ()
             {
-                logger.info ( "Data update: {} (v: {}, vi: {})", new Object[] { index, values.size (), valueInformation.length } );
+                logger.debug ( "Data update: {} (v: {}, vi: {})", new Object[] { index, values.size (), valueInformation.length } );
                 QueryImpl.this.listener.updateData ( index, values, valueInformation );
             }
         } );
