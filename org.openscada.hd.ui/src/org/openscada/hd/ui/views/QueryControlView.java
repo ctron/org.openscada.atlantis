@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -28,8 +27,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.part.ViewPart;
-import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
@@ -39,12 +36,10 @@ import org.openscada.hd.ui.data.QueryBufferBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class QueryControlView extends ViewPart implements QueryListener, PropertyChangeListener
+public class QueryControlView extends QueryViewPart implements PropertyChangeListener
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( QueryControlView.class );
-
-    private QueryBufferBean query;
 
     private Text startTimestampText;
 
@@ -65,10 +60,6 @@ public class QueryControlView extends ViewPart implements QueryListener, Propert
     private Button requestButton;
 
     private final Set<Control> controls = new HashSet<Control> ();
-
-    public QueryControlView ()
-    {
-    }
 
     @Override
     public void createPartControl ( final Composite parent )
@@ -287,39 +278,6 @@ public class QueryControlView extends ViewPart implements QueryListener, Propert
         }
     }
 
-    protected void setSelection ( final ISelection selection )
-    {
-        clear ();
-        if ( selection.isEmpty () )
-        {
-            return;
-        }
-        if ( ! ( selection instanceof IStructuredSelection ) )
-        {
-            return;
-        }
-        final Object o = ( (IStructuredSelection)selection ).getFirstElement ();
-        if ( o instanceof QueryBufferBean )
-        {
-            setQuery ( ( (QueryBufferBean)o ) );
-        }
-    }
-
-    private void setQuery ( final QueryBufferBean query )
-    {
-        this.query = query;
-        this.query.addQueryListener ( this );
-        this.query.addPropertyChangeListener ( this );
-        this.requestParameters = query.getRequestParameters ();
-
-        for ( final Control control : this.controls )
-        {
-            control.setEnabled ( true );
-        }
-
-        updateRequestParameters ();
-    }
-
     private void updateRequestParameters ()
     {
         getDisplay ().asyncExec ( new Runnable () {
@@ -333,13 +291,19 @@ public class QueryControlView extends ViewPart implements QueryListener, Propert
         } );
     }
 
-    private void clear ()
+    @Override
+    protected void setQuery ( final QueryBufferBean query )
+    {
+        super.setQuery ( query );
+        this.query.addPropertyChangeListener ( this );
+    }
+
+    @Override
+    protected void clear ()
     {
         if ( this.query != null )
         {
-            this.query.removeQueryListener ( this );
             this.query.removePropertyChangeListener ( this );
-            this.query = null;
 
             this.stateText.setText ( "" );
             this.startTimestampRequestText.setText ( "" );
@@ -355,6 +319,8 @@ public class QueryControlView extends ViewPart implements QueryListener, Propert
                 control.setEnabled ( false );
             }
         }
+
+        super.clear ();
     }
 
     @Override

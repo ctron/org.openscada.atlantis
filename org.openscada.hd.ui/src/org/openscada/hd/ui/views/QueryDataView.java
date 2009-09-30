@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
@@ -17,20 +16,16 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.part.ViewPart;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
-import org.openscada.hd.ui.data.QueryBufferBean;
 
-public class QueryDataView extends ViewPart implements QueryListener
+public class QueryDataView extends QueryViewPart implements QueryListener
 {
 
     private static final int FIX_COLS = 2;
-
-    private QueryBufferBean query;
 
     private final Map<String, TableColumn> columns = new HashMap<String, TableColumn> ();
 
@@ -72,44 +67,17 @@ public class QueryDataView extends ViewPart implements QueryListener
         this.invalidColor = JFaceColors.getErrorBackground ( getDisplay () );
     }
 
-    protected void setSelection ( final ISelection selection )
-    {
-        clear ();
-        if ( selection.isEmpty () )
-        {
-            return;
-        }
-        if ( ! ( selection instanceof IStructuredSelection ) )
-        {
-            return;
-        }
-        final Object o = ( (IStructuredSelection)selection ).getFirstElement ();
-        if ( o instanceof QueryBufferBean )
-        {
-            setQuery ( ( (QueryBufferBean)o ) );
-        }
-    }
-
-    private void setQuery ( final QueryBufferBean query )
-    {
-        this.query = query;
-        this.query.addQueryListener ( this );
-    }
-
-    private void clear ()
-    {
-        if ( this.query != null )
-        {
-            this.query.removeQueryListener ( this );
-            clearDataSize ();
-            this.query = null;
-        }
-    }
-
     @Override
     public void setFocus ()
     {
         this.table.setFocus ();
+    }
+
+    @Override
+    protected void clear ()
+    {
+        clearDataSize ();
+        super.clear ();
     }
 
     public void updateData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
