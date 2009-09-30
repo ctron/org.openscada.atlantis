@@ -20,6 +20,7 @@
 package org.openscada.hd;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.Variant;
@@ -36,7 +37,7 @@ public class HistoricalItemInformation
     {
         super ();
         this.id = id;
-        this.attributes = attributes;
+        this.attributes = new HashMap<String, Variant> ( attributes );
     }
 
     public String getId ()
