@@ -132,7 +132,6 @@
   	
   	<openscada.builder.copyFeature id="org.openscada.rcp.client" />
   	<openscada.builder.copyPlugin id="org.openscada.rcp.client"/>
-  	<openscada.builder.copyPlugin id="org.openscada.rcp.update"/>
   </target>
 
   <!-- ===================================================================== -->
