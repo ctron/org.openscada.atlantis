@@ -21,12 +21,15 @@ package org.openscada.core;
 
 import java.io.Serializable;
 
+import org.openscada.utils.lang.Immutable;
+
 /**
  * A variant data type that can hold any scalar value type.
  * 
  * @author Jens Reimann &lt;jens.reimann@inavare.net&gt;
  * 
  */
+@Immutable
 public class Variant implements Serializable
 {
 
@@ -101,10 +104,8 @@ public class Variant implements Serializable
      * 
      * @param value
      *            the value to set
-     * @deprecated Variant will become immutable in the next release
      */
-    @Deprecated
-    public void setValue ( final Object value )
+    private void setValue ( final Object value )
     {
         if ( value == null )
         {
@@ -152,46 +153,26 @@ public class Variant implements Serializable
         }
     }
 
-    /**
-     * 
-     * @deprecated Variant will become immutable in the next release
-     */
-    @Deprecated
-    public void setValue ( final boolean value )
+    private void setValue ( final boolean value )
     {
-        this.value = new Boolean ( value );
+        this.value = Boolean.valueOf ( value );
     }
 
-    /**
-     * 
-     * @deprecated Variant will become immutable in the next release
-     */
-    @Deprecated
-    public void setValue ( final int value )
+    private void setValue ( final int value )
     {
-        this.value = new Integer ( value );
+        this.value = Integer.valueOf ( value );
     }
 
-    /**
-     * 
-     * @deprecated Variant will become immutable in the next release
-     */
-    @Deprecated
-    public void setValue ( final long value )
+    private void setValue ( final long value )
     {
-        this.value = new Long ( value );
+        this.value = Long.valueOf ( value );
     }
 
-    /**
-     * 
-     * @deprecated Variant will become immutable in the next release
-     */
-    @Deprecated
-    public void setValue ( final String value )
+    private void setValue ( final String value )
     {
         if ( value != null )
         {
-            this.value = new String ( value );
+            this.value = value;
         }
         else
         {
@@ -199,14 +180,9 @@ public class Variant implements Serializable
         }
     }
 
-    /**
-     * 
-     * @deprecated Variant will become immutable in the next release
-     */
-    @Deprecated
-    public void setValue ( final double value )
+    private void setValue ( final double value )
     {
-        this.value = new Double ( value );
+        this.value = Double.valueOf ( value );
     }
 
     /**
@@ -243,6 +219,27 @@ public class Variant implements Serializable
         return this.value.toString ();
     }
 
+    /**
+     * @since 0.14.0
+     * @param defaultValue the default value
+     * @return the value as a double or the default value if the value cannot be provided as a double
+     */
+    public Double asDouble ( final Double defaultValue )
+    {
+        try
+        {
+            return asDouble ();
+        }
+        catch ( final NullValueException e )
+        {
+            return defaultValue;
+        }
+        catch ( final NotConvertableException e )
+        {
+            return defaultValue;
+        }
+    }
+
     public double asDouble () throws NullValueException, NotConvertableException
     {
         if ( isNull () )
@@ -254,7 +251,7 @@ public class Variant implements Serializable
         {
             if ( this.value instanceof Boolean )
             {
-                return ( (Boolean)this.value ).booleanValue () ? 1 : 0;
+                return ( (Boolean)this.value ).booleanValue () ? 1.0 : 0.0;
             }
             if ( this.value instanceof Double )
             {
@@ -279,6 +276,27 @@ public class Variant implements Serializable
         }
 
         throw new NotConvertableException ( this.value );
+    }
+
+    /**
+     * @since 0.14.0
+     * @param defaultValue the default value
+     * @return the value as an integer or the default value if the value cannot be provided as an integer
+     */
+    public Integer asInteger ( final Integer defaultValue )
+    {
+        try
+        {
+            return asInteger ();
+        }
+        catch ( final NullValueException e )
+        {
+            return defaultValue;
+        }
+        catch ( final NotConvertableException e )
+        {
+            return defaultValue;
+        }
     }
 
     public int asInteger () throws NullValueException, NotConvertableException
@@ -317,6 +335,27 @@ public class Variant implements Serializable
         }
 
         throw new NotConvertableException ( this.value );
+    }
+
+    /**
+     * @since 0.14.0
+     * @param defaultValue the default value
+     * @return the value as a long or the default value if the value cannot be provided as a long
+     */
+    public Long asLong ( final Long defaultValue )
+    {
+        try
+        {
+            return asLong ();
+        }
+        catch ( final NullValueException e )
+        {
+            return defaultValue;
+        }
+        catch ( final NotConvertableException e )
+        {
+            return defaultValue;
+        }
     }
 
     public long asLong () throws NullValueException, NotConvertableException
@@ -679,16 +718,21 @@ public class Variant implements Serializable
         return asBoolean () == b;
     }
 
-    public String toLabel ()
+    public String toLabel ( final String defaultLabel )
     {
         if ( this.value == null )
         {
-            return "";
+            return defaultLabel;
         }
         else
         {
             return this.value.toString ();
         }
+    }
+
+    public String toLabel ()
+    {
+        return toLabel ( "" );
     }
 
     /**

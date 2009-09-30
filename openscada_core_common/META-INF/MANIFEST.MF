@@ -2,12 +2,10 @@ Manifest-Version: 1.0
 Built-By: jens
 Created-By: Apache Maven Bundle Plugin
 Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
-Import-Package: javax.crypto;resolution:=optional,javax.crypto.spec;re
- solution:=optional,javax.net.ssl;resolution:=optional,javax.xml.names
- pace;resolution:=optional,javax.xml.stream;resolution:=optional,org.o
- penscada.core;version="0.14",org.openscada.core.subscription;version=
- "0.14",org.openscada.core.utils;version="0.14",org.w3c.dom;resolution
- :=optional
+Import-Package: org.openscada.core;version="0.14",
+ org.openscada.core.subscription;version="0.14",
+ org.openscada.core.utils;version="0.14",
+ org.openscada.utils.lang;version="0.14.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bnd-LastModified: 1252499257865
 Export-Package: org.openscada.core;version="0.14.0",
