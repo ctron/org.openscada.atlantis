@@ -18,7 +18,7 @@ import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.Session;
-import org.openscada.hd.server.common.HistoricalItem;
+import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -40,14 +40,14 @@ public class ServiceImpl implements Service, ServiceTrackerCustomizer
 
     private final ServiceTracker tracker;
 
-    private final Map<String, HistoricalItem> items = new HashMap<String, HistoricalItem> ();
+    private final Map<String, StorageHistoricalItem> items = new HashMap<String, StorageHistoricalItem> ();
 
     private final Set<HistoricalItemInformation> itemInformations = new HashSet<HistoricalItemInformation> ();
 
     public ServiceImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         this.context = context;
-        this.tracker = new ServiceTracker ( this.context, HistoricalItem.class.getName (), this );
+        this.tracker = new ServiceTracker ( this.context, StorageHistoricalItem.class.getName (), this );
     }
 
     public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
@@ -135,7 +135,7 @@ public class ServiceImpl implements Service, ServiceTrackerCustomizer
         final SessionImpl sessionImpl = validateSession ( session );
         synchronized ( this )
         {
-            final HistoricalItem item = this.items.get ( itemId );
+            final StorageHistoricalItem item = this.items.get ( itemId );
             if ( item == null )
             {
                 throw new InvalidItemException ( itemId );
@@ -166,7 +166,7 @@ public class ServiceImpl implements Service, ServiceTrackerCustomizer
     public Object addingService ( final ServiceReference reference )
     {
         logger.info ( "Adding service: {}", reference );
-        final HistoricalItem item = (HistoricalItem)this.context.getService ( reference );
+        final StorageHistoricalItem item = (StorageHistoricalItem)this.context.getService ( reference );
         final HistoricalItemInformation info = item.getInformation ();
 
         synchronized ( this )
@@ -196,7 +196,7 @@ public class ServiceImpl implements Service, ServiceTrackerCustomizer
 
         synchronized ( this )
         {
-            final HistoricalItem item = this.items.remove ( itemId );
+            final StorageHistoricalItem item = this.items.remove ( itemId );
             if ( item != null )
             {
                 this.context.ungetService ( reference );
