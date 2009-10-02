@@ -3,7 +3,7 @@ package org.openscada.hd.server.test;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import org.openscada.hd.server.common.HistoricalItem;
+import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -28,12 +28,12 @@ public class Activator implements BundleActivator
         Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
         properties.put ( "itemId", "test1" );
         this.service = new TestItemImpl ();
-        this.handle = context.registerService ( HistoricalItem.class.getName (), this.service, properties );
+        this.handle = context.registerService ( StorageHistoricalItem.class.getName (), this.service, properties );
 
         properties = new Hashtable<Object, Object> ();
         properties.put ( "itemId", "test2" );
         this.service2 = new Test2ItemImpl ();
-        this.handle2 = context.registerService ( HistoricalItem.class.getName (), this.service2, properties );
+        this.handle2 = context.registerService ( StorageHistoricalItem.class.getName (), this.service2, properties );
     }
 
     /*
