@@ -8,6 +8,7 @@ import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.master.internal.MasterFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 
 public class Activator implements BundleActivator
@@ -28,6 +29,8 @@ public class Activator implements BundleActivator
         this.masterService = new MasterFactory ( context );
         properties = new Hashtable<Object, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, "master.item" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "A configuration factory for master items" );
+        properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
         this.masterHandle = context.registerService ( new String[] { ConfigurationFactory.class.getName () }, this.masterService, properties );
     }
 
