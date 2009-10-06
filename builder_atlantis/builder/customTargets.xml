@@ -161,6 +161,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter"/>
 	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter.net"/>
 	<openscada.builder.copyPlugin id="org.openscada.hd.server.net"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage"/>
   	
   	<!-- Additional stuff -->
   	
