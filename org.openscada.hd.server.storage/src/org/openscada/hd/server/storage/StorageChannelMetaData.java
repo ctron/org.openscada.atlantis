@@ -1,6 +1,7 @@
 package org.openscada.hd.server.storage;
 
 import org.openscada.hd.server.storage.calculation.CalculationMethod;
+import org.openscada.hd.server.storage.datatypes.DataType;
 
 /**
  * This class provides methods for accessing meta information of storage channels.
@@ -8,6 +9,9 @@ import org.openscada.hd.server.storage.calculation.CalculationMethod;
  */
 public class StorageChannelMetaData
 {
+    /** Unique id specifying the combination of the meta data information. */
+    private String configurationId;
+
     /** Name of data source of which data is stored in the channel. */
     private String dataItemId;
 
@@ -29,13 +33,8 @@ public class StorageChannelMetaData
     /** Age of the data in milliseconds a stored data should be kept available. */
     private long proposedDataAge;
 
-    /**
-     * Standard constructor
-     */
-    public StorageChannelMetaData ()
-    {
-        this ( null, CalculationMethod.NATIVE, new long[0], 0L, Long.MIN_VALUE, Long.MAX_VALUE, Long.MAX_VALUE );
-    }
+    /** Datatype of the stored values. */
+    private DataType dataType;
 
     /**
      * Copy constructor
@@ -43,11 +42,12 @@ public class StorageChannelMetaData
      */
     public StorageChannelMetaData ( StorageChannelMetaData storageChannelMetaData )
     {
-        this ( storageChannelMetaData.getDataItemId (), storageChannelMetaData.getCalculationMethod (), storageChannelMetaData.getCalculationMethodParameters (), storageChannelMetaData.getDetailLevelId (), storageChannelMetaData.getStartTime (), storageChannelMetaData.getEndTime (), storageChannelMetaData.getProposedDataAge () );
+        this ( storageChannelMetaData.getConfigurationId (), storageChannelMetaData.getDataItemId (), storageChannelMetaData.getCalculationMethod (), storageChannelMetaData.getCalculationMethodParameters (), storageChannelMetaData.getDetailLevelId (), storageChannelMetaData.getStartTime (), storageChannelMetaData.getEndTime (), storageChannelMetaData.getProposedDataAge (), storageChannelMetaData.getDataType () );
     }
 
     /**
      * Fully initializing constructor
+     * @param configurationId unique id specifying the combination of the meta data information
      * @param dataItemId name of data source of which data is stored in the channel
      * @param calculationMethod method that is used to calculate the data that is stored in the channel
      * @param calculationMethodParameters parameters that are used in combination with the calculation method to specify the algorithm that has to be applied
@@ -55,9 +55,11 @@ public class StorageChannelMetaData
      * @param startTime time stamp of first possible entry of the channel
      * @param endTime time stamp of first entry that will not be stored in the channel
      * @param proposedDataAge age of the data in milliseconds a stored data should be kept available
+     * @param dataType datatype of the stored values
      */
-    public StorageChannelMetaData ( final String dataItemId, final CalculationMethod calculationMethod, final long[] calculationMethodParameters, final long detailLevelId, final long startTime, final long endTime, final long proposedDataAge )
+    public StorageChannelMetaData ( final String configurationId, final String dataItemId, final CalculationMethod calculationMethod, final long[] calculationMethodParameters, final long detailLevelId, final long startTime, final long endTime, final long proposedDataAge, final DataType dataType )
     {
+        this.configurationId = configurationId;
         this.dataItemId = dataItemId;
         this.calculationMethod = calculationMethod;
         this.calculationMethodParameters = calculationMethodParameters != null ? calculationMethodParameters : new long[0];
@@ -65,6 +67,25 @@ public class StorageChannelMetaData
         this.startTime = startTime;
         this.endTime = endTime;
         this.proposedDataAge = proposedDataAge;
+        this.dataType = dataType;
+    }
+
+    /**
+     * This method returns the unique id specifying the combination of the meta data information.
+     * @return unique id specifying the combination of the meta data information
+     */
+    public String getConfigurationId ()
+    {
+        return configurationId;
+    }
+
+    /**
+     * This method sets the unique id specifying the combination of the meta data information.
+     * @param configurationId unique id specifying the combination of the meta data information
+     */
+    public void setConfigurationId ( String configurationId )
+    {
+        this.configurationId = configurationId;
     }
 
     /**
@@ -194,12 +215,30 @@ public class StorageChannelMetaData
     }
 
     /**
+     * This method returns the datatype of the stored values.
+     * @return datatype of the stored values
+     */
+    public DataType getDataType ()
+    {
+        return dataType;
+    }
+
+    /**
+     * This method sets the datatype of the stored values.
+     * @param dataType datatype of the stored values
+     */
+    public void setDataType ( DataType dataType )
+    {
+        this.dataType = dataType;
+    }
+
+    /**
      * This method transform the data to a String and provides output for debugging.
      * @return data transformed to a String
      */
     @Override
     public String toString ()
     {
-        return String.format ( "dataItemId: %s; calculationMethod: %s; detailLevel: %s; startTime: %s; endTime: %s; proposedDataAge: %s", dataItemId, CalculationMethod.convertCalculationMethodToString ( calculationMethod ), detailLevelId, startTime, endTime, proposedDataAge );
+        return String.format ( "dataItemId: %s; calculationMethod: %s; detailLevel: %s; startTime: %s; endTime: %s; proposedDataAge: %s; datatype: %s", dataItemId, CalculationMethod.convertCalculationMethodToString ( calculationMethod ), detailLevelId, startTime, endTime, proposedDataAge, dataType );
     }
 }

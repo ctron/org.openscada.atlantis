@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openscada.hd.server.storage.StorageChannelMetaData;
 import org.openscada.hd.server.storage.calculation.CalculationMethod;
+import org.openscada.hd.server.storage.datatypes.DataType;
 import org.openscada.hd.server.storage.datatypes.LongValue;
 
 /**
@@ -16,6 +17,9 @@ public abstract class BackEndTestBase
 {
     /** Maximum entries per test storage channel backend. */
     protected final static int MAX_COUNT = 500;
+
+    /** Configuration id that is used for the tests. */
+    private final static String CONFIGURATION_ID = "Confügura<tionId";
 
     /** Data item id that is used for the tests. */
     private final static String DATA_ITEM_ID = "Data.It\\em?:#\"'";
@@ -39,7 +43,7 @@ public abstract class BackEndTestBase
     @Before
     public void testFileCreate () throws Exception
     {
-        backEnd = createBackEnd ( new StorageChannelMetaData ( DATA_ITEM_ID, CalculationMethod.NATIVE, new long[0], 0, 0, MAX_COUNT, Long.MAX_VALUE ) );
+        backEnd = createBackEnd ( new StorageChannelMetaData ( CONFIGURATION_ID, DATA_ITEM_ID, CalculationMethod.NATIVE, new long[0], 0, 0, MAX_COUNT, Long.MAX_VALUE, DataType.LONG_VALUE ) );
     }
 
     /**

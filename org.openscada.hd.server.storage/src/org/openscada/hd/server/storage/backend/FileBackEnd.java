@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.openscada.hd.server.storage.StorageChannelMetaData;
 import org.openscada.hd.server.storage.calculation.CalculationMethod;
+import org.openscada.hd.server.storage.datatypes.DataType;
 import org.openscada.hd.server.storage.datatypes.LongValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,16 +96,20 @@ public class FileBackEnd implements BackEnd
         }
 
         // extract configuration values
-        final byte[] dataItemId = encodeToBytes ( storageChannelMetaData.getDataItemId () );
+        final String configurationId = storageChannelMetaData.getConfigurationId ();
+        final byte[] configurationIdBytes = encodeToBytes ( configurationId );
+        final String dataItemId = storageChannelMetaData.getDataItemId ();
+        final byte[] dataItemIdBytes = encodeToBytes ( dataItemId );
         final long calculationMethodId = CalculationMethod.convertCalculationMethodToLong ( storageChannelMetaData.getCalculationMethod () );
         final long[] calculationMethodParameters = storageChannelMetaData.getCalculationMethodParameters ();
         final long detailLevelId = storageChannelMetaData.getDetailLevelId ();
         final long startTime = storageChannelMetaData.getStartTime ();
         final long endTime = storageChannelMetaData.getEndTime ();
         final long proposedDataAge = storageChannelMetaData.getProposedDataAge ();
+        final long dataType = DataType.convertDataTypeToLong ( storageChannelMetaData.getDataType () );
 
         // validate input data
-        if ( dataItemId == null )
+        if ( dataItemIdBytes == null )
         {
             String message = String.format ( "invalid data item id specified for file '%s'!", fileName );
             logger.error ( message );
@@ -134,7 +139,7 @@ public class FileBackEnd implements BackEnd
         // write standardized file header to file
         openConnection ( true );
         randomAccessFile.seek ( 0L );
-        final long dataOffset = ( 10 + calculationMethodParameters.length ) * 8 + dataItemId.length + 2;
+        final long dataOffset = ( 12 + calculationMethodParameters.length ) * 8 + configurationIdBytes.length + dataItemIdBytes.length + 2;
         randomAccessFile.writeLong ( FILE_MARKER );
         randomAccessFile.writeLong ( dataOffset );
         randomAccessFile.writeLong ( FILE_VERSION );
@@ -142,20 +147,27 @@ public class FileBackEnd implements BackEnd
         randomAccessFile.writeLong ( startTime );
         randomAccessFile.writeLong ( endTime );
         randomAccessFile.writeLong ( proposedDataAge );
+        randomAccessFile.writeLong ( dataType );
         randomAccessFile.writeLong ( calculationMethodId );
         randomAccessFile.writeLong ( calculationMethodParameters.length );
-        randomAccessFile.writeLong ( dataItemId.length );
+        randomAccessFile.writeLong ( configurationIdBytes.length );
+        randomAccessFile.writeLong ( dataItemIdBytes.length );
         for ( int i = 0; i < calculationMethodParameters.length; i++ )
         {
             randomAccessFile.writeLong ( calculationMethodParameters[i] );
         }
-        randomAccessFile.write ( dataItemId );
+        randomAccessFile.write ( configurationIdBytes );
+        randomAccessFile.write ( dataItemIdBytes );
         long parity = 0;
         parity = ( parity + FILE_VERSION ) % SHORT_BORDER;
+        parity = ( parity + dataOffset ) % SHORT_BORDER;
+        parity = ( parity + ( configurationId == null ? 0 : configurationId.hashCode () ) ) % SHORT_BORDER;
+        parity = ( parity + ( dataItemId == null ? 0 : dataItemId.hashCode () ) ) % SHORT_BORDER;
         parity = ( parity + detailLevelId ) % SHORT_BORDER;
         parity = ( parity + startTime ) % SHORT_BORDER;
         parity = ( parity + endTime ) % SHORT_BORDER;
         parity = ( parity + proposedDataAge ) % SHORT_BORDER;
+        parity = ( parity + dataType ) % SHORT_BORDER;
         parity = ( parity + calculationMethodId ) % SHORT_BORDER;
         parity = ( parity + calculationMethodParameters.length ) % SHORT_BORDER;
         for ( int i = 0; i < calculationMethodParameters.length; i++ )
@@ -276,10 +288,12 @@ public class FileBackEnd implements BackEnd
             throw new Exception ( message );
         }
         final long proposedDataAge = randomAccessFile.readLong ();
+        final long dataType = randomAccessFile.readLong ();
         final long calculationMethodId = randomAccessFile.readLong ();
         final long calculationMethodParameterCountSize = randomAccessFile.readLong ();
-        long dataItemIdSize = randomAccessFile.readLong ();
-        if ( ( dataOffset - randomAccessFile.getFilePointer () - 2 - dataItemIdSize ) != ( calculationMethodParameterCountSize * 8 ) )
+        final long configurationIdSize = randomAccessFile.readLong ();
+        final long dataItemIdSize = randomAccessFile.readLong ();
+        if ( ( dataOffset - randomAccessFile.getFilePointer () - 2 - configurationIdSize - dataItemIdSize ) != ( calculationMethodParameterCountSize * 8 ) )
         {
             String message = String.format ( "file '%s' is of invalid format! (invalid count of calculation method parameters)", fileName );
             logger.error ( message );
@@ -290,21 +304,34 @@ public class FileBackEnd implements BackEnd
         {
             calculationMethodParameters[i] = randomAccessFile.readLong ();
         }
-        if ( ( ( dataItemIdSize % 2 ) != 0 ) || ( ( dataOffset - randomAccessFile.getFilePointer () - 2 ) != dataItemIdSize ) )
+        if ( ( dataOffset - randomAccessFile.getFilePointer () - 2 - dataItemIdSize ) != configurationIdSize )
+        {
+            String message = String.format ( "file '%s' is of invalid format! (invalid configuration id)", fileName );
+            logger.error ( message );
+            throw new Exception ( message );
+        }
+        final byte[] configurationIdBytes = new byte[(int)configurationIdSize];
+        randomAccessFile.readFully ( configurationIdBytes );
+        final String configurationId = decodeStringFromBytes ( configurationIdBytes );
+        if ( ( dataOffset - randomAccessFile.getFilePointer () - 2 ) != dataItemIdSize )
         {
             String message = String.format ( "file '%s' is of invalid format! (invalid data item id)", fileName );
             logger.error ( message );
             throw new Exception ( message );
         }
-        final byte[] bytes = new byte[(int)dataItemIdSize];
-        randomAccessFile.readFully ( bytes );
-        String dataItemId = decodeStringFromBytes ( bytes );
+        final byte[] dataItemIdBytes = new byte[(int)dataItemIdSize];
+        randomAccessFile.readFully ( dataItemIdBytes );
+        final String dataItemId = decodeStringFromBytes ( dataItemIdBytes );
         long parity = 0;
         parity = ( parity + version ) % SHORT_BORDER;
+        parity = ( parity + dataOffset ) % SHORT_BORDER;
+        parity = ( parity + configurationId.hashCode () ) % SHORT_BORDER;
+        parity = ( parity + dataItemId.hashCode () ) % SHORT_BORDER;
         parity = ( parity + detailLevelId ) % SHORT_BORDER;
         parity = ( parity + startTime ) % SHORT_BORDER;
         parity = ( parity + endTime ) % SHORT_BORDER;
         parity = ( parity + proposedDataAge ) % SHORT_BORDER;
+        parity = ( parity + dataType ) % SHORT_BORDER;
         parity = ( parity + calculationMethodId ) % SHORT_BORDER;
         parity = ( parity + calculationMethodParameters.length ) % SHORT_BORDER;
         for ( int i = 0; i < calculationMethodParameters.length; i++ )
@@ -319,7 +346,7 @@ public class FileBackEnd implements BackEnd
         }
 
         // create a wrapper object for returning the retrieved data
-        return new StorageChannelMetaData ( dataItemId, CalculationMethod.convertLongToCalculationMethod ( calculationMethodId ), calculationMethodParameters, detailLevelId, startTime, endTime, proposedDataAge );
+        return new StorageChannelMetaData ( configurationId, dataItemId, CalculationMethod.convertLongToCalculationMethod ( calculationMethodId ), calculationMethodParameters, detailLevelId, startTime, endTime, proposedDataAge, DataType.convertLongToDataType ( dataType ) );
     }
 
     /**

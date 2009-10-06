@@ -27,7 +27,7 @@ public enum CalculationMethod
      * @param calculationMethod calculation method value that has to be transformed
      * @return short string representation of the passed calculation method
      */
-    public static String convertCalculationMethodToShortString ( CalculationMethod calculationMethod )
+    public static String convertCalculationMethodToShortString ( final CalculationMethod calculationMethod )
     {
         switch ( calculationMethod )
         {
@@ -60,25 +60,25 @@ public enum CalculationMethod
      * @param calculationMethod calculation method value that has to be transformed
      * @return transformed calculation method value
      */
-    public static CalculationMethod convertShortStringToCalculationMethod ( String calculationMethod )
+    public static CalculationMethod convertShortStringToCalculationMethod ( final String calculationMethod )
     {
         if ( "NAT".equals ( calculationMethod ) )
         {
-            return CalculationMethod.NATIVE;
+            return NATIVE;
         }
         if ( "AVG".equals ( calculationMethod ) )
         {
-            return CalculationMethod.AVERAGE;
+            return AVERAGE;
         }
         if ( "MIN".equals ( calculationMethod ) )
         {
-            return CalculationMethod.MINIMUM;
+            return MINIMUM;
         }
         if ( "MAX".equals ( calculationMethod ) )
         {
-            return CalculationMethod.MAXIMUM;
+            return MAXIMUM;
         }
-        return CalculationMethod.UNKNOWN;
+        return UNKNOWN;
     }
 
     /**
@@ -87,7 +87,7 @@ public enum CalculationMethod
      * @param calculationMethod calculation method value that has to be transformed
      * @return string representation of the passed calculation method
      */
-    public static String convertCalculationMethodToString ( CalculationMethod calculationMethod )
+    public static String convertCalculationMethodToString ( final CalculationMethod calculationMethod )
     {
         return calculationMethod.toString ();
     }
@@ -98,7 +98,7 @@ public enum CalculationMethod
      * @param calculationMethod calculation method value that has to be transformed
      * @return transformed calculation method value
      */
-    public static CalculationMethod convertStringToCalculationMethod ( String calculationMethod )
+    public static CalculationMethod convertStringToCalculationMethod ( final String calculationMethod )
     {
         return Enum.valueOf ( CalculationMethod.class, calculationMethod );
     }
@@ -109,7 +109,7 @@ public enum CalculationMethod
      * @param calculationMethod calculation method value that has to be transformed
      * @return long representation of the passed calculation method
      */
-    public static long convertCalculationMethodToLong ( CalculationMethod calculationMethod )
+    public static long convertCalculationMethodToLong ( final CalculationMethod calculationMethod )
     {
         switch ( calculationMethod )
         {
@@ -148,23 +148,23 @@ public enum CalculationMethod
         {
         case 0:
         {
-            return CalculationMethod.NATIVE;
+            return NATIVE;
         }
         case 1:
         {
-            return CalculationMethod.AVERAGE;
+            return AVERAGE;
         }
         case 2:
         {
-            return CalculationMethod.MINIMUM;
+            return MINIMUM;
         }
         case 3:
         {
-            return CalculationMethod.MAXIMUM;
+            return MAXIMUM;
         }
         default:
         {
-            return CalculationMethod.UNKNOWN;
+            return UNKNOWN;
         }
         }
     }
