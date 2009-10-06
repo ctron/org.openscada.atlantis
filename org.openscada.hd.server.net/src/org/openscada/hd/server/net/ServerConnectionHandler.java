@@ -33,6 +33,7 @@ import org.openscada.core.net.MessageHelper;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.ItemListListener;
+import org.openscada.hd.Query;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
 import org.openscada.hd.ValueInformation;
@@ -193,10 +194,17 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
                 // create the handler and set the query
                 final QueryHandler handler = new QueryHandler ( queryId, this );
-                this.queries.put ( queryId, handler );
 
-                handler.setQuery ( this.service.createQuery ( this.session, itemId, parameters, handler ) );
-
+                final Query query = this.service.createQuery ( this.session, itemId, parameters, handler );
+                if ( query == null )
+                {
+                    handler.setQuery ( query );
+                    this.queries.put ( queryId, handler );
+                }
+                else
+                {
+                    sendQueryState ( queryId, QueryState.DISCONNECTED );
+                }
             }
             catch ( final Throwable e )
             {
