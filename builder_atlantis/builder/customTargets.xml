@@ -164,6 +164,8 @@
   	<!-- Additional stuff -->
   	
   	<openscada.builder.copyPlugin id="org.openscada.spring.components" project="openscada_spring_components"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.connection.service"/>
+  		
   	<openscada.builder.copyPlugin id="org.openscada.da.master" />
   	<openscada.builder.copyFeature id="org.openscada.atlantis" />
   	<openscada.builder.copyFeature id="org.openscada.atlantis.sdk" />
