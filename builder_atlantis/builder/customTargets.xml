@@ -157,6 +157,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.hd.client.net"/>
 	<openscada.builder.copyPlugin id="org.openscada.hd.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.common"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.server.common.item"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter"/>
 	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter.net"/>
 	<openscada.builder.copyPlugin id="org.openscada.hd.server.net"/>
