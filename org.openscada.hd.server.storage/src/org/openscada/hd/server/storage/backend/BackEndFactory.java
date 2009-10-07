@@ -13,8 +13,9 @@ public interface BackEndFactory
     /**
      * This method returns the metadata objects of all existing back end objects.
      * If more than one metadata object exists for the same data item, calculation
-     * method and detail level but with different time information,
-     * then the time information is merged into one single meta data object.
+     * method and detail level then the additional information is merged into one single meta data object.
+     * The time span is hereby widened so that the earliest start time is used and the latest end time.
+     * All other information is taken from the sub meta data object with the latest end time.
      * @return metadata objects of all existing back end objects
      * @throws Exception in case of any problems
      */

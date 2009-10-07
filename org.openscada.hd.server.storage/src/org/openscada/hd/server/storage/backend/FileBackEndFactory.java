@@ -223,6 +223,16 @@ public class FileBackEndFactory implements BackEndFactory
                                 {
                                     // adapt the current entry in the list and expand the time span
                                     entry.setStartTime ( Math.min ( entry.getStartTime (), metaData.getStartTime () ) );
+                                    final long endTime = metaData.getEndTime ();
+                                    if ( entry.getEndTime () < endTime )
+                                    {
+                                        entry.setCalculationMethod ( metaData.getCalculationMethod () );
+                                        entry.setCalculationMethodParameters ( metaData.getCalculationMethodParameters () );
+                                        entry.setConfigurationId ( metaData.getConfigurationId () );
+                                        entry.setDataType ( metaData.getDataType () );
+                                        entry.setEndTime ( endTime );
+                                        entry.setProposedDataAge ( metaData.getProposedDataAge () );
+                                    }
                                     entry.setEndTime ( Math.max ( entry.getEndTime (), metaData.getEndTime () ) );
                                     addNew = false;
                                     break;
