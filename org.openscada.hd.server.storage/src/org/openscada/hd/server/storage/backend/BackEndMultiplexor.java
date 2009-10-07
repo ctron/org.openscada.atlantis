@@ -2,13 +2,14 @@ package org.openscada.hd.server.storage.backend;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
 
 import org.openscada.hd.server.storage.StorageChannelMetaData;
+import org.openscada.hd.server.storage.backend.comparator.InverseTimeOrderComparator;
 import org.openscada.hd.server.storage.calculation.CalculationMethod;
 import org.openscada.hd.server.storage.datatypes.LongValue;
 import org.slf4j.Logger;
@@ -19,79 +20,16 @@ import org.slf4j.LoggerFactory;
  * It is arranged that each such backend object is responsible for its own exclusive time span.
  * @author Ludwig Straub
  */
-public class BackEndMultiplexor implements BackEnd
+public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
 {
-    /**
-     * Comparator that is used to sort storage channel meta data by time span.
-     * @author Ludwig Straub
-     */
-    private static class InverseTimeOrderComparator implements Comparator<BackEnd>
-    {
-        /**
-         * @see java.util.Comparator#compare
-         */
-        public int compare ( final BackEnd o1, final BackEnd o2 )
-        {
-            if ( o1 == null )
-            {
-                return 1;
-            }
-            if ( o2 == null )
-            {
-                return -1;
-            }
-            StorageChannelMetaData m1 = null;
-            try
-            {
-                m1 = o1.getMetaData ();
-            }
-            catch ( Exception e )
-            {
-                return 1;
-            }
-            StorageChannelMetaData m2 = null;
-            try
-            {
-                m2 = o2.getMetaData ();
-            }
-            catch ( Exception e )
-            {
-                return -1;
-            }
-            if ( m1 == null )
-            {
-                return 1;
-            }
-            if ( m2 == null )
-            {
-                return -1;
-            }
-            final long endTime1 = m1.getEndTime ();
-            final long endTime2 = m2.getEndTime ();
-            if ( endTime1 < endTime2 )
-            {
-                return 1;
-            }
-            if ( endTime1 > endTime2 )
-            {
-                return -1;
-            }
-            final long startTime1 = m1.getStartTime ();
-            final long startTime2 = m2.getStartTime ();
-            if ( startTime1 < startTime2 )
-            {
-                return 1;
-            }
-            if ( startTime1 > startTime2 )
-            {
-                return -1;
-            }
-            return 0;
-        }
-    }
-
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( BackEndMultiplexor.class );
+
+    /** Delay in milliseconds after that old data is deleted for the first time after initialization of the class. */
+    private final static long CLEANER_TASK_DELAY = 1000 * 60;
+
+    /** Period in milliseconds between two consecutive attemps to delete old data. */
+    private final static long CLEANER_TASK_PERIOD = 1000 * 60 * 10;
 
     /** Metadata of the storage channel. */
     private StorageChannelMetaData metaData;
@@ -104,6 +42,9 @@ public class BackEndMultiplexor implements BackEnd
 
     /** Amount of milliseconds that can be contained by any newly created storage channel backend. */
     private final long newBackendTimespan;
+
+    /** Timer that is used for deleting old data. */
+    private Timer deleteRelictsTimer;
 
     /**
      * Constructor.
@@ -136,11 +77,14 @@ public class BackEndMultiplexor implements BackEnd
      */
     public synchronized void initialize ( final StorageChannelMetaData storageChannelMetaData ) throws Exception
     {
+        deinitialize ();
         backEnds.clear ();
         BackEnd[] backEndArray = backEndFactory.getExistingBackEnds ( storageChannelMetaData.getDataItemId (), storageChannelMetaData.getDetailLevelId (), storageChannelMetaData.getCalculationMethod () );
         Arrays.sort ( backEndArray, new InverseTimeOrderComparator () );
         backEnds.addAll ( Arrays.asList ( backEndArray ) );
         metaData = new StorageChannelMetaData ( storageChannelMetaData );
+        deleteRelictsTimer = new Timer ();
+        deleteRelictsTimer.schedule ( new RelictDataCleanerTask ( this ), CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD );
     }
 
     /**
@@ -170,6 +114,12 @@ public class BackEndMultiplexor implements BackEnd
      */
     public synchronized void deinitialize () throws Exception
     {
+        if ( deleteRelictsTimer != null )
+        {
+            deleteRelictsTimer.cancel ();
+            deleteRelictsTimer.purge ();
+            deleteRelictsTimer = null;
+        }
         for ( BackEnd backEnd : backEnds )
         {
             backEnd.deinitialize ();
@@ -187,6 +137,54 @@ public class BackEndMultiplexor implements BackEnd
             backEnd.delete ();
         }
         backEnds.clear ();
+    }
+
+    /**
+     * This method deletes data that is older than the proposed data age specified within the metadata.
+     */
+    public synchronized void deleteRelicts ()
+    {
+        logger.info ( "deleting old data... start" );
+        if ( metaData == null )
+        {
+            return;
+        }
+        final long proposedDataAge = System.currentTimeMillis () - metaData.getProposedDataAge ();
+        for ( int i = backEnds.size () - 1; i >= 0; i-- )
+        {
+            BackEnd backEnd = backEnds.get ( i );
+            if ( backEnd != null )
+            {
+                StorageChannelMetaData subMetaData = null;
+                try
+                {
+                    subMetaData = backEnd.getMetaData ();
+                    if ( ( subMetaData == null ) || ( subMetaData.getEndTime () <= proposedDataAge ) )
+                    {
+                        try
+                        {
+                            backEnd.delete ();
+                        }
+                        catch ( Exception e1 )
+                        {
+                            logger.warn ( "relict data (%s) could not be deleted by BackEndMultiplexor (%s)! ", subMetaData, metaData );
+                        }
+                        backEnds.remove ( i );
+                    }
+                    else
+                    {
+                        // since the array of back ends is sorted, no older entries will be found during further iteration steps
+                        break;
+                    }
+                }
+                catch ( Exception e )
+                {
+                    logger.warn ( "metadata of sub backend could not be accessed! (%s)", metaData );
+                }
+            }
+        }
+        backEnds.clear ();
+        logger.info ( "deleting old data... end" );
     }
 
     /**
