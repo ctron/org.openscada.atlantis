@@ -15,6 +15,9 @@ import org.openscada.hd.server.storage.datatypes.LongValue;
  */
 public abstract class BackEndTestBase
 {
+    /** This flag can be used to skip cleaning the created artefacts. Some tests will fail then but the relicts can be useful for testing. */
+    public final static boolean PERFORM_CLEANUP = true;
+
     /** Maximum entries per test storage channel backend. */
     protected final static int MAX_COUNT = 500;
 
@@ -109,10 +112,13 @@ public abstract class BackEndTestBase
     @After
     public void cleanup () throws Exception
     {
-        if ( backEnd != null )
+        if ( PERFORM_CLEANUP )
         {
-            backEnd.deinitialize ();
-            backEnd.delete ();
+            if ( backEnd != null )
+            {
+                backEnd.deinitialize ();
+                backEnd.delete ();
+            }
         }
     }
 }

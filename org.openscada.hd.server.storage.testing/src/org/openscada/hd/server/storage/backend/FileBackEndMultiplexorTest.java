@@ -13,7 +13,7 @@ import org.openscada.hd.server.storage.StorageChannelMetaData;
 public class FileBackEndMultiplexorTest extends BackEndTestBase
 {
     /** Base directory for test files. */
-    private final static String ROOT = "we_base";
+    private final static String ROOT = "va_base_test";
 
     /**
      * This method creates, initializes and returns the backend that has to be tested.
@@ -34,6 +34,40 @@ public class FileBackEndMultiplexorTest extends BackEndTestBase
     }
 
     /**
+     * This method cleans the root directory.
+     */
+    private void cleanDirectory ()
+    {
+        if ( PERFORM_CLEANUP )
+        {
+            if ( ( ROOT != null ) && ( ROOT.length () > 0 ) )
+            {
+                deleteDirectory ( new File ( ROOT ) );
+            }
+        }
+    }
+
+    /**
+     * This method deletes the passed directory or file.
+     * In case of a directory, all subdirectories and files will also be deleted.
+     * @param file or directory that has to be deleted
+     */
+    private void deleteDirectory ( final File file )
+    {
+        if ( file != null )
+        {
+            if ( file.isDirectory () )
+            {
+                for ( File subDir : file.listFiles () )
+                {
+                    deleteDirectory ( subDir );
+                }
+            }
+            file.delete ();
+        }
+    }
+
+    /**
      * This method cleans all artefacts that have been created during a test run.
      * @throws Exception in case of problems
      */
@@ -43,15 +77,7 @@ public class FileBackEndMultiplexorTest extends BackEndTestBase
         if ( backEnd != null )
         {
             super.cleanup ();
-            if ( ( ROOT != null ) && ( ROOT.length () > 0 ) )
-            {
-                File root = new File ( ROOT );
-                for ( File subDir : root.listFiles () )
-                {
-                    subDir.delete ();
-                }
-                root.delete ();
-            }
+            cleanDirectory ();
         }
     }
 }

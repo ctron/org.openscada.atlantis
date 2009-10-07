@@ -26,6 +26,6 @@ public class FileFileFilter implements FileFilter
      */
     public boolean accept ( final File file )
     {
-        return file.isFile () && file.getName ().matches ( fileNamePattern );
+        return file.isFile () && ( ( fileNamePattern == null ) || file.getName ().matches ( fileNamePattern ) );
     }
 }

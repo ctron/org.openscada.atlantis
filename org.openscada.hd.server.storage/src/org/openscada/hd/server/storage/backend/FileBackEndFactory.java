@@ -3,6 +3,7 @@ package org.openscada.hd.server.storage.backend;
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -30,20 +31,23 @@ public class FileBackEndFactory implements BackEndFactory
     /** File mask that is used when no other file mask is passed. Sample file: MyDataSource-AVG-1-1000000-1100000.wa (dataItemId-calculationMethod-level-startTime-endTime) */
     public final static String FILE_MASK = "%1$s" + FILENAME_PART_SEPERATOR + "%3$s" + FILENAME_PART_SEPERATOR + "%2$s" + FILENAME_PART_SEPERATOR + "%4$s" + FILENAME_PART_SEPERATOR + "%5$s.va";
 
+    /** Format string used to format time information. */
+    private final static String TIME_FORMAT = "%1$04d%2$02d%3$02d.%4$02d%5$02d%6$02d.%7$03d";
+
     /** Regular expression for data item id fragments. */
     private final static String DATA_ITEM_ID_REGEX_PATTERN = ".*";
 
     /** Regular expression for detail level id fragments. */
-    private final static String DETAIL_LEVEL_ID_REGEX_PATTERN = "[0-9]+";
+    private final static String DETAIL_LEVEL_ID_REGEX_PATTERN = "[-0-9]+";
 
     /** Regular expression for calculation method information fragments. */
     private final static String CALCULATION_METHOD_REGEX_PATTERN = ".*";
 
     /** Regular expression for start time fragments. */
-    private final static String START_TIME_REGEX_PATTERN = "[0-9]+";
+    private final static String START_TIME_REGEX_PATTERN = "[-0-9.]+";
 
     /** Regular expression for end time fragments. */
-    private final static String END_TIME_REGEX_PATTERN = "[0-9]+";
+    private final static String END_TIME_REGEX_PATTERN = "[-0-9.]+";
 
     /** Prepared empty backend array. */
     private final static BackEnd[] EMTPY_BACKEND_ARRAY = new BackEnd[0];
@@ -73,6 +77,18 @@ public class FileBackEndFactory implements BackEndFactory
         this.dataItemIdPattern = Pattern.compile ( String.format ( FILE_MASK, "(" + DATA_ITEM_ID_REGEX_PATTERN + ")", CALCULATION_METHOD_REGEX_PATTERN, DETAIL_LEVEL_ID_REGEX_PATTERN, START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ), Pattern.CASE_INSENSITIVE );
         this.calculationMethodPattern = Pattern.compile ( String.format ( FILE_MASK, DATA_ITEM_ID_REGEX_PATTERN, "(" + CALCULATION_METHOD_REGEX_PATTERN + ")", DETAIL_LEVEL_ID_REGEX_PATTERN, START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ), Pattern.CASE_INSENSITIVE );
         this.detailLevelIdPattern = Pattern.compile ( String.format ( FILE_MASK, DATA_ITEM_ID_REGEX_PATTERN, CALCULATION_METHOD_REGEX_PATTERN, "(" + DETAIL_LEVEL_ID_REGEX_PATTERN + ")", START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ), Pattern.CASE_INSENSITIVE );
+    }
+
+    /**
+     * This method converts the time to a valid and readable part of a file name.
+     * @param time time to be converted
+     * @return converted time
+     */
+    private static String encodeFileNamePart ( final long time )
+    {
+        Calendar calendar = Calendar.getInstance ();
+        calendar.setTimeInMillis ( time );
+        return String.format ( TIME_FORMAT, calendar.get ( Calendar.YEAR ), calendar.get ( Calendar.MONTH ), calendar.get ( Calendar.DAY_OF_MONTH ), calendar.get ( Calendar.HOUR_OF_DAY ), calendar.get ( Calendar.MINUTE ), calendar.get ( Calendar.SECOND ), calendar.get ( Calendar.MILLISECOND ) );
     }
 
     /**
@@ -184,7 +200,7 @@ public class FileBackEndFactory implements BackEndFactory
         List<StorageChannelMetaData> metaDatas = new LinkedList<StorageChannelMetaData> ();
         for ( File dataItemDirectory : directories )
         {
-            for ( File file : dataItemDirectory.listFiles ( new FileFileFilter ( String.format ( FILE_MASK, dataItemDirectory.getName (), ".*", ".*", ".*", ".*" ) ) ) )
+            for ( File file : dataItemDirectory.listFiles ( new FileFileFilter ( String.format ( FILE_MASK, dataItemDirectory.getName (), CALCULATION_METHOD_REGEX_PATTERN, DETAIL_LEVEL_ID_REGEX_PATTERN, START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ) ) ) )
             {
                 final BackEnd backEnd = getBackEnd ( file );
                 if ( backEnd != null )
@@ -259,7 +275,7 @@ public class FileBackEndFactory implements BackEndFactory
 
         // evaluate the data item directory
         final List<BackEnd> backEnds = new ArrayList<BackEnd> ();
-        for ( File file : directories[0].listFiles ( new FileFileFilter ( String.format ( FILE_MASK, dataItemIdFileName, CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ), detailLevelId, ".*", ".*" ) ) ) )
+        for ( File file : directories[0].listFiles ( new FileFileFilter ( String.format ( FILE_MASK, dataItemIdFileName, CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ), detailLevelId, START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ) ) ) )
         {
             final BackEnd backEnd = getBackEnd ( file );
             if ( backEnd != null )
@@ -292,6 +308,6 @@ public class FileBackEndFactory implements BackEndFactory
         }
 
         // assure that root folder exists
-        return new FileBackEnd ( new File ( new File ( fileRoot, dataItemId ), String.format ( FILE_MASK, dataItemId, CalculationMethod.convertCalculationMethodToShortString ( storageChannelMetaData.getCalculationMethod () ), storageChannelMetaData.getDetailLevelId (), storageChannelMetaData.getStartTime (), storageChannelMetaData.getEndTime () ) ).getPath () );
+        return new FileBackEnd ( new File ( new File ( fileRoot, dataItemId ), String.format ( FILE_MASK, dataItemId, CalculationMethod.convertCalculationMethodToShortString ( storageChannelMetaData.getCalculationMethod () ), storageChannelMetaData.getDetailLevelId (), encodeFileNamePart ( storageChannelMetaData.getStartTime () ), encodeFileNamePart ( storageChannelMetaData.getEndTime () ) ) ).getPath () );
     }
 }
