@@ -88,6 +88,14 @@
             name="Query Data View"
             restorable="true">
       </view>
+      <view
+            allowMultiple="false"
+            category="org.openscada.hd.ui.category"
+            class="org.openscada.hd.ui.views.TrendView"
+            id="org.openscada.hd.ui.TrendView"
+            name="Trend View"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
