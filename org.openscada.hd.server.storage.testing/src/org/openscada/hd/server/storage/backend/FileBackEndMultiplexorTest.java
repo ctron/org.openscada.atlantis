@@ -26,10 +26,9 @@ public class FileBackEndMultiplexorTest extends BackEndTestBase
     protected BackEnd createBackEnd ( StorageChannelMetaData metaData ) throws Exception
     {
         BackEnd backEnd = new BackEndMultiplexor ( new FileBackEndFactory ( ROOT ), 50 );
-        backEnd.delete ();
-        backEnd.create ( metaData );
         backEnd.initialize ( metaData );
         backEnd.delete ();
+        backEnd.create ( metaData );
         return backEnd;
     }
 

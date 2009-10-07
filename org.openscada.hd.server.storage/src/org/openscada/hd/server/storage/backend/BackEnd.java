@@ -51,7 +51,8 @@ public interface BackEnd extends StorageChannel
     public abstract void deinitialize () throws Exception;
 
     /**
-     * This method removes all data that was previously stored by the backend storage channel.
+     * This method removes all data that was previously stored or retrieved by the backend storage channel.
+     * The initialize method must have been executed before this method can be called.
      * @throws Exception in case of any problem
      */
     public abstract void delete () throws Exception;

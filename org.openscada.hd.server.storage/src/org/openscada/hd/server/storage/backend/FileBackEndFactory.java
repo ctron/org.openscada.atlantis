@@ -130,7 +130,7 @@ public class FileBackEndFactory implements BackEndFactory
 
         // parse filename
         final Matcher matcher = pattern.matcher ( fileName );
-        if ( matcher.groupCount () != 1 )
+        if ( !matcher.matches () || ( matcher.groupCount () != 1 ) )
         {
             return defaultValue;
         }
@@ -169,7 +169,7 @@ public class FileBackEndFactory implements BackEndFactory
             final String dataItemId = encodeFileNamePart ( metaData.getDataItemId () );
             final String calculationMethod = CalculationMethod.convertCalculationMethodToShortString ( metaData.getCalculationMethod () );
             final long detailLevelId = metaData.getDetailLevelId ();
-            if ( ( dataItemId == null ) || !extractDataFromFileName ( dataItemIdPattern, fileName, dataItemId ).equals ( dataItemId ) || ( extractDataFromFileName ( calculationMethodPattern, fileName, calculationMethod ) != calculationMethod ) || ( extractDataFromFileName ( detailLevelIdPattern, fileName, detailLevelId ) != detailLevelId ) )
+            if ( ( dataItemId == null ) || !extractDataFromFileName ( dataItemIdPattern, fileName, dataItemId ).equals ( dataItemId ) || ( !extractDataFromFileName ( calculationMethodPattern, fileName, calculationMethod ).equals ( calculationMethod ) ) || ( extractDataFromFileName ( detailLevelIdPattern, fileName, detailLevelId ) != detailLevelId ) )
             {
                 fileBackEnd = null;
                 logger.warn ( String.format ( "file content does not match expected content due to file name (%s). file will be ignored", file.getPath () ) );
