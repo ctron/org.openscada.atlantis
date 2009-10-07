@@ -1,5 +1,6 @@
 package org.openscada.hd.server.storage;
 
+import org.openscada.hd.server.storage.calculation.CalculationLogicProvider;
 import org.openscada.hd.server.storage.datatypes.LongValue;
 
 /**
@@ -9,20 +10,25 @@ import org.openscada.hd.server.storage.datatypes.LongValue;
 public class CalculatingStorageChannel extends SimpleStorageChannelManager
 {
     /** Storage channel that is used as main channel when writing results of calculations. */
-    private final StorageChannel baseStorageChannel;
+    private final ExtendedStorageChannel baseStorageChannel;
 
     /** Storage channel that is used to request data if data is missing for instance after startup. */
-    private final StorageChannel inputStorageChannel;
+    private final ExtendedStorageChannel inputStorageChannel;
+
+    /** Logic provider for calculation of values for storage channel. */
+    private final CalculationLogicProvider calculationLogicProvider;
 
     /**
      * Fully initializing constructor.
      * @param baseStorageChannel storage channel that is used as main channel when writing results of calculations
      * @param inputStorageChannel storage channel that is used to request data if data is missing for instance after startup
+     * @param calculationLogicProvider logic provider for calculation of values for storage channel
      */
-    public CalculatingStorageChannel ( final StorageChannel baseStorageChannel, final StorageChannel inputStorageChannel )
+    public CalculatingStorageChannel ( final ExtendedStorageChannel baseStorageChannel, final ExtendedStorageChannel inputStorageChannel, final CalculationLogicProvider calculationLogicProvider )
     {
         this.baseStorageChannel = baseStorageChannel;
         this.inputStorageChannel = inputStorageChannel;
+        this.calculationLogicProvider = calculationLogicProvider;
     }
 
     /**

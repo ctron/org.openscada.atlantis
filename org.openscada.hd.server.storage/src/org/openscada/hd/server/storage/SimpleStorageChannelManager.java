@@ -2,6 +2,7 @@ package org.openscada.hd.server.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.openscada.hd.server.storage.datatypes.DoubleValue;
@@ -22,7 +23,7 @@ public class SimpleStorageChannelManager implements StorageChannelManager
      */
     public SimpleStorageChannelManager ()
     {
-        storageChannels = new ArrayList<ExtendedStorageChannel> ();
+        storageChannels = new LinkedList<ExtendedStorageChannel> ();
     }
 
     /**

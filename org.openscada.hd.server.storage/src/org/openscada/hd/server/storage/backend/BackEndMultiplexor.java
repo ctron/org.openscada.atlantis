@@ -46,6 +46,9 @@ public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
     /** Timer that is used for deleting old data. */
     private Timer deleteRelictsTimer;
 
+    /** Flag indicating whether the instance has been initialized or not. */
+    private boolean initialized;
+
     /**
      * Constructor.
      * @param backEndFactory factory that is used to create new fractal backend objects
@@ -56,6 +59,7 @@ public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
         this.backEndFactory = backEndFactory;
         this.newBackendTimespan = newBackendTimespan;
         backEnds = new LinkedList<BackEnd> ();
+        initialized = false;
     }
 
     /**
@@ -80,6 +84,7 @@ public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
         deinitialize ();
         backEnds.clear ();
         BackEnd[] backEndArray = backEndFactory.getExistingBackEnds ( storageChannelMetaData.getDataItemId (), storageChannelMetaData.getDetailLevelId (), storageChannelMetaData.getCalculationMethod () );
+        initialized = true;
         Arrays.sort ( backEndArray, new InverseTimeOrderComparator () );
         backEnds.addAll ( Arrays.asList ( backEndArray ) );
         metaData = new StorageChannelMetaData ( storageChannelMetaData );
@@ -114,6 +119,7 @@ public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
      */
     public synchronized void deinitialize () throws Exception
     {
+        initialized = false;
         if ( deleteRelictsTimer != null )
         {
             deleteRelictsTimer.cancel ();
@@ -122,7 +128,14 @@ public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
         }
         for ( BackEnd backEnd : backEnds )
         {
-            backEnd.deinitialize ();
+            try
+            {
+                backEnd.deinitialize ();
+            }
+            catch ( Exception e )
+            {
+                logger.warn ( "sub back end of '%s' could not be deinitialized", metaData );
+            }
         }
         metaData = null;
     }
@@ -188,6 +201,42 @@ public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
     }
 
     /**
+     * This method assures that the instance is initialized.
+     * @throws Exception if the instance is not initialized
+     */
+    private void assureInitialized () throws Exception
+    {
+        if ( !initialized )
+        {
+            String message = String.format ( "back end (%s) is not properly initialized!", metaData );
+            logger.error ( message );
+            throw new Exception ( message );
+        }
+    }
+
+    /**
+     * This method creates a new back end object using the back end factory, creates and initializes the object's data, adds the object to the back end list and returns a reference to the newly created object.
+     * @param startTime start time of the newly created back end object
+     * @param endTime end time of the newly created back end object
+     * @param index insertion index of the new object in the list of back end objects
+     * @return reference to the newly created object
+     * @throws Exception in case of any problem
+     */
+    private BackEnd createAndAddNewBackEnd ( final long startTime, final long endTime, final int index ) throws Exception
+    {
+        final StorageChannelMetaData storageChannelMetaData = new StorageChannelMetaData ( metaData );
+        storageChannelMetaData.setStartTime ( startTime );
+        storageChannelMetaData.setEndTime ( endTime );
+        final BackEnd backEnd = backEndFactory.createNewBackEnd ( storageChannelMetaData );
+        backEnd.create ( storageChannelMetaData );
+        backEnd.initialize ( storageChannelMetaData );
+        backEnds.add ( index, backEnd );
+        metaData.setStartTime ( Math.min ( metaData.getStartTime (), storageChannelMetaData.getStartTime () ) );
+        metaData.setEndTime ( Math.min ( metaData.getEndTime (), storageChannelMetaData.getEndTime () ) );
+        return backEnd;
+    }
+
+    /**
      * This method returns the backend that is able to process data with the passed timestamp.
      * If no suitable backend currently exists, a new one will be created using the backend factory.
      * @param timestamp timestam for which a storage channel backend has to be retrieved
@@ -227,28 +276,15 @@ public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
                 }
 
                 // a new backend has to be created
-                StorageChannelMetaData storageChannelMetaData = new StorageChannelMetaData ( metaData );
-                storageChannelMetaData.setStartTime ( endTime );
-                storageChannelMetaData.setEndTime ( Math.min ( endTime + this.newBackendTimespan, maxEndTime ) );
-                backEnd = backEndFactory.createNewBackEnd ( storageChannelMetaData );
-                backEnd.create ( storageChannelMetaData );
-                backEnd.initialize ( storageChannelMetaData );
-                backEnds.add ( i, backEnd );
-                return backEnd;
+                return createAndAddNewBackEnd ( endTime, Math.min ( endTime + this.newBackendTimespan, maxEndTime ), i );
             }
             maxEndTime = startTime;
         }
 
         // create a new backend channel with a completely independent timespan, since no channel exists
         // as start time, a time not too far in the past is chosen, since older data might be processed in the future
-        StorageChannelMetaData storageChannelMetaData = new StorageChannelMetaData ( metaData );
-        storageChannelMetaData.setStartTime ( timestamp - this.newBackendTimespan / 10 );
-        storageChannelMetaData.setEndTime ( storageChannelMetaData.getStartTime () + this.newBackendTimespan );
-        backEnd = backEndFactory.createNewBackEnd ( storageChannelMetaData );
-        backEnd.create ( storageChannelMetaData );
-        backEnd.initialize ( storageChannelMetaData );
-        backEnds.add ( backEnd );
-        return backEnd;
+        final long startTime = timestamp - this.newBackendTimespan / 10;
+        return createAndAddNewBackEnd ( startTime, startTime + this.newBackendTimespan, backEnds.size () );
     }
 
     /**
@@ -275,6 +311,7 @@ public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
      */
     public synchronized void updateLong ( final LongValue longValue ) throws Exception
     {
+        assureInitialized ();
         if ( longValue != null )
         {
             try
@@ -293,6 +330,7 @@ public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
      */
     public synchronized void updateLongs ( final LongValue[] longValues ) throws Exception
     {
+        assureInitialized ();
         if ( longValues != null )
         {
             // assign all long values to the backend that is responsible for their processing
@@ -337,6 +375,9 @@ public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
      */
     public synchronized LongValue[] getLongValues ( final long startTime, final long endTime ) throws Exception
     {
+        // assure that the current state is valid
+        assureInitialized ();
+
         // collect result data
         final List<LongValue> longValues = new LinkedList<LongValue> ();
         List<BackEnd> backEndsToRemove = new ArrayList<BackEnd> ();

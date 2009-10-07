@@ -67,6 +67,9 @@ public class FileBackEnd implements BackEnd
     /** Offset within the file where the header has ended and real data starts. */
     private long dataOffset;
 
+    /** Flag indicating whether the instance has been initialized or not. */
+    private boolean initialized;
+
     /**
      * Constructor expecting the configuration of the file backend.
      * @param fileName name of the existing file that is used to store data
@@ -76,6 +79,7 @@ public class FileBackEnd implements BackEnd
         this.fileName = fileName;
         metaData = null;
         openInWriteMode = false;
+        initialized = false;
         if ( ( fileName == null ) || ( fileName.trim ().length () == 0 ) )
         {
             throw new IllegalArgumentException ( "invalid filename passed via configuration" );
@@ -184,6 +188,7 @@ public class FileBackEnd implements BackEnd
     {
         metaData = null;
         getMetaData ();
+        initialized = true;
     }
 
     /**
@@ -213,6 +218,7 @@ public class FileBackEnd implements BackEnd
      */
     public synchronized void deinitialize () throws Exception
     {
+        initialized = false;
         closeConnection ();
         metaData = null;
     }
@@ -238,6 +244,20 @@ public class FileBackEnd implements BackEnd
             {
                 logger.warn ( String.format ( "deletion of file '%s' failed", fileName ) );
             }
+        }
+    }
+
+    /**
+     * This method assures that the instance is initialized.
+     * @throws Exception if the instance is not initialized
+     */
+    private void assureInitialized () throws Exception
+    {
+        if ( !initialized )
+        {
+            String message = String.format ( "back end (%s) is not properly initialized!", metaData );
+            logger.error ( message );
+            throw new Exception ( message );
         }
     }
 
@@ -577,6 +597,7 @@ public class FileBackEnd implements BackEnd
      */
     public synchronized void updateLong ( final LongValue longValue ) throws Exception
     {
+        assureInitialized ();
         if ( longValue != null )
         {
             try
@@ -600,6 +621,7 @@ public class FileBackEnd implements BackEnd
      */
     public synchronized void updateLongs ( final LongValue[] longValues ) throws Exception
     {
+        assureInitialized ();
         if ( longValues != null )
         {
             try
@@ -626,6 +648,9 @@ public class FileBackEnd implements BackEnd
      */
     public synchronized LongValue[] getLongValues ( final long startTime, final long endTime ) throws Exception
     {
+        // assure that the current state is valid
+        assureInitialized ();
+
         // assure that a valid timespan is passed
         if ( startTime >= endTime )
         {
