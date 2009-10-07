@@ -1,7 +1,6 @@
 package org.openscada.hd.server.storage.backend;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -10,6 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openscada.hd.server.storage.StorageChannelMetaData;
+import org.openscada.hd.server.storage.backend.filefilter.DirectoryFileFilter;
+import org.openscada.hd.server.storage.backend.filefilter.FileFileFilter;
 import org.openscada.hd.server.storage.calculation.CalculationMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,60 +21,6 @@ import org.slf4j.LoggerFactory;
  */
 public class FileBackEndFactory implements BackEndFactory
 {
-    /**
-     * This file filter searches for sub directories with the specified name.
-     * @author Ludwig Straub
-     */
-    private static class DirectoryFileFilter implements FileFilter
-    {
-        /** Case insensitive name of the sub directories that have to be searched. If null is set then all directories are accepted. */
-        private final String name;
-
-        /**
-         * Constructor
-         * @param name case insensitive name of the sub directories that have to be searched. If null is passed then all directories are accepted
-         */
-        public DirectoryFileFilter ( final String name )
-        {
-            this.name = name;
-        }
-
-        /**
-         * @see java.io.FileFilter#accept
-         */
-        public boolean accept ( final File file )
-        {
-            return file.isDirectory () && ( ( name == null ) || file.getName ().equalsIgnoreCase ( name ) );
-        }
-    }
-
-    /**
-     * This file filter searches for files matching files with the specified name.
-     * @author Ludwig Straub
-     */
-    private static class FileFileFilter implements FileFilter
-    {
-        /** Case insensitive name of the files that have to be searched. If null is set then all files are accepted. */
-        private final String fileNamePattern;
-
-        /**
-         * Constructor
-         * @param fileNamePattern case pattern of file names that have to be searched. If null is passed then all files are accepted
-         */
-        public FileFileFilter ( final String fileNamePattern )
-        {
-            this.fileNamePattern = fileNamePattern;
-        }
-
-        /**
-         * @see java.io.FileFilter#accept
-         */
-        public boolean accept ( final File file )
-        {
-            return file.isFile () && file.getName ().matches ( fileNamePattern );
-        }
-    }
-
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( FileBackEndFactory.class );
 
