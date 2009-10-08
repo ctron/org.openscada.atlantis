@@ -19,7 +19,6 @@ import org.openscada.hd.QueryParameters;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.Session;
 import org.openscada.hd.server.common.HistoricalItem;
-import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -48,7 +47,7 @@ public class ServiceImpl implements Service, ServiceTrackerCustomizer
     public ServiceImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         this.context = context;
-        this.tracker = new ServiceTracker ( this.context, StorageHistoricalItem.class.getName (), this );
+        this.tracker = new ServiceTracker ( this.context, HistoricalItem.class.getName (), this );
     }
 
     public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
@@ -141,10 +140,18 @@ public class ServiceImpl implements Service, ServiceTrackerCustomizer
             {
                 throw new InvalidItemException ( itemId );
             }
-            final QueryImpl query = new QueryImpl ( sessionImpl, listener );
-            query.setQuery ( item.createQuery ( parameters, query ) );
-
-            return query;
+            final QueryImpl queryImpl = new QueryImpl ( sessionImpl, listener );
+            final Query query = item.createQuery ( parameters, queryImpl );
+            if ( query != null )
+            {
+                queryImpl.setQuery ( query );
+                return queryImpl;
+            }
+            else
+            {
+                logger.warn ( "Unable to create query: {}", itemId );
+                return null;
+            }
         }
     }
 
@@ -167,7 +174,7 @@ public class ServiceImpl implements Service, ServiceTrackerCustomizer
     public Object addingService ( final ServiceReference reference )
     {
         logger.info ( "Adding service: {}", reference );
-        final StorageHistoricalItem item = (StorageHistoricalItem)this.context.getService ( reference );
+        final HistoricalItem item = (HistoricalItem)this.context.getService ( reference );
         final HistoricalItemInformation info = item.getInformation ();
 
         synchronized ( this )

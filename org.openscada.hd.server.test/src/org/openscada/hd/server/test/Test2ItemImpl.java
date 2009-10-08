@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 public class Test2ItemImpl implements HistoricalItem
 {
-
     private final static Logger logger = LoggerFactory.getLogger ( Test2ItemImpl.class );
 
     private final Set<Test2QueryImpl> queries = new HashSet<Test2QueryImpl> ();

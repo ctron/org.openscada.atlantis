@@ -173,8 +173,11 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     protected void handleCreateQuery ( final Message message )
     {
+
         // get the query id
         final long queryId = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
+
+        logger.debug ( "Creating new query with id: {}", queryId );
 
         synchronized ( this )
         {
@@ -194,15 +197,18 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
                 // create the handler and set the query
                 final QueryHandler handler = new QueryHandler ( queryId, this );
+                this.queries.put ( queryId, handler );
 
                 final Query query = this.service.createQuery ( this.session, itemId, parameters, handler );
                 if ( query == null )
                 {
                     handler.setQuery ( query );
-                    this.queries.put ( queryId, handler );
+                    logger.debug ( "Adding query: {}", queryId );
                 }
                 else
                 {
+                    // we already added the query .. so remove it here
+                    this.queries.remove ( queryId );
                     sendQueryState ( queryId, QueryState.DISCONNECTED );
                 }
             }
@@ -234,6 +240,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     public void sendQueryParameters ( final long queryId, final QueryParameters parameters, final Set<String> valueTypes )
     {
+        logger.debug ( "Sending query parameters: {}", queryId );
+
         synchronized ( this )
         {
             if ( !this.queries.containsKey ( queryId ) )
@@ -256,6 +264,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     public void sendQueryState ( final long queryId, final QueryState state )
     {
+        logger.debug ( "Sending query state: {}", queryId );
+
         synchronized ( this )
         {
             if ( !this.queries.containsKey ( queryId ) )
