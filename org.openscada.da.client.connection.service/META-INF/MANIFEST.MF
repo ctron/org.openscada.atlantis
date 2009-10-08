@@ -16,3 +16,4 @@ Import-Package: org.apache.log4j,
  org.osgi.util.tracker;version="1.4.2"
 Export-Package: org.openscada.da.client.connection.service;version="0.14.0"
 Bundle-License: http://opensource.org/licenses/lgpl-2.1.php
+Bundle-Copyright: 2006-2009 inavare GmbH
