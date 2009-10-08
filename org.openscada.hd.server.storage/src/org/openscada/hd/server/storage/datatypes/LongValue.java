@@ -15,7 +15,7 @@ public class LongValue extends BaseValue
      * @param qualityIndicator quality information of the data
      * @param value value to be handled
      */
-    public LongValue ( long time, double qualityIndicator, long value )
+    public LongValue ( final long time, final double qualityIndicator, final long value )
     {
         super ( time, qualityIndicator );
         this.value = value;
@@ -34,8 +34,16 @@ public class LongValue extends BaseValue
      * This method sets the value to be handled.
      * @param value value to be handled
      */
-    public void setValue ( long value )
+    public void setValue ( final long value )
     {
         this.value = value;
+    }
+
+    /**
+     * @see org.openscada.hd.server.storage.datatypes
+     */
+    public BaseValue createNewValue ( final long time, final double qualityIndicator )
+    {
+        return new LongValue ( time, qualityIndicator, 0 );
     }
 }

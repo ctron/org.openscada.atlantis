@@ -34,8 +34,16 @@ public class DoubleValue extends BaseValue
      * This method sets the value to be handled.
      * @param value value to be handled
      */
-    public void setValue ( double value )
+    public void setValue ( final double value )
     {
         this.value = value;
+    }
+
+    /**
+     * @see org.openscada.hd.server.storage.datatypes
+     */
+    public BaseValue createNewValue ( final long time, final double qualityIndicator )
+    {
+        return new DoubleValue ( time, qualityIndicator, value );
     }
 }

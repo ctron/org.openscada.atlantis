@@ -192,6 +192,22 @@ public class FileBackEnd implements BackEnd
     }
 
     /**
+     * @see org.openscada.hd.server.storage.backend.BackEnd#scheduleCleanup
+     */
+    public void scheduleCleanup () throws Exception
+    {
+        assureInitialized ();
+    }
+
+    /**
+     * @see org.openscada.hd.server.storage.backend.BackEnd#cleanupRelicts
+     */
+    public void cleanupRelicts () throws Exception
+    {
+        assureInitialized ();
+    }
+
+    /**
      * @see org.openscada.hd.server.storage.backend.BackEnd#getMetaData
      */
     public synchronized StorageChannelMetaData getMetaData () throws Exception

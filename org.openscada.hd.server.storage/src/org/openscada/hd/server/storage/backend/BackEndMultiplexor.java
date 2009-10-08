@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * It is arranged that each such backend object is responsible for its own exclusive time span.
  * @author Ludwig Straub
  */
-public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
+public class BackEndMultiplexor implements BackEnd
 {
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( BackEndMultiplexor.class );
@@ -88,8 +88,63 @@ public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
         Arrays.sort ( backEndArray, new InverseTimeOrderComparator () );
         backEnds.addAll ( Arrays.asList ( backEndArray ) );
         metaData = new StorageChannelMetaData ( storageChannelMetaData );
+    }
+
+    /**
+     * @see org.openscada.hd.server.storage.backend.BackEnd#scheduleCleanup
+     */
+    public synchronized void scheduleCleanup ()
+    {
         deleteRelictsTimer = new Timer ();
-        deleteRelictsTimer.schedule ( new RelictDataCleanerTask ( this ), CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD );
+        deleteRelictsTimer.schedule ( new BackEndRelictDataCleanerTask ( this ), CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD );
+    }
+
+    /**
+     * @see org.openscada.hd.server.storage.backend.BackEnd#cleanupRelicts
+     */
+    public synchronized void cleanupRelicts ()
+    {
+        logger.info ( "deleting old data... start" );
+        if ( metaData == null )
+        {
+            return;
+        }
+        final long proposedDataAge = System.currentTimeMillis () - metaData.getProposedDataAge ();
+        for ( int i = backEnds.size () - 1; i >= 0; i-- )
+        {
+            BackEnd backEnd = backEnds.get ( i );
+            if ( backEnd != null )
+            {
+                StorageChannelMetaData subMetaData = null;
+                try
+                {
+                    subMetaData = backEnd.getMetaData ();
+                    if ( ( subMetaData == null ) || ( subMetaData.getEndTime () <= proposedDataAge ) )
+                    {
+                        try
+                        {
+                            backEnd.delete ();
+                        }
+                        catch ( Exception e1 )
+                        {
+                            logger.warn ( String.format ( "relict data (%s) could not be deleted by BackEndMultiplexor (%s)! ", subMetaData, metaData ), e1 );
+                        }
+                        backEnds.remove ( i );
+                    }
+                    else
+                    {
+                        // since the array of back ends is sorted, no older entries will be found during further iteration steps
+                        break;
+                    }
+                }
+                catch ( Exception e )
+                {
+                    logger.warn ( String.format ( "metadata of sub backend could not be accessed! (%s)", metaData ), e );
+                }
+            }
+        }
+        backEnds.clear ();
+        logger.info ( "deleting old data... end" );
     }
 
     /**
@@ -134,7 +189,7 @@ public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
             }
             catch ( Exception e )
             {
-                logger.warn ( "sub back end of '%s' could not be deinitialized", metaData );
+                logger.warn ( String.format ( "sub back end of '%s' could not be deinitialized", metaData ), e );
             }
         }
         metaData = null;
@@ -150,54 +205,6 @@ public class BackEndMultiplexor implements BackEnd, RelictDataCleaner
             backEnd.delete ();
         }
         backEnds.clear ();
-    }
-
-    /**
-     * This method deletes data that is older than the proposed data age specified within the metadata.
-     */
-    public synchronized void deleteRelicts ()
-    {
-        logger.info ( "deleting old data... start" );
-        if ( metaData == null )
-        {
-            return;
-        }
-        final long proposedDataAge = System.currentTimeMillis () - metaData.getProposedDataAge ();
-        for ( int i = backEnds.size () - 1; i >= 0; i-- )
-        {
-            BackEnd backEnd = backEnds.get ( i );
-            if ( backEnd != null )
-            {
-                StorageChannelMetaData subMetaData = null;
-                try
-                {
-                    subMetaData = backEnd.getMetaData ();
-                    if ( ( subMetaData == null ) || ( subMetaData.getEndTime () <= proposedDataAge ) )
-                    {
-                        try
-                        {
-                            backEnd.delete ();
-                        }
-                        catch ( Exception e1 )
-                        {
-                            logger.warn ( "relict data (%s) could not be deleted by BackEndMultiplexor (%s)! ", subMetaData, metaData );
-                        }
-                        backEnds.remove ( i );
-                    }
-                    else
-                    {
-                        // since the array of back ends is sorted, no older entries will be found during further iteration steps
-                        break;
-                    }
-                }
-                catch ( Exception e )
-                {
-                    logger.warn ( "metadata of sub backend could not be accessed! (%s)", metaData );
-                }
-            }
-        }
-        backEnds.clear ();
-        logger.info ( "deleting old data... end" );
     }
 
     /**

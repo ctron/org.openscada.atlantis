@@ -32,7 +32,7 @@ public interface ExtendedStorageChannel extends StorageChannel
     public abstract void updateDoubles ( final DoubleValue[] doubleValues ) throws Exception;
 
     /**
-     * This method retrieves all double values that match the specified time span and returns them as array.
+     * This method retrieves all double values that match the specified time span and returns them as array sorted by time.
      * @param startTime start of the time span for which the values have to be retrieved
      * @param endTime end of the time span for which the values have to be retrieved
      * @return double values that match the specified time span

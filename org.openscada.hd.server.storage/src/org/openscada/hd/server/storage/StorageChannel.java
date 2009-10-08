@@ -32,7 +32,7 @@ public interface StorageChannel
     public abstract void updateLongs ( final LongValue[] longValues ) throws Exception;
 
     /**
-     * This method retrieves all long values that match the specified time span and returns them as array.
+     * This method retrieves all long values that match the specified time span and returns them as array sorted by time.
      * If the lower bound cannot be satisfied by an exact value, the previous value that lies outside the time span will also be returned.
      * @param startTime start of the time span for which the values have to be retrieved
      * @param endTime end of the time span for which the values have to be retrieved

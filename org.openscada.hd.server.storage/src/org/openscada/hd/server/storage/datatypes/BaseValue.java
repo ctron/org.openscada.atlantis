@@ -2,9 +2,10 @@ package org.openscada.hd.server.storage.datatypes;
 
 /**
  * Base class for all values that can be handled via the storage channel api.
+ * Two instances of this class are equal if they have the identical timestamp.
  * @author Ludwig Straub
  */
-public class BaseValue
+public abstract class BaseValue implements Comparable<BaseValue>
 {
     /** Time stamp of the data. */
     private long time;
@@ -17,7 +18,7 @@ public class BaseValue
      * @param time time stamp of the data
      * @param qualityIndicator quality information of the data
      */
-    public BaseValue ( long time, double qualityIndicator )
+    public BaseValue ( final long time, final double qualityIndicator )
     {
         this.time = time;
         this.qualityIndicator = qualityIndicator;
@@ -36,7 +37,7 @@ public class BaseValue
      * This method sets the time stamp of the data.
      * @param time time stamp of the data
      */
-    public void setTime ( long time )
+    public void setTime ( final long time )
     {
         this.time = time;
     }
@@ -54,8 +55,53 @@ public class BaseValue
      * This method sets the quality information of the data.
      * @param qualityIndicator quality information of the data
      */
-    public void setQualityIndicator ( double qualityIndicator )
+    public void setQualityIndicator ( final double qualityIndicator )
     {
         this.qualityIndicator = qualityIndicator;
+    }
+
+    /**
+     * This method creates an object of the same type with the identical value
+     * @param time time stamp of the object that has to be created
+     * @param qualityIndicator quality information of the data
+     * @return object of the same time with quality indicator set to 0
+     */
+    public abstract BaseValue createNewValue ( final long time, final double qualityIndicator );
+
+    /**
+     * @see java.lang.Object#hashCode
+     */
+    public int hashCode ()
+    {
+        return (int) ( time ^ ( time >>> 32 ) );
+    }
+
+    /**
+     * @see java.lang.Object#equals
+     */
+    public boolean equals ( Object baseValue )
+    {
+        return ( baseValue instanceof BaseValue ) && ( time == ( (BaseValue)baseValue ).getTime () );
+    }
+
+    /**
+     * @see java.lang.Comparable#compareTo
+     */
+    public int compareTo ( BaseValue o2 )
+    {
+        if ( o2 == null )
+        {
+            return 1;
+        }
+        final long t2 = o2.getTime ();
+        if ( time < t2 )
+        {
+            return -1;
+        }
+        if ( time > t2 )
+        {
+            return 1;
+        }
+        return 0;
     }
 }
