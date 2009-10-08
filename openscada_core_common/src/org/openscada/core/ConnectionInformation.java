@@ -124,6 +124,15 @@ public class ConnectionInformation
                 }
             }
 
+            if ( ci.getInterface () == null )
+            {
+                return null;
+            }
+            if ( ci.getDriver () == null )
+            {
+                return null;
+            }
+
             return ci;
         }
         catch ( final Exception e )
