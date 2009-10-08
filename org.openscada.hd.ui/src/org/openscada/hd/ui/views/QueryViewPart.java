@@ -5,9 +5,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.ui.data.QueryBufferBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class QueryViewPart extends ViewPart implements QueryListener
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( QueryViewPart.class );
 
     protected QueryBufferBean query;
 
@@ -44,6 +48,8 @@ public abstract class QueryViewPart extends ViewPart implements QueryListener
 
     protected void setQuery ( final QueryBufferBean query )
     {
+        logger.info ( "Setting query: ", query );
+
         this.query = query;
         this.query.addQueryListener ( this );
     }

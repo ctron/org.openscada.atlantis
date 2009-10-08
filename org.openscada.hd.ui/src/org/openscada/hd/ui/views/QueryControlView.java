@@ -101,17 +101,17 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
         Label label;
 
         label = new Label ( group, SWT.NONE );
-        label.setText ( "From: " );
+        label.setText ( "From:" );
         this.startTimestampText = new Text ( group, SWT.BORDER | SWT.READ_ONLY );
         this.startTimestampText.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
 
         label = new Label ( group, SWT.NONE );
-        label.setText ( "To: " );
+        label.setText ( "To:" );
         this.endTimestampText = new Text ( group, SWT.BORDER | SWT.READ_ONLY );
         this.endTimestampText.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
 
         label = new Label ( group, SWT.NONE );
-        label.setText ( "Entries: " );
+        label.setText ( "Entries:" );
         this.entriesText = new Text ( group, SWT.BORDER | SWT.READ_ONLY );
         this.entriesText.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
 
@@ -122,17 +122,17 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
         group.setLayout ( new GridLayout ( 2, false ) );
 
         label = new Label ( group, SWT.NONE );
-        label.setText ( "From: " );
+        label.setText ( "From:" );
         this.startTimestampRequestText = new Text ( group, SWT.BORDER | SWT.READ_ONLY );
         this.startTimestampRequestText.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
 
         label = new Label ( group, SWT.NONE );
-        label.setText ( "To: " );
+        label.setText ( "To:" );
         this.endTimestampRequestText = new Text ( group, SWT.BORDER | SWT.READ_ONLY );
         this.endTimestampRequestText.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
 
         label = new Label ( group, SWT.NONE );
-        label.setText ( "Entries: " );
+        label.setText ( "Entries:" );
         this.entriesRequestText = new Text ( group, SWT.BORDER );
         this.entriesRequestText.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
         this.entriesRequestText.addVerifyListener ( new VerifyListener () {
@@ -296,6 +296,14 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
     {
         super.setQuery ( query );
         this.query.addPropertyChangeListener ( this );
+
+        for ( final Control control : this.controls )
+        {
+            control.setEnabled ( true );
+        }
+
+        this.requestParameters = query.getRequestParameters ();
+        updateRequestParameters ();
     }
 
     @Override
@@ -374,6 +382,11 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
         if ( QueryBuffer.PROP_PERCENT_FILLED.equals ( evt.getPropertyName () ) || QueryBuffer.PROP_STATE.equals ( evt.getPropertyName () ) )
         {
             setState ( this.query.getState (), this.query.getPercentFilled () );
+        }
+        else if ( QueryBuffer.PROP_REQUEST_PARAMETERS.equals ( evt.getPropertyName () ) )
+        {
+            this.requestParameters = this.query.getRequestParameters ();
+            updateRequestParameters ();
         }
     }
 

@@ -38,7 +38,7 @@ public class QueryBuffer extends AbstractPropertyChange
 
     private final String itemId;
 
-    private final QueryParameters requestParameters;
+    private QueryParameters requestParameters;
 
     private QueryParameters queryParameters;
 
@@ -208,6 +208,13 @@ public class QueryBuffer extends AbstractPropertyChange
         firePropertyChange ( PROP_QUERY_PARAMETERS, oldParameters, parameters );
     }
 
+    private void setRequestParameters ( final QueryParameters parameters )
+    {
+        final QueryParameters oldParameters = this.requestParameters;
+        this.requestParameters = parameters;
+        firePropertyChange ( PROP_REQUEST_PARAMETERS, oldParameters, parameters );
+    }
+
     protected synchronized void updateState ( final QueryState state )
     {
         final QueryState oldState = this.state;
@@ -248,6 +255,7 @@ public class QueryBuffer extends AbstractPropertyChange
 
     public void changeProperties ( final QueryParameters parameters )
     {
+        setRequestParameters ( parameters );
         this.query.changeParameters ( parameters );
     }
 
