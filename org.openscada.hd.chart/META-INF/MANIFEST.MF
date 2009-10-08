@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SWTChart Plug-in
+Bundle-SymbolicName: org.openscada.hd.chart;singleton:=true
+Bundle-Version: 0.6.0
+Require-Bundle: org.eclipse.swt
+Export-Package: org.swtchart,org.openscada.hd.chart
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
