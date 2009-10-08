@@ -20,7 +20,6 @@
 package org.openscada.hd.server.net;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -51,11 +50,6 @@ import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
 import org.openscada.net.utils.MessageCreator;
-import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.concurrent.ResultHandler;
-import org.openscada.utils.concurrent.task.DefaultTaskHandler;
-import org.openscada.utils.concurrent.task.ResultFutureHandler;
-import org.openscada.utils.concurrent.task.TaskHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,10 +63,6 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
     private Service service = null;
 
     private Session session = null;
-
-    private final TaskHandler taskHandler = new DefaultTaskHandler ();
-
-    private final Set<Long> taskMap = new HashSet<Long> ();
 
     private final Map<Long, QueryHandler> queries = new HashMap<Long, QueryHandler> ();
 
@@ -157,8 +147,11 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     protected void handleCloseQuery ( final Message message )
     {
+
         // get the query id
         final long queryId = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
+
+        logger.info ( "Handle close query: {}", queryId );
 
         synchronized ( this )
         {
@@ -202,14 +195,14 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
                 final Query query = this.service.createQuery ( this.session, itemId, parameters, handler );
                 if ( query == null )
                 {
-                    handler.setQuery ( query );
-                    logger.debug ( "Adding query: {}", queryId );
-                }
-                else
-                {
                     // we already added the query .. so remove it here
                     this.queries.remove ( queryId );
                     sendQueryState ( queryId, QueryState.DISCONNECTED );
+                }
+                else
+                {
+                    logger.debug ( "Adding query: {}", queryId );
+                    handler.setQuery ( query );
                 }
             }
             catch ( final Throwable e )
@@ -240,7 +233,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     public void sendQueryParameters ( final long queryId, final QueryParameters parameters, final Set<String> valueTypes )
     {
-        logger.debug ( "Sending query parameters: {}", queryId );
+        logger.debug ( "Sending query parameters: {} / {} / {}", new Object[] { queryId, parameters, valueTypes } );
 
         synchronized ( this )
         {
@@ -264,12 +257,13 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     public void sendQueryState ( final long queryId, final QueryState state )
     {
-        logger.debug ( "Sending query state: {}", queryId );
+        logger.debug ( "Sending query state: {} -> {}", new Object[] { queryId, state } );
 
         synchronized ( this )
         {
             if ( !this.queries.containsKey ( queryId ) )
             {
+                logger.info ( "Query not found {}", queryId );
                 return;
             }
             final Message message = new Message ( Messages.CC_HD_UPDATE_QUERY_STATUS );
@@ -375,19 +369,6 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
     private void closeSession ()
     {
         cleanUp ();
-    }
-
-    private <T> void scheduleTask ( final NotifyFuture<T> task, final long id, final ResultHandler<T> resultHandler )
-    {
-        task.addListener ( new ResultFutureHandler<T> ( resultHandler ) );
-    }
-
-    private void removeTask ( final long id )
-    {
-        synchronized ( this.taskMap )
-        {
-            this.taskMap.remove ( id );
-        }
     }
 
     public void listChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
