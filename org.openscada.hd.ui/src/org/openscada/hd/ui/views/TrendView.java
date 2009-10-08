@@ -35,6 +35,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -53,9 +54,11 @@ import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
+import org.openscada.hd.chart.TrendChart;
 import org.openscada.hd.ui.data.QueryBufferBean;
 import org.swtchart.Chart;
-import org.swtchart.IAxisTick;
+import org.swtchart.IAxis;
+import org.swtchart.IBarSeries;
 import org.swtchart.ILineSeries;
 import org.swtchart.ISeries;
 import org.swtchart.LineStyle;
@@ -71,24 +74,27 @@ public class TrendView extends ViewPart implements QueryListener
      */
     public static class DateRange
     {
-        private final Date start;
+        public final Date start;
 
-        private final Date end;
+        public final Date end;
 
         public DateRange ( final Date start, final Date end )
         {
             this.start = start;
             this.end = end;
         }
+    }
 
-        public Date getStart ()
-        {
-            return start;
-        }
+    public static class SeriesParameters
+    {
+        public final String name;
 
-        public Date getEnd ()
+        public final int width;
+
+        public SeriesParameters ( final String name, final int width )
         {
-            return end;
+            this.name = name;
+            this.width = width;
         }
     }
 
@@ -109,7 +115,7 @@ public class TrendView extends ViewPart implements QueryListener
 
         private Date endTime = null;
 
-        private final List<String> availableSeries = new ArrayList<String> ();
+        private final List<SeriesParameters> availableSeries = new ArrayList<SeriesParameters> ();
 
         public static class ChartParameterBuilder
         {
@@ -129,7 +135,7 @@ public class TrendView extends ViewPart implements QueryListener
                 this.numOfEntries ( parameters.numOfEntries );
                 this.startTime ( parameters.startTime );
                 this.endTime ( parameters.endTime );
-                this.availableSeries ( parameters.availableSeries );
+                this.seriesParameters ( parameters.availableSeries );
                 return this;
             }
 
@@ -157,29 +163,77 @@ public class TrendView extends ViewPart implements QueryListener
                 return this;
             }
 
-            public ChartParameterBuilder availableSeries ( final Iterable<String> availableSeries )
+            public ChartParameterBuilder seriesParameters ( final Iterable<SeriesParameters> availableSeries )
             {
                 parameters.availableSeries.clear ();
-                for ( String series : availableSeries )
+                for ( SeriesParameters series : availableSeries )
                 {
                     parameters.availableSeries.add ( series );
                 }
                 return this;
             }
 
-            public ChartParameterBuilder availableSeries ( final String[] availableSeries )
+            public ChartParameterBuilder seriesParameters ( final SeriesParameters newSeriesParameters )
             {
-                parameters.availableSeries.clear ();
-                for ( String series : availableSeries )
+                int index = 0;
+                for ( SeriesParameters oldSeriesParameters : parameters.availableSeries )
                 {
-                    parameters.availableSeries.add ( series );
+                    if ( oldSeriesParameters.name.equals ( newSeriesParameters.name ) )
+                    {
+                        parameters.availableSeries.set ( index, newSeriesParameters );
+                    }
+                    index += 1;
                 }
+                return this;
+            }
+
+            public ChartParameterBuilder seriesWidth ( final String seriesId, final int width )
+            {
+                SeriesParameters seriesParameters = seriesbyId ( seriesId );
+                this.seriesParameters ( new SeriesParameters ( seriesId, width ) );
+                return this;
+            }
+
+            public ChartParameterBuilder availableSeries ( final Iterable<String> availableSeries )
+            {
+                List<SeriesParameters> newSeriesParameters = new ArrayList<SeriesParameters> ();
+                for ( String seriesId : availableSeries )
+                {
+                    boolean found = false;
+                    for ( SeriesParameters seriesParameters : parameters.availableSeries )
+                    {
+                        if ( seriesId.equals ( seriesParameters.name ) )
+                        {
+                            newSeriesParameters.add ( seriesParameters );
+                            found = true;
+                        }
+
+                    }
+                    if ( !found )
+                    {
+                        newSeriesParameters.add ( new SeriesParameters ( seriesId, 1 ) );
+                    }
+                }
+                parameters.availableSeries.clear ();
+                parameters.availableSeries.addAll ( newSeriesParameters );
                 return this;
             }
 
             public ChartParameters construct ()
             {
                 return parameters;
+            }
+
+            private SeriesParameters seriesbyId ( final String seriesId )
+            {
+                for ( SeriesParameters seriesParameters : parameters.availableSeries )
+                {
+                    if ( seriesParameters.name.equals ( seriesId ) )
+                    {
+                        return seriesParameters;
+                    }
+                }
+                return null;
             }
         }
 
@@ -212,7 +266,7 @@ public class TrendView extends ViewPart implements QueryListener
             return endTime == null ? null : (Date)endTime.clone ();
         }
 
-        public List<String> getAvailableSeries ()
+        public List<SeriesParameters> getAvailableSeries ()
         {
             return Collections.unmodifiableList ( availableSeries );
         }
@@ -320,7 +374,9 @@ public class TrendView extends ViewPart implements QueryListener
 
     private final ConcurrentMap<String, double[]> data = new ConcurrentHashMap<String, double[]> ();
 
-    private Date[] dataLabel = null;
+    private final AtomicReference<double[]> dataQuality = new AtomicReference<double[]> ();
+
+    private final AtomicReference<Date[]> dataLabel = new AtomicReference<Date[]> ();
 
     private final AtomicReference<ChartParameters> chartParameters = new AtomicReference<ChartParameters> ();
 
@@ -343,6 +399,10 @@ public class TrendView extends ViewPart implements QueryListener
 
     private Cursor dragCursor;
 
+    private Cursor zoomInCursor;
+
+    private Cursor zoomOutCursor;
+
     private volatile boolean dragStarted = false;
 
     private volatile int dragStartedX = -1;
@@ -356,6 +416,24 @@ public class TrendView extends ViewPart implements QueryListener
     @Override
     public void createPartControl ( final Composite parent )
     {
+        // create predefined cursors
+        dragCursor = new Cursor ( parent.getDisplay (), SWT.CURSOR_CROSS );
+        ImageData zoomInImage = new ImageData ( getClass ()
+                .getClassLoader ()
+                    .getResourceAsStream ( "org/openscada/hd/ui/zoomin.gif" ) );
+        zoomInCursor = new Cursor ( parent.getDisplay (), zoomInImage, 15, 15 );
+        ImageData zoomOutImage = new ImageData ( getClass ()
+                .getClassLoader ()
+                    .getResourceAsStream ( "org/openscada/hd/ui/zoomout.gif" ) );
+        zoomOutCursor = new Cursor ( parent.getDisplay (), zoomOutImage, 15, 15 );
+
+        // create predefined colors
+        colorRegistry = new ColorRegistry ( parent.getDisplay () );
+        colorRegistry.put ( "quality", new RGB ( 255, 192, 192 ) );
+        colorRegistry.put ( "MIN", new RGB ( 255, 0, 0 ) );
+        colorRegistry.put ( "MAX", new RGB ( 0, 255, 0 ) );
+        colorRegistry.put ( "AVG", new RGB ( 0, 0, 255 ) );
+
         // chart has some predefined parameters, quality of 0.75, from yesterday to today
         chartParameters.set ( ChartParameters.create ().construct () );
 
@@ -399,8 +477,6 @@ public class TrendView extends ViewPart implements QueryListener
             }
         } );
 
-        colorRegistry = new ColorRegistry ( parent.getDisplay () );
-        colorRegistry.put ( "quality", new RGB ( 255, 128, 128 ) );
         qualityColorButton = new Button ( qualityGroup, SWT.PUSH );
         qualityColorButton.setText ( "Color" );
         qualityColorButton.setBackground ( colorRegistry.get ( "quality" ) );
@@ -414,6 +490,11 @@ public class TrendView extends ViewPart implements QueryListener
                 {
                     colorRegistry.put ( "quality", resultColor );
                     qualityColorButton.setBackground ( colorRegistry.get ( "quality" ) );
+                    IBarSeries series = (IBarSeries)chart.getSeriesSet ().getSeries ( "quality" );
+                    if ( series != null )
+                    {
+                        series.setBarColor ( colorRegistry.get ( "quality" ) );
+                    }
                 }
             }
 
@@ -429,7 +510,7 @@ public class TrendView extends ViewPart implements QueryListener
         fontRegistry.put ( SMALL_LABEL_FONT, smallFont );
 
         // add chart
-        chart = new Chart ( parent, SWT.NONE );
+        chart = new TrendChart ( parent, SWT.NONE );
         chart.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, true ) );
         chart.getTitle ().setText ( "no item selected" );
         chart.getTitle ().setForeground ( parent.getDisplay ().getSystemColor ( SWT.COLOR_WIDGET_FOREGROUND ) );
@@ -447,6 +528,21 @@ public class TrendView extends ViewPart implements QueryListener
                     .getSystemColor ( SWT.COLOR_WIDGET_FOREGROUND ) );
         chart.getAxisSet ().getYAxis ( 0 ).getTick ().setFont ( fontRegistry.get ( SMALL_LABEL_FONT ) );
         chart.getAxisSet ().getYAxis ( 0 ).getGrid ().setStyle ( LineStyle.NONE );
+
+        IAxis qualityYAxis = chart.getAxisSet ().getYAxis ( chart.getAxisSet ().createYAxis () );
+        IAxis qualityXAxis = chart.getAxisSet ().getXAxis ( chart.getAxisSet ().createXAxis () );
+        IBarSeries qualitySeries = (IBarSeries)chart.getSeriesSet ().createSeries ( SeriesType.BAR, "quality" );
+        qualitySeries.setBarColor ( colorRegistry.get ( "quality" ) );
+        qualitySeries.setBarPadding ( 0 );
+        qualitySeries.setYAxisId ( qualityYAxis.getId () );
+        qualitySeries.setXAxisId ( qualityXAxis.getId () );
+        qualityYAxis.getTitle ().setVisible ( false );
+        qualityYAxis.getTick ().setVisible ( false );
+        qualityYAxis.getGrid ().setStyle ( LineStyle.NONE );
+        qualityXAxis.getTitle ().setVisible ( false );
+        qualityXAxis.getTick ().setVisible ( false );
+        qualityXAxis.getGrid ().setStyle ( LineStyle.NONE );
+
         // if size of plot has changed, a new request should be made to account
         // for changed numbers of displayed entries
         chart.getPlotArea ().addControlListener ( new ControlListener () {
@@ -488,8 +584,8 @@ public class TrendView extends ViewPart implements QueryListener
                     ChartParameters parameters = ChartParameters
                             .create ()
                                 .from ( chartParameters.get () )
-                                .startTime ( zoomResult.getStart () )
-                                .endTime ( zoomResult.getEnd () )
+                                .startTime ( zoomResult.start )
+                                .endTime ( zoomResult.end )
                                 .construct ();
                     chartParameters.set ( parameters );
                     rangeUpdateJob.get ().schedule ( GUI_JOB_DELAY );
@@ -505,8 +601,8 @@ public class TrendView extends ViewPart implements QueryListener
                         ChartParameters parameters = ChartParameters
                                 .create ()
                                     .from ( chartParameters.get () )
-                                    .startTime ( zoomResult.getStart () )
-                                    .endTime ( zoomResult.getEnd () )
+                                    .startTime ( zoomResult.start )
+                                    .endTime ( zoomResult.end )
                                     .construct ();
                         chartParameters.set ( parameters );
                         rangeUpdateJob.get ().schedule ( GUI_JOB_DELAY );
@@ -520,8 +616,8 @@ public class TrendView extends ViewPart implements QueryListener
                         ChartParameters parameters = ChartParameters
                                 .create ()
                                     .from ( chartParameters.get () )
-                                    .startTime ( zoomResult.getStart () )
-                                    .endTime ( zoomResult.getEnd () )
+                                    .startTime ( zoomResult.start )
+                                    .endTime ( zoomResult.end )
                                     .construct ();
                         chartParameters.set ( parameters );
                         rangeUpdateJob.get ().schedule ( GUI_JOB_DELAY );
@@ -537,14 +633,6 @@ public class TrendView extends ViewPart implements QueryListener
             {
             }
         } );
-
-        // create predefined cursors
-        dragCursor = new Cursor ( parent.getDisplay (), SWT.CURSOR_CROSS );
-
-        // create predefined colors
-        colorRegistry.put ( "MIN", new RGB ( 255, 0, 0 ) );
-        colorRegistry.put ( "MAX", new RGB ( 0, 255, 0 ) );
-        colorRegistry.put ( "AVG", new RGB ( 0, 0, 255 ) );
 
         // set up job for updating chart in case of parameter change
         parameterUpdateJob.set ( new Job ( "updateChartParameters" ) {
@@ -640,15 +728,6 @@ public class TrendView extends ViewPart implements QueryListener
         return new DateRange ( new Date ( startTime.getTime () + ( factor * dLeft ) ), new Date ( startTime.getTime () + ( factor * dRight ) ) );
     }
 
-    @Override
-    public void dispose ()
-    {
-        super.dispose ();
-        parameterUpdateJob.get ().cancel ();
-        rangeUpdateJob.get ().cancel ();
-        dataUpdateJob.get ().cancel ();
-    }
-
     protected void setSelection ( final ISelection selection )
     {
         clear ();
@@ -693,7 +772,8 @@ public class TrendView extends ViewPart implements QueryListener
     {
         // update model
         data.clear ();
-        dataLabel = new Date[parameters.getEntries ()];
+        dataLabel.set ( new Date[parameters.getEntries ()] );
+        dataQuality.set ( new double[parameters.getEntries ()] );
         for ( String seriesId : valueTypes )
         {
             data.put ( seriesId, new double[parameters.getEntries ()] );
@@ -716,11 +796,11 @@ public class TrendView extends ViewPart implements QueryListener
 
     public void updateData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
     {
-        for ( String seriesId : chartParameters.get ().getAvailableSeries () )
+        for ( SeriesParameters series : chartParameters.get ().getAvailableSeries () )
         {
             // use local ref for faster access
-            final Value[] valueArray = values.get ( seriesId );
-            final double[] chartValues = data.get ( seriesId );
+            final Value[] valueArray = values.get ( series.name );
+            final double[] chartValues = data.get ( series.name );
             // now copy values from data source to our data array
             for ( int i = 0; i < valueInformation.length; i++ )
             {
@@ -738,10 +818,11 @@ public class TrendView extends ViewPart implements QueryListener
                 chartValues[i + index] = value;
             }
         }
-        // now copy values for date axis
+        // now copy values for date axis and quality
         for ( int i = 0; i < valueInformation.length; i++ )
         {
-            dataLabel[i + index] = valueInformation[i].getStartTimestamp ().getTime ();
+            dataLabel.get ()[i + index] = valueInformation[i].getStartTimestamp ().getTime ();
+            dataQuality.get ()[i + index] = valueInformation[i].getQuality ();
         }
         dataUpdateJob.get ().schedule ( GUI_JOB_DELAY );
     }
@@ -788,6 +869,10 @@ public class TrendView extends ViewPart implements QueryListener
                 List<String> seriesIds = new ArrayList<String> ();
                 for ( ISeries series : chart.getSeriesSet ().getSeries () )
                 {
+                    if ( "quality".equals ( series.getId () ) )
+                    {
+                        continue;
+                    }
                     seriesIds.add ( series.getId () );
                 }
                 for ( String seriesId : seriesIds )
@@ -799,24 +884,27 @@ public class TrendView extends ViewPart implements QueryListener
                     group.dispose ();
                 }
                 // add new series
-                for ( final String seriesId : chartParameters.get ().getAvailableSeries () )
+                for ( final SeriesParameters seriesParameters : chartParameters.get ().getAvailableSeries () )
                 {
                     final ILineSeries series = (ILineSeries)chart
                             .getSeriesSet ()
-                                .createSeries ( SeriesType.LINE, seriesId );
-                    series.setVisible ( true );
+                                .createSeries ( SeriesType.LINE, seriesParameters.name );
+                    series.setYAxisId ( 0 );
+                    series.setXAxisId ( 0 );
+                    series.setVisible ( seriesParameters.width > 0 );
                     series.enableStep ( true );
                     series.setAntialias ( SWT.ON );
                     series.setSymbolType ( PlotSymbolType.NONE );
-                    series.setLineColor ( colorRegistry.get ( seriesId ) );
+                    series.setLineColor ( colorRegistry.get ( seriesParameters.name ) );
+                    series.setLineWidth ( seriesParameters.width );
                     Group group = new Group ( panel, SWT.SHADOW_ETCHED_IN );
-                    seriesGroups.put ( seriesId, group );
-                    group.setText ( seriesId );
+                    seriesGroups.put ( seriesParameters.name, group );
+                    group.setText ( seriesParameters.name );
                     group.setLayout ( groupLayout );
                     final Button colorButton = new Button ( group, SWT.PUSH );
                     colorButton.setText ( "Color" );
                     colorButton.setVisible ( true );
-                    colorButton.setBackground ( colorRegistry.get ( seriesId ) );
+                    colorButton.setBackground ( colorRegistry.get ( seriesParameters.name ) );
                     colorButton.addSelectionListener ( new SelectionListener () {
                         public void widgetSelected ( final SelectionEvent e )
                         {
@@ -825,9 +913,10 @@ public class TrendView extends ViewPart implements QueryListener
                             RGB resultColor = cd.open ();
                             if ( resultColor != null )
                             {
-                                colorRegistry.put ( seriesId, resultColor );
-                                colorButton.setBackground ( colorRegistry.get ( seriesId ) );
-                                series.setLineColor ( colorRegistry.get ( seriesId ) );
+                                colorRegistry.put ( seriesParameters.name, resultColor );
+                                colorButton.setBackground ( colorRegistry.get ( seriesParameters.name ) );
+                                series.setLineColor ( colorRegistry.get ( seriesParameters.name ) );
+                                chart.redraw ();
                             }
                         }
 
@@ -835,21 +924,23 @@ public class TrendView extends ViewPart implements QueryListener
                         {
                         }
                     } );
-                    final Button visibleButton = new Button ( group, SWT.CHECK );
-                    visibleButton.setText ( "Visible" );
-                    visibleButton.setSelection ( true );
-                    visibleButton.setVisible ( true );
-                    visibleButton.addSelectionListener ( new SelectionListener () {
+                    final Spinner widthSpinner = new Spinner ( group, SWT.BORDER );
+                    widthSpinner.setDigits ( 0 );
+                    widthSpinner.setMinimum ( 0 );
+                    widthSpinner.setMaximum ( 25 );
+                    widthSpinner.setSelection ( seriesParameters.width );
+                    widthSpinner.addSelectionListener ( new SelectionListener () {
                         public void widgetSelected ( final SelectionEvent e )
                         {
-                            if ( visibleButton.getSelection () )
-                            {
-                                series.setVisible ( true );
-                            }
-                            else
-                            {
-                                chart.getSeriesSet ().getSeries ( seriesId ).setVisible ( false );
-                            }
+                            ChartParameters newChartParameters = ChartParameters
+                                    .create ()
+                                        .from ( chartParameters.get () )
+                                        .seriesWidth ( seriesParameters.name, widthSpinner.getSelection () )
+                                        .construct ();
+                            chartParameters.set ( newChartParameters );
+                            series.setLineWidth ( widthSpinner.getSelection () );
+                            series.setVisible ( widthSpinner.getSelection () > 0 );
+                            chart.redraw ();
                         }
 
                         public void widgetDefaultSelected ( final SelectionEvent e )
@@ -897,24 +988,56 @@ public class TrendView extends ViewPart implements QueryListener
         display.asyncExec ( new Runnable () {
             public void run ()
             {
-                for ( String seriesId : chartParameters.get ().getAvailableSeries () )
+                for ( SeriesParameters seriesParameter : chartParameters.get ().getAvailableSeries () )
                 {
-                    final ISeries series = chart.getSeriesSet ().getSeries ( seriesId );
+                    final ISeries series = chart.getSeriesSet ().getSeries ( seriesParameter.name );
                     // I'm not sure in which cases the series can even be null, but just try to continue as usual
                     if ( series == null )
                     {
                         continue;
                     }
-                    series.setXDateSeries ( dataLabel );
-                    series.setYSeries ( data.get ( seriesId ) );
+                    series.setXDateSeries ( dataLabel.get () );
+                    series.setYSeries ( data.get ( seriesParameter.name ) );
                 }
-                IAxisTick xTick = chart.getAxisSet ().getXAxis ( 0 ).getTick ();
-                xTick.setFormat ( new SimpleDateFormat ( formatByRange () ) );
+                chart.getAxisSet ().getXAxis ( 0 ).getTick ().setFormat ( new SimpleDateFormat ( formatByRange () ) );
+                double quality = chartParameters.get ().getQuality ();
+                ISeries qualitySeries = chart.getSeriesSet ().getSeries ( "quality" );
+                if ( qualitySeries != null )
+                {
+                    qualitySeries.setYSeries ( qualityData ( dataQuality.get (), quality ) );
+                    qualitySeries.setXDateSeries ( dataLabel.get () );
+                    if ( quality > 0.0 )
+                    {
+                        qualitySeries.setVisible ( true );
+                    }
+                    else
+                    {
+                        qualitySeries.setVisible ( false );
+                    }
+                }
                 chart.getAxisSet ().adjustRange ();
                 chart.redraw ();
             }
-
         } );
+    }
+
+    private double[] qualityData ( final double[] data, final double quality )
+    {
+        double[] result = new double[data.length];
+        int i = 0;
+        for ( double q : data )
+        {
+            if ( q < ( quality / 100.0 ) )
+            {
+                result[i] = 1;
+            }
+            else
+            {
+                result[i] = 0;
+            }
+            i += 1;
+        }
+        return result;
     }
 
     private String formatByRange ()
@@ -939,5 +1062,17 @@ public class TrendView extends ViewPart implements QueryListener
         {
             return "yyyy-MM-dd HH";
         }
+    }
+
+    @Override
+    public void dispose ()
+    {
+        super.dispose ();
+        parameterUpdateJob.get ().cancel ();
+        rangeUpdateJob.get ().cancel ();
+        dataUpdateJob.get ().cancel ();
+        dragCursor.dispose ();
+        zoomInCursor.dispose ();
+        zoomOutCursor.dispose ();
     }
 }
