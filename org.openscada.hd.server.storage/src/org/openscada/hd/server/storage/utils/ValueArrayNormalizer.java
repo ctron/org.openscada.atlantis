@@ -15,23 +15,23 @@ public class ValueArrayNormalizer
     /**
      * This method extracts a sub array out of the passed array of elements matching the specified criteria.
      * If the exact specified start time is not available in the array then a new virtual entry will be created at the beginning of the resulting array with the start time.
+     * If the exact specified end time is not available in the array then a new virtual entry will be created at the beginning of the resulting array with the start time.
      * @param values values to be processed
      * @param startTime start time for extracting
      * @param endTime end time for extracting
-     * @param startIndex index of first element that is of interest (parameter available for optimization)
      * @param emptyResultArray empty array that can be used as template for the result
      * @return normalized array
      */
-    public static BaseValue[] extractSubArray ( BaseValue[] values, final long startTime, final long endTime, final int startIndex, BaseValue[] emptyResultArray )
+    public static BaseValue[] extractSubArray ( BaseValue[] values, final long startTime, final long endTime, BaseValue[] emptyResultArray )
     {
-        if ( ( values == null ) || ( values.length <= startIndex ) )
+        if ( ( values == null ) || ( values.length == 0 ) )
         {
             return emptyResultArray;
         }
         final List<BaseValue> blockValues = new ArrayList<BaseValue> ();
-        int firstRelevantEntryIndex = startIndex;
+        int firstRelevantEntryIndex = 0;
         int lastRelevantEntryIndex = values.length;
-        for ( int i = startIndex; i < values.length; i++ )
+        for ( int i = firstRelevantEntryIndex; i < values.length; i++ )
         {
             if ( values[i].getTime () <= startTime )
             {
@@ -52,6 +52,11 @@ public class ValueArrayNormalizer
         for ( int i = firstRelevantEntryIndex + 1; i < lastRelevantEntryIndex; i++ )
         {
             blockValues.add ( values[i] );
+        }
+        final BaseValue lastValue = blockValues.get ( blockValues.size () - 1 );
+        if ( lastValue.getTime () != endTime )
+        {
+            blockValues.add ( lastValue.createNewValue ( endTime, lastValue.getQualityIndicator () ) );
         }
         return blockValues.toArray ( emptyResultArray );
     }

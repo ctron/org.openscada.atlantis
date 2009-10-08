@@ -263,11 +263,10 @@ public class CalculatingStorageChannel extends SimpleStorageChannelManager
             final long blockMid = Math.max ( minStartTime, values[0].getTime () );
             final long blockTimeSpan = calculationLogicProvider.getRequiredTimespanForCalculation ();
             long blockStart = getTimeSpanStart ( blockMid );
-            int index = 0;
             while ( blockStart < maxEndTime )
             {
                 final long blockEnd = blockStart + blockTimeSpan;
-                BaseValue[] valueBlock = ValueArrayNormalizer.extractSubArray ( values, blockStart, blockEnd, index, emptyArray );
+                BaseValue[] valueBlock = ValueArrayNormalizer.extractSubArray ( values, blockStart, blockEnd, emptyArray );
                 if ( valueBlock.length == 0 )
                 {
                     break;

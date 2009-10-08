@@ -34,14 +34,24 @@ public abstract class AverageCalculationLogicProvider extends CalculationLogicPr
      */
     protected LongValue[] generateLongValues ( final LongValue[] values )
     {
+        final long timeSpanSize = getRequiredTimespanForCalculation ();
         double avgValue = 0;
         double quality = 0;
+        long lastTimeStamp = Long.MAX_VALUE;
+        long lastValue = 0;
         for ( LongValue value : values )
         {
-            avgValue += value.getValue ();
-            quality += value.getQualityIndicator ();
+            long time = value.getTime ();
+            if ( lastTimeStamp < time )
+            {
+                long weightFactor = time - lastTimeStamp;
+                avgValue += lastValue * weightFactor;
+                quality += value.getQualityIndicator () * weightFactor;
+                lastTimeStamp = time;
+                lastValue = value.getValue ();
+            }
         }
-        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, (long) ( avgValue / values.length ) ) };
+        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, (long) ( avgValue / timeSpanSize ) ) };
     }
 
     /**
@@ -49,14 +59,24 @@ public abstract class AverageCalculationLogicProvider extends CalculationLogicPr
      */
     protected LongValue[] generateLongValues ( final DoubleValue[] values )
     {
+        final long timeSpanSize = getRequiredTimespanForCalculation ();
         double avgValue = 0;
         double quality = 0;
+        long lastTimeStamp = Long.MAX_VALUE;
+        double lastValue = 0;
         for ( DoubleValue value : values )
         {
-            avgValue += value.getValue ();
-            quality += value.getQualityIndicator ();
+            long time = value.getTime ();
+            if ( lastTimeStamp < time )
+            {
+                long weightFactor = time - lastTimeStamp;
+                avgValue += lastValue * weightFactor;
+                quality += value.getQualityIndicator () * weightFactor;
+                lastTimeStamp = time;
+                lastValue = value.getValue ();
+            }
         }
-        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, (long) ( avgValue / values.length ) ) };
+        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, (long) ( avgValue / timeSpanSize ) ) };
     }
 
     /**
@@ -64,14 +84,24 @@ public abstract class AverageCalculationLogicProvider extends CalculationLogicPr
      */
     protected DoubleValue[] generateDoubleValues ( final LongValue[] values )
     {
+        final long timeSpanSize = getRequiredTimespanForCalculation ();
         double avgValue = 0;
         double quality = 0;
+        long lastTimeStamp = Long.MAX_VALUE;
+        long lastValue = 0;
         for ( LongValue value : values )
         {
-            avgValue += value.getValue ();
-            quality += value.getQualityIndicator ();
+            long time = value.getTime ();
+            if ( lastTimeStamp < time )
+            {
+                long weightFactor = time - lastTimeStamp;
+                avgValue += lastValue * weightFactor;
+                quality += value.getQualityIndicator () * weightFactor;
+                lastTimeStamp = time;
+                lastValue = value.getValue ();
+            }
         }
-        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, avgValue / values.length ) };
+        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, avgValue / timeSpanSize ) };
     }
 
     /**
@@ -81,13 +111,23 @@ public abstract class AverageCalculationLogicProvider extends CalculationLogicPr
      */
     protected DoubleValue[] generateDoubleValues ( final DoubleValue[] values )
     {
+        final long timeSpanSize = getRequiredTimespanForCalculation ();
         double avgValue = 0;
         double quality = 0;
+        long lastTimeStamp = Long.MAX_VALUE;
+        double lastValue = 0;
         for ( DoubleValue value : values )
         {
-            avgValue += value.getValue ();
-            quality += value.getQualityIndicator ();
+            long time = value.getTime ();
+            if ( lastTimeStamp < time )
+            {
+                long weightFactor = time - lastTimeStamp;
+                avgValue += lastValue * weightFactor;
+                quality += value.getQualityIndicator () * weightFactor;
+                lastTimeStamp = time;
+                lastValue = value.getValue ();
+            }
         }
-        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, avgValue / values.length ) };
+        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, avgValue / timeSpanSize ) };
     }
 }
