@@ -1,7 +1,5 @@
 package org.openscada.core.connection.provider;
 
-import java.util.Set;
-
 import org.openscada.core.client.AutoReconnectController;
 import org.openscada.core.client.Connection;
 
@@ -11,5 +9,7 @@ public interface ConnectionService
 
     public AutoReconnectController getAutoReconnectController ();
 
-    public Set<ConnectionRequest> getRequests ();
+    public void connect ();
+
+    public void disconnect ();
 }

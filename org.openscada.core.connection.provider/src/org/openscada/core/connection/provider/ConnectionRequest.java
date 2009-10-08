@@ -49,4 +49,10 @@ public class ConnectionRequest
     {
         return this.requestId;
     }
+
+    @Override
+    public String toString ()
+    {
+        return String.format ( "%s -> %s (Auto: %s, Open: %s, Private: %s)", this.requestId, this.connectionInformation, this.autoReconnectDelay, this.initialOpen, this.privateRequest );
+    }
 }
