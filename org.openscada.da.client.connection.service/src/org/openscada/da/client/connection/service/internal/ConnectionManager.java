@@ -1,4 +1,4 @@
-package org.openscada.da.client.connection.service;
+package org.openscada.da.client.connection.service.internal;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -9,6 +9,7 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.DriverFactory;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;
+import org.openscada.da.client.connection.service.ConnectionService;
 import org.openscada.utils.osgi.FilterUtil;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.SingleServiceTracker;

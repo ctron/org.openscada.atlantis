@@ -1,4 +1,4 @@
-package org.openscada.da.client.connection.service;
+package org.openscada.da.client.connection.service.internal;
 
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -58,11 +58,11 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
 
         if ( connectionId == null )
         {
-            throw new RuntimeException ( Messages.getString ( "ManagedConnectionServiceFactory.1" ) ); //$NON-NLS-1$
+            throw new RuntimeException ( "'id' not set" );
         }
         if ( uri == null )
         {
-            throw new RuntimeException ( Messages.getString ( "ManagedConnectionServiceFactory.0" ) ); //$NON-NLS-1$
+            throw new RuntimeException ( "'connectionInformation' is not set" ); //$NON-NLS-1$
         }
 
         synchronized ( this )

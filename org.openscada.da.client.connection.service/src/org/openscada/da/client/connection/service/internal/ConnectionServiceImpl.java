@@ -1,8 +1,9 @@
-package org.openscada.da.client.connection.service;
+package org.openscada.da.client.connection.service.internal;
 
 import org.openscada.core.client.AutoReconnectController;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;
+import org.openscada.da.client.connection.service.ConnectionService;
 
 public class ConnectionServiceImpl implements ConnectionService
 {

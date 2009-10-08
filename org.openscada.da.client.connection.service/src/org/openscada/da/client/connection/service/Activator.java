@@ -5,6 +5,7 @@ import java.util.Hashtable;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
+import org.openscada.da.client.connection.service.internal.ManagedConnectionServiceFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -14,7 +15,7 @@ public class Activator implements BundleActivator
 {
     private static final String FACTORY_ID = "da.connection"; //$NON-NLS-1$
 
-    private org.openscada.da.client.connection.service.ManagedConnectionServiceFactory service;
+    private org.openscada.da.client.connection.service.internal.ManagedConnectionServiceFactory service;
 
     private BundleContext context;
 
