@@ -2,6 +2,7 @@ package org.openscada.hd.server.test;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Random;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
@@ -28,6 +29,8 @@ public class Test2QueryImpl implements Query
     private long end;
 
     private int count;
+
+    private static Random random = new Random ();
 
     public Test2QueryImpl ( final Test2ItemImpl item, final QueryParameters parameters, final QueryListener listener )
     {
@@ -105,7 +108,7 @@ public class Test2QueryImpl implements Query
 
     private double getValue ( final long tick )
     {
-        return Math.sin ( tick / 100000.0 ) * 100.0;
+        return Math.sin ( tick / 100000.0 ) * 100.0 + random.nextDouble () * 10.0;
     }
 
     private Integer getBufferIndex ( final long tick )
