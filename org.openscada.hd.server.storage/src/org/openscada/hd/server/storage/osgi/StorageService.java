@@ -288,6 +288,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         properties.put ( Constants.SERVICE_PID, configurationId );
         properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A OpenSCADA Storage Historical Item Implementation" );
+        shiService.start ();
         this.bundleContext.registerService ( new String[] { ShiService.class.getName (), StorageHistoricalItem.class.getName () }, shiService, properties );
         return shiService;
     }
