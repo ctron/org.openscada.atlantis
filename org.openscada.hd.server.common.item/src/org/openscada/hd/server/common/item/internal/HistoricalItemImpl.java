@@ -85,6 +85,8 @@ public class HistoricalItemImpl implements HistoricalItem, MasterItemListener
 
     protected synchronized void setStorage ( final StorageHistoricalItem service )
     {
+        logger.info ( "Setting storage: {}", service );
+
         if ( this.service == service )
         {
             return;

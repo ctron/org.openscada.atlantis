@@ -33,7 +33,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
             this.registration = registration;
         }
 
-        public HistoricalItem getItem ()
+        public HistoricalItemImpl getItem ()
         {
             return this.item;
         }
@@ -89,6 +89,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
     private void unregisterItem ( final ItemWrapper item )
     {
         item.getRegistration ().unregister ();
+        item.getItem ().stop ();
     }
 
     public void update ( final String configurationId, final Map<String, String> properties ) throws Exception
@@ -133,6 +134,8 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
         final HistoricalItemImpl item = new HistoricalItemImpl ( configurationId, attributes, masterId, this.context );
 
         final ServiceRegistration registration = this.context.registerService ( HistoricalItem.class.getName (), item, serviceProperties );
+
+        item.start ();
 
         return new ItemWrapper ( item, registration );
     }
