@@ -9,19 +9,12 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.eclipse.core.runtime.Status;
 import org.openscada.core.ConnectionInformation;
-import org.openscada.core.ui.connection.ConnectionDiscoverer;
-import org.openscada.core.ui.connection.ConnectionDiscoveryListener;
 
-public abstract class ResourceDiscoverer implements ConnectionDiscoverer
+public abstract class ResourceDiscoverer extends AbstractConnectionDiscoverer
 {
-    private final Set<ConnectionDiscoveryListener> listeners = new CopyOnWriteArraySet<ConnectionDiscoveryListener> ();
-
-    protected Set<ConnectionInformation> connections = new HashSet<ConnectionInformation> ();
-
     public ResourceDiscoverer ()
     {
         initialize ();
@@ -88,40 +81,6 @@ public abstract class ResourceDiscoverer implements ConnectionDiscoverer
         }
 
         setConnections ( result );
-    }
-
-    protected synchronized void setConnections ( final Set<ConnectionInformation> result )
-    {
-        final Set<ConnectionInformation> added = new HashSet<ConnectionInformation> ( result );
-        added.removeAll ( this.connections );
-
-        final Set<ConnectionInformation> removed = new HashSet<ConnectionInformation> ( this.connections );
-        removed.removeAll ( result );
-
-        this.connections = result;
-
-        fireDiscoveryUpdate ( added.toArray ( new ConnectionInformation[0] ), removed.toArray ( new ConnectionInformation[0] ) );
-    }
-
-    protected void fireDiscoveryUpdate ( final ConnectionInformation[] added, final ConnectionInformation[] removed )
-    {
-        for ( final ConnectionDiscoveryListener listener : this.listeners )
-        {
-            listener.discoveryUpdate ( added, removed );
-        }
-    }
-
-    public void addConnectionListener ( final ConnectionDiscoveryListener listener )
-    {
-        if ( this.listeners.add ( listener ) )
-        {
-            listener.discoveryUpdate ( this.connections.toArray ( new ConnectionInformation[0] ), null );
-        }
-    }
-
-    public void removeConnectionListener ( final ConnectionDiscoveryListener listener )
-    {
-        this.listeners.remove ( listener );
     }
 
 }

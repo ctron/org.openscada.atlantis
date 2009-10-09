@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractConnectionHandler extends AbstractHandler
 {
 
-    protected static final Logger logger = LoggerFactory.getLogger ( AbstractConnectionHandler.class );
+    private static final Logger logger = LoggerFactory.getLogger ( AbstractConnectionHandler.class );
 
     private IWorkbenchWindow activeWindow;
 
