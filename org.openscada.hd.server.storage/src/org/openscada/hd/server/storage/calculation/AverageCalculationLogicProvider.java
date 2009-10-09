@@ -8,7 +8,7 @@ import org.openscada.hd.server.storage.datatypes.LongValue;
  * This class implements the CalculationLogicProvider interface for the calculation of average values.
  * @author Ludwig Straub
  */
-public abstract class AverageCalculationLogicProvider extends CalculationLogicProviderBase
+public class AverageCalculationLogicProvider extends CalculationLogicProviderBase
 {
     /**
      * Constructor.

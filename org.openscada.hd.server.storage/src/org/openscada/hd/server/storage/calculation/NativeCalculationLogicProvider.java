@@ -7,7 +7,7 @@ import org.openscada.hd.server.storage.datatypes.DataType;
  * This class implements the CalculationLogicProvider interface for the processing of native values.
  * @author Ludwig Straub
  */
-public abstract class NativeCalculationLogicProvider extends CalculationLogicProviderBase
+public class NativeCalculationLogicProvider extends CalculationLogicProviderBase
 {
     /**
      * Constructor.

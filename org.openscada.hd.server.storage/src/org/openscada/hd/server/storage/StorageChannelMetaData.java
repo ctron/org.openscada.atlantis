@@ -33,7 +33,7 @@ public class StorageChannelMetaData
     /** Age of the data in milliseconds a stored data should be kept available. */
     private long proposedDataAge;
 
-    /** Datatype of the stored values. */
+    /** Data type of the stored values. */
     private DataType dataType;
 
     /**
@@ -55,7 +55,7 @@ public class StorageChannelMetaData
      * @param startTime time stamp of first possible entry of the channel
      * @param endTime time stamp of first entry that will not be stored in the channel
      * @param proposedDataAge age of the data in milliseconds a stored data should be kept available
-     * @param dataType datatype of the stored values
+     * @param dataType data type of the stored values
      */
     public StorageChannelMetaData ( final String configurationId, final String dataItemId, final CalculationMethod calculationMethod, final long[] calculationMethodParameters, final long detailLevelId, final long startTime, final long endTime, final long proposedDataAge, final DataType dataType )
     {
@@ -215,8 +215,8 @@ public class StorageChannelMetaData
     }
 
     /**
-     * This method returns the datatype of the stored values.
-     * @return datatype of the stored values
+     * This method returns the data type of the stored values.
+     * @return data type of the stored values
      */
     public DataType getDataType ()
     {
@@ -224,8 +224,8 @@ public class StorageChannelMetaData
     }
 
     /**
-     * This method sets the datatype of the stored values.
-     * @param dataType datatype of the stored values
+     * This method sets the data type of the stored values.
+     * @param dataType data type of the stored values
      */
     public void setDataType ( DataType dataType )
     {

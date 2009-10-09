@@ -57,7 +57,7 @@ public class BackEndMultiplexor implements BackEnd
     public BackEndMultiplexor ( final BackEndFactory backEndFactory, final long newBackendTimespan )
     {
         this.backEndFactory = backEndFactory;
-        this.newBackendTimespan = newBackendTimespan;
+        this.newBackendTimespan = newBackendTimespan < 1 ? 1 : newBackendTimespan;
         backEnds = new LinkedList<BackEnd> ();
         initialized = false;
     }

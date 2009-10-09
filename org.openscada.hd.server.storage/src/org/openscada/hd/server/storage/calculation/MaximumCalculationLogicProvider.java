@@ -5,10 +5,10 @@ import org.openscada.hd.server.storage.datatypes.DoubleValue;
 import org.openscada.hd.server.storage.datatypes.LongValue;
 
 /**
- * This class implements the CalculationLogicProvider interface for the calculation of minimum values.
+ * This class implements the CalculationLogicProvider interface for the calculation of maximum values.
  * @author Ludwig Straub
  */
-public abstract class MinCalculationLogicProvider extends CalculationLogicProviderBase
+public class MaximumCalculationLogicProvider extends CalculationLogicProviderBase
 {
     /**
      * Constructor.
@@ -16,7 +16,7 @@ public abstract class MinCalculationLogicProvider extends CalculationLogicProvid
      * @param outputDataType data type of the output values
      * @param parameters parameters further specifying the behaviour
      */
-    public MinCalculationLogicProvider ( final DataType inputDataType, final DataType outputDataType, final long[] parameters )
+    public MaximumCalculationLogicProvider ( final DataType inputDataType, final DataType outputDataType, final long[] parameters )
     {
         super ( inputDataType, outputDataType, parameters );
     }
@@ -34,18 +34,18 @@ public abstract class MinCalculationLogicProvider extends CalculationLogicProvid
      */
     protected LongValue[] generateLongValues ( final LongValue[] values )
     {
-        long minValue = Long.MAX_VALUE;
+        long maxValue = Long.MIN_VALUE;
         double quality = 0;
         for ( LongValue value : values )
         {
             long val = value.getValue ();
-            if ( val < minValue )
+            if ( val > maxValue )
             {
-                minValue = val;
+                maxValue = val;
             }
             quality += value.getQualityIndicator ();
         }
-        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, minValue ) };
+        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, maxValue ) };
     }
 
     /**
@@ -53,18 +53,18 @@ public abstract class MinCalculationLogicProvider extends CalculationLogicProvid
      */
     protected LongValue[] generateLongValues ( final DoubleValue[] values )
     {
-        double minValue = Double.MAX_VALUE;
+        double maxValue = Double.MIN_VALUE;
         double quality = 0;
         for ( DoubleValue value : values )
         {
             double val = value.getValue ();
-            if ( val < minValue )
+            if ( val > maxValue )
             {
-                minValue = val;
+                maxValue = val;
             }
             quality += value.getQualityIndicator ();
         }
-        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, (long)minValue ) };
+        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, (long)maxValue ) };
     }
 
     /**
@@ -72,18 +72,18 @@ public abstract class MinCalculationLogicProvider extends CalculationLogicProvid
      */
     protected DoubleValue[] generateDoubleValues ( final LongValue[] values )
     {
-        long minValue = Long.MAX_VALUE;
+        long maxValue = Long.MIN_VALUE;
         double quality = 0;
         for ( LongValue value : values )
         {
             long val = value.getValue ();
-            if ( val < minValue )
+            if ( val > maxValue )
             {
-                minValue = val;
+                maxValue = val;
             }
             quality += value.getQualityIndicator ();
         }
-        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, minValue ) };
+        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, maxValue ) };
     }
 
     /**
@@ -93,17 +93,17 @@ public abstract class MinCalculationLogicProvider extends CalculationLogicProvid
      */
     protected DoubleValue[] generateDoubleValues ( final DoubleValue[] values )
     {
-        double minValue = Double.MAX_VALUE;
+        double maxValue = Double.MIN_VALUE;
         double quality = 0;
         for ( DoubleValue value : values )
         {
             double val = value.getValue ();
-            if ( val < minValue )
+            if ( val > maxValue )
             {
-                minValue = val;
+                maxValue = val;
             }
             quality += value.getQualityIndicator ();
         }
-        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, minValue ) };
+        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, maxValue ) };
     }
 }

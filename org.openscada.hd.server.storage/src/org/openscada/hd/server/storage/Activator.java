@@ -23,6 +23,9 @@ public class Activator implements BundleActivator
     /** OSGi bundle context. */
     private static BundleContext bundleContext = null;
 
+    /** Storage service instance. */
+    private static StorageService service = null;
+
     /**
      * This method returns the currently available bundle context.
      * @return currently available bundle context
@@ -40,12 +43,14 @@ public class Activator implements BundleActivator
         Hashtable<String, String> gescheiteHT = new Hashtable<String, String> ();
         gescheiteHT.put ( Constants.SERVICE_DESCRIPTION, "" );
         gescheiteHT.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
-        gescheiteHT.put ( ConfigurationAdministrator.FACTORY_ID, "org.opensdcada.hd.server.storage" );
+        gescheiteHT.put ( ConfigurationAdministrator.FACTORY_ID, StorageService.FACTORY_ID );
         logger.debug ( context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME ) + " starting..." );
-        StorageService service = new StorageService ( bundleContext );
+        service = new StorageService ( context );
         context.registerService ( new String[] { StorageService.class.getName (), SelfManagedConfigurationFactory.class.getName () }, service, gescheiteHT );
         logger.debug ( "Service registered: StorageService" );
         Activator.bundleContext = context;
+        service.start ();
+        logger.debug ( "Service started: StorageService" );
     }
 
     /**
@@ -54,6 +59,11 @@ public class Activator implements BundleActivator
     public void stop ( BundleContext context ) throws Exception
     {
         logger.debug ( context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME ) + " stopping..." );
+        if ( service != null )
+        {
+            service.stop ();
+            service = null;
+        }
         Activator.bundleContext = null;
     }
 }

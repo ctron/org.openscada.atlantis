@@ -67,7 +67,7 @@ public enum DataType
      */
     public static String convertDataTypeToString ( final DataType dataType )
     {
-        return dataType.toString ();
+        return dataType == null ? UNKNOWN.toString () : dataType.toString ();
     }
 
     /**
@@ -78,7 +78,7 @@ public enum DataType
      */
     public static DataType convertStringToDataType ( final String dataType )
     {
-        return Enum.valueOf ( DataType.class, dataType );
+        return dataType == null ? UNKNOWN : Enum.valueOf ( DataType.class, dataType );
     }
 
     /**

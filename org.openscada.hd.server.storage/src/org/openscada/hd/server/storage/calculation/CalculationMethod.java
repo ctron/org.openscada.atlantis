@@ -89,7 +89,7 @@ public enum CalculationMethod
      */
     public static String convertCalculationMethodToString ( final CalculationMethod calculationMethod )
     {
-        return calculationMethod.toString ();
+        return calculationMethod == null ? UNKNOWN.toString () : calculationMethod.toString ();
     }
 
     /**
@@ -100,7 +100,7 @@ public enum CalculationMethod
      */
     public static CalculationMethod convertStringToCalculationMethod ( final String calculationMethod )
     {
-        return Enum.valueOf ( CalculationMethod.class, calculationMethod );
+        return calculationMethod == null ? UNKNOWN : Enum.valueOf ( CalculationMethod.class, calculationMethod );
     }
 
     /**
