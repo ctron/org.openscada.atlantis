@@ -74,6 +74,9 @@ public class BackEndMultiplexor implements BackEnd
             logger.error ( message );
             throw new Exception ( message );
         }
+
+        // create new backend
+        getBackEnd ( storageChannelMetaData.getStartTime () );
     }
 
     /**
