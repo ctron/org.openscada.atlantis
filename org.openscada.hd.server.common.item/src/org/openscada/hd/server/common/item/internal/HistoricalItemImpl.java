@@ -59,7 +59,7 @@ public class HistoricalItemImpl implements HistoricalItem, MasterItemListener
                 HistoricalItemImpl.this.setStorage ( (StorageHistoricalItem)service );
             }
         } );
-        this.masterTracker = new SingleServiceTracker ( context, FilterUtil.createAndFilter ( MasterItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, masterId ).getMap () ), new SingleServiceListener () {
+        this.masterTracker = new SingleServiceTracker ( context, FilterUtil.createAndFilter ( MasterItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, this.masterId ).getMap () ), new SingleServiceListener () {
 
             public void serviceChange ( final ServiceReference reference, final Object service )
             {
