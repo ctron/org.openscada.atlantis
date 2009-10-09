@@ -8,6 +8,7 @@ import org.openscada.hd.server.storage.osgi.StorageService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,37 +21,28 @@ public class Activator implements BundleActivator
     /** Default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( Activator.class );
 
-    /** OSGi bundle context. */
-    private static BundleContext bundleContext = null;
-
     /** Storage service instance. */
     private static StorageService service = null;
 
-    /**
-     * This method returns the currently available bundle context.
-     * @return currently available bundle context
-     */
-    public static BundleContext getBundleContext ()
-    {
-        return bundleContext;
-    }
+    /** Service registration of storage service. */
+    private static ServiceRegistration serviceRegistration = null;
 
     /**
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
     public void start ( BundleContext context ) throws Exception
     {
+        final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
         Hashtable<String, String> gescheiteHT = new Hashtable<String, String> ();
-        gescheiteHT.put ( Constants.SERVICE_DESCRIPTION, "" );
+        gescheiteHT.put ( Constants.SERVICE_DESCRIPTION, StorageService.SERVICE_DESCRIPTION );
         gescheiteHT.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
         gescheiteHT.put ( ConfigurationAdministrator.FACTORY_ID, StorageService.FACTORY_ID );
-        logger.debug ( context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME ) + " starting..." );
+        logger.info ( bundleName + " starting..." );
         service = new StorageService ( context );
-        context.registerService ( new String[] { StorageService.class.getName (), SelfManagedConfigurationFactory.class.getName () }, service, gescheiteHT );
-        logger.debug ( "Service registered: StorageService" );
-        Activator.bundleContext = context;
         service.start ();
-        logger.debug ( "Service started: StorageService" );
+        logger.info ( bundleName + " service started" );
+        serviceRegistration = context.registerService ( new String[] { StorageService.class.getName (), SelfManagedConfigurationFactory.class.getName () }, service, gescheiteHT );
+        logger.info ( bundleName + " service registered" );
     }
 
     /**
@@ -58,12 +50,19 @@ public class Activator implements BundleActivator
      */
     public void stop ( BundleContext context ) throws Exception
     {
-        logger.debug ( context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME ) + " stopping..." );
+        final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
+        logger.info ( bundleName + " stopping..." );
+        if ( serviceRegistration != null )
+        {
+            serviceRegistration.unregister ();
+            serviceRegistration = null;
+            logger.info ( bundleName + "service unregistered" );
+        }
         if ( service != null )
         {
             service.stop ();
             service = null;
+            logger.info ( bundleName + " service stopped" );
         }
-        Activator.bundleContext = null;
     }
 }

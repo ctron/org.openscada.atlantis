@@ -46,6 +46,9 @@ public class StorageService implements SelfManagedConfigurationFactory
     /** Id of the OSGi service factory. */
     public final static String FACTORY_ID = "org.openscada.hd.server.storage.osgi.StorageService";
 
+    /** Description of the service. */
+    public final static String SERVICE_DESCRIPTION = "OpenSCADA Storage Manager Service";
+
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( StorageService.class );
 

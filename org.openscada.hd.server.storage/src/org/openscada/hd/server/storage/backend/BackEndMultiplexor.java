@@ -87,6 +87,10 @@ public class BackEndMultiplexor implements BackEnd
         initialized = true;
         Arrays.sort ( backEndArray, new InverseTimeOrderComparator () );
         backEnds.addAll ( Arrays.asList ( backEndArray ) );
+        for ( BackEnd backEnd : backEnds )
+        {
+            backEnd.initialize ( storageChannelMetaData );
+        }
         metaData = new StorageChannelMetaData ( storageChannelMetaData );
     }
 

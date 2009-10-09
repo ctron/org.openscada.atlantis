@@ -1,5 +1,6 @@
 package org.openscada.hd.server.storage.osgi;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +10,8 @@ import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
+import org.openscada.hd.Value;
+import org.openscada.hd.ValueInformation;
 import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.ConfigurationImpl;
 import org.openscada.hd.server.storage.ExtendedStorageChannel;
@@ -51,9 +54,35 @@ public class ShiService implements StorageHistoricalItem
     /**
      * @see org.openscada.hd.server.common.StorageHistoricalItem#createQuery
      */
-    public Query createQuery ( QueryParameters parameters, QueryListener listener )
+    public Query createQuery ( QueryParameters parameters, final QueryListener listener )
     {
-        return null;
+        try
+        {
+            DoubleValue[] dvs = rootStorageChannel.getDoubleValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () );
+            Value[] values = new Value[dvs.length];
+            ValueInformation[] valueInformations = new ValueInformation[dvs.length];
+            for ( int i = 0; i < dvs.length; i++ )
+            {
+                DoubleValue doubleValue = dvs[i];
+                values[i] = new Value ( doubleValue.getValue () );
+                valueInformations[i] = new ValueInformation ( parameters.getStartTimestamp (), parameters.getEndTimestamp (), doubleValue.getQualityIndicator (), 0L );
+            }
+            final Map<String, Value[]> map = new HashMap<String, Value[]> ();
+            map.put ( "NATIVE", values );
+            listener.updateData ( 0, map, valueInformations );
+        }
+        catch ( Exception e )
+        {
+        }
+        return new Query () {
+            public void changeParameters ( QueryParameters parameters )
+            {
+            }
+
+            public void close ()
+            {
+            }
+        };
     }
 
     /**
@@ -79,7 +108,8 @@ public class ShiService implements StorageHistoricalItem
         {
             return;
         }
-        final long time = value.getTimestamp ().getTimeInMillis ();
+        final Calendar calendar = value.getTimestamp ();
+        final long time = calendar == null ? System.currentTimeMillis () : calendar.getTimeInMillis ();
         final double qualityIndicator = !value.isConnected () || value.isError () ? 0 : 1;
         try
         {
