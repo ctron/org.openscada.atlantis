@@ -144,8 +144,6 @@ public class HistoricalItemImpl implements HistoricalItem, MasterItemListener
 
     public void stateChanged ( final DataItemValue value )
     {
-        logger.debug ( "Data item change: {}", value );
-
         synchronized ( this )
         {
             if ( this.service != null )
