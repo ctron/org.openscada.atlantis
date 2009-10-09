@@ -1,7 +1,9 @@
 package org.openscada.hd.server.storage.osgi;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,7 @@ import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -280,7 +283,12 @@ public class StorageService implements SelfManagedConfigurationFactory
             shiService.addStorageChannel ( storageChannels[i], calculationMethod );
         }
         this.shiServices.put ( shiService.getConfiguration ().getId (), shiService );
-        this.bundleContext.registerService ( new String[] { ShiService.class.getName (), StorageHistoricalItem.class.getName () }, shiService, null );
+
+        final Dictionary<String, String> properties = new Hashtable<String, String> ();
+        properties.put ( Constants.SERVICE_PID, configurationId );
+        properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "A OpenSCADA Storage Historical Item Implementation" );
+        this.bundleContext.registerService ( new String[] { ShiService.class.getName (), StorageHistoricalItem.class.getName () }, shiService, properties );
         return shiService;
     }
 
