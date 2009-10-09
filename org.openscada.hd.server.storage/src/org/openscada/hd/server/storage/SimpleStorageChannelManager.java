@@ -87,7 +87,6 @@ public class SimpleStorageChannelManager implements StorageChannelManager
     /**
      * @see org.openscada.hd.server.storage.ExtendedStorageChannel#updateDouble
      */
-    @Override
     public synchronized void updateDouble ( final DoubleValue doubleValue ) throws Exception
     {
         for ( ExtendedStorageChannel storageChannel : storageChannels )
@@ -99,7 +98,6 @@ public class SimpleStorageChannelManager implements StorageChannelManager
     /**
      * @see org.openscada.hd.server.storage.ExtendedStorageChannel#updateDoubles
      */
-    @Override
     public synchronized void updateDoubles ( final DoubleValue[] doubleValues ) throws Exception
     {
         for ( ExtendedStorageChannel storageChannel : storageChannels )
@@ -111,7 +109,6 @@ public class SimpleStorageChannelManager implements StorageChannelManager
     /**
      * @see org.openscada.hd.server.storage.ExtendedStorageChannel#getDoubleValues
      */
-    @Override
     public synchronized DoubleValue[] getDoubleValues ( final long startTime, final long endTime ) throws Exception
     {
         // optimization if exactly one storage channel is currently managed

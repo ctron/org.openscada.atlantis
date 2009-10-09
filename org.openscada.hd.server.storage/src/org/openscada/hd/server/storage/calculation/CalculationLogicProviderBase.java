@@ -1,7 +1,5 @@
 package org.openscada.hd.server.storage.calculation;
 
-import java.util.Arrays;
-
 import org.openscada.hd.server.storage.ExtendedStorageChannel;
 import org.openscada.hd.server.storage.datatypes.BaseValue;
 import org.openscada.hd.server.storage.datatypes.DataType;
@@ -50,7 +48,11 @@ public abstract class CalculationLogicProviderBase implements CalculationLogicPr
     {
         this.inputDataType = inputDataType;
         this.outputDataType = outputDataType;
-        this.parameters = Arrays.copyOf ( parameters, parameters.length );
+        this.parameters = new long[parameters.length];
+        for ( int i = 0; i < parameters.length; i++ )
+        {
+            this.parameters[i] = parameters[i];
+        }
     }
 
     /**
