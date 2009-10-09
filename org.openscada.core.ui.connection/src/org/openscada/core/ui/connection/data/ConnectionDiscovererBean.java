@@ -1,4 +1,4 @@
-package org.openscada.core.ui.connection;
+package org.openscada.core.ui.connection.data;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +9,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IActionFilter;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.ui.connection.ConnectionDiscoverer;
+import org.openscada.core.ui.connection.ConnectionDiscoveryListener;
+import org.openscada.core.ui.connection.ConnectionStore;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

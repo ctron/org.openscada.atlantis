@@ -5,8 +5,8 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.openscada.core.ui.connection.Activator;
-import org.openscada.core.ui.connection.ConnectionDiscovererBean;
-import org.openscada.core.ui.connection.ConnectionHolder;
+import org.openscada.core.ui.connection.data.ConnectionDiscovererBean;
+import org.openscada.core.ui.connection.data.ConnectionHolder;
 
 public class ConnectionContentProvider extends ObservableSetTreeContentProvider
 {

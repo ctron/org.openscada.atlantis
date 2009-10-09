@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.openscada.core.ui.connection.Activator;
-import org.openscada.core.ui.connection.ConnectionHolder;
+import org.openscada.core.ui.connection.data.ConnectionHolder;
 
 public class DeleteConnectionAction implements IObjectActionDelegate
 {

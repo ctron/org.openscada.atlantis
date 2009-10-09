@@ -57,17 +57,17 @@
                      value="org.openscada.core.ui.connection.Root">
                </instanceof>
                <instanceof
-                     value="org.openscada.core.ui.connection.ConnectionDiscovererBean">
+                     value="org.openscada.core.ui.connection.data.ConnectionDiscovererBean">
                </instanceof>
             </or>
          </triggerPoints>
          <possibleChildren>
             <or>
                <instanceof
-                     value="org.openscada.core.ui.connection.ConnectionDiscovererBean">
+                     value="org.openscada.core.ui.connection.data.ConnectionDiscovererBean">
                </instanceof>
                <instanceof
-                     value="org.openscada.core.ui.connection.ConnectionHolder">
+                     value="org.openscada.core.ui.connection.data.ConnectionHolder">
                </instanceof>
             </or>
          </possibleChildren>
@@ -91,7 +91,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.core.ui.connection.ConnectionStore"
-            objectClass="org.openscada.core.ui.connection.ConnectionDiscovererBean">
+            objectClass="org.openscada.core.ui.connection.data.ConnectionDiscovererBean">
          <action
                class="org.openscada.core.ui.connection.actions.AddConnectionAction"
                enablesFor="1"
@@ -109,7 +109,7 @@
       <objectContribution
             adaptable="false"
             id="org.openscada.core.ui.connection.ConnectionHolder"
-            objectClass="org.openscada.core.ui.connection.ConnectionHolder">
+            objectClass="org.openscada.core.ui.connection.data.ConnectionHolder">
          <action
                class="org.openscada.core.ui.connection.actions.DeleteConnectionAction"
                id="org.openscada.core.ui.connection.action.DeleteConnectionAction"
@@ -132,10 +132,10 @@
                         operator="and">
                      <or>
                         <adapt
-                              type="org.openscada.core.ui.connection.ConnectionHolder">
+                              type="org.openscada.core.ui.connection.data.ConnectionHolder">
                         </adapt>
                         <instanceof
-                              value="org.openscada.core.ui.connection.ConnectionHolder">
+                              value="org.openscada.core.ui.connection.data.ConnectionHolder">
                         </instanceof>
                      </or>
                   </iterate>
@@ -152,10 +152,10 @@
                         operator="and">
                      <or>
                         <adapt
-                              type="org.openscada.core.ui.connection.ConnectionHolder">
+                              type="org.openscada.core.ui.connection.data.ConnectionHolder">
                         </adapt>
                         <instanceof
-                              value="org.openscada.core.ui.connection.ConnectionHolder">
+                              value="org.openscada.core.ui.connection.data.ConnectionHolder">
                         </instanceof>
                      </or>
                   </iterate>

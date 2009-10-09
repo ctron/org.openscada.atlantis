@@ -1,7 +1,9 @@
-package org.openscada.core.ui.connection;
+package org.openscada.core.ui.connection.data;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.openscada.core.ui.connection.ConnectionDiscoverer;
+import org.openscada.core.ui.connection.ConnectionStore;
 
 public class ConnectionDiscovererAdapterFactory implements IAdapterFactory
 {

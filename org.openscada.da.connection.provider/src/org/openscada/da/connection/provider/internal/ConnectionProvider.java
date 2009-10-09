@@ -47,6 +47,7 @@ public class ConnectionProvider implements ServiceTrackerCustomizer
             final ConnectionRequest request = (ConnectionRequest)o;
             addRequest ( request );
             o = null;
+            return request;
         }
         catch ( final Throwable e )
         {
@@ -65,11 +66,12 @@ public class ConnectionProvider implements ServiceTrackerCustomizer
             removeRequest ( (ConnectionRequest)service );
             addRequest ( (ConnectionRequest)service );
         }
-
     }
 
     public void removedService ( final ServiceReference reference, final Object service )
     {
+        logger.debug ( "Removed service: {}", reference );
+
         if ( service instanceof ConnectionRequest )
         {
             removeRequest ( (ConnectionRequest)service );
@@ -81,6 +83,12 @@ public class ConnectionProvider implements ServiceTrackerCustomizer
         logger.info ( "Request removed: {}", request );
 
         final ConnectionManager manager = this.connections.get ( request.getConnectionInformation () );
+        if ( manager == null )
+        {
+            logger.warn ( "Unknown request: {}", request );
+            return;
+        }
+
         manager.removeRequest ( request );
         if ( manager.isIdle () )
         {

@@ -8,8 +8,8 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.openscada.core.ui.connection.ConnectionDiscovererBean;
-import org.openscada.core.ui.connection.ConnectionHolder;
+import org.openscada.core.ui.connection.data.ConnectionDiscovererBean;
+import org.openscada.core.ui.connection.data.ConnectionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

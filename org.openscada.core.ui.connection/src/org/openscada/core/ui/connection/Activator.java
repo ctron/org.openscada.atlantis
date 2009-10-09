@@ -8,6 +8,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.openscada.core.ui.connection.data.ConnectionDiscovererAdapterFactory;
+import org.openscada.core.ui.connection.data.ConnectionDiscovererBean;
 import org.osgi.framework.BundleContext;
 
 /**

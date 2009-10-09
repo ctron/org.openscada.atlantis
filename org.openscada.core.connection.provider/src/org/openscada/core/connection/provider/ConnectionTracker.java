@@ -87,6 +87,7 @@ public class ConnectionTracker
     {
         if ( this.handle != null )
         {
+            logger.debug ( "Unregister handle: {}", this.handle );
             this.handle.unregister ();
         }
 

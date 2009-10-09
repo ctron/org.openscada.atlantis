@@ -1,10 +1,11 @@
-package org.openscada.core.ui.connection;
+package org.openscada.core.ui.connection.data;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.connection.provider.ConnectionRequest;
 import org.openscada.core.connection.provider.ConnectionService;
 import org.openscada.core.connection.provider.ConnectionTracker;
 import org.openscada.core.connection.provider.ConnectionTracker.Listener;
+import org.openscada.core.ui.connection.Activator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;

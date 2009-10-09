@@ -2,7 +2,7 @@ package org.openscada.core.ui.connection.commands;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.openscada.core.ui.connection.ConnectionHolder;
+import org.openscada.core.ui.connection.data.ConnectionHolder;
 
 public class CloseConnection extends AbstractConnectionHandler
 {
