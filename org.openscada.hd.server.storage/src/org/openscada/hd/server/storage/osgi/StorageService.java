@@ -27,6 +27,7 @@ import org.openscada.hd.server.storage.calculation.MaximumCalculationLogicProvid
 import org.openscada.hd.server.storage.calculation.MinimumCalculationLogicProvider;
 import org.openscada.hd.server.storage.calculation.NativeCalculationLogicProvider;
 import org.openscada.hd.server.storage.datatypes.DataType;
+import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
@@ -377,7 +378,7 @@ public class StorageService implements SelfManagedConfigurationFactory
                 logger.error ( String.format ( "could not update service '%s' (%s)", configurationId, metaData ), e );
             }
         }
-        return new InstantFuture<Configuration> ( createEmptyConfiguration ( configurationId, ConfigurationState.ERROR ) );
+        return new InstantErrorFuture<Configuration> ( new IllegalStateException ( "Unable to modify exisiting configuration" ).fillInStackTrace () );
     }
 
     /**
