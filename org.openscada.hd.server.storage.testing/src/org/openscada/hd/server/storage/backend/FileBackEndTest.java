@@ -25,7 +25,7 @@ public class FileBackEndTest extends BackEndTestBase
     @Override
     protected BackEnd createBackEnd ( StorageChannelMetaData metaData ) throws Exception
     {
-        BackEnd backEnd = new FileBackEnd ( URLEncoder.encode ( metaData.getDataItemId (), "utf-8" ) + ".va" );
+        BackEnd backEnd = new FileBackEnd ( URLEncoder.encode ( metaData.getConfigurationId (), "utf-8" ) + ".va" );
         backEnd.delete ();
         backEnd.create ( metaData );
         backEnd.initialize ( metaData );
@@ -60,11 +60,11 @@ public class FileBackEndTest extends BackEndTestBase
     @Test
     public void testLongBounds () throws Exception
     {
-        backEnd.updateLong ( new LongValue ( -1, 100, 0 ) );
-        backEnd.updateLong ( new LongValue ( MAX_COUNT - 2, 100, 1 ) );
-        backEnd.updateLong ( new LongValue ( MAX_COUNT - 1, 100, 2 ) );
-        backEnd.updateLong ( new LongValue ( MAX_COUNT, 100, 3 ) );
-        backEnd.updateLong ( new LongValue ( MAX_COUNT + 1, 100, 4 ) );
+        backEnd.updateLong ( new LongValue ( -1, 100, 1, 0 ) );
+        backEnd.updateLong ( new LongValue ( MAX_COUNT - 2, 100, 1, 1 ) );
+        backEnd.updateLong ( new LongValue ( MAX_COUNT - 1, 100, 1, 2 ) );
+        backEnd.updateLong ( new LongValue ( MAX_COUNT, 100, 1, 3 ) );
+        backEnd.updateLong ( new LongValue ( MAX_COUNT + 1, 100, 1, 4 ) );
         LongValue[] result = backEnd.getLongValues ( -10, MAX_COUNT + 10 );
         Assert.assertEquals ( 2, result.length );
         Assert.assertEquals ( 1, result[0].getValue () );

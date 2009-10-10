@@ -13,15 +13,20 @@ public abstract class BaseValue implements Comparable<BaseValue>
     /** Quality information of the data. The value lies within the interval 0..100. */
     private double qualityIndicator;
 
+    /** Count of values that have been combined to get the current value. */
+    private long baseValueCount;
+
     /**
      * Fully initializing constructor.
      * @param time time stamp of the data
      * @param qualityIndicator quality information of the data
+     * @param baseValueCount count of values that have been combined to get the current value
      */
-    public BaseValue ( final long time, final double qualityIndicator )
+    public BaseValue ( final long time, final double qualityIndicator, final long baseValueCount )
     {
         this.time = time;
         this.qualityIndicator = qualityIndicator;
+        this.baseValueCount = baseValueCount;
     }
 
     /**
@@ -61,12 +66,31 @@ public abstract class BaseValue implements Comparable<BaseValue>
     }
 
     /**
+     * This method returns the count of values that have been combined to get the current value.
+     * @return count of values that have been combined to get the current value
+     */
+    public long getBaseValueCount ()
+    {
+        return baseValueCount;
+    }
+
+    /**
+     * This method sets the count of values that have been combined to get the current value.
+     * @param baseValueCount count of values that have been combined to get the current value
+     */
+    public void setBaseValueCount ( final long baseValueCount )
+    {
+        this.baseValueCount = baseValueCount;
+    }
+
+    /**
      * This method creates an object of the same type with the identical value
      * @param time time stamp of the object that has to be created
      * @param qualityIndicator quality information of the data
+     * @param baseValueCount count of values that have been combined to get the current value
      * @return object of the same time with quality indicator set to 0
      */
-    public abstract BaseValue createNewValue ( final long time, final double qualityIndicator );
+    public abstract BaseValue createNewValue ( final long time, final double qualityIndicator, final long baseValueCount );
 
     /**
      * @see java.lang.Object#hashCode

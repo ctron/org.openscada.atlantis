@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
 
 import org.openscada.hd.server.storage.StorageChannelMetaData;
 import org.openscada.hd.server.storage.backend.comparator.InverseTimeOrderComparator;
 import org.openscada.hd.server.storage.calculation.CalculationMethod;
 import org.openscada.hd.server.storage.datatypes.LongValue;
+import org.openscada.hd.server.storage.relict.RelictCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,16 +20,10 @@ import org.slf4j.LoggerFactory;
  * It is arranged that each such backend object is responsible for its own exclusive time span.
  * @author Ludwig Straub
  */
-public class BackEndMultiplexor implements BackEnd
+public class BackEndMultiplexor implements BackEnd, RelictCleaner
 {
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( BackEndMultiplexor.class );
-
-    /** Delay in milliseconds after that old data is deleted for the first time after initialization of the class. */
-    private final static long CLEANER_TASK_DELAY = 1000 * 60;
-
-    /** Period in milliseconds between two consecutive attemps to delete old data. */
-    private final static long CLEANER_TASK_PERIOD = 1000 * 60 * 10;
 
     /** Metadata of the storage channel. */
     private StorageChannelMetaData metaData;
@@ -42,9 +36,6 @@ public class BackEndMultiplexor implements BackEnd
 
     /** Amount of milliseconds that can be contained by any newly created storage channel backend. */
     private final long newBackendTimespan;
-
-    /** Timer that is used for deleting old data. */
-    private Timer deleteRelictsTimer;
 
     /** Flag indicating whether the instance has been initialized or not. */
     private boolean initialized;
@@ -68,9 +59,9 @@ public class BackEndMultiplexor implements BackEnd
     public synchronized void create ( final StorageChannelMetaData storageChannelMetaData ) throws Exception
     {
         // assure that no old data exists
-        if ( backEndFactory.getExistingBackEnds ( storageChannelMetaData.getDataItemId (), storageChannelMetaData.getDetailLevelId (), storageChannelMetaData.getCalculationMethod () ).length > 0 )
+        if ( backEndFactory.getExistingBackEnds ( storageChannelMetaData.getConfigurationId (), storageChannelMetaData.getDetailLevelId (), storageChannelMetaData.getCalculationMethod () ).length > 0 )
         {
-            String message = String.format ( "data already exists for combination! (data source: '%s'; detail level: '%d'; calculation method: '%s')", storageChannelMetaData.getDataItemId (), storageChannelMetaData.getDetailLevelId (), CalculationMethod.convertCalculationMethodToString ( storageChannelMetaData.getCalculationMethod () ) );
+            String message = String.format ( "data already exists for combination! (configuration id: '%s'; detail level: '%d'; calculation method: '%s')", storageChannelMetaData.getConfigurationId (), storageChannelMetaData.getDetailLevelId (), CalculationMethod.convertCalculationMethodToString ( storageChannelMetaData.getCalculationMethod () ) );
             logger.error ( message );
             throw new Exception ( message );
         }
@@ -86,7 +77,7 @@ public class BackEndMultiplexor implements BackEnd
     {
         deinitialize ();
         backEnds.clear ();
-        BackEnd[] backEndArray = backEndFactory.getExistingBackEnds ( storageChannelMetaData.getDataItemId (), storageChannelMetaData.getDetailLevelId (), storageChannelMetaData.getCalculationMethod () );
+        BackEnd[] backEndArray = backEndFactory.getExistingBackEnds ( storageChannelMetaData.getConfigurationId (), storageChannelMetaData.getDetailLevelId (), storageChannelMetaData.getCalculationMethod () );
         initialized = true;
         Arrays.sort ( backEndArray, new InverseTimeOrderComparator () );
         backEnds.addAll ( Arrays.asList ( backEndArray ) );
@@ -98,16 +89,7 @@ public class BackEndMultiplexor implements BackEnd
     }
 
     /**
-     * @see org.openscada.hd.server.storage.backend.BackEnd#scheduleCleanup
-     */
-    public synchronized void scheduleCleanup ()
-    {
-        deleteRelictsTimer = new Timer ();
-        deleteRelictsTimer.schedule ( new BackEndRelictDataCleanerTask ( this ), CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD );
-    }
-
-    /**
-     * @see org.openscada.hd.server.storage.backend.BackEnd#cleanupRelicts
+     * @see org.openscada.hd.server.storage.relict.RelictCleaner#cleanupRelicts
      */
     public synchronized void cleanupRelicts ()
     {
@@ -182,12 +164,6 @@ public class BackEndMultiplexor implements BackEnd
     public synchronized void deinitialize () throws Exception
     {
         initialized = false;
-        if ( deleteRelictsTimer != null )
-        {
-            deleteRelictsTimer.cancel ();
-            deleteRelictsTimer.purge ();
-            deleteRelictsTimer = null;
-        }
         for ( BackEnd backEnd : backEnds )
         {
             try

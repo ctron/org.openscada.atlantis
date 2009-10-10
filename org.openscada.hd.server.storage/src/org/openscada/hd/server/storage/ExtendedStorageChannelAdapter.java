@@ -1,7 +1,5 @@
 package org.openscada.hd.server.storage;
 
-import org.openscada.hd.server.storage.ExtendedStorageChannel;
-import org.openscada.hd.server.storage.StorageChannel;
 import org.openscada.hd.server.storage.datatypes.DoubleValue;
 import org.openscada.hd.server.storage.datatypes.LongValue;
 
@@ -52,7 +50,7 @@ public class ExtendedStorageChannelAdapter implements ExtendedStorageChannel
     {
         if ( ( storageChannel != null ) && ( doubleValue != null ) )
         {
-            storageChannel.updateLong ( new LongValue ( doubleValue.getTime (), doubleValue.getQualityIndicator (), Double.doubleToLongBits ( doubleValue.getValue () ) ) );
+            storageChannel.updateLong ( new LongValue ( doubleValue.getTime (), doubleValue.getQualityIndicator (), doubleValue.getBaseValueCount (), Double.doubleToLongBits ( doubleValue.getValue () ) ) );
         }
     }
 
@@ -63,11 +61,11 @@ public class ExtendedStorageChannelAdapter implements ExtendedStorageChannel
     {
         if ( ( storageChannel != null ) && ( doubleValues != null ) )
         {
-            LongValue[] longValues = new LongValue[doubleValues.length];
+            final LongValue[] longValues = new LongValue[doubleValues.length];
             for ( int i = 0; i < doubleValues.length; i++ )
             {
-                DoubleValue doubleValue = doubleValues[i];
-                longValues[i] = new LongValue ( doubleValue.getTime (), doubleValue.getQualityIndicator (), Double.doubleToLongBits ( doubleValue.getValue () ) );
+                final DoubleValue doubleValue = doubleValues[i];
+                longValues[i] = new LongValue ( doubleValue.getTime (), doubleValue.getQualityIndicator (), doubleValue.getBaseValueCount (), Double.doubleToLongBits ( doubleValue.getValue () ) );
             }
             storageChannel.updateLongs ( longValues );
         }
@@ -78,12 +76,12 @@ public class ExtendedStorageChannelAdapter implements ExtendedStorageChannel
      */
     public synchronized DoubleValue[] getDoubleValues ( final long startTime, final long endTime ) throws Exception
     {
-        LongValue[] longValues = storageChannel != null ? storageChannel.getLongValues ( startTime, endTime ) : EMPTY_LONGVALUE_ARRAY;
-        DoubleValue[] doubleValues = new DoubleValue[longValues.length];
+        final LongValue[] longValues = storageChannel != null ? storageChannel.getLongValues ( startTime, endTime ) : EMPTY_LONGVALUE_ARRAY;
+        final DoubleValue[] doubleValues = new DoubleValue[longValues.length];
         for ( int i = 0; i < longValues.length; i++ )
         {
             LongValue longValue = longValues[i];
-            doubleValues[i] = new DoubleValue ( longValue.getTime (), longValue.getQualityIndicator (), Double.longBitsToDouble ( longValue.getValue () ) );
+            doubleValues[i] = new DoubleValue ( longValue.getTime (), longValue.getQualityIndicator (), longValue.getBaseValueCount (), Double.longBitsToDouble ( longValue.getValue () ) );
         }
         return doubleValues;
     }
@@ -91,7 +89,7 @@ public class ExtendedStorageChannelAdapter implements ExtendedStorageChannel
     /**
      * @see org.openscada.hd.server.storage.StorageChannel#getLongValues
      */
-    public synchronized LongValue[] getLongValues ( long startTime, long endTime ) throws Exception
+    public synchronized LongValue[] getLongValues ( final long startTime, final long endTime ) throws Exception
     {
         return storageChannel != null ? storageChannel.getLongValues ( startTime, endTime ) : EMPTY_LONGVALUE_ARRAY;
     }
@@ -99,7 +97,7 @@ public class ExtendedStorageChannelAdapter implements ExtendedStorageChannel
     /**
      * @see org.openscada.hd.server.storage.StorageChannel#updateLong
      */
-    public synchronized void updateLong ( LongValue longValue ) throws Exception
+    public synchronized void updateLong ( final LongValue longValue ) throws Exception
     {
         if ( storageChannel != null )
         {
@@ -110,11 +108,22 @@ public class ExtendedStorageChannelAdapter implements ExtendedStorageChannel
     /**
      * @see org.openscada.hd.server.storage.StorageChannel#updateLongs
      */
-    public synchronized void updateLongs ( LongValue[] longValues ) throws Exception
+    public synchronized void updateLongs ( final LongValue[] longValues ) throws Exception
     {
         if ( storageChannel != null )
         {
             storageChannel.updateLongs ( longValues );
+        }
+    }
+
+    /**
+     * @see org.openscada.hd.server.storage.ExtendedStorageChannel#cleanupRelicts
+     */
+    public synchronized void cleanupRelicts () throws Exception
+    {
+        if ( storageChannel != null )
+        {
+            storageChannel.cleanupRelicts ();
         }
     }
 }

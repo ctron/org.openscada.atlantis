@@ -28,14 +28,14 @@ public class FileBackEndFactory implements BackEndFactory
     /** Text that is used to split the different parts of the generated file names. */
     private final static String FILENAME_PART_SEPERATOR = "_";
 
-    /** File mask that is used when no other file mask is passed. Sample file: MyDataSource-AVG-1-1000000-1100000.wa (dataItemId-calculationMethod-level-startTime-endTime) */
+    /** File mask that is used when no other file mask is passed. Sample file: MyDataSource-AVG-1-1000000-1100000.wa (configurationId-calculationMethod-level-startTime-endTime) */
     public final static String FILE_MASK = "%1$s" + FILENAME_PART_SEPERATOR + "%3$s" + FILENAME_PART_SEPERATOR + "%2$s" + FILENAME_PART_SEPERATOR + "%4$s" + FILENAME_PART_SEPERATOR + "%5$s.va";
 
     /** Format string used to format time information. */
     private final static String TIME_FORMAT = "%1$04d%2$02d%3$02d.%4$02d%5$02d%6$02d.%7$03d";
 
-    /** Regular expression for data item id fragments. */
-    private final static String DATA_ITEM_ID_REGEX_PATTERN = ".*";
+    /** Regular expression for configuration id fragments. */
+    private final static String CONFIGURATION_ID_REGEX_PATTERN = ".*";
 
     /** Regular expression for detail level id fragments. */
     private final static String DETAIL_LEVEL_ID_REGEX_PATTERN = "[-0-9]+";
@@ -58,8 +58,8 @@ public class FileBackEndFactory implements BackEndFactory
     /** Root folder within the storage files are located and new ones have to be created. */
     private final String fileRoot;
 
-    /** Precompiled regular expression pattern for extracting the data item id from a filename. */
-    private final Pattern dataItemIdPattern;
+    /** Precompiled regular expression pattern for extracting the configuration id from a filename. */
+    private final Pattern configurationIdPattern;
 
     /** Precompiled regular expression pattern for extracting the calculation method information from a filename. */
     private final Pattern calculationMethodPattern;
@@ -74,9 +74,9 @@ public class FileBackEndFactory implements BackEndFactory
     public FileBackEndFactory ( final String fileRoot )
     {
         this.fileRoot = fileRoot;
-        this.dataItemIdPattern = Pattern.compile ( String.format ( FILE_MASK, "(" + DATA_ITEM_ID_REGEX_PATTERN + ")", CALCULATION_METHOD_REGEX_PATTERN, DETAIL_LEVEL_ID_REGEX_PATTERN, START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ), Pattern.CASE_INSENSITIVE );
-        this.calculationMethodPattern = Pattern.compile ( String.format ( FILE_MASK, DATA_ITEM_ID_REGEX_PATTERN, "(" + CALCULATION_METHOD_REGEX_PATTERN + ")", DETAIL_LEVEL_ID_REGEX_PATTERN, START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ), Pattern.CASE_INSENSITIVE );
-        this.detailLevelIdPattern = Pattern.compile ( String.format ( FILE_MASK, DATA_ITEM_ID_REGEX_PATTERN, CALCULATION_METHOD_REGEX_PATTERN, "(" + DETAIL_LEVEL_ID_REGEX_PATTERN + ")", START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ), Pattern.CASE_INSENSITIVE );
+        this.configurationIdPattern = Pattern.compile ( String.format ( FILE_MASK, "(" + CONFIGURATION_ID_REGEX_PATTERN + ")", CALCULATION_METHOD_REGEX_PATTERN, DETAIL_LEVEL_ID_REGEX_PATTERN, START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ), Pattern.CASE_INSENSITIVE );
+        this.calculationMethodPattern = Pattern.compile ( String.format ( FILE_MASK, CONFIGURATION_ID_REGEX_PATTERN, "(" + CALCULATION_METHOD_REGEX_PATTERN + ")", DETAIL_LEVEL_ID_REGEX_PATTERN, START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ), Pattern.CASE_INSENSITIVE );
+        this.detailLevelIdPattern = Pattern.compile ( String.format ( FILE_MASK, CONFIGURATION_ID_REGEX_PATTERN, CALCULATION_METHOD_REGEX_PATTERN, "(" + DETAIL_LEVEL_ID_REGEX_PATTERN + ")", START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ), Pattern.CASE_INSENSITIVE );
     }
 
     /**
@@ -166,10 +166,10 @@ public class FileBackEndFactory implements BackEndFactory
             fileBackEnd.initialize ( null );
             final StorageChannelMetaData metaData = fileBackEnd.getMetaData ();
             final String fileName = file.getName ();
-            final String dataItemId = encodeFileNamePart ( metaData.getDataItemId () );
+            final String configurationId = encodeFileNamePart ( metaData.getConfigurationId () );
             final String calculationMethod = CalculationMethod.convertCalculationMethodToShortString ( metaData.getCalculationMethod () );
             final long detailLevelId = metaData.getDetailLevelId ();
-            if ( ( dataItemId == null ) || !extractDataFromFileName ( dataItemIdPattern, fileName, dataItemId ).equals ( dataItemId ) || ( !extractDataFromFileName ( calculationMethodPattern, fileName, calculationMethod ).equals ( calculationMethod ) ) || ( extractDataFromFileName ( detailLevelIdPattern, fileName, detailLevelId ) != detailLevelId ) )
+            if ( ( configurationId == null ) || !extractDataFromFileName ( configurationIdPattern, fileName, configurationId ).equals ( configurationId ) || ( !extractDataFromFileName ( calculationMethodPattern, fileName, calculationMethod ).equals ( calculationMethod ) ) || ( extractDataFromFileName ( detailLevelIdPattern, fileName, detailLevelId ) != detailLevelId ) )
             {
                 fileBackEnd = null;
                 logger.warn ( String.format ( "file content does not match expected content due to file name (%s). file will be ignored", file.getPath () ) );
@@ -198,9 +198,9 @@ public class FileBackEndFactory implements BackEndFactory
         // get all directories
         File[] directories = root.listFiles ( new DirectoryFileFilter ( null ) );
         List<StorageChannelMetaData> metaDatas = new LinkedList<StorageChannelMetaData> ();
-        for ( File dataItemDirectory : directories )
+        for ( File configurationDirectory : directories )
         {
-            for ( File file : dataItemDirectory.listFiles ( new FileFileFilter ( String.format ( FILE_MASK, dataItemDirectory.getName (), CALCULATION_METHOD_REGEX_PATTERN, DETAIL_LEVEL_ID_REGEX_PATTERN, START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ) ) ) )
+            for ( File file : configurationDirectory.listFiles ( new FileFileFilter ( String.format ( FILE_MASK, configurationDirectory.getName (), CALCULATION_METHOD_REGEX_PATTERN, DETAIL_LEVEL_ID_REGEX_PATTERN, START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ) ) ) )
             {
                 final BackEnd backEnd = getBackEnd ( file );
                 if ( backEnd != null )
@@ -213,10 +213,10 @@ public class FileBackEndFactory implements BackEndFactory
                             boolean addNew = true;
                             for ( StorageChannelMetaData entry : metaDatas )
                             {
-                                String storedDataItemId = entry.getDataItemId ();
-                                if ( ( storedDataItemId != null ) && !storedDataItemId.equals ( metaData.getDataItemId () ) )
+                                String storedConfigurationId = entry.getConfigurationId ();
+                                if ( ( storedConfigurationId != null ) && !storedConfigurationId.equals ( metaData.getConfigurationId () ) )
                                 {
-                                    // since the list is ordered by directory and therefore by data item id, it can be assumed that no more suitable entry exists in the list
+                                    // since the list is ordered by directory and therefore by configuration id, it can be assumed that no more suitable entry exists in the list
                                     break;
                                 }
                                 if ( ( entry.getDetailLevelId () == metaData.getDetailLevelId () ) && ( entry.getCalculationMethod () == metaData.getCalculationMethod () ) )
@@ -258,10 +258,10 @@ public class FileBackEndFactory implements BackEndFactory
     /**
      * @see org.openscada.hd.server.storage.backend.BackEndFactory#getExistingBackEnds
      */
-    public BackEnd[] getExistingBackEnds ( final String dataItemId, final long detailLevelId, final CalculationMethod calculationMethod ) throws Exception
+    public BackEnd[] getExistingBackEnds ( final String configurationId, final long detailLevelId, final CalculationMethod calculationMethod ) throws Exception
     {
         // check input
-        if ( dataItemId == null )
+        if ( configurationId == null )
         {
             return EMTPY_BACKEND_ARRAY;
         }
@@ -274,8 +274,8 @@ public class FileBackEndFactory implements BackEndFactory
         }
 
         // get all directories within the root folder
-        final String dataItemIdFileName = encodeFileNamePart ( dataItemId );
-        File[] directories = root.listFiles ( new DirectoryFileFilter ( dataItemIdFileName ) );
+        final String configurationIdFileName = encodeFileNamePart ( configurationId );
+        File[] directories = root.listFiles ( new DirectoryFileFilter ( configurationIdFileName ) );
 
         // check if sub directory exists
         if ( directories.length == 0 )
@@ -283,9 +283,9 @@ public class FileBackEndFactory implements BackEndFactory
             return EMTPY_BACKEND_ARRAY;
         }
 
-        // evaluate the data item directory
+        // evaluate the configuration id directory
         final List<BackEnd> backEnds = new ArrayList<BackEnd> ();
-        for ( File file : directories[0].listFiles ( new FileFileFilter ( String.format ( FILE_MASK, dataItemIdFileName, CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ), detailLevelId, START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ) ) ) )
+        for ( File file : directories[0].listFiles ( new FileFileFilter ( String.format ( FILE_MASK, configurationIdFileName, CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ), detailLevelId, START_TIME_REGEX_PATTERN, END_TIME_REGEX_PATTERN ) ) ) )
         {
             final BackEnd backEnd = getBackEnd ( file );
             if ( backEnd != null )
@@ -309,15 +309,15 @@ public class FileBackEndFactory implements BackEndFactory
             logger.error ( message );
             throw new Exception ( message );
         }
-        final String dataItemId = encodeFileNamePart ( storageChannelMetaData.getDataItemId () );
-        if ( dataItemId == null )
+        final String configurationId = encodeFileNamePart ( storageChannelMetaData.getConfigurationId () );
+        if ( configurationId == null )
         {
-            String message = "invalid dataItemId specified as metadata for FileBackEndFactory!";
+            String message = "invalid configurationId specified as metadata for FileBackEndFactory!";
             logger.error ( message );
             throw new Exception ( message );
         }
 
         // assure that root folder exists
-        return new FileBackEnd ( new File ( new File ( fileRoot, dataItemId ), String.format ( FILE_MASK, dataItemId, CalculationMethod.convertCalculationMethodToShortString ( storageChannelMetaData.getCalculationMethod () ), storageChannelMetaData.getDetailLevelId (), encodeFileNamePart ( storageChannelMetaData.getStartTime () ), encodeFileNamePart ( storageChannelMetaData.getEndTime () ) ) ).getPath () );
+        return new FileBackEnd ( new File ( new File ( fileRoot, configurationId ), String.format ( FILE_MASK, configurationId, CalculationMethod.convertCalculationMethodToShortString ( storageChannelMetaData.getCalculationMethod () ), storageChannelMetaData.getDetailLevelId (), encodeFileNamePart ( storageChannelMetaData.getStartTime () ), encodeFileNamePart ( storageChannelMetaData.getEndTime () ) ) ).getPath () );
     }
 }

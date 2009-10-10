@@ -47,7 +47,14 @@ public class ValueArrayNormalizer
         final long firstStartTime = firstValue.getTime ();
         if ( firstStartTime != startTime )
         {
-            blockValues.add ( firstValue.createNewValue ( startTime, firstStartTime < startTime ? firstValue.getQualityIndicator () : 0 ) );
+            if ( firstStartTime < startTime )
+            {
+                blockValues.add ( firstValue.createNewValue ( startTime, firstValue.getQualityIndicator (), firstValue.getBaseValueCount () ) );
+            }
+            else
+            {
+                blockValues.add ( firstValue.createNewValue ( startTime, 0, 0 ) );
+            }
         }
         for ( int i = firstRelevantEntryIndex + 1; i < lastRelevantEntryIndex; i++ )
         {
@@ -56,7 +63,7 @@ public class ValueArrayNormalizer
         final BaseValue lastValue = blockValues.get ( blockValues.size () - 1 );
         if ( lastValue.getTime () != endTime )
         {
-            blockValues.add ( lastValue.createNewValue ( endTime, lastValue.getQualityIndicator () ) );
+            blockValues.add ( lastValue.createNewValue ( endTime, lastValue.getQualityIndicator (), 0 ) );
         }
         return blockValues.toArray ( emptyResultArray );
     }

@@ -12,9 +12,6 @@ public class StorageChannelMetaData
     /** Unique id specifying the combination of the meta data information. */
     private String configurationId;
 
-    /** Name of data source of which data is stored in the channel. */
-    private String dataItemId;
-
     /** Method that is used to calculate the data that is stored in the channel. */
     private CalculationMethod calculationMethod;
 
@@ -42,13 +39,12 @@ public class StorageChannelMetaData
      */
     public StorageChannelMetaData ( StorageChannelMetaData storageChannelMetaData )
     {
-        this ( storageChannelMetaData.getConfigurationId (), storageChannelMetaData.getDataItemId (), storageChannelMetaData.getCalculationMethod (), storageChannelMetaData.getCalculationMethodParameters (), storageChannelMetaData.getDetailLevelId (), storageChannelMetaData.getStartTime (), storageChannelMetaData.getEndTime (), storageChannelMetaData.getProposedDataAge (), storageChannelMetaData.getDataType () );
+        this ( storageChannelMetaData.getConfigurationId (), storageChannelMetaData.getCalculationMethod (), storageChannelMetaData.getCalculationMethodParameters (), storageChannelMetaData.getDetailLevelId (), storageChannelMetaData.getStartTime (), storageChannelMetaData.getEndTime (), storageChannelMetaData.getProposedDataAge (), storageChannelMetaData.getDataType () );
     }
 
     /**
      * Fully initializing constructor
      * @param configurationId unique id specifying the combination of the meta data information
-     * @param dataItemId name of data source of which data is stored in the channel
      * @param calculationMethod method that is used to calculate the data that is stored in the channel
      * @param calculationMethodParameters parameters that are used in combination with the calculation method to specify the algorithm that has to be applied
      * @param detailLevelId detail level of the stored data
@@ -57,10 +53,9 @@ public class StorageChannelMetaData
      * @param proposedDataAge age of the data in milliseconds a stored data should be kept available
      * @param dataType data type of the stored values
      */
-    public StorageChannelMetaData ( final String configurationId, final String dataItemId, final CalculationMethod calculationMethod, final long[] calculationMethodParameters, final long detailLevelId, final long startTime, final long endTime, final long proposedDataAge, final DataType dataType )
+    public StorageChannelMetaData ( final String configurationId, final CalculationMethod calculationMethod, final long[] calculationMethodParameters, final long detailLevelId, final long startTime, final long endTime, final long proposedDataAge, final DataType dataType )
     {
         this.configurationId = configurationId;
-        this.dataItemId = dataItemId;
         this.calculationMethod = calculationMethod;
         this.calculationMethodParameters = calculationMethodParameters != null ? calculationMethodParameters : new long[0];
         this.detailLevelId = detailLevelId;
@@ -86,24 +81,6 @@ public class StorageChannelMetaData
     public void setConfigurationId ( String configurationId )
     {
         this.configurationId = configurationId;
-    }
-
-    /**
-     * This method returns the name of data source of which data is stored in the channel.
-     * @return name of data source of which data is stored in the channel
-     */
-    public String getDataItemId ()
-    {
-        return dataItemId;
-    }
-
-    /**
-     * This method sets the name of data source of which data is stored in the channel.
-     * @param dataItemId name of data source of which data is stored in the channel
-     */
-    public void setDataItemId ( String dataItemId )
-    {
-        this.dataItemId = dataItemId;
     }
 
     /**
@@ -239,6 +216,6 @@ public class StorageChannelMetaData
     @Override
     public String toString ()
     {
-        return String.format ( "dataItemId: %s; calculationMethod: %s; detailLevel: %s; startTime: %s; endTime: %s; proposedDataAge: %s; datatype: %s", dataItemId, CalculationMethod.convertCalculationMethodToString ( calculationMethod ), detailLevelId, startTime, endTime, proposedDataAge, dataType );
+        return String.format ( "configurationId: %s; calculationMethod: %s; detailLevel: %s; startTime: %s; endTime: %s; proposedDataAge: %s; datatype: %s", configurationId, CalculationMethod.convertCalculationMethodToString ( calculationMethod ), detailLevelId, startTime, endTime, proposedDataAge, dataType );
     }
 }

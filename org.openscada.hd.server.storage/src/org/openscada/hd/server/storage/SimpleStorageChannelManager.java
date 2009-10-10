@@ -125,4 +125,15 @@ public class SimpleStorageChannelManager implements StorageChannelManager
         }
         return doubleValues.toArray ( EMPTY_DOUBLEVALUE_ARRAY );
     }
+
+    /**
+     * @see org.openscada.hd.server.storage.ExtendedStorageChannel#cleanupRelicts
+     */
+    public synchronized void cleanupRelicts () throws Exception
+    {
+        for ( StorageChannel storageChannel : storageChannels )
+        {
+            storageChannel.cleanupRelicts ();
+        }
+    }
 }

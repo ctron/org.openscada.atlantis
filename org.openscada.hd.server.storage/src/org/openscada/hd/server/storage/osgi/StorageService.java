@@ -126,10 +126,10 @@ public class StorageService implements SelfManagedConfigurationFactory
 
     /**
      * This method creates a configuration object using the passed meta data as input.
-     * @param metaData input for the configuration object that has to be created
+     * @param metaDatas input for the configuration object that has to be created
      * @return created configuration object
      */
-    private static ConfigurationImpl convertMetaDataToConfiguration ( final StorageChannelMetaData metaData )
+    private static ConfigurationImpl convertMetaDatasToConfiguration ( final List<StorageChannelMetaData> metaDatas )
     {
         final ConfigurationImpl configuration = new ConfigurationImpl ();
         configuration.setFactoryId ( FACTORY_ID );
@@ -191,7 +191,6 @@ public class StorageService implements SelfManagedConfigurationFactory
 
     private static StorageChannelMetaData createMetaData ( final String configurationId, final Map<String, String> data )
     {
-        final String dataItemId = data.get ( "DATA_ITEM_ID" );
         final CalculationMethod calculationMethod = CalculationMethod.convertStringToCalculationMethod ( data.get ( "CALCULATION_METHOD" ) );
         long[] calculationMethodParameters = null;
         final String calculationMethodParametersAsString = data.get ( "CALCULATION_METHOD_PARAMETERS" );
@@ -210,7 +209,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         final long endTime = parseLong ( data.get ( "END_TIME" ), Long.MAX_VALUE );
         final long proposedDataAge = parseLong ( data.get ( "PROPOSED_DATA_AGE" ), Long.MAX_VALUE );
         final DataType dataType = DataType.convertStringToDataType ( data.get ( "DATA_TYPE" ) );
-        return new StorageChannelMetaData ( configurationId, dataItemId, calculationMethod, calculationMethodParameters, detailLevelId, startTime, endTime, proposedDataAge, dataType );
+        return new StorageChannelMetaData ( configurationId, calculationMethod, calculationMethodParameters, detailLevelId, startTime, endTime, proposedDataAge, dataType );
     }
 
     /**
@@ -219,20 +218,20 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public synchronized void start () throws Exception
     {
-        // build a map holding all back end objects grouped by data item ids ordered by detail level
+        // build a map holding all back end objects grouped by data configuration ids ordered by detail level
         for ( final StorageChannelMetaData metaData : this.backEndFactory.getExistingBackEndsMetaData () )
         {
             // create new back end object
             final BackEnd backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
             backEnd.initialize ( metaData );
-            final String dataItemId = metaData.getDataItemId ();
+            final String configurationId = metaData.getConfigurationId ();
 
             // get list of already created back end objects with the same data item id
-            List<BackEnd> backEnds = this.backEndMap.get ( dataItemId );
+            List<BackEnd> backEnds = this.backEndMap.get ( configurationId );
             if ( backEnds == null )
             {
                 backEnds = new LinkedList<BackEnd> ();
-                this.backEndMap.put ( dataItemId, backEnds );
+                this.backEndMap.put ( configurationId, backEnds );
             }
 
             // assure that the list is sorted by detail level
@@ -256,17 +255,18 @@ public class StorageService implements SelfManagedConfigurationFactory
                 final StorageChannelMetaData metaData = backEnd.getMetaData ();
                 if ( metaData != null )
                 {
-                    addService ( metaData.getConfigurationId (), metaData.getDataItemId () );
+                    addService ( metaData.getConfigurationId () );
                 }
             }
         }
     }
 
-    private ShiService addService ( final String configurationId, final String dataItemId ) throws Exception
+    private ShiService addService ( final String configurationId ) throws Exception
     {
-        final List<BackEnd> backEnds = this.backEndMap.get ( dataItemId );
+        final List<BackEnd> backEnds = this.backEndMap.get ( configurationId );
         final ExtendedStorageChannel[] storageChannels = new ExtendedStorageChannel[backEnds.size ()];
-        final ShiService shiService = new ShiService ( convertMetaDataToConfiguration ( backEnds.get ( 0 ).getMetaData () ) );
+        final List<StorageChannelMetaData> metaDatas = new ArrayList<StorageChannelMetaData> ();
+        final ShiService shiService = new ShiService ( convertMetaDatasToConfiguration ( null ) );
         for ( int i = 0; i < backEnds.size (); i++ )
         {
             final BackEnd backEnd = backEnds.get ( i );
@@ -355,7 +355,6 @@ public class StorageService implements SelfManagedConfigurationFactory
     {
         // easy input test data
         properties = new HashMap<String, String> ();
-        properties.put ( "DATA_ITEM_ID", configurationId );
         properties.put ( "CALCULATION_METHOD", "NATIVE" );
         properties.put ( "CALCULATION_METHOD_PARAMETERS", "4711" );
         properties.put ( "DETAIL_LEVEL", "" + 0 );
@@ -366,18 +365,18 @@ public class StorageService implements SelfManagedConfigurationFactory
 
         // disallow update of already existing service
         final StorageChannelMetaData metaData = createMetaData ( configurationId, properties );
-        ShiService service = this.shiServices.get ( metaData.getDataItemId () );
+        ShiService service = this.shiServices.get ( metaData.getConfigurationId () );
         if ( service == null )
         {
             // create new service
             try
             {
                 final List<BackEnd> backEnds = new ArrayList<BackEnd> ();
-                this.backEndMap.put ( metaData.getDataItemId (), backEnds );
+                this.backEndMap.put ( metaData.getConfigurationId (), backEnds );
                 final BackEnd backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
                 backEnd.initialize ( metaData );
                 backEnds.add ( backEnd );
-                service = addService ( metaData.getConfigurationId (), metaData.getDataItemId () );
+                service = addService ( metaData.getConfigurationId () );
                 final Configuration[] addedConfigurationIds = new Configuration[] { service.getConfiguration () };
                 for ( final ConfigurationListener listener : this.configurationListeners )
                 {
@@ -420,8 +419,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         serviceToDelete.stop ();
         final ConfigurationImpl configuration = serviceToDelete.getConfiguration ();
         final StorageChannelMetaData metaData = convertConfigurationToMetaData ( configuration );
-        final String dataItemId = metaData.getDataItemId ();
-        final List<BackEnd> backEnds = this.backEndMap.get ( dataItemId );
+        final List<BackEnd> backEnds = this.backEndMap.get ( configurationId );
         if ( backEnds != null )
         {
             for ( final BackEnd backEnd : backEnds )

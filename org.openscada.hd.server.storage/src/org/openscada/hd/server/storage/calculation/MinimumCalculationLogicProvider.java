@@ -36,6 +36,7 @@ public class MinimumCalculationLogicProvider extends CalculationLogicProviderBas
     {
         long minValue = Long.MAX_VALUE;
         double quality = 0;
+        long baseValueCount = 0;
         for ( LongValue value : values )
         {
             long val = value.getValue ();
@@ -44,8 +45,9 @@ public class MinimumCalculationLogicProvider extends CalculationLogicProviderBas
                 minValue = val;
             }
             quality += value.getQualityIndicator ();
+            baseValueCount += value.getBaseValueCount ();
         }
-        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, minValue ) };
+        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, baseValueCount, minValue ) };
     }
 
     /**
@@ -55,6 +57,7 @@ public class MinimumCalculationLogicProvider extends CalculationLogicProviderBas
     {
         double minValue = Double.MAX_VALUE;
         double quality = 0;
+        long baseValueCount = 0;
         for ( DoubleValue value : values )
         {
             double val = value.getValue ();
@@ -63,8 +66,9 @@ public class MinimumCalculationLogicProvider extends CalculationLogicProviderBas
                 minValue = val;
             }
             quality += value.getQualityIndicator ();
+            baseValueCount += value.getBaseValueCount ();
         }
-        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, (long)minValue ) };
+        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, baseValueCount, (long)minValue ) };
     }
 
     /**
@@ -74,6 +78,7 @@ public class MinimumCalculationLogicProvider extends CalculationLogicProviderBas
     {
         long minValue = Long.MAX_VALUE;
         double quality = 0;
+        long baseValueCount = 0;
         for ( LongValue value : values )
         {
             long val = value.getValue ();
@@ -82,8 +87,9 @@ public class MinimumCalculationLogicProvider extends CalculationLogicProviderBas
                 minValue = val;
             }
             quality += value.getQualityIndicator ();
+            baseValueCount += value.getBaseValueCount ();
         }
-        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, minValue ) };
+        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, baseValueCount, minValue ) };
     }
 
     /**
@@ -95,6 +101,7 @@ public class MinimumCalculationLogicProvider extends CalculationLogicProviderBas
     {
         double minValue = Double.MAX_VALUE;
         double quality = 0;
+        long baseValueCount = 0;
         for ( DoubleValue value : values )
         {
             double val = value.getValue ();
@@ -103,7 +110,8 @@ public class MinimumCalculationLogicProvider extends CalculationLogicProviderBas
                 minValue = val;
             }
             quality += value.getQualityIndicator ();
+            baseValueCount += value.getBaseValueCount ();
         }
-        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, minValue ) };
+        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, baseValueCount, minValue ) };
     }
 }

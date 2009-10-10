@@ -27,20 +27,6 @@ public interface BackEnd extends StorageChannel
     public abstract void initialize ( final StorageChannelMetaData storageChannelMetaData ) throws Exception;
 
     /**
-     * This method schedules the deletion of old data.
-     * This method can only be called after the initialize method.
-     * @throws Exception in case of any problem
-     */
-    public abstract void scheduleCleanup () throws Exception;
-
-    /**
-     * This method deletes old data.
-     * This method can only be called after the initialize method.
-     * @throws Exception in case of any problem
-     */
-    public abstract void cleanupRelicts () throws Exception;
-
-    /**
      * This method returns the metadata that is currently valid by the storage channel backend.
      * Note: The data that is returned via this method has to be treated as snapshot.
      * To be reliable, the storage channel object has to be synchronized.

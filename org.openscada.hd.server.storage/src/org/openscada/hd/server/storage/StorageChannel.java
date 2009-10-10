@@ -40,4 +40,11 @@ public interface StorageChannel
      * @throws Exception in case of read/write problems or file corruption
      */
     public abstract LongValue[] getLongValues ( long startTime, long endTime ) throws Exception;
+
+    /**
+     * This method deletes old data.
+     * This method can only be called after the initialize method.
+     * @throws Exception in case of any problem
+     */
+    public abstract void cleanupRelicts () throws Exception;
 }

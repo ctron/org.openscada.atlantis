@@ -1,4 +1,4 @@
-package org.openscada.hd.server.storage.backend;
+package org.openscada.hd.server.storage.relict;
 
 import java.util.TimerTask;
 
@@ -9,21 +9,21 @@ import org.slf4j.LoggerFactory;
  * This task is used to periodically delete old data.
  * @author Ludwig Straub
  */
-public class BackEndRelictDataCleanerTask extends TimerTask
+public class RelictCleanerCallerTask extends TimerTask
 {
     /** The default logger. */
-    private final static Logger logger = LoggerFactory.getLogger ( BackEndRelictDataCleanerTask.class );
+    private final static Logger logger = LoggerFactory.getLogger ( RelictCleanerCallerTask.class );
 
-    /** Back end of which old data has to be deleted. */
-    private final BackEnd backEnd;
+    /** Object of which old data has to be deleted. */
+    private final RelictCleaner relictCleaner;
 
     /**
      * Constructor.
-     * @param backEnd back end of which old data has to be deleted
+     * @param backEnd Object of which old data has to be deleted
      */
-    public BackEndRelictDataCleanerTask ( BackEnd backEnd )
+    public RelictCleanerCallerTask ( RelictCleaner relictCleaner )
     {
-        this.backEnd = backEnd;
+        this.relictCleaner = relictCleaner;
     }
 
     /**
@@ -33,7 +33,7 @@ public class BackEndRelictDataCleanerTask extends TimerTask
     {
         try
         {
-            backEnd.cleanupRelicts ();
+            relictCleaner.cleanupRelicts ();
         }
         catch ( Exception e )
         {

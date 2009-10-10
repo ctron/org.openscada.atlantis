@@ -3,6 +3,7 @@ package org.openscada.hd.server.storage.osgi;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
 
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -18,6 +19,8 @@ import org.openscada.hd.server.storage.ExtendedStorageChannel;
 import org.openscada.hd.server.storage.calculation.CalculationMethod;
 import org.openscada.hd.server.storage.datatypes.DoubleValue;
 import org.openscada.hd.server.storage.datatypes.LongValue;
+import org.openscada.hd.server.storage.relict.RelictCleaner;
+import org.openscada.hd.server.storage.relict.RelictCleanerCallerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +28,16 @@ import org.slf4j.LoggerFactory;
  * Implementation of StorageHistoricalItem as OSGi service.
  * @author Ludwig Straub
  */
-public class ShiService implements StorageHistoricalItem
+public class ShiService implements StorageHistoricalItem, RelictCleaner
 {
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( ShiService.class );
+
+    /** Delay in milliseconds after that old data is deleted for the first time after initialization of the class. */
+    private final static long CLEANER_TASK_DELAY = 1000 * 60;
+
+    /** Period in milliseconds between two consecutive attemps to delete old data. */
+    private final static long CLEANER_TASK_PERIOD = 1000 * 60 * 10;
 
     private final ConfigurationImpl configuration;
 
@@ -36,7 +45,11 @@ public class ShiService implements StorageHistoricalItem
 
     private ExtendedStorageChannel rootStorageChannel;
 
+    /** Flag indicating whether the service is currently running or not. */
     private boolean started;
+
+    /** Timer that is used for deleting old data. */
+    private Timer deleteRelictsTimer;
 
     public ShiService ( ConfigurationImpl configuration )
     {
@@ -115,11 +128,11 @@ public class ShiService implements StorageHistoricalItem
         {
             if ( variant.isLong () || variant.isInteger () || variant.isBoolean () )
             {
-                rootStorageChannel.updateLong ( new LongValue ( time, qualityIndicator, variant.asLong ( 0L ) ) );
+                rootStorageChannel.updateLong ( new LongValue ( time, qualityIndicator, 1, variant.asLong ( 0L ) ) );
             }
             else
             {
-                rootStorageChannel.updateDouble ( new DoubleValue ( time, qualityIndicator, variant.asDouble ( 0.0 ) ) );
+                rootStorageChannel.updateDouble ( new DoubleValue ( time, qualityIndicator, 1, variant.asDouble ( 0.0 ) ) );
             }
         }
         catch ( Exception e )
@@ -137,13 +150,41 @@ public class ShiService implements StorageHistoricalItem
         }
     }
 
+    /**
+     * This method activates the service processing.
+     * The methods updateData and createQuery only have effect after calling this method.
+     */
     public synchronized void start ()
     {
+        deleteRelictsTimer = new Timer ();
+        deleteRelictsTimer.schedule ( new RelictCleanerCallerTask ( this ), CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD );
         started = true;
     }
 
+    /**
+     * This method stops the service from processing and destroys its internal structure.
+     * The service cannot be started again, after stop has been called.
+     * After calling this method, no further call to this service can be made.
+     */
     public synchronized void stop ()
     {
         started = false;
+        if ( deleteRelictsTimer != null )
+        {
+            deleteRelictsTimer.cancel ();
+            deleteRelictsTimer.purge ();
+            deleteRelictsTimer = null;
+        }
+    }
+
+    /**
+     * @see org.openscada.hd.server.storage.relict.RelictCleaner#cleanupRelicts
+     */
+    public synchronized void cleanupRelicts () throws Exception
+    {
+        if ( rootStorageChannel != null )
+        {
+            rootStorageChannel.cleanupRelicts ();
+        }
     }
 }

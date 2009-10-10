@@ -13,11 +13,12 @@ public class LongValue extends BaseValue
      * Fully initializing constructor.
      * @param time time stamp of the data
      * @param qualityIndicator quality information of the data
+     * @param baseValueCount count of values that have been combined to get the current value
      * @param value value to be handled
      */
-    public LongValue ( final long time, final double qualityIndicator, final long value )
+    public LongValue ( final long time, final double qualityIndicator, final long baseValueCount, final long value )
     {
-        super ( time, qualityIndicator );
+        super ( time, qualityIndicator, baseValueCount );
         this.value = value;
     }
 
@@ -42,8 +43,8 @@ public class LongValue extends BaseValue
     /**
      * @see org.openscada.hd.server.storage.datatypes
      */
-    public BaseValue createNewValue ( final long time, final double qualityIndicator )
+    public BaseValue createNewValue ( final long time, final double qualityIndicator, final long baseValueCount )
     {
-        return new LongValue ( time, qualityIndicator, 0 );
+        return new LongValue ( time, qualityIndicator, baseValueCount, 0 );
     }
 }

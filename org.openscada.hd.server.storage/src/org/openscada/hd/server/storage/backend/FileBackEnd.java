@@ -38,7 +38,7 @@ public class FileBackEnd implements BackEnd
     private final static long SHORT_BORDER = Short.MAX_VALUE + 1;
 
     /** Size of one data record in the file. */
-    private final static long RECORD_BLOCK_SIZE = 8 + 8 + 8 + 2;
+    private final static long RECORD_BLOCK_SIZE = 8 + 8 + 8 + 8 + 2;
 
     /** Maximum size of buffer when copying data within a file. */
     private final static int MAX_COPY_BUFFER_FILL_SIZE = 1024 * 1024;
@@ -46,10 +46,10 @@ public class FileBackEnd implements BackEnd
     /** Version of file format. */
     private final static long FILE_VERSION = 1L;
 
-    /** Encoder that will be used to store the data item id within the file header. */
+    /** Encoder that will be used to store the configuration id within the file header. */
     private final CharsetEncoder charEncoder = Charset.forName ( "utf-8" ).newEncoder ();
 
-    /** Decoder that will be used to extract the data item id from the file header. */
+    /** Decoder that will be used to extract the configuration id from the file header. */
     private final CharsetDecoder charDecoder = Charset.forName ( "utf-8" ).newDecoder ();
 
     /** Name of the file that is used to store data. */
@@ -102,8 +102,6 @@ public class FileBackEnd implements BackEnd
         // extract configuration values
         final String configurationId = storageChannelMetaData.getConfigurationId ();
         final byte[] configurationIdBytes = encodeToBytes ( configurationId );
-        final String dataItemId = storageChannelMetaData.getDataItemId ();
-        final byte[] dataItemIdBytes = encodeToBytes ( dataItemId );
         final long calculationMethodId = CalculationMethod.convertCalculationMethodToLong ( storageChannelMetaData.getCalculationMethod () );
         final long[] calculationMethodParameters = storageChannelMetaData.getCalculationMethodParameters ();
         final long detailLevelId = storageChannelMetaData.getDetailLevelId ();
@@ -113,9 +111,9 @@ public class FileBackEnd implements BackEnd
         final long dataType = DataType.convertDataTypeToLong ( storageChannelMetaData.getDataType () );
 
         // validate input data
-        if ( dataItemIdBytes == null )
+        if ( configurationId == null )
         {
-            String message = String.format ( "invalid data item id specified for file '%s'!", fileName );
+            String message = String.format ( "invalid configuration id specified for file '%s'!", fileName );
             logger.error ( message );
             throw new Exception ( message );
         }
@@ -143,7 +141,7 @@ public class FileBackEnd implements BackEnd
         // write standardized file header to file
         openConnection ( true );
         randomAccessFile.seek ( 0L );
-        final long dataOffset = ( 12 + calculationMethodParameters.length ) * 8 + configurationIdBytes.length + dataItemIdBytes.length + 2;
+        final long dataOffset = ( 11 + calculationMethodParameters.length ) * 8 + configurationIdBytes.length + 2;
         randomAccessFile.writeLong ( FILE_MARKER );
         randomAccessFile.writeLong ( dataOffset );
         randomAccessFile.writeLong ( FILE_VERSION );
@@ -155,18 +153,15 @@ public class FileBackEnd implements BackEnd
         randomAccessFile.writeLong ( calculationMethodId );
         randomAccessFile.writeLong ( calculationMethodParameters.length );
         randomAccessFile.writeLong ( configurationIdBytes.length );
-        randomAccessFile.writeLong ( dataItemIdBytes.length );
         for ( int i = 0; i < calculationMethodParameters.length; i++ )
         {
             randomAccessFile.writeLong ( calculationMethodParameters[i] );
         }
         randomAccessFile.write ( configurationIdBytes );
-        randomAccessFile.write ( dataItemIdBytes );
         long parity = 0;
         parity = ( parity + FILE_VERSION ) % SHORT_BORDER;
         parity = ( parity + dataOffset ) % SHORT_BORDER;
         parity = ( parity + ( configurationId == null ? 0 : configurationId.hashCode () ) ) % SHORT_BORDER;
-        parity = ( parity + ( dataItemId == null ? 0 : dataItemId.hashCode () ) ) % SHORT_BORDER;
         parity = ( parity + detailLevelId ) % SHORT_BORDER;
         parity = ( parity + startTime ) % SHORT_BORDER;
         parity = ( parity + endTime ) % SHORT_BORDER;
@@ -192,17 +187,9 @@ public class FileBackEnd implements BackEnd
     }
 
     /**
-     * @see org.openscada.hd.server.storage.backend.BackEnd#scheduleCleanup
-     */
-    public void scheduleCleanup () throws Exception
-    {
-        assureInitialized ();
-    }
-
-    /**
      * @see org.openscada.hd.server.storage.backend.BackEnd#cleanupRelicts
      */
-    public void cleanupRelicts () throws Exception
+    public synchronized void cleanupRelicts () throws Exception
     {
         assureInitialized ();
     }
@@ -224,7 +211,7 @@ public class FileBackEnd implements BackEnd
     /**
      * @see org.openscada.hd.server.storage.backend.BackEnd#isTimeSpanConstant
      */
-    public boolean isTimeSpanConstant ()
+    public synchronized boolean isTimeSpanConstant ()
     {
         return true;
     }
@@ -328,8 +315,7 @@ public class FileBackEnd implements BackEnd
         final long calculationMethodId = randomAccessFile.readLong ();
         final long calculationMethodParameterCountSize = randomAccessFile.readLong ();
         final long configurationIdSize = randomAccessFile.readLong ();
-        final long dataItemIdSize = randomAccessFile.readLong ();
-        if ( ( dataOffset - randomAccessFile.getFilePointer () - 2 - configurationIdSize - dataItemIdSize ) != ( calculationMethodParameterCountSize * 8 ) )
+        if ( ( dataOffset - randomAccessFile.getFilePointer () - 2 - configurationIdSize ) != ( calculationMethodParameterCountSize * 8 ) )
         {
             String message = String.format ( "file '%s' is of invalid format! (invalid count of calculation method parameters)", fileName );
             logger.error ( message );
@@ -340,7 +326,7 @@ public class FileBackEnd implements BackEnd
         {
             calculationMethodParameters[i] = randomAccessFile.readLong ();
         }
-        if ( ( dataOffset - randomAccessFile.getFilePointer () - 2 - dataItemIdSize ) != configurationIdSize )
+        if ( ( dataOffset - randomAccessFile.getFilePointer () - 2 ) != configurationIdSize )
         {
             String message = String.format ( "file '%s' is of invalid format! (invalid configuration id)", fileName );
             logger.error ( message );
@@ -349,20 +335,10 @@ public class FileBackEnd implements BackEnd
         final byte[] configurationIdBytes = new byte[(int)configurationIdSize];
         randomAccessFile.readFully ( configurationIdBytes );
         final String configurationId = decodeStringFromBytes ( configurationIdBytes );
-        if ( ( dataOffset - randomAccessFile.getFilePointer () - 2 ) != dataItemIdSize )
-        {
-            String message = String.format ( "file '%s' is of invalid format! (invalid data item id)", fileName );
-            logger.error ( message );
-            throw new Exception ( message );
-        }
-        final byte[] dataItemIdBytes = new byte[(int)dataItemIdSize];
-        randomAccessFile.readFully ( dataItemIdBytes );
-        final String dataItemId = decodeStringFromBytes ( dataItemIdBytes );
         long parity = 0;
         parity = ( parity + version ) % SHORT_BORDER;
         parity = ( parity + dataOffset ) % SHORT_BORDER;
         parity = ( parity + configurationId.hashCode () ) % SHORT_BORDER;
-        parity = ( parity + dataItemId.hashCode () ) % SHORT_BORDER;
         parity = ( parity + detailLevelId ) % SHORT_BORDER;
         parity = ( parity + startTime ) % SHORT_BORDER;
         parity = ( parity + endTime ) % SHORT_BORDER;
@@ -382,7 +358,7 @@ public class FileBackEnd implements BackEnd
         }
 
         // create a wrapper object for returning the retrieved data
-        return new StorageChannelMetaData ( configurationId, dataItemId, CalculationMethod.convertLongToCalculationMethod ( calculationMethodId ), calculationMethodParameters, detailLevelId, startTime, endTime, proposedDataAge, DataType.convertLongToDataType ( dataType ) );
+        return new StorageChannelMetaData ( configurationId, CalculationMethod.convertLongToCalculationMethod ( calculationMethodId ), calculationMethodParameters, detailLevelId, startTime, endTime, proposedDataAge, DataType.convertLongToDataType ( dataType ) );
     }
 
     /**
@@ -452,13 +428,15 @@ public class FileBackEnd implements BackEnd
         {
             randomAccessFile.seek ( position );
         }
-        long time = randomAccessFile.readLong ();
-        long qualityIndicatorAsLong = randomAccessFile.readLong ();
-        double qualityIndicator = Double.longBitsToDouble ( qualityIndicatorAsLong );
-        long value = randomAccessFile.readLong ();
+        final long time = randomAccessFile.readLong ();
+        final long qualityIndicatorAsLong = randomAccessFile.readLong ();
+        final double qualityIndicator = Double.longBitsToDouble ( qualityIndicatorAsLong );
+        final long baseValueCount = randomAccessFile.readLong ();
+        final long value = randomAccessFile.readLong ();
         long parity = 0;
         parity = ( parity + time ) % SHORT_BORDER;
         parity = ( parity + qualityIndicatorAsLong ) % SHORT_BORDER;
+        parity = ( parity + baseValueCount ) % SHORT_BORDER;
         parity = ( parity + value ) % SHORT_BORDER;
         if ( randomAccessFile.readShort () != parity )
         {
@@ -466,7 +444,7 @@ public class FileBackEnd implements BackEnd
             logger.error ( message );
             throw new Exception ( message );
         }
-        return new LongValue ( time, qualityIndicator, value );
+        return new LongValue ( time, qualityIndicator, baseValueCount, value );
     }
 
     /**
@@ -595,15 +573,18 @@ public class FileBackEnd implements BackEnd
 
         // prepare values to write
         final long qualityIndicator = Double.doubleToLongBits ( longValue.getQualityIndicator () );
+        final long baseValueCount = longValue.getBaseValueCount ();
         final long value = longValue.getValue ();
         long parity = 0;
         parity = ( parity + time ) % SHORT_BORDER;
         parity = ( parity + qualityIndicator ) % SHORT_BORDER;
+        parity = ( parity + baseValueCount ) % SHORT_BORDER;
         parity = ( parity + value ) % SHORT_BORDER;
 
         // write values
         randomAccessFile.writeLong ( time );
         randomAccessFile.writeLong ( qualityIndicator );
+        randomAccessFile.writeLong ( baseValueCount );
         randomAccessFile.writeLong ( value );
         randomAccessFile.writeShort ( (short)parity );
     }

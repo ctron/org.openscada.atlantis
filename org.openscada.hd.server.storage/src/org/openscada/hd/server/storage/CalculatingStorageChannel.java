@@ -383,4 +383,14 @@ public class CalculatingStorageChannel extends SimpleStorageChannelManager
         }
         return EMPTY_DOUBLEVALUE_ARRAY;
     }
+
+    /**
+     * @see org.openscada.hd.server.storage.ExtendedStorageChannel#cleanupRelicts
+     */
+    public synchronized void cleanupRelicts () throws Exception
+    {
+        notifyNewValues ( null );
+        super.cleanupRelicts ();
+        baseStorageChannel.cleanupRelicts ();
+    }
 }

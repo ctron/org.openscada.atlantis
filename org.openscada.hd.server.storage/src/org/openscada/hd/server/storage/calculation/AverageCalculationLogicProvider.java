@@ -37,6 +37,7 @@ public class AverageCalculationLogicProvider extends CalculationLogicProviderBas
         final long timeSpanSize = getRequiredTimespanForCalculation ();
         double avgValue = 0;
         double quality = 0;
+        long baseValueCount = 0;
         long lastTimeStamp = Long.MAX_VALUE;
         long lastValue = 0;
         for ( LongValue value : values )
@@ -47,11 +48,12 @@ public class AverageCalculationLogicProvider extends CalculationLogicProviderBas
                 long weightFactor = time - lastTimeStamp;
                 avgValue += lastValue * weightFactor;
                 quality += value.getQualityIndicator () * weightFactor;
+                baseValueCount += value.getBaseValueCount ();
                 lastTimeStamp = time;
                 lastValue = value.getValue ();
             }
         }
-        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, (long) ( avgValue / timeSpanSize ) ) };
+        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, baseValueCount, (long) ( avgValue / timeSpanSize ) ) };
     }
 
     /**
@@ -62,6 +64,7 @@ public class AverageCalculationLogicProvider extends CalculationLogicProviderBas
         final long timeSpanSize = getRequiredTimespanForCalculation ();
         double avgValue = 0;
         double quality = 0;
+        long baseValueCount = 0;
         long lastTimeStamp = Long.MAX_VALUE;
         double lastValue = 0;
         for ( DoubleValue value : values )
@@ -72,11 +75,12 @@ public class AverageCalculationLogicProvider extends CalculationLogicProviderBas
                 long weightFactor = time - lastTimeStamp;
                 avgValue += lastValue * weightFactor;
                 quality += value.getQualityIndicator () * weightFactor;
+                baseValueCount += value.getBaseValueCount ();
                 lastTimeStamp = time;
                 lastValue = value.getValue ();
             }
         }
-        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, (long) ( avgValue / timeSpanSize ) ) };
+        return new LongValue[] { new LongValue ( values[0].getTime (), quality / values.length, baseValueCount, (long) ( avgValue / timeSpanSize ) ) };
     }
 
     /**
@@ -87,6 +91,7 @@ public class AverageCalculationLogicProvider extends CalculationLogicProviderBas
         final long timeSpanSize = getRequiredTimespanForCalculation ();
         double avgValue = 0;
         double quality = 0;
+        long baseValueCount = 0;
         long lastTimeStamp = Long.MAX_VALUE;
         long lastValue = 0;
         for ( LongValue value : values )
@@ -97,11 +102,12 @@ public class AverageCalculationLogicProvider extends CalculationLogicProviderBas
                 long weightFactor = time - lastTimeStamp;
                 avgValue += lastValue * weightFactor;
                 quality += value.getQualityIndicator () * weightFactor;
+                baseValueCount += value.getBaseValueCount ();
                 lastTimeStamp = time;
                 lastValue = value.getValue ();
             }
         }
-        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, avgValue / timeSpanSize ) };
+        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, baseValueCount, avgValue / timeSpanSize ) };
     }
 
     /**
@@ -114,6 +120,7 @@ public class AverageCalculationLogicProvider extends CalculationLogicProviderBas
         final long timeSpanSize = getRequiredTimespanForCalculation ();
         double avgValue = 0;
         double quality = 0;
+        long baseValueCount = 0;
         long lastTimeStamp = Long.MAX_VALUE;
         double lastValue = 0;
         for ( DoubleValue value : values )
@@ -124,10 +131,11 @@ public class AverageCalculationLogicProvider extends CalculationLogicProviderBas
                 long weightFactor = time - lastTimeStamp;
                 avgValue += lastValue * weightFactor;
                 quality += value.getQualityIndicator () * weightFactor;
+                baseValueCount += value.getBaseValueCount ();
                 lastTimeStamp = time;
                 lastValue = value.getValue ();
             }
         }
-        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, avgValue / timeSpanSize ) };
+        return new DoubleValue[] { new DoubleValue ( values[0].getTime (), quality / values.length, baseValueCount, avgValue / timeSpanSize ) };
     }
 }

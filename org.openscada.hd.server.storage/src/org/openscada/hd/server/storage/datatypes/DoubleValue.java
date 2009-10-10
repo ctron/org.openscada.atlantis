@@ -13,11 +13,12 @@ public class DoubleValue extends BaseValue
      * Fully initializing constructor.
      * @param time time stamp of the data
      * @param qualityIndicator quality information of the data
+     * @param baseValueCount count of values that have been combined to get the current value
      * @param value value to be handled
      */
-    public DoubleValue ( long time, double qualityIndicator, double value )
+    public DoubleValue ( long time, double qualityIndicator, final long baseValueCount, double value )
     {
-        super ( time, qualityIndicator );
+        super ( time, qualityIndicator, baseValueCount );
         this.value = value;
     }
 
@@ -42,8 +43,8 @@ public class DoubleValue extends BaseValue
     /**
      * @see org.openscada.hd.server.storage.datatypes
      */
-    public BaseValue createNewValue ( final long time, final double qualityIndicator )
+    public BaseValue createNewValue ( final long time, final double qualityIndicator, final long baseValueCount )
     {
-        return new DoubleValue ( time, qualityIndicator, value );
+        return new DoubleValue ( time, qualityIndicator, baseValueCount, value );
     }
 }
