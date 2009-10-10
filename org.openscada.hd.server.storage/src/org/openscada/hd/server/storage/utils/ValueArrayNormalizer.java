@@ -63,7 +63,7 @@ public class ValueArrayNormalizer
         final BaseValue lastValue = blockValues.get ( blockValues.size () - 1 );
         if ( lastValue.getTime () != endTime )
         {
-            blockValues.add ( lastValue.createNewValue ( endTime, lastValue.getQualityIndicator (), 0 ) );
+            blockValues.add ( lastValue.createNewValue ( endTime, lastValue.getQualityIndicator (), lastValue.getBaseValueCount () ) );
         }
         return blockValues.toArray ( emptyResultArray );
     }
