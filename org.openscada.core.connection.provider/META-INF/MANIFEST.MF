@@ -14,5 +14,6 @@ Import-Package: org.openscada.common;version="0.14.0",
  org.openscada.utils.lang;version="0.14.0",
  org.openscada.utils.osgi;version="0.14.0",
  org.osgi.framework;version="1.5.0",
+ org.osgi.util.tracker,
  org.slf4j;version="1.5.8"
 Export-Package: org.openscada.core.connection.provider;version="0.14.0"

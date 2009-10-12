@@ -1,5 +1,6 @@
 package org.openscada.da.connection.provider;
 
+import org.openscada.core.connection.provider.AbstractConnectionProvider;
 import org.openscada.da.connection.provider.internal.ConnectionProvider;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -7,7 +8,7 @@ import org.osgi.framework.BundleContext;
 public class Activator implements BundleActivator
 {
 
-    private ConnectionProvider connectionProvider;
+    private AbstractConnectionProvider connectionProvider;
 
     /*
      * (non-Javadoc)
