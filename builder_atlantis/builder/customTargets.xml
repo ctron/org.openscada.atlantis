@@ -167,6 +167,10 @@
   	
   	<openscada.builder.copyPlugin id="org.openscada.spring.components" project="openscada_spring_components"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.connection.service"/>
+  	
+  	<openscada.builder.copyPlugin id="org.openscada.core.connection.provider"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.connection.provider"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.connection.provider"/>
   		
   	<openscada.builder.copyPlugin id="org.openscada.da.master" />
   	<openscada.builder.copyFeature id="org.openscada.atlantis" />
