@@ -44,7 +44,7 @@
    </plugins>
 
    <features>
-      <feature id="org.openscada.da.client.test" version="0.13.0"/>
+      <feature id="org.openscada.da.client.test" version="0.14.0"/>
       <feature id="org.openscada.da.ice.client" version="0.13.0"/>
       <feature id="org.openscada.da.net.client" version="0.13.0"/>
       <feature id="org.openscada.rcp.client" version="0.14.0.qualifier"/>
