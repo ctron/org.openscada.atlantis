@@ -197,8 +197,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
                 if ( query == null )
                 {
                     // we already added the query .. so remove it here
-                    this.queries.remove ( queryId );
                     sendQueryState ( queryId, QueryState.DISCONNECTED );
+                    this.queries.remove ( queryId );
                 }
                 else
                 {
