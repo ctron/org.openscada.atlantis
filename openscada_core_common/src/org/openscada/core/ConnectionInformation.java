@@ -39,6 +39,8 @@ public class ConnectionInformation
      *  da:net://target:secondarytarget/subtarget/subsubtarget?property1=value1&property2=value2
      */
 
+    private static final String URI_ENCODING = "utf-8";
+
     private String interfaceName = null;
 
     private String driver = null;
@@ -93,11 +95,11 @@ public class ConnectionInformation
                 final String[] userInfo = subUri.getRawUserInfo ().split ( "\\:" );
                 if ( userInfo.length > 0 )
                 {
-                    ci.properties.put ( "user", URLDecoder.decode ( userInfo[0], "utf-8" ) );
+                    ci.properties.put ( "user", URLDecoder.decode ( userInfo[0], URI_ENCODING ) );
                 }
                 if ( userInfo.length > 1 )
                 {
-                    ci.properties.put ( "password", URLDecoder.decode ( userInfo[1], "utf-8" ) );
+                    ci.properties.put ( "password", URLDecoder.decode ( userInfo[1], URI_ENCODING ) );
                 }
             }
 
@@ -112,13 +114,13 @@ public class ConnectionInformation
                         final Matcher m = p.matcher ( pair );
                         if ( m.matches () )
                         {
-                            final String key = URLDecoder.decode ( m.group ( 1 ), "utf-8" );
-                            final String value = URLDecoder.decode ( m.group ( 2 ), "utf-8" );
+                            final String key = URLDecoder.decode ( m.group ( 1 ), URI_ENCODING );
+                            final String value = URLDecoder.decode ( m.group ( 2 ), URI_ENCODING );
                             ci.properties.put ( key, value );
                         }
                         else
                         {
-                            ci.properties.put ( URLDecoder.decode ( pair, "utf-8" ), "" );
+                            ci.properties.put ( URLDecoder.decode ( pair, URI_ENCODING ), "" );
                         }
                     }
                 }
@@ -159,7 +161,7 @@ public class ConnectionInformation
                 for ( final String subtarget : this.subtargets )
                 {
                     subtargets += "/";
-                    subtargets += URLEncoder.encode ( subtarget, "utf-8" );
+                    subtargets += URLEncoder.encode ( subtarget, URI_ENCODING );
                 }
             }
 
@@ -176,30 +178,30 @@ public class ConnectionInformation
                 {
                     query += "&";
                 }
-                query += URLEncoder.encode ( entry.getKey (), "utf-8" );
+                query += URLEncoder.encode ( entry.getKey (), URI_ENCODING );
                 query += "=";
-                query += URLEncoder.encode ( entry.getValue (), "utf-8" );
+                query += URLEncoder.encode ( entry.getValue (), URI_ENCODING );
             }
 
             // prepare user info
             if ( user != null && password != null )
             {
-                userInfo = URLEncoder.encode ( user, "utf-8" ) + ":" + URLEncoder.encode ( password, "utf-8" );
+                userInfo = URLEncoder.encode ( user, URI_ENCODING ) + ":" + URLEncoder.encode ( password, URI_ENCODING );
             }
             else if ( user != null )
             {
-                userInfo = URLEncoder.encode ( user, "utf-8" );
+                userInfo = URLEncoder.encode ( user, URI_ENCODING );
             }
 
             String uri = "";
 
-            uri += URLEncoder.encode ( this.interfaceName, "utf-8" ) + ":" + URLEncoder.encode ( this.driver, "utf-8" ) + "://";
+            uri += URLEncoder.encode ( this.interfaceName, URI_ENCODING ) + ":" + URLEncoder.encode ( this.driver, URI_ENCODING ) + "://";
             if ( userInfo != null )
             {
                 uri += userInfo + "@";
             }
 
-            uri += URLEncoder.encode ( this.target, "utf-8" );
+            uri += URLEncoder.encode ( this.target, URI_ENCODING );
             if ( this.secondaryTarget != null )
             {
                 uri += ":" + this.secondaryTarget;
