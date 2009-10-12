@@ -36,6 +36,7 @@
       <import plugin="org.openscada.utils.osgi"/>
       <import plugin="org.openscada.da.server.common"/>
       <import feature="org.openscada.aurora" version="0.14.0.qualifier"/>
+      <import plugin="org.openscada.core.connection.provider"/>
    </requires>
 
    <plugin
@@ -109,7 +110,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.openscada.core.connection.provider"
+         id="org.openscada.hd.connection.provider"
          download-size="0"
          install-size="0"
          version="0.0.0"
