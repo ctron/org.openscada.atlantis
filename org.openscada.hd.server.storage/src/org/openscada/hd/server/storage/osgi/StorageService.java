@@ -131,6 +131,7 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     private static ConfigurationImpl convertMetaDatasToConfiguration ( final List<StorageChannelMetaData> metaDatas )
     {
+        StorageChannelMetaData metaData = metaDatas.get ( 0 );
         final ConfigurationImpl configuration = new ConfigurationImpl ();
         configuration.setFactoryId ( FACTORY_ID );
         configuration.setId ( metaData.getConfigurationId () );
