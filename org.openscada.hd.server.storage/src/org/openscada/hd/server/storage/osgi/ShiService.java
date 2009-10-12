@@ -68,7 +68,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /**
      * @see org.openscada.hd.server.common.StorageHistoricalItem#createQuery
      */
-    public Query createQuery ( QueryParameters parameters, final QueryListener listener )
+    public Query createQuery ( QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
         try
         {
