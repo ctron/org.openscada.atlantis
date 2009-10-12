@@ -1,5 +1,7 @@
 package org.openscada.hd.ui.views;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -27,10 +30,14 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DragDetectEvent;
 import org.eclipse.swt.events.DragDetectListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
@@ -40,11 +47,16 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.printing.PrintDialog;
+import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -189,7 +201,6 @@ public class TrendView extends ViewPart implements QueryListener
 
             public ChartParameterBuilder seriesWidth ( final String seriesId, final int width )
             {
-                SeriesParameters seriesParameters = seriesbyId ( seriesId );
                 this.seriesParameters ( new SeriesParameters ( seriesId, width ) );
                 return this;
             }
@@ -222,18 +233,6 @@ public class TrendView extends ViewPart implements QueryListener
             public ChartParameters construct ()
             {
                 return parameters;
-            }
-
-            private SeriesParameters seriesbyId ( final String seriesId )
-            {
-                for ( SeriesParameters seriesParameters : parameters.availableSeries )
-                {
-                    if ( seriesParameters.name.equals ( seriesId ) )
-                    {
-                        return seriesParameters;
-                    }
-                }
-                return null;
             }
         }
 
@@ -417,7 +416,7 @@ public class TrendView extends ViewPart implements QueryListener
     public void createPartControl ( final Composite parent )
     {
         // create predefined cursors
-        dragCursor = new Cursor ( parent.getDisplay (), SWT.CURSOR_CROSS );
+        dragCursor = new Cursor ( parent.getDisplay (), SWT.CURSOR_HAND );
         ImageData zoomInImage = new ImageData ( getClass ()
                 .getClassLoader ()
                     .getResourceAsStream ( "org/openscada/hd/ui/zoomin.gif" ) );
@@ -561,6 +560,54 @@ public class TrendView extends ViewPart implements QueryListener
             {
             }
         } );
+        chart.getPlotArea ().addKeyListener ( new KeyListener () {
+            public void keyReleased ( final KeyEvent e )
+            {
+                if ( e.keyCode == SWT.SHIFT )
+                {
+                    chart.getPlotArea ().setCursor ( null );
+                }
+                else if ( e.keyCode == SWT.ALT )
+                {
+                    chart.getPlotArea ().setCursor ( null );
+                }
+            }
+
+            public void keyPressed ( final KeyEvent e )
+            {
+                if ( e.keyCode == SWT.SHIFT )
+                {
+                    chart.getPlotArea ().setCursor ( zoomInCursor );
+                }
+                else if ( e.keyCode == SWT.ALT )
+                {
+                    chart.getPlotArea ().setCursor ( zoomOutCursor );
+                }
+            }
+        } );
+        chart.getPlotArea ().addMouseTrackListener ( new MouseTrackListener () {
+            public void mouseHover ( final MouseEvent e )
+            {
+                if ( ( e.stateMask & SWT.SHIFT ) == SWT.SHIFT )
+                {
+                    chart.getPlotArea ().setCursor ( zoomInCursor );
+                }
+                else if ( ( e.stateMask & SWT.ALT ) == SWT.ALT )
+                {
+                    chart.getPlotArea ().setCursor ( zoomOutCursor );
+                }
+            }
+
+            public void mouseExit ( final MouseEvent e )
+            {
+                chart.getPlotArea ().setCursor ( null );
+            }
+
+            public void mouseEnter ( final MouseEvent e )
+            {
+                chart.getPlotArea ().setFocus ();
+            }
+        } );
         chart.getPlotArea ().addDragDetectListener ( new DragDetectListener () {
             public void dragDetected ( final DragDetectEvent e )
             {
@@ -578,7 +625,7 @@ public class TrendView extends ViewPart implements QueryListener
                     dragStarted = false;
                     chart.getPlotArea ().setCursor ( null );
                     // zoom in range
-                    DateRange zoomResult = zoomRange ( dragStartedX, e.x, 0, chart.getPlotArea ().getSize ().x, chartParameters
+                    DateRange zoomResult = moveRange ( dragStartedX, e.x, 0, chart.getPlotArea ().getSize ().x, chartParameters
                             .get ()
                                 .getStartTime (), chartParameters.get ().getEndTime () );
                     ChartParameters parameters = ChartParameters
@@ -592,7 +639,7 @@ public class TrendView extends ViewPart implements QueryListener
                 }
                 else
                 {
-                    if ( e.button == 1 )
+                    if ( ( e.button == 1 ) && ( ( e.stateMask & SWT.SHIFT ) == SWT.SHIFT ) )
                     {
                         // zoom in
                         DateRange zoomResult = zoomIn ( e.x, 0, chart.getPlotArea ().getSize ().x, chartParameters
@@ -607,7 +654,7 @@ public class TrendView extends ViewPart implements QueryListener
                         chartParameters.set ( parameters );
                         rangeUpdateJob.get ().schedule ( GUI_JOB_DELAY );
                     }
-                    else if ( e.button == 3 )
+                    else if ( ( e.button == 1 ) && ( ( e.stateMask & SWT.ALT ) == SWT.ALT ) )
                     {
                         // zoom out
                         DateRange zoomResult = zoomOut ( e.x, 0, chart.getPlotArea ().getSize ().x, chartParameters
@@ -622,6 +669,28 @@ public class TrendView extends ViewPart implements QueryListener
                         chartParameters.set ( parameters );
                         rangeUpdateJob.get ().schedule ( GUI_JOB_DELAY );
                     }
+                    else if ( e.button == 1 )
+                    {
+                        chart.getPlotArea ().setCursor ( null );
+                        // zoom in range
+                        DateRange zoomResult = moveRange ( e.x, chart.getPlotArea ().getSize ().x / 2, 0, chart
+                                .getPlotArea ()
+                                    .getSize ().x, chartParameters.get ().getStartTime (), chartParameters
+                                .get ()
+                                    .getEndTime () );
+                        ChartParameters parameters = ChartParameters
+                                .create ()
+                                    .from ( chartParameters.get () )
+                                    .startTime ( zoomResult.start )
+                                    .endTime ( zoomResult.end )
+                                    .construct ();
+                        chartParameters.set ( parameters );
+                        rangeUpdateJob.get ().schedule ( GUI_JOB_DELAY );
+                    }
+                    else if ( e.button == 3 )
+                    {
+                        chart.getMenu ().setVisible ( true );
+                    }
                 }
             }
 
@@ -633,6 +702,101 @@ public class TrendView extends ViewPart implements QueryListener
             {
             }
         } );
+        chart.getPlotArea ().addMouseWheelListener ( new MouseWheelListener () {
+            public void mouseScrolled ( final MouseEvent e )
+            {
+                if ( e.count > 0 )
+                {
+                    // zoom in
+                    DateRange zoomResult = zoomIn ( e.x, 0, chart.getPlotArea ().getSize ().x, chartParameters
+                            .get ()
+                                .getStartTime (), chartParameters.get ().getEndTime () );
+                    ChartParameters parameters = ChartParameters
+                            .create ()
+                                .from ( chartParameters.get () )
+                                .startTime ( zoomResult.start )
+                                .endTime ( zoomResult.end )
+                                .construct ();
+                    chartParameters.set ( parameters );
+                    rangeUpdateJob.get ().schedule ( GUI_JOB_DELAY );
+                }
+                else
+                {
+                    // zoom out
+                    DateRange zoomResult = zoomOut ( e.x, 0, chart.getPlotArea ().getSize ().x, chartParameters
+                            .get ()
+                                .getStartTime (), chartParameters.get ().getEndTime () );
+                    ChartParameters parameters = ChartParameters
+                            .create ()
+                                .from ( chartParameters.get () )
+                                .startTime ( zoomResult.start )
+                                .endTime ( zoomResult.end )
+                                .construct ();
+                    chartParameters.set ( parameters );
+                    rangeUpdateJob.get ().schedule ( GUI_JOB_DELAY );
+                }
+            }
+        } );
+
+        Menu m = new Menu ( chart );
+        MenuItem miSaveAsImage = new MenuItem ( m, SWT.NONE );
+        miSaveAsImage.setText ( "Save as image ..." );
+        miSaveAsImage.addSelectionListener ( new SelectionListener () {
+            public void widgetSelected ( final SelectionEvent e )
+            {
+                FileDialog dlg = new FileDialog ( parent.getShell () );
+                dlg.setText ( "Save Trend As Image" );
+                String filename = dlg.open ();
+                if ( filename != null )
+                {
+                    File file = new File ( filename );
+                    try
+                    {
+                        if ( file.canWrite () || file.createNewFile () )
+                        {
+                            chart.update ();
+                            chart.save ( filename, SWT.IMAGE_PNG );
+                        }
+                        else
+                        {
+                            MessageDialog
+                                    .openError ( parent.getShell (), "Save Trend As Image", "File could not be saved!" );
+                        }
+                    }
+                    catch ( IOException ex )
+                    {
+                        MessageDialog
+                                .openError ( parent.getShell (), "Save Trend As Image", "File could not be saved!" );
+                    }
+                }
+            }
+
+            public void widgetDefaultSelected ( final SelectionEvent e )
+            {
+
+            }
+        } );
+        MenuItem miPrint = new MenuItem ( m, SWT.NONE );
+        miPrint.setText ( "Print" );
+        miPrint.addSelectionListener ( new SelectionListener () {
+            public void widgetSelected ( final SelectionEvent e )
+            {
+                PrintDialog printDialog = new PrintDialog ( parent.getShell () );
+                // and open it
+                PrinterData printerData = printDialog.open ();
+                // Check if OK was pressed
+                if ( printerData != null )
+                {
+                    MessageDialog.openInformation ( parent.getShell (), "Print Trend", "Not implemented!" );
+                }
+            }
+
+            public void widgetDefaultSelected ( final SelectionEvent e )
+            {
+            }
+        } );
+
+        chart.setMenu ( m );
 
         // set up job for updating chart in case of parameter change
         parameterUpdateJob.set ( new Job ( "updateChartParameters" ) {
@@ -684,9 +848,13 @@ public class TrendView extends ViewPart implements QueryListener
      * @param endTime
      * @return
      */
-    private DateRange zoomOut ( final int x, final int xStart, final int xEnd, final Date startTime, final Date endTime )
+    private DateRange zoomOut ( final int x, final int xStart, final int xEnd, Date startTime, Date endTime )
     {
+        long factor = ( endTime.getTime () - startTime.getTime () ) / ( xEnd - xStart );
         long dTimeQ = ( endTime.getTime () - startTime.getTime () ) / 4;
+        long timeshift = factor * ( x - ( xEnd - xStart ) / 2 );
+        startTime = new Date ( startTime.getTime () + timeshift );
+        endTime = new Date ( endTime.getTime () + timeshift );
         return new DateRange ( new Date ( startTime.getTime () - dTimeQ ), new Date ( endTime.getTime () + dTimeQ ) );
     }
 
@@ -715,17 +883,18 @@ public class TrendView extends ViewPart implements QueryListener
      * @param endTime
      * @return
      */
-    private DateRange zoomRange ( final int drag1, final int drag2, final int xStart, final int xEnd, final Date startTime, final Date endTime )
+    private DateRange moveRange ( final int drag1, final int drag2, final int xStart, final int xEnd, final Date startTime, final Date endTime )
     {
         long factor = ( endTime.getTime () - startTime.getTime () ) / ( xEnd - xStart );
-        int dLeft = drag1;
-        int dRight = drag2;
-        if ( dLeft > dRight )
+        long timediff = Math.abs ( ( drag1 - drag2 ) ) * factor;
+        if ( drag2 > drag1 )
         {
-            dLeft = drag2;
-            dRight = drag1;
+            return new DateRange ( new Date ( startTime.getTime () - timediff ), new Date ( endTime.getTime () - timediff ) );
         }
-        return new DateRange ( new Date ( startTime.getTime () + ( factor * dLeft ) ), new Date ( startTime.getTime () + ( factor * dRight ) ) );
+        else
+        {
+            return new DateRange ( new Date ( startTime.getTime () + timediff ), new Date ( endTime.getTime () + timediff ) );
+        }
     }
 
     protected void setSelection ( final ISelection selection )
@@ -1021,6 +1190,13 @@ public class TrendView extends ViewPart implements QueryListener
         } );
     }
 
+    /**
+     * returns array of 1s or 0s. An element is 1 if the quality in the given position is lower then the quality parameter
+     * this is misused to draw the bar chart which displays the quality
+     * @param data
+     * @param quality
+     * @return
+     */
     private double[] qualityData ( final double[] data, final double quality )
     {
         double[] result = new double[data.length];
@@ -1040,6 +1216,10 @@ public class TrendView extends ViewPart implements QueryListener
         return result;
     }
 
+    /**
+     * tries to adjust labels for x axis according to range
+     * @return
+     */
     private String formatByRange ()
     {
         long range = chartParameters.get ().getEndTime ().getTime () - chartParameters
