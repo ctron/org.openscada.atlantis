@@ -19,6 +19,13 @@
 </glossentry>
 
 <glossentry>
+	<glossterm>Hive</glossterm>
+	<glossdef>
+		<para>A hive is a DA server instance.</para>
+	</glossdef>
+</glossentry>
+
+<glossentry>
 	<glossterm>HD</glossterm>
 	<glossdef>
 		<para>Historical Data</para>
