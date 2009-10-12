@@ -3,7 +3,7 @@ package org.openscada.da.connection.provider.internal;
 import org.openscada.core.client.AutoReconnectController;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;
-import org.openscada.da.connection.provider.ConnectionService;
+import org.openscada.hd.connection.provider.ConnectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

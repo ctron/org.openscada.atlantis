@@ -1,4 +1,4 @@
-package org.openscada.da.connection.provider;
+package org.openscada.hd.connection.provider;
 
 import org.openscada.da.client.ItemManager;
 

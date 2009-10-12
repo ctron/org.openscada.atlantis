@@ -29,7 +29,7 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.DriverFactory;
 import org.openscada.core.connection.provider.ConnectionRequest;
 import org.openscada.da.client.Connection;
-import org.openscada.da.connection.provider.ConnectionService;
+import org.openscada.hd.connection.provider.ConnectionService;
 import org.openscada.utils.osgi.FilterUtil;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.SingleServiceTracker;
