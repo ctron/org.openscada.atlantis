@@ -147,13 +147,14 @@ public class StorageService implements SelfManagedConfigurationFactory
             }
 
             // assure that the list is sorted by detail level
-            final int insertionIndex = 0;
+            int insertionIndex = 0;
             while ( insertionIndex < backEnds.size () )
             {
                 if ( backEnds.get ( insertionIndex ).getMetaData ().getDetailLevelId () >= metaData.getDetailLevelId () )
                 {
                     break;
                 }
+                insertionIndex++;
             }
             backEnds.add ( insertionIndex, backEnd );
         }
