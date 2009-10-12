@@ -3,8 +3,8 @@
 <project name="OpenSCADADocumentation" default="publish">
 
 	<property name="publish.base" value="/tmp/publish"/>
-	<property name="publish.type" value="integration"/>
-	<property name="publish.id" value="0.13.0.SNAPSHOT"/>
+	<property name="publish.type" value="I"/>
+	<property name="publish.id" value="0.14.0"/>
 	
 	<!-- ================================= 
           target: publish              
@@ -15,17 +15,6 @@
     	<ant target="all" antfile="build.xml">
     		<property name="deploy.dir" location="${publish.base}/atlantis/${publish.type}/${publish.id}/doc"/>
     	</ant>
-    	
-    	<!-- make latest link -->
-    	<exec executable="rm">
-    		<arg value="-f"/>
-    		<arg value="${publish.base}/atlantis/${publish.type}/latest"/>
-    	</exec>    	
-    	<exec executable="ln">
-    		<arg value="-fs"/>
-    		<arg value="${publish.base}/atlantis/${publish.type}/${publish.id}"/>
-    		<arg value="${publish.base}/atlantis/${publish.type}/latest"/>
-    	</exec>
     </target>
 	
 	<!-- ================================= 
