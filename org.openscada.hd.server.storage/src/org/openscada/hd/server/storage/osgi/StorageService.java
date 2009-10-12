@@ -67,7 +67,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     /** Back end factory that has to be used. */
     private final BackEndFactory backEndFactory;
 
-    /** Map containing all internal back end objects mapped by data item id. */
+    /** Map containing all internal back end objects mapped by configuration id. */
     private final Map<String, List<BackEnd>> backEndMap;
 
     /** Registered configuration listeners. */
@@ -125,95 +125,6 @@ public class StorageService implements SelfManagedConfigurationFactory
     }
 
     /**
-     * This method creates a configuration object using the passed meta data as input.
-     * @param metaDatas input for the configuration object that has to be created
-     * @return created configuration object
-     */
-    private static ConfigurationImpl convertMetaDatasToConfiguration ( final List<StorageChannelMetaData> metaDatas )
-    {
-        StorageChannelMetaData metaData = metaDatas.get ( 0 );
-        final ConfigurationImpl configuration = new ConfigurationImpl ();
-        configuration.setFactoryId ( FACTORY_ID );
-        configuration.setId ( metaData.getConfigurationId () );
-        final Map<String, String> data = new HashMap<String, String> ();
-        configuration.setData ( data );
-        configuration.setState ( ConfigurationState.APPLIED );
-        data.put ( "CALCULATION_METHOD", CalculationMethod.convertCalculationMethodToString ( metaData.getCalculationMethod () ) );
-        final long[] calculationMethodParameters = metaData.getCalculationMethodParameters ();
-        String calculationMethodParametersAsString = "";
-        if ( calculationMethodParameters != null && calculationMethodParameters.length > 0 )
-        {
-            final StringBuffer sb = new StringBuffer ( "" + calculationMethodParameters[0] );
-            for ( int i = 1; i < calculationMethodParameters.length; i++ )
-            {
-                sb.append ( "" + calculationMethodParameters[i] );
-            }
-            calculationMethodParametersAsString = sb.toString ();
-        }
-        data.put ( "CALCULATION_METHOD_PARAMETERS", calculationMethodParametersAsString );
-        data.put ( "START_TIME", "" + metaData.getStartTime () );
-        data.put ( "END_TIME", "" + metaData.getEndTime () );
-        data.put ( "PROPOSED_DATA_AGE", "" + metaData.getProposedDataAge () );
-        data.put ( "DATA_TYPE", DataType.convertDataTypeToString ( metaData.getDataType () ) );
-        return configuration;
-    }
-
-    /**
-     * This method creates a meta data object using the passed configuration as input.
-     * @param configuration input for the meta data object that has to be created
-     * @return created meta data object
-     */
-    private static StorageChannelMetaData convertConfigurationToMetaData ( final Configuration configuration )
-    {
-        return createMetaData ( configuration.getId (), configuration.getData () );
-    }
-
-    /**
-     * This method parsed a text to a long value and returns the result.
-     * @param value text to be parsed
-     * @param defaultValue default value that will be returned if either the passed text is null or if the conversion fails
-     * @return converted text of default value if conversion failed
-     */
-    private static long parseLong ( final String value, final long defaultValue )
-    {
-        if ( value == null )
-        {
-            return defaultValue;
-        }
-        try
-        {
-            return Long.parseLong ( value );
-        }
-        catch ( final Exception e )
-        {
-            return defaultValue;
-        }
-    }
-
-    private static StorageChannelMetaData createMetaData ( final String configurationId, final Map<String, String> data )
-    {
-        final CalculationMethod calculationMethod = CalculationMethod.convertStringToCalculationMethod ( data.get ( "CALCULATION_METHOD" ) );
-        long[] calculationMethodParameters = null;
-        final String calculationMethodParametersAsString = data.get ( "CALCULATION_METHOD_PARAMETERS" );
-        if ( calculationMethodParametersAsString != null )
-        {
-            final String[] calculationMethodParametersAsStringArray = calculationMethodParametersAsString.split ( "|" );
-            calculationMethodParameters = new long[calculationMethodParametersAsStringArray.length];
-            for ( int i = 0; i < calculationMethodParametersAsStringArray.length; i++ )
-            {
-                calculationMethodParameters[i] = parseLong ( calculationMethodParametersAsStringArray[i], 0L );
-            }
-        }
-        final String detailLevelAsString = data.get ( "DETAIL_LEVEL" );
-        final long detailLevelId = parseLong ( detailLevelAsString, 0L );
-        final long startTime = parseLong ( data.get ( "START_TIME" ), Long.MIN_VALUE );
-        final long endTime = parseLong ( data.get ( "END_TIME" ), Long.MAX_VALUE );
-        final long proposedDataAge = parseLong ( data.get ( "PROPOSED_DATA_AGE" ), Long.MAX_VALUE );
-        final DataType dataType = DataType.convertStringToDataType ( data.get ( "DATA_TYPE" ) );
-        return new StorageChannelMetaData ( configurationId, calculationMethod, calculationMethodParameters, detailLevelId, startTime, endTime, proposedDataAge, dataType );
-    }
-
-    /**
      * This method loads the configuration of the service and publishes the available ShiService objects.
      * @throws Exception in case of unexpected problems
      */
@@ -227,7 +138,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             backEnd.initialize ( metaData );
             final String configurationId = metaData.getConfigurationId ();
 
-            // get list of already created back end objects with the same data item id
+            // get list of already created back end objects with the same configuration id
             List<BackEnd> backEnds = this.backEndMap.get ( configurationId );
             if ( backEnds == null )
             {
@@ -247,54 +158,19 @@ public class StorageService implements SelfManagedConfigurationFactory
             backEnds.add ( insertionIndex, backEnd );
         }
 
-        // create shi service objects for grouped data items
+        // create shi service objects for grouped configuration ids
         for ( final List<BackEnd> backEnds : this.backEndMap.values () )
         {
             if ( !backEnds.isEmpty () )
             {
-                final BackEnd backEnd = backEnds.get ( 0 );
-                final StorageChannelMetaData metaData = backEnd.getMetaData ();
-                if ( metaData != null )
+                List<StorageChannelMetaData> metaDatas = new ArrayList<StorageChannelMetaData> ();
+                for ( BackEnd backEnd : backEnds )
                 {
-                    addService ( metaData.getConfigurationId () );
+                    metaDatas.add ( backEnd.getMetaData () );
                 }
+                createService ( Conversions.convertMetaDatasToConfiguration ( FACTORY_ID, metaDatas ), false );
             }
         }
-    }
-
-    private ShiService addService ( final String configurationId ) throws Exception
-    {
-        final List<BackEnd> backEnds = this.backEndMap.get ( configurationId );
-        final ExtendedStorageChannel[] storageChannels = new ExtendedStorageChannel[backEnds.size ()];
-        final List<StorageChannelMetaData> metaDatas = new ArrayList<StorageChannelMetaData> ();
-        final ShiService shiService = new ShiService ( convertMetaDatasToConfiguration ( null ) );
-        for ( int i = 0; i < backEnds.size (); i++ )
-        {
-            final BackEnd backEnd = backEnds.get ( i );
-            final CalculationMethod calculationMethod = backEnd.getMetaData ().getCalculationMethod ();
-            int superBackEndIndex = -1;
-            for ( int j = i - 1; j >= 0; j-- )
-            {
-                final BackEnd superBackEndCandidate = backEnds.get ( i );
-                final CalculationMethod superCalculationMethod = superBackEndCandidate.getMetaData ().getCalculationMethod ();
-                if ( superCalculationMethod == calculationMethod || superCalculationMethod == CalculationMethod.NATIVE )
-                {
-                    superBackEndIndex = j;
-                    break;
-                }
-            }
-            storageChannels[i] = new CalculatingStorageChannel ( new ExtendedStorageChannelAdapter ( backEnd ), superBackEndIndex >= 0 ? storageChannels[superBackEndIndex] : null, getCalculationLogicProvider ( backEnd.getMetaData () ) );
-            shiService.addStorageChannel ( storageChannels[i], calculationMethod );
-        }
-        this.shiServices.put ( shiService.getConfiguration ().getId (), shiService );
-
-        final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        properties.put ( Constants.SERVICE_PID, configurationId );
-        properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
-        properties.put ( Constants.SERVICE_DESCRIPTION, "A OpenSCADA Storage Historical Item Implementation" );
-        shiService.start ();
-        this.bundleContext.registerService ( new String[] { ShiService.class.getName (), StorageHistoricalItem.class.getName () }, shiService, properties );
-        return shiService;
     }
 
     /**
@@ -355,55 +231,102 @@ public class StorageService implements SelfManagedConfigurationFactory
     public NotifyFuture<Configuration> update ( final String configurationId, Map<String, String> properties )
     {
         // easy input test data
-        properties = new HashMap<String, String> ();
-        properties.put ( "CALCULATION_METHOD", "NATIVE" );
-        properties.put ( "CALCULATION_METHOD_PARAMETERS", "4711" );
-        properties.put ( "DETAIL_LEVEL", "" + 0 );
-        properties.put ( "START_TIME", "" + 0 );
-        properties.put ( "END_TIME", "" + Long.MAX_VALUE );
-        properties.put ( "PROPOSED_DATA_AGE", "" + 1000 * 60 * 10 );
-        properties.put ( "DATA_TYPE", "DOUBLE_VALUE" );
-
-        // disallow update of already existing service
-        final StorageChannelMetaData metaData = createMetaData ( configurationId, properties );
-        ShiService service = this.shiServices.get ( metaData.getConfigurationId () );
-        if ( service == null )
+        if ( properties.isEmpty () )
         {
-            // create new service
-            try
-            {
-                final List<BackEnd> backEnds = new ArrayList<BackEnd> ();
-                this.backEndMap.put ( metaData.getConfigurationId (), backEnds );
-                final BackEnd backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
-                backEnd.initialize ( metaData );
-                backEnds.add ( backEnd );
-                service = addService ( metaData.getConfigurationId () );
-                final Configuration[] addedConfigurationIds = new Configuration[] { service.getConfiguration () };
-                for ( final ConfigurationListener listener : this.configurationListeners )
-                {
-                    listener.configurationUpdate ( addedConfigurationIds, null );
-                }
-                return new InstantFuture<Configuration> ( createEmptyConfiguration ( configurationId, ConfigurationState.APPLIED ) );
-            }
-            catch ( final Exception e )
-            {
-                logger.error ( String.format ( "could not update service '%s' (%s)", configurationId, metaData ), e );
-            }
+            properties = new HashMap<String, String> ();
+            properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0, "1m" );
+            properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "1h" );
+            properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1m" );
+            properties.put ( Conversions.CALCULATION_METHODS, "AVG,MIN,MAX" );
+            properties.put ( Conversions.MAX_COMPRESSION_LEVEL, "1" );
+            properties.put ( Conversions.DATA_TYPE_KEY, "LV" );
         }
-        return new InstantErrorFuture<Configuration> ( new IllegalStateException ( "Unable to modify exisiting configuration" ).fillInStackTrace () );
-    }
 
-    /**
-     * This method creates a configuration indicating an error.
-     * @param configurationId id of configuration that has to be created
-     * @return configuration indicating an error
-     */
-    private static ConfigurationImpl createEmptyConfiguration ( final String configurationId, final ConfigurationState configurationState )
-    {
-        final ConfigurationImpl configuration = new ConfigurationImpl ();
+        // prepare temporary configuration from which data will be converted
+        ConfigurationImpl configuration = new ConfigurationImpl ();
+        configuration.setData ( properties );
         configuration.setFactoryId ( FACTORY_ID );
         configuration.setId ( configurationId );
-        configuration.setState ( configurationState );
+        configuration.setState ( ConfigurationState.ERROR );
+
+        // disallow update of already existing service
+        ShiService service = this.shiServices.get ( configurationId );
+        if ( service != null )
+        {
+            return new InstantErrorFuture<Configuration> ( new IllegalStateException ( "unable to modify exisiting configuration" ).fillInStackTrace () );
+        }
+
+        // try to create new service
+        try
+        {
+            return new InstantFuture<Configuration> ( createService ( configuration, true ) );
+        }
+        catch ( final Exception e )
+        {
+            final String message = String.format ( "could not update configuration '%s'", configurationId );
+            logger.error ( message, e );
+            return new InstantErrorFuture<Configuration> ( new Exception ( message, e ).fillInStackTrace () );
+        }
+    }
+
+    private ConfigurationImpl createService ( final Configuration inputConfiguration, final boolean createNewBackEnds ) throws Exception
+    {
+        // use input data to prepare valid configuration objects
+        final String configurationId = inputConfiguration.getId ();
+        final List<StorageChannelMetaData> metaDatas = Conversions.convertConfigurationToMetaDatas ( FACTORY_ID, inputConfiguration );
+        final ConfigurationImpl configuration = Conversions.convertMetaDatasToConfiguration ( FACTORY_ID, metaDatas );
+
+        // create back end objects 
+        final List<BackEnd> backEnds = new ArrayList<BackEnd> ();
+        this.backEndMap.put ( configurationId, backEnds );
+        for ( StorageChannelMetaData metaData : metaDatas )
+        {
+            final BackEnd backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
+            backEnd.initialize ( metaData );
+            if ( createNewBackEnds )
+            {
+                backEnd.create ( metaData );
+            }
+            backEnds.add ( backEnd );
+        }
+
+        // create hierarchical storage channel structure
+        final ExtendedStorageChannel[] storageChannels = new ExtendedStorageChannel[backEnds.size ()];
+        final ShiService service = new ShiService ( configuration );
+        for ( int i = 0; i < backEnds.size (); i++ )
+        {
+            final BackEnd backEnd = backEnds.get ( i );
+            final CalculationMethod calculationMethod = backEnd.getMetaData ().getCalculationMethod ();
+            int superBackEndIndex = -1;
+            for ( int j = i - 1; j >= 0; j-- )
+            {
+                final BackEnd superBackEndCandidate = backEnds.get ( i );
+                final CalculationMethod superCalculationMethod = superBackEndCandidate.getMetaData ().getCalculationMethod ();
+                if ( ( superCalculationMethod == calculationMethod ) || ( superCalculationMethod == CalculationMethod.NATIVE ) )
+                {
+                    superBackEndIndex = j;
+                    break;
+                }
+            }
+            storageChannels[i] = new CalculatingStorageChannel ( new ExtendedStorageChannelAdapter ( backEnd ), superBackEndIndex >= 0 ? storageChannels[superBackEndIndex] : null, getCalculationLogicProvider ( backEnd.getMetaData () ) );
+            service.addStorageChannel ( storageChannels[i], calculationMethod );
+        }
+        this.shiServices.put ( configuration.getId (), service );
+
+        // publish service
+        final Dictionary<String, String> serviceProperties = new Hashtable<String, String> ();
+        serviceProperties.put ( Constants.SERVICE_PID, configurationId );
+        serviceProperties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
+        serviceProperties.put ( Constants.SERVICE_DESCRIPTION, "A OpenSCADA Storage Historical Item Implementation" );
+        service.start ();
+        this.bundleContext.registerService ( new String[] { ShiService.class.getName (), StorageHistoricalItem.class.getName () }, service, serviceProperties );
+
+        // notify listeners of performed update
+        final Configuration[] addedConfigurationIds = new Configuration[] { configuration };
+        for ( final ConfigurationListener listener : this.configurationListeners )
+        {
+            listener.configurationUpdate ( addedConfigurationIds, null );
+        }
         return configuration;
     }
 
@@ -415,11 +338,10 @@ public class StorageService implements SelfManagedConfigurationFactory
         final ShiService serviceToDelete = this.shiServices.remove ( configurationId );
         if ( serviceToDelete == null )
         {
-            return new InstantFuture<Configuration> ( createEmptyConfiguration ( configurationId, ConfigurationState.ERROR ) );
+            return new InstantErrorFuture<Configuration> ( new IllegalStateException ( String.format ( "Unable to delete non existing service with configuration id '%s'", configurationId ) ).fillInStackTrace () );
         }
         serviceToDelete.stop ();
         final ConfigurationImpl configuration = serviceToDelete.getConfiguration ();
-        final StorageChannelMetaData metaData = convertConfigurationToMetaData ( configuration );
         final List<BackEnd> backEnds = this.backEndMap.get ( configurationId );
         if ( backEnds != null )
         {
@@ -427,11 +349,15 @@ public class StorageService implements SelfManagedConfigurationFactory
             {
                 try
                 {
-                    backEnd.delete ();
+                    synchronized ( backEnd )
+                    {
+                        backEnd.delete ();
+                        backEnd.deinitialize ();
+                    }
                 }
                 catch ( final Exception e )
                 {
-                    logger.error ( String.format ( "could not delete back ends for '%s' (%s)", configurationId, metaData ), e );
+                    logger.error ( String.format ( "could not delete back ends for configuration '%s'", configurationId ), e );
                 }
             }
         }

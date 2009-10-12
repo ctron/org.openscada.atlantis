@@ -48,11 +48,12 @@ public enum DataType
      */
     public static DataType convertShortStringToDataType ( final String dataType )
     {
-        if ( "LV".equals ( dataType ) )
+        final String trimmedDataType = dataType == null ? "" : dataType.trim ();
+        if ( "LV".equals ( trimmedDataType ) )
         {
             return LONG_VALUE;
         }
-        if ( "DV".equals ( dataType ) )
+        if ( "DV".equals ( trimmedDataType ) )
         {
             return DOUBLE_VALUE;
         }
@@ -78,7 +79,7 @@ public enum DataType
      */
     public static DataType convertStringToDataType ( final String dataType )
     {
-        return dataType == null ? UNKNOWN : Enum.valueOf ( DataType.class, dataType );
+        return dataType == null ? UNKNOWN : Enum.valueOf ( DataType.class, dataType.trim () );
     }
 
     /**

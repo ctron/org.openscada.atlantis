@@ -25,6 +25,9 @@ public class BackEndMultiplexor implements BackEnd, RelictCleaner
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( BackEndMultiplexor.class );
 
+    /** Reprieve time in milliseconds old data is not deleted althrough the proposed data age is reached. */
+    private final static long REPRIEVE = 3000;
+
     /** Metadata of the storage channel. */
     private StorageChannelMetaData metaData;
 
@@ -98,7 +101,7 @@ public class BackEndMultiplexor implements BackEnd, RelictCleaner
         {
             return;
         }
-        final long proposedDataAge = System.currentTimeMillis () - metaData.getProposedDataAge ();
+        final long proposedDataAge = System.currentTimeMillis () - metaData.getProposedDataAge () - REPRIEVE;
         for ( int i = backEnds.size () - 1; i >= 0; i-- )
         {
             BackEnd backEnd = backEnds.get ( i );
