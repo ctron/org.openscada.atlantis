@@ -13,6 +13,8 @@ import org.openscada.core.connection.provider.ConnectionService;
 import org.openscada.core.ui.connection.Activator;
 import org.openscada.core.ui.connection.data.ConnectionDiscovererBean;
 import org.openscada.core.ui.connection.data.ConnectionHolder;
+import org.openscada.ui.databinding.ListeningLabelProvider;
+import org.openscada.ui.databinding.StyledViewerLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
