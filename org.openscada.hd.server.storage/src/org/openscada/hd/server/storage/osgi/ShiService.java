@@ -14,6 +14,7 @@ import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
+import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
 import org.openscada.hd.server.common.StorageHistoricalItem;
@@ -37,10 +38,10 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     private final static Logger logger = LoggerFactory.getLogger ( ShiService.class );
 
     /** Delay in milliseconds after that old data is deleted for the first time after initialization of the class. */
-    private final static long CLEANER_TASK_DELAY = 1000 * 60;
+    private final static long CLEANER_TASK_DELAY = 1000 * 5;
 
     /** Period in milliseconds between two consecutive attemps to delete old data. */
-    private final static long CLEANER_TASK_PERIOD = 1000 * 60 * 10;
+    private final static long CLEANER_TASK_PERIOD = 1000 * 5;
 
     private final ConfigurationImpl configuration;
 
@@ -82,7 +83,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 final CalculationMethod calculationMethod = entry.getKey ();
                 final DoubleValue[] dvs = entry.getValue ().getDoubleValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () );
                 final Value[] values = new Value[dvs.length];
-                if ( calculationMethod == CalculationMethod.AVERAGE )
+                if ( calculationMethod == CalculationMethod.NATIVE )
                 {
                     valueInformations = new ValueInformation[dvs.length];
                 }
@@ -90,12 +91,12 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 {
                     final DoubleValue doubleValue = dvs[i];
                     values[i] = new Value ( doubleValue.getValue () );
-                    if ( calculationMethod == CalculationMethod.AVERAGE )
+                    if ( calculationMethod == CalculationMethod.NATIVE )
                     {
                         valueInformations[i] = new ValueInformation ( parameters.getStartTimestamp (), parameters.getEndTimestamp (), doubleValue.getQualityIndicator (), doubleValue.getBaseValueCount () );
                     }
                 }
-                if ( calculationMethod == CalculationMethod.AVERAGE )
+                if ( calculationMethod == CalculationMethod.NATIVE )
                 {
                     map.put ( CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ), values );
                     calculationMethods.add ( CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ) );
@@ -203,6 +204,30 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized void cleanupRelicts () throws Exception
     {
+        Calendar start = Calendar.getInstance ();
+        start.setTimeInMillis ( 0 );
+        Calendar end = Calendar.getInstance ();
+        end.setTimeInMillis ( Long.MAX_VALUE );
+        createQuery ( new QueryParameters ( start, end, 1000 ), new QueryListener () {
+
+            public void updateState ( QueryState state )
+            {
+                // TODO Auto-generated method stub
+
+            }
+
+            public void updateParameters ( QueryParameters parameters, Set<String> valueTypes )
+            {
+                // TODO Auto-generated method stub
+
+            }
+
+            public void updateData ( int index, Map<String, Value[]> values, ValueInformation[] valueInformation )
+            {
+                // TODO Auto-generated method stub
+
+            }
+        }, false );
         if ( this.rootStorageChannel != null )
         {
             this.rootStorageChannel.cleanupRelicts ();
