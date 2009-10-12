@@ -82,22 +82,19 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 CalculationMethod calculationMethod = entry.getKey ();
                 DoubleValue[] dvs = entry.getValue ().getDoubleValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () );
                 Value[] values = new Value[dvs.length];
-                if ( calculationMethod == CalculationMethod.NATIVE )
-                {
-                    valueInformations = new ValueInformation[dvs.length];
-                }
                 for ( int i = 0; i < dvs.length; i++ )
                 {
                     DoubleValue doubleValue = dvs[i];
                     values[i] = new Value ( doubleValue.getValue () );
-                    if ( calculationMethod == CalculationMethod.NATIVE )
+                    if ( calculationMethod == CalculationMethod.AVERAGE )
                     {
+                        valueInformations = new ValueInformation[dvs.length];
                         valueInformations[i] = new ValueInformation ( parameters.getStartTimestamp (), parameters.getEndTimestamp (), doubleValue.getQualityIndicator (), doubleValue.getBaseValueCount () );
                     }
                 }
-                if ( calculationMethod != CalculationMethod.NATIVE )
+                if ( calculationMethod == CalculationMethod.AVERAGE )
                 {
-                    map.put ( CalculationMethod.convertCalculationMethodToString ( calculationMethod ), values );
+                    map.put ( CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ), values );
                     calculationMethods.add ( CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ) );
                 }
             }
