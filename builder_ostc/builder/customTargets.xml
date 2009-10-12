@@ -139,6 +139,7 @@
 
   	<openscada.builder.copyFeature id="org.openscada.hd.ui"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.ui"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.chart"/>
   	
   	<openscada.builder.copyFeature id="org.openscada.rcp.client" />
   	<openscada.builder.copyPlugin id="org.openscada.rcp.client"/>
