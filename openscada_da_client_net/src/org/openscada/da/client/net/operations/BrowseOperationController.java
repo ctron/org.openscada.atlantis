@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,28 +29,28 @@ import org.openscada.utils.exec.LongRunningOperation;
 
 public class BrowseOperationController
 {
-    private LongRunningController _controller = null;
+    private LongRunningController controller = null;
 
     public BrowseOperationController ( final Messenger connection )
     {
-        this._controller = new LongRunningController ( connection, Messages.CC_BROWSER_LIST_RES );
+        this.controller = new LongRunningController ( connection, Messages.CC_BROWSER_LIST_RES );
     }
 
     public void register ()
     {
-        this._controller.register ();
+        this.controller.register ();
     }
 
     public void unregister ()
     {
-        this._controller.unregister ();
+        this.controller.unregister ();
     }
 
     public LongRunningOperation start ( final String[] location, final LongRunningListener listener )
     {
         final Message message = ListBrowser.createRequest ( location );
 
-        return this._controller.start ( message, listener );
+        return this.controller.start ( message, listener );
     }
 
 }
