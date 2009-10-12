@@ -23,12 +23,42 @@ import org.openscada.hd.ItemListListener;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
+import org.openscada.hd.QueryState;
 
+/**
+ * A client connection to the historical data server
+ * 
+ * @author Jens Reimann
+ * @since 0.14.0
+ *
+ */
 public interface Connection extends org.openscada.core.client.Connection
 {
-    public Query createQuery ( String itemId, QueryParameters parameters, QueryListener listener );
+    /**
+     * Create a new query on the server
+     * @param itemId the historical item to query
+     * @param parameters the initial query parameters
+     * @param listener the listener that will receive data
+     * @param updateData <code>true</code> if the query should provide continuous updates,
+     *          <code>false</code> if the query should only be executed once an not data
+     *          updates should be delivered after the query state changed to
+     *          {@link QueryState#COMPLETE}.
+     * @return a new query instance, <code>null</code> is never returned
+     */
+    public Query createQuery ( String itemId, QueryParameters parameters, QueryListener listener, boolean updateData );
 
+    /**
+     * Add a new listener to the connection in order to receive item list updates.
+     * <p>
+     * A new listener will also receive any already known items.
+     * </p> 
+     * @param listener the listener to add
+     */
     public void addListListener ( ItemListListener listener );
 
+    /**
+     * Remove a listener from the connection
+     * @param listener the listener to remove
+     */
     public void removeListListener ( ItemListListener listener );
 }

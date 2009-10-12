@@ -18,7 +18,7 @@ public class TestItemImpl implements HistoricalItem
 
     private final Set<TestQueryImpl> queries = new HashSet<TestQueryImpl> ();
 
-    public Query createQuery ( final QueryParameters parameters, final QueryListener listener )
+    public Query createQuery ( final QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
         final TestQueryImpl query = new TestQueryImpl ( this, parameters, listener );
         this.queries.add ( query );

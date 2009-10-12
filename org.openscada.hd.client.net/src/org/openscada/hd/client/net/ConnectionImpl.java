@@ -49,6 +49,7 @@ import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
+import org.openscada.net.base.data.VoidValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -284,7 +285,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         this.messenger.sendMessage ( ItemListHelper.createRequestList ( flag ) );
     }
 
-    public Query createQuery ( final String itemId, final QueryParameters parameters, final QueryListener listener )
+    public Query createQuery ( final String itemId, final QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
         synchronized ( this )
         {
@@ -298,7 +299,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 }
                 query.setId ( id );
                 this.queries.put ( id, query );
-                sendCreateQuery ( id, itemId, parameters );
+                sendCreateQuery ( id, itemId, parameters, updateData );
                 return query;
             }
             else
@@ -308,12 +309,16 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         }
     }
 
-    protected void sendCreateQuery ( final long id, final String itemId, final QueryParameters parameters )
+    protected void sendCreateQuery ( final long id, final String itemId, final QueryParameters parameters, final boolean updateData )
     {
         final Message message = new Message ( Messages.CC_HD_CREATE_QUERY );
         message.getValues ().put ( "itemId", new StringValue ( itemId ) );
         message.getValues ().put ( "id", new LongValue ( id ) );
         message.getValues ().put ( "parameters", QueryHelper.toValue ( parameters ) );
+        if ( updateData )
+        {
+            message.getValues ().put ( "updateData", new VoidValue () );
+        }
         this.messenger.sendMessage ( message );
     }
 
@@ -358,10 +363,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         synchronized ( this )
         {
             final QueryImpl query = this.queries.remove ( id );
-            if ( query == queryImpl )
-            {
-                sendCloseQuery ( id );
-            }
+            query.setId ( null );
+            sendCloseQuery ( id );
         }
     }
 

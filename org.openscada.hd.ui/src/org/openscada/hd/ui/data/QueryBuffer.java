@@ -90,7 +90,7 @@ public class QueryBuffer extends AbstractPropertyChange
                 {
                     QueryBuffer.this.updateData ( index, values, valueInformation );
                 }
-            } );
+            }, true );
         }
     }
 

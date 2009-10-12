@@ -130,7 +130,7 @@ public class ServiceImpl implements Service, ServiceTrackerCustomizer
         return (SessionImpl)session;
     }
 
-    public Query createQuery ( final Session session, final String itemId, final QueryParameters parameters, final QueryListener listener ) throws InvalidSessionException, InvalidItemException
+    public Query createQuery ( final Session session, final String itemId, final QueryParameters parameters, final QueryListener listener, final boolean updateData ) throws InvalidSessionException, InvalidItemException
     {
         final SessionImpl sessionImpl = validateSession ( session );
         synchronized ( this )
@@ -141,7 +141,7 @@ public class ServiceImpl implements Service, ServiceTrackerCustomizer
                 throw new InvalidItemException ( itemId );
             }
             final QueryImpl queryImpl = new QueryImpl ( sessionImpl, listener );
-            final Query query = item.createQuery ( parameters, queryImpl );
+            final Query query = item.createQuery ( parameters, queryImpl, updateData );
             if ( query != null )
             {
                 queryImpl.setQuery ( query );

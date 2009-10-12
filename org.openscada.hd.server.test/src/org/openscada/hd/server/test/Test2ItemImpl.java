@@ -47,7 +47,7 @@ public class Test2ItemImpl implements HistoricalItem
         }
     }
 
-    public Query createQuery ( final QueryParameters parameters, final QueryListener listener )
+    public Query createQuery ( final QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
         try
         {

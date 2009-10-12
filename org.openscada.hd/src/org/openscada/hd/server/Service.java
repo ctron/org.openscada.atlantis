@@ -27,5 +27,5 @@ import org.openscada.hd.QueryParameters;
 
 public interface Service extends org.openscada.core.server.Service
 {
-    public Query createQuery ( Session session, String itemId, QueryParameters parameters, QueryListener listener ) throws InvalidSessionException, InvalidItemException;
+    public Query createQuery ( Session session, String itemId, QueryParameters parameters, QueryListener listener, boolean updateData ) throws InvalidSessionException, InvalidItemException;
 }

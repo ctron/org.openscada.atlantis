@@ -7,7 +7,7 @@ import org.openscada.hd.QueryParameters;
 
 public interface HistoricalItem
 {
-    public Query createQuery ( QueryParameters parameters, QueryListener listener );
+    public Query createQuery ( QueryParameters parameters, QueryListener listener, boolean updateData );
 
     public HistoricalItemInformation getInformation ();
 }
