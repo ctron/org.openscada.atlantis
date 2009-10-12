@@ -266,9 +266,12 @@ public class QueryBuffer extends AbstractPropertyChange
             return;
         }
 
-        listener.updateParameters ( this.queryParameters, this.valueTypes );
         listener.updateState ( this.state );
-        transmitKnownData ( listener );
+        if ( this.queryParameters != null )
+        {
+            listener.updateParameters ( this.queryParameters, this.valueTypes );
+            transmitKnownData ( listener );
+        }
     }
 
     private void transmitKnownData ( final QueryListener listener )
