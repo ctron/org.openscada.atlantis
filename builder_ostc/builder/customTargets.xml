@@ -126,6 +126,13 @@
   	<openscada.builder.copyFeature id="org.openscada.da.ice.client" />
   	<openscada.builder.copyFeature id="org.openscada.da.net.client" />
   	<openscada.builder.copyFeature id="org.openscada.da.rcp.LocalTestServer" />
+  	
+  	<openscada.builder.copyFeature id="org.openscada.core.connection.provider" />
+  	<openscada.builder.copyFeature id="org.openscada.da.connection.provider" />
+  	
+  	<openscada.builder.copyFeature id="org.openscada.core.ui.connection" />
+  	<openscada.builder.copyFeature id="org.openscada.core.ui.connection.discoverer.file" />
+  	<openscada.builder.copyFeature id="org.openscada.core.ui.connection.discoverer.osgi" />
 
   	<openscada.builder.copyFeature id="org.openscada.hd.ui"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.ui"/>
