@@ -124,7 +124,10 @@ public class HistoricalItemImpl implements HistoricalItem, MasterItemListener
         }
 
         final Query query = this.service.createQuery ( parameters, listener, updateData );
-        this.openQueries.add ( query );
+        if ( query != null )
+        {
+            this.openQueries.add ( query );
+        }
         return query;
     }
 
