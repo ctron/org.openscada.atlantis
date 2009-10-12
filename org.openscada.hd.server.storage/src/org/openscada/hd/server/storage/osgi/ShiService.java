@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
+import java.util.Map.Entry;
 
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -71,17 +72,31 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     {
         try
         {
-            DoubleValue[] dvs = rootStorageChannel.getDoubleValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () );
-            Value[] values = new Value[dvs.length];
-            ValueInformation[] valueInformations = new ValueInformation[dvs.length];
-            for ( int i = 0; i < dvs.length; i++ )
-            {
-                DoubleValue doubleValue = dvs[i];
-                values[i] = new Value ( doubleValue.getValue () );
-                valueInformations[i] = new ValueInformation ( parameters.getStartTimestamp (), parameters.getEndTimestamp (), doubleValue.getQualityIndicator (), 0L );
-            }
             final Map<String, Value[]> map = new HashMap<String, Value[]> ();
-            map.put ( "NATIVE", values );
+            ValueInformation[] valueInformations = null;
+            for ( Entry<CalculationMethod, ExtendedStorageChannel> entry : storageChannels.entrySet () )
+            {
+                CalculationMethod calculationMethod = entry.getKey ();
+                DoubleValue[] dvs = entry.getValue ().getDoubleValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () );
+                Value[] values = new Value[dvs.length];
+                if ( calculationMethod == CalculationMethod.NATIVE )
+                {
+                    valueInformations = new ValueInformation[dvs.length];
+                }
+                for ( int i = 0; i < dvs.length; i++ )
+                {
+                    DoubleValue doubleValue = dvs[i];
+                    values[i] = new Value ( doubleValue.getValue () );
+                    if ( calculationMethod == CalculationMethod.NATIVE )
+                    {
+                        valueInformations[i] = new ValueInformation ( parameters.getStartTimestamp (), parameters.getEndTimestamp (), doubleValue.getQualityIndicator (), doubleValue.getBaseValueCount () );
+                    }
+                }
+                if ( calculationMethod != CalculationMethod.NATIVE )
+                {
+                    map.put ( CalculationMethod.convertCalculationMethodToString ( calculationMethod ), values );
+                }
+            }
             listener.updateData ( 0, map, valueInformations );
         }
         catch ( Exception e )
