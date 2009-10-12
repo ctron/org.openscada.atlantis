@@ -54,17 +54,17 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /** Timer that is used for deleting old data. */
     private Timer deleteRelictsTimer;
 
-    public ShiService ( ConfigurationImpl configuration )
+    public ShiService ( final ConfigurationImpl configuration )
     {
         this.configuration = configuration;
-        storageChannels = new HashMap<CalculationMethod, ExtendedStorageChannel> ();
-        rootStorageChannel = null;
-        started = false;
+        this.storageChannels = new HashMap<CalculationMethod, ExtendedStorageChannel> ();
+        this.rootStorageChannel = null;
+        this.started = false;
     }
 
     public ConfigurationImpl getConfiguration ()
     {
-        return configuration;
+        return this.configuration;
     }
 
     /**
@@ -76,19 +76,22 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         {
             final Map<String, Value[]> map = new HashMap<String, Value[]> ();
             ValueInformation[] valueInformations = null;
-            Set<String> calculationMethods = new HashSet<String> ();
-            for ( Entry<CalculationMethod, ExtendedStorageChannel> entry : storageChannels.entrySet () )
+            final Set<String> calculationMethods = new HashSet<String> ();
+            for ( final Entry<CalculationMethod, ExtendedStorageChannel> entry : this.storageChannels.entrySet () )
             {
-                CalculationMethod calculationMethod = entry.getKey ();
-                DoubleValue[] dvs = entry.getValue ().getDoubleValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () );
-                Value[] values = new Value[dvs.length];
+                final CalculationMethod calculationMethod = entry.getKey ();
+                final DoubleValue[] dvs = entry.getValue ().getDoubleValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () );
+                final Value[] values = new Value[dvs.length];
+                if ( calculationMethod == CalculationMethod.AVERAGE )
+                {
+                    valueInformations = new ValueInformation[dvs.length];
+                }
                 for ( int i = 0; i < dvs.length; i++ )
                 {
-                    DoubleValue doubleValue = dvs[i];
+                    final DoubleValue doubleValue = dvs[i];
                     values[i] = new Value ( doubleValue.getValue () );
                     if ( calculationMethod == CalculationMethod.AVERAGE )
                     {
-                        valueInformations = new ValueInformation[dvs.length];
                         valueInformations[i] = new ValueInformation ( parameters.getStartTimestamp (), parameters.getEndTimestamp (), doubleValue.getQualityIndicator (), doubleValue.getBaseValueCount () );
                     }
                 }
@@ -101,11 +104,12 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
             listener.updateParameters ( parameters, calculationMethods );
             listener.updateData ( 0, map, valueInformations );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
+            logger.warn ( "Failed to create query", e );
         }
         return new Query () {
-            public void changeParameters ( QueryParameters parameters )
+            public void changeParameters ( final QueryParameters parameters )
             {
             }
 
@@ -127,13 +131,13 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /**
      * @see org.openscada.hd.server.common.StorageHistoricalItem#updateData
      */
-    public synchronized void updateData ( DataItemValue value )
+    public synchronized void updateData ( final DataItemValue value )
     {
-        if ( !started || ( rootStorageChannel == null ) || ( value == null ) )
+        if ( !this.started || this.rootStorageChannel == null || value == null )
         {
             return;
         }
-        Variant variant = value.getValue ();
+        final Variant variant = value.getValue ();
         if ( variant == null )
         {
             return;
@@ -145,25 +149,25 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         {
             if ( variant.isLong () || variant.isInteger () || variant.isBoolean () )
             {
-                rootStorageChannel.updateLong ( new LongValue ( time, qualityIndicator, 1, variant.asLong ( 0L ) ) );
+                this.rootStorageChannel.updateLong ( new LongValue ( time, qualityIndicator, 1, variant.asLong ( 0L ) ) );
             }
             else
             {
-                rootStorageChannel.updateDouble ( new DoubleValue ( time, qualityIndicator, 1, variant.asDouble ( 0.0 ) ) );
+                this.rootStorageChannel.updateDouble ( new DoubleValue ( time, qualityIndicator, 1, variant.asDouble ( 0.0 ) ) );
             }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             logger.error ( String.format ( "could not process value (%s)", variant ), e );
         }
     }
 
-    public synchronized void addStorageChannel ( ExtendedStorageChannel storageChannel, CalculationMethod calculationMethod )
+    public synchronized void addStorageChannel ( final ExtendedStorageChannel storageChannel, final CalculationMethod calculationMethod )
     {
-        storageChannels.put ( calculationMethod, storageChannel );
+        this.storageChannels.put ( calculationMethod, storageChannel );
         if ( calculationMethod == CalculationMethod.NATIVE )
         {
-            rootStorageChannel = storageChannel;
+            this.rootStorageChannel = storageChannel;
         }
     }
 
@@ -173,9 +177,9 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized void start ()
     {
-        deleteRelictsTimer = new Timer ();
-        deleteRelictsTimer.schedule ( new RelictCleanerCallerTask ( this ), CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD );
-        started = true;
+        this.deleteRelictsTimer = new Timer ();
+        this.deleteRelictsTimer.schedule ( new RelictCleanerCallerTask ( this ), CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD );
+        this.started = true;
     }
 
     /**
@@ -185,12 +189,12 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized void stop ()
     {
-        started = false;
-        if ( deleteRelictsTimer != null )
+        this.started = false;
+        if ( this.deleteRelictsTimer != null )
         {
-            deleteRelictsTimer.cancel ();
-            deleteRelictsTimer.purge ();
-            deleteRelictsTimer = null;
+            this.deleteRelictsTimer.cancel ();
+            this.deleteRelictsTimer.purge ();
+            this.deleteRelictsTimer = null;
         }
     }
 
@@ -199,9 +203,9 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized void cleanupRelicts () throws Exception
     {
-        if ( rootStorageChannel != null )
+        if ( this.rootStorageChannel != null )
         {
-            rootStorageChannel.cleanupRelicts ();
+            this.rootStorageChannel.cleanupRelicts ();
         }
     }
 }
