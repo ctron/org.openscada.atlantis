@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Status;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.ui.connection.AbstractConnectionDiscoverer;
 
 public abstract class ResourceDiscoverer extends AbstractConnectionDiscoverer
 {

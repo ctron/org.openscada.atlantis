@@ -3,6 +3,7 @@ package org.openscada.core.ui.connection.data;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.runtime.IAdaptable;
@@ -50,7 +51,7 @@ public class ConnectionDiscovererBean implements IAdaptable, ConnectionDiscovery
 
     public IObservableSet getKnownConnections ()
     {
-        return this.knownConnections;
+        return Observables.proxyObservableSet ( this.knownConnections );
     }
 
     public ImageDescriptor getImageDescriptor ()

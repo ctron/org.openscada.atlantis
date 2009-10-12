@@ -46,6 +46,9 @@ public class ConnectionTracker
 
         final Map<String, String> parameters = new HashMap<String, String> ();
 
+        // add connection URI to filter criteria so we will only receive connections that match our connection uri
+        parameters.put ( ConnectionService.CONNECTION_URI, request.getConnectionInformation ().toString () );
+
         try
         {
             this.filter = FilterUtil.createAndFilter ( ConnectionService.class.getName (), parameters );
@@ -56,48 +59,73 @@ public class ConnectionTracker
             this.filter = null;
         }
 
-        if ( this.filter != null )
+        synchronized ( this )
         {
-            this.tracker = new SingleServiceTracker ( context, this.filter, new SingleServiceListener () {
+            if ( this.filter != null )
+            {
+                this.tracker = new SingleServiceTracker ( context, this.filter, new SingleServiceListener () {
 
-                public void serviceChange ( final ServiceReference reference, final Object service )
-                {
-                    ConnectionTracker.this.setService ( reference, (ConnectionService)service );
-                }
-            } );
-        }
-        else
-        {
-            this.tracker = null;
+                    public void serviceChange ( final ServiceReference reference, final Object service )
+                    {
+                        ConnectionTracker.this.setService ( reference, (ConnectionService)service );
+                    }
+                } );
+            }
+            else
+            {
+                this.tracker = null;
+            }
         }
     }
 
-    public void open ()
+    public synchronized void request ()
+    {
+        if ( this.handle == null )
+        {
+            this.handle = this.context.registerService ( ConnectionRequest.class.getName (), this.request, null );
+        }
+    }
+
+    public synchronized void listen ()
     {
         if ( this.tracker != null )
         {
             logger.debug ( "Opening tracker" );
             this.tracker.open ();
-
-            this.handle = this.context.registerService ( ConnectionRequest.class.getName (), this.request, null );
         }
     }
 
-    public void close ()
+    public synchronized void open ()
     {
-        if ( this.handle != null )
-        {
-            logger.debug ( "Unregister handle: {}", this.handle );
-            this.handle.unregister ();
-        }
+        listen ();
+        request ();
+    }
 
+    public synchronized void close ()
+    {
+        unrequest ();
+        unlisten ();
+    }
+
+    public synchronized void unlisten ()
+    {
         if ( this.tracker != null )
         {
             this.tracker.close ();
         }
     }
 
-    protected void setService ( final ServiceReference reference, final ConnectionService service )
+    public synchronized void unrequest ()
+    {
+        if ( this.handle != null )
+        {
+            logger.debug ( "Unregister handle: {}", this.handle );
+            this.handle.unregister ();
+            this.handle = null;
+        }
+    }
+
+    protected synchronized void setService ( final ServiceReference reference, final ConnectionService service )
     {
         logger.debug ( "Set service: {} -> {}", new Object[] { reference, service } );
         this.service = service;
@@ -108,7 +136,7 @@ public class ConnectionTracker
         }
     }
 
-    public ConnectionService getService ()
+    public synchronized ConnectionService getService ()
     {
         return this.service;
     }

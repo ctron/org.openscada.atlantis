@@ -12,4 +12,6 @@ public interface ConnectionService
     public void connect ();
 
     public void disconnect ();
+
+    public static final String CONNECTION_URI = "connection.uri";
 }

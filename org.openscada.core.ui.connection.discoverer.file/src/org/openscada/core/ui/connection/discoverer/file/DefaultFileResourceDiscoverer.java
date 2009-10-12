@@ -21,19 +21,17 @@ public class DefaultFileResourceDiscoverer extends ResourceDiscoverer implements
 
     public void add ( final ConnectionInformation connectionInformation ) throws CoreException
     {
-        if ( this.connections.add ( connectionInformation ) )
+        if ( addConnection ( connectionInformation ) )
         {
             store ();
-            fireDiscoveryUpdate ( new ConnectionInformation[] { connectionInformation }, null );
         }
     }
 
     public void remove ( final ConnectionInformation connectionInformation ) throws CoreException
     {
-        if ( this.connections.remove ( connectionInformation ) )
+        if ( removeConnection ( connectionInformation ) )
         {
             store ();
-            fireDiscoveryUpdate ( null, new ConnectionInformation[] { connectionInformation } );
         }
     }
 
@@ -43,7 +41,7 @@ public class DefaultFileResourceDiscoverer extends ResourceDiscoverer implements
         try
         {
             printer = new PrintWriter ( getFile () );
-            for ( final ConnectionInformation info : this.connections )
+            for ( final ConnectionInformation info : this.getConnections () )
             {
                 printer.println ( info.toString () );
             }

@@ -12,9 +12,14 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServiceDiscoverer extends AbstractConnectionDiscoverer implements ServiceListener
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ServiceDiscoverer.class );
+
     private final BundleContext context;
 
     private final Set<ServiceReference> references = new HashSet<ServiceReference> ();
@@ -42,6 +47,7 @@ public class ServiceDiscoverer extends AbstractConnectionDiscoverer implements S
         }
         catch ( final InvalidSyntaxException e )
         {
+            logger.warn ( "Invalid syntax when setting up filter", e );
             return;
         }
 
@@ -60,6 +66,8 @@ public class ServiceDiscoverer extends AbstractConnectionDiscoverer implements S
 
     private void addReference ( final ServiceReference ref )
     {
+        logger.info ( "Adding service: {}", ref );
+
         if ( this.references.add ( ref ) )
         {
             update ();
@@ -68,6 +76,8 @@ public class ServiceDiscoverer extends AbstractConnectionDiscoverer implements S
 
     private void removeReference ( final ServiceReference ref )
     {
+        logger.info ( "Removing service: {}", ref );
+
         if ( this.references.remove ( ref ) )
         {
             update ();

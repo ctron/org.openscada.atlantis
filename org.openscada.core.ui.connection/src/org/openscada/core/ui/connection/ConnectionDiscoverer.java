@@ -1,6 +1,8 @@
 package org.openscada.core.ui.connection;
 
-public interface ConnectionDiscoverer
+import org.eclipse.ui.services.IDisposable;
+
+public interface ConnectionDiscoverer extends IDisposable
 {
     public void addConnectionListener ( ConnectionDiscoveryListener listener );
 

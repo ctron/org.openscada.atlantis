@@ -16,7 +16,7 @@ public class CloseConnection extends AbstractConnectionHandler
 
         for ( final ConnectionHolder holder : getConnections () )
         {
-            holder.stop ();
+            holder.disconnect ();
         }
 
         return null;

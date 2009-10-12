@@ -1,5 +1,7 @@
 package org.openscada.core.ui.connection;
 
+import org.eclipse.core.databinding.observable.Observables;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.runtime.CoreException;
@@ -65,7 +67,7 @@ public class Activator extends AbstractUIPlugin
         super.stop ( context );
     }
 
-    public ObservableSet getDiscovererSet ()
+    public IObservableSet getDiscovererSet ()
     {
         synchronized ( this )
         {
@@ -73,7 +75,7 @@ public class Activator extends AbstractUIPlugin
             {
                 this.discoverers = createDiscoverers ();
             }
-            return this.discoverers;
+            return Observables.proxyObservableSet ( this.discoverers );
         }
     }
 

@@ -160,7 +160,7 @@ public class ConnectionManager implements SingleServiceListener
             }
             properties.put ( DriverFactory.INTERFACE_NAME, this.connectionInformation.getInterface () );
             properties.put ( DriverFactory.DRIVER_NAME, this.connectionInformation.getDriver () );
-            properties.put ( "connection.uri", this.connectionInformation.toString () );
+            properties.put ( ConnectionService.CONNECTION_URI, this.connectionInformation.toString () );
 
             logger.info ( "Registered new connection service: " + properties );
             this.serviceReg = this.context.registerService ( new String[] { ConnectionService.class.getName (), org.openscada.core.connection.provider.ConnectionService.class.getName () }, this.connection, properties );

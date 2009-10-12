@@ -16,7 +16,7 @@ public class OpenConnection extends AbstractConnectionHandler
 
         for ( final ConnectionHolder holder : getConnections () )
         {
-            holder.start ();
+            holder.connect ();
         }
 
         return null;
