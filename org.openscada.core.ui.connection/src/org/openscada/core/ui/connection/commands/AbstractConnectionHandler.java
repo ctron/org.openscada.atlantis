@@ -9,8 +9,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.openscada.core.ui.connection.AdapterHelper;
 import org.openscada.core.ui.connection.data.ConnectionHolder;
+import org.openscada.ui.databinding.AdapterHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

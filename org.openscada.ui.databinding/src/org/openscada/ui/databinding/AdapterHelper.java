@@ -1,4 +1,4 @@
-package org.openscada.core.ui.connection;
+package org.openscada.ui.databinding;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;

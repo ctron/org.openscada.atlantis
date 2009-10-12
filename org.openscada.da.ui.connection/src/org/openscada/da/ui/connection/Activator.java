@@ -1,6 +1,13 @@
 package org.openscada.da.ui.connection;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.openscada.core.ui.connection.data.ConnectionHolder;
+import org.openscada.da.ui.connection.views.FolderEntryWrapper;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -15,11 +22,15 @@ public class Activator extends AbstractUIPlugin
     // The shared instance
     private static Activator plugin;
 
+    private final Map<Class<?>, IAdapterFactory> adaperFactories = new HashMap<Class<?>, IAdapterFactory> ();
+
     /**
      * The constructor
      */
     public Activator ()
     {
+        this.adaperFactories.put ( ConnectionHolder.class, new ConnectionHolderAdapterFactory () );
+        this.adaperFactories.put ( FolderEntryWrapper.class, new FolderEntryWrapperAdapterFactory () );
     }
 
     /*
@@ -29,6 +40,12 @@ public class Activator extends AbstractUIPlugin
     public void start ( final BundleContext context ) throws Exception
     {
         super.start ( context );
+
+        for ( final Map.Entry<Class<?>, IAdapterFactory> entry : this.adaperFactories.entrySet () )
+        {
+            Platform.getAdapterManager ().registerAdapters ( entry.getValue (), entry.getKey () );
+        }
+
         plugin = this;
     }
 
@@ -39,6 +56,12 @@ public class Activator extends AbstractUIPlugin
     public void stop ( final BundleContext context ) throws Exception
     {
         plugin = null;
+
+        for ( final Map.Entry<Class<?>, IAdapterFactory> entry : this.adaperFactories.entrySet () )
+        {
+            Platform.getAdapterManager ().registerAdapters ( entry.getValue (), entry.getKey () );
+        }
+
         super.stop ( context );
     }
 

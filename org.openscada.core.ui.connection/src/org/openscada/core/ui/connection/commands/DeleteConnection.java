@@ -5,9 +5,9 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
 import org.openscada.core.ui.connection.Activator;
-import org.openscada.core.ui.connection.AdapterHelper;
 import org.openscada.core.ui.connection.ConnectionStore;
 import org.openscada.core.ui.connection.data.ConnectionHolder;
+import org.openscada.ui.databinding.AdapterHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

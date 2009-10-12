@@ -36,7 +36,7 @@
          <includes>
             <contentExtension
                   isRoot="true"
-                  pattern="org.openscada.core.ui.connection.provider">
+                  pattern="org.openscada..*.ui.connection.provider">
             </contentExtension>
          </includes>
       </viewerContentBinding>

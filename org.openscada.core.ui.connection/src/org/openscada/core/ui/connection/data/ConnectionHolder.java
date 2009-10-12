@@ -1,5 +1,6 @@
 package org.openscada.core.ui.connection.data;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
@@ -15,7 +16,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectionHolder extends AbstractPropertyChange implements ConnectionStateListener
+public class ConnectionHolder extends AbstractPropertyChange implements ConnectionStateListener, IAdaptable
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionHolder.class );
@@ -163,5 +164,15 @@ public class ConnectionHolder extends AbstractPropertyChange implements Connecti
         logger.debug ( "Connection state changed: {}", state );
         setConnectionState ( state );
         setConnectionError ( error );
+    }
+
+    @SuppressWarnings ( "unchecked" )
+    public Object getAdapter ( final Class adapter )
+    {
+        if ( adapter == ConnectionService.class )
+        {
+            return this.connectionService;
+        }
+        return null;
     }
 }

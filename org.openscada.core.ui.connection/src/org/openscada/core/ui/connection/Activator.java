@@ -1,10 +1,14 @@
 package org.openscada.core.ui.connection;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -12,6 +16,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.openscada.core.ui.connection.data.ConnectionDiscovererAdapterFactory;
 import org.openscada.core.ui.connection.data.ConnectionDiscovererBean;
+import org.openscada.core.ui.connection.data.ConnectionHolder;
+import org.openscada.core.ui.connection.data.ConnectionHolderAdapterFactory;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -32,7 +38,7 @@ public class Activator extends AbstractUIPlugin
 
     private ObservableSet discoverers;
 
-    private final ConnectionDiscovererAdapterFactory adaperFactory;
+    private final Map<Class<?>, IAdapterFactory> adaperFactories = new HashMap<Class<?>, IAdapterFactory> ();
 
     public static final Root ROOT = new Root ();
 
@@ -41,7 +47,8 @@ public class Activator extends AbstractUIPlugin
      */
     public Activator ()
     {
-        this.adaperFactory = new ConnectionDiscovererAdapterFactory ();
+        this.adaperFactories.put ( ConnectionDiscovererBean.class, new ConnectionDiscovererAdapterFactory () );
+        this.adaperFactories.put ( ConnectionHolder.class, new ConnectionHolderAdapterFactory () );
     }
 
     /*
@@ -52,7 +59,12 @@ public class Activator extends AbstractUIPlugin
     {
         super.start ( context );
         plugin = this;
-        Platform.getAdapterManager ().registerAdapters ( this.adaperFactory, ConnectionDiscovererBean.class );
+
+        for ( final Map.Entry<Class<?>, IAdapterFactory> entry : this.adaperFactories.entrySet () )
+        {
+            Platform.getAdapterManager ().registerAdapters ( entry.getValue (), entry.getKey () );
+        }
+
     }
 
     /*
@@ -61,7 +73,10 @@ public class Activator extends AbstractUIPlugin
      */
     public void stop ( final BundleContext context ) throws Exception
     {
-        Platform.getAdapterManager ().unregisterAdapters ( this.adaperFactory );
+        for ( final Map.Entry<Class<?>, IAdapterFactory> entry : this.adaperFactories.entrySet () )
+        {
+            Platform.getAdapterManager ().unregisterAdapters ( entry.getValue (), entry.getKey () );
+        }
 
         plugin = null;
         super.stop ( context );
