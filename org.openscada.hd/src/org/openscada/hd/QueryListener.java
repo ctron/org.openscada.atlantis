@@ -81,16 +81,21 @@ public interface QueryListener
 
     /**
      * Reports a change in parameters
-     * @param parameters the new parameters
-     * @param valueTypes the new value types to expect
+     * @param parameters the new parameters, must not be <code>null</code>
+     * @param valueTypes the new value types to expect, must not be <code>null</code> or empty
      */
     public void updateParameters ( QueryParameters parameters, Set<String> valueTypes );
 
     /**
      * Reports data update
-     * @param index index from which the data update starts
-     * @param values the values that are updates
-     * @param valueInformation the value information for the provided values
+     * <p>
+     * All arrays must have the same size. 
+     * </p>
+     * 
+     * @param index index from which the data update starts, must be greater or equal to zero
+     * and lower than the reported number of entries
+     * @param values the values that are updates, must not be <code>null</code>
+     * @param valueInformation the value information for the provided values. must not be <code>null</code>
      */
     public void updateData ( int index, Map<String, Value[]> values, ValueInformation[] valueInformation );
 }
