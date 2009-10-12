@@ -2,7 +2,9 @@ package org.openscada.hd.server.storage.osgi;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.Map.Entry;
 
@@ -68,12 +70,13 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /**
      * @see org.openscada.hd.server.common.StorageHistoricalItem#createQuery
      */
-    public Query createQuery ( QueryParameters parameters, final QueryListener listener, final boolean updateData )
+    public Query createQuery ( final QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
         try
         {
             final Map<String, Value[]> map = new HashMap<String, Value[]> ();
             ValueInformation[] valueInformations = null;
+            Set<String> calculationMethods = new HashSet<String> ();
             for ( Entry<CalculationMethod, ExtendedStorageChannel> entry : storageChannels.entrySet () )
             {
                 CalculationMethod calculationMethod = entry.getKey ();
@@ -95,8 +98,10 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 if ( calculationMethod != CalculationMethod.NATIVE )
                 {
                     map.put ( CalculationMethod.convertCalculationMethodToString ( calculationMethod ), values );
+                    calculationMethods.add ( CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ) );
                 }
             }
+            listener.updateParameters ( parameters, calculationMethods );
             listener.updateData ( 0, map, valueInformations );
         }
         catch ( Exception e )
