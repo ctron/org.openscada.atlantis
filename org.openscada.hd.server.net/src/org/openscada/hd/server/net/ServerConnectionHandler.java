@@ -187,12 +187,13 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
                 final String itemId = ( (StringValue)message.getValues ().get ( "itemId" ) ).getValue ();
                 // get the initial query parameters
                 final QueryParameters parameters = QueryHelper.fromValue ( message.getValues ().get ( "parameters" ) );
+                final boolean updateData = message.getValues ().containsKey ( "updateData" );
 
                 // create the handler and set the query
                 final QueryHandler handler = new QueryHandler ( queryId, this );
                 this.queries.put ( queryId, handler );
 
-                final Query query = this.service.createQuery ( this.session, itemId, parameters, handler );
+                final Query query = this.service.createQuery ( this.session, itemId, parameters, handler, updateData );
                 if ( query == null )
                 {
                     // we already added the query .. so remove it here
