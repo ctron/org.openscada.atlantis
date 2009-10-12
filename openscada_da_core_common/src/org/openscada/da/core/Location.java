@@ -19,6 +19,7 @@
 
 package org.openscada.da.core;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +41,16 @@ public class Location
     public Location ( final Location location )
     {
         this.location = location.location.clone ();
+    }
+
+    public Location ( final Location parent, final String child )
+    {
+        final ArrayList<String> result = new ArrayList<String> ( parent.asList () );
+        if ( child != null )
+        {
+            result.add ( child );
+        }
+        this.location = result.toArray ( new String[result.size ()] );
     }
 
     public Location ()
