@@ -9,9 +9,14 @@ import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class QueryImpl implements Query, QueryListener
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( QueryImpl.class );
+
     private Query query;
 
     private final SessionImpl session;
@@ -45,6 +50,7 @@ public class QueryImpl implements Query, QueryListener
 
     public void updateParameters ( final QueryParameters parameters, final Set<String> valueTypes )
     {
+        logger.debug ( "updateParameters: parameters: {}, valueTypes: {}", new Object[] { parameters, valueTypes } );
         if ( parameters == null )
         {
             throw new IllegalArgumentException ( "'parameters' must not be null" );
@@ -60,6 +66,8 @@ public class QueryImpl implements Query, QueryListener
 
     public void updateData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
     {
+        logger.debug ( "updateData: index: {}, values: @{}, valueInformation: @{}", new Object[] { index, values.size (), valueInformation.length } );
+
         if ( values == null )
         {
             throw new IllegalArgumentException ( "'values' must not be null" );
@@ -98,6 +106,8 @@ public class QueryImpl implements Query, QueryListener
 
     public void updateState ( final QueryState state )
     {
+        logger.debug ( "updateState: state: {}", new Object[] { state } );
+
         if ( state == null )
         {
             throw new IllegalArgumentException ( "'state' must not be null" );
