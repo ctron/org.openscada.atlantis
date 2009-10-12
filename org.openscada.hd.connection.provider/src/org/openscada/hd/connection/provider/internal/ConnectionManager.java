@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.connection.provider.internal;
+package org.openscada.hd.connection.provider.internal;
 
 import java.util.HashMap;
 import java.util.HashSet;

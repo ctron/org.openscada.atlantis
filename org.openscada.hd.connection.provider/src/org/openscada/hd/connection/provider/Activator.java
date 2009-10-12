@@ -1,6 +1,6 @@
 package org.openscada.hd.connection.provider;
 
-import org.openscada.da.connection.provider.internal.ConnectionProvider;
+import org.openscada.hd.connection.provider.internal.ConnectionProvider;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

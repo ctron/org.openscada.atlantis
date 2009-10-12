@@ -1,4 +1,4 @@
-package org.openscada.da.connection.provider.internal;
+package org.openscada.hd.connection.provider.internal;
 
 import org.openscada.core.client.AutoReconnectController;
 import org.openscada.da.client.Connection;
