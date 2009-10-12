@@ -108,6 +108,8 @@
 
 	<openscada.builder.copyPlugin id="org.openscada.external.jfreechart"/>
   	
+  	<openscada.builder.copyPlugin id="org.openscada.ui.databinding"/>
+  	
   	<openscada.builder.copyPlugin id="org.openscada.da.client.base"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.chart"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.connection.manager.view"/>
@@ -133,6 +135,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.core.ui.connection" />
   	<openscada.builder.copyPlugin id="org.openscada.core.ui.connection.discoverer.file" />
   	<openscada.builder.copyPlugin id="org.openscada.core.ui.connection.discoverer.osgi" />
+  	<openscada.builder.copyPlugin id="org.openscada.da.ui.connection" />
 
   	<openscada.builder.copyFeature id="org.openscada.hd.ui"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.ui"/>
