@@ -1,4 +1,4 @@
-package org.openscada.da.ui.connection;
+package org.openscada.ui.databinding;
 
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerLabel;

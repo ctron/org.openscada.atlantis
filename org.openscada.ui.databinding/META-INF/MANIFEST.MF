@@ -6,6 +6,15 @@ Bundle-Version: 01.4.0.qualifier
 Bundle-Activator: org.openscada.ui.databinding.Activator
 Bundle-Vendor: inavare GmbH
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.core.databinding;bundle-version="1.2.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
+Import-Package: org.slf4j;version="1.5.8"
+Export-Package: org.openscada.ui.databinding;version="0.14.0";
+  uses:="org.eclipse.core.databinding.observable.set,
+   org.eclipse.core.databinding.observable.masterdetail,
+   org.eclipse.ui.plugin,
+   org.eclipse.jface.viewers,
+   org.eclipse.swt.graphics,
+   org.osgi.framework"

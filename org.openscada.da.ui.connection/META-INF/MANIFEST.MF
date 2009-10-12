@@ -12,10 +12,4 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: org.slf4j;version="1.5.8"
-Export-Package: org.openscada.da.ui.connection;version="0.14.0";
-  uses:="org.eclipse.core.databinding.observable.set,
-   org.eclipse.core.databinding.observable.masterdetail,
-   org.eclipse.ui.plugin,
-   org.eclipse.jface.viewers,
-   org.eclipse.swt.graphics,
-   org.osgi.framework"
+Export-Package: org.openscada.da.ui.connection;version="0.14.0";uses:="org.eclipse.ui.plugin,org.osgi.framework"
