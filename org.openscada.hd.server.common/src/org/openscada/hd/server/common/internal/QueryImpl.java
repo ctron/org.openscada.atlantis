@@ -72,7 +72,7 @@ public class QueryImpl implements Query, QueryListener
         {
             throw new IllegalStateException ( "'updateData' must be called after a call to 'updateParameters'" );
         }
-        if ( index <= 0 || index >= this.queryParameters.getEntries () )
+        if ( index < 0 || index >= this.queryParameters.getEntries () )
         {
             throw new IllegalArgumentException ( "'index' must be greater or equal to zero and lower than the number of reported entries" );
         }
