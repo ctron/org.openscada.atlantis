@@ -57,7 +57,7 @@
 
 	<target name="pre.@dot">
 		<ant antfile="schema_build.xml">
-			<property name="xmlbeans.root" location="${source.root}/builder_atlantis/common/lib/xmlbeans"/>
+			<property name="xmlbeans.root" location="${source.root}/builder_ostc/common/lib/xmlbeans"/>
 		</ant>
 	</target>
 
