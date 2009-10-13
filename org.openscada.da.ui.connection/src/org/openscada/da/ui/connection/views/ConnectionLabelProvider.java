@@ -9,13 +9,9 @@ import org.openscada.da.core.browser.FolderEntry;
 import org.openscada.ui.databinding.AdapterHelper;
 import org.openscada.ui.databinding.ListeningLabelProvider;
 import org.openscada.ui.databinding.StyledViewerLabel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ConnectionLabelProvider extends ListeningLabelProvider
 {
-    private final static Logger logger = LoggerFactory.getLogger ( ConnectionLabelProvider.class );
-
     private final ResourceManager resource = new LocalResourceManager ( JFaceResources.getResources () );
 
     public ConnectionLabelProvider ()
