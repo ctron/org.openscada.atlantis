@@ -38,10 +38,10 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     private final static Logger logger = LoggerFactory.getLogger ( ShiService.class );
 
     /** Delay in milliseconds after that old data is deleted for the first time after initialization of the class. */
-    private final static long CLEANER_TASK_DELAY = 1000 * 5;
+    private final static long CLEANER_TASK_DELAY = 1000 * 60;
 
-    /** Period in milliseconds between two consecutive attemps to delete old data. */
-    private final static long CLEANER_TASK_PERIOD = 1000 * 5;
+    /** Period in milliseconds between two consecutive attempts to delete old data. */
+    private final static long CLEANER_TASK_PERIOD = 1000 * 60 * 10;
 
     private final ConfigurationImpl configuration;
 
