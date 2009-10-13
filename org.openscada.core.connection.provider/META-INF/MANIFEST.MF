@@ -5,15 +5,17 @@ Bundle-SymbolicName: org.openscada.core.connection.provider
 Bundle-Version: 0.14.0.qualifier
 Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Import-Package: org.openscada.common;version="0.14.0",
- org.openscada.core;version="0.14.0",
+Import-Package: org.openscada.core;version="0.14.0",
  org.openscada.core.client;version="0.14.0",
- org.openscada.utils;version="0.14.0",
- org.openscada.utils.beans;version="0.14.0",
- org.openscada.utils.concurrent;version="0.14.0",
  org.openscada.utils.lang;version="0.14.0",
  org.openscada.utils.osgi;version="0.14.0",
  org.osgi.framework;version="1.5.0",
  org.osgi.util.tracker,
  org.slf4j;version="1.5.8"
-Export-Package: org.openscada.core.connection.provider;version="0.14.0"
+Export-Package: org.openscada.core.connection.provider;version="0.14.0";
+  uses:="org.openscada.core.client,
+   org.osgi.util.tracker,
+   org.osgi.framework,
+   org.openscada.core,
+   org.openscada.utils.osgi,
+   org.slf4j"
