@@ -16,8 +16,18 @@
                <instanceof
                      value="org.openscada.core.ui.connection.data.ConnectionHolder">
                </instanceof>
+               <instanceof
+                     value="org.openscada.da.ui.connection.internal.FolderEntryWrapper">
+               </instanceof>
             </or></triggerPoints>
       </navigatorContent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <dragAssistant
+            class="org.openscada.da.ui.connection.dnd.CommonDragAdapterAssistant"
+            viewerId="org.openscada.core.ui.connection.ConnectionView">
+      </dragAssistant>
    </extension>
 
 </plugin>

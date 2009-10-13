@@ -1,4 +1,4 @@
-package org.openscada.da.client.base.item;
+package org.openscada.da.ui.connection.data;
 
 import java.io.Serializable;
 

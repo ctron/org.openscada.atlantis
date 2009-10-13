@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.5.0",
  org.openscada.da.client.common;bundle-version="0.14.0",
  org.openscada.core.common;bundle-version="0.14.0",
  org.openscada.da.core.common;bundle-version="0.14.0",
- org.openscada.da.client.connector;bundle-version="0.14.0"
+ org.openscada.da.client.connector;bundle-version="0.14.0",
+ org.openscada.da.ui.connection;bundle-version="0.14.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.da.client.base.action;version="0.14.0";
@@ -32,8 +33,7 @@ Export-Package: org.openscada.da.client.base.action;version="0.14.0";
    org.openscada.da.client,
    org.openscada.da.client.base.item,
    org.openscada.core",
- org.openscada.da.client.base.dnd;version="0.14.0";uses:="org.eclipse.swt.dnd,org.eclipse.jface.viewers,org.eclipse.ui.part",
- org.openscada.da.client.base.item;version="0.14.0";
+  org.openscada.da.client.base.item;version="0.14.0";
   uses:="org.eclipse.ui,
    org.openscada.da.client,
    org.openscada.da.client.base.connection,

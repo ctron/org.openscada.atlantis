@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 
 import org.openscada.core.ui.connection.data.ConnectionHolder;
 import org.openscada.da.connection.provider.ConnectionService;
+import org.openscada.da.ui.connection.internal.FolderEntryWrapper;
 
 public class RootFolderObserver extends FolderObserver implements PropertyChangeListener
 {
@@ -12,8 +13,13 @@ public class RootFolderObserver extends FolderObserver implements PropertyChange
 
     public RootFolderObserver ( final ConnectionHolder connectionHolder )
     {
+        super ();
+
         this.connectionHolder = connectionHolder;
-        connectionHolder.addPropertyChangeListener ( ConnectionHolder.PROP_CONNECTION_SERVICE, this );
+        synchronized ( this )
+        {
+            connectionHolder.addPropertyChangeListener ( ConnectionHolder.PROP_CONNECTION_SERVICE, this );
+        }
     }
 
     @Override
@@ -37,11 +43,11 @@ public class RootFolderObserver extends FolderObserver implements PropertyChange
         }
     }
 
-    private void setConnection ( final ConnectionService connectionService )
+    private synchronized void setConnection ( final ConnectionService connectionService )
     {
         if ( connectionService != null )
         {
-            setFolderManager ( new FolderEntryWrapper ( connectionService.getFolderManager () ) );
+            setFolderManager ( new FolderEntryWrapper ( this.connectionHolder, connectionService.getFolderManager () ) );
         }
         else
         {

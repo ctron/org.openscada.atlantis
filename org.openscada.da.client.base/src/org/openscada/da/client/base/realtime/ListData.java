@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.base.connection.ConnectionManager;
-import org.openscada.da.client.base.item.Item;
+import org.openscada.da.ui.connection.data.Item;
 
 public class ListData implements Observer
 {

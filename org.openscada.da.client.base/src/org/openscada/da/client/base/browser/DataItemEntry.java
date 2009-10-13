@@ -27,8 +27,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.openscada.core.Variant;
-import org.openscada.da.client.base.item.Item;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.ui.connection.data.Item;
 
 public class DataItemEntry extends BrowserEntry implements IAdaptable
 {

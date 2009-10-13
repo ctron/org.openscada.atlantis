@@ -30,8 +30,8 @@ import org.eclipse.swt.dnd.TransferData;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.base.connection.ConnectionManager;
-import org.openscada.da.client.base.dnd.ItemTransfer;
-import org.openscada.da.client.base.item.Item;
+import org.openscada.da.ui.connection.data.Item;
+import org.openscada.da.ui.connection.dnd.ItemTransfer;
 
 public class ItemDropAdapter extends ViewerDropAdapter
 {

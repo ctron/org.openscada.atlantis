@@ -35,7 +35,7 @@ import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemManager;
-import org.openscada.da.client.base.item.Item;
+import org.openscada.da.ui.connection.data.Item;
 
 public class ListEntry extends Observable implements Observer, IAdaptable, IPropertySource
 {

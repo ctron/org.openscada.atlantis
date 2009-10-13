@@ -14,6 +14,8 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * NON-API - Generic viewer label provider.
@@ -22,6 +24,8 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ViewerLabelProvider implements ILabelProvider, IStyledLabelProvider
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ViewerLabelProvider.class );
 
     private final List<ILabelProviderListener> listeners = new ArrayList<ILabelProviderListener> ();
 
@@ -37,20 +41,18 @@ public class ViewerLabelProvider implements ILabelProvider, IStyledLabelProvider
     protected final void fireChangeEvent ( final Collection<?> changes )
     {
 
+        final LabelProviderChangedEvent event = new LabelProviderChangedEvent ( ViewerLabelProvider.this, changes.toArray () );
+        final ILabelProviderListener[] listenerArray = ViewerLabelProvider.this.listeners.toArray ( new ILabelProviderListener[ViewerLabelProvider.this.listeners.size ()] );
+
         final Display display = getDisplay ();
         if ( !display.isDisposed () )
         {
-
             display.asyncExec ( new Runnable () {
 
                 public void run ()
                 {
-
-                    final LabelProviderChangedEvent event = new LabelProviderChangedEvent ( ViewerLabelProvider.this, changes.toArray () );
-                    final ILabelProviderListener[] listenerArray = ViewerLabelProvider.this.listeners.toArray ( new ILabelProviderListener[ViewerLabelProvider.this.listeners.size ()] );
-                    for ( int i = 0; i < listenerArray.length; i++ )
+                    for ( final ILabelProviderListener listener : listenerArray )
                     {
-                        final ILabelProviderListener listener = listenerArray[i];
                         try
                         {
                             listener.labelProviderChanged ( event );
@@ -76,6 +78,9 @@ public class ViewerLabelProvider implements ILabelProvider, IStyledLabelProvider
     {
         final StyledViewerLabel label = new StyledViewerLabel ( "", null ); //$NON-NLS-1$
         updateLabel ( label, element );
+
+        logger.debug ( "Get Image: {}", label.getImage () );
+
         return label.getImage ();
     }
 

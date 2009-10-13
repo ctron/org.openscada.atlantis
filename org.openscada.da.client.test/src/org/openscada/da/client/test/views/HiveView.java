@@ -48,9 +48,9 @@ import org.openscada.core.client.ConnectionState;
 import org.openscada.da.client.base.browser.FolderEntry;
 import org.openscada.da.client.base.browser.HiveConnection;
 import org.openscada.da.client.base.browser.HiveRepository;
-import org.openscada.da.client.base.dnd.ItemDragSourceListener;
-import org.openscada.da.client.base.dnd.ItemTransfer;
 import org.openscada.da.client.test.Activator;
+import org.openscada.da.ui.connection.dnd.ItemDragSourceListener;
+import org.openscada.da.ui.connection.dnd.ItemTransfer;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view

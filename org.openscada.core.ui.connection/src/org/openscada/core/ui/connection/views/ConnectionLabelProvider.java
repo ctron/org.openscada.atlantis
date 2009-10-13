@@ -4,10 +4,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.swt.graphics.Image;
 import org.openscada.core.client.Connection;
 import org.openscada.core.connection.provider.ConnectionService;
 import org.openscada.core.ui.connection.Activator;
@@ -69,6 +71,8 @@ public class ConnectionLabelProvider extends ListeningLabelProvider implements P
         }
         else if ( element instanceof ConnectionHolder )
         {
+            final Image image = this.resource.createImage ( ImageDescriptor.createFromFile ( ConnectionLabelProvider.class, "icons/connection.gif" ) );
+            label.setImage ( image );
             label.setStyledText ( getConnectionString ( (ConnectionHolder)element ) );
         }
     }

@@ -11,6 +11,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.openscada.core.ui.connection.data.ConnectionDiscovererBean;
 import org.openscada.core.ui.connection.data.ConnectionHolder;
 import org.openscada.da.core.browser.FolderEntry;
+import org.openscada.da.ui.connection.internal.FolderEntryWrapper;
 import org.openscada.ui.databinding.AdapterHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

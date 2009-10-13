@@ -21,8 +21,8 @@ import org.openscada.da.client.base.browser.BrowserEntry;
 import org.openscada.da.client.base.browser.DataItemEntry;
 import org.openscada.da.client.base.browser.FolderEntry;
 import org.openscada.da.client.base.connection.ConnectionManager;
-import org.openscada.da.client.base.item.Item;
 import org.openscada.da.client.base.realtime.ListEntry;
+import org.openscada.da.ui.connection.data.Item;
 
 public class PatternSubscribeAction implements IObjectActionDelegate
 {
@@ -131,9 +131,9 @@ public class PatternSubscribeAction implements IObjectActionDelegate
             }
             else if ( entry instanceof FolderEntry )
             {
-            	handleFolder ( ((FolderEntry)entry ));
+                handleFolder ( ( (FolderEntry)entry ) );
             }
-            	
+
         }
     }
 }

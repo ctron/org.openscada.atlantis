@@ -20,7 +20,7 @@
 package org.openscada.da.client.base.browser;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.openscada.da.client.base.item.Item;
+import org.openscada.da.ui.connection.data.Item;
 
 public class HiveItem implements IAdaptable
 {

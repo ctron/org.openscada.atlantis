@@ -63,8 +63,8 @@ import org.openscada.da.client.Connection;
 import org.openscada.da.client.base.browser.ValueType;
 import org.openscada.da.client.base.connection.ConnectionManager;
 import org.openscada.da.client.base.item.DataItemHolder;
-import org.openscada.da.client.base.item.Item;
 import org.openscada.da.client.base.item.ItemSelectionHelper;
+import org.openscada.da.ui.connection.data.Item;
 
 class WriteAttributesOperationWizardValuePage extends WizardPage implements IWizardPage
 {

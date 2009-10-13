@@ -12,8 +12,8 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.URLTransfer;
-import org.openscada.da.client.base.dnd.ItemTransfer;
-import org.openscada.da.client.base.item.Item;
+import org.openscada.da.ui.connection.data.Item;
+import org.openscada.da.ui.connection.dnd.ItemTransfer;
 
 public class RealtimeListDragSourceListener implements DragSourceListener
 {

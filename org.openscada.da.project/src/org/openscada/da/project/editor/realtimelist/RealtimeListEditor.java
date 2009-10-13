@@ -54,8 +54,6 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.client.base.connection.ConnectionManager;
-import org.openscada.da.client.base.dnd.ItemTransfer;
-import org.openscada.da.client.base.item.Item;
 import org.openscada.da.client.base.realtime.ItemDropAdapter;
 import org.openscada.da.client.base.realtime.ItemListContentProvider;
 import org.openscada.da.client.base.realtime.ItemListLabelProvider;
@@ -67,6 +65,8 @@ import org.openscada.da.dataItemList.ItemType;
 import org.openscada.da.dataItemList.ItemsDocument;
 import org.openscada.da.dataItemList.ItemsType;
 import org.openscada.da.project.Activator;
+import org.openscada.da.ui.connection.data.Item;
+import org.openscada.da.ui.connection.dnd.ItemTransfer;
 
 public class RealtimeListEditor extends EditorPart implements RealtimeListAdapter
 {

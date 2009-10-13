@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.ui,
  org.openscada.core.common;bundle-version="0.14.0",
  org.openscada.da.client.common;bundle-version="0.14.0",
  org.openscada.da.core.common;bundle-version="0.14.0",
- org.openscada.external.jfreechart;bundle-version="1.0.4"
+ org.openscada.external.jfreechart;bundle-version="1.0.4",
+ org.openscada.da.ui.connection;bundle-version="0.14.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Localization: plugin

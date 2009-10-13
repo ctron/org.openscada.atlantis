@@ -1,4 +1,4 @@
-package org.openscada.da.client.base.dnd;
+package org.openscada.da.ui.connection.dnd;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.openscada.da.client.base.item.Item;
+import org.openscada.da.ui.connection.data.Item;
 
 /**
  * Class for serializing gadgets to/from a byte array
