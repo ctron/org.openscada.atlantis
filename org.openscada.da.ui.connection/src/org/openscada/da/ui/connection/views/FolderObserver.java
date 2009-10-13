@@ -25,7 +25,7 @@ public abstract class FolderObserver extends WritableSet implements FolderListen
 
         if ( this.parent != null )
         {
-            this.parent.getFolderManager ().removeFolderListener ( this, parent.getLocation () );
+            this.parent.getFolderManager ().removeFolderListener ( this, this.parent.getLocation () );
         }
 
         this.parent = parent;
