@@ -176,7 +176,12 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         }
     }
 
-    public synchronized void addStorageChannel ( final ExtendedStorageChannel storageChannel, final CalculationMethod calculationMethod )
+    /**
+     * This method adds a storage channel.
+     * @param calculationMethod calculation method the storage channel is connected with
+     * @param storageChannel storage channel that has to be added
+     */
+    public synchronized void addStorageChannel ( final CalculationMethod calculationMethod, final ExtendedStorageChannel storageChannel )
     {
         this.storageChannels.put ( calculationMethod, storageChannel );
         if ( calculationMethod == CalculationMethod.NATIVE )

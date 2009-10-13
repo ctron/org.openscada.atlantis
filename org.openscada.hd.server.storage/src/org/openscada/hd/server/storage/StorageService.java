@@ -23,13 +23,7 @@ import org.openscada.hsdb.backend.BackEnd;
 import org.openscada.hsdb.backend.BackEndFactory;
 import org.openscada.hsdb.backend.BackEndMultiplexor;
 import org.openscada.hsdb.backend.file.FileBackEndFactory;
-import org.openscada.hsdb.calculation.AverageCalculationLogicProvider;
-import org.openscada.hsdb.calculation.CalculationLogicProvider;
 import org.openscada.hsdb.calculation.CalculationMethod;
-import org.openscada.hsdb.calculation.MaximumCalculationLogicProvider;
-import org.openscada.hsdb.calculation.MinimumCalculationLogicProvider;
-import org.openscada.hsdb.calculation.NativeCalculationLogicProvider;
-import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -89,40 +83,71 @@ public class StorageService implements SelfManagedConfigurationFactory
     }
 
     /**
-     * This method creates and returns a calculation logic provider instance that supports the specified configuration.
-     * @param metaData configuration that is used when creating the calculation logic provider instance
-     * @return created logic provider instance
-     * @throws Exception in case of unexpected problems
+     * This method creates a new service using the passed configuration as input.
+     * @param inputConfiguration configuration object containing the relevant information to create a service. The object does not have to be completely initialized
+     * @param createNewBackEnds flag indicating whether the back end objects should be initially created or not
+     * @return initialized configuration object of the created service
+     * @throws Exception if the service or related back end objects could not be created
      */
-    private CalculationLogicProvider getCalculationLogicProvider ( final StorageChannelMetaData metaData ) throws Exception
+    private Configuration createService ( final Configuration inputConfiguration, final boolean createNewBackEnds ) throws Exception
     {
-        final DataType nativeDataType = metaData.getDataType ();
-        final long[] calculationMethodParameters = metaData.getCalculationMethodParameters ();
-        switch ( metaData.getCalculationMethod () )
+        // use input data to prepare valid configuration objects
+        final String configurationId = inputConfiguration.getId ();
+        final List<StorageChannelMetaData> metaDatas = Conversions.convertConfigurationToMetaDatas ( FACTORY_ID, inputConfiguration );
+        final ConfigurationImpl configuration = Conversions.convertMetaDatasToConfiguration ( FACTORY_ID, metaDatas );
+
+        // create back end objects 
+        final List<BackEnd> backEnds = new ArrayList<BackEnd> ();
+        this.backEndMap.put ( configurationId, backEnds );
+        for ( StorageChannelMetaData metaData : metaDatas )
         {
-        case AVERAGE:
+            final BackEnd backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
+            backEnd.initialize ( metaData );
+            if ( createNewBackEnds )
+            {
+                backEnd.create ( metaData );
+            }
+            backEnds.add ( backEnd );
+        }
+
+        // create hierarchical storage channel structure
+        final ExtendedStorageChannel[] storageChannels = new ExtendedStorageChannel[backEnds.size ()];
+        final ShiService service = new ShiService ( configuration );
+        for ( int i = 0; i < backEnds.size (); i++ )
         {
-            return new AverageCalculationLogicProvider ( metaData.getDetailLevelId () > 1 ? DataType.DOUBLE_VALUE : nativeDataType, DataType.DOUBLE_VALUE, calculationMethodParameters );
+            final BackEnd backEnd = backEnds.get ( i );
+            final CalculationMethod calculationMethod = backEnd.getMetaData ().getCalculationMethod ();
+            int superBackEndIndex = -1;
+            for ( int j = i - 1; j >= 0; j-- )
+            {
+                final BackEnd superBackEndCandidate = backEnds.get ( i );
+                final CalculationMethod superCalculationMethod = superBackEndCandidate.getMetaData ().getCalculationMethod ();
+                if ( ( superCalculationMethod == calculationMethod ) || ( superCalculationMethod == CalculationMethod.NATIVE ) )
+                {
+                    superBackEndIndex = j;
+                    break;
+                }
+            }
+            storageChannels[i] = new CalculatingStorageChannel ( new ExtendedStorageChannelAdapter ( backEnd ), superBackEndIndex >= 0 ? storageChannels[superBackEndIndex] : null, Conversions.getCalculationLogicProvider ( backEnd.getMetaData () ) );
+            service.addStorageChannel ( calculationMethod, storageChannels[i] );
         }
-        case MAXIMUM:
+        this.shiServices.put ( configuration.getId (), service );
+
+        // publish service
+        final Dictionary<String, String> serviceProperties = new Hashtable<String, String> ();
+        serviceProperties.put ( Constants.SERVICE_PID, configurationId );
+        serviceProperties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
+        serviceProperties.put ( Constants.SERVICE_DESCRIPTION, "A OpenSCADA Storage Historical Item Implementation" );
+        service.start ();
+        this.bundleContext.registerService ( new String[] { ShiService.class.getName (), StorageHistoricalItem.class.getName () }, service, serviceProperties );
+
+        // notify listeners of performed update
+        final Configuration[] addedConfigurationIds = new Configuration[] { configuration };
+        for ( final ConfigurationListener listener : this.configurationListeners )
         {
-            return new MaximumCalculationLogicProvider ( nativeDataType, nativeDataType, calculationMethodParameters );
+            listener.configurationUpdate ( addedConfigurationIds, null );
         }
-        case MINIMUM:
-        {
-            return new MinimumCalculationLogicProvider ( nativeDataType, nativeDataType, calculationMethodParameters );
-        }
-        case NATIVE:
-        {
-            return new NativeCalculationLogicProvider ( nativeDataType, nativeDataType, calculationMethodParameters );
-        }
-        default:
-        {
-            final String message = String.format ( "invalid calculation method specified (%s)", metaData );
-            logger.error ( message );
-            throw new Exception ( message );
-        }
-        }
+        return configuration;
     }
 
     /**
@@ -269,67 +294,6 @@ public class StorageService implements SelfManagedConfigurationFactory
             logger.error ( message, e );
             return new InstantErrorFuture<Configuration> ( new Exception ( message, e ).fillInStackTrace () );
         }
-    }
-
-    private ConfigurationImpl createService ( final Configuration inputConfiguration, final boolean createNewBackEnds ) throws Exception
-    {
-        // use input data to prepare valid configuration objects
-        final String configurationId = inputConfiguration.getId ();
-        final List<StorageChannelMetaData> metaDatas = Conversions.convertConfigurationToMetaDatas ( FACTORY_ID, inputConfiguration );
-        final ConfigurationImpl configuration = Conversions.convertMetaDatasToConfiguration ( FACTORY_ID, metaDatas );
-
-        // create back end objects 
-        final List<BackEnd> backEnds = new ArrayList<BackEnd> ();
-        this.backEndMap.put ( configurationId, backEnds );
-        for ( StorageChannelMetaData metaData : metaDatas )
-        {
-            final BackEnd backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
-            backEnd.initialize ( metaData );
-            if ( createNewBackEnds )
-            {
-                backEnd.create ( metaData );
-            }
-            backEnds.add ( backEnd );
-        }
-
-        // create hierarchical storage channel structure
-        final ExtendedStorageChannel[] storageChannels = new ExtendedStorageChannel[backEnds.size ()];
-        final ShiService service = new ShiService ( configuration );
-        for ( int i = 0; i < backEnds.size (); i++ )
-        {
-            final BackEnd backEnd = backEnds.get ( i );
-            final CalculationMethod calculationMethod = backEnd.getMetaData ().getCalculationMethod ();
-            int superBackEndIndex = -1;
-            for ( int j = i - 1; j >= 0; j-- )
-            {
-                final BackEnd superBackEndCandidate = backEnds.get ( i );
-                final CalculationMethod superCalculationMethod = superBackEndCandidate.getMetaData ().getCalculationMethod ();
-                if ( ( superCalculationMethod == calculationMethod ) || ( superCalculationMethod == CalculationMethod.NATIVE ) )
-                {
-                    superBackEndIndex = j;
-                    break;
-                }
-            }
-            storageChannels[i] = new CalculatingStorageChannel ( new ExtendedStorageChannelAdapter ( backEnd ), superBackEndIndex >= 0 ? storageChannels[superBackEndIndex] : null, getCalculationLogicProvider ( backEnd.getMetaData () ) );
-            service.addStorageChannel ( storageChannels[i], calculationMethod );
-        }
-        this.shiServices.put ( configuration.getId (), service );
-
-        // publish service
-        final Dictionary<String, String> serviceProperties = new Hashtable<String, String> ();
-        serviceProperties.put ( Constants.SERVICE_PID, configurationId );
-        serviceProperties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
-        serviceProperties.put ( Constants.SERVICE_DESCRIPTION, "A OpenSCADA Storage Historical Item Implementation" );
-        service.start ();
-        this.bundleContext.registerService ( new String[] { ShiService.class.getName (), StorageHistoricalItem.class.getName () }, service, serviceProperties );
-
-        // notify listeners of performed update
-        final Configuration[] addedConfigurationIds = new Configuration[] { configuration };
-        for ( final ConfigurationListener listener : this.configurationListeners )
-        {
-            listener.configurationUpdate ( addedConfigurationIds, null );
-        }
-        return configuration;
     }
 
     /**

@@ -10,7 +10,12 @@ import java.util.Set;
 import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationState;
 import org.openscada.hsdb.StorageChannelMetaData;
+import org.openscada.hsdb.calculation.AverageCalculationLogicProvider;
+import org.openscada.hsdb.calculation.CalculationLogicProvider;
 import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.calculation.MaximumCalculationLogicProvider;
+import org.openscada.hsdb.calculation.MinimumCalculationLogicProvider;
+import org.openscada.hsdb.calculation.NativeCalculationLogicProvider;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.utils.str.StringHelper;
 import org.slf4j.Logger;
@@ -69,6 +74,43 @@ public class Conversions
 
     /** Key in configuration for the maximum compression level setting. */
     public final static String MAX_COMPRESSION_LEVEL = "storage.maxCompressionLevel";
+
+    /**
+     * This method creates and returns a calculation logic provider instance that supports the specified configuration.
+     * @param metaData configuration that is used when creating the calculation logic provider instance
+     * @return created logic provider instance
+     * @throws Exception in case of unexpected problems
+     */
+    public static CalculationLogicProvider getCalculationLogicProvider ( final StorageChannelMetaData metaData ) throws Exception
+    {
+        final DataType nativeDataType = metaData.getDataType ();
+        final long[] calculationMethodParameters = metaData.getCalculationMethodParameters ();
+        switch ( metaData.getCalculationMethod () )
+        {
+        case AVERAGE:
+        {
+            return new AverageCalculationLogicProvider ( metaData.getDetailLevelId () > 1 ? DataType.DOUBLE_VALUE : nativeDataType, DataType.DOUBLE_VALUE, calculationMethodParameters );
+        }
+        case MAXIMUM:
+        {
+            return new MaximumCalculationLogicProvider ( nativeDataType, nativeDataType, calculationMethodParameters );
+        }
+        case MINIMUM:
+        {
+            return new MinimumCalculationLogicProvider ( nativeDataType, nativeDataType, calculationMethodParameters );
+        }
+        case NATIVE:
+        {
+            return new NativeCalculationLogicProvider ( nativeDataType, nativeDataType, calculationMethodParameters );
+        }
+        default:
+        {
+            final String message = String.format ( "invalid calculation method specified (%s)", metaData );
+            logger.error ( message );
+            throw new Exception ( message );
+        }
+        }
+    }
 
     /**
      * This method converts the passed time span in milliseconds to a user friendly text.
