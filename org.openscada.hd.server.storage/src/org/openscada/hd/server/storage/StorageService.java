@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class StorageService implements SelfManagedConfigurationFactory
 {
     /** Id of the OSGi service factory. */
-    public final static String FACTORY_ID = "hsdb.StorageService";
+    public final static String FACTORY_ID = "hd.StorageService";
 
     /** Description of the service. */
     public final static String SERVICE_DESCRIPTION = "OpenSCADA Storage Manager Service";
