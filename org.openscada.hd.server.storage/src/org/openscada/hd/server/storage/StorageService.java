@@ -301,9 +301,8 @@ public class StorageService implements SelfManagedConfigurationFactory
 
     /**
      * This method loads the configuration of the service and publishes the available ShiService objects.
-     * @throws Exception in case unexpected problems
      */
-    public synchronized void stop () throws Exception
+    public synchronized void stop ()
     {
         for ( final ShiService shiService : this.shiServices.values () )
         {
@@ -314,10 +313,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         {
             for ( final List<BackEnd> backEnds : this.backEndMap.values () )
             {
-                for ( final BackEnd backEnd : backEnds )
-                {
-                    backEnd.deinitialize ();
-                }
+                deinitializeBackEnds ( backEnds );
             }
             this.backEndMap.clear ();
         }
