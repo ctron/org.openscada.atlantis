@@ -1,4 +1,4 @@
-package org.openscada.da.ui.connection;
+package org.openscada.hd.ui.connection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.openscada.core.ui.connection.data.ConnectionHolder;
-import org.openscada.da.ui.connection.views.FolderEntryWrapper;
+import org.openscada.hd.ui.connection.internal.FolderEntryWrapper;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -17,7 +17,7 @@ public class Activator extends AbstractUIPlugin
 {
 
     // The plug-in ID
-    public static final String PLUGIN_ID = "org.openscada.da.ui.connection";
+    public static final String PLUGIN_ID = "org.openscada.hd.ui.connection";
 
     // The shared instance
     private static Activator plugin;

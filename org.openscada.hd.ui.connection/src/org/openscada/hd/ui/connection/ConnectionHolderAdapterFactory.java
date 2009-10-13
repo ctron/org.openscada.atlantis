@@ -1,4 +1,4 @@
-package org.openscada.da.ui.connection;
+package org.openscada.hd.ui.connection;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.openscada.core.ui.connection.data.ConnectionHolder;

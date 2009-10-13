@@ -5,9 +5,9 @@
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
             activeByDefault="true"
-            contentProvider="org.openscada.da.ui.connection.views.ConnectionContentProvider"
+            contentProvider="org.openscada.hd.ui.connection.views.ConnectionContentProvider"
             id="org.openscada.da.ui.connection.provider"
-            labelProvider="org.openscada.da.ui.connection.views.ConnectionLabelProvider"
+            labelProvider="org.openscada.hd.ui.connection.views.ConnectionLabelProvider"
             name="DA Connections"
             priority="normal"
             providesSaveables="false">
@@ -16,8 +16,18 @@
                <instanceof
                      value="org.openscada.core.ui.connection.data.ConnectionHolder">
                </instanceof>
+               <instanceof
+                     value="org.openscada.hd.ui.connection.internal.FolderEntryWrapper">
+               </instanceof>
             </or></triggerPoints>
       </navigatorContent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <dragAssistant
+            class="org.openscada.hd.ui.connection.dnd.CommonDragAdapterAssistant"
+            viewerId="org.openscada.core.ui.connection.ConnectionView">
+      </dragAssistant>
    </extension>
 
 </plugin>

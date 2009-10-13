@@ -1,4 +1,4 @@
-package org.openscada.da.ui.connection.views;
+package org.openscada.hd.ui.connection.views;
 
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;

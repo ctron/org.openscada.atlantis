@@ -1,9 +1,13 @@
-package org.openscada.da.ui.connection.views;
+package org.openscada.hd.ui.connection.views;
 
+import java.util.Arrays;
+
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.openscada.core.ui.connection.Activator;
+import org.openscada.da.core.IODirection;
 import org.openscada.da.core.browser.DataItemEntry;
 import org.openscada.da.core.browser.FolderEntry;
 import org.openscada.ui.databinding.AdapterHelper;
@@ -45,11 +49,27 @@ public class ConnectionLabelProvider extends ListeningLabelProvider
     private void updateItem ( final StyledViewerLabel label, final DataItemEntry dataItemEntry )
     {
         label.setText ( dataItemEntry.getName () );
+        if ( dataItemEntry.getIODirections ().containsAll ( Arrays.asList ( IODirection.INPUT, IODirection.OUTPUT ) ) )
+        {
+            label.setImage ( this.resource.createImage ( ImageDescriptor.createFromFile ( ConnectionLabelProvider.class, "icons/item_io.gif" ) ) );
+        }
+        else if ( dataItemEntry.getIODirections ().contains ( IODirection.INPUT ) )
+        {
+            label.setImage ( this.resource.createImage ( ImageDescriptor.createFromFile ( ConnectionLabelProvider.class, "icons/item_i.gif" ) ) );
+        }
+        else if ( dataItemEntry.getIODirections ().contains ( IODirection.OUTPUT ) )
+        {
+            label.setImage ( this.resource.createImage ( ImageDescriptor.createFromFile ( ConnectionLabelProvider.class, "icons/item_o.gif" ) ) );
+        }
+        else
+        {
+            label.setImage ( this.resource.createImage ( ImageDescriptor.createFromFile ( ConnectionLabelProvider.class, "icons/item.gif" ) ) );
+        }
     }
 
     private void updateFolder ( final StyledViewerLabel label, final FolderEntry folderEntry )
     {
+        label.setImage ( this.resource.createImage ( ImageDescriptor.createFromFile ( ConnectionLabelProvider.class, "icons/folder.gif" ) ) );
         label.setText ( folderEntry.getName () );
     }
-
 }
