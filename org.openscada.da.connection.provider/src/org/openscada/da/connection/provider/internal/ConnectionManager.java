@@ -24,9 +24,13 @@ import org.openscada.core.connection.provider.AbstractConnectionManager;
 import org.openscada.core.connection.provider.AbstractConnectionService;
 import org.openscada.da.client.Connection;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConnectionManager extends AbstractConnectionManager
 {
+    private final static Logger logger = LoggerFactory.getLogger ( ConnectionManager.class );
+
     public ConnectionManager ( final BundleContext context, final String connectionId, final ConnectionInformation connectionInformation, final Integer autoReconnectDelay, final boolean initialOpen )
     {
         super ( context, connectionInformation, connectionId, autoReconnectDelay, initialOpen );
@@ -34,6 +38,8 @@ public class ConnectionManager extends AbstractConnectionManager
 
     protected AbstractConnectionService createConnection ()
     {
+        logger.debug ( "Creating new DA connection: {}", getConnectionInformation () );
+
         final Connection connection = (Connection)getFactory ().getDriverInformation ( getConnectionInformation () ).create ( getConnectionInformation () );
 
         if ( connection == null )

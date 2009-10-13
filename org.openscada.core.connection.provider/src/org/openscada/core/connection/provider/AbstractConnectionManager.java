@@ -124,7 +124,7 @@ public abstract class AbstractConnectionManager implements SingleServiceListener
 
     public void serviceChange ( final ServiceReference reference, final Object factory )
     {
-        logger.info ( "Service changed: " + reference + "/" + factory );
+        logger.info ( "Service changed: {} / {} ({}:{})", new Object[] { reference, factory, this.connectionInformation.getInterface (), this.connectionInformation.getDriver () } );
 
         disposeConnection ();
 

@@ -20,6 +20,13 @@
                      value="org.openscada.da.ui.connection.internal.FolderEntryWrapper">
                </instanceof>
             </or></triggerPoints>
+         <possibleChildren>
+            <or>
+               <instanceof
+                     value="org.openscada.da.ui.connection.internal.FolderEntryWrapper">
+               </instanceof>
+            </or>
+         </possibleChildren>
       </navigatorContent>
    </extension>
    <extension

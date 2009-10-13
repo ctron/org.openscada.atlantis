@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.Platform;
  */
 public class Item implements Serializable
 {
-    private static final long serialVersionUID = 7384306434115724744L;
+    private static final long serialVersionUID = -3086299983454760614L;
 
     private String connectionString;
 

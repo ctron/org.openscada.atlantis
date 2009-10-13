@@ -9,7 +9,7 @@ public class ConnectionProvider extends AbstractConnectionProvider
 {
     public ConnectionProvider ( final BundleContext context )
     {
-        super ( context );
+        super ( context, "da" );
     }
 
     @Override

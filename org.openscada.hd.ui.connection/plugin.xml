@@ -6,18 +6,15 @@
       <navigatorContent
             activeByDefault="true"
             contentProvider="org.openscada.hd.ui.connection.views.ConnectionContentProvider"
-            id="org.openscada.da.ui.connection.provider"
+            id="org.openscada.hd.ui.connection.provider"
             labelProvider="org.openscada.hd.ui.connection.views.ConnectionLabelProvider"
-            name="DA Connections"
+            name="HD Connections"
             priority="normal"
             providesSaveables="false">
          <triggerPoints>
             <or>
                <instanceof
                      value="org.openscada.core.ui.connection.data.ConnectionHolder">
-               </instanceof>
-               <instanceof
-                     value="org.openscada.hd.ui.connection.internal.FolderEntryWrapper">
                </instanceof>
             </or></triggerPoints>
       </navigatorContent>

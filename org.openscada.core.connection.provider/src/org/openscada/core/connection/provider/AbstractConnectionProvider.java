@@ -4,7 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.client.DriverFactory;
+import org.openscada.utils.osgi.FilterUtil;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
@@ -23,27 +27,48 @@ public abstract class AbstractConnectionProvider
 
     private final Map<ConnectionInformation, AbstractConnectionManager> connections = new HashMap<ConnectionInformation, AbstractConnectionManager> ();
 
-    public AbstractConnectionProvider ( final BundleContext context )
+    public AbstractConnectionProvider ( final BundleContext context, final String interfaceName )
     {
         super ();
         this.context = context;
-        this.tracker = new ServiceTracker ( context, ConnectionRequest.class.getName (), new ServiceTrackerCustomizer () {
 
-            public void removedService ( final ServiceReference reference, final Object service )
-            {
-                AbstractConnectionProvider.this.removedService ( reference, service );
-            }
+        Filter filter = null;
+        try
+        {
+            final Map<String, String> parameters = new HashMap<String, String> ();
+            parameters.put ( DriverFactory.INTERFACE_NAME, interfaceName );
+            filter = FilterUtil.createAndFilter ( ConnectionRequest.class.getName (), parameters );
+        }
+        catch ( final InvalidSyntaxException e )
+        {
+            logger.warn ( "Failed to create filter", e );
+        }
 
-            public void modifiedService ( final ServiceReference reference, final Object service )
-            {
-                AbstractConnectionProvider.this.modifiedService ( reference, service );
-            }
+        if ( filter != null )
+        {
+            this.tracker = new ServiceTracker ( context, filter, new ServiceTrackerCustomizer () {
 
-            public Object addingService ( final ServiceReference reference )
-            {
-                return AbstractConnectionProvider.this.addingService ( reference );
-            }
-        } );
+                public void removedService ( final ServiceReference reference, final Object service )
+                {
+                    AbstractConnectionProvider.this.removedService ( reference, service );
+                }
+
+                public void modifiedService ( final ServiceReference reference, final Object service )
+                {
+                    AbstractConnectionProvider.this.modifiedService ( reference, service );
+                }
+
+                public Object addingService ( final ServiceReference reference )
+                {
+                    return AbstractConnectionProvider.this.addingService ( reference );
+                }
+            } );
+        }
+        else
+        {
+            this.tracker = null;
+        }
+
     }
 
     public synchronized void start ()

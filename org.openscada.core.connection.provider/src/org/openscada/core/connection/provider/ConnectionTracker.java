@@ -1,8 +1,11 @@
 package org.openscada.core.connection.provider;
 
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
+import org.openscada.core.client.DriverFactory;
 import org.openscada.utils.osgi.FilterUtil;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.SingleServiceTracker;
@@ -82,7 +85,10 @@ public class ConnectionTracker
     {
         if ( this.handle == null )
         {
-            this.handle = this.context.registerService ( ConnectionRequest.class.getName (), this.request, null );
+            final Dictionary<String, String> properties = new Hashtable<String, String> ();
+            properties.put ( DriverFactory.DRIVER_NAME, this.request.getConnectionInformation ().getDriver () );
+            properties.put ( DriverFactory.INTERFACE_NAME, this.request.getConnectionInformation ().getInterface () );
+            this.handle = this.context.registerService ( ConnectionRequest.class.getName (), this.request, properties );
         }
     }
 

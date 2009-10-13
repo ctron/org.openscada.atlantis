@@ -35,10 +35,13 @@ public class ConnectionManager extends AbstractConnectionManager
 
     protected AbstractConnectionService createConnection ()
     {
+        logger.debug ( "Create new HD connection: {}", getConnectionInformation () );
+
         final Connection connection = (Connection)getFactory ().getDriverInformation ( getConnectionInformation () ).create ( getConnectionInformation () );
 
         if ( connection == null )
         {
+            logger.warn ( "Failed to create new HD connection: {}", getConnectionInformation () );
             return null;
         }
 
