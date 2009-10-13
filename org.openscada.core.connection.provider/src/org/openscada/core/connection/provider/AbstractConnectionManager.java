@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openscada.core.ConnectionInformation;
-import org.openscada.core.client.Connection;
 import org.openscada.core.client.DriverFactory;
 import org.openscada.utils.osgi.FilterUtil;
 import org.openscada.utils.osgi.SingleServiceListener;
@@ -66,6 +65,7 @@ public abstract class AbstractConnectionManager implements SingleServiceListener
             parameters.put ( DriverFactory.INTERFACE_NAME, interfaceName );
             parameters.put ( DriverFactory.DRIVER_NAME, driverName );
             filter = FilterUtil.createAndFilter ( DriverFactory.class.getName (), parameters );
+            logger.debug ( "Created filter: {}", filter );
         }
         catch ( final InvalidSyntaxException e )
         {
@@ -143,12 +143,12 @@ public abstract class AbstractConnectionManager implements SingleServiceListener
      */
     private void createAndRegisterConnection ()
     {
-        final Connection connection = this.factory.getDriverInformation ( this.connectionInformation ).create ( this.connectionInformation );
+        logger.debug ( "Creating new connection" );
 
-        if ( connection != null )
+        this.connection = createConnection ();
+
+        if ( this.connection != null )
         {
-            this.connection = createConnection ();
-
             if ( this.initialOpen )
             {
                 logger.debug ( "Initially open" );
@@ -178,6 +178,7 @@ public abstract class AbstractConnectionManager implements SingleServiceListener
     {
         if ( this.serviceReg != null )
         {
+            logger.info ( "We got an old service ... dispose" );
             final AbstractConnectionService connection = this.connection;
             this.connection = null;
 
