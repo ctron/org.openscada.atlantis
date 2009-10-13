@@ -1,4 +1,4 @@
-package org.openscada.hd.server.storage.osgi;
+package org.openscada.hd.server.storage;
 
 import java.util.Hashtable;
 

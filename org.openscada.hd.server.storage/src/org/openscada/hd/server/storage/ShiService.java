@@ -1,4 +1,4 @@
-package org.openscada.hd.server.storage.osgi;
+package org.openscada.hd.server.storage;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -19,7 +19,6 @@ import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
 import org.openscada.hd.server.common.StorageHistoricalItem;
-import org.openscada.hd.server.storage.ExtendedStorageChannel;
 import org.openscada.hd.server.storage.calculation.CalculationMethod;
 import org.openscada.hd.server.storage.datatypes.DoubleValue;
 import org.openscada.hd.server.storage.datatypes.LongValue;

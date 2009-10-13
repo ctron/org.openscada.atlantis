@@ -1,4 +1,4 @@
-package org.openscada.hd.server.storage.osgi;
+package org.openscada.hd.server.storage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationState;
-import org.openscada.hd.server.storage.StorageChannelMetaData;
 import org.openscada.hd.server.storage.calculation.CalculationMethod;
 import org.openscada.hd.server.storage.datatypes.DataType;
 import org.openscada.hd.server.storage.osgi.internal.ConfigurationImpl;

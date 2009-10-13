@@ -1,4 +1,4 @@
-package org.openscada.hd.server.storage.osgi;
+package org.openscada.hd.server.storage;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -13,10 +13,6 @@ import org.openscada.ca.ConfigurationListener;
 import org.openscada.ca.ConfigurationState;
 import org.openscada.ca.SelfManagedConfigurationFactory;
 import org.openscada.hd.server.common.StorageHistoricalItem;
-import org.openscada.hd.server.storage.CalculatingStorageChannel;
-import org.openscada.hd.server.storage.ExtendedStorageChannel;
-import org.openscada.hd.server.storage.ExtendedStorageChannelAdapter;
-import org.openscada.hd.server.storage.StorageChannelMetaData;
 import org.openscada.hd.server.storage.backend.BackEnd;
 import org.openscada.hd.server.storage.backend.BackEndFactory;
 import org.openscada.hd.server.storage.backend.BackEndMultiplexor;
