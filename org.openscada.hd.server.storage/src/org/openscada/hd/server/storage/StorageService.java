@@ -51,7 +51,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     private final static Logger logger = LoggerFactory.getLogger ( StorageService.class );
 
     /** Default root folder of the file fragments that are created by the back end objects. */
-    private final static String FILE_FRAGMENTS_ROOT_FOLDER_SYSTEM_PROPERTY = "STORAGE_SERVICE_ROOT";
+    private final static String FILE_FRAGMENTS_ROOT_FOLDER_SYSTEM_PROPERTY = "HD_STORAGE_FILE_ROOT";
 
     /** Minimum count of file fragments before the first fragment is old enough to be deleted. */
     private final static long FILE_FRAGMENTS_PER_DATA_LIFESPAN = 4;
