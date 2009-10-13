@@ -13,19 +13,23 @@ import org.openscada.ca.ConfigurationListener;
 import org.openscada.ca.ConfigurationState;
 import org.openscada.ca.SelfManagedConfigurationFactory;
 import org.openscada.hd.server.common.StorageHistoricalItem;
-import org.openscada.hd.server.storage.backend.BackEnd;
-import org.openscada.hd.server.storage.backend.BackEndFactory;
-import org.openscada.hd.server.storage.backend.BackEndMultiplexor;
-import org.openscada.hd.server.storage.backend.FileBackEndFactory;
-import org.openscada.hd.server.storage.calculation.AverageCalculationLogicProvider;
-import org.openscada.hd.server.storage.calculation.CalculationLogicProvider;
-import org.openscada.hd.server.storage.calculation.CalculationMethod;
-import org.openscada.hd.server.storage.calculation.MaximumCalculationLogicProvider;
-import org.openscada.hd.server.storage.calculation.MinimumCalculationLogicProvider;
-import org.openscada.hd.server.storage.calculation.NativeCalculationLogicProvider;
-import org.openscada.hd.server.storage.datatypes.DataType;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.internal.Conversions;
+import org.openscada.hsdb.CalculatingStorageChannel;
+import org.openscada.hsdb.ExtendedStorageChannel;
+import org.openscada.hsdb.ExtendedStorageChannelAdapter;
+import org.openscada.hsdb.StorageChannelMetaData;
+import org.openscada.hsdb.backend.BackEnd;
+import org.openscada.hsdb.backend.BackEndFactory;
+import org.openscada.hsdb.backend.BackEndMultiplexor;
+import org.openscada.hsdb.backend.file.FileBackEndFactory;
+import org.openscada.hsdb.calculation.AverageCalculationLogicProvider;
+import org.openscada.hsdb.calculation.CalculationLogicProvider;
+import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.calculation.MaximumCalculationLogicProvider;
+import org.openscada.hsdb.calculation.MinimumCalculationLogicProvider;
+import org.openscada.hsdb.calculation.NativeCalculationLogicProvider;
+import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -41,7 +45,7 @@ import org.slf4j.LoggerFactory;
 public class StorageService implements SelfManagedConfigurationFactory
 {
     /** Id of the OSGi service factory. */
-    public final static String FACTORY_ID = "org.openscada.hd.server.storage.osgi.StorageService";
+    public final static String FACTORY_ID = "hsdb.StorageService";
 
     /** Description of the service. */
     public final static String SERVICE_DESCRIPTION = "OpenSCADA Storage Manager Service";

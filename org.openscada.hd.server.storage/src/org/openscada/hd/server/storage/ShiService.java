@@ -19,12 +19,13 @@ import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
 import org.openscada.hd.server.common.StorageHistoricalItem;
-import org.openscada.hd.server.storage.calculation.CalculationMethod;
-import org.openscada.hd.server.storage.datatypes.DoubleValue;
-import org.openscada.hd.server.storage.datatypes.LongValue;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
-import org.openscada.hd.server.storage.relict.RelictCleaner;
-import org.openscada.hd.server.storage.relict.RelictCleanerCallerTask;
+import org.openscada.hsdb.ExtendedStorageChannel;
+import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.datatypes.DoubleValue;
+import org.openscada.hsdb.datatypes.LongValue;
+import org.openscada.hsdb.relict.RelictCleaner;
+import org.openscada.hsdb.relict.RelictCleanerCallerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,7 +213,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     }
 
     /**
-     * @see org.openscada.hd.server.storage.relict.RelictCleaner#cleanupRelicts
+     * @see org.openscada.hsdb.relict.RelictCleaner#cleanupRelicts
      */
     public synchronized void cleanupRelicts () throws Exception
     {

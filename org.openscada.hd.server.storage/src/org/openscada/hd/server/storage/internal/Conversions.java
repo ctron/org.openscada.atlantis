@@ -9,8 +9,9 @@ import java.util.Set;
 
 import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationState;
-import org.openscada.hd.server.storage.calculation.CalculationMethod;
-import org.openscada.hd.server.storage.datatypes.DataType;
+import org.openscada.hsdb.StorageChannelMetaData;
+import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.utils.str.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
