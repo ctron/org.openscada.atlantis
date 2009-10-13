@@ -1,4 +1,4 @@
-package org.openscada.hd.server.storage;
+package org.openscada.hd.server.storage.osgi.internal;
 
 import java.util.Map;
 
@@ -8,6 +8,16 @@ import org.openscada.ca.ConfigurationState;
 public class ConfigurationImpl implements Configuration
 {
     private String factoryId;
+
+    public ConfigurationImpl ()
+    {
+
+    }
+
+    public ConfigurationImpl ( Configuration configuration )
+    {
+
+    }
 
     public String getFactoryId ()
     {

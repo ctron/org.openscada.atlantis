@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.Map.Entry;
 
+import org.openscada.ca.Configuration;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.hd.HistoricalItemInformation;
@@ -18,11 +19,11 @@ import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
 import org.openscada.hd.server.common.StorageHistoricalItem;
-import org.openscada.hd.server.storage.ConfigurationImpl;
 import org.openscada.hd.server.storage.ExtendedStorageChannel;
 import org.openscada.hd.server.storage.calculation.CalculationMethod;
 import org.openscada.hd.server.storage.datatypes.DoubleValue;
 import org.openscada.hd.server.storage.datatypes.LongValue;
+import org.openscada.hd.server.storage.osgi.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.relict.RelictCleaner;
 import org.openscada.hd.server.storage.relict.RelictCleanerCallerTask;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of StorageHistoricalItem as OSGi service.
+ * @see org.openscada.hd.server.common.StorageHistoricalItem
  * @author Ludwig Straub
  */
 public class ShiService implements StorageHistoricalItem, RelictCleaner
@@ -43,10 +45,13 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /** Period in milliseconds between two consecutive attempts to delete old data. */
     private final static long CLEANER_TASK_PERIOD = 1000 * 60 * 10;
 
-    private final ConfigurationImpl configuration;
+    /** Configuration of the service. */
+    private final Configuration configuration;
 
+    /** All available storage channels mapped via calculation method. */
     private final Map<CalculationMethod, ExtendedStorageChannel> storageChannels;
 
+    /** Reference to the main input storage channel that is also available in the storageChannels map. */
     private ExtendedStorageChannel rootStorageChannel;
 
     /** Flag indicating whether the service is currently running or not. */
@@ -55,15 +60,23 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /** Timer that is used for deleting old data. */
     private Timer deleteRelictsTimer;
 
-    public ShiService ( final ConfigurationImpl configuration )
+    /**
+     * Constructor
+     * @param configuration configuration of the service
+     */
+    public ShiService ( final Configuration configuration )
     {
-        this.configuration = configuration;
+        this.configuration = new ConfigurationImpl ( configuration );
         this.storageChannels = new HashMap<CalculationMethod, ExtendedStorageChannel> ();
         this.rootStorageChannel = null;
         this.started = false;
     }
 
-    public ConfigurationImpl getConfiguration ()
+    /**
+     * This method returns a reference to the current configuration of the service.
+     * @return reference to the current configuration of the service
+     */
+    public Configuration getConfiguration ()
     {
         return this.configuration;
     }

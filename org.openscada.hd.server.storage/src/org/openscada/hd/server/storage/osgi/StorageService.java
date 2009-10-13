@@ -14,7 +14,6 @@ import org.openscada.ca.ConfigurationState;
 import org.openscada.ca.SelfManagedConfigurationFactory;
 import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.CalculatingStorageChannel;
-import org.openscada.hd.server.storage.ConfigurationImpl;
 import org.openscada.hd.server.storage.ExtendedStorageChannel;
 import org.openscada.hd.server.storage.ExtendedStorageChannelAdapter;
 import org.openscada.hd.server.storage.StorageChannelMetaData;
@@ -29,6 +28,7 @@ import org.openscada.hd.server.storage.calculation.MaximumCalculationLogicProvid
 import org.openscada.hd.server.storage.calculation.MinimumCalculationLogicProvider;
 import org.openscada.hd.server.storage.calculation.NativeCalculationLogicProvider;
 import org.openscada.hd.server.storage.datatypes.DataType;
+import org.openscada.hd.server.storage.osgi.internal.ConfigurationImpl;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -342,7 +342,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             return new InstantErrorFuture<Configuration> ( new IllegalStateException ( String.format ( "Unable to delete non existing service with configuration id '%s'", configurationId ) ).fillInStackTrace () );
         }
         serviceToDelete.stop ();
-        final ConfigurationImpl configuration = serviceToDelete.getConfiguration ();
+        final ConfigurationImpl configuration = new ConfigurationImpl ( serviceToDelete.getConfiguration () );
         final List<BackEnd> backEnds = this.backEndMap.get ( configurationId );
         if ( backEnds != null )
         {
