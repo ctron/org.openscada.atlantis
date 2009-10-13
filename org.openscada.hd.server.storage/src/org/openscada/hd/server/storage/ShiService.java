@@ -195,6 +195,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized void start ()
     {
+        stop ();
         this.deleteRelictsTimer = new Timer ();
         this.deleteRelictsTimer.schedule ( new RelictCleanerCallerTask ( this ), CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD );
         this.started = true;
