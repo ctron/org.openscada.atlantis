@@ -226,7 +226,7 @@
             class="org.openscada.core.ui.connection.tester.ConnectionHolderTester"
             id="org.openscada.core.ui.connection.tester.ConnectionHolder"
             namespace="org.openscada.core.ui.connection.data.ConnectionHolder"
-            properties="stored"
+            properties="stored,interfaceName"
             type="org.openscada.core.ui.connection.data.ConnectionHolder">
       </propertyTester>
    </extension>

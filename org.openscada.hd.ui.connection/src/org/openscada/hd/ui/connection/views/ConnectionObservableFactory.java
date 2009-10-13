@@ -22,7 +22,7 @@ final class ConnectionObservableFactory implements IObservableFactory
     {
         if ( target instanceof ConnectionHolder )
         {
-            return null;
+            return new ConnectionWrapper ( (ConnectionHolder)target );
         }
 
         return null;

@@ -28,6 +28,11 @@ public class ConnectionHolderTester extends PropertyTester
             }
         }
 
+        if ( "interfaceName".equals ( property ) && expectedValue != null )
+        {
+            return holder.getConnectionInformation ().getInterface ().equals ( expectedValue );
+        }
+
         // default to false
         return false;
     }

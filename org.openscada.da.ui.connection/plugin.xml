@@ -14,11 +14,17 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="org.openscada.core.ui.connection.data.ConnectionHolder">
-               </instanceof>
-               <instanceof
                      value="org.openscada.da.ui.connection.internal.FolderEntryWrapper">
                </instanceof>
+               <and>
+                  <instanceof
+                        value="org.openscada.core.ui.connection.data.ConnectionHolder">
+                  </instanceof>
+                  <test
+                        property="org.openscada.core.ui.connection.data.ConnectionHolder.interfaceName"
+                        value="da">
+                  </test>
+               </and>
             </or></triggerPoints>
          <possibleChildren>
             <or>

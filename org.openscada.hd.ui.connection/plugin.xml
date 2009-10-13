@@ -13,9 +13,15 @@
             providesSaveables="false">
          <triggerPoints>
             <or>
-               <instanceof
-                     value="org.openscada.core.ui.connection.data.ConnectionHolder">
-               </instanceof>
+               <and>
+                  <instanceof
+                        value="org.openscada.core.ui.connection.data.ConnectionHolder">
+                  </instanceof>
+                  <test
+                        property="org.openscada.core.ui.connection.data.ConnectionHolder.interfaceName"
+                        value="hd">
+                  </test>
+               </and>
             </or></triggerPoints>
       </navigatorContent>
    </extension>
