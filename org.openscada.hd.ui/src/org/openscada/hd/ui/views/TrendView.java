@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -66,9 +67,9 @@ import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
+import org.openscada.hd.chart.DataAtPoint;
 import org.openscada.hd.chart.TrendChart;
 import org.openscada.hd.ui.data.QueryBufferBean;
-import org.swtchart.Chart;
 import org.swtchart.IAxis;
 import org.swtchart.IBarSeries;
 import org.swtchart.ILineSeries;
@@ -392,7 +393,7 @@ public class TrendView extends ViewPart implements QueryListener
 
     private Button qualityColorButton;
 
-    private Chart chart;
+    private TrendChart chart;
 
     private final ConcurrentMap<String, Group> seriesGroups = new ConcurrentHashMap<String, Group> ();
 
@@ -449,11 +450,12 @@ public class TrendView extends ViewPart implements QueryListener
         panelLayout.center = true;
         panel.setLayout ( panelLayout );
 
+        groupLayout = new RowLayout ( SWT.HORIZONTAL );
+        groupLayout.center = true;
+
         // add label for Spinner
         qualityGroup = new Group ( panel, SWT.SHADOW_ETCHED_IN );
 
-        groupLayout = new RowLayout ( SWT.HORIZONTAL );
-        groupLayout.center = true;
         qualityGroup.setLayout ( groupLayout );
         qualityGroup.setText ( "Quality:" );
 
@@ -735,6 +737,37 @@ public class TrendView extends ViewPart implements QueryListener
                     chartParameters.set ( parameters );
                     rangeUpdateJob.get ().schedule ( GUI_JOB_DELAY );
                 }
+            }
+        } );
+
+        chart.setDataAtPoint ( new DataAtPoint () {
+            private int coordinateToIndex ( final int x )
+            {
+                int numOfEntries = chartParameters.get ().getNumOfEntries ();
+                int pixels = chart.getPlotArea ().getBounds ().width;
+                double factor = (double)numOfEntries / (double)pixels;
+                final int i = (int)Math.floor ( x * factor );
+                return i;
+            }
+
+            public Date getTimestamp ( final int x )
+            {
+                return dataLabel.get ()[coordinateToIndex ( x )];
+            }
+
+            public double getQuality ( final int x )
+            {
+                return dataQuality.get ()[coordinateToIndex ( x )];
+            }
+
+            public Map<String, Double> getData ( final int x )
+            {
+                Map<String, Double> result = new HashMap<String, Double> ();
+                for ( SeriesParameters seriesParameters : chartParameters.get ().getAvailableSeries () )
+                {
+                    result.put ( seriesParameters.name, data.get ( seriesParameters.name )[coordinateToIndex ( x )] );
+                }
+                return result;
             }
         } );
 
