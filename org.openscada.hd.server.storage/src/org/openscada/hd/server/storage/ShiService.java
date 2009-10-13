@@ -19,6 +19,7 @@ import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
 import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
+import org.openscada.hd.server.storage.internal.QueryImpl;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.calculation.CalculationMethod;
 import org.openscada.hsdb.datatypes.DoubleValue;
@@ -121,15 +122,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         {
             logger.warn ( "Failed to create query", e );
         }
-        return new Query () {
-            public void changeParameters ( final QueryParameters parameters )
-            {
-            }
-
-            public void close ()
-            {
-            }
-        };
+        return new QueryImpl ( this, listener, parameters, updateData );
     }
 
     /**
