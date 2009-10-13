@@ -65,7 +65,7 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
 
     public static final String VIEW_ID = "org.openscada.da.test.views.RealTimeList";
 
-    private RemoveAction _removeAction = null;
+    private RemoveAction removeAction = null;
 
     private TreeViewer viewer;
 
@@ -74,7 +74,7 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
     public RealTimeList ()
     {
         super ();
-        this._removeAction = new RemoveAction ( this );
+        this.removeAction = new RemoveAction ( this );
     }
 
     @Override
@@ -109,7 +109,7 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
 
         getViewSite ().setSelectionProvider ( this.viewer );
 
-        this.viewer.addSelectionChangedListener ( this._removeAction );
+        this.viewer.addSelectionChangedListener ( this.removeAction );
         this.viewer.addDoubleClickListener ( new IDoubleClickListener () {
 
             public void doubleClick ( final DoubleClickEvent event )
@@ -195,7 +195,7 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
     {
         // Other plug-ins can contribute there actions here
 
-        manager.add ( this._removeAction );
+        manager.add ( this.removeAction );
         manager.add ( new Separator () );
         manager.add ( new Separator ( IWorkbenchActionConstants.MB_ADDITIONS ) );
     }
@@ -209,12 +209,12 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
 
     private void fillLocalToolBar ( final IToolBarManager manager )
     {
-        manager.add ( this._removeAction );
+        manager.add ( this.removeAction );
     }
 
     private void fillLocalPullDown ( final IMenuManager manager )
     {
-        manager.add ( this._removeAction );
+        manager.add ( this.removeAction );
     }
 
     private void addDropSupport ()
