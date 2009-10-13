@@ -304,19 +304,16 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public synchronized void stop ()
     {
-        for ( final ShiService shiService : this.shiServices.values () )
+        for ( final ShiService shiService : shiServices.values () )
         {
             shiService.stop ();
         }
-        this.shiServices.clear ();
-        if ( this.backEndMap != null )
+        shiServices.clear ();
+        for ( final List<BackEnd> backEnds : backEndMap.values () )
         {
-            for ( final List<BackEnd> backEnds : this.backEndMap.values () )
-            {
-                deinitializeBackEnds ( backEnds );
-            }
-            this.backEndMap.clear ();
+            deinitializeBackEnds ( backEnds );
         }
+        backEndMap.clear ();
     }
 
     /**
