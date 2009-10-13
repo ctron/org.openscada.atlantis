@@ -1,10 +1,9 @@
-package org.openscada.hd.server.storage;
+package org.openscada.hd.server.storage.osgi;
 
 import java.util.Hashtable;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.SelfManagedConfigurationFactory;
-import org.openscada.hd.server.storage.osgi.StorageService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
