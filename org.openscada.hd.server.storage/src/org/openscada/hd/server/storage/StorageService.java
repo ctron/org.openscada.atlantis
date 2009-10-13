@@ -3,10 +3,13 @@ package org.openscada.hd.server.storage;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationListener;
@@ -83,6 +86,36 @@ public class StorageService implements SelfManagedConfigurationFactory
     }
 
     /**
+     * This method deinitializes all passed back end objects.
+     * @param backEnds back end objects that have to be deinitialized
+     */
+    private static void deinitializeBackEnds ( final List<BackEnd> backEnds )
+    {
+        if ( backEnds != null )
+        {
+            for ( BackEnd backEnd : backEnds )
+            {
+                try
+                {
+                    backEnd.deinitialize ();
+                }
+                catch ( Exception e1 )
+                {
+                    StorageChannelMetaData metaData = null;
+                    try
+                    {
+                        metaData = backEnd.getMetaData ();
+                    }
+                    catch ( Exception e2 )
+                    {
+                    }
+                    logger.error ( String.format ( "unable to deinitialize unused back end for meta data '%s'", metaData ), e1 );
+                }
+            }
+        }
+    }
+
+    /**
      * This method creates a new service using the passed configuration as input.
      * @param inputConfiguration configuration object containing the relevant information to create a service. The object does not have to be completely initialized
      * @param createNewBackEnds flag indicating whether the back end objects should be initially created or not
@@ -98,17 +131,28 @@ public class StorageService implements SelfManagedConfigurationFactory
 
         // create back end objects 
         final List<BackEnd> backEnds = new ArrayList<BackEnd> ();
-        this.backEndMap.put ( configurationId, backEnds );
         for ( StorageChannelMetaData metaData : metaDatas )
         {
-            final BackEnd backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
-            backEnd.initialize ( metaData );
-            if ( createNewBackEnds )
+            try
             {
-                backEnd.create ( metaData );
+                final BackEnd backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
+                backEnds.add ( backEnd );
+                backEnd.initialize ( metaData );
+                if ( createNewBackEnds )
+                {
+                    backEnd.delete ();
+                    backEnd.create ( metaData );
+                }
             }
-            backEnds.add ( backEnd );
+            catch ( Exception e )
+            {
+                deinitializeBackEnds ( backEnds );
+                String message = String.format ( "could not create all back ends required for configuration '%s'", configurationId );
+                logger.error ( message, e );
+                throw new Exception ( message, e );
+            }
         }
+        this.backEndMap.put ( configurationId, backEnds );
 
         // create hierarchical storage channel structure
         final ExtendedStorageChannel[] storageChannels = new ExtendedStorageChannel[backEnds.size ()];
@@ -152,51 +196,106 @@ public class StorageService implements SelfManagedConfigurationFactory
 
     /**
      * This method loads the configuration of the service and publishes the available ShiService objects.
-     * @throws Exception in case of unexpected problems
      */
-    public synchronized void start () throws Exception
+    public synchronized void start ()
     {
-        // build a map holding all back end objects grouped by data configuration ids ordered by detail level
-        for ( final StorageChannelMetaData metaData : this.backEndFactory.getExistingBackEndsMetaData () )
+        // get information of existing meta data
+        StorageChannelMetaData[] availableMetaDatas = null;
+        try
         {
-            // create new back end object
-            final BackEnd backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
-            backEnd.initialize ( metaData );
+            availableMetaDatas = backEndFactory.getExistingBackEndsMetaData ();
+        }
+        catch ( Exception e )
+        {
+            logger.error ( "could not retrieve information of existing meta data service start", e );
+            availableMetaDatas = new StorageChannelMetaData[0];
+        }
+
+        // build a map holding all back end objects grouped by data configuration ids ordered by detail level
+        Set<String> bannedConfigurationIds = new HashSet<String> ();
+        for ( final StorageChannelMetaData metaData : availableMetaDatas )
+        {
             final String configurationId = metaData.getConfigurationId ();
-
-            // get list of already created back end objects with the same configuration id
-            List<BackEnd> backEnds = this.backEndMap.get ( configurationId );
-            if ( backEnds == null )
+            BackEnd backEnd = null;
+            try
             {
-                backEnds = new LinkedList<BackEnd> ();
-                this.backEndMap.put ( configurationId, backEnds );
-            }
-
-            // assure that the list is sorted by detail level
-            int insertionIndex = 0;
-            while ( insertionIndex < backEnds.size () )
-            {
-                if ( backEnds.get ( insertionIndex ).getMetaData ().getDetailLevelId () >= metaData.getDetailLevelId () )
+                // check if configuration is not on the ban list
+                if ( bannedConfigurationIds.contains ( configurationId ) )
                 {
-                    break;
+                    logger.info ( String.format ( "skipping meta data '%s' at service start", metaData ) );
+                    continue;
                 }
-                insertionIndex++;
+
+                // create new back end object
+                backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
+                backEnd.initialize ( metaData );
+
+                // get list of already created back end objects with the same configuration id
+                List<BackEnd> backEnds = this.backEndMap.get ( configurationId );
+                if ( backEnds == null )
+                {
+                    backEnds = new LinkedList<BackEnd> ();
+                    this.backEndMap.put ( configurationId, backEnds );
+                }
+
+                // assure that the list is sorted by detail level
+                int insertionIndex = 0;
+                while ( insertionIndex < backEnds.size () )
+                {
+                    if ( backEnds.get ( insertionIndex ).getMetaData ().getDetailLevelId () >= metaData.getDetailLevelId () )
+                    {
+                        break;
+                    }
+                    insertionIndex++;
+                }
+                backEnds.add ( insertionIndex, backEnd );
             }
-            backEnds.add ( insertionIndex, backEnd );
+            catch ( Exception e )
+            {
+                logger.error ( String.format ( "problem while loading back ends for meta data '%s'", metaData ), e );
+                bannedConfigurationIds.add ( configurationId );
+                List<BackEnd> backEnds = this.backEndMap.remove ( configurationId );
+                if ( backEnds == null )
+                {
+                    backEnds = new ArrayList<BackEnd> ();
+                }
+                if ( backEnd != null )
+                {
+                    backEnds.add ( backEnd );
+                }
+                deinitializeBackEnds ( backEnds );
+            }
         }
 
         // create shi service objects for grouped configuration ids
-        for ( final List<BackEnd> backEnds : this.backEndMap.values () )
+        bannedConfigurationIds.clear ();
+        for ( Entry<String, List<BackEnd>> entry : backEndMap.entrySet () )
         {
+            List<BackEnd> backEnds = entry.getValue ();
             if ( !backEnds.isEmpty () )
             {
-                List<StorageChannelMetaData> metaDatas = new ArrayList<StorageChannelMetaData> ();
-                for ( BackEnd backEnd : backEnds )
+                try
                 {
-                    metaDatas.add ( backEnd.getMetaData () );
+                    List<StorageChannelMetaData> metaDatas = new ArrayList<StorageChannelMetaData> ();
+                    for ( BackEnd backEnd : backEnds )
+                    {
+                        metaDatas.add ( backEnd.getMetaData () );
+                    }
+                    createService ( Conversions.convertMetaDatasToConfiguration ( FACTORY_ID, metaDatas ), false );
                 }
-                createService ( Conversions.convertMetaDatasToConfiguration ( FACTORY_ID, metaDatas ), false );
+                catch ( Exception e )
+                {
+                    final String configurationId = entry.getKey ();
+                    logger.error ( String.format ( "could not create service for existing configuration '%s'", configurationId ), e );
+                    bannedConfigurationIds.add ( configurationId );
+                }
             }
+        }
+
+        // remove not used back end objects
+        for ( String configurationId : bannedConfigurationIds )
+        {
+            deinitializeBackEnds ( backEndMap.remove ( configurationId ) );
         }
     }
 

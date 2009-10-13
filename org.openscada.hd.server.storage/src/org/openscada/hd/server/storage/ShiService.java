@@ -15,7 +15,6 @@ import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
-import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
 import org.openscada.hd.server.common.StorageHistoricalItem;
@@ -222,33 +221,9 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized void cleanupRelicts () throws Exception
     {
-        Calendar start = Calendar.getInstance ();
-        start.setTimeInMillis ( 0 );
-        Calendar end = Calendar.getInstance ();
-        end.setTimeInMillis ( Long.MAX_VALUE );
-        createQuery ( new QueryParameters ( start, end, 1000 ), new QueryListener () {
-
-            public void updateState ( QueryState state )
-            {
-                // TODO Auto-generated method stub
-
-            }
-
-            public void updateParameters ( QueryParameters parameters, Set<String> valueTypes )
-            {
-                // TODO Auto-generated method stub
-
-            }
-
-            public void updateData ( int index, Map<String, Value[]> values, ValueInformation[] valueInformation )
-            {
-                // TODO Auto-generated method stub
-
-            }
-        }, false );
-        if ( this.rootStorageChannel != null )
+        if ( rootStorageChannel != null )
         {
-            this.rootStorageChannel.cleanupRelicts ();
+            rootStorageChannel.cleanupRelicts ();
         }
     }
 }
