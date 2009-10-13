@@ -50,7 +50,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /** All available storage channels mapped via calculation method. */
     private final Map<CalculationMethod, ExtendedStorageChannel> storageChannels;
 
-    /** Reference to the main input storage channel that is also available in the storageChannels map. */
+    /** Reference to the main input storage channel that is also available in the storage channels map. */
     private ExtendedStorageChannel rootStorageChannel;
 
     /** Flag indicating whether the service is currently running or not. */
