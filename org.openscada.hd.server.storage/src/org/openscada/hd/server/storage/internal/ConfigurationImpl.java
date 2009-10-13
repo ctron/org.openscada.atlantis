@@ -1,4 +1,4 @@
-package org.openscada.hd.server.storage.osgi.internal;
+package org.openscada.hd.server.storage.internal;
 
 import java.util.Map;
 

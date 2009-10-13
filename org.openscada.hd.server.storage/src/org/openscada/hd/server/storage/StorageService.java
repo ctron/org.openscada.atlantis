@@ -24,7 +24,7 @@ import org.openscada.hd.server.storage.calculation.MaximumCalculationLogicProvid
 import org.openscada.hd.server.storage.calculation.MinimumCalculationLogicProvider;
 import org.openscada.hd.server.storage.calculation.NativeCalculationLogicProvider;
 import org.openscada.hd.server.storage.datatypes.DataType;
-import org.openscada.hd.server.storage.osgi.internal.ConfigurationImpl;
+import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;

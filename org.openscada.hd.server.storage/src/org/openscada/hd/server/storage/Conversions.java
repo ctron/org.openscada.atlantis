@@ -11,7 +11,7 @@ import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationState;
 import org.openscada.hd.server.storage.calculation.CalculationMethod;
 import org.openscada.hd.server.storage.datatypes.DataType;
-import org.openscada.hd.server.storage.osgi.internal.ConfigurationImpl;
+import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.utils.str.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -22,7 +22,7 @@ import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.calculation.CalculationMethod;
 import org.openscada.hd.server.storage.datatypes.DoubleValue;
 import org.openscada.hd.server.storage.datatypes.LongValue;
-import org.openscada.hd.server.storage.osgi.internal.ConfigurationImpl;
+import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.relict.RelictCleaner;
 import org.openscada.hd.server.storage.relict.RelictCleanerCallerTask;
 import org.slf4j.Logger;
