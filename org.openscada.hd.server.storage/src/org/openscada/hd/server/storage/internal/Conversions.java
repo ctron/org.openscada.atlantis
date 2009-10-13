@@ -61,19 +61,19 @@ public class Conversions
     public final static String LIST_SEPARATOR = ",";
 
     /** Prefix of key in configuration for the proposed data age setting. */
-    public final static String PROPOSED_DATA_AGE_KEY_PREFIX = "storage.proposedDataAge.level.";
+    public final static String PROPOSED_DATA_AGE_KEY_PREFIX = "hd.proposedDataAge.level.";
 
     /** Prefix of key in configuration for the compression time span setting. */
-    public final static String COMPRESSION_TIMESPAN_KEY_PREFIX = "storage.compressionTimeSpan.level.";
+    public final static String COMPRESSION_TIMESPAN_KEY_PREFIX = "hd.compressionTimeSpan.level.";
 
     /** Key in configuration for the data type setting of NATIVE calculation method setting. */
-    public final static String DATA_TYPE_KEY = "storage.dataType";
+    public final static String DATA_TYPE_KEY = "hd.dataType";
 
     /** Key in configuration for the set of configured calculation methods setting. */
-    public final static String CALCULATION_METHODS = "storage.calculationMethods";
+    public final static String CALCULATION_METHODS = "hd.calculationMethods";
 
     /** Key in configuration for the maximum compression level setting. */
-    public final static String MAX_COMPRESSION_LEVEL = "storage.maxCompressionLevel";
+    public final static String MAX_COMPRESSION_LEVEL = "hd.maxCompressionLevel";
 
     /**
      * This method creates and returns a calculation logic provider instance that supports the specified configuration.
