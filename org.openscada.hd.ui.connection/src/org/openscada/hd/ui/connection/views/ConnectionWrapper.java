@@ -17,7 +17,12 @@ public class ConnectionWrapper extends WritableSet implements PropertyChangeList
     public ConnectionWrapper ( final ConnectionHolder target )
     {
         this.holder = target;
-        this.holder.addPropertyChangeListener ( ConnectionHolder.PROP_CONNECTION_SERVICE, this );
+
+        synchronized ( this )
+        {
+            this.holder.addPropertyChangeListener ( ConnectionHolder.PROP_CONNECTION_SERVICE, this );
+            triggerUpdate ();
+        }
     }
 
     @Override
@@ -27,7 +32,12 @@ public class ConnectionWrapper extends WritableSet implements PropertyChangeList
         super.dispose ();
     }
 
-    public void propertyChange ( final PropertyChangeEvent evt )
+    public synchronized void propertyChange ( final PropertyChangeEvent evt )
+    {
+        triggerUpdate ();
+    }
+
+    private void triggerUpdate ()
     {
         getRealm ().asyncExec ( new Runnable () {
 
@@ -36,7 +46,6 @@ public class ConnectionWrapper extends WritableSet implements PropertyChangeList
                 update ();
             }
         } );
-        update ();
     }
 
     private void update ()
@@ -50,8 +59,11 @@ public class ConnectionWrapper extends WritableSet implements PropertyChangeList
 
             final ConnectionService service = (ConnectionService)this.holder.getConnectionService ();
             this.service = service;
-            add ( "Items" );
-            add ( "Queries" );
+            if ( this.service != null )
+            {
+                add ( "Items" );
+                add ( "Queries" );
+            }
         }
         finally
         {

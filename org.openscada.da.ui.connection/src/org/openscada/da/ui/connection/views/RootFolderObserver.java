@@ -19,6 +19,7 @@ public class RootFolderObserver extends FolderObserver implements PropertyChange
         synchronized ( this )
         {
             connectionHolder.addPropertyChangeListener ( ConnectionHolder.PROP_CONNECTION_SERVICE, this );
+            updateConnection ();
         }
     }
 
@@ -30,7 +31,12 @@ public class RootFolderObserver extends FolderObserver implements PropertyChange
         super.dispose ();
     }
 
-    public void propertyChange ( final PropertyChangeEvent evt )
+    public synchronized void propertyChange ( final PropertyChangeEvent evt )
+    {
+        updateConnection ();
+    }
+
+    private void updateConnection ()
     {
         final org.openscada.core.connection.provider.ConnectionService connection = this.connectionHolder.getConnectionService ();
         if ( connection == null )
