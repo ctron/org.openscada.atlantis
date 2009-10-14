@@ -66,7 +66,7 @@ public class RealtimeListDragSourceListener implements DragSourceListener
 
     }
 
-    private void setItemUriData ( final DragSourceEvent event, final IStructuredSelection selection )
+    protected void setItemUriData ( final DragSourceEvent event, final IStructuredSelection selection )
     {
         final StringBuilder sb = new StringBuilder ();
         int cnt = 0;
@@ -88,7 +88,7 @@ public class RealtimeListDragSourceListener implements DragSourceListener
         event.data = sb.toString ();
     }
 
-    private void setItemStringData ( final DragSourceEvent event, final IStructuredSelection selection )
+    protected void setItemStringData ( final DragSourceEvent event, final IStructuredSelection selection )
     {
         final StringBuilder sb = new StringBuilder ();
         int cnt = 0;
