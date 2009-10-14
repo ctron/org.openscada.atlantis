@@ -59,12 +59,12 @@ public final class QueryParameters implements Serializable
 
     public Calendar getStartTimestamp ()
     {
-        return this.startTimestamp;
+        return (Calendar)this.startTimestamp.clone ();
     }
 
     public Calendar getEndTimestamp ()
     {
-        return this.endTimestamp;
+        return (Calendar)this.endTimestamp.clone ();
     }
 
     public int getEntries ()
