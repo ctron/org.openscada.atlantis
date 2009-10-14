@@ -1,12 +1,10 @@
 package org.openscada.hd.ui.connection.views;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.openscada.core.ui.connection.data.ConnectionDiscovererBean;
 import org.openscada.core.ui.connection.data.ConnectionHolder;
+import org.openscada.hd.ui.connection.internal.ItemListWrapper;
+import org.openscada.hd.ui.connection.internal.QueryWrapper;
 
 final class ConnectionObservableFactory implements IObservableFactory
 {
@@ -16,16 +14,16 @@ final class ConnectionObservableFactory implements IObservableFactory
         {
             return new ConnectionWrapper ( (ConnectionHolder)target );
         }
-
-        return null;
-    }
-
-    public IObservableMap createElementMap ( final Object target, final IObservableSet observableSet )
-    {
-        if ( target instanceof ConnectionDiscovererBean )
+        else if ( target instanceof ItemListWrapper )
         {
-            return BeansObservables.observeMap ( observableSet, ConnectionHolder.PROP_CONNECTION_SERVICE );
+            return new ItemListObserver ( ( (ItemListWrapper)target ).getConnection () );
         }
+        else if ( target instanceof QueryWrapper )
+        {
+            return ( (QueryWrapper)target ).getQueriesObservable ();
+        }
+
         return null;
     }
+
 }

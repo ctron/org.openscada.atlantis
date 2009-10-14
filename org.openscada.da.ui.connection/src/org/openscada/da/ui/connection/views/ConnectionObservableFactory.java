@@ -3,12 +3,8 @@
  */
 package org.openscada.da.ui.connection.views;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.openscada.core.ui.connection.data.ConnectionDiscovererBean;
 import org.openscada.core.ui.connection.data.ConnectionHolder;
 import org.openscada.da.core.browser.FolderEntry;
 import org.openscada.da.ui.connection.internal.FolderEntryWrapper;
@@ -46,12 +42,4 @@ final class ConnectionObservableFactory implements IObservableFactory
         return null;
     }
 
-    public IObservableMap createElementMap ( final Object target, final IObservableSet observableSet )
-    {
-        if ( target instanceof ConnectionDiscovererBean )
-        {
-            return BeansObservables.observeMap ( observableSet, ConnectionHolder.PROP_CONNECTION_SERVICE );
-        }
-        return null;
-    }
 }

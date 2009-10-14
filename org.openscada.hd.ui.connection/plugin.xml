@@ -8,7 +8,7 @@
             contentProvider="org.openscada.hd.ui.connection.views.ConnectionContentProvider"
             id="org.openscada.hd.ui.connection.provider"
             labelProvider="org.openscada.hd.ui.connection.views.ConnectionLabelProvider"
-            name="HD Connections"
+            name="%navigatorContent.name"
             priority="normal"
             providesSaveables="false">
          <triggerPoints>
@@ -22,7 +22,26 @@
                         value="hd">
                   </test>
                </and>
+               <instanceof
+                     value="org.openscada.hd.ui.connection.internal.ItemWrapper">
+               </instanceof>
+               <instanceof
+                     value="org.openscada.hd.ui.connection.internal.QueryWrapper">
+               </instanceof>
             </or></triggerPoints>
+         <possibleChildren>
+            <or>
+               <instanceof
+                     value="org.openscada.hd.ui.connection.internal.QueryWrapper">
+               </instanceof>
+               <instanceof
+                     value="org.openscada.hd.ui.connection.internal.ItemWrapper">
+               </instanceof>
+               <instanceof
+                     value="org.openscada.hd.ui.connection.internal.QueryBufferBean">
+               </instanceof>
+            </or>
+         </possibleChildren>
       </navigatorContent>
    </extension>
    <extension
@@ -31,6 +50,43 @@
             class="org.openscada.hd.ui.connection.dnd.CommonDragAdapterAssistant"
             viewerId="org.openscada.core.ui.connection.ConnectionView">
       </dragAssistant>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.openscada.hd.ui.connection.handler.CreateQueryHandler"
+            commandId="org.openscada.hd.ui.connection.command.CreateQuery">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <instanceof
+                        value="org.openscada.hd.ui.connection.internal.ItemWrapper">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.openscada.hd.ui.connection.command.CreateQuery"
+            name="%command.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.openscada.core.ui.connection.ConnectionView#PopupMenu">
+         <command
+               commandId="org.openscada.hd.ui.connection.command.CreateQuery"
+               label="%command.label"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
 
 </plugin>

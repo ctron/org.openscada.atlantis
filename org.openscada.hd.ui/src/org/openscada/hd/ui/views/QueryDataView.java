@@ -94,7 +94,6 @@ public class QueryDataView extends QueryViewPart implements QueryListener
     private void handleUpdateData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
     {
         // FIXME: implement faster
-
         final int len = valueInformation.length;
         for ( int i = 0; i < len; i++ )
         {
@@ -179,6 +178,8 @@ public class QueryDataView extends QueryViewPart implements QueryListener
 
     private void clearDataSize ()
     {
+        this.table.clearAll ();
+
         for ( final TableColumn col : this.columns.values () )
         {
             col.dispose ();
@@ -190,13 +191,10 @@ public class QueryDataView extends QueryViewPart implements QueryListener
             this.infoCol.dispose ();
             this.infoCol = null;
         }
-
-        this.table.clearAll ();
     }
 
     public void updateState ( final QueryState state )
     {
-        // TODO Auto-generated method stub
     }
 
 }

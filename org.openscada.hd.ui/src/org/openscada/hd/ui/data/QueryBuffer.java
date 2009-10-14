@@ -163,8 +163,6 @@ public class QueryBuffer extends AbstractPropertyChange
 
     private void setFilled ( final int filled )
     {
-        logger.debug ( "Filled: {}", filled );
-
         final int oldFilled = this.filled;
         this.filled = filled;
         firePropertyChange ( PROP_FILLED, oldFilled, filled );
@@ -253,10 +251,19 @@ public class QueryBuffer extends AbstractPropertyChange
         this.query.close ();
     }
 
-    public void changeProperties ( final QueryParameters parameters )
+    public synchronized void changeProperties ( final QueryParameters parameters )
     {
-        setRequestParameters ( parameters );
-        this.query.changeParameters ( parameters );
+        logger.info ( "Request parameter change - new: {}, old: {}", new Object[] { parameters, this.requestParameters } );
+
+        if ( !this.requestParameters.equals ( parameters ) )
+        {
+            setRequestParameters ( parameters );
+            this.query.changeParameters ( parameters );
+        }
+        else
+        {
+            logger.info ( "Ignore change request since there is no change" );
+        }
     }
 
     public synchronized void addQueryListener ( final QueryListener listener )

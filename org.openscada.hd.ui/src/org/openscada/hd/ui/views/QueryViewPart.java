@@ -48,7 +48,7 @@ public abstract class QueryViewPart extends ViewPart implements QueryListener
 
     protected void setQuery ( final QueryBuffer query )
     {
-        logger.info ( "Setting query: ", query );
+        logger.info ( "Setting query: {}", query );
 
         this.query = query;
         this.query.addQueryListener ( this );

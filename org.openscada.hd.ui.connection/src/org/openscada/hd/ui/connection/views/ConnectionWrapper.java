@@ -6,6 +6,8 @@ import java.beans.PropertyChangeListener;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.openscada.core.ui.connection.data.ConnectionHolder;
 import org.openscada.hd.connection.provider.ConnectionService;
+import org.openscada.hd.ui.connection.internal.ItemListWrapper;
+import org.openscada.hd.ui.connection.internal.QueryWrapper;
 
 public class ConnectionWrapper extends WritableSet implements PropertyChangeListener
 {
@@ -13,6 +15,8 @@ public class ConnectionWrapper extends WritableSet implements PropertyChangeList
     private final ConnectionHolder holder;
 
     private ConnectionService service;
+
+    private QueryWrapper queryManager;
 
     public ConnectionWrapper ( final ConnectionHolder target )
     {
@@ -54,21 +58,41 @@ public class ConnectionWrapper extends WritableSet implements PropertyChangeList
 
         try
         {
-            clear ();
-            this.service = null;
+            clearConnection ();
 
             final ConnectionService service = (ConnectionService)this.holder.getConnectionService ();
             this.service = service;
             if ( this.service != null )
             {
-                add ( "Items" );
-                add ( "Queries" );
+                this.queryManager = new QueryWrapper ( service );
+                add ( this.queryManager );
+                add ( new ItemListWrapper ( this ) );
             }
         }
         finally
         {
             setStale ( false );
         }
+    }
+
+    public QueryWrapper getQueryManager ()
+    {
+        return this.queryManager;
+    }
+
+    private void clearConnection ()
+    {
+        clear ();
+        this.service = null;
+        if ( this.queryManager != null )
+        {
+            this.queryManager.dispose ();
+        }
+    }
+
+    public ConnectionService getService ()
+    {
+        return this.service;
     }
 
 }
