@@ -384,6 +384,7 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
         }
         else if ( QueryBuffer.PROP_REQUEST_PARAMETERS.equals ( evt.getPropertyName () ) )
         {
+            logger.info ( "Request set using property change: {}", this.query.getRequestParameters () );
             this.requestParameters = this.query.getRequestParameters ();
             updateRequestParameters ();
         }

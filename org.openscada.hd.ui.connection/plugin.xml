@@ -28,6 +28,12 @@
                <instanceof
                      value="org.openscada.hd.ui.connection.internal.QueryWrapper">
                </instanceof>
+               <instanceof
+                     value="org.openscada.hd.ui.connection.internal.ItemListWrapper">
+               </instanceof>
+               <instanceof
+                     value="org.openscada.hd.ui.connection.internal.QueryBufferBean">
+               </instanceof>
             </or></triggerPoints>
          <possibleChildren>
             <or>
@@ -39,6 +45,9 @@
                </instanceof>
                <instanceof
                      value="org.openscada.hd.ui.connection.internal.QueryBufferBean">
+               </instanceof>
+               <instanceof
+                     value="org.openscada.hd.ui.connection.internal.ItemListWrapper">
                </instanceof>
             </or>
          </possibleChildren>

@@ -67,7 +67,7 @@ public class QueryBuffer extends AbstractPropertyChange
         {
             this.connection = connection;
             this.itemId = id;
-            this.requestParameters = requestParameters;
+            setRequestParameters ( requestParameters );
 
             if ( listener != null )
             {
@@ -208,6 +208,8 @@ public class QueryBuffer extends AbstractPropertyChange
 
     private void setRequestParameters ( final QueryParameters parameters )
     {
+        logger.debug ( "Setting request parameters: {}", parameters );
+
         final QueryParameters oldParameters = this.requestParameters;
         this.requestParameters = parameters;
         firePropertyChange ( PROP_REQUEST_PARAMETERS, oldParameters, parameters );
