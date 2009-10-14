@@ -376,7 +376,7 @@ public class TrendView extends ViewPart implements QueryListener
 
     private final AtomicReference<double[]> dataQuality = new AtomicReference<double[]> ();
 
-    private final AtomicReference<Date[]> dataLabel = new AtomicReference<Date[]> ();
+    private final AtomicReference<Date[]> dataTimestamp = new AtomicReference<Date[]> ();
 
     private final AtomicReference<ChartParameters> chartParameters = new AtomicReference<ChartParameters> ();
 
@@ -406,8 +406,6 @@ public class TrendView extends ViewPart implements QueryListener
     private volatile boolean dragStarted = false;
 
     private volatile int dragStartedX = -1;
-
-    private volatile int dragStartedY = -1;
 
     private FontRegistry fontRegistry;
 
@@ -616,7 +614,6 @@ public class TrendView extends ViewPart implements QueryListener
                 chart.getPlotArea ().setCursor ( dragCursor );
                 dragStarted = true;
                 dragStartedX = e.x;
-                dragStartedY = e.y;
             }
         } );
         chart.getPlotArea ().addMouseListener ( new MouseListener () {
@@ -743,16 +740,25 @@ public class TrendView extends ViewPart implements QueryListener
         chart.setDataAtPoint ( new DataAtPoint () {
             private int coordinateToIndex ( final int x )
             {
-                int numOfEntries = chartParameters.get ().getNumOfEntries ();
-                int pixels = chart.getPlotArea ().getBounds ().width;
-                double factor = (double)numOfEntries / (double)pixels;
-                final int i = (int)Math.floor ( x * factor );
-                return i;
+                final int margin = 10;
+                try
+                {
+                    int numOfEntries = chartParameters.get ().getNumOfEntries ();
+                    int pixels = chart.getPlotArea ().getBounds ().width - ( 2 * margin );
+                    double factor = (double)numOfEntries / (double)pixels;
+                    final int i = (int)Math.round ( ( x - margin ) * factor );
+                    return i;
+                }
+                catch ( Exception e )
+                {
+                    // pass
+                }
+                return 0;
             }
 
             public Date getTimestamp ( final int x )
             {
-                return dataLabel.get ()[coordinateToIndex ( x )];
+                return dataTimestamp.get ()[coordinateToIndex ( x )];
             }
 
             public double getQuality ( final int x )
@@ -974,7 +980,7 @@ public class TrendView extends ViewPart implements QueryListener
     {
         // update model
         data.clear ();
-        dataLabel.set ( new Date[parameters.getEntries ()] );
+        dataTimestamp.set ( new Date[parameters.getEntries ()] );
         dataQuality.set ( new double[parameters.getEntries ()] );
         for ( String seriesId : valueTypes )
         {
@@ -1023,7 +1029,7 @@ public class TrendView extends ViewPart implements QueryListener
         // now copy values for date axis and quality
         for ( int i = 0; i < valueInformation.length; i++ )
         {
-            dataLabel.get ()[i + index] = valueInformation[i].getStartTimestamp ().getTime ();
+            dataTimestamp.get ()[i + index] = valueInformation[i].getStartTimestamp ().getTime ();
             dataQuality.get ()[i + index] = valueInformation[i].getQuality ();
         }
         dataUpdateJob.get ().schedule ( GUI_JOB_DELAY );
@@ -1198,7 +1204,7 @@ public class TrendView extends ViewPart implements QueryListener
                     {
                         continue;
                     }
-                    series.setXDateSeries ( dataLabel.get () );
+                    series.setXDateSeries ( dataTimestamp.get () );
                     series.setYSeries ( data.get ( seriesParameter.name ) );
                 }
                 chart.getAxisSet ().getXAxis ( 0 ).getTick ().setFormat ( new SimpleDateFormat ( formatByRange () ) );
@@ -1207,7 +1213,7 @@ public class TrendView extends ViewPart implements QueryListener
                 if ( qualitySeries != null )
                 {
                     qualitySeries.setYSeries ( qualityData ( dataQuality.get (), quality ) );
-                    qualitySeries.setXDateSeries ( dataLabel.get () );
+                    qualitySeries.setXDateSeries ( dataTimestamp.get () );
                     if ( quality > 0.0 )
                     {
                         qualitySeries.setVisible ( true );
