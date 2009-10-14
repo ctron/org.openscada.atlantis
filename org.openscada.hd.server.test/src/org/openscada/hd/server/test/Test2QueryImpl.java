@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 public class Test2QueryImpl implements Query
 {
-
     private final static Logger logger = LoggerFactory.getLogger ( Test2QueryImpl.class );
 
     private final Test2ItemImpl item;
