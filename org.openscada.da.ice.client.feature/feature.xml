@@ -503,8 +503,13 @@ DAMAGES.
       <import plugin="org.openscada.da.client.connector" version="0.13.3" match="greaterOrEqual"/>
       <import plugin="org.openscada.da.core.common" version="0.13.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.openscada.utils" version="0.13.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.openscada.core.ice.base" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.ice.base" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.ice" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.utils" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="slf4j.api"/>
+      <import plugin="com.springsource.javax.xml.stream"/>
    </requires>
 
    <plugin
