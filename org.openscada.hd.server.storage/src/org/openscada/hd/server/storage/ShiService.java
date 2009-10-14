@@ -26,6 +26,7 @@ import org.openscada.hd.server.storage.internal.QueryImpl;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
 import org.openscada.hsdb.datatypes.LongValue;
@@ -104,9 +105,52 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         openQueries.remove ( query );
     }
 
-    public synchronized Map<Long, Long> processQuery ( final QueryImpl query )
+    /**
+     * @param maximumCompressionLevel
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    public synchronized Map<StorageChannelMetaData, BaseValue[]> getValues ( final long maximumCompressionLevel, final long startTime, final long endTime ) throws Exception
     {
-        return null;
+        long maximumAvailableCompressionLevel = Long.MIN_VALUE;
+        for ( StorageChannelMetaData metaData : storageChannels.keySet () )
+        {
+            maximumAvailableCompressionLevel = Math.max ( maximumAvailableCompressionLevel, metaData.getDetailLevelId () );
+        }
+        maximumAvailableCompressionLevel = Math.min ( maximumAvailableCompressionLevel, maximumCompressionLevel );
+        Map<StorageChannelMetaData, BaseValue[]> result = new HashMap<StorageChannelMetaData, BaseValue[]> ();
+        try
+        {
+            for ( Entry<StorageChannelMetaData, ExtendedStorageChannel> entry : storageChannels.entrySet () )
+            {
+                StorageChannelMetaData metaData = entry.getKey ();
+                if ( metaData.getDetailLevelId () == maximumAvailableCompressionLevel )
+                {
+                    ExtendedStorageChannel storageChannel = entry.getValue ();
+                    switch ( expectedDataType )
+                    {
+                    case LONG_VALUE:
+                    {
+                        result.put ( storageChannel.getMetaData (), storageChannel.getLongValues ( startTime, endTime ) );
+                        break;
+                    }
+                    case DOUBLE_VALUE:
+                    {
+                        result.put ( storageChannel.getMetaData (), storageChannel.getDoubleValues ( startTime, endTime ) );
+                        break;
+                    }
+                    }
+                }
+            }
+        }
+        catch ( Exception e )
+        {
+            final String message = "unable to retrieve values from storage channel";
+            logger.error ( message, e );
+            throw new Exception ( message, e );
+        }
+        return result;
     }
 
     /**
