@@ -78,12 +78,52 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.openscada.hd.ui.connection.handler.CloseQueryHandler"
+            commandId="org.openscada.hd.ui.connection.command.CloseQueries">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <instanceof
+                        value="org.openscada.hd.ui.connection.internal.QueryBufferBean">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.openscada.hd.ui.connection.handler.RemoveQueryHandler"
+            commandId="org.openscada.hd.ui.connection.command.RemoveQueries">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <instanceof
+                        value="org.openscada.hd.ui.connection.internal.QueryBufferBean">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
       <command
             id="org.openscada.hd.ui.connection.command.CreateQuery"
-            name="%command.name">
+            name="%command.closeQuery.name">
+      </command>
+      <command
+            id="org.openscada.hd.ui.connection.command.CloseQueries"
+            name="Close Query">
+      </command>
+      <command
+            id="org.openscada.hd.ui.connection.command.RemoveQueries"
+            name="Remove Query">
       </command>
    </extension>
    <extension
@@ -92,8 +132,27 @@
             locationURI="popup:org.openscada.core.ui.connection.ConnectionView#PopupMenu">
          <command
                commandId="org.openscada.hd.ui.connection.command.CreateQuery"
-               label="%command.label"
+               label="%command.closeQuery.label"
                style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.openscada.hd.ui.connection.command.CloseQueries"
+               label="Close Query"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.openscada.hd.ui.connection.command.RemoveQueries"
+               label="Remove Query"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>

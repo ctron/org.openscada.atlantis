@@ -1,5 +1,8 @@
 package org.openscada.hd.ui.connection.internal;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
@@ -42,9 +45,37 @@ public class QueryWrapper
 
     public void createQuery ( final String id )
     {
-        logger.info ( "Create new query for: {}" ); //$NON-NLS-1$
+        logger.info ( "Create new query for: {}", id ); //$NON-NLS-1$
 
-        this.queries.add ( new QueryBufferBean ( this, id ) );
+        final QueryBufferBean query = new QueryBufferBean ( this, id );
+
+        // FIXME: we need some real updates
+        query.addPropertyChangeListener ( new PropertyChangeListener () {
+
+            public void propertyChange ( final PropertyChangeEvent evt )
+            {
+                if ( ! ( QueryBufferBean.PROP_FILLED.equals ( evt.getPropertyName () ) || QueryBufferBean.PROP_PERCENT_FILLED.equals ( evt.getPropertyName () ) ) )
+                {
+                    QueryWrapper.this.queries.getRealm ().asyncExec ( new Runnable () {
+
+                        public void run ()
+                        {
+                            fakeIt ( query );
+                        }
+                    } );
+                }
+            }
+        } );
+
+        this.queries.add ( query );
+    }
+
+    protected void fakeIt ( final QueryBufferBean query )
+    {
+        this.queries.setStale ( true );
+        this.queries.remove ( query );
+        this.queries.add ( query );
+        this.queries.setStale ( false );
     }
 
     /**

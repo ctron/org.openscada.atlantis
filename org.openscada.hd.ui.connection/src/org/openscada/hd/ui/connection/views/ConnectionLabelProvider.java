@@ -18,9 +18,14 @@ import org.openscada.hd.ui.connection.internal.QueryBufferBean;
 import org.openscada.hd.ui.connection.internal.QueryWrapper;
 import org.openscada.ui.databinding.ListeningLabelProvider;
 import org.openscada.ui.databinding.StyledViewerLabel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConnectionLabelProvider extends ListeningLabelProvider implements PropertyChangeListener
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ConnectionLabelProvider.class );
+
     private final ResourceManager resource = new LocalResourceManager ( JFaceResources.getResources () );
 
     public ConnectionLabelProvider ()
@@ -101,7 +106,9 @@ public class ConnectionLabelProvider extends ListeningLabelProvider implements P
         super.addListenerTo ( next );
         if ( next instanceof QueryBufferBean )
         {
+            logger.debug ( "Adding query: {}", next );
             ( (QueryBufferBean)next ).addPropertyChangeListener ( this );
+            fireChangeEvent ( Arrays.asList ( next ) );
         }
     }
 
@@ -117,6 +124,7 @@ public class ConnectionLabelProvider extends ListeningLabelProvider implements P
 
     public void propertyChange ( final PropertyChangeEvent evt )
     {
+        logger.debug ( "Property change: {}" );
         fireChangeEvent ( Arrays.asList ( evt.getSource () ) );
     }
 

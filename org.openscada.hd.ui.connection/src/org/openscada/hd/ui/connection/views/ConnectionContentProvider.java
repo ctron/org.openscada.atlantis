@@ -18,5 +18,4 @@ public class ConnectionContentProvider extends ObservableSetTreeContentProvider
     {
         super ( new ConnectionObservableFactory (), new TreeStructureAdvisorExtension () );
     }
-
 }
