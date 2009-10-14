@@ -21,11 +21,6 @@ public abstract class AbstractConnectionHandler extends AbstractHandler
 
     private IWorkbenchWindow activeWindow;
 
-    public AbstractConnectionHandler ()
-    {
-        super ();
-    }
-
     /**
      * Returns the selection of the active workbench window.
      *
