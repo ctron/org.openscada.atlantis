@@ -32,7 +32,6 @@ import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
 import org.openscada.hd.ui.data.QueryBuffer;
-import org.openscada.hd.ui.data.QueryBufferBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -292,7 +291,7 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
     }
 
     @Override
-    protected void setQuery ( final QueryBufferBean query )
+    protected void setQuery ( final QueryBuffer query )
     {
         super.setQuery ( query );
         this.query.addPropertyChangeListener ( this );

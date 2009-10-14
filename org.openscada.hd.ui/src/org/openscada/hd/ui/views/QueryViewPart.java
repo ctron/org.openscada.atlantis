@@ -4,7 +4,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.ui.data.QueryBufferBean;
+import org.openscada.hd.ui.data.QueryBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,9 +13,9 @@ public abstract class QueryViewPart extends ViewPart implements QueryListener
 
     private final static Logger logger = LoggerFactory.getLogger ( QueryViewPart.class );
 
-    protected QueryBufferBean query;
+    protected QueryBuffer query;
 
-    protected QueryBufferBean getQueryFromSelection ( final ISelection selection )
+    protected QueryBuffer getQueryFromSelection ( final ISelection selection )
     {
         if ( selection.isEmpty () )
         {
@@ -26,16 +26,16 @@ public abstract class QueryViewPart extends ViewPart implements QueryListener
             return null;
         }
         final Object o = ( (IStructuredSelection)selection ).getFirstElement ();
-        if ( o instanceof QueryBufferBean )
+        if ( o instanceof QueryBuffer )
         {
-            return (QueryBufferBean)o;
+            return (QueryBuffer)o;
         }
         return null;
     }
 
     protected void setSelection ( final ISelection selection )
     {
-        final QueryBufferBean query = getQueryFromSelection ( selection );
+        final QueryBuffer query = getQueryFromSelection ( selection );
         if ( query != this.query )
         {
             clear ();
@@ -46,7 +46,7 @@ public abstract class QueryViewPart extends ViewPart implements QueryListener
         }
     }
 
-    protected void setQuery ( final QueryBufferBean query )
+    protected void setQuery ( final QueryBuffer query )
     {
         logger.info ( "Setting query: ", query );
 

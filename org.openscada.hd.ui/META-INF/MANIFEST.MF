@@ -22,3 +22,12 @@ Import-Package: org.apache.mina.core.service;version="2.0.0.M6",
  org.openscada.hd.client.net,
  org.openscada.utils.beans;version="0.14.0",
  org.slf4j
+Export-Package: org.openscada.hd.ui;version="0.14.0";uses:="org.eclipse.core.databinding.observable.set,org.eclipse.ui.plugin,org.osgi.framework",
+ org.openscada.hd.ui.data;version="0.14.0";
+  uses:="org.eclipse.core.databinding.observable.set,
+   org.openscada.core.client,
+   org.openscada.hd,
+   org.openscada.utils.beans,
+   org.eclipse.ui,
+   org.openscada.hd.client,
+   org.openscada.core"

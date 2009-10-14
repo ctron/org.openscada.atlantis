@@ -6,7 +6,6 @@ import org.openscada.hd.QueryParameters;
 
 public class QueryBufferBean extends QueryBuffer
 {
-
     private final ConnectionEntryBean parent;
 
     private final HistoricalItemEntryBean item;
