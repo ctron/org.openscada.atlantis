@@ -106,9 +106,11 @@
   <target name="postSetup">
     <antcall target="getBaseComponents" />
 
-	<openscada.builder.copyPlugin id="org.openscada.external.jfreechart"/>
+	
   	
+  	<openscada.builder.copyFeature id="org.openscada.core.client.test"/>
   	<openscada.builder.copyPlugin id="org.openscada.ui.databinding"/>
+  	<openscada.builder.copyPlugin id="org.openscada.external.jfreechart"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.client.base"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.chart"/>

@@ -323,10 +323,6 @@ POSSIBILITY OF SUCH DAMAGES.
       <discovery label="OpenSCADA Update Site" url="http://repo.inavare.net/p2/release/ostc"/>
    </url>
 
-   <includes
-         id="org.openscada.da.client"
-         version="0.0.0"/>
-
    <requires>
       <import plugin="org.eclipse.rcp"/>
       <import plugin="org.eclipse.ui" version="3.5.0" match="greaterOrEqual"/>
@@ -366,6 +362,25 @@ POSSIBILITY OF SUCH DAMAGES.
       <import plugin="org.openscada.da.client.connection.service" version="0.14.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.da.connection.provider" version="0.14.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.utils" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.mina.core"/>
+      <import plugin="org.openscada.core.client.net"/>
+      <import plugin="org.openscada.core.net.base"/>
+      <import plugin="org.openscada.net.base"/>
+      <import plugin="org.openscada.da.server.common"/>
+      <import plugin="org.openscada.utils.osgi"/>
+      <import plugin="com.springsource.javax.xml.stream"/>
+      <import plugin="org.openscada.ca"/>
+      <import plugin="org.openscada.core.ice.base"/>
+      <import plugin="org.openscada.core.server.common"/>
+      <import plugin="org.openscada.core.client.common" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.common" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.ice.base" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.common" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.connector" version="0.13.3" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.core.common" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.ice.base" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.ice" version="0.13.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.net" version="0.13.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -510,6 +525,83 @@ POSSIBILITY OF SUCH DAMAGES.
 
    <plugin
          id="org.openscada.da.connection.provider"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.client.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.client.connection.service"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.client.connector"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.client.ice"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.core.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.core.server"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.ice.base"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.ice.client"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.master"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.net.base"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.net.client"
          download-size="0"
          install-size="0"
          version="0.0.0"
