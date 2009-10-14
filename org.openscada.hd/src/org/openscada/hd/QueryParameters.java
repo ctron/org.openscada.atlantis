@@ -24,7 +24,7 @@ import java.util.Calendar;
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
-public class QueryParameters
+public final class QueryParameters
 {
     private final Calendar startTimestamp;
 
@@ -73,5 +73,61 @@ public class QueryParameters
     public String toString ()
     {
         return String.format ( "%1$tF-%1$tT.%1$tL -> %2$tF-%2$tT.%2$tL (%3$s)", this.startTimestamp, this.endTimestamp, this.numberOfEntries );
+    }
+
+    @Override
+    public int hashCode ()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( this.endTimestamp == null ? 0 : this.endTimestamp.hashCode () );
+        result = prime * result + this.numberOfEntries;
+        result = prime * result + ( this.startTimestamp == null ? 0 : this.startTimestamp.hashCode () );
+        return result;
+    }
+
+    @Override
+    public boolean equals ( final Object obj )
+    {
+        if ( this == obj )
+        {
+            return true;
+        }
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( getClass () != obj.getClass () )
+        {
+            return false;
+        }
+        final QueryParameters other = (QueryParameters)obj;
+        if ( this.endTimestamp == null )
+        {
+            if ( other.endTimestamp != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.endTimestamp.equals ( other.endTimestamp ) )
+        {
+            return false;
+        }
+        if ( this.numberOfEntries != other.numberOfEntries )
+        {
+            return false;
+        }
+        if ( this.startTimestamp == null )
+        {
+            if ( other.startTimestamp != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.startTimestamp.equals ( other.startTimestamp ) )
+        {
+            return false;
+        }
+        return true;
     }
 }
