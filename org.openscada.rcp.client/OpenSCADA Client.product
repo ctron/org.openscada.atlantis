@@ -40,7 +40,6 @@
    <vm>
    </vm>
 
-
    <plugins>
    </plugins>
 
@@ -55,12 +54,12 @@
    </features>
 
    <configurations>
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <plugin id="org.openscada.da.client.net" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.connection.provider" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.hd.client.net" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.hd.connection.provider" autoStart="true" startLevel="0" />
-      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="0"/>
-      <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="0"/>
    </configurations>
 
 </product>
