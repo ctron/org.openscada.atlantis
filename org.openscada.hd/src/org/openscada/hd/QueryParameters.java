@@ -19,13 +19,16 @@
 
 package org.openscada.hd;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
-public final class QueryParameters
+public final class QueryParameters implements Serializable
 {
+    private static final long serialVersionUID = -7843048077890250710L;
+
     private final Calendar startTimestamp;
 
     private final Calendar endTimestamp;
