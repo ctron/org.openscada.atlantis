@@ -498,7 +498,7 @@ DAMAGES.
    <requires>
       <import plugin="org.openscada.core.client.common" version="0.13.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.core.common" version="0.13.0" match="greaterOrEqual"/>
-      <import plugin="org.openscada.da.client.base" version="0.13.2" match="greaterOrEqual"/>
+      <import plugin="org.openscada.da.client.base" version="0.14.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.da.client.common" version="0.13.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.da.client.connector" version="0.13.3" match="greaterOrEqual"/>
       <import plugin="org.openscada.da.core.common" version="0.13.0" match="greaterOrEqual"/>
