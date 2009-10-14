@@ -40,6 +40,7 @@
    <vm>
    </vm>
 
+
    <plugins>
    </plugins>
 
@@ -54,6 +55,8 @@
    </features>
 
    <configurations>
+      <plugin id="org.openscada.da.client.net" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.da.connection.provider" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.hd.client.net" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.hd.connection.provider" autoStart="true" startLevel="0" />
    </configurations>

@@ -357,15 +357,15 @@ POSSIBILITY OF SUCH DAMAGES.
       <import plugin="org.eclipse.core.databinding.beans" version="1.2.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.core.connection.provider" version="0.14.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="org.openscada.ui.databinding" version="1.4.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.utils"/>
       <import plugin="slf4j.api"/>
       <import plugin="org.openscada.core.ui.connection" version="0.14.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.5.0" match="compatible"/>
       <import plugin="org.eclipse.core.expressions" version="3.2.0" match="compatible"/>
       <import plugin="org.openscada.da.client.connection.service" version="0.14.0" match="greaterOrEqual"/>
-      <import plugin="org.openscada.utils" version="0.14.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.da.connection.provider" version="0.14.0" match="greaterOrEqual"/>
-      <import plugin="org.openscada.ui.databinding" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.utils" version="0.14.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -496,6 +496,20 @@ POSSIBILITY OF SUCH DAMAGES.
 
    <plugin
          id="org.openscada.da.ui.connection"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.client.net"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.connection.provider"
          download-size="0"
          install-size="0"
          version="0.0.0"
