@@ -1,8 +1,11 @@
 package org.openscada.hd.server.storage;
 
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -21,7 +24,9 @@ import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.internal.QueryImpl;
 import org.openscada.hsdb.ExtendedStorageChannel;
+import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
 import org.openscada.hsdb.datatypes.LongValue;
 import org.openscada.hsdb.relict.RelictCleaner;
@@ -49,7 +54,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     private final Configuration configuration;
 
     /** All available storage channels mapped via calculation method. */
-    private final Map<CalculationMethod, ExtendedStorageChannel> storageChannels;
+    private final Map<StorageChannelMetaData, ExtendedStorageChannel> storageChannels;
 
     /** Reference to the main input storage channel that is also available in the storage channels map. */
     private ExtendedStorageChannel rootStorageChannel;
@@ -60,6 +65,12 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /** Timer that is used for deleting old data. */
     private Timer deleteRelictsTimer;
 
+    /** List of currently open queries. */
+    private Collection<QueryImpl> openQueries;
+
+    /** Expected input data type. */
+    private DataType expectedDataType;
+
     /**
      * Constructor
      * @param configuration configuration of the service
@@ -67,33 +78,59 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     public ShiService ( final Configuration configuration )
     {
         this.configuration = new ConfigurationImpl ( configuration );
-        this.storageChannels = new HashMap<CalculationMethod, ExtendedStorageChannel> ();
+        this.storageChannels = new HashMap<StorageChannelMetaData, ExtendedStorageChannel> ();
         this.rootStorageChannel = null;
         this.started = false;
+        this.openQueries = new LinkedList<QueryImpl> ();
+        expectedDataType = DataType.UNKNOWN;
+    }
+
+    /**
+     * This method adds a query to the collection of currently open queries.
+     * @param query query to be added
+     */
+    private synchronized void addQuery ( final QueryImpl query )
+    {
+        openQueries.add ( query );
+    }
+
+    /**
+     * This method removes a query from the collection of currently open queries.
+     * If the query is not found in the collection then no action is performed.
+     * @param query query to be removed
+     */
+    public synchronized void removeQuery ( final QueryImpl query )
+    {
+        openQueries.remove ( query );
+    }
+
+    public synchronized Map<Long, Long> processQuery ( final QueryImpl query )
+    {
+        return null;
     }
 
     /**
      * This method returns a reference to the current configuration of the service.
      * @return reference to the current configuration of the service
      */
-    public Configuration getConfiguration ()
+    public synchronized Configuration getConfiguration ()
     {
-        return this.configuration;
+        return new ConfigurationImpl ( configuration );
     }
 
     /**
      * @see org.openscada.hd.server.common.StorageHistoricalItem#createQuery
      */
-    public Query createQuery ( final QueryParameters parameters, final QueryListener listener, final boolean updateData )
+    public synchronized Query createQuery ( final QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
         try
         {
             final Map<String, Value[]> map = new HashMap<String, Value[]> ();
             ValueInformation[] valueInformations = null;
             final Set<String> calculationMethods = new HashSet<String> ();
-            for ( final Entry<CalculationMethod, ExtendedStorageChannel> entry : this.storageChannels.entrySet () )
+            for ( final Entry<StorageChannelMetaData, ExtendedStorageChannel> entry : this.storageChannels.entrySet () )
             {
-                final CalculationMethod calculationMethod = entry.getKey ();
+                final CalculationMethod calculationMethod = entry.getKey ().getCalculationMethod ();
                 final DoubleValue[] dvs = entry.getValue ().getDoubleValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () );
                 final Value[] values = new Value[dvs.length];
                 if ( calculationMethod == CalculationMethod.NATIVE )
@@ -117,12 +154,15 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
             }
             listener.updateParameters ( parameters, calculationMethods );
             listener.updateData ( 0, map, valueInformations );
+            final QueryImpl query = new QueryImpl ( this, listener, parameters, updateData );
+            addQuery ( query );
+            return query;
         }
         catch ( final Exception e )
         {
             logger.warn ( "Failed to create query", e );
         }
-        return new QueryImpl ( this, listener, parameters, updateData );
+        return null;
     }
 
     /**
@@ -153,13 +193,30 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         final double qualityIndicator = !value.isConnected () || value.isError () ? 0 : 1;
         try
         {
+            DataType processedDataType = DataType.UNKNOWN;
             if ( variant.isLong () || variant.isInteger () || variant.isBoolean () )
             {
-                this.rootStorageChannel.updateLong ( new LongValue ( time, qualityIndicator, 1, variant.asLong ( 0L ) ) );
+                LongValue longValue = new LongValue ( time, qualityIndicator, 1, variant.asLong ( 0L ) );
+                this.rootStorageChannel.updateLong ( longValue );
+                for ( QueryImpl query : this.openQueries )
+                {
+                    query.updateLong ( longValue );
+                }
+                processedDataType = DataType.LONG_VALUE;
             }
             else
             {
-                this.rootStorageChannel.updateDouble ( new DoubleValue ( time, qualityIndicator, 1, variant.asDouble ( 0.0 ) ) );
+                DoubleValue doubleValue = new DoubleValue ( time, qualityIndicator, 1, variant.asDouble ( 0.0 ) );
+                this.rootStorageChannel.updateDouble ( doubleValue );
+                for ( QueryImpl query : this.openQueries )
+                {
+                    query.updateDouble ( doubleValue );
+                }
+                processedDataType = DataType.DOUBLE_VALUE;
+            }
+            if ( expectedDataType != processedDataType )
+            {
+                logger.warn ( String.format ( "processed data type (%s) does not match expected data type (%s)!", processedDataType, expectedDataType ) );
             }
         }
         catch ( final Exception e )
@@ -170,15 +227,29 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
 
     /**
      * This method adds a storage channel.
-     * @param calculationMethod calculation method the storage channel is connected with
      * @param storageChannel storage channel that has to be added
      */
-    public synchronized void addStorageChannel ( final CalculationMethod calculationMethod, final ExtendedStorageChannel storageChannel )
+    public synchronized void addStorageChannel ( final ExtendedStorageChannel storageChannel )
     {
-        this.storageChannels.put ( calculationMethod, storageChannel );
-        if ( calculationMethod == CalculationMethod.NATIVE )
+        if ( storageChannel != null )
         {
-            this.rootStorageChannel = storageChannel;
+            try
+            {
+                StorageChannelMetaData metaData = storageChannel.getMetaData ();
+                if ( metaData != null )
+                {
+                    this.storageChannels.put ( metaData, storageChannel );
+                    if ( metaData.getCalculationMethod () == CalculationMethod.NATIVE )
+                    {
+                        this.rootStorageChannel = storageChannel;
+                        expectedDataType = metaData.getDataType ();
+                    }
+                }
+            }
+            catch ( Exception e )
+            {
+                logger.error ( "could not retrieve meta data information of storage channel", e );
+            }
         }
     }
 
@@ -201,12 +272,21 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized void stop ()
     {
+        // set running flag
         this.started = false;
+
+        // stop relict cleaner timer
         if ( this.deleteRelictsTimer != null )
         {
             this.deleteRelictsTimer.cancel ();
             this.deleteRelictsTimer.purge ();
             this.deleteRelictsTimer = null;
+        }
+
+        // close existing queries
+        for ( QueryImpl query : Collections.unmodifiableCollection ( openQueries ) )
+        {
+            query.close ();
         }
     }
 

@@ -173,7 +173,7 @@ public class StorageService implements SelfManagedConfigurationFactory
                 }
             }
             storageChannels[i] = new CalculatingStorageChannel ( new ExtendedStorageChannelAdapter ( backEnd ), superBackEndIndex >= 0 ? storageChannels[superBackEndIndex] : null, Conversions.getCalculationLogicProvider ( backEnd.getMetaData () ) );
-            service.addStorageChannel ( calculationMethod, storageChannels[i] );
+            service.addStorageChannel ( storageChannels[i] );
         }
         this.shiServices.put ( configuration.getId (), service );
 
