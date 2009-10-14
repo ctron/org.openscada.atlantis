@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da.ice.client"
       label="OpenSCADA DA ICE Client Connector"
-      version="0.13.0"
+      version="0.14.0.qualifier"
       provider-name="inavare GmbH"
       plugin="org.openscada.da.ice.client">
 
