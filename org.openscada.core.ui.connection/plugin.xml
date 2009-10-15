@@ -6,6 +6,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
+            category="org.openscada.core.ui.category"
             class="org.openscada.core.ui.connection.views.ConnectionView"
             id="org.openscada.core.ui.connection.ConnectionView"
             name="%view.connections.name"
@@ -76,6 +77,7 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
+            category="org.openscada.core.ui.category"
             class="org.openscada.core.ui.connection.wizards.AddConnectionWizard"
             hasPages="true"
             id="org.openscada.core.ui.connection.AddConnection"
@@ -178,14 +180,17 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            categoryId="org.openscada.core.ui.category"
             id="org.openscada.core.ui.connection.command.OpenConnection"
             name="%command.openConnection.name">
       </command>
       <command
+            categoryId="org.openscada.core.ui.category"
             id="org.openscada.core.ui.connection.command.CloseConnection"
             name="%command.closeConnection.name">
       </command>
       <command
+            categoryId="org.openscada.core.ui.category"
             id="org.openscada.core.ui.connection.command.DeleteConnection"
             name="%command.deleteConnection.name">
       </command>

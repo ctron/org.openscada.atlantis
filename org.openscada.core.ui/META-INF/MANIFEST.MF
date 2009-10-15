@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
-Bundle-SymbolicName: org.openscada.core.ui
+Bundle-SymbolicName: org.openscada.core.ui;singleton:=true
 Bundle-Version: 0.14.0.qualifier
 Bundle-Activator: org.openscada.core.ui.Activator
 Bundle-Vendor: %Bundle-Vendor
