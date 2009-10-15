@@ -241,5 +241,23 @@
             type="org.openscada.core.ui.connection.data.ConnectionDiscovererBean">
       </propertyTester>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.openscada.rcp.client.perspective">
+         <view
+               closeable="true"
+               id="org.openscada.core.ui.connection.ConnectionView"
+               minimized="false"
+               moveable="true"
+               ratio="0.25"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>
