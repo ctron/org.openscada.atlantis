@@ -695,6 +695,9 @@
     <ROW File="wr_standbyhov.gif" Component_="fs_standby.gif" FileName="wr_sta~2.gif|wr_standbyhov.gif" Attributes="0" SourcePath="ostc\ostc\plugins\org.eclipse.ui.intro.universal_3.2.300.v20090526\themes\circles\graphics\standby\wr_standbyhov.gif" SelfReg="false" Sequence="194"/>
     <ROW File="wr_standbyhov.gif_1" Component_="fs_standby.gif_1" FileName="wr_sta~2.gif|wr_standbyhov.gif" Attributes="0" SourcePath="ostc\ostc\plugins\org.eclipse.ui.intro.universal_3.2.300.v20090526\themes\slate\graphics\standby\wr_standbyhov.gif" SelfReg="false" Sequence="448"/>
   </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.AiRemoveFileComponent">
+    <ROW RemoveFile="_" Options="3"/>
+  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
     <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageName="ostc_[|ProductVersion]_win32.win32.x86" Languages="en;de" LangOpt="1" InstallationType="4"/>
     <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
@@ -710,7 +713,13 @@
     <ROW Fragment="StaticUIStrings.aip" Path="&lt;AI_FRAGS&gt;StaticUIStrings.aip"/>
     <ROW Fragment="UI.aip" Path="&lt;AI_FRAGS&gt;UI.aip"/>
   </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiActionTextComponent">
+    <ROW Action="AI_AiRemoveFilesCommit" Description="Executing file removal operations." Template="Removing file: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesCommit" TemplateLocId="ActionText.Template.AI_AiRemoveFilesCommit"/>
+    <ROW Action="AI_AiRemoveFilesDeferred" Description="Executing file removal operations." Template="Removing file: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesDeferred" TemplateLocId="ActionText.Template.AI_AiRemoveFilesDeferred"/>
+    <ROW Action="AI_AiRemoveFilesImmediate" Description="Generating actions to remove files." DescriptionLocId="ActionText.Description.AI_AiRemoveFilesImmediate"/>
+  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
+    <ROW Name="ResourceCleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ResourceCleaner.dll"/>
     <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
     <ROW Name="banner_image.jpg" SourcePath="&lt;AI_RES&gt;banner-image.jpg"/>
     <ROW Name="dialog_image.jpg" SourcePath="&lt;AI_RES&gt;dialog-image.jpg"/>
@@ -733,6 +742,9 @@
     <ROW Directory_="data_DIR" Component_="data"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
+    <ROW Action="AI_AiRemoveFilesCommit" Type="11777" Source="ResourceCleaner.dll" Target="OnAiRemoveFiles" WithoutSeq="true"/>
+    <ROW Action="AI_AiRemoveFilesDeferred" Type="11265" Source="ResourceCleaner.dll" Target="OnAiRemoveFiles" WithoutSeq="true"/>
+    <ROW Action="AI_AiRemoveFilesImmediate" Type="1" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesImmediate"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_DetectJRE" Type="1" Source="aicustact.dll" Target="RequiredJreExists"/>
     <ROW Action="AI_PREPARE_UPGRADE" Type="65" Source="aicustact.dll" Target="PrepareUpgrade"/>
@@ -748,6 +760,7 @@
     <ROW Action="AI_STORE_LOCATION" Condition="Not Installed" Sequence="1501"/>
     <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1399"/>
     <ROW Action="AI_DetectJRE" Condition="1" Sequence="399" Builds="DefaultBuild"/>
+    <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
@@ -757,6 +770,9 @@
     <ROW Condition="AI_JREVERFOUND = 1" Description="[ProductName] cannot be installed on systems with JRE version smaller than [AI_MINJREVERSION]" DescriptionLocId="AI.LaunchCondition.Jre" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="Version9X OR VersionNT64 OR (VersionNT &gt;= 500 )" Description="[ProductName] cannot be installed on systems earlier than [WindowsTypeNT]" DescriptionLocId="AI.LaunchCondition.NoSpecificNT" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsFamily9X]" DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
+    <ROW FileKey="_" Component_="SHORTCUTDIR" DirProperty="APPDIR" InstallMode="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
     <ROW Shortcut="OpenSCADA_RCP_Client" Directory_="SHORTCUTDIR" Name="OpenSC~1|OpenSCADA RCP Client" Component_="ostc.exe" Target="[#ostc.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
