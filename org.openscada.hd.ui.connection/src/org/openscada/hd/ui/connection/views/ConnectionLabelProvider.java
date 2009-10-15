@@ -50,12 +50,12 @@ public class ConnectionLabelProvider extends ListeningLabelProvider implements P
         else if ( element instanceof ItemListWrapper )
         {
             label.setImage ( this.resource.createImage ( ImageDescriptor.createFromFile ( ConnectionLabelProvider.class, "icons/items.gif" ) ) ); //$NON-NLS-1$
-            label.setText ( Messages.getString ( "ConnectionLabelProvider.items.label" ) ); //$NON-NLS-1$
+            label.setText ( Messages.ConnectionLabelProvider_Items );
         }
         else if ( element instanceof QueryWrapper )
         {
             label.setImage ( this.resource.createImage ( ImageDescriptor.createFromFile ( ConnectionLabelProvider.class, "icons/queries.gif" ) ) ); //$NON-NLS-1$
-            label.setText ( Messages.getString ( "ConnectionLabelProvider.queries.label" ) ); //$NON-NLS-1$
+            label.setText ( Messages.ConnectionLabelProvider_Queries );
         }
         else if ( element instanceof QueryBufferBean )
         {
@@ -73,9 +73,9 @@ public class ConnectionLabelProvider extends ListeningLabelProvider implements P
 
         final StyledString text = new StyledString ();
         text.append ( query.getItemId () );
-        text.append ( " " + getQueryParameterInfo ( query ), StyledString.COUNTER_STYLER );
+        text.append ( " " + getQueryParameterInfo ( query ), StyledString.COUNTER_STYLER ); //$NON-NLS-1$
         final QueryState state = query.getState ();
-        text.append ( " [" + ( state != null ? state : "<unknown>" ) + "]", StyledString.DECORATIONS_STYLER );
+        text.append ( " [" + ( state != null ? state : "<unknown>" ) + "]", StyledString.DECORATIONS_STYLER ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         label.setStyledText ( text );
     }
@@ -90,7 +90,7 @@ public class ConnectionLabelProvider extends ListeningLabelProvider implements P
         }
         else
         {
-            return "";
+            return ""; //$NON-NLS-1$
         }
     }
 
@@ -106,7 +106,7 @@ public class ConnectionLabelProvider extends ListeningLabelProvider implements P
         super.addListenerTo ( next );
         if ( next instanceof QueryBufferBean )
         {
-            logger.debug ( "Adding query: {}", next );
+            logger.debug ( "Adding query: {}", next ); //$NON-NLS-1$
             ( (QueryBufferBean)next ).addPropertyChangeListener ( this );
             fireChangeEvent ( Arrays.asList ( next ) );
         }
@@ -124,7 +124,7 @@ public class ConnectionLabelProvider extends ListeningLabelProvider implements P
 
     public void propertyChange ( final PropertyChangeEvent evt )
     {
-        logger.debug ( "Property change: {}" );
+        logger.debug ( "Property change: {}" ); //$NON-NLS-1$
         fireChangeEvent ( Arrays.asList ( evt.getSource () ) );
     }
 

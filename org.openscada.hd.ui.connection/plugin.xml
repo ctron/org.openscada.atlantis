@@ -115,15 +115,15 @@
          point="org.eclipse.ui.commands">
       <command
             id="org.openscada.hd.ui.connection.command.CreateQuery"
-            name="%command.closeQuery.name">
+            name="%command.createQuery.name">
       </command>
       <command
             id="org.openscada.hd.ui.connection.command.CloseQueries"
-            name="Close Query">
+            name="%command.closeQuery.name">
       </command>
       <command
             id="org.openscada.hd.ui.connection.command.RemoveQueries"
-            name="Remove Query">
+            name="%command.removeQuery.name">
       </command>
    </extension>
    <extension
@@ -132,7 +132,7 @@
             locationURI="popup:org.openscada.core.ui.connection.ConnectionView#PopupMenu">
          <command
                commandId="org.openscada.hd.ui.connection.command.CreateQuery"
-               label="%command.closeQuery.label"
+               label="%command.createQuery.label"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -140,7 +140,7 @@
          </command>
          <command
                commandId="org.openscada.hd.ui.connection.command.CloseQueries"
-               label="Close Query"
+               label="%command.closeQuery.label"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -148,7 +148,7 @@
          </command>
          <command
                commandId="org.openscada.hd.ui.connection.command.RemoveQueries"
-               label="Remove Query"
+               label="%command.removeQuery.label"
                style="push">
             <visibleWhen
                   checkEnabled="true">

@@ -42,17 +42,23 @@ public class ItemListObserver extends WritableSet implements ItemListListener
             getRealm ().asyncExec ( new Runnable () {
                 public void run ()
                 {
-                    handleUpdate ( addedOrModified, removed );
+                    handleUpdate ( addedOrModified, removed, full );
                 }
             } );
         }
     }
 
-    protected void handleUpdate ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed )
+    protected void handleUpdate ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
         setStale ( true );
         try
         {
+            if ( full )
+            {
+                // full transmission ... clear first
+                clear ();
+            }
+
             if ( removed != null )
             {
                 for ( final String itemId : removed )
