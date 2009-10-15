@@ -114,14 +114,17 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            categoryId="org.openscada.hd.ui.category"
             id="org.openscada.hd.ui.connection.command.CreateQuery"
             name="%command.createQuery.name">
       </command>
       <command
+            categoryId="org.openscada.hd.ui.category"
             id="org.openscada.hd.ui.connection.command.CloseQueries"
             name="%command.closeQuery.name">
       </command>
       <command
+            categoryId="org.openscada.hd.ui.category"
             id="org.openscada.hd.ui.connection.command.RemoveQueries"
             name="%command.removeQuery.name">
       </command>

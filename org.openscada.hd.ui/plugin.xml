@@ -150,5 +150,12 @@
          </action>
       </objectContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.openscada.hd.ui.category"
+            name="%category.hd.name">
+      </category>
+   </extension>
 
 </plugin>
