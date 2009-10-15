@@ -33,7 +33,7 @@ import org.osgi.framework.ServiceRegistration;
 
 public class ManagedConnectionServiceFactory implements ConfigurationFactory
 {
-    public static final String CONNECTION_URI = "connectionInformation";
+    public static final String CONNECTION_URI = "connection.uri";
 
     private final static Logger logger = Logger.getLogger ( ManagedConnectionServiceFactory.class );
 
