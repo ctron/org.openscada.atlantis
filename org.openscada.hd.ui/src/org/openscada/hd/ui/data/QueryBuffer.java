@@ -20,17 +20,17 @@ public class QueryBuffer extends AbstractPropertyChange
 {
     private final static Logger logger = LoggerFactory.getLogger ( QueryBuffer.class );
 
-    public static final String PROP_STATE = "state";
+    public static final String PROP_STATE = "state"; //$NON-NLS-1$
 
-    public static final String PROP_QUERY_PARAMETERS = "queryParameters";
+    public static final String PROP_QUERY_PARAMETERS = "queryParameters"; //$NON-NLS-1$
 
-    public static final String PROP_REQUEST_PARAMETERS = "requestParameters";
+    public static final String PROP_REQUEST_PARAMETERS = "requestParameters"; //$NON-NLS-1$
 
-    public static final String PROP_VALUE_TYPES = "valueTypes";
+    public static final String PROP_VALUE_TYPES = "valueTypes"; //$NON-NLS-1$
 
-    public static final String PROP_FILLED = "filled";
+    public static final String PROP_FILLED = "filled"; //$NON-NLS-1$
 
-    public static final String PROP_PERCENT_FILLED = "percentFilled";
+    public static final String PROP_PERCENT_FILLED = "percentFilled"; //$NON-NLS-1$
 
     private final Set<QueryListener> listeners = new HashSet<QueryListener> ();
 
@@ -193,7 +193,7 @@ public class QueryBuffer extends AbstractPropertyChange
 
     private void setValueTypes ( final Set<String> valueTypes )
     {
-        logger.debug ( "Set value types: {}", valueTypes );
+        logger.debug ( "Set value types: {}", valueTypes ); //$NON-NLS-1$
         final Set<String> oldValueTypes = this.valueTypes;
         this.valueTypes = valueTypes;
         firePropertyChange ( PROP_VALUE_TYPES, oldValueTypes, valueTypes );
@@ -208,7 +208,7 @@ public class QueryBuffer extends AbstractPropertyChange
 
     private void setRequestParameters ( final QueryParameters parameters )
     {
-        logger.debug ( "Setting request parameters: {}", parameters );
+        logger.debug ( "Setting request parameters: {}", parameters ); //$NON-NLS-1$
 
         final QueryParameters oldParameters = this.requestParameters;
         this.requestParameters = parameters;
@@ -255,7 +255,7 @@ public class QueryBuffer extends AbstractPropertyChange
 
     public synchronized void changeProperties ( final QueryParameters parameters )
     {
-        logger.info ( "Request parameter change - new: {}, old: {}", new Object[] { parameters, this.requestParameters } );
+        logger.info ( "Request parameter change - new: {}, old: {}", new Object[] { parameters, this.requestParameters } ); //$NON-NLS-1$
 
         if ( !this.requestParameters.equals ( parameters ) )
         {
@@ -264,7 +264,7 @@ public class QueryBuffer extends AbstractPropertyChange
         }
         else
         {
-            logger.info ( "Ignore change request since there is no change" );
+            logger.info ( "Ignore change request since there is no change" ); //$NON-NLS-1$
         }
     }
 
@@ -321,7 +321,7 @@ public class QueryBuffer extends AbstractPropertyChange
 
     private void sendCache ( final QueryListener listener, final int start, final int count )
     {
-        logger.info ( "Sending cache: start:{} - count:{}", new Object[] { start, count } );
+        logger.info ( "Sending cache: start:{} - count:{}", new Object[] { start, count } ); //$NON-NLS-1$
         final ValueInformation[] info = new ValueInformation[count];
         System.arraycopy ( this.valueInformation, start, info, 0, count );
 

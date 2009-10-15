@@ -57,11 +57,11 @@ public class QueryDataView extends QueryViewPart implements QueryListener
         this.table.setHeaderVisible ( true );
 
         this.indexCol = new TableColumn ( this.table, SWT.NONE );
-        this.indexCol.setText ( "Index" );
+        this.indexCol.setText ( Messages.QueryDataView_ColIndex );
         this.indexCol.setWidth ( 50 );
 
         this.qualityCol = new TableColumn ( this.table, SWT.NONE );
-        this.qualityCol.setText ( "Quality" );
+        this.qualityCol.setText ( Messages.QueryDataView_ColQuality );
         this.qualityCol.setWidth ( 75 );
 
         this.invalidColor = JFaceColors.getErrorBackground ( getDisplay () );
@@ -101,13 +101,13 @@ public class QueryDataView extends QueryViewPart implements QueryListener
 
             final double quality = valueInformation[i].getQuality ();
 
-            item.setText ( 0, String.format ( "%s", index + i ) );
-            item.setText ( 1, String.format ( "%g", quality ) );
+            item.setText ( 0, String.format ( Messages.QueryDataView_Format_Index, index + i ) );
+            item.setText ( 1, String.format ( Messages.QueryDataView_Format_Quality, quality ) );
 
             for ( int j = 0; j < this.colNames.length; j++ )
             {
                 final Value[] value = values.get ( this.colNames[j] );
-                item.setText ( j + FIX_COLS, String.format ( "%g", value[i].toDouble () ) );
+                item.setText ( j + FIX_COLS, String.format ( Messages.QueryDataView_Format_Value, value[i].toDouble () ) );
             }
 
             item.setText ( this.colNames.length + FIX_COLS, valueInformation[i].toString () );
@@ -162,7 +162,7 @@ public class QueryDataView extends QueryViewPart implements QueryListener
         }
 
         this.infoCol = new TableColumn ( this.table, SWT.NONE );
-        this.infoCol.setText ( "Info" );
+        this.infoCol.setText ( Messages.QueryDataView_ColInfo );
         this.infoCol.setWidth ( 150 );
 
         this.table.clearAll ();
@@ -172,7 +172,7 @@ public class QueryDataView extends QueryViewPart implements QueryListener
         {
             final TableItem item = this.table.getItem ( i );
             item.setBackground ( this.invalidColor );
-            item.setText ( 0, String.format ( "%d", i ) );
+            item.setText ( 0, String.format ( Messages.QueryDataView_Format_Index, i ) );
         }
     }
 

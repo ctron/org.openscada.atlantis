@@ -93,45 +93,45 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
 
         // query group
         group = new Group ( parent, SWT.NONE );
-        group.setText ( "Query" );
+        group.setText ( Messages.QueryControlView_Group_Query_Text );
         group.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, false ) );
         group.setLayout ( new GridLayout ( 2, false ) );
 
         Label label;
 
         label = new Label ( group, SWT.NONE );
-        label.setText ( "From:" );
+        label.setText ( Messages.QueryControlView_Label_From_Text );
         this.startTimestampText = new Text ( group, SWT.BORDER | SWT.READ_ONLY );
         this.startTimestampText.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
 
         label = new Label ( group, SWT.NONE );
-        label.setText ( "To:" );
+        label.setText ( Messages.QueryControlView_Label_To_Text );
         this.endTimestampText = new Text ( group, SWT.BORDER | SWT.READ_ONLY );
         this.endTimestampText.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
 
         label = new Label ( group, SWT.NONE );
-        label.setText ( "Entries:" );
+        label.setText ( Messages.QueryControlView_Label_Entries_Text );
         this.entriesText = new Text ( group, SWT.BORDER | SWT.READ_ONLY );
         this.entriesText.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
 
         // request group
         group = new Group ( parent, SWT.NONE );
-        group.setText ( "Request" );
+        group.setText ( Messages.QueryControlView_Group_Request_Text );
         group.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, false ) );
         group.setLayout ( new GridLayout ( 2, false ) );
 
         label = new Label ( group, SWT.NONE );
-        label.setText ( "From:" );
+        label.setText ( Messages.QueryControlView_Label_From_Text );
         this.startTimestampRequestText = new Text ( group, SWT.BORDER | SWT.READ_ONLY );
         this.startTimestampRequestText.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
 
         label = new Label ( group, SWT.NONE );
-        label.setText ( "To:" );
+        label.setText ( Messages.QueryControlView_Label_To_Text );
         this.endTimestampRequestText = new Text ( group, SWT.BORDER | SWT.READ_ONLY );
         this.endTimestampRequestText.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
 
         label = new Label ( group, SWT.NONE );
-        label.setText ( "Entries:" );
+        label.setText ( Messages.QueryControlView_Label_Entries_Text );
         this.entriesRequestText = new Text ( group, SWT.BORDER );
         this.entriesRequestText.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
         this.entriesRequestText.addVerifyListener ( new VerifyListener () {
@@ -143,7 +143,7 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
 
                 final String org = QueryControlView.this.entriesRequestText.getText ();
                 text.append ( org );
-                if ( org.equals ( "" ) && e.text.equals ( "" ) )
+                if ( org.equals ( "" ) && e.text.equals ( "" ) ) //$NON-NLS-1$ //$NON-NLS-2$
                 {
                     e.doit = true;
                     return;
@@ -156,7 +156,7 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
                     final String str = text.toString ();
 
                     // empty string is ok
-                    if ( str.equals ( "" ) )
+                    if ( str.equals ( "" ) ) //$NON-NLS-1$
                     {
                         e.doit = true;
                         return;
@@ -185,31 +185,31 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
         compControl1.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, false, 2, 1 ) );
         compControl1.setLayout ( new FillLayout ( SWT.HORIZONTAL ) );
 
-        createControlButton ( compControl1, "<<<", - ( 60 * 60 ), 0 );
-        createControlButton ( compControl1, "<<", - ( 60 * 5 ), 0 );
-        createControlButton ( compControl1, "<", -30, 0 );
+        createControlButton ( compControl1, Messages.QueryControlView_PaneLeft3_Button_Text, - ( 60 * 60 ), 0 );
+        createControlButton ( compControl1, Messages.QueryControlView_PaneLeft2_Button_Text, - ( 60 * 5 ), 0 );
+        createControlButton ( compControl1, Messages.QueryControlView_PaneLeft1_Button_Text, -30, 0 );
 
-        createControlButton ( compControl1, ">", 30, 0 );
-        createControlButton ( compControl1, ">>", 60 * 5, 0 );
-        createControlButton ( compControl1, ">>>", 60 * 60, 0 );
+        createControlButton ( compControl1, Messages.QueryControlView_PaneRight1_Button_Text, 30, 0 );
+        createControlButton ( compControl1, Messages.QueryControlView_PaneRight2_Button_Text, 60 * 5, 0 );
+        createControlButton ( compControl1, Messages.QueryControlView_PaneRight3_Button_Text, 60 * 60, 0 );
 
         final Composite compControl2 = new Composite ( group, SWT.NONE );
         compControl2.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, false, 2, 1 ) );
         compControl2.setLayout ( new FillLayout ( SWT.HORIZONTAL ) );
 
-        createControlButton ( compControl2, "+", 0, 30 );
-        createControlButton ( compControl2, "++", 0, 60 * 5 );
-        createControlButton ( compControl2, "+++", 0, 60 * 60 );
+        createControlButton ( compControl2, Messages.QueryControlView_Add1_Button_Text, 0, 30 );
+        createControlButton ( compControl2, Messages.QueryControlView_Add2_Button_Text, 0, 60 * 5 );
+        createControlButton ( compControl2, Messages.QueryControlView_Add3_Button_Text, 0, 60 * 60 );
 
-        createControlButton ( compControl2, "-", 0, -30 );
-        createControlButton ( compControl2, "--", 0, - ( 60 * 5 ) );
-        createControlButton ( compControl2, "---", 0, - ( 60 * 60 ) );
+        createControlButton ( compControl2, Messages.QueryControlView_Remove1_Button_Text, 0, -30 );
+        createControlButton ( compControl2, Messages.QueryControlView_Remove2_Button_Text, 0, - ( 60 * 5 ) );
+        createControlButton ( compControl2, Messages.QueryControlView_Remove3_Button_Text, 0, - ( 60 * 60 ) );
 
         // action button
 
         this.requestButton = new Button ( group, SWT.BORDER | SWT.PUSH );
         this.requestButton.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, false, 2, 1 ) );
-        this.requestButton.setText ( "Request" );
+        this.requestButton.setText ( Messages.QueryControlView_Request_Button_Text );
         this.requestButton.addSelectionListener ( new SelectionAdapter () {
             @Override
             public void widgetSelected ( final SelectionEvent e )
@@ -283,9 +283,9 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
 
             public void run ()
             {
-                QueryControlView.this.startTimestampRequestText.setText ( String.format ( "%tc", QueryControlView.this.requestParameters.getStartTimestamp () ) );
-                QueryControlView.this.endTimestampRequestText.setText ( String.format ( "%tc", QueryControlView.this.requestParameters.getEndTimestamp () ) );
-                QueryControlView.this.entriesRequestText.setText ( String.format ( "%d", QueryControlView.this.requestParameters.getEntries () ) );
+                QueryControlView.this.startTimestampRequestText.setText ( String.format ( Messages.QueryControlView_Format_Request_Date, QueryControlView.this.requestParameters.getStartTimestamp () ) );
+                QueryControlView.this.endTimestampRequestText.setText ( String.format ( Messages.QueryControlView_Format_Request_Date, QueryControlView.this.requestParameters.getEndTimestamp () ) );
+                QueryControlView.this.entriesRequestText.setText ( String.format ( Messages.QueryControlView_Format_Request_Entries, QueryControlView.this.requestParameters.getEntries () ) );
             }
         } );
     }
@@ -312,14 +312,14 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
         {
             this.query.removePropertyChangeListener ( this );
 
-            this.stateText.setText ( "" );
-            this.startTimestampRequestText.setText ( "" );
-            this.endTimestampRequestText.setText ( "" );
-            this.entriesRequestText.setText ( "" );
+            this.stateText.setText ( Messages.QueryControlView_EmptyString );
+            this.startTimestampRequestText.setText ( Messages.QueryControlView_EmptyString );
+            this.endTimestampRequestText.setText ( Messages.QueryControlView_EmptyString );
+            this.entriesRequestText.setText ( Messages.QueryControlView_EmptyString );
 
-            this.startTimestampText.setText ( "" );
-            this.endTimestampText.setText ( "" );
-            this.entriesText.setText ( "" );
+            this.startTimestampText.setText ( Messages.QueryControlView_EmptyString );
+            this.endTimestampText.setText ( Messages.QueryControlView_EmptyString );
+            this.entriesText.setText ( Messages.QueryControlView_EmptyString );
 
             for ( final Control control : this.controls )
             {
@@ -346,9 +346,9 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
 
             public void run ()
             {
-                QueryControlView.this.startTimestampText.setText ( String.format ( "%tc", parameters.getStartTimestamp () ) );
-                QueryControlView.this.endTimestampText.setText ( String.format ( "%tc", parameters.getEndTimestamp () ) );
-                QueryControlView.this.entriesText.setText ( String.format ( "%d", parameters.getEntries () ) );
+                QueryControlView.this.startTimestampText.setText ( String.format ( Messages.QueryControlView_Format_Query_Date, parameters.getStartTimestamp () ) );
+                QueryControlView.this.endTimestampText.setText ( String.format ( Messages.QueryControlView_Format_Query_Date, parameters.getEndTimestamp () ) );
+                QueryControlView.this.entriesText.setText ( String.format ( Messages.QueryControlView_Format_Query_Entries, parameters.getEntries () ) );
             }
         } );
     }
@@ -365,13 +365,13 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
 
     private void setState ( final QueryState state, final double percentFilled )
     {
-        logger.info ( "Update state: {} / {}", state, percentFilled );
+        logger.info ( "Update state: {} / {}", state, percentFilled ); //$NON-NLS-1$
 
         getDisplay ().asyncExec ( new Runnable () {
 
             public void run ()
             {
-                QueryControlView.this.stateText.setText ( String.format ( "%s (%.2f%%)", state.toString (), 100.0 * percentFilled ) );
+                QueryControlView.this.stateText.setText ( String.format ( Messages.QueryControlView_Format_StateString, state.toString (), 100.0 * percentFilled ) );
             }
         } );
     }
@@ -384,7 +384,7 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
         }
         else if ( QueryBuffer.PROP_REQUEST_PARAMETERS.equals ( evt.getPropertyName () ) )
         {
-            logger.info ( "Request set using property change: {}", this.query.getRequestParameters () );
+            logger.info ( "Request set using property change: {}", this.query.getRequestParameters () ); //$NON-NLS-1$
             this.requestParameters = this.query.getRequestParameters ();
             updateRequestParameters ();
         }

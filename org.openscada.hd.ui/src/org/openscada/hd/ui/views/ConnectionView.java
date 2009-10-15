@@ -54,8 +54,8 @@ public class ConnectionView extends ViewPart
         this.viewer.setContentProvider ( contentProvider );
 
         this.viewer.setLabelProvider ( new LabelProvider ( //
-        BeansObservables.observeMap ( contentProvider.getKnownElements (), "connection" ), //
-        BeansObservables.observeMap ( contentProvider.getKnownElements (), "connectionStatus" ), //
+        BeansObservables.observeMap ( contentProvider.getKnownElements (), "connection" ), // //$NON-NLS-1$
+        BeansObservables.observeMap ( contentProvider.getKnownElements (), "connectionStatus" ), // //$NON-NLS-1$
         BeansObservables.observeMap ( contentProvider.getKnownElements (), QueryBufferBean.PROP_QUERY_PARAMETERS ), //
         BeansObservables.observeMap ( contentProvider.getKnownElements (), QueryBufferBean.PROP_STATE ) // 
         ) );
@@ -74,7 +74,7 @@ public class ConnectionView extends ViewPart
 
     private void hookContextMenu ()
     {
-        final MenuManager menuMgr = new MenuManager ( "#PopupMenu" );
+        final MenuManager menuMgr = new MenuManager ( "#PopupMenu" ); //$NON-NLS-1$
         menuMgr.setRemoveAllWhenShown ( true );
         menuMgr.addMenuListener ( new IMenuListener () {
             public void menuAboutToShow ( final IMenuManager manager )

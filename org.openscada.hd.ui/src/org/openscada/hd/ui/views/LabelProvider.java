@@ -64,7 +64,7 @@ final class LabelProvider extends StyledCellLabelProvider
             text.append ( entry.getConnectionInformation ().toString () );
             if ( entry.getConnectionStatus () != null )
             {
-                text.append ( " [" + entry.getConnectionStatus ().toString () + "]", StyledString.DECORATIONS_STYLER );
+                text.append ( Messages.LabelProvider_0 + entry.getConnectionStatus ().toString () + Messages.LabelProvider_1, StyledString.DECORATIONS_STYLER );
             }
 
             cell.setText ( text.getString () );
@@ -81,9 +81,9 @@ final class LabelProvider extends StyledCellLabelProvider
             final StyledString text = new StyledString ();
 
             text.append ( query.getItem ().getId () );
-            text.append ( " " + getQueryParameterInfo ( query ), StyledString.COUNTER_STYLER );
+            text.append ( Messages.LabelProvider_2 + getQueryParameterInfo ( query ), StyledString.COUNTER_STYLER );
             final QueryState state = query.getState ();
-            text.append ( " [" + ( state != null ? state : "<unknown>" ) + "]", StyledString.DECORATIONS_STYLER );
+            text.append ( Messages.LabelProvider_3 + ( state != null ? state : Messages.LabelProvider_4 ) + Messages.LabelProvider_5, StyledString.DECORATIONS_STYLER );
 
             // set text info
             cell.setText ( text.getString () );
@@ -107,7 +107,7 @@ final class LabelProvider extends StyledCellLabelProvider
         }
         else
         {
-            return "";
+            return ""; //$NON-NLS-1$
         }
     }
 }

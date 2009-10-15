@@ -20,9 +20,9 @@ import org.openscada.utils.beans.AbstractPropertyChange;
 public class ConnectionEntryBean extends AbstractPropertyChange implements ConnectionStateListener, IActionFilter, ItemListListener
 {
 
-    public static final String PROP_CONNECTION = "connection";
+    public static final String PROP_CONNECTION = "connection"; //$NON-NLS-1$
 
-    private static final String PROP_CONNECTION_STATUS = "connectionStatus";
+    private static final String PROP_CONNECTION_STATUS = "connectionStatus"; //$NON-NLS-1$
 
     private Connection connection;
 
@@ -90,7 +90,7 @@ public class ConnectionEntryBean extends AbstractPropertyChange implements Conne
 
     public boolean testAttribute ( final Object target, final String name, final String value )
     {
-        if ( "hasConnection".equals ( name ) )
+        if ( "hasConnection".equals ( name ) ) //$NON-NLS-1$
         {
             return this.connection != null == Boolean.parseBoolean ( value );
         }
