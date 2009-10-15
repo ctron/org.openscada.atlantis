@@ -8,7 +8,7 @@
             allowMultiple="false"
             class="org.openscada.core.ui.connection.views.ConnectionView"
             id="org.openscada.core.ui.connection.ConnectionView"
-            name="Connections"
+            name="%view.connections.name"
             restorable="true">
       </view>
    </extension>
@@ -48,7 +48,7 @@
             contentProvider="org.openscada.core.ui.connection.views.ConnectionContentProvider"
             id="org.openscada.core.ui.connection.provider"
             labelProvider="org.openscada.core.ui.connection.views.ConnectionLabelProvider"
-            name="Connection Provider"
+            name="%navigatorContent.coreConnection.name"
             priority="normal"
             providesSaveables="false">
          <triggerPoints>
@@ -79,7 +79,7 @@
             class="org.openscada.core.ui.connection.wizards.AddConnectionWizard"
             hasPages="true"
             id="org.openscada.core.ui.connection.AddConnection"
-            name="Add Connection"
+            name="%wizard.addConnection.name"
             project="false">
          <selection
                class="org.openscada.core.ui.connection.ConnectionStore">
@@ -92,7 +92,7 @@
             locationURI="popup:org.openscada.core.ui.connection.ConnectionView#PopupMenu">
          <command
                commandId="org.openscada.core.ui.connection.command.OpenConnection"
-               label="Connect"
+               label="%command.openConnection.label"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -113,7 +113,7 @@
          </command>
          <command
                commandId="org.openscada.core.ui.connection.command.CloseConnection"
-               label="Disconnect"
+               label="%command.closeConnection.label"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -134,7 +134,7 @@
          </command>
          <command
                commandId="org.openscada.core.ui.connection.command.DeleteConnection"
-               label="Delete"
+               label="%command.deleteConnection.label"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -155,7 +155,7 @@
          </command>
          <command
                commandId="org.eclipse.ui.newWizard"
-               label="New Connection"
+               label="%command.newConnection.label"
                style="push">
             <parameter
                   name="newWizardId"
@@ -179,15 +179,15 @@
          point="org.eclipse.ui.commands">
       <command
             id="org.openscada.core.ui.connection.command.OpenConnection"
-            name="Open Connection">
+            name="%command.openConnection.name">
       </command>
       <command
             id="org.openscada.core.ui.connection.command.CloseConnection"
-            name="Close Connection">
+            name="%command.closeConnection.name">
       </command>
       <command
             id="org.openscada.core.ui.connection.command.DeleteConnection"
-            name="Delete">
+            name="%command.deleteConnection.name">
       </command>
    </extension>
    <extension
