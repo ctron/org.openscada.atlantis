@@ -16,6 +16,10 @@ import org.osgi.framework.ServiceRegistration;
 
 public class MasterFactory implements ConfigurationFactory
 {
+    public static final String ITEM_ID = "item.id";
+
+    public static final String CONNECTION_ID = "connection.id";
+
     private final static Logger logger = Logger.getLogger ( MasterFactory.class );
 
     private final BundleContext context;
@@ -52,15 +56,15 @@ public class MasterFactory implements ConfigurationFactory
             else
             {
                 // create
-                final String connectionId = properties.get ( "connectionId" );
-                final String itemId = properties.get ( "itemId" );
+                final String connectionId = properties.get ( CONNECTION_ID );
+                final String itemId = properties.get ( ITEM_ID );
                 if ( connectionId == null )
                 {
-                    throw new IllegalArgumentException ( "'connectionId' must not be null" );
+                    throw new IllegalArgumentException ( String.format ( "'%s' must not be null", CONNECTION_ID ) );
                 }
                 if ( itemId == null )
                 {
-                    throw new IllegalArgumentException ( "'itemId' must not be null" );
+                    throw new IllegalArgumentException ( String.format ( "'%s' must not be null", ITEM_ID ) );
                 }
                 createMaster ( id, connectionId, itemId );
             }
@@ -79,8 +83,8 @@ public class MasterFactory implements ConfigurationFactory
             properties.put ( Constants.SERVICE_PID, id );
             properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Master Data Item" );
-            properties.put ( "connection.id", connectionId );
-            properties.put ( "item.id", itemId );
+            properties.put ( CONNECTION_ID, connectionId );
+            properties.put ( ITEM_ID, itemId );
 
             logger.debug ( "Registering " + id );
 
