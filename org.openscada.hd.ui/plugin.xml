@@ -6,7 +6,7 @@
       <perspective
             class="org.openscada.hd.ui.perspectives.PerspectiveFactory"
             id="org.openscada.hd.ui.perspective"
-            name="HD">
+            name="%perspective.hd.name">
       </perspective>
    </extension>
    <extension
@@ -65,19 +65,19 @@
             class="org.openscada.hd.ui.views.ConnectionView"
             fastViewWidthRatio="0.25"
             id="org.openscada.hd.ui.ConnectionView"
-            name="Connections"
+            name="%view.connections.name"
             restorable="true">
       </view>
       <category
             id="org.openscada.hd.ui.category"
-            name="Historical Data">
+            name="%category.hd.name">
       </category>
       <view
             allowMultiple="false"
             category="org.openscada.hd.ui.category"
             class="org.openscada.hd.ui.views.QueryControlView"
             id="org.openscada.hd.ui.QueryControlView"
-            name="Query Control"
+            name="%view.queryControl.name"
             restorable="true">
       </view>
       <view
@@ -85,7 +85,7 @@
             category="org.openscada.hd.ui.category"
             class="org.openscada.hd.ui.views.QueryDataView"
             id="org.openscada.hd.ui.QueryDataView"
-            name="Query Data View"
+            name="%view.queryData.name"
             restorable="true">
       </view>
       <view
@@ -93,7 +93,7 @@
             category="org.openscada.hd.ui.category"
             class="org.openscada.hd.ui.views.TrendView"
             id="org.openscada.hd.ui.TrendView"
-            name="Trend View"
+            name="%view.trendView.name"
             restorable="true">
       </view>
    </extension>
@@ -107,14 +107,14 @@
                class="org.openscada.hd.ui.actions.DisconnectAction"
                enablesFor="1"
                id="org.openscada.hd.ui.DisconnectAction"
-               label="Disconnect"
+               label="%action.disconnect.label"
                menubarPath="additions">
          </action>
          <action
                class="org.openscada.hd.ui.actions.ConnectAction"
                enablesFor="1"
                id="org.openscada.hd.ui.ConnectAction"
-               label="Connect"
+               label="%action.connect.label"
                menubarPath="additions">
          </action>
       </objectContribution>
@@ -126,7 +126,7 @@
                class="org.openscada.hd.ui.actions.CreateQueryAction"
                enablesFor="1"
                id="org.openscada.hd.ui.CreateQueryAction"
-               label="Create Query"
+               label="%action.createQuery.label"
                menubarPath="additions">
          </action>
       </objectContribution>
@@ -138,14 +138,14 @@
                class="org.openscada.hd.ui.actions.CloseQuery"
                enablesFor="1"
                id="org.openscada.hd.ui.CloseQueryAction"
-               label="Close"
+               label="%action.closeQuery.label"
                menubarPath="additions">
          </action>
          <action
                class="org.openscada.hd.ui.actions.RemoveQuery"
                enablesFor="1"
                id="org.openscada.hd.ui.RemoveQueryAction"
-               label="Remove"
+               label="%action.removeQuery.label"
                menubarPath="additions">
          </action>
       </objectContribution>
