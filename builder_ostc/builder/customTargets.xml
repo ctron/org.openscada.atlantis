@@ -116,6 +116,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.core.ui.connection.discoverer.osgi" />
 
   	<openscada.builder.copyFeature id="org.openscada.da.client.test" />
+  	<openscada.builder.copyPlugin id="org.openscada.da.ui"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.base"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.chart"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.connection.manager.view"/>
