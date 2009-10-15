@@ -1,5 +1,7 @@
 package org.openscada.core.ui.connection.data;
 
+import java.util.UUID;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
@@ -50,7 +52,7 @@ public class ConnectionHolder extends AbstractPropertyChange implements Connecti
 
         this.context = Activator.getDefault ().getBundle ().getBundleContext ();
 
-        this.request = new ConnectionRequest ( null, info, null, true, false );
+        this.request = new ConnectionRequest ( UUID.randomUUID ().toString (), info, null, true, false );
 
         this.tracker = new ConnectionTracker ( this.context, this.request, new Listener () {
 
