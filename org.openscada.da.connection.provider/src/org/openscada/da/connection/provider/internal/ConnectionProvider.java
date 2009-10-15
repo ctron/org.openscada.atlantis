@@ -15,7 +15,7 @@ public class ConnectionProvider extends AbstractConnectionProvider
     @Override
     protected AbstractConnectionManager createConnectionManager ( final ConnectionRequest request )
     {
-        return new ConnectionManager ( this.context, null, request.getConnectionInformation (), request.getAutoReconnectDelay (), request.isInitialOpen () );
+        return new ConnectionManager ( this.context, request.getRequestId (), request.getConnectionInformation (), request.getAutoReconnectDelay (), request.isInitialOpen () );
     }
 
 }

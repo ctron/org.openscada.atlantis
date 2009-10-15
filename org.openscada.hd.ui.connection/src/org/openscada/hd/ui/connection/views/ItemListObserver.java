@@ -50,6 +50,11 @@ public class ItemListObserver extends WritableSet implements ItemListListener
 
     protected void handleUpdate ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
+        if ( isDisposed () )
+        {
+            return;
+        }
+
         setStale ( true );
         try
         {
