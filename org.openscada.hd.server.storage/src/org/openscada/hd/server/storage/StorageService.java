@@ -1,5 +1,6 @@
 package org.openscada.hd.server.storage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -81,7 +82,13 @@ public class StorageService implements SelfManagedConfigurationFactory
         this.shiServices = new HashMap<String, ShiService> ();
         this.backEndMap = new HashMap<String, List<BackEnd>> ();
         final String rootFolder = System.getProperty ( FILE_FRAGMENTS_ROOT_FOLDER_SYSTEM_PROPERTY );
-        this.backEndFactory = new FileBackEndFactory ( rootFolder != null ? rootFolder : bundleContext.getDataFile ( "" ).getPath () );
+        final File root = rootFolder != null ? new File ( rootFolder ) : bundleContext.getDataFile ( "" );
+        final String rootPath = root.getPath ();
+        if ( !root.exists () && !root.mkdirs () )
+        {
+            logger.error ( String.format ( "could not create root folder for data storage (%s)", rootPath ) );
+        }
+        this.backEndFactory = new FileBackEndFactory ( rootPath );
         this.configurationListeners = new LinkedList<ConfigurationListener> ();
     }
 
