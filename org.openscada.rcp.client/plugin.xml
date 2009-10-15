@@ -26,10 +26,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.openscada.rcp.client.application"
-            name="OpenSCADA Test Client">
+            name="OpenSCADA RCP Client">
          <property
                name="aboutImage"
-               value="about.png"/>
+               value="branding/about.png"/>
          <property
                name="aboutText"
                value="%aboutText"/>
@@ -41,13 +41,13 @@
                value="Welcome to the OpenSCADA Test Client"/>
          <property
                name="introBrandingImage"
-               value="product:about.png"/>
+               value="product:branding/about.png"/>
          <property
        	       name="introBrandingImageText"
                value="OpenSCADA Project"/>
          <property
                name="appName"
-               value="OpenSCADA Test Client">
+               value="OpenSCADA RCP Client">
          </property>
          <property
                name="startupForegroundColor"
