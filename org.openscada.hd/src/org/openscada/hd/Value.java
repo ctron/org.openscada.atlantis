@@ -22,7 +22,7 @@ package org.openscada.hd;
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
-public class Value
+public final class Value
 {
     private final Long longValue;
 
@@ -87,5 +87,56 @@ public class Value
         {
             return String.format ( "%s", this.longValue );
         }
+    }
+
+    @Override
+    public int hashCode ()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( this.doubleValue == null ? 0 : this.doubleValue.hashCode () );
+        result = prime * result + ( this.longValue == null ? 0 : this.longValue.hashCode () );
+        return result;
+    }
+
+    @Override
+    public boolean equals ( final Object obj )
+    {
+        if ( this == obj )
+        {
+            return true;
+        }
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( getClass () != obj.getClass () )
+        {
+            return false;
+        }
+        final Value other = (Value)obj;
+        if ( this.doubleValue == null )
+        {
+            if ( other.doubleValue != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.doubleValue.equals ( other.doubleValue ) )
+        {
+            return false;
+        }
+        if ( this.longValue == null )
+        {
+            if ( other.longValue != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.longValue.equals ( other.longValue ) )
+        {
+            return false;
+        }
+        return true;
     }
 }

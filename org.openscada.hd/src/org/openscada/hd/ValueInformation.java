@@ -24,7 +24,7 @@ import java.util.Calendar;
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
-public class ValueInformation
+public final class ValueInformation
 {
     /**
      * The percent count (from 0.0 to 1.0) of valid values
@@ -56,12 +56,12 @@ public class ValueInformation
 
     public Calendar getStartTimestamp ()
     {
-        return this.startTimestamp;
+        return (Calendar)this.startTimestamp.clone ();
     }
 
     public Calendar getEndTimestamp ()
     {
-        return this.endTimestamp;
+        return (Calendar)this.endTimestamp.clone ();
     }
 
     public long getSourceValues ()
@@ -73,6 +73,69 @@ public class ValueInformation
     public String toString ()
     {
         return String.format ( "%tc -> %tc (quality: %s, source values: %s)", this.startTimestamp, this.endTimestamp, this.quality, this.sourceValues );
+    }
+
+    @Override
+    public int hashCode ()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( this.endTimestamp == null ? 0 : this.endTimestamp.hashCode () );
+        long temp;
+        temp = Double.doubleToLongBits ( this.quality );
+        result = prime * result + (int) ( temp ^ temp >>> 32 );
+        result = prime * result + (int) ( this.sourceValues ^ this.sourceValues >>> 32 );
+        result = prime * result + ( this.startTimestamp == null ? 0 : this.startTimestamp.hashCode () );
+        return result;
+    }
+
+    @Override
+    public boolean equals ( final Object obj )
+    {
+        if ( this == obj )
+        {
+            return true;
+        }
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( getClass () != obj.getClass () )
+        {
+            return false;
+        }
+        final ValueInformation other = (ValueInformation)obj;
+        if ( this.endTimestamp == null )
+        {
+            if ( other.endTimestamp != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.endTimestamp.equals ( other.endTimestamp ) )
+        {
+            return false;
+        }
+        if ( Double.doubleToLongBits ( this.quality ) != Double.doubleToLongBits ( other.quality ) )
+        {
+            return false;
+        }
+        if ( this.sourceValues != other.sourceValues )
+        {
+            return false;
+        }
+        if ( this.startTimestamp == null )
+        {
+            if ( other.startTimestamp != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.startTimestamp.equals ( other.startTimestamp ) )
+        {
+            return false;
+        }
+        return true;
     }
 
 }
