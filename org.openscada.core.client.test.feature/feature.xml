@@ -3,7 +3,8 @@
       id="org.openscada.core.client.test"
       label="OpenSCADA Core Test Client Feature"
       version="0.14.0.qualifier"
-      provider-name="inavare GmbH">
+      provider-name="inavare GmbH"
+      plugin="org.openscada.core.ui">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]

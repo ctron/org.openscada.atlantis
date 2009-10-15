@@ -79,6 +79,12 @@
          <newWizardShortcut id="org.openscada.da.client.test.newWizards.NewWatch"/>
          <viewShortcut id="org.openscada.da.test.views.RealTimeList"/>
       </perspectiveExtension>
+      <perspectiveExtension
+            targetID="*">
+         <perspectiveShortcut
+               id="org.openscada.da.client.test.perspective">
+         </perspectiveShortcut>
+      </perspectiveExtension>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -298,7 +304,7 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
-            category="org.openscada.da.category"
+            category="org.openscada.da.ui.category"
             class="org.openscada.da.client.test.wizards.NewHiveWizard"
             descriptionImage="icons/32x32/stock_channel.png"
             hasPages="true"
@@ -308,7 +314,7 @@
             project="false">
       </wizard>
       <wizard
-            category="org.openscada.da.client.test"
+            category="org.openscada.da.ui.category"
             class="org.openscada.da.client.test.wizards.NewWatchWizard"
             descriptionImage="icons/32x32/stock_channel.png"
             hasPages="true"
@@ -317,23 +323,6 @@
             name="New Watch"
             project="false">
       </wizard>
-      <category
-            id="org.openscada.da.client.test"
-            name="OpenSCADA DA Testing"
-            parentCategory="org.openscada.da.category"/>
-   </extension>
-   <extension
-         point="org.eclipse.ui.propertyPages">
-      <page
-            class="org.openscada.da.client.test.pages.DataItemEntryPage"
-            id="org.openscada.da.client.test.propertyPages.DataItemEntryPage"
-            name="Data Item">
-         <enabledWhen>
-            <instanceof
-                  value="org.openscada.da.client.base.browser.DataItemEntry">
-            </instanceof>
-         </enabledWhen>
-      </page>
    </extension>
    <extension
          point="org.eclipse.ui.menus">

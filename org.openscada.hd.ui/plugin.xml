@@ -157,5 +157,12 @@
             name="%category.hd.name">
       </category>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.openscada.hd.ui.category"
+            name="%category.hd.name">
+      </category>
+   </extension>
 
 </plugin>

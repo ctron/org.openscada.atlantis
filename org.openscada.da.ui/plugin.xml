@@ -15,5 +15,12 @@
             name="%category.da.name">
       </category>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.openscada.da.ui.category"
+            name="%category.da.name">
+      </category>
+   </extension>
 
 </plugin>

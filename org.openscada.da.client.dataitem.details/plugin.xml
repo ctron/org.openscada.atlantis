@@ -6,6 +6,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="true"
+            category="org.openscada.da.ui.category"
             class="org.openscada.da.client.dataitem.details.DetailsViewPart"
             id="org.openscada.da.client.dataitem.details.DetailsViewPart"
             name="%view.dataItemDetails.name"

@@ -8,6 +8,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="true"
+            category="org.openscada.da.ui.category"
             class="org.openscada.da.client.chart.view.ChartView2"
             id="org.openscada.da.client.chart.ChartView"
             name="%view.chartView.name"/>
