@@ -33,6 +33,8 @@ import org.osgi.framework.ServiceRegistration;
 
 public class ManagedConnectionServiceFactory implements ConfigurationFactory
 {
+    public static final String CONNECTION_URI = "connectionInformation";
+
     private final static Logger logger = Logger.getLogger ( ManagedConnectionServiceFactory.class );
 
     private final Map<String, ConnectionManager> connections = new HashMap<String, ConnectionManager> ();
@@ -72,16 +74,11 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
     {
         logger.info ( String.format ( "Update request: %s (%s)", pid, properties ) ); //$NON-NLS-1$
 
-        final String connectionId = properties.get ( "id" ); //$NON-NLS-1$
-        final String uri = properties.get ( "connectionInformation" ); //$NON-NLS-1$
+        final String uri = properties.get ( CONNECTION_URI );
 
-        if ( connectionId == null )
-        {
-            throw new RuntimeException ( "'id' not set" );
-        }
         if ( uri == null )
         {
-            throw new RuntimeException ( "'connectionInformation' is not set" ); //$NON-NLS-1$
+            throw new RuntimeException ( String.format ( "'%s' is not set", CONNECTION_URI ) ); //$NON-NLS-1$
         }
 
         synchronized ( this )
@@ -90,8 +87,8 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
             if ( manager == null )
             {
                 // create
-                final ConnectionManager newManager = new ConnectionManager ( this.context, connectionId, ConnectionInformation.fromURI ( uri ) );
-                publishConnection ( pid, connectionId, newManager );
+                final ConnectionManager newManager = new ConnectionManager ( this.context, pid, ConnectionInformation.fromURI ( uri ) );
+                publishConnection ( pid, newManager );
             }
             else
             {
@@ -101,10 +98,10 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
         }
     }
 
-    private void publishConnection ( final String pid, final String connectionId, final ConnectionManager manager )
+    private void publishConnection ( final String pid, final ConnectionManager manager )
     {
         final Dictionary<String, String> regProperties = new Hashtable<String, String> ();
-        regProperties.put ( Constants.SERVICE_PID, connectionId );
+        regProperties.put ( Constants.SERVICE_PID, pid );
         final ServiceRegistration reg = this.context.registerService ( ConnectionManager.class.getName (), manager, regProperties );
         this.connectionsRegs.put ( pid, reg );
 
