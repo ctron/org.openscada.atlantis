@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="OpenSCADA Test Client" uid="org.openscada.testclient" id="org.openscada.rcp.client.product" application="org.openscada.rcp.client.application" version="0.14.0" useFeatures="true" includeLaunchers="true">
+<product name="OpenSCADA RCP Client" uid="org.openscada.testclient" id="org.openscada.rcp.client.product" application="org.openscada.rcp.client.application" version="0.14.0" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="about.png"/>
+      <image path="branding/about.png"/>
       <text>
          %aboutText
       </text>
@@ -39,6 +39,7 @@
 
    <vm>
    </vm>
+
 
    <plugins>
    </plugins>
