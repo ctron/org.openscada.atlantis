@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DOCUMENT type="Advanced Installer" CreateVersion="7.2.1" version="7.2.1" modules="update" RootPath="." Language="en">
+  <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
+    <ROW Path="&lt;AI_DICTS&gt;aiu-ue.ail"/>
+    <ROW Path="&lt;AI_DICTS&gt;aiu-ue_en.ail"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.UpdaterEditorComponent">
+    <ROW Section="Update 0.14.0" Key="Name" Value="OpenSCADA RCP Client"/>
+    <ROW Section="Update 0.14.0" Key="URL" Value="http://download.openscada.org/ostc/R/0.14.0/ostc/ostc_0.14.0_win32.win32.x86.msi"/>
+    <ROW Section="Update 0.14.0" Key="Size" Value="build.win32.win32.x86\ostc_0.14.0_win32.win32.x86.msi"/>
+    <ROW Section="Update 0.14.0" Key="ReleaseDate" Value="15183"/>
+    <ROW Section="Update 0.14.0" Key="MD5" Value="build.win32.win32.x86\ostc_0.14.0_win32.win32.x86.msi"/>
+    <ROW Section="Update 0.14.0" Key="ServerFileName" Value="ostc_0.14.0_win32.win32.x86.msi"/>
+    <ROW Section="Update 0.14.0" Key="FilePath" Value="[APPDIR]ostc.exe"/>
+    <ROW Section="Update 0.14.0" Key="Version" Value="0.14.0"/>
+    <ROW Section="Update 0.14.0" Key="Description" Value="Initial release of the MSI based installer."/>
+    <ROW Section="Update 0.14.0" Key="AutoCloseApplication" Value="[APPDIR]ostc.exe"/>
+    <ATTRIBUTE name="UEPath" value="ostc_updates.win32.win32.x86.txt"/>
+  </COMPONENT>
+</DOCUMENT>
