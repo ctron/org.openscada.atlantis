@@ -172,7 +172,7 @@ public class StorageService implements SelfManagedConfigurationFactory
                     break;
                 }
             }
-            storageChannels[i] = new CalculatingStorageChannel ( new ExtendedStorageChannelAdapter ( backEnd ), superBackEndIndex >= 0 ? storageChannels[superBackEndIndex] : null, Conversions.getCalculationLogicProvider ( backEnd.getMetaData () ) );
+            storageChannels[i] = new CalculatingStorageChannel ( new ExtendedStorageChannelAdapter ( backEnd ), superBackEndIndex >= 0 ? storageChannels[superBackEndIndex] : null, Conversions.getCalculationLogicProvider ( backEnd.getMetaData (), CalculationMethod.NATIVE ) );
             service.addStorageChannel ( storageChannels[i] );
         }
         this.shiServices.put ( configuration.getId (), service );
@@ -356,7 +356,6 @@ public class StorageService implements SelfManagedConfigurationFactory
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0, "1m" );
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "1h" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1s" );
-            properties.put ( Conversions.CALCULATION_METHODS, "AVG,MIN,MAX" );
             properties.put ( Conversions.MAX_COMPRESSION_LEVEL, "1" );
             properties.put ( Conversions.DATA_TYPE_KEY, "DV" );
         }

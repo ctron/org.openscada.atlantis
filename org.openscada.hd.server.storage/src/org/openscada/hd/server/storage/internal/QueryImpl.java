@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.concurrent.FutureTask;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
@@ -61,7 +60,22 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     private boolean updateRequired;
 
     /** Task that will calculate the result. */
-    private FutureTask<Object> futureTask;
+    private Thread futureTask;
+
+    /** Maximum availavle compression level. */
+    private final long maximumCompressionLevel;
+
+    /** Current compression level. */
+    private long currentCompressionLevel;
+
+    /** Parameters that were last time sent via the listener. */
+    private QueryParameters lastParameters;
+
+    /** Array of value information that was last time sent via the listener. */
+    private ValueInformation[] lastValueInformations;
+
+    /** Set of calculation methods that were last time sent via the listener. */
+    private Map<String, Value[]> lastData;
 
     /**
      * Constructor.
@@ -76,6 +90,11 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         this.listener = listener;
         this.parameters = parameters;
         this.updateDataPeriodically = updateData;
+        lastParameters = null;
+        lastValueInformations = null;
+        lastData = null;
+        maximumCompressionLevel = service.getMaximumCompressionLevel ();
+        currentCompressionLevel = maximumCompressionLevel;
         this.closed = ( service == null ) || ( listener == null ) || ( parameters == null );
         if ( closed )
         {
@@ -99,7 +118,9 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     {
         if ( !closed && updateRequired && ( futureTask == null ) )
         {
-            futureTask = new FutureTask<Object> ( this, null );
+            updateRequired = false;
+            futureTask = new Thread ( this );
+            futureTask.start ();
         }
     }
 
@@ -111,8 +132,14 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         try
         {
             QueryParameters parameters = null;
+            long currentCompressionLevel = maximumCompressionLevel;
             synchronized ( this )
             {
+                currentCompressionLevel = this.currentCompressionLevel;
+                if ( currentCompressionLevel == maximumCompressionLevel )
+                {
+                    this.currentCompressionLevel--;
+                }
                 parameters = this.parameters;
             }
             final long requestedEntries = parameters.getEntries ();
@@ -122,45 +149,41 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
             }
             else
             {
-                // set the state to loading
-                listener.updateState ( QueryState.LOADING );
-
                 // retrieve data of level that is suitable for the requested time span
                 final long startTime = parameters.getStartTimestamp ().getTimeInMillis ();
                 final long endTime = parameters.getEndTimestamp ().getTimeInMillis ();
                 final long requestedTimeSpan = endTime - startTime;
                 final double requestedValueFrequency = (double)requestedTimeSpan / requestedEntries;
-                final long optimalResultColumnCount = Math.max ( 1, requestedTimeSpan / requestedEntries );
-                double currentTimeOffsetAsDouble = startTime;
-                long currentTimeOffsetAsLong = startTime;
-                long currentCompressionLevel = Long.MAX_VALUE;
-                long currentResultColumnCount = Long.MIN_VALUE;
                 do
                 {
-                    final Map<StorageChannelMetaData, BaseValue[]> availableChannels = service.getValues ( currentCompressionLevel, startTime, endTime );
+                    boolean metaInformationCalculated = false;
+                    final Map<StorageChannelMetaData, BaseValue[]> availableChannels = service.getValues ( service.getMaximumCompressionLevel (), startTime, endTime );
                     final Map<String, Value[]> resultMap = new HashMap<String, Value[]> ();
-                    final Set<String> calculationMethods = new HashSet<String> ();
+                    long currentResultColumnCount = Long.MIN_VALUE;
                     if ( !availableChannels.isEmpty () )
                     {
-                        boolean metaInformationCalculated = false;
                         ValueInformation[] resultValueInformationArray = null;
                         // get raw storage channel data from service
                         for ( Entry<StorageChannelMetaData, BaseValue[]> entry : availableChannels.entrySet () )
                         {
                             // get current compression level
                             final StorageChannelMetaData metaData = entry.getKey ();
-                            CalculationLogicProvider calculationLogicProvider = Conversions.getCalculationLogicProvider ( metaData );
+                            CalculationLogicProvider calculationLogicProvider = Conversions.getCalculationLogicProvider ( metaData, CalculationMethod.AVERAGE );
                             final BaseValue[] values = entry.getValue ();
                             currentCompressionLevel = Math.min ( currentCompressionLevel, metaData.getDetailLevelId () );
                             currentResultColumnCount = Math.max ( currentResultColumnCount, values.length );
                             final List<BaseValue> resultValues = new ArrayList<BaseValue> ();
-                            while ( currentTimeOffsetAsLong < endTime )
+                            long currentTimeOffsetAsLong = startTime;
+                            if ( values.length > 0 )
                             {
-                                currentTimeOffsetAsDouble += requestedValueFrequency;
-                                final BaseValue[] filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, Math.max ( currentTimeOffsetAsLong + 1, (long)currentTimeOffsetAsDouble ), values instanceof LongValue[] ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
-                                final BaseValue[] normalizedValues = calculationLogicProvider.generateValues ( filledValues );
-                                resultValues.addAll ( Arrays.asList ( normalizedValues ) );
-                                currentTimeOffsetAsDouble += requestedValueFrequency;
+                                while ( currentTimeOffsetAsLong < endTime )
+                                {
+                                    final long localEndTime = currentTimeOffsetAsLong + (long)requestedValueFrequency;
+                                    final BaseValue[] filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, values instanceof LongValue[] ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
+                                    final BaseValue[] normalizedValues = calculationLogicProvider.generateValues ( filledValues );
+                                    resultValues.addAll ( Arrays.asList ( normalizedValues ) );
+                                    currentTimeOffsetAsLong = localEndTime;
+                                }
                             }
                             Value[] resultValueArray = new Value[resultValues.size ()];
                             if ( !metaInformationCalculated )
@@ -202,9 +225,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                                 }
                             }
                             metaInformationCalculated = true;
-                            String calculationMethod = CalculationMethod.convertCalculationMethodToShortString ( metaData.getCalculationMethod () );
-                            calculationMethods.add ( calculationMethod );
-                            resultMap.put ( calculationMethod, resultValueArray );
+                            resultMap.put ( CalculationMethod.convertCalculationMethodToShortString ( metaData.getCalculationMethod () ), resultValueArray );
                         }
 
                         // send data to listener
@@ -214,18 +235,26 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                             {
                                 return;
                             }
-                            listener.updateParameters ( parameters, calculationMethods );
-                            listener.updateState ( QueryState.COMPLETE );
+                            sendDataDiff ( parameters, resultMap, resultValueInformationArray );
                         }
-                        currentCompressionLevel--;
 
                         // stop if a higher detail level won't result in great improvement of result
-                        if ( currentResultColumnCount >= optimalResultColumnCount )
+                        if ( currentResultColumnCount >= requestedEntries )
                         {
                             break;
                         }
+                        currentCompressionLevel--;
                     }
                 } while ( currentCompressionLevel >= 0 );
+            }
+
+            // store current compression level for next call
+            synchronized ( this )
+            {
+                if ( this.currentCompressionLevel < maximumCompressionLevel )
+                {
+                    this.currentCompressionLevel = Math.max ( 0, currentCompressionLevel );
+                }
             }
 
             // wait for some time
@@ -258,6 +287,77 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     }
 
     /**
+     * This method sends the passed data to the listener. If data was sent before, only the data difference is sent.
+     * @param parameters parameters that have been used to generate the data
+     * @param calculationMethods calculation methods for which data is available
+     * @param data data mapped by calculation methods
+     * @param valueInformations state information of generated data
+     */
+    private void sendDataDiff ( final QueryParameters parameters, final Map<String, Value[]> data, final ValueInformation[] valueInformations )
+    {
+        // do not send any data if input parameters have changed
+        if ( parameters.equals ( this.parameters ) )
+        {
+            return;
+        }
+
+        // compare input parameters of generated data
+        final boolean sameParameters = parameters.equals ( lastParameters );
+        final Set<String> calculationMethods = new HashSet<String> ( data.keySet () );
+        final Set<String> lastCalculationMethods = lastData != null ? lastData.keySet () : null;
+        final boolean sameCalculationMethods = ( lastCalculationMethods != null ) && ( calculationMethods.size () == lastCalculationMethods.size () ) && calculationMethods.containsAll ( lastCalculationMethods );
+
+        // prepare sending generated data
+        if ( !sameParameters || !sameCalculationMethods )
+        {
+            listener.updateParameters ( parameters, calculationMethods );
+        }
+
+        // compare generated data
+        final boolean compatibleValueInformations = ( lastValueInformations != null ) && ( valueInformations.length == lastValueInformations.length );
+
+        // send generated data
+        if ( !compatibleValueInformations )
+        {
+            listener.updateData ( 0, data, valueInformations );
+        }
+        else
+        {
+            // it is supposed that very few entries are changed
+            final Set<Integer> changedEntries = new HashSet<Integer> ();
+            for ( String calculationMethod : calculationMethods )
+            {
+                final Value[] lastValues = lastData.get ( calculationMethod );
+                final Value[] values = data.get ( calculationMethod );
+                for ( int i = 0; i < valueInformations.length; i++ )
+                {
+                    if ( !lastValueInformations[i].equals ( valueInformations[i] ) || !lastValues[i].equals ( values[i] ) )
+                    {
+                        changedEntries.add ( i );
+                    }
+                }
+            }
+            for ( int changedIndex : changedEntries )
+            {
+                final Map<String, Value[]> subData = new HashMap<String, Value[]> ();
+                for ( String calculationMethod : calculationMethods )
+                {
+                    subData.put ( calculationMethod, new Value[] { data.get ( calculationMethod )[changedIndex] } );
+                }
+                listener.updateData ( changedIndex, subData, new ValueInformation[] { valueInformations[changedIndex] } );
+            }
+        }
+
+        // update state to complete (call multiple times has no effect)
+        listener.updateState ( QueryState.COMPLETE );
+
+        // remember processed data for next call of method
+        lastParameters = parameters;
+        lastValueInformations = valueInformations;
+        lastData = data;
+    }
+
+    /**
      * This method marks the values that are affected by the specified time as changed
      * @param time time at which the affected values have to be marked as changed
      */
@@ -265,7 +365,10 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     {
         if ( updateDataPeriodically && !closed )
         {
-            updateRequired = true;
+            if ( parameters.getEndTimestamp ().getTimeInMillis () > time )
+            {
+                updateRequired = true;
+            }
         }
     }
 
@@ -274,7 +377,9 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
      */
     public synchronized void changeParameters ( final QueryParameters parameters )
     {
+        this.currentCompressionLevel = maximumCompressionLevel;
         this.parameters = parameters;
+        listener.updateState ( QueryState.LOADING );
         updateRequired = true;
         checkStartTask ();
     }

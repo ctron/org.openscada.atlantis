@@ -78,14 +78,20 @@ public class Conversions
     /**
      * This method creates and returns a calculation logic provider instance that supports the specified configuration.
      * @param metaData configuration that is used when creating the calculation logic provider instance
+     * @param overrideNativeCalculationLogic calculation method that will be used if NATIVE is specified via the meta data
      * @return created logic provider instance
      * @throws Exception in case of unexpected problems
      */
-    public static CalculationLogicProvider getCalculationLogicProvider ( final StorageChannelMetaData metaData ) throws Exception
+    public static CalculationLogicProvider getCalculationLogicProvider ( final StorageChannelMetaData metaData, final CalculationMethod overrideNativeCalculationLogic ) throws Exception
     {
         final DataType nativeDataType = metaData.getDataType ();
         final long[] calculationMethodParameters = metaData.getCalculationMethodParameters ();
-        switch ( metaData.getCalculationMethod () )
+        CalculationMethod calculationMethod = metaData.getCalculationMethod ();
+        if ( calculationMethod == CalculationMethod.NATIVE )
+        {
+            calculationMethod = overrideNativeCalculationLogic;
+        }
+        switch ( calculationMethod )
         {
         case AVERAGE:
         {
@@ -329,11 +335,11 @@ public class Conversions
         }
 
         // assure the calculation methods are specified if a compression level greater than 0 is set
-        if ( ( maxDetailLevelId > 0 ) && calculationMethods.isEmpty () )
+        if ( calculationMethods.isEmpty () )
         {
-            final String message = String.format ( "no calculation method specified, although maximum compression level is greater 0 in configuration '%s'", configurationId );
-            logger.error ( message );
-            throw new Exception ( message );
+            calculationMethods.add ( CalculationMethod.AVERAGE );
+            calculationMethods.add ( CalculationMethod.MINIMUM );
+            calculationMethods.add ( CalculationMethod.MAXIMUM );
         }
 
         // check native data type

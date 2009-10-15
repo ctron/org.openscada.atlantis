@@ -4,10 +4,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 import java.util.Timer;
 import java.util.Map.Entry;
 
@@ -18,8 +16,6 @@ import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
 import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.internal.QueryImpl;
@@ -106,26 +102,37 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     }
 
     /**
-     * @param maximumCompressionLevel
-     * @param startTime
-     * @param endTime
-     * @return
+     * This method returns the maximum available compression level of all storage channels.
+     * @return maximum available compression level of all storage channels or negative value if no storage channel is availavle
      */
-    public synchronized Map<StorageChannelMetaData, BaseValue[]> getValues ( final long maximumCompressionLevel, final long startTime, final long endTime ) throws Exception
+    public synchronized long getMaximumCompressionLevel ()
     {
         long maximumAvailableCompressionLevel = Long.MIN_VALUE;
         for ( StorageChannelMetaData metaData : storageChannels.keySet () )
         {
             maximumAvailableCompressionLevel = Math.max ( maximumAvailableCompressionLevel, metaData.getDetailLevelId () );
         }
-        maximumAvailableCompressionLevel = Math.min ( maximumAvailableCompressionLevel, maximumCompressionLevel );
+        return maximumAvailableCompressionLevel;
+    }
+
+    /**
+     * This method returns the currently available values for the given time span.
+     * The returned map contains all available storage channels for the given level.
+     * @param compressionLevel compression level for which data has to be retrieved
+     * @param startTime start time of the requested data
+     * @param endTime end time of the requested data
+     * @return map containing all available storage channels for the given level
+     * @throws Exception in case of problems retrieving the requested data
+     */
+    public synchronized Map<StorageChannelMetaData, BaseValue[]> getValues ( final long compressionLevel, final long startTime, final long endTime ) throws Exception
+    {
         Map<StorageChannelMetaData, BaseValue[]> result = new HashMap<StorageChannelMetaData, BaseValue[]> ();
         try
         {
             for ( Entry<StorageChannelMetaData, ExtendedStorageChannel> entry : storageChannels.entrySet () )
             {
                 StorageChannelMetaData metaData = entry.getKey ();
-                if ( metaData.getDetailLevelId () == maximumAvailableCompressionLevel )
+                if ( metaData.getDetailLevelId () == compressionLevel )
                 {
                     ExtendedStorageChannel storageChannel = entry.getValue ();
                     switch ( expectedDataType )
@@ -169,35 +176,6 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     {
         try
         {
-            final Map<String, Value[]> map = new HashMap<String, Value[]> ();
-            ValueInformation[] valueInformations = null;
-            final Set<String> calculationMethods = new HashSet<String> ();
-            for ( final Entry<StorageChannelMetaData, ExtendedStorageChannel> entry : this.storageChannels.entrySet () )
-            {
-                final CalculationMethod calculationMethod = entry.getKey ().getCalculationMethod ();
-                final DoubleValue[] dvs = entry.getValue ().getDoubleValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () );
-                final Value[] values = new Value[dvs.length];
-                if ( calculationMethod == CalculationMethod.NATIVE )
-                {
-                    valueInformations = new ValueInformation[dvs.length];
-                }
-                for ( int i = 0; i < dvs.length; i++ )
-                {
-                    final DoubleValue doubleValue = dvs[i];
-                    values[i] = new Value ( doubleValue.getValue () );
-                    if ( calculationMethod == CalculationMethod.NATIVE )
-                    {
-                        valueInformations[i] = new ValueInformation ( parameters.getStartTimestamp (), parameters.getEndTimestamp (), doubleValue.getQualityIndicator (), doubleValue.getBaseValueCount () );
-                    }
-                }
-                if ( calculationMethod == CalculationMethod.NATIVE )
-                {
-                    map.put ( CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ), values );
-                    calculationMethods.add ( CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ) );
-                }
-            }
-            listener.updateParameters ( parameters, calculationMethods );
-            listener.updateData ( 0, map, valueInformations );
             final QueryImpl query = new QueryImpl ( this, listener, parameters, updateData );
             addQuery ( query );
             return query;
@@ -223,7 +201,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized void updateData ( final DataItemValue value )
     {
-        if ( !this.started || this.rootStorageChannel == null || value == null )
+        if ( !this.started || ( this.rootStorageChannel == null ) || ( value == null ) )
         {
             return;
         }
@@ -237,8 +215,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         final double qualityIndicator = !value.isConnected () || value.isError () ? 0 : 1;
         try
         {
-            DataType processedDataType = DataType.UNKNOWN;
-            if ( variant.isLong () || variant.isInteger () || variant.isBoolean () )
+            if ( expectedDataType == DataType.LONG_VALUE )
             {
                 LongValue longValue = new LongValue ( time, qualityIndicator, 1, variant.asLong ( 0L ) );
                 this.rootStorageChannel.updateLong ( longValue );
@@ -246,7 +223,6 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 {
                     query.updateLong ( longValue );
                 }
-                processedDataType = DataType.LONG_VALUE;
             }
             else
             {
@@ -256,11 +232,11 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 {
                     query.updateDouble ( doubleValue );
                 }
-                processedDataType = DataType.DOUBLE_VALUE;
             }
-            if ( expectedDataType != processedDataType )
+            final DataType receivedDataType = variant.isBoolean () || variant.isInteger () || variant.isLong () ? DataType.LONG_VALUE : DataType.DOUBLE_VALUE;
+            if ( !variant.isNull () && ( expectedDataType != receivedDataType ) )
             {
-                logger.warn ( String.format ( "processed data type (%s) does not match expected data type (%s)!", processedDataType, expectedDataType ) );
+                logger.warn ( String.format ( "received data type (%s) does not match expected data type (%s)!", receivedDataType, expectedDataType ) );
             }
         }
         catch ( final Exception e )
@@ -313,9 +289,14 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      * This method stops the service from processing and destroys its internal structure.
      * The service cannot be started again, after stop has been called.
      * After calling this method, no further call to this service can be made.
+     * Before the service is stopped, an invalid value is processed in order to mark
+     * future values as invalid until a valid value is processed again.
      */
     public synchronized void stop ()
     {
+        // send invalid value to mark the future as not reliable
+        updateData ( new DataItemValue () );
+
         // set running flag
         this.started = false;
 
