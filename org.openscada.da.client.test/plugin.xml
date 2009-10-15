@@ -3,16 +3,6 @@
 <plugin>
 
    <extension
-         id="application"
-         point="org.eclipse.core.runtime.applications">
-      <application
-            icon="icons/app/openscada.ico">
-         <run
-               class="org.openscada.da.client.test.Application">
-         </run>
-      </application>
-   </extension>
-   <extension
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.openscada.da.client.test.Perspective"

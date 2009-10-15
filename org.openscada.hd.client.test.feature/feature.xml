@@ -3,7 +3,8 @@
       id="org.openscada.hd.client.test"
       label="OpenSCADA HD Test Feature"
       version="0.14.0.qualifier"
-      provider-name="inavare GmbH">
+      provider-name="inavare GmbH"
+      plugin="org.openscada.hd.ui">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]

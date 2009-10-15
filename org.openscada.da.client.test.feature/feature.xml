@@ -4,7 +4,7 @@
       label="OpenSCADA DA Test Client Feature"
       version="0.14.0.qualifier"
       provider-name="inavare GmbH"
-      plugin="org.openscada.da.client.test">
+      plugin="org.openscada.da.ui">
 
    <description url="http://openscada.org">
       &lt;p&gt;
@@ -319,7 +319,6 @@ POSSIBILITY OF SUCH DAMAGES.
    </license>
 
    <url>
-      <update label="OpenSCADA RCP Client" url="http://openscada.org/ostc"/>
       <discovery label="OpenSCADA Update Site" url="http://repo.inavare.net/p2/release/ostc"/>
    </url>
 
