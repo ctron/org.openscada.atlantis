@@ -38,7 +38,7 @@
                value="icons/app/Sign_open-Scada_16px.png,icons/app/Sign_open-Scada_32px.png,icons/app/Sign_open-Scada_48px.png,icons/app/Sign_open-Scada_64px.png,icons/app/Sign_open-Scada_128px.png"/>
                <property
                name="introTitle"
-               value="Welcome to the OpenSCADA Test Client"/>
+               value="Welcome to the OpenSCADA RCP Client"/>
          <property
                name="introBrandingImage"
                value="product:branding/about.png"/>
