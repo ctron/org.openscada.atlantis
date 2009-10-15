@@ -155,7 +155,7 @@
          </command>
          <command
                commandId="org.eclipse.ui.newWizard"
-               label="New"
+               label="New Connection"
                style="push">
             <parameter
                   name="newWizardId"
