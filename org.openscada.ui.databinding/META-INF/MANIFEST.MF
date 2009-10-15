@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA Databinding Utilities
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.openscada.ui.databinding
 Bundle-Version: 01.4.0.qualifier
 Bundle-Activator: org.openscada.ui.databinding.Activator
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.ui;bundle-version="3.5.0",
  org.eclipse.core.runtime;bundle-version="3.5.0",
  org.eclipse.core.databinding;bundle-version="1.2.0"

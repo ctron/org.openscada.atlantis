@@ -85,7 +85,7 @@ public class ListeningLabelProvider extends ViewerLabelProvider
 
     protected void addListenerTo ( final Object next )
     {
-        logger.debug ( "Add listener to: {}", next );
+        logger.debug ( "Add listener to: {}", next ); //$NON-NLS-1$
 
         final IObservableSet set = (IObservableSet)this.factory.createObservable ( next );
 
@@ -98,7 +98,7 @@ public class ListeningLabelProvider extends ViewerLabelProvider
 
     protected void removeListenerFrom ( final Object next )
     {
-        logger.debug ( "Remove listener from: {}", next );
+        logger.debug ( "Remove listener from: {}", next ); //$NON-NLS-1$
         removeSource ( this.itemMap.remove ( next ) );
     }
 
