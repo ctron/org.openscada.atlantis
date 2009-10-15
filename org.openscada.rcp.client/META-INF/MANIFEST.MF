@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA Test Client
+Bundle-Name: OpenSCADA RCP Client
 Bundle-SymbolicName: org.openscada.rcp.client; singleton:=true
 Bundle-Version: 0.14.0.qualifier
 Bundle-Activator: org.openscada.rcp.client.Activator

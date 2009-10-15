@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.openscada.rcp.client"
-      label="OpenSCADA RCP Client Feature"
+      label="OpenSCADA RCP Client"
       version="0.14.0.qualifier"
       provider-name="inavare GmbH"
       plugin="org.openscada.rcp.client">
