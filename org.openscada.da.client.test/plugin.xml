@@ -24,21 +24,21 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            category="org.openscada.da.category"
+            category="org.openscada.da.ui.category"
             class="org.openscada.da.client.test.views.HiveView"
             icon="icons/stock_channel.png"
             id="org.openscada.da.client.test.views.HiveView"
             name="%view.hiveView.name"/>
       <view
             allowMultiple="true"
-            category="org.openscada.da.category"
+            category="org.openscada.da.ui.category"
             class="org.openscada.da.client.test.views.watch.DataItemWatchView"
             icon="icons/stock_watch.png"
             id="org.openscada.da.client.test.views.DataItemWatchView"
             name="%view.dataItemWatch.name"/>
       <view
             allowMultiple="true"
-            category="org.openscada.da.category"
+            category="org.openscada.da.ui.category"
             class="org.openscada.da.client.test.views.realtime.RealTimeList"
             id="org.openscada.da.test.views.RealTimeList"
             name="%view.realtimeList.name"/>
@@ -46,16 +46,12 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            categoryId="org.openscada.da.client.test"
+            categoryId="org.openscada.da.ui.category"
             defaultHandler="org.openscada.da.client.test.commands.OpenNewRealtimeList"
             description="%command.openNewRealtimeList.description"
             id="org.openscada.da.client.test.NewRealtimeList"
             name="%command.openNewRealtimeList.name">
       </command>
-      <category
-            id="org.openscada.da.client.test"
-            name="OpenSCADA DA">
-      </category>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -348,12 +344,6 @@
             </instanceof>
          </enabledWhen>
       </page>
-   </extension>
-   <extension
-         point="org.eclipse.ui.dropActions">
-      <action
-            class="org.openscada.da.client.base.dnd.ItemDropAction"
-            id="itemDrop"/>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
