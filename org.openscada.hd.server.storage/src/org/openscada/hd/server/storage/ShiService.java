@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.Map.Entry;
 
@@ -18,6 +19,7 @@ import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
+import org.openscada.hd.server.storage.internal.Conversions;
 import org.openscada.hd.server.storage.internal.QueryImpl;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
@@ -50,6 +52,9 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /** Configuration of the service. */
     private final Configuration configuration;
 
+    /** Set of all calculation methods except NATIVE. */
+    private final Set<CalculationMethod> calculationMethods;
+
     /** All available storage channels mapped via calculation method. */
     private final Map<StorageChannelMetaData, ExtendedStorageChannel> storageChannels;
 
@@ -75,6 +80,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     public ShiService ( final Configuration configuration )
     {
         this.configuration = new ConfigurationImpl ( configuration );
+        calculationMethods = Conversions.getCalculationMethods ( configuration );
         this.storageChannels = new HashMap<StorageChannelMetaData, ExtendedStorageChannel> ();
         this.rootStorageChannel = null;
         this.started = false;
@@ -126,27 +132,42 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized Map<StorageChannelMetaData, BaseValue[]> getValues ( final long compressionLevel, final long startTime, final long endTime ) throws Exception
     {
-        Map<StorageChannelMetaData, BaseValue[]> result = new HashMap<StorageChannelMetaData, BaseValue[]> ();
+        final Map<StorageChannelMetaData, BaseValue[]> result = new HashMap<StorageChannelMetaData, BaseValue[]> ();
         try
         {
             for ( Entry<StorageChannelMetaData, ExtendedStorageChannel> entry : storageChannels.entrySet () )
             {
-                StorageChannelMetaData metaData = entry.getKey ();
+                final StorageChannelMetaData metaData = entry.getKey ();
                 if ( metaData.getDetailLevelId () == compressionLevel )
                 {
                     ExtendedStorageChannel storageChannel = entry.getValue ();
+                    BaseValue[] values = null;
                     switch ( expectedDataType )
                     {
                     case LONG_VALUE:
                     {
-                        result.put ( storageChannel.getMetaData (), storageChannel.getLongValues ( startTime, endTime ) );
+                        values = storageChannel.getLongValues ( startTime, endTime );
                         break;
                     }
                     case DOUBLE_VALUE:
                     {
-                        result.put ( storageChannel.getMetaData (), storageChannel.getDoubleValues ( startTime, endTime ) );
+                        values = storageChannel.getDoubleValues ( startTime, endTime );
                         break;
                     }
+                    }
+                    if ( compressionLevel == 0 )
+                    {
+                        // create a virtual entry for each required calculation method
+                        for ( CalculationMethod calculationMethod : calculationMethods )
+                        {
+                            final StorageChannelMetaData subMetaData = new StorageChannelMetaData ( metaData );
+                            subMetaData.setCalculationMethod ( calculationMethod );
+                            result.put ( subMetaData, values );
+                        }
+                    }
+                    else
+                    {
+                        result.put ( storageChannel.getMetaData (), values );
                     }
                 }
             }

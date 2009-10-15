@@ -154,10 +154,15 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                 final long endTime = parameters.getEndTimestamp ().getTimeInMillis ();
                 final long requestedTimeSpan = endTime - startTime;
                 final double requestedValueFrequency = (double)requestedTimeSpan / requestedEntries;
+                boolean entriesFound = false;
                 do
                 {
                     boolean metaInformationCalculated = false;
-                    final Map<StorageChannelMetaData, BaseValue[]> availableChannels = service.getValues ( service.getMaximumCompressionLevel (), startTime, endTime );
+                    final Map<StorageChannelMetaData, BaseValue[]> availableChannels;
+                    synchronized ( service )
+                    {
+                        availableChannels = service.getValues ( currentCompressionLevel, startTime, endTime );
+                    }
                     final Map<String, Value[]> resultMap = new HashMap<String, Value[]> ();
                     long currentResultColumnCount = Long.MIN_VALUE;
                     if ( !availableChannels.isEmpty () )
@@ -170,20 +175,36 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                             final StorageChannelMetaData metaData = entry.getKey ();
                             CalculationLogicProvider calculationLogicProvider = Conversions.getCalculationLogicProvider ( metaData, CalculationMethod.AVERAGE );
                             final BaseValue[] values = entry.getValue ();
-                            currentCompressionLevel = Math.min ( currentCompressionLevel, metaData.getDetailLevelId () );
+                            if ( ( currentCompressionLevel > 0 ) && entriesFound && ( values.length < 1 ) )
+                            {
+                                continue;
+                            }
+                            entriesFound |= values.length > 0;
                             currentResultColumnCount = Math.max ( currentResultColumnCount, values.length );
                             final List<BaseValue> resultValues = new ArrayList<BaseValue> ();
                             long currentTimeOffsetAsLong = startTime;
-                            if ( values.length > 0 )
+                            while ( currentTimeOffsetAsLong < endTime )
                             {
-                                while ( currentTimeOffsetAsLong < endTime )
+                                final long localEndTime = currentTimeOffsetAsLong + (long)requestedValueFrequency;
+                                BaseValue[] filledValues = null;
+                                if ( values.length == 0 )
                                 {
-                                    final long localEndTime = currentTimeOffsetAsLong + (long)requestedValueFrequency;
-                                    final BaseValue[] filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, values instanceof LongValue[] ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
-                                    final BaseValue[] normalizedValues = calculationLogicProvider.generateValues ( filledValues );
-                                    resultValues.addAll ( Arrays.asList ( normalizedValues ) );
-                                    currentTimeOffsetAsLong = localEndTime;
+                                    if ( values instanceof LongValue[] )
+                                    {
+                                        filledValues = new LongValue[] { new LongValue ( currentTimeOffsetAsLong, 0, 0, 0 ), new LongValue ( localEndTime, 0, 0, 0 ) };
+                                    }
+                                    else
+                                    {
+                                        filledValues = new DoubleValue[] { new DoubleValue ( currentTimeOffsetAsLong, 0, 0, 0 ), new DoubleValue ( localEndTime, 0, 0, 0 ) };
+                                    }
                                 }
+                                else
+                                {
+                                    filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, values instanceof LongValue[] ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
+                                }
+                                final BaseValue[] normalizedValues = calculationLogicProvider.generateValues ( filledValues );
+                                resultValues.addAll ( Arrays.asList ( normalizedValues ) );
+                                currentTimeOffsetAsLong = localEndTime;
                             }
                             Value[] resultValueArray = new Value[resultValues.size ()];
                             if ( !metaInformationCalculated )
@@ -227,21 +248,23 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                             metaInformationCalculated = true;
                             resultMap.put ( CalculationMethod.convertCalculationMethodToShortString ( metaData.getCalculationMethod () ), resultValueArray );
                         }
-
-                        // send data to listener
-                        synchronized ( this )
+                        if ( availableChannels.size () == resultMap.size () )
                         {
-                            if ( closed )
+                            // send data to listener
+                            synchronized ( this )
                             {
-                                return;
+                                if ( closed )
+                                {
+                                    return;
+                                }
+                                sendDataDiff ( parameters, resultMap, resultValueInformationArray );
                             }
-                            sendDataDiff ( parameters, resultMap, resultValueInformationArray );
-                        }
 
-                        // stop if a higher detail level won't result in great improvement of result
-                        if ( currentResultColumnCount >= requestedEntries )
-                        {
-                            break;
+                            // stop if a higher detail level won't result in great improvement of result
+                            if ( currentResultColumnCount >= requestedEntries )
+                            {
+                                break;
+                            }
                         }
                         currentCompressionLevel--;
                     }
@@ -296,7 +319,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     private void sendDataDiff ( final QueryParameters parameters, final Map<String, Value[]> data, final ValueInformation[] valueInformations )
     {
         // do not send any data if input parameters have changed
-        if ( parameters.equals ( this.parameters ) )
+        if ( !parameters.equals ( this.parameters ) )
         {
             return;
         }

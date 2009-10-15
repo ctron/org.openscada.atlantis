@@ -280,6 +280,30 @@ public class Conversions
     }
 
     /**
+     * This method returns all calculation methods that are defined within the passed configuration object without the NATIVE calculation method.
+     * @param configuration configuration object that has to be evaluated
+     * @return all calculation methods that are defined within the passed configuration object without the NATIVE calculation method
+     */
+    public static Set<CalculationMethod> getCalculationMethods ( final Configuration configuration )
+    {
+        final Set<CalculationMethod> calculationMethods = new HashSet<CalculationMethod> ();
+        final Map<String, String> data = configuration.getData ();
+        if ( data != null )
+        {
+            final String calculationMethodsValue = data.get ( CALCULATION_METHODS );
+            if ( calculationMethodsValue != null )
+            {
+                for ( String s : calculationMethodsValue.split ( LIST_SEPARATOR ) )
+                {
+                    calculationMethods.add ( CalculationMethod.convertShortStringToCalculationMethod ( s.trim () ) );
+                }
+            }
+            calculationMethods.remove ( CalculationMethod.NATIVE );
+        }
+        return calculationMethods;
+    }
+
+    /**
      * This method creates meta data objects using the passed configuration as input.
      * @param factoryId id of factory that created the configuration object
      * @param configuration input for the meta data objects that have to be created
@@ -317,16 +341,7 @@ public class Conversions
         }
 
         // check calculation methods
-        final String calculationMethodsValue = data.get ( CALCULATION_METHODS );
-        final Set<CalculationMethod> calculationMethods = new HashSet<CalculationMethod> ();
-        if ( calculationMethodsValue != null )
-        {
-            for ( String s : calculationMethodsValue.split ( LIST_SEPARATOR ) )
-            {
-                calculationMethods.add ( CalculationMethod.convertShortStringToCalculationMethod ( s.trim () ) );
-            }
-        }
-        calculationMethods.remove ( CalculationMethod.NATIVE );
+        final Set<CalculationMethod> calculationMethods = getCalculationMethods ( configuration );
         if ( calculationMethods.contains ( CalculationMethod.UNKNOWN ) )
         {
             final String message = String.format ( "unknown calculation method specified in configuration '%s'", configurationId );
