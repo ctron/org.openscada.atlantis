@@ -6,7 +6,7 @@
       <discoverer
             class="org.openscada.core.ui.connection.discoverer.osgi.ServiceDiscoverer"
             id="org.openscada.core.ui.connection.discoverer.osgi.ServiceDiscoverer"
-            name="OSGi Connection Services">
+            name="%discoverer.osgi.name">
       </discoverer>
    </extension>
 

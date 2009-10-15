@@ -7,7 +7,7 @@
             class="org.openscada.core.ui.connection.discoverer.file.DefaultFileResourceDiscoverer"
             icon="icons/tree_explorer.gif"
             id="org.openscada.core.ui.connection.discoverer.file.DefaultFileResourceDiscoverer"
-            name="Default File Source">
+            name="%discoverer.defaultFileSource.name">
       </discoverer>
    </extension>
 
