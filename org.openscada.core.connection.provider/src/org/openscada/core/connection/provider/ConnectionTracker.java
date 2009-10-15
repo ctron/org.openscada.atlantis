@@ -10,6 +10,7 @@ import org.openscada.utils.osgi.FilterUtil;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -51,6 +52,11 @@ public class ConnectionTracker
 
         // add connection URI to filter criteria so we will only receive connections that match our connection uri
         parameters.put ( ConnectionService.CONNECTION_URI, request.getConnectionInformation ().toString () );
+
+        if ( request.getRequestId () != null )
+        {
+            parameters.put ( Constants.SERVICE_PID, request.getRequestId () );
+        }
 
         try
         {

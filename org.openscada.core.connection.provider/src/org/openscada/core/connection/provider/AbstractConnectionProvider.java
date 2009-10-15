@@ -27,6 +27,8 @@ public abstract class AbstractConnectionProvider
 
     private final Map<ConnectionInformation, AbstractConnectionManager> connections = new HashMap<ConnectionInformation, AbstractConnectionManager> ();
 
+    private final Map<String, AbstractConnectionManager> privateConnections = new HashMap<String, AbstractConnectionManager> ();
+
     public AbstractConnectionProvider ( final BundleContext context, final String interfaceName )
     {
         super ();
@@ -124,21 +126,47 @@ public abstract class AbstractConnectionProvider
     {
         logger.info ( "Request removed: {}", request );
 
-        final AbstractConnectionManager manager = this.connections.get ( request.getConnectionInformation () );
-        if ( manager == null )
+        final String requestId = request.getRequestId ();
+
+        if ( requestId == null )
         {
-            logger.warn ( "Unknown request: {}", request );
-            return;
+            // public request
+            final AbstractConnectionManager manager = this.connections.get ( request.getConnectionInformation () );
+            if ( manager == null )
+            {
+                logger.warn ( "Unknown request: {}", request );
+                return;
+            }
+
+            manager.removeRequest ( request );
+            if ( manager.isIdle () )
+            {
+                logger.info ( "Dropping connection" );
+
+                // if this was the last request .. remove it
+                this.connections.remove ( request.getConnectionInformation () );
+                manager.dispose ();
+            }
         }
-
-        manager.removeRequest ( request );
-        if ( manager.isIdle () )
+        else
         {
-            logger.info ( "Dropping connection" );
+            // private request
+            final AbstractConnectionManager manager = this.privateConnections.get ( requestId );
+            if ( manager == null )
+            {
+                logger.warn ( "Unknown request: {}", requestId );
+                return;
+            }
+            manager.removeRequest ( request );
 
-            // if this was the last request .. remove it
-            this.connections.remove ( request.getConnectionInformation () );
-            manager.dispose ();
+            if ( manager.isIdle () )
+            {
+                logger.info ( "Dropping private connection" );
+
+                // if this was the last request .. remove it
+                this.privateConnections.remove ( requestId );
+                manager.dispose ();
+            }
         }
     }
 
@@ -146,14 +174,32 @@ public abstract class AbstractConnectionProvider
     {
         logger.info ( "Found new request: {}", request );
 
-        AbstractConnectionManager manager = this.connections.get ( request.getConnectionInformation () );
-        if ( manager == null )
+        final String requestId = request.getRequestId ();
+
+        if ( requestId == null )
         {
-            logger.info ( "Create new connection: {}", request );
-            manager = createConnectionManager ( request );
-            this.connections.put ( request.getConnectionInformation (), manager );
+            // public request
+            AbstractConnectionManager manager = this.connections.get ( request.getConnectionInformation () );
+            if ( manager == null )
+            {
+                logger.info ( "Create new connection: {}", request );
+                manager = createConnectionManager ( request );
+                this.connections.put ( request.getConnectionInformation (), manager );
+            }
+            manager.addRequest ( request );
         }
-        manager.addRequest ( request );
+        else
+        {
+            // we have a private request
+            AbstractConnectionManager manager = this.privateConnections.get ( requestId );
+            if ( manager == null )
+            {
+                logger.info ( "Create new private connection: {} -> {}", new Object[] { request, requestId } );
+                manager = createConnectionManager ( request );
+                this.privateConnections.put ( requestId, manager );
+            }
+            manager.addRequest ( request );
+        }
     }
 
 }
