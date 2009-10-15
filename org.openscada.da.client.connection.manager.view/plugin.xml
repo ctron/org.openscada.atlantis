@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
-            category="org.openscada.da.category"
+            category="org.openscada.da.ui.category"
             class="org.openscada.da.client.connection.manager.view.ConnectionManagerViewPart"
             id="org.openscada.da.client.connection.manager.view.ConnectionManagerView"
             name="%view.connection.name"
