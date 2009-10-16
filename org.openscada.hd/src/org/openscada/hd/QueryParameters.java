@@ -52,8 +52,8 @@ public final class QueryParameters implements Serializable
             throw new IllegalArgumentException ( "'numberOfEntries' must be greater than or equal to zero" );
         }
 
-        this.startTimestamp = startTimestamp;
-        this.endTimestamp = endTimestamp;
+        this.startTimestamp = (Calendar)startTimestamp.clone ();
+        this.endTimestamp = (Calendar)endTimestamp.clone ();
         this.numberOfEntries = numberOfEntries;
     }
 
