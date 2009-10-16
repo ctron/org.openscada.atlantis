@@ -5,6 +5,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.openscada.hd.ui.perspectives.PerspectiveFactory"
+            icon="icons/perspective.gif"
             id="org.openscada.hd.ui.perspective"
             name="%perspective.hd.name">
       </perspective>
@@ -24,7 +25,7 @@
                id="org.openscada.core.ui.connection.ConnectionView"
                minimized="false"
                moveable="true"
-               ratio="0.25"
+               ratio="0.35"
                relationship="left"
                relative="org.eclipse.ui.editorss"
                showTitle="true"
