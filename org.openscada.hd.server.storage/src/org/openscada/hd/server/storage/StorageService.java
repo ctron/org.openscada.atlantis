@@ -204,11 +204,37 @@ public class StorageService implements SelfManagedConfigurationFactory
         return configuration;
     }
 
+    private void initializeHeartBeat ()
+    {/*
+      * final long now = System.currentTimeMillis ();
+      * BackEnd[] existingBackEnds = null;
+      * try
+      * {
+      * existingBackEnds = backEndFactory.getExistingBackEnds ( "heartbeat", 0, CalculationMethod.NATIVE );
+      * }
+      * catch ( Exception e )
+      * {
+      * }
+      * if ( ( existingBackEnds == null ) || ( existingBackEnds.length == 0 ) )
+      * {
+      * }
+      * final StorageChannelMetaData metaData = new StorageChannelMetaData ( "heartbeat", CalculationMethod.NATIVE, new long[0], 0, now, now + 1, 10000, DataType.LONG_VALUE );
+      */
+    }
+
+    private void deinitializeHeartBeat ()
+    {
+
+    }
+
     /**
      * This method loads the configuration of the service and publishes the available ShiService objects.
      */
     public synchronized void start ()
     {
+        // activate heart beat functionality
+        initializeHeartBeat ();
+
         // get information of existing meta data
         StorageChannelMetaData[] availableMetaDatas = null;
         try
@@ -324,6 +350,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             deinitializeBackEnds ( backEnds );
         }
         backEndMap.clear ();
+        deinitializeHeartBeat ();
     }
 
     /**

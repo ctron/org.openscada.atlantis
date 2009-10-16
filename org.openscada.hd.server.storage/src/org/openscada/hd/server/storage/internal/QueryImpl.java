@@ -183,6 +183,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                             currentResultColumnCount = Math.max ( currentResultColumnCount, values.length );
                             final List<BaseValue> resultValues = new ArrayList<BaseValue> ();
                             long currentTimeOffsetAsLong = startTime;
+                            double currentTimeOffsetAsDouble = startTime;
                             while ( currentTimeOffsetAsLong < endTime )
                             {
                                 final long localEndTime = currentTimeOffsetAsLong + (long)requestedValueFrequency;
@@ -204,7 +205,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                                 }
                                 final BaseValue[] normalizedValues = calculationLogicProvider.generateValues ( filledValues );
                                 resultValues.addAll ( Arrays.asList ( normalizedValues ) );
-                                currentTimeOffsetAsLong = localEndTime;
+                                currentTimeOffsetAsDouble += requestedValueFrequency;
+                                currentTimeOffsetAsLong = (long)currentTimeOffsetAsDouble;
                             }
                             Value[] resultValueArray = new Value[resultValues.size ()];
                             if ( !metaInformationCalculated )
