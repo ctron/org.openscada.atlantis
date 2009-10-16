@@ -59,12 +59,12 @@ public class ValueBuffer
         }
         else
         {
-            sendData ( dec, min, max, 0.0 );
+            sendData ( null, Double.NaN, Double.NaN, 0.0 );
         }
 
     }
 
-    private void sendData ( final BigDecimal dec, final double min, final double max, final double quality )
+    private void sendData ( final BigDecimal avg, final double min, final double max, final double quality )
     {
         final Calendar startCal = Calendar.getInstance ();
         startCal.setTimeInMillis ( this.start );
@@ -73,7 +73,14 @@ public class ValueBuffer
         final ValueInformation info = new ValueInformation ( startCal, endCal, quality, this.values.size () );
 
         final Map<String, Value[]> values = new HashMap<String, Value[]> ();
-        values.put ( "AVG", new Value[] { new Value ( dec.doubleValue () ) } );
+        if ( avg == null )
+        {
+            values.put ( "AVG", new Value[] { new Value ( Double.NaN ) } );
+        }
+        else
+        {
+            values.put ( "AVG", new Value[] { new Value ( avg.doubleValue () ) } );
+        }
         values.put ( "MIN", new Value[] { new Value ( min ) } );
         values.put ( "MAX", new Value[] { new Value ( max ) } );
         this.listener.updateData ( this.index, values, new ValueInformation[] { info } );
