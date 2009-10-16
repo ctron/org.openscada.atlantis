@@ -19,6 +19,7 @@
 
 package org.openscada.rcp.client;
 
+import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
@@ -28,5 +29,7 @@ public class Perspective implements IPerspectiveFactory
     public void createInitialLayout ( final IPageLayout layout )
     {
         layout.setEditorAreaVisible ( false );
+        final IFolderLayout folder = layout.createFolder ( "org.openscada.rcp.main", IPageLayout.RIGHT, 0.4f, "org.eclipse.ui.editorss" );
+        folder.addPlaceholder ( "*" );
     }
 }
