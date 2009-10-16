@@ -328,6 +328,8 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
             {
                 value = values[values.length - 1];
                 value.setTime ( Math.max ( time, value.getTime () ) );
+                value.setQualityIndicator ( 0 );
+                value.setBaseValueCount ( 0 );
             }
             else
             {
