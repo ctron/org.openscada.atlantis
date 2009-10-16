@@ -78,8 +78,6 @@ import org.swtchart.ISeries.SeriesType;
 
 public class TrendView extends ViewPart implements QueryListener
 {
-    private static final String KEY_QUALITY = "quality"; //$NON-NLS-1$
-
     /**
      * @author jrose
      * 
@@ -357,6 +355,8 @@ public class TrendView extends ViewPart implements QueryListener
     }
 
     // internal
+    private static final String KEY_QUALITY = "quality"; //$NON-NLS-1$
+
     private final static long GUI_JOB_DELAY = 150;
 
     private final static long GUI_RESIZE_JOB_DELAY = 1500;
@@ -370,6 +370,8 @@ public class TrendView extends ViewPart implements QueryListener
     private final AtomicReference<Job> dataUpdateJob = new AtomicReference<Job> ();
 
     // data (model)
+    private final Object updateLock = new Object ();
+
     private final AtomicReference<QueryBuffer> query = new AtomicReference<QueryBuffer> ();
 
     private final ConcurrentMap<String, double[]> data = new ConcurrentHashMap<String, double[]> ();
@@ -958,25 +960,33 @@ public class TrendView extends ViewPart implements QueryListener
 
     public void updateParameters ( final QueryParameters parameters, final Set<String> valueTypes )
     {
-        // update model
-        data.clear ();
-        dataTimestamp.set ( new Date[parameters.getEntries ()] );
-        dataQuality.set ( new double[parameters.getEntries ()] );
-        for ( final String seriesId : valueTypes )
+        boolean updateRequired = false;
+        synchronized ( updateLock )
         {
-            data.put ( seriesId, new double[parameters.getEntries ()] );
+            // update model
+            data.clear ();
+            dataTimestamp.set ( new Date[parameters.getEntries ()] );
+            dataQuality.set ( new double[parameters.getEntries ()] );
+            for ( final String seriesId : valueTypes )
+            {
+                data.put ( seriesId, new double[parameters.getEntries ()] );
+            }
+            final ChartParameters newChartParameters = ChartParameters
+                    .create ()
+                        .from ( chartParameters.get () )
+                        .startTime ( parameters.getStartTimestamp ().getTime () )
+                        .endTime ( parameters.getEndTimestamp ().getTime () )
+                        .numOfEntries ( parameters.getEntries () )
+                        .availableSeries ( valueTypes )
+                        .construct ();
+            if ( !newChartParameters.equals ( chartParameters.get () ) )
+            {
+                chartParameters.set ( newChartParameters );
+                updateRequired = true;
+            }
         }
-        final ChartParameters newChartParameters = ChartParameters
-                .create ()
-                    .from ( chartParameters.get () )
-                    .startTime ( parameters.getStartTimestamp ().getTime () )
-                    .endTime ( parameters.getEndTimestamp ().getTime () )
-                    .numOfEntries ( parameters.getEntries () )
-                    .availableSeries ( valueTypes )
-                    .construct ();
-        if ( !newChartParameters.equals ( chartParameters.get () ) )
+        if ( updateRequired )
         {
-            chartParameters.set ( newChartParameters );
             parameterUpdateJob.get ().schedule ( GUI_JOB_DELAY );
             rangeUpdateJob.get ().schedule ( GUI_JOB_DELAY );
         }
@@ -984,33 +994,36 @@ public class TrendView extends ViewPart implements QueryListener
 
     public void updateData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
     {
-        for ( final SeriesParameters series : chartParameters.get ().getAvailableSeries () )
+        synchronized ( updateLock )
         {
-            // use local ref for faster access
-            final Value[] valueArray = values.get ( series.name );
-            final double[] chartValues = data.get ( series.name );
-            // now copy values from data source to our data array
+            for ( final SeriesParameters series : chartParameters.get ().getAvailableSeries () )
+            {
+                // use local ref for faster access
+                final Value[] valueArray = values.get ( series.name );
+                final double[] chartValues = data.get ( series.name );
+                // now copy values from data source to our data array
+                for ( int i = 0; i < valueInformation.length; i++ )
+                {
+                    double value = valueArray[i].toDouble ();
+                    // at the moment special handling for values out of range,
+                    // should be handled by Chart
+                    if ( value >= Double.MAX_VALUE )
+                    {
+                        value = 0;
+                    }
+                    if ( value <= -Double.MAX_VALUE )
+                    {
+                        value = 0;
+                    }
+                    chartValues[i + index] = value;
+                }
+            }
+            // now copy values for date axis and quality
             for ( int i = 0; i < valueInformation.length; i++ )
             {
-                double value = valueArray[i].toDouble ();
-                // at the moment special handling for values out of range,
-                // should be handled by Chart
-                if ( value >= Double.MAX_VALUE )
-                {
-                    value = 0;
-                }
-                if ( value <= -Double.MAX_VALUE )
-                {
-                    value = 0;
-                }
-                chartValues[i + index] = value;
+                dataTimestamp.get ()[i + index] = valueInformation[i].getStartTimestamp ().getTime ();
+                dataQuality.get ()[i + index] = valueInformation[i].getQuality ();
             }
-        }
-        // now copy values for date axis and quality
-        for ( int i = 0; i < valueInformation.length; i++ )
-        {
-            dataTimestamp.get ()[i + index] = valueInformation[i].getStartTimestamp ().getTime ();
-            dataQuality.get ()[i + index] = valueInformation[i].getQuality ();
         }
         dataUpdateJob.get ().schedule ( GUI_JOB_DELAY );
     }
