@@ -25,6 +25,12 @@ import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
 
+/**
+ * This interface specifies the operations provided by the server
+ * @author Jens Reimann
+ * @since 0.14.0
+ *
+ */
 public interface Service extends org.openscada.core.server.Service
 {
     public Query createQuery ( Session session, String itemId, QueryParameters parameters, QueryListener listener, boolean updateData ) throws InvalidSessionException, InvalidItemException;

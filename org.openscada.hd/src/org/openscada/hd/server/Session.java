@@ -21,6 +21,12 @@ package org.openscada.hd.server;
 
 import org.openscada.hd.ItemListListener;
 
+/**
+ * The session object for HD services
+ * @author Jens Reimann
+ * @since 0.14.0
+ *
+ */
 public interface Session extends org.openscada.core.server.Session
 {
     public void setItemListListener ( ItemListListener itemListListener );
