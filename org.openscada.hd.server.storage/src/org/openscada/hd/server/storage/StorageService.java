@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationListener;
@@ -27,6 +30,8 @@ import org.openscada.hsdb.backend.BackEndFactory;
 import org.openscada.hsdb.backend.BackEndMultiplexor;
 import org.openscada.hsdb.backend.file.FileBackEndFactory;
 import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.datatypes.DataType;
+import org.openscada.hsdb.datatypes.LongValue;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -39,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * Storage service that manages available storage historical item services.
  * @author Ludwig Straub
  */
-public class StorageService implements SelfManagedConfigurationFactory
+public class StorageService implements SelfManagedConfigurationFactory, Runnable
 {
     /** Id of the OSGi service factory. */
     public final static String FACTORY_ID = "hd.StorageService";
@@ -56,6 +61,15 @@ public class StorageService implements SelfManagedConfigurationFactory
     /** Minimum count of file fragments before the first fragment is old enough to be deleted. */
     private final static long FILE_FRAGMENTS_PER_DATA_LIFESPAN = 4;
 
+    /** Execute heart beat period in milliseconds. */
+    private final static long HEART_BEATS_PERIOD = 1000;
+
+    /** Maximum data age of heart beat data. */
+    private final static long PROPOSED_HEART_BEAT_DATA_AGE = 1;
+
+    /** Internal configuration id for heartbeat back end. */
+    private final static String HEARTBEAT_CONFIGURATION_ID = "HEARTBEAT";
+
     /** OSGi bundle context. */
     private final BundleContext bundleContext;
 
@@ -70,6 +84,15 @@ public class StorageService implements SelfManagedConfigurationFactory
 
     /** Registered configuration listeners. */
     private final List<ConfigurationListener> configurationListeners;
+
+    /** Back end used to store heart beat data. */
+    private BackEnd heartBeatBackEnd;
+
+    /** Task that will create periodical entries in the heart bear back end. */
+    private ScheduledExecutorService heartBeatTask;
+
+    /** Latest time with valid information that could be retrieved via the heart beat timer. */
+    private long latestReliableTime;
 
     /**
      * Constructor.
@@ -89,6 +112,8 @@ public class StorageService implements SelfManagedConfigurationFactory
         }
         this.backEndFactory = new FileBackEndFactory ( rootPath );
         this.configurationListeners = new LinkedList<ConfigurationListener> ();
+        heartBeatBackEnd = null;
+        latestReliableTime = Long.MIN_VALUE;
     }
 
     /**
@@ -162,7 +187,7 @@ public class StorageService implements SelfManagedConfigurationFactory
 
         // create hierarchical storage channel structure
         final CalculatingStorageChannel[] storageChannels = new CalculatingStorageChannel[backEnds.size ()];
-        final ShiService service = new ShiService ( configuration );
+        final ShiService service = new ShiService ( configuration, latestReliableTime );
         for ( int i = 0; i < backEnds.size (); i++ )
         {
             final BackEnd backEnd = backEnds.get ( i );
@@ -204,27 +229,100 @@ public class StorageService implements SelfManagedConfigurationFactory
         return configuration;
     }
 
+    /**
+     * This method starts the heart beat functionality.
+     */
     private void initializeHeartBeat ()
-    {/*
-      * final long now = System.currentTimeMillis ();
-      * BackEnd[] existingBackEnds = null;
-      * try
-      * {
-      * existingBackEnds = backEndFactory.getExistingBackEnds ( "heartbeat", 0, CalculationMethod.NATIVE );
-      * }
-      * catch ( Exception e )
-      * {
-      * }
-      * if ( ( existingBackEnds == null ) || ( existingBackEnds.length == 0 ) )
-      * {
-      * }
-      * final StorageChannelMetaData metaData = new StorageChannelMetaData ( "heartbeat", CalculationMethod.NATIVE, new long[0], 0, now, now + 1, 10000, DataType.LONG_VALUE );
-      */
+    {
+        final long now = System.currentTimeMillis ();
+        StorageChannelMetaData[] existingMetaData = null;
+        try
+        {
+            final BackEnd[] existingBackEnds = backEndFactory.getExistingBackEnds ( HEARTBEAT_CONFIGURATION_ID, 0, CalculationMethod.NATIVE );
+            if ( existingBackEnds != null )
+            {
+                existingMetaData = new StorageChannelMetaData[existingBackEnds.length];
+                for ( int i = 0; i < existingBackEnds.length; i++ )
+                {
+                    existingMetaData[i] = existingBackEnds[i].getMetaData ();
+                }
+            }
+        }
+        catch ( Exception e )
+        {
+            logger.error ( "unable to retrieve existing heart beat back end information", e );
+        }
+
+        // create new backend if none exist
+        StorageChannelMetaData metaData = null;
+        boolean createNewBackEnd = ( existingMetaData == null ) || ( existingMetaData.length == 0 );
+        if ( createNewBackEnd )
+        {
+            metaData = new StorageChannelMetaData ( HEARTBEAT_CONFIGURATION_ID, CalculationMethod.NATIVE, new long[0], 0, now, now + 1, PROPOSED_HEART_BEAT_DATA_AGE, DataType.LONG_VALUE );
+        }
+        else
+        {
+            metaData = existingMetaData[0];
+        }
+        try
+        {
+            final BackEnd backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
+            backEnd.initialize ( metaData );
+            if ( createNewBackEnd )
+            {
+                backEnd.delete ();
+                backEnd.create ( metaData );
+            }
+            heartBeatBackEnd = backEnd;
+        }
+        catch ( Exception e )
+        {
+            logger.error ( String.format ( "unable to create heart beat back end (%s)", metaData ), e );
+        }
     }
 
+    /**
+     * This method stores a new value in the heart beat back end to remember the last valid time.
+     */
+    private synchronized void performPingOfLife ()
+    {
+        if ( heartBeatBackEnd != null )
+        {
+            final long now = System.currentTimeMillis ();
+            final LongValue value = new LongValue ( now, 1, 0, now );
+            try
+            {
+                heartBeatBackEnd.updateLong ( value );
+                heartBeatBackEnd.cleanupRelicts ();
+            }
+            catch ( Exception e )
+            {
+                logger.error ( String.format ( "unable to store heart beat value" ), e );
+            }
+        }
+    }
+
+    /**
+     * This method triggers the heart beat operation.
+     */
+    public void run ()
+    {
+        this.performPingOfLife ();
+    }
+
+    /**
+     * This method stops the heart beat functionality.
+     */
     private void deinitializeHeartBeat ()
     {
-
+        if ( heartBeatBackEnd != null )
+        {
+            synchronized ( this )
+            {
+                performPingOfLife ();
+                heartBeatBackEnd = null;
+            }
+        }
     }
 
     /**
@@ -234,6 +332,28 @@ public class StorageService implements SelfManagedConfigurationFactory
     {
         // activate heart beat functionality
         initializeHeartBeat ();
+
+        // get latest reliable time and start heart beat timer
+        latestReliableTime = Long.MIN_VALUE;
+        if ( heartBeatBackEnd != null )
+        {
+            final long now = System.currentTimeMillis ();
+            try
+            {
+                LongValue[] longValues = heartBeatBackEnd.getLongValues ( now, now + 1 );
+                if ( ( longValues != null ) && ( longValues.length > 0 ) )
+                {
+                    latestReliableTime = longValues[longValues.length - 1].getValue ();
+                }
+            }
+            catch ( Exception e )
+            {
+                logger.error ( String.format ( "unable to read heart beat value" ), e );
+            }
+            // start heart beat timer
+            heartBeatTask = new ScheduledThreadPoolExecutor ( 1 );
+            heartBeatTask.scheduleWithFixedDelay ( this, 0, HEART_BEATS_PERIOD, TimeUnit.MILLISECONDS );
+        }
 
         // get information of existing meta data
         StorageChannelMetaData[] availableMetaDatas = null;
@@ -251,6 +371,13 @@ public class StorageService implements SelfManagedConfigurationFactory
         Set<String> bannedConfigurationIds = new HashSet<String> ();
         for ( final StorageChannelMetaData metaData : availableMetaDatas )
         {
+            // ignore heartbeat meta data since it is internal
+            if ( HEARTBEAT_CONFIGURATION_ID.equals ( metaData.getConfigurationId () ) )
+            {
+                continue;
+            }
+
+            // process meta data
             final String configurationId = metaData.getConfigurationId ();
             BackEnd backEnd = null;
             try

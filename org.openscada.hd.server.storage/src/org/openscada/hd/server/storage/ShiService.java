@@ -73,11 +73,15 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /** Expected input data type. */
     private DataType expectedDataType;
 
+    /** Latest time of known valid information. */
+    private long latestReliableTime;
+
     /**
-     * Constructor
+     * Constructor.
      * @param configuration configuration of the service
+     * @param latestReliableTime latest time of known valid information
      */
-    public ShiService ( final Configuration configuration )
+    public ShiService ( final Configuration configuration, final long latestReliableTime )
     {
         this.configuration = new ConfigurationImpl ( configuration );
         calculationMethods = Conversions.getCalculationMethods ( configuration );
@@ -86,6 +90,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         this.started = false;
         this.openQueries = new LinkedList<QueryImpl> ();
         expectedDataType = DataType.UNKNOWN;
+        this.latestReliableTime = latestReliableTime;
     }
 
     /**
@@ -295,6 +300,58 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     }
 
     /**
+     * This method creates an invalid entry using the data of the latest existing entry.
+     * @param time time of the entry that has to be created
+     */
+    private void createInvalidEntry ( final long time )
+    {
+        if ( rootStorageChannel != null )
+        {
+            BaseValue value = null;
+            BaseValue[] values = null;
+            try
+            {
+                if ( expectedDataType == DataType.LONG_VALUE )
+                {
+                    values = rootStorageChannel.getLongValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
+                }
+                else
+                {
+                    values = rootStorageChannel.getDoubleValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
+                }
+            }
+            catch ( Exception e )
+            {
+                logger.error ( "could not retrieve latest value from root storage channel", e );
+            }
+            if ( ( values != null ) && ( values.length > 0 ) )
+            {
+                value = values[values.length - 1];
+                value.setTime ( Math.max ( time, value.getTime () ) );
+            }
+            else
+            {
+                value = expectedDataType == DataType.LONG_VALUE ? new LongValue ( time, 0, 0, 0 ) : new DoubleValue ( time, 0, 0, 0 );
+            }
+            try
+            {
+                if ( expectedDataType == DataType.LONG_VALUE )
+                {
+                    rootStorageChannel.updateLong ( (LongValue)value );
+                }
+                else
+                {
+                    rootStorageChannel.updateDouble ( (DoubleValue)value );
+                }
+            }
+            catch ( Exception e )
+            {
+                logger.error ( "could not store value via root storage channel", e );
+            }
+        }
+    }
+
+    /**
      * This method activates the service processing.
      * The methods updateData and createQuery only have effect after calling this method.
      */
@@ -304,6 +361,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         this.deleteRelictsTimer = new Timer ();
         this.deleteRelictsTimer.schedule ( new RelictCleanerCallerTask ( this ), CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD );
         this.started = true;
+        createInvalidEntry ( latestReliableTime );
     }
 
     /**
@@ -315,8 +373,8 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized void stop ()
     {
-        // send invalid value to mark the future as not reliable
-        updateData ( new DataItemValue () );
+        // create entry with data marked as invalid
+        createInvalidEntry ( System.currentTimeMillis () );
 
         // set running flag
         this.started = false;
