@@ -107,7 +107,7 @@ public class QueryDataView extends QueryViewPart implements QueryListener
             for ( int j = 0; j < this.colNames.length; j++ )
             {
                 final Value[] value = values.get ( this.colNames[j] );
-                item.setText ( j + FIX_COLS, String.format ( Messages.QueryDataView_Format_Value, value[i].toDouble () ) );
+                item.setText ( j + FIX_COLS, getValueString ( value[i] ) );
             }
 
             item.setText ( this.colNames.length + FIX_COLS, valueInformation[i].toString () );
@@ -122,6 +122,34 @@ public class QueryDataView extends QueryViewPart implements QueryListener
             }
 
         }
+    }
+
+    private String getValueString ( final Value value )
+    {
+        final Number num = value.toNumber ();
+        if ( num instanceof Double )
+        {
+            final Double dNum = (Double)num;
+            if ( Double.isInfinite ( dNum ) )
+            {
+                return "Inf";
+            }
+            else if ( Double.isNaN ( dNum ) )
+            {
+                return "NaN";
+            }
+            return String.format ( Messages.QueryDataView_Format_Value, dNum );
+        }
+        else if ( num instanceof Long )
+        {
+            final Long lNum = (Long)num;
+            return String.format ( Messages.QueryDataView_Format_Value, lNum );
+        }
+        else
+        {
+            return String.format ( Messages.QueryDataView_Format_Value, value.toDouble () );
+        }
+
     }
 
     protected Display getDisplay ()
