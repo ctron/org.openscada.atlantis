@@ -208,7 +208,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                                 currentTimeOffsetAsDouble += requestedValueFrequency;
                                 currentTimeOffsetAsLong = (long)currentTimeOffsetAsDouble;
                             }
-                            Value[] resultValueArray = new Value[resultValues.size ()];
+                            Value[] resultValueArray = new Value[(int)Math.min ( resultValues.size (), requestedEntries )];
                             if ( !metaInformationCalculated )
                             {
                                 resultValueInformationArray = new ValueInformation[resultValueArray.length];
@@ -216,7 +216,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                             if ( values instanceof LongValue[] )
                             {
                                 LongValue[] longValues = resultValues.toArray ( ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY );
-                                for ( int i = 0; i < longValues.length; i++ )
+                                for ( int i = 0; i < resultValueArray.length; i++ )
                                 {
                                     LongValue longValue = longValues[i];
                                     resultValueArray[i] = new Value ( longValue.getValue () );
@@ -233,7 +233,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                             else
                             {
                                 DoubleValue[] doubleValues = resultValues.toArray ( ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
-                                for ( int i = 0; i < doubleValues.length; i++ )
+                                for ( int i = 0; i < resultValueArray.length; i++ )
                                 {
                                     DoubleValue doubleValue = doubleValues[i];
                                     resultValueArray[i] = new Value ( doubleValue.getValue () );
