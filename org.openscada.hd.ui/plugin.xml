@@ -21,7 +21,7 @@
             targetID="org.openscada.hd.ui.perspective">
          <view
                closeable="true"
-               id="org.openscada.hd.ui.ConnectionView"
+               id="org.openscada.core.ui.connection.ConnectionView"
                minimized="false"
                moveable="true"
                ratio="0.25"
@@ -36,9 +36,9 @@
                id="org.openscada.hd.ui.QueryControlView"
                minimized="false"
                moveable="true"
-               ratio="0.25"
+               ratio="0.35"
                relationship="bottom"
-               relative="org.openscada.hd.ui.ConnectionView"
+               relative="org.openscada.core.ui.connection.ConnectionView"
                showTitle="true"
                standalone="false"
                visible="true">
