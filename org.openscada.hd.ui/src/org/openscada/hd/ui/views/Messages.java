@@ -77,6 +77,22 @@ public class Messages extends NLS
     public static String QueryDataView_Format_Quality;
 
     public static String QueryDataView_Format_Value;
+
+    public static String TrendView_Color;
+
+    public static String TrendView_FileCouldNotBeSaved;
+
+    public static String TrendView_NoItemSelected;
+
+    public static String TrendView_NotImplemented;
+
+    public static String TrendView_Quality;
+
+    public static String TrendView_SaveAsImage;
+
+    public static String TrendView_SaveTrendAsImage;
+
+    public static String TrendView_SelectColor;
     static
     {
         // initialize resource bundle
