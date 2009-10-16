@@ -173,7 +173,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                         {
                             // get current compression level
                             final StorageChannelMetaData metaData = entry.getKey ();
-                            CalculationLogicProvider calculationLogicProvider = Conversions.getCalculationLogicProvider ( metaData, CalculationMethod.AVERAGE );
+                            CalculationLogicProvider calculationLogicProvider = Conversions.getCalculationLogicProvider ( metaData );
                             final BaseValue[] values = entry.getValue ();
                             if ( ( currentCompressionLevel > 0 ) && entriesFound && ( values.length < 1 ) )
                             {

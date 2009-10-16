@@ -20,7 +20,6 @@ import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.internal.Conversions;
 import org.openscada.hsdb.CalculatingStorageChannel;
-import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.ExtendedStorageChannelAdapter;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.backend.BackEnd;
@@ -162,7 +161,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         this.backEndMap.put ( configurationId, backEnds );
 
         // create hierarchical storage channel structure
-        final ExtendedStorageChannel[] storageChannels = new ExtendedStorageChannel[backEnds.size ()];
+        final CalculatingStorageChannel[] storageChannels = new CalculatingStorageChannel[backEnds.size ()];
         final ShiService service = new ShiService ( configuration );
         for ( int i = 0; i < backEnds.size (); i++ )
         {
@@ -171,7 +170,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             int superBackEndIndex = -1;
             for ( int j = i - 1; j >= 0; j-- )
             {
-                final BackEnd superBackEndCandidate = backEnds.get ( i );
+                final BackEnd superBackEndCandidate = backEnds.get ( j );
                 final CalculationMethod superCalculationMethod = superBackEndCandidate.getMetaData ().getCalculationMethod ();
                 if ( ( superCalculationMethod == calculationMethod ) || ( superCalculationMethod == CalculationMethod.NATIVE ) )
                 {
@@ -179,7 +178,11 @@ public class StorageService implements SelfManagedConfigurationFactory
                     break;
                 }
             }
-            storageChannels[i] = new CalculatingStorageChannel ( new ExtendedStorageChannelAdapter ( backEnd ), superBackEndIndex >= 0 ? storageChannels[superBackEndIndex] : null, Conversions.getCalculationLogicProvider ( backEnd.getMetaData (), CalculationMethod.NATIVE ) );
+            storageChannels[i] = new CalculatingStorageChannel ( new ExtendedStorageChannelAdapter ( backEnd ), superBackEndIndex >= 0 ? storageChannels[superBackEndIndex] : null, Conversions.getCalculationLogicProvider ( backEnd.getMetaData () ) );
+            if ( superBackEndIndex >= 0 )
+            {
+                storageChannels[superBackEndIndex].registerStorageChannel ( storageChannels[i] );
+            }
             service.addStorageChannel ( storageChannels[i] );
         }
         this.shiServices.put ( configuration.getId (), service );
@@ -361,7 +364,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         {
             properties = new HashMap<String, String> ();
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0, "1m" );
-            properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "1h" );
+            properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "10m" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1s" );
             properties.put ( Conversions.MAX_COMPRESSION_LEVEL, "1" );
             properties.put ( Conversions.DATA_TYPE_KEY, "DV" );

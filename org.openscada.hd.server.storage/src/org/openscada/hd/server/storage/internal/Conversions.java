@@ -78,20 +78,14 @@ public class Conversions
     /**
      * This method creates and returns a calculation logic provider instance that supports the specified configuration.
      * @param metaData configuration that is used when creating the calculation logic provider instance
-     * @param overrideNativeCalculationLogic calculation method that will be used if NATIVE is specified via the meta data
      * @return created logic provider instance
      * @throws Exception in case of unexpected problems
      */
-    public static CalculationLogicProvider getCalculationLogicProvider ( final StorageChannelMetaData metaData, final CalculationMethod overrideNativeCalculationLogic ) throws Exception
+    public static CalculationLogicProvider getCalculationLogicProvider ( final StorageChannelMetaData metaData ) throws Exception
     {
         final DataType nativeDataType = metaData.getDataType ();
         final long[] calculationMethodParameters = metaData.getCalculationMethodParameters ();
-        CalculationMethod calculationMethod = metaData.getCalculationMethod ();
-        if ( calculationMethod == CalculationMethod.NATIVE )
-        {
-            calculationMethod = overrideNativeCalculationLogic;
-        }
-        switch ( calculationMethod )
+        switch ( metaData.getCalculationMethod () )
         {
         case AVERAGE:
         {
