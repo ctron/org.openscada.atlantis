@@ -43,8 +43,8 @@ public final class ValueInformation
     public ValueInformation ( final Calendar startTimestamp, final Calendar endTimestamp, final double quality, final long sourceValues )
     {
         super ();
-        this.startTimestamp = startTimestamp;
-        this.endTimestamp = endTimestamp;
+        this.startTimestamp = (Calendar)startTimestamp.clone ();
+        this.endTimestamp = (Calendar)endTimestamp.clone ();
         this.quality = quality;
         this.sourceValues = sourceValues;
     }
