@@ -23,6 +23,11 @@ import java.util.Calendar;
 
 import org.openscada.utils.lang.Immutable;
 
+/**
+ * An information object for a value range
+ * @author Jens Reimann
+ *
+ */
 @Immutable
 public final class ValueInformation
 {
@@ -49,6 +54,10 @@ public final class ValueInformation
         this.sourceValues = sourceValues;
     }
 
+    /**
+     * Get the quality of the value range in percent (0.0 to 1.0)
+     * @return the quality
+     */
     public double getQuality ()
     {
         return this.quality;
