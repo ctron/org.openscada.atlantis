@@ -319,6 +319,8 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
         {
             synchronized ( this )
             {
+                heartBeatTask.shutdown ();
+                heartBeatTask = null;
                 performPingOfLife ();
                 heartBeatBackEnd = null;
             }
