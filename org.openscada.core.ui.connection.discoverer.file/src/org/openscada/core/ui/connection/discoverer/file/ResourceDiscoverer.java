@@ -13,9 +13,14 @@ import java.util.Set;
 import org.eclipse.core.runtime.Status;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.ui.connection.AbstractConnectionDiscoverer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ResourceDiscoverer extends AbstractConnectionDiscoverer
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ResourceDiscoverer.class );
+
     public ResourceDiscoverer ()
     {
         initialize ();
@@ -25,6 +30,8 @@ public abstract class ResourceDiscoverer extends AbstractConnectionDiscoverer
 
     protected void load ( final File file )
     {
+        logger.info ( "Loading: {}", file );
+
         try
         {
             load ( new FileInputStream ( file ) );
