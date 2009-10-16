@@ -53,7 +53,7 @@ public class ListeningLabelProvider extends ViewerLabelProvider
         addSource ( itemsThatNeedLabels );
     }
 
-    private void addSource ( final IObservableSet observableSet )
+    private synchronized void addSource ( final IObservableSet observableSet )
     {
         if ( observableSet == null )
         {
@@ -68,7 +68,7 @@ public class ListeningLabelProvider extends ViewerLabelProvider
         }
     }
 
-    private void removeSource ( final IObservableSet observableSet )
+    private synchronized void removeSource ( final IObservableSet observableSet )
     {
         if ( observableSet == null )
         {
@@ -83,7 +83,7 @@ public class ListeningLabelProvider extends ViewerLabelProvider
         this.items.remove ( observableSet );
     }
 
-    protected void addListenerTo ( final Object next )
+    protected synchronized void addListenerTo ( final Object next )
     {
         logger.debug ( "Add listener to: {}", next ); //$NON-NLS-1$
 
@@ -96,13 +96,13 @@ public class ListeningLabelProvider extends ViewerLabelProvider
         }
     }
 
-    protected void removeListenerFrom ( final Object next )
+    protected synchronized void removeListenerFrom ( final Object next )
     {
         logger.debug ( "Remove listener from: {}", next ); //$NON-NLS-1$
         removeSource ( this.itemMap.remove ( next ) );
     }
 
-    public void dispose ()
+    public synchronized void dispose ()
     {
         for ( final IObservableSet set : this.items )
         {
