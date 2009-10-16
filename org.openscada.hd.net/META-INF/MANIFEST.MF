@@ -10,4 +10,4 @@ Import-Package: org.openscada.core;version="0.14.0",
  org.openscada.hd;version="0.14.0",
  org.openscada.net.base.data;version="0.14.0",
  org.slf4j
-Export-Package: org.openscada.hd.net;version="0.14.0";uses:="org.openscada.net.base.data"
+Export-Package: org.openscada.hd.net;version="0.14.0";uses:="org.openscada.net.base.data,org.openscada.hd"
