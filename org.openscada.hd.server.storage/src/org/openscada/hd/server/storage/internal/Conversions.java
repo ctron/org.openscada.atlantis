@@ -245,13 +245,13 @@ public class Conversions
                 {
                     // set compression time span per detail level
                     final long[] calculationMethodParameters = metaData.getCalculationMethodParameters ();
-                    if ( calculationMethodParameters.length < 2 )
+                    if ( calculationMethodParameters.length < 1 )
                     {
                         final String message = String.format ( "invalid calculation method parameters set (%s)!", metaData );
                         logger.error ( message );
                         throw new Exception ( message );
                     }
-                    data.put ( compressionTimeSpanKey, Conversions.encodeTimeSpan ( calculationMethodParameters[1] ) );
+                    data.put ( compressionTimeSpanKey, Conversions.encodeTimeSpan ( calculationMethodParameters[0] ) );
                 }
             }
             else
@@ -373,7 +373,7 @@ public class Conversions
             logger.error ( message );
             throw new Exception ( message );
         }
-        metaDatas.add ( new StorageChannelMetaData ( configurationId, CalculationMethod.NATIVE, new long[] { 0 }, 0, now, now, proposedDataAge, nativeDataType ) );
+        metaDatas.add ( new StorageChannelMetaData ( configurationId, CalculationMethod.NATIVE, new long[0], 0, now, now, proposedDataAge, nativeDataType ) );
 
         // create meta data for other calculation methods if required
         for ( long detailLevelId = 1; detailLevelId <= maxDetailLevelId; detailLevelId++ )
@@ -394,10 +394,7 @@ public class Conversions
                     logger.error ( message );
                     throw new Exception ( message );
                 }
-                final long[] calculationMethodParameters = new long[2];
-                calculationMethodParameters[0] = detailLevelId == 1 ? 1 : 0;
-                calculationMethodParameters[1] = compressionTimeSpan;
-                metaDatas.add ( new StorageChannelMetaData ( configurationId, calculationMethod, calculationMethodParameters, detailLevelId, now, now, proposedDataAge, nativeDataType ) );
+                metaDatas.add ( new StorageChannelMetaData ( configurationId, calculationMethod, new long[] { compressionTimeSpan }, detailLevelId, now, now, proposedDataAge, nativeDataType ) );
             }
         }
         return metaDatas;

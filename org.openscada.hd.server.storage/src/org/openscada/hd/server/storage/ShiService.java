@@ -300,13 +300,13 @@ public class ShiService implements StorageHistoricalItem, Runnable
 
     /**
      * This method creates an invalid entry using the data of the latest existing entry.
+     * No entry is made if no data at all is available in the root storage channel.
      * @param time time of the entry that has to be created
      */
     private void createInvalidEntry ( final long time )
     {
         if ( rootStorageChannel != null )
         {
-            BaseValue value = null;
             BaseValue[] values = null;
             try
             {
@@ -325,29 +325,25 @@ public class ShiService implements StorageHistoricalItem, Runnable
             }
             if ( ( values != null ) && ( values.length > 0 ) )
             {
-                value = values[values.length - 1];
+                BaseValue value = values[values.length - 1];
                 value.setTime ( Math.max ( time, value.getTime () ) );
                 value.setQualityIndicator ( 0 );
                 value.setBaseValueCount ( 0 );
-            }
-            else
-            {
-                value = expectedDataType == DataType.LONG_VALUE ? new LongValue ( time, 0, 0, 0 ) : new DoubleValue ( time, 0, 0, 0 );
-            }
-            try
-            {
-                if ( expectedDataType == DataType.LONG_VALUE )
+                try
                 {
-                    rootStorageChannel.updateLong ( (LongValue)value );
+                    if ( expectedDataType == DataType.LONG_VALUE )
+                    {
+                        rootStorageChannel.updateLong ( (LongValue)value );
+                    }
+                    else
+                    {
+                        rootStorageChannel.updateDouble ( (DoubleValue)value );
+                    }
                 }
-                else
+                catch ( Exception e )
                 {
-                    rootStorageChannel.updateDouble ( (DoubleValue)value );
+                    logger.error ( "could not store value via root storage channel", e );
                 }
-            }
-            catch ( Exception e )
-            {
-                logger.error ( "could not store value via root storage channel", e );
             }
         }
     }
