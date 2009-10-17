@@ -1,7 +1,6 @@
 package org.openscada.hd.server.storage.internal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -203,8 +202,11 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                                 {
                                     filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, values instanceof LongValue[] ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
                                 }
-                                final BaseValue[] normalizedValues = calculationLogicProvider.generateValues ( filledValues );
-                                resultValues.addAll ( Arrays.asList ( normalizedValues ) );
+                                final BaseValue normalizedValue = calculationLogicProvider.generateValues ( filledValues );
+                                if ( normalizedValue != null )
+                                {
+                                    resultValues.add ( normalizedValue );
+                                }
                                 currentTimeOffsetAsDouble += requestedValueFrequency;
                                 currentTimeOffsetAsLong = (long)currentTimeOffsetAsDouble;
                             }
