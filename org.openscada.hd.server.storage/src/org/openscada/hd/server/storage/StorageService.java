@@ -511,20 +511,32 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
     }
 
     /**
-     * @see org.openscada.ca.SelfManagedConfigurationFactory#update
+     * This method fills the passed map with default setttings if it is passed empty.
+     * @param properties map to be filled with default settings if map is passsed empty
      */
-    public NotifyFuture<Configuration> update ( final String configurationId, Map<String, String> properties )
+    private static void fillConfigurationDefaultSettings ( final Map<String, String> properties )
     {
-        // easy input test data
-        if ( properties.isEmpty () )
+        if ( ( properties != null ) && properties.isEmpty () )
         {
-            properties = new HashMap<String, String> ();
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0, "1m" );
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "10m" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1s" );
             properties.put ( Conversions.MAX_COMPRESSION_LEVEL, "1" );
             properties.put ( Conversions.DATA_TYPE_KEY, "DV" );
         }
+    }
+
+    /**
+     * @see org.openscada.ca.SelfManagedConfigurationFactory#update
+     */
+    public NotifyFuture<Configuration> update ( final String configurationId, Map<String, String> properties )
+    {
+        // provide default settings
+        if ( properties == null )
+        {
+            properties = new HashMap<String, String> ();
+        }
+        fillConfigurationDefaultSettings ( properties );
 
         // prepare temporary configuration from which data will be converted
         ConfigurationImpl configuration = new ConfigurationImpl ();

@@ -417,7 +417,7 @@ public class Conversions
         }
 
         // prepare data for result
-        final String id = String.format ( "%s@%s", configuration.getId (), configuration.getFactoryId ());
+        final String id = String.format ( "%s@%s", configuration.getId (), configuration.getFactoryId () );
         final Map<String, Variant> variantData = new HashMap<String, Variant> ();
 
         // process data
