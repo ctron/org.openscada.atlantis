@@ -145,7 +145,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
                 final StorageChannelMetaData metaData = entry.getKey ();
                 if ( metaData.getDetailLevelId () == compressionLevel )
                 {
-                    ExtendedStorageChannel storageChannel = entry.getValue ();
+                    final ExtendedStorageChannel storageChannel = entry.getValue ();
                     BaseValue[] values = null;
                     switch ( expectedDataType )
                     {
@@ -242,7 +242,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
         {
             if ( expectedDataType == DataType.LONG_VALUE )
             {
-                LongValue longValue = new LongValue ( time, qualityIndicator, 1, variant.asLong ( 0L ) );
+                final LongValue longValue = new LongValue ( time, qualityIndicator, 1, variant.asLong ( 0L ) );
                 this.rootStorageChannel.updateLong ( longValue );
                 for ( QueryImpl query : this.openQueries )
                 {
@@ -251,7 +251,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
             }
             else
             {
-                DoubleValue doubleValue = new DoubleValue ( time, qualityIndicator, 1, variant.asDouble ( 0.0 ) );
+                final DoubleValue doubleValue = new DoubleValue ( time, qualityIndicator, 1, variant.asDouble ( 0.0 ) );
                 this.rootStorageChannel.updateDouble ( doubleValue );
                 for ( QueryImpl query : this.openQueries )
                 {
