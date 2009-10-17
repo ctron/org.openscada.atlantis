@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
 import java.util.Map.Entry;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.ca.Configuration;
 import org.openscada.core.Variant;
@@ -28,8 +30,6 @@ import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
 import org.openscada.hsdb.datatypes.LongValue;
-import org.openscada.hsdb.relict.RelictCleaner;
-import org.openscada.hsdb.relict.RelictCleanerCallerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * @see org.openscada.hd.server.common.StorageHistoricalItem
  * @author Ludwig Straub
  */
-public class ShiService implements StorageHistoricalItem, RelictCleaner
+public class ShiService implements StorageHistoricalItem, Runnable
 {
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( ShiService.class );
@@ -64,8 +64,8 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /** Flag indicating whether the service is currently running or not. */
     private boolean started;
 
-    /** Timer that is used for deleting old data. */
-    private Timer deleteRelictsTimer;
+    /** Task that is used for deleting old data. */
+    private ScheduledExecutorService relictCleanerTask;
 
     /** List of currently open queries. */
     private Collection<QueryImpl> openQueries;
@@ -218,8 +218,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public HistoricalItemInformation getInformation ()
     {
-        // FIXME: remove the whole method
-        return null;
+        return Conversions.convertConfigurationToHistoricalItemInformation ( configuration );
     }
 
     /**
@@ -284,10 +283,10 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 StorageChannelMetaData metaData = storageChannel.getMetaData ();
                 if ( metaData != null )
                 {
-                    this.storageChannels.put ( metaData, storageChannel );
+                    storageChannels.put ( metaData, storageChannel );
                     if ( metaData.getCalculationMethod () == CalculationMethod.NATIVE )
                     {
-                        this.rootStorageChannel = storageChannel;
+                        rootStorageChannel = storageChannel;
                         expectedDataType = metaData.getDataType ();
                     }
                 }
@@ -360,8 +359,8 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     public synchronized void start ()
     {
         stop ();
-        this.deleteRelictsTimer = new Timer ();
-        this.deleteRelictsTimer.schedule ( new RelictCleanerCallerTask ( this ), CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD );
+        this.relictCleanerTask = new ScheduledThreadPoolExecutor ( 1 );
+        this.relictCleanerTask.scheduleWithFixedDelay ( this, CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD, TimeUnit.MILLISECONDS );
         this.started = true;
         createInvalidEntry ( latestReliableTime );
     }
@@ -376,17 +375,19 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     public synchronized void stop ()
     {
         // create entry with data marked as invalid
-        createInvalidEntry ( System.currentTimeMillis () );
+        if ( started )
+        {
+            createInvalidEntry ( System.currentTimeMillis () );
+        }
 
         // set running flag
-        this.started = false;
+        started = false;
 
-        // stop relict cleaner timer
-        if ( this.deleteRelictsTimer != null )
+        // stop relict cleaner task
+        if ( relictCleanerTask != null )
         {
-            this.deleteRelictsTimer.cancel ();
-            this.deleteRelictsTimer.purge ();
-            this.deleteRelictsTimer = null;
+            relictCleanerTask.shutdown ();
+            relictCleanerTask = null;
         }
 
         // close existing queries
@@ -397,13 +398,21 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     }
 
     /**
+     * This method cleans old data.
      * @see org.openscada.hsdb.relict.RelictCleaner#cleanupRelicts
      */
-    public synchronized void cleanupRelicts () throws Exception
+    public synchronized void run ()
     {
-        if ( rootStorageChannel != null )
+        if ( started && ( rootStorageChannel != null ) )
         {
-            rootStorageChannel.cleanupRelicts ();
+            try
+            {
+                rootStorageChannel.cleanupRelicts ();
+            }
+            catch ( Exception e )
+            {
+                logger.error ( "could not clean old data", e );
+            }
         }
     }
 }

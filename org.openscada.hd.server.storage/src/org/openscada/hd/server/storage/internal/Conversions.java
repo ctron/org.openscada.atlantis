@@ -6,9 +6,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationState;
+import org.openscada.core.Variant;
+import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.AverageCalculationLogicProvider;
 import org.openscada.hsdb.calculation.CalculationLogicProvider;
@@ -398,6 +401,35 @@ public class Conversions
             }
         }
         return metaDatas;
+    }
+
+    /**
+     * This method convertes the configuration data to a historical item information compatible format.
+     * @param configuration configuration that has to be converted
+     * @return converted configuration data
+     */
+    public static HistoricalItemInformation convertConfigurationToHistoricalItemInformation ( final Configuration configuration )
+    {
+        // abort if no data was passed
+        if ( configuration == null )
+        {
+            return null;
+        }
+
+        // prepare data for result
+        final String id = String.format ( "%s@%s", configuration.getId (), configuration.getFactoryId ());
+        final Map<String, Variant> variantData = new HashMap<String, Variant> ();
+
+        // process data
+        final Map<String, String> data = configuration.getData ();
+        if ( data != null )
+        {
+            for ( Entry<String, String> entry : data.entrySet () )
+            {
+                variantData.put ( entry.getKey (), new Variant ( entry.getValue () ) );
+            }
+        }
+        return new HistoricalItemInformation ( id, variantData );
     }
 
     /**
