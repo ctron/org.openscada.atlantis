@@ -529,12 +529,13 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
     /**
      * @see org.openscada.ca.SelfManagedConfigurationFactory#update
      */
-    public NotifyFuture<Configuration> update ( final String configurationId, Map<String, String> properties )
+    public NotifyFuture<Configuration> update ( final String configurationId, final Map<String, String> inputProperties )
     {
         // provide default settings
-        if ( properties == null )
+        final Map<String, String> properties = new HashMap<String, String> ();
+        if ( inputProperties != null )
         {
-            properties = new HashMap<String, String> ();
+            properties.putAll ( inputProperties );
         }
         fillConfigurationDefaultSettings ( properties );
 
