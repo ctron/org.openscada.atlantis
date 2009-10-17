@@ -216,7 +216,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
     /**
      * @see org.openscada.hd.server.common.StorageHistoricalItem#getInformation
      */
-    public HistoricalItemInformation getInformation ()
+    public synchronized HistoricalItemInformation getInformation ()
     {
         return Conversions.convertConfigurationToHistoricalItemInformation ( configuration );
     }
