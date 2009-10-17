@@ -91,7 +91,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
     /** Task that will create periodical entries in the heart bear back end. */
     private ScheduledExecutorService heartBeatTask;
 
-    /** Latest time with valid information that could be retrieved via the heart beat timer. */
+    /** Latest time with valid information that could be retrieved via the heart beat task. */
     private long latestReliableTime;
 
     /**
@@ -335,7 +335,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
         // activate heart beat functionality
         initializeHeartBeat ();
 
-        // get latest reliable time and start heart beat timer
+        // get latest reliable time and start heart beat task
         latestReliableTime = Long.MIN_VALUE;
         if ( heartBeatBackEnd != null )
         {
@@ -352,7 +352,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
             {
                 logger.error ( String.format ( "unable to read heart beat value" ), e );
             }
-            // start heart beat timer
+            // start heart beat task
             heartBeatTask = new ScheduledThreadPoolExecutor ( 1 );
             heartBeatTask.scheduleWithFixedDelay ( this, 0, HEART_BEATS_PERIOD, TimeUnit.MILLISECONDS );
         }
