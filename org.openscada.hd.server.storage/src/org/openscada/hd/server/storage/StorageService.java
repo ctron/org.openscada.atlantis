@@ -238,19 +238,11 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
         StorageChannelMetaData[] existingMetaData = null;
         try
         {
-            final BackEnd[] existingBackEnds = backEndFactory.getExistingBackEnds ( HEARTBEAT_CONFIGURATION_ID, 0, CalculationMethod.NATIVE );
-            if ( existingBackEnds != null )
-            {
-                existingMetaData = new StorageChannelMetaData[existingBackEnds.length];
-                for ( int i = 0; i < existingBackEnds.length; i++ )
-                {
-                    existingMetaData[i] = existingBackEnds[i].getMetaData ();
-                }
-            }
+            existingMetaData = backEndFactory.getExistingBackEndsMetaData ( HEARTBEAT_CONFIGURATION_ID );
         }
         catch ( Exception e )
         {
-            logger.error ( "unable to retrieve existing heart beat back end information", e );
+            logger.error ( "unable to retrieve existing heart beat back end meta data", e );
         }
 
         // create new backend if none exist
