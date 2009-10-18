@@ -513,7 +513,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0, "1m" );
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "10m" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1s" );
-            properties.put ( Conversions.MAX_COMPRESSION_LEVEL, "0" );
+            properties.put ( Conversions.MAX_COMPRESSION_LEVEL, "1" );
             properties.put ( Conversions.DATA_TYPE_KEY, "DV" );
         }
     }
