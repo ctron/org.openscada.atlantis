@@ -76,12 +76,19 @@ public class ShiService implements StorageHistoricalItem, Runnable
     /** Latest time of known valid information. */
     private final long latestReliableTime;
 
+    /** Flag indicating whether old data should be deleted or not. */
+    private final boolean importMode;
+
+    /** Maximum age of data that will be processed by the service if not running in import mode. */
+    private final long proposedDataAge;
+
     /**
      * Constructor.
      * @param configuration configuration of the service
      * @param latestReliableTime latest time of known valid information
+     * @param importMode flag indicating whether old data should be deleted or not
      */
-    public ShiService ( final Configuration configuration, final long latestReliableTime )
+    public ShiService ( final Configuration configuration, final long latestReliableTime, final boolean importMode )
     {
         this.configuration = new ConfigurationImpl ( configuration );
         calculationMethods = Conversions.getCalculationMethods ( configuration );
@@ -91,6 +98,8 @@ public class ShiService implements StorageHistoricalItem, Runnable
         this.openQueries = new LinkedList<QueryImpl> ();
         expectedDataType = DataType.UNKNOWN;
         this.latestReliableTime = latestReliableTime;
+        this.importMode = importMode;
+        this.proposedDataAge = Conversions.decodeTimeSpan ( configuration.getData ().get ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0 ) );
     }
 
     /**
@@ -236,7 +245,12 @@ public class ShiService implements StorageHistoricalItem, Runnable
             return;
         }
         final Calendar calendar = value.getTimestamp ();
-        final long time = calendar == null ? System.currentTimeMillis () : calendar.getTimeInMillis ();
+        final long now = System.currentTimeMillis ();
+        final long time = calendar == null ? now : calendar.getTimeInMillis ();
+        if ( importMode || ( ( now - proposedDataAge ) > time ) )
+        {
+            logger.warn ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", configuration.getId (), time );
+        }
         final double qualityIndicator = !value.isConnected () || value.isError () ? 0 : 1;
         try
         {
@@ -355,8 +369,11 @@ public class ShiService implements StorageHistoricalItem, Runnable
     public synchronized void start ()
     {
         stop ();
-        this.relictCleanerTask = new ScheduledThreadPoolExecutor ( 1 );
-        this.relictCleanerTask.scheduleWithFixedDelay ( this, CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD, TimeUnit.MILLISECONDS );
+        if ( importMode )
+        {
+            this.relictCleanerTask = new ScheduledThreadPoolExecutor ( 1 );
+            this.relictCleanerTask.scheduleWithFixedDelay ( this, CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD, TimeUnit.MILLISECONDS );
+        }
         this.started = true;
         createInvalidEntry ( latestReliableTime );
     }

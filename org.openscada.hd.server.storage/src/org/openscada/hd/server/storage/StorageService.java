@@ -55,8 +55,11 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( StorageService.class );
 
-    /** Default root folder of the file fragments that are created by the back end objects. */
+    /** System property defining the default root folder of the file fragments that are created by the back end objects. */
     private final static String FILE_FRAGMENTS_ROOT_FOLDER_SYSTEM_PROPERTY = "org.openscada.hd.server.storage.file.root";
+
+    /** System property defining the flag specifying whether the service should run in import mode or not. Import mode means that no old data is removed. */
+    private final static String IMPORT_MODE = "org.openscada.hd.server.storage.import";
 
     /** Minimum count of file fragments before the first fragment is old enough to be deleted. */
     private final static long FILE_FRAGMENTS_PER_DATA_LIFESPAN = 4;
@@ -84,6 +87,9 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
 
     /** Registered configuration listeners. */
     private final List<ConfigurationListener> configurationListeners;
+
+    /** Flag indicating whether old data should be deleted or not. */
+    private final boolean importMode;
 
     /** Back end used to store heart beat data. */
     private BackEnd heartBeatBackEnd;
@@ -114,6 +120,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
         this.configurationListeners = new LinkedList<ConfigurationListener> ();
         heartBeatBackEnd = null;
         latestReliableTime = Long.MIN_VALUE;
+        this.importMode = Boolean.parseBoolean ( System.getProperty ( IMPORT_MODE ) );
     }
 
     /**
@@ -187,7 +194,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
 
         // create hierarchical storage channel structure
         final CalculatingStorageChannel[] storageChannels = new CalculatingStorageChannel[backEnds.size ()];
-        final ShiService service = new ShiService ( configuration, latestReliableTime );
+        final ShiService service = new ShiService ( configuration, latestReliableTime, importMode );
         for ( int i = 0; i < backEnds.size (); i++ )
         {
             final BackEnd backEnd = backEnds.get ( i );
@@ -325,7 +332,10 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
     public synchronized void start ()
     {
         // activate heart beat functionality
-        initializeHeartBeat ();
+        if ( !importMode )
+        {
+            initializeHeartBeat ();
+        }
 
         // get latest reliable time and start heart beat task
         latestReliableTime = Long.MIN_VALUE;

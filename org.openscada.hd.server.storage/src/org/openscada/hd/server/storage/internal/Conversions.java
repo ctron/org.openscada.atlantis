@@ -232,9 +232,10 @@ public class Conversions
 
             // set proposed data age per level
             final String proposedDataAgeKey = PROPOSED_DATA_AGE_KEY_PREFIX + detailLevelId;
+            final long proposedDataAge = metaData.getProposedDataAge ();
             if ( !data.containsKey ( proposedDataAgeKey ) )
             {
-                data.put ( proposedDataAgeKey, Conversions.encodeTimeSpan ( metaData.getProposedDataAge () ) );
+                data.put ( proposedDataAgeKey, Conversions.encodeTimeSpan ( proposedDataAge ) );
             }
 
             // set proposed compression time span per level if calculation method is not NATIVE
@@ -251,7 +252,14 @@ public class Conversions
                         logger.error ( message );
                         throw new Exception ( message );
                     }
-                    data.put ( compressionTimeSpanKey, Conversions.encodeTimeSpan ( calculationMethodParameters[0] ) );
+                    final long compressionTimeSpan = calculationMethodParameters[0];
+                    final String compressionTimeSpanAsString = Conversions.encodeTimeSpan ( compressionTimeSpan );
+                    if ( compressionTimeSpan > proposedDataAge )
+                    {
+                        logger.warn ( String.format ( "invalid compression time span set within calculation method parameters (%s)! compression time span must be at least the value of proposed data age. value of proposed data age will be adapted to %s ms", metaData, compressionTimeSpanAsString ) );
+                        data.put ( proposedDataAgeKey, compressionTimeSpanAsString );
+                    }
+                    data.put ( compressionTimeSpanKey, compressionTimeSpanAsString );
                 }
             }
             else
