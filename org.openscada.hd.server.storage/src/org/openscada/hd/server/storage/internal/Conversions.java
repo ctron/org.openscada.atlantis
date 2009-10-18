@@ -256,7 +256,7 @@ public class Conversions
                     final String compressionTimeSpanAsString = Conversions.encodeTimeSpan ( compressionTimeSpan );
                     if ( compressionTimeSpan > proposedDataAge )
                     {
-                        logger.warn ( String.format ( "invalid compression time span set within calculation method parameters (%s)! compression time span must be at least the value of proposed data age. value of proposed data age will be adapted to %s ms", metaData, compressionTimeSpanAsString ) );
+                        logger.warn ( String.format ( "invalid compression time span set within calculation method parameters (%s)! compression time span must be at least the value of proposed data age. value of proposed data age will be adapted to %s", metaData, compressionTimeSpanAsString ) );
                         data.put ( proposedDataAgeKey, compressionTimeSpanAsString );
                     }
                     data.put ( compressionTimeSpanKey, compressionTimeSpanAsString );
