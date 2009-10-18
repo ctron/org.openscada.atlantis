@@ -287,7 +287,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
             // wait for some time
             try
             {
-                Thread.sleep ( DELAY_BETWEEN_TWO_QUERY_CALCULATIONS );
+                Thread.sleep ( 1000 );
             }
             catch ( Exception e )
             {
@@ -390,11 +390,14 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
      */
     private void markTimeAsDirty ( final long time )
     {
-        if ( updateDataPeriodically && !closed )
+        synchronized ( this )
         {
-            if ( parameters.getEndTimestamp ().getTimeInMillis () > time )
+            if ( updateDataPeriodically && !closed )
             {
-                updateRequired = true;
+                if ( parameters.getEndTimestamp ().getTimeInMillis () > time )
+                {
+                    updateRequired = true;
+                }
             }
         }
     }
@@ -459,7 +462,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     /**
      * @see org.openscada.hsdb.ExtendedStorageChannel#updateLong
      */
-    public synchronized void updateLong ( final LongValue longValue ) throws Exception
+    public void updateLong ( final LongValue longValue ) throws Exception
     {
         if ( longValue != null )
         {
@@ -470,7 +473,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     /**
      * @see org.openscada.hsdb.ExtendedStorageChannel#updateLongs
      */
-    public synchronized void updateLongs ( final LongValue[] longValues ) throws Exception
+    public void updateLongs ( final LongValue[] longValues ) throws Exception
     {
         if ( longValues != null )
         {
@@ -484,7 +487,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     /**
      * @see org.openscada.hsdb.ExtendedStorageChannel#updateDouble
      */
-    public synchronized void updateDouble ( final DoubleValue doubleValue ) throws Exception
+    public void updateDouble ( final DoubleValue doubleValue ) throws Exception
     {
         if ( doubleValue != null )
         {
@@ -495,7 +498,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     /**
      * @see org.openscada.hsdb.ExtendedStorageChannel#updateDoubles
      */
-    public synchronized void updateDoubles ( final DoubleValue[] doubleValues ) throws Exception
+    public void updateDoubles ( final DoubleValue[] doubleValues ) throws Exception
     {
         if ( doubleValues != null )
         {
