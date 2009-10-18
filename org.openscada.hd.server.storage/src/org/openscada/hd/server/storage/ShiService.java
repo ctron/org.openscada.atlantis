@@ -370,6 +370,12 @@ public class ShiService implements StorageHistoricalItem, Runnable
      */
     public synchronized void stop ()
     {
+        // close existing queries
+        for ( final QueryImpl query : Collections.unmodifiableCollection ( openQueries ) )
+        {
+            query.close ();
+        }
+
         // create entry with data marked as invalid
         if ( started )
         {
@@ -384,12 +390,6 @@ public class ShiService implements StorageHistoricalItem, Runnable
         {
             relictCleanerTask.shutdown ();
             relictCleanerTask = null;
-        }
-
-        // close existing queries
-        for ( final QueryImpl query : Collections.unmodifiableCollection ( openQueries ) )
-        {
-            query.close ();
         }
     }
 

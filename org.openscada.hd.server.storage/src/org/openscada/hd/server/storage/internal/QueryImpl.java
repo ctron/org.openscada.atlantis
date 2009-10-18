@@ -284,16 +284,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                 }
             }
 
-            // wait for some time
-            try
-            {
-                Thread.sleep ( 1000 );
-            }
-            catch ( final Exception e )
-            {
-                logger.debug ( "query thread was interrupted" );
-            }
-
             // free related future task and restart query if new data is available
             synchronized ( service )
             {
@@ -397,6 +387,10 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                 if ( parameters.getEndTimestamp ().getTimeInMillis () > time )
                 {
                     updateRequired = true;
+                    if ( futureTask == null )
+                    {
+                        checkStartTask ();
+                    }
                 }
             }
         }
