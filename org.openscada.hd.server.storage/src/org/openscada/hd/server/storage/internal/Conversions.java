@@ -203,7 +203,7 @@ public class Conversions
         configuration.setData ( data );
         long maxLevel = -1;
         final Set<String> calculationMethods = new HashSet<String> ();
-        for ( StorageChannelMetaData metaData : metaDatas )
+        for ( final StorageChannelMetaData metaData : metaDatas )
         {
             // check calculation method
             final CalculationMethod calculationMethod = metaData.getCalculationMethod ();
@@ -260,6 +260,14 @@ public class Conversions
             }
         }
 
+        // add default calculation methods if none are available
+        if ( calculationMethods.isEmpty () )
+        {
+            calculationMethods.add ( CalculationMethod.convertCalculationMethodToShortString ( CalculationMethod.AVERAGE ) );
+            calculationMethods.add ( CalculationMethod.convertCalculationMethodToShortString ( CalculationMethod.MINIMUM ) );
+            calculationMethods.add ( CalculationMethod.convertCalculationMethodToShortString ( CalculationMethod.MAXIMUM ) );
+        }
+
         // assure that all calculated data has been set
         if ( DataType.convertShortStringToDataType ( data.get ( DATA_TYPE_KEY ) ) == DataType.UNKNOWN )
         {
@@ -288,9 +296,9 @@ public class Conversions
         if ( data != null )
         {
             final String calculationMethodsValue = data.get ( CALCULATION_METHODS );
-            if ( calculationMethodsValue != null )
+            if ( ( calculationMethodsValue != null ) && ( calculationMethodsValue.trim ().length () != 0 ) )
             {
-                for ( String s : calculationMethodsValue.split ( LIST_SEPARATOR ) )
+                for ( final String s : calculationMethodsValue.split ( LIST_SEPARATOR ) )
                 {
                     calculationMethods.add ( CalculationMethod.convertShortStringToCalculationMethod ( s.trim () ) );
                 }
@@ -378,7 +386,7 @@ public class Conversions
         // create meta data for other calculation methods if required
         for ( long detailLevelId = 1; detailLevelId <= maxDetailLevelId; detailLevelId++ )
         {
-            for ( CalculationMethod calculationMethod : calculationMethods )
+            for ( final CalculationMethod calculationMethod : calculationMethods )
             {
                 final long compressionTimeSpan = decodeTimeSpan ( data.get ( COMPRESSION_TIMESPAN_KEY_PREFIX + detailLevelId ) );
                 if ( compressionTimeSpan < 1 )
@@ -421,7 +429,7 @@ public class Conversions
         final Map<String, String> data = configuration.getData ();
         if ( data != null )
         {
-            for ( Entry<String, String> entry : data.entrySet () )
+            for ( final Entry<String, String> entry : data.entrySet () )
             {
                 variantData.put ( entry.getKey (), new Variant ( entry.getValue () ) );
             }

@@ -32,7 +32,7 @@ public class Activator implements BundleActivator
     public void start ( BundleContext context ) throws Exception
     {
         final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
-        Hashtable<String, String> gescheiteHT = new Hashtable<String, String> ();
+        final Hashtable<String, String> gescheiteHT = new Hashtable<String, String> ();
         gescheiteHT.put ( Constants.SERVICE_DESCRIPTION, StorageService.SERVICE_DESCRIPTION );
         gescheiteHT.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
         gescheiteHT.put ( ConfigurationAdministrator.FACTORY_ID, StorageService.FACTORY_ID );

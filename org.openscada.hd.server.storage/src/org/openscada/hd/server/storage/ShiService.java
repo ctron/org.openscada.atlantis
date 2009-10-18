@@ -68,13 +68,13 @@ public class ShiService implements StorageHistoricalItem, Runnable
     private ScheduledExecutorService relictCleanerTask;
 
     /** List of currently open queries. */
-    private Collection<QueryImpl> openQueries;
+    private final Collection<QueryImpl> openQueries;
 
     /** Expected input data type. */
     private DataType expectedDataType;
 
     /** Latest time of known valid information. */
-    private long latestReliableTime;
+    private final long latestReliableTime;
 
     /**
      * Constructor.
@@ -119,7 +119,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
     public synchronized long getMaximumCompressionLevel ()
     {
         long maximumAvailableCompressionLevel = Long.MIN_VALUE;
-        for ( StorageChannelMetaData metaData : storageChannels.keySet () )
+        for ( final StorageChannelMetaData metaData : storageChannels.keySet () )
         {
             maximumAvailableCompressionLevel = Math.max ( maximumAvailableCompressionLevel, metaData.getDetailLevelId () );
         }
@@ -140,7 +140,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
         final Map<StorageChannelMetaData, BaseValue[]> result = new HashMap<StorageChannelMetaData, BaseValue[]> ();
         try
         {
-            for ( Entry<StorageChannelMetaData, ExtendedStorageChannel> entry : storageChannels.entrySet () )
+            for ( final Entry<StorageChannelMetaData, ExtendedStorageChannel> entry : storageChannels.entrySet () )
             {
                 final StorageChannelMetaData metaData = entry.getKey ();
                 if ( metaData.getDetailLevelId () == compressionLevel )
@@ -163,7 +163,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
                     if ( compressionLevel == 0 )
                     {
                         // create a virtual entry for each required calculation method
-                        for ( CalculationMethod calculationMethod : calculationMethods )
+                        for ( final CalculationMethod calculationMethod : calculationMethods )
                         {
                             final StorageChannelMetaData subMetaData = new StorageChannelMetaData ( metaData );
                             subMetaData.setCalculationMethod ( calculationMethod );
@@ -177,7 +177,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
                 }
             }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             final String message = "unable to retrieve values from storage channel";
             logger.error ( message, e );
@@ -244,7 +244,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
             {
                 final LongValue longValue = new LongValue ( time, qualityIndicator, 1, variant.asLong ( 0L ) );
                 this.rootStorageChannel.updateLong ( longValue );
-                for ( QueryImpl query : this.openQueries )
+                for ( final QueryImpl query : this.openQueries )
                 {
                     query.updateLong ( longValue );
                 }
@@ -253,7 +253,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
             {
                 final DoubleValue doubleValue = new DoubleValue ( time, qualityIndicator, 1, variant.asDouble ( 0.0 ) );
                 this.rootStorageChannel.updateDouble ( doubleValue );
-                for ( QueryImpl query : this.openQueries )
+                for ( final QueryImpl query : this.openQueries )
                 {
                     query.updateDouble ( doubleValue );
                 }
@@ -280,7 +280,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
         {
             try
             {
-                StorageChannelMetaData metaData = storageChannel.getMetaData ();
+                final StorageChannelMetaData metaData = storageChannel.getMetaData ();
                 if ( metaData != null )
                 {
                     storageChannels.put ( metaData, storageChannel );
@@ -291,7 +291,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
                     }
                 }
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 logger.error ( "could not retrieve meta data information of storage channel", e );
             }
@@ -319,13 +319,13 @@ public class ShiService implements StorageHistoricalItem, Runnable
                     values = rootStorageChannel.getDoubleValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
                 }
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 logger.error ( "could not retrieve latest value from root storage channel", e );
             }
             if ( ( values != null ) && ( values.length > 0 ) )
             {
-                BaseValue value = values[values.length - 1];
+                final BaseValue value = values[values.length - 1];
                 value.setTime ( Math.max ( time, value.getTime () ) );
                 value.setQualityIndicator ( 0 );
                 value.setBaseValueCount ( 0 );
@@ -340,7 +340,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
                         rootStorageChannel.updateDouble ( (DoubleValue)value );
                     }
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     logger.error ( "could not store value via root storage channel", e );
                 }
@@ -387,7 +387,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
         }
 
         // close existing queries
-        for ( QueryImpl query : Collections.unmodifiableCollection ( openQueries ) )
+        for ( final QueryImpl query : Collections.unmodifiableCollection ( openQueries ) )
         {
             query.close ();
         }
@@ -405,7 +405,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
             {
                 rootStorageChannel.cleanupRelicts ();
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 logger.error ( "could not clean old data", e );
             }

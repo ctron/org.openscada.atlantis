@@ -132,7 +132,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         {
             QueryParameters parameters = null;
             long currentCompressionLevel = maximumCompressionLevel;
-            synchronized ( this )
+            synchronized ( service )
             {
                 currentCompressionLevel = this.currentCompressionLevel;
                 if ( currentCompressionLevel == maximumCompressionLevel )
@@ -168,11 +168,11 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                     {
                         ValueInformation[] resultValueInformationArray = null;
                         // get raw storage channel data from service
-                        for ( Entry<StorageChannelMetaData, BaseValue[]> entry : availableChannels.entrySet () )
+                        for ( final Entry<StorageChannelMetaData, BaseValue[]> entry : availableChannels.entrySet () )
                         {
                             // get current compression level
                             final StorageChannelMetaData metaData = entry.getKey ();
-                            CalculationLogicProvider calculationLogicProvider = Conversions.getCalculationLogicProvider ( metaData );
+                            final CalculationLogicProvider calculationLogicProvider = Conversions.getCalculationLogicProvider ( metaData );
                             final BaseValue[] values = entry.getValue ();
                             if ( ( currentCompressionLevel > 0 ) && entriesFound && ( values.length < 1 ) )
                             {
@@ -210,22 +210,22 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                                 currentTimeOffsetAsDouble += requestedValueFrequency;
                                 currentTimeOffsetAsLong = (long)currentTimeOffsetAsDouble;
                             }
-                            Value[] resultValueArray = new Value[(int)Math.min ( resultValues.size (), requestedEntries )];
+                            final Value[] resultValueArray = new Value[(int)Math.min ( resultValues.size (), requestedEntries )];
                             if ( !metaInformationCalculated )
                             {
                                 resultValueInformationArray = new ValueInformation[resultValueArray.length];
                             }
                             if ( values instanceof LongValue[] )
                             {
-                                LongValue[] longValues = resultValues.toArray ( ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY );
+                                final LongValue[] longValues = resultValues.toArray ( ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY );
                                 for ( int i = 0; i < resultValueArray.length; i++ )
                                 {
-                                    LongValue longValue = longValues[i];
+                                    final LongValue longValue = longValues[i];
                                     resultValueArray[i] = new Value ( longValue.getValue () );
                                     if ( !metaInformationCalculated )
                                     {
-                                        Calendar cstartTime = Calendar.getInstance ();
-                                        Calendar cendTime = Calendar.getInstance ();
+                                        final Calendar cstartTime = Calendar.getInstance ();
+                                        final Calendar cendTime = Calendar.getInstance ();
                                         cstartTime.setTimeInMillis ( longValue.getTime () );
                                         cendTime.setTimeInMillis ( i == longValues.length - 1 ? endTime : longValues[i + 1].getTime () );
                                         resultValueInformationArray[i] = new ValueInformation ( cstartTime, cendTime, longValue.getQualityIndicator (), longValue.getBaseValueCount () );
@@ -234,15 +234,15 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                             }
                             else
                             {
-                                DoubleValue[] doubleValues = resultValues.toArray ( ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
+                                final DoubleValue[] doubleValues = resultValues.toArray ( ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
                                 for ( int i = 0; i < resultValueArray.length; i++ )
                                 {
-                                    DoubleValue doubleValue = doubleValues[i];
+                                    final DoubleValue doubleValue = doubleValues[i];
                                     resultValueArray[i] = new Value ( doubleValue.getValue () );
                                     if ( !metaInformationCalculated )
                                     {
-                                        Calendar cstartTime = Calendar.getInstance ();
-                                        Calendar cendTime = Calendar.getInstance ();
+                                        final Calendar cstartTime = Calendar.getInstance ();
+                                        final Calendar cendTime = Calendar.getInstance ();
                                         cstartTime.setTimeInMillis ( doubleValue.getTime () );
                                         cendTime.setTimeInMillis ( i == doubleValues.length - 1 ? endTime : doubleValues[i + 1].getTime () );
                                         resultValueInformationArray[i] = new ValueInformation ( cstartTime, cendTime, doubleValue.getQualityIndicator (), doubleValue.getBaseValueCount () );
@@ -255,7 +255,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                         if ( availableChannels.size () == resultMap.size () )
                         {
                             // send data to listener
-                            synchronized ( this )
+                            synchronized ( service )
                             {
                                 if ( closed )
                                 {
@@ -276,7 +276,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
             }
 
             // store current compression level for next call
-            synchronized ( this )
+            synchronized ( service )
             {
                 if ( this.currentCompressionLevel < maximumCompressionLevel )
                 {
@@ -289,22 +289,22 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
             {
                 Thread.sleep ( 1000 );
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 logger.debug ( "query thread was interrupted" );
             }
 
             // free related future task and restart query if new data is available
-            synchronized ( this )
+            synchronized ( service )
             {
                 futureTask = null;
                 checkStartTask ();
             }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             logger.error ( "problem while processing query", e );
-            synchronized ( this )
+            synchronized ( service )
             {
                 listener.updateState ( QueryState.DISCONNECTED );
                 close ();
@@ -352,7 +352,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         {
             // it is supposed that very few entries are changed
             final Set<Integer> changedEntries = new HashSet<Integer> ();
-            for ( String calculationMethod : calculationMethods )
+            for ( final String calculationMethod : calculationMethods )
             {
                 final Value[] lastValues = lastData.get ( calculationMethod );
                 final Value[] values = data.get ( calculationMethod );
@@ -364,10 +364,10 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                     }
                 }
             }
-            for ( int changedIndex : changedEntries )
+            for ( final int changedIndex : changedEntries )
             {
                 final Map<String, Value[]> subData = new HashMap<String, Value[]> ();
-                for ( String calculationMethod : calculationMethods )
+                for ( final String calculationMethod : calculationMethods )
                 {
                     subData.put ( calculationMethod, new Value[] { data.get ( calculationMethod )[changedIndex] } );
                 }
@@ -390,7 +390,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
      */
     private void markTimeAsDirty ( final long time )
     {
-        synchronized ( this )
+        synchronized ( service )
         {
             if ( updateDataPeriodically && !closed )
             {
@@ -405,32 +405,38 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     /**
      * @see org.openscada.hd.Query#changeParameters
      */
-    public synchronized void changeParameters ( final QueryParameters parameters )
+    public void changeParameters ( final QueryParameters parameters )
     {
-        this.currentCompressionLevel = maximumCompressionLevel;
-        this.parameters = parameters;
-        listener.updateState ( QueryState.LOADING );
-        updateRequired = true;
-        checkStartTask ();
+        synchronized ( service )
+        {
+            this.currentCompressionLevel = maximumCompressionLevel;
+            this.parameters = parameters;
+            listener.updateState ( QueryState.LOADING );
+            updateRequired = true;
+            checkStartTask ();
+        }
     }
 
     /**
      * @see org.openscada.hd.Query#close
      */
-    public synchronized void close ()
+    public void close ()
     {
-        if ( !closed )
+        synchronized ( service )
         {
-            listener.updateState ( QueryState.DISCONNECTED );
-            service.removeQuery ( this );
+            if ( !closed )
+            {
+                listener.updateState ( QueryState.DISCONNECTED );
+                service.removeQuery ( this );
+            }
+            closed = true;
         }
-        closed = true;
     }
 
     /**
      * @see org.openscada.hsdb.ExtendedStorageChannel#cleanupRelicts
      */
-    public synchronized void cleanupRelicts () throws Exception
+    public void cleanupRelicts () throws Exception
     {
         throw new UnsupportedOperationException ();
     }
@@ -438,7 +444,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     /**
      * @see org.openscada.hsdb.ExtendedStorageChannel#getLongValues
      */
-    public synchronized LongValue[] getLongValues ( final long startTime, final long endTime ) throws Exception
+    public LongValue[] getLongValues ( final long startTime, final long endTime ) throws Exception
     {
         throw new UnsupportedOperationException ();
     }
@@ -446,7 +452,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     /**
      * @see org.openscada.hsdb.ExtendedStorageChannel#getDoubleValues
      */
-    public synchronized DoubleValue[] getDoubleValues ( final long startTime, final long endTime ) throws Exception
+    public DoubleValue[] getDoubleValues ( final long startTime, final long endTime ) throws Exception
     {
         throw new UnsupportedOperationException ();
     }
@@ -454,7 +460,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     /**
      * @see org.openscada.hsdb.ExtendedStorageChannel#getMetaData
      */
-    public synchronized StorageChannelMetaData getMetaData () throws Exception
+    public StorageChannelMetaData getMetaData () throws Exception
     {
         throw new UnsupportedOperationException ();
     }
@@ -477,7 +483,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     {
         if ( longValues != null )
         {
-            for ( LongValue longValue : longValues )
+            for ( final LongValue longValue : longValues )
             {
                 updateLong ( longValue );
             }
@@ -502,7 +508,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     {
         if ( doubleValues != null )
         {
-            for ( DoubleValue doubleValue : doubleValues )
+            for ( final DoubleValue doubleValue : doubleValues )
             {
                 updateDouble ( doubleValue );
             }

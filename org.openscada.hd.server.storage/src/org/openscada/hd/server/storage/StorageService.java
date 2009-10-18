@@ -124,20 +124,20 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
     {
         if ( backEnds != null )
         {
-            for ( BackEnd backEnd : backEnds )
+            for ( final BackEnd backEnd : backEnds )
             {
                 try
                 {
                     backEnd.deinitialize ();
                 }
-                catch ( Exception e1 )
+                catch ( final Exception e1 )
                 {
                     StorageChannelMetaData metaData = null;
                     try
                     {
                         metaData = backEnd.getMetaData ();
                     }
-                    catch ( Exception e2 )
+                    catch ( final Exception e2 )
                     {
                     }
                     logger.error ( String.format ( "unable to deinitialize unused back end for meta data '%s'", metaData ), e1 );
@@ -162,7 +162,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
 
         // create back end objects 
         final List<BackEnd> backEnds = new ArrayList<BackEnd> ();
-        for ( StorageChannelMetaData metaData : metaDatas )
+        for ( final StorageChannelMetaData metaData : metaDatas )
         {
             try
             {
@@ -175,10 +175,10 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
                     backEnd.create ( metaData );
                 }
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 deinitializeBackEnds ( backEnds );
-                String message = String.format ( "could not create all back ends required for configuration '%s'", configurationId );
+                final String message = String.format ( "could not create all back ends required for configuration '%s'", configurationId );
                 logger.error ( message, e );
                 throw new Exception ( message, e );
             }
@@ -240,14 +240,14 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
         {
             existingMetaData = backEndFactory.getExistingBackEndsMetaData ( HEARTBEAT_CONFIGURATION_ID );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             logger.error ( "unable to retrieve existing heart beat back end meta data", e );
         }
 
         // create new backend if none exist
         StorageChannelMetaData metaData = null;
-        boolean createNewBackEnd = ( existingMetaData == null ) || ( existingMetaData.length == 0 );
+        final boolean createNewBackEnd = ( existingMetaData == null ) || ( existingMetaData.length == 0 );
         if ( createNewBackEnd )
         {
             metaData = new StorageChannelMetaData ( HEARTBEAT_CONFIGURATION_ID, CalculationMethod.NATIVE, new long[0], 0, now, now + 1, PROPOSED_HEART_BEAT_DATA_AGE, DataType.LONG_VALUE );
@@ -267,7 +267,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
             }
             heartBeatBackEnd = backEnd;
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             logger.error ( String.format ( "unable to create heart beat back end (%s)", metaData ), e );
         }
@@ -287,7 +287,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
                 heartBeatBackEnd.updateLong ( value );
                 heartBeatBackEnd.cleanupRelicts ();
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 logger.error ( String.format ( "unable to store heart beat value" ), e );
             }
@@ -334,13 +334,13 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
             final long now = System.currentTimeMillis ();
             try
             {
-                LongValue[] longValues = heartBeatBackEnd.getLongValues ( now, now + 1 );
+                final LongValue[] longValues = heartBeatBackEnd.getLongValues ( now, now + 1 );
                 if ( ( longValues != null ) && ( longValues.length > 0 ) )
                 {
                     latestReliableTime = longValues[longValues.length - 1].getValue ();
                 }
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 logger.error ( String.format ( "unable to read heart beat value" ), e );
             }
@@ -355,14 +355,14 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
         {
             availableMetaDatas = backEndFactory.getExistingBackEndsMetaData ();
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             logger.error ( "could not retrieve information of existing meta data service start", e );
             availableMetaDatas = new StorageChannelMetaData[0];
         }
 
         // build a map holding all back end objects grouped by data configuration ids ordered by detail level
-        Set<String> bannedConfigurationIds = new HashSet<String> ();
+        final Set<String> bannedConfigurationIds = new HashSet<String> ();
         for ( final StorageChannelMetaData metaData : availableMetaDatas )
         {
             // ignore heartbeat meta data since it is internal
@@ -407,7 +407,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
                 }
                 backEnds.add ( insertionIndex, backEnd );
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 logger.error ( String.format ( "problem while loading back ends for meta data '%s'", metaData ), e );
                 bannedConfigurationIds.add ( configurationId );
@@ -426,21 +426,21 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
 
         // create shi service objects for grouped configuration ids
         bannedConfigurationIds.clear ();
-        for ( Entry<String, List<BackEnd>> entry : backEndMap.entrySet () )
+        for ( final Entry<String, List<BackEnd>> entry : backEndMap.entrySet () )
         {
-            List<BackEnd> backEnds = entry.getValue ();
+            final List<BackEnd> backEnds = entry.getValue ();
             if ( !backEnds.isEmpty () )
             {
                 try
                 {
-                    List<StorageChannelMetaData> metaDatas = new ArrayList<StorageChannelMetaData> ();
-                    for ( BackEnd backEnd : backEnds )
+                    final List<StorageChannelMetaData> metaDatas = new ArrayList<StorageChannelMetaData> ();
+                    for ( final BackEnd backEnd : backEnds )
                     {
                         metaDatas.add ( backEnd.getMetaData () );
                     }
                     createService ( Conversions.convertMetaDatasToConfiguration ( FACTORY_ID, metaDatas ), false );
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     final String configurationId = entry.getKey ();
                     logger.error ( String.format ( "could not create service for existing configuration '%s'", configurationId ), e );
@@ -450,7 +450,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
         }
 
         // remove not used back end objects
-        for ( String configurationId : bannedConfigurationIds )
+        for ( final String configurationId : bannedConfigurationIds )
         {
             deinitializeBackEnds ( backEndMap.remove ( configurationId ) );
         }
@@ -513,7 +513,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0, "1m" );
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "10m" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1s" );
-            properties.put ( Conversions.MAX_COMPRESSION_LEVEL, "1" );
+            properties.put ( Conversions.MAX_COMPRESSION_LEVEL, "0" );
             properties.put ( Conversions.DATA_TYPE_KEY, "DV" );
         }
     }
@@ -532,14 +532,14 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
         fillConfigurationDefaultSettings ( properties );
 
         // prepare temporary configuration from which data will be converted
-        ConfigurationImpl configuration = new ConfigurationImpl ();
+        final ConfigurationImpl configuration = new ConfigurationImpl ();
         configuration.setData ( properties );
         configuration.setFactoryId ( FACTORY_ID );
         configuration.setId ( configurationId );
         configuration.setState ( ConfigurationState.ERROR );
 
         // disallow update of already existing service
-        ShiService service = this.shiServices.get ( configurationId );
+        final ShiService service = this.shiServices.get ( configurationId );
         if ( service != null )
         {
             return new InstantErrorFuture<Configuration> ( new IllegalStateException ( "unable to modify exisiting configuration" ).fillInStackTrace () );
