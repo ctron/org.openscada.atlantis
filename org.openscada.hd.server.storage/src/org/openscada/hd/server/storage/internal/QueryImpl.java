@@ -193,7 +193,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         }
         if ( secondArray instanceof LongValue[] )
         {
-            final LongValue[] secondArray1 = (LongValue[])firstArray;
+            final LongValue[] secondArray1 = (LongValue[])secondArray;
             final LongValue[] result = new LongValue[firstArray.length + secondArray.length];
             for ( int i = 0; i < secondArray.length; i++ )
             {
@@ -334,6 +334,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
             final CalculationLogicProvider calculationLogicProvider = Conversions.getCalculationLogicProvider ( metaData );
             final BaseValue[] values = entry.getValue ();
             final List<BaseValue> resultValues = new ArrayList<BaseValue> ();
+            final DataType inputDataType = calculationLogicProvider.getInputType ();
+            final DataType outputDataType = calculationLogicProvider.getOutputType ();
             for ( int i = 0; i < resultSize; i++ )
             {
                 final double currentTimeOffsetAsDouble = startTime + i * requestedValueFrequency;
@@ -342,7 +344,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                 BaseValue[] filledValues = null;
                 if ( values.length == 0 )
                 {
-                    if ( values instanceof LongValue[] )
+                    if ( inputDataType == DataType.LONG_VALUE )
                     {
                         filledValues = new LongValue[] { new LongValue ( currentTimeOffsetAsLong, 0, 0, 0 ), new LongValue ( localEndTime, 0, 0, 0 ) };
                     }
@@ -353,7 +355,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                 }
                 else
                 {
-                    filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, 0, values instanceof LongValue[] ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
+                    filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, 0, inputDataType == DataType.LONG_VALUE ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
                 }
                 final BaseValue normalizedValue = calculationLogicProvider.generateValues ( filledValues );
                 if ( normalizedValue != null )
@@ -362,7 +364,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                 }
             }
             final Value[] resultValueArray = new Value[resultSize];
-            if ( values instanceof LongValue[] )
+            if ( outputDataType == DataType.LONG_VALUE )
             {
                 final LongValue[] longValues = resultValues.toArray ( ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY );
                 for ( int i = 0; i < resultValueArray.length; i++ )
