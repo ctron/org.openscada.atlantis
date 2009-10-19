@@ -73,6 +73,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private final Map<Long, QueryImpl> queries = new HashMap<Long, QueryImpl> ();
 
+    protected Map<String, HistoricalItemInformation> knownItems = new HashMap<String, HistoricalItemInformation> ();
+
     @Override
     public String getRequiredVersion ()
     {
@@ -208,8 +210,10 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
      * @param removed removed item
      * @param full indicates a full or differential transmission
      */
-    private void fireListChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
+    private synchronized void fireListChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
+        applyChange ( addedOrModified, removed, full );
+
         final Collection<ItemListListener> listeners = new ArrayList<ItemListListener> ( this.itemListListeners );
 
         this.executor.execute ( new Runnable () {
@@ -222,6 +226,34 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 }
             }
         } );
+    }
+
+    /**
+     * Updates data to the cache
+     * @param addedOrModified the items that where added or modified
+     * @param removed the items that where removed
+     * @param full <code>true</code> if this is a full update and not a delta update
+     */
+    private void applyChange ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
+    {
+        if ( full )
+        {
+            this.itemListListeners.clear ();
+        }
+        if ( removed != null )
+        {
+            for ( final String item : removed )
+            {
+                this.knownItems.remove ( item );
+            }
+        }
+        if ( addedOrModified != null )
+        {
+            for ( final HistoricalItemInformation item : addedOrModified )
+            {
+                this.knownItems.put ( item.getId (), item );
+            }
+        }
     }
 
     public Executor getExecutor ()
@@ -252,30 +284,36 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         }
     }
 
-    public void addListListener ( final ItemListListener listener )
+    public synchronized void addListListener ( final ItemListListener listener )
     {
-        synchronized ( this )
-        {
-            final boolean isEmpty = this.itemListListeners.isEmpty ();
-            this.itemListListeners.add ( listener );
+        final boolean isEmpty = this.itemListListeners.isEmpty ();
+        this.itemListListeners.add ( listener );
 
-            if ( isEmpty != this.itemListListeners.isEmpty () )
-            {
-                sendRequestItemList ( true );
-            }
+        if ( isEmpty != this.itemListListeners.isEmpty () )
+        {
+            sendRequestItemList ( true );
         }
+
+        // send out known items
+
+        final HashSet<HistoricalItemInformation> currentItems = new HashSet<HistoricalItemInformation> ( ConnectionImpl.this.knownItems.values () );
+
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                listener.listChanged ( currentItems, null, true );
+            }
+        } );
     }
 
-    public void removeListListener ( final ItemListListener listener )
+    public synchronized void removeListListener ( final ItemListListener listener )
     {
-        synchronized ( this )
+        final boolean isEmpty = this.itemListListeners.isEmpty ();
+        this.itemListListeners.remove ( listener );
+        if ( isEmpty != this.itemListListeners.isEmpty () )
         {
-            final boolean isEmpty = this.itemListListeners.isEmpty ();
-            this.itemListListeners.remove ( listener );
-            if ( isEmpty != this.itemListListeners.isEmpty () )
-            {
-                sendRequestItemList ( false );
-            }
+            sendRequestItemList ( false );
         }
     }
 
