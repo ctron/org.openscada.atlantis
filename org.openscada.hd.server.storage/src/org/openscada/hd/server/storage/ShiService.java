@@ -91,7 +91,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
     public ShiService ( final Configuration configuration, final long latestReliableTime, final boolean importMode )
     {
         this.configuration = new ConfigurationImpl ( configuration );
-        calculationMethods = Conversions.getCalculationMethods ( configuration );
+        calculationMethods = Collections.unmodifiableSet ( Conversions.getCalculationMethods ( configuration ) );
         this.storageChannels = new HashMap<StorageChannelMetaData, ExtendedStorageChannel> ();
         this.rootStorageChannel = null;
         this.started = false;
@@ -106,7 +106,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
      * This method adds a query to the collection of currently open queries.
      * @param query query to be added
      */
-    private synchronized void addQuery ( final QueryImpl query )
+    public synchronized void addQuery ( final QueryImpl query )
     {
         openQueries.add ( query );
     }
@@ -211,9 +211,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
     {
         try
         {
-            final QueryImpl query = new QueryImpl ( this, listener, parameters, updateData );
-            addQuery ( query );
-            return query;
+            return new QueryImpl ( this, listener, parameters, calculationMethods, updateData );
         }
         catch ( final Exception e )
         {

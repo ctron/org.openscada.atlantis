@@ -2,12 +2,16 @@ package org.openscada.hd.server.storage.internal;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
@@ -21,6 +25,7 @@ import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationLogicProvider;
 import org.openscada.hsdb.calculation.CalculationMethod;
 import org.openscada.hsdb.datatypes.BaseValue;
+import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
 import org.openscada.hsdb.datatypes.LongValue;
 import org.openscada.hsdb.utils.ValueArrayNormalizer;
@@ -29,7 +34,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This is the internal implementation of the HD query interface.
+ * The class works in direct combination with the class ShiService.
+ * Therefore synchronization is done via the related service object.
  * @see org.openscada.hd.Query
+ * @see org.openscada.hd.server.storage.ShiService
  * @author Ludwig Straub
  */
 public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
@@ -38,7 +46,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     private final static Logger logger = LoggerFactory.getLogger ( QueryImpl.class );
 
     /** Time span between two consecutive calls of the future task. */
-    private final static long DELAY_BETWEEN_TWO_QUERY_CALCULATIONS = 1000;
+    private final static long DELAY_BETWEEN_TWO_QUERY_CALCULATIONS = 500;
 
     /** Service that created the query object. */
     private final ShiService service;
@@ -46,26 +54,26 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     /** Listener that should receive the data. */
     private final QueryListener listener;
 
+    /** Set of available calculation methods. */
+    private final Set<CalculationMethod> calculationMethods;
+
+    /*** Flag indicating whether the query is registered at the service or not. */
+    private final boolean queryRegistered;
+
     /** Input parameters of the query. */
     private QueryParameters parameters;
 
-    /** Flag indicating whether the result should be periodically updated or not. */
-    private final boolean updateDataPeriodically;
+    /** Currently set query state. */
+    private QueryState currentQueryState;
 
     /** Flag indicating whether the query is closed or not. */
     private boolean closed;
 
-    /** Flag indicating whether the query has to be executed again due to data changes. */
-    private boolean updateRequired;
-
     /** Task that will calculate the result. */
-    private Thread futureTask;
+    private ScheduledExecutorService queryTask;
 
     /** Maximum availavle compression level. */
     private final long maximumCompressionLevel;
-
-    /** Current compression level. */
-    private long currentCompressionLevel;
 
     /** Parameters that were last time sent via the listener. */
     private QueryParameters lastParameters;
@@ -81,45 +89,153 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
      * @param service service that created the query object
      * @param listener listener that should receive the data
      * @param parameters input parameters of the query
+     * @param calculationMethods set of calculation methods that will be available via the service
      * @param updateData flag indicating whether the result should be periodically updated or not
      */
-    public QueryImpl ( final ShiService service, final QueryListener listener, final QueryParameters parameters, final boolean updateData )
+    public QueryImpl ( final ShiService service, final QueryListener listener, final QueryParameters parameters, final Set<CalculationMethod> calculationMethods, final boolean updateData )
     {
         this.service = service;
         this.listener = listener;
         this.parameters = parameters;
-        this.updateDataPeriodically = updateData;
+        this.calculationMethods = Collections.unmodifiableSet ( calculationMethods );
         lastParameters = null;
         lastValueInformations = null;
         lastData = null;
         maximumCompressionLevel = service.getMaximumCompressionLevel ();
-        currentCompressionLevel = maximumCompressionLevel;
-        this.closed = ( service == null ) || ( listener == null ) || ( parameters == null );
+        this.closed = ( service == null ) || ( listener == null ) || ( parameters == null ) || ( parameters.getStartTimestamp () == null ) || ( parameters.getEndTimestamp () == null ) || ( parameters.getEntries () < 1 ) || calculationMethods.isEmpty ();
         if ( closed )
         {
             logger.error ( "not all data is available to execute query. no action will be performed" );
-            if ( listener != null )
+            setQueryState ( QueryState.DISCONNECTED );
+            queryRegistered = false;
+        }
+        else
+        {
+            setQueryState ( QueryState.LOADING );
+            queryTask = new ScheduledThreadPoolExecutor ( 1 );
+            if ( updateData )
             {
-                listener.updateState ( QueryState.DISCONNECTED );
+                service.addQuery ( this );
+                queryRegistered = true;
+                queryTask.scheduleWithFixedDelay ( this, 0, DELAY_BETWEEN_TWO_QUERY_CALCULATIONS, TimeUnit.MILLISECONDS );
+            }
+            else
+            {
+                queryRegistered = false;
+                queryTask.schedule ( this, 0, TimeUnit.MILLISECONDS );
             }
         }
-        this.updateRequired = true;
-        listener.updateState ( QueryState.LOADING );
-        checkStartTask ();
     }
 
     /**
-     * This method checks if the future task has to be started or not.
-     * The task has to be started if it is not yet running and the query is not closed, an update is required due to either storage channel data change or query parameter changes.
-     * If the task has to be started, it will be started by this method.
+     * This method updates the query state if the new state differs from the current state.
+     * @param queryState new query state
      */
-    private void checkStartTask ()
+    private void setQueryState ( QueryState queryState )
     {
-        if ( !closed && updateRequired && ( futureTask == null ) )
+        if ( ( listener != null ) && ( currentQueryState == null ) || ( currentQueryState != queryState ) )
         {
-            updateRequired = false;
-            futureTask = new Thread ( this );
-            futureTask.start ();
+            currentQueryState = queryState;
+            listener.updateState ( queryState );
+        }
+    }
+
+    /**
+     * This method removes element from the end of the second array until there is no more time overlapping between the first and the second array.
+     * The method returns the shortened second array.
+     * @param firstArray first array
+     * @param secondArray second array
+     * @return shortened second array
+     */
+    private static BaseValue[] removeTimeOverlay ( final BaseValue[] firstArray, final BaseValue[] secondArray )
+    {
+        if ( ( firstArray.length == 0 ) || ( secondArray.length == 0 ) )
+        {
+            return secondArray;
+        }
+        final long timeBorderValue = firstArray[0].getTime ();
+        for ( int i = secondArray.length - 1; i >= 0; i-- )
+        {
+            if ( secondArray[i].getTime () < timeBorderValue )
+            {
+                final BaseValue[] resultArray = secondArray instanceof LongValue[] ? new LongValue[i + 1] : new DoubleValue[i + 1];
+                for ( int j = 0; j <= i; j++ )
+                {
+                    resultArray[j] = secondArray[j];
+                }
+                return resultArray;
+            }
+        }
+        return secondArray;
+    }
+
+    /**
+     * This method merges the two passed arrays. The second array will be joined before the first array.
+     * The result array has the same type as the second array.
+     * If the types do not match, an automatic conversion is performed.
+     * @param firstArray first array that has to be merged. this array can be null
+     * @param secondArray second array that has to be merged. this array must not be null
+     * @return new array containing the elements of both arrays
+     */
+    private static BaseValue[] joinValueArrays ( final BaseValue[] firstArray, final BaseValue[] secondArray )
+    {
+        if ( ( firstArray == null ) || ( firstArray.length == 0 ) )
+        {
+            return secondArray;
+        }
+        if ( secondArray instanceof LongValue[] )
+        {
+            final LongValue[] secondArray1 = (LongValue[])firstArray;
+            final LongValue[] result = new LongValue[firstArray.length + secondArray.length];
+            for ( int i = 0; i < secondArray.length; i++ )
+            {
+                result[i] = secondArray1[i];
+            }
+            if ( firstArray instanceof LongValue[] )
+            {
+                final LongValue[] firstArray1 = (LongValue[])firstArray;
+                for ( int i = 0, j = secondArray.length; i < firstArray.length; i++, j++ )
+                {
+                    result[j] = firstArray1[i];
+                }
+            }
+            else
+            {
+                final DoubleValue[] firstArray1 = (DoubleValue[])firstArray;
+                for ( int i = 0, j = secondArray.length; i < firstArray.length; i++, j++ )
+                {
+                    final DoubleValue srcValue = firstArray1[i];
+                    result[j] = new LongValue ( srcValue.getTime (), srcValue.getQualityIndicator (), srcValue.getBaseValueCount (), (long)srcValue.getValue () );
+                }
+            }
+            return result;
+        }
+        else
+        {
+            final DoubleValue[] secondArray1 = (DoubleValue[])secondArray;
+            final DoubleValue[] result = new DoubleValue[firstArray.length + secondArray.length];
+            for ( int i = 0; i < secondArray.length; i++ )
+            {
+                result[i] = secondArray1[i];
+            }
+            if ( firstArray instanceof DoubleValue[] )
+            {
+                final DoubleValue[] firstArray1 = (DoubleValue[])firstArray;
+                for ( int i = 0, j = secondArray.length; i < firstArray.length; i++, j++ )
+                {
+                    result[j] = firstArray1[i];
+                }
+            }
+            else
+            {
+                final LongValue[] firstArray1 = (LongValue[])firstArray;
+                for ( int i = 0, j = secondArray.length; i < firstArray.length; i++, j++ )
+                {
+                    final LongValue srcValue = firstArray1[i];
+                    result[j] = new DoubleValue ( srcValue.getTime (), srcValue.getQualityIndicator (), srcValue.getBaseValueCount (), srcValue.getValue () );
+                }
+            }
+            return result;
         }
     }
 
@@ -130,165 +246,168 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     {
         try
         {
+            // prepare all data that is required for calculation
             QueryParameters parameters = null;
-            long currentCompressionLevel = maximumCompressionLevel;
+            long maximumCompressionLevel = 0;
+            long startTime = 0;
+            long endTime = 0;
+            int resultSize = 0;
+            Map<StorageChannelMetaData, BaseValue[]> mergeMap = null;
             synchronized ( service )
             {
-                currentCompressionLevel = this.currentCompressionLevel;
-                if ( currentCompressionLevel == maximumCompressionLevel )
-                {
-                    this.currentCompressionLevel--;
-                }
+                // get values that won't change during the calculation
                 parameters = this.parameters;
-            }
-            final long requestedEntries = parameters.getEntries ();
-            if ( requestedEntries < 1 )
-            {
-                listener.updateState ( QueryState.COMPLETE );
-            }
-            else
-            {
-                // retrieve data of level that is suitable for the requested time span
-                final long startTime = parameters.getStartTimestamp ().getTimeInMillis ();
-                final long endTime = parameters.getEndTimestamp ().getTimeInMillis ();
-                final long requestedTimeSpan = endTime - startTime;
-                final double requestedValueFrequency = (double)requestedTimeSpan / requestedEntries;
-                boolean entriesFound = false;
-                do
+                maximumCompressionLevel = this.maximumCompressionLevel;
+                startTime = parameters.getStartTimestamp ().getTimeInMillis ();
+                endTime = parameters.getEndTimestamp ().getTimeInMillis ();
+                resultSize = parameters.getEntries ();
+
+                // load raw data that has to be normalized later
+                long currentCompressionLevel = 0;
+                long oldestValueTime = Long.MAX_VALUE;
+                while ( ( oldestValueTime > startTime ) && ( currentCompressionLevel <= maximumCompressionLevel ) )
                 {
-                    boolean metaInformationCalculated = false;
-                    final Map<StorageChannelMetaData, BaseValue[]> availableChannels;
-                    synchronized ( service )
+                    if ( currentCompressionLevel == 0 )
                     {
-                        availableChannels = service.getValues ( currentCompressionLevel, startTime, endTime );
-                    }
-                    final Map<String, Value[]> resultMap = new HashMap<String, Value[]> ();
-                    long currentResultColumnCount = Long.MIN_VALUE;
-                    if ( !availableChannels.isEmpty () )
-                    {
-                        ValueInformation[] resultValueInformationArray = null;
-                        // get raw storage channel data from service
-                        for ( final Entry<StorageChannelMetaData, BaseValue[]> entry : availableChannels.entrySet () )
+                        mergeMap = service.getValues ( currentCompressionLevel, startTime, endTime );
+                        for ( final Entry<StorageChannelMetaData, BaseValue[]> mergeEntry : mergeMap.entrySet () )
                         {
-                            // get current compression level
-                            final StorageChannelMetaData metaData = entry.getKey ();
-                            final CalculationLogicProvider calculationLogicProvider = Conversions.getCalculationLogicProvider ( metaData );
-                            final BaseValue[] values = entry.getValue ();
-                            if ( ( currentCompressionLevel > 0 ) && entriesFound && ( values.length < 1 ) )
+                            final DataType dataType = mergeEntry.getKey ().getDataType ();
+                            final BaseValue[] mergeValues = mergeEntry.getValue ();
+                            final long now = System.currentTimeMillis ();
+                            final long maxTime = mergeValues.length > 0 ? Math.max ( mergeValues[mergeValues.length - 1].getTime () + 1, now ) : now;
+                            if ( dataType == DataType.LONG_VALUE )
                             {
-                                continue;
-                            }
-                            entriesFound |= values.length > 0;
-                            currentResultColumnCount = Math.max ( currentResultColumnCount, values.length );
-                            final List<BaseValue> resultValues = new ArrayList<BaseValue> ();
-                            long currentTimeOffsetAsLong = startTime;
-                            double currentTimeOffsetAsDouble = startTime;
-                            while ( currentTimeOffsetAsLong < endTime )
-                            {
-                                final long localEndTime = currentTimeOffsetAsLong + (long)requestedValueFrequency;
-                                BaseValue[] filledValues = null;
-                                if ( values.length == 0 )
-                                {
-                                    if ( values instanceof LongValue[] )
-                                    {
-                                        filledValues = new LongValue[] { new LongValue ( currentTimeOffsetAsLong, 0, 0, 0 ), new LongValue ( localEndTime, 0, 0, 0 ) };
-                                    }
-                                    else
-                                    {
-                                        filledValues = new DoubleValue[] { new DoubleValue ( currentTimeOffsetAsLong, 0, 0, 0 ), new DoubleValue ( localEndTime, 0, 0, 0 ) };
-                                    }
-                                }
-                                else
-                                {
-                                    filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, values instanceof LongValue[] ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
-                                }
-                                final BaseValue normalizedValue = calculationLogicProvider.generateValues ( filledValues );
-                                if ( normalizedValue != null )
-                                {
-                                    resultValues.add ( normalizedValue );
-                                }
-                                currentTimeOffsetAsDouble += requestedValueFrequency;
-                                currentTimeOffsetAsLong = (long)currentTimeOffsetAsDouble;
-                            }
-                            final Value[] resultValueArray = new Value[(int)Math.min ( resultValues.size (), requestedEntries )];
-                            if ( !metaInformationCalculated )
-                            {
-                                resultValueInformationArray = new ValueInformation[resultValueArray.length];
-                            }
-                            if ( values instanceof LongValue[] )
-                            {
-                                final LongValue[] longValues = resultValues.toArray ( ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY );
-                                for ( int i = 0; i < resultValueArray.length; i++ )
-                                {
-                                    final LongValue longValue = longValues[i];
-                                    resultValueArray[i] = new Value ( longValue.getValue () );
-                                    if ( !metaInformationCalculated )
-                                    {
-                                        final Calendar cstartTime = Calendar.getInstance ();
-                                        final Calendar cendTime = Calendar.getInstance ();
-                                        cstartTime.setTimeInMillis ( longValue.getTime () );
-                                        cendTime.setTimeInMillis ( i == longValues.length - 1 ? endTime : longValues[i + 1].getTime () );
-                                        resultValueInformationArray[i] = new ValueInformation ( cstartTime, cendTime, longValue.getQualityIndicator (), longValue.getBaseValueCount () );
-                                    }
-                                }
+                                final LongValue longValue = new LongValue ( maxTime, 0, 0, 0 );
+                                mergeEntry.setValue ( joinValueArrays ( new LongValue[] { longValue }, mergeEntry.getValue () ) );
                             }
                             else
                             {
-                                final DoubleValue[] doubleValues = resultValues.toArray ( ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
-                                for ( int i = 0; i < resultValueArray.length; i++ )
-                                {
-                                    final DoubleValue doubleValue = doubleValues[i];
-                                    resultValueArray[i] = new Value ( doubleValue.getValue () );
-                                    if ( !metaInformationCalculated )
-                                    {
-                                        final Calendar cstartTime = Calendar.getInstance ();
-                                        final Calendar cendTime = Calendar.getInstance ();
-                                        cstartTime.setTimeInMillis ( doubleValue.getTime () );
-                                        cendTime.setTimeInMillis ( i == doubleValues.length - 1 ? endTime : doubleValues[i + 1].getTime () );
-                                        resultValueInformationArray[i] = new ValueInformation ( cstartTime, cendTime, doubleValue.getQualityIndicator (), doubleValue.getBaseValueCount () );
-                                    }
-                                }
-                            }
-                            metaInformationCalculated = true;
-                            resultMap.put ( CalculationMethod.convertCalculationMethodToShortString ( metaData.getCalculationMethod () ), resultValueArray );
-                        }
-                        if ( availableChannels.size () == resultMap.size () )
-                        {
-                            // send data to listener
-                            synchronized ( service )
-                            {
-                                if ( closed )
-                                {
-                                    return;
-                                }
-                                sendDataDiff ( parameters, resultMap, resultValueInformationArray );
-                            }
-
-                            // stop if a higher detail level won't result in great improvement of result
-                            if ( currentResultColumnCount >= requestedEntries )
-                            {
-                                break;
+                                final DoubleValue doubleValue = new DoubleValue ( maxTime, 0, 0, 0 );
+                                mergeEntry.setValue ( joinValueArrays ( new DoubleValue[] { doubleValue }, mergeEntry.getValue () ) );
                             }
                         }
-                        currentCompressionLevel--;
                     }
-                } while ( currentCompressionLevel >= 0 );
-            }
-
-            // store current compression level for next call
-            synchronized ( service )
-            {
-                if ( this.currentCompressionLevel < maximumCompressionLevel )
-                {
-                    this.currentCompressionLevel = Math.max ( 0, currentCompressionLevel );
+                    else
+                    {
+                        final Map<StorageChannelMetaData, BaseValue[]> subMap = service.getValues ( currentCompressionLevel, startTime, Math.min ( oldestValueTime, endTime ) );
+                        for ( final Entry<StorageChannelMetaData, BaseValue[]> subEntry : subMap.entrySet () )
+                        {
+                            for ( final Entry<StorageChannelMetaData, BaseValue[]> mergeEntry : mergeMap.entrySet () )
+                            {
+                                if ( mergeEntry.getKey ().getCalculationMethod () == subEntry.getKey ().getCalculationMethod () )
+                                {
+                                    final BaseValue[] mergeValues = mergeEntry.getValue ();
+                                    mergeEntry.setValue ( joinValueArrays ( mergeEntry.getValue (), removeTimeOverlay ( mergeValues, subEntry.getValue () ) ) );
+                                }
+                            }
+                        }
+                    }
+                    long oldestLocalValueTime = Long.MAX_VALUE;
+                    for ( final BaseValue[] baseValues : mergeMap.values () )
+                    {
+                        if ( baseValues.length > 0 )
+                        {
+                            oldestLocalValueTime = oldestLocalValueTime == Long.MAX_VALUE ? baseValues[0].getTime () : Math.max ( oldestLocalValueTime, baseValues[0].getTime () );
+                        }
+                    }
+                    oldestValueTime = Math.min ( oldestValueTime, oldestLocalValueTime );
+                    currentCompressionLevel++;
                 }
             }
 
-            // free related future task and restart query if new data is available
+            // since all data is collected now, the normalizing can be performed
+            final ValueInformation[] resultValueInformations = new ValueInformation[resultSize];
+            final Map<String, Value[]> resultMap = new HashMap<String, Value[]> ();
+            for ( final CalculationMethod calculationMethod : calculationMethods )
+            {
+                resultMap.put ( CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ), new Value[0] );
+            }
+            final long requestedTimeSpan = endTime - startTime;
+            final double requestedValueFrequency = (double)requestedTimeSpan / resultSize;
+            boolean metaInformationCalculated = false;
+            // get raw storage channel data from service
+            for ( final Entry<StorageChannelMetaData, BaseValue[]> entry : mergeMap.entrySet () )
+            {
+                // get current compression level
+                final StorageChannelMetaData metaData = entry.getKey ();
+                final CalculationLogicProvider calculationLogicProvider = Conversions.getCalculationLogicProvider ( metaData );
+                final BaseValue[] values = entry.getValue ();
+                final List<BaseValue> resultValues = new ArrayList<BaseValue> ();
+                for ( int i = 0; i < resultSize; i++ )
+                {
+                    final double currentTimeOffsetAsDouble = startTime + i * requestedValueFrequency;
+                    final long currentTimeOffsetAsLong = Math.round ( currentTimeOffsetAsDouble );
+                    final long localEndTime = Math.round ( currentTimeOffsetAsDouble + requestedValueFrequency );
+                    BaseValue[] filledValues = null;
+                    if ( values.length == 0 )
+                    {
+                        if ( values instanceof LongValue[] )
+                        {
+                            filledValues = new LongValue[] { new LongValue ( currentTimeOffsetAsLong, 0, 0, 0 ), new LongValue ( localEndTime, 0, 0, 0 ) };
+                        }
+                        else
+                        {
+                            filledValues = new DoubleValue[] { new DoubleValue ( currentTimeOffsetAsLong, 0, 0, 0 ), new DoubleValue ( localEndTime, 0, 0, 0 ) };
+                        }
+                    }
+                    else
+                    {
+                        filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, 0, values instanceof LongValue[] ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
+                    }
+                    final BaseValue normalizedValue = calculationLogicProvider.generateValues ( filledValues );
+                    if ( normalizedValue != null )
+                    {
+                        resultValues.add ( normalizedValue );
+                    }
+                }
+                final Value[] resultValueArray = new Value[resultSize];
+                if ( values instanceof LongValue[] )
+                {
+                    final LongValue[] longValues = resultValues.toArray ( ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY );
+                    for ( int i = 0; i < resultValueArray.length; i++ )
+                    {
+                        final LongValue longValue = longValues[i];
+                        resultValueArray[i] = new Value ( longValue.getValue () );
+                        if ( !metaInformationCalculated )
+                        {
+                            final Calendar cstartTime = Calendar.getInstance ();
+                            final Calendar cendTime = Calendar.getInstance ();
+                            cstartTime.setTimeInMillis ( longValue.getTime () );
+                            cendTime.setTimeInMillis ( i == longValues.length - 1 ? endTime : longValues[i + 1].getTime () );
+                            resultValueInformations[i] = new ValueInformation ( cstartTime, cendTime, longValue.getQualityIndicator (), longValue.getBaseValueCount () );
+                        }
+                    }
+                }
+                else
+                {
+                    final DoubleValue[] doubleValues = resultValues.toArray ( ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
+                    for ( int i = 0; i < resultValueArray.length; i++ )
+                    {
+                        final DoubleValue doubleValue = doubleValues[i];
+                        resultValueArray[i] = new Value ( doubleValue.getValue () );
+                        if ( !metaInformationCalculated )
+                        {
+                            final Calendar cstartTime = Calendar.getInstance ();
+                            final Calendar cendTime = Calendar.getInstance ();
+                            cstartTime.setTimeInMillis ( doubleValue.getTime () );
+                            cendTime.setTimeInMillis ( i == doubleValues.length - 1 ? endTime : doubleValues[i + 1].getTime () );
+                            resultValueInformations[i] = new ValueInformation ( cstartTime, cendTime, doubleValue.getQualityIndicator (), doubleValue.getBaseValueCount () );
+                        }
+                    }
+                }
+                metaInformationCalculated = true;
+                resultMap.put ( CalculationMethod.convertCalculationMethodToShortString ( metaData.getCalculationMethod () ), resultValueArray );
+            }
+
+            // send data to listener
             synchronized ( service )
             {
-                futureTask = null;
-                checkStartTask ();
+                if ( closed )
+                {
+                    return;
+                }
+                sendDataDiff ( parameters, resultMap, resultValueInformations );
             }
         }
         catch ( final Exception e )
@@ -296,9 +415,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
             logger.error ( "problem while processing query", e );
             synchronized ( service )
             {
-                listener.updateState ( QueryState.DISCONNECTED );
+                setQueryState ( QueryState.DISCONNECTED );
                 close ();
-                futureTask = null;
             }
         }
     }
@@ -366,7 +484,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         }
 
         // update state to complete (call multiple times has no effect)
-        listener.updateState ( QueryState.COMPLETE );
+        setQueryState ( QueryState.COMPLETE );
 
         // remember processed data for next call of method
         lastParameters = parameters;
@@ -382,15 +500,10 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     {
         synchronized ( service )
         {
-            if ( updateDataPeriodically && !closed )
+            if ( !closed )
             {
                 if ( parameters.getEndTimestamp ().getTimeInMillis () > time )
                 {
-                    updateRequired = true;
-                    if ( futureTask == null )
-                    {
-                        checkStartTask ();
-                    }
                 }
             }
         }
@@ -403,11 +516,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     {
         synchronized ( service )
         {
-            this.currentCompressionLevel = maximumCompressionLevel;
             this.parameters = parameters;
-            listener.updateState ( QueryState.LOADING );
-            updateRequired = true;
-            checkStartTask ();
+            setQueryState ( QueryState.LOADING );
         }
     }
 
@@ -420,8 +530,16 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         {
             if ( !closed )
             {
-                listener.updateState ( QueryState.DISCONNECTED );
-                service.removeQuery ( this );
+                if ( queryTask != null )
+                {
+                    queryTask.shutdown ();
+                    queryTask = null;
+                }
+                setQueryState ( QueryState.DISCONNECTED );
+                if ( queryRegistered )
+                {
+                    service.removeQuery ( this );
+                }
             }
             closed = true;
         }
