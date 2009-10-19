@@ -464,7 +464,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                 parameters = this.parameters;
                 if ( initialLoadPerformed )
                 {
-                    startTimeIndicesToUpdate = Collections.unmodifiableSet ( this.startTimeIndicesToUpdate );
+                    startTimeIndicesToUpdate = new HashSet<Integer> ( this.startTimeIndicesToUpdate );
                 }
                 if ( !this.startTimeIndicesToUpdate.isEmpty () )
                 {
