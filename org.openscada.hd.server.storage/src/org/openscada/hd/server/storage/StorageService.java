@@ -10,9 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Map.Entry;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationListener;
@@ -29,7 +29,6 @@ import org.openscada.hsdb.backend.BackEndFactory;
 import org.openscada.hsdb.backend.BackEndMultiplexor;
 import org.openscada.hsdb.backend.file.FileBackEndFactory;
 import org.openscada.hsdb.calculation.CalculationMethod;
-import org.openscada.hsdb.concurrent.HsdbThreadFactory;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.LongValue;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -44,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * Storage service that manages available storage historical item services.
  * @author Ludwig Straub
  */
-public class StorageService implements SelfManagedConfigurationFactory, Runnable
+public class StorageService implements SelfManagedConfigurationFactory
 {
     /** Id of the OSGi service factory. */
     public final static String FACTORY_ID = "hd.storage.factory";
@@ -95,7 +94,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
     private BackEnd heartBeatBackEnd;
 
     /** Task that will create periodical entries in the heart bear back end. */
-    private ScheduledThreadPoolExecutor heartBeatTask;
+    private Timer heartBeatTask;
 
     /** Latest time with valid information that could be retrieved via the heart beat task. */
     private long latestReliableTime;
@@ -306,7 +305,15 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
      */
     public void run ()
     {
-        this.performPingOfLife ();
+        boolean b = false;
+        do
+        {
+            synchronized ( this )
+            {
+                this.performPingOfLife ();
+                b = heartBeatTask != null;
+            }
+        } while ( b );
     }
 
     /**
@@ -318,10 +325,9 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
         {
             synchronized ( this )
             {
-                heartBeatTask.remove ( this );
-                heartBeatTask.shutdown ();
-                heartBeatTask = null;
                 performPingOfLife ();
+                heartBeatTask.cancel ();
+                heartBeatTask = null;
                 heartBeatBackEnd = null;
             }
         }
@@ -356,9 +362,13 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
                 logger.error ( String.format ( "unable to read heart beat value" ), e );
             }
             // start heart beat task
-            heartBeatTask = new ScheduledThreadPoolExecutor ( 0, HsdbThreadFactory.createFactory ( "HeartBeatTask" ) );
-            heartBeatTask.setMaximumPoolSize ( 1 );
-            heartBeatTask.scheduleWithFixedDelay ( this, 0, HEART_BEATS_PERIOD, TimeUnit.MILLISECONDS );
+            heartBeatTask = new Timer ( "heartbeat" );
+            heartBeatTask.schedule ( new TimerTask () {
+                public void run ()
+                {
+                    performPingOfLife ();
+                }
+            }, HEART_BEATS_PERIOD, HEART_BEATS_PERIOD );
         }
 
         // get information of existing meta data

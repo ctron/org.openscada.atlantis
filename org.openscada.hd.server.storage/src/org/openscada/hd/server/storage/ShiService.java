@@ -8,9 +8,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
 import java.util.Map.Entry;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.openscada.ca.Configuration;
 import org.openscada.core.Variant;
@@ -26,7 +25,7 @@ import org.openscada.hd.server.storage.internal.QueryImpl;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationMethod;
-import org.openscada.hsdb.concurrent.HsdbThreadFactory;
+import org.openscada.hsdb.concurrent.RunnableTimerTask;
 import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
@@ -43,9 +42,6 @@ public class ShiService implements StorageHistoricalItem, Runnable
 {
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( ShiService.class );
-
-    /** Delay in milliseconds after that old data is deleted for the first time after initialization of the class. */
-    private final static long CLEANER_TASK_DELAY = 1000 * 1;
 
     /** Period in milliseconds between two consecutive attempts to delete old data. */
     private final static long CLEANER_TASK_PERIOD = 1000 * 10;
@@ -66,7 +62,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
     private boolean started;
 
     /** Task that is used for deleting old data. */
-    private ScheduledThreadPoolExecutor relictCleanerTask;
+    private Timer relictCleanerTask;
 
     /** List of currently open queries. */
     private final Collection<QueryImpl> openQueries;
@@ -376,9 +372,9 @@ public class ShiService implements StorageHistoricalItem, Runnable
         createInvalidEntry ( latestReliableTime );
         if ( !importMode )
         {
-            this.relictCleanerTask = new ScheduledThreadPoolExecutor ( 0, HsdbThreadFactory.createFactory ( "RelictCleaner" ) );
-            this.relictCleanerTask.setMaximumPoolSize ( 1 );
-            this.relictCleanerTask.scheduleWithFixedDelay ( this, CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD, TimeUnit.MILLISECONDS );
+            this.relictCleanerTask = new Timer ( "RelictCleaner" );
+            this.relictCleanerTask.schedule ( new RunnableTimerTask ( this ), CLEANER_TASK_PERIOD );
+            ;
         }
     }
 
@@ -400,8 +396,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
         // stop relict cleaner task
         if ( relictCleanerTask != null )
         {
-            relictCleanerTask.remove ( this );
-            relictCleanerTask.shutdown ();
+            relictCleanerTask.cancel ();
             relictCleanerTask = null;
         }
 
@@ -425,6 +420,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
         {
             try
             {
+                logger.info ( "cleaning old data" );
                 rootStorageChannel.cleanupRelicts ();
             }
             catch ( final Exception e )

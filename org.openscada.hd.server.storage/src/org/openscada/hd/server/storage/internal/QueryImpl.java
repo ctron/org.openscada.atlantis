@@ -8,9 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
 import java.util.Map.Entry;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
@@ -23,7 +22,7 @@ import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationLogicProvider;
 import org.openscada.hsdb.calculation.CalculationMethod;
-import org.openscada.hsdb.concurrent.HsdbThreadFactory;
+import org.openscada.hsdb.concurrent.RunnableTimerTask;
 import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
@@ -70,7 +69,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     private boolean closed;
 
     /** Task that will calculate the result. */
-    private ScheduledThreadPoolExecutor queryTask;
+    private Timer queryTask;
 
     /** Maximum available compression level. */
     private final long maximumCompressionLevel;
@@ -119,18 +118,17 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         {
             setQueryState ( QueryState.LOADING );
             dataChanged = true;
-            queryTask = new ScheduledThreadPoolExecutor ( 1, HsdbThreadFactory.createFactory ( "QueryTask" ) );
-            queryTask.setMaximumPoolSize ( 1 );
+            queryTask = new Timer ( "QueryTask" );
             if ( updateData )
             {
                 service.addQuery ( this );
                 queryRegistered = true;
-                queryTask.scheduleWithFixedDelay ( this, 0, DELAY_BETWEEN_TWO_QUERY_CALCULATIONS, TimeUnit.MILLISECONDS );
+                queryTask.schedule ( new RunnableTimerTask ( this ), 0, DELAY_BETWEEN_TWO_QUERY_CALCULATIONS );
             }
             else
             {
                 queryRegistered = false;
-                queryTask.schedule ( this, 0, TimeUnit.MILLISECONDS );
+                queryTask.schedule ( new RunnableTimerTask ( this ), 0 );
             }
         }
     }
@@ -616,7 +614,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
             {
                 if ( queryTask != null )
                 {
-                    queryTask.shutdown ();
+                    queryTask.cancel ();
                     queryTask = null;
                 }
                 setQueryState ( QueryState.DISCONNECTED );
