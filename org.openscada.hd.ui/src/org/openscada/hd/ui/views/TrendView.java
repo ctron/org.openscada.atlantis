@@ -369,6 +369,8 @@ public class TrendView extends QueryViewPart implements QueryListener
 
     private final AtomicReference<double[]> dataQuality = new AtomicReference<double[]> ();
 
+    private final AtomicReference<long[]> dataSourceValues = new AtomicReference<long[]> ();
+
     private final AtomicReference<Date[]> dataTimestamp = new AtomicReference<Date[]> ();
 
     private final AtomicReference<ChartParameters> chartParameters = new AtomicReference<ChartParameters> ();
@@ -701,6 +703,11 @@ public class TrendView extends QueryViewPart implements QueryListener
                 return TrendView.this.dataQuality.get ()[coordinateToIndex ( x )];
             }
 
+            public long getSourceValues ( final int x )
+            {
+                return TrendView.this.dataSourceValues.get ()[coordinateToIndex ( x )];
+            }
+
             public Map<String, Double> getData ( final int x )
             {
                 final Map<String, Double> result = new HashMap<String, Double> ();
@@ -861,6 +868,7 @@ public class TrendView extends QueryViewPart implements QueryListener
             this.data.clear ();
             this.dataTimestamp.set ( new Date[parameters.getEntries ()] );
             this.dataQuality.set ( new double[parameters.getEntries ()] );
+            this.dataSourceValues.set ( new long[parameters.getEntries ()] );
             for ( final String seriesId : valueTypes )
             {
                 this.data.put ( seriesId, new double[parameters.getEntries ()] );
@@ -899,6 +907,7 @@ public class TrendView extends QueryViewPart implements QueryListener
             {
                 this.dataTimestamp.get ()[i + index] = valueInformation[i].getStartTimestamp ().getTime ();
                 this.dataQuality.get ()[i + index] = valueInformation[i].getQuality ();
+                this.dataSourceValues.get ()[i + index] = valueInformation[i].getSourceValues ();
             }
         }
         this.dataUpdateJob.get ().schedule ( GUI_JOB_DELAY );
@@ -1039,7 +1048,10 @@ public class TrendView extends QueryViewPart implements QueryListener
             startTime.setTime ( this.chartParameters.get ().getStartTime () );
             final Calendar endTime = new GregorianCalendar ();
             endTime.setTime ( this.chartParameters.get ().getEndTime () );
-            query.changeProperties ( new QueryParameters ( startTime, endTime, this.chartParameters.get ().getNumOfEntries () ) );
+            synchronized ( this.updateLock )
+            {
+                query.changeProperties ( new QueryParameters ( startTime, endTime, this.chartParameters.get ().getNumOfEntries () ) );
+            }
         }
     }
 

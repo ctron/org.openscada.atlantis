@@ -10,6 +10,8 @@ public interface DataAtPoint
 
     Date getTimestamp ( int currentX );
 
+    long getSourceValues ( int currentX );
+
     Map<String, Double> getData ( int currentX );
 
 }

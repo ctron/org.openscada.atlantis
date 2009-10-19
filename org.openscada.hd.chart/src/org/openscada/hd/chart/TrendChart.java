@@ -1,7 +1,12 @@
 package org.openscada.hd.chart;
 
+import java.math.RoundingMode;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -28,6 +33,12 @@ public class TrendChart extends Chart implements PaintListener
 
     private DataAtPoint dataAtPoint;
 
+    private final NumberFormat decimalFormat;
+
+    private final NumberFormat percentFormat;
+
+    private FontData smallFontData;
+
     public DataAtPoint getDataAtPoint ()
     {
         return dataAtPoint;
@@ -45,6 +56,13 @@ public class TrendChart extends Chart implements PaintListener
     public TrendChart ( final Composite parent, final int style )
     {
         super ( parent, style );
+        decimalFormat = DecimalFormat.getNumberInstance ();
+        decimalFormat.setGroupingUsed ( true );
+        decimalFormat.setMaximumFractionDigits ( 3 );
+        decimalFormat.setMinimumFractionDigits ( 3 );
+        decimalFormat.setRoundingMode ( RoundingMode.HALF_UP );
+        percentFormat = DecimalFormat.getPercentInstance ();
+
         this.getPlotArea ().addMouseMoveListener ( new MouseMoveListener () {
             public void mouseMove ( final MouseEvent e )
             {
@@ -76,6 +94,34 @@ public class TrendChart extends Chart implements PaintListener
             }
         } );
         this.getPlotArea ().addPaintListener ( this );
+
+        List<FontData> fontDataList = new ArrayList<FontData> ();
+        for ( FontData fontData : getDisplay ().getFontList ( "Monaco", true ) )
+        {
+            fontDataList.add ( fontData );
+        }
+        for ( FontData fontData : getDisplay ().getFontList ( "Bitstream Vera Sans Mono", true ) )
+        {
+            fontDataList.add ( fontData );
+        }
+        for ( FontData fontData : getDisplay ().getFontList ( "Courier New", true ) )
+        {
+            fontDataList.add ( fontData );
+        }
+        for ( FontData fontData : getDisplay ().getFontList ( "Courier", true ) )
+        {
+            fontDataList.add ( fontData );
+        }
+        FontData[] fontDataDefault = getDisplay ().getSystemFont ().getFontData ();
+        if ( fontDataList.size () > 0 )
+        {
+            smallFontData = fontDataList.get ( 0 );
+        }
+        else
+        {
+            smallFontData = fontDataDefault[0];
+        }
+        smallFontData.setHeight ( fontDataDefault[0].getHeight () - 2 );
     }
 
     public void paintControl ( final PaintEvent e )
@@ -105,43 +151,44 @@ public class TrendChart extends Chart implements PaintListener
             int padding = 5;
             gc.setBackground ( getDisplay ().getSystemColor ( SWT.COLOR_INFO_BACKGROUND ) );
             gc.setForeground ( getDisplay ().getSystemColor ( SWT.COLOR_INFO_FOREGROUND ) );
-            FontData[] fontData = getDisplay ().getSystemFont ().getFontData ();
-            for ( FontData fd : fontData )
-            {
-                fd.setHeight ( 8 );
-            }
-            Font smallFont = new Font ( gc.getDevice (), fontData );
+            Font smallFont = new Font ( gc.getDevice (), smallFontData );
             gc.setFont ( smallFont );
-            String timestampText = "Timestamp: " + DateFormat
-                    .getDateTimeInstance ( DateFormat.LONG, DateFormat.LONG )
-                        .format ( timestamp );
-            String qualityText = "Quality: " + quality;
+            String timestampText = "     Timestamp: " + DateFormat.getDateTimeInstance ( DateFormat.LONG, DateFormat.LONG ).format ( timestamp );
+            String qualityText = "       Quality: " + percentFormat.format ( quality );
+            String soureValuesText = "   # of Values: " + dataAtPoint.getSourceValues ( currentX );
             Point textSize = gc.textExtent ( timestampText );
             int textWidth = textSize.x;
             int textHeight = textSize.y;
-            int height = textHeight * 2 + ( textHeight + padding ) * data.keySet ().size () + padding * 3;
+            int height = textHeight * 4 + ( textHeight + padding ) * data.keySet ().size () + padding * 5;
             if ( currentY + height > getPlotArea ().getSize ().y )
             {
                 yoffset = -10 - height;
             }
-            int width = textWidth + padding * 2;
+            int width = textWidth + padding * 3;
             if ( currentX + width > getPlotArea ().getSize ().x )
             {
                 xoffset = -10 - width;
             }
             gc.fillRoundRectangle ( currentX + xoffset, currentY + yoffset, width, height, corner, corner );
             gc.drawRoundRectangle ( currentX + xoffset, currentY + yoffset, width, height, corner, corner );
+            gc.drawLine ( currentX + xoffset + padding, currentY + yoffset + ( padding + textHeight ) * 4 - padding, currentX + xoffset + width - padding, currentY + yoffset + ( padding + textHeight ) * 4 - padding );
             gc.drawText ( timestampText, currentX + xoffset + padding, currentY + yoffset + padding );
             gc.drawText ( qualityText, currentX + xoffset + padding, currentY + yoffset + padding * 2 + textHeight );
-            int i = 2;
+            gc.drawText ( soureValuesText, currentX + xoffset + padding, currentY + yoffset + padding * 3 + textHeight * 2 );
+            int i = 4;
             for ( Entry<String, Double> entry : data.entrySet () )
             {
-                gc
-                        .drawText ( entry.getKey () + ": " + entry.getValue (), currentX + xoffset + padding, currentY + yoffset + ( padding + textHeight ) * i + padding );
+                gc.drawText ( String.format ( "%14s", entry.getKey () ) + ": " + String.format ( "%16s", Double.isNaN ( entry.getValue () ) ? "-" : decimalFormat.format ( entry.getValue () ) ), currentX + xoffset + padding, currentY + yoffset + ( padding + textHeight ) * i + padding );
                 i++;
             }
             smallFont.dispose ();
         }
     }
 
+    @Override
+    public void dispose ()
+    {
+
+        super.dispose ();
+    }
 }
