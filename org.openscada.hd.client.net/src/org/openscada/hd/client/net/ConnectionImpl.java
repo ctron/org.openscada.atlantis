@@ -275,7 +275,10 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             // clear lists
             fireListChanged ( new HashSet<HistoricalItemInformation> (), null, true );
             // clear queries
-            for ( final QueryImpl query : this.queries.values () )
+
+            // make a copy to prevent a concurrent modification
+            final Collection<QueryImpl> queries = new ArrayList<QueryImpl> ( this.queries.values () );
+            for ( final QueryImpl query : queries )
             {
                 query.close ();
             }
@@ -401,9 +404,22 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         synchronized ( this )
         {
             final QueryImpl query = this.queries.remove ( id );
-            query.setId ( null );
-            sendCloseQuery ( id );
+            performCloseQuery ( id, query );
         }
+    }
+
+    /**
+     * Perform closing a query after
+     * <p>
+     * The internal queries collection is not modified by this call
+     * </p>
+     * @param id the id of the query
+     * @param query the query itself
+     */
+    private void performCloseQuery ( final Long id, final QueryImpl query )
+    {
+        query.setId ( null );
+        sendCloseQuery ( id );
     }
 
     private void sendCloseQuery ( final Long id )
