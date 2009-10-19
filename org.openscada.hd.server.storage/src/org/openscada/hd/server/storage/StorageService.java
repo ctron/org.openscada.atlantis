@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +21,7 @@ import org.openscada.ca.SelfManagedConfigurationFactory;
 import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.internal.Conversions;
+import org.openscada.hd.server.storage.internal.StorageThreadFactory;
 import org.openscada.hsdb.CalculatingStorageChannel;
 import org.openscada.hsdb.ExtendedStorageChannelAdapter;
 import org.openscada.hsdb.StorageChannelMetaData;
@@ -95,7 +95,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
     private BackEnd heartBeatBackEnd;
 
     /** Task that will create periodical entries in the heart bear back end. */
-    private ScheduledExecutorService heartBeatTask;
+    private ScheduledThreadPoolExecutor heartBeatTask;
 
     /** Latest time with valid information that could be retrieved via the heart beat task. */
     private long latestReliableTime;
@@ -355,7 +355,8 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
                 logger.error ( String.format ( "unable to read heart beat value" ), e );
             }
             // start heart beat task
-            heartBeatTask = new ScheduledThreadPoolExecutor ( 1 );
+            heartBeatTask = new ScheduledThreadPoolExecutor ( 1, StorageThreadFactory.createFactory ( "HeartBeatTask" ) );
+            heartBeatTask.setMaximumPoolSize ( 1 );
             heartBeatTask.scheduleWithFixedDelay ( this, 0, HEART_BEATS_PERIOD, TimeUnit.MILLISECONDS );
         }
 

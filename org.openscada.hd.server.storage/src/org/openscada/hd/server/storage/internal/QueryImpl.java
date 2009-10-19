@@ -3,14 +3,12 @@ package org.openscada.hd.server.storage.internal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -71,7 +69,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     private boolean closed;
 
     /** Task that will calculate the result. */
-    private ScheduledExecutorService queryTask;
+    private ScheduledThreadPoolExecutor queryTask;
 
     /** Maximum available compression level. */
     private final long maximumCompressionLevel;
@@ -104,14 +102,14 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         this.service = service;
         this.listener = listener;
         this.parameters = parameters;
-        this.calculationMethods = Collections.unmodifiableSet ( calculationMethods );
+        this.calculationMethods = new HashSet<CalculationMethod> ( calculationMethods );
         maximumCompressionLevel = service.getMaximumCompressionLevel ();
         startTimeIndicesToUpdate = new HashSet<Integer> ();
         initialLoadPerformed = false;
-        this.closed = ( service == null ) || ( listener == null ) || ( parameters == null ) || ( parameters.getStartTimestamp () == null ) || ( parameters.getEndTimestamp () == null ) || ( parameters.getEntries () < 1 ) || calculationMethods.isEmpty ();
+        this.closed = ( service == null ) || ( listener == null );
         if ( closed )
         {
-            logger.error ( "not all data is available to execute query. no action will be performed" );
+            logger.error ( "not all data is available to execute query via 'new query'. no action will be performed" );
             setQueryState ( QueryState.DISCONNECTED );
             queryRegistered = false;
             dataChanged = false;
@@ -120,7 +118,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         {
             setQueryState ( QueryState.LOADING );
             dataChanged = true;
-            queryTask = new ScheduledThreadPoolExecutor ( 1 );
+            queryTask = new ScheduledThreadPoolExecutor ( 1, StorageThreadFactory.createFactory ( "QueryTask" ) );
+            queryTask.setMaximumPoolSize ( 1 );
             if ( updateData )
             {
                 service.addQuery ( this );
@@ -471,6 +470,21 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                 if ( !this.startTimeIndicesToUpdate.isEmpty () )
                 {
                     this.startTimeIndicesToUpdate.clear ();
+                }
+                final Calendar start = parameters.getStartTimestamp ();
+                final Calendar end = parameters.getEndTimestamp ();
+                if ( ( parameters == null ) || ( start == null ) || ( end == null ) || ( end.getTimeInMillis () <= start.getTimeInMillis () ) || ( parameters.getEntries () < 1 ) )
+                {
+                    this.initialLoadPerformed = true;
+                    this.dataChanged = false;
+                    final Set<String> calculationMethodsAsString = new HashSet<String> ();
+                    for ( final CalculationMethod calculationMethod : calculationMethods )
+                    {
+                        calculationMethodsAsString.add ( CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ) );
+                    }
+                    listener.updateParameters ( parameters, calculationMethodsAsString );
+                    setQueryState ( QueryState.COMPLETE );
+                    return;
                 }
             }
             if ( !initialLoadPerformed )

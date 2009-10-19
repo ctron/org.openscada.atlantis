@@ -200,7 +200,6 @@ public class Conversions
 
         // fill configuration data
         final Map<String, String> data = new HashMap<String, String> ();
-        configuration.setData ( data );
         long maxLevel = -1;
         final Set<String> calculationMethods = new HashSet<String> ();
         for ( final StorageChannelMetaData metaData : metaDatas )
@@ -289,6 +288,7 @@ public class Conversions
         data.put ( MAX_COMPRESSION_LEVEL, "" + maxLevel );
 
         // the configuration is now complete
+        configuration.setData ( data );
         return configuration;
     }
 

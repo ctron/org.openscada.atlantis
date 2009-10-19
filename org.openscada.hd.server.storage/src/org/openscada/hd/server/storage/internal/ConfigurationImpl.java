@@ -1,6 +1,7 @@
 package org.openscada.hd.server.storage.internal;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.ca.Configuration;
@@ -137,6 +138,6 @@ public class ConfigurationImpl implements Configuration
      */
     public void setData ( final Map<String, String> data )
     {
-        this.data = data == null ? null : Collections.unmodifiableMap ( data );
+        this.data = data == null ? null : new HashMap<String, String> ( data );
     }
 }

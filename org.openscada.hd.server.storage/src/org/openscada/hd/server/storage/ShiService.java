@@ -1,14 +1,14 @@
 package org.openscada.hd.server.storage;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +23,7 @@ import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.internal.Conversions;
 import org.openscada.hd.server.storage.internal.QueryImpl;
+import org.openscada.hd.server.storage.internal.StorageThreadFactory;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationMethod;
@@ -65,7 +66,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
     private boolean started;
 
     /** Task that is used for deleting old data. */
-    private ScheduledExecutorService relictCleanerTask;
+    private ScheduledThreadPoolExecutor relictCleanerTask;
 
     /** List of currently open queries. */
     private final Collection<QueryImpl> openQueries;
@@ -91,7 +92,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
     public ShiService ( final Configuration configuration, final long latestReliableTime, final boolean importMode )
     {
         this.configuration = new ConfigurationImpl ( configuration );
-        calculationMethods = Collections.unmodifiableSet ( Conversions.getCalculationMethods ( configuration ) );
+        calculationMethods = new HashSet ( Conversions.getCalculationMethods ( configuration ) );
         this.storageChannels = new HashMap<StorageChannelMetaData, ExtendedStorageChannel> ();
         this.rootStorageChannel = null;
         this.started = false;
@@ -371,7 +372,8 @@ public class ShiService implements StorageHistoricalItem, Runnable
         createInvalidEntry ( latestReliableTime );
         if ( !importMode )
         {
-            this.relictCleanerTask = new ScheduledThreadPoolExecutor ( 1 );
+            this.relictCleanerTask = new ScheduledThreadPoolExecutor ( 1, StorageThreadFactory.createFactory ( "RelictCleaner" ) );
+            this.relictCleanerTask.setMaximumPoolSize ( 1 );
             this.relictCleanerTask.scheduleWithFixedDelay ( this, CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD, TimeUnit.MILLISECONDS );
         }
     }
@@ -386,7 +388,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
     public synchronized void stop ()
     {
         // close existing queries
-        for ( final QueryImpl query : Collections.unmodifiableCollection ( openQueries ) )
+        for ( final QueryImpl query : new ArrayList<QueryImpl> ( openQueries ) )
         {
             query.close ();
         }
