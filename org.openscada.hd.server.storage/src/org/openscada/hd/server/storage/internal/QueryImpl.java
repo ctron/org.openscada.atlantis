@@ -73,7 +73,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     /** Task that will calculate the result. */
     private ScheduledExecutorService queryTask;
 
-    /** Maximum availavle compression level. */
+    /** Maximum available compression level. */
     private final long maximumCompressionLevel;
 
     /** Flag indicating whether data was changed or not. */
