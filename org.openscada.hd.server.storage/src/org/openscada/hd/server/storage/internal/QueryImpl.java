@@ -47,7 +47,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     private final static Logger logger = LoggerFactory.getLogger ( QueryImpl.class );
 
     /** Time span between two consecutive calls of the future task. */
-    private final static long DELAY_BETWEEN_TWO_QUERY_CALCULATIONS = 1000;
+    private final static long DELAY_BETWEEN_TWO_QUERY_CALCULATIONS = 250;
 
     /** Service that created the query object. */
     private final ShiService service;
