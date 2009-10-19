@@ -29,7 +29,7 @@ public class Activator implements BundleActivator
     /**
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
-    public void start ( BundleContext context ) throws Exception
+    public void start ( final BundleContext context ) throws Exception
     {
         final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
         final Hashtable<String, String> gescheiteHT = new Hashtable<String, String> ();
@@ -47,7 +47,7 @@ public class Activator implements BundleActivator
     /**
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
-    public void stop ( BundleContext context ) throws Exception
+    public void stop ( final BundleContext context ) throws Exception
     {
         final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
         logger.info ( bundleName + " stopping..." );

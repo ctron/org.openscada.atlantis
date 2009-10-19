@@ -38,7 +38,7 @@ public class ConfigurationImpl implements Configuration
      * Copy constructor.
      * @param configuration configuration object from whcih data has to be copied
      */
-    public ConfigurationImpl ( Configuration configuration )
+    public ConfigurationImpl ( final Configuration configuration )
     {
         if ( configuration != null )
         {
@@ -63,7 +63,7 @@ public class ConfigurationImpl implements Configuration
      * This method sets the id of the factory that is used to process the configuration and create the related objects.
      * @param factoryId id of the factory that is used to process the configuration and create the related objects
      */
-    public void setFactoryId ( String factoryId )
+    public void setFactoryId ( final String factoryId )
     {
         this.factoryId = factoryId;
     }
@@ -81,7 +81,7 @@ public class ConfigurationImpl implements Configuration
      * This method sets the id of the configuration itself.
      * @param id id of the configuration itself
      */
-    public void setId ( String id )
+    public void setId ( final String id )
     {
         this.id = id;
     }
@@ -99,7 +99,7 @@ public class ConfigurationImpl implements Configuration
      * This method sets the state of the configuration.
      * @param state state of the configuration
      */
-    public void setState ( ConfigurationState state )
+    public void setState ( final ConfigurationState state )
     {
         this.state = state;
     }
@@ -117,7 +117,7 @@ public class ConfigurationImpl implements Configuration
      * This method sets the error information.
      * @param errorInformation error information
      */
-    public void setErrorInformation ( Throwable errorInformation )
+    public void setErrorInformation ( final Throwable errorInformation )
     {
         this.errorInformation = errorInformation;
     }
@@ -135,7 +135,7 @@ public class ConfigurationImpl implements Configuration
      * This method sets the additional configuration data.
      * @param data additional configuration data
      */
-    public void setData ( Map<String, String> data )
+    public void setData ( final Map<String, String> data )
     {
         this.data = data == null ? null : Collections.unmodifiableMap ( data );
     }
