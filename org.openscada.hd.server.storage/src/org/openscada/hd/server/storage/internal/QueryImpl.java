@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.Map.Entry;
+import java.util.concurrent.Executors;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
@@ -420,6 +421,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     public void sendCalculatedValues ( final QueryParameters parameters, final int startIndex, final boolean updateParameters )
     {
         // send data to listener
+        final Map<String, Value[]> calculatedResultMap = this.calculatedResultMap;
+        final ValueInformation[] calculatedResultValueInformations = this.calculatedResultValueInformations;
         synchronized ( service )
         {
             // stop immediately if query has been closed in the meantime
@@ -434,20 +437,26 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                 return;
             }
 
-            // prepare sending generated data
-            if ( updateParameters )
-            {
-                listener.updateParameters ( parameters, calculatedResultMap.keySet () );
-            }
+            // send data
+            Executors.newSingleThreadExecutor ().submit ( new Runnable () {
+                public void run ()
+                {
+                    // prepare sending generated data
+                    if ( updateParameters )
+                    {
+                        listener.updateParameters ( parameters, calculatedResultMap.keySet () );
+                    }
 
-            // send generated data
-            listener.updateData ( startIndex, calculatedResultMap, calculatedResultValueInformations );
+                    // send generated data
+                    listener.updateData ( startIndex, calculatedResultMap, calculatedResultValueInformations );
 
-            // update state to complete (call multiple times has no effect)
-            if ( initialLoadPerformed )
-            {
-                setQueryState ( QueryState.COMPLETE );
-            }
+                    // update state to complete (call multiple times has no effect)
+                    if ( initialLoadPerformed )
+                    {
+                        setQueryState ( QueryState.COMPLETE );
+                    }
+                }
+            } );
         }
     }
 
