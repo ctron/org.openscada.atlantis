@@ -61,6 +61,7 @@ public class Messenger implements MessageListener
             this.listener = listener;
         }
 
+        @SuppressWarnings ( "unused" )
         public long getTimestamp ()
         {
             return this.timestamp;
@@ -71,6 +72,7 @@ public class Messenger implements MessageListener
             this.timestamp = timestamp;
         }
 
+        @SuppressWarnings ( "unused" )
         public long getTimeout ()
         {
             return this.timeout;
