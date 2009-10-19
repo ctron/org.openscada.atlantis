@@ -2,6 +2,8 @@ package org.openscada.hd.ui.views;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.ui.data.QueryBuffer;
@@ -13,7 +15,39 @@ public abstract class QueryViewPart extends ViewPart implements QueryListener
 
     private final static Logger logger = LoggerFactory.getLogger ( QueryViewPart.class );
 
-    protected QueryBuffer query;
+    protected volatile QueryBuffer query;
+
+    private ISelectionListener selectionListener;
+
+    @Override
+    public void dispose ()
+    {
+        removeListener ();
+        super.dispose ();
+    }
+
+    protected void addListener ()
+    {
+        if ( this.selectionListener == null )
+        {
+            getViewSite ().getWorkbenchWindow ().getSelectionService ().addSelectionListener ( this.selectionListener = new ISelectionListener () {
+
+                public void selectionChanged ( final IWorkbenchPart part, final ISelection selection )
+                {
+                    QueryViewPart.this.setSelection ( selection );
+                }
+            } );
+        }
+    }
+
+    protected void removeListener ()
+    {
+        if ( this.selectionListener != null )
+        {
+            getViewSite ().getWorkbenchWindow ().getSelectionService ().removeSelectionListener ( this.selectionListener );
+            this.selectionListener = null;
+        }
+    }
 
     protected QueryBuffer getQueryFromSelection ( final ISelection selection )
     {

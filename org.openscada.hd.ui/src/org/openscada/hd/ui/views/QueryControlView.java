@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -25,8 +24,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
@@ -72,13 +69,7 @@ public class QueryControlView extends QueryViewPart implements PropertyChangeLis
             control.setEnabled ( false );
         }
 
-        getViewSite ().getWorkbenchWindow ().getSelectionService ().addSelectionListener ( new ISelectionListener () {
-
-            public void selectionChanged ( final IWorkbenchPart part, final ISelection selection )
-            {
-                QueryControlView.this.setSelection ( selection );
-            }
-        } );
+        addListener ();
     }
 
     private void createControls ( final Composite part )

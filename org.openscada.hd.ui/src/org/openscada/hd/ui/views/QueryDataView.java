@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
@@ -14,8 +13,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
@@ -24,7 +21,6 @@ import org.openscada.hd.ValueInformation;
 
 public class QueryDataView extends QueryViewPart implements QueryListener
 {
-
     private static final int FIX_COLS = 2;
 
     private final Map<String, TableColumn> columns = new HashMap<String, TableColumn> ();
@@ -44,13 +40,7 @@ public class QueryDataView extends QueryViewPart implements QueryListener
     @Override
     public void createPartControl ( final Composite parent )
     {
-        getViewSite ().getWorkbenchWindow ().getSelectionService ().addSelectionListener ( new ISelectionListener () {
-
-            public void selectionChanged ( final IWorkbenchPart part, final ISelection selection )
-            {
-                QueryDataView.this.setSelection ( selection );
-            }
-        } );
+        addListener ();
 
         parent.setLayout ( new FillLayout () );
         this.table = new Table ( parent, SWT.FULL_SELECTION );
