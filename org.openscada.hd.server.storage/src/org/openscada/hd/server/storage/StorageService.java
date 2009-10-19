@@ -21,7 +21,6 @@ import org.openscada.ca.SelfManagedConfigurationFactory;
 import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.internal.Conversions;
-import org.openscada.hd.server.storage.internal.StorageThreadFactory;
 import org.openscada.hsdb.CalculatingStorageChannel;
 import org.openscada.hsdb.ExtendedStorageChannelAdapter;
 import org.openscada.hsdb.StorageChannelMetaData;
@@ -30,6 +29,7 @@ import org.openscada.hsdb.backend.BackEndFactory;
 import org.openscada.hsdb.backend.BackEndMultiplexor;
 import org.openscada.hsdb.backend.file.FileBackEndFactory;
 import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.concurrent.HsdbThreadFactory;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.LongValue;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -318,6 +318,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
         {
             synchronized ( this )
             {
+                heartBeatTask.remove ( this );
                 heartBeatTask.shutdown ();
                 heartBeatTask = null;
                 performPingOfLife ();
@@ -355,7 +356,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
                 logger.error ( String.format ( "unable to read heart beat value" ), e );
             }
             // start heart beat task
-            heartBeatTask = new ScheduledThreadPoolExecutor ( 1, StorageThreadFactory.createFactory ( "HeartBeatTask" ) );
+            heartBeatTask = new ScheduledThreadPoolExecutor ( 0, HsdbThreadFactory.createFactory ( "HeartBeatTask" ) );
             heartBeatTask.setMaximumPoolSize ( 1 );
             heartBeatTask.scheduleWithFixedDelay ( this, 0, HEART_BEATS_PERIOD, TimeUnit.MILLISECONDS );
         }

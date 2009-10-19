@@ -23,6 +23,7 @@ import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationLogicProvider;
 import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.concurrent.HsdbThreadFactory;
 import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
@@ -118,7 +119,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         {
             setQueryState ( QueryState.LOADING );
             dataChanged = true;
-            queryTask = new ScheduledThreadPoolExecutor ( 1, StorageThreadFactory.createFactory ( "QueryTask" ) );
+            queryTask = new ScheduledThreadPoolExecutor ( 1, HsdbThreadFactory.createFactory ( "QueryTask" ) );
             queryTask.setMaximumPoolSize ( 1 );
             if ( updateData )
             {
@@ -148,7 +149,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     }
 
     /**
-     * This method removes element from the end of the second array until there is no more time overlapping between the first and the second array.
+     * This method removes elements from the end of the second array until there is no more time overlapping between the first and the second array.
      * The method returns the shortened second array.
      * @param firstArray first array
      * @param secondArray second array
@@ -275,12 +276,12 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                         if ( dataType == DataType.LONG_VALUE )
                         {
                             final LongValue longValue = new LongValue ( maxTime, 0, 0, 0 );
-                            mergeEntry.setValue ( joinValueArrays ( new LongValue[] { longValue }, mergeEntry.getValue () ) );
+                            mergeEntry.setValue ( joinValueArrays ( new LongValue[] { longValue }, mergeValues ) );
                         }
                         else
                         {
                             final DoubleValue doubleValue = new DoubleValue ( maxTime, 0, 0, 0 );
-                            mergeEntry.setValue ( joinValueArrays ( new DoubleValue[] { doubleValue }, mergeEntry.getValue () ) );
+                            mergeEntry.setValue ( joinValueArrays ( new DoubleValue[] { doubleValue }, mergeValues ) );
                         }
                     }
                 }
@@ -294,7 +295,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                             if ( mergeEntry.getKey ().getCalculationMethod () == subEntry.getKey ().getCalculationMethod () )
                             {
                                 final BaseValue[] mergeValues = mergeEntry.getValue ();
-                                mergeEntry.setValue ( joinValueArrays ( mergeEntry.getValue (), removeTimeOverlay ( mergeValues, subEntry.getValue () ) ) );
+                                mergeEntry.setValue ( joinValueArrays ( mergeValues, removeTimeOverlay ( mergeValues, subEntry.getValue () ) ) );
                             }
                         }
                     }
@@ -332,6 +333,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
             final StorageChannelMetaData metaData = entry.getKey ();
             final CalculationLogicProvider calculationLogicProvider = Conversions.getCalculationLogicProvider ( metaData );
             final BaseValue[] values = entry.getValue ();
+            int startIndex = 0;
             final List<BaseValue> resultValues = new ArrayList<BaseValue> ();
             final DataType inputDataType = calculationLogicProvider.getInputType ();
             final DataType outputDataType = calculationLogicProvider.getOutputType ();
@@ -354,7 +356,14 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                 }
                 else
                 {
-                    filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, 0, inputDataType == DataType.LONG_VALUE ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
+                    filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, startIndex, inputDataType == DataType.LONG_VALUE ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
+                    // maximum 2 entries are completely virtual due to the algorithm
+                    // it is possible that one value will be processed with a time span before the interval start time
+                    // therefore the index can be increased by length-3 to optimize performance of this method
+                    if ( filledValues.length > 3 )
+                    {
+                        startIndex += filledValues.length - 3;
+                    }
                 }
                 final BaseValue normalizedValue = calculationLogicProvider.generateValues ( filledValues );
                 if ( normalizedValue != null )

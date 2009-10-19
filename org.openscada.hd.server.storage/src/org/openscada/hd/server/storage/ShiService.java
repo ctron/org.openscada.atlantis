@@ -23,10 +23,10 @@ import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.internal.Conversions;
 import org.openscada.hd.server.storage.internal.QueryImpl;
-import org.openscada.hd.server.storage.internal.StorageThreadFactory;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.concurrent.HsdbThreadFactory;
 import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
@@ -251,6 +251,10 @@ public class ShiService implements StorageHistoricalItem, Runnable
             logger.warn ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", configuration.getId (), time );
         }
         final double qualityIndicator = !value.isConnected () || value.isError () ? 0 : 1;
+        if ( qualityIndicator == 0 )
+        {
+            logger.error ( String.format ( "q=0 bei %s", time ) );
+        }
         try
         {
             if ( expectedDataType == DataType.LONG_VALUE )
@@ -372,7 +376,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
         createInvalidEntry ( latestReliableTime );
         if ( !importMode )
         {
-            this.relictCleanerTask = new ScheduledThreadPoolExecutor ( 1, StorageThreadFactory.createFactory ( "RelictCleaner" ) );
+            this.relictCleanerTask = new ScheduledThreadPoolExecutor ( 0, HsdbThreadFactory.createFactory ( "RelictCleaner" ) );
             this.relictCleanerTask.setMaximumPoolSize ( 1 );
             this.relictCleanerTask.scheduleWithFixedDelay ( this, CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD, TimeUnit.MILLISECONDS );
         }
@@ -396,6 +400,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
         // stop relict cleaner task
         if ( relictCleanerTask != null )
         {
+            relictCleanerTask.remove ( this );
             relictCleanerTask.shutdown ();
             relictCleanerTask = null;
         }
