@@ -8,10 +8,16 @@ import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.ItemListListener;
 import org.openscada.hd.connection.provider.ConnectionService;
+import org.openscada.hd.ui.connection.internal.ConnectionWrapper;
 import org.openscada.hd.ui.connection.internal.ItemWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ItemListObserver extends WritableSet implements ItemListListener
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ItemListObserver.class );
+
     private final ConnectionService service;
 
     private final ConnectionWrapper connection;
@@ -37,6 +43,8 @@ public class ItemListObserver extends WritableSet implements ItemListListener
 
     public void listChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
+        logger.debug ( "List changed: {} / {}", new Object[] { addedOrModified, removed } );
+
         if ( !isDisposed () )
         {
             getRealm ().asyncExec ( new Runnable () {

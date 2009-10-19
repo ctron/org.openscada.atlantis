@@ -1,4 +1,4 @@
-package org.openscada.hd.ui.connection.views;
+package org.openscada.hd.ui.connection.internal;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -6,8 +6,6 @@ import java.beans.PropertyChangeListener;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.openscada.core.ui.connection.data.ConnectionHolder;
 import org.openscada.hd.connection.provider.ConnectionService;
-import org.openscada.hd.ui.connection.internal.ItemListWrapper;
-import org.openscada.hd.ui.connection.internal.QueryWrapper;
 
 public class ConnectionWrapper extends WritableSet implements PropertyChangeListener
 {

@@ -3,6 +3,7 @@ package org.openscada.hd.ui.connection.views;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.openscada.core.ui.connection.data.ConnectionHolder;
+import org.openscada.hd.ui.connection.internal.ConnectionWrapper;
 import org.openscada.hd.ui.connection.internal.ItemListWrapper;
 import org.openscada.hd.ui.connection.internal.QueryWrapper;
 

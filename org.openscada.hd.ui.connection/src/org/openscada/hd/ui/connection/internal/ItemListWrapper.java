@@ -1,6 +1,5 @@
 package org.openscada.hd.ui.connection.internal;
 
-import org.openscada.hd.ui.connection.views.ConnectionWrapper;
 
 public class ItemListWrapper
 {

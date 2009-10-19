@@ -50,6 +50,7 @@ public class QueryWrapper
         final QueryBufferBean query = new QueryBufferBean ( this, id );
 
         // FIXME: we need some real updates
+
         query.addPropertyChangeListener ( new PropertyChangeListener () {
 
             public void propertyChange ( final PropertyChangeEvent evt )
@@ -60,7 +61,7 @@ public class QueryWrapper
 
                         public void run ()
                         {
-                            fakeIt ( query );
+                            // fakeIt ( query );
                         }
                     } );
                 }

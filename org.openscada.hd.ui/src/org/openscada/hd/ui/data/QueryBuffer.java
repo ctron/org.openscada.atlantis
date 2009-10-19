@@ -56,6 +56,10 @@ public class QueryBuffer extends AbstractPropertyChange
 
     private double percentFilled;
 
+    private Double lastFilled;
+
+    private static double FILLED_DELTA = 1.0;
+
     public QueryBuffer ( final Connection connection, final String id, final QueryParameters requestParameters )
     {
         this ( connection, id, requestParameters, null );
@@ -167,10 +171,20 @@ public class QueryBuffer extends AbstractPropertyChange
         this.filled = filled;
         firePropertyChange ( PROP_FILLED, oldFilled, filled );
 
-        final double percentFilled = (double)this.filled / (double)this.queryParameters.getEntries ();
+        final double percentFilled = (double)filled / (double)this.queryParameters.getEntries ();
+        setPercentFilled ( percentFilled );
+    }
+
+    private void setPercentFilled ( final double percentFilled )
+    {
         final double oldPercentFilled = this.percentFilled;
         this.percentFilled = percentFilled;
-        firePropertyChange ( PROP_PERCENT_FILLED, oldPercentFilled, percentFilled );
+
+        if ( this.lastFilled == null || Math.abs ( this.lastFilled - percentFilled ) > FILLED_DELTA )
+        {
+            this.lastFilled = percentFilled;
+            firePropertyChange ( PROP_PERCENT_FILLED, oldPercentFilled, percentFilled );
+        }
     }
 
     protected synchronized void updateParameters ( final QueryParameters parameters, final Set<String> valueTypes )

@@ -48,12 +48,16 @@ public class ListeningLabelProvider extends ViewerLabelProvider
      */
     public ListeningLabelProvider ( final IObservableSet itemsThatNeedLabels, final IObservableFactory factory )
     {
-        this.factory = factory;
-
+        this ( factory );
         addSource ( itemsThatNeedLabels );
     }
 
-    private synchronized void addSource ( final IObservableSet observableSet )
+    public ListeningLabelProvider ( final IObservableFactory factory )
+    {
+        this.factory = factory;
+    }
+
+    protected synchronized void addSource ( final IObservableSet observableSet )
     {
         if ( observableSet == null )
         {
@@ -68,7 +72,7 @@ public class ListeningLabelProvider extends ViewerLabelProvider
         }
     }
 
-    private synchronized void removeSource ( final IObservableSet observableSet )
+    protected synchronized void removeSource ( final IObservableSet observableSet )
     {
         if ( observableSet == null )
         {
@@ -106,9 +110,12 @@ public class ListeningLabelProvider extends ViewerLabelProvider
     {
         for ( final IObservableSet set : this.items )
         {
-            for ( final Iterator<?> iter = set.iterator (); iter.hasNext (); )
+            if ( !set.isDisposed () )
             {
-                removeListenerFrom ( iter.next () );
+                for ( final Iterator<?> iter = set.iterator (); iter.hasNext (); )
+                {
+                    removeListenerFrom ( iter.next () );
+                }
             }
             set.removeSetChangeListener ( this.listener );
         }

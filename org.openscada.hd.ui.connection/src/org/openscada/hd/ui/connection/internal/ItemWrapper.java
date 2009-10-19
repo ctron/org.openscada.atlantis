@@ -1,7 +1,6 @@
 package org.openscada.hd.ui.connection.internal;
 
 import org.openscada.hd.HistoricalItemInformation;
-import org.openscada.hd.ui.connection.views.ConnectionWrapper;
 
 public class ItemWrapper
 {

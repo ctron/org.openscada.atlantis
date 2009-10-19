@@ -9,19 +9,19 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.StyledString;
-import org.openscada.core.ui.connection.Activator;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
 import org.openscada.hd.ui.connection.internal.ItemListWrapper;
 import org.openscada.hd.ui.connection.internal.ItemWrapper;
 import org.openscada.hd.ui.connection.internal.QueryBufferBean;
 import org.openscada.hd.ui.connection.internal.QueryWrapper;
-import org.openscada.ui.databinding.ListeningLabelProvider;
+import org.openscada.hd.ui.data.QueryBuffer;
+import org.openscada.ui.databinding.CommonListeningLabelProvider;
 import org.openscada.ui.databinding.StyledViewerLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectionLabelProvider extends ListeningLabelProvider implements PropertyChangeListener
+public class ConnectionLabelProvider extends CommonListeningLabelProvider implements PropertyChangeListener
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionLabelProvider.class );
@@ -30,7 +30,7 @@ public class ConnectionLabelProvider extends ListeningLabelProvider implements P
 
     public ConnectionLabelProvider ()
     {
-        super ( Activator.getDefault ().getDiscovererSet (), new ConnectionObservableFactory () );
+        super ( new ConnectionObservableFactory (), "org.openscada.hd.ui.connection.provider" );
     }
 
     @Override
@@ -125,7 +125,15 @@ public class ConnectionLabelProvider extends ListeningLabelProvider implements P
     public void propertyChange ( final PropertyChangeEvent evt )
     {
         logger.debug ( "Property change: {}" ); //$NON-NLS-1$
-        fireChangeEvent ( Arrays.asList ( evt.getSource () ) );
+        if ( evt.getSource () instanceof QueryBuffer )
+        {
+            final String propName = evt.getPropertyName ();
+            // don't fire changes for "percent filled" or "filled", they come to often and are not shown
+            if ( !QueryBuffer.PROP_PERCENT_FILLED.equals ( propName ) && !QueryBufferBean.PROP_FILLED.equals ( propName ) )
+            {
+                fireChangeEvent ( Arrays.asList ( evt.getSource () ) );
+            }
+        }
     }
 
 }
