@@ -610,7 +610,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                 }
                 else
                 {
-                    if ( e.button == 1 && ( e.stateMask & SWT.SHIFT ) == SWT.SHIFT )
+                    if ( ( e.button == 1 ) && ( ( e.stateMask & SWT.SHIFT ) == SWT.SHIFT ) )
                     {
                         // zoom in
                         final DateRange zoomResult = zoomIn ( e.x, 0, TrendView.this.chart.getPlotArea ().getSize ().x, TrendView.this.chartParameters.get ().getStartTime (), TrendView.this.chartParameters.get ().getEndTime () );
@@ -618,7 +618,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                         TrendView.this.chartParameters.set ( parameters );
                         TrendView.this.rangeUpdateJob.get ().schedule ( GUI_JOB_DELAY );
                     }
-                    else if ( e.button == 1 && ( e.stateMask & SWT.ALT ) == SWT.ALT )
+                    else if ( ( e.button == 1 ) && ( ( e.stateMask & SWT.ALT ) == SWT.ALT ) )
                     {
                         // zoom out
                         final DateRange zoomResult = zoomOut ( e.x, 0, TrendView.this.chart.getPlotArea ().getSize ().x, TrendView.this.chartParameters.get ().getStartTime (), TrendView.this.chartParameters.get ().getEndTime () );
@@ -891,18 +891,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                 // now copy values from data source to our data array
                 for ( int i = 0; i < valueInformation.length; i++ )
                 {
-                    double value = valueArray[i].toDouble ();
-                    // at the moment special handling for values out of range,
-                    // should be handled by Chart
-                    if ( value >= Double.MAX_VALUE )
-                    {
-                        value = 0;
-                    }
-                    if ( value <= -Double.MAX_VALUE )
-                    {
-                        value = 0;
-                    }
-                    chartValues[i + index] = value;
+                    chartValues[i + index] = valueArray[i].toDouble ();
                 }
             }
             // now copy values for date axis and quality
@@ -1079,7 +1068,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                         continue;
                     }
                     series.setXDateSeries ( TrendView.this.dataTimestamp.get () );
-                    series.setYSeries ( TrendView.this.data.get ( seriesParameter.name ) );
+                    series.setYSeries ( convertInvalidData ( TrendView.this.data.get ( seriesParameter.name ) ) );
                 }
                 TrendView.this.chart.getAxisSet ().getXAxis ( 0 ).getTick ().setFormat ( new SimpleDateFormat ( formatByRange () ) );
                 final double quality = TrendView.this.chartParameters.get ().getQuality ();
@@ -1152,6 +1141,26 @@ public class TrendView extends QueryViewPart implements QueryListener
         {
             return "yyyy-MM-dd HH";
         }
+    }
+
+    /**
+     * FIXME: this is just a temporary fix until the chart is able to handle infinity or NaN
+     * @param data
+     * @return
+     */
+    private double[] convertInvalidData ( final double[] data )
+    {
+        if ( data == null )
+        {
+            return null;
+        }
+        double[] result = new double[data.length];
+
+        for ( int i = 0; i < data.length; i++ )
+        {
+            result[i] = ( Double.isNaN ( data[i] ) || Double.isInfinite ( data[i] ) ) ? 0.0 : data[i];
+        }
+        return result;
     }
 
     @Override
