@@ -44,10 +44,10 @@ public class ShiService implements StorageHistoricalItem, Runnable
     private final static Logger logger = LoggerFactory.getLogger ( ShiService.class );
 
     /** Delay in milliseconds after that old data is deleted for the first time after initialization of the class. */
-    private final static long CLEANER_TASK_DELAY = 1000 * 60;
+    private final static long CLEANER_TASK_DELAY = 1000 * 1;
 
     /** Period in milliseconds between two consecutive attempts to delete old data. */
-    private final static long CLEANER_TASK_PERIOD = 1000 * 60 * 10;
+    private final static long CLEANER_TASK_PERIOD = 1000 * 10;
 
     /** Configuration of the service. */
     private final Configuration configuration;
@@ -367,13 +367,13 @@ public class ShiService implements StorageHistoricalItem, Runnable
     public synchronized void start ()
     {
         stop ();
-        if ( importMode )
+        this.started = true;
+        createInvalidEntry ( latestReliableTime );
+        if ( !importMode )
         {
             this.relictCleanerTask = new ScheduledThreadPoolExecutor ( 1 );
             this.relictCleanerTask.scheduleWithFixedDelay ( this, CLEANER_TASK_DELAY, CLEANER_TASK_PERIOD, TimeUnit.MILLISECONDS );
         }
-        this.started = true;
-        createInvalidEntry ( latestReliableTime );
     }
 
     /**
@@ -391,6 +391,13 @@ public class ShiService implements StorageHistoricalItem, Runnable
             query.close ();
         }
 
+        // stop relict cleaner task
+        if ( relictCleanerTask != null )
+        {
+            relictCleanerTask.shutdown ();
+            relictCleanerTask = null;
+        }
+
         // create entry with data marked as invalid
         if ( started )
         {
@@ -399,13 +406,6 @@ public class ShiService implements StorageHistoricalItem, Runnable
 
         // set running flag
         started = false;
-
-        // stop relict cleaner task
-        if ( relictCleanerTask != null )
-        {
-            relictCleanerTask.shutdown ();
-            relictCleanerTask = null;
-        }
     }
 
     /**

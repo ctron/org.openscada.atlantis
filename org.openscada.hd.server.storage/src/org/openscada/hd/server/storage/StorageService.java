@@ -373,6 +373,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
 
         // build a map holding all back end objects grouped by data configuration ids ordered by detail level
         final Set<String> bannedConfigurationIds = new HashSet<String> ();
+        final Map<String, List<BackEnd>> backEndMap = new HashMap<String, List<BackEnd>> ();
         for ( final StorageChannelMetaData metaData : availableMetaDatas )
         {
             // ignore heartbeat meta data since it is internal
@@ -398,11 +399,11 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
                 backEnd.initialize ( metaData );
 
                 // get list of already created back end objects with the same configuration id
-                List<BackEnd> backEnds = this.backEndMap.get ( configurationId );
+                List<BackEnd> backEnds = backEndMap.get ( configurationId );
                 if ( backEnds == null )
                 {
                     backEnds = new LinkedList<BackEnd> ();
-                    this.backEndMap.put ( configurationId, backEnds );
+                    backEndMap.put ( configurationId, backEnds );
                 }
 
                 // assure that the list is sorted by detail level
@@ -421,7 +422,7 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
             {
                 logger.error ( String.format ( "problem while loading back ends for meta data '%s'", metaData ), e );
                 bannedConfigurationIds.add ( configurationId );
-                List<BackEnd> backEnds = this.backEndMap.remove ( configurationId );
+                List<BackEnd> backEnds = backEndMap.remove ( configurationId );
                 if ( backEnds == null )
                 {
                     backEnds = new ArrayList<BackEnd> ();
@@ -459,10 +460,10 @@ public class StorageService implements SelfManagedConfigurationFactory, Runnable
             }
         }
 
-        // remove not used back end objects
-        for ( final String configurationId : bannedConfigurationIds )
+        // deinitialize all back end objects
+        for ( final List<BackEnd> bs : backEndMap.values () )
         {
-            deinitializeBackEnds ( backEndMap.remove ( configurationId ) );
+            deinitializeBackEnds ( bs );
         }
     }
 
