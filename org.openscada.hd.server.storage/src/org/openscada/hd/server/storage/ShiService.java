@@ -92,7 +92,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
     public ShiService ( final Configuration configuration, final long latestReliableTime, final boolean importMode )
     {
         this.configuration = new ConfigurationImpl ( configuration );
-        calculationMethods = new HashSet ( Conversions.getCalculationMethods ( configuration ) );
+        calculationMethods = new HashSet<CalculationMethod> ( Conversions.getCalculationMethods ( configuration ) );
         this.storageChannels = new HashMap<StorageChannelMetaData, ExtendedStorageChannel> ();
         this.rootStorageChannel = null;
         this.started = false;
