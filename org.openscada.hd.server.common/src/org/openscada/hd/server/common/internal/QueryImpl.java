@@ -34,13 +34,24 @@ public class QueryImpl implements Query, QueryListener
 
     public void setQuery ( final Query query )
     {
-        this.query = query;
+        if ( this.query == null )
+        {
+            this.query = query;
+        }
     }
 
     public void close ()
     {
+        dispose ();
+    }
+
+    public void dispose ()
+    {
         this.session.removeQuery ( this );
-        this.query.close ();
+        if ( this.query != null )
+        {
+            this.query.close ();
+        }
     }
 
     public void changeParameters ( final QueryParameters parameters )
@@ -128,8 +139,4 @@ public class QueryImpl implements Query, QueryListener
         }
     }
 
-    public void dispose ()
-    {
-        this.query.close ();
-    }
 }
