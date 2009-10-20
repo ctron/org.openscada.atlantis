@@ -23,7 +23,7 @@ import org.openscada.hsdb.ExtendedStorageChannelAdapter;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.backend.BackEnd;
 import org.openscada.hsdb.backend.BackEndFactory;
-import org.openscada.hsdb.backend.BackEndMultiplexor;
+import org.openscada.hsdb.backend.BackEndMultiplexer;
 import org.openscada.hsdb.backend.file.FileBackEndFactory;
 import org.openscada.hsdb.calculation.CalculationMethod;
 import org.openscada.hsdb.datatypes.DataType;
@@ -168,7 +168,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         {
             try
             {
-                final BackEnd backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
+                final BackEnd backEnd = new BackEndMultiplexer ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
                 backEnds.add ( backEnd );
                 backEnd.initialize ( metaData );
                 if ( createNewBackEnds )
@@ -255,7 +255,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         }
         try
         {
-            final BackEnd backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
+            final BackEnd backEnd = new BackEndMultiplexer ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
             backEnd.initialize ( metaData );
             if ( createNewBackEnd )
             {
@@ -398,7 +398,7 @@ public class StorageService implements SelfManagedConfigurationFactory
                 }
 
                 // create new back end object
-                backEnd = new BackEndMultiplexor ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
+                backEnd = new BackEndMultiplexer ( this.backEndFactory, metaData.getProposedDataAge () / FILE_FRAGMENTS_PER_DATA_LIFESPAN );
                 backEnd.initialize ( metaData );
 
                 // get list of already created back end objects with the same configuration id

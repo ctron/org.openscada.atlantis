@@ -256,10 +256,6 @@ public class ShiService implements StorageHistoricalItem, Runnable
             logger.warn ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", configuration.getId (), time );
         }
         final double qualityIndicator = !value.isConnected () || value.isError () ? 0 : 1;
-        if ( qualityIndicator == 0 )
-        {
-            logger.error ( String.format ( "q=0 bei %s", time ) );
-        }
         try
         {
             if ( expectedDataType == DataType.LONG_VALUE )
