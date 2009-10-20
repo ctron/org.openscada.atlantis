@@ -28,6 +28,8 @@ package org.openscada.net.base.data;
  */
 public class VoidValue extends Value
 {
+    public final static VoidValue INSTANCE = new VoidValue ();
+
     @Override
     public int hashCode ()
     {

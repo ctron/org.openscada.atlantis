@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,29 +21,23 @@ package org.openscada.net.base.data;
 
 public class BooleanValue extends Value
 {
-
-    private boolean _value;
+    public final boolean value;
 
     public BooleanValue ( final boolean value )
     {
         super ();
-        this._value = value;
+        this.value = value;
     }
 
     public boolean getValue ()
     {
-        return this._value;
-    }
-
-    public void setValue ( final boolean value )
-    {
-        this._value = value;
+        return this.value;
     }
 
     @Override
     public String toString ()
     {
-        return String.valueOf ( this._value );
+        return String.valueOf ( this.value );
     }
 
     @Override
@@ -51,7 +45,7 @@ public class BooleanValue extends Value
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ( this._value ? 1231 : 1237 );
+        result = PRIME * result + ( this.value ? 1231 : 1237 );
         return result;
     }
 
@@ -71,7 +65,7 @@ public class BooleanValue extends Value
             return false;
         }
         final BooleanValue other = (BooleanValue)obj;
-        if ( this._value != other._value )
+        if ( this.value != other.value )
         {
             return false;
         }

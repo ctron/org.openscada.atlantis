@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,27 +24,26 @@ import java.util.List;
 
 public class ListValue extends Value
 {
-
-    private List<Value> _values = null;
+    private final List<Value> values;
 
     public ListValue ()
     {
-        this._values = new LinkedList<Value> ();
+        this.values = new LinkedList<Value> ();
     }
 
     public void add ( final Value value )
     {
-        this._values.add ( value );
+        this.values.add ( value );
     }
 
     public void remove ( final Value value )
     {
-        this._values.remove ( value );
+        this.values.remove ( value );
     }
 
     public int size ()
     {
-        return this._values.size ();
+        return this.values.size ();
     }
 
     @Override
@@ -52,7 +51,7 @@ public class ListValue extends Value
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ( this._values == null ? 0 : this._values.hashCode () );
+        result = PRIME * result + ( this.values == null ? 0 : this.values.hashCode () );
         return result;
     }
 
@@ -72,14 +71,14 @@ public class ListValue extends Value
             return false;
         }
         final ListValue other = (ListValue)obj;
-        if ( this._values == null )
+        if ( this.values == null )
         {
-            if ( other._values != null )
+            if ( other.values != null )
             {
                 return false;
             }
         }
-        else if ( !this._values.equals ( other._values ) )
+        else if ( !this.values.equals ( other.values ) )
         {
             return false;
         }
@@ -88,6 +87,6 @@ public class ListValue extends Value
 
     public List<Value> getValues ()
     {
-        return this._values;
+        return this.values;
     }
 }

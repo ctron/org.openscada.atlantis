@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,29 +21,23 @@ package org.openscada.net.base.data;
 
 public class LongValue extends Value
 {
-
-    private long _value;
+    public final long value;
 
     public LongValue ( final long value )
     {
         super ();
-        this._value = value;
+        this.value = value;
     }
 
     public long getValue ()
     {
-        return this._value;
-    }
-
-    public void setValue ( final long value )
-    {
-        this._value = value;
+        return this.value;
     }
 
     @Override
     public String toString ()
     {
-        return String.valueOf ( this._value );
+        return String.valueOf ( this.value );
     }
 
     @Override
@@ -51,7 +45,7 @@ public class LongValue extends Value
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + (int) ( this._value ^ this._value >>> 32 );
+        result = PRIME * result + (int) ( this.value ^ this.value >>> 32 );
         return result;
     }
 
@@ -71,7 +65,7 @@ public class LongValue extends Value
             return false;
         }
         final LongValue other = (LongValue)obj;
-        if ( this._value != other._value )
+        if ( this.value != other.value )
         {
             return false;
         }

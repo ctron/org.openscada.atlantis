@@ -19,8 +19,6 @@
 
 package org.openscada.net.mina;
 
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
@@ -44,8 +42,13 @@ import org.openscada.net.codec.InvalidValueTypeException;
 
 public class GMPPProtocolEncoder implements ProtocolEncoder, GMPPProtocol
 {
-
-    private final CharsetEncoder charEncoder = Charset.forName ( "utf-8" ).newEncoder ();
+    private final ThreadLocal<CharsetEncoder> encoderLocal = new ThreadLocal<CharsetEncoder> () {
+        @Override
+        protected CharsetEncoder initialValue ()
+        {
+            return Charset.forName ( "utf-8" ).newEncoder ();
+        }
+    };
 
     public void dispose ( final IoSession session ) throws Exception
     {
@@ -64,87 +67,66 @@ public class GMPPProtocolEncoder implements ProtocolEncoder, GMPPProtocol
         }
     }
 
-    private IoBuffer encodeToStream ( final IoBuffer buffer, final String data )
+    private void encodeToStream ( final IoBuffer buffer, final String data )
     {
-        ByteBuffer rawData;
-        synchronized ( this.charEncoder )
+        buffer.putInt ( 0 );
+        final int pos = buffer.position ();
+
+        try
         {
-            try
-            {
-                rawData = this.charEncoder.encode ( CharBuffer.wrap ( data ) );
-            }
-            catch ( final CharacterCodingException e )
-            {
-                rawData = ByteBuffer.wrap ( data.getBytes () );
-            }
+            buffer.putString ( data, this.encoderLocal.get () );
+            final int afterPos = buffer.position ();
+            final int len = afterPos - pos;
+            buffer.putInt ( pos - 4, len );
         }
-
-        buffer.expand ( 4 + rawData.remaining () );
-        buffer.putInt ( rawData.remaining () );
-        buffer.put ( rawData );
-
-        return buffer;
+        catch ( final CharacterCodingException e )
+        {
+            throw new RuntimeException ( "Failed to encode", e );
+        }
     }
 
-    private IoBuffer encodeToStream ( final IoBuffer buffer, final IntegerValue value )
+    private void encodeToStream ( final IoBuffer buffer, final IntegerValue value )
     {
-        buffer.expand ( 4 + 4 + 4 );
         buffer.putInt ( VT_INTEGER );
         buffer.putInt ( 4 );
-        buffer.putInt ( value.getValue () );
-
-        return buffer;
+        buffer.putInt ( value.value );
     }
 
-    private IoBuffer encodeToStream ( final IoBuffer buffer, final LongValue value )
+    private void encodeToStream ( final IoBuffer buffer, final LongValue value )
     {
-        buffer.expand ( 4 + 4 + 8 );
         buffer.putInt ( VT_LONG );
         buffer.putInt ( 8 );
         buffer.putLong ( value.getValue () );
-
-        return buffer;
     }
 
-    private IoBuffer encodeToStream ( final IoBuffer buffer, final DoubleValue value )
+    private void encodeToStream ( final IoBuffer buffer, final DoubleValue value )
     {
-        buffer.expand ( 4 + 4 + 8 );
         buffer.putInt ( VT_DOUBLE );
         buffer.putInt ( 8 );
         buffer.putLong ( Double.doubleToRawLongBits ( value.getValue () ) );
-        return buffer;
     }
 
-    private IoBuffer encodeToStream ( final IoBuffer buffer, final VoidValue value )
+    private void encodeToStream ( final IoBuffer buffer, final VoidValue value )
     {
-        buffer.expand ( 4 + 4 );
         buffer.putInt ( VT_VOID );
         buffer.putInt ( 0 );
-
-        return buffer;
     }
 
-    private IoBuffer encodeToStream ( final IoBuffer buffer, final BooleanValue value )
+    private void encodeToStream ( final IoBuffer buffer, final BooleanValue value )
     {
-        buffer.expand ( 4 + 4 + 1 );
         buffer.putInt ( VT_BOOLEAN );
         buffer.putInt ( 1 );
         buffer.put ( value.getValue () ? (byte)0xFF : (byte)0x00 );
-
-        return buffer;
     }
 
-    private IoBuffer encodeToStream ( IoBuffer buffer, final StringValue value )
+    private void encodeToStream ( final IoBuffer buffer, final StringValue value )
     {
-        buffer.expand ( 4 );
         buffer.putInt ( VT_STRING );
-        buffer = encodeToStream ( buffer, value.getValue () );
-        return buffer;
+        encodeToStream ( buffer, value.getValue () );
     }
 
-    private IoBuffer encodeToStream ( IoBuffer buffer, final ListValue value ) throws InvalidValueTypeException
+    private void encodeToStream ( final IoBuffer buffer, final ListValue value ) throws InvalidValueTypeException
     {
-        buffer.expand ( 4 + 4 + 4 );
         buffer.putInt ( VT_LIST );
         final int position = buffer.position (); // remember position
         buffer.putInt ( 0 ); // dummy size length
@@ -154,17 +136,15 @@ public class GMPPProtocolEncoder implements ProtocolEncoder, GMPPProtocol
 
         for ( final Value valueEntry : value.getValues () )
         {
-            buffer = codeValue ( buffer, valueEntry );
+            codeValue ( buffer, valueEntry );
         }
         final int size = buffer.position () - startPos;
 
         buffer.putInt ( position, size ); // set value size
-        return buffer;
     }
 
-    private IoBuffer encodeToStream ( IoBuffer buffer, final MapValue value ) throws InvalidValueTypeException
+    private void encodeToStream ( final IoBuffer buffer, final MapValue value ) throws InvalidValueTypeException
     {
-        buffer.expand ( 4 + 4 + 4 );
         buffer.putInt ( VT_MAP );
         final int position = buffer.position (); // remember position
         buffer.putInt ( 0 ); // dummy size length
@@ -174,47 +154,48 @@ public class GMPPProtocolEncoder implements ProtocolEncoder, GMPPProtocol
 
         for ( final Map.Entry<String, Value> valueEntry : value.getValues ().entrySet () )
         {
-            buffer = codeValue ( buffer, valueEntry.getKey (), valueEntry.getValue () );
+            codeValue ( buffer, valueEntry.getKey (), valueEntry.getValue () );
         }
         final int size = buffer.position () - startPos;
 
         buffer.putInt ( position, size ); // set value size
-        return buffer;
     }
 
-    private IoBuffer codeValue ( IoBuffer buffer, final Value value ) throws InvalidValueTypeException
+    private void codeValue ( final IoBuffer buffer, final Value value ) throws InvalidValueTypeException
     {
-        if ( value instanceof StringValue )
+        final Class<?> clazz = value.getClass ();
+
+        if ( clazz == StringValue.class )
         {
-            buffer = encodeToStream ( buffer, (StringValue)value );
+            encodeToStream ( buffer, (StringValue)value );
         }
-        else if ( value instanceof BooleanValue )
+        else if ( clazz == BooleanValue.class )
         {
-            buffer = encodeToStream ( buffer, (BooleanValue)value );
+            encodeToStream ( buffer, (BooleanValue)value );
         }
-        else if ( value instanceof IntegerValue )
+        else if ( clazz == IntegerValue.class )
         {
-            buffer = encodeToStream ( buffer, (IntegerValue)value );
+            encodeToStream ( buffer, (IntegerValue)value );
         }
-        else if ( value instanceof LongValue )
+        else if ( clazz == LongValue.class )
         {
-            buffer = encodeToStream ( buffer, (LongValue)value );
+            encodeToStream ( buffer, (LongValue)value );
         }
-        else if ( value instanceof DoubleValue )
+        else if ( clazz == DoubleValue.class )
         {
-            buffer = encodeToStream ( buffer, (DoubleValue)value );
+            encodeToStream ( buffer, (DoubleValue)value );
         }
-        else if ( value instanceof VoidValue )
+        else if ( clazz == VoidValue.class )
         {
-            buffer = encodeToStream ( buffer, (VoidValue)value );
+            encodeToStream ( buffer, (VoidValue)value );
         }
-        else if ( value instanceof ListValue )
+        else if ( clazz == ListValue.class )
         {
-            buffer = encodeToStream ( buffer, (ListValue)value );
+            encodeToStream ( buffer, (ListValue)value );
         }
-        else if ( value instanceof MapValue )
+        else if ( clazz == MapValue.class )
         {
-            buffer = encodeToStream ( buffer, (MapValue)value );
+            encodeToStream ( buffer, (MapValue)value );
         }
         else
         {
@@ -225,22 +206,21 @@ public class GMPPProtocolEncoder implements ProtocolEncoder, GMPPProtocol
             }
             throw new InvalidValueTypeException ( String.format ( "The type '%s' is unknown", value.getClass ().getName () ) );
         }
-        return buffer;
     }
 
-    private IoBuffer codeValue ( IoBuffer buffer, final String name, final Value value ) throws InvalidValueTypeException
+    private void codeValue ( final IoBuffer buffer, final String name, final Value value ) throws InvalidValueTypeException
     {
-        buffer = codeValue ( buffer, value );
-        buffer = encodeToStream ( buffer, name );
-
-        return buffer;
+        codeValue ( buffer, value );
+        encodeToStream ( buffer, name );
     }
 
-    protected IoBuffer code ( final Message message ) throws InvalidValueTypeException
+    public IoBuffer code ( final Message message ) throws InvalidValueTypeException
     {
-        IoBuffer outputBuffer = IoBuffer.allocate ( HEADER_SIZE );
+        final IoBuffer outputBuffer = IoBuffer.allocate ( HEADER_SIZE );
 
+        outputBuffer.setAutoExpand ( true );
         outputBuffer.clear ();
+
         outputBuffer.putInt ( message.getCommandCode () );
         outputBuffer.putLong ( message.getTimestamp () );
         outputBuffer.putLong ( message.getSequence () );
@@ -249,7 +229,7 @@ public class GMPPProtocolEncoder implements ProtocolEncoder, GMPPProtocol
         outputBuffer.putInt ( 0 ); // dummy body size
 
         final int startPos = outputBuffer.position ();
-        outputBuffer = codeValue ( outputBuffer, message.getValues () );
+        codeValue ( outputBuffer, message.getValues () );
         final int bodySize = outputBuffer.position () - startPos;
         outputBuffer.putInt ( sizePos, bodySize );
 

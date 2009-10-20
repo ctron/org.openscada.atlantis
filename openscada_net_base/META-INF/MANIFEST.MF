@@ -8,7 +8,8 @@ Import-Package: org.apache.log4j;version="1.2.0",
  org.apache.mina.transport.socket.apr;version="2.0",
  org.apache.mina.transport.socket.nio;version="2.0",
  org.apache.mina.transport.vmpipe;version="2.0",
- org.openscada.utils.exec;version="0.13"
+ org.openscada.utils.exec;version="0.13",
+ org.openscada.utils.lang
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.net.base.handlers;uses:="org.apache.log4
  j,org.openscada.net.base.data,org.openscada.net.base,org.openscada.ne

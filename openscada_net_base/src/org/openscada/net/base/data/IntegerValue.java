@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,29 +21,23 @@ package org.openscada.net.base.data;
 
 public class IntegerValue extends Value
 {
-
-    private int _value;
+    public final int value;
 
     public IntegerValue ( final int value )
     {
         super ();
-        this._value = value;
+        this.value = value;
     }
 
     public int getValue ()
     {
-        return this._value;
-    }
-
-    public void setValue ( final int value )
-    {
-        this._value = value;
+        return this.value;
     }
 
     @Override
     public String toString ()
     {
-        return String.valueOf ( this._value );
+        return String.valueOf ( this.value );
     }
 
     @Override
@@ -51,7 +45,7 @@ public class IntegerValue extends Value
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + this._value;
+        result = PRIME * result + this.value;
         return result;
     }
 
@@ -71,7 +65,7 @@ public class IntegerValue extends Value
             return false;
         }
         final IntegerValue other = (IntegerValue)obj;
-        if ( this._value != other._value )
+        if ( this.value != other.value )
         {
             return false;
         }
