@@ -21,7 +21,8 @@ Import-Package: Ice,
  org.openscada.da.core;version="0.14",
  org.openscada.da.core.browser;version="0.14",
  org.openscada.da.ice;version="0.14",
- org.openscada.utils.timing;version="0.13"
+ org.openscada.utils.timing;version="0.13",
+ org.osgi.framework
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bnd-LastModified: 1252499297410
 Export-Package: org.openscada.da.client.ice;uses:="org.openscada.da.co
@@ -39,4 +40,5 @@ Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
 Bundle-SymbolicName: org.openscada.da.client.ice
 Tool: Bnd-0.0.311
+Bundle-Activator: org.openscada.da.client.ice.Activator
 
