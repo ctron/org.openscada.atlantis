@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.databinding.beans;bundle-version="1.2.0",
  org.openscada.da.client.common;bundle-version="0.14.0",
  org.openscada.da.core.common;bundle-version="0.14.0",
- org.openscada.utils;bundle-version="0.14.0"
+ org.openscada.utils;bundle-version="0.14.0",
+ org.openscada.core.ui;bundle-version="0.14.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: org.slf4j;version="1.5.8"
