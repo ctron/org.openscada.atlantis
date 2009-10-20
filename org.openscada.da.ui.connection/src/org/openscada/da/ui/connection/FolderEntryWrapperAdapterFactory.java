@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.openscada.da.core.browser.DataItemEntry;
 import org.openscada.da.core.browser.FolderEntry;
+import org.openscada.da.ui.connection.data.Item;
 
 public class FolderEntryWrapperAdapterFactory implements IAdapterFactory
 {
@@ -21,7 +22,7 @@ public class FolderEntryWrapperAdapterFactory implements IAdapterFactory
     @SuppressWarnings ( "unchecked" )
     public Class[] getAdapterList ()
     {
-        return new Class[] { DataItemEntry.class, FolderEntry.class };
+        return new Class[] { DataItemEntry.class, FolderEntry.class, Item.class };
     }
 
 }

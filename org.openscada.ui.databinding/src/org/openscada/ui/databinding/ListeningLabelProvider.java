@@ -42,6 +42,8 @@ public class ListeningLabelProvider extends ViewerLabelProvider
 
     private final Map<Object, IObservableSet> itemMap = new HashMap<Object, IObservableSet> ();
 
+    private boolean disposed;
+
     /**
      * @param itemsThatNeedLabels
      * @param connectionObservableFactory 
@@ -84,7 +86,11 @@ public class ListeningLabelProvider extends ViewerLabelProvider
             removeListenerFrom ( it.next () );
         }
         observableSet.removeSetChangeListener ( this.listener );
-        this.items.remove ( observableSet );
+
+        if ( !this.disposed )
+        {
+            this.items.remove ( observableSet );
+        }
     }
 
     protected synchronized void addListenerTo ( final Object next )
@@ -108,6 +114,8 @@ public class ListeningLabelProvider extends ViewerLabelProvider
 
     public synchronized void dispose ()
     {
+        this.disposed = true;
+
         for ( final IObservableSet set : this.items )
         {
             if ( !set.isDisposed () )

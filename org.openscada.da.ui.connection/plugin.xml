@@ -42,5 +42,57 @@
             viewerId="org.openscada.core.ui.connection.ConnectionView">
       </dragAssistant>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.openscada.core.ui.connection.ConnectionView#PopupMenu">
+         <command
+               commandId="org.eclipse.ui.newWizard"
+               icon="icons/stock_write.png"
+               label="Write"
+               style="push">
+            <parameter
+                  name="newWizardId"
+                  value="org.openscada.da.client.test.newWizards.NewWriteOperation">
+            </parameter>
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                     <adapt
+                           type="org.openscada.da.ui.connection.data.Item">
+                     </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
+		<command
+        commandId="org.eclipse.ui.newWizard"
+        icon="icons/stock_write.png"
+        label="Write Attributes"
+        style="push">
+            <parameter
+                  name="newWizardId"
+                  value="org.openscada.da.client.test.newWizards.NewWriteAttributesOperation">
+            </parameter>
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                     <adapt
+                           type="org.openscada.da.ui.connection.data.Item">
+                     </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
 
 </plugin>

@@ -323,6 +323,24 @@
             name="New Watch"
             project="false">
       </wizard>
+      <wizard
+            category="org.openscada.da.ui.category"
+            class="org.openscada.da.client.test.wizards.WriteOperationWizard"
+            hasPages="true"
+            icon="icons/16x16/stock_write.png"
+            id="org.openscada.da.client.test.newWizards.NewWriteOperation"
+            name="Write Operation"
+            project="false">
+      </wizard>
+      <wizard
+            category="org.openscada.da.ui.category"
+            class="org.openscada.da.client.test.wizards.WriteAttributesOperationWizard"
+            hasPages="true"
+            icon="icons/16x16/stock_write.png"
+            id="org.openscada.da.client.test.newWizards.NewWriteAttributesOperation"
+            name="Write Operation Attributes"
+            project="false">
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
