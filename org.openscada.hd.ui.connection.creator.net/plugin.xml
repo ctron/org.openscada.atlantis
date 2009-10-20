@@ -4,10 +4,10 @@
    <extension
          point="org.openscada.core.ui.connection.creator">
       <creator
-            class="org.openscada.da.ui.connection.creator.net.ConnectionCreatorImpl"
+            class="org.openscada.hd.ui.connection.creator.net.ConnectionCreatorImpl"
             driver="net"
             id="org.openscada.da.ui.connection.creator.net.ConnectionCreator"
-            interface="da">
+            interface="hd">
       </creator>
    </extension>
 

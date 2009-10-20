@@ -1,20 +1,20 @@
 package org.openscada.core.ui.connection.data;
 
-import java.util.UUID;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
-import org.openscada.core.connection.provider.ConnectionRequest;
 import org.openscada.core.connection.provider.ConnectionService;
-import org.openscada.core.connection.provider.ConnectionTracker;
-import org.openscada.core.connection.provider.ConnectionTracker.Listener;
 import org.openscada.core.ui.connection.Activator;
+import org.openscada.core.ui.connection.creator.ConnectionCreatorHelper;
 import org.openscada.utils.beans.AbstractPropertyChange;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,17 +33,15 @@ public class ConnectionHolder extends AbstractPropertyChange implements Connecti
 
     private final ConnectionDiscovererBean discoverer;
 
-    private final BundleContext context;
-
-    private final ConnectionTracker tracker;
-
-    private final ConnectionRequest request;
-
-    private ConnectionService connectionService;
+    private volatile ConnectionService connectionService;
 
     private volatile ConnectionState connectionState;
 
     private Throwable connectionError;
+
+    private final BundleContext context;
+
+    private ServiceRegistration serviceRegistration;
 
     public ConnectionHolder ( final ConnectionDiscovererBean discoverer, final ConnectionInformation info ) throws InvalidSyntaxException
     {
@@ -52,16 +50,60 @@ public class ConnectionHolder extends AbstractPropertyChange implements Connecti
 
         this.context = Activator.getDefault ().getBundle ().getBundleContext ();
 
-        this.request = new ConnectionRequest ( UUID.randomUUID ().toString (), info, null, true, false );
+        createConnection ();
+    }
 
-        this.tracker = new ConnectionTracker ( this.context, this.request, new Listener () {
+    private synchronized void createConnection ()
+    {
+        final ConnectionService connectionService = ConnectionCreatorHelper.createConnection ( this.info, null );
+        if ( connectionService != null )
+        {
+            connectionService.getConnection ().addConnectionStateListener ( this );
+            setConnectionService ( connectionService );
+            setConnectionState ( ConnectionState.CLOSED );
+            setConnectionError ( null );
 
-            public void setConnection ( final org.openscada.core.connection.provider.ConnectionService connectionService )
-            {
-                ConnectionHolder.this.setConnectionService ( connectionService );
-            }
-        } );
-        this.tracker.listen ();
+            registerConnection ();
+        }
+    }
+
+    /**
+     * Register the current connection as an OSGi service
+     */
+    private void registerConnection ()
+    {
+        final Class<?>[] interfaces = this.connectionService.getSupportedInterfaces ();
+
+        final String[] clazzes = new String[interfaces.length];
+
+        int i = 0;
+        for ( final Class<?> iface : interfaces )
+        {
+            clazzes[i] = iface.getName ();
+            i++;
+        }
+
+        final Dictionary<String, String> properties = new Hashtable<String, String> ();
+        properties.put ( ConnectionService.CONNECTION_URI, this.info.toString () );
+        this.serviceRegistration = this.context.registerService ( clazzes, this.connectionService, properties );
+    }
+
+    private synchronized void destroyConnection ()
+    {
+        if ( this.serviceRegistration != null )
+        {
+            this.serviceRegistration.unregister ();
+            this.serviceRegistration = null;
+        }
+        if ( this.connectionService != null )
+        {
+            this.connectionService.getConnection ().removeConnectionStateListener ( this );
+            this.connectionService.disconnect ();
+            this.connectionService = null;
+            setConnectionService ( null );
+            setConnectionState ( null );
+            setConnectionError ( null );
+        }
     }
 
     public synchronized void connect ()
@@ -70,40 +112,13 @@ public class ConnectionHolder extends AbstractPropertyChange implements Connecti
         {
             this.connectionService.connect ();
         }
-        else
-        {
-            this.tracker.request ();
-        }
     }
 
     public synchronized void disconnect ()
     {
-        this.tracker.unrequest ();
-    }
-
-    protected void setConnectionService ( final ConnectionService connectionService )
-    {
-        logger.info ( "Set connection: {}", connectionService );
-
-        final ConnectionService oldConnectionService = this.connectionService;
-        this.connectionService = connectionService;
-        firePropertyChange ( PROP_CONNECTION_SERVICE, oldConnectionService, connectionService );
-
-        if ( oldConnectionService != null )
+        if ( this.connectionService != null )
         {
-            oldConnectionService.getConnection ().removeConnectionStateListener ( this );
-        }
-
-        if ( connectionService != null )
-        {
-            setConnectionState ( connectionService.getConnection ().getState () );
-            setConnectionError ( null );
-            connectionService.getConnection ().addConnectionStateListener ( this );
-        }
-        else
-        {
-            setConnectionError ( null );
-            setConnectionState ( null );
+            this.connectionService.disconnect ();
         }
     }
 
@@ -120,10 +135,7 @@ public class ConnectionHolder extends AbstractPropertyChange implements Connecti
 
     public void dispose ()
     {
-        if ( this.tracker != null )
-        {
-            this.tracker.close ();
-        }
+        destroyConnection ();
     }
 
     public ConnectionService getConnectionService ()
@@ -153,12 +165,18 @@ public class ConnectionHolder extends AbstractPropertyChange implements Connecti
         return this.connectionError;
     }
 
+    protected void setConnectionService ( final ConnectionService connectionService )
+    {
+        final ConnectionService olcConnectionService = connectionService;
+        this.connectionService = connectionService;
+        firePropertyChange ( PROP_CONNECTION_SERVICE, olcConnectionService, connectionService );
+    }
+
     protected void setConnectionError ( final Throwable connectionError )
     {
         final Throwable olcConnectionError = connectionError;
         this.connectionError = connectionError;
         firePropertyChange ( PROP_CONNECTION_ERROR, olcConnectionError, connectionError );
-
     }
 
     public void stateChange ( final Connection connection, final ConnectionState state, final Throwable error )

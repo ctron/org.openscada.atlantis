@@ -1,4 +1,4 @@
-package org.openscada.da.ui.connection.creator.net;
+package org.openscada.hd.ui.connection.creator.net;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -9,7 +9,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.openscada.da.ui.connection.creator.net";
+	public static final String PLUGIN_ID = "org.openscada.hd.ui.connection.creator.net";
 
 	// The shared instance
 	private static Activator plugin;

@@ -1,10 +1,9 @@
-package org.openscada.da.connection.provider.internal;
+package org.openscada.da.connection.provider;
 
 import org.openscada.core.connection.provider.AbstractConnectionService;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;
-import org.openscada.da.connection.provider.ConnectionService;
 
 public class ConnectionServiceImpl extends AbstractConnectionService implements ConnectionService
 {
@@ -36,6 +35,11 @@ public class ConnectionServiceImpl extends AbstractConnectionService implements 
     public ItemManager getItemManager ()
     {
         return this.itemManager;
+    }
+
+    public Class<?>[] getSupportedInterfaces ()
+    {
+        return new Class<?>[] { org.openscada.core.connection.provider.ConnectionService.class, ConnectionService.class };
     }
 
 }

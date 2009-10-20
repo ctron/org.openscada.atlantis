@@ -3,10 +3,10 @@
 <schema targetNamespace="org.openscada.core.ui.connection" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.openscada.core.ui.connection" id="discoverer" name="discoverer"/>
+         <meta.schema plugin="org.openscada.core.ui.connection" id="org.openscada.core.ui.connectionCreator" name="connectionCreator"/>
       </appinfo>
       <documentation>
-         
+         [Enter description of this extension point.]
       </documentation>
    </annotation>
 
@@ -17,9 +17,9 @@
          </appinfo>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="discoverer" minOccurs="0" maxOccurs="unbounded"/>
-         </sequence>
+         <choice>
+            <element ref="creator" minOccurs="0" maxOccurs="unbounded"/>
+         </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
@@ -47,46 +47,37 @@
       </complexType>
    </element>
 
-   <element name="discoverer">
+   <element name="creator">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  Identifier
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
                   
                </documentation>
-               <appinfo>
-                  <meta.attribute translatable="true"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="icon" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="resource"/>
-               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The creator for ConnectionServices
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.openscada.core.ui.connection.creator.ConnectionCreator"/>
                </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="driver" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the driver the creator realizes (e.g. &quot;net&quot;).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="interface" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the interface the creator realizes (e.g. &quot;da&quot;).
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -97,20 +88,36 @@
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         0.14.0
+         [Enter the first release in which this extension point appears.]
       </documentation>
    </annotation>
-
-
-
 
    <annotation>
       <appinfo>
-         <meta.section type="copyright"/>
+         <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         &amp;copy; 2008-2009 by inavare GmbH
+         [Enter extension point usage example here.]
       </documentation>
    </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
 
 </schema>

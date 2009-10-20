@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="org.openscada.core.ui.connection.creator" name="connectionCreator" schema="schema/org.openscada.core.ui.connectionCreator.exsd"/>
+   
+</plugin>

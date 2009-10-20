@@ -23,6 +23,7 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.connection.provider.AbstractConnectionManager;
 import org.openscada.core.connection.provider.AbstractConnectionService;
 import org.openscada.hd.client.Connection;
+import org.openscada.hd.connection.provider.ConnectionServiceImpl;
 import org.osgi.framework.BundleContext;
 
 public class ConnectionManager extends AbstractConnectionManager

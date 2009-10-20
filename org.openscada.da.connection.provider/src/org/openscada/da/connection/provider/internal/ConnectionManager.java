@@ -23,6 +23,7 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.connection.provider.AbstractConnectionManager;
 import org.openscada.core.connection.provider.AbstractConnectionService;
 import org.openscada.da.client.Connection;
+import org.openscada.da.connection.provider.ConnectionServiceImpl;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

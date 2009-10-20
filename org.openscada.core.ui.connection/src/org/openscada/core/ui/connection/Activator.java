@@ -29,7 +29,7 @@ public class Activator extends AbstractUIPlugin
     // The plug-in ID
     public static final String PLUGIN_ID = "org.openscada.core.ui.connection";
 
-    private static final String EXTP_CONNECTON_DISCOVERER = "org.openscada.core.ui.connection.discoverer";
+    public static final String EXTP_CONNECTON_DISCOVERER = "org.openscada.core.ui.connection.discoverer";
 
     private static final String ELE_DISCOVERER = "discoverer";
 
