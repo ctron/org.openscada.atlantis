@@ -19,6 +19,8 @@
 
 package org.openscada.net.base.data;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,6 +31,11 @@ public class ListValue extends Value
     public ListValue ()
     {
         this.values = new LinkedList<Value> ();
+    }
+
+    public ListValue ( final Value[] values )
+    {
+        this.values = new ArrayList<Value> ( Arrays.asList ( values ) );
     }
 
     public void add ( final Value value )
