@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenSCADA DA UI NET Connection Creator
+Bundle-SymbolicName: org.openscada.da.ui.connection.creator.net;singleton:=true
+Bundle-Version: 0.14.0.qualifier
+Bundle-Activator: org.openscada.da.ui.connection.creator.net.Activator
+Bundle-Vendor: inavare GmbH
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.openscada.core.ui.connection.creator;bundle-version="0.14.0",
+ org.openscada.core.connection.provider;bundle-version="0.14.0",
+ org.openscada.da.connection.provider;bundle-version="0.14.0",
+ org.openscada.da.client.net;bundle-version="0.14.0",
+ org.openscada.core.client.common;bundle-version="0.14.0",
+ org.openscada.core.common;bundle-version="0.14.0",
+ org.openscada.da.client.common;bundle-version="0.14.0",
+ org.openscada.core.client.net;bundle-version="0.14.0",
+ org.openscada.utils;bundle-version="0.14.0",
+ org.openscada.da.net.base;bundle-version="0.14.0",
+ org.apache.mina.core;bundle-version="2.0.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
