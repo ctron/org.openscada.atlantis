@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,15 +36,15 @@ import org.openscada.da.client.WriteOperationCallback;
 public class WriteOperationWizard extends Wizard implements INewWizard
 {
 
-    private static Logger _log = Logger.getLogger ( WriteOperationWizard.class );
+    private static Logger log = Logger.getLogger ( WriteOperationWizard.class );
 
-    private WriteOperationWizardValuePage _page = null;
+    private WriteOperationWizardValuePage page = null;
 
-    private IStructuredSelection _selection = null;
+    private IStructuredSelection selection = null;
 
-    private boolean _complete = false;
+    private boolean complete = false;
 
-    private Throwable _error = null;
+    private Throwable error = null;
 
     public WriteOperationWizard ()
     {
@@ -55,9 +55,9 @@ public class WriteOperationWizard extends Wizard implements INewWizard
     @Override
     public boolean performFinish ()
     {
-        final String item = this._page.getItem ();
-        final Variant value = this._page.getValue ();
-        final Connection connection = this._page.getConnection ();
+        final String item = this.page.getItem ();
+        final Variant value = this.page.getValue ();
+        final Connection connection = this.page.getConnection ();
 
         final IRunnableWithProgress op = new IRunnableWithProgress () {
             public void run ( final IProgressMonitor monitor ) throws InvocationTargetException
@@ -86,7 +86,7 @@ public class WriteOperationWizard extends Wizard implements INewWizard
         }
         catch ( final InvocationTargetException e )
         {
-            _log.warn ( "Failed to perform write operation", e );
+            log.warn ( "Failed to perform write operation", e );
             final Throwable realException = e.getTargetException ();
             MessageDialog.openError ( getShell (), "Error writing to item", realException.getMessage () );
             return false;
@@ -99,10 +99,9 @@ public class WriteOperationWizard extends Wizard implements INewWizard
         monitor.beginTask ( "Writing value to item", 2 );
 
         monitor.worked ( 1 );
-        final WriteOperationWizard _this = this;
 
-        this._error = null;
-        this._complete = false;
+        this.error = null;
+        this.complete = false;
         connection.write ( item, value, new WriteOperationCallback () {
 
             public void complete ()
@@ -124,23 +123,23 @@ public class WriteOperationWizard extends Wizard implements INewWizard
 
             private void endWait ()
             {
-                WriteOperationWizard.this._complete = true;
-                synchronized ( _this )
+                WriteOperationWizard.this.complete = true;
+                synchronized ( WriteOperationWizard.this )
                 {
-                    _this.notifyAll ();
+                    WriteOperationWizard.this.notifyAll ();
                 }
             }
         } );
 
         synchronized ( this )
         {
-            while ( ! ( this._complete || monitor.isCanceled () ) )
+            while ( ! ( this.complete || monitor.isCanceled () ) )
             {
                 wait ( 100 );
             }
-            if ( this._error != null )
+            if ( this.error != null )
             {
-                throw new Exception ( this._error );
+                throw new Exception ( this.error );
             }
         }
         monitor.worked ( 1 );
@@ -148,14 +147,14 @@ public class WriteOperationWizard extends Wizard implements INewWizard
 
     public void handleError ( final Throwable e )
     {
-        this._error = e;
+        this.error = e;
     }
 
     public void init ( final IWorkbench workbench, final IStructuredSelection selection )
     {
         setNeedsProgressMonitor ( true );
 
-        this._selection = selection;
+        this.selection = selection;
     }
 
     @Override
@@ -163,9 +162,9 @@ public class WriteOperationWizard extends Wizard implements INewWizard
     {
         super.addPages ();
 
-        addPage ( this._page = new WriteOperationWizardValuePage () );
+        addPage ( this.page = new WriteOperationWizardValuePage () );
 
-        this._page.setSelection ( this._selection );
+        this.page.setSelection ( this.selection );
     }
 
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,9 @@ import org.openscada.da.core.WriteAttributeResults;
 public class WriteAttributesOperationWizard extends Wizard implements INewWizard
 {
 
-    private WriteAttributesOperationWizardValuePage _page = null;
+    private WriteAttributesOperationWizardValuePage page = null;
 
-    private IStructuredSelection _selection = null;
+    private IStructuredSelection selection = null;
 
     private boolean _complete = false;
 
@@ -54,9 +54,9 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
     @Override
     public boolean performFinish ()
     {
-        final String item = this._page.getItem ();
-        final Map<String, Variant> attributes = this._page.getAttributes ();
-        final Connection connection = this._page.getConnection ();
+        final String item = this.page.getItem ();
+        final Map<String, Variant> attributes = this.page.getAttributes ();
+        final Connection connection = this.page.getConnection ();
 
         final IRunnableWithProgress op = new IRunnableWithProgress () {
             public void run ( final IProgressMonitor monitor ) throws InvocationTargetException
@@ -195,7 +195,7 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
         setNeedsProgressMonitor ( true );
         setWindowTitle ( "Write Attributes" );
 
-        this._selection = selection;
+        this.selection = selection;
     }
 
     @Override
@@ -203,9 +203,9 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
     {
         super.addPages ();
 
-        addPage ( this._page = new WriteAttributesOperationWizardValuePage () );
+        addPage ( this.page = new WriteAttributesOperationWizardValuePage () );
 
-        this._page.setSelection ( this._selection );
+        this.page.setSelection ( this.selection );
     }
 
 }

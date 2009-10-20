@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,108 +64,105 @@ import org.openscada.da.client.base.browser.ValueType;
 import org.openscada.da.client.base.connection.ConnectionManager;
 import org.openscada.da.client.base.item.DataItemHolder;
 import org.openscada.da.client.base.item.ItemSelectionHelper;
-import org.openscada.da.ui.connection.data.Item;
 
 class WriteAttributesOperationWizardValuePage extends WizardPage implements IWizardPage
 {
-    private static Logger _log = Logger.getLogger ( WriteAttributesOperationWizardValuePage.class );
+    private static Logger logger = Logger.getLogger ( WriteAttributesOperationWizardValuePage.class );
 
-    private Text _itemIdText = null;
+    private Text itemIdText = null;
 
-    private IStructuredSelection _selection = null;
+    private Connection connection = null;
 
-    private Connection _connection = null;
-
-    private TableViewer _table = null;
+    private TableViewer table = null;
 
     private class AttributeEntry
     {
-        private String _name = "";
+        private String name = "";
 
-        private ValueType _valueType = ValueType.STRING;
+        private ValueType valueType = ValueType.STRING;
 
-        private String _valueString = "";
+        private String valueString = "";
 
-        private Variant _value = new Variant ();
+        private Variant value = new Variant ();
 
-        private Throwable _valueError = null;
+        private Throwable valueError = null;
 
         public AttributeEntry ( final String name, final ValueType valueType, final String value )
         {
             super ();
-            this._name = name;
-            this._valueType = valueType;
+            this.name = name;
+            this.valueType = valueType;
             setValue ( value );
         }
 
         public String getName ()
         {
-            return this._name;
+            return this.name;
         }
 
         public void setName ( final String name )
         {
-            this._name = name;
+            this.name = name;
         }
 
         public Variant getValue ()
         {
-            return this._value;
+            return this.value;
         }
 
         public String getValueString ()
         {
-            return this._valueString;
+            return this.valueString;
         }
 
         public void setValue ( final String value )
         {
             try
             {
-                this._valueString = value;
-                this._value = this._valueType.convertTo ( value );
-                this._valueError = null;
+                this.valueString = value;
+                this.value = this.valueType.convertTo ( value );
+                this.valueError = null;
             }
             catch ( final Exception e )
             {
-                this._valueError = e;
+                this.valueError = e;
             }
         }
 
         public ValueType getValueType ()
         {
-            return this._valueType;
+            return this.valueType;
         }
 
         public void setValueType ( final ValueType valueType )
         {
-            this._valueType = valueType;
-            setValue ( this._valueString );
+            this.valueType = valueType;
+            setValue ( this.valueString );
         }
 
         public Throwable getValueError ()
         {
-            return this._valueError;
+            return this.valueError;
         }
     }
 
     private class Attributes
     {
-        private final List<AttributeEntry> _entries = new ArrayList<AttributeEntry> ();
+        private final List<AttributeEntry> entries = new ArrayList<AttributeEntry> ();
 
         public void add ( final AttributeEntry entry )
         {
-            this._entries.add ( entry );
+            this.entries.add ( entry );
         }
 
         public void remove ( final AttributeEntry entry )
         {
-            this._entries.remove ( entry );
+            this.entries.remove ( entry );
         }
 
         public List<AttributeEntry> getEntries ()
         {
-            return this._entries;
+            return this.entries;
         }
     }
 
@@ -179,12 +176,12 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
 
         public String getColumnText ( final Object element, final int columnIndex )
         {
-            _log.info ( "Label for: " + element + ":" + columnIndex );
+            logger.info ( "Label for: " + element + ":" + columnIndex );
 
             if ( element instanceof AttributeEntry )
             {
                 final AttributeEntry entry = (AttributeEntry)element;
-                _log.info ( "Label: " + entry.getName () );
+                logger.info ( "Label: " + entry.getName () );
                 switch ( columnIndex )
                 {
                 case 0:
@@ -245,7 +242,7 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
 
         public boolean canModify ( final Object element, final String property )
         {
-            _log.debug ( "Can modify: " + element + ":" + property );
+            logger.debug ( "Can modify: " + element + ":" + property );
 
             if ( element instanceof AttributeEntry )
             {
@@ -267,7 +264,7 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
 
         public Object getValue ( final Object element, final String property )
         {
-            _log.debug ( "Get Value: " + element + ":" + property );
+            logger.debug ( "Get Value: " + element + ":" + property );
 
             if ( element instanceof AttributeEntry )
             {
@@ -290,7 +287,7 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
 
         public void modify ( final Object element, final String property, final Object value )
         {
-            _log.debug ( "Modify Value: " + element + ":" + property + ":" + value );
+            logger.debug ( "Modify Value: " + element + ":" + property + ":" + value );
 
             final TableItem tableItem = (TableItem)element;
 
@@ -324,7 +321,7 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
 
     }
 
-    private final Attributes _attributes = new Attributes ();
+    private final Attributes attributes = new Attributes ();
 
     private class AddAction extends Action
     {
@@ -338,8 +335,8 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
         public void run ()
         {
             final AttributeEntry entry = new AttributeEntry ( "", ValueType.STRING, "" );
-            WriteAttributesOperationWizardValuePage.this._attributes.add ( entry );
-            WriteAttributesOperationWizardValuePage.this._table.add ( entry );
+            WriteAttributesOperationWizardValuePage.this.attributes.add ( entry );
+            WriteAttributesOperationWizardValuePage.this.table.add ( entry );
             dialogChanged ();
         }
     }
@@ -366,8 +363,8 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
                     final Object o = i.next ();
                     if ( o instanceof AttributeEntry )
                     {
-                        WriteAttributesOperationWizardValuePage.this._attributes.remove ( (AttributeEntry)o );
-                        WriteAttributesOperationWizardValuePage.this._table.remove ( o );
+                        WriteAttributesOperationWizardValuePage.this.attributes.remove ( (AttributeEntry)o );
+                        WriteAttributesOperationWizardValuePage.this.table.remove ( o );
                     }
                 }
                 dialogChanged ();
@@ -384,6 +381,8 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
     private final AddAction _addAction = new AddAction ();
 
     private final RemoveAction _removeAction = new RemoveAction ();
+
+    private String itemId;
 
     protected WriteAttributesOperationWizardValuePage ()
     {
@@ -404,10 +403,10 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
         Label label = new Label ( container, SWT.NONE );
         label.setText ( "&Item:" );
 
-        this._itemIdText = new Text ( container, SWT.BORDER | SWT.SINGLE );
+        this.itemIdText = new Text ( container, SWT.BORDER | SWT.SINGLE );
         GridData gd = new GridData ( GridData.FILL_HORIZONTAL );
-        this._itemIdText.setLayoutData ( gd );
-        this._itemIdText.addModifyListener ( new ModifyListener () {
+        this.itemIdText.setLayoutData ( gd );
+        this.itemIdText.addModifyListener ( new ModifyListener () {
             public void modifyText ( final ModifyEvent e )
             {
                 dialogChanged ();
@@ -434,104 +433,92 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
         gd.horizontalSpan = 3;
         gd.grabExcessHorizontalSpace = true;
         gd.grabExcessVerticalSpace = true;
-        this._table = new TableViewer ( container, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
+        this.table = new TableViewer ( container, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
 
         TableColumn col;
 
-        col = new TableColumn ( this._table.getTable (), SWT.NONE );
+        col = new TableColumn ( this.table.getTable (), SWT.NONE );
         col.setText ( "Name" );
-        col = new TableColumn ( this._table.getTable (), SWT.NONE );
+        col = new TableColumn ( this.table.getTable (), SWT.NONE );
         col.setText ( "Value Type" );
-        col = new TableColumn ( this._table.getTable (), SWT.NONE );
+        col = new TableColumn ( this.table.getTable (), SWT.NONE );
         col.setText ( "Value" );
-        col = new TableColumn ( this._table.getTable (), SWT.NONE );
+        col = new TableColumn ( this.table.getTable (), SWT.NONE );
         col.setText ( "Value Error" );
-        this._table.getTable ().setHeaderVisible ( true );
+        this.table.getTable ().setHeaderVisible ( true );
 
         try
         {
-            this._table.setLabelProvider ( new MyLabelProvider () );
-            this._table.setContentProvider ( new MyContentProvider () );
+            this.table.setLabelProvider ( new MyLabelProvider () );
+            this.table.setContentProvider ( new MyContentProvider () );
 
-            this._table.setColumnProperties ( this.PROPERTIES );
-            this._table.setCellModifier ( new MyCellModifier ( this._table ) );
+            this.table.setColumnProperties ( this.PROPERTIES );
+            this.table.setCellModifier ( new MyCellModifier ( this.table ) );
 
-            final TextCellEditor nameEditor = new TextCellEditor ( this._table.getTable () );
+            final TextCellEditor nameEditor = new TextCellEditor ( this.table.getTable () );
 
             final List<String> values = new LinkedList<String> ();
             for ( final ValueType vt : ValueType.values () )
             {
                 values.add ( vt.label () );
             }
-            this._valueTypeEditor = new ComboBoxCellEditor ( this._table.getTable (), values.toArray ( new String[0] ) );
+            this._valueTypeEditor = new ComboBoxCellEditor ( this.table.getTable (), values.toArray ( new String[0] ) );
 
-            final TextCellEditor valueEditor = new TextCellEditor ( this._table.getTable () );
-            this._table.setCellEditors ( new CellEditor[] { nameEditor, this._valueTypeEditor, valueEditor, new TextCellEditor ( this._table.getTable () ) } );
+            final TextCellEditor valueEditor = new TextCellEditor ( this.table.getTable () );
+            this.table.setCellEditors ( new CellEditor[] { nameEditor, this._valueTypeEditor, valueEditor, new TextCellEditor ( this.table.getTable () ) } );
 
             final TableLayout tableLayout = new TableLayout ();
             tableLayout.addColumnData ( new ColumnWeightData ( 50, 75, true ) );
             tableLayout.addColumnData ( new ColumnWeightData ( 50, 75, true ) );
             tableLayout.addColumnData ( new ColumnWeightData ( 50, 75, true ) );
             tableLayout.addColumnData ( new ColumnWeightData ( 50, 75, true ) );
-            this._table.getTable ().setLayout ( tableLayout );
+            this.table.getTable ().setLayout ( tableLayout );
 
-            this._table.setInput ( this._attributes );
+            this.table.setInput ( this.attributes );
         }
         catch ( final Exception e )
         {
-            _log.warn ( "Unable to create control", e );
+            logger.warn ( "Unable to create control", e );
         }
 
-        this._table.getTable ().setLayoutData ( gd );
-        this._table.addSelectionChangedListener ( this._removeAction );
+        this.table.getTable ().setLayoutData ( gd );
+        this.table.addSelectionChangedListener ( this._removeAction );
 
         setControl ( container );
-        fillFromSelection ();
+        updateSelection ();
         dialogChanged ();
     }
 
-    private void fillFromSelection ()
+    private void updateSelection ()
     {
-        if ( this._selection == null )
-        {
-            return;
-        }
-
-        final Item item = ItemSelectionHelper.getFirstFromSelection ( this._selection );
-
-        if ( item == null )
-        {
-            return;
-        }
-
-        this._itemIdText.setText ( item.getId () );
+        this.itemIdText.setText ( this.itemId );
     }
 
     private void dialogChanged ()
     {
         // connection
-        if ( this._connection == null )
+        if ( this.connection == null )
         {
             updateStatus ( "No hive connection selection" );
             return;
         }
 
         // item
-        if ( this._itemIdText.getText ().length () <= 0 )
+        if ( this.itemIdText.getText ().length () <= 0 )
         {
             updateStatus ( "Item name must not be empty" );
             return;
         }
 
-        if ( this._attributes._entries.size () <= 0 )
+        if ( this.attributes.entries.size () <= 0 )
         {
             updateStatus ( "No attributes" );
             return;
         }
 
-        for ( final AttributeEntry entry : this._attributes._entries )
+        for ( final AttributeEntry entry : this.attributes.entries )
         {
-            if ( entry._name.equals ( "" ) )
+            if ( entry.name.equals ( "" ) )
             {
                 updateStatus ( "Attribute with an empty name is not allowed" );
                 return;
@@ -549,14 +536,14 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
 
     public String getItem ()
     {
-        return this._itemIdText.getText ();
+        return this.itemIdText.getText ();
     }
 
     public Map<String, Variant> getAttributes ()
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        for ( final AttributeEntry entry : this._attributes._entries )
+        for ( final AttributeEntry entry : this.attributes.entries )
         {
             attributes.put ( entry.getName (), entry.getValue () );
         }
@@ -566,14 +553,13 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
 
     public Connection getConnection ()
     {
-        return this._connection;
+        return this.connection;
     }
 
     public void setSelection ( final IStructuredSelection selection )
     {
-        this._selection = selection;
-
         final DataItemHolder dataItem = ItemSelectionHelper.getFirstFromSelectionHookedUp ( selection, ConnectionManager.getDefault () );
-        this._connection = dataItem.getConnection ();
+        this.itemId = dataItem.getItemId ();
+        this.connection = dataItem.getConnection ();
     }
 }
