@@ -21,7 +21,7 @@ public class Test1
     {
         final GMPPProtocolEncoder encoder = new GMPPProtocolEncoder ();
 
-        final Message message = createMessage ( 150 );
+        final Message message = createMessage ( 250 );
 
         encode ( encoder, message );
     }
