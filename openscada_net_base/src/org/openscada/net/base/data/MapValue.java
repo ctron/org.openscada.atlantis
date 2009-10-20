@@ -24,41 +24,40 @@ import java.util.Map;
 
 public class MapValue extends Value
 {
-    private Map<String, Value> _values = null;
+    private final Map<String, Value> values = new HashMap<String, Value> ();
 
     public MapValue ()
     {
-        this._values = new HashMap<String, Value> ();
     }
 
     public Map<String, Value> getValues ()
     {
-        return this._values;
+        return this.values;
     }
 
     public void put ( final String key, final Value value )
     {
-        this._values.put ( key, value );
+        this.values.put ( key, value );
     }
 
     public void remove ( final String key )
     {
-        this._values.remove ( key );
+        this.values.remove ( key );
     }
 
     public Value get ( final String key )
     {
-        return this._values.get ( key );
+        return this.values.get ( key );
     }
 
     public boolean containsKey ( final String key )
     {
-        return this._values.containsKey ( key );
+        return this.values.containsKey ( key );
     }
 
     public int size ()
     {
-        return this._values.size ();
+        return this.values.size ();
     }
 
     @Override
@@ -66,7 +65,7 @@ public class MapValue extends Value
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ( this._values == null ? 0 : this._values.hashCode () );
+        result = PRIME * result + ( this.values == null ? 0 : this.values.hashCode () );
         return result;
     }
 
@@ -86,14 +85,14 @@ public class MapValue extends Value
             return false;
         }
         final MapValue other = (MapValue)obj;
-        if ( this._values == null )
+        if ( this.values == null )
         {
-            if ( other._values != null )
+            if ( other.values != null )
             {
                 return false;
             }
         }
-        else if ( !this._values.equals ( other._values ) )
+        else if ( !this.values.equals ( other.values ) )
         {
             return false;
         }
