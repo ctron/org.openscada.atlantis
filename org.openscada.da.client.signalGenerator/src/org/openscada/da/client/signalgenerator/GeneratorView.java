@@ -49,8 +49,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.core.Variant;
 import org.openscada.da.client.WriteOperationCallback;
+import org.openscada.da.client.base.connection.ConnectionManager;
 import org.openscada.da.client.base.item.DataItemHolder;
+import org.openscada.da.client.base.item.ItemSelectionHelper;
 import org.openscada.da.client.signalgenerator.page.GeneratorPage;
+import org.openscada.da.ui.connection.data.Item;
 
 public class GeneratorView extends ViewPart implements SimulationTarget
 {
@@ -222,12 +225,12 @@ public class GeneratorView extends ViewPart implements SimulationTarget
         this.tabFolder.setFocus ();
     }
 
-    public void setDataItem ( final DataItemHolder item )
+    public void setDataItem ( final Item item )
     {
-        this.item = item;
         if ( item != null )
         {
-            setPartName ( String.format ( Messages.getString ( "GeneratorView.partName" ), item.getItemId (), item.getConnection ().getConnectionInformation () ) ); //$NON-NLS-1$
+            this.item = ItemSelectionHelper.hookupItem ( item.getConnectionString (), item.getId (), ConnectionManager.getDefault () );
+            setPartName ( String.format ( Messages.getString ( "GeneratorView.partName" ), this.item.getItemId (), this.item.getConnection ().getConnectionInformation () ) ); //$NON-NLS-1$
         }
         else
         {
@@ -287,7 +290,7 @@ public class GeneratorView extends ViewPart implements SimulationTarget
     public void init ( final IViewSite site, final IMemento memento ) throws PartInitException
     {
         super.init ( site, memento );
-        setDataItem ( DataItemHolder.loadFrom ( memento ) );
+        setDataItem ( Item.loadFrom ( memento ) );
     }
 
     @Override
@@ -296,7 +299,7 @@ public class GeneratorView extends ViewPart implements SimulationTarget
         super.saveState ( memento );
         if ( this.item != null )
         {
-            this.item.saveTo ( memento );
+            new Item ( this.item.getConnection ().getConnectionInformation ().toString (), this.item.getItemId () ).saveTo ( memento );
         }
     }
 

@@ -10,7 +10,10 @@ Require-Bundle: org.eclipse.ui,
  org.openscada.da.client.base;bundle-version="0.14.0",
  org.openscada.core.common;bundle-version="0.14.0",
  org.openscada.da.client.common;bundle-version="0.14.0",
- org.openscada.core.client.common;bundle-version="0.14.0"
+ org.openscada.core.client.common;bundle-version="0.14.0",
+ org.openscada.da.ui;bundle-version="0.14.0",
+ org.openscada.da.ui.connection;bundle-version="0.14.0",
+ org.openscada.ui.databinding;bundle-version="1.4.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin

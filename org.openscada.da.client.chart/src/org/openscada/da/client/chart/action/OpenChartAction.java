@@ -20,6 +20,7 @@ import org.openscada.da.client.chart.Activator;
 import org.openscada.da.client.chart.Messages;
 import org.openscada.da.client.chart.view.ChartView;
 import org.openscada.da.client.chart.view.ChartView2;
+import org.openscada.da.ui.connection.data.Item;
 
 public class OpenChartAction implements IViewActionDelegate, IObjectActionDelegate
 {
@@ -65,7 +66,7 @@ public class OpenChartAction implements IViewActionDelegate, IObjectActionDelega
                 }
                 else if ( viewer instanceof ChartView2 )
                 {
-                    ( (ChartView2)viewer ).addItem ( item );
+                    ( (ChartView2)viewer ).addItem ( new Item ( item.getConnection ().getConnectionInformation ().toString (), item.getItemId () ) );
                 }
             }
 

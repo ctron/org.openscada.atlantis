@@ -37,8 +37,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.da.client.AsyncDataItem;
 import org.openscada.da.client.DataItem;
+import org.openscada.da.client.base.connection.ConnectionManager;
 import org.openscada.da.client.base.item.DataItemHolder;
+import org.openscada.da.client.base.item.ItemSelectionHelper;
 import org.openscada.da.client.dataitem.details.part.DetailsPart;
+import org.openscada.da.ui.connection.data.Item;
 
 public class DetailsViewPart extends ViewPart
 {
@@ -154,17 +157,19 @@ public class DetailsViewPart extends ViewPart
      * set the current data item
      * @param item data item or <code>null</code> if none should be selected
      */
-    public void setDataItem ( final DataItemHolder item )
+    public void setDataItem ( final Item item )
     {
         disposeDataItem ();
 
+        final DataItemHolder itemHolder = ItemSelectionHelper.hookupItem ( item.getConnectionString (), item.getId (), ConnectionManager.getDefault () );
+
         if ( item != null )
         {
-            this.dataItem = new AsyncDataItem ( item.getItemId (), item.getItemManager () );
+            this.dataItem = new AsyncDataItem ( itemHolder.getItemId (), itemHolder.getItemManager () );
 
             for ( final DetailsPart part : this.detailParts )
             {
-                part.setDataItem ( item, this.dataItem );
+                part.setDataItem ( itemHolder, this.dataItem );
             }
         }
         else
@@ -185,5 +190,4 @@ public class DetailsViewPart extends ViewPart
             this.dataItem = null;
         }
     }
-
 }

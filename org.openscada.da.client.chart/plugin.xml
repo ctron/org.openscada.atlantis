@@ -33,5 +33,63 @@
                menubarPath="additions"/>
       </objectContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.openscada.da.ui.category"
+            id="org.openscada.da.client.chart.commands.OpenCharView"
+            name="Open Chart">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.openscada.da.client.chart.commands.OpenCharView"
+            commandId="org.openscada.da.client.chart.commands.OpenCharView">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <or>
+                     <instanceof
+                           value="org.openscada.da.ui.connection.data.Item">
+                     </instanceof>
+                     <adapt
+                           type="org.openscada.da.ui.connection.data.Item">
+                     </adapt>
+                  </or>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.openscada.core.ui.connection.ConnectionView#PopupMenu">
+         <command
+               commandId="org.openscada.da.client.chart.commands.OpenCharView"
+               label="Open Chart View"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <or>
+                     <instanceof
+                           value="org.openscada.da.ui.connection.data.Item">
+                     </instanceof>
+                     <adapt
+                           type="org.openscada.da.ui.connection.data.Item">
+                     </adapt>
+                  </or>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
 
 </plugin>

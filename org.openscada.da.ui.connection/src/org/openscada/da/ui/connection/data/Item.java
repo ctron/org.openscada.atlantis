@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.IMemento;
 
 /**
  * A data item information object
@@ -68,5 +69,36 @@ public class Item implements Serializable
         {
             return (Item)Platform.getAdapterManager ().getAdapter ( o, Item.class );
         }
+    }
+
+    public static Item loadFrom ( final IMemento memento )
+    {
+        if ( memento == null )
+        {
+            return null;
+        }
+
+        final String itemId = memento.getString ( "item.id" );
+        final String connectionUri = memento.getString ( "connection.uri" );
+
+        if ( itemId == null || connectionUri == null )
+        {
+            return null;
+        }
+        else
+        {
+            return new Item ( connectionUri, itemId );
+        }
+    }
+
+    public void saveTo ( final IMemento memento )
+    {
+        if ( memento == null )
+        {
+            return;
+        }
+
+        memento.putString ( "item.id", this.id );
+        memento.putString ( "connection.uri", this.connectionString );
     }
 }

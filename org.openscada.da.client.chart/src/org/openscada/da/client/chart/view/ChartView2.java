@@ -29,15 +29,14 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.time.TimeSeriesDataItem;
 import org.jfree.experimental.chart.swt.ChartComposite;
-import org.openscada.core.ConnectionInformation;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.client.AsyncDataItem;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.base.connection.ConnectionManager;
-import org.openscada.da.client.base.connection.ConnectionManagerEntry;
 import org.openscada.da.client.base.item.DataItemHolder;
+import org.openscada.da.client.base.item.ItemSelectionHelper;
 import org.openscada.da.client.chart.Messages;
 
 public class ChartView2 extends ViewPart
@@ -224,14 +223,14 @@ public class ChartView2 extends ViewPart
 
     }
 
-    public void addItem ( final DataItemHolder itemHolder )
+    public void addItem ( final org.openscada.da.ui.connection.data.Item item )
     {
-
+        final DataItemHolder itemHolder = ItemSelectionHelper.hookupItem ( item.getConnectionString (), item.getId (), ConnectionManager.getDefault () );
         if ( itemHolder != null )
         {
-            Item item;
-            this.items.add ( item = new Item ( itemHolder, this.dataset, this ) );
-            item.connect ();
+            Item charItem;
+            this.items.add ( charItem = new Item ( itemHolder, this.dataset, this ) );
+            charItem.connect ();
         }
     }
 
@@ -304,8 +303,7 @@ public class ChartView2 extends ViewPart
 
                     if ( itemId != null && connectionUri != null )
                     {
-                        final ConnectionManagerEntry entry = ConnectionManager.getDefault ().getEntry ( ConnectionInformation.fromURI ( connectionUri ), false );
-                        addItem ( new DataItemHolder ( entry.getConnection (), entry.getItemManager (), itemId ) );
+                        addItem ( new org.openscada.da.ui.connection.data.Item ( connectionUri, itemId ) );
                     }
 
                 }

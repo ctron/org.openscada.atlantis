@@ -22,9 +22,14 @@ public class ItemSelectionHelper extends org.openscada.da.ui.connection.data.Ite
         final Collection<DataItemHolder> dataItems = new LinkedList<DataItemHolder> ();
         for ( final Item item : items )
         {
-            dataItems.add ( mgr.getDataItemHolder ( ConnectionInformation.fromURI ( item.getConnectionString () ), item.getId (), true ) );
+            dataItems.add ( hookupItem ( item.getConnectionString (), item.getId (), mgr ) );
         }
         return dataItems;
+    }
+
+    public static DataItemHolder hookupItem ( final String connectionUri, final String itemId, final ConnectionManager mgr )
+    {
+        return mgr.getDataItemHolder ( ConnectionInformation.fromURI ( connectionUri ), itemId, true );
     }
 
     /**
