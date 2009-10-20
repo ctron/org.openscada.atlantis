@@ -1,6 +1,5 @@
 package org.openscada.hd.chart;
 
-import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -60,7 +59,6 @@ public class TrendChart extends Chart implements PaintListener
         decimalFormat.setGroupingUsed ( true );
         decimalFormat.setMaximumFractionDigits ( 3 );
         decimalFormat.setMinimumFractionDigits ( 3 );
-        decimalFormat.setRoundingMode ( RoundingMode.HALF_UP );
         percentFormat = DecimalFormat.getPercentInstance ();
 
         this.getPlotArea ().addMouseMoveListener ( new MouseMoveListener () {
@@ -95,24 +93,24 @@ public class TrendChart extends Chart implements PaintListener
         } );
         this.getPlotArea ().addPaintListener ( this );
 
-        List<FontData> fontDataList = new ArrayList<FontData> ();
-        for ( FontData fontData : getDisplay ().getFontList ( "Monaco", true ) )
+        final List<FontData> fontDataList = new ArrayList<FontData> ();
+        for ( final FontData fontData : getDisplay ().getFontList ( "Monaco", true ) )
         {
             fontDataList.add ( fontData );
         }
-        for ( FontData fontData : getDisplay ().getFontList ( "Bitstream Vera Sans Mono", true ) )
+        for ( final FontData fontData : getDisplay ().getFontList ( "Bitstream Vera Sans Mono", true ) )
         {
             fontDataList.add ( fontData );
         }
-        for ( FontData fontData : getDisplay ().getFontList ( "Courier New", true ) )
+        for ( final FontData fontData : getDisplay ().getFontList ( "Courier New", true ) )
         {
             fontDataList.add ( fontData );
         }
-        for ( FontData fontData : getDisplay ().getFontList ( "Courier", true ) )
+        for ( final FontData fontData : getDisplay ().getFontList ( "Courier", true ) )
         {
             fontDataList.add ( fontData );
         }
-        FontData[] fontDataDefault = getDisplay ().getSystemFont ().getFontData ();
+        final FontData[] fontDataDefault = getDisplay ().getSystemFont ().getFontData ();
         if ( fontDataList.size () > 0 )
         {
             smallFontData = fontDataList.get ( 0 );
@@ -126,7 +124,7 @@ public class TrendChart extends Chart implements PaintListener
 
     public void paintControl ( final PaintEvent e )
     {
-        GC gc = e.gc;
+        final GC gc = e.gc;
         if ( currentX > -1 )
         {
             gc.drawLine ( currentX, 0, currentX, this.getPlotArea ().getBounds ().height - 1 );
@@ -141,30 +139,30 @@ public class TrendChart extends Chart implements PaintListener
     {
         if ( dataAtPoint != null )
         {
-            double quality = dataAtPoint.getQuality ( currentX );
-            Date timestamp = dataAtPoint.getTimestamp ( currentX );
-            Map<String, Double> data = dataAtPoint.getData ( currentX );
+            final double quality = dataAtPoint.getQuality ( currentX );
+            final Date timestamp = dataAtPoint.getTimestamp ( currentX );
+            final Map<String, Double> data = dataAtPoint.getData ( currentX );
             gc.setAntialias ( SWT.ON );
             int xoffset = 10;
             int yoffset = 10;
-            int corner = 10;
-            int padding = 5;
+            final int corner = 10;
+            final int padding = 5;
             gc.setBackground ( getDisplay ().getSystemColor ( SWT.COLOR_INFO_BACKGROUND ) );
             gc.setForeground ( getDisplay ().getSystemColor ( SWT.COLOR_INFO_FOREGROUND ) );
-            Font smallFont = new Font ( gc.getDevice (), smallFontData );
+            final Font smallFont = new Font ( gc.getDevice (), smallFontData );
             gc.setFont ( smallFont );
-            String timestampText = "     Timestamp: " + DateFormat.getDateTimeInstance ( DateFormat.LONG, DateFormat.LONG ).format ( timestamp );
-            String qualityText = "       Quality: " + percentFormat.format ( quality );
-            String soureValuesText = "   # of Values: " + dataAtPoint.getSourceValues ( currentX );
-            Point textSize = gc.textExtent ( timestampText );
-            int textWidth = textSize.x;
-            int textHeight = textSize.y;
-            int height = textHeight * 4 + ( textHeight + padding ) * data.keySet ().size () + padding * 5;
+            final String timestampText = "     Timestamp: " + DateFormat.getDateTimeInstance ( DateFormat.LONG, DateFormat.LONG ).format ( timestamp );
+            final String qualityText = "       Quality: " + percentFormat.format ( quality );
+            final String soureValuesText = "   # of Values: " + dataAtPoint.getSourceValues ( currentX );
+            final Point textSize = gc.textExtent ( timestampText );
+            final int textWidth = textSize.x;
+            final int textHeight = textSize.y;
+            final int height = textHeight * 4 + ( textHeight + padding ) * data.keySet ().size () + padding * 5;
             if ( currentY + height > getPlotArea ().getSize ().y )
             {
                 yoffset = -10 - height;
             }
-            int width = textWidth + padding * 3;
+            final int width = textWidth + padding * 3;
             if ( currentX + width > getPlotArea ().getSize ().x )
             {
                 xoffset = -10 - width;
@@ -176,7 +174,7 @@ public class TrendChart extends Chart implements PaintListener
             gc.drawText ( qualityText, currentX + xoffset + padding, currentY + yoffset + padding * 2 + textHeight );
             gc.drawText ( soureValuesText, currentX + xoffset + padding, currentY + yoffset + padding * 3 + textHeight * 2 );
             int i = 4;
-            for ( Entry<String, Double> entry : data.entrySet () )
+            for ( final Entry<String, Double> entry : data.entrySet () )
             {
                 gc.drawText ( String.format ( "%14s", entry.getKey () ) + ": " + String.format ( "%16s", Double.isNaN ( entry.getValue () ) ? "-" : decimalFormat.format ( entry.getValue () ) ), currentX + xoffset + padding, currentY + yoffset + ( padding + textHeight ) * i + padding );
                 i++;
