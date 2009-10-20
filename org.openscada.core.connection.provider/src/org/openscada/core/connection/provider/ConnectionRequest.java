@@ -14,20 +14,17 @@ public class ConnectionRequest
 
     private final boolean initialOpen;
 
-    private final boolean privateRequest;
-
-    public ConnectionRequest ( final String requestId, final ConnectionInformation connectionInformation, final Integer autoReconnectDelay, final boolean initialOpen, final boolean privateRequest )
+    public ConnectionRequest ( final String requestId, final ConnectionInformation connectionInformation, final Integer autoReconnectDelay, final boolean initialOpen )
     {
         this.requestId = requestId;
         this.connectionInformation = connectionInformation;
         this.autoReconnectDelay = autoReconnectDelay;
         this.initialOpen = initialOpen;
-        this.privateRequest = privateRequest;
     }
 
     public boolean isPrivateRequest ()
     {
-        return this.privateRequest;
+        return this.requestId != null;
     }
 
     public boolean isInitialOpen ()
@@ -53,6 +50,6 @@ public class ConnectionRequest
     @Override
     public String toString ()
     {
-        return String.format ( "%s -> %s (Auto: %s, Open: %s, Private: %s)", this.requestId, this.connectionInformation, this.autoReconnectDelay, this.initialOpen, this.privateRequest );
+        return String.format ( "%s -> %s (Auto: %s, Open: %s, Private: %s)", this.requestId, this.connectionInformation, this.autoReconnectDelay, this.initialOpen, isPrivateRequest () );
     }
 }
