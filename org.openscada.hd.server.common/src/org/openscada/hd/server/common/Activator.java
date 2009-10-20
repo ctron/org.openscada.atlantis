@@ -6,13 +6,18 @@ import org.openscada.hd.server.Service;
 import org.openscada.hd.server.common.internal.ServiceImpl;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 
+/**
+ * This activator registeres the a common OSGi based
+ * implemenation of the HD server side service
+ * @author Jens Reimann
+ * @since 0.14.0
+ *
+ */
 public class Activator implements BundleActivator
 {
-    @SuppressWarnings ( "unused" )
-    private BundleContext context;
-
     private ServiceImpl service;
 
     private ServiceRegistration serviceRegistration;
@@ -23,11 +28,13 @@ public class Activator implements BundleActivator
      */
     public void start ( final BundleContext context ) throws Exception
     {
-        this.context = context;
         this.service = new ServiceImpl ( context );
         this.service.start ();
 
-        this.serviceRegistration = context.registerService ( Service.class.getName (), this.service, new Hashtable<String, String> () );
+        final Hashtable<String, String> properties = new Hashtable<String, String> ();
+        properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "An OpenSCADA HD service implementation" );
+        this.serviceRegistration = context.registerService ( Service.class.getName (), this.service, properties );
     }
 
     /*
@@ -40,7 +47,6 @@ public class Activator implements BundleActivator
 
         this.service.stop ();
         this.service = null;
-        this.context = null;
     }
 
 }
