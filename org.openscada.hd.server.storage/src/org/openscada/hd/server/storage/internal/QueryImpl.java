@@ -90,6 +90,9 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     /** This attribute is set by the method calculateValues and read by the method sendCalculatedValues. It contains the value objects that were created during the calculation process. */
     private Map<String, Value[]> calculatedResultMap;
 
+    /** Latest value that was processed or re-processed. */
+    private long latestDirtyTime;
+
     /**
      * Constructor.
      * @param service service that created the query object
@@ -118,6 +121,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         else
         {
             setQueryState ( QueryState.LOADING );
+            latestDirtyTime = Long.MAX_VALUE;
             dataChanged = true;
             queryTask = new Timer ( "QueryTask" );
             if ( updateData )
@@ -259,6 +263,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         synchronized ( service )
         {
             // load raw data that has to be normalized later
+            latestDirtyTime = System.currentTimeMillis ();
             long currentCompressionLevel = 0;
             long oldestValueTime = Long.MAX_VALUE;
             while ( ( oldestValueTime > startTime ) && ( currentCompressionLevel <= maximumCompressionLevel ) )
@@ -270,8 +275,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                     {
                         final DataType dataType = mergeEntry.getKey ().getDataType ();
                         final BaseValue[] mergeValues = mergeEntry.getValue ();
-                        final long now = System.currentTimeMillis ();
-                        final long maxTime = mergeValues.length > 0 ? Math.max ( mergeValues[mergeValues.length - 1].getTime () + 1, now ) : now;
+                        final long maxTime = mergeValues.length > 0 ? Math.max ( mergeValues[mergeValues.length - 1].getTime () + 1, latestDirtyTime ) : latestDirtyTime;
+                        latestDirtyTime = Math.min ( maxTime, latestDirtyTime );
                         if ( dataType == DataType.LONG_VALUE )
                         {
                             final LongValue longValue = new LongValue ( maxTime, 0, 0, 0 );
@@ -315,7 +320,11 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         }
 
         // since all data is collected now, the normalizing can be performed
-        final ValueInformation[] resultValueInformations = new ValueInformation[resultSize];
+        final MutableValueInformation[] resultValueInformations = new MutableValueInformation[resultSize];
+        for ( int i = 0; i < resultValueInformations.length; i++ )
+        {
+            resultValueInformations[i] = new MutableValueInformation ( null, null, 1.0, Long.MAX_VALUE );
+        }
         final Map<String, Value[]> resultMap = new HashMap<String, Value[]> ();
         for ( final CalculationMethod calculationMethod : calculationMethods )
         {
@@ -323,7 +332,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         }
         final long requestedTimeSpan = endTime - startTime;
         final double requestedValueFrequency = (double)requestedTimeSpan / resultSize;
-        boolean metaInformationCalculated = false;
 
         // get raw storage channel data from service
         for ( final Entry<StorageChannelMetaData, BaseValue[]> entry : mergeMap.entrySet () )
@@ -378,14 +386,15 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                 {
                     final LongValue longValue = longValues[i];
                     resultValueArray[i] = new Value ( longValue.getValue () );
-                    if ( !metaInformationCalculated )
-                    {
-                        final Calendar cstartTime = Calendar.getInstance ();
-                        final Calendar cendTime = Calendar.getInstance ();
-                        cstartTime.setTimeInMillis ( longValue.getTime () );
-                        cendTime.setTimeInMillis ( i == longValues.length - 1 ? endTime : longValues[i + 1].getTime () );
-                        resultValueInformations[i] = new ValueInformation ( cstartTime, cendTime, longValue.getQualityIndicator (), longValue.getBaseValueCount () );
-                    }
+                    final Calendar cstartTime = Calendar.getInstance ();
+                    final Calendar cendTime = Calendar.getInstance ();
+                    cstartTime.setTimeInMillis ( longValue.getTime () );
+                    cendTime.setTimeInMillis ( i == longValues.length - 1 ? endTime : longValues[i + 1].getTime () );
+                    final MutableValueInformation valueInformation = resultValueInformations[i];
+                    valueInformation.setStartTimestamp ( cstartTime );
+                    valueInformation.setEndTimestamp ( cendTime );
+                    valueInformation.setQuality ( Math.min ( longValue.getQualityIndicator (), valueInformation.getQuality () ) );
+                    valueInformation.setSourceValues ( Math.min ( longValue.getBaseValueCount (), valueInformation.getSourceValues () ) );
                 }
             }
             else
@@ -395,20 +404,25 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                 {
                     final DoubleValue doubleValue = doubleValues[i];
                     resultValueArray[i] = new Value ( doubleValue.getValue () );
-                    if ( !metaInformationCalculated )
-                    {
-                        final Calendar cstartTime = Calendar.getInstance ();
-                        final Calendar cendTime = Calendar.getInstance ();
-                        cstartTime.setTimeInMillis ( doubleValue.getTime () );
-                        cendTime.setTimeInMillis ( i == doubleValues.length - 1 ? endTime : doubleValues[i + 1].getTime () );
-                        resultValueInformations[i] = new ValueInformation ( cstartTime, cendTime, doubleValue.getQualityIndicator (), doubleValue.getBaseValueCount () );
-                    }
+                    final Calendar cstartTime = Calendar.getInstance ();
+                    final Calendar cendTime = Calendar.getInstance ();
+                    cstartTime.setTimeInMillis ( doubleValue.getTime () );
+                    cendTime.setTimeInMillis ( i == doubleValues.length - 1 ? endTime : doubleValues[i + 1].getTime () );
+                    final MutableValueInformation valueInformation = resultValueInformations[i];
+                    valueInformation.setStartTimestamp ( cstartTime );
+                    valueInformation.setEndTimestamp ( cendTime );
+                    valueInformation.setQuality ( Math.min ( doubleValue.getQualityIndicator (), valueInformation.getQuality () ) );
+                    valueInformation.setSourceValues ( Math.min ( doubleValue.getBaseValueCount (), valueInformation.getSourceValues () ) );
                 }
             }
-            metaInformationCalculated = true;
             resultMap.put ( CalculationMethod.convertCalculationMethodToShortString ( metaData.getCalculationMethod () ), resultValueArray );
         }
-        this.calculatedResultValueInformations = resultValueInformations;
+        this.calculatedResultValueInformations = new ValueInformation[resultValueInformations.length];
+        for ( int i = 0; i < resultValueInformations.length; i++ )
+        {
+            final MutableValueInformation valueInformation = resultValueInformations[i];
+            this.calculatedResultValueInformations[i] = new ValueInformation ( valueInformation.getStartTimestamp (), valueInformation.getEndTimestamp (), valueInformation.getQuality (), valueInformation.getSourceValues () );
+        }
         this.calculatedResultMap = resultMap;
     }
 
@@ -585,7 +599,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
                     final double currentEndTimeAsDouble = currentStartTimeAsDouble + requestedValueFrequency;
                     final long currentStartTimeAsLong = Math.round ( currentStartTimeAsDouble );
                     final long currentEndTimeAsLong = Math.round ( currentEndTimeAsDouble );
-                    if ( ( currentStartTimeAsLong <= time ) && ( time <= currentEndTimeAsLong ) )
+                    if ( ( latestDirtyTime <= currentEndTimeAsLong ) || ( ( currentStartTimeAsLong <= time ) && ( time <= currentEndTimeAsLong ) ) )
                     {
                         startTimeIndicesToUpdate.add ( i );
                     }

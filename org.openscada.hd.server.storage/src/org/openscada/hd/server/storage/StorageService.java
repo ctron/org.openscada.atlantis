@@ -2,10 +2,8 @@ package org.openscada.hd.server.storage;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +16,6 @@ import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationListener;
 import org.openscada.ca.ConfigurationState;
 import org.openscada.ca.SelfManagedConfigurationFactory;
-import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.internal.Conversions;
 import org.openscada.hsdb.CalculatingStorageChannel;
@@ -35,7 +32,6 @@ import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -219,13 +215,8 @@ public class StorageService implements SelfManagedConfigurationFactory
         this.shiServices.put ( configuration.getId (), service );
 
         // publish service
-        final Dictionary<String, String> serviceProperties = new Hashtable<String, String> ();
-        serviceProperties.put ( Constants.SERVICE_PID, configurationId );
-        serviceProperties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
-        serviceProperties.put ( Constants.SERVICE_DESCRIPTION, "A OpenSCADA Storage Historical Item Implementation" );
         service.start ();
-        this.bundleContext.registerService ( new String[] { ShiService.class.getName (), StorageHistoricalItem.class.getName () }, service, serviceProperties );
-
+        service.registerService ( bundleContext );
         // notify listeners of performed update
         final Configuration[] addedConfigurationIds = new Configuration[] { configuration };
         for ( final ConfigurationListener listener : this.configurationListeners )
@@ -486,6 +477,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     {
         for ( final ShiService shiService : shiServices.values () )
         {
+            shiService.unregisterService ();
             shiService.stop ();
         }
         shiServices.clear ();
@@ -591,9 +583,10 @@ public class StorageService implements SelfManagedConfigurationFactory
         {
             return new InstantErrorFuture<Configuration> ( new IllegalStateException ( String.format ( "Unable to delete non existing service with configuration id '%s'", configurationId ) ).fillInStackTrace () );
         }
+        serviceToDelete.unregisterService ();
         serviceToDelete.stop ();
         final ConfigurationImpl configuration = new ConfigurationImpl ( serviceToDelete.getConfiguration () );
-        final List<BackEnd> backEnds = this.backEndMap.get ( configurationId );
+        final List<BackEnd> backEnds = this.backEndMap.remove ( configurationId );
         if ( backEnds != null )
         {
             for ( final BackEnd backEnd : backEnds )

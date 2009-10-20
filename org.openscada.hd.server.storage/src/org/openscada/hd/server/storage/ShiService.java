@@ -3,8 +3,10 @@ package org.openscada.hd.server.storage;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +32,9 @@ import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
 import org.openscada.hsdb.datatypes.LongValue;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +84,9 @@ public class ShiService implements StorageHistoricalItem, Runnable
     /** Maximum age of data that will be processed by the service if not running in import mode. */
     private final long proposedDataAge;
 
+    /** Registration of this service. */
+    private ServiceRegistration registration;
+
     /**
      * Constructor.
      * @param configuration configuration of the service
@@ -97,6 +105,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
         this.latestReliableTime = latestReliableTime;
         this.importMode = importMode;
         this.proposedDataAge = Conversions.decodeTimeSpan ( configuration.getData ().get ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0 ) );
+        registration = null;
     }
 
     /**
@@ -374,7 +383,32 @@ public class ShiService implements StorageHistoricalItem, Runnable
         {
             this.relictCleanerTask = new Timer ( "RelictCleaner" );
             this.relictCleanerTask.schedule ( new RunnableTimerTask ( this ), CLEANER_TASK_PERIOD );
-            ;
+        }
+    }
+
+    /**
+     * This method registers the service via OSGi.
+     * @param bundleContext OSGi bundle context
+     */
+    public synchronized void registerService ( final BundleContext bundleContext )
+    {
+        unregisterService ();
+        final Dictionary<String, String> serviceProperties = new Hashtable<String, String> ();
+        serviceProperties.put ( Constants.SERVICE_PID, configuration.getId () );
+        serviceProperties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
+        serviceProperties.put ( Constants.SERVICE_DESCRIPTION, "A OpenSCADA Storage Historical Item Implementation" );
+        registration = bundleContext.registerService ( new String[] { ShiService.class.getName (), StorageHistoricalItem.class.getName () }, this, serviceProperties );
+    }
+
+    /**
+     * This method unregisters a previously registered service.
+     */
+    public synchronized void unregisterService ()
+    {
+        if ( registration != null )
+        {
+            registration.unregister ();
+            registration = null;
         }
     }
 
