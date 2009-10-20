@@ -367,26 +367,28 @@ public class ShiService implements StorageHistoricalItem, Runnable
     }
 
     /**
-     * This method activates the service processing.
+     * This method activates the service processing and registers the service as OSGi service.
      * The methods updateData and createQuery only have effect after calling this method.
+     * @param bundleContext OSGi bundle context
      */
-    public synchronized void start ()
+    public synchronized void start ( final BundleContext bundleContext )
     {
         stop ();
-        this.started = true;
+        started = true;
         createInvalidEntry ( latestReliableTime );
         if ( !importMode )
         {
-            this.relictCleanerTask = new Timer ( "RelictCleaner" );
-            this.relictCleanerTask.schedule ( new RunnableTimerTask ( this ), CLEANER_TASK_PERIOD );
+            relictCleanerTask = new Timer ( "RelictCleaner" );
+            relictCleanerTask.schedule ( new RunnableTimerTask ( this ), CLEANER_TASK_PERIOD );
         }
+        registerService ( bundleContext );
     }
 
     /**
      * This method registers the service via OSGi.
      * @param bundleContext OSGi bundle context
      */
-    public synchronized void registerService ( final BundleContext bundleContext )
+    private synchronized void registerService ( final BundleContext bundleContext )
     {
         unregisterService ();
         final Dictionary<String, String> serviceProperties = new Hashtable<String, String> ();
@@ -399,7 +401,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
     /**
      * This method unregisters a previously registered service.
      */
-    public synchronized void unregisterService ()
+    private synchronized void unregisterService ()
     {
         if ( registration != null )
         {
@@ -422,6 +424,9 @@ public class ShiService implements StorageHistoricalItem, Runnable
         {
             query.close ();
         }
+
+        // unregister service
+        unregisterService ();
 
         // stop relict cleaner task
         if ( relictCleanerTask != null )

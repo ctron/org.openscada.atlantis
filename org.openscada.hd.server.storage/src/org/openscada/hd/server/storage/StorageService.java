@@ -215,8 +215,8 @@ public class StorageService implements SelfManagedConfigurationFactory
         this.shiServices.put ( configuration.getId (), service );
 
         // publish service
-        service.start ();
-        service.registerService ( bundleContext );
+        service.start ( bundleContext );
+
         // notify listeners of performed update
         final Configuration[] addedConfigurationIds = new Configuration[] { configuration };
         for ( final ConfigurationListener listener : this.configurationListeners )
@@ -477,7 +477,6 @@ public class StorageService implements SelfManagedConfigurationFactory
     {
         for ( final ShiService shiService : shiServices.values () )
         {
-            shiService.unregisterService ();
             shiService.stop ();
         }
         shiServices.clear ();
@@ -583,7 +582,6 @@ public class StorageService implements SelfManagedConfigurationFactory
         {
             return new InstantErrorFuture<Configuration> ( new IllegalStateException ( String.format ( "Unable to delete non existing service with configuration id '%s'", configurationId ) ).fillInStackTrace () );
         }
-        serviceToDelete.unregisterService ();
         serviceToDelete.stop ();
         final ConfigurationImpl configuration = new ConfigurationImpl ( serviceToDelete.getConfiguration () );
         final List<BackEnd> backEnds = this.backEndMap.remove ( configurationId );

@@ -1,6 +1,8 @@
 package org.openscada.hd.server.storage;
 
 import java.util.Hashtable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.SelfManagedConfigurationFactory;
@@ -26,22 +28,30 @@ public class Activator implements BundleActivator
     /** Service registration of storage service. */
     private static ServiceRegistration serviceRegistration = null;
 
+    /** Future of starting operation. */
+    private static Future<?> future;
+
     /**
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
     public void start ( final BundleContext context ) throws Exception
     {
-        final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
-        final Hashtable<String, String> gescheiteHT = new Hashtable<String, String> ();
-        gescheiteHT.put ( Constants.SERVICE_DESCRIPTION, StorageService.SERVICE_DESCRIPTION );
-        gescheiteHT.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
-        gescheiteHT.put ( ConfigurationAdministrator.FACTORY_ID, StorageService.FACTORY_ID );
-        logger.info ( bundleName + " starting..." );
-        service = new StorageService ( context );
-        service.start ();
-        logger.info ( bundleName + " service started" );
-        serviceRegistration = context.registerService ( new String[] { StorageService.class.getName (), SelfManagedConfigurationFactory.class.getName () }, service, gescheiteHT );
-        logger.info ( bundleName + " service registered" );
+        future = Executors.newSingleThreadExecutor ().submit ( new Runnable () {
+            public void run ()
+            {
+                final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
+                final Hashtable<String, String> gescheiteHT = new Hashtable<String, String> ();
+                gescheiteHT.put ( Constants.SERVICE_DESCRIPTION, StorageService.SERVICE_DESCRIPTION );
+                gescheiteHT.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
+                gescheiteHT.put ( ConfigurationAdministrator.FACTORY_ID, StorageService.FACTORY_ID );
+                logger.info ( bundleName + " starting..." );
+                service = new StorageService ( context );
+                service.start ();
+                logger.info ( bundleName + " service started" );
+                serviceRegistration = context.registerService ( new String[] { StorageService.class.getName (), SelfManagedConfigurationFactory.class.getName () }, service, gescheiteHT );
+                logger.info ( bundleName + " service registered" );
+            }
+        } );
     }
 
     /**
@@ -49,6 +59,14 @@ public class Activator implements BundleActivator
      */
     public void stop ( final BundleContext context ) throws Exception
     {
+        // stop starting thread if running
+        if ( future != null )
+        {
+            future.cancel ( true );
+            future = null;
+        }
+
+        // stop service
         final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
         logger.info ( bundleName + " stopping..." );
         if ( serviceRegistration != null )
