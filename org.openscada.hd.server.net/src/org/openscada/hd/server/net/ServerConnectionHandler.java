@@ -58,6 +58,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     public final static String VERSION = "0.1.0";
 
+    public final static int MAX_DATA_SIZE = 1024;
+
     private final static Logger logger = LoggerFactory.getLogger ( ServerConnectionHandler.class );
 
     private Service service = null;
@@ -221,15 +223,55 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             {
                 return;
             }
-            final Message message = new Message ( Messages.CC_HD_UPDATE_QUERY_DATA );
-            message.getValues ().put ( "id", new LongValue ( queryId ) );
-            message.getValues ().put ( "index", new IntegerValue ( index ) );
 
-            message.getValues ().put ( "values", QueryHelper.toValueData ( values ) );
-            message.getValues ().put ( "valueInformation", QueryHelper.toValueInfo ( valueInformation ) );
+            final int len = valueInformation.length;
 
-            this.messenger.sendMessage ( message );
+            if ( len < MAX_DATA_SIZE )
+            {
+                sendQueryDataPacket ( queryId, index, values, valueInformation );
+            }
+            else
+            {
+                logger.debug ( "Using split send: {}", MAX_DATA_SIZE );
+                int count = 0;
+
+                do
+                {
+                    // get remaining items
+                    final int size = Math.min ( len - count, MAX_DATA_SIZE );
+
+                    logger.debug ( "Sending - query-id: {}, index: {}, size: {}", new Object[] { queryId, count, size } );
+
+                    // copy vi
+                    final ValueInformation[] vi = new ValueInformation[size];
+                    System.arraycopy ( valueInformation, count, vi, 0, size );
+
+                    // copy values
+                    final Map<String, org.openscada.hd.Value[]> v = new HashMap<String, org.openscada.hd.Value[]> ();
+                    for ( final Map.Entry<String, org.openscada.hd.Value[]> entry : values.entrySet () )
+                    {
+                        final org.openscada.hd.Value[] vs = new org.openscada.hd.Value[size];
+                        System.arraycopy ( entry.getValue (), count, vs, 0, size );
+                    }
+
+                    sendQueryDataPacket ( queryId, count, v, vi );
+
+                    count += MAX_DATA_SIZE;
+                } while ( count < len );
+            }
         }
+    }
+
+    private void sendQueryDataPacket ( final long queryId, final int index, final Map<String, org.openscada.hd.Value[]> values, final ValueInformation[] valueInformation )
+    {
+        final Message message = new Message ( Messages.CC_HD_UPDATE_QUERY_DATA );
+        message.getValues ().put ( "id", new LongValue ( queryId ) );
+        message.getValues ().put ( "index", new IntegerValue ( index ) );
+
+        message.getValues ().put ( "values", QueryHelper.toValueData ( values ) );
+        message.getValues ().put ( "valueInformation", QueryHelper.toValueInfo ( valueInformation ) );
+
+        this.messenger.sendMessage ( message );
     }
 
     public void sendQueryParameters ( final long queryId, final QueryParameters parameters, final Set<String> valueTypes )
