@@ -102,13 +102,18 @@ public class QueryImpl implements Query
         } );
     }
 
-    public synchronized void changeParameters ( final QueryParameters parameters )
+    public void changeParameters ( final QueryParameters parameters )
     {
-        if ( this.parameters != parameters )
+        synchronized ( this )
         {
+            if ( this.parameters == parameters )
+            {
+                return;
+            }
             this.parameters = parameters;
-            this.connection.updateQueryParameters ( this, parameters );
         }
+
+        this.connection.updateQueryParameters ( this, parameters );
     }
 
     public void setId ( final Long id )
