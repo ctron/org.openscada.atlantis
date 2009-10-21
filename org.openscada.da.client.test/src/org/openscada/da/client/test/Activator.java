@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,6 @@ package org.openscada.da.client.test;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.commands.operations.OperationStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -31,10 +29,6 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.openscada.da.client.connector.ConnectorInitializer;
-import org.openscada.da.client.base.browser.HiveConnection;
-import org.openscada.da.client.base.browser.HiveConnectionInformation;
-import org.openscada.da.client.base.browser.HiveRepository;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -121,52 +115,6 @@ public class Activator extends AbstractUIPlugin
     public static void logError ( final int code, final String msg, final Throwable ex )
     {
         getDefault ().getLog ().log ( new Status ( IStatus.ERROR, getId (), code, msg, ex ) );
-    }
-
-    private static HiveRepository _repository = null;
-
-    public static HiveRepository getRepository ()
-    {
-        if ( _repository == null )
-        {
-
-            try
-            {
-                ConnectorInitializer.initialize ();
-            }
-            catch ( final CoreException e )
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace ();
-            }
-
-            _repository = new HiveRepository ();
-
-            final IPath hives = getRepostoryFile ();
-            if ( hives.toFile ().canRead () )
-            {
-                _repository.load ( hives );
-            }
-            else
-            {
-                HiveConnectionInformation connection = new HiveConnectionInformation ();
-                connection.setConnectionString ( "da:net://localhost:1202" );
-                _repository.getConnections ().add ( new HiveConnection ( connection ) );
-
-                connection = new HiveConnectionInformation ();
-                connection.setConnectionString ( "da:net://localhost:1203" );
-                _repository.getConnections ().add ( new HiveConnection ( connection ) );
-
-                _repository.save ( hives );
-            }
-
-        }
-        return _repository;
-    }
-
-    public static IPath getRepostoryFile ()
-    {
-        return getDefault ().getStateLocation ().append ( "hives.xml" );
     }
 
     /**
