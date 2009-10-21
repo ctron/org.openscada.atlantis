@@ -147,6 +147,7 @@ public class ConnectionManager implements SingleServiceListener
         if ( this.serviceReg != null )
         {
             final ConnectionServiceImpl connection = this.connection;
+            connection.disconnect ();
             this.connection = null;
 
             this.serviceReg.unregister ();
