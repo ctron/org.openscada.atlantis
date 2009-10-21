@@ -53,6 +53,9 @@ public class StorageService implements SelfManagedConfigurationFactory
     /** System property defining the default root folder of the file fragments that are created by the back end objects. */
     private final static String FILE_FRAGMENTS_ROOT_FOLDER_SYSTEM_PROPERTY = "org.openscada.hd.server.storage.file.root";
 
+    /** System property defining the maximum compression level at which connections to a file should be kept open as long as the file might be used. */
+    private final static String MAX_COMPRESSION_LEVEL_TO_KEEP_FILE_OPEN = "org.openscada.hd.server.storage.file.keep.open";
+
     /** System property defining the flag specifying whether the service should run in import mode or not. Import mode means that no old data is removed. */
     private final static String IMPORT_MODE = "org.openscada.hd.server.storage.import";
 
@@ -111,7 +114,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         {
             logger.error ( String.format ( "could not create root folder for data storage (%s)", rootPath ) );
         }
-        this.backEndFactory = new FileBackEndFactory ( rootPath );
+        this.backEndFactory = new FileBackEndFactory ( rootPath, Conversions.parseLong ( System.getProperty ( MAX_COMPRESSION_LEVEL_TO_KEEP_FILE_OPEN ), 0 ) );
         this.configurationListeners = new LinkedList<ConfigurationListener> ();
         heartBeatBackEnd = null;
         latestReliableTime = Long.MIN_VALUE;
