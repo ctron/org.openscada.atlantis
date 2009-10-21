@@ -8,10 +8,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
@@ -25,7 +26,6 @@ import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationLogicProvider;
 import org.openscada.hsdb.calculation.CalculationMethod;
 import org.openscada.hsdb.concurrent.HsdbThreadFactory;
-import org.openscada.hsdb.concurrent.SecureTimerTask;
 import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
@@ -42,13 +42,17 @@ import org.slf4j.LoggerFactory;
  * @see org.openscada.hd.server.storage.ShiService
  * @author Ludwig Straub
  */
-public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
+public class QueryImpl implements Query, ExtendedStorageChannel
 {
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( QueryImpl.class );
 
     /** Time span between two consecutive calls of the future task. */
     private final static long DELAY_BETWEEN_TWO_QUERY_CALCULATIONS = 250;
+
+    private final static String QUERY_DATA_PROCESSOR_THREAD_ID = "QueryProcessor";
+
+    private final static String QUERY_DATA_SENDER_THREAD_ID = "QueryDataSender";
 
     /** Service that created the query object. */
     private final ShiService service;
@@ -72,7 +76,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     private boolean closed;
 
     /** Task that will calculate the result. */
-    private Timer queryTask;
+    private ScheduledExecutorService queryTask;
 
     /** Maximum available compression level. */
     private final long maximumCompressionLevel;
@@ -96,7 +100,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     private long latestDirtyTime;
 
     /** Executor that will be used to send data. */
-    private ExecutorService sendingExecutor;
+    private ExecutorService sendingTask;
 
     /**
      * Constructor.
@@ -125,21 +129,27 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         }
         else
         {
-            sendingExecutor = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( "QueryDataSender" ) );
+            sendingTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_SENDER_THREAD_ID ) );
             setQueryState ( QueryState.LOADING );
             latestDirtyTime = Long.MAX_VALUE;
             dataChanged = true;
-            queryTask = new Timer ( "QueryTask" );
+            final Runnable runnable = new Runnable () {
+                public void run ()
+                {
+                    processQuery ();
+                }
+            };
+            queryTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_PROCESSOR_THREAD_ID ) );
             if ( updateData )
             {
                 service.addQuery ( this );
                 queryRegistered = true;
-                queryTask.schedule ( new SecureTimerTask ( this ), 0, DELAY_BETWEEN_TWO_QUERY_CALCULATIONS );
+                queryTask.scheduleWithFixedDelay ( runnable, 0, DELAY_BETWEEN_TWO_QUERY_CALCULATIONS, TimeUnit.MILLISECONDS );
             }
             else
             {
                 queryRegistered = false;
-                queryTask.schedule ( new SecureTimerTask ( this ), 0 );
+                queryTask.schedule ( runnable, 0, TimeUnit.MILLISECONDS );
             }
         }
     }
@@ -458,7 +468,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
             }
 
             // send data
-            sendingExecutor.submit ( new Runnable () {
+            sendingTask.submit ( new Runnable () {
                 public void run ()
                 {
                     // prepare sending generated data
@@ -483,7 +493,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     /**
      * This method processes the query.
      */
-    public void run ()
+    private void processQuery ()
     {
         try
         {
@@ -643,8 +653,12 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
             {
                 if ( queryTask != null )
                 {
-                    queryTask.cancel ();
+                    queryTask.shutdown ();
                     queryTask = null;
+                }
+                if ( sendingTask != null )
+                {
+                    sendingTask.shutdown ();
                 }
                 setQueryState ( QueryState.DISCONNECTED );
                 if ( queryRegistered )

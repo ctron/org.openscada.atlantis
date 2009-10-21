@@ -8,8 +8,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
 import java.util.Map.Entry;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationListener;
@@ -25,7 +27,7 @@ import org.openscada.hsdb.backend.BackEndFactory;
 import org.openscada.hsdb.backend.BackEndMultiplexer;
 import org.openscada.hsdb.backend.file.FileBackEndFactory;
 import org.openscada.hsdb.calculation.CalculationMethod;
-import org.openscada.hsdb.concurrent.SecureTimerTask;
+import org.openscada.hsdb.concurrent.HsdbThreadFactory;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.LongValue;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -102,13 +104,13 @@ public class StorageService implements SelfManagedConfigurationFactory
     private BackEnd heartBeatBackEnd;
 
     /** Task that will create periodical entries in the heart bear back end. */
-    private Timer heartBeatTask;
+    private ScheduledExecutorService heartBeatTask;
 
     /** Latest time with valid information that could be retrieved via the heart beat task. */
     private long latestReliableTime;
 
     /** Task that is used for deleting old data. */
-    private Timer relictCleanerTask;
+    private ScheduledExecutorService relictCleanerTask;
 
     /**
      * Constructor.
@@ -316,7 +318,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             synchronized ( this )
             {
                 performPingOfLife ();
-                heartBeatTask.cancel ();
+                heartBeatTask.shutdown ();
                 heartBeatTask = null;
                 heartBeatBackEnd = null;
             }
@@ -338,6 +340,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         latestReliableTime = Long.MIN_VALUE;
         if ( heartBeatBackEnd != null )
         {
+            // get latest reliable time before system startup
             final long now = System.currentTimeMillis ();
             try
             {
@@ -351,14 +354,15 @@ public class StorageService implements SelfManagedConfigurationFactory
             {
                 logger.error ( String.format ( "unable to read heart beat value" ), e );
             }
+
             // start heart beat task
-            heartBeatTask = new Timer ( HEARTBEAT_THREAD_ID );
-            heartBeatTask.schedule ( new SecureTimerTask ( new Runnable () {
+            heartBeatTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( HEARTBEAT_THREAD_ID ) );
+            heartBeatTask.scheduleWithFixedDelay ( new Runnable () {
                 public void run ()
                 {
                     performPingOfLife ();
                 }
-            } ), HEART_BEATS_PERIOD, HEART_BEATS_PERIOD );
+            }, HEART_BEATS_PERIOD, HEART_BEATS_PERIOD, TimeUnit.MILLISECONDS );
         }
 
         // get information of existing meta data
@@ -471,13 +475,13 @@ public class StorageService implements SelfManagedConfigurationFactory
         // start clean relicts timer
         if ( !importMode )
         {
-            relictCleanerTask = new Timer ( RELICT_CLEANER_THREAD_ID );
-            relictCleanerTask.schedule ( new SecureTimerTask ( new Runnable () {
+            relictCleanerTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( RELICT_CLEANER_THREAD_ID ) );
+            relictCleanerTask.scheduleWithFixedDelay ( new Runnable () {
                 public void run ()
                 {
                     cleanupRelicts ();
                 }
-            } ), CLEANER_TASK_PERIOD, CLEANER_TASK_PERIOD );
+            }, CLEANER_TASK_PERIOD, CLEANER_TASK_PERIOD, TimeUnit.MILLISECONDS );
         }
     }
 
@@ -488,7 +492,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     {
         if ( relictCleanerTask != null )
         {
-            relictCleanerTask.cancel ();
+            relictCleanerTask.shutdown ();
             relictCleanerTask = null;
         }
         for ( final ShiService shiService : shiServices.values () )
@@ -638,7 +642,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         {
             try
             {
-                logger.info ( "triggering cleaning of relicts" );
+                logger.info ( "triggering cleaning of old data" );
                 service.cleanupRelicts ();
             }
             catch ( final Exception e )
