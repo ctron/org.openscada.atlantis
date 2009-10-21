@@ -638,6 +638,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         {
             try
             {
+                logger.info ( "triggering cleaning of relicts" );
                 service.cleanupRelicts ();
             }
             catch ( final Exception e )

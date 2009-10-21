@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.openscada.hd.Query;
@@ -23,6 +24,7 @@ import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationLogicProvider;
 import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.concurrent.HsdbThreadFactory;
 import org.openscada.hsdb.concurrent.SecureTimerTask;
 import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
@@ -93,6 +95,9 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
     /** Latest value that was processed or re-processed. */
     private long latestDirtyTime;
 
+    /** Executor that will be used to send data. */
+    private ExecutorService sendingExecutor;
+
     /**
      * Constructor.
      * @param service service that created the query object
@@ -120,6 +125,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
         }
         else
         {
+            sendingExecutor = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( "QueryDataSender" ) );
             setQueryState ( QueryState.LOADING );
             latestDirtyTime = Long.MAX_VALUE;
             dataChanged = true;
@@ -452,7 +458,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
             }
 
             // send data
-            Executors.newSingleThreadExecutor ().submit ( new Runnable () {
+            sendingExecutor.submit ( new Runnable () {
                 public void run ()
                 {
                     // prepare sending generated data
