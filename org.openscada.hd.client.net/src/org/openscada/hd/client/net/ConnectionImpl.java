@@ -67,6 +67,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionImpl.class );
 
+    private static final int MAX_QUERY_ENTRIES = Integer.getInteger ( "org.openscada.hd.client.net.maxQuerySize", 4096 );
+
     private final Executor executor;
 
     private final Set<ItemListListener> itemListListeners = new HashSet<ItemListListener> ();
@@ -355,7 +357,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         final Message message = new Message ( Messages.CC_HD_CREATE_QUERY );
         message.getValues ().put ( "itemId", new StringValue ( itemId ) );
         message.getValues ().put ( "id", new LongValue ( id ) );
-        message.getValues ().put ( "parameters", QueryHelper.toValue ( parameters ) );
+        message.getValues ().put ( "parameters", QueryHelper.toValue ( checkParameters ( parameters ) ) );
         if ( updateData )
         {
             message.getValues ().put ( "updateData", new VoidValue () );
@@ -385,8 +387,13 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         final Message message = new Message ( Messages.CC_HD_CHANGE_QUERY_PARAMETERS );
         message.getValues ().put ( "id", new LongValue ( id ) );
-        message.getValues ().put ( "parameters", QueryHelper.toValue ( parameters ) );
+        message.getValues ().put ( "parameters", QueryHelper.toValue ( checkParameters ( parameters ) ) );
         this.messenger.sendMessage ( message );
+    }
+
+    private QueryParameters checkParameters ( final QueryParameters parameters )
+    {
+        return new QueryParameters ( parameters.getStartTimestamp (), parameters.getEndTimestamp (), Math.min ( parameters.getEntries (), MAX_QUERY_ENTRIES ) );
     }
 
     /**
