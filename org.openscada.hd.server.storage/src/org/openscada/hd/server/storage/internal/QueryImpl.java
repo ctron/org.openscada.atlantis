@@ -23,7 +23,7 @@ import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationLogicProvider;
 import org.openscada.hsdb.calculation.CalculationMethod;
-import org.openscada.hsdb.concurrent.RunnableTimerTask;
+import org.openscada.hsdb.concurrent.SecureTimerTask;
 import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
@@ -128,12 +128,12 @@ public class QueryImpl implements Query, ExtendedStorageChannel, Runnable
             {
                 service.addQuery ( this );
                 queryRegistered = true;
-                queryTask.schedule ( new RunnableTimerTask ( this ), 0, DELAY_BETWEEN_TWO_QUERY_CALCULATIONS );
+                queryTask.schedule ( new SecureTimerTask ( this ), 0, DELAY_BETWEEN_TWO_QUERY_CALCULATIONS );
             }
             else
             {
                 queryRegistered = false;
-                queryTask.schedule ( new RunnableTimerTask ( this ), 0 );
+                queryTask.schedule ( new SecureTimerTask ( this ), 0 );
             }
         }
     }

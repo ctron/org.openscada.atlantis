@@ -10,7 +10,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
 import java.util.Map.Entry;
 
 import org.openscada.ca.Configuration;
@@ -27,11 +26,11 @@ import org.openscada.hd.server.storage.internal.QueryImpl;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationMethod;
-import org.openscada.hsdb.concurrent.RunnableTimerTask;
 import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
 import org.openscada.hsdb.datatypes.LongValue;
+import org.openscada.hsdb.relict.RelictCleaner;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
@@ -43,13 +42,10 @@ import org.slf4j.LoggerFactory;
  * @see org.openscada.hd.server.common.StorageHistoricalItem
  * @author Ludwig Straub
  */
-public class ShiService implements StorageHistoricalItem, Runnable
+public class ShiService implements StorageHistoricalItem, RelictCleaner
 {
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( ShiService.class );
-
-    /** Period in milliseconds between two consecutive attempts to delete old data. */
-    private final static long CLEANER_TASK_PERIOD = 1000 * 10;
 
     /** Configuration of the service. */
     private final Configuration configuration;
@@ -65,9 +61,6 @@ public class ShiService implements StorageHistoricalItem, Runnable
 
     /** Flag indicating whether the service is currently running or not. */
     private boolean started;
-
-    /** Task that is used for deleting old data. */
-    private Timer relictCleanerTask;
 
     /** List of currently open queries. */
     private final Collection<QueryImpl> openQueries;
@@ -376,11 +369,6 @@ public class ShiService implements StorageHistoricalItem, Runnable
         stop ();
         started = true;
         createInvalidEntry ( latestReliableTime );
-        if ( !importMode )
-        {
-            relictCleanerTask = new Timer ( "RelictCleaner" );
-            relictCleanerTask.schedule ( new RunnableTimerTask ( this ), CLEANER_TASK_PERIOD );
-        }
         registerService ( bundleContext );
     }
 
@@ -428,13 +416,6 @@ public class ShiService implements StorageHistoricalItem, Runnable
         // unregister service
         unregisterService ();
 
-        // stop relict cleaner task
-        if ( relictCleanerTask != null )
-        {
-            relictCleanerTask.cancel ();
-            relictCleanerTask = null;
-        }
-
         // create entry with data marked as invalid
         if ( started )
         {
@@ -449,7 +430,7 @@ public class ShiService implements StorageHistoricalItem, Runnable
      * This method cleans old data.
      * @see org.openscada.hsdb.relict.RelictCleaner#cleanupRelicts
      */
-    public synchronized void run ()
+    public synchronized void cleanupRelicts () throws Exception
     {
         if ( started && ( rootStorageChannel != null ) )
         {

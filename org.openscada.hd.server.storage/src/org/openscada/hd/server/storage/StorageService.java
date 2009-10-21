@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Map.Entry;
 
 import org.openscada.ca.Configuration;
@@ -26,6 +25,7 @@ import org.openscada.hsdb.backend.BackEndFactory;
 import org.openscada.hsdb.backend.BackEndMultiplexer;
 import org.openscada.hsdb.backend.file.FileBackEndFactory;
 import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.concurrent.SecureTimerTask;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.LongValue;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -65,11 +65,20 @@ public class StorageService implements SelfManagedConfigurationFactory
     /** Execute heart beat period in milliseconds. */
     private final static long HEART_BEATS_PERIOD = 1000;
 
+    /** Period in milliseconds between two consecutive attempts to delete old data. */
+    private final static long CLEANER_TASK_PERIOD = 1000 * 10;
+
     /** Maximum data age of heart beat data. */
     private final static long PROPOSED_HEART_BEAT_DATA_AGE = 1;
 
     /** Internal configuration id for heartbeat back end. */
     private final static String HEARTBEAT_CONFIGURATION_ID = "HEARTBEAT";
+
+    /** Internal id for heart beat thread. */
+    private final static String HEARTBEAT_THREAD_ID = "Heartbeat";
+
+    /** Internal id for relicts cleaner thread. */
+    private final static String RELICT_CLEANER_THREAD_ID = "RelictCleaner";
 
     /** OSGi bundle context. */
     private final BundleContext bundleContext;
@@ -97,6 +106,9 @@ public class StorageService implements SelfManagedConfigurationFactory
 
     /** Latest time with valid information that could be retrieved via the heart beat task. */
     private long latestReliableTime;
+
+    /** Task that is used for deleting old data. */
+    private Timer relictCleanerTask;
 
     /**
      * Constructor.
@@ -276,7 +288,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     /**
      * This method stores a new value in the heart beat back end to remember the last valid time.
      */
-    private synchronized void performPingOfLife ()
+    public synchronized void performPingOfLife ()
     {
         if ( heartBeatBackEnd != null )
         {
@@ -292,22 +304,6 @@ public class StorageService implements SelfManagedConfigurationFactory
                 logger.error ( String.format ( "unable to store heart beat value" ), e );
             }
         }
-    }
-
-    /**
-     * This method triggers the heart beat operation.
-     */
-    public void run ()
-    {
-        boolean b = false;
-        do
-        {
-            synchronized ( this )
-            {
-                this.performPingOfLife ();
-                b = heartBeatTask != null;
-            }
-        } while ( b );
     }
 
     /**
@@ -356,13 +352,13 @@ public class StorageService implements SelfManagedConfigurationFactory
                 logger.error ( String.format ( "unable to read heart beat value" ), e );
             }
             // start heart beat task
-            heartBeatTask = new Timer ( "heartbeat" );
-            heartBeatTask.schedule ( new TimerTask () {
+            heartBeatTask = new Timer ( HEARTBEAT_THREAD_ID );
+            heartBeatTask.schedule ( new SecureTimerTask ( new Runnable () {
                 public void run ()
                 {
                     performPingOfLife ();
                 }
-            }, HEART_BEATS_PERIOD, HEART_BEATS_PERIOD );
+            } ), HEART_BEATS_PERIOD, HEART_BEATS_PERIOD );
         }
 
         // get information of existing meta data
@@ -471,6 +467,18 @@ public class StorageService implements SelfManagedConfigurationFactory
         {
             deinitializeBackEnds ( bs );
         }
+
+        // start clean relicts timer
+        if ( !importMode )
+        {
+            relictCleanerTask = new Timer ( RELICT_CLEANER_THREAD_ID );
+            relictCleanerTask.schedule ( new SecureTimerTask ( new Runnable () {
+                public void run ()
+                {
+                    cleanupRelicts ();
+                }
+            } ), CLEANER_TASK_PERIOD, CLEANER_TASK_PERIOD );
+        }
     }
 
     /**
@@ -478,6 +486,11 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public synchronized void stop ()
     {
+        if ( relictCleanerTask != null )
+        {
+            relictCleanerTask.cancel ();
+            relictCleanerTask = null;
+        }
         for ( final ShiService shiService : shiServices.values () )
         {
             shiService.stop ();
@@ -613,5 +626,24 @@ public class StorageService implements SelfManagedConfigurationFactory
             listener.configurationUpdate ( null, removedConfigurationIds );
         }
         return new InstantFuture<Configuration> ( configuration );
+    }
+
+    /**
+     * This method cleans old data.
+     * @see org.openscada.hsdb.relict.RelictCleaner#cleanupRelicts
+     */
+    public synchronized void cleanupRelicts ()
+    {
+        for ( final ShiService service : shiServices.values () )
+        {
+            try
+            {
+                service.cleanupRelicts ();
+            }
+            catch ( final Exception e )
+            {
+                logger.error ( "problem while cleaning relicts", e );
+            }
+        }
     }
 }
