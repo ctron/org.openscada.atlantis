@@ -155,6 +155,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         {
         case CLOSED:
             performClosed ( error );
+            onConnectionClosed ();
             break;
         }
     }
@@ -168,6 +169,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
             break;
         case CLOSED:
             performClosed ( error );
+            onConnectionClosed ();
             break;
         }
     }
@@ -181,6 +183,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
             break;
         case CLOSED:
             performClosed ( error );
+            onConnectionClosed ();
             break;
         case BOUND:
             setState ( ConnectionState.BOUND, null );
@@ -431,11 +434,11 @@ public abstract class ConnectionBase implements Connection, IoHandler
      */
     protected synchronized void connectFailed ( final ConnectFuture future, final Throwable e )
     {
-    	String connection = "";
-    	if ( connectionInformation != null )
-    	{
-    		connection += " " + connectionInformation.toString();
-    	}
+        String connection = "";
+        if ( this.connectionInformation != null )
+        {
+            connection += " " + this.connectionInformation.toString ();
+        }
         logger.warn ( "Connection attempt failed" + connection, e );
 
         if ( future == this.connectingFuture )
