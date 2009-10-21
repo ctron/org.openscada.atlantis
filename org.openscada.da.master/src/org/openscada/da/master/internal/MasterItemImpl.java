@@ -138,7 +138,7 @@ public class MasterItemImpl implements ItemUpdateListener, MasterItem
 
     public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        logger.debug ( "Data update: {} -> {} / {} (cache: {})", new Object[] { this.itemId, value, attributes, cache } );
+        // logger.debug ( "Data update: {} -> {} / {} (cache: {})", new Object[] { this.itemId, value, attributes, cache } );
         applyDataChange ( value, attributes, cache );
         notifyHandler ();
         notifyListener ();
