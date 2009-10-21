@@ -68,7 +68,6 @@ public class Activator implements BundleActivator
      */
     public void stop ( final BundleContext context ) throws Exception
     {
-        // stop starting thread if running
         if ( ( lockObject != null ) && ( executor != null ) )
         {
             final Object lock = lockObject;
