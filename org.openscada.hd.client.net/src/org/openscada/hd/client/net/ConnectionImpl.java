@@ -240,7 +240,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         if ( full )
         {
-            this.itemListListeners.clear ();
+            this.knownItems.clear ();
         }
         if ( removed != null )
         {
