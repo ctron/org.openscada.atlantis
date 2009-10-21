@@ -1,31 +1,23 @@
 package org.openscada.core.connection.provider;
 
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
-import org.openscada.core.client.DriverFactory;
 import org.openscada.utils.osgi.FilterUtil;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectionTracker
+public abstract class ConnectionTracker
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionTracker.class );
 
-    private final ConnectionRequest request;
-
-    private final SingleServiceTracker tracker;
+    private SingleServiceTracker tracker;
 
     private Filter filter;
 
@@ -35,44 +27,29 @@ public class ConnectionTracker
 
     private final BundleContext context;
 
-    private ServiceRegistration handle;
-
     public interface Listener
     {
         public void setConnection ( final ConnectionService connectionService );
     }
 
-    public ConnectionTracker ( final BundleContext context, final ConnectionRequest request, final Listener listener )
+    public ConnectionTracker ( final BundleContext context, final Listener listener )
     {
         this.context = context;
-        this.request = request;
         this.listener = listener;
+    }
 
-        final Map<String, String> parameters = new HashMap<String, String> ();
-
-        // add connection URI to filter criteria so we will only receive connections that match our connection uri
-        parameters.put ( ConnectionService.CONNECTION_URI, request.getConnectionInformation ().toString () );
-
-        if ( request.getRequestId () != null )
-        {
-            parameters.put ( Constants.SERVICE_PID, request.getRequestId () );
-        }
-
-        try
-        {
-            this.filter = FilterUtil.createAndFilter ( ConnectionService.class.getName (), parameters );
-        }
-        catch ( final InvalidSyntaxException e )
-        {
-            logger.warn ( "Failed to create filter", e );
-            this.filter = null;
-        }
-
+    protected SingleServiceTracker createTracker ()
+    {
         synchronized ( this )
         {
+            if ( this.filter == null )
+            {
+                this.filter = createFilter ();
+            }
+
             if ( this.filter != null )
             {
-                this.tracker = new SingleServiceTracker ( context, this.filter, new SingleServiceListener () {
+                return new SingleServiceTracker ( this.context, this.filter, new SingleServiceListener () {
 
                     public void serviceChange ( final ServiceReference reference, final Object service )
                     {
@@ -80,26 +57,32 @@ public class ConnectionTracker
                     }
                 } );
             }
-            else
-            {
-                this.tracker = null;
-            }
+            return null;
         }
     }
 
-    public synchronized void request ()
+    protected Filter createFilter ()
     {
-        if ( this.handle == null )
+        try
         {
-            final Dictionary<String, String> properties = new Hashtable<String, String> ();
-            properties.put ( DriverFactory.DRIVER_NAME, this.request.getConnectionInformation ().getDriver () );
-            properties.put ( DriverFactory.INTERFACE_NAME, this.request.getConnectionInformation ().getInterface () );
-            this.handle = this.context.registerService ( ConnectionRequest.class.getName (), this.request, properties );
+            return FilterUtil.createAndFilter ( ConnectionService.class.getName (), createFilterParameters () );
+        }
+        catch ( final InvalidSyntaxException e )
+        {
+            logger.warn ( "Failed to create filter", e );
+            return null;
         }
     }
+
+    protected abstract Map<String, String> createFilterParameters ();
 
     public synchronized void listen ()
     {
+        if ( this.tracker == null )
+        {
+            this.tracker = createTracker ();
+        }
+
         if ( this.tracker != null )
         {
             logger.debug ( "Opening tracker" );
@@ -110,12 +93,10 @@ public class ConnectionTracker
     public synchronized void open ()
     {
         listen ();
-        request ();
     }
 
     public synchronized void close ()
     {
-        unrequest ();
         unlisten ();
     }
 
@@ -124,16 +105,6 @@ public class ConnectionTracker
         if ( this.tracker != null )
         {
             this.tracker.close ();
-        }
-    }
-
-    public synchronized void unrequest ()
-    {
-        if ( this.handle != null )
-        {
-            logger.debug ( "Unregister handle: {}", this.handle );
-            this.handle.unregister ();
-            this.handle = null;
         }
     }
 
