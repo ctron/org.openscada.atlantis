@@ -21,6 +21,7 @@ package org.openscada.da.client.net;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,20 +107,10 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         return VERSION;
     }
 
-    public Connection ( final ConnectionInformation connectionInformantion, final boolean defaultExecutorAsync )
+    public Connection ( final ConnectionInformation connectionInformantion )
     {
         super ( connectionInformantion );
 
-        if ( defaultExecutorAsync )
-        {
-            setupAsyncExecutor ();
-        }
-
-        init ();
-    }
-
-    private void setupAsyncExecutor ()
-    {
         this.executor = Executors.newSingleThreadExecutor ( new ThreadFactory () {
 
             public Thread newThread ( final Runnable r )
@@ -129,6 +120,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
                 return t;
             }
         } );
+        init ();
     }
 
     private void init ()
@@ -209,12 +201,12 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         Variant value = decodeValueChange ( message );
         Map<String, Variant> attributes = decodeAttributeChange ( message );
 
-        if ( cache && ( value == null ) )
+        if ( cache && value == null )
         {
             // we need a value if we read from cache
             value = new Variant ();
         }
-        if ( cache && ( attributes == null ) )
+        if ( cache && attributes == null )
         {
             // we need attributes if we read from cache
             attributes = new HashMap<String, Variant> ();
@@ -571,6 +563,26 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     public void unsubscribeFolder ( final Location location ) throws NoConnectionException, OperationException
     {
         this.messenger.sendMessage ( ListBrowser.createUnsubscribe ( location.asArray () ) );
+    }
+
+    @Override
+    protected synchronized void onConnectionClosed ()
+    {
+        // clear all subscribed folders
+        final HashMap<Location, FolderListener> listeners = new HashMap<Location, FolderListener> ( this.folderListeners );
+
+        getExecutor ().execute ( new Runnable () {
+
+            public void run ()
+            {
+                for ( final Map.Entry<Location, FolderListener> entry : listeners.entrySet () )
+                {
+                    entry.getValue ().folderChanged ( Collections.<Entry> emptyList (), Collections.<String> emptyList (), true );
+                }
+            }
+        } );
+
+        super.onConnectionClosed ();
     }
 
     protected void performSubscriptionChange ( final Message message )

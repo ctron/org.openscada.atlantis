@@ -33,14 +33,7 @@ public class DriverInformation implements org.openscada.core.client.DriverInform
             return null;
         }
 
-        final String defaultAsync = connectionInformation.getProperties ().get ( PROP_DEFAULT_ASYNC );
-        boolean defaultAsyncFlag = false;
-        if ( defaultAsync != null )
-        {
-            defaultAsyncFlag = Boolean.parseBoolean ( defaultAsync );
-        }
-
-        return new org.openscada.da.client.net.Connection ( connectionInformation, defaultAsyncFlag );
+        return new org.openscada.da.client.net.Connection ( connectionInformation );
     }
 
     public Class<?> getConnectionClass ()
