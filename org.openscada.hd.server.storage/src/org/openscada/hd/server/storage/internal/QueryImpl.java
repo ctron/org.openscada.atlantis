@@ -383,7 +383,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 }
                 else
                 {
-                    filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, startIndex, inputDataType == DataType.LONG_VALUE ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
+                    filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime <= currentTimeOffsetAsLong ? currentTimeOffsetAsLong + 1 : localEndTime, startIndex, inputDataType == DataType.LONG_VALUE ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
                     // maximum 2 entries are completely virtual due to the algorithm
                     // it is possible that one value will be processed with a time span before the interval start time
                     // therefore the index can be increased by length-3 to optimize performance of this method
@@ -391,11 +391,19 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                     {
                         startIndex += filledValues.length - 3;
                     }
+                    if ( filledValues == null || filledValues.length == 0 )
+                    {
+                        filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, startIndex, inputDataType == DataType.LONG_VALUE ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
+                    }
                 }
                 final BaseValue normalizedValue = calculationLogicProvider.generateValues ( filledValues );
                 if ( normalizedValue != null )
                 {
                     resultValues.add ( normalizedValue );
+                }
+                else
+                {
+                    logger.error ( "DF" );
                 }
             }
             final Value[] resultValueArray = new Value[resultSize];
@@ -420,6 +428,10 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             else
             {
                 final DoubleValue[] doubleValues = resultValues.toArray ( ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
+                if ( resultValueArray.length != doubleValues.length )
+                {
+                    logger.error ( "result values are nto equal in length to generated values!" );
+                }
                 for ( int i = 0; i < resultValueArray.length; i++ )
                 {
                     final DoubleValue doubleValue = doubleValues[i];
@@ -523,7 +535,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 }
                 final Calendar start = parameters.getStartTimestamp ();
                 final Calendar end = parameters.getEndTimestamp ();
-                if ( ( parameters == null ) || ( start == null ) || ( end == null ) || ( end.getTimeInMillis () <= start.getTimeInMillis () ) || ( parameters.getEntries () < 1 ) )
+                if ( ( parameters == null ) || ( start == null ) || ( end == null ) || ( parameters.getEntries () < 1 ) )
                 {
                     this.initialLoadPerformed = true;
                     this.dataChanged = false;
@@ -540,7 +552,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             if ( !initialLoadPerformed )
             {
                 // calculate all values
-                calculateValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis (), parameters.getEntries () );
+                calculateValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () + 1, parameters.getEntries () );
                 sendCalculatedValues ( parameters, 0, true );
             }
             else
@@ -571,7 +583,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                     final double currentEndTimeAsDouble = currentStartTimeAsDouble + requestedValueFrequency * ( endIndex - startIndex + 1 );
                     final long currentStartTimeAsLong = Math.round ( currentStartTimeAsDouble );
                     final long currentEndTimeAsLong = Math.round ( currentEndTimeAsDouble );
-                    calculateValues ( currentStartTimeAsLong, currentEndTimeAsLong, (int)resultSize );
+                    calculateValues ( currentStartTimeAsLong, currentEndTimeAsLong + 1, (int)resultSize );
                     sendCalculatedValues ( parameters, startIndex, false );
                     index++;
                 }
