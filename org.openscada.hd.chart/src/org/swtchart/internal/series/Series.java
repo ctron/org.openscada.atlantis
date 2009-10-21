@@ -95,7 +95,7 @@ abstract public class Series implements ISeries
     private boolean isDateSeries;
 
     /** the list of dispose listeners */
-    private List<IDisposeListener> listeners;
+    private final List<IDisposeListener> listeners;
 
     /**
      * Constructor.
@@ -105,22 +105,22 @@ abstract public class Series implements ISeries
      * @param id
      *            the series id
      */
-    protected Series ( Chart chart, String id )
+    protected Series ( final Chart chart, final String id )
     {
         super ();
 
         this.chart = chart;
         this.id = id;
-        xAxisId = 0;
-        yAxisId = 0;
-        visible = true;
-        type = DEFAULT_SERIES_TYPE;
-        stackEnabled = false;
-        isXMonotoneIncreasing = true;
-        seriesLabel = new SeriesLabel ();
-        xErrorBar = new ErrorBar ();
-        yErrorBar = new ErrorBar ();
-        listeners = new ArrayList<IDisposeListener> ();
+        this.xAxisId = 0;
+        this.yAxisId = 0;
+        this.visible = true;
+        this.type = DEFAULT_SERIES_TYPE;
+        this.stackEnabled = false;
+        this.isXMonotoneIncreasing = true;
+        this.seriesLabel = new SeriesLabel ();
+        this.xErrorBar = new ErrorBar ();
+        this.yErrorBar = new ErrorBar ();
+        this.listeners = new ArrayList<IDisposeListener> ();
     }
 
     /*
@@ -128,13 +128,13 @@ abstract public class Series implements ISeries
      */
     public String getId ()
     {
-        return id;
+        return this.id;
     }
 
     /*
      * @see ISeries#setVisible(boolean)
      */
-    public void setVisible ( boolean visible )
+    public void setVisible ( final boolean visible )
     {
         if ( this.visible == visible )
         {
@@ -143,7 +143,7 @@ abstract public class Series implements ISeries
 
         this.visible = visible;
 
-        ( (SeriesSet)chart.getSeriesSet () ).updateStackAndRiserData ();
+        ( (SeriesSet)this.chart.getSeriesSet () ).updateStackAndRiserData ();
     }
 
     /*
@@ -151,7 +151,7 @@ abstract public class Series implements ISeries
      */
     public boolean isVisible ()
     {
-        return visible;
+        return this.visible;
     }
 
     /*
@@ -159,7 +159,7 @@ abstract public class Series implements ISeries
      */
     public SeriesType getType ()
     {
-        return type;
+        return this.type;
     }
 
     /*
@@ -167,33 +167,33 @@ abstract public class Series implements ISeries
      */
     public boolean isStackEnabled ()
     {
-        return stackEnabled;
+        return this.stackEnabled;
     }
 
     /*
      * @see ISeries#enableStack(boolean)
      */
-    public void enableStack ( boolean enabled )
+    public void enableStack ( final boolean enabled )
     {
-        if ( enabled && minY < 0 )
+        if ( enabled && this.minY < 0 )
         {
             throw new IllegalStateException ( "Stacked series cannot contain minus values." );
         }
 
-        if ( stackEnabled == enabled )
+        if ( this.stackEnabled == enabled )
         {
             return;
         }
 
-        stackEnabled = enabled;
+        this.stackEnabled = enabled;
 
-        ( (SeriesSet)chart.getSeriesSet () ).updateStackAndRiserData ();
+        ( (SeriesSet)this.chart.getSeriesSet () ).updateStackAndRiserData ();
     }
 
     /*
      * @see ISeries#setXSeries(double[])
      */
-    public void setXSeries ( double[] series )
+    public void setXSeries ( final double[] series )
     {
 
         if ( series == null )
@@ -202,46 +202,46 @@ abstract public class Series implements ISeries
             return; // to suppress warning...
         }
 
-        xSeries = new double[series.length];
-        System.arraycopy ( series, 0, xSeries, 0, series.length );
-        isDateSeries = false;
+        this.xSeries = new double[series.length];
+        System.arraycopy ( series, 0, this.xSeries, 0, series.length );
+        this.isDateSeries = false;
 
-        if ( xSeries.length == 0 )
+        if ( this.xSeries.length == 0 )
         {
             return;
         }
 
         // find the min and max value of x series
-        minX = xSeries[0];
-        maxX = xSeries[0];
-        for ( int i = 1; i < xSeries.length; i++ )
+        this.minX = this.xSeries[0];
+        this.maxX = this.xSeries[0];
+        for ( int i = 1; i < this.xSeries.length; i++ )
         {
-            if ( minX > xSeries[i] )
+            if ( this.minX > this.xSeries[i] )
             {
-                minX = xSeries[i];
+                this.minX = this.xSeries[i];
             }
-            if ( maxX < xSeries[i] )
+            if ( this.maxX < this.xSeries[i] )
             {
-                maxX = xSeries[i];
+                this.maxX = this.xSeries[i];
             }
 
-            if ( xSeries[i - 1] > xSeries[i] )
+            if ( this.xSeries[i - 1] > this.xSeries[i] )
             {
-                isXMonotoneIncreasing = false;
+                this.isXMonotoneIncreasing = false;
             }
         }
 
         setCompressor ();
 
-        compressor.setXSeries ( xSeries );
-        if ( ySeries != null )
+        this.compressor.setXSeries ( this.xSeries );
+        if ( this.ySeries != null )
         {
-            compressor.setYSeries ( ySeries );
+            this.compressor.setYSeries ( this.ySeries );
         }
 
-        if ( minX <= 0 )
+        if ( this.minX <= 0 )
         {
-            IAxis axis = chart.getAxisSet ().getXAxis ( xAxisId );
+            final IAxis axis = this.chart.getAxisSet ().getXAxis ( this.xAxisId );
             if ( axis != null )
             {
                 axis.enableLogScale ( false );
@@ -254,13 +254,13 @@ abstract public class Series implements ISeries
      */
     public double[] getXSeries ()
     {
-        if ( xSeries == null )
+        if ( this.xSeries == null )
         {
             return null;
         }
 
-        double[] copiedSeries = new double[xSeries.length];
-        System.arraycopy ( xSeries, 0, copiedSeries, 0, xSeries.length );
+        final double[] copiedSeries = new double[this.xSeries.length];
+        System.arraycopy ( this.xSeries, 0, copiedSeries, 0, this.xSeries.length );
 
         return copiedSeries;
     }
@@ -268,7 +268,7 @@ abstract public class Series implements ISeries
     /*
      * @see ISeries#setYSeries(double[])
      */
-    public void setYSeries ( double[] series )
+    public void setYSeries ( final double[] series )
     {
 
         if ( series == null )
@@ -277,62 +277,62 @@ abstract public class Series implements ISeries
             return; // to suppress warning...
         }
 
-        ySeries = new double[series.length];
-        System.arraycopy ( series, 0, ySeries, 0, series.length );
+        this.ySeries = new double[series.length];
+        System.arraycopy ( series, 0, this.ySeries, 0, series.length );
 
-        if ( ySeries.length == 0 )
+        if ( this.ySeries.length == 0 )
         {
             return;
         }
 
         // find the min and max value of y series
-        minY = ySeries[0];
-        maxY = ySeries[0];
-        for ( int i = 1; i < ySeries.length; i++ )
+        this.minY = this.ySeries[0];
+        this.maxY = this.ySeries[0];
+        for ( int i = 1; i < this.ySeries.length; i++ )
         {
-            if ( minY > ySeries[i] )
+            if ( this.minY > this.ySeries[i] )
             {
-                minY = ySeries[i];
+                this.minY = this.ySeries[i];
             }
-            if ( maxY < ySeries[i] )
+            if ( this.maxY < this.ySeries[i] )
             {
-                maxY = ySeries[i];
+                this.maxY = this.ySeries[i];
             }
         }
 
-        if ( xSeries == null || xSeries.length != series.length )
+        if ( this.xSeries == null || this.xSeries.length != series.length )
         {
-            xSeries = new double[series.length];
+            this.xSeries = new double[series.length];
             for ( int i = 0; i < series.length; i++ )
             {
-                xSeries[i] = i;
+                this.xSeries[i] = i;
             }
-            minX = xSeries[0];
-            maxX = xSeries[xSeries.length - 1];
-            isXMonotoneIncreasing = true;
+            this.minX = this.xSeries[0];
+            this.maxX = this.xSeries[this.xSeries.length - 1];
+            this.isXMonotoneIncreasing = true;
         }
 
         setCompressor ();
 
-        compressor.setXSeries ( xSeries );
-        compressor.setYSeries ( ySeries );
+        this.compressor.setXSeries ( this.xSeries );
+        this.compressor.setYSeries ( this.ySeries );
 
-        if ( minX <= 0 )
+        if ( this.minX <= 0 )
         {
-            IAxis axis = chart.getAxisSet ().getXAxis ( xAxisId );
+            final IAxis axis = this.chart.getAxisSet ().getXAxis ( this.xAxisId );
             if ( axis != null )
             {
                 axis.enableLogScale ( false );
             }
         }
-        if ( minY <= 0 )
+        if ( this.minY <= 0 )
         {
-            IAxis axis = chart.getAxisSet ().getYAxis ( yAxisId );
+            final IAxis axis = this.chart.getAxisSet ().getYAxis ( this.yAxisId );
             if ( axis != null )
             {
                 axis.enableLogScale ( false );
             }
-            stackEnabled = false;
+            this.stackEnabled = false;
         }
     }
 
@@ -341,13 +341,13 @@ abstract public class Series implements ISeries
      */
     public double[] getYSeries ()
     {
-        if ( ySeries == null )
+        if ( this.ySeries == null )
         {
             return null;
         }
 
-        double[] copiedSeries = new double[ySeries.length];
-        System.arraycopy ( ySeries, 0, copiedSeries, 0, ySeries.length );
+        final double[] copiedSeries = new double[this.ySeries.length];
+        System.arraycopy ( this.ySeries, 0, copiedSeries, 0, this.ySeries.length );
 
         return copiedSeries;
     }
@@ -355,7 +355,7 @@ abstract public class Series implements ISeries
     /*
      * @see ISeries#setXDateSeries(Date[])
      */
-    public void setXDateSeries ( Date[] series )
+    public void setXDateSeries ( final Date[] series )
     {
         if ( series == null )
         {
@@ -363,13 +363,20 @@ abstract public class Series implements ISeries
             return; // to suppress warning...
         }
 
-        double[] xDateSeries = new double[series.length];
+        final double[] xDateSeries = new double[series.length];
         for ( int i = 0; i < series.length; i++ )
         {
-            xDateSeries[i] = series[i].getTime ();
+            if ( series[i] != null )
+            {
+                xDateSeries[i] = series[i].getTime ();
+            }
+            else
+            {
+                xDateSeries[i] = Double.NaN;
+            }
         }
         setXSeries ( xDateSeries );
-        isDateSeries = true;
+        this.isDateSeries = true;
     }
 
     /*
@@ -377,15 +384,15 @@ abstract public class Series implements ISeries
      */
     public Date[] getXDateSeries ()
     {
-        if ( !isDateSeries )
+        if ( !this.isDateSeries )
         {
             return null;
         }
 
-        Date[] series = new Date[xSeries.length];
+        final Date[] series = new Date[this.xSeries.length];
         for ( int i = 0; i < series.length; i++ )
         {
-            series[i] = new Date ( (long)xSeries[i] );
+            series[i] = new Date ( (long)this.xSeries[i] );
         }
         return series;
     }
@@ -397,7 +404,7 @@ abstract public class Series implements ISeries
      */
     public boolean isDateSeries ()
     {
-        return isDateSeries;
+        return this.isDateSeries;
     }
 
     /**
@@ -407,10 +414,7 @@ abstract public class Series implements ISeries
      */
     public boolean isValidStackSeries ()
     {
-        return stackEnabled && stackSeries != null && stackSeries.length > 0 && !chart
-                .getAxisSet ()
-                    .getYAxis ( yAxisId )
-                    .isLogScaleEnabled () && ( (Axis)chart.getAxisSet ().getXAxis ( xAxisId ) ).isValidCategoryAxis ();
+        return this.stackEnabled && this.stackSeries != null && this.stackSeries.length > 0 && !this.chart.getAxisSet ().getYAxis ( this.yAxisId ).isLogScaleEnabled () && ( (Axis)this.chart.getAxisSet ().getXAxis ( this.xAxisId ) ).isValidCategoryAxis ();
     }
 
     /**
@@ -420,8 +424,8 @@ abstract public class Series implements ISeries
      */
     public Range getXRange ()
     {
-        double min = minX;
-        double max = maxX;
+        double min = this.minX;
+        double max = this.maxX;
         if ( min == max )
         {
             min = min - 0.5;
@@ -449,16 +453,16 @@ abstract public class Series implements ISeries
      */
     public Range getYRange ()
     {
-        double min = minY;
-        double max = maxY;
-        Axis xAxis = (Axis)chart.getAxisSet ().getXAxis ( xAxisId );
+        final double min = this.minY;
+        double max = this.maxY;
+        final Axis xAxis = (Axis)this.chart.getAxisSet ().getXAxis ( this.xAxisId );
         if ( isValidStackSeries () && xAxis.isValidCategoryAxis () )
         {
-            for ( int i = 0; i < stackSeries.length; i++ )
+            for ( int i = 0; i < this.stackSeries.length; i++ )
             {
-                if ( max < stackSeries[i] )
+                if ( max < this.stackSeries[i] )
                 {
-                    max = stackSeries[i];
+                    max = this.stackSeries[i];
                 }
             }
         }
@@ -472,7 +476,7 @@ abstract public class Series implements ISeries
      */
     protected ICompress getCompressor ()
     {
-        return compressor;
+        return this.compressor;
     }
 
     /**
@@ -485,29 +489,29 @@ abstract public class Series implements ISeries
      */
     public int getXAxisId ()
     {
-        return xAxisId;
+        return this.xAxisId;
     }
 
     /*
      * @see ISeries#setXAxisId(int)
      */
-    public void setXAxisId ( int id )
+    public void setXAxisId ( final int id )
     {
-        if ( xAxisId == id )
+        if ( this.xAxisId == id )
         {
             return;
         }
 
-        IAxis axis = chart.getAxisSet ().getXAxis ( xAxisId );
+        final IAxis axis = this.chart.getAxisSet ().getXAxis ( this.xAxisId );
 
-        if ( minX <= 0 && axis != null && axis.isLogScaleEnabled () )
+        if ( this.minX <= 0 && axis != null && axis.isLogScaleEnabled () )
         {
-            chart.getAxisSet ().getXAxis ( xAxisId ).enableLogScale ( false );
+            this.chart.getAxisSet ().getXAxis ( this.xAxisId ).enableLogScale ( false );
         }
 
-        xAxisId = id;
+        this.xAxisId = id;
 
-        ( (SeriesSet)chart.getSeriesSet () ).updateStackAndRiserData ();
+        ( (SeriesSet)this.chart.getSeriesSet () ).updateStackAndRiserData ();
     }
 
     /*
@@ -515,15 +519,15 @@ abstract public class Series implements ISeries
      */
     public int getYAxisId ()
     {
-        return yAxisId;
+        return this.yAxisId;
     }
 
     /*
      * @see ISeries#setYAxisId(int)
      */
-    public void setYAxisId ( int id )
+    public void setYAxisId ( final int id )
     {
-        yAxisId = id;
+        this.yAxisId = id;
     }
 
     /*
@@ -531,7 +535,7 @@ abstract public class Series implements ISeries
      */
     public ISeriesLabel getLabel ()
     {
-        return seriesLabel;
+        return this.seriesLabel;
     }
 
     /*
@@ -539,7 +543,7 @@ abstract public class Series implements ISeries
      */
     public IErrorBar getXErrorBar ()
     {
-        return xErrorBar;
+        return this.xErrorBar;
     }
 
     /*
@@ -547,7 +551,7 @@ abstract public class Series implements ISeries
      */
     public IErrorBar getYErrorBar ()
     {
-        return yErrorBar;
+        return this.yErrorBar;
     }
 
     /**
@@ -555,7 +559,7 @@ abstract public class Series implements ISeries
      * 
      * @param stackSeries
      */
-    protected void setStackSeries ( double[] stackSeries )
+    protected void setStackSeries ( final double[] stackSeries )
     {
         this.stackSeries = stackSeries;
     }
@@ -563,21 +567,21 @@ abstract public class Series implements ISeries
     /*
      * @see ISeries#getPixelCoordinates(int)
      */
-    public Point getPixelCoordinates ( int index )
+    public Point getPixelCoordinates ( final int index )
     {
 
         // get the horizontal and vertical axes
         IAxis hAxis;
         IAxis vAxis;
-        if ( chart.getOrientation () == SWT.HORIZONTAL )
+        if ( this.chart.getOrientation () == SWT.HORIZONTAL )
         {
-            hAxis = chart.getAxisSet ().getXAxis ( xAxisId );
-            vAxis = chart.getAxisSet ().getYAxis ( yAxisId );
+            hAxis = this.chart.getAxisSet ().getXAxis ( this.xAxisId );
+            vAxis = this.chart.getAxisSet ().getYAxis ( this.yAxisId );
         }
-        else if ( chart.getOrientation () == SWT.VERTICAL )
+        else if ( this.chart.getOrientation () == SWT.VERTICAL )
         {
-            hAxis = chart.getAxisSet ().getYAxis ( yAxisId );
-            vAxis = chart.getAxisSet ().getXAxis ( xAxisId );
+            hAxis = this.chart.getAxisSet ().getYAxis ( this.yAxisId );
+            vAxis = this.chart.getAxisSet ().getXAxis ( this.xAxisId );
         }
         else
         {
@@ -597,7 +601,7 @@ abstract public class Series implements ISeries
      *            the series index
      * @return the pixel coordinates
      */
-    private int getPixelCoordinate ( IAxis axis, int index )
+    private int getPixelCoordinate ( final IAxis axis, final int index )
     {
 
         // get the data coordinate
@@ -610,30 +614,30 @@ abstract public class Series implements ISeries
             }
             else
             {
-                if ( index < 0 || xSeries.length <= index )
+                if ( index < 0 || this.xSeries.length <= index )
                 {
                     throw new IllegalArgumentException ( "Series index is out of range." ); //$NON-NLS-1$
                 }
-                dataCoordinate = xSeries[index];
+                dataCoordinate = this.xSeries[index];
             }
         }
         else if ( axis.getDirection () == Direction.Y )
         {
             if ( isValidStackSeries () )
             {
-                if ( index < 0 || stackSeries.length <= index )
+                if ( index < 0 || this.stackSeries.length <= index )
                 {
                     throw new IllegalArgumentException ( "Series index is out of range." ); //$NON-NLS-1$
                 }
-                dataCoordinate = stackSeries[index];
+                dataCoordinate = this.stackSeries[index];
             }
             else
             {
-                if ( index < 0 || ySeries.length <= index )
+                if ( index < 0 || this.ySeries.length <= index )
                 {
                     throw new IllegalArgumentException ( "Series index is out of range." ); //$NON-NLS-1$
                 }
-                dataCoordinate = ySeries[index];
+                dataCoordinate = this.ySeries[index];
             }
         }
         else
@@ -660,20 +664,18 @@ abstract public class Series implements ISeries
      *            the range
      * @return the range with margin
      */
-    protected Range getRangeWithMargin ( int lowerPlotMargin, int upperPlotMargin, int length, Axis axis, Range range )
+    protected Range getRangeWithMargin ( final int lowerPlotMargin, final int upperPlotMargin, final int length, final Axis axis, final Range range )
     {
         if ( length == 0 )
         {
             return range;
         }
 
-        int lowerPixelCoordinate = axis.getPixelCoordinate ( range.lower, range.lower, range.upper ) + lowerPlotMargin * ( axis
-                .isHorizontalAxis () ? -1 : 1 );
-        int upperPixelCoordinate = axis.getPixelCoordinate ( range.upper, range.lower, range.upper ) + upperPlotMargin * ( axis
-                .isHorizontalAxis () ? 1 : -1 );
+        final int lowerPixelCoordinate = axis.getPixelCoordinate ( range.lower, range.lower, range.upper ) + lowerPlotMargin * ( axis.isHorizontalAxis () ? -1 : 1 );
+        final int upperPixelCoordinate = axis.getPixelCoordinate ( range.upper, range.lower, range.upper ) + upperPlotMargin * ( axis.isHorizontalAxis () ? 1 : -1 );
 
-        double lower = axis.getDataCoordinate ( lowerPixelCoordinate, range.lower, range.upper );
-        double upper = axis.getDataCoordinate ( upperPixelCoordinate, range.lower, range.upper );
+        final double lower = axis.getDataCoordinate ( lowerPixelCoordinate, range.lower, range.upper );
+        final double upper = axis.getDataCoordinate ( upperPixelCoordinate, range.lower, range.upper );
 
         return new Range ( lower, upper );
     }
@@ -683,7 +685,7 @@ abstract public class Series implements ISeries
      */
     protected void dispose ()
     {
-        for ( IDisposeListener listener : listeners )
+        for ( final IDisposeListener listener : this.listeners )
         {
             listener.disposed ( new Event () );
         }
@@ -692,9 +694,9 @@ abstract public class Series implements ISeries
     /*
      * @see IAxis#addDisposeListener(IDisposeListener)
      */
-    public void addDisposeListener ( IDisposeListener listener )
+    public void addDisposeListener ( final IDisposeListener listener )
     {
-        listeners.add ( listener );
+        this.listeners.add ( listener );
     }
 
     /**
@@ -707,16 +709,16 @@ abstract public class Series implements ISeries
      * @param height
      *            the height to draw series
      */
-    public void draw ( GC gc, int width, int height )
+    public void draw ( final GC gc, final int width, final int height )
     {
 
-        if ( !visible || width < 0 || height < 0 || xSeries == null || xSeries.length == 0 || ySeries == null || ySeries.length == 0 )
+        if ( !this.visible || width < 0 || height < 0 || this.xSeries == null || this.xSeries.length == 0 || this.ySeries == null || this.ySeries.length == 0 )
         {
             return;
         }
 
-        Axis xAxis = (Axis)chart.getAxisSet ().getXAxis ( getXAxisId () );
-        Axis yAxis = (Axis)chart.getAxisSet ().getYAxis ( getYAxisId () );
+        final Axis xAxis = (Axis)this.chart.getAxisSet ().getXAxis ( getXAxisId () );
+        final Axis yAxis = (Axis)this.chart.getAxisSet ().getYAxis ( getYAxisId () );
         if ( xAxis == null || yAxis == null )
         {
             return;
