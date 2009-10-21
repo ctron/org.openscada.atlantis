@@ -3,15 +3,6 @@
 <plugin>
 
    <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            class="org.openscada.da.client.test.Perspective"
-            icon="icons/stock_channel.png"
-            id="org.openscada.da.client.test.perspective"
-            name="DA">
-      </perspective>
-   </extension>
-   <extension
          point="org.eclipse.ui.views">
       <view
             allowMultiple="true"
@@ -58,18 +49,6 @@
                name="windowImages"
                value="icons/app/Sign_open-Scada_16px.png,icons/app/Sign_open-Scada_32px.png,icons/app/Sign_open-Scada_48px.png,icons/app/Sign_open-Scada_64px.png,icons/app/Sign_open-Scada_128px.png"/>
       </product>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
-         <viewShortcut id="org.openscada.da.test.views.RealTimeList"/>
-      </perspectiveExtension>
-      <perspectiveExtension
-            targetID="*">
-         <perspectiveShortcut
-               id="org.openscada.da.client.test.perspective">
-         </perspectiveShortcut>
-      </perspectiveExtension>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -158,6 +137,24 @@
             </command>
          </toolbar>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.openscada.da.ui.perspective">
+         <view
+               closeable="true"
+               id="org.openscada.da.test.views.RealTimeList"
+               minimized="false"
+               moveable="true"
+               ratio="0.75"
+               relationship="stack"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+      </perspectiveExtension>
    </extension>
    
   

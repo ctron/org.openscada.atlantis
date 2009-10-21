@@ -60,15 +60,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
-      <view
-            allowMultiple="false"
-            category="org.openscada.hd.ui.category"
-            class="org.openscada.hd.ui.views.ConnectionView"
-            fastViewWidthRatio="0.25"
-            id="org.openscada.hd.ui.ConnectionView"
-            name="%view.connections.name"
-            restorable="true">
-      </view>
       <category
             id="org.openscada.hd.ui.category"
             name="%category.hd.name">
@@ -97,59 +88,6 @@
             name="%view.trendView.name"
             restorable="true">
       </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            adaptable="false"
-            id="org.openscada.hd.ui.oc.ConnectionEntry"
-            objectClass="org.openscada.hd.ui.data.ConnectionEntryBean">
-         <action
-               class="org.openscada.hd.ui.actions.DisconnectAction"
-               enablesFor="1"
-               id="org.openscada.hd.ui.DisconnectAction"
-               label="%action.disconnect.label"
-               menubarPath="additions">
-         </action>
-         <action
-               class="org.openscada.hd.ui.actions.ConnectAction"
-               enablesFor="1"
-               id="org.openscada.hd.ui.ConnectAction"
-               label="%action.connect.label"
-               menubarPath="additions">
-         </action>
-      </objectContribution>
-      <objectContribution
-            adaptable="false"
-            id="org.openscada.hd.ui.oc.HistoricalItemEntry"
-            objectClass="org.openscada.hd.ui.data.HistoricalItemEntryBean">
-         <action
-               class="org.openscada.hd.ui.actions.CreateQueryAction"
-               enablesFor="1"
-               id="org.openscada.hd.ui.CreateQueryAction"
-               label="%action.createQuery.label"
-               menubarPath="additions">
-         </action>
-      </objectContribution>
-      <objectContribution
-            adaptable="false"
-            id="org.openscada.hd.ui.oc.QueryBufferBean"
-            objectClass="org.openscada.hd.ui.data.QueryBufferBean">
-         <action
-               class="org.openscada.hd.ui.actions.CloseQuery"
-               enablesFor="1"
-               id="org.openscada.hd.ui.CloseQueryAction"
-               label="%action.closeQuery.label"
-               menubarPath="additions">
-         </action>
-         <action
-               class="org.openscada.hd.ui.actions.RemoveQuery"
-               enablesFor="1"
-               id="org.openscada.hd.ui.RemoveQueryAction"
-               label="%action.removeQuery.label"
-               menubarPath="additions">
-         </action>
-      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

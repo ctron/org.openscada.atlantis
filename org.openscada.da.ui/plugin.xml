@@ -22,5 +22,37 @@
             name="%category.da.name">
       </category>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <perspectiveShortcut
+               id="org.openscada.da.ui.perspective">
+         </perspectiveShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.openscada.da.ui.perspective">
+         <view
+               closeable="true"
+               id="org.openscada.core.ui.connection.ConnectionView"
+               minimized="false"
+               moveable="true"
+               ratio="0.35"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.openscada.da.ui.PerspectiveFactory"
+            id="org.openscada.da.ui.perspective"
+            name="DA">
+      </perspective>
+   </extension>
 
 </plugin>
