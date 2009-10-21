@@ -68,7 +68,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     private final static long HEART_BEATS_PERIOD = 1000;
 
     /** Period in milliseconds between two consecutive attempts to delete old data. */
-    private final static long CLEANER_TASK_PERIOD = 1000 * 10;
+    private final static long CLEANER_TASK_PERIOD = 1000 * 3;
 
     /** Maximum data age of heart beat data. */
     private final static long PROPOSED_HEART_BEAT_DATA_AGE = 1;
@@ -331,10 +331,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     public synchronized void start ()
     {
         // activate heart beat functionality
-        if ( !importMode )
-        {
-            initializeHeartBeat ();
-        }
+        initializeHeartBeat ();
 
         // get latest reliable time and start heart beat task
         latestReliableTime = Long.MIN_VALUE;
@@ -473,16 +470,13 @@ public class StorageService implements SelfManagedConfigurationFactory
         }
 
         // start clean relicts timer
-        if ( !importMode )
-        {
-            relictCleanerTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( RELICT_CLEANER_THREAD_ID ) );
-            relictCleanerTask.scheduleWithFixedDelay ( new Runnable () {
-                public void run ()
-                {
-                    cleanupRelicts ();
-                }
-            }, CLEANER_TASK_PERIOD, CLEANER_TASK_PERIOD, TimeUnit.MILLISECONDS );
-        }
+        relictCleanerTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( RELICT_CLEANER_THREAD_ID ) );
+        relictCleanerTask.scheduleWithFixedDelay ( new Runnable () {
+            public void run ()
+            {
+                cleanupRelicts ();
+            }
+        }, CLEANER_TASK_PERIOD, CLEANER_TASK_PERIOD, TimeUnit.MILLISECONDS );
     }
 
     /**

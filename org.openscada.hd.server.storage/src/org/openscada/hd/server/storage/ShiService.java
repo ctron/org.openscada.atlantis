@@ -11,6 +11,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.openscada.ca.Configuration;
 import org.openscada.core.Variant;
@@ -26,6 +28,7 @@ import org.openscada.hd.server.storage.internal.QueryImpl;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.concurrent.HsdbThreadFactory;
 import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
@@ -46,6 +49,9 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
 {
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( ShiService.class );
+
+    /** Id of the data receiver thread. */
+    private final static String DATA_RECEIVER_THREAD_ID = "DataReceiver";
 
     /** Configuration of the service. */
     private final Configuration configuration;
@@ -79,6 +85,9 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
 
     /** Registration of this service. */
     private ServiceRegistration registration;
+
+    /** Task that receives the incoming data. */
+    private ExecutorService dataReceiver;
 
     /**
      * Constructor.
@@ -251,7 +260,24 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /**
      * @see org.openscada.hd.server.common.StorageHistoricalItem#updateData
      */
-    public synchronized void updateData ( final DataItemValue value )
+    public void updateData ( final DataItemValue value )
+    {
+        if ( dataReceiver != null )
+        {
+            dataReceiver.submit ( new Runnable () {
+                public void run ()
+                {
+                    processData ( value );
+                }
+            } );
+        }
+    }
+
+    /**
+     * This method processes the data tha is received via the data receiver task.
+     * @param value data that has to be processed
+     */
+    public synchronized void processData ( final DataItemValue value )
     {
         if ( !this.started || ( this.rootStorageChannel == null ) || ( value == null ) )
         {
@@ -265,9 +291,10 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         final Calendar calendar = value.getTimestamp ();
         final long now = System.currentTimeMillis ();
         final long time = calendar == null ? now : calendar.getTimeInMillis ();
-        if ( importMode || ( ( now - proposedDataAge ) > time ) )
+        if ( !importMode && ( ( now - proposedDataAge ) > time ) )
         {
             logger.warn ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", configuration.getId (), time );
+            return;
         }
         final double qualityIndicator = !value.isConnected () || value.isError () ? 0 : 1;
         try
@@ -389,7 +416,11 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     {
         stop ();
         started = true;
-        createInvalidEntry ( latestReliableTime );
+        if ( !importMode )
+        {
+            createInvalidEntry ( latestReliableTime );
+        }
+        dataReceiver = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( DATA_RECEIVER_THREAD_ID ) );
         registerService ( bundleContext );
     }
 
@@ -437,8 +468,15 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         // unregister service
         unregisterService ();
 
+        // stop data receiver
+        if ( dataReceiver != null )
+        {
+            dataReceiver.shutdown ();
+            dataReceiver = null;
+        }
+
         // create entry with data marked as invalid
-        if ( started )
+        if ( started && !importMode )
         {
             createInvalidEntry ( System.currentTimeMillis () );
         }
