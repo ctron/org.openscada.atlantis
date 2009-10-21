@@ -86,7 +86,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     private ConnectFuture connectingFuture;
 
-    private final ExecutorService executor;
+    private final ExecutorService lookupExecutor;
 
     private SocketAddress remoteAddress;
 
@@ -95,7 +95,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         super ();
         this.connectionInformation = connectionInformation;
 
-        this.executor = Executors.newCachedThreadPool ( new ThreadFactoryImplementation ( connectionInformation ) );
+        this.lookupExecutor = Executors.newCachedThreadPool ( new ThreadFactoryImplementation ( connectionInformation ) );
 
         this.messenger = new Messenger ( getMessageTimeout () );
 
@@ -366,7 +366,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         setState ( ConnectionState.LOOKUP, null );
 
-        this.executor.execute ( new Runnable () {
+        this.lookupExecutor.execute ( new Runnable () {
 
             public void run ()
             {
@@ -495,7 +495,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
                     logger.debug ( "Dispose connector...done" );
                 }
             };
-            this.executor.execute ( r );
+            this.lookupExecutor.execute ( r );
         }
     }
 
@@ -638,7 +638,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     protected void finalize () throws Throwable
     {
         logger.info ( "Finalized" );
-        this.executor.shutdown ();
+        this.lookupExecutor.shutdown ();
         super.finalize ();
     }
 
@@ -659,6 +659,11 @@ public abstract class ConnectionBase implements Connection, IoHandler
         {
             ConnectionBase.this.resolvedRemoteAddress ( null, e );
         }
+    }
+
+    public void dispose ()
+    {
+        this.lookupExecutor.shutdown ();
     }
 
 }
