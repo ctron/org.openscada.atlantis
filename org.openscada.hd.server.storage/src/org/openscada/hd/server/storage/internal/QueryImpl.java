@@ -493,7 +493,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /**
      * This method processes the query.
      */
-    private void processQuery ()
+    private synchronized void processQuery ()
     {
         try
         {
