@@ -262,12 +262,17 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public void updateData ( final DataItemValue value )
     {
+        final long now = System.currentTimeMillis ();
+        logger.debug ( "receiving data at: " + now );
         if ( dataReceiver != null )
         {
             dataReceiver.submit ( new Runnable () {
                 public void run ()
                 {
+                    final long then = System.currentTimeMillis ();
+                    logger.debug ( "processing data at: " + now );
                     processData ( value );
+                    logger.debug ( "data processing time: " + ( System.currentTimeMillis () - then ) );
                 }
             } );
         }
