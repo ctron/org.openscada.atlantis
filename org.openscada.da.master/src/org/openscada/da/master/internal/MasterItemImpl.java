@@ -12,8 +12,10 @@ import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemUpdateListener;
+import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.client.connection.service.ConnectionService;
+import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.MasterItemHandler;
@@ -45,6 +47,25 @@ public class MasterItemImpl implements ItemUpdateListener, ServiceListener, Mast
         {
             super.setError ( new OperationException ( reason ).fillInStackTrace () );
         }
+    }
+
+    private final class WriteAttributesOperationCallbackImplementation extends AbstractFuture<WriteAttributeResults> implements WriteAttributeOperationCallback
+    {
+        public void complete ( final WriteAttributeResults results )
+        {
+            super.setResult ( results );
+        }
+
+        public void error ( final Throwable error )
+        {
+            super.setError ( error );
+        }
+
+        public void failed ( final String reason )
+        {
+            super.setError ( new OperationException ( reason ).fillInStackTrace () );
+        }
+
     }
 
     private final static Logger logger = Logger.getLogger ( MasterItemImpl.class );
@@ -257,6 +278,13 @@ public class MasterItemImpl implements ItemUpdateListener, ServiceListener, Mast
     {
         final WriteOperationCallbackImplementation task = new WriteOperationCallbackImplementation ();
         this.connection.getConnection ().write ( this.itemId, value, task );
+        return task;
+    }
+
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes )
+    {
+        final WriteAttributesOperationCallbackImplementation task = new WriteAttributesOperationCallbackImplementation ();
+        this.connection.getConnection ().writeAttributes ( this.itemId, attributes, task );
         return task;
     }
 }
