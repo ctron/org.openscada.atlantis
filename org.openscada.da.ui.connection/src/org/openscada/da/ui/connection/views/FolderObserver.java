@@ -74,6 +74,7 @@ public abstract class FolderObserver extends WritableSet implements FolderListen
     {
         if ( isDisposed () )
         {
+            logger.debug ( "Folder already disposed" );
             return;
         }
 
@@ -81,6 +82,11 @@ public abstract class FolderObserver extends WritableSet implements FolderListen
 
         try
         {
+            if ( full )
+            {
+                clear ();
+            }
+
             if ( removed != null )
             {
                 for ( final String name : removed )
