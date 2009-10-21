@@ -3,7 +3,6 @@ package org.openscada.da.client.signalgenerator.action;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.openscada.da.client.base.action.AbstractItemAction;
-import org.openscada.da.client.base.item.DataItemHolder;
 import org.openscada.da.client.signalgenerator.GeneratorView;
 import org.openscada.da.ui.connection.data.Item;
 
@@ -16,9 +15,9 @@ public class ShowGenerator extends AbstractItemAction
     }
 
     @Override
-    protected void processItem ( final DataItemHolder item ) throws PartInitException
+    protected void processItem ( final Item item ) throws PartInitException
     {
         final GeneratorView view = (GeneratorView)this.page.showView ( GeneratorView.VIEW_ID, asSecondardId ( item ), IWorkbenchPage.VIEW_ACTIVATE );
-        view.setDataItem ( new Item ( item.getConnection ().getConnectionInformation ().toString (), item.getItemId () ) );
+        view.setDataItem ( item );
     }
 }

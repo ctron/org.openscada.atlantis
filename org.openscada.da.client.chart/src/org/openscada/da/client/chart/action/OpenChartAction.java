@@ -13,18 +13,14 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
-import org.openscada.da.client.base.connection.ConnectionManager;
-import org.openscada.da.client.base.item.DataItemHolder;
-import org.openscada.da.client.base.item.ItemSelectionHelper;
 import org.openscada.da.client.chart.Activator;
 import org.openscada.da.client.chart.Messages;
-import org.openscada.da.client.chart.view.ChartView;
 import org.openscada.da.client.chart.view.ChartView2;
 import org.openscada.da.ui.connection.data.Item;
+import org.openscada.da.ui.connection.data.ItemSelectionHelper;
 
 public class OpenChartAction implements IViewActionDelegate, IObjectActionDelegate
 {
-
     private static Logger logger = Logger.getLogger ( OpenChartAction.class );
 
     private IWorkbenchPartSite site = null;
@@ -45,9 +41,9 @@ public class OpenChartAction implements IViewActionDelegate, IObjectActionDelega
 
         final StringBuilder sb = new StringBuilder ();
 
-        for ( final DataItemHolder item : ItemSelectionHelper.getSelectionHookedUp ( this.selection, ConnectionManager.getDefault () ) )
+        for ( final Item item : ItemSelectionHelper.getSelection ( this.selection ) )
         {
-            sb.append ( item.getItemId () );
+            sb.append ( item.getId () );
         }
 
         String secondaryId = sb.toString ();
@@ -56,17 +52,13 @@ public class OpenChartAction implements IViewActionDelegate, IObjectActionDelega
 
         try
         {
-            final IViewPart viewer = this.site.getPage ().showView ( ChartView.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE );
+            final IViewPart viewer = this.site.getPage ().showView ( ChartView2.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE );
 
-            for ( final DataItemHolder item : ItemSelectionHelper.getSelectionHookedUp ( this.selection, ConnectionManager.getDefault () ) )
+            for ( final Item item : ItemSelectionHelper.getSelection ( this.selection ) )
             {
-                if ( viewer instanceof ChartView )
+                if ( viewer instanceof ChartView2 )
                 {
-                    ( (ChartView)viewer ).setDataItem ( item );
-                }
-                else if ( viewer instanceof ChartView2 )
-                {
-                    ( (ChartView2)viewer ).addItem ( new Item ( item.getConnection ().getConnectionInformation ().toString (), item.getItemId () ) );
+                    ( (ChartView2)viewer ).addItem ( item );
                 }
             }
 

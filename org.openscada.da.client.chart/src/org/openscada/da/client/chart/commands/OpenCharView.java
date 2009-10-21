@@ -7,7 +7,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.openscada.da.client.chart.view.ChartView;
 import org.openscada.da.client.chart.view.ChartView2;
 import org.openscada.da.ui.connection.commands.AbstractItemHandler;
 import org.openscada.da.ui.connection.data.Item;
@@ -33,7 +32,7 @@ public class OpenCharView extends AbstractItemHandler
         IViewPart viewer;
         try
         {
-            viewer = getActivePage ().showView ( ChartView.VIEW_ID, sb.toString (), IWorkbenchPage.VIEW_ACTIVATE );
+            viewer = getActivePage ().showView ( ChartView2.VIEW_ID, sb.toString (), IWorkbenchPage.VIEW_ACTIVATE );
         }
         catch ( final PartInitException e )
         {

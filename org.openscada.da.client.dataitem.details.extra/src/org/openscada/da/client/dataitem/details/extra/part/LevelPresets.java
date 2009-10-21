@@ -18,9 +18,7 @@ import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.Triangle;
 import org.eclipse.draw2d.geometry.Dimension;
-import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.client.NoConnectionException;
 
 public class LevelPresets extends AbstractBaseDraw2DDetailsPart
 {
@@ -250,16 +248,7 @@ public class LevelPresets extends AbstractBaseDraw2DDetailsPart
 
         attributes.put ( String.format ( "org.openscada.da.level.%s.preset", string ), value );
 
-        try
-        {
-            this.itemHolder.getConnection ().writeAttributes ( this.item.getItemId (), attributes );
-        }
-        catch ( final NoConnectionException e )
-        {
-        }
-        catch ( final OperationException e )
-        {
-        }
+        this.item.writeAtrtibutes ( attributes );
     }
 
 }

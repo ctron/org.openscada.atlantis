@@ -1,18 +1,55 @@
 package org.openscada.da.ui.connection.data;
 
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.Variant;
 import org.openscada.core.connection.provider.ConnectionRequest;
 import org.openscada.core.connection.provider.ConnectionTracker;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.da.client.WriteAttributeOperationCallback;
+import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.connection.provider.ConnectionService;
+import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.utils.concurrent.AbstractFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
 
 public class DataItemHolder
 {
+    private final class WriteFuture extends AbstractFuture<Object>
+    {
+        @Override
+        public void setError ( final Throwable error )
+        {
+            super.setError ( error );
+        }
+
+        @Override
+        protected void setResult ( final Object result )
+        {
+            super.setResult ( result );
+        }
+    }
+
+    private final class WriteAttributesFuture extends AbstractFuture<WriteAttributeResults>
+    {
+        @Override
+        public void setError ( final Throwable error )
+        {
+            super.setError ( error );
+        }
+
+        @Override
+        protected void setResult ( final WriteAttributeResults result )
+        {
+            super.setResult ( result );
+        }
+    }
+
     private final Item item;
 
     private final BundleContext context;
@@ -117,8 +154,63 @@ public class DataItemHolder
         this.tracker.close ();
     }
 
+    public NotifyFuture<Object> write ( final Variant value )
+    {
+        final WriteFuture writeResult = new WriteFuture ();
+
+        this.connection.getConnection ().write ( this.item.getId (), value, new WriteOperationCallback () {
+
+            public void failed ( final String error )
+            {
+                writeResult.setError ( new RuntimeException ( error ).fillInStackTrace () );
+            }
+
+            public void error ( final Throwable e )
+            {
+                writeResult.setError ( e );
+            }
+
+            public void complete ()
+            {
+                writeResult.setResult ( null );
+            }
+        } );
+
+        return writeResult;
+    }
+
+    public NotifyFuture<WriteAttributeResults> writeAtrtibutes ( final Map<String, Variant> attributes )
+    {
+        final WriteAttributesFuture writeResult = new WriteAttributesFuture ();
+
+        this.connection.getConnection ().writeAttributes ( this.item.getId (), attributes, new WriteAttributeOperationCallback () {
+
+            public void failed ( final String error )
+            {
+                writeResult.setError ( new RuntimeException ( error ).fillInStackTrace () );
+            }
+
+            public void error ( final Throwable e )
+            {
+                writeResult.setError ( e );
+            }
+
+            public void complete ( final WriteAttributeResults result )
+            {
+                writeResult.setResult ( result );
+            }
+        } );
+
+        return writeResult;
+    }
+
     public Item getItem ()
     {
         return this.item;
+    }
+
+    public boolean waitForConnection ( final long timeout ) throws InterruptedException
+    {
+        return this.tracker.waitForService ( timeout );
     }
 }

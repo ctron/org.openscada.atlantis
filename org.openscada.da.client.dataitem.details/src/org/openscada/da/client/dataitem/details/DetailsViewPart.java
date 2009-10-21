@@ -35,12 +35,10 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
-import org.openscada.da.client.AsyncDataItem;
-import org.openscada.da.client.DataItem;
-import org.openscada.da.client.base.connection.ConnectionManager;
-import org.openscada.da.client.base.item.DataItemHolder;
-import org.openscada.da.client.base.item.ItemSelectionHelper;
+import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.dataitem.details.part.DetailsPart;
+import org.openscada.da.ui.connection.data.DataItemHolder;
+import org.openscada.da.ui.connection.data.DataSourceListener;
 import org.openscada.da.ui.connection.data.Item;
 
 public class DetailsViewPart extends ViewPart
@@ -50,7 +48,7 @@ public class DetailsViewPart extends ViewPart
 
     private final Collection<DetailsPart> detailParts = new LinkedList<DetailsPart> ();
 
-    private DataItem dataItem;
+    private DataItemHolder dataItem;
 
     private CTabFolder tabFolder;
 
@@ -161,15 +159,19 @@ public class DetailsViewPart extends ViewPart
     {
         disposeDataItem ();
 
-        final DataItemHolder itemHolder = ItemSelectionHelper.hookupItem ( item.getConnectionString (), item.getId (), ConnectionManager.getDefault () );
-
         if ( item != null )
         {
-            this.dataItem = new AsyncDataItem ( itemHolder.getItemId (), itemHolder.getItemManager () );
+            this.dataItem = new DataItemHolder ( Activator.getDefault ().getBundle ().getBundleContext (), item, new DataSourceListener () {
+
+                public void updateData ( final DataItemValue value )
+                {
+                    DetailsViewPart.this.updateData ( value );
+                }
+            } );
 
             for ( final DetailsPart part : this.detailParts )
             {
-                part.setDataItem ( itemHolder, this.dataItem );
+                part.setDataItem ( this.dataItem );
             }
         }
         else
@@ -177,8 +179,16 @@ public class DetailsViewPart extends ViewPart
             // clear
             for ( final DetailsPart part : this.detailParts )
             {
-                part.setDataItem ( null, null );
+                part.setDataItem ( null );
             }
+        }
+    }
+
+    protected void updateData ( final DataItemValue value )
+    {
+        for ( final DetailsPart part : this.detailParts )
+        {
+            part.updateData ( value );
         }
     }
 
@@ -186,7 +196,7 @@ public class DetailsViewPart extends ViewPart
     {
         if ( this.dataItem != null )
         {
-            this.dataItem.unregister ();
+            this.dataItem.dispose ();
             this.dataItem = null;
         }
     }

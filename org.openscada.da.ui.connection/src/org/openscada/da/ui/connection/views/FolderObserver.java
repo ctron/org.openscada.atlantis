@@ -61,6 +61,12 @@ public abstract class FolderObserver extends WritableSet implements FolderListen
 
     public synchronized void folderChanged ( final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
+        if ( isDisposed () )
+        {
+            logger.debug ( "Folder already disposed" );
+            return;
+        }
+
         getRealm ().asyncExec ( new Runnable () {
 
             public void run ()

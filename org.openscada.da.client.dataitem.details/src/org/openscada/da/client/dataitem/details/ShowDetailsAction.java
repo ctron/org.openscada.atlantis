@@ -22,7 +22,6 @@ package org.openscada.da.client.dataitem.details;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.openscada.da.client.base.action.AbstractItemAction;
-import org.openscada.da.client.base.item.DataItemHolder;
 import org.openscada.da.ui.connection.data.Item;
 
 public class ShowDetailsAction extends AbstractItemAction
@@ -33,10 +32,10 @@ public class ShowDetailsAction extends AbstractItemAction
     }
 
     @Override
-    protected void processItem ( final DataItemHolder item ) throws PartInitException
+    protected void processItem ( final Item item ) throws PartInitException
     {
         final DetailsViewPart view = (DetailsViewPart)this.page.showView ( DetailsViewPart.VIEW_ID, asSecondardId ( item ), IWorkbenchPage.VIEW_ACTIVATE );
-        view.setDataItem ( new Item ( item.getConnection ().getConnectionInformation ().toString (), item.getItemId () ) );
+        view.setDataItem ( item );
     }
 
 }

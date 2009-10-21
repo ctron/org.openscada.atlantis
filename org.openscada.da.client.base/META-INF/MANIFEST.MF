@@ -33,12 +33,6 @@ Export-Package: org.openscada.da.client.base.action;version="0.14.0";
    org.openscada.da.client,
    org.openscada.da.client.base.item,
    org.openscada.core",
- org.openscada.da.client.base.item;version="0.14.0";
-  uses:="org.eclipse.ui,
-   org.openscada.da.client,
-   org.eclipse.jface.viewers,
-   org.openscada.da.client.base.connection,
-   org.openscada.da.ui.connection.data",
  org.openscada.da.client.base.realtime;version="0.14.0";
   uses:="org.eclipse.core.runtime,
    org.eclipse.ui,

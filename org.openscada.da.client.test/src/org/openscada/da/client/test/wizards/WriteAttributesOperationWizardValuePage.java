@@ -59,19 +59,15 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.openscada.core.Variant;
-import org.openscada.da.client.Connection;
 import org.openscada.da.client.base.browser.ValueType;
-import org.openscada.da.client.base.connection.ConnectionManager;
-import org.openscada.da.client.base.item.DataItemHolder;
-import org.openscada.da.client.base.item.ItemSelectionHelper;
+import org.openscada.da.ui.connection.data.Item;
+import org.openscada.da.ui.connection.data.ItemSelectionHelper;
 
 class WriteAttributesOperationWizardValuePage extends WizardPage implements IWizardPage
 {
     private static Logger logger = Logger.getLogger ( WriteAttributesOperationWizardValuePage.class );
 
     private Text itemIdText = null;
-
-    private Connection connection = null;
 
     private TableViewer table = null;
 
@@ -382,7 +378,7 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
 
     private final RemoveAction _removeAction = new RemoveAction ();
 
-    private String itemId;
+    private Item item;
 
     protected WriteAttributesOperationWizardValuePage ()
     {
@@ -491,15 +487,15 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
 
     private void updateSelection ()
     {
-        this.itemIdText.setText ( this.itemId );
+        this.itemIdText.setText ( this.item.getId () );
     }
 
     private void dialogChanged ()
     {
         // connection
-        if ( this.connection == null )
+        if ( this.item == null )
         {
-            updateStatus ( "No hive connection selection" );
+            updateStatus ( "No item selection" );
             return;
         }
 
@@ -534,9 +530,9 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
         setPageComplete ( message == null );
     }
 
-    public String getItem ()
+    public Item getItem ()
     {
-        return this.itemIdText.getText ();
+        return new Item ( this.item.getConnectionString (), this.itemIdText.getText () );
     }
 
     public Map<String, Variant> getAttributes ()
@@ -551,15 +547,8 @@ class WriteAttributesOperationWizardValuePage extends WizardPage implements IWiz
         return attributes;
     }
 
-    public Connection getConnection ()
-    {
-        return this.connection;
-    }
-
     public void setSelection ( final IStructuredSelection selection )
     {
-        final DataItemHolder dataItem = ItemSelectionHelper.getFirstFromSelectionHookedUp ( selection, ConnectionManager.getDefault () );
-        this.itemId = dataItem.getItemId ();
-        this.connection = dataItem.getConnection ();
+        this.item = ItemSelectionHelper.getFirstFromSelection ( selection );
     }
 }

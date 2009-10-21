@@ -27,10 +27,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.openscada.da.client.DataItem;
-import org.openscada.da.client.base.item.DataItemHolder;
 import org.openscada.da.client.dataitem.details.part.AbstractBaseDetailsPart;
 import org.openscada.da.client.dataitem.details.part.DetailsPart;
+import org.openscada.da.ui.connection.data.DataItemHolder;
 
 public class OverviewDetailsPart extends AbstractBaseDetailsPart implements DetailsPart
 {
@@ -98,14 +97,14 @@ public class OverviewDetailsPart extends AbstractBaseDetailsPart implements Deta
     }
 
     @Override
-    public void setDataItem ( final DataItemHolder itemHolder, final DataItem item )
+    public void setDataItem ( final DataItemHolder item )
     {
-        super.setDataItem ( itemHolder, item );
+        super.setDataItem ( item );
 
-        if ( item != null && itemHolder != null )
+        if ( item != null )
         {
-            this.connectionUriText.setText ( "??" );
-            this.itemIdText.setText ( item.getItemId () );
+            this.connectionUriText.setText ( item.getItem ().getConnectionString () );
+            this.itemIdText.setText ( item.getItem ().getId () );
         }
         else
         {

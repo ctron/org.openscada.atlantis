@@ -122,7 +122,6 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.ui"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.base"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.chart"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.connection.manager.view"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.connector"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.dataitem.details"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.dataitem.details.extra"/>

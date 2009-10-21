@@ -153,4 +153,8 @@ public class ConnectionTracker
         return this.service;
     }
 
+    public boolean waitForService ( final long timeout ) throws InterruptedException
+    {
+        return this.tracker.waitForService ( timeout ) != null;
+    }
 }

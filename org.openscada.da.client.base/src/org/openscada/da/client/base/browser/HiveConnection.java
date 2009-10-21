@@ -37,7 +37,6 @@ import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;
-import org.openscada.da.client.base.connection.ConnectionManager;
 import org.openscada.da.client.base.connection.ConnectionManagerEntry;
 
 public class HiveConnection extends Observable implements IActionFilter, IPropertySource
@@ -72,7 +71,9 @@ public class HiveConnection extends Observable implements IActionFilter, IProper
 
         this.connectionInformation = ConnectionInformation.fromURI ( connectionInfo.getConnectionString () );
 
-        this.connectionEntry = ConnectionManager.getDefault ().getEntry ( this.connectionInformation, false );
+        // this.connectionEntry = ConnectionManager.getDefault ().getEntry ( this.connectionInformation, false );
+
+        this.connectionEntry = null;
 
         this.connection = this.connectionEntry.getConnection ();
 

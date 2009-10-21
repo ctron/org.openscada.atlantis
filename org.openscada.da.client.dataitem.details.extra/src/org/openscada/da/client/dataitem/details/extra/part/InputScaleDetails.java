@@ -20,9 +20,7 @@ import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.RoundedRectangle;
-import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.client.NoConnectionException;
 
 public class InputScaleDetails extends AbstractBaseDraw2DDetailsPart
 {
@@ -127,16 +125,7 @@ public class InputScaleDetails extends AbstractBaseDraw2DDetailsPart
         {
             final Map<String, Variant> attributes = new HashMap<String, Variant> ();
             attributes.put ( "org.openscada.da.scale.input.factor", factor );
-            try
-            {
-                this.itemHolder.getConnection ().writeAttributes ( this.itemHolder.getItemId (), attributes );
-            }
-            catch ( final NoConnectionException e )
-            {
-            }
-            catch ( final OperationException e )
-            {
-            }
+            this.item.writeAtrtibutes ( attributes );
         }
     }
 

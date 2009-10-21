@@ -165,6 +165,11 @@ public class ListEntry extends Observable implements IAdaptable, IPropertySource
 
     public synchronized List<AttributePair> getAttributes ()
     {
+        if ( this.value == null )
+        {
+            return new LinkedList<AttributePair> ();
+        }
+
         final List<AttributePair> pairs = new ArrayList<AttributePair> ( this.value.getAttributes ().size () );
         for ( final Map.Entry<String, Variant> entry : this.value.getAttributes ().entrySet () )
         {

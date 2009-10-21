@@ -38,17 +38,15 @@ import org.eclipse.swt.widgets.Text;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.da.client.Connection;
 import org.openscada.da.client.base.browser.ValueType;
-import org.openscada.da.client.base.connection.ConnectionManager;
-import org.openscada.da.client.base.item.DataItemHolder;
-import org.openscada.da.client.base.item.ItemSelectionHelper;
+import org.openscada.da.ui.connection.data.Item;
+import org.openscada.da.ui.connection.data.ItemSelectionHelper;
 
 class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
 {
     private static Logger log = Logger.getLogger ( WriteOperationWizardValuePage.class );
 
-    private Text itemNameText = null;
+    private Text itemIdText = null;
 
     private Text valueText = null;
 
@@ -58,11 +56,9 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
 
     private Color defaultValueColor = null;
 
-    private Connection connection = null;
-
     private Variant value = null;
 
-    private String itemId;
+    private Item item;
 
     protected WriteOperationWizardValuePage ()
     {
@@ -83,10 +79,10 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         Label label = new Label ( container, SWT.NONE );
         label.setText ( "&Item:" );
 
-        this.itemNameText = new Text ( container, SWT.BORDER | SWT.SINGLE );
+        this.itemIdText = new Text ( container, SWT.BORDER | SWT.SINGLE );
         GridData gd = new GridData ( GridData.FILL_HORIZONTAL );
-        this.itemNameText.setLayoutData ( gd );
-        this.itemNameText.addModifyListener ( new ModifyListener () {
+        this.itemIdText.setLayoutData ( gd );
+        this.itemIdText.addModifyListener ( new ModifyListener () {
             public void modifyText ( final ModifyEvent e )
             {
                 dialogChanged ();
@@ -142,7 +138,14 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
 
     private void updateSelection ()
     {
-        this.itemNameText.setText ( this.itemId );
+        if ( this.item != null )
+        {
+            this.itemIdText.setText ( this.item.getId () );
+        }
+        else
+        {
+            this.itemIdText.setText ( "" );
+        }
     }
 
     private void setValueText ( final String value, final boolean systemText )
@@ -163,14 +166,14 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
     private void dialogChanged ()
     {
         // connection
-        if ( this.connection == null )
+        if ( this.item == null )
         {
-            updateStatus ( "No hive connection selection" );
+            updateStatus ( "No item selection" );
             return;
         }
 
         // item
-        if ( this.itemNameText.getText ().length () <= 0 )
+        if ( this.itemIdText.getText ().length () <= 0 )
         {
             updateStatus ( "Item name must not be empty" );
             return;
@@ -225,9 +228,9 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         setPageComplete ( message == null );
     }
 
-    public String getItem ()
+    public Item getItem ()
     {
-        return this.itemNameText.getText ();
+        return new Item ( this.item.getConnectionString (), this.itemIdText.getText () );
     }
 
     public Variant getValue ()
@@ -235,15 +238,8 @@ class WriteOperationWizardValuePage extends WizardPage implements IWizardPage
         return this.value;
     }
 
-    public Connection getConnection ()
-    {
-        return this.connection;
-    }
-
     public void setSelection ( final IStructuredSelection selection )
     {
-        final DataItemHolder dataItem = ItemSelectionHelper.getFirstFromSelectionHookedUp ( selection, ConnectionManager.getDefault () );
-        this.itemId = dataItem.getItemId ();
-        this.connection = dataItem.getConnection ();
+        this.item = ItemSelectionHelper.getFirstFromSelection ( selection );
     }
 }

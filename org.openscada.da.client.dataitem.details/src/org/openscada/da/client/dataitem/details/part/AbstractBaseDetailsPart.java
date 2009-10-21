@@ -19,27 +19,20 @@
 
 package org.openscada.da.client.dataitem.details.part;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.openscada.core.Variant;
-import org.openscada.da.client.DataItem;
 import org.openscada.da.client.DataItemValue;
-import org.openscada.da.client.base.item.DataItemHolder;
+import org.openscada.da.ui.connection.data.DataItemHolder;
 
-public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
+public abstract class AbstractBaseDetailsPart implements DetailsPart
 {
-
     protected Display display;
 
-    protected DataItem item;
+    protected DataItemHolder item;
 
     protected DataItemValue value;
-
-    protected DataItemHolder itemHolder;
 
     protected Shell shell;
 
@@ -52,41 +45,18 @@ public abstract class AbstractBaseDetailsPart implements Observer, DetailsPart
         this.parent = parent;
     }
 
-    public void setDataItem ( final DataItemHolder itemHolder, final DataItem item )
+    public void setDataItem ( final DataItemHolder item )
     {
-        this.itemHolder = itemHolder;
-
-        if ( this.item != null )
-        {
-            this.item.deleteObserver ( this );
-            this.item = null;
-        }
         this.item = item;
-
-        if ( this.item != null )
-        {
-            // fetch the initial value
-            this.value = this.item.getSnapshotValue ();
-            this.item.addObserver ( this );
-            update ();
-        }
     }
 
     public void dispose ()
     {
-        if ( this.item != null )
-        {
-            this.item.deleteObserver ( this );
-            this.item = null;
-        }
     }
 
-    /**
-     * called by DataItem
-     */
-    public void update ( final Observable o, final Object arg )
+    public void updateData ( final DataItemValue value )
     {
-        AbstractBaseDetailsPart.this.value = AbstractBaseDetailsPart.this.item.getSnapshotValue ();
+        this.value = value;
 
         // trigger async update in display thread
         this.display.asyncExec ( new Runnable () {

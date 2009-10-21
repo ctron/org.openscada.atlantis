@@ -48,10 +48,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
-import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.base.browser.ValueType;
 import org.openscada.da.client.dataitem.details.part.AbstractBaseDetailsPart;
-import org.openscada.da.core.WriteAttributeResults;
 
 /**
  * A detail view for the manual override value, setting and getting the status
@@ -255,21 +253,7 @@ public class ManualOverride extends AbstractBaseDetailsPart
         }
 
         attributes.put ( "org.openscada.da.manual.value", value );
-        this.itemHolder.getConnection ().writeAttributes ( this.item.getItemId (), attributes, new WriteAttributeOperationCallback () {
-
-            public void complete ( final WriteAttributeResults result )
-            {
-
-            }
-
-            public void error ( final Throwable e )
-            {
-            }
-
-            public void failed ( final String error )
-            {
-            }
-        } );
+        this.item.writeAtrtibutes ( attributes );
     }
 
     private Figure createPV ()
@@ -313,21 +297,7 @@ public class ManualOverride extends AbstractBaseDetailsPart
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         attributes.put ( "org.openscada.da.manual.value", new Variant () );
-        this.itemHolder.getConnection ().writeAttributes ( this.item.getItemId (), attributes, new WriteAttributeOperationCallback () {
-
-            public void complete ( final WriteAttributeResults result )
-            {
-
-            }
-
-            public void error ( final Throwable e )
-            {
-            }
-
-            public void failed ( final String error )
-            {
-            }
-        } );
+        this.item.writeAtrtibutes ( attributes );
     }
 
     private Variant getManualSetValue () throws NotConvertableException

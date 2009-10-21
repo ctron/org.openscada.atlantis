@@ -11,14 +11,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.openscada.da.client.base.Activator;
-import org.openscada.da.client.base.connection.ConnectionManager;
-import org.openscada.da.client.base.item.DataItemHolder;
-import org.openscada.da.client.base.item.ItemSelectionHelper;
+import org.openscada.da.ui.connection.data.Item;
+import org.openscada.da.ui.connection.data.ItemSelectionHelper;
 
 public abstract class AbstractItemAction implements org.eclipse.ui.IObjectActionDelegate
 {
 
-    protected final Collection<DataItemHolder> items = new LinkedList<DataItemHolder> ();
+    protected final Collection<Item> items = new LinkedList<Item> ();
 
     protected IWorkbenchPage page;
 
@@ -35,12 +34,12 @@ public abstract class AbstractItemAction implements org.eclipse.ui.IObjectAction
         this.page = targetPart.getSite ().getPage ();
     }
 
-    protected abstract void processItem ( final DataItemHolder item ) throws PartInitException;
+    protected abstract void processItem ( final Item item ) throws PartInitException;
 
     public void run ( final IAction action )
     {
         final MultiStatus status = new MultiStatus ( Activator.PLUGIN_ID, 0, this.message, null );
-        for ( final DataItemHolder item : this.items )
+        for ( final Item item : this.items )
         {
             try
             {
@@ -62,16 +61,16 @@ public abstract class AbstractItemAction implements org.eclipse.ui.IObjectAction
         ErrorDialog.openError ( this.page.getWorkbenchWindow ().getShell (), "View Error", "Failed to show data item details", status );
     }
 
-    protected String asSecondardId ( final DataItemHolder item )
+    protected String asSecondardId ( final Item item )
     {
-        return item.getItemId ().replace ( "_", "__" ).replace ( ':', '_' );
+        return item.getId ().replace ( "_", "__" ).replace ( ':', '_' );
     }
 
     public void selectionChanged ( final IAction action, final ISelection selection )
     {
         clearSelection ();
 
-        this.items.addAll ( ItemSelectionHelper.getSelectionHookedUp ( selection, ConnectionManager.getDefault () ) );
+        this.items.addAll ( ItemSelectionHelper.getSelection ( selection ) );
     }
 
     protected void clearSelection ()

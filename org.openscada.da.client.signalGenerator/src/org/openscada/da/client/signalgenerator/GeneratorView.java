@@ -48,11 +48,9 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.openscada.core.Variant;
-import org.openscada.da.client.WriteOperationCallback;
-import org.openscada.da.client.base.connection.ConnectionManager;
-import org.openscada.da.client.base.item.DataItemHolder;
-import org.openscada.da.client.base.item.ItemSelectionHelper;
+import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.signalgenerator.page.GeneratorPage;
+import org.openscada.da.ui.connection.data.DataSourceListener;
 import org.openscada.da.ui.connection.data.Item;
 
 public class GeneratorView extends ViewPart implements SimulationTarget
@@ -65,7 +63,7 @@ public class GeneratorView extends ViewPart implements SimulationTarget
 
     private GeneratorPageInformation activePage;
 
-    private DataItemHolder item;
+    private org.openscada.da.ui.connection.data.DataItemHolder item;
 
     private Composite header;
 
@@ -123,7 +121,7 @@ public class GeneratorView extends ViewPart implements SimulationTarget
         this.header.setLayout ( new RowLayout () );
 
         this.startButton = new Button ( this.header, SWT.TOGGLE );
-        this.startButton.setText ( Messages.getString ( "GeneratorView.ButtonGo" ) ); //$NON-NLS-1$
+        this.startButton.setText ( Messages.getString ( "GeneratorView.ButtonGo" ) );
         this.startButton.addSelectionListener ( new SelectionAdapter () {
             @Override
             public void widgetSelected ( final SelectionEvent e )
@@ -204,7 +202,7 @@ public class GeneratorView extends ViewPart implements SimulationTarget
         }
         catch ( final CoreException e )
         {
-            ErrorDialog.openError ( this.getSite ().getShell (), Messages.getString ( "GeneratorView.createPages.error" ), Messages.getString ( "GeneratorView.createPages.errorMessage" ), e.getStatus () ); //$NON-NLS-1$ //$NON-NLS-2$
+            ErrorDialog.openError ( this.getSite ().getShell (), Messages.getString ( "GeneratorView.createPages.error" ), Messages.getString ( "GeneratorView.createPages.errorMessage" ), e.getStatus () );
         }
     }
 
@@ -229,14 +227,26 @@ public class GeneratorView extends ViewPart implements SimulationTarget
     {
         if ( item != null )
         {
-            this.item = ItemSelectionHelper.hookupItem ( item.getConnectionString (), item.getId (), ConnectionManager.getDefault () );
-            setPartName ( String.format ( Messages.getString ( "GeneratorView.partName" ), this.item.getItemId (), this.item.getConnection ().getConnectionInformation () ) ); //$NON-NLS-1$
+            this.item = new org.openscada.da.ui.connection.data.DataItemHolder ( Activator.getDefault ().getBundle ().getBundleContext (), item, new DataSourceListener () {
+
+                public void updateData ( final DataItemValue value )
+                {
+                    GeneratorView.this.updateData ();
+                }
+            } );
+
+            setPartName ( String.format ( Messages.getString ( "GeneratorView.partName" ), item.getId (), item.getConnectionString () ) );
         }
         else
         {
-            setPartName ( Messages.getString ( "GeneratorView.emptyPartName" ) ); //$NON-NLS-1$
+            setPartName ( Messages.getString ( "GeneratorView.emptyPartName" ) );
         }
         updateState ();
+    }
+
+    protected void updateData ()
+    {
+        // TODO Auto-generated method stub
     }
 
     private Collection<GeneratorPageInformation> getPageInformation () throws CoreException
@@ -245,22 +255,22 @@ public class GeneratorView extends ViewPart implements SimulationTarget
 
         for ( final IConfigurationElement element : Platform.getExtensionRegistry ().getConfigurationElementsFor ( Activator.EXTP_GENERATOR_PAGE ) )
         {
-            if ( !"generatorPage".equals ( element.getName () ) ) //$NON-NLS-1$
+            if ( !"generatorPage".equals ( element.getName () ) )
             {
                 continue;
             }
             Object o;
-            o = element.createExecutableExtension ( "class" ); //$NON-NLS-1$
+            o = element.createExecutableExtension ( "class" );
 
             if ( ! ( o instanceof GeneratorPage ) )
             {
-                throw new CoreException ( new Status ( Status.ERROR, Activator.PLUGIN_ID, Messages.getString ( "GeneratorView.classTypeMismatchError" ) ) ); //$NON-NLS-1$
+                throw new CoreException ( new Status ( Status.ERROR, Activator.PLUGIN_ID, Messages.getString ( "GeneratorView.classTypeMismatchError" ) ) );
             }
 
             final GeneratorPageInformation info = new GeneratorPageInformation ();
             info.setGeneratorPage ( (GeneratorPage)o );
             info.setLabel ( element.getAttribute ( "label" ) ); //$NON-NLS-1$
-            info.setSortKey ( element.getAttribute ( "sortKey" ) ); //$NON-NLS-1$
+            info.setSortKey ( element.getAttribute ( "sortKey" ) );
             result.add ( info );
         }
 
@@ -272,11 +282,11 @@ public class GeneratorView extends ViewPart implements SimulationTarget
                 String key2 = arg1.getSortKey ();
                 if ( key1 == null )
                 {
-                    key1 = ""; //$NON-NLS-1$
+                    key1 = "";
                 }
                 if ( key2 == null )
                 {
-                    key2 = ""; //$NON-NLS-1$
+                    key2 = "";
                 }
 
                 return key1.compareTo ( key2 );
@@ -299,32 +309,16 @@ public class GeneratorView extends ViewPart implements SimulationTarget
         super.saveState ( memento );
         if ( this.item != null )
         {
-            new Item ( this.item.getConnection ().getConnectionInformation ().toString (), this.item.getItemId () ).saveTo ( memento );
+            this.item.getItem ().saveTo ( memento );
         }
     }
 
     public void writeValue ( final Variant value )
     {
-        final DataItemHolder item = this.item;
+        final org.openscada.da.ui.connection.data.DataItemHolder item = this.item;
         if ( item != null )
         {
-            item.getConnection ().write ( item.getItemId (), value, new WriteOperationCallback () {
-
-                public void complete ()
-                {
-                    GeneratorView.this.setFailure ( null );
-                }
-
-                public void error ( final Throwable e )
-                {
-                    GeneratorView.this.setFailure ( e.getMessage () );
-                }
-
-                public void failed ( final String reason )
-                {
-                    GeneratorView.this.setFailure ( reason );
-                }
-            } );
+            item.write ( value );
         }
     }
 
@@ -336,7 +330,7 @@ public class GeneratorView extends ViewPart implements SimulationTarget
         }
         else
         {
-            triggerErrorLabel ( "" ); //$NON-NLS-1$
+            triggerErrorLabel ( "" );
         }
     }
 

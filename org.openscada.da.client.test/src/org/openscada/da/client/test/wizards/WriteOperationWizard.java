@@ -23,15 +23,20 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.core.Variant;
-import org.openscada.da.client.Connection;
-import org.openscada.da.client.WriteOperationCallback;
+import org.openscada.da.client.test.Activator;
+import org.openscada.da.ui.connection.data.DataItemHolder;
+import org.openscada.da.ui.connection.data.Item;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public class WriteOperationWizard extends Wizard implements INewWizard
 {
@@ -42,10 +47,6 @@ public class WriteOperationWizard extends Wizard implements INewWizard
 
     private IStructuredSelection selection = null;
 
-    private boolean complete = false;
-
-    private Throwable error = null;
-
     public WriteOperationWizard ()
     {
         setWindowTitle ( "Write to data item" );
@@ -55,16 +56,15 @@ public class WriteOperationWizard extends Wizard implements INewWizard
     @Override
     public boolean performFinish ()
     {
-        final String item = this.page.getItem ();
+        final Item item = this.page.getItem ();
         final Variant value = this.page.getValue ();
-        final Connection connection = this.page.getConnection ();
 
         final IRunnableWithProgress op = new IRunnableWithProgress () {
             public void run ( final IProgressMonitor monitor ) throws InvocationTargetException
             {
                 try
                 {
-                    doFinish ( monitor, connection, item, value );
+                    doFinish ( monitor, item, value );
                 }
                 catch ( final Throwable e )
                 {
@@ -94,60 +94,50 @@ public class WriteOperationWizard extends Wizard implements INewWizard
         return true;
     }
 
-    private void doFinish ( final IProgressMonitor monitor, final Connection connection, final String item, final Variant value ) throws Exception
+    private void doFinish ( final IProgressMonitor monitor, final Item item, final Variant value ) throws Exception
     {
         monitor.beginTask ( "Writing value to item", 2 );
 
         monitor.worked ( 1 );
 
-        this.error = null;
-        this.complete = false;
-        connection.write ( item, value, new WriteOperationCallback () {
+        try
+        {
 
-            public void complete ()
+            final DataItemHolder itemHolder = new DataItemHolder ( Activator.getDefault ().getBundle ().getBundleContext (), item, null );
+            if ( !itemHolder.waitForConnection ( 5 * 1000 ) )
             {
-                endWait ();
+                handleError ( new RuntimeException ( "No available connection" ).fillInStackTrace () );
+                return;
             }
 
-            public void error ( final Throwable e )
+            final NotifyFuture<Object> future = itemHolder.write ( value );
+
+            try
+            {
+                future.get ();
+            }
+            catch ( final Throwable e )
             {
                 handleError ( e );
-                endWait ();
             }
 
-            public void failed ( final String message )
-            {
-                handleError ( new Exception ( message ) );
-                endWait ();
-            }
-
-            private void endWait ()
-            {
-                WriteOperationWizard.this.complete = true;
-                synchronized ( WriteOperationWizard.this )
-                {
-                    WriteOperationWizard.this.notifyAll ();
-                }
-            }
-        } );
-
-        synchronized ( this )
-        {
-            while ( ! ( this.complete || monitor.isCanceled () ) )
-            {
-                wait ( 100 );
-            }
-            if ( this.error != null )
-            {
-                throw new Exception ( this.error );
-            }
         }
-        monitor.worked ( 1 );
+        finally
+        {
+            monitor.done ();
+        }
     }
 
     public void handleError ( final Throwable e )
     {
-        this.error = e;
+        Display.getDefault ().syncExec ( new Runnable () {
+
+            public void run ()
+            {
+                ErrorDialog.openError ( getShell (), "Failed to write", e.getMessage (), new Status ( Status.ERROR, Activator.PLUGIN_ID, e.getMessage (), e ) );
+            }
+        } );
+
     }
 
     public void init ( final IWorkbench workbench, final IStructuredSelection selection )

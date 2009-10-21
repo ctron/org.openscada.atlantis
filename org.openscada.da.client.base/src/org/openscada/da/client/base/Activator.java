@@ -1,7 +1,6 @@
 package org.openscada.da.client.base;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.openscada.da.client.base.connection.ConnectionManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -15,8 +14,6 @@ public class Activator extends AbstractUIPlugin
 
     // The shared instance
     private static Activator plugin;
-
-    private ConnectionManager connectionManager;
 
     /**
      * The constructor
@@ -34,8 +31,6 @@ public class Activator extends AbstractUIPlugin
     {
         super.start ( context );
         plugin = this;
-
-        this.connectionManager = new ConnectionManager ();
     }
 
     /*
@@ -45,9 +40,6 @@ public class Activator extends AbstractUIPlugin
     @Override
     public void stop ( final BundleContext context ) throws Exception
     {
-        this.connectionManager.dispose ();
-        this.connectionManager = null;
-
         plugin = null;
         super.stop ( context );
     }
@@ -60,11 +52,6 @@ public class Activator extends AbstractUIPlugin
     public static Activator getDefault ()
     {
         return plugin;
-    }
-
-    public static ConnectionManager getConnectionManager ()
-    {
-        return plugin.connectionManager;
     }
 
 }

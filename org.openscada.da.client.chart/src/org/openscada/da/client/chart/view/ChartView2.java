@@ -2,8 +2,6 @@ package org.openscada.da.client.chart.view;
 
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.log4j.Logger;
@@ -32,12 +30,11 @@ import org.jfree.experimental.chart.swt.ChartComposite;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.da.client.AsyncDataItem;
-import org.openscada.da.client.DataItem;
-import org.openscada.da.client.base.connection.ConnectionManager;
-import org.openscada.da.client.base.item.DataItemHolder;
-import org.openscada.da.client.base.item.ItemSelectionHelper;
+import org.openscada.da.client.DataItemValue;
+import org.openscada.da.client.chart.Activator;
 import org.openscada.da.client.chart.Messages;
+import org.openscada.da.ui.connection.data.DataItemHolder;
+import org.openscada.da.ui.connection.data.DataSourceListener;
 
 public class ChartView2 extends ViewPart
 {
@@ -55,17 +52,19 @@ public class ChartView2 extends ViewPart
 
     private Display display;
 
-    private static class Item implements Observer
+    private static class Item implements DataSourceListener
     {
-        private final DataItemHolder item;
+        private final org.openscada.da.ui.connection.data.Item item;
 
         private final TimeSeries series;
 
-        private DataItem dataItem;
-
         private final ChartView2 chartView;
 
-        public Item ( final DataItemHolder item, final TimeSeriesCollection dataset, final ChartView2 chartView )
+        private DataItemHolder dataItem;
+
+        private DataItemValue value;
+
+        public Item ( final org.openscada.da.ui.connection.data.Item item, final TimeSeriesCollection dataset, final ChartView2 chartView )
         {
             this.item = item;
 
@@ -75,42 +74,33 @@ public class ChartView2 extends ViewPart
             this.chartView = chartView;
         }
 
-        public DataItemHolder getItem ()
+        public org.openscada.da.ui.connection.data.Item getItem ()
         {
             return this.item;
         }
 
         public String getLabel ()
         {
-            return this.item.getItemId ();
+            return this.item.getId ();
         }
 
         public void connect ()
         {
-            this.dataItem = new AsyncDataItem ( this.item.getItemId (), this.item.getItemManager () );
-
-            this.dataItem.addObserver ( this );
+            this.dataItem = new DataItemHolder ( Activator.getDefault ().getBundle ().getBundleContext (), this.item, this );
         }
 
         public void disconnect ()
         {
             if ( this.dataItem != null )
             {
-                this.dataItem.deleteObserver ( this );
-
-                this.dataItem.unregister ();
+                this.dataItem.dispose ();
                 this.dataItem = null;
             }
         }
 
-        public void update ( final Observable o, final Object arg )
-        {
-            this.chartView.update ();
-        }
-
         public void performUpdate ()
         {
-            final Number n = convertToNumber ( this.dataItem.getSnapshotValue ().getValue () );
+            final Number n = convertToNumber ( this.value );
 
             final RegularTimePeriod time = new FixedMillisecond ( Calendar.getInstance ().getTime () );
 
@@ -122,6 +112,12 @@ public class ChartView2 extends ViewPart
             this.series.add ( di );
 
             // this.chart.getXYPlot ().addDomainMarker ( new IntervalMarker ( end, now ) );
+        }
+
+        public void updateData ( final DataItemValue value )
+        {
+            this.value = value;
+            this.chartView.update ();
         }
     }
 
@@ -225,13 +221,9 @@ public class ChartView2 extends ViewPart
 
     public void addItem ( final org.openscada.da.ui.connection.data.Item item )
     {
-        final DataItemHolder itemHolder = ItemSelectionHelper.hookupItem ( item.getConnectionString (), item.getId (), ConnectionManager.getDefault () );
-        if ( itemHolder != null )
-        {
-            Item charItem;
-            this.items.add ( charItem = new Item ( itemHolder, this.dataset, this ) );
-            charItem.connect ();
-        }
+        Item charItem;
+        this.items.add ( charItem = new Item ( item, this.dataset, this ) );
+        charItem.connect ();
     }
 
     protected void triggerUpdate ()
@@ -256,8 +248,15 @@ public class ChartView2 extends ViewPart
 
     }
 
-    protected static Number convertToNumber ( final Variant value )
+    protected static Number convertToNumber ( final DataItemValue div )
     {
+        if ( div == null )
+        {
+            return null;
+        }
+
+        final Variant value = div.getValue ();
+
         Number n = null;
 
         try
@@ -298,14 +297,11 @@ public class ChartView2 extends ViewPart
             {
                 for ( final IMemento child : childs )
                 {
-                    final String itemId = child.getString ( "itemId" );
-                    final String connectionUri = child.getString ( "connectionUri" );
-
-                    if ( itemId != null && connectionUri != null )
+                    final org.openscada.da.ui.connection.data.Item item = org.openscada.da.ui.connection.data.Item.loadFrom ( child );
+                    if ( item != null )
                     {
-                        addItem ( new org.openscada.da.ui.connection.data.Item ( connectionUri, itemId ) );
+                        addItem ( item );
                     }
-
                 }
             }
         }
@@ -319,8 +315,7 @@ public class ChartView2 extends ViewPart
         for ( final Item item : this.items )
         {
             final IMemento child = memento.createChild ( "item" );
-            child.putString ( "itemId", item.getItem ().getItemId () );
-            child.putString ( "connectionUri", item.getItem ().getConnection ().getConnectionInformation ().toString () );
+            item.getItem ().saveTo ( child );
         }
 
         super.saveState ( memento );

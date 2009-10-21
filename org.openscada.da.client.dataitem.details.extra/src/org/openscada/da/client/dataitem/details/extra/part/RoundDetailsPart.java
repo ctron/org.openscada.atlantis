@@ -111,13 +111,7 @@ public class RoundDetailsPart extends AbstractBaseDraw2DDetailsPart
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "org.openscada.da.round.type", new Variant ( string ) );
-        try
-        {
-            this.itemHolder.getConnection ().writeAttributes ( this.itemHolder.getItemId (), attributes );
-        }
-        catch ( final Throwable e )
-        {
-        }
+        this.item.writeAtrtibutes ( attributes );
     }
 
     private void createRoundArrow ( final Figure figure )

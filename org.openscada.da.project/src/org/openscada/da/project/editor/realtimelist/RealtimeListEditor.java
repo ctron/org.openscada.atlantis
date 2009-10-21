@@ -51,9 +51,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.openscada.core.Variant;
-import org.openscada.da.client.Connection;
-import org.openscada.da.client.WriteOperationCallback;
-import org.openscada.da.client.base.connection.ConnectionManager;
 import org.openscada.da.client.base.realtime.ItemDropAdapter;
 import org.openscada.da.client.base.realtime.ItemListContentProvider;
 import org.openscada.da.client.base.realtime.ItemListLabelProvider;
@@ -238,28 +235,7 @@ public class RealtimeListEditor extends EditorPart implements RealtimeListAdapte
 
         value = new Variant ( !value.asBoolean () );
 
-        final Connection connection = ConnectionManager.getDefault ().getConnection ( entry.getItem ().getConnectionString (), true );
-
-        connection.write ( entry.getDataItem ().getItem ().getId (), value, new WriteOperationCallback () {
-
-            public void complete ()
-            {
-                // TODO Auto-generated method stub
-
-            }
-
-            public void error ( final Throwable e )
-            {
-                // TODO Auto-generated method stub
-
-            }
-
-            public void failed ( final String error )
-            {
-                // TODO Auto-generated method stub
-
-            }
-        } );
+        entry.getDataItem ().write ( value );
     }
 
     private void hookContextMenu ()

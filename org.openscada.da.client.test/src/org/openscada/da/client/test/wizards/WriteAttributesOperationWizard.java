@@ -25,6 +25,7 @@ import java.util.Map;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -34,11 +35,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openscada.core.Variant;
-import org.openscada.da.client.Connection;
-import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.test.Activator;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.ui.connection.data.DataItemHolder;
+import org.openscada.da.ui.connection.data.Item;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public class WriteAttributesOperationWizard extends Wizard implements INewWizard
 {
@@ -47,23 +49,18 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
 
     private IStructuredSelection selection = null;
 
-    private boolean _complete = false;
-
-    private Throwable _error = null;
-
     @Override
     public boolean performFinish ()
     {
-        final String item = this.page.getItem ();
+        final Item item = this.page.getItem ();
         final Map<String, Variant> attributes = this.page.getAttributes ();
-        final Connection connection = this.page.getConnection ();
 
         final IRunnableWithProgress op = new IRunnableWithProgress () {
             public void run ( final IProgressMonitor monitor ) throws InvocationTargetException
             {
                 try
                 {
-                    doFinish ( monitor, connection, item, attributes );
+                    doFinish ( monitor, item, attributes );
                 }
                 catch ( final Exception e )
                 {
@@ -92,66 +89,54 @@ public class WriteAttributesOperationWizard extends Wizard implements INewWizard
         return true;
     }
 
-    private void doFinish ( final IProgressMonitor monitor, final Connection connection, final String item, final Map<String, Variant> attributes ) throws Exception
+    private void doFinish ( final IProgressMonitor monitor, final Item item, final Map<String, Variant> attributes ) throws Exception
     {
         monitor.beginTask ( "Writing attributes to item", 2 );
 
         monitor.worked ( 1 );
 
-        final WriteAttributesOperationWizard _this = this;
+        try
+        {
 
-        this._complete = false;
-        connection.writeAttributes ( item, attributes, new WriteAttributeOperationCallback () {
-
-            public void complete ( final WriteAttributeResults results )
+            final DataItemHolder itemHolder = new DataItemHolder ( Activator.getDefault ().getBundle ().getBundleContext (), item, null );
+            if ( !itemHolder.waitForConnection ( 5 * 1000 ) )
             {
+                handleError ( new RuntimeException ( "No available connection" ).fillInStackTrace () );
+                return;
+            }
+
+            final NotifyFuture<WriteAttributeResults> future = itemHolder.writeAtrtibutes ( attributes );
+
+            try
+            {
+                final WriteAttributeResults results = future.get ();
                 if ( !results.isSuccess () )
                 {
                     handleError ( attributes, results );
                 }
-                endWait ();
             }
-
-            public void error ( final Throwable e )
+            catch ( final Throwable e )
             {
                 handleError ( e );
-                endWait ();
             }
 
-            public void failed ( final String message )
-            {
-                handleError ( new Exception ( message ) );
-                endWait ();
-            }
-
-            private void endWait ()
-            {
-                WriteAttributesOperationWizard.this._complete = true;
-                synchronized ( _this )
-                {
-                    _this.notifyAll ();
-                }
-            }
-        } );
-
-        synchronized ( this )
-        {
-            wait ( 100 );
-
-            if ( this._complete || monitor.isCanceled () )
-            {
-                if ( this._error != null )
-                {
-                    throw new Exception ( this._error );
-                }
-            }
         }
-        monitor.worked ( 1 );
+        finally
+        {
+            monitor.done ();
+        }
     }
 
     public void handleError ( final Throwable e )
     {
-        this._error = e;
+        Display.getDefault ().syncExec ( new Runnable () {
+
+            public void run ()
+            {
+                ErrorDialog.openError ( getShell (), "Failed to write", e.getMessage (), new Status ( Status.ERROR, Activator.PLUGIN_ID, e.getMessage (), e ) );
+            }
+        } );
+
     }
 
     public void handleError ( final Map<String, Variant> attributes, final WriteAttributeResults results )
