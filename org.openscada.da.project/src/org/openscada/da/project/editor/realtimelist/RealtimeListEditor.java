@@ -141,7 +141,7 @@ public class RealtimeListEditor extends EditorPart implements RealtimeListAdapte
                 final Item item = new Item ( itemType.getUri (), itemType.getItemId () );
                 final URI uri = new URI ( itemType.getUri () );
 
-                this.list.add ( item, ConnectionManager.getDefault ().getItemManager ( uri, true ) );
+                this.list.add ( item );
             }
         }
         catch ( final CoreException e )
@@ -240,7 +240,7 @@ public class RealtimeListEditor extends EditorPart implements RealtimeListAdapte
 
         final Connection connection = ConnectionManager.getDefault ().getConnection ( entry.getItem ().getConnectionString (), true );
 
-        connection.write ( entry.getDataItem ().getItemId (), value, new WriteOperationCallback () {
+        connection.write ( entry.getDataItem ().getItem ().getId (), value, new WriteOperationCallback () {
 
             public void complete ()
             {

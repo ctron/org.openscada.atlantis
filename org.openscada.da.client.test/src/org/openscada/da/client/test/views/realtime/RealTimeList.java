@@ -154,7 +154,7 @@ public class RealTimeList extends ViewPart implements RealtimeListAdapter
 
         final Connection connection = ConnectionManager.getDefault ().getConnection ( entry.getItem ().getConnectionString (), true );
 
-        connection.write ( entry.getDataItem ().getItemId (), value, new WriteOperationCallback () {
+        connection.write ( entry.getDataItem ().getItem ().getId (), value, new WriteOperationCallback () {
 
             public void complete ()
             {

@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
-import java.util.Observer;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -32,12 +31,13 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.da.client.DataItem;
 import org.openscada.da.client.DataItemValue;
-import org.openscada.da.client.ItemManager;
+import org.openscada.da.client.base.Activator;
+import org.openscada.da.ui.connection.data.DataItemHolder;
+import org.openscada.da.ui.connection.data.DataSourceListener;
 import org.openscada.da.ui.connection.data.Item;
 
-public class ListEntry extends Observable implements Observer, IAdaptable, IPropertySource
+public class ListEntry extends Observable implements IAdaptable, IPropertySource, DataSourceListener
 {
 
     private enum Properties
@@ -113,26 +113,27 @@ public class ListEntry extends Observable implements Observer, IAdaptable, IProp
         }
     }
 
-    private DataItem dataItem;
+    private DataItemHolder dataItem;
 
     private Item item;
+
+    private DataItemValue value;
 
     public Item getItem ()
     {
         return this.item;
     }
 
-    public DataItem getDataItem ()
+    public DataItemHolder getDataItem ()
     {
         return this.dataItem;
     }
 
-    public synchronized void setDataItem ( final Item item, final ItemManager itemManager )
+    public synchronized void setDataItem ( final Item item )
     {
         clear ();
         this.item = item;
-        this.dataItem = new DataItem ( item.getId (), itemManager );
-        this.dataItem.addObserver ( this );
+        this.dataItem = new DataItemHolder ( Activator.getDefault ().getBundle ().getBundleContext (), item, this );
     }
 
     public synchronized void clear ()
@@ -140,27 +141,32 @@ public class ListEntry extends Observable implements Observer, IAdaptable, IProp
         this.item = null;
         if ( this.dataItem != null )
         {
-            this.dataItem.deleteObserver ( this );
-            this.dataItem.unregister ();
+            this.dataItem.dispose ();
         }
     }
 
     public Variant getValue ()
     {
-        return this.dataItem.getSnapshotValue ().getValue ();
+        if ( this.value == null )
+        {
+            return new Variant ();
+        }
+        return this.value.getValue ();
     }
 
-    public SubscriptionState getSubscriptionChange ()
+    public SubscriptionState getSubscriptionState ()
     {
-        return this.dataItem.getSnapshotValue ().getSubscriptionState ();
+        if ( this.value == null )
+        {
+            return SubscriptionState.DISCONNECTED;
+        }
+        return this.value.getSubscriptionState ();
     }
 
     public synchronized List<AttributePair> getAttributes ()
     {
-        final DataItemValue value = this.dataItem.getSnapshotValue ();
-
-        final List<AttributePair> pairs = new ArrayList<AttributePair> ( value.getAttributes ().size () );
-        for ( final Map.Entry<String, Variant> entry : value.getAttributes ().entrySet () )
+        final List<AttributePair> pairs = new ArrayList<AttributePair> ( this.value.getAttributes ().size () );
+        for ( final Map.Entry<String, Variant> entry : this.value.getAttributes ().entrySet () )
         {
             pairs.add ( new AttributePair ( entry.getKey (), entry.getValue () ) );
         }
@@ -173,18 +179,27 @@ public class ListEntry extends Observable implements Observer, IAdaptable, IProp
      */
     public synchronized boolean hasAttributes ()
     {
-        return !this.dataItem.getSnapshotValue ().getAttributes ().isEmpty ();
+        if ( this.value == null )
+        {
+            return false;
+        }
+        return !this.value.getAttributes ().isEmpty ();
     }
 
     public Throwable getSubscriptionError ()
     {
-        return this.dataItem.getSnapshotValue ().getSubscriptionError ();
+        if ( this.value == null )
+        {
+            return null;
+        }
+        return this.value.getSubscriptionError ();
     }
 
-    public void update ( final Observable o, final Object arg )
+    public void updateData ( final DataItemValue value )
     {
+        this.value = value;
         setChanged ();
-        notifyObservers ( arg );
+        notifyObservers ( value );
     }
 
     @SuppressWarnings ( "unchecked" )
@@ -247,9 +262,13 @@ public class ListEntry extends Observable implements Observer, IAdaptable, IProp
             case CONNECTION_URI:
                 return this.item.getConnectionString ();
             case VALUE:
-                return this.dataItem.getSnapshotValue ();
+                return this.value;
             case SUBSCRIPTION_STATE:
-                return this.dataItem.getSnapshotValue ().getSubscriptionState ();
+                if ( this.value == null )
+                {
+                    return SubscriptionState.DISCONNECTED;
+                }
+                return this.value.getSubscriptionState ();
             }
         }
         return null;

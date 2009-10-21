@@ -68,15 +68,15 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
             switch ( columnIndex )
             {
             case 0:
-                return listEntry.getDataItem ().getItemId ();
+                return listEntry.getDataItem ().getItem ().getId ();
             case 1:
                 if ( listEntry.getSubscriptionError () != null )
                 {
-                    return String.format ( "%s (%s)", listEntry.getSubscriptionChange (), listEntry.getSubscriptionError ().getMessage () ); //$NON-NLS-1$
+                    return String.format ( "%s (%s)", listEntry.getSubscriptionState (), listEntry.getSubscriptionError ().getMessage () ); //$NON-NLS-1$
                 }
                 else
                 {
-                    return listEntry.getSubscriptionChange ().name ();
+                    return listEntry.getSubscriptionState ().name ();
                 }
             case 2:
                 if ( listEntry.getValue () != null )

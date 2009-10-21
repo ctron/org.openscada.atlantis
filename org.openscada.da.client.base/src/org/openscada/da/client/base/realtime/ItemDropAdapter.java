@@ -27,9 +27,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.openscada.core.ConnectionInformation;
-import org.openscada.da.client.ItemManager;
-import org.openscada.da.client.base.connection.ConnectionManager;
 import org.openscada.da.ui.connection.data.Item;
 import org.openscada.da.ui.connection.dnd.ItemTransfer;
 
@@ -103,15 +100,9 @@ public class ItemDropAdapter extends ViewerDropAdapter
 
     private void dropItem ( final Item item, final TreeViewer viewer ) throws URISyntaxException
     {
-        final ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( item.getConnectionString () );
-        final ItemManager itemManager = ConnectionManager.getDefault ().getItemManager ( connectionInformation, true );
-
-        if ( itemManager != null )
-        {
-            final ListEntry entry = new ListEntry ();
-            entry.setDataItem ( new Item ( item ), itemManager );
-            this.list.add ( entry );
-        }
+        final ListEntry entry = new ListEntry ();
+        entry.setDataItem ( new Item ( item ) );
+        this.list.add ( entry );
     }
 
     @Override

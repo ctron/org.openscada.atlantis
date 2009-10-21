@@ -28,9 +28,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
-import org.openscada.core.ConnectionInformation;
-import org.openscada.da.client.ItemManager;
-import org.openscada.da.client.base.connection.ConnectionManager;
 import org.openscada.da.ui.connection.data.Item;
 
 public class ListData implements Observer
@@ -69,13 +66,8 @@ public class ListData implements Observer
 
     public void add ( final Item item )
     {
-        add ( item, ConnectionManager.getDefault ().getItemManager ( ConnectionInformation.fromURI ( item.getConnectionString () ), true ) );
-    }
-
-    public void add ( final Item item, final ItemManager itemManager )
-    {
         final ListEntry entry = new ListEntry ();
-        entry.setDataItem ( item, itemManager );
+        entry.setDataItem ( item );
 
         add ( entry );
     }

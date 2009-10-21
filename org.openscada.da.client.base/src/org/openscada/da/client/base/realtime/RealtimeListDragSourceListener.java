@@ -99,7 +99,7 @@ public class RealtimeListDragSourceListener implements DragSourceListener
             {
                 sb.append ( "\n" );
             }
-            sb.append ( entry.getDataItem ().getItemId () );
+            sb.append ( entry.getDataItem ().getItem ().getId () );
             cnt++;
         }
         event.data = sb.toString ();
