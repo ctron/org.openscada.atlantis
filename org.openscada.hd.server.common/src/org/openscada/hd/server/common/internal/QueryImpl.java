@@ -19,6 +19,7 @@
 
 package org.openscada.hd.server.common.internal;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,6 +44,8 @@ public class QueryImpl implements Query, QueryListener
     private final QueryListener listener;
 
     private QueryParameters queryParameters;
+
+    private HashSet<String> valueTypes;
 
     public QueryImpl ( final SessionImpl session, final QueryListener listener )
     {
@@ -90,13 +93,17 @@ public class QueryImpl implements Query, QueryListener
             throw new IllegalArgumentException ( "'valueTypes' must not be null or empty" );
         }
 
-        this.queryParameters = parameters;
+        synchronized ( this )
+        {
+            this.queryParameters = parameters;
+            this.valueTypes = new HashSet<String> ( valueTypes );
+        }
         this.listener.updateParameters ( parameters, valueTypes );
     }
 
     public void updateData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
     {
-        logger.debug ( "updateData: index: {}, values: @{}, valueInformation: @{}", new Object[] { index, values.size (), valueInformation.length } );
+        logger.debug ( "updateData: index: {}, values: @{} ({}), valueInformation: @{}", new Object[] { index, values.size (), values.keySet (), valueInformation.length } );
 
         if ( values == null )
         {
@@ -106,9 +113,16 @@ public class QueryImpl implements Query, QueryListener
         {
             throw new IllegalArgumentException ( "'valueInformation' must not be null" );
         }
-        if ( this.queryParameters == null )
+        synchronized ( this )
         {
-            throw new IllegalStateException ( "'updateData' must be called after a call to 'updateParameters'" );
+            if ( this.queryParameters == null )
+            {
+                throw new IllegalStateException ( "'updateData' must be called after a call to 'updateParameters'" );
+            }
+            if ( !this.valueTypes.equals ( values.keySet () ) )
+            {
+                throw new IllegalArgumentException ( "'updateData' must receive the same data series as the 'updateParameters' call" );
+            }
         }
         if ( index < 0 || index >= this.queryParameters.getEntries () )
         {
