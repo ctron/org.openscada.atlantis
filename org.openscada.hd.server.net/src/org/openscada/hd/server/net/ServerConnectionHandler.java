@@ -252,6 +252,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
                     {
                         final org.openscada.hd.Value[] vs = new org.openscada.hd.Value[size];
                         System.arraycopy ( entry.getValue (), count, vs, 0, size );
+                        v.put ( entry.getKey (), vs );
                     }
 
                     sendQueryDataPacket ( queryId, count, v, vi );
