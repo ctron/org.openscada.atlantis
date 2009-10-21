@@ -1,11 +1,6 @@
 package org.openscada.hd.ui;
 
-import org.eclipse.core.databinding.observable.set.ObservableSet;
-import org.eclipse.core.databinding.observable.set.WritableSet;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.openscada.core.ConnectionInformation;
-import org.openscada.hd.ui.data.ConnectionEntryBean;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -19,8 +14,6 @@ public class Activator extends AbstractUIPlugin
 
     // The shared instance
     private static Activator plugin;
-
-    private WritableSet connectionSet;
 
     /**
      * The constructor
@@ -37,9 +30,6 @@ public class Activator extends AbstractUIPlugin
     {
         super.start ( context );
         plugin = this;
-
-        this.connectionSet = new WritableSet ( SWTObservables.getRealm ( getWorkbench ().getDisplay () ) );
-        this.connectionSet.add ( new ConnectionEntryBean ( ConnectionInformation.fromURI ( "hd:net://localhost:1402" ) ) );
     }
 
     /*
@@ -61,10 +51,4 @@ public class Activator extends AbstractUIPlugin
     {
         return plugin;
     }
-
-    public ObservableSet getConnectionSet ()
-    {
-        return this.connectionSet;
-    }
-
 }
