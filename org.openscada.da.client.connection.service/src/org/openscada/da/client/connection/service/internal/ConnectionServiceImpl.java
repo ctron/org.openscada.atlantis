@@ -1,48 +1,36 @@
-/*
- * This file is part of the OpenSCADA project
- * Copyright (C) 2008-2009 inavare GmbH (http://inavare.com)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
-
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
-
 package org.openscada.da.client.connection.service.internal;
 
-import org.openscada.core.client.AutoReconnectController;
+import org.openscada.core.connection.provider.AbstractConnectionService;
 import org.openscada.da.client.Connection;
+import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.connection.service.ConnectionService;
 
-public class ConnectionServiceImpl implements ConnectionService
+public class ConnectionServiceImpl extends AbstractConnectionService implements ConnectionService
 {
-    private final Connection connection;
-
     private final ItemManager itemManager;
 
-    private final AutoReconnectController controller;
+    private final FolderManager folderManager;
 
-    public ConnectionServiceImpl ( final Connection connection, final ItemManager itemManager )
+    private final Connection connection;
+
+    public ConnectionServiceImpl ( final Connection connection, final Integer autoReconnectController )
     {
+        super ( connection, autoReconnectController );
         this.connection = connection;
-        this.itemManager = itemManager;
-        this.controller = new AutoReconnectController ( connection );
-        this.controller.connect ();
+        this.itemManager = new ItemManager ( connection );
+        this.folderManager = new FolderManager ( connection );
     }
 
-    public Connection getConnection ()
+    @Override
+    public org.openscada.da.client.Connection getConnection ()
     {
         return this.connection;
+    }
+
+    public FolderManager getFolderManager ()
+    {
+        return this.folderManager;
     }
 
     public ItemManager getItemManager ()
@@ -50,9 +38,9 @@ public class ConnectionServiceImpl implements ConnectionService
         return this.itemManager;
     }
 
-    public void dispose ()
+    public Class<?>[] getSupportedInterfaces ()
     {
-        this.controller.disconnect ();
+        return new Class<?>[] { org.openscada.core.connection.provider.ConnectionService.class, ConnectionService.class };
     }
 
 }

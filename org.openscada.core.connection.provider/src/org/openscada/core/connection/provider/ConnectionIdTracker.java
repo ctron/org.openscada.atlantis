@@ -13,7 +13,12 @@ public class ConnectionIdTracker extends ConnectionTracker
 
     public ConnectionIdTracker ( final BundleContext context, final String connectionId, final Listener listener )
     {
-        super ( context, listener );
+        this ( context, connectionId, listener, null );
+    }
+
+    public ConnectionIdTracker ( final BundleContext context, final String connectionId, final Listener listener, final Class<?> clazz )
+    {
+        super ( context, listener, clazz );
         this.connectionId = connectionId;
     }
 

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.master.DataItemSource;
 import org.openscada.da.master.MasterItem;
@@ -13,14 +12,16 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MasterFactory implements ConfigurationFactory
 {
+    private final static Logger logger = LoggerFactory.getLogger ( MasterFactory.class );
+
     public static final String ITEM_ID = "item.id";
 
     public static final String CONNECTION_ID = "connection.id";
-
-    private final static Logger logger = Logger.getLogger ( MasterFactory.class );
 
     private final BundleContext context;
 

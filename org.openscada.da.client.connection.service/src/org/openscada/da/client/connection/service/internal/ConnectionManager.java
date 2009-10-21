@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.DriverFactory;
 import org.openscada.da.client.Connection;
-import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.connection.service.ConnectionService;
 import org.openscada.utils.osgi.FilterUtil;
 import org.openscada.utils.osgi.SingleServiceListener;
@@ -126,8 +125,8 @@ public class ConnectionManager implements SingleServiceListener
 
         if ( connection != null )
         {
-            final ItemManager itemManager = new ItemManager ( connection );
-            this.connection = new ConnectionServiceImpl ( connection, itemManager );
+            this.connection = new ConnectionServiceImpl ( connection, 10000 );
+            this.connection.connect ();
 
             final Hashtable<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_PID, this.connectionId );

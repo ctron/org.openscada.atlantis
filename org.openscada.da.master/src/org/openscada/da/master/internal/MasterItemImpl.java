@@ -5,9 +5,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.connection.provider.ConnectionIdTracker;
+import org.openscada.core.connection.provider.ConnectionTracker;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
@@ -23,13 +24,11 @@ import org.openscada.da.master.MasterItemListener;
 import org.openscada.utils.concurrent.AbstractFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.ServiceListener;
-import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class MasterItemImpl implements ItemUpdateListener, ServiceListener, MasterItem
+public class MasterItemImpl implements ItemUpdateListener, MasterItem
 {
     private final class WriteOperationCallbackImplementation extends AbstractFuture<WriteResult> implements WriteOperationCallback
     {
@@ -68,7 +67,7 @@ public class MasterItemImpl implements ItemUpdateListener, ServiceListener, Mast
 
     }
 
-    private final static Logger logger = Logger.getLogger ( MasterItemImpl.class );
+    private final static Logger logger = LoggerFactory.getLogger ( MasterItemImpl.class );
 
     private ConnectionService connection;
 
@@ -82,7 +81,7 @@ public class MasterItemImpl implements ItemUpdateListener, ServiceListener, Mast
 
     private final BundleContext context;
 
-    private ServiceReference connectionRef;
+    private final ConnectionIdTracker tracker;
 
     public MasterItemImpl ( final BundleContext context, final String id, final String connectionId, final String itemId ) throws InvalidSyntaxException
     {
@@ -90,70 +89,46 @@ public class MasterItemImpl implements ItemUpdateListener, ServiceListener, Mast
         this.itemId = itemId;
         this.value = new DataItemValue ();
 
-        final ServiceReference[] refs = context.getServiceReferences ( ConnectionService.class.getName (), String.format ( "(%s=%s)", Constants.SERVICE_PID, connectionId ) );
-        if ( refs != null )
-        {
-            for ( final ServiceReference ref : refs )
+        this.tracker = new ConnectionIdTracker ( this.context, connectionId, new ConnectionTracker.Listener () {
+
+            public void setConnection ( final org.openscada.core.connection.provider.ConnectionService connectionService )
             {
-                addReference ( ref );
+                MasterItemImpl.this.setConnection ( (ConnectionService)connectionService );
             }
-        }
-        this.context.addServiceListener ( this, String.format ( "(&(%s=%s)(%s=%s))", Constants.OBJECTCLASS, ConnectionService.class.getName (), Constants.SERVICE_PID, connectionId ) );
+        }, ConnectionService.class );
+
+        this.tracker.open ();
     }
 
-    public void serviceChanged ( final ServiceEvent event )
+    protected synchronized void setConnection ( final ConnectionService connectionService )
     {
-        switch ( event.getType () )
-        {
-        case ServiceEvent.REGISTERED:
-            addReference ( event.getServiceReference () );
-            break;
-        case ServiceEvent.UNREGISTERING:
-            removeReference ( event.getServiceReference () );
-            break;
-        }
-    }
+        logger.info ( "Set connection: {}", connectionService );
 
-    private synchronized void addReference ( final ServiceReference ref )
-    {
-        logger.info ( "New connection: " + ref );
-
-        if ( this.connection != null )
+        if ( this.connection == connectionService )
         {
+            // no change at all
             return;
         }
 
-        this.connection = (ConnectionService)this.context.getService ( ref );
-        this.connectionRef = ref;
-
-        this.connection.getItemManager ().addItemUpdateListener ( this.itemId, this );
-    }
-
-    private synchronized void removeReference ( final ServiceReference ref )
-    {
-        if ( this.connectionRef != ref )
-        {
-            return;
-        }
-
+        // clear the old connection
         if ( this.connection != null )
         {
             this.connection.getItemManager ().removeItemUpdateListener ( this.itemId, this );
         }
 
-        this.context.ungetService ( ref );
-        this.connection = null;
-        this.connectionRef = null;
+        // assign the new one
+        this.connection = connectionService;
 
-        // simulate state change
-        applyStateChange ( SubscriptionState.DISCONNECTED, null );
-        notifyHandler ();
-        notifyListener ();
+        if ( this.connection != null )
+        {
+            // and connect to it
+            this.connection.getItemManager ().addItemUpdateListener ( this.itemId, this );
+        }
     }
 
     public void dispose ()
     {
-        removeReference ( this.connectionRef );
+        this.tracker.close ();
 
         synchronized ( this )
         {
@@ -163,6 +138,7 @@ public class MasterItemImpl implements ItemUpdateListener, ServiceListener, Mast
 
     public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
+        logger.debug ( "Data update: {} -> {} / {} (cache: {})", new Object[] { this.itemId, value, attributes, cache } );
         applyDataChange ( value, attributes, cache );
         notifyHandler ();
         notifyListener ();

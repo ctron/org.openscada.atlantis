@@ -27,15 +27,18 @@ public abstract class ConnectionTracker
 
     private final BundleContext context;
 
+    private final Class<?> clazz;
+
     public interface Listener
     {
         public void setConnection ( final ConnectionService connectionService );
     }
 
-    public ConnectionTracker ( final BundleContext context, final Listener listener )
+    public ConnectionTracker ( final BundleContext context, final Listener listener, final Class<?> clazz )
     {
         this.context = context;
         this.listener = listener;
+        this.clazz = clazz;
     }
 
     protected SingleServiceTracker createTracker ()
@@ -46,6 +49,8 @@ public abstract class ConnectionTracker
             {
                 this.filter = createFilter ();
             }
+
+            logger.debug ( "Creating tracker for: {}", this.filter );
 
             if ( this.filter != null )
             {
@@ -65,7 +70,17 @@ public abstract class ConnectionTracker
     {
         try
         {
-            return FilterUtil.createAndFilter ( ConnectionService.class.getName (), createFilterParameters () );
+            Class<?> filterClazz;
+            if ( this.clazz != null )
+            {
+                filterClazz = this.clazz;
+            }
+            else
+            {
+                filterClazz = ConnectionService.class;
+            }
+
+            return FilterUtil.createAndFilter ( filterClazz.getName (), createFilterParameters () );
         }
         catch ( final InvalidSyntaxException e )
         {
