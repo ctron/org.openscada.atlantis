@@ -284,6 +284,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             latestDirtyTime = System.currentTimeMillis ();
             long currentCompressionLevel = 0;
             long oldestValueTime = Long.MAX_VALUE;
+            final BaseValue latestValue = service.getLatestValue ();
+            final long latestValidTime = latestValue == null ? latestDirtyTime : latestValue.getTime ();
             while ( ( oldestValueTime > startTime ) && ( currentCompressionLevel <= maximumCompressionLevel ) )
             {
                 if ( currentCompressionLevel == 0 )
@@ -293,7 +295,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                     {
                         final DataType dataType = mergeEntry.getKey ().getDataType ();
                         final BaseValue[] mergeValues = mergeEntry.getValue ();
-                        final long maxTime = mergeValues.length > 0 ? Math.max ( mergeValues[mergeValues.length - 1].getTime () + 1, latestDirtyTime ) : latestDirtyTime;
+                        final long maxTime = mergeValues.length > 0 ? Math.max ( latestValidTime + 1, latestDirtyTime ) : latestDirtyTime;
                         latestDirtyTime = Math.min ( maxTime, latestDirtyTime );
                         if ( dataType == DataType.LONG_VALUE )
                         {

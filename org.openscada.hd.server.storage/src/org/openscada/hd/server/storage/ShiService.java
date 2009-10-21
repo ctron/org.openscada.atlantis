@@ -135,6 +135,27 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     }
 
     /**
+     * This method returns the latest NATIVE value or null, if no value is available at all.
+     * @return latest NATIVE value or null, if no value is available at all
+     */
+    public synchronized BaseValue getLatestValue ()
+    {
+        if ( rootStorageChannel != null )
+        {
+            try
+            {
+                final BaseValue[] result = rootStorageChannel.getMetaData ().getDataType () == DataType.LONG_VALUE ? rootStorageChannel.getLongValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE ) : rootStorageChannel.getDoubleValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
+                return ( result != null ) && ( result.length > 0 ) ? result[0] : null;
+            }
+            catch ( final Exception e )
+            {
+                logger.error ( "unable to retriebe latest value from root storage channel", e );
+            }
+        }
+        return null;
+    }
+
+    /**
      * This method returns the currently available values for the given time span.
      * The returned map contains all available storage channels for the given level.
      * @param compressionLevel compression level for which data has to be retrieved
