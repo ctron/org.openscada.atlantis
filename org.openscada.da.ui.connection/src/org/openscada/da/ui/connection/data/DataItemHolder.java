@@ -7,6 +7,7 @@ import java.util.Observer;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.Variant;
 import org.openscada.core.connection.provider.ConnectionRequest;
+import org.openscada.core.connection.provider.ConnectionRequestTracker;
 import org.openscada.core.connection.provider.ConnectionTracker;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.DataItemValue;
@@ -79,7 +80,7 @@ public class DataItemHolder
             }
         };
 
-        this.tracker = new ConnectionTracker ( this.context, createRequest (), new ConnectionTracker.Listener () {
+        this.tracker = new ConnectionRequestTracker ( this.context, createRequest (), new ConnectionTracker.Listener () {
 
             public void setConnection ( final org.openscada.core.connection.provider.ConnectionService connectionService )
             {
