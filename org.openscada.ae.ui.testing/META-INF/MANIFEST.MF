@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.databinding;bundle-version="1.2.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Import-Package: org.apache.log4j,
- org.openscada.core,
- org.openscada.core.client;version="0.13.0",
- org.openscada.core.subscription
+Import-Package: org.openscada.core;version="0.14.0",
+ org.openscada.core.client;version="0.14.0",
+ org.openscada.core.subscription;version="0.14.0",
+ org.slf4j

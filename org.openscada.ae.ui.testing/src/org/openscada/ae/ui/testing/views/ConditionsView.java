@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.jface.action.IMenuListener;
@@ -29,11 +28,12 @@ import org.openscada.ae.ConditionStatusInformation;
 import org.openscada.ae.client.ConditionListener;
 import org.openscada.ae.client.Connection;
 import org.openscada.core.subscription.SubscriptionState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConditionsView extends ViewPart implements ConditionListener
 {
-
-    private final static Logger logger = Logger.getLogger ( ConditionsView.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ConditionsView.class );
 
     public static final String VIEW_ID = "org.openscada.ae.ui.testing.views.ConditionsView";
 
@@ -56,7 +56,7 @@ public class ConditionsView extends ViewPart implements ConditionListener
     @Override
     public void createPartControl ( final Composite parent )
     {
-        GridLayout layout = new GridLayout ( 1, false );
+        final GridLayout layout = new GridLayout ( 1, false );
         layout.horizontalSpacing = layout.verticalSpacing = 0;
         layout.marginHeight = layout.marginWidth = 0;
 
@@ -65,7 +65,7 @@ public class ConditionsView extends ViewPart implements ConditionListener
         this.stateLabel = new Label ( parent, SWT.NONE );
         this.stateLabel.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, false ) );
 
-        Composite wrapper = new Composite ( parent, SWT.NONE );
+        final Composite wrapper = new Composite ( parent, SWT.NONE );
         wrapper.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, true ) );
 
         this.viewer = new TableViewer ( wrapper );
@@ -171,9 +171,9 @@ public class ConditionsView extends ViewPart implements ConditionListener
             Collection<ConditionStatusBean> infos = new LinkedList<ConditionStatusBean> ();
             if ( removed != null )
             {
-                for ( String id : removed )
+                for ( final String id : removed )
                 {
-                    ConditionStatusBean info = this.conditionSet.remove ( id );
+                    final ConditionStatusBean info = this.conditionSet.remove ( id );
                     if ( info != null )
                     {
                         infos.add ( info );
@@ -187,18 +187,18 @@ public class ConditionsView extends ViewPart implements ConditionListener
 
             if ( addedOrUpdated != null )
             {
-                for ( ConditionStatusInformation info : addedOrUpdated )
+                for ( final ConditionStatusInformation info : addedOrUpdated )
                 {
                     if ( this.conditionSet.containsKey ( info.getId () ) )
                     {
                         // update
-                        ConditionStatusBean infoBean = this.conditionSet.get ( info.getId () );
+                        final ConditionStatusBean infoBean = this.conditionSet.get ( info.getId () );
                         infoBean.update ( info );
                     }
                     else
                     {
                         // add
-                        ConditionStatusBean infoBean = new ConditionStatusBean ( this.connection, info );
+                        final ConditionStatusBean infoBean = new ConditionStatusBean ( this.connection, info );
                         this.conditionSet.put ( info.getId (), infoBean );
                         infos.add ( infoBean );
                     }
@@ -207,7 +207,7 @@ public class ConditionsView extends ViewPart implements ConditionListener
 
             this.conditions.addAll ( infos );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             e.printStackTrace ();
         }
