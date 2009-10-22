@@ -22,10 +22,30 @@
       <import plugin="org.openscada.core.client.common"/>
       <import plugin="org.openscada.core.server.common"/>
       <import plugin="org.openscada.utils"/>
+      <import plugin="com.springsource.org.apache.log4j"/>
+      <import plugin="org.apache.mina.core"/>
+      <import plugin="org.openscada.core.client.net"/>
+      <import plugin="org.openscada.da.core.common"/>
+      <import plugin="org.openscada.net.base"/>
+      <import plugin="org.openscada.core.net.base"/>
    </requires>
 
    <plugin
          id="org.openscada.ae"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.ae.client.net"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.ae.net"
          download-size="0"
          install-size="0"
          version="0.0.0"
