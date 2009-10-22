@@ -28,7 +28,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-import org.apache.log4j.Logger;
 import org.apache.mina.core.session.IoSession;
 import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
@@ -49,6 +48,8 @@ import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConnectionImpl extends SessionConnectionBase implements org.openscada.ae.client.Connection
 {
@@ -62,22 +63,9 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     public static final String VERSION = "0.1.0";
 
-    private static Logger logger = Logger.getLogger ( ConnectionImpl.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ConnectionImpl.class );
 
-    private Executor executor = new Executor () {
-
-        public void execute ( final Runnable command )
-        {
-            try
-            {
-                command.run ();
-            }
-            catch ( final Throwable e )
-            {
-                logger.info ( "Uncaught exception in default executor", e );
-            }
-        }
-    };
+    private Executor executor;
 
     private final Map<String, ConditionListener> conditionListeners = new HashMap<String, ConditionListener> ();
 
@@ -93,15 +81,11 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         return VERSION;
     }
 
-    public ConnectionImpl ( final ConnectionInformation connectionInformantion, final boolean defaultExecutorAsync )
+    public ConnectionImpl ( final ConnectionInformation connectionInformantion )
     {
         super ( connectionInformantion );
 
-        if ( defaultExecutorAsync )
-        {
-            setupAsyncExecutor ();
-        }
-
+        setupAsyncExecutor ();
         init ();
     }
 
@@ -163,20 +147,20 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     protected void handleBrowserUpdate ( final Message message )
     {
-        BrowserEntry[] added = BrowserMessageHelper.fromValue ( message.getValues ().get ( "added" ) );
-        String[] removed = BrowserMessageHelper.fromValueRemoved ( message.getValues ().get ( "removed" ) );
+        final BrowserEntry[] added = BrowserMessageHelper.fromValue ( message.getValues ().get ( "added" ) );
+        final String[] removed = BrowserMessageHelper.fromValueRemoved ( message.getValues ().get ( "removed" ) );
 
         // perform update
         if ( removed != null )
         {
-            for ( String id : removed )
+            for ( final String id : removed )
             {
                 this.browserCache.remove ( id );
             }
         }
         if ( added != null )
         {
-            for ( BrowserEntry entry : added )
+            for ( final BrowserEntry entry : added )
             {
                 this.browserCache.put ( entry.getId (), entry );
             }
@@ -188,16 +172,16 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         String queryId = null;
         {
-            Value value = message.getValues ().get ( MESSAGE_QUERY_ID );
+            final Value value = message.getValues ().get ( MESSAGE_QUERY_ID );
             if ( value instanceof StringValue )
             {
                 queryId = ( (StringValue)value ).getValue ();
             }
         }
 
-        Event[] data = EventMessageHelper.fromValue ( message.getValues ().get ( "events" ) );
+        final Event[] data = EventMessageHelper.fromValue ( message.getValues ().get ( "events" ) );
 
-        if ( ( queryId != null ) && ( data != null ) )
+        if ( queryId != null && data != null )
         {
             EventListener listener;
             synchronized ( this.eventListeners )
@@ -219,7 +203,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         {
             listener.dataChanged ( data );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             logger.warn ( "Failed to notify", e );
         }
@@ -233,17 +217,17 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
             String queryId = null;
             {
-                Value value = message.getValues ().get ( MESSAGE_QUERY_ID );
+                final Value value = message.getValues ().get ( MESSAGE_QUERY_ID );
                 if ( value instanceof StringValue )
                 {
                     queryId = ( (StringValue)value ).getValue ();
                 }
             }
 
-            ConditionStatusInformation[] data = ConditionMessageHelper.fromValue ( message.getValues ().get ( "conditions.addedOrUpdated" ) );
-            String[] removed = ConditionMessageHelper.fromValueRemoved ( message.getValues ().get ( "conditions.removed" ) );
+            final ConditionStatusInformation[] data = ConditionMessageHelper.fromValue ( message.getValues ().get ( "conditions.addedOrUpdated" ) );
+            final String[] removed = ConditionMessageHelper.fromValueRemoved ( message.getValues ().get ( "conditions.removed" ) );
 
-            if ( ( queryId != null ) && ( ( data != null ) || ( removed != null ) ) )
+            if ( queryId != null && ( data != null || removed != null ) )
             {
                 ConditionListener listener;
                 synchronized ( this.conditionListeners )
@@ -257,7 +241,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 logger.info ( "Nothing to notify" );
             }
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             logger.warn ( "Failed to handle condition data", e );
         }
@@ -277,7 +261,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             logger.debug ( "notify condition data change" );
             listener.dataChanged ( addedOrUpdated, removed );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             logger.warn ( "Failed to notify", e );
         }
@@ -287,7 +271,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         String queryId = null;
         {
-            Value value = message.getValues ().get ( MESSAGE_QUERY_ID );
+            final Value value = message.getValues ().get ( MESSAGE_QUERY_ID );
             if ( value instanceof StringValue )
             {
                 queryId = ( (StringValue)value ).getValue ();
@@ -296,15 +280,15 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         SubscriptionState status = null;
         {
-            Value value = message.getValues ().get ( "status" );
+            final Value value = message.getValues ().get ( "status" );
             if ( value instanceof StringValue )
             {
-                String statusString = ( (StringValue)value ).getValue ();
+                final String statusString = ( (StringValue)value ).getValue ();
                 status = SubscriptionState.valueOf ( statusString );
             }
         }
 
-        if ( ( queryId != null ) && ( status != null ) )
+        if ( queryId != null && status != null )
         {
             EventListener listener;
             synchronized ( this.eventListeners )
@@ -319,7 +303,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         String queryId = null;
         {
-            Value value = message.getValues ().get ( MESSAGE_QUERY_ID );
+            final Value value = message.getValues ().get ( MESSAGE_QUERY_ID );
             if ( value instanceof StringValue )
             {
                 queryId = ( (StringValue)value ).getValue ();
@@ -328,15 +312,15 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         SubscriptionState status = null;
         {
-            Value value = message.getValues ().get ( "status" );
+            final Value value = message.getValues ().get ( "status" );
             if ( value instanceof StringValue )
             {
-                String statusString = ( (StringValue)value ).getValue ();
+                final String statusString = ( (StringValue)value ).getValue ();
                 status = SubscriptionState.valueOf ( statusString );
             }
         }
 
-        if ( ( queryId != null ) && ( status != null ) )
+        if ( queryId != null && status != null )
         {
             ConditionListener listener;
             synchronized ( this.conditionListeners )
@@ -428,7 +412,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         logger.info ( "Requesting conditions: " + conditionQueryId + "/" + flag );
 
-        Message message = new Message ( flag ? Messages.CC_SUBSCRIBE_CONDITIONS : Messages.CC_UNSUBSCRIBE_CONDITIONS );
+        final Message message = new Message ( flag ? Messages.CC_SUBSCRIBE_CONDITIONS : Messages.CC_UNSUBSCRIBE_CONDITIONS );
 
         message.getValues ().put ( MESSAGE_QUERY_ID, new StringValue ( conditionQueryId ) );
 
@@ -446,7 +430,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         {
             listener.statusChanged ( status );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             logger.warn ( "Failed to notify", e );
         }
@@ -520,7 +504,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         {
             listener.statusChanged ( status );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             logger.warn ( "Failed to notify", e );
         }
@@ -533,7 +517,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
      */
     private void sendSubscribeEventQuery ( final String eventQueryId, final boolean flag )
     {
-        Message message = new Message ( flag ? Messages.CC_SUBSCRIBE_EVENT_POOL : Messages.CC_UNSUBSCRIBE_EVENT_POOL );
+        final Message message = new Message ( flag ? Messages.CC_SUBSCRIBE_EVENT_POOL : Messages.CC_UNSUBSCRIBE_EVENT_POOL );
 
         message.getValues ().put ( MESSAGE_QUERY_ID, new StringValue ( eventQueryId ) );
 
@@ -544,11 +528,11 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     public void sessionClosed ( final IoSession session ) throws Exception
     {
         // set states to DISCONNECTED
-        for ( ConditionListener listener : this.conditionListeners.values () )
+        for ( final ConditionListener listener : this.conditionListeners.values () )
         {
             fireConditionStatusChange ( listener, SubscriptionState.DISCONNECTED );
         }
-        for ( EventListener listener : this.eventListeners.values () )
+        for ( final EventListener listener : this.eventListeners.values () )
         {
             fireEventStatusChange ( listener, SubscriptionState.DISCONNECTED );
         }
@@ -574,13 +558,13 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     protected void fireBrowserListener ( final BrowserEntry[] added, final String[] removed )
     {
-        for ( BrowserListener listener : this.browserListeners )
+        for ( final BrowserListener listener : this.browserListeners )
         {
             try
             {
                 listener.dataChanged ( added, removed );
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
                 logger.warn ( "Failed to notify browser change", e );
             }
@@ -589,7 +573,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     public void acknowledge ( final String conditionId, final Date aknTimestamp )
     {
-        Message message = new Message ( Messages.CC_CONDITION_AKN );
+        final Message message = new Message ( Messages.CC_CONDITION_AKN );
         message.getValues ().put ( "id", new StringValue ( conditionId ) );
         message.getValues ().put ( "aknTimestamp", new LongValue ( aknTimestamp.getTime () ) );
         this.messenger.sendMessage ( message );
