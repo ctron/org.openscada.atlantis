@@ -303,6 +303,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         final double qualityIndicator = !value.isConnected () || value.isError () ? 0 : 1;
         try
         {
+            // process data
             if ( expectedDataType == DataType.LONG_VALUE )
             {
                 final LongValue longValue = new LongValue ( time, qualityIndicator, 1, variant.asLong ( 0L ) );
@@ -321,10 +322,19 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                     query.updateDouble ( doubleValue );
                 }
             }
+
+            // check processed data type and give warning if type does not match the expected type
             final DataType receivedDataType = variant.isBoolean () || variant.isInteger () || variant.isLong () ? DataType.LONG_VALUE : DataType.DOUBLE_VALUE;
             if ( !variant.isNull () && ( expectedDataType != receivedDataType ) )
             {
                 logger.warn ( String.format ( "received data type (%s) does not match expected data type (%s)!", receivedDataType, expectedDataType ) );
+            }
+
+            // when importing data, the values are most likely strongly differing from each other in time.
+            // this causes additional files to be generated that can be cleaned to increase performance
+            if ( importMode )
+            {
+                cleanupRelicts ();
             }
         }
         catch ( final Exception e )
