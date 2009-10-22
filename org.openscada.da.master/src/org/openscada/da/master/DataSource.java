@@ -1,6 +1,6 @@
 package org.openscada.da.master;
 
-public interface DataItemSource
+public interface DataSource
 {
     public abstract void addListener ( final DataSourceListener listener );
 

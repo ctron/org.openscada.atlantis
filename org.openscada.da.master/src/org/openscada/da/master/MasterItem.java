@@ -7,7 +7,7 @@ import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.utils.concurrent.NotifyFuture;
 
-public interface MasterItem extends DataItemSource
+public interface MasterItem extends DataSource
 {
 
     /**
