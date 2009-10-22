@@ -1,0 +1,170 @@
+package org.openscada.ae;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import org.openscada.core.Variant;
+import org.openscada.utils.lang.Immutable;
+
+@Immutable
+public class Event implements Cloneable {
+
+	public static class EventBuilder {
+		private final Event event = new Event();
+
+		private EventBuilder() {
+		};
+
+		public EventBuilder event(Event event) {
+			this.event.id = event.getId();
+			this.event.sourceTimestamp = event.getSourceTimestamp();
+			this.event.entryTimestamp = event.getEntryTimestamp();
+			this.event.attributes.putAll(event.getAttributes());
+			return this;
+		}
+
+		public EventBuilder id(UUID id) {
+			this.event.id = id;
+			return this;
+		}
+
+		public EventBuilder sourceTimestamp(Date sourceTimestamp) {
+			this.event.sourceTimestamp = sourceTimestamp;
+			return this;
+		}
+
+		public EventBuilder entryTimestamp(Date entryTimestamp) {
+			this.event.entryTimestamp = entryTimestamp;
+			return this;
+		}
+
+		public EventBuilder attributes(Map<String, Variant> attributes) {
+			this.event.attributes.putAll(attributes);
+			return this;
+		}
+
+		public EventBuilder attribute(String key, Variant value) {
+			this.event.attributes.put(key, value);
+			return this;
+		}
+
+		public EventBuilder attribute(String key, Object value) {
+			this.event.attributes.put(key, new Variant(value));
+			return this;
+		}
+
+		public Event build() {
+			return new Event(event);
+		}
+	}
+
+	public enum Fields {
+		TYPE("type", String.class), SOURCE("source", String.class), PRIORITY(
+				"priority", Integer.class);
+
+		private final Class<? extends Object> clazz;
+
+		private final String name;
+
+		Fields(String name, Class<? extends Object> clazz) {
+			this.name = name;
+			this.clazz = clazz;
+		}
+
+		public Class<? extends Object> getType() {
+			return this.clazz;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public boolean contains(String name) {
+			return byField(name) == null ? false : true;
+		}
+
+		public Fields byField(String name) {
+			for (Fields field : values()) {
+				if (field.getName().equals(name)) {
+					return field;
+				}
+			}
+			return null;
+		}
+	}
+
+	private UUID id;
+
+	private Date sourceTimestamp;
+
+	private Date entryTimestamp;
+
+	private final Map<String, Variant> attributes = new HashMap<String, Variant>();
+
+	private Event(Event event) {
+		this.id = event.getId();
+		this.sourceTimestamp = event.getSourceTimestamp();
+		this.entryTimestamp = event.getEntryTimestamp();
+		this.attributes.putAll(event.getAttributes());
+	}
+
+	private Event() {
+	}
+
+	public UUID getId() {
+		return this.id;
+	}
+
+	public Date getSourceTimestamp() {
+		return this.sourceTimestamp;
+	}
+
+	public Date getEntryTimestamp() {
+		return this.entryTimestamp;
+	}
+
+	public Map<String, Variant> getAttributes() {
+		return Collections.unmodifiableMap(this.attributes);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Event other = (Event) obj;
+		if (this.id == null) {
+			if (other.id != null) {
+				return false;
+			}
+		} else if (!this.id.equals(other.id)) {
+			return false;
+		}
+		return true;
+	}
+
+	public static EventBuilder create() {
+		return new EventBuilder();
+	}
+
+	public Event clone() {
+		return new Event(this);
+	}
+}
