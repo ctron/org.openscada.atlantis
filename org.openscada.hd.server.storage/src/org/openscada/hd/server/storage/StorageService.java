@@ -621,6 +621,7 @@ public class StorageService implements SelfManagedConfigurationFactory
                 }
             }
         }
+        backEndFactory.deleteBackEnds ( configurationId );
         configuration.setState ( ConfigurationState.AVAILABLE );
         final String[] removedConfigurationIds = new String[] { configurationId };
         for ( final ConfigurationListener listener : this.configurationListeners )

@@ -269,9 +269,45 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
             dataReceiver.submit ( new Runnable () {
                 public void run ()
                 {
+                    // check if input is valid
                     logger.debug ( "processing data after: " + ( System.currentTimeMillis () - now ) );
-                    processData ( value );
+                    if ( value == null )
+                    {
+                        createInvalidEntry ( now );
+                        return;
+                    }
+                    final Variant variant = value.getValue ();
+                    if ( variant == null )
+                    {
+                        createInvalidEntry ( now );
+                        return;
+                    }
+                    final Calendar calendar = value.getTimestamp ();
+                    final long time = calendar == null ? now : calendar.getTimeInMillis ();
+                    if ( !importMode && ( ( now - proposedDataAge ) > time ) )
+                    {
+                        logger.warn ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", configuration.getId (), time );
+                        return;
+                    }
+
+                    // process data
+                    final double qualityIndicator = !value.isConnected () || value.isError () ? 0 : 1;
+                    if ( expectedDataType == DataType.LONG_VALUE )
+                    {
+                        processData ( new LongValue ( time, qualityIndicator, 1, variant.asLong ( 0L ) ) );
+                    }
+                    else
+                    {
+                        processData ( new DoubleValue ( time, qualityIndicator, 1, variant.asDouble ( 0.0 ) ) );
+                    }
                     logger.debug ( "data processing time: " + ( System.currentTimeMillis () - now ) );
+
+                    // check processed data type and give warning if type does not match the expected type
+                    final DataType receivedDataType = variant.isBoolean () || variant.isInteger () || variant.isLong () ? DataType.LONG_VALUE : DataType.DOUBLE_VALUE;
+                    if ( !variant.isNull () && ( expectedDataType != receivedDataType ) )
+                    {
+                        logger.warn ( String.format ( "received data type (%s) does not match expected data type (%s)!", receivedDataType, expectedDataType ) );
+                    }
                 }
             } );
         }
@@ -281,32 +317,18 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      * This method processes the data tha is received via the data receiver task.
      * @param value data that has to be processed
      */
-    public synchronized void processData ( final DataItemValue value )
+    public synchronized void processData ( final BaseValue value )
     {
-        if ( !this.started || ( this.rootStorageChannel == null ) || ( value == null ) )
+        if ( !this.started || ( this.rootStorageChannel == null ) )
         {
             return;
         }
-        final Variant variant = value.getValue ();
-        if ( variant == null )
-        {
-            return;
-        }
-        final Calendar calendar = value.getTimestamp ();
-        final long now = System.currentTimeMillis ();
-        final long time = calendar == null ? now : calendar.getTimeInMillis ();
-        if ( !importMode && ( ( now - proposedDataAge ) > time ) )
-        {
-            logger.warn ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", configuration.getId (), time );
-            return;
-        }
-        final double qualityIndicator = !value.isConnected () || value.isError () ? 0 : 1;
         try
         {
             // process data
-            if ( expectedDataType == DataType.LONG_VALUE )
+            if ( value instanceof LongValue )
             {
-                final LongValue longValue = new LongValue ( time, qualityIndicator, 1, variant.asLong ( 0L ) );
+                final LongValue longValue = (LongValue)value;
                 this.rootStorageChannel.updateLong ( longValue );
                 for ( final QueryImpl query : this.openQueries )
                 {
@@ -315,19 +337,12 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
             }
             else
             {
-                final DoubleValue doubleValue = new DoubleValue ( time, qualityIndicator, 1, variant.asDouble ( 0.0 ) );
+                final DoubleValue doubleValue = (DoubleValue)value;
                 this.rootStorageChannel.updateDouble ( doubleValue );
                 for ( final QueryImpl query : this.openQueries )
                 {
                     query.updateDouble ( doubleValue );
                 }
-            }
-
-            // check processed data type and give warning if type does not match the expected type
-            final DataType receivedDataType = variant.isBoolean () || variant.isInteger () || variant.isLong () ? DataType.LONG_VALUE : DataType.DOUBLE_VALUE;
-            if ( !variant.isNull () && ( expectedDataType != receivedDataType ) )
-            {
-                logger.warn ( String.format ( "received data type (%s) does not match expected data type (%s)!", receivedDataType, expectedDataType ) );
             }
 
             // when importing data, the values are most likely strongly differing from each other in time.
@@ -339,7 +354,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         }
         catch ( final Exception e )
         {
-            logger.error ( String.format ( "could not process value (%s)", variant ), e );
+            logger.error ( "could not process value", e );
         }
     }
 
@@ -374,6 +389,8 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /**
      * This method creates an invalid entry using the data of the latest existing entry.
      * No entry is made if no data at all is available in the root storage channel.
+     * It is assured that the time of the new entry is after the latest existing entry.
+     * If necessary, the passed time will be increased to fit this requirement.
      * @param time time of the entry that has to be created
      */
     private void createInvalidEntry ( final long time )
@@ -399,23 +416,13 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
             if ( ( values != null ) && ( values.length > 0 ) )
             {
                 final BaseValue value = values[values.length - 1];
-                value.setTime ( Math.max ( time, value.getTime () ) );
-                value.setQualityIndicator ( 0 );
-                value.setBaseValueCount ( 0 );
-                try
+                if ( value instanceof LongValue )
                 {
-                    if ( expectedDataType == DataType.LONG_VALUE )
-                    {
-                        rootStorageChannel.updateLong ( (LongValue)value );
-                    }
-                    else
-                    {
-                        rootStorageChannel.updateDouble ( (DoubleValue)value );
-                    }
+                    processData ( new LongValue ( Math.max ( value.getTime () + 1, time ), 0, 0, ( (LongValue)value ).getValue () ) );
                 }
-                catch ( final Exception e )
+                else
                 {
-                    logger.error ( "could not store value via root storage channel", e );
+                    processData ( new DoubleValue ( Math.max ( value.getTime () + 1, time ), 0, 0, ( (DoubleValue)value ).getValue () ) );
                 }
             }
         }
