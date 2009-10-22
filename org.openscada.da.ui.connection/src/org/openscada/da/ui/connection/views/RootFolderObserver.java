@@ -4,7 +4,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.openscada.core.ui.connection.data.ConnectionHolder;
-import org.openscada.da.connection.provider.ConnectionService;
+import org.openscada.da.client.connection.service.ConnectionService;
 import org.openscada.da.ui.connection.internal.FolderEntryWrapper;
 
 public class RootFolderObserver extends FolderObserver implements PropertyChangeListener

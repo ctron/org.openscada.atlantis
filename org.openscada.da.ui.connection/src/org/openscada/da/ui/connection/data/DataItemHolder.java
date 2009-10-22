@@ -13,7 +13,7 @@ import org.openscada.da.client.DataItem;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
-import org.openscada.da.connection.provider.ConnectionService;
+import org.openscada.da.client.connection.service.ConnectionService;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.utils.concurrent.AbstractFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
