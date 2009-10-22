@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<syslog:configuration xmlns:syslog="http://openscada.org/ae/syslog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://openscada.org/ae/syslog schema/SyslogStorage.xsd ">
-  <providers>
-    <file-provider file="/var/log/syslog" default-severity="INFO"/>
-    <syslog-udp-provider port="1402"/>
-  </providers>
-</syslog:configuration>
