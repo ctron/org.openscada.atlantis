@@ -62,13 +62,13 @@ public class StorageService implements SelfManagedConfigurationFactory
     private final static String IMPORT_MODE = "org.openscada.hd.server.storage.import";
 
     /** Minimum count of file fragments before the first fragment is old enough to be deleted. */
-    private final static long FILE_FRAGMENTS_PER_DATA_LIFESPAN = 4;
+    private final static long FILE_FRAGMENTS_PER_DATA_LIFESPAN = 3;
 
     /** Execute heart beat period in milliseconds. */
     private final static long HEART_BEATS_PERIOD = 1000;
 
     /** Period in milliseconds between two consecutive attempts to delete old data. */
-    private final static long CLEANER_TASK_PERIOD = 1000 * 3;
+    private final static long CLEANER_TASK_PERIOD = 1000 * 5;
 
     /** Maximum data age of heart beat data. */
     private final static long PROPOSED_HEART_BEAT_DATA_AGE = 1;
