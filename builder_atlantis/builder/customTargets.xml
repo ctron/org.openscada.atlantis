@@ -167,6 +167,12 @@
 	<openscada.builder.copyPlugin id="org.openscada.hd.server.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage"/>
   	
+  	<!-- OpenSCADA AE -->
+  	
+  	<openscada.builder.copyFeature id="org.openscada.ae"/>
+  	  	
+  	<openscada.builder.copyPlugin id="org.openscada.ae"/>
+  	
   	<!-- Additional stuff -->
   	
   	<openscada.builder.copyPlugin id="org.openscada.spring.components" project="openscada_spring_components"/>
