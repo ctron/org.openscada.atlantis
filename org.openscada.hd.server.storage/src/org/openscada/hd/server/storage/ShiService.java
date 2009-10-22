@@ -89,6 +89,9 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /** Task that receives the incoming data. */
     private ExecutorService dataReceiver;
 
+    /** Latest processed value. */
+    private BaseValue latestProcessedValue;
+
     /**
      * Constructor.
      * @param configuration configuration of the service
@@ -319,9 +322,21 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized void processData ( final BaseValue value )
     {
-        if ( !this.started || ( this.rootStorageChannel == null ) )
+        if ( !this.started || ( this.rootStorageChannel == null ) || ( value == null ) )
         {
             return;
+        }
+        if ( latestProcessedValue == null )
+        {
+            latestProcessedValue = getLatestValue ();
+        }
+        if ( latestProcessedValue == null )
+        {
+            latestProcessedValue = value;
+        }
+        if ( value.getTime () < latestProcessedValue.getTime () )
+        {
+            logger.warn ( "older value for configuration '%s' received than latest available value", configuration.getId () );
         }
         try
         {
