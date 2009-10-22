@@ -396,15 +396,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                         filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, startIndex, inputDataType == DataType.LONG_VALUE ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
                     }
                 }
-                final BaseValue normalizedValue = calculationLogicProvider.generateValues ( filledValues );
-                if ( normalizedValue != null )
-                {
-                    resultValues.add ( normalizedValue );
-                }
-                else
-                {
-                    logger.error ( "DF" );
-                }
+                resultValues.add ( calculationLogicProvider.generateValues ( filledValues ) );
             }
             final Value[] resultValueArray = new Value[resultSize];
             if ( outputDataType == DataType.LONG_VALUE )
@@ -428,10 +420,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             else
             {
                 final DoubleValue[] doubleValues = resultValues.toArray ( ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
-                if ( resultValueArray.length != doubleValues.length )
-                {
-                    logger.error ( "result values are nto equal in length to generated values!" );
-                }
                 for ( int i = 0; i < resultValueArray.length; i++ )
                 {
                     final DoubleValue doubleValue = doubleValues[i];
