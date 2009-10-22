@@ -7,7 +7,7 @@ import java.util.Set;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.master.MasterItem;
-import org.openscada.da.master.MasterItemListener;
+import org.openscada.da.master.DataSourceListener;
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
@@ -25,7 +25,7 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HistoricalItemImpl implements HistoricalItem, MasterItemListener
+public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( HistoricalItemImpl.class );

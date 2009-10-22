@@ -20,7 +20,7 @@ import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.MasterItemHandler;
-import org.openscada.da.master.MasterItemListener;
+import org.openscada.da.master.DataSourceListener;
 import org.openscada.utils.concurrent.AbstractFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
@@ -77,7 +77,7 @@ public class MasterItemImpl implements ItemUpdateListener, MasterItem
 
     private final Set<MasterItemHandler> subHandler = new HashSet<MasterItemHandler> ();
 
-    private final Set<MasterItemListener> listeners = new HashSet<MasterItemListener> ();
+    private final Set<DataSourceListener> listeners = new HashSet<DataSourceListener> ();
 
     private final BundleContext context;
 
@@ -147,7 +147,7 @@ public class MasterItemImpl implements ItemUpdateListener, MasterItem
     private void notifyListener ()
     {
         final DataItemValue value = this.value;
-        for ( final MasterItemListener listener : this.listeners )
+        for ( final DataSourceListener listener : this.listeners )
         {
             listener.stateChanged ( value );
         }
@@ -230,7 +230,7 @@ public class MasterItemImpl implements ItemUpdateListener, MasterItem
         this.value = value;
     }
 
-    public void addListener ( final MasterItemListener listener )
+    public void addListener ( final DataSourceListener listener )
     {
         if ( listener == null )
         {
@@ -241,7 +241,7 @@ public class MasterItemImpl implements ItemUpdateListener, MasterItem
         listener.stateChanged ( this.value );
     }
 
-    public void removeListener ( final MasterItemListener listener )
+    public void removeListener ( final DataSourceListener listener )
     {
         if ( listener == null )
         {
