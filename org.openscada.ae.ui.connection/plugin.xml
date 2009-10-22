@@ -5,11 +5,34 @@
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
             activeByDefault="true"
-            contentProvider="org.openscada.ae.ui.connection.navigator.ContentProvider"
+            contentProvider="org.openscada.ae.ui.connection.navigator.ConnectionContentProvider"
             id="org.openscada.ae.ui.connection.provider"
-            labelProvider="org.openscada.ae.ui.connection.navigator.LabelProvider"
-            name="OpenSCADA AE"
+            labelProvider="org.openscada.ae.ui.connection.navigator.ConnectionLabelProvider"
+            name="AE Connections"
+            priority="normal"
             providesSaveables="false">
+         <triggerPoints>
+            <or>
+               <and>
+                  <instanceof
+                        value="org.openscada.core.ui.connection.data.ConnectionHolder">
+                  </instanceof>
+                  <test
+                        property="org.openscada.core.ui.connection.data.ConnectionHolder.interfaceName"
+                        value="ae">
+                  </test>
+               </and>
+               <instanceof
+                     value="org.openscada.ae.BrowserEntry">
+               </instanceof>
+            </or>
+         </triggerPoints>
+         <possibleChildren>
+            <or>
+               <instanceof
+                     value="org.openscada.ae.BrowserEntry">
+               </instanceof>
+            </or></possibleChildren>
       </navigatorContent>
    </extension>
 

@@ -3,6 +3,8 @@ package org.openscada.ae.ui.connection.navigator;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
+import org.eclipse.jface.viewers.StyledString;
+import org.openscada.ae.BrowserEntry;
 import org.openscada.ui.databinding.CommonListeningLabelProvider;
 import org.openscada.ui.databinding.StyledViewerLabel;
 import org.slf4j.Logger;
@@ -17,7 +19,7 @@ public class ConnectionLabelProvider extends CommonListeningLabelProvider
 
     public ConnectionLabelProvider ()
     {
-        super ( new ConnectionObservableFactory (), "org.openscada.ae.ui.connection.provider" );
+        super ( "org.openscada.ae.ui.connection.provider" );
     }
 
     @Override
@@ -30,6 +32,15 @@ public class ConnectionLabelProvider extends CommonListeningLabelProvider
     @Override
     public void updateLabel ( final StyledViewerLabel label, final Object element )
     {
+        logger.debug ( "Update label: {}", element );
+
+        if ( element instanceof BrowserEntry )
+        {
+            final BrowserEntry entry = (BrowserEntry)element;
+            final StyledString string = new StyledString ( entry.getId () );
+            label.setStyledText ( string );
+        }
+        else
         {
             super.updateLabel ( label, element );
         }

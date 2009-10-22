@@ -12,15 +12,14 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.openscada.core.client.Connection;
 import org.openscada.core.connection.provider.ConnectionService;
-import org.openscada.core.ui.connection.Activator;
 import org.openscada.core.ui.connection.data.ConnectionDiscovererBean;
 import org.openscada.core.ui.connection.data.ConnectionHolder;
-import org.openscada.ui.databinding.ListeningLabelProvider;
+import org.openscada.ui.databinding.CommonListeningLabelProvider;
 import org.openscada.ui.databinding.StyledViewerLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectionLabelProvider extends ListeningLabelProvider implements PropertyChangeListener
+public class ConnectionLabelProvider extends CommonListeningLabelProvider implements PropertyChangeListener
 {
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionLabelProvider.class );
 
@@ -28,7 +27,7 @@ public class ConnectionLabelProvider extends ListeningLabelProvider implements P
 
     public ConnectionLabelProvider ()
     {
-        super ( Activator.getDefault ().getDiscovererSet (), new ConnectionObservableFactory () );
+        super ( "org.openscada.core.ui.connection.provider" );
     }
 
     @Override

@@ -1,17 +1,12 @@
 package org.openscada.ui.databinding;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @since 1.1
@@ -19,8 +14,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ListeningLabelProvider extends ViewerLabelProvider
 {
-
-    private final static Logger logger = LoggerFactory.getLogger ( ListeningLabelProvider.class );
 
     private final ISetChangeListener listener = new ISetChangeListener () {
         public void handleSetChange ( final SetChangeEvent event )
@@ -36,27 +29,20 @@ public class ListeningLabelProvider extends ViewerLabelProvider
         }
     };
 
-    private final Set<IObservableSet> items = new HashSet<IObservableSet> ();
-
-    private final IObservableFactory factory;
-
-    private final Map<Object, IObservableSet> itemMap = new HashMap<Object, IObservableSet> ();
+    private final Set<IObservableSet> sources = new HashSet<IObservableSet> ();
 
     private boolean disposed;
 
     /**
      * @param itemsThatNeedLabels
-     * @param connectionObservableFactory 
      */
-    public ListeningLabelProvider ( final IObservableSet itemsThatNeedLabels, final IObservableFactory factory )
+    public ListeningLabelProvider ( final IObservableSet itemsThatNeedLabels )
     {
-        this ( factory );
         addSource ( itemsThatNeedLabels );
     }
 
-    public ListeningLabelProvider ( final IObservableFactory factory )
+    public ListeningLabelProvider ()
     {
-        this.factory = factory;
     }
 
     protected synchronized void addSource ( final IObservableSet observableSet )
@@ -66,7 +52,7 @@ public class ListeningLabelProvider extends ViewerLabelProvider
             return;
         }
 
-        this.items.add ( observableSet );
+        this.sources.add ( observableSet );
         observableSet.addSetChangeListener ( this.listener );
         for ( final Iterator<?> it = observableSet.iterator (); it.hasNext (); )
         {
@@ -89,34 +75,23 @@ public class ListeningLabelProvider extends ViewerLabelProvider
 
         if ( !this.disposed )
         {
-            this.items.remove ( observableSet );
+            this.sources.remove ( observableSet );
         }
     }
 
     protected synchronized void addListenerTo ( final Object next )
     {
-        logger.debug ( "Add listener to: {}", next ); //$NON-NLS-1$
-
-        final IObservableSet set = (IObservableSet)this.factory.createObservable ( next );
-
-        if ( set != null )
-        {
-            this.itemMap.put ( next, set );
-            addSource ( set );
-        }
     }
 
     protected synchronized void removeListenerFrom ( final Object next )
     {
-        logger.debug ( "Remove listener from: {}", next ); //$NON-NLS-1$
-        removeSource ( this.itemMap.remove ( next ) );
     }
 
     public synchronized void dispose ()
     {
         this.disposed = true;
 
-        for ( final IObservableSet set : this.items )
+        for ( final IObservableSet set : this.sources )
         {
             if ( !set.isDisposed () )
             {

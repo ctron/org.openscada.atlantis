@@ -30,7 +30,7 @@ public class ConnectionLabelProvider extends CommonListeningLabelProvider implem
 
     public ConnectionLabelProvider ()
     {
-        super ( new ConnectionObservableFactory (), "org.openscada.hd.ui.connection.provider" );
+        super ( "org.openscada.hd.ui.connection.provider" );
     }
 
     @Override

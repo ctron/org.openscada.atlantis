@@ -1,6 +1,5 @@
 package org.openscada.ui.databinding;
 
-import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableSetContentProvider;
@@ -19,9 +18,8 @@ public class CommonListeningLabelProvider extends ListeningLabelProvider impleme
 
     private final String contentExtensionId;
 
-    public CommonListeningLabelProvider ( final IObservableFactory factory, final String contentExtensionId )
+    public CommonListeningLabelProvider ( final String contentExtensionId )
     {
-        super ( factory );
         this.contentExtensionId = contentExtensionId;
     }
 
