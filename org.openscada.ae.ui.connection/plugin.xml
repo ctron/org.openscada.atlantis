@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <navigatorContent
+            activeByDefault="true"
+            contentProvider="org.openscada.ae.ui.connection.navigator.ContentProvider"
+            id="org.openscada.ae.ui.connection.provider"
+            labelProvider="org.openscada.ae.ui.connection.navigator.LabelProvider"
+            name="OpenSCADA AE"
+            providesSaveables="false">
+      </navigatorContent>
+   </extension>
+
+</plugin>

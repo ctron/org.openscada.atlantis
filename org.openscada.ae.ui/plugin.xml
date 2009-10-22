@@ -13,7 +13,7 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="org.openscada.rcp.client.perspective">
+            targetID="*">
          <perspectiveShortcut
                id="org.openscada.ae.ui.perspectives.perspective">
          </perspectiveShortcut>
@@ -21,11 +21,11 @@
       <perspectiveExtension
             targetID="org.openscada.ae.ui.perspectives.perspective">
          <view
-               closeable="false"
-               id="org.openscada.ae.ui.views.ConnectionsView"
+               closeable="true"
+               id="org.openscada.core.ui.connection.ConnectionView"
                minimized="false"
                moveable="true"
-               ratio="0.25"
+               ratio="0.35"
                relationship="left"
                relative="org.eclipse.ui.editorss"
                showTitle="true"
@@ -38,11 +38,16 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
+            category="org.openscada.ae.ui.category"
             class="org.openscada.ae.ui.views.ConnectionsView"
             id="org.openscada.ae.ui.views.ConnectionsView"
             name="Connections"
             restorable="true">
       </view>
+      <category
+            id="org.openscada.ae.ui.category"
+            name="OpenSCADA AE">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -65,6 +70,20 @@
                menubarPath="additions">
          </action>
       </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.openscada.ae.ui.category"
+            name="OpenSCADA AE">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.openscada.ae.ui.category"
+            name="OpenSCADA AE">
+      </category>
    </extension>
 
 </plugin>
