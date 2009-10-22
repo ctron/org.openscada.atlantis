@@ -1,4 +1,4 @@
-package org.openscada.da.server.testing;
+package org.openscada.da.server.osgi.testing;
 
 import java.util.Dictionary;
 import java.util.Hashtable;

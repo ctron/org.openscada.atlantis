@@ -1,4 +1,4 @@
-package org.openscada.da.server.testing;
+package org.openscada.da.server.osgi.testing;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;

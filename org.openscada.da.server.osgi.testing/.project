@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.openscada.da.server.testing</name>
+	<name>org.openscada.da.server.osgi.testing</name>
 	<comment></comment>
 	<projects>
 	</projects>

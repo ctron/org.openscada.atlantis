@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Server Testing Plug-In
-Bundle-SymbolicName: org.openscada.da.server.testing
+Bundle-SymbolicName: org.openscada.da.server.osgi.testing
 Bundle-Version: 0.14.0.qualifier
-Bundle-Activator: org.openscada.da.server.testing.Activator
+Bundle-Activator: org.openscada.da.server.osgi.testing.Activator
 Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.apache.log4j;version="1.2.6",
