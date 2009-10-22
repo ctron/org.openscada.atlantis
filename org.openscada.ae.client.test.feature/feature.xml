@@ -36,6 +36,13 @@
       <import plugin="org.openscada.ae" version="0.14.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.ae.client.net" version="0.14.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.ae.ui" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="slf4j.api"/>
+      <import plugin="org.eclipse.ui" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.ui.connection.creator" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.ae.connection.provider" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.connection.provider"/>
+      <import plugin="org.eclipse.osgi"/>
    </requires>
 
    <plugin

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.openscada.core.ui.connection.creator">
+      <creator
+            class="org.openscada.ae.ui.connection.creator.net.ConnectionCreatorImpl"
+            driver="net"
+            id="org.openscada.ae.ui.connection.creator.net.creator"
+            interface="ae">
+      </creator>
+   </extension>
+
+</plugin>
