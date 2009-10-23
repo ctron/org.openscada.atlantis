@@ -150,10 +150,15 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         final BrowserEntry[] added = BrowserMessageHelper.fromValue ( message.getValues ().get ( "added" ) );
         final String[] removed = BrowserMessageHelper.fromValueRemoved ( message.getValues ().get ( "removed" ) );
+        final boolean full = message.getValues ().containsKey ( "full" );
 
         // perform update
         if ( removed != null )
         {
+            if ( full )
+            {
+                this.browserCache.clear ();
+            }
             for ( final String id : removed )
             {
                 this.browserCache.remove ( id );
@@ -166,7 +171,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 this.browserCache.put ( entry.getId (), entry );
             }
         }
-        fireBrowserListener ( added, removed, false );
+        fireBrowserListener ( added, removed, full );
     }
 
     protected synchronized void handleEventData ( final Message message )
