@@ -461,7 +461,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         for ( int i = 0; i < resultValueInformations.length; i++ )
         {
             final MutableValueInformation valueInformation = resultValueInformations[i];
-            this.calculatedResultValueInformations[i] = new ValueInformation ( valueInformation.getStartTimestamp (), valueInformation.getEndTimestamp (), valueInformation.getQuality (), valueInformation.getSourceValues () );
+            this.calculatedResultValueInformations[i] = new ValueInformation ( valueInformation.getStartTimestamp (), valueInformation.getEndTimestamp (), valueInformation.getQuality (), 0.0, valueInformation.getSourceValues () );
         }
         this.calculatedResultMap = resultMap;
     }
