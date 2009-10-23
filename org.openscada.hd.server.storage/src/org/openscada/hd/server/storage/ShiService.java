@@ -531,8 +531,15 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         {
             try
             {
+                // clean data
                 logger.info ( "cleaning old data" );
                 rootStorageChannel.cleanupRelicts ();
+
+                // notify queries
+                for ( final QueryImpl query : openQueries )
+                {
+                    query.updateDataBefore ( System.currentTimeMillis () - proposedDataAge );
+                }
             }
             catch ( final Exception e )
             {

@@ -292,7 +292,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         // calculate global values
         final long requestedTimeSpan = absoluteEndTime - absoluteStartTime;
         final double requestedValueFrequency = (double)requestedTimeSpan / absoluteResultSize;
-        final int resultSize = lastIndex - firstIndex;
+        final int resultSize = lastIndex - firstIndex + 1;
         final double startTimeAsDouble = absoluteStartTime + firstIndex * requestedValueFrequency;
         final double endTimeAsDouble = absoluteStartTime + ( lastIndex + 1 ) * requestedValueFrequency;
         final long startTime = Math.round ( startTimeAsDouble );
@@ -362,7 +362,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         }
 
         // since all data is collected now, the normalizing can be performed
-        final MutableValueInformation[] resultValueInformations = new MutableValueInformation[lastIndex - firstIndex];
+        final MutableValueInformation[] resultValueInformations = new MutableValueInformation[resultSize];
         for ( int i = 0; i < resultValueInformations.length; i++ )
         {
             resultValueInformations[i] = new MutableValueInformation ( null, null, 1.0, Long.MAX_VALUE );
@@ -708,42 +708,36 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /**
      * This method marks the values that are affected by the specified time as changed
      * @param time time at which the affected values have to be marked as changed
+     * @param alsoMarkPast flag indicating whether all values that lie before the passed time should also be calculated again
      */
-    private void markTimeAsDirty ( final long time )
+    private void markTimeAsDirty ( final long time, final boolean alsoMarkPast )
     {
-        synchronized ( service )
+        if ( !closed && initialLoadPerformed )
         {
-            if ( !closed && initialLoadPerformed )
+            final long endTime = parameters.getEndTimestamp ().getTimeInMillis ();
+            dataChanged = true;
+            final long startTime = parameters.getStartTimestamp ().getTimeInMillis ();
+            if ( time <= startTime )
             {
-                final long endTime = parameters.getEndTimestamp ().getTimeInMillis ();
-                if ( time >= endTime )
+                startTimeIndicesToUpdate.add ( 0 );
+                return;
+            }
+            final long resultSize = parameters.getEntries ();
+            final long requestedTimeSpan = endTime - startTime;
+            final double requestedValueFrequency = (double)requestedTimeSpan / resultSize;
+            for ( int i = 0; i < resultSize; i++ )
+            {
+                final double currentStartTimeAsDouble = startTime + i * requestedValueFrequency;
+                final double currentEndTimeAsDouble = currentStartTimeAsDouble + requestedValueFrequency;
+                final long currentStartTimeAsLong = Math.round ( currentStartTimeAsDouble );
+                final long currentEndTimeAsLong = Math.round ( currentEndTimeAsDouble );
+                if ( ( latestDirtyTime <= currentEndTimeAsLong ) || ( ( currentStartTimeAsLong <= time ) && ( ( alsoMarkPast ) || ( time <= currentEndTimeAsLong ) ) ) )
                 {
-                    return;
+                    startTimeIndicesToUpdate.add ( i );
                 }
-                dataChanged = true;
-                final long startTime = parameters.getStartTimestamp ().getTimeInMillis ();
-                if ( time <= startTime )
+                else if ( time < currentStartTimeAsLong )
                 {
-                    startTimeIndicesToUpdate.add ( 0 );
-                    return;
-                }
-                final long resultSize = parameters.getEntries ();
-                final long requestedTimeSpan = endTime - startTime;
-                final double requestedValueFrequency = (double)requestedTimeSpan / resultSize;
-                for ( int i = 0; i < resultSize; i++ )
-                {
-                    final double currentStartTimeAsDouble = startTime + i * requestedValueFrequency;
-                    final double currentEndTimeAsDouble = currentStartTimeAsDouble + requestedValueFrequency;
-                    final long currentStartTimeAsLong = Math.round ( currentStartTimeAsDouble );
-                    final long currentEndTimeAsLong = Math.round ( currentEndTimeAsDouble );
-                    if ( ( latestDirtyTime <= currentEndTimeAsLong ) || ( ( currentStartTimeAsLong <= time ) && ( time <= currentEndTimeAsLong ) ) )
-                    {
-                        startTimeIndicesToUpdate.add ( i );
-                    }
-                    else if ( time < currentStartTimeAsLong )
-                    {
-                        break;
-                    }
+                    break;
                 }
             }
         }
@@ -830,7 +824,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     {
         if ( longValue != null )
         {
-            markTimeAsDirty ( longValue.getTime () );
+            markTimeAsDirty ( longValue.getTime (), false );
         }
     }
 
@@ -855,7 +849,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     {
         if ( doubleValue != null )
         {
-            markTimeAsDirty ( doubleValue.getTime () );
+            markTimeAsDirty ( doubleValue.getTime (), false );
         }
     }
 
@@ -871,5 +865,14 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 updateDouble ( doubleValue );
             }
         }
+    }
+
+    /**
+     * This method invalidates all data up to the specified time.
+     * @param time time up to which data has to be invalidated
+     */
+    public void updateDataBefore ( final long time )
+    {
+        markTimeAsDirty ( time, true );
     }
 }
