@@ -637,11 +637,11 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public synchronized void cleanupRelicts ()
     {
+        logger.info ( "triggering cleaning of old data" );
         for ( final ShiService service : shiServices.values () )
         {
             try
             {
-                logger.info ( "triggering cleaning of old data" );
                 service.cleanupRelicts ();
             }
             catch ( final Exception e )
