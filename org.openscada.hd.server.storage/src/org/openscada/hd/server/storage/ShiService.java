@@ -289,7 +289,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                     final long time = calendar == null ? now : calendar.getTimeInMillis ();
                     if ( !importMode && ( ( now - proposedDataAge ) > time ) )
                     {
-                        logger.warn ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", configuration.getId (), time );
+                        logger.warn ( String.format ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", configuration.getId (), time ) );
                         return;
                     }
 
