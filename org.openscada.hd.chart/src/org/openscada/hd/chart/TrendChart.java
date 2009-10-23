@@ -151,9 +151,9 @@ public class TrendChart extends Chart implements PaintListener
             gc.setForeground ( getDisplay ().getSystemColor ( SWT.COLOR_INFO_FOREGROUND ) );
             final Font smallFont = new Font ( gc.getDevice (), smallFontData );
             gc.setFont ( smallFont );
-            final String timestampText = "     Timestamp: " + DateFormat.getDateTimeInstance ( DateFormat.LONG, DateFormat.LONG ).format ( timestamp );
-            final String qualityText = "       Quality: " + percentFormat.format ( quality );
-            final String soureValuesText = "   # of Values: " + dataAtPoint.getSourceValues ( currentX );
+            final String timestampText = String.format ( "%-16s: ", Messages.getString ( "TrendChart.timestamp" ) ) + DateFormat.getDateTimeInstance ( DateFormat.LONG, DateFormat.LONG ).format ( timestamp ); //$NON-NLS-1$
+            final String qualityText = String.format ( "%-16s: ", Messages.getString ( "TrendChart.quality" ) ) + percentFormat.format ( quality ); //$NON-NLS-1$
+            final String soureValuesText = String.format ( "%-16s: ", Messages.getString ( "TrendChart.numOfValues" ) ) + dataAtPoint.getSourceValues ( currentX ); //$NON-NLS-1$
             final Point textSize = gc.textExtent ( timestampText );
             final int textWidth = textSize.x;
             final int textHeight = textSize.y;
@@ -176,7 +176,7 @@ public class TrendChart extends Chart implements PaintListener
             int i = 4;
             for ( final Entry<String, Double> entry : data.entrySet () )
             {
-                gc.drawText ( String.format ( "%14s", entry.getKey () ) + ": " + String.format ( "%16s", Double.isNaN ( entry.getValue () ) ? "-" : decimalFormat.format ( entry.getValue () ) ), currentX + xoffset + padding, currentY + yoffset + ( padding + textHeight ) * i + padding );
+                gc.drawText ( String.format ( "%16s: ", entry.getKey () ) + String.format ( "%16s", Double.isNaN ( entry.getValue () ) ? "-" : decimalFormat.format ( entry.getValue () ) ), currentX + xoffset + padding, currentY + yoffset + ( padding + textHeight ) * i + padding ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 i++;
             }
             smallFont.dispose ();
