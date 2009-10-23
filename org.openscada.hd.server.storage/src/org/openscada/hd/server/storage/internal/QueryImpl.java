@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -103,6 +104,15 @@ public class QueryImpl implements Query, ExtendedStorageChannel
 
     /** Executor that will be used to send data. */
     private ExecutorService sendingTask;
+
+    /** Parameters for which data was sent last time. */
+    private QueryParameters lastParameters;
+
+    /** Data that was sent last time. */
+    private Map<String, Value[]> lastData;
+
+    /** Value information that was sent together with data last time. */
+    private ValueInformation[] lastValueInformations;
 
     /**
      * Constructor.
@@ -270,13 +280,25 @@ public class QueryImpl implements Query, ExtendedStorageChannel
 
     /**
      * This method loads data from the service and calculates the output.
-     * @param startTime start time for calculation
-     * @param endTime end time for calculation
-     * @param resultSize size of entries per calculation method during the requested time span
+     * @param absoluteStartTime start time of global calculation
+     * @param absoluteEndTime end time of global calculation
+     * @param absoluteResultSize size of entries per global calculation
+     * @param firstIndex index of first time slice of the global time span that has to be calculated
+     * @param lastIndex index of last time slice of the global time span that has to be calculated
      * @throws Exception in case of problems when retrieving data via the service
      */
-    private void calculateValues ( final long startTime, final long endTime, final int resultSize ) throws Exception
+    private void calculateValues ( final long absoluteStartTime, final long absoluteEndTime, final int absoluteResultSize, final int firstIndex, final int lastIndex ) throws Exception
     {
+        // calculate global values
+        final long requestedTimeSpan = absoluteEndTime - absoluteStartTime;
+        final double requestedValueFrequency = (double)requestedTimeSpan / absoluteResultSize;
+        final int resultSize = lastIndex - firstIndex;
+        final double startTimeAsDouble = absoluteStartTime + firstIndex * requestedValueFrequency;
+        final double endTimeAsDouble = absoluteStartTime + ( lastIndex + 1 ) * requestedValueFrequency;
+        final long startTime = Math.round ( startTimeAsDouble );
+        final long endTime = Math.min ( absoluteEndTime, ( (long)endTimeAsDouble ) + 1 );
+
+        // perform calculation
         Map<StorageChannelMetaData, BaseValue[]> mergeMap = null;
         synchronized ( service )
         {
@@ -340,7 +362,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         }
 
         // since all data is collected now, the normalizing can be performed
-        final MutableValueInformation[] resultValueInformations = new MutableValueInformation[resultSize];
+        final MutableValueInformation[] resultValueInformations = new MutableValueInformation[lastIndex - firstIndex];
         for ( int i = 0; i < resultValueInformations.length; i++ )
         {
             resultValueInformations[i] = new MutableValueInformation ( null, null, 1.0, Long.MAX_VALUE );
@@ -350,8 +372,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         {
             resultMap.put ( CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ), new Value[0] );
         }
-        final long requestedTimeSpan = endTime - startTime;
-        final double requestedValueFrequency = (double)requestedTimeSpan / resultSize;
 
         // get raw storage channel data from service
         for ( final Entry<StorageChannelMetaData, BaseValue[]> entry : mergeMap.entrySet () )
@@ -366,7 +386,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             final DataType outputDataType = calculationLogicProvider.getOutputType ();
             for ( int i = 0; i < resultSize; i++ )
             {
-                final double currentTimeOffsetAsDouble = startTime + i * requestedValueFrequency;
+                final double currentTimeOffsetAsDouble = startTimeAsDouble + i * requestedValueFrequency;
                 final long currentTimeOffsetAsLong = Math.round ( currentTimeOffsetAsDouble );
                 final long localEndTime = Math.round ( currentTimeOffsetAsDouble + requestedValueFrequency );
                 BaseValue[] filledValues = null;
@@ -450,9 +470,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel
      * This method sends the calculated data to the listener.
      * @param parameters parameters that were used to generate the result
      * @param startIndex start index of data that has to be transferred
-     * @param updateParameters flag indicating whether the method updateParameters of the listener should be triggered
      */
-    public void sendCalculatedValues ( final QueryParameters parameters, final int startIndex, final boolean updateParameters )
+    public void sendCalculatedValues ( final QueryParameters parameters, final int startIndex )
     {
         // send data to listener
         final Map<String, Value[]> calculatedResultMap = this.calculatedResultMap;
@@ -472,26 +491,131 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             }
 
             // send data
+            sendDataDiff ( parameters, calculatedResultMap, calculatedResultValueInformations, initialLoadPerformed, startIndex );
+        }
+    }
+
+    /**
+     * This method sends the passed data to the listener. If data was sent before, only the data difference is sent.
+     * @param parameters parameters that have been used to generate the data
+     * @param calculationMethods calculation methods for which data is available
+     * @param data data mapped by calculation methods
+     * @param valueInformations state information of generated data
+     * @param updateQueryState flag indicating whether the query state should be set to complete or not
+     * @param startIndex first index to start comparing the data. all data before this index is supposed to be unchanged
+     */
+    private void sendDataDiff ( final QueryParameters parameters, final Map<String, Value[]> data, final ValueInformation[] valueInformations, final boolean updateQueryState, final int startIndex )
+    {
+        // do not send any data if input parameters have changed
+        if ( !parameters.equals ( this.parameters ) )
+        {
+            lastParameters = null;
+            lastValueInformations = null;
+            lastData = null;
+            return;
+        }
+
+        // compare input parameters of generated data
+        final boolean sameParameters = parameters.equals ( lastParameters );
+        final Set<String> calculationMethods = new HashSet<String> ( data.keySet () );
+        final Set<String> lastCalculationMethods = lastData != null ? lastData.keySet () : null;
+        final boolean sameCalculationMethods = ( lastCalculationMethods != null ) && ( calculationMethods.size () == lastCalculationMethods.size () ) && calculationMethods.containsAll ( lastCalculationMethods );
+
+        // prepare sending generated data
+        if ( !sameParameters || !sameCalculationMethods )
+        {
             sendingTask.submit ( new Runnable () {
                 public void run ()
                 {
-                    // prepare sending generated data
-                    if ( updateParameters )
-                    {
-                        listener.updateParameters ( parameters, calculatedResultMap.keySet () );
-                    }
-
-                    // send generated data
-                    listener.updateData ( startIndex, calculatedResultMap, calculatedResultValueInformations );
-
-                    // update state to complete (call multiple times has no effect)
-                    if ( initialLoadPerformed )
-                    {
-                        setQueryState ( QueryState.COMPLETE );
-                    }
+                    listener.updateParameters ( parameters, calculationMethods );
                 }
             } );
         }
+
+        // send generated data
+        if ( !sameParameters || !sameCalculationMethods || ( lastData == null ) || ( lastValueInformations == null ) )
+        {
+            sendingTask.submit ( new Runnable () {
+                public void run ()
+                {
+                    listener.updateData ( startIndex, data, valueInformations );
+                }
+            } );
+            lastValueInformations = valueInformations;
+            lastData = data;
+        }
+        else
+        {
+            // collect all indices of which the data has changed
+            final List<Integer> changedEntries = new ArrayList<Integer> ();
+            for ( final String calculationMethod : calculationMethods )
+            {
+                final Value[] lastValues = lastData.get ( calculationMethod );
+                final Value[] values = data.get ( calculationMethod );
+                for ( int i = 0; i < valueInformations.length; i++ )
+                {
+                    final int j = i + startIndex;
+                    if ( !lastValueInformations[j].equals ( valueInformations[i] ) || !lastValues[j].equals ( values[i] ) )
+                    {
+                        changedEntries.add ( j );
+                        lastValueInformations[j] = valueInformations[i];
+                        lastValues[j] = values[i];
+                    }
+                }
+            }
+
+            // send changed value blocks as sub bulks
+            final Iterator<Integer> entry = changedEntries.iterator ();
+            while ( entry.hasNext () )
+            {
+                final int startBlockIndex = entry.next ();
+                int endBlockIndex = startBlockIndex;
+                int nextBlockIndex = endBlockIndex;
+                if ( entry.hasNext () )
+                {
+                    nextBlockIndex = entry.next ();
+                }
+                while ( nextBlockIndex == endBlockIndex + 1 )
+                {
+                    endBlockIndex = nextBlockIndex;
+                    if ( !entry.hasNext () )
+                    {
+                        break;
+                    }
+                    nextBlockIndex = entry.next ();
+                }
+                final int blockSize = endBlockIndex - startBlockIndex + 1;
+                final Map<String, Value[]> subData = new HashMap<String, Value[]> ();
+                final ValueInformation[] valueInformationBlock = new ValueInformation[blockSize];
+                for ( final String calculationMethod : calculationMethods )
+                {
+                    final Value[] valueBlock = new Value[blockSize];
+                    for ( int i = startBlockIndex; i <= endBlockIndex; i++ )
+                    {
+                        final int absoluteIndex = i - startIndex;
+                        final int absoluteBlockIndex = i - startBlockIndex;
+                        valueInformationBlock[absoluteBlockIndex] = valueInformations[absoluteIndex];
+                        valueBlock[absoluteBlockIndex] = data.get ( calculationMethod )[absoluteIndex];
+                    }
+                    subData.put ( calculationMethod, valueBlock );
+                }
+                sendingTask.submit ( new Runnable () {
+                    public void run ()
+                    {
+                        listener.updateData ( startBlockIndex, subData, valueInformationBlock );
+                    }
+                } );
+            }
+        }
+
+        // update state to complete (call multiple times has no effect)
+        if ( updateQueryState )
+        {
+            setQueryState ( QueryState.COMPLETE );
+        }
+
+        // remember processed data for next call of method
+        lastParameters = parameters;
     }
 
     /**
@@ -540,8 +664,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             if ( !initialLoadPerformed )
             {
                 // calculate all values
-                calculateValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () + 1, parameters.getEntries () );
-                sendCalculatedValues ( parameters, 0, true );
+                calculateValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () + 1, parameters.getEntries (), 0, parameters.getEntries () - 1 );
+                sendCalculatedValues ( parameters, 0 );
             }
             else
             {
@@ -552,8 +676,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 }
                 final long startTime = parameters.getStartTimestamp ().getTimeInMillis ();
                 final long endTime = parameters.getEndTimestamp ().getTimeInMillis ();
-                final long requestedTimeSpan = endTime - startTime;
-                final double requestedValueFrequency = (double)requestedTimeSpan / parameters.getEntries ();
                 final Integer[] startTimeIndicesToUpdateArray = startTimeIndicesToUpdate.toArray ( new Integer[0] );
                 Arrays.sort ( startTimeIndicesToUpdateArray );
                 int index = 0;
@@ -566,13 +688,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                         endIndex++;
                         index++;
                     }
-                    final long resultSize = endIndex - startIndex + 1;
-                    final double currentStartTimeAsDouble = startTime + startIndex * requestedValueFrequency;
-                    final double currentEndTimeAsDouble = currentStartTimeAsDouble + requestedValueFrequency * ( endIndex - startIndex + 1 );
-                    final long currentStartTimeAsLong = Math.round ( currentStartTimeAsDouble );
-                    final long currentEndTimeAsLong = Math.round ( currentEndTimeAsDouble );
-                    calculateValues ( currentStartTimeAsLong, currentEndTimeAsLong + 1, (int)resultSize );
-                    sendCalculatedValues ( parameters, startIndex, false );
+                    calculateValues ( startTime, endTime + 1, parameters.getEntries (), startIndex, endIndex );
+                    sendCalculatedValues ( parameters, startIndex );
                     index++;
                 }
             }
