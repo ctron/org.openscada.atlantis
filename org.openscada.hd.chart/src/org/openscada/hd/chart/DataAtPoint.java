@@ -8,6 +8,8 @@ public interface DataAtPoint
 
     double getQuality ( int currentX );
 
+    double getManual ( int currentX );
+
     Date getTimestamp ( int currentX );
 
     long getSourceValues ( int currentX );

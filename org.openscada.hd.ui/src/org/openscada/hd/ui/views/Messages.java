@@ -88,6 +88,8 @@ public class Messages extends NLS
 
     public static String TrendView_Quality;
 
+    public static String TrendView_Manual;
+
     public static String TrendView_SaveAsImage;
 
     public static String TrendView_SaveTrendAsImage;
