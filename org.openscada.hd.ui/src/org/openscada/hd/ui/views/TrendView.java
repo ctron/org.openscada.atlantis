@@ -450,21 +450,6 @@ public class TrendView extends QueryViewPart implements QueryListener
         this.qualityGroup.setLayout ( this.groupLayout );
         this.qualityGroup.setText ( Messages.TrendView_Quality );
 
-        // add spinner
-        this.qualitySpinner = new Spinner ( this.qualityGroup, SWT.BORDER );
-        this.qualitySpinner.setDigits ( 2 );
-        this.qualitySpinner.setMaximum ( 100 );
-        this.qualitySpinner.setMinimum ( 0 );
-        this.qualitySpinner.setSelection ( this.chartParameters.get ().getQuality () );
-        this.qualitySpinner.addModifyListener ( new ModifyListener () {
-            public void modifyText ( final ModifyEvent e )
-            {
-                final ChartParameters newParameters = ChartParameters.create ().from ( TrendView.this.chartParameters.get () ).quality ( TrendView.this.qualitySpinner.getSelection () ).construct ();
-                TrendView.this.chartParameters.set ( newParameters );
-                TrendView.this.parameterUpdateJob.get ().schedule ( GUI_JOB_DELAY );
-            }
-        } );
-
         this.qualityColorButton = new Button ( this.qualityGroup, SWT.PUSH );
         this.qualityColorButton.setText ( Messages.TrendView_Color );
         this.qualityColorButton.setBackground ( this.colorRegistry.get ( KEY_QUALITY ) );
@@ -488,6 +473,21 @@ public class TrendView extends QueryViewPart implements QueryListener
 
             public void widgetDefaultSelected ( final SelectionEvent e )
             {
+            }
+        } );
+
+        // add spinner
+        this.qualitySpinner = new Spinner ( this.qualityGroup, SWT.BORDER );
+        this.qualitySpinner.setDigits ( 2 );
+        this.qualitySpinner.setMaximum ( 100 );
+        this.qualitySpinner.setMinimum ( 0 );
+        this.qualitySpinner.setSelection ( this.chartParameters.get ().getQuality () );
+        this.qualitySpinner.addModifyListener ( new ModifyListener () {
+            public void modifyText ( final ModifyEvent e )
+            {
+                final ChartParameters newParameters = ChartParameters.create ().from ( TrendView.this.chartParameters.get () ).quality ( TrendView.this.qualitySpinner.getSelection () ).construct ();
+                TrendView.this.chartParameters.set ( newParameters );
+                TrendView.this.parameterUpdateJob.get ().schedule ( GUI_JOB_DELAY );
             }
         } );
 
@@ -805,6 +805,11 @@ public class TrendView extends QueryViewPart implements QueryListener
      */
     private DateRange zoomOut ( final int x, final int xStart, final int xEnd, Date startTime, Date endTime )
     {
+        if ( endTime.getTime () - startTime.getTime () == 0 )
+        {
+            startTime = new Date ( startTime.getTime () - 2 );
+            endTime = new Date ( endTime.getTime () + 2 );
+        }
         final long factor = ( endTime.getTime () - startTime.getTime () ) / ( xEnd - xStart );
         final long dTimeQ = ( endTime.getTime () - startTime.getTime () ) / 4;
         final long timeshift = factor * ( x - ( xEnd - xStart ) / 2 );
