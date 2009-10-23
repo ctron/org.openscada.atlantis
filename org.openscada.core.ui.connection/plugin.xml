@@ -50,7 +50,7 @@
             id="org.openscada.core.ui.connection.provider"
             labelProvider="org.openscada.core.ui.connection.views.ConnectionLabelProvider"
             name="%navigatorContent.coreConnection.name"
-            priority="normal"
+            priority="high"
             providesSaveables="false">
          <triggerPoints>
             <or>
@@ -59,6 +59,9 @@
                </instanceof>
                <instanceof
                      value="org.openscada.core.ui.connection.data.ConnectionDiscovererBean">
+               </instanceof>
+               <instanceof
+                     value="org.openscada.core.ui.connection.data.ConnectionHolder">
                </instanceof>
             </or>
          </triggerPoints>
