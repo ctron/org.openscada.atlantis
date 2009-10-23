@@ -1,4 +1,4 @@
-package org.openscada.da.master;
+package org.openscada.da.datasource;
 
 import org.openscada.da.client.DataItemValue;
 

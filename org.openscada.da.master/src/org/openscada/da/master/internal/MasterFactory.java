@@ -6,7 +6,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.openscada.ca.ConfigurationFactory;
-import org.openscada.da.master.DataSource;
+import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.MasterItem;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -86,6 +86,7 @@ public class MasterFactory implements ConfigurationFactory
             properties.put ( Constants.SERVICE_DESCRIPTION, "Master Data Item" );
             properties.put ( CONNECTION_ID, connectionId );
             properties.put ( ITEM_ID, itemId );
+            properties.put ( DataSource.DATA_SOURCE_ID, id );
 
             logger.debug ( "Registering " + id );
 

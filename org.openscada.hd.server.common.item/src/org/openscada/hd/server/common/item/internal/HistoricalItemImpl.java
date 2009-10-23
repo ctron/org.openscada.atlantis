@@ -6,8 +6,8 @@ import java.util.Set;
 
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.master.MasterItem;
-import org.openscada.da.master.DataSourceListener;
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;

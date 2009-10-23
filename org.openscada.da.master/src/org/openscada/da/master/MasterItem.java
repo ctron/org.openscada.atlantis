@@ -1,11 +1,7 @@
 package org.openscada.da.master;
 
-import java.util.Map;
+import org.openscada.da.datasource.DataSource;
 
-import org.openscada.core.Variant;
-import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.core.WriteResult;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public interface MasterItem extends DataSource
 {
@@ -22,8 +18,4 @@ public interface MasterItem extends DataSource
      * @param handler new condition to add
      */
     public abstract void addHandler ( final MasterItemHandler handler );
-
-    public abstract NotifyFuture<WriteResult> startWriteValue ( final Variant value );
-
-    public abstract NotifyFuture<WriteAttributeResults> startWriteAttributes ( Map<String, Variant> attributes );
 }

@@ -186,6 +186,8 @@
   	<openscada.builder.copyPlugin id="org.openscada.hd.connection.provider"/>
   		
   	<openscada.builder.copyPlugin id="org.openscada.da.master" />
+  	<openscada.builder.copyPlugin id="org.openscada.da.datasource"/>
+  	
   	<openscada.builder.copyFeature id="org.openscada.atlantis" />
   	<openscada.builder.copyFeature id="org.openscada.atlantis.sdk" />
   </target>
