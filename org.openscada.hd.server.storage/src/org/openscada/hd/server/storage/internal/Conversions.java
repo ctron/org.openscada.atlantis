@@ -66,6 +66,9 @@ public class Conversions
     /** Prefix of key in configuration for the proposed data age setting. */
     public final static String PROPOSED_DATA_AGE_KEY_PREFIX = "hd.proposedDataAge.level.";
 
+    /** Prefix of key in configuration for the accepted future time setting. */
+    public final static String ACCEPTED_FUTURE_TIME_KEY_PREFIX = "hd.acceptedFutureTime.level.";
+
     /** Prefix of key in configuration for the compression time span setting. */
     public final static String COMPRESSION_TIMESPAN_KEY_PREFIX = "hd.compressionTimeSpan.level.";
 
@@ -237,6 +240,14 @@ public class Conversions
                 data.put ( proposedDataAgeKey, Conversions.encodeTimeSpan ( proposedDataAge ) );
             }
 
+            // set accepted future time per level
+            final String acceptedFutureTimeKey = ACCEPTED_FUTURE_TIME_KEY_PREFIX + detailLevelId;
+            final long acceptedFutureTime = metaData.getAcceptedFutureTime ();
+            if ( !data.containsKey ( acceptedFutureTimeKey ) )
+            {
+                data.put ( acceptedFutureTimeKey, Conversions.encodeTimeSpan ( acceptedFutureTime ) );
+            }
+
             // set proposed compression time span per level if calculation method is not NATIVE
             if ( calculationMethod != CalculationMethod.NATIVE )
             {
@@ -389,7 +400,8 @@ public class Conversions
             logger.error ( message );
             throw new Exception ( message );
         }
-        metaDatas.add ( new StorageChannelMetaData ( configurationId, CalculationMethod.NATIVE, new long[0], 0, now, now, proposedDataAge, nativeDataType ) );
+        long acceptedFutureTime = decodeTimeSpan ( data.get ( ACCEPTED_FUTURE_TIME_KEY_PREFIX + 0 ) );
+        metaDatas.add ( new StorageChannelMetaData ( configurationId, CalculationMethod.NATIVE, new long[0], 0, now, now, proposedDataAge, acceptedFutureTime, nativeDataType ) );
 
         // create meta data for other calculation methods if required
         for ( long detailLevelId = 1; detailLevelId <= maxDetailLevelId; detailLevelId++ )
@@ -410,7 +422,8 @@ public class Conversions
                     logger.error ( message );
                     throw new Exception ( message );
                 }
-                metaDatas.add ( new StorageChannelMetaData ( configurationId, calculationMethod, new long[] { compressionTimeSpan }, detailLevelId, now, now, proposedDataAge, nativeDataType ) );
+                acceptedFutureTime = decodeTimeSpan ( data.get ( ACCEPTED_FUTURE_TIME_KEY_PREFIX + detailLevelId ) );
+                metaDatas.add ( new StorageChannelMetaData ( configurationId, calculationMethod, new long[] { compressionTimeSpan }, detailLevelId, now, now, proposedDataAge, acceptedFutureTime, nativeDataType ) );
             }
         }
         return metaDatas;

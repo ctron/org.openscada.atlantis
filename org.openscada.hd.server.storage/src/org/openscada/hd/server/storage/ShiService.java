@@ -295,13 +295,14 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
 
                     // process data
                     final double qualityIndicator = !value.isConnected () || value.isError () ? 0 : 1;
+                    final double isManual = value.isManual () ? 1 : 0;
                     if ( expectedDataType == DataType.LONG_VALUE )
                     {
-                        processData ( new LongValue ( time, qualityIndicator, 1, variant.asLong ( 0L ) ) );
+                        processData ( new LongValue ( time, qualityIndicator, isManual, 1, variant.asLong ( 0L ) ) );
                     }
                     else
                     {
-                        processData ( new DoubleValue ( time, qualityIndicator, 1, variant.asDouble ( 0.0 ) ) );
+                        processData ( new DoubleValue ( time, qualityIndicator, isManual, 1, variant.asDouble ( 0.0 ) ) );
                     }
                     logger.debug ( "data processing time: " + ( System.currentTimeMillis () - now ) );
 
@@ -433,11 +434,11 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 final BaseValue value = values[values.length - 1];
                 if ( value instanceof LongValue )
                 {
-                    processData ( new LongValue ( Math.max ( value.getTime () + 1, time ), 0, 0, ( (LongValue)value ).getValue () ) );
+                    processData ( new LongValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (LongValue)value ).getValue () ) );
                 }
                 else
                 {
-                    processData ( new DoubleValue ( Math.max ( value.getTime () + 1, time ), 0, 0, ( (DoubleValue)value ).getValue () ) );
+                    processData ( new DoubleValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (DoubleValue)value ).getValue () ) );
                 }
             }
         }

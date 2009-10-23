@@ -264,7 +264,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         final boolean createNewBackEnd = ( existingMetaData == null ) || ( existingMetaData.length == 0 );
         if ( createNewBackEnd )
         {
-            metaData = new StorageChannelMetaData ( HEARTBEAT_CONFIGURATION_ID, CalculationMethod.NATIVE, new long[0], 0, now, now + 1, PROPOSED_HEART_BEAT_DATA_AGE, DataType.LONG_VALUE );
+            metaData = new StorageChannelMetaData ( HEARTBEAT_CONFIGURATION_ID, CalculationMethod.NATIVE, new long[0], 0, now, now + 1, PROPOSED_HEART_BEAT_DATA_AGE, 0, DataType.LONG_VALUE );
         }
         else
         {
@@ -295,7 +295,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         if ( heartBeatBackEnd != null )
         {
             final long now = System.currentTimeMillis ();
-            final LongValue value = new LongValue ( now, 1, 0, now );
+            final LongValue value = new LongValue ( now, 1, 0, 0, now );
             try
             {
                 heartBeatBackEnd.updateLong ( value );
@@ -542,6 +542,10 @@ public class StorageService implements SelfManagedConfigurationFactory
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "1h" );
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 2, "7d" );
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 3, "1825d" );
+            properties.put ( Conversions.ACCEPTED_FUTURE_TIME_KEY_PREFIX + 0, "0s" );
+            properties.put ( Conversions.ACCEPTED_FUTURE_TIME_KEY_PREFIX + 1, "0s" );
+            properties.put ( Conversions.ACCEPTED_FUTURE_TIME_KEY_PREFIX + 2, "0s" );
+            properties.put ( Conversions.ACCEPTED_FUTURE_TIME_KEY_PREFIX + 3, "0s" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1m" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 2, "1h" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 3, "1d" );

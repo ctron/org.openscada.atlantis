@@ -244,7 +244,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 for ( int i = 0, j = secondArray.length; i < firstArray.length; i++, j++ )
                 {
                     final DoubleValue srcValue = firstArray1[i];
-                    result[j] = new LongValue ( srcValue.getTime (), srcValue.getQualityIndicator (), srcValue.getBaseValueCount (), (long)srcValue.getValue () );
+                    result[j] = new LongValue ( srcValue.getTime (), srcValue.getQualityIndicator (), srcValue.getManualIndicator (), srcValue.getBaseValueCount (), (long)srcValue.getValue () );
                 }
             }
             return result;
@@ -271,7 +271,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 for ( int i = 0, j = secondArray.length; i < firstArray.length; i++, j++ )
                 {
                     final LongValue srcValue = firstArray1[i];
-                    result[j] = new DoubleValue ( srcValue.getTime (), srcValue.getQualityIndicator (), srcValue.getBaseValueCount (), srcValue.getValue () );
+                    result[j] = new DoubleValue ( srcValue.getTime (), srcValue.getQualityIndicator (), srcValue.getManualIndicator (), srcValue.getBaseValueCount (), srcValue.getValue () );
                 }
             }
             return result;
@@ -321,12 +321,12 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                         latestDirtyTime = Math.min ( maxTime, latestDirtyTime );
                         if ( dataType == DataType.LONG_VALUE )
                         {
-                            final LongValue longValue = new LongValue ( maxTime, 0, 0, 0 );
+                            final LongValue longValue = new LongValue ( maxTime, 0, 0, 0, 0 );
                             mergeEntry.setValue ( joinValueArrays ( new LongValue[] { longValue }, mergeValues ) );
                         }
                         else
                         {
-                            final DoubleValue doubleValue = new DoubleValue ( maxTime, 0, 0, 0 );
+                            final DoubleValue doubleValue = new DoubleValue ( maxTime, 0, 0, 0, 0 );
                             mergeEntry.setValue ( joinValueArrays ( new DoubleValue[] { doubleValue }, mergeValues ) );
                         }
                     }
@@ -394,11 +394,11 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 {
                     if ( inputDataType == DataType.LONG_VALUE )
                     {
-                        filledValues = new LongValue[] { new LongValue ( currentTimeOffsetAsLong, 0, 0, 0 ), new LongValue ( localEndTime, 0, 0, 0 ) };
+                        filledValues = new LongValue[] { new LongValue ( currentTimeOffsetAsLong, 0, 0, 0, 0 ), new LongValue ( localEndTime, 0, 0, 0, 0 ) };
                     }
                     else
                     {
-                        filledValues = new DoubleValue[] { new DoubleValue ( currentTimeOffsetAsLong, 0, 0, 0 ), new DoubleValue ( localEndTime, 0, 0, 0 ) };
+                        filledValues = new DoubleValue[] { new DoubleValue ( currentTimeOffsetAsLong, 0, 0, 0, 0 ), new DoubleValue ( localEndTime, 0, 0, 0, 0 ) };
                     }
                 }
                 else
