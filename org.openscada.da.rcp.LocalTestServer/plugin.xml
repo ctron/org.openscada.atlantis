@@ -29,7 +29,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension targetID="org.openscada.da.client.test.perspective">
+      <perspectiveExtension targetID="org.openscada.da.ui.perspective">
          <actionSet id="org.openscada.da.rcp.LocalTestServer.actionSet"/>
       </perspectiveExtension>
    </extension>
