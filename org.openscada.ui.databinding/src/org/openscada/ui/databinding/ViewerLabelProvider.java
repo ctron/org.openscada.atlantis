@@ -79,7 +79,7 @@ public class ViewerLabelProvider implements ILabelProvider, IStyledLabelProvider
         final StyledViewerLabel label = new StyledViewerLabel ( "", null ); //$NON-NLS-1$
         updateLabel ( label, element );
 
-        logger.debug ( "Get Image: {}", label.getImage () ); //$NON-NLS-1$
+        logger.debug ( "Get Image: {} for {}", new Object[] { label.getImage (), element } ); //$NON-NLS-1$
 
         return label.getImage ();
     }
