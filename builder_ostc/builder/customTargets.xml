@@ -146,6 +146,7 @@
   	  	
   	<openscada.builder.copyFeature id="org.openscada.ae.client.test"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.ui"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.ui.testing"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.ui.connection" />
   	<openscada.builder.copyPlugin id="org.openscada.ae.ui.connection.creator.net" />
   	
