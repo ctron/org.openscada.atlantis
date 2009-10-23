@@ -1,11 +1,12 @@
-package org.openscada.ae.ui.testing.views;
+package org.openscada.ae.ui.connection.data;
 
 import java.util.Date;
 
 import org.openscada.ae.ConditionStatus;
 import org.openscada.ae.ConditionStatusInformation;
-import org.openscada.ae.client.Connection;
+import org.openscada.ae.connection.provider.ConnectionService;
 import org.openscada.core.Variant;
+import org.openscada.utils.beans.AbstractPropertyChange;
 
 public class ConditionStatusBean extends AbstractPropertyChange
 {
@@ -19,7 +20,7 @@ public class ConditionStatusBean extends AbstractPropertyChange
 
     public static final String PROP_LAST_AKN_TIMESTAMP = "lastAknTimestamp";
 
-    private final Connection connection;
+    private final ConnectionService connection;
 
     private final String id;
 
@@ -33,13 +34,13 @@ public class ConditionStatusBean extends AbstractPropertyChange
 
     private Date lastAknTimestamp;
 
-    public ConditionStatusBean ( final Connection connection, final String id )
+    public ConditionStatusBean ( final ConnectionService connection, final String id )
     {
         this.connection = connection;
         this.id = id;
     }
 
-    public ConditionStatusBean ( final Connection connection, final ConditionStatusInformation information )
+    public ConditionStatusBean ( final ConnectionService connection, final ConditionStatusInformation information )
     {
         this ( connection, information.getId () );
         this.status = information.getStatus ();
@@ -54,7 +55,7 @@ public class ConditionStatusBean extends AbstractPropertyChange
         return this.id;
     }
 
-    public Connection getConnection ()
+    public ConnectionService getConnection ()
     {
         return this.connection;
     }
@@ -66,7 +67,7 @@ public class ConditionStatusBean extends AbstractPropertyChange
 
     public void setStatus ( final ConditionStatus status )
     {
-        ConditionStatus oldStatus = this.status;
+        final ConditionStatus oldStatus = this.status;
         this.status = status;
         firePropertyChange ( PROP_STATUS, oldStatus, status );
     }
@@ -99,7 +100,7 @@ public class ConditionStatusBean extends AbstractPropertyChange
 
     public void setValue ( final Variant value )
     {
-        Variant oldValue = this.value;
+        final Variant oldValue = this.value;
         this.value = value;
         firePropertyChange ( PROP_VALUE, oldValue, value );
     }
@@ -111,7 +112,7 @@ public class ConditionStatusBean extends AbstractPropertyChange
 
     public void setLastAknUser ( final String lastAknUser )
     {
-        String oldLastAknUser = this.lastAknUser;
+        final String oldLastAknUser = this.lastAknUser;
         this.lastAknUser = lastAknUser;
         firePropertyChange ( PROP_LAST_AKN_USER, oldLastAknUser, lastAknUser );
     }
@@ -123,8 +124,13 @@ public class ConditionStatusBean extends AbstractPropertyChange
 
     public void setLastAknTimestamp ( final Date lastAknTimestamp )
     {
-        Date oldLastDateAknTimestamp = this.lastAknTimestamp;
+        final Date oldLastDateAknTimestamp = this.lastAknTimestamp;
         this.lastAknTimestamp = lastAknTimestamp;
         firePropertyChange ( PROP_LAST_AKN_TIMESTAMP, oldLastDateAknTimestamp, lastAknTimestamp );
+    }
+
+    public void akn ()
+    {
+        this.connection.getConnection ().acknowledge ( this.id, new Date () );
     }
 }

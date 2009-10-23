@@ -4,39 +4,12 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            allowMultiple="true"
-            class="org.openscada.ae.ui.testing.views.ConditionsView"
+            allowMultiple="false"
+            category="org.openscada.ae.ui.category"
+            class="org.openscada.ae.ui.testing.views.MonitorsView"
             id="org.openscada.ae.ui.testing.views.ConditionsView"
-            name="Conditions"
-            restorable="false">
+            name="Monitors"
+            restorable="true">
       </view>
    </extension>
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            adaptable="false"
-            id="org.openscada.ae.ui.testing.oc1.BrowserEntryBean"
-            objectClass="org.openscada.ae.ui.data.BrowserEntryBean">
-         <action
-               class="org.openscada.ae.ui.testing.actions.OpenConditions"
-               enablesFor="1"
-               id="org.openscada.ae.ui.testing.actions.OpenConditions"
-               label="Open Conditions"
-               menubarPath="additions">
-         </action>
-      </objectContribution>
-      <objectContribution
-            adaptable="false"
-            id="org.openscada.ae.ui.testing.oc2.ConditionStatusBean"
-            objectClass="org.openscada.ae.ui.testing.views.ConditionStatusBean">
-         <action
-               class="org.openscada.ae.ui.testing.actions.AcknowledgeAction"
-               enablesFor="1"
-               id="org.openscada.ae.ui.testing.actions.Acknowledge"
-               label="Acknowledge"
-               menubarPath="additions">
-         </action>
-      </objectContribution>
-   </extension>
-
 </plugin>

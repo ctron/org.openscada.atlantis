@@ -21,6 +21,7 @@ package org.openscada.ae.client.net;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -145,7 +146,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         } );
     }
 
-    protected void handleBrowserUpdate ( final Message message )
+    protected synchronized void handleBrowserUpdate ( final Message message )
     {
         final BrowserEntry[] added = BrowserMessageHelper.fromValue ( message.getValues ().get ( "added" ) );
         final String[] removed = BrowserMessageHelper.fromValueRemoved ( message.getValues ().get ( "removed" ) );
@@ -165,10 +166,10 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 this.browserCache.put ( entry.getId (), entry );
             }
         }
-        fireBrowserListener ( added, removed );
+        fireBrowserListener ( added, removed, false );
     }
 
-    protected void handleEventData ( final Message message )
+    protected synchronized void handleEventData ( final Message message )
     {
         String queryId = null;
         {
@@ -201,7 +202,14 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         try
         {
-            listener.dataChanged ( data );
+            this.executor.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    listener.dataChanged ( data );
+                }
+            } );
+
         }
         catch ( final Throwable e )
         {
@@ -209,7 +217,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         }
     }
 
-    protected void handleConditionData ( final Message message )
+    protected synchronized void handleConditionData ( final Message message )
     {
         try
         {
@@ -229,11 +237,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
             if ( queryId != null && ( data != null || removed != null ) )
             {
-                ConditionListener listener;
-                synchronized ( this.conditionListeners )
-                {
-                    listener = this.conditionListeners.get ( queryId );
-                }
+                final ConditionListener listener = this.conditionListeners.get ( queryId );
                 fireConditionDataChange ( listener, data, removed );
             }
             else
@@ -259,7 +263,14 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         try
         {
             logger.debug ( "notify condition data change" );
-            listener.dataChanged ( addedOrUpdated, removed );
+            this.executor.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    listener.dataChanged ( addedOrUpdated, removed );
+                }
+            } );
+
         }
         catch ( final Throwable e )
         {
@@ -267,7 +278,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         }
     }
 
-    protected void handleEventStatus ( final Message message )
+    protected synchronized void handleEventStatus ( final Message message )
     {
         String queryId = null;
         {
@@ -290,16 +301,12 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         if ( queryId != null && status != null )
         {
-            EventListener listener;
-            synchronized ( this.eventListeners )
-            {
-                listener = this.eventListeners.get ( queryId );
-            }
+            final EventListener listener = this.eventListeners.get ( queryId );
             fireEventStatusChange ( listener, status );
         }
     }
 
-    protected void handleConditionStatus ( final Message message )
+    protected synchronized void handleConditionStatus ( final Message message )
     {
         String queryId = null;
         {
@@ -322,18 +329,9 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         if ( queryId != null && status != null )
         {
-            ConditionListener listener;
-            synchronized ( this.conditionListeners )
-            {
-                listener = this.conditionListeners.get ( queryId );
-            }
+            final ConditionListener listener = this.conditionListeners.get ( queryId );
             fireConditionStatusChange ( listener, status );
         }
-    }
-
-    public void setExecutor ( final Executor executor )
-    {
-        this.executor = executor;
     }
 
     public Executor getExecutor ()
@@ -346,7 +344,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         throw new RuntimeException ( "Not implemented" );
     }
 
-    public void setConditionListener ( final String conditionQueryId, final ConditionListener listener )
+    public synchronized void setConditionListener ( final String conditionQueryId, final ConditionListener listener )
     {
         if ( listener == null )
         {
@@ -362,40 +360,35 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         ConditionListener oldListener;
 
-        synchronized ( this.conditionListeners )
+        oldListener = this.conditionListeners.put ( conditionQueryId, listener );
+        if ( oldListener == listener )
         {
-            oldListener = this.conditionListeners.put ( conditionQueryId, listener );
-            if ( oldListener == listener )
-            {
-                return;
-            }
+            return;
+        }
 
-            if ( oldListener == null )
-            {
-                sendSubscribeConditions ( conditionQueryId, true );
-            }
+        if ( oldListener != null )
+        {
+            // notify old listener first
+            fireConditionStatusChange ( oldListener, SubscriptionState.DISCONNECTED );
+        }
+        else
+        {
+            // request data
+            sendSubscribeConditions ( conditionQueryId, true );
         }
 
         // initially send DISCONNECTED
         fireConditionStatusChange ( listener, SubscriptionState.DISCONNECTED );
-
-        if ( oldListener != null )
-        {
-            fireConditionStatusChange ( oldListener, SubscriptionState.DISCONNECTED );
-        }
     }
 
     private void clearConditionListener ( final String conditionQueryId )
     {
         ConditionListener oldListener;
 
-        synchronized ( this.conditionListeners )
+        oldListener = this.conditionListeners.remove ( conditionQueryId );
+        if ( oldListener != null )
         {
-            oldListener = this.conditionListeners.remove ( conditionQueryId );
-            if ( oldListener != null )
-            {
-                sendSubscribeConditions ( conditionQueryId, false );
-            }
+            sendSubscribeConditions ( conditionQueryId, false );
         }
         if ( oldListener != null )
         {
@@ -426,17 +419,15 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             return;
         }
 
-        try
-        {
-            listener.statusChanged ( status );
-        }
-        catch ( final Throwable e )
-        {
-            logger.warn ( "Failed to notify", e );
-        }
+        this.executor.execute ( new Runnable () {
+            public void run ()
+            {
+                listener.statusChanged ( status );
+            }
+        } );
     }
 
-    public void setEventListener ( final String eventQueryId, final EventListener listener )
+    public synchronized void setEventListener ( final String eventQueryId, final EventListener listener )
     {
         if ( listener == null )
         {
@@ -452,40 +443,33 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         EventListener oldListener;
 
-        synchronized ( this.eventListeners )
+        oldListener = this.eventListeners.put ( eventQueryId, listener );
+        if ( oldListener == listener )
         {
-            oldListener = this.eventListeners.put ( eventQueryId, listener );
-            if ( oldListener == listener )
-            {
-                return;
-            }
+            return;
+        }
 
-            if ( oldListener == null )
-            {
-                sendSubscribeEventQuery ( eventQueryId, true );
-            }
+        if ( oldListener != null )
+        {
+            // notify old listener first
+            fireEventStatusChange ( oldListener, SubscriptionState.DISCONNECTED );
+        }
+        else
+        {
+            // request data
+            sendSubscribeEventQuery ( eventQueryId, true );
         }
 
         // initially send DISCONNECTED
         fireEventStatusChange ( listener, SubscriptionState.DISCONNECTED );
-
-        if ( oldListener != null )
-        {
-            fireEventStatusChange ( oldListener, SubscriptionState.DISCONNECTED );
-        }
     }
 
     private void clearEventListener ( final String eventQueryId )
     {
-        EventListener oldListener;
-
-        synchronized ( this.eventListeners )
+        final EventListener oldListener = this.eventListeners.remove ( eventQueryId );
+        if ( oldListener != null )
         {
-            oldListener = this.eventListeners.remove ( eventQueryId );
-            if ( oldListener != null )
-            {
-                sendSubscribeConditions ( eventQueryId, false );
-            }
+            sendSubscribeConditions ( eventQueryId, false );
         }
         if ( oldListener != null )
         {
@@ -500,14 +484,13 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             return;
         }
 
-        try
-        {
-            listener.statusChanged ( status );
-        }
-        catch ( final Throwable e )
-        {
-            logger.warn ( "Failed to notify", e );
-        }
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                listener.statusChanged ( status );
+            }
+        } );
     }
 
     /**
@@ -525,7 +508,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     }
 
     @Override
-    public void sessionClosed ( final IoSession session ) throws Exception
+    public synchronized void sessionClosed ( final IoSession session ) throws Exception
     {
         // set states to DISCONNECTED
         for ( final ConditionListener listener : this.conditionListeners.values () )
@@ -537,45 +520,86 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             fireEventStatusChange ( listener, SubscriptionState.DISCONNECTED );
         }
 
-        fireBrowserListener ( null, this.browserCache.keySet ().toArray ( new String[0] ) );
         this.browserCache.clear ();
+        fireBrowserListener ( null, null, true );
 
         super.sessionClosed ( session );
     }
 
-    public void addBrowserListener ( final BrowserListener listener )
+    public synchronized void addBrowserListener ( final BrowserListener listener )
     {
+        if ( listener == null )
+        {
+            return;
+        }
+
         if ( this.browserListeners.add ( listener ) )
         {
-            listener.dataChanged ( this.browserCache.values ().toArray ( new BrowserEntry[0] ), null );
+            final BrowserEntry[] addedOrChanged = this.browserCache.values ().toArray ( new BrowserEntry[0] );
+
+            this.executor.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    listener.dataChanged ( addedOrChanged, null, true );
+                }
+            } );
+
         }
     }
 
-    public void removeBrowserListener ( final BrowserListener listener )
+    public synchronized void removeBrowserListener ( final BrowserListener listener )
     {
+        if ( listener == null )
+        {
+            return;
+        }
         this.browserListeners.remove ( listener );
     }
 
-    protected void fireBrowserListener ( final BrowserEntry[] added, final String[] removed )
+    protected void fireBrowserListener ( final BrowserEntry[] added, final String[] removed, final boolean full )
     {
-        for ( final BrowserListener listener : this.browserListeners )
+        final Set<BrowserListener> listeners = new HashSet<BrowserListener> ( this.browserListeners );
+
+        if ( listeners.isEmpty () )
         {
-            try
-            {
-                listener.dataChanged ( added, removed );
-            }
-            catch ( final Throwable e )
-            {
-                logger.warn ( "Failed to notify browser change", e );
-            }
+            return;
         }
+
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+
+                for ( final BrowserListener listener : listeners )
+                {
+                    try
+                    {
+                        listener.dataChanged ( added, removed, full );
+                    }
+                    catch ( final Throwable e )
+                    {
+                        logger.warn ( "Failed to notify browser change", e );
+                    }
+                }
+
+            }
+        } );
     }
 
     public void acknowledge ( final String conditionId, final Date aknTimestamp )
     {
         final Message message = new Message ( Messages.CC_CONDITION_AKN );
         message.getValues ().put ( "id", new StringValue ( conditionId ) );
-        message.getValues ().put ( "aknTimestamp", new LongValue ( aknTimestamp.getTime () ) );
+        // if we don't have a timestamp provided use current time
+        if ( aknTimestamp != null )
+        {
+            message.getValues ().put ( "aknTimestamp", new LongValue ( aknTimestamp.getTime () ) );
+        }
+        else
+        {
+            message.getValues ().put ( "aknTimestamp", new LongValue ( System.currentTimeMillis () ) );
+        }
         this.messenger.sendMessage ( message );
     }
 }

@@ -4,7 +4,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.StyledString;
-import org.openscada.ae.BrowserEntry;
+import org.openscada.ae.ui.connection.data.BrowserEntryBean;
 import org.openscada.ui.databinding.CommonListeningLabelProvider;
 import org.openscada.ui.databinding.StyledViewerLabel;
 import org.slf4j.Logger;
@@ -34,10 +34,10 @@ public class ConnectionLabelProvider extends CommonListeningLabelProvider
     {
         logger.debug ( "Update label: {}", element );
 
-        if ( element instanceof BrowserEntry )
+        if ( element instanceof BrowserEntryBean )
         {
-            final BrowserEntry entry = (BrowserEntry)element;
-            final StyledString string = new StyledString ( entry.getId () );
+            final BrowserEntryBean entry = (BrowserEntryBean)element;
+            final StyledString string = new StyledString ( entry.getEntry ().getId () );
             label.setStyledText ( string );
         }
         else

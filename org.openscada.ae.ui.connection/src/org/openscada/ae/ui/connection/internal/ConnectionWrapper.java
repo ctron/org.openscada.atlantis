@@ -9,11 +9,12 @@ import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.connection.provider.ConnectionService;
+import org.openscada.ae.ui.connection.data.BrowserEntryBean;
 import org.openscada.core.ui.connection.data.ConnectionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectionWrapper extends WritableSet implements PropertyChangeListener, BrowserListener
+public class ConnectionWrapper extends WritableSet implements PropertyChangeListener
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionWrapper.class );
@@ -22,7 +23,9 @@ public class ConnectionWrapper extends WritableSet implements PropertyChangeList
 
     private ConnectionService service;
 
-    private final Map<String, BrowserEntry> entries = new HashMap<String, BrowserEntry> ();
+    private final Map<String, BrowserEntryBean> entries = new HashMap<String, BrowserEntryBean> ();
+
+    private BrowserListener listener;
 
     public ConnectionWrapper ( final ConnectionHolder target )
     {
@@ -81,12 +84,30 @@ public class ConnectionWrapper extends WritableSet implements PropertyChangeList
 
     private void setupConnection ()
     {
-        this.service.getConnection ().addBrowserListener ( this );
+        this.service.getConnection ().addBrowserListener ( this.listener = new BrowserListener () {
+
+            public void dataChanged ( final BrowserEntry[] addedOrUpdated, final String[] removed, final boolean full )
+            {
+                ConnectionWrapper.this.dataChanged ( addedOrUpdated, removed, full );
+            }
+        } );
     }
 
     private void clearConnection ()
     {
         clear ();
+        for ( final BrowserEntryBean entry : this.entries.values () )
+        {
+            entry.dispose ();
+        }
+
+        if ( this.service != null )
+        {
+            this.service.getConnection ().removeBrowserListener ( this.listener );
+        }
+        this.listener = null;
+
+        this.entries.clear ();
         this.service = null;
     }
 
@@ -95,19 +116,19 @@ public class ConnectionWrapper extends WritableSet implements PropertyChangeList
         return this.service;
     }
 
-    public void dataChanged ( final BrowserEntry[] addedOrUpdated, final String[] removed )
+    public void dataChanged ( final BrowserEntry[] addedOrUpdated, final String[] removed, final boolean full )
     {
         getRealm ().asyncExec ( new Runnable () {
 
             public void run ()
             {
-                handleDataChanged ( addedOrUpdated, removed );
+                handleDataChanged ( addedOrUpdated, removed, full );
 
             }
         } );
     }
 
-    protected void handleDataChanged ( final BrowserEntry[] addedOrUpdated, final String[] removed )
+    protected void handleDataChanged ( final BrowserEntry[] addedOrUpdated, final String[] removed, final boolean full )
     {
         if ( isDisposed () )
         {
@@ -117,15 +138,20 @@ public class ConnectionWrapper extends WritableSet implements PropertyChangeList
         setStale ( true );
         try
         {
+            if ( full )
+            {
+                clear ();
+            }
             if ( removed != null )
             {
                 for ( final String item : removed )
                 {
-                    final BrowserEntry entry = this.entries.remove ( item );
+                    final BrowserEntryBean entry = this.entries.remove ( item );
                     if ( entry != null )
                     {
                         logger.debug ( "Removing: {}", entry );
                         remove ( entry );
+                        entry.dispose ();
                     }
                 }
             }
@@ -133,14 +159,16 @@ public class ConnectionWrapper extends WritableSet implements PropertyChangeList
             {
                 for ( final BrowserEntry entry : addedOrUpdated )
                 {
-                    final BrowserEntry oldEntry = this.entries.put ( entry.getId (), entry );
+                    final BrowserEntryBean newEntry = new BrowserEntryBean ( this.service, entry );
+                    final BrowserEntryBean oldEntry = this.entries.put ( entry.getId (), newEntry );
                     if ( oldEntry != null )
                     {
                         logger.debug ( "Removing old: {}", entry.getId () );
                         remove ( oldEntry );
+                        oldEntry.dispose ();
                     }
                     logger.debug ( "Adding: {}", entry.getId () );
-                    add ( entry );
+                    add ( newEntry );
                 }
             }
         }

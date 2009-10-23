@@ -9,6 +9,7 @@ import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.openscada.ae.ui.connection.data.ConditionStatusBean;
 import org.openscada.core.Variant;
 
 public class LabelProvider extends CellLabelProvider
@@ -17,10 +18,10 @@ public class LabelProvider extends CellLabelProvider
     private final IMapChangeListener mapChangeListener = new IMapChangeListener () {
         public void handleMapChange ( final MapChangeEvent event )
         {
-            Set<?> affectedElements = event.diff.getChangedKeys ();
+            final Set<?> affectedElements = event.diff.getChangedKeys ();
             if ( !affectedElements.isEmpty () )
             {
-                LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent ( LabelProvider.this, affectedElements.toArray () );
+                final LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent ( LabelProvider.this, affectedElements.toArray () );
                 fireLabelProviderChanged ( newEvent );
             }
         }
@@ -56,10 +57,10 @@ public class LabelProvider extends CellLabelProvider
     @Override
     public void update ( final ViewerCell cell )
     {
-        Object o = cell.getElement ();
+        final Object o = cell.getElement ();
         if ( o instanceof ConditionStatusBean )
         {
-            ConditionStatusBean info = (ConditionStatusBean)o;
+            final ConditionStatusBean info = (ConditionStatusBean)o;
             switch ( cell.getColumnIndex () )
             {
             case 0:
@@ -79,11 +80,11 @@ public class LabelProvider extends CellLabelProvider
                 }
                 break;
             case 3:
-                Variant value = info.getValue ();
+                final Variant value = info.getValue ();
                 cell.setText ( value != null ? value.asString ( "<none>" ) : "<none>" );
                 break;
             case 4:
-                cell.setText ( ( info.getLastAknUser () != null ) ? info.getLastAknUser () : "<unknown>" );
+                cell.setText ( info.getLastAknUser () != null ? info.getLastAknUser () : "<unknown>" );
                 break;
             case 5:
                 if ( info.getLastAknTimestamp () != null )

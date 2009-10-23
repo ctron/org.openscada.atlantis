@@ -11,6 +11,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableSetContentProvider;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -19,38 +20,34 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.part.ViewPart;
 import org.openscada.ae.ConditionStatusInformation;
-import org.openscada.ae.client.ConditionListener;
-import org.openscada.ae.client.Connection;
+import org.openscada.ae.ui.connection.data.ConditionStatusBean;
 import org.openscada.core.subscription.SubscriptionState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConditionsView extends ViewPart implements ConditionListener
+public class MonitorsView extends AbstractEntryViewPart
 {
-    private final static Logger logger = LoggerFactory.getLogger ( ConditionsView.class );
+    private final static Logger logger = LoggerFactory.getLogger ( MonitorsView.class );
 
-    public static final String VIEW_ID = "org.openscada.ae.ui.testing.views.ConditionsView";
-
-    private Connection connection;
+    public static final String VIEW_ID = "org.openscada.ae.ui.testing.views.MonitorsView";
 
     private Label stateLabel;
 
     private final Map<String, ConditionStatusBean> conditionSet = new HashMap<String, ConditionStatusBean> ();
 
-    private final WritableSet conditions = new WritableSet ();
+    private final WritableSet conditions;
 
     private TableViewer viewer;
 
-    private String queryId;
-
-    public ConditionsView ()
+    public MonitorsView ()
     {
+        this.conditions = new WritableSet ( SWTObservables.getRealm ( Display.getDefault () ) );
     }
 
     @Override
@@ -107,11 +104,12 @@ public class ConditionsView extends ViewPart implements ConditionListener
         this.viewer.setInput ( this.conditions );
 
         hookContextMenu ();
+        addSelectionListener ();
     }
 
     private void hookContextMenu ()
     {
-        final MenuManager menuMgr = new MenuManager ( "#PopupMenu" );
+        final MenuManager menuMgr = new MenuManager ( "#PopupMenu", VIEW_ID );
         menuMgr.setRemoveAllWhenShown ( true );
         menuMgr.addMenuListener ( new IMenuListener () {
             public void menuAboutToShow ( final IMenuManager manager )
@@ -138,21 +136,7 @@ public class ConditionsView extends ViewPart implements ConditionListener
     }
 
     @Override
-    public void dispose ()
-    {
-        this.connection.setConditionListener ( this.queryId, null );
-        super.dispose ();
-    }
-
-    public void setConnection ( final Connection connection, final String id )
-    {
-        this.queryId = id;
-        this.connection = connection;
-        this.connection.setConditionListener ( id, this );
-        logger.info ( "Connection set" );
-    }
-
-    public void dataChanged ( final ConditionStatusInformation[] addedOrUpdated, final String[] removed )
+    public void handleDataChanged ( final ConditionStatusInformation[] addedOrUpdated, final String[] removed, final boolean full )
     {
         this.conditions.getRealm ().asyncExec ( new Runnable () {
 
@@ -163,9 +147,26 @@ public class ConditionsView extends ViewPart implements ConditionListener
         } );
     }
 
+    @Override
+    protected void clear ()
+    {
+        super.clear ();
+
+        this.conditions.getRealm ().asyncExec ( new Runnable () {
+
+            public void run ()
+            {
+                MonitorsView.this.conditionSet.clear ();
+                MonitorsView.this.conditions.clear ();
+                MonitorsView.this.stateLabel.setText ( "<no query selected>" );
+            }
+        } );
+    }
+
     protected void performDataChanged ( final ConditionStatusInformation[] addedOrUpdated, final String[] removed )
     {
-        logger.info ( "Got data change" );
+        logger.debug ( "Got data change" );
+
         try
         {
             Collection<ConditionStatusBean> infos = new LinkedList<ConditionStatusBean> ();
@@ -198,7 +199,7 @@ public class ConditionsView extends ViewPart implements ConditionListener
                     else
                     {
                         // add
-                        final ConditionStatusBean infoBean = new ConditionStatusBean ( this.connection, info );
+                        final ConditionStatusBean infoBean = new ConditionStatusBean ( this.entry.getConnection (), info );
                         this.conditionSet.put ( info.getId (), infoBean );
                         infos.add ( infoBean );
                     }
@@ -209,11 +210,12 @@ public class ConditionsView extends ViewPart implements ConditionListener
         }
         catch ( final Throwable e )
         {
-            e.printStackTrace ();
+            logger.warn ( "Failed to handle data", e );
         }
     }
 
-    public void statusChanged ( final SubscriptionState status )
+    @Override
+    public void handleStatusChanged ( final SubscriptionState status )
     {
         triggerStateUpdate ( status );
     }
@@ -229,11 +231,11 @@ public class ConditionsView extends ViewPart implements ConditionListener
 
             public void run ()
             {
-                if ( ConditionsView.this.stateLabel.isDisposed () )
+                if ( MonitorsView.this.stateLabel.isDisposed () )
                 {
                     return;
                 }
-                ConditionsView.this.stateLabel.setText ( status.toString () );
+                MonitorsView.this.stateLabel.setText ( status.toString () );
             }
         } );
     }
