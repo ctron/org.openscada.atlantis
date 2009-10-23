@@ -172,7 +172,7 @@ public class QueryHelper
         start.setTimeInMillis ( ( (LongValue)value.get ( "startTimestamp" ) ).getValue () );
         final Calendar end = Calendar.getInstance ();
         end.setTimeInMillis ( ( (LongValue)value.get ( "endTimestamp" ) ).getValue () );
-        return new ValueInformation ( start, end, ( (DoubleValue)value.get ( "quality" ) ).getValue (), ( (LongValue)value.get ( "values" ) ).getValue () );
+        return new ValueInformation ( start, end, ( (DoubleValue)value.get ( "quality" ) ).getValue (), ( (DoubleValue)value.get ( "manual" ) ).getValue (), ( (LongValue)value.get ( "values" ) ).getValue () );
     }
 
     public static Value toValueInfo ( final ValueInformation[] infos )
@@ -185,6 +185,7 @@ public class QueryHelper
             entry.put ( "startTimestamp", new LongValue ( info.getStartTimestamp ().getTimeInMillis () ) );
             entry.put ( "endTimestamp", new LongValue ( info.getEndTimestamp ().getTimeInMillis () ) );
             entry.put ( "quality", new DoubleValue ( info.getQuality () ) );
+            entry.put ( "manual", new DoubleValue ( info.getManualPercentage () ) );
             entry.put ( "values", new LongValue ( info.getSourceValues () ) );
             result.add ( entry );
         }

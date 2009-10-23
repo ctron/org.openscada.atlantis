@@ -90,7 +90,7 @@ public class TestQueryImpl implements Query
             }
             end.setTimeInMillis ( nextTix );
 
-            next.add ( new ValueInformation ( start, end, /*100% good*/1.0, nextTix - currentTix ) );
+            next.add ( new ValueInformation ( start, end, /*100% good*/1.0, 0.0, nextTix - currentTix ) );
 
             count++;
             if ( nextTix == endTix )
@@ -131,7 +131,7 @@ public class TestQueryImpl implements Query
         for ( final ValueInformation info : next )
         {
             final double quality = generateValues ( index, values, info );
-            valueInformation[index] = new ValueInformation ( info.getStartTimestamp (), info.getEndTimestamp (), quality, info.getSourceValues () );
+            valueInformation[index] = new ValueInformation ( info.getStartTimestamp (), info.getEndTimestamp (), quality, 0.0, info.getSourceValues () );
             index++;
         }
 

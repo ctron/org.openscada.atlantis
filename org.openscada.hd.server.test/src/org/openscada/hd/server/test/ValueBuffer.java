@@ -70,7 +70,7 @@ public class ValueBuffer
         startCal.setTimeInMillis ( this.start );
         final Calendar endCal = Calendar.getInstance ();
         endCal.setTimeInMillis ( this.end );
-        final ValueInformation info = new ValueInformation ( startCal, endCal, quality, this.values.size () );
+        final ValueInformation info = new ValueInformation ( startCal, endCal, quality, 0.0, this.values.size () );
 
         final Map<String, Value[]> values = new HashMap<String, Value[]> ();
         if ( avg == null )

@@ -16,8 +16,8 @@ public class ValueInformationTest
         final Calendar end = (Calendar)start.clone ();
         end.add ( Calendar.MINUTE, 1 );
 
-        final ValueInformation vi1 = new ValueInformation ( start, end, 1.0, 1 );
-        final ValueInformation vi2 = new ValueInformation ( start, end, 1.0, 1 );
+        final ValueInformation vi1 = new ValueInformation ( start, end, 1.0, 0.0, 1 );
+        final ValueInformation vi2 = new ValueInformation ( start, end, 1.0, 0.0, 1 );
 
         Assert.assertEquals ( "Basic equality", vi1, vi2 );
     }
@@ -33,11 +33,11 @@ public class ValueInformationTest
         final Calendar end = (Calendar)start.clone ();
         end.add ( Calendar.MINUTE, 1 );
 
-        final ValueInformation vi1 = new ValueInformation ( start, end, 1.0, 1 );
+        final ValueInformation vi1 = new ValueInformation ( start, end, 1.0, 0.0, 1 );
 
         start.set ( 2001, 1, 1 );
 
-        final ValueInformation vi2 = new ValueInformation ( start, end, 1.0, 1 );
+        final ValueInformation vi2 = new ValueInformation ( start, end, 1.0, 0.0, 1 );
 
         Assert.assertFalse ( "Should not be equal", vi1.equals ( vi2 ) );
     }

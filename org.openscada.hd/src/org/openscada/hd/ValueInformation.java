@@ -36,6 +36,11 @@ public final class ValueInformation
      */
     private final double quality;
 
+    /**
+     * The percent count (from 0.0 to 1.0) of manual values
+     */
+    private final double manualPercentage;
+
     private final Calendar startTimestamp;
 
     private final Calendar endTimestamp;
@@ -45,12 +50,13 @@ public final class ValueInformation
      */
     private final long sourceValues;
 
-    public ValueInformation ( final Calendar startTimestamp, final Calendar endTimestamp, final double quality, final long sourceValues )
+    public ValueInformation ( final Calendar startTimestamp, final Calendar endTimestamp, final double quality, final double manualPercentage, final long sourceValues )
     {
         super ();
         this.startTimestamp = (Calendar)startTimestamp.clone ();
         this.endTimestamp = (Calendar)endTimestamp.clone ();
         this.quality = quality;
+        this.manualPercentage = manualPercentage;
         this.sourceValues = sourceValues;
     }
 
@@ -61,6 +67,18 @@ public final class ValueInformation
     public double getQuality ()
     {
         return this.quality;
+    }
+
+    /**
+     * Get the amount of manual values in percent (0.0 to 1.0)
+     * <p>
+     * <code>0.0</code> means no manual values, <code>1.0</code> means all values where manual 
+     * </p>
+     * @return the manual percent count
+     */
+    public double getManualPercentage ()
+    {
+        return this.manualPercentage;
     }
 
     public Calendar getStartTimestamp ()
@@ -92,6 +110,8 @@ public final class ValueInformation
         result = prime * result + ( this.endTimestamp == null ? 0 : this.endTimestamp.hashCode () );
         long temp;
         temp = Double.doubleToLongBits ( this.quality );
+        result = prime * result + (int) ( temp ^ temp >>> 32 );
+        temp = Double.doubleToLongBits ( this.manualPercentage );
         result = prime * result + (int) ( temp ^ temp >>> 32 );
         result = prime * result + (int) ( this.sourceValues ^ this.sourceValues >>> 32 );
         result = prime * result + ( this.startTimestamp == null ? 0 : this.startTimestamp.hashCode () );
@@ -126,6 +146,10 @@ public final class ValueInformation
             return false;
         }
         if ( Double.doubleToLongBits ( this.quality ) != Double.doubleToLongBits ( other.quality ) )
+        {
+            return false;
+        }
+        if ( Double.doubleToLongBits ( this.manualPercentage ) != Double.doubleToLongBits ( other.manualPercentage ) )
         {
             return false;
         }
