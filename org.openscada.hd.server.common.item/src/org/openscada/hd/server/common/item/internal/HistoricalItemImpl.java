@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.master.MasterItem;
 import org.openscada.hd.HistoricalItemInformation;
@@ -44,7 +45,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     private SingleServiceTracker masterTracker;
 
-    private MasterItem masterItem;
+    private DataSource dataSource;
 
     public HistoricalItemImpl ( final HistoricalItemInformation itemInformation, final String masterId, final BundleContext context ) throws InvalidSyntaxException
     {
@@ -59,27 +60,27 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
                 HistoricalItemImpl.this.setStorage ( (StorageHistoricalItem)service );
             }
         } );
-        this.masterTracker = new SingleServiceTracker ( context, FilterUtil.createAndFilter ( MasterItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, this.masterId ).getMap () ), new SingleServiceListener () {
+        this.masterTracker = new SingleServiceTracker ( context, FilterUtil.createAndFilter ( DataSource.class.getName (), new MapBuilder<String, String> ().put ( DataSource.DATA_SOURCE_ID, this.masterId ).getMap () ), new SingleServiceListener () {
 
             public void serviceChange ( final ServiceReference reference, final Object service )
             {
-                HistoricalItemImpl.this.setMasterItem ( (MasterItem)service );
+                HistoricalItemImpl.this.setMasterItem ( (DataSource)service );
             }
         } );
     }
 
-    protected void setMasterItem ( final MasterItem service )
+    protected void setMasterItem ( final DataSource service )
     {
         logger.info ( "Set master item: {}", service );
 
-        if ( this.masterItem != null )
+        if ( this.dataSource != null )
         {
-            this.masterItem.removeListener ( this );
+            this.dataSource.removeListener ( this );
         }
-        this.masterItem = service;
-        if ( this.masterItem != null )
+        this.dataSource = service;
+        if ( this.dataSource != null )
         {
-            this.masterItem.addListener ( this );
+            this.dataSource.addListener ( this );
         }
     }
 
