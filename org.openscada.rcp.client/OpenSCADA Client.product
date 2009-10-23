@@ -40,7 +40,6 @@
    <vm>
    </vm>
 
-
    <plugins>
    </plugins>
 
@@ -48,6 +47,7 @@
       <feature id="org.openscada.core.client.test" version="0.14.0.qualifier"/>
       <feature id="org.openscada.da.client.test" version="0.14.0.qualifier"/>
       <feature id="org.openscada.hd.client.test" version="0.14.0.qualifier"/>
+      <feature id="org.openscada.ae.client.test" version="0.14.0.qualifier"/>
       <feature id="org.openscada.rcp.client" version="0.14.0.qualifier"/>
       <feature id="org.openscada.da.rcp.LocalTestServer" version="0.14.0.qualifier"/>
    </features>
