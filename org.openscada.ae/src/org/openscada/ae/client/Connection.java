@@ -28,6 +28,10 @@ public interface Connection extends org.openscada.core.client.Connection
     // Event - offline
     public void createQuery ( String queryType, String queryData, QueryListener listener );
 
+    /**
+     * Add browser listener
+     * @param listener
+     */
     public void addBrowserListener ( BrowserListener listener );
 
     public void removeBrowserListener ( BrowserListener listener );
