@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
+import org.openscada.da.datasource.testing.test1.SawtoothDataSourceFactory;
 import org.openscada.da.datasource.testing.test1.SineDataSourceFactory;
 import org.openscada.da.datasource.testing.test1.ToggleDataSourceFactory;
 import org.osgi.framework.BundleActivator;
@@ -43,6 +44,8 @@ public class Activator implements BundleActivator
 
     private ToggleDataSourceFactory factory2;
 
+    private SawtoothDataSourceFactory factory3;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -66,6 +69,13 @@ public class Activator implements BundleActivator
         properties.put ( ConfigurationAdministrator.FACTORY_ID, "datasource.test.toggle" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "Testing Factory - Toggle" );
         context.registerService ( ConfigurationFactory.class.getName (), this.factory2, properties );
+
+        // register sawtooth factory
+        this.factory3 = new SawtoothDataSourceFactory ( context, this.executor );
+        properties = new Hashtable<String, String> ();
+        properties.put ( ConfigurationAdministrator.FACTORY_ID, "datasource.test.sawtooth" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "Testing Factory - Sawtooth" );
+        context.registerService ( ConfigurationFactory.class.getName (), this.factory3, properties );
     }
 
     /*
@@ -76,6 +86,7 @@ public class Activator implements BundleActivator
     {
         this.factory1.dispose ();
         this.factory2.dispose ();
+        this.factory3.dispose ();
         this.executor.shutdown ();
     }
 
