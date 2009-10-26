@@ -152,7 +152,12 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
         {
             if ( this.service != null )
             {
+                // logger.debug ( "State change: {}", value );
                 this.service.updateData ( value );
+            }
+            else
+            {
+                logger.info ( "State change ignored: {} missing storage", this.itemInformation.getId () );
             }
         }
     }
