@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenSCADA A&E Storage Interface Plug-in
+Bundle-SymbolicName: org.openscada.ae.server.storage
+Bundle-Version: 0.14.0.qualifier
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: inavare GmbH
+Import-Package: org.openscada.ae
