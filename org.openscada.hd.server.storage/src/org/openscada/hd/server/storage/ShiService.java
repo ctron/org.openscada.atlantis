@@ -83,6 +83,9 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /** Maximum age of data that will be processed by the service if not running in import mode. */
     private final long proposedDataAge;
 
+    /** Maximum time in milliseconds in the future a new value is accepted and processed. */
+    private final long acceptedFutureTime;
+
     /** Registration of this service. */
     private ServiceRegistration registration;
 
@@ -109,7 +112,9 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         expectedDataType = DataType.UNKNOWN;
         this.latestReliableTime = latestReliableTime;
         this.importMode = importMode;
-        this.proposedDataAge = Conversions.decodeTimeSpan ( configuration.getData ().get ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0 ) );
+        final Map<String, String> data = configuration.getData ();
+        this.proposedDataAge = Conversions.decodeTimeSpan ( data.get ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0 ) );
+        this.acceptedFutureTime = Conversions.decodeTimeSpan ( data.get ( Conversions.ACCEPTED_FUTURE_TIME_KEY_PREFIX ) );
         registration = null;
     }
 
@@ -290,6 +295,11 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                     if ( !importMode && ( ( now - proposedDataAge ) > time ) )
                     {
                         logger.warn ( String.format ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", configuration.getId (), time ) );
+                        return;
+                    }
+                    if ( ( now + acceptedFutureTime ) < time )
+                    {
+                        logger.warn ( String.format ( "timestamp of data is located too far in the future! data will be ignored: (configuration: '%s'; time: %s)", configuration.getId (), time ) );
                         return;
                     }
 

@@ -67,7 +67,7 @@ public class Conversions
     public final static String PROPOSED_DATA_AGE_KEY_PREFIX = "hd.proposedDataAge.level.";
 
     /** Prefix of key in configuration for the accepted future time setting. */
-    public final static String ACCEPTED_FUTURE_TIME_KEY_PREFIX = "hd.acceptedFutureTime.level.";
+    public final static String ACCEPTED_FUTURE_TIME_KEY_PREFIX = "hd.acceptedFutureTime";
 
     /** Prefix of key in configuration for the compression time span setting. */
     public final static String COMPRESSION_TIMESPAN_KEY_PREFIX = "hd.compressionTimeSpan.level.";
@@ -241,7 +241,7 @@ public class Conversions
             }
 
             // set accepted future time per level
-            final String acceptedFutureTimeKey = ACCEPTED_FUTURE_TIME_KEY_PREFIX + detailLevelId;
+            final String acceptedFutureTimeKey = ACCEPTED_FUTURE_TIME_KEY_PREFIX;
             final long acceptedFutureTime = metaData.getAcceptedFutureTime ();
             if ( !data.containsKey ( acceptedFutureTimeKey ) )
             {
@@ -400,7 +400,7 @@ public class Conversions
             logger.error ( message );
             throw new Exception ( message );
         }
-        long acceptedFutureTime = decodeTimeSpan ( data.get ( ACCEPTED_FUTURE_TIME_KEY_PREFIX + 0 ) );
+        final long acceptedFutureTime = decodeTimeSpan ( data.get ( ACCEPTED_FUTURE_TIME_KEY_PREFIX ) );
         metaDatas.add ( new StorageChannelMetaData ( configurationId, CalculationMethod.NATIVE, new long[0], 0, now, now, proposedDataAge, acceptedFutureTime, nativeDataType ) );
 
         // create meta data for other calculation methods if required
@@ -422,7 +422,6 @@ public class Conversions
                     logger.error ( message );
                     throw new Exception ( message );
                 }
-                acceptedFutureTime = decodeTimeSpan ( data.get ( ACCEPTED_FUTURE_TIME_KEY_PREFIX + detailLevelId ) );
                 metaDatas.add ( new StorageChannelMetaData ( configurationId, calculationMethod, new long[] { compressionTimeSpan }, detailLevelId, now, now, proposedDataAge, acceptedFutureTime, nativeDataType ) );
             }
         }
