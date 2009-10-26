@@ -11,9 +11,6 @@ import org.openscada.da.datasource.testing.DefaultDataSource;
 
 public class ToggleDataSource extends ScheduledDataSource implements DefaultDataSource
 {
-
-    private int timeDiff;
-
     private boolean toggle;
 
     private double value;
@@ -34,7 +31,6 @@ public class ToggleDataSource extends ScheduledDataSource implements DefaultData
     @Override
     public void update ( final Map<String, String> properties )
     {
-        this.timeDiff = getInteger ( properties, "time.diff", 0 );
         this.value = getDouble ( properties, "value", 0.0 );
 
         super.update ( properties );

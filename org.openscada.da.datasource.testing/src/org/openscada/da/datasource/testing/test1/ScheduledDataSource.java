@@ -10,6 +10,7 @@ import org.openscada.da.datasource.base.AbstractInputDataSource;
 
 public abstract class ScheduledDataSource extends AbstractInputDataSource
 {
+    protected int timeDiff;
 
     protected final ScheduledExecutorService scheduler;
 
@@ -89,6 +90,9 @@ public abstract class ScheduledDataSource extends AbstractInputDataSource
     public void update ( final Map<String, String> properties )
     {
         setDelay ( getInteger ( properties, "delay", 250 ) );
+
+        this.timeDiff = getInteger ( properties, "time.diff", 0 );
+
     }
 
 }

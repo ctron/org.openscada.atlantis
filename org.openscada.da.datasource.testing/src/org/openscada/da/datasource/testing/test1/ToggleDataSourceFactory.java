@@ -16,7 +16,7 @@ public class ToggleDataSourceFactory extends AbstractDataSourceFactory
     @Override
     protected DefaultDataSource createDataSource ()
     {
-        return new SineDataSource ( getScheduler () );
+        return new ToggleDataSource ( getScheduler () );
     }
 
 }
