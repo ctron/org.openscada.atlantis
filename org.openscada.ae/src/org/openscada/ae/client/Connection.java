@@ -5,6 +5,12 @@ import java.util.Date;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.QueryListener;
 
+/**
+ * Interface for client connection
+ * @author Jens Reimann
+ * @since 0.15.0
+ *
+ */
 public interface Connection extends org.openscada.core.client.Connection
 {
     // Conditions
