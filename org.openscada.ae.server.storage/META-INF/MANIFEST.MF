@@ -6,4 +6,4 @@ Bundle-Version: 0.14.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: inavare GmbH
 Import-Package: org.openscada.ae
-Export-Package: org.openscada.ae.server.storage
+Export-Package: org.openscada.ae.server.storage;version="0.14.0"
