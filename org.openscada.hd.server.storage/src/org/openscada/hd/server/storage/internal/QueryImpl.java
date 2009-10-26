@@ -464,6 +464,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
      * This method sends the calculated data to the listener.
      * @param parameters parameters that were used to generate the result
      * @param startIndex start index of data that has to be transferred
+     * @param calculatedData data that has been calculated
      */
     public void sendCalculatedValues ( final QueryParameters parameters, final int startIndex, final CalculatedData calculatedData )
     {
@@ -526,7 +527,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         }
 
         // send generated data
-        if ( true || !sameParameters || !sameCalculationMethods || ( lastData == null ) || ( lastValueInformations == null ) )
+        if ( !sameParameters || !sameCalculationMethods || ( lastData == null ) || ( lastValueInformations == null ) )
         {
             sendingTask.submit ( new Runnable () {
                 public void run ()
