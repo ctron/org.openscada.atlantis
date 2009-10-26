@@ -347,7 +347,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         }
         if ( value.getTime () < latestProcessedValue.getTime () )
         {
-            logger.warn ( "older value for configuration '%s' received than latest available value", configuration.getId () );
+            logger.warn ( String.format ( "older value for configuration '%s' received than latest available value", configuration.getId () ) );
         }
         try
         {
