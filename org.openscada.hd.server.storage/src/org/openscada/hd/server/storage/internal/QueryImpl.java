@@ -741,9 +741,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             this.parameters = parameters;
             this.dataChanged = true;
             this.initialLoadPerformed = false;
-            lastParameters = null;
-            lastValueInformations = null;
-            lastData = null;
             setQueryState ( QueryState.LOADING );
         }
     }
