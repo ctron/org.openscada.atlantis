@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -318,6 +317,10 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                         final DataType dataType = mergeEntry.getKey ().getDataType ();
                         final BaseValue[] mergeValues = mergeEntry.getValue ();
                         final long maxTime = mergeValues.length > 0 ? Math.max ( latestValidTime + 1, latestDirtyTime ) : latestDirtyTime;
+                        if ( ( maxTime == latestDirtyTime ) && ( maxTime < absoluteEndTime ) )
+                        {
+                            markTimeAsDirty ( 0, true );
+                        }
                         latestDirtyTime = Math.min ( maxTime, latestDirtyTime );
                         if ( dataType == DataType.LONG_VALUE )
                         {
@@ -491,7 +494,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             }
 
             // send data
-            sendDataDiff ( parameters, calculatedResultMap, calculatedResultValueInformations, initialLoadPerformed, startIndex );
+            sendDataDiff ( parameters, calculatedResultMap, calculatedResultValueInformations, startIndex );
         }
     }
 
@@ -501,10 +504,9 @@ public class QueryImpl implements Query, ExtendedStorageChannel
      * @param calculationMethods calculation methods for which data is available
      * @param data data mapped by calculation methods
      * @param valueInformations state information of generated data
-     * @param updateQueryState flag indicating whether the query state should be set to complete or not
      * @param startIndex first index to start comparing the data. all data before this index is supposed to be unchanged
      */
-    private void sendDataDiff ( final QueryParameters parameters, final Map<String, Value[]> data, final ValueInformation[] valueInformations, final boolean updateQueryState, final int startIndex )
+    private void sendDataDiff ( final QueryParameters parameters, final Map<String, Value[]> data, final ValueInformation[] valueInformations, final int startIndex )
     {
         // do not send any data if input parameters have changed
         if ( !parameters.equals ( this.parameters ) )
@@ -547,7 +549,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         else
         {
             // collect all indices of which the data has changed
-            final List<Integer> changedEntries = new ArrayList<Integer> ();
+            final Set<Integer> changedEntriesSet = new HashSet<Integer> ();
             for ( final String calculationMethod : calculationMethods )
             {
                 final Value[] lastValues = lastData.get ( calculationMethod );
@@ -557,7 +559,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                     final int j = i + startIndex;
                     if ( !lastValueInformations[j].equals ( valueInformations[i] ) || !lastValues[j].equals ( values[i] ) )
                     {
-                        changedEntries.add ( j );
+                        changedEntriesSet.add ( j );
                         lastValueInformations[j] = valueInformations[i];
                         lastValues[j] = values[i];
                     }
@@ -565,24 +567,19 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             }
 
             // send changed value blocks as sub bulks
-            final Iterator<Integer> entry = changedEntries.iterator ();
-            while ( entry.hasNext () )
+            final Integer[] changedEntries = changedEntriesSet.toArray ( new Integer[0] );
+            Arrays.sort ( changedEntries );
+            int index = 0;
+            final int size = changedEntries.length;
+            while ( index < size )
             {
-                final int startBlockIndex = entry.next ();
+                final int startBlockIndex = changedEntries[index];
                 int endBlockIndex = startBlockIndex;
-                int nextBlockIndex = endBlockIndex;
-                if ( entry.hasNext () )
-                {
-                    nextBlockIndex = entry.next ();
-                }
+                int nextBlockIndex = ( index + 1 ) < size ? changedEntries[++index] : endBlockIndex;
                 while ( nextBlockIndex == endBlockIndex + 1 )
                 {
                     endBlockIndex = nextBlockIndex;
-                    if ( !entry.hasNext () )
-                    {
-                        break;
-                    }
-                    nextBlockIndex = entry.next ();
+                    nextBlockIndex = index + 1 < size ? changedEntries[++index] : endBlockIndex;
                 }
                 final int blockSize = endBlockIndex - startBlockIndex + 1;
                 final Map<String, Value[]> subData = new HashMap<String, Value[]> ();
@@ -605,14 +602,12 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                         listener.updateData ( startBlockIndex, subData, valueInformationBlock );
                     }
                 } );
+                index++;
             }
         }
 
         // update state to complete (call multiple times has no effect)
-        if ( updateQueryState )
-        {
-            setQueryState ( QueryState.COMPLETE );
-        }
+        setQueryState ( QueryState.COMPLETE );
 
         // remember processed data for next call of method
         lastParameters = parameters;
@@ -708,16 +703,20 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /**
      * This method marks the values that are affected by the specified time as changed
      * @param time time at which the affected values have to be marked as changed
-     * @param alsoMarkPast flag indicating whether all values that lie before the passed time should also be calculated again
+     * @param invalidateAllData flag indicating whether all values should also be calculated again or not
      */
-    private void markTimeAsDirty ( final long time, final boolean alsoMarkPast )
+    private void markTimeAsDirty ( final long time, final boolean invalidateAllData )
     {
-        if ( !closed && initialLoadPerformed )
+        if ( closed )
         {
-            final long endTime = parameters.getEndTimestamp ().getTimeInMillis ();
-            dataChanged = true;
-            final long startTime = parameters.getStartTimestamp ().getTimeInMillis ();
-            if ( time <= startTime )
+            return;
+        }
+        final long endTime = parameters.getEndTimestamp ().getTimeInMillis ();
+        final long startTime = parameters.getStartTimestamp ().getTimeInMillis ();
+        dataChanged = true;
+        if ( initialLoadPerformed )
+        {
+            if ( !invalidateAllData && ( time <= startTime ) )
             {
                 startTimeIndicesToUpdate.add ( 0 );
                 return;
@@ -731,7 +730,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 final double currentEndTimeAsDouble = currentStartTimeAsDouble + requestedValueFrequency;
                 final long currentStartTimeAsLong = Math.round ( currentStartTimeAsDouble );
                 final long currentEndTimeAsLong = Math.round ( currentEndTimeAsDouble );
-                if ( ( latestDirtyTime <= currentEndTimeAsLong ) || ( ( currentStartTimeAsLong <= time ) && ( ( alsoMarkPast ) || ( time <= currentEndTimeAsLong ) ) ) )
+                if ( invalidateAllData || ( latestDirtyTime <= currentEndTimeAsLong ) || ( ( currentStartTimeAsLong <= time ) && ( ( invalidateAllData ) || ( time <= currentEndTimeAsLong ) ) ) )
                 {
                     startTimeIndicesToUpdate.add ( i );
                 }
