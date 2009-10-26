@@ -449,15 +449,14 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             }
             resultMap.put ( CalculationMethod.convertCalculationMethodToShortString ( metaData.getCalculationMethod () ), resultValueArray );
         }
-        final CalculatedData d = new CalculatedData ();
-        d.calculatedResultValueInformations = new ValueInformation[resultValueInformations.length];
-        d.calculatedResultMap = resultMap;
+        final CalculatedData calculatedData = new CalculatedData ( new ValueInformation[resultValueInformations.length], resultMap );
+        final ValueInformation[] calculatedValueInformations = calculatedData.getValueInformations ();
         for ( int i = 0; i < resultValueInformations.length; i++ )
         {
             final MutableValueInformation valueInformation = resultValueInformations[i];
-            d.calculatedResultValueInformations[i] = new ValueInformation ( valueInformation.getStartTimestamp (), valueInformation.getEndTimestamp (), valueInformation.getQuality (), 0.0, valueInformation.getSourceValues () );
+            calculatedValueInformations[i] = new ValueInformation ( valueInformation.getStartTimestamp (), valueInformation.getEndTimestamp (), valueInformation.getQuality (), 0.0, valueInformation.getSourceValues () );
         }
-        return d;
+        return calculatedData;
     }
 
     /**
@@ -471,8 +470,9 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         synchronized ( service )
         {
             // send data to listener
-            final Map<String, Value[]> calculatedResultMap = calculatedData.calculatedResultMap;
-            final ValueInformation[] calculatedResultValueInformations = calculatedData.calculatedResultValueInformations;
+            final ValueInformation[] calculatedResultValueInformations = calculatedData.getValueInformations ();
+            final Map<String, Value[]> calculatedResultMap = calculatedData.getData ();
+
             // stop immediately if query has been closed in the meantime
             if ( closed )
             {
