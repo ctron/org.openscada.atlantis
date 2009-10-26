@@ -243,7 +243,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 for ( int i = 0, j = secondArray.length; i < firstArray.length; i++, j++ )
                 {
                     final DoubleValue srcValue = firstArray1[i];
-                    result[j] = new LongValue ( srcValue.getTime (), srcValue.getQualityIndicator (), srcValue.getManualIndicator (), srcValue.getBaseValueCount (), (long)srcValue.getValue () );
+                    result[j] = new LongValue ( srcValue.getTime (), srcValue.getQualityIndicator (), srcValue.getManualIndicator (), srcValue.getBaseValueCount (), Math.round ( srcValue.getValue () ) );
                 }
             }
             return result;
@@ -314,7 +314,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                     mergeMap = service.getValues ( currentCompressionLevel, startTime, endTime );
                     for ( final Entry<StorageChannelMetaData, BaseValue[]> mergeEntry : mergeMap.entrySet () )
                     {
-                        final DataType dataType = mergeEntry.getKey ().getDataType ();
                         final BaseValue[] mergeValues = mergeEntry.getValue ();
                         final long maxTime = mergeValues.length > 0 ? Math.max ( latestValidTime + 1, latestDirtyTime ) : latestDirtyTime;
                         if ( ( maxTime == latestDirtyTime ) && ( maxTime < absoluteEndTime ) )
@@ -322,7 +321,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                             markTimeAsDirty ( 0, true );
                         }
                         latestDirtyTime = Math.min ( maxTime, latestDirtyTime );
-                        if ( dataType == DataType.LONG_VALUE )
+                        if ( mergeValues instanceof LongValue[] )
                         {
                             final LongValue longValue = new LongValue ( maxTime, 0, 0, 0, 0 );
                             mergeEntry.setValue ( joinValueArrays ( new LongValue[] { longValue }, mergeValues ) );
@@ -406,17 +405,13 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 }
                 else
                 {
-                    filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime <= currentTimeOffsetAsLong ? currentTimeOffsetAsLong + 1 : localEndTime, startIndex, inputDataType == DataType.LONG_VALUE ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
+                    filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime <= currentTimeOffsetAsLong ? currentTimeOffsetAsLong + 1 : localEndTime, startIndex, values instanceof LongValue[] ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
                     // maximum 2 entries are completely virtual due to the algorithm
                     // it is possible that one value will be processed with a time span before the interval start time
                     // therefore the index can be increased by length-3 to optimize performance of this method
                     if ( filledValues.length > 3 )
                     {
                         startIndex += filledValues.length - 3;
-                    }
-                    if ( filledValues == null || filledValues.length == 0 )
-                    {
-                        filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime, startIndex, inputDataType == DataType.LONG_VALUE ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
                     }
                 }
                 resultValues.add ( calculationLogicProvider.generateValues ( filledValues ) );

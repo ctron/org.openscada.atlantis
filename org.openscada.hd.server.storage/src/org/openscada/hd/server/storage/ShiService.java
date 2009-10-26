@@ -25,7 +25,7 @@ import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.internal.Conversions;
 import org.openscada.hd.server.storage.internal.QueryImpl;
-import org.openscada.hsdb.ExtendedStorageChannel;
+import org.openscada.hsdb.CalculatingStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationMethod;
 import org.openscada.hsdb.concurrent.HsdbThreadFactory;
@@ -60,10 +60,10 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     private final Set<CalculationMethod> calculationMethods;
 
     /** All available storage channels mapped via calculation method. */
-    private final Map<StorageChannelMetaData, ExtendedStorageChannel> storageChannels;
+    private final Map<StorageChannelMetaData, CalculatingStorageChannel> storageChannels;
 
     /** Reference to the main input storage channel that is also available in the storage channels map. */
-    private ExtendedStorageChannel rootStorageChannel;
+    private CalculatingStorageChannel rootStorageChannel;
 
     /** Flag indicating whether the service is currently running or not. */
     private boolean started;
@@ -105,7 +105,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     {
         this.configuration = new ConfigurationImpl ( configuration );
         calculationMethods = new HashSet<CalculationMethod> ( Conversions.getCalculationMethods ( configuration ) );
-        this.storageChannels = new HashMap<StorageChannelMetaData, ExtendedStorageChannel> ();
+        this.storageChannels = new HashMap<StorageChannelMetaData, CalculatingStorageChannel> ();
         this.rootStorageChannel = null;
         this.started = false;
         this.openQueries = new LinkedList<QueryImpl> ();
@@ -186,14 +186,14 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         final Map<StorageChannelMetaData, BaseValue[]> result = new HashMap<StorageChannelMetaData, BaseValue[]> ();
         try
         {
-            for ( final Entry<StorageChannelMetaData, ExtendedStorageChannel> entry : storageChannels.entrySet () )
+            for ( final Entry<StorageChannelMetaData, CalculatingStorageChannel> entry : storageChannels.entrySet () )
             {
                 final StorageChannelMetaData metaData = entry.getKey ();
                 if ( metaData.getDetailLevelId () == compressionLevel )
                 {
-                    final ExtendedStorageChannel storageChannel = entry.getValue ();
+                    final CalculatingStorageChannel storageChannel = entry.getValue ();
                     BaseValue[] values = null;
-                    switch ( expectedDataType )
+                    switch ( storageChannel.getCalculationLogicProvider ().getOutputType () )
                     {
                     case LONG_VALUE:
                     {
@@ -388,7 +388,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      * This method adds a storage channel.
      * @param storageChannel storage channel that has to be added
      */
-    public synchronized void addStorageChannel ( final ExtendedStorageChannel storageChannel )
+    public synchronized void addStorageChannel ( final CalculatingStorageChannel storageChannel )
     {
         if ( storageChannel != null )
         {
