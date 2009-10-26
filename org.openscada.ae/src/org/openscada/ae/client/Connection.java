@@ -20,6 +20,9 @@ public interface Connection extends org.openscada.core.client.Connection
     public void setConditionListener ( String conditionQueryId, ConditionListener listener );
 
     // Event - online
+    /**
+     * Set the listener that should receive event updates
+     */
     public void setEventListener ( String eventQueryId, EventListener listener );
 
     // Event - offline
