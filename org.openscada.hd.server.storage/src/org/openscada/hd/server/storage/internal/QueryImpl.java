@@ -565,13 +565,14 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             final int size = changedEntries.length;
             while ( index < size )
             {
-                final int startBlockIndex = changedEntries[index];
+                final int startBlockIndex = changedEntries[index++];
                 int endBlockIndex = startBlockIndex;
-                int nextBlockIndex = ( index + 1 ) < size ? changedEntries[++index] : endBlockIndex;
+                int nextBlockIndex = index < size ? changedEntries[index] : endBlockIndex;
                 while ( nextBlockIndex == endBlockIndex + 1 )
                 {
+                    index++;
                     endBlockIndex = nextBlockIndex;
-                    nextBlockIndex = index + 1 < size ? changedEntries[++index] : endBlockIndex;
+                    nextBlockIndex = index < size ? changedEntries[index] : endBlockIndex;
                 }
                 final int blockSize = endBlockIndex - startBlockIndex + 1;
                 final Map<String, Value[]> subData = new HashMap<String, Value[]> ();
@@ -594,7 +595,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                         listener.updateData ( startBlockIndex, subData, valueInformationBlock );
                     }
                 } );
-                index++;
             }
         }
 
