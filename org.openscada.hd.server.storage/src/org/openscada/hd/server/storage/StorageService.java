@@ -130,8 +130,8 @@ public class StorageService implements SelfManagedConfigurationFactory
         }
         this.backEndFactory = new FileBackEndFactory ( rootPath, Conversions.parseLong ( System.getProperty ( MAX_COMPRESSION_LEVEL_TO_KEEP_FILE_OPEN ), 0 ) );
         this.configurationListeners = new LinkedList<ConfigurationListener> ();
-        heartBeatBackEnd = null;
-        latestReliableTime = Long.MIN_VALUE;
+        this.heartBeatBackEnd = null;
+        this.latestReliableTime = Long.MIN_VALUE;
         this.importMode = Boolean.parseBoolean ( System.getProperty ( IMPORT_MODE ) );
     }
 
@@ -206,7 +206,7 @@ public class StorageService implements SelfManagedConfigurationFactory
 
         // create hierarchical storage channel structure
         final CalculatingStorageChannel[] storageChannels = new CalculatingStorageChannel[backEnds.size ()];
-        final ShiService service = new ShiService ( configuration, latestReliableTime, importMode );
+        final ShiService service = new ShiService ( configuration, this.latestReliableTime, this.importMode );
         for ( int i = 0; i < backEnds.size (); i++ )
         {
             final BackEnd backEnd = backEnds.get ( i );
@@ -216,7 +216,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             {
                 final BackEnd superBackEndCandidate = backEnds.get ( j );
                 final CalculationMethod superCalculationMethod = superBackEndCandidate.getMetaData ().getCalculationMethod ();
-                if ( ( superCalculationMethod == calculationMethod ) || ( superCalculationMethod == CalculationMethod.NATIVE ) )
+                if ( superCalculationMethod == calculationMethod || superCalculationMethod == CalculationMethod.NATIVE )
                 {
                     superBackEndIndex = j;
                     break;
@@ -232,7 +232,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         this.shiServices.put ( configuration.getId (), service );
 
         // publish service
-        service.start ( bundleContext );
+        service.start ( this.bundleContext );
 
         // notify listeners of performed update
         final Configuration[] addedConfigurationIds = new Configuration[] { configuration };
@@ -252,7 +252,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         StorageChannelMetaData[] existingMetaData = null;
         try
         {
-            existingMetaData = backEndFactory.getExistingBackEndsMetaData ( HEARTBEAT_CONFIGURATION_ID );
+            existingMetaData = this.backEndFactory.getExistingBackEndsMetaData ( HEARTBEAT_CONFIGURATION_ID );
         }
         catch ( final Exception e )
         {
@@ -261,7 +261,7 @@ public class StorageService implements SelfManagedConfigurationFactory
 
         // create new backend if none exist
         StorageChannelMetaData metaData = null;
-        final boolean createNewBackEnd = ( existingMetaData == null ) || ( existingMetaData.length == 0 );
+        final boolean createNewBackEnd = existingMetaData == null || existingMetaData.length == 0;
         if ( createNewBackEnd )
         {
             metaData = new StorageChannelMetaData ( HEARTBEAT_CONFIGURATION_ID, CalculationMethod.NATIVE, new long[0], 0, now, now + 1, PROPOSED_HEART_BEAT_DATA_AGE, 0, DataType.LONG_VALUE );
@@ -279,7 +279,7 @@ public class StorageService implements SelfManagedConfigurationFactory
                 backEnd.delete ();
                 backEnd.create ( metaData );
             }
-            heartBeatBackEnd = backEnd;
+            this.heartBeatBackEnd = backEnd;
         }
         catch ( final Exception e )
         {
@@ -292,14 +292,14 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public synchronized void performPingOfLife ()
     {
-        if ( heartBeatBackEnd != null )
+        if ( this.heartBeatBackEnd != null )
         {
             final long now = System.currentTimeMillis ();
             final LongValue value = new LongValue ( now, 1, 0, 0, now );
             try
             {
-                heartBeatBackEnd.updateLong ( value );
-                heartBeatBackEnd.cleanupRelicts ();
+                this.heartBeatBackEnd.updateLong ( value );
+                this.heartBeatBackEnd.cleanupRelicts ();
             }
             catch ( final Exception e )
             {
@@ -313,14 +313,14 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     private void deinitializeHeartBeat ()
     {
-        if ( heartBeatBackEnd != null )
+        if ( this.heartBeatBackEnd != null )
         {
             synchronized ( this )
             {
                 performPingOfLife ();
-                heartBeatTask.shutdown ();
-                heartBeatTask = null;
-                heartBeatBackEnd = null;
+                this.heartBeatTask.shutdown ();
+                this.heartBeatTask = null;
+                this.heartBeatBackEnd = null;
             }
         }
     }
@@ -334,17 +334,17 @@ public class StorageService implements SelfManagedConfigurationFactory
         initializeHeartBeat ();
 
         // get latest reliable time and start heart beat task
-        latestReliableTime = Long.MIN_VALUE;
-        if ( heartBeatBackEnd != null )
+        this.latestReliableTime = Long.MIN_VALUE;
+        if ( this.heartBeatBackEnd != null )
         {
             // get latest reliable time before system startup
             final long now = System.currentTimeMillis ();
             try
             {
-                final LongValue[] longValues = heartBeatBackEnd.getLongValues ( now, now + 1 );
-                if ( ( longValues != null ) && ( longValues.length > 0 ) )
+                final LongValue[] longValues = this.heartBeatBackEnd.getLongValues ( now, now + 1 );
+                if ( longValues != null && longValues.length > 0 )
                 {
-                    latestReliableTime = longValues[longValues.length - 1].getValue ();
+                    this.latestReliableTime = longValues[longValues.length - 1].getValue ();
                 }
             }
             catch ( final Exception e )
@@ -353,8 +353,8 @@ public class StorageService implements SelfManagedConfigurationFactory
             }
 
             // start heart beat task
-            heartBeatTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( HEARTBEAT_THREAD_ID ) );
-            heartBeatTask.scheduleWithFixedDelay ( new Runnable () {
+            this.heartBeatTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( HEARTBEAT_THREAD_ID ) );
+            this.heartBeatTask.scheduleWithFixedDelay ( new Runnable () {
                 public void run ()
                 {
                     performPingOfLife ();
@@ -366,7 +366,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         StorageChannelMetaData[] availableMetaDatas = null;
         try
         {
-            availableMetaDatas = backEndFactory.getExistingBackEndsMetaData ();
+            availableMetaDatas = this.backEndFactory.getExistingBackEndsMetaData ();
         }
         catch ( final Exception e )
         {
@@ -470,8 +470,8 @@ public class StorageService implements SelfManagedConfigurationFactory
         }
 
         // start clean relicts timer
-        relictCleanerTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( RELICT_CLEANER_THREAD_ID ) );
-        relictCleanerTask.scheduleWithFixedDelay ( new Runnable () {
+        this.relictCleanerTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( RELICT_CLEANER_THREAD_ID ) );
+        this.relictCleanerTask.scheduleWithFixedDelay ( new Runnable () {
             public void run ()
             {
                 cleanupRelicts ();
@@ -484,21 +484,21 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public synchronized void stop ()
     {
-        if ( relictCleanerTask != null )
+        if ( this.relictCleanerTask != null )
         {
-            relictCleanerTask.shutdown ();
-            relictCleanerTask = null;
+            this.relictCleanerTask.shutdown ();
+            this.relictCleanerTask = null;
         }
-        for ( final ShiService shiService : shiServices.values () )
+        for ( final ShiService shiService : this.shiServices.values () )
         {
             shiService.stop ();
         }
-        shiServices.clear ();
-        for ( final List<BackEnd> backEnds : backEndMap.values () )
+        this.shiServices.clear ();
+        for ( final List<BackEnd> backEnds : this.backEndMap.values () )
         {
             deinitializeBackEnds ( backEnds );
         }
-        backEndMap.clear ();
+        this.backEndMap.clear ();
         deinitializeHeartBeat ();
     }
 
@@ -531,15 +531,15 @@ public class StorageService implements SelfManagedConfigurationFactory
     }
 
     /**
-     * This method fills the passed map with default setttings if it is passed empty.
-     * @param properties map to be filled with default settings if map is passsed empty
+     * This method fills the passed map with default settings if it is passed empty.
+     * @param properties map to be filled with default settings if map is passed empty
      */
     private static void fillConfigurationDefaultSettings ( final Map<String, String> properties )
     {
-        if ( ( properties != null ) && properties.isEmpty () )
+        if ( properties != null && properties.isEmpty () )
         {
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0, "1m" );
-            properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "1h" );
+            properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "1d" );
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 2, "7d" );
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 3, "1825d" );
             properties.put ( Conversions.ACCEPTED_FUTURE_TIME_KEY_PREFIX + 0, "0s" );
@@ -549,6 +549,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1m" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 2, "1h" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 3, "1d" );
+            properties.put ( Conversions.ACCEPTED_FUTURE_TIME_KEY_PREFIX, "10m" );
             properties.put ( Conversions.MAX_COMPRESSION_LEVEL, "3" );
             properties.put ( Conversions.DATA_TYPE_KEY, "DV" );
         }
@@ -625,7 +626,7 @@ public class StorageService implements SelfManagedConfigurationFactory
                 }
             }
         }
-        backEndFactory.deleteBackEnds ( configurationId );
+        this.backEndFactory.deleteBackEnds ( configurationId );
         configuration.setState ( ConfigurationState.AVAILABLE );
         final String[] removedConfigurationIds = new String[] { configurationId };
         for ( final ConfigurationListener listener : this.configurationListeners )
@@ -642,7 +643,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     public synchronized void cleanupRelicts ()
     {
         logger.info ( "triggering cleaning of old data" );
-        for ( final ShiService service : shiServices.values () )
+        for ( final ShiService service : this.shiServices.values () )
         {
             try
             {
