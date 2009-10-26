@@ -30,7 +30,7 @@ public interface Connection extends org.openscada.core.client.Connection
 
     /**
      * Add browser listener
-     * @param listener
+     * @param listener the listener to add
      */
     public void addBrowserListener ( BrowserListener listener );
 
