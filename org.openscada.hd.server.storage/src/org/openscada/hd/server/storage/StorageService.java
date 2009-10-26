@@ -542,10 +542,6 @@ public class StorageService implements SelfManagedConfigurationFactory
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "1d" );
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 2, "7d" );
             properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 3, "1825d" );
-            properties.put ( Conversions.ACCEPTED_FUTURE_TIME_KEY_PREFIX + 0, "0s" );
-            properties.put ( Conversions.ACCEPTED_FUTURE_TIME_KEY_PREFIX + 1, "0s" );
-            properties.put ( Conversions.ACCEPTED_FUTURE_TIME_KEY_PREFIX + 2, "0s" );
-            properties.put ( Conversions.ACCEPTED_FUTURE_TIME_KEY_PREFIX + 3, "0s" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1m" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 2, "1h" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 3, "1d" );
