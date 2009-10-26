@@ -45,6 +45,9 @@ public class Conversions
     /** Count of milliseconds per day. */
     public final static long DAY_SPAN = HOUR_SPAN * 24;
 
+    /** Count of milliseconds per year (365 days). */
+    public final static long YEAR_SPAN = DAY_SPAN * 365;
+
     /** Suffix for text values of milliseconds. */
     public final static String MILLISECOND_SPAN_SUFFIX = "ms";
 
@@ -59,6 +62,9 @@ public class Conversions
 
     /** Suffix for text values of days. */
     public final static String DAY_SPAN_SUFFIX = "d";
+
+    /** Suffix for text values of years (365 days). */
+    public final static String YEAR_SPAN_SUFFIX = "y";
 
     /** Seperatur used to split the elements of a list within the configuration. */
     public final static String LIST_SEPARATOR = ",";
@@ -125,6 +131,10 @@ public class Conversions
      */
     public static String encodeTimeSpan ( final long timeSpan )
     {
+        if ( ( timeSpan % YEAR_SPAN ) == 0 )
+        {
+            return ( timeSpan / YEAR_SPAN ) + YEAR_SPAN_SUFFIX;
+        }
         if ( ( timeSpan % DAY_SPAN ) == 0 )
         {
             return ( timeSpan / DAY_SPAN ) + DAY_SPAN_SUFFIX;
@@ -174,6 +184,10 @@ public class Conversions
         if ( timeSpan.endsWith ( DAY_SPAN_SUFFIX ) )
         {
             return parseLong ( timeSpan.substring ( 0, timeSpan.length () - DAY_SPAN_SUFFIX.length () ), 0 ) * DAY_SPAN;
+        }
+        if ( timeSpan.endsWith ( YEAR_SPAN_SUFFIX ) )
+        {
+            return parseLong ( timeSpan.substring ( 0, timeSpan.length () - YEAR_SPAN_SUFFIX.length () ), 0 ) * YEAR_SPAN;
         }
         return 0;
     }

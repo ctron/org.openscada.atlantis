@@ -426,6 +426,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                     valueInformation.setStartTimestamp ( cstartTime );
                     valueInformation.setEndTimestamp ( cendTime );
                     valueInformation.setQuality ( Math.min ( longValue.getQualityIndicator (), valueInformation.getQuality () ) );
+                    valueInformation.setManual ( Math.min ( longValue.getManualIndicator (), valueInformation.getManual () ) );
                     valueInformation.setSourceValues ( Math.min ( longValue.getBaseValueCount (), valueInformation.getSourceValues () ) );
                 }
             }
@@ -444,6 +445,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                     valueInformation.setStartTimestamp ( cstartTime );
                     valueInformation.setEndTimestamp ( cendTime );
                     valueInformation.setQuality ( Math.min ( doubleValue.getQualityIndicator (), valueInformation.getQuality () ) );
+                    valueInformation.setManual ( Math.min ( doubleValue.getManualIndicator (), valueInformation.getManual () ) );
                     valueInformation.setSourceValues ( Math.min ( doubleValue.getBaseValueCount (), valueInformation.getSourceValues () ) );
                 }
             }

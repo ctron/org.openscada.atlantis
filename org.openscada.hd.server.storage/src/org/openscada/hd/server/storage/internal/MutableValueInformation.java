@@ -26,6 +26,11 @@ public class MutableValueInformation
     private double quality;
 
     /**
+     * @see quality of org.openscada.hd.ValueInformation
+     */
+    private double manual;
+
+    /**
      * @see sourceValues of org.openscada.hd.ValueInformation
      */
     private long sourceValues;
@@ -74,6 +79,15 @@ public class MutableValueInformation
     }
 
     /**
+     * @see org.openscada.hd.ValueInformation#getManualPercentage
+     * @return @see org.openscada.hd.ValueInformation#getManualPercentage
+     */
+    public double getManual ()
+    {
+        return this.manual;
+    }
+
+    /**
      * @see org.openscada.hd.ValueInformation#getSourceValues
      * @return @see org.openscada.hd.ValueInformation#getSourceValues
      */
@@ -107,6 +121,15 @@ public class MutableValueInformation
     public void setQuality ( final double quality )
     {
         this.quality = quality;
+    }
+
+    /**
+     * This method sets the manual value. @see org.openscada.hd.ValueInformation
+     * @param manual value to set
+     */
+    public void setManual ( final double manual )
+    {
+        this.manual = manual;
     }
 
     /**
