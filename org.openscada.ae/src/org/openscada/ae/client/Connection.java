@@ -14,6 +14,9 @@ import org.openscada.ae.QueryListener;
 public interface Connection extends org.openscada.core.client.Connection
 {
     // Conditions
+    /**
+     * Set the listener that should receive condition updates
+     */
     public void setConditionListener ( String conditionQueryId, ConditionListener listener );
 
     // Event - online
