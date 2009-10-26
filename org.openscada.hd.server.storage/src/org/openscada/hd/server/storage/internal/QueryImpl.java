@@ -318,7 +318,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                         final long maxTime = mergeValues.length > 0 ? Math.max ( latestValidTime + 1, latestDirtyTime ) : latestDirtyTime;
                         if ( ( maxTime == latestDirtyTime ) && ( maxTime < absoluteEndTime ) )
                         {
-                            markTimeAsDirty ( 0, true );
+                            markTimeAsDirty ( maxTime, false );
                         }
                         latestDirtyTime = Math.min ( maxTime, latestDirtyTime );
                         if ( mergeValues instanceof LongValue[] )
@@ -709,30 +709,27 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         final long endTime = parameters.getEndTimestamp ().getTimeInMillis ();
         final long startTime = parameters.getStartTimestamp ().getTimeInMillis ();
         dataChanged = true;
-        if ( initialLoadPerformed )
+        if ( !invalidateAllData && ( time <= startTime ) )
         {
-            if ( !invalidateAllData && ( time <= startTime ) )
+            startTimeIndicesToUpdate.add ( 0 );
+            return;
+        }
+        final long resultSize = parameters.getEntries ();
+        final long requestedTimeSpan = endTime - startTime;
+        final double requestedValueFrequency = (double)requestedTimeSpan / resultSize;
+        for ( int i = 0; i < resultSize; i++ )
+        {
+            final double currentStartTimeAsDouble = startTime + i * requestedValueFrequency;
+            final double currentEndTimeAsDouble = currentStartTimeAsDouble + requestedValueFrequency;
+            final long currentStartTimeAsLong = Math.round ( currentStartTimeAsDouble );
+            final long currentEndTimeAsLong = Math.round ( currentEndTimeAsDouble );
+            if ( invalidateAllData || ( latestDirtyTime <= currentEndTimeAsLong ) || ( ( currentStartTimeAsLong <= time ) && ( ( invalidateAllData ) || ( time <= currentEndTimeAsLong ) ) ) )
             {
-                startTimeIndicesToUpdate.add ( 0 );
-                return;
+                startTimeIndicesToUpdate.add ( i );
             }
-            final long resultSize = parameters.getEntries ();
-            final long requestedTimeSpan = endTime - startTime;
-            final double requestedValueFrequency = (double)requestedTimeSpan / resultSize;
-            for ( int i = 0; i < resultSize; i++ )
+            else if ( time < currentStartTimeAsLong )
             {
-                final double currentStartTimeAsDouble = startTime + i * requestedValueFrequency;
-                final double currentEndTimeAsDouble = currentStartTimeAsDouble + requestedValueFrequency;
-                final long currentStartTimeAsLong = Math.round ( currentStartTimeAsDouble );
-                final long currentEndTimeAsLong = Math.round ( currentEndTimeAsDouble );
-                if ( invalidateAllData || ( latestDirtyTime <= currentEndTimeAsLong ) || ( ( currentStartTimeAsLong <= time ) && ( ( invalidateAllData ) || ( time <= currentEndTimeAsLong ) ) ) )
-                {
-                    startTimeIndicesToUpdate.add ( i );
-                }
-                else if ( time < currentStartTimeAsLong )
-                {
-                    break;
-                }
+                break;
             }
         }
     }
