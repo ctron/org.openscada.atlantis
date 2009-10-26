@@ -92,12 +92,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /** Set of indices of start times that have to be calculated again. */
     private final Set<Integer> startTimeIndicesToUpdate;
 
-    /** This attribute is set by the method calculateValues and read by the method sendCalculatedValues. It contains the value information objects that were created during the calculation process. */
-    private ValueInformation[] calculatedResultValueInformations;
-
-    /** This attribute is set by the method calculateValues and read by the method sendCalculatedValues. It contains the value objects that were created during the calculation process. */
-    private Map<String, Value[]> calculatedResultMap;
-
     /** Latest value that was processed or re-processed. */
     private long latestDirtyTime;
 
@@ -286,7 +280,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
      * @param lastIndex index of last time slice of the global time span that has to be calculated
      * @throws Exception in case of problems when retrieving data via the service
      */
-    private void calculateValues ( final long absoluteStartTime, final long absoluteEndTime, final int absoluteResultSize, final int firstIndex, final int lastIndex ) throws Exception
+    private CalculatedData calculateValues ( final long absoluteStartTime, final long absoluteEndTime, final int absoluteResultSize, final int firstIndex, final int lastIndex ) throws Exception
     {
         // calculate global values
         final long requestedTimeSpan = absoluteEndTime - absoluteStartTime;
@@ -455,13 +449,15 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             }
             resultMap.put ( CalculationMethod.convertCalculationMethodToShortString ( metaData.getCalculationMethod () ), resultValueArray );
         }
-        this.calculatedResultValueInformations = new ValueInformation[resultValueInformations.length];
+        final CalculatedData d = new CalculatedData ();
+        d.calculatedResultValueInformations = new ValueInformation[resultValueInformations.length];
+        d.calculatedResultMap = resultMap;
         for ( int i = 0; i < resultValueInformations.length; i++ )
         {
             final MutableValueInformation valueInformation = resultValueInformations[i];
-            this.calculatedResultValueInformations[i] = new ValueInformation ( valueInformation.getStartTimestamp (), valueInformation.getEndTimestamp (), valueInformation.getQuality (), 0.0, valueInformation.getSourceValues () );
+            d.calculatedResultValueInformations[i] = new ValueInformation ( valueInformation.getStartTimestamp (), valueInformation.getEndTimestamp (), valueInformation.getQuality (), 0.0, valueInformation.getSourceValues () );
         }
-        this.calculatedResultMap = resultMap;
+        return d;
     }
 
     /**
@@ -469,13 +465,13 @@ public class QueryImpl implements Query, ExtendedStorageChannel
      * @param parameters parameters that were used to generate the result
      * @param startIndex start index of data that has to be transferred
      */
-    public void sendCalculatedValues ( final QueryParameters parameters, final int startIndex )
+    public void sendCalculatedValues ( final QueryParameters parameters, final int startIndex, final CalculatedData calculatedData )
     {
-        // send data to listener
-        final Map<String, Value[]> calculatedResultMap = this.calculatedResultMap;
-        final ValueInformation[] calculatedResultValueInformations = this.calculatedResultValueInformations;
         synchronized ( service )
         {
+            // send data to listener
+            final Map<String, Value[]> calculatedResultMap = calculatedData.calculatedResultMap;
+            final ValueInformation[] calculatedResultValueInformations = calculatedData.calculatedResultValueInformations;
             // stop immediately if query has been closed in the meantime
             if ( closed )
             {
@@ -530,7 +526,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         }
 
         // send generated data
-        if ( !sameParameters || !sameCalculationMethods || ( lastData == null ) || ( lastValueInformations == null ) )
+        if ( true || !sameParameters || !sameCalculationMethods || ( lastData == null ) || ( lastValueInformations == null ) )
         {
             sendingTask.submit ( new Runnable () {
                 public void run ()
@@ -654,8 +650,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             if ( !initialLoadPerformed )
             {
                 // calculate all values
-                calculateValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () + 1, parameters.getEntries (), 0, parameters.getEntries () - 1 );
-                sendCalculatedValues ( parameters, 0 );
+                final CalculatedData calculatedData = calculateValues ( parameters.getStartTimestamp ().getTimeInMillis (), parameters.getEndTimestamp ().getTimeInMillis () + 1, parameters.getEntries (), 0, parameters.getEntries () - 1 );
+                sendCalculatedValues ( parameters, 0, calculatedData );
             }
             else
             {
@@ -678,8 +674,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                         endIndex++;
                         index++;
                     }
-                    calculateValues ( startTime, endTime + 1, parameters.getEntries (), startIndex, endIndex );
-                    sendCalculatedValues ( parameters, startIndex );
+                    final CalculatedData calculatedData = calculateValues ( startTime, endTime + 1, parameters.getEntries (), startIndex, endIndex );
+                    sendCalculatedValues ( parameters, startIndex, calculatedData );
                     index++;
                 }
             }
@@ -744,6 +740,9 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             this.parameters = parameters;
             this.dataChanged = true;
             this.initialLoadPerformed = false;
+            lastParameters = null;
+            lastValueInformations = null;
+            lastData = null;
             setQueryState ( QueryState.LOADING );
         }
     }
