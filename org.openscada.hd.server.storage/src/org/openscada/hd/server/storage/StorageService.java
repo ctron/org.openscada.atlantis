@@ -547,7 +547,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 3, "1d" );
             properties.put ( Conversions.ACCEPTED_FUTURE_TIME_KEY_PREFIX, "10m" );
             properties.put ( Conversions.MAX_COMPRESSION_LEVEL, "3" );
-            properties.put ( Conversions.DATA_TYPE_KEY, "DV" );
+            properties.put ( Conversions.DATA_TYPE_KEY, "DOUBLE" );
         }
     }
 
