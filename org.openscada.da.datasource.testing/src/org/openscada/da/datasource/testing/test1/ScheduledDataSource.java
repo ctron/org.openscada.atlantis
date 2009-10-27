@@ -87,6 +87,23 @@ public abstract class ScheduledDataSource extends AbstractInputDataSource
         }
     }
 
+    protected static long getLong ( final Map<String, String> properties, final String key, final long defaultValue )
+    {
+        final String value = properties.get ( key );
+        if ( value == null )
+        {
+            return defaultValue;
+        }
+        try
+        {
+            return Long.parseLong ( value );
+        }
+        catch ( final NumberFormatException e )
+        {
+            return defaultValue;
+        }
+    }
+
     public void update ( final Map<String, String> properties )
     {
         setDelay ( getInteger ( properties, "delay", 250 ) );
