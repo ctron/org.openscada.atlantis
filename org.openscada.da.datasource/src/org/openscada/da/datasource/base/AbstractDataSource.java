@@ -5,9 +5,10 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.openscada.da.client.DataItemValue;
+import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 
-public abstract class AbstractDataSource
+public abstract class AbstractDataSource implements DataSource
 {
     private DataItemValue value;
 
