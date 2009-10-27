@@ -165,24 +165,28 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
     public void update ( final Map<String, String> properties ) throws InvalidSyntaxException
     {
         final String masterId = properties.get ( "master.id" );
-        if ( masterId == null )
-        {
-            throw new IllegalArgumentException ( "'master.id' must be set" );
-        }
 
         synchronized ( this )
         {
             logger.info ( "Updating..." );
 
-            this.masterTracker.close ();
-            this.masterTracker = new SingleServiceTracker ( this.context, FilterUtil.createAndFilter ( MasterItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, masterId ).getMap () ), new SingleServiceListener () {
+            if ( this.masterTracker != null )
+            {
+                this.masterTracker.close ();
+                this.masterTracker = null;
+            }
 
-                public void serviceChange ( final ServiceReference reference, final Object service )
-                {
-                    HistoricalItemImpl.this.setMasterItem ( (MasterItem)service );
-                }
-            } );
-            this.masterTracker.open ();
+            if ( masterId != null )
+            {
+                this.masterTracker = new SingleServiceTracker ( this.context, FilterUtil.createAndFilter ( MasterItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, masterId ).getMap () ), new SingleServiceListener () {
+
+                    public void serviceChange ( final ServiceReference reference, final Object service )
+                    {
+                        HistoricalItemImpl.this.setMasterItem ( (MasterItem)service );
+                    }
+                } );
+                this.masterTracker.open ();
+            }
 
             this.masterId = masterId;
 
