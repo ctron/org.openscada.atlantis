@@ -415,6 +415,12 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                     {
                         startIndex += filledValues.length - 3;
                     }
+                    final long lastFilledValueTime = filledValues[filledValues.length - 1].getTime ();
+                    final long size = values.length;
+                    while ( ( startIndex + 1 < size ) && ( values[startIndex + 1].getTime () < lastFilledValueTime ) )
+                    {
+                        startIndex++;
+                    }
                 }
                 resultValues.add ( calculationLogicProvider.generateValues ( filledValues ) );
             }
