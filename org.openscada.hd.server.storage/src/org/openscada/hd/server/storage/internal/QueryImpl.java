@@ -53,6 +53,9 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /** Task for processing the query. */
     private final static String QUERY_DATA_PROCESSOR_THREAD_ID = "QueryProcessor";
 
+    /** Task for receiving the query parameter changes. */
+    private final static String QUERY_DATA_RECEIVER_THREAD_ID = "QueryParameterChangeReceiver";
+
     /** Task for sending the query data. */
     private final static String QUERY_DATA_SENDER_THREAD_ID = "QueryDataSender";
 
@@ -98,6 +101,9 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /** Executor that will be used to send data. */
     private ExecutorService sendingTask;
 
+    /** Executor that will be used when changing parameters. */
+    private ExecutorService receivingTask;
+
     /** Parameters for which data was sent last time. */
     private QueryParameters lastParameters;
 
@@ -134,6 +140,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         }
         else
         {
+            receivingTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_RECEIVER_THREAD_ID ) );
             sendingTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_SENDER_THREAD_ID ) );
             setQueryState ( QueryState.LOADING );
             latestDirtyTime = Long.MAX_VALUE;
@@ -750,20 +757,25 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /**
      * @see org.openscada.hd.Query#changeParameters
      */
-    public void changeParameters ( final QueryParameters parameters )
+    public void changeParameters ( final QueryParameters inputParameters )
     {
-        synchronized ( service )
-        {
-            if ( ( parameters == null ) || ( parameters.getStartTimestamp () == null ) || ( parameters.getEndTimestamp () == null ) )
+        receivingTask.submit ( new Runnable () {
+            public void run ()
             {
-                close ();
-                return;
+                synchronized ( service )
+                {
+                    if ( ( inputParameters == null ) || ( inputParameters.getStartTimestamp () == null ) || ( inputParameters.getEndTimestamp () == null ) )
+                    {
+                        close ();
+                        return;
+                    }
+                    parameters = inputParameters;
+                    dataChanged = true;
+                    initialLoadPerformed = false;
+                    setQueryState ( QueryState.LOADING );
+                }
             }
-            this.parameters = parameters;
-            this.dataChanged = true;
-            this.initialLoadPerformed = false;
-            setQueryState ( QueryState.LOADING );
-        }
+        } );
     }
 
     /**
