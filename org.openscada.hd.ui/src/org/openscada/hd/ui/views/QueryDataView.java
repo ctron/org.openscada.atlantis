@@ -133,7 +133,7 @@ public class QueryDataView extends QueryViewPart implements QueryListener
         else if ( num instanceof Long )
         {
             final Long lNum = (Long)num;
-            return String.format ( Messages.QueryDataView_Format_Value, lNum );
+            return String.format ( "%s", lNum );
         }
         else
         {
