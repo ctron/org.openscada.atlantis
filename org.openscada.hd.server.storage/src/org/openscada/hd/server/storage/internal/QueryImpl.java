@@ -83,9 +83,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /** Maximum available compression level. */
     private final long maximumCompressionLevel;
 
-    /** Recommended compression level for the current query parameter. */
-    private long recommendedCompressionLevel;
-
     /** Flag indicating whether data was changed or not. */
     private boolean initialLoadPerformed;
 
@@ -134,7 +131,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             queryRegistered = false;
             dataChanged = false;
             maximumCompressionLevel = 0;
-            recommendedCompressionLevel = 0;
         }
         else
         {
@@ -143,7 +139,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             latestDirtyTime = Long.MAX_VALUE;
             dataChanged = true;
             maximumCompressionLevel = service.getMaximumCompressionLevel ();
-            recommendedCompressionLevel = service.getRecommendedCompressionLevel ( ( parameters.getEndTimestamp ().getTimeInMillis () - parameters.getStartTimestamp ().getTimeInMillis () ) / parameters.getEntries () );
             final Runnable runnable = new Runnable () {
                 public void run ()
                 {
@@ -303,7 +298,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         {
             // load raw data that has to be normalized later
             latestDirtyTime = System.currentTimeMillis ();
-            long currentCompressionLevel = recommendedCompressionLevel;
+            long currentCompressionLevel = service.getRecommendedCompressionLevel ( ( parameters.getEndTimestamp ().getTimeInMillis () - parameters.getStartTimestamp ().getTimeInMillis () ) / parameters.getEntries () );
             long oldestValueTime = Long.MAX_VALUE;
             final BaseValue latestValue = service.getLatestValue ();
             final long latestValidTime = latestValue == null ? latestDirtyTime : latestValue.getTime ();
@@ -549,6 +544,10 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 public void run ()
                 {
                     listener.updateData ( startIndex, data, valueInformations );
+                    synchronized ( service )
+                    {
+                        setQueryState ( QueryState.COMPLETE );
+                    }
                 }
             } );
             lastValueInformations = valueInformations;
@@ -609,13 +608,14 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                     public void run ()
                     {
                         listener.updateData ( startBlockIndex, subData, valueInformationBlock );
+                        synchronized ( service )
+                        {
+                            setQueryState ( QueryState.COMPLETE );
+                        }
                     }
                 } );
             }
         }
-
-        // update state to complete (call multiple times has no effect)
-        setQueryState ( QueryState.COMPLETE );
 
         // remember processed data for next call of method
         lastParameters = parameters;
@@ -760,7 +760,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 return;
             }
             this.parameters = parameters;
-            recommendedCompressionLevel = service.getRecommendedCompressionLevel ( ( parameters.getEndTimestamp ().getTimeInMillis () - parameters.getStartTimestamp ().getTimeInMillis () ) / parameters.getEntries () );
             this.dataChanged = true;
             this.initialLoadPerformed = false;
             setQueryState ( QueryState.LOADING );
