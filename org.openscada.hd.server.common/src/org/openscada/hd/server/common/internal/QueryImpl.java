@@ -78,6 +78,7 @@ public class QueryImpl implements Query, QueryListener
 
     public void changeParameters ( final QueryParameters parameters )
     {
+        logger.debug ( "changeParameters: parameters: {}", parameters );
         this.query.changeParameters ( parameters );
     }
 
