@@ -545,87 +545,96 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         }
 
         // send generated data
-        if ( !sameParameters || !sameCalculationMethods || ( lastData == null ) || ( lastValueInformations == null ) )
+        if ( sameParameters && sameCalculationMethods && ( lastData != null ) && ( lastValueInformations != null ) )
         {
-            sendingTask.submit ( new Runnable () {
-                public void run ()
-                {
-                    listener.updateData ( startIndex, data, valueInformations );
-                    synchronized ( service )
-                    {
-                        setQueryState ( QueryState.COMPLETE );
-                    }
-                }
-            } );
-            lastValueInformations = valueInformations;
-            lastData = data;
-        }
-        else
-        {
-            // collect all indices of which the data has changed
-            final Set<Integer> changedEntriesSet = new HashSet<Integer> ();
-            for ( final String calculationMethod : calculationMethods )
+            try
             {
-                final Value[] lastValues = lastData.get ( calculationMethod );
-                final Value[] values = data.get ( calculationMethod );
-                for ( int i = 0; i < valueInformations.length; i++ )
-                {
-                    final int j = i + startIndex;
-                    if ( !lastValueInformations[j].equals ( valueInformations[i] ) || !lastValues[j].equals ( values[i] ) )
-                    {
-                        changedEntriesSet.add ( j );
-                        lastValueInformations[j] = valueInformations[i];
-                        lastValues[j] = values[i];
-                    }
-                }
-            }
-
-            // send changed value blocks as sub bulks
-            final Integer[] changedEntries = changedEntriesSet.toArray ( new Integer[0] );
-            Arrays.sort ( changedEntries );
-            int index = 0;
-            final int size = changedEntries.length;
-            while ( index < size )
-            {
-                final int startBlockIndex = changedEntries[index++];
-                int endBlockIndex = startBlockIndex;
-                int nextBlockIndex = index < size ? changedEntries[index] : endBlockIndex;
-                while ( nextBlockIndex == endBlockIndex + 1 )
-                {
-                    index++;
-                    endBlockIndex = nextBlockIndex;
-                    nextBlockIndex = index < size ? changedEntries[index] : endBlockIndex;
-                }
-                final int blockSize = endBlockIndex - startBlockIndex + 1;
-                final Map<String, Value[]> subData = new HashMap<String, Value[]> ();
-                final ValueInformation[] valueInformationBlock = new ValueInformation[blockSize];
+                // collect all indices of which the data has changed
+                final Set<Integer> changedEntriesSet = new HashSet<Integer> ();
                 for ( final String calculationMethod : calculationMethods )
                 {
-                    final Value[] valueBlock = new Value[blockSize];
-                    for ( int i = startBlockIndex; i <= endBlockIndex; i++ )
+                    final Value[] lastValues = lastData.get ( calculationMethod );
+                    final Value[] values = data.get ( calculationMethod );
+                    for ( int i = 0; i < valueInformations.length; i++ )
                     {
-                        final int absoluteIndex = i - startIndex;
-                        final int absoluteBlockIndex = i - startBlockIndex;
-                        valueInformationBlock[absoluteBlockIndex] = valueInformations[absoluteIndex];
-                        valueBlock[absoluteBlockIndex] = data.get ( calculationMethod )[absoluteIndex];
-                    }
-                    subData.put ( calculationMethod, valueBlock );
-                }
-                sendingTask.submit ( new Runnable () {
-                    public void run ()
-                    {
-                        listener.updateData ( startBlockIndex, subData, valueInformationBlock );
-                        synchronized ( service )
+                        final int j = i + startIndex;
+                        if ( !lastValueInformations[j].equals ( valueInformations[i] ) || !lastValues[j].equals ( values[i] ) )
                         {
-                            setQueryState ( QueryState.COMPLETE );
+                            changedEntriesSet.add ( j );
+                            lastValueInformations[j] = valueInformations[i];
+                            lastValues[j] = values[i];
                         }
                     }
-                } );
+                }
+
+                // send changed value blocks as sub bulks
+                final Integer[] changedEntries = changedEntriesSet.toArray ( new Integer[0] );
+                Arrays.sort ( changedEntries );
+                int index = 0;
+                final int size = changedEntries.length;
+                while ( index < size )
+                {
+                    final int startBlockIndex = changedEntries[index++];
+                    int endBlockIndex = startBlockIndex;
+                    int nextBlockIndex = index < size ? changedEntries[index] : endBlockIndex;
+                    while ( nextBlockIndex == endBlockIndex + 1 )
+                    {
+                        index++;
+                        endBlockIndex = nextBlockIndex;
+                        nextBlockIndex = index < size ? changedEntries[index] : endBlockIndex;
+                    }
+                    final int blockSize = endBlockIndex - startBlockIndex + 1;
+                    final Map<String, Value[]> subData = new HashMap<String, Value[]> ();
+                    final ValueInformation[] valueInformationBlock = new ValueInformation[blockSize];
+                    for ( final String calculationMethod : calculationMethods )
+                    {
+                        final Value[] valueBlock = new Value[blockSize];
+                        for ( int i = startBlockIndex; i <= endBlockIndex; i++ )
+                        {
+                            final int absoluteIndex = i - startIndex;
+                            final int absoluteBlockIndex = i - startBlockIndex;
+                            valueInformationBlock[absoluteBlockIndex] = valueInformations[absoluteIndex];
+                            valueBlock[absoluteBlockIndex] = data.get ( calculationMethod )[absoluteIndex];
+                        }
+                        subData.put ( calculationMethod, valueBlock );
+                    }
+                    sendingTask.submit ( new Runnable () {
+                        public void run ()
+                        {
+                            listener.updateData ( startBlockIndex, subData, valueInformationBlock );
+                            synchronized ( service )
+                            {
+                                setQueryState ( QueryState.COMPLETE );
+                            }
+                        }
+                    } );
+                }
+
+                // remember processed data for next call of method
+                lastParameters = parameters;
+                return;
+            }
+            catch ( final Exception e )
+            {
+                // optimistic data locking failed, but no real problem
+                logger.info ( "base data changed since last calculation of data diff. sending complete set of data..." );
             }
         }
 
-        // remember processed data for next call of method
+        // send complete data
+        sendingTask.submit ( new Runnable () {
+            public void run ()
+            {
+                listener.updateData ( startIndex, data, valueInformations );
+                synchronized ( service )
+                {
+                    setQueryState ( QueryState.COMPLETE );
+                }
+            }
+        } );
         lastParameters = parameters;
+        lastValueInformations = valueInformations;
+        lastData = data;
     }
 
     /**
