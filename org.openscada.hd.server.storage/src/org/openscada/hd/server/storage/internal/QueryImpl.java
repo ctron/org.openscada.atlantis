@@ -83,6 +83,9 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /** Maximum available compression level. */
     private final long maximumCompressionLevel;
 
+    /** Recommended compression level for the current query parameter. */
+    private long recommendedCompressionLevel;
+
     /** Flag indicating whether data was changed or not. */
     private boolean initialLoadPerformed;
 
@@ -121,16 +124,17 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         this.listener = listener;
         this.parameters = parameters;
         this.calculationMethods = new HashSet<CalculationMethod> ( calculationMethods );
-        maximumCompressionLevel = service.getMaximumCompressionLevel ();
         startTimeIndicesToUpdate = new HashSet<Integer> ();
         initialLoadPerformed = false;
-        this.closed = ( service == null ) || ( listener == null );
+        this.closed = ( service == null ) || ( listener == null ) || ( parameters == null ) || ( parameters.getStartTimestamp () == null ) || ( parameters.getEndTimestamp () == null );
         if ( closed )
         {
             logger.error ( "not all data is available to execute query via 'new query'. no action will be performed" );
             setQueryState ( QueryState.DISCONNECTED );
             queryRegistered = false;
             dataChanged = false;
+            maximumCompressionLevel = 0;
+            recommendedCompressionLevel = 0;
         }
         else
         {
@@ -138,6 +142,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             setQueryState ( QueryState.LOADING );
             latestDirtyTime = Long.MAX_VALUE;
             dataChanged = true;
+            maximumCompressionLevel = service.getMaximumCompressionLevel ();
+            recommendedCompressionLevel = service.getRecommendedCompressionLevel ( ( parameters.getEndTimestamp ().getTimeInMillis () - parameters.getStartTimestamp ().getTimeInMillis () ) / parameters.getEntries () );
             final Runnable runnable = new Runnable () {
                 public void run ()
                 {
@@ -297,14 +303,16 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         {
             // load raw data that has to be normalized later
             latestDirtyTime = System.currentTimeMillis ();
-            long currentCompressionLevel = 0;
+            long currentCompressionLevel = recommendedCompressionLevel;
             long oldestValueTime = Long.MAX_VALUE;
             final BaseValue latestValue = service.getLatestValue ();
             final long latestValidTime = latestValue == null ? latestDirtyTime : latestValue.getTime ();
+            boolean firstIteration = true;
             while ( ( oldestValueTime > startTime ) && ( currentCompressionLevel <= maximumCompressionLevel ) )
             {
-                if ( currentCompressionLevel == 0 )
+                if ( firstIteration )
                 {
+                    firstIteration = false;
                     mergeMap = service.getValues ( currentCompressionLevel, startTime, endTime );
                     for ( final Entry<StorageChannelMetaData, BaseValue[]> mergeEntry : mergeMap.entrySet () )
                     {
@@ -740,7 +748,13 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     {
         synchronized ( service )
         {
+            if ( ( parameters == null ) || ( parameters.getStartTimestamp () == null ) || ( parameters.getEndTimestamp () == null ) )
+            {
+                close ();
+                return;
+            }
             this.parameters = parameters;
+            recommendedCompressionLevel = service.getRecommendedCompressionLevel ( ( parameters.getEndTimestamp ().getTimeInMillis () - parameters.getStartTimestamp ().getTimeInMillis () ) / parameters.getEntries () );
             this.dataChanged = true;
             this.initialLoadPerformed = false;
             setQueryState ( QueryState.LOADING );

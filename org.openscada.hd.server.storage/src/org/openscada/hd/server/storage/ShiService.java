@@ -152,6 +152,37 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     }
 
     /**
+     * This method returns the lowest compression level that is sufficient for the specified detail level
+     * @param timespan time span in milliseconds the requested compression level must provide at least in order to be considered as recommended compression level
+     * @return recommended compression level
+     */
+    public synchronized long getRecommendedCompressionLevel ( final long timespan )
+    {
+        // optimize in case of minimal time span
+        if ( timespan <= 1 )
+        {
+            return 0;
+        }
+
+        // search for optimal compression level
+        long minimumAvailableCompressionLevel = 0;
+        long providedTimespan = Long.MIN_VALUE;
+        for ( final StorageChannelMetaData metaData : storageChannels.keySet () )
+        {
+            if ( metaData.getDetailLevelId () > 0 )
+            {
+                final long compressionTimespan = metaData.getCalculationMethodParameters ()[0];
+                if ( ( compressionTimespan < timespan ) && ( compressionTimespan > providedTimespan ) )
+                {
+                    providedTimespan = compressionTimespan;
+                    minimumAvailableCompressionLevel = metaData.getDetailLevelId ();
+                }
+            }
+        }
+        return minimumAvailableCompressionLevel;
+    }
+
+    /**
      * This method returns the latest NATIVE value or null, if no value is available at all.
      * @return latest NATIVE value or null, if no value is available at all
      */
@@ -183,6 +214,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized Map<StorageChannelMetaData, BaseValue[]> getValues ( final long compressionLevel, final long startTime, final long endTime ) throws Exception
     {
+        logger.debug ( "requested compression level: " + compressionLevel );
         final Map<StorageChannelMetaData, BaseValue[]> result = new HashMap<StorageChannelMetaData, BaseValue[]> ();
         try
         {

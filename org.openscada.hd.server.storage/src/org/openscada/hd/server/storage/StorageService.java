@@ -538,15 +538,13 @@ public class StorageService implements SelfManagedConfigurationFactory
     {
         if ( properties != null && properties.isEmpty () )
         {
-            properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0, "1m" );
-            properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "1d" );
-            properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 2, "7d" );
-            properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 3, "1825d" );
-            properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1m" );
+            properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0, "2d" );
+            properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "90d" );
+            properties.put ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 2, "5y" );
+            properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1s" );
             properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 2, "1h" );
-            properties.put ( Conversions.COMPRESSION_TIMESPAN_KEY_PREFIX + 3, "1d" );
             properties.put ( Conversions.ACCEPTED_FUTURE_TIME_KEY_PREFIX, "10m" );
-            properties.put ( Conversions.MAX_COMPRESSION_LEVEL, "3" );
+            properties.put ( Conversions.MAX_COMPRESSION_LEVEL, "2" );
             properties.put ( Conversions.DATA_TYPE_KEY, DataType.convertDataTypeToShortString ( DataType.DOUBLE_VALUE ) );
         }
     }
