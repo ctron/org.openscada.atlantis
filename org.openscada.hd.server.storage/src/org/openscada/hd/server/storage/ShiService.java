@@ -50,8 +50,11 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( ShiService.class );
 
-    /** Id of the data receiver thread. */
-    private final static String DATA_RECEIVER_THREAD_ID = "DataReceiver";
+    /** Id prefix of the startup thread. */
+    private final static String STARTUP_THREAD_ID_PREFIX = "ShiStartup_";
+
+    /** Id prefix of the data receiver thread. */
+    private final static String DATA_RECEIVER_THREAD_ID_PREFIX = "ShiDataReceiver_";
 
     /** Configuration of the service. */
     private final Configuration configuration;
@@ -64,6 +67,9 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
 
     /** Reference to the main input storage channel that is also available in the storage channels map. */
     private CalculatingStorageChannel rootStorageChannel;
+
+    /** Flag indicating whether the service is currently starting or not. */
+    private boolean starting;
 
     /** Flag indicating whether the service is currently running or not. */
     private boolean started;
@@ -92,8 +98,14 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     /** Task that receives the incoming data. */
     private ExecutorService dataReceiver;
 
+    /** Task that performs the startup of the service. */
+    private ExecutorService startUpTask;
+
     /** Latest processed value. */
     private BaseValue latestProcessedValue;
+
+    /** Object that is used for internal synchronization. */
+    private final Object lockObject;
 
     /**
      * Constructor.
@@ -107,6 +119,8 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         calculationMethods = new HashSet<CalculationMethod> ( Conversions.getCalculationMethods ( configuration ) );
         this.storageChannels = new HashMap<StorageChannelMetaData, CalculatingStorageChannel> ();
         this.rootStorageChannel = null;
+        this.lockObject = new Object ();
+        this.starting = false;
         this.started = false;
         this.openQueries = new LinkedList<QueryImpl> ();
         expectedDataType = DataType.UNKNOWN;
@@ -313,13 +327,13 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                     logger.debug ( "processing data after: " + ( System.currentTimeMillis () - now ) );
                     if ( value == null )
                     {
-                        createInvalidEntry ( now );
+                        createInvalidEntry ( now, rootStorageChannel );
                         return;
                     }
                     final Variant variant = value.getValue ();
                     if ( variant == null )
                     {
-                        createInvalidEntry ( now );
+                        createInvalidEntry ( now, rootStorageChannel );
                         return;
                     }
                     final Calendar calendar = value.getTimestamp ();
@@ -450,21 +464,22 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      * It is assured that the time of the new entry is after the latest existing entry.
      * If necessary, the passed time will be increased to fit this requirement.
      * @param time time of the entry that has to be created
+     * @param storageChannel storage channel to which the invalid value should be written
      */
-    private void createInvalidEntry ( final long time )
+    private void createInvalidEntry ( final long time, final CalculatingStorageChannel storageChannel )
     {
-        if ( rootStorageChannel != null )
+        if ( storageChannel != null )
         {
             BaseValue[] values = null;
             try
             {
-                if ( expectedDataType == DataType.LONG_VALUE )
+                if ( storageChannel.getCalculationLogicProvider ().getOutputType () == DataType.LONG_VALUE )
                 {
-                    values = rootStorageChannel.getLongValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
+                    values = storageChannel.getLongValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
                 }
                 else
                 {
-                    values = rootStorageChannel.getDoubleValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
+                    values = storageChannel.getDoubleValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
                 }
             }
             catch ( final Exception e )
@@ -474,13 +489,20 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
             if ( ( values != null ) && ( values.length > 0 ) )
             {
                 final BaseValue value = values[values.length - 1];
-                if ( value instanceof LongValue )
+                try
                 {
-                    processData ( new LongValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (LongValue)value ).getValue () ) );
+                    if ( value instanceof LongValue )
+                    {
+                        storageChannel.updateLong ( new LongValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (LongValue)value ).getValue () ) );
+                    }
+                    else
+                    {
+                        storageChannel.updateDouble ( new DoubleValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (DoubleValue)value ).getValue () ) );
+                    }
                 }
-                else
+                catch ( final Exception e )
                 {
-                    processData ( new DoubleValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (DoubleValue)value ).getValue () ) );
+                    logger.error ( "could not write value with quality=0", e );
                 }
             }
         }
@@ -494,13 +516,47 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     public synchronized void start ( final BundleContext bundleContext )
     {
         stop ();
+        starting = true;
         started = true;
-        if ( !importMode )
-        {
-            createInvalidEntry ( latestReliableTime );
-        }
-        dataReceiver = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( DATA_RECEIVER_THREAD_ID ) );
-        registerService ( bundleContext );
+        final String configurationId = configuration.getId ();
+        dataReceiver = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( DATA_RECEIVER_THREAD_ID_PREFIX + configurationId ) );
+        startUpTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( STARTUP_THREAD_ID_PREFIX + configurationId ) );
+        startUpTask.submit ( new Runnable () {
+            public void run ()
+            {
+                startUpTask.shutdown ();
+                if ( !postprocessData () )
+                {
+                    stop ();
+                    return;
+                }
+                boolean proceed = true;
+                synchronized ( lockObject )
+                {
+                    proceed = starting;
+                }
+                if ( !proceed )
+                {
+                    stop ();
+                    return;
+                }
+                if ( !importMode )
+                {
+                    createInvalidEntry ( latestReliableTime, rootStorageChannel );
+                }
+                registerService ( bundleContext );
+                synchronized ( lockObject )
+                {
+                    proceed = starting;
+                    starting = false;
+                }
+                if ( !proceed )
+                {
+                    stop ();
+                    return;
+                }
+            }
+        } );
     }
 
     /**
@@ -538,6 +594,19 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized void stop ()
     {
+        // abort if service is not yet started
+        if ( starting )
+        {
+            synchronized ( lockObject )
+            {
+                if ( starting )
+                {
+                    starting = false;
+                    return;
+                }
+            }
+        }
+
         // close existing queries
         for ( final QueryImpl query : new ArrayList<QueryImpl> ( openQueries ) )
         {
@@ -557,7 +626,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         // create entry with data marked as invalid
         if ( started && !importMode )
         {
-            createInvalidEntry ( System.currentTimeMillis () );
+            createInvalidEntry ( System.currentTimeMillis (), rootStorageChannel );
         }
 
         // set running flag
@@ -589,5 +658,95 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 logger.error ( "could not clean old data", e );
             }
         }
+    }
+
+    /**
+     * This method iterates over all storage channels and checks whether the latest entry of each storage channel matches the expected time stamp.
+     * In the scenario that data has been deleted, the deleted data will be calculated again.
+     */
+    private boolean postprocessData ()
+    {
+        logger.info ( String.format ( "start calculating missing data for configuration '%s'", configuration.getId () ) );
+        for ( long i = getMaximumCompressionLevel (); i >= 1; i-- )
+        {
+            for ( final Entry<StorageChannelMetaData, CalculatingStorageChannel> entry : storageChannels.entrySet () )
+            {
+                final StorageChannelMetaData metaData = entry.getKey ();
+                final long compressionLevel = metaData.getDetailLevelId ();
+                if ( compressionLevel != i )
+                {
+                    continue;
+                }
+                logger.debug ( "start calculating missing data for configuration '%s' and channel '%s'", configuration.getId (), metaData );
+                try
+                {
+                    // get last values of the storage channel that has to be checked and possibly calculated again
+                    final CalculationMethod requiredBaseCalculationMethod = compressionLevel == 1 ? CalculationMethod.NATIVE : metaData.getCalculationMethod ();
+                    final CalculatingStorageChannel storageChannel = entry.getValue ();
+                    BaseValue[] lastValues;
+                    final DataType dataType = storageChannel.getCalculationLogicProvider ().getOutputType ();
+                    if ( dataType == DataType.LONG_VALUE )
+                    {
+                        lastValues = storageChannel.getLongValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
+                    }
+                    else
+                    {
+                        lastValues = storageChannel.getDoubleValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
+                    }
+                    if ( ( lastValues == null ) || ( lastValues.length == 0 ) )
+                    {
+                        break;
+                    }
+                    for ( final Entry<StorageChannelMetaData, CalculatingStorageChannel> subEntry : storageChannels.entrySet () )
+                    {
+                        final StorageChannelMetaData subMetaData = subEntry.getKey ();
+                        final CalculatingStorageChannel subStorageChannel = subEntry.getValue ();
+                        if ( ( subMetaData.getDetailLevelId () == compressionLevel - 1 ) && ( subMetaData.getCalculationMethod () == requiredBaseCalculationMethod ) )
+                        {
+                            final long timespan = storageChannel.getCalculationLogicProvider ().getRequiredTimespanForCalculation ();
+                            final BaseValue[] lastBaseValues;
+                            final long endTime = latestReliableTime == Long.MIN_VALUE ? Long.MAX_VALUE : latestReliableTime;
+                            if ( subStorageChannel.getCalculationLogicProvider ().getOutputType () == DataType.LONG_VALUE )
+                            {
+                                lastBaseValues = subStorageChannel.getLongValues ( endTime - 1, endTime );
+                            }
+                            else
+                            {
+                                lastBaseValues = subStorageChannel.getDoubleValues ( endTime - 1, endTime );
+                            }
+                            if ( ( lastBaseValues == null ) || ( lastBaseValues.length == 0 ) )
+                            {
+                                break;
+                            }
+                            final long lastAvailableTime = lastBaseValues[lastBaseValues.length - 1].getTime ();
+                            long lastTime = lastValues[lastValues.length - 1].getTime ();
+                            while ( lastTime < lastAvailableTime )
+                            {
+                                storageChannel.notifyNewValues ( new long[] { lastTime } );
+                                synchronized ( lockObject )
+                                {
+                                    if ( !starting )
+                                    {
+                                        createInvalidEntry ( lastTime + 1, storageChannel );
+                                        logger.error ( String.format ( "aborting calculating missing data for configuration '%s'", configuration.getId () ) );
+                                        return false;
+                                    }
+                                }
+                                lastTime += timespan;
+                            }
+                        }
+                        break;
+                    }
+                }
+                catch ( final Exception e )
+                {
+                    final String message = String.format ( "error while re-calculating data for storage channel (%s)", metaData );
+                    logger.error ( message, e );
+                }
+                break;
+            }
+        }
+        logger.info ( String.format ( "end calculating missing data for configuration '%s'", configuration.getId () ) );
+        return true;
     }
 }
