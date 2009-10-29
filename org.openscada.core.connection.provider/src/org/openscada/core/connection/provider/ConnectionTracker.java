@@ -141,6 +141,10 @@ public abstract class ConnectionTracker
 
     public boolean waitForService ( final long timeout ) throws InterruptedException
     {
+        if ( this.tracker == null )
+        {
+            return false;
+        }
         return this.tracker.waitForService ( timeout ) != null;
     }
 }
