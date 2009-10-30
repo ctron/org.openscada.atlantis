@@ -45,6 +45,7 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.profiler.Profiler;
 
 public class ServiceImpl implements Service, ServiceTrackerCustomizer
 {
@@ -149,28 +150,48 @@ public class ServiceImpl implements Service, ServiceTrackerCustomizer
         return (SessionImpl)session;
     }
 
+    public static final String CREATE_QUERY_PROFILER = "CREATE_QUERY";
+
     public Query createQuery ( final Session session, final String itemId, final QueryParameters parameters, final QueryListener listener, final boolean updateData ) throws InvalidSessionException, InvalidItemException
     {
+        final Profiler p = new Profiler ( "createQuery" );
+        p.setLogger ( logger );
+
+        p.start ( "Validate session" );
         final SessionImpl sessionImpl = validateSession ( session );
-        synchronized ( this )
+
+        try
         {
-            final HistoricalItem item = this.items.get ( itemId );
-            if ( item == null )
+            synchronized ( this )
             {
-                throw new InvalidItemException ( itemId );
+                p.start ( "Get item" );
+
+                final HistoricalItem item = this.items.get ( itemId );
+                if ( item == null )
+                {
+                    throw new InvalidItemException ( itemId );
+                }
+                p.start ( "new Query" );
+                final QueryImpl queryImpl = new QueryImpl ( sessionImpl, listener );
+                p.start ( "createQuery" );
+                final Query query = item.createQuery ( parameters, queryImpl, updateData );
+                p.start ( "Completing" );
+
+                if ( query != null )
+                {
+                    queryImpl.setQuery ( query );
+                    return queryImpl;
+                }
+                else
+                {
+                    logger.warn ( "Unable to create query: {}", itemId );
+                    return null;
+                }
             }
-            final QueryImpl queryImpl = new QueryImpl ( sessionImpl, listener );
-            final Query query = item.createQuery ( parameters, queryImpl, updateData );
-            if ( query != null )
-            {
-                queryImpl.setQuery ( query );
-                return queryImpl;
-            }
-            else
-            {
-                logger.warn ( "Unable to create query: {}", itemId );
-                return null;
-            }
+        }
+        finally
+        {
+            p.stop ().log ();
         }
     }
 

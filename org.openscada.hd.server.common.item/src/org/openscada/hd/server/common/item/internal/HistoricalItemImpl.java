@@ -25,6 +25,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.profiler.Profiler;
 
 public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 {
@@ -119,16 +120,24 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     public synchronized Query createQuery ( final QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
+        final Profiler p = new Profiler ( "hi.createQuery" );
+        p.setLogger ( logger );
+
         if ( this.service == null )
         {
             return null;
         }
+
+        p.start ( "call shi.createQuery" );
 
         final Query query = this.service.createQuery ( parameters, listener, updateData );
         if ( query != null )
         {
             this.openQueries.add ( query );
         }
+
+        p.stop ().log ();
+
         return query;
     }
 

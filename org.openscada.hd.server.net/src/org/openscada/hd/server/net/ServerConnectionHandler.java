@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.mina.core.session.IoSession;
 import org.openscada.core.ConnectionInformation;
@@ -31,6 +33,7 @@ import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
 import org.openscada.hd.HistoricalItemInformation;
+import org.openscada.hd.InvalidItemException;
 import org.openscada.hd.ItemListListener;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryParameters;
@@ -50,8 +53,10 @@ import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
 import org.openscada.net.utils.MessageCreator;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.profiler.Profiler;
 
 public class ServerConnectionHandler extends AbstractServerConnectionHandler implements ItemListListener
 {
@@ -68,9 +73,20 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     private final Map<Long, QueryHandler> queries = new HashMap<Long, QueryHandler> ();
 
+    private ExecutorService queryDisposer;
+
     public ServerConnectionHandler ( final Service service, final IoSession ioSession, final ConnectionInformation connectionInformation )
     {
         super ( ioSession, connectionInformation );
+
+        try
+        {
+            this.queryDisposer = Executors.newCachedThreadPool ( new NamedThreadFactory ( "ServerConnectionHandler/QueryDisposer" ) );
+        }
+        catch ( final Throwable e )
+        {
+            logger.warn ( "fucked up", e );
+        }
 
         this.service = service;
 
@@ -149,69 +165,114 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     protected void handleCloseQuery ( final Message message )
     {
+        final Profiler p = new Profiler ( "Close Query" );
+        p.setLogger ( logger );
+
+        p.start ( "init" );
 
         // get the query id
         final long queryId = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
 
         logger.info ( "Handle close query: {}", queryId );
 
+        final QueryHandler handler;
         synchronized ( this )
         {
-            final QueryHandler handler = this.queries.remove ( queryId );
+            p.start ( "remove" );
+
+            handler = this.queries.remove ( queryId );
             if ( handler != null )
             {
+                p.start ( "Send query state" );
                 sendQueryState ( queryId, QueryState.DISCONNECTED );
-                handler.close ();
             }
         }
+
+        // close outside of lock
+        if ( handler != null )
+        {
+            p.start ( "Close" );
+            // throw it in the disposer queue ... the storage module takes too long
+            this.queryDisposer.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    handler.close ();
+                }
+            } );
+        }
+
+        p.stop ().log ();
     }
 
     protected void handleCreateQuery ( final Message message )
     {
+        final Profiler p = new Profiler ( "Create query" );
+        p.setLogger ( logger );
 
         // get the query id
         final long queryId = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
 
         logger.debug ( "Creating new query with id: {}", queryId );
 
+        try
+        {
+            p.start ( "Prepare" );
+
+            // get the query item
+            final String itemId = ( (StringValue)message.getValues ().get ( "itemId" ) ).getValue ();
+            // get the initial query parameters
+            final QueryParameters parameters = QueryHelper.fromValue ( message.getValues ().get ( "parameters" ) );
+            final boolean updateData = message.getValues ().containsKey ( "updateData" );
+
+            p.start ( "Make query" );
+            makeQuery ( message, queryId, itemId, parameters, updateData );
+
+            p.start ( "Finish" );
+        }
+        catch ( final Throwable e )
+        {
+            sendQueryState ( queryId, QueryState.DISCONNECTED );
+        }
+        finally
+        {
+            p.stop ().log ();
+        }
+    }
+
+    private void makeQuery ( final Message message, final long queryId, final String itemId, final QueryParameters parameters, final boolean updateData ) throws InvalidSessionException, InvalidItemException
+    {
+
+        final QueryHandler handler;
         synchronized ( this )
         {
-            try
+            if ( this.queries.containsKey ( queryId ) )
             {
-                if ( this.queries.containsKey ( queryId ) )
-                {
-                    logger.warn ( "Duplicate query request: {}", queryId );
-                    this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, "Duplicate query id" ) );
-                    return;
-                }
-
-                // get the query item
-                final String itemId = ( (StringValue)message.getValues ().get ( "itemId" ) ).getValue ();
-                // get the initial query parameters
-                final QueryParameters parameters = QueryHelper.fromValue ( message.getValues ().get ( "parameters" ) );
-                final boolean updateData = message.getValues ().containsKey ( "updateData" );
-
-                // create the handler and set the query
-                final QueryHandler handler = new QueryHandler ( queryId, this );
-                this.queries.put ( queryId, handler );
-
-                final Query query = this.service.createQuery ( this.session, itemId, parameters, handler, updateData );
-                if ( query == null )
-                {
-                    // we already added the query .. so remove it here
-                    sendQueryState ( queryId, QueryState.DISCONNECTED );
-                    this.queries.remove ( queryId );
-                }
-                else
-                {
-                    logger.debug ( "Adding query: {}", queryId );
-                    handler.setQuery ( query );
-                }
+                logger.warn ( "Duplicate query request: {}", queryId );
+                this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, "Duplicate query id" ) );
+                return;
             }
-            catch ( final Throwable e )
+
+            // create the handler and set the query
+            handler = new QueryHandler ( queryId, this );
+            this.queries.put ( queryId, handler );
+        }
+
+        final Query query = this.service.createQuery ( this.session, itemId, parameters, handler, updateData );
+
+        if ( query == null )
+        {
+            synchronized ( this )
             {
+                // we already added the query .. so remove it here
                 sendQueryState ( queryId, QueryState.DISCONNECTED );
+                this.queries.remove ( queryId );
             }
+        }
+        else
+        {
+            logger.debug ( "Adding query: {}", queryId );
+            handler.setQuery ( query );
         }
     }
 
@@ -394,6 +455,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     private void disposeSession ()
     {
+        this.queryDisposer.shutdown ();
+
         // if session does not exists, silently ignore it
         if ( this.session != null )
         {

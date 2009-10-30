@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.apache.mina.core.future.ConnectFuture;
@@ -44,28 +42,10 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.mina.IoSessionSender;
 import org.openscada.net.mina.Messenger;
 import org.openscada.net.mina.SocketImpl;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 
 public abstract class ConnectionBase implements Connection, IoHandler
 {
-    private final static class ThreadFactoryImplementation implements ThreadFactory
-    {
-        private final ConnectionInformation connectionInformation;
-
-        private ThreadFactoryImplementation ( final ConnectionInformation connectionInformation )
-        {
-            this.connectionInformation = connectionInformation;
-        }
-
-        private final AtomicInteger counter = new AtomicInteger ();
-
-        public Thread newThread ( final Runnable r )
-        {
-            final Thread t = new Thread ( r, "ConnectionBaseExecutor/" + this.counter.getAndIncrement () + "/" + this.connectionInformation );
-            t.setDaemon ( true );
-            return t;
-        }
-    }
-
     private static Logger logger = Logger.getLogger ( ConnectionBase.class );
 
     private final List<ConnectionStateListener> connectionStateListeners = new CopyOnWriteArrayList<ConnectionStateListener> ();
@@ -95,7 +75,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         super ();
         this.connectionInformation = connectionInformation;
 
-        this.lookupExecutor = Executors.newCachedThreadPool ( new ThreadFactoryImplementation ( connectionInformation ) );
+        this.lookupExecutor = Executors.newCachedThreadPool ( new NamedThreadFactory ( "ConnectionBaseExecutor/" + connectionInformation ) );
 
         this.messenger = new Messenger ( getMessageTimeout () );
 
@@ -259,22 +239,31 @@ public abstract class ConnectionBase implements Connection, IoHandler
         return this.connectionInformation;
     }
 
-    protected synchronized void disconnected ( final Throwable reason )
+    protected void disconnected ( final Throwable reason )
     {
-        // disconnect the messenger here
-        this.messenger.disconnected ();
+        IoSession session;
 
-        if ( this.session != null )
+        synchronized ( this )
         {
-            logger.info ( "Session disconnected", reason );
+            // disconnect the messenger here
+            this.messenger.disconnected ();
 
-            setState ( ConnectionState.CLOSING, reason );
+            session = this.session;
+            if ( session != null )
+            {
+                logger.info ( "Session disconnected", reason );
 
-            this.session.close ( true );
-            this.session = null;
+                setState ( ConnectionState.CLOSING, reason );
+                this.session = null;
+            }
+
+            disposeConnector ();
         }
 
-        disposeConnector ();
+        if ( session != null )
+        {
+            session.close ( true );
+        }
     }
 
     public void addConnectionStateListener ( final ConnectionStateListener connectionStateListener )

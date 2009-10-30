@@ -66,7 +66,10 @@ public class QueryHandler implements QueryListener
 
     public void close ()
     {
-        this.query.close ();
+        if ( this.query != null )
+        {
+            this.query.close ();
+        }
     }
 
     public void changeParameters ( final QueryParameters parameters )

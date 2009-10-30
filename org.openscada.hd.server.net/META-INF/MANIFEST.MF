@@ -26,5 +26,6 @@ Import-Package: org.apache.mina.core.session;version="2.0.0",
  org.openscada.utils.concurrent.task;version="0.14.0",
  org.openscada.utils.lifecycle;version="0.14.0",
  org.osgi.framework;version="1.3.0",
- org.slf4j;version="[1.5.8,1.6.0)"
+ org.slf4j;version="[1.5.8,1.6.0)",
+ org.slf4j.profiler;version="1.5.8"
 Export-Package: org.openscada.hd.server.net;version="0.14.0"
