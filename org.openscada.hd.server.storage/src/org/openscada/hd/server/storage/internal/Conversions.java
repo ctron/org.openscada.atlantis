@@ -73,7 +73,7 @@ public class Conversions
     public final static String PROPOSED_DATA_AGE_KEY_PREFIX = "hd.proposedDataAge.level.";
 
     /** Prefix of key in configuration for the accepted future time setting. */
-    public final static String ACCEPTED_FUTURE_TIME_KEY_PREFIX = "hd.acceptedFutureTime";
+    public final static String ACCEPTED_TIME_DELTA_KEY_PREFIX = "hd.acceptedTimeDelta";
 
     /** Prefix of key in configuration for the compression time span setting. */
     public final static String COMPRESSION_TIMESPAN_KEY_PREFIX = "hd.compressionTimeSpan.level.";
@@ -255,11 +255,15 @@ public class Conversions
             }
 
             // set accepted future time per level
-            final String acceptedFutureTimeKey = ACCEPTED_FUTURE_TIME_KEY_PREFIX;
-            final long acceptedFutureTime = metaData.getAcceptedFutureTime ();
-            if ( !data.containsKey ( acceptedFutureTimeKey ) )
+            final String acceptedTimeDeltaKey = ACCEPTED_TIME_DELTA_KEY_PREFIX;
+            if ( !data.containsKey ( acceptedTimeDeltaKey ) )
             {
-                data.put ( acceptedFutureTimeKey, Conversions.encodeTimeSpan ( acceptedFutureTime ) );
+                final long acceptedTimeDelta = metaData.getAcceptedTimeDelta ();
+                if ( acceptedTimeDelta < 1 )
+                {
+                    logger.warn ( "accepted delta time not specified. value must be > 0" );
+                }
+                data.put ( acceptedTimeDeltaKey, Conversions.encodeTimeSpan ( acceptedTimeDelta ) );
             }
 
             // set proposed compression time span per level if calculation method is not NATIVE
@@ -272,7 +276,7 @@ public class Conversions
                     final long[] calculationMethodParameters = metaData.getCalculationMethodParameters ();
                     if ( calculationMethodParameters.length < 1 )
                     {
-                        final String message = String.format ( "invalid calculation method parameters set (%s)!", metaData );
+                        final String message = String.format ( "no calculation methods set (%s)!", metaData );
                         logger.error ( message );
                         throw new Exception ( message );
                     }
@@ -414,8 +418,8 @@ public class Conversions
             logger.error ( message );
             throw new Exception ( message );
         }
-        final long acceptedFutureTime = decodeTimeSpan ( data.get ( ACCEPTED_FUTURE_TIME_KEY_PREFIX ) );
-        metaDatas.add ( new StorageChannelMetaData ( configurationId, CalculationMethod.NATIVE, new long[0], 0, now, now, proposedDataAge, acceptedFutureTime, nativeDataType ) );
+        final long acceptedTimeDelta = decodeTimeSpan ( data.get ( ACCEPTED_TIME_DELTA_KEY_PREFIX ) );
+        metaDatas.add ( new StorageChannelMetaData ( configurationId, CalculationMethod.NATIVE, new long[0], 0, now, now, proposedDataAge, acceptedTimeDelta, nativeDataType ) );
 
         // create meta data for other calculation methods if required
         for ( long detailLevelId = 1; detailLevelId <= maxDetailLevelId; detailLevelId++ )
@@ -436,7 +440,7 @@ public class Conversions
                     logger.error ( message );
                     throw new Exception ( message );
                 }
-                metaDatas.add ( new StorageChannelMetaData ( configurationId, calculationMethod, new long[] { compressionTimeSpan }, detailLevelId, now, now, proposedDataAge, acceptedFutureTime, nativeDataType ) );
+                metaDatas.add ( new StorageChannelMetaData ( configurationId, calculationMethod, new long[] { compressionTimeSpan }, detailLevelId, now, now, proposedDataAge, acceptedTimeDelta, nativeDataType ) );
             }
         }
         return metaDatas;
