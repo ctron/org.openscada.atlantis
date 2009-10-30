@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
@@ -18,7 +19,7 @@ import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.client.connection.service.ConnectionService;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
-import org.openscada.da.datasource.DataSourceListener;
+import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.MasterItemHandler;
 import org.openscada.utils.concurrent.AbstractFuture;
@@ -28,7 +29,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MasterItemImpl implements ItemUpdateListener, MasterItem
+public class MasterItemImpl extends AbstractDataSource implements ItemUpdateListener, MasterItem
 {
     private final class WriteOperationCallbackImplementation extends AbstractFuture<WriteResult> implements WriteOperationCallback
     {
@@ -77,14 +78,15 @@ public class MasterItemImpl implements ItemUpdateListener, MasterItem
 
     private final Set<MasterItemHandler> subHandler = new HashSet<MasterItemHandler> ();
 
-    private final Set<DataSourceListener> listeners = new HashSet<DataSourceListener> ();
-
     private final BundleContext context;
 
     private final ConnectionIdTracker tracker;
 
-    public MasterItemImpl ( final BundleContext context, final String id, final String connectionId, final String itemId ) throws InvalidSyntaxException
+    private final Executor executor;
+
+    public MasterItemImpl ( final Executor executor, final BundleContext context, final String id, final String connectionId, final String itemId ) throws InvalidSyntaxException
     {
+        this.executor = executor;
         this.context = context;
         this.itemId = itemId;
         this.value = new DataItemValue ();
@@ -98,6 +100,12 @@ public class MasterItemImpl implements ItemUpdateListener, MasterItem
         }, ConnectionService.class );
 
         this.tracker.open ();
+    }
+
+    @Override
+    protected Executor getExecutor ()
+    {
+        return this.executor;
     }
 
     protected synchronized void setConnection ( final ConnectionService connectionService )
@@ -141,16 +149,7 @@ public class MasterItemImpl implements ItemUpdateListener, MasterItem
         // logger.debug ( "Data update: {} -> {} / {} (cache: {})", new Object[] { this.itemId, value, attributes, cache } );
         applyDataChange ( value, attributes, cache );
         notifyHandler ();
-        notifyListener ();
-    }
-
-    private void notifyListener ()
-    {
-        final DataItemValue value = this.value;
-        for ( final DataSourceListener listener : this.listeners )
-        {
-            listener.stateChanged ( value );
-        }
+        updateData ( this.value );
     }
 
     private void applyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
@@ -185,7 +184,7 @@ public class MasterItemImpl implements ItemUpdateListener, MasterItem
 
         applyStateChange ( state, error );
         notifyHandler ();
-        notifyListener ();
+        updateData ( this.value );
     }
 
     private void applyStateChange ( final SubscriptionState state, final Throwable error )
@@ -228,26 +227,6 @@ public class MasterItemImpl implements ItemUpdateListener, MasterItem
             }
         }
         this.value = value;
-    }
-
-    public void addListener ( final DataSourceListener listener )
-    {
-        if ( listener == null )
-        {
-            return;
-        }
-
-        this.listeners.add ( listener );
-        listener.stateChanged ( this.value );
-    }
-
-    public void removeListener ( final DataSourceListener listener )
-    {
-        if ( listener == null )
-        {
-            return;
-        }
-        this.listeners.remove ( listener );
     }
 
     public NotifyFuture<WriteResult> startWriteValue ( final Variant value )

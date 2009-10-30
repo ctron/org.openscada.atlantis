@@ -4,10 +4,13 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.MasterItem;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -29,9 +32,12 @@ public class MasterFactory implements ConfigurationFactory
 
     private final Map<String, MasterItemImpl> masterItemImpls = new HashMap<String, MasterItemImpl> ();
 
+    private final ExecutorService executor;
+
     public MasterFactory ( final BundleContext context )
     {
         this.context = context;
+        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "MasterItemFactory" ) );
     }
 
     public void delete ( final String configurationId )
@@ -77,7 +83,7 @@ public class MasterFactory implements ConfigurationFactory
         MasterItemImpl masterItemImpl = this.masterItemImpls.get ( id );
         if ( masterItemImpl == null )
         {
-            masterItemImpl = new MasterItemImpl ( this.context, id, connectionId, itemId );
+            masterItemImpl = new MasterItemImpl ( this.executor, this.context, id, connectionId, itemId );
             this.masterItemImpls.put ( id, masterItemImpl );
 
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
@@ -118,6 +124,7 @@ public class MasterFactory implements ConfigurationFactory
     public void dispose ()
     {
         removeAllItems ();
+        this.executor.shutdown ();
     }
 
     private synchronized void removeAllItems ()
