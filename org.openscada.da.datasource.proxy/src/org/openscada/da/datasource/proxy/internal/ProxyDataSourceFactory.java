@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.openscada.ca.common.factory.AbstractServiceFactory;
+import org.openscada.ca.common.factory.Service;
 import org.openscada.da.datasource.DataSource;
-import org.openscada.da.datasource.proxy.AbstractServiceFactory;
-import org.openscada.da.datasource.proxy.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;

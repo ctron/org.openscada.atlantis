@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.openscada.ca.common.factory.Service;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -17,7 +18,6 @@ import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.datasource.base.AbstractDataSource;
-import org.openscada.da.datasource.proxy.Service;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.osgi.FilterUtil;
