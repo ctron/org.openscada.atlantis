@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractConnectionManager implements SingleServiceListener
 {
 
-    protected static final Logger logger = LoggerFactory.getLogger ( AbstractConnectionManager.class );
+    private static final Logger logger = LoggerFactory.getLogger ( AbstractConnectionManager.class );
 
     private final ConnectionInformation connectionInformation;
 
