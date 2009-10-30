@@ -572,7 +572,7 @@ public class TrendView extends QueryViewPart implements QueryListener
 
         // font for chart labels
         final FontData[] smallFont = JFaceResources.getDefaultFontDescriptor ().getFontData ();
-        smallFont[0].height = smallFont[0].height - 2;
+        smallFont[0].setHeight ( smallFont[0].getHeight () - 2 );
         this.fontRegistry = new FontRegistry ( parent.getDisplay () );
         this.fontRegistry.put ( SMALL_LABEL_FONT, smallFont );
 
