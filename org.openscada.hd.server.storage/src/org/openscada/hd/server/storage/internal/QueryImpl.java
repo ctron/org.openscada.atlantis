@@ -83,9 +83,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /** Task that will calculate the result. */
     private ScheduledExecutorService queryTask;
 
-    /** Maximum available compression level. */
-    private final long maximumCompressionLevel;
-
     /** Flag indicating whether data was changed or not. */
     private boolean initialLoadPerformed;
 
@@ -136,7 +133,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             setQueryState ( QueryState.DISCONNECTED );
             queryRegistered = false;
             dataChanged = false;
-            maximumCompressionLevel = 0;
         }
         else
         {
@@ -145,7 +141,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             setQueryState ( QueryState.LOADING );
             latestDirtyTime = Long.MAX_VALUE;
             dataChanged = true;
-            maximumCompressionLevel = service.getMaximumCompressionLevel ();
             final Runnable runnable = new Runnable () {
                 public void run ()
                 {
@@ -155,7 +150,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             queryTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_PROCESSOR_THREAD_ID ) );
             if ( updateData )
             {
-                service.addQuery ( this );
                 queryRegistered = true;
                 queryTask.scheduleWithFixedDelay ( runnable, 0, DELAY_BETWEEN_TWO_QUERY_CALCULATIONS, TimeUnit.MILLISECONDS );
             }
@@ -305,6 +299,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         {
             // load raw data that has to be normalized later
             latestDirtyTime = System.currentTimeMillis ();
+            final long maximumCompressionLevel = service.getMaximumCompressionLevel ();
             long currentCompressionLevel = service.getRecommendedCompressionLevel ( ( parameters.getEndTimestamp ().getTimeInMillis () - parameters.getStartTimestamp ().getTimeInMillis () ) / parameters.getEntries () );
             long oldestValueTime = Long.MAX_VALUE;
             final BaseValue latestValue = service.getLatestValue ();
