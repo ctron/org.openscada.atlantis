@@ -343,13 +343,13 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                     logger.debug ( "processing data after: " + ( System.currentTimeMillis () - now ) );
                     if ( value == null )
                     {
-                        createInvalidEntry ( now, rootStorageChannel );
+                        createInvalidEntry ( now );
                         return;
                     }
                     final Variant variant = value.getValue ();
                     if ( variant == null )
                     {
-                        createInvalidEntry ( now, rootStorageChannel );
+                        createInvalidEntry ( now );
                         return;
                     }
                     final Calendar calendar = value.getTimestamp ();
@@ -475,28 +475,45 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
     }
 
     /**
+     * This method creates an invalid entry of the specified time in the passed storage channel using the required data type.
+     * @param storageChannel storage channel to which a value marked as invalid has to be written
+     * @param dataType type of the value that will be written
+     * @param time time stamp of the value
+     * @throws Exception if the value could not be written
+     */
+    private void createRawInvalidEntry ( final ExtendedStorageChannel storageChannel, final DataType dataType, final long time ) throws Exception
+    {
+        if ( dataType == DataType.LONG_VALUE )
+        {
+            storageChannel.updateLong ( new LongValue ( time, 0, 0, 0, 0 ) );
+        }
+        else
+        {
+            storageChannel.updateDouble ( new DoubleValue ( time, 0, 0, 0, 0 ) );
+        }
+    }
+
+    /**
      * This method creates an invalid marker entry using the data of the latest existing entry.
      * No entry is made if no data at all is available in the root storage channel.
      * It is assured that the time of the new entry is after the latest existing entry.
      * If necessary, the passed time will be increased to fit this requirement.
      * @param time time of the entry that has to be created
-     * @param storageChannel storage channel to which the invalid value should be written
-     * @param dataType data type of the invalid marker entry.
      */
-    private void createInvalidEntry ( final long time, final ExtendedStorageChannel storageChannel, final DataType dataType )
+    private void createInvalidEntry ( final long time )
     {
-        if ( storageChannel != null )
+        if ( rootStorageChannel != null )
         {
             BaseValue[] values = null;
             try
             {
-                if ( dataType == DataType.LONG_VALUE )
+                if ( rootStorageChannel.getCalculationLogicProvider ().getOutputType () == DataType.LONG_VALUE )
                 {
-                    values = storageChannel.getLongValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
+                    values = rootStorageChannel.getLongValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
                 }
                 else
                 {
-                    values = storageChannel.getDoubleValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
+                    values = rootStorageChannel.getDoubleValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
                 }
             }
             catch ( final Exception e )
@@ -510,11 +527,11 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 {
                     if ( value instanceof LongValue )
                     {
-                        storageChannel.updateLong ( new LongValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (LongValue)value ).getValue () ) );
+                        rootStorageChannel.updateLong ( new LongValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (LongValue)value ).getValue () ) );
                     }
                     else
                     {
-                        storageChannel.updateDouble ( new DoubleValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (DoubleValue)value ).getValue () ) );
+                        rootStorageChannel.updateDouble ( new DoubleValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (DoubleValue)value ).getValue () ) );
                     }
                 }
                 catch ( final Exception e )
@@ -523,19 +540,6 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 }
             }
         }
-    }
-
-    /**
-     * This method creates an invalid marker entry using the data of the latest existing entry.
-     * No entry is made if no data at all is available in the root storage channel.
-     * It is assured that the time of the new entry is after the latest existing entry.
-     * If necessary, the passed time will be increased to fit this requirement.
-     * @param time time of the entry that has to be created
-     * @param storageChannel storage channel to which the invalid value should be written
-     */
-    private void createInvalidEntry ( final long time, final CalculatingStorageChannel storageChannel )
-    {
-        createInvalidEntry ( time, storageChannel, storageChannel.getCalculationLogicProvider ().getOutputType () );
     }
 
     /**
@@ -573,7 +577,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 }
                 if ( !importMode )
                 {
-                    createInvalidEntry ( latestReliableTime, rootStorageChannel );
+                    createInvalidEntry ( latestReliableTime );
                 }
                 registerService ( bundleContext );
                 synchronized ( lockObject )
@@ -670,7 +674,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         // create entry with data marked as invalid
         if ( started && !importMode )
         {
-            createInvalidEntry ( System.currentTimeMillis (), rootStorageChannel );
+            createInvalidEntry ( System.currentTimeMillis () );
         }
 
         // set running flag
@@ -683,7 +687,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      */
     public synchronized void cleanupRelicts () throws Exception
     {
-        if ( started && ( rootStorageChannel != null ) )
+        if ( !starting && started && ( rootStorageChannel != null ) )
         {
             try
             {
@@ -728,7 +732,6 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 try
                 {
                     // get last values of the storage channel that has to be checked and possibly calculated again
-                    final CalculationMethod requiredBaseCalculationMethod = compressionLevel == 1 ? CalculationMethod.NATIVE : metaData.getCalculationMethod ();
                     final CalculatingStorageChannel storageChannel = entry.getValue ();
                     final CalculationLogicProvider calculationLogicProvider = storageChannel.getCalculationLogicProvider ();
                     final long timespan = calculationLogicProvider.getRequiredTimespanForCalculation ();
@@ -749,68 +752,63 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
 
                     // get the required base storage channel and process the missing values
                     final CalculatingStorageChannel subStorageChannel = (CalculatingStorageChannel)storageChannel.getInputStorageChannel ();
-                    final StorageChannelMetaData subMetaData = subStorageChannel.getMetaData ();
-                    if ( ( subMetaData.getDetailLevelId () == compressionLevel - 1 ) && ( subMetaData.getCalculationMethod () == requiredBaseCalculationMethod ) )
+                    final BaseValue[] lastBaseValues;
+                    final long endTime = latestReliableTime == Long.MIN_VALUE ? Long.MAX_VALUE : latestReliableTime;
+                    final DataType baseDataType = subStorageChannel.getCalculationLogicProvider ().getOutputType ();
+                    if ( baseDataType == DataType.LONG_VALUE )
                     {
-                        final BaseValue[] lastBaseValues;
-                        final long endTime = latestReliableTime == Long.MIN_VALUE ? Long.MAX_VALUE : latestReliableTime;
-                        final DataType baseDataType = subStorageChannel.getCalculationLogicProvider ().getOutputType ();
-                        if ( baseDataType == DataType.LONG_VALUE )
-                        {
-                            lastBaseValues = subStorageChannel.getLongValues ( endTime - 1, endTime );
-                        }
-                        else
-                        {
-                            lastBaseValues = subStorageChannel.getDoubleValues ( endTime - 1, endTime );
-                        }
-                        if ( ( lastBaseValues == null ) || ( lastBaseValues.length == 0 ) )
-                        {
-                            break;
-                        }
-                        final long lastAvailableTime = lastBaseValues[lastBaseValues.length - 1].getTime ();
-                        final long lastAlreadyCalculatedTime = lastValues[lastValues.length - 1].getTime ();
-                        long lastTime = lastAlreadyCalculatedTime;
-                        boolean first = true;
-                        while ( !abort && ( lastTime < lastAvailableTime ) )
-                        {
-                            // mark time as invalid for which no base value is available to calculate value again
-                            if ( first )
-                            {
-                                BaseValue[] oldBaseValues;
-                                if ( baseDataType == DataType.LONG_VALUE )
-                                {
-                                    oldBaseValues = subStorageChannel.getLongValues ( lastAlreadyCalculatedTime - 1, lastAlreadyCalculatedTime );
-                                }
-                                else
-                                {
-                                    oldBaseValues = subStorageChannel.getDoubleValues ( lastAlreadyCalculatedTime - 1, lastAlreadyCalculatedTime );
-                                }
-                                if ( ( oldBaseValues != null ) && ( oldBaseValues.length > 0 ) )
-                                {
-                                    createInvalidEntry ( lastAlreadyCalculatedTime + 1, storageChannel.getBaseStorageChannel (), dataType );
-                                }
-                                first = false;
-                            }
-
-                            // since this loop can be time consuming, check whether the application has to be shut down again
-                            if ( abort )
-                            {
-                                createInvalidEntry ( lastTime + 1, storageChannel );
-                                logger.error ( String.format ( "aborting calculating missing data for configuration '%s'. marking not yet calculated time for '%s' as invalid", configuration.getId (), metaData ) );
-                                continue;
-                            }
-
-                            // trigger calculation of data
-                            storageChannel.notifyNewValues ( new long[] { lastTime } );
-
-                            // check for abort criterion
-                            synchronized ( lockObject )
-                            {
-                                abort &= starting;
-                            }
-                            lastTime += timespan;
-                        }
+                        lastBaseValues = subStorageChannel.getLongValues ( endTime - 1, endTime );
+                    }
+                    else
+                    {
+                        lastBaseValues = subStorageChannel.getDoubleValues ( endTime - 1, endTime );
+                    }
+                    if ( ( lastBaseValues == null ) || ( lastBaseValues.length == 0 ) )
+                    {
                         break;
+                    }
+                    final long lastAvailableTime = lastBaseValues[lastBaseValues.length - 1].getTime ();
+                    final long lastAlreadyCalculatedTime = lastValues[lastValues.length - 1].getTime ();
+                    long lastTime = lastAlreadyCalculatedTime;
+                    boolean first = true;
+                    while ( !abort && ( lastTime < lastAvailableTime ) )
+                    {
+                        // mark time as invalid for which no base value is available to calculate value again
+                        if ( first )
+                        {
+                            BaseValue[] oldBaseValues;
+                            if ( baseDataType == DataType.LONG_VALUE )
+                            {
+                                oldBaseValues = subStorageChannel.getLongValues ( lastAlreadyCalculatedTime - 1, lastAlreadyCalculatedTime );
+                            }
+                            else
+                            {
+                                oldBaseValues = subStorageChannel.getDoubleValues ( lastAlreadyCalculatedTime - 1, lastAlreadyCalculatedTime );
+                            }
+                            if ( ( oldBaseValues != null ) && ( oldBaseValues.length > 0 ) )
+                            {
+                                createRawInvalidEntry ( storageChannel.getBaseStorageChannel (), baseDataType, lastAlreadyCalculatedTime + 1 );
+                            }
+                            first = false;
+                        }
+
+                        // since this loop can be time consuming, check whether the application has to be shut down again
+                        if ( abort )
+                        {
+                            createRawInvalidEntry ( storageChannel.getBaseStorageChannel (), baseDataType, lastTime + 1 );
+                            logger.error ( String.format ( "aborting calculating missing data for configuration '%s'. marking not yet calculated time for '%s' as invalid", configuration.getId (), metaData ) );
+                            continue;
+                        }
+
+                        // trigger calculation of data
+                        storageChannel.notifyNewValues ( new long[] { lastTime } );
+
+                        // check for abort criterion
+                        synchronized ( lockObject )
+                        {
+                            abort &= starting;
+                        }
+                        lastTime += timespan;
                     }
                 }
                 catch ( final Exception e )
@@ -818,7 +816,6 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                     final String message = String.format ( "error while re-calculating data for storage channel (%s)", metaData );
                     logger.error ( message, e );
                 }
-                break;
             }
         }
         logger.info ( String.format ( "end calculating missing data for configuration '%s'", configuration.getId () ) );
