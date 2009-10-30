@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.ca.ConfigurationFactory;
-import org.openscada.da.datasource.proxy.internal.ProxyDataSource;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
@@ -81,7 +80,7 @@ public abstract class AbstractServiceFactory implements ConfigurationFactory
         }
     }
 
-    protected abstract ProxyDataSource createService ( String configurationId, Map<String, String> properties ) throws Exception;
+    protected abstract Service createService ( String configurationId, Map<String, String> properties ) throws Exception;
 
     protected abstract ServiceRegistration registerService ( BundleContext context, String configurationId, Service service );
 
