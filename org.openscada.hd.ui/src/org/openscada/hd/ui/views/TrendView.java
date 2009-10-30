@@ -517,6 +517,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                 }
                 scaleMinSpinner.setSelection ( (int)Math.round ( scaleYMin * 1000 ) );
                 scaleMaxSpinner.setSelection ( (int)Math.round ( scaleYMax * 1000 ) );
+                chart.redraw ();
             }
 
             public void widgetDefaultSelected ( final SelectionEvent e )
@@ -544,6 +545,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                 }
                 scaleMinSpinner.setSelection ( (int) ( scaleYMin * 1000 ) );
                 adjustYRange ();
+                chart.redraw ();
             }
 
             public void widgetDefaultSelected ( final SelectionEvent e )
@@ -571,6 +573,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                 }
                 scaleMaxSpinner.setSelection ( (int) ( scaleYMax * 1000 ) );
                 adjustYRange ();
+                chart.redraw ();
             }
 
             public void widgetDefaultSelected ( final SelectionEvent e )
