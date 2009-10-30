@@ -25,9 +25,12 @@ import org.openscada.core.connection.provider.AbstractConnectionService;
 import org.openscada.hd.client.Connection;
 import org.openscada.hd.connection.provider.ConnectionServiceImpl;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConnectionManager extends AbstractConnectionManager
 {
+    private static final Logger logger = LoggerFactory.getLogger ( ConnectionManager.class );
 
     public ConnectionManager ( final BundleContext context, final String connectionId, final ConnectionInformation connectionInformation, final Integer autoReconnectDelay, final boolean initialOpen )
     {
