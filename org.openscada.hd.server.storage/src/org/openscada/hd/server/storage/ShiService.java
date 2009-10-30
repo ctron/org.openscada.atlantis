@@ -560,11 +560,13 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
             public void run ()
             {
                 startUpTask.shutdown ();
-                if ( !postprocessData () )
-                {
-                    stop ();
-                    return;
-                }
+                /*
+                 * if ( !postprocessData () )
+                 * {
+                 * stop ();
+                 * return;
+                 * }
+                 */
                 boolean proceed = true;
                 synchronized ( lockObject )
                 {
@@ -728,7 +730,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
                 {
                     continue;
                 }
-                logger.debug ( "start calculating missing data for configuration '%s' and channel '%s'", configuration.getId (), metaData );
+                logger.debug ( String.format ( "start calculating missing data for configuration '%s' and channel '%s'", configuration.getId (), metaData ) );
                 try
                 {
                     // get last values of the storage channel that has to be checked and possibly calculated again
