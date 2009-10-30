@@ -68,6 +68,7 @@ import org.swtchart.IBarSeries;
 import org.swtchart.ILineSeries;
 import org.swtchart.ISeries;
 import org.swtchart.LineStyle;
+import org.swtchart.Range;
 import org.swtchart.ILineSeries.PlotSymbolType;
 import org.swtchart.ISeries.SeriesType;
 
@@ -409,6 +410,14 @@ public class TrendView extends QueryViewPart implements QueryListener
 
     private RowLayout groupLayout;
 
+    private Group scaleGroup;
+
+    private Button scaleAutomaticallyCheckbox;
+
+    private Spinner scaleMinSpinner;
+
+    private Spinner scaleMaxSpinner;
+
     private Group qualityGroup;
 
     private Spinner qualitySpinner;
@@ -438,6 +447,12 @@ public class TrendView extends QueryViewPart implements QueryListener
     private FontRegistry fontRegistry;
 
     private ColorRegistry colorRegistry;
+
+    private volatile double scaleYMin = 0.0;
+
+    private volatile double scaleYMax = 1.0;
+
+    private volatile boolean scaleYAutomatically = true;
 
     @Override
     public void createPartControl ( final Composite parent )
@@ -475,6 +490,93 @@ public class TrendView extends QueryViewPart implements QueryListener
 
         this.groupLayout = new RowLayout ( SWT.HORIZONTAL );
         this.groupLayout.center = true;
+
+        // add group for scaling
+        this.scaleGroup = new Group ( this.panel, SWT.SHADOW_ETCHED_IN );
+        this.scaleGroup.setLayout ( groupLayout );
+        this.scaleGroup.setText ( Messages.TrendView_Scaling );
+
+        this.scaleAutomaticallyCheckbox = new Button ( this.scaleGroup, SWT.CHECK );
+        this.scaleAutomaticallyCheckbox.setText ( Messages.TrendView_Automatically );
+        this.scaleAutomaticallyCheckbox.setSelection ( scaleYAutomatically );
+        this.scaleAutomaticallyCheckbox.addSelectionListener ( new SelectionListener () {
+            public void widgetSelected ( final SelectionEvent e )
+            {
+                if ( scaleAutomaticallyCheckbox.getSelection () )
+                {
+                    scaleYAutomatically = true;
+                    scaleMinSpinner.setEnabled ( false );
+                    scaleMaxSpinner.setEnabled ( false );
+                    chart.getAxisSet ().adjustRange ();
+                }
+                else
+                {
+                    scaleYAutomatically = false;
+                    scaleMinSpinner.setEnabled ( true );
+                    scaleMaxSpinner.setEnabled ( true );
+                }
+                scaleMinSpinner.setSelection ( (int)Math.round ( scaleYMin * 1000 ) );
+                scaleMaxSpinner.setSelection ( (int)Math.round ( scaleYMax * 1000 ) );
+            }
+
+            public void widgetDefaultSelected ( final SelectionEvent e )
+            {
+            }
+        } );
+
+        this.scaleMinSpinner = new Spinner ( this.scaleGroup, SWT.BORDER );
+        this.scaleMinSpinner.setEnabled ( !scaleYAutomatically );
+        this.scaleMinSpinner.setDigits ( 3 );
+        this.scaleMinSpinner.setMaximum ( Integer.MAX_VALUE );
+        this.scaleMinSpinner.setMinimum ( Integer.MIN_VALUE );
+        this.scaleMinSpinner.setSelection ( (int)Math.round ( ( scaleYMin * 1000 ) ) );
+        this.scaleMinSpinner.addSelectionListener ( new SelectionListener () {
+            public void widgetSelected ( final SelectionEvent e )
+            {
+                double v = scaleMinSpinner.getSelection () / 1000.0;
+                if ( v >= scaleYMax )
+                {
+                    scaleYMin = scaleYMax - 0.001;
+                }
+                else
+                {
+                    scaleYMin = v;
+                }
+                scaleMinSpinner.setSelection ( (int) ( scaleYMin * 1000 ) );
+                adjustYRange ();
+            }
+
+            public void widgetDefaultSelected ( final SelectionEvent e )
+            {
+            }
+        } );
+
+        this.scaleMaxSpinner = new Spinner ( this.scaleGroup, SWT.BORDER );
+        this.scaleMaxSpinner.setEnabled ( !scaleYAutomatically );
+        this.scaleMaxSpinner.setDigits ( 3 );
+        this.scaleMaxSpinner.setMaximum ( Integer.MAX_VALUE );
+        this.scaleMaxSpinner.setMinimum ( Integer.MIN_VALUE );
+        this.scaleMaxSpinner.setSelection ( (int)Math.round ( ( scaleYMax * 1000 ) ) );
+        this.scaleMaxSpinner.addSelectionListener ( new SelectionListener () {
+            public void widgetSelected ( final SelectionEvent e )
+            {
+                double v = scaleMaxSpinner.getSelection () / 1000.0;
+                if ( v <= scaleYMin )
+                {
+                    scaleYMax = scaleYMin + 0.001;
+                }
+                else
+                {
+                    scaleYMax = v;
+                }
+                scaleMaxSpinner.setSelection ( (int) ( scaleYMax * 1000 ) );
+                adjustYRange ();
+            }
+
+            public void widgetDefaultSelected ( final SelectionEvent e )
+            {
+            }
+        } );
 
         // add label for quality spinner
         this.qualityGroup = new Group ( this.panel, SWT.SHADOW_ETCHED_IN );
@@ -1212,10 +1314,55 @@ public class TrendView extends QueryViewPart implements QueryListener
                         manualSeries.setVisible ( false );
                     }
                 }
-                TrendView.this.chart.getAxisSet ().adjustRange ();
+                if ( scaleYAutomatically )
+                {
+                    // all axis should be adjusted automatically, handles chart by itself
+                    TrendView.this.chart.getAxisSet ().adjustRange ();
+                    for ( IAxis axis : TrendView.this.chart.getAxisSet ().getYAxes () )
+                    {
+                        if ( ( qualitySeries != null ) && ( qualitySeries.getYAxisId () == axis.getId () ) )
+                        {
+                            continue;
+                        }
+                        if ( ( manualSeries != null ) && ( manualSeries.getYAxisId () == axis.getId () ) )
+                        {
+                            continue;
+                        }
+                        Range range = axis.getRange ();
+                        scaleYMin = range.lower;
+                        scaleYMax = range.upper;
+                    }
+                }
+                else
+                {
+                    // chart should only scale x axis automatically
+                    for ( IAxis axis : TrendView.this.chart.getAxisSet ().getXAxes () )
+                    {
+                        axis.adjustRange ();
+                    }
+                    adjustYRange ();
+                }
                 TrendView.this.chart.redraw ();
             }
         } );
+    }
+
+    private void adjustYRange ()
+    {
+        final ISeries qualitySeries = chart.getSeriesSet ().getSeries ( KEY_QUALITY );
+        final ISeries manualSeries = chart.getSeriesSet ().getSeries ( KEY_MANUAL );
+        for ( IAxis axis : chart.getAxisSet ().getYAxes () )
+        {
+            if ( ( qualitySeries != null ) && ( qualitySeries.getYAxisId () == axis.getId () ) )
+            {
+                continue;
+            }
+            if ( ( manualSeries != null ) && ( manualSeries.getYAxisId () == axis.getId () ) )
+            {
+                continue;
+            }
+            axis.setRange ( new Range ( scaleYMin, scaleYMax ) );
+        }
     }
 
     /**

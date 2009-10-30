@@ -95,6 +95,11 @@ public class Messages extends NLS
     public static String TrendView_SaveTrendAsImage;
 
     public static String TrendView_SelectColor;
+
+    public static String TrendView_Scaling;
+
+    public static String TrendView_Automatically;
+
     static
     {
         // initialize resource bundle
