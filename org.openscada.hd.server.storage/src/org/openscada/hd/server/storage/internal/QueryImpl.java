@@ -20,7 +20,7 @@ import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
-import org.openscada.hd.server.storage.ShiService;
+import org.openscada.hd.server.storage.StorageHistoricalItemService;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationLogicProvider;
@@ -36,10 +36,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This is the internal implementation of the HD query interface.
- * The class works in direct combination with the class ShiService.
+ * The class works in direct combination with the class StorageHistoricalItemService.
  * Therefore synchronization is done via the related service object.
  * @see org.openscada.hd.Query
- * @see org.openscada.hd.server.storage.ShiService
+ * @see org.openscada.hd.server.storage.StorageHistoricalItemService
  * @author Ludwig Straub
  */
 public class QueryImpl implements Query, ExtendedStorageChannel
@@ -60,7 +60,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     private final static String QUERY_DATA_SENDER_THREAD_ID = "QueryDataSender";
 
     /** Service that created the query object. */
-    private final ShiService service;
+    private final StorageHistoricalItemService service;
 
     /** Listener that should receive the data. */
     private final QueryListener listener;
@@ -118,7 +118,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
      * @param calculationMethods set of calculation methods that will be available via the service
      * @param updateData flag indicating whether the result should be periodically updated or not
      */
-    public QueryImpl ( final ShiService service, final QueryListener listener, final QueryParameters parameters, final Set<CalculationMethod> calculationMethods, final boolean updateData )
+    public QueryImpl ( final StorageHistoricalItemService service, final QueryListener listener, final QueryParameters parameters, final Set<CalculationMethod> calculationMethods, final boolean updateData )
     {
         this.service = service;
         this.listener = listener;

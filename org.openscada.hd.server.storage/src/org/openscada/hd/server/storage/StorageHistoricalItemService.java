@@ -47,16 +47,16 @@ import org.slf4j.LoggerFactory;
  * @see org.openscada.hd.server.common.StorageHistoricalItem
  * @author Ludwig Straub
  */
-public class ShiService implements StorageHistoricalItem, RelictCleaner
+public class StorageHistoricalItemService implements StorageHistoricalItem, RelictCleaner
 {
     /** The default logger. */
-    private final static Logger logger = LoggerFactory.getLogger ( ShiService.class );
+    private final static Logger logger = LoggerFactory.getLogger ( StorageHistoricalItemService.class );
 
     /** Id prefix of the startup thread. */
-    private final static String STARTUP_THREAD_ID_PREFIX = "ShiStartup_";
+    private final static String STARTUP_THREAD_ID_PREFIX = "StorageHistoricalItemServiceStartup_";
 
     /** Id prefix of the data receiver thread. */
-    private final static String DATA_RECEIVER_THREAD_ID_PREFIX = "ShiDataReceiver_";
+    private final static String DATA_RECEIVER_THREAD_ID_PREFIX = "StorageHistoricalItemServiceDataReceiver_";
 
     /** Configuration of the service. */
     private final Configuration configuration;
@@ -118,7 +118,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
      * @param latestReliableTime latest time of known valid information
      * @param importMode flag indicating whether old data should be deleted or not
      */
-    public ShiService ( final Configuration configuration, final long latestReliableTime, final boolean importMode )
+    public StorageHistoricalItemService ( final Configuration configuration, final long latestReliableTime, final boolean importMode )
     {
         this.configuration = new ConfigurationImpl ( configuration );
         calculationMethods = new HashSet<CalculationMethod> ( Conversions.getCalculationMethods ( configuration ) );
@@ -300,7 +300,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         try
         {
             final QueryImpl query = new QueryImpl ( this, listener, parameters, calculationMethods, updateData );
-            final ShiService service = this;
+            final StorageHistoricalItemService service = this;
             createQueryTask.submit ( new Runnable () {
                 public void run ()
                 {
@@ -607,7 +607,7 @@ public class ShiService implements StorageHistoricalItem, RelictCleaner
         serviceProperties.put ( Constants.SERVICE_PID, configuration.getId () );
         serviceProperties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
         serviceProperties.put ( Constants.SERVICE_DESCRIPTION, "A OpenSCADA Storage Historical Item Implementation" );
-        registration = bundleContext.registerService ( new String[] { ShiService.class.getName (), StorageHistoricalItem.class.getName () }, this, serviceProperties );
+        registration = bundleContext.registerService ( new String[] { StorageHistoricalItemService.class.getName (), StorageHistoricalItem.class.getName () }, this, serviceProperties );
     }
 
     /**

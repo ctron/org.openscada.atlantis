@@ -85,8 +85,8 @@ public class StorageService implements SelfManagedConfigurationFactory
     /** OSGi bundle context. */
     private final BundleContext bundleContext;
 
-    /** Currently registered shi services mapped by configuration id. */
-    private final Map<String, ShiService> shiServices;
+    /** Currently registered storage historical item services mapped by configuration id. */
+    private final Map<String, StorageHistoricalItemService> storageHistoricalItemServices;
 
     /** Back end factory that has to be used. */
     private final BackEndFactory backEndFactory;
@@ -119,7 +119,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     public StorageService ( final BundleContext bundleContext )
     {
         this.bundleContext = bundleContext;
-        this.shiServices = new HashMap<String, ShiService> ();
+        this.storageHistoricalItemServices = new HashMap<String, StorageHistoricalItemService> ();
         this.backEndMap = new HashMap<String, List<BackEnd>> ();
         final String rootFolder = System.getProperty ( FILE_FRAGMENTS_ROOT_FOLDER_SYSTEM_PROPERTY );
         final File root = rootFolder != null ? new File ( rootFolder ) : bundleContext.getDataFile ( "" );
@@ -206,7 +206,7 @@ public class StorageService implements SelfManagedConfigurationFactory
 
         // create hierarchical storage channel structure
         final CalculatingStorageChannel[] storageChannels = new CalculatingStorageChannel[backEnds.size ()];
-        final ShiService service = new ShiService ( configuration, this.latestReliableTime, this.importMode );
+        final StorageHistoricalItemService service = new StorageHistoricalItemService ( configuration, this.latestReliableTime, this.importMode );
         for ( int i = 0; i < backEnds.size (); i++ )
         {
             final BackEnd backEnd = backEnds.get ( i );
@@ -229,7 +229,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             }
             service.addStorageChannel ( storageChannels[i] );
         }
-        this.shiServices.put ( configuration.getId (), service );
+        this.storageHistoricalItemServices.put ( configuration.getId (), service );
 
         // publish service
         service.start ( this.bundleContext );
@@ -326,7 +326,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     }
 
     /**
-     * This method loads the configuration of the service and publishes the available ShiService objects.
+     * This method loads the configuration of the service and publishes the available StorageHistoricalItemService objects.
      */
     public synchronized void start ()
     {
@@ -438,7 +438,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             }
         }
 
-        // create shi service objects for grouped configuration ids
+        // create storage historical item service objects for grouped configuration ids
         bannedConfigurationIds.clear ();
         for ( final Entry<String, List<BackEnd>> entry : backEndMap.entrySet () )
         {
@@ -480,7 +480,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     }
 
     /**
-     * This method loads the configuration of the service and publishes the available ShiService objects.
+     * This method loads the configuration of the service and publishes the available StorageHistoricalItemService objects.
      */
     public synchronized void stop ()
     {
@@ -489,11 +489,11 @@ public class StorageService implements SelfManagedConfigurationFactory
             this.relictCleanerTask.shutdown ();
             this.relictCleanerTask = null;
         }
-        for ( final ShiService shiService : this.shiServices.values () )
+        for ( final StorageHistoricalItemService service : this.storageHistoricalItemServices.values () )
         {
-            shiService.stop ();
+            service.stop ();
         }
-        this.shiServices.clear ();
+        this.storageHistoricalItemServices.clear ();
         for ( final List<BackEnd> backEnds : this.backEndMap.values () )
         {
             deinitializeBackEnds ( backEnds );
@@ -511,7 +511,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         {
             this.configurationListeners.add ( listener );
             final List<Configuration> configurations = new ArrayList<Configuration> ();
-            for ( final ShiService service : this.shiServices.values () )
+            for ( final StorageHistoricalItemService service : this.storageHistoricalItemServices.values () )
             {
                 configurations.add ( service.getConfiguration () );
             }
@@ -570,7 +570,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         configuration.setState ( ConfigurationState.ERROR );
 
         // disallow update of already existing service
-        final ShiService service = this.shiServices.get ( configurationId );
+        final StorageHistoricalItemService service = this.storageHistoricalItemServices.get ( configurationId );
         if ( service != null )
         {
             return new InstantErrorFuture<Configuration> ( new IllegalStateException ( "unable to modify exisiting configuration" ).fillInStackTrace () );
@@ -594,7 +594,7 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public synchronized NotifyFuture<Configuration> delete ( final String configurationId )
     {
-        final ShiService serviceToDelete = this.shiServices.remove ( configurationId );
+        final StorageHistoricalItemService serviceToDelete = this.storageHistoricalItemServices.remove ( configurationId );
         if ( serviceToDelete == null )
         {
             return new InstantErrorFuture<Configuration> ( new IllegalStateException ( String.format ( "Unable to delete non existing service with configuration id '%s'", configurationId ) ).fillInStackTrace () );
@@ -637,7 +637,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     public synchronized void cleanupRelicts ()
     {
         logger.info ( "triggering cleaning of old data" );
-        for ( final ShiService service : this.shiServices.values () )
+        for ( final StorageHistoricalItemService service : this.storageHistoricalItemServices.values () )
         {
             try
             {
