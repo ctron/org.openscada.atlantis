@@ -306,6 +306,8 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                 {
                     synchronized ( this )
                     {
+                        query.setInput ();
+                        query.run ();
                         service.addQuery ( query );
                     }
                 }
@@ -354,7 +356,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                     }
                     final Calendar calendar = value.getTimestamp ();
                     final long time = calendar == null ? now : calendar.getTimeInMillis ();
-                    if ( !importMode && ( ( now - acceptedTimeDelta ) > time ) )
+                    if ( !importMode && ( ( ( now - acceptedTimeDelta ) > time ) || ( ( now - proposedDataAge ) > time ) ) )
                     {
                         logger.warn ( String.format ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", configuration.getId (), time ) );
                         return;

@@ -24,13 +24,14 @@ import org.openscada.hd.server.storage.StorageHistoricalItemService;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationLogicProvider;
+import org.openscada.hsdb.calculation.CalculationLogicProviderFactoryImpl;
 import org.openscada.hsdb.calculation.CalculationMethod;
 import org.openscada.hsdb.concurrent.HsdbThreadFactory;
 import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
 import org.openscada.hsdb.datatypes.LongValue;
-import org.openscada.hsdb.utils.ValueArrayNormalizer;
+import org.openscada.hsdb.utils.HsdbHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,6 +111,9 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /** Value information that was sent together with data last time. */
     private ValueInformation[] lastValueInformations;
 
+    /** Factory that will be used when creating new calculation logic provider objects. */
+    private final CalculationLogicProviderFactoryImpl calculationLogicProviderFactory;
+
     /**
      * Constructor.
      * @param service service that created the query object
@@ -126,6 +130,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         this.calculationMethods = new HashSet<CalculationMethod> ( calculationMethods );
         startTimeIndicesToUpdate = new HashSet<Integer> ();
         initialLoadPerformed = false;
+        this.calculationLogicProviderFactory = new CalculationLogicProviderFactoryImpl ();
         this.closed = ( service == null ) || ( listener == null ) || ( parameters == null ) || ( parameters.getStartTimestamp () == null ) || ( parameters.getEndTimestamp () == null );
         if ( closed )
         {
@@ -159,6 +164,16 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 queryTask.schedule ( runnable, 0, TimeUnit.MILLISECONDS );
             }
         }
+    }
+
+    public void setInput ()
+    {
+
+    }
+
+    public void run ()
+    {
+
     }
 
     /**
@@ -379,45 +394,29 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         {
             // get current compression level
             final StorageChannelMetaData metaData = entry.getKey ();
-            final CalculationLogicProvider calculationLogicProvider = Conversions.getCalculationLogicProvider ( metaData );
+            final CalculationLogicProvider calculationLogicProvider = calculationLogicProviderFactory.getCalculationLogicProvider ( metaData );
             final BaseValue[] values = entry.getValue ();
             int startIndex = 0;
             final List<BaseValue> resultValues = new ArrayList<BaseValue> ();
-            final DataType inputDataType = calculationLogicProvider.getInputType ();
             final DataType outputDataType = calculationLogicProvider.getOutputType ();
             for ( int i = 0; i < resultSize; i++ )
             {
                 final double currentTimeOffsetAsDouble = startTimeAsDouble + i * requestedValueFrequency;
                 final long currentTimeOffsetAsLong = Math.round ( currentTimeOffsetAsDouble );
                 final long localEndTime = Math.round ( currentTimeOffsetAsDouble + requestedValueFrequency );
-                BaseValue[] filledValues = null;
-                if ( values.length == 0 )
+                final BaseValue[] filledValues = HsdbHelper.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime <= currentTimeOffsetAsLong ? currentTimeOffsetAsLong + 1 : localEndTime, startIndex, values instanceof LongValue[] ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
+                // maximum 2 entries are completely virtual due to the algorithm
+                // it is possible that one value will be processed with a time span before the interval start time
+                // therefore the index can be increased by length-3 to optimize performance of this method
+                if ( filledValues.length > 3 )
                 {
-                    if ( inputDataType == DataType.LONG_VALUE )
-                    {
-                        filledValues = new LongValue[] { new LongValue ( currentTimeOffsetAsLong, 0, 0, 0, 0 ), new LongValue ( localEndTime, 0, 0, 0, 0 ) };
-                    }
-                    else
-                    {
-                        filledValues = new DoubleValue[] { new DoubleValue ( currentTimeOffsetAsLong, 0, 0, 0, 0 ), new DoubleValue ( localEndTime, 0, 0, 0, 0 ) };
-                    }
+                    startIndex += filledValues.length - 3;
                 }
-                else
+                final long lastFilledValueTime = filledValues[filledValues.length - 1].getTime ();
+                final long size = values.length;
+                while ( ( startIndex + 1 < size ) && ( values[startIndex + 1].getTime () < lastFilledValueTime ) )
                 {
-                    filledValues = ValueArrayNormalizer.extractSubArray ( values, currentTimeOffsetAsLong, localEndTime <= currentTimeOffsetAsLong ? currentTimeOffsetAsLong + 1 : localEndTime, startIndex, values instanceof LongValue[] ? ExtendedStorageChannel.EMPTY_LONGVALUE_ARRAY : ExtendedStorageChannel.EMPTY_DOUBLEVALUE_ARRAY );
-                    // maximum 2 entries are completely virtual due to the algorithm
-                    // it is possible that one value will be processed with a time span before the interval start time
-                    // therefore the index can be increased by length-3 to optimize performance of this method
-                    if ( filledValues.length > 3 )
-                    {
-                        startIndex += filledValues.length - 3;
-                    }
-                    final long lastFilledValueTime = filledValues[filledValues.length - 1].getTime ();
-                    final long size = values.length;
-                    while ( ( startIndex + 1 < size ) && ( values[startIndex + 1].getTime () < lastFilledValueTime ) )
-                    {
-                        startIndex++;
-                    }
+                    startIndex++;
                 }
                 resultValues.add ( calculationLogicProvider.generateValues ( filledValues ) );
             }

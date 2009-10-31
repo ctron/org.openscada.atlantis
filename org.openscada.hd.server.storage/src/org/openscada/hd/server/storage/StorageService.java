@@ -26,6 +26,7 @@ import org.openscada.hsdb.backend.BackEnd;
 import org.openscada.hsdb.backend.BackEndFactory;
 import org.openscada.hsdb.backend.BackEndMultiplexer;
 import org.openscada.hsdb.backend.file.FileBackEndFactory;
+import org.openscada.hsdb.calculation.CalculationLogicProviderFactoryImpl;
 import org.openscada.hsdb.calculation.CalculationMethod;
 import org.openscada.hsdb.concurrent.HsdbThreadFactory;
 import org.openscada.hsdb.datatypes.DataType;
@@ -62,13 +63,13 @@ public class StorageService implements SelfManagedConfigurationFactory
     private final static String IMPORT_MODE = "org.openscada.hd.server.storage.import";
 
     /** Minimum count of file fragments before the first fragment is old enough to be deleted. */
-    private final static long FILE_FRAGMENTS_PER_DATA_LIFESPAN = 3;
+    private final static long FILE_FRAGMENTS_PER_DATA_LIFESPAN = 4;
 
     /** Execute heart beat period in milliseconds. */
     private final static long HEART_BEATS_PERIOD = 1000;
 
     /** Period in milliseconds between two consecutive attempts to delete old data. */
-    private final static long CLEANER_TASK_PERIOD = 1000 * 5;
+    private final static long CLEANER_TASK_PERIOD = 1000 * 60;
 
     /** Maximum data age of heart beat data. */
     private final static long PROPOSED_HEART_BEAT_DATA_AGE = 1;
@@ -112,6 +113,9 @@ public class StorageService implements SelfManagedConfigurationFactory
     /** Task that is used for deleting old data. */
     private ScheduledExecutorService relictCleanerTask;
 
+    /** Factory that will be used when creating new calculation logic provider objects. */
+    private final CalculationLogicProviderFactoryImpl calculationLogicProviderFactory;
+
     /**
      * Constructor.
      * @param bundleContext OSGi bundle context
@@ -133,6 +137,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         this.heartBeatBackEnd = null;
         this.latestReliableTime = Long.MIN_VALUE;
         this.importMode = Boolean.parseBoolean ( System.getProperty ( IMPORT_MODE ) );
+        this.calculationLogicProviderFactory = new CalculationLogicProviderFactoryImpl ();
     }
 
     /**
@@ -222,7 +227,7 @@ public class StorageService implements SelfManagedConfigurationFactory
                     break;
                 }
             }
-            storageChannels[i] = new CalculatingStorageChannel ( new ExtendedStorageChannelAdapter ( backEnd ), superBackEndIndex >= 0 ? storageChannels[superBackEndIndex] : null, Conversions.getCalculationLogicProvider ( backEnd.getMetaData () ) );
+            storageChannels[i] = new CalculatingStorageChannel ( new ExtendedStorageChannelAdapter ( backEnd ), superBackEndIndex >= 0 ? storageChannels[superBackEndIndex] : null, calculationLogicProviderFactory.getCalculationLogicProvider ( backEnd.getMetaData () ) );
             if ( superBackEndIndex >= 0 )
             {
                 storageChannels[superBackEndIndex].registerStorageChannel ( storageChannels[i] );
