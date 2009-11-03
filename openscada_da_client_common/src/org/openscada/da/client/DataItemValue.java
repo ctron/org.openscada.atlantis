@@ -322,4 +322,98 @@ public class DataItemValue
         }
         return true;
     }
+
+    public static class Builder
+    {
+
+        private SubscriptionState subscriptionState;
+
+        private Throwable subscriptionError;
+
+        private Variant value;
+
+        private Map<String, Variant> attributes;
+
+        public Builder ()
+        {
+            this.value = new Variant ();
+            this.attributes = new HashMap<String, Variant> ();
+        }
+
+        public Builder ( final DataItemValue sourceValue )
+        {
+            if ( sourceValue == null )
+            {
+                this.value = new Variant ();
+                this.attributes = new HashMap<String, Variant> ();
+            }
+            else
+            {
+                this.value = sourceValue.getValue ();
+                this.attributes = new HashMap<String, Variant> ( sourceValue.getAttributes () );
+                this.subscriptionState = sourceValue.getSubscriptionState ();
+                this.subscriptionError = sourceValue.getSubscriptionError ();
+            }
+        }
+
+        public SubscriptionState getSubscriptionState ()
+        {
+            return this.subscriptionState;
+        }
+
+        public void setSubscriptionState ( final SubscriptionState subscriptionState )
+        {
+            this.subscriptionState = subscriptionState;
+        }
+
+        public Throwable getSubscriptionError ()
+        {
+            return this.subscriptionError;
+        }
+
+        public void setSubscriptionError ( final Throwable subscriptionError )
+        {
+            this.subscriptionError = subscriptionError;
+        }
+
+        public Variant getValue ()
+        {
+            return this.value;
+        }
+
+        public void setValue ( final Variant value )
+        {
+            this.value = value;
+        }
+
+        public Map<String, Variant> getAttributes ()
+        {
+            return this.attributes;
+        }
+
+        public void setAttributes ( final Map<String, Variant> attributes )
+        {
+            this.attributes = attributes;
+        }
+
+        public void setAttribute ( final String name, final Variant value )
+        {
+            this.attributes.put ( name, value );
+        }
+
+        public void clearAttribute ( final String name )
+        {
+            this.attributes.remove ( name );
+        }
+
+        public void setTimestamp ( final Calendar timestamp )
+        {
+            setAttribute ( "timestamp", new Variant ( timestamp.getTimeInMillis () ) );
+        }
+
+        public DataItemValue build ()
+        {
+            return new DataItemValue ( this.value, this.attributes, this.subscriptionState, this.subscriptionError );
+        }
+    }
 }
