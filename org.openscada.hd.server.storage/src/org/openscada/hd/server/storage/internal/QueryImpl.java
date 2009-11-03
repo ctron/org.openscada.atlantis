@@ -67,7 +67,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     private final QueryListener listener;
 
     /** Set of available calculation methods. */
-    private final Set<CalculationMethod> calculationMethods;
+    private final CalculationMethod[] calculationMethods;
 
     /*** Flag indicating whether the query is registered at the service or not. */
     private final boolean queryRegistered;
@@ -122,12 +122,12 @@ public class QueryImpl implements Query, ExtendedStorageChannel
      * @param calculationMethods set of calculation methods that will be available via the service
      * @param updateData flag indicating whether the result should be periodically updated or not
      */
-    public QueryImpl ( final StorageHistoricalItemService service, final QueryListener listener, final QueryParameters parameters, final Set<CalculationMethod> calculationMethods, final boolean updateData )
+    public QueryImpl ( final StorageHistoricalItemService service, final QueryListener listener, final QueryParameters parameters, final CalculationMethod[] calculationMethods, final boolean updateData )
     {
         this.service = service;
         this.listener = listener;
         this.parameters = parameters;
-        this.calculationMethods = new HashSet<CalculationMethod> ( calculationMethods );
+        this.calculationMethods = calculationMethods.clone ();
         startTimeIndicesToUpdate = new HashSet<Integer> ();
         initialLoadPerformed = false;
         this.calculationLogicProviderFactory = new CalculationLogicProviderFactoryImpl ();

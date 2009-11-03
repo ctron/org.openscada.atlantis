@@ -5,16 +5,13 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.openscada.ca.Configuration;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.hd.HistoricalItemInformation;
@@ -23,14 +20,13 @@ import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
-import org.openscada.hd.server.storage.internal.Conversions;
 import org.openscada.hd.server.storage.internal.QueryImpl;
 import org.openscada.hsdb.CalculatingStorageChannel;
-import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
-import org.openscada.hsdb.calculation.CalculationLogicProvider;
+import org.openscada.hsdb.backend.BackEndManager;
 import org.openscada.hsdb.calculation.CalculationMethod;
 import org.openscada.hsdb.concurrent.HsdbThreadFactory;
+import org.openscada.hsdb.configuration.Conversions;
 import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
@@ -58,11 +54,11 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     /** Id prefix of the data receiver thread. */
     private final static String DATA_RECEIVER_THREAD_ID_PREFIX = "StorageHistoricalItemServiceDataReceiver_";
 
-    /** Configuration of the service. */
-    private final Configuration configuration;
+    /** Manager that will be used to handle and distribute back end objects. */
+    private final BackEndManager<?> backEndManager;
 
     /** Set of all calculation methods except NATIVE. */
-    private final Set<CalculationMethod> calculationMethods;
+    private final CalculationMethod[] calculationMethods;
 
     /** All available storage channels mapped via calculation method. */
     private final Map<StorageChannelMetaData, CalculatingStorageChannel> storageChannels;
@@ -80,7 +76,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     private final Collection<QueryImpl> openQueries;
 
     /** Expected input data type. */
-    private DataType expectedDataType;
+    private final DataType expectedDataType;
 
     /** Latest time of known valid information. */
     private final long latestReliableTime;
@@ -114,14 +110,15 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
 
     /**
      * Constructor.
-     * @param configuration configuration of the service
+     * @param backEndManager manager that will be used to handle and distribute back end objects
      * @param latestReliableTime latest time of known valid information
      * @param importMode flag indicating whether old data should be deleted or not
      */
-    public StorageHistoricalItemService ( final Configuration configuration, final long latestReliableTime, final boolean importMode )
+    public StorageHistoricalItemService ( final BackEndManager<?> backEndManager, final long latestReliableTime, final boolean importMode )
     {
-        this.configuration = new ConfigurationImpl ( configuration );
-        calculationMethods = new HashSet<CalculationMethod> ( Conversions.getCalculationMethods ( configuration ) );
+        this.backEndManager = backEndManager;
+        final org.openscada.hsdb.configuration.Configuration configuration = backEndManager.getConfiguration ();
+        calculationMethods = Conversions.getCalculationMethods ( configuration );
         this.storageChannels = new HashMap<StorageChannelMetaData, CalculatingStorageChannel> ();
         this.rootStorageChannel = null;
         this.lockObject = new Object ();
@@ -132,8 +129,8 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         this.latestReliableTime = latestReliableTime;
         this.importMode = importMode;
         final Map<String, String> data = configuration.getData ();
-        this.proposedDataAge = Conversions.decodeTimeSpan ( data.get ( Conversions.PROPOSED_DATA_AGE_KEY_PREFIX + 0 ) );
-        this.acceptedTimeDelta = Conversions.decodeTimeSpan ( data.get ( Conversions.ACCEPTED_TIME_DELTA_KEY_PREFIX ) );
+        this.proposedDataAge = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 0 ) );
+        this.acceptedTimeDelta = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.ACCEPTED_TIME_DELTA_KEY ) );
         registration = null;
     }
 
@@ -284,12 +281,12 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     }
 
     /**
-     * This method returns a reference to the current configuration of the service.
-     * @return reference to the current configuration of the service
+     * This method returns a reference to the current back end manager of the service.
+     * @return reference to the current back end manager of the service
      */
-    public synchronized Configuration getConfiguration ()
+    public synchronized BackEndManager<?> getBackEndManager ()
     {
-        return new ConfigurationImpl ( configuration );
+        return backEndManager;
     }
 
     /**
@@ -326,7 +323,20 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     public synchronized HistoricalItemInformation getInformation ()
     {
-        return Conversions.convertConfigurationToHistoricalItemInformation ( configuration );
+        // prepare data for result
+        final org.openscada.hsdb.configuration.Configuration configuration = backEndManager.getConfiguration ();
+        final Map<String, Variant> variantData = new HashMap<String, Variant> ();
+
+        // process data
+        final Map<String, String> data = configuration.getData ();
+        if ( data != null )
+        {
+            for ( final Entry<String, String> entry : data.entrySet () )
+            {
+                variantData.put ( entry.getKey (), new Variant ( entry.getValue () ) );
+            }
+        }
+        return new HistoricalItemInformation ( configuration.getId (), variantData );
     }
 
     /**
@@ -358,12 +368,12 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                     final long time = calendar == null ? now : calendar.getTimeInMillis ();
                     if ( !importMode && ( ( ( now - acceptedTimeDelta ) > time ) || ( ( now - proposedDataAge ) > time ) ) )
                     {
-                        logger.warn ( String.format ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", configuration.getId (), time ) );
+                        logger.warn ( String.format ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", backEndManager.getConfiguration ().getId (), time ) );
                         return;
                     }
                     if ( ( now + acceptedTimeDelta ) < time )
                     {
-                        logger.warn ( String.format ( "timestamp of data is located too far in the future! data will be ignored: (configuration: '%s'; time: %s)", configuration.getId (), time ) );
+                        logger.warn ( String.format ( "timestamp of data is located too far in the future! data will be ignored: (configuration: '%s'; time: %s)", backEndManager.getConfiguration ().getId (), time ) );
                         return;
                     }
 
@@ -411,7 +421,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         }
         if ( value.getTime () < latestProcessedValue.getTime () )
         {
-            logger.warn ( String.format ( "older value for configuration '%s' received than latest available value", configuration.getId () ) );
+            logger.warn ( String.format ( "older value for configuration '%s' received than latest available value", backEndManager.getConfiguration ().getId () ) );
         }
         try
         {
@@ -445,53 +455,6 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         catch ( final Exception e )
         {
             logger.error ( "could not process value", e );
-        }
-    }
-
-    /**
-     * This method adds a storage channel.
-     * @param storageChannel storage channel that has to be added
-     */
-    public synchronized void addStorageChannel ( final CalculatingStorageChannel storageChannel )
-    {
-        if ( storageChannel != null )
-        {
-            try
-            {
-                final StorageChannelMetaData metaData = storageChannel.getMetaData ();
-                if ( metaData != null )
-                {
-                    storageChannels.put ( metaData, storageChannel );
-                    if ( metaData.getCalculationMethod () == CalculationMethod.NATIVE )
-                    {
-                        rootStorageChannel = storageChannel;
-                        expectedDataType = metaData.getDataType ();
-                    }
-                }
-            }
-            catch ( final Exception e )
-            {
-                logger.error ( "could not retrieve meta data information of storage channel", e );
-            }
-        }
-    }
-
-    /**
-     * This method creates an invalid entry of the specified time in the passed storage channel using the required data type.
-     * @param storageChannel storage channel to which a value marked as invalid has to be written
-     * @param dataType type of the value that will be written
-     * @param time time stamp of the value
-     * @throws Exception if the value could not be written
-     */
-    private void createRawInvalidEntry ( final ExtendedStorageChannel storageChannel, final DataType dataType, final long time ) throws Exception
-    {
-        if ( dataType == DataType.LONG_VALUE )
-        {
-            storageChannel.updateLong ( new LongValue ( time, 0, 0, 0, 0 ) );
-        }
-        else
-        {
-            storageChannel.updateDouble ( new DoubleValue ( time, 0, 0, 0, 0 ) );
         }
     }
 
@@ -554,7 +517,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         stop ();
         starting = true;
         started = true;
-        final String configurationId = configuration.getId ();
+        final String configurationId = backEndManager.getConfiguration ().getId ();
         dataReceiver = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( DATA_RECEIVER_THREAD_ID_PREFIX + configurationId ) );
         startUpTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( STARTUP_THREAD_ID_PREFIX + configurationId ) );
         createQueryTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( STARTUP_THREAD_ID_PREFIX + configurationId ) );
@@ -562,6 +525,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
             public void run ()
             {
                 startUpTask.shutdown ();
+                rootStorageChannel = backEndManager.buildStorageChannelTree ();
                 /*
                  * if ( !postprocessData () )
                  * {
@@ -606,7 +570,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     {
         unregisterService ();
         final Dictionary<String, String> serviceProperties = new Hashtable<String, String> ();
-        serviceProperties.put ( Constants.SERVICE_PID, configuration.getId () );
+        serviceProperties.put ( Constants.SERVICE_PID, backEndManager.getConfiguration ().getId () );
         serviceProperties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
         serviceProperties.put ( Constants.SERVICE_DESCRIPTION, "A OpenSCADA Storage Historical Item Implementation" );
         registration = bundleContext.registerService ( new String[] { StorageHistoricalItemService.class.getName (), StorageHistoricalItem.class.getName () }, this, serviceProperties );
@@ -691,13 +655,16 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     public synchronized void cleanupRelicts () throws Exception
     {
-        if ( !starting && started && ( rootStorageChannel != null ) )
+        if ( !starting && started )
         {
             try
             {
                 // clean data
                 logger.info ( "cleaning old data" );
-                rootStorageChannel.cleanupRelicts ();
+                if ( rootStorageChannel != null )
+                {
+                    rootStorageChannel.cleanupRelicts ();
+                }
 
                 // notify queries
                 for ( final QueryImpl query : openQueries )
@@ -710,119 +677,5 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                 logger.error ( "could not clean old data", e );
             }
         }
-    }
-
-    /**
-     * This method iterates over all storage channels and checks whether the latest entry of each storage channel matches the expected time stamp.
-     * In the scenario that data has been deleted, the deleted data will be calculated again.
-     */
-    private boolean postprocessData ()
-    {
-        logger.info ( String.format ( "start calculating missing data for configuration '%s'", configuration.getId () ) );
-        boolean abort = false;
-
-        // process high (compression level) storage channels first, since their values will be influenced while calculating values of lower storage channels
-        for ( long i = getMaximumCompressionLevel (); i >= 1; i-- )
-        {
-            for ( final Entry<StorageChannelMetaData, CalculatingStorageChannel> entry : storageChannels.entrySet () )
-            {
-                final StorageChannelMetaData metaData = entry.getKey ();
-                final long compressionLevel = metaData.getDetailLevelId ();
-                if ( compressionLevel != i )
-                {
-                    continue;
-                }
-                logger.debug ( String.format ( "start calculating missing data for configuration '%s' and channel '%s'", configuration.getId (), metaData ) );
-                try
-                {
-                    // get last values of the storage channel that has to be checked and possibly calculated again
-                    final CalculatingStorageChannel storageChannel = entry.getValue ();
-                    final CalculationLogicProvider calculationLogicProvider = storageChannel.getCalculationLogicProvider ();
-                    final long timespan = calculationLogicProvider.getRequiredTimespanForCalculation ();
-                    BaseValue[] lastValues;
-                    final DataType dataType = calculationLogicProvider.getOutputType ();
-                    if ( dataType == DataType.LONG_VALUE )
-                    {
-                        lastValues = storageChannel.getLongValues ( latestReliableTime - timespan - 1, latestReliableTime - timespan );
-                    }
-                    else
-                    {
-                        lastValues = storageChannel.getDoubleValues ( latestReliableTime - timespan - 1, latestReliableTime - timespan );
-                    }
-                    if ( ( lastValues == null ) || ( lastValues.length == 0 ) )
-                    {
-                        break;
-                    }
-
-                    // get the required base storage channel and process the missing values
-                    final CalculatingStorageChannel subStorageChannel = (CalculatingStorageChannel)storageChannel.getInputStorageChannel ();
-                    final BaseValue[] lastBaseValues;
-                    final long endTime = latestReliableTime == Long.MIN_VALUE ? Long.MAX_VALUE : latestReliableTime;
-                    final DataType baseDataType = subStorageChannel.getCalculationLogicProvider ().getOutputType ();
-                    if ( baseDataType == DataType.LONG_VALUE )
-                    {
-                        lastBaseValues = subStorageChannel.getLongValues ( endTime - 1, endTime );
-                    }
-                    else
-                    {
-                        lastBaseValues = subStorageChannel.getDoubleValues ( endTime - 1, endTime );
-                    }
-                    if ( ( lastBaseValues == null ) || ( lastBaseValues.length == 0 ) )
-                    {
-                        break;
-                    }
-                    final long lastAvailableTime = lastBaseValues[lastBaseValues.length - 1].getTime ();
-                    final long lastAlreadyCalculatedTime = lastValues[lastValues.length - 1].getTime ();
-                    long lastTime = lastAlreadyCalculatedTime;
-                    boolean first = true;
-                    while ( !abort && ( lastTime < lastAvailableTime ) )
-                    {
-                        // mark time as invalid for which no base value is available to calculate value again
-                        if ( first )
-                        {
-                            BaseValue[] oldBaseValues;
-                            if ( baseDataType == DataType.LONG_VALUE )
-                            {
-                                oldBaseValues = subStorageChannel.getLongValues ( lastAlreadyCalculatedTime - 1, lastAlreadyCalculatedTime );
-                            }
-                            else
-                            {
-                                oldBaseValues = subStorageChannel.getDoubleValues ( lastAlreadyCalculatedTime - 1, lastAlreadyCalculatedTime );
-                            }
-                            if ( ( oldBaseValues != null ) && ( oldBaseValues.length > 0 ) )
-                            {
-                                createRawInvalidEntry ( storageChannel.getBaseStorageChannel (), baseDataType, lastAlreadyCalculatedTime + 1 );
-                            }
-                            first = false;
-                        }
-
-                        // since this loop can be time consuming, check whether the application has to be shut down again
-                        if ( abort )
-                        {
-                            createRawInvalidEntry ( storageChannel.getBaseStorageChannel (), baseDataType, lastTime + 1 );
-                            logger.error ( String.format ( "aborting calculating missing data for configuration '%s'. marking not yet calculated time for '%s' as invalid", configuration.getId (), metaData ) );
-                            continue;
-                        }
-
-                        // trigger calculation of data
-                        storageChannel.notifyNewValues ( new long[] { lastTime } );
-
-                        // check for abort criterion
-                        synchronized ( lockObject )
-                        {
-                            abort &= starting;
-                        }
-                        lastTime += timespan;
-                    }
-                }
-                catch ( final Exception e )
-                {
-                    final String message = String.format ( "error while re-calculating data for storage channel (%s)", metaData );
-                    logger.error ( message, e );
-                }
-            }
-        }
-        logger.info ( String.format ( "end calculating missing data for configuration '%s'", configuration.getId () ) );
-        return true;
     }
 }

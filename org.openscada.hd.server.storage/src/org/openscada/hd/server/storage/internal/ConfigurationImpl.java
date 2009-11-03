@@ -1,9 +1,5 @@
 package org.openscada.hd.server.storage.internal;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationState;
 
@@ -11,22 +7,16 @@ import org.openscada.ca.ConfigurationState;
  * This is the internally used implementation of the CA configuration interface.
  * @author Ludwig Straub
  */
-public class ConfigurationImpl implements Configuration
+public class ConfigurationImpl extends org.openscada.hsdb.configuration.Configuration implements Configuration
 {
     /** Id of the factory that is used to process the configuration and create the related objects. */
     private String factoryId;
-
-    /** Id of the configuration itself. */
-    private String id;
 
     /** State of the configuration. */
     private ConfigurationState state;
 
     /** Error information. */
     private Throwable errorInformation;
-
-    /** Additional configuration data. */
-    private Map<String, String> data;
 
     /**
      * Standard constructor.
@@ -37,17 +27,17 @@ public class ConfigurationImpl implements Configuration
 
     /**
      * Copy constructor.
-     * @param configuration configuration object from whcih data has to be copied
+     * @param configuration configuration object from which data has to be copied
      */
-    public ConfigurationImpl ( final Configuration configuration )
+    public ConfigurationImpl ( final org.openscada.hsdb.configuration.Configuration configuration )
     {
-        if ( configuration != null )
+        super ( configuration );
+        if ( configuration instanceof ConfigurationImpl )
         {
-            this.errorInformation = configuration.getErrorInformation ();
-            this.factoryId = configuration.getFactoryId ();
-            this.id = configuration.getId ();
-            this.state = configuration.getState ();
-            setData ( configuration.getData () );
+            final ConfigurationImpl configurationImpl = (ConfigurationImpl)configuration;
+            this.errorInformation = configurationImpl.getErrorInformation ();
+            this.factoryId = configurationImpl.getFactoryId ();
+            this.state = configurationImpl.getState ();
         }
     }
 
@@ -67,24 +57,6 @@ public class ConfigurationImpl implements Configuration
     public void setFactoryId ( final String factoryId )
     {
         this.factoryId = factoryId;
-    }
-
-    /**
-     * This method returns the id of the configuration itself.
-     * @return id of the configuration itself
-     */
-    public String getId ()
-    {
-        return id;
-    }
-
-    /**
-     * This method sets the id of the configuration itself.
-     * @param id id of the configuration itself
-     */
-    public void setId ( final String id )
-    {
-        this.id = id;
     }
 
     /**
@@ -121,23 +93,5 @@ public class ConfigurationImpl implements Configuration
     public void setErrorInformation ( final Throwable errorInformation )
     {
         this.errorInformation = errorInformation;
-    }
-
-    /**
-     * This method returns the additional configuration data.
-     * @return additional configuration data
-     */
-    public Map<String, String> getData ()
-    {
-        return data == null ? null : Collections.unmodifiableMap ( data );
-    }
-
-    /**
-     * This method sets the additional configuration data.
-     * @param data additional configuration data
-     */
-    public void setData ( final Map<String, String> data )
-    {
-        this.data = data == null ? null : new HashMap<String, String> ( data );
     }
 }
