@@ -526,7 +526,15 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
             public void run ()
             {
                 startUpTask.shutdown ();
-                rootStorageChannel = backEndManager.buildStorageChannelTree ();
+                backEndManager.repairBackEndFragmentsIfRequired ( new AbortNotificator () {
+                    public boolean getAbort ()
+                    {
+                        synchronized ( lockObject )
+                        {
+                            return !starting;
+                        }
+                    }
+                } );
                 boolean proceed = true;
                 synchronized ( lockObject )
                 {
@@ -537,15 +545,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                     stop ();
                     return;
                 }
-                backEndManager.repairBackEndFragmentsIfRequired ( new AbortNotificator () {
-                    public boolean getAbort ()
-                    {
-                        synchronized ( lockObject )
-                        {
-                            return !starting;
-                        }
-                    }
-                } );
+                rootStorageChannel = backEndManager.buildStorageChannelTree ();
                 synchronized ( lockObject )
                 {
                     proceed = starting;
