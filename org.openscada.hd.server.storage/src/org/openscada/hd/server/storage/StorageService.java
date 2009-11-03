@@ -70,10 +70,10 @@ public class StorageService implements SelfManagedConfigurationFactory
     private final static String HEARTBEAT_CONFIGURATION_ID = "HEARTBEAT";
 
     /** Internal id for heart beat thread. */
-    private final static String HEARTBEAT_THREAD_ID = "Heartbeat";
+    private final static String HEARTBEAT_THREAD_ID = "hd.Heartbeat";
 
     /** Internal id for relicts cleaner thread. */
-    private final static String RELICT_CLEANER_THREAD_ID = "RelictCleaner";
+    private final static String RELICT_CLEANER_THREAD_ID = "hd.RelictCleaner";
 
     /** OSGi bundle context. */
     private final BundleContext bundleContext;

@@ -23,6 +23,7 @@ import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.internal.QueryImpl;
 import org.openscada.hsdb.CalculatingStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
+import org.openscada.hsdb.backend.AbortNotificator;
 import org.openscada.hsdb.backend.BackEndManager;
 import org.openscada.hsdb.calculation.CalculationMethod;
 import org.openscada.hsdb.concurrent.HsdbThreadFactory;
@@ -526,14 +527,25 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
             {
                 startUpTask.shutdown ();
                 rootStorageChannel = backEndManager.buildStorageChannelTree ();
-                /*
-                 * if ( !postprocessData () )
-                 * {
-                 * stop ();
-                 * return;
-                 * }
-                 */
                 boolean proceed = true;
+                synchronized ( lockObject )
+                {
+                    proceed = starting;
+                }
+                if ( !proceed )
+                {
+                    stop ();
+                    return;
+                }
+                backEndManager.repairBackEndFragmentsIfRequired ( new AbortNotificator () {
+                    public boolean getAbort ()
+                    {
+                        synchronized ( lockObject )
+                        {
+                            return !starting;
+                        }
+                    }
+                } );
                 synchronized ( lockObject )
                 {
                     proceed = starting;
