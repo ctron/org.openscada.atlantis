@@ -388,6 +388,8 @@ public class TrendView extends QueryViewPart implements QueryListener
 
     private final AtomicReference<Job> dataUpdateJob = new AtomicReference<Job> ();
 
+    private final AtomicReference<Job> scalingUpdateJob = new AtomicReference<Job> ();
+
     // data (model)
     private final ConcurrentMap<String, double[]> data = new ConcurrentHashMap<String, double[]> ();
 
@@ -534,22 +536,17 @@ public class TrendView extends QueryViewPart implements QueryListener
         this.scaleMinSpinner.addSelectionListener ( new SelectionListener () {
             public void widgetSelected ( final SelectionEvent e )
             {
-                double v = scaleMinSpinner.getSelection () / 1000.0;
-                if ( v >= scaleYMax )
-                {
-                    scaleYMin = scaleYMax - 0.001;
-                }
-                else
-                {
-                    scaleYMin = v;
-                }
-                scaleMinSpinner.setSelection ( (int) ( scaleYMin * 1000 ) );
-                adjustYRange ();
-                chart.redraw ();
+                scalingUpdateJob.get ().schedule ( GUI_RESIZE_JOB_DELAY );
             }
 
             public void widgetDefaultSelected ( final SelectionEvent e )
             {
+            }
+        } );
+        this.scaleMinSpinner.addModifyListener ( new ModifyListener () {
+            public void modifyText ( final ModifyEvent e )
+            {
+                scalingUpdateJob.get ().schedule ( GUI_RESIZE_JOB_DELAY );
             }
         } );
 
@@ -562,22 +559,17 @@ public class TrendView extends QueryViewPart implements QueryListener
         this.scaleMaxSpinner.addSelectionListener ( new SelectionListener () {
             public void widgetSelected ( final SelectionEvent e )
             {
-                double v = scaleMaxSpinner.getSelection () / 1000.0;
-                if ( v <= scaleYMin )
-                {
-                    scaleYMax = scaleYMin + 0.001;
-                }
-                else
-                {
-                    scaleYMax = v;
-                }
-                scaleMaxSpinner.setSelection ( (int) ( scaleYMax * 1000 ) );
-                adjustYRange ();
-                chart.redraw ();
+                scalingUpdateJob.get ().schedule ( GUI_JOB_DELAY );
             }
 
             public void widgetDefaultSelected ( final SelectionEvent e )
             {
+            }
+        } );
+        this.scaleMaxSpinner.addModifyListener ( new ModifyListener () {
+            public void modifyText ( final ModifyEvent e )
+            {
+                scalingUpdateJob.get ().schedule ( GUI_RESIZE_JOB_DELAY );
             }
         } );
 
@@ -985,6 +977,24 @@ public class TrendView extends QueryViewPart implements QueryListener
             }
         } );
 
+        // set up job for updating chart scaling
+        this.scalingUpdateJob.set ( new Job ( "updateScaling" ) { //$NON-NLS-1$
+            @Override
+            protected IStatus run ( final IProgressMonitor monitor )
+            {
+                doUpdateScaling ();
+                try
+                {
+                    Thread.sleep ( 100 );
+                }
+                catch ( InterruptedException e )
+                {
+                    // pass
+                }
+                return Status.OK_STATUS;
+            }
+        } );
+
         // register all own listeners
         // according to selection on left side update chart as well
         addListener ();
@@ -1346,6 +1356,47 @@ public class TrendView extends QueryViewPart implements QueryListener
                     adjustYRange ();
                 }
                 TrendView.this.chart.redraw ();
+            }
+        } );
+    }
+
+    // update scaling to current value
+    private void doUpdateScaling ()
+    {
+        if ( this.chart.isDisposed () )
+        {
+            return;
+        }
+        final Display display = this.chart.getDisplay ();
+        if ( display.isDisposed () )
+        {
+            return;
+        }
+        display.asyncExec ( new Runnable () {
+            public void run ()
+            {
+                double v = scaleMinSpinner.getSelection () / 1000.0;
+                if ( v >= scaleYMax )
+                {
+                    scaleYMin = scaleYMax - 0.001;
+                }
+                else
+                {
+                    scaleYMin = v;
+                }
+                scaleMinSpinner.setSelection ( (int) ( scaleYMin * 1000 ) );
+                v = scaleMaxSpinner.getSelection () / 1000.0;
+                if ( v <= scaleYMin )
+                {
+                    scaleYMax = scaleYMin + 0.001;
+                }
+                else
+                {
+                    scaleYMax = v;
+                }
+                scaleMaxSpinner.setSelection ( (int) ( scaleYMax * 1000 ) );
+                adjustYRange ();
+                chart.redraw ();
             }
         } );
     }
