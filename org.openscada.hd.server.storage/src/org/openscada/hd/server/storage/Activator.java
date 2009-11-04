@@ -22,6 +22,9 @@ public class Activator implements BundleActivator
     /** Default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( Activator.class );
 
+    /** Lock object for start and stop. */
+    private final static Object lockObject = new Object ();
+
     /** Storage service instance. */
     private static StorageService service = null;
 
@@ -31,15 +34,11 @@ public class Activator implements BundleActivator
     /** Executor service used for start and stop. */
     private static ExecutorService executor = null;
 
-    /** Lock object for start and stop. */
-    private static Object lockObject = null;
-
     /**
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
     public void start ( final BundleContext context ) throws Exception
     {
-        lockObject = new Object ();
         final Object lock = lockObject;
         executor = Executors.newSingleThreadExecutor ();
         executor.submit ( new Runnable () {
