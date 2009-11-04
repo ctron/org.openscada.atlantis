@@ -52,16 +52,22 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     private final static long DELAY_BETWEEN_TWO_QUERY_CALCULATIONS = 1000;
 
     /** Task for processing the query. */
-    private final static String QUERY_DATA_PROCESSOR_THREAD_ID = "QueryProcessor";
+    private final static String QUERY_DATA_PROCESSOR_THREAD_ID = "hd.QueryProcessor";
 
     /** Task for receiving the query parameter changes. */
-    private final static String QUERY_DATA_RECEIVER_THREAD_ID = "QueryParameterChangeReceiver";
+    private final static String QUERY_DATA_RECEIVER_THREAD_ID = "hd.QueryParameterChangeReceiver";
 
     /** Task for sending the query data. */
-    private final static String QUERY_DATA_SENDER_THREAD_ID = "QueryDataSender";
+    private final static String QUERY_DATA_SENDER_THREAD_ID = "hd.QueryDataSender";
+
+    /** Task for closing the query. */
+    private final static String QUERY_CLOSER_THREAD_ID = "hd.QueryCloser";
 
     /** Service that created the query object. */
     private final StorageHistoricalItemService service;
+
+    /** Map containing all available storage channels mapped by detail level id and calculation method including the calculation logic provider objects. */
+    private Map<Long, Map<CalculationMethod, Map<ExtendedStorageChannel, CalculationLogicProvider>>> storageChannels;
 
     /** Listener that should receive the data. */
     private final QueryListener listener;
@@ -70,7 +76,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     private final CalculationMethod[] calculationMethods;
 
     /*** Flag indicating whether the query is registered at the service or not. */
-    private final boolean queryRegistered;
+    private boolean queryRegistered;
 
     /** Input parameters of the query. */
     private QueryParameters parameters;
@@ -79,10 +85,13 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     private QueryState currentQueryState;
 
     /** Flag indicating whether the query is closed or not. */
-    private boolean closed;
+    private volatile boolean closed;
 
     /** Task that will calculate the result. */
     private ScheduledExecutorService queryTask;
+
+    /** Task that will close the query. */
+    private ExecutorService closerTask;
 
     /** Flag indicating whether data was changed or not. */
     private boolean initialLoadPerformed;
@@ -114,15 +123,17 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /** Factory that will be used when creating new calculation logic provider objects. */
     private final CalculationLogicProviderFactoryImpl calculationLogicProviderFactory;
 
+    /** Maximum compression level. */
+    private long maximumCompressionLevel;
+
     /**
      * Constructor.
      * @param service service that created the query object
      * @param listener listener that should receive the data
      * @param parameters input parameters of the query
      * @param calculationMethods set of calculation methods that will be available via the service
-     * @param updateData flag indicating whether the result should be periodically updated or not
      */
-    public QueryImpl ( final StorageHistoricalItemService service, final QueryListener listener, final QueryParameters parameters, final CalculationMethod[] calculationMethods, final boolean updateData )
+    public QueryImpl ( final StorageHistoricalItemService service, final QueryListener listener, final QueryParameters parameters, final CalculationMethod[] calculationMethods )
     {
         this.service = service;
         this.listener = listener;
@@ -130,50 +141,59 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         this.calculationMethods = calculationMethods.clone ();
         startTimeIndicesToUpdate = new HashSet<Integer> ();
         initialLoadPerformed = false;
+        maximumCompressionLevel = 0;
+        queryRegistered = false;
         this.calculationLogicProviderFactory = new CalculationLogicProviderFactoryImpl ();
         this.closed = ( service == null ) || ( listener == null ) || ( parameters == null ) || ( parameters.getStartTimestamp () == null ) || ( parameters.getEndTimestamp () == null );
         if ( closed )
         {
             logger.error ( "not all data is available to execute query via 'new query'. no action will be performed" );
             setQueryState ( QueryState.DISCONNECTED );
-            queryRegistered = false;
             dataChanged = false;
         }
         else
         {
-            receivingTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_RECEIVER_THREAD_ID ) );
-            sendingTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_SENDER_THREAD_ID ) );
             setQueryState ( QueryState.LOADING );
-            latestDirtyTime = Long.MAX_VALUE;
-            dataChanged = true;
-            final Runnable runnable = new Runnable () {
-                public void run ()
-                {
-                    processQuery ();
-                }
-            };
-            queryTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_PROCESSOR_THREAD_ID ) );
-            if ( updateData )
-            {
-                queryRegistered = true;
-                queryTask.scheduleWithFixedDelay ( runnable, 0, DELAY_BETWEEN_TWO_QUERY_CALCULATIONS, TimeUnit.MILLISECONDS );
-            }
-            else
-            {
-                queryRegistered = false;
-                queryTask.schedule ( runnable, 0, TimeUnit.MILLISECONDS );
-            }
         }
     }
 
-    public void setInput ()
+    /**
+     * This method starts the query execution.
+     * @param storageChannels map containing all available storage channels mapped by detail level id and calculation method including the calculation logic provider objects
+     * @param updateData flag indicating whether the result should be periodically updated or not
+     */
+    public void run ( final Map<Long, Map<CalculationMethod, Map<ExtendedStorageChannel, CalculationLogicProvider>>> storageChannels, final boolean updateData )
     {
-
-    }
-
-    public void run ()
-    {
-
+        if ( closed )
+        {
+            return;
+        }
+        this.storageChannels = storageChannels;
+        for ( final Long compressionLevel : storageChannels.keySet () )
+        {
+            this.maximumCompressionLevel = Math.max ( maximumCompressionLevel, compressionLevel );
+        }
+        receivingTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_RECEIVER_THREAD_ID ) );
+        sendingTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_SENDER_THREAD_ID ) );
+        latestDirtyTime = Long.MAX_VALUE;
+        dataChanged = true;
+        final Runnable runnable = new Runnable () {
+            public void run ()
+            {
+                processQuery ();
+            }
+        };
+        queryTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_PROCESSOR_THREAD_ID ) );
+        if ( updateData )
+        {
+            queryRegistered = true;
+            queryTask.scheduleWithFixedDelay ( runnable, 0, DELAY_BETWEEN_TWO_QUERY_CALCULATIONS, TimeUnit.MILLISECONDS );
+        }
+        else
+        {
+            queryRegistered = false;
+            queryTask.schedule ( runnable, 0, TimeUnit.MILLISECONDS );
+        }
     }
 
     /**
@@ -310,72 +330,69 @@ public class QueryImpl implements Query, ExtendedStorageChannel
 
         // perform calculation
         Map<StorageChannelMetaData, BaseValue[]> mergeMap = null;
-        synchronized ( service )
+
+        // load raw data that has to be normalized later
+        latestDirtyTime = System.currentTimeMillis ();
+        long currentCompressionLevel = getRecommendedCompressionLevel ( ( parameters.getEndTimestamp ().getTimeInMillis () - parameters.getStartTimestamp ().getTimeInMillis () ) / parameters.getEntries () );
+        long oldestValueTime = Long.MAX_VALUE;
+        final BaseValue latestValue = getLatestValue ();
+        final long latestValidTime = latestValue == null ? latestDirtyTime : latestValue.getTime ();
+        boolean firstIteration = true;
+        while ( ( oldestValueTime > startTime ) && ( currentCompressionLevel <= maximumCompressionLevel ) )
         {
-            // load raw data that has to be normalized later
-            latestDirtyTime = System.currentTimeMillis ();
-            final long maximumCompressionLevel = service.getMaximumCompressionLevel ();
-            long currentCompressionLevel = service.getRecommendedCompressionLevel ( ( parameters.getEndTimestamp ().getTimeInMillis () - parameters.getStartTimestamp ().getTimeInMillis () ) / parameters.getEntries () );
-            long oldestValueTime = Long.MAX_VALUE;
-            final BaseValue latestValue = service.getLatestValue ();
-            final long latestValidTime = latestValue == null ? latestDirtyTime : latestValue.getTime ();
-            boolean firstIteration = true;
-            while ( ( oldestValueTime > startTime ) && ( currentCompressionLevel <= maximumCompressionLevel ) )
+            if ( firstIteration )
             {
-                if ( firstIteration )
+                firstIteration = false;
+                mergeMap = getValues ( currentCompressionLevel, startTime, endTime );
+                for ( final Entry<StorageChannelMetaData, BaseValue[]> mergeEntry : mergeMap.entrySet () )
                 {
-                    firstIteration = false;
-                    mergeMap = service.getValues ( currentCompressionLevel, startTime, endTime );
+                    final BaseValue[] mergeValues = mergeEntry.getValue ();
+                    final long maxTime = mergeValues.length > 0 ? Math.max ( latestValidTime + 1, latestDirtyTime ) : latestDirtyTime;
+                    if ( ( maxTime == latestDirtyTime ) && ( maxTime < absoluteEndTime ) )
+                    {
+                        markTimeAsDirty ( maxTime, false );
+                    }
+                    latestDirtyTime = Math.min ( maxTime, latestDirtyTime );
+                    if ( mergeValues instanceof LongValue[] )
+                    {
+                        final LongValue longValue = new LongValue ( maxTime, 0, 0, 0, 0 );
+                        mergeEntry.setValue ( joinValueArrays ( new LongValue[] { longValue }, mergeValues ) );
+                    }
+                    else
+                    {
+                        final DoubleValue doubleValue = new DoubleValue ( maxTime, 0, 0, 0, 0 );
+                        mergeEntry.setValue ( joinValueArrays ( new DoubleValue[] { doubleValue }, mergeValues ) );
+                    }
+                }
+            }
+            else
+            {
+                final Map<StorageChannelMetaData, BaseValue[]> subMap = getValues ( currentCompressionLevel, startTime, Math.min ( oldestValueTime, endTime ) );
+                for ( final Entry<StorageChannelMetaData, BaseValue[]> subEntry : subMap.entrySet () )
+                {
                     for ( final Entry<StorageChannelMetaData, BaseValue[]> mergeEntry : mergeMap.entrySet () )
                     {
-                        final BaseValue[] mergeValues = mergeEntry.getValue ();
-                        final long maxTime = mergeValues.length > 0 ? Math.max ( latestValidTime + 1, latestDirtyTime ) : latestDirtyTime;
-                        if ( ( maxTime == latestDirtyTime ) && ( maxTime < absoluteEndTime ) )
+                        if ( mergeEntry.getKey ().getCalculationMethod () == subEntry.getKey ().getCalculationMethod () )
                         {
-                            markTimeAsDirty ( maxTime, false );
-                        }
-                        latestDirtyTime = Math.min ( maxTime, latestDirtyTime );
-                        if ( mergeValues instanceof LongValue[] )
-                        {
-                            final LongValue longValue = new LongValue ( maxTime, 0, 0, 0, 0 );
-                            mergeEntry.setValue ( joinValueArrays ( new LongValue[] { longValue }, mergeValues ) );
-                        }
-                        else
-                        {
-                            final DoubleValue doubleValue = new DoubleValue ( maxTime, 0, 0, 0, 0 );
-                            mergeEntry.setValue ( joinValueArrays ( new DoubleValue[] { doubleValue }, mergeValues ) );
+                            final BaseValue[] mergeValues = mergeEntry.getValue ();
+                            mergeEntry.setValue ( joinValueArrays ( mergeValues, removeTimeOverlay ( mergeValues, subEntry.getValue () ) ) );
                         }
                     }
                 }
-                else
-                {
-                    final Map<StorageChannelMetaData, BaseValue[]> subMap = service.getValues ( currentCompressionLevel, startTime, Math.min ( oldestValueTime, endTime ) );
-                    for ( final Entry<StorageChannelMetaData, BaseValue[]> subEntry : subMap.entrySet () )
-                    {
-                        for ( final Entry<StorageChannelMetaData, BaseValue[]> mergeEntry : mergeMap.entrySet () )
-                        {
-                            if ( mergeEntry.getKey ().getCalculationMethod () == subEntry.getKey ().getCalculationMethod () )
-                            {
-                                final BaseValue[] mergeValues = mergeEntry.getValue ();
-                                mergeEntry.setValue ( joinValueArrays ( mergeValues, removeTimeOverlay ( mergeValues, subEntry.getValue () ) ) );
-                            }
-                        }
-                    }
-                }
-                long oldestLocalValueTime = Long.MAX_VALUE;
-                for ( final BaseValue[] baseValues : mergeMap.values () )
-                {
-                    if ( baseValues.length > 0 )
-                    {
-                        oldestLocalValueTime = oldestLocalValueTime == Long.MAX_VALUE ? baseValues[0].getTime () : Math.max ( oldestLocalValueTime, baseValues[0].getTime () );
-                    }
-                }
-                oldestValueTime = Math.min ( oldestValueTime, oldestLocalValueTime );
-                currentCompressionLevel++;
             }
-            dataChanged = false;
-            initialLoadPerformed = true;
+            long oldestLocalValueTime = Long.MAX_VALUE;
+            for ( final BaseValue[] baseValues : mergeMap.values () )
+            {
+                if ( baseValues.length > 0 )
+                {
+                    oldestLocalValueTime = oldestLocalValueTime == Long.MAX_VALUE ? baseValues[0].getTime () : Math.max ( oldestLocalValueTime, baseValues[0].getTime () );
+                }
+            }
+            oldestValueTime = Math.min ( oldestValueTime, oldestLocalValueTime );
+            currentCompressionLevel++;
         }
+        dataChanged = false;
+        initialLoadPerformed = true;
 
         // since all data is collected now, the normalizing can be performed
         final MutableValueInformation[] resultValueInformations = new MutableValueInformation[resultSize];
@@ -479,27 +496,24 @@ public class QueryImpl implements Query, ExtendedStorageChannel
      */
     public void sendCalculatedValues ( final QueryParameters parameters, final int startIndex, final CalculatedData calculatedData )
     {
-        synchronized ( service )
+        // send data to listener
+        final ValueInformation[] calculatedResultValueInformations = calculatedData.getValueInformations ();
+        final Map<String, Value[]> calculatedResultMap = calculatedData.getData ();
+
+        // stop immediately if query has been closed in the meantime
+        if ( closed )
         {
-            // send data to listener
-            final ValueInformation[] calculatedResultValueInformations = calculatedData.getValueInformations ();
-            final Map<String, Value[]> calculatedResultMap = calculatedData.getData ();
-
-            // stop immediately if query has been closed in the meantime
-            if ( closed )
-            {
-                return;
-            }
-
-            // do not send any data if input parameters have changed
-            if ( !parameters.equals ( this.parameters ) )
-            {
-                return;
-            }
-
-            // send data
-            sendDataDiff ( parameters, calculatedResultMap, calculatedResultValueInformations, startIndex );
+            return;
         }
+
+        // do not send any data if input parameters have changed
+        if ( !parameters.equals ( this.parameters ) )
+        {
+            return;
+        }
+
+        // send data
+        sendDataDiff ( parameters, calculatedResultMap, calculatedResultValueInformations, startIndex );
     }
 
     /**
@@ -596,10 +610,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                         public void run ()
                         {
                             listener.updateData ( startBlockIndex, subData, valueInformationBlock );
-                            synchronized ( service )
-                            {
-                                setQueryState ( QueryState.COMPLETE );
-                            }
+                            setQueryState ( QueryState.COMPLETE );
                         }
                     } );
                 }
@@ -620,10 +631,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             public void run ()
             {
                 listener.updateData ( startIndex, data, valueInformations );
-                synchronized ( service )
-                {
-                    setQueryState ( QueryState.COMPLETE );
-                }
+                setQueryState ( QueryState.COMPLETE );
             }
         } );
         lastParameters = parameters;
@@ -640,39 +648,36 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         {
             // prepare all data that is required for calculation
             QueryParameters parameters = null;
-            boolean initialLoadPerformed;
+            final boolean initialLoadPerformed;
             Set<Integer> startTimeIndicesToUpdate = null;
-            synchronized ( service )
+            if ( !dataChanged )
             {
-                if ( !dataChanged )
+                return;
+            }
+            initialLoadPerformed = this.initialLoadPerformed;
+            parameters = this.parameters;
+            if ( initialLoadPerformed )
+            {
+                startTimeIndicesToUpdate = new HashSet<Integer> ( this.startTimeIndicesToUpdate );
+            }
+            if ( !this.startTimeIndicesToUpdate.isEmpty () )
+            {
+                this.startTimeIndicesToUpdate.clear ();
+            }
+            final Calendar start = parameters.getStartTimestamp ();
+            final Calendar end = parameters.getEndTimestamp ();
+            if ( ( parameters == null ) || ( start == null ) || ( end == null ) || ( parameters.getEntries () < 1 ) )
+            {
+                this.initialLoadPerformed = true;
+                this.dataChanged = false;
+                final Set<String> calculationMethodsAsString = new HashSet<String> ();
+                for ( final CalculationMethod calculationMethod : calculationMethods )
                 {
-                    return;
+                    calculationMethodsAsString.add ( CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ) );
                 }
-                initialLoadPerformed = this.initialLoadPerformed;
-                parameters = this.parameters;
-                if ( initialLoadPerformed )
-                {
-                    startTimeIndicesToUpdate = new HashSet<Integer> ( this.startTimeIndicesToUpdate );
-                }
-                if ( !this.startTimeIndicesToUpdate.isEmpty () )
-                {
-                    this.startTimeIndicesToUpdate.clear ();
-                }
-                final Calendar start = parameters.getStartTimestamp ();
-                final Calendar end = parameters.getEndTimestamp ();
-                if ( ( parameters == null ) || ( start == null ) || ( end == null ) || ( parameters.getEntries () < 1 ) )
-                {
-                    this.initialLoadPerformed = true;
-                    this.dataChanged = false;
-                    final Set<String> calculationMethodsAsString = new HashSet<String> ();
-                    for ( final CalculationMethod calculationMethod : calculationMethods )
-                    {
-                        calculationMethodsAsString.add ( CalculationMethod.convertCalculationMethodToShortString ( calculationMethod ) );
-                    }
-                    listener.updateParameters ( parameters, calculationMethodsAsString );
-                    setQueryState ( QueryState.COMPLETE );
-                    return;
-                }
+                listener.updateParameters ( parameters, calculationMethodsAsString );
+                setQueryState ( QueryState.COMPLETE );
+                return;
             }
             if ( !initialLoadPerformed )
             {
@@ -710,11 +715,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         catch ( final Exception e )
         {
             logger.error ( "problem while processing query", e );
-            synchronized ( service )
-            {
-                setQueryState ( QueryState.DISCONNECTED );
-                close ();
-            }
+            setQueryState ( QueryState.DISCONNECTED );
+            close ();
         }
     }
 
@@ -765,18 +767,15 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         receivingTask.submit ( new Runnable () {
             public void run ()
             {
-                synchronized ( service )
+                if ( ( inputParameters == null ) || ( inputParameters.getStartTimestamp () == null ) || ( inputParameters.getEndTimestamp () == null ) )
                 {
-                    if ( ( inputParameters == null ) || ( inputParameters.getStartTimestamp () == null ) || ( inputParameters.getEndTimestamp () == null ) )
-                    {
-                        close ();
-                        return;
-                    }
-                    parameters = inputParameters;
-                    dataChanged = true;
-                    initialLoadPerformed = false;
-                    setQueryState ( QueryState.LOADING );
+                    close ();
+                    return;
                 }
+                parameters = inputParameters;
+                dataChanged = true;
+                initialLoadPerformed = false;
+                setQueryState ( QueryState.LOADING );
             }
         } );
     }
@@ -786,24 +785,27 @@ public class QueryImpl implements Query, ExtendedStorageChannel
      */
     public void close ()
     {
-        synchronized ( service )
+        if ( !closed )
         {
-            if ( !closed )
+            if ( queryTask != null )
             {
-                if ( queryTask != null )
-                {
-                    queryTask.shutdown ();
-                    queryTask = null;
-                }
-                if ( sendingTask != null )
-                {
-                    sendingTask.shutdown ();
-                }
-                setQueryState ( QueryState.DISCONNECTED );
-                if ( queryRegistered )
-                {
-                    service.removeQuery ( this );
-                }
+                queryTask.shutdown ();
+                queryTask = null;
+            }
+            if ( sendingTask != null )
+            {
+                sendingTask.shutdown ();
+            }
+            setQueryState ( QueryState.DISCONNECTED );
+            if ( queryRegistered )
+            {
+                closerTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( QUERY_CLOSER_THREAD_ID ) );
+                closerTask.submit ( new Runnable () {
+                    public void run ()
+                    {
+                        service.removeQuery ( QueryImpl.this );
+                    }
+                } );
             }
             closed = true;
         }
@@ -898,5 +900,137 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     public void updateDataBefore ( final long time )
     {
         markTimeAsDirty ( time, true );
+    }
+
+    /**
+     * This method returns the lowest compression level that is sufficient for the specified detail level
+     * @param timespan time span in milliseconds the requested compression level must provide at least in order to be considered as recommended compression level
+     * @return recommended compression level
+     */
+    private long getRecommendedCompressionLevel ( final long timespan )
+    {
+        // optimize in case of minimal time span
+        if ( timespan <= 1 )
+        {
+            return 0;
+        }
+
+        // search for optimal compression level
+        long minimumAvailableCompressionLevel = 0;
+        long providedTimespan = Long.MIN_VALUE;
+        try
+        {
+            for ( final Entry<Long, Map<CalculationMethod, Map<ExtendedStorageChannel, CalculationLogicProvider>>> entry : storageChannels.entrySet () )
+            {
+                final long detailLevelId = entry.getKey ();
+                if ( detailLevelId > 0 )
+                {
+                    final Map<CalculationMethod, Map<ExtendedStorageChannel, CalculationLogicProvider>> map = entry.getValue ();
+                    for ( final Map<ExtendedStorageChannel, CalculationLogicProvider> calculationMethodEntry : map.values () )
+                    {
+                        for ( final CalculationLogicProvider value : calculationMethodEntry.values () )
+                        {
+                            final long compressionTimespan = value.getRequiredTimespanForCalculation ();
+                            if ( ( compressionTimespan < timespan ) && ( compressionTimespan > providedTimespan ) )
+                            {
+                                providedTimespan = compressionTimespan;
+                                minimumAvailableCompressionLevel = detailLevelId;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch ( final Exception e )
+        {
+            logger.error ( "problem while determining recommended compression level for query", e );
+        }
+        return minimumAvailableCompressionLevel;
+    }
+
+    /**
+     * This method returns the currently available values for the given time span.
+     * The returned map contains all available storage channels for the given level.
+     * @param compressionLevel compression level for which data has to be retrieved
+     * @param startTime start time of the requested data
+     * @param endTime end time of the requested data
+     * @return map containing all available storage channels for the given level
+     * @throws Exception in case of problems retrieving the requested data
+     */
+    private Map<StorageChannelMetaData, BaseValue[]> getValues ( final long compressionLevel, final long startTime, final long endTime ) throws Exception
+    {
+        logger.debug ( "requested compression level: " + compressionLevel );
+        final Map<StorageChannelMetaData, BaseValue[]> result = new HashMap<StorageChannelMetaData, BaseValue[]> ();
+        try
+        {
+            final Map<CalculationMethod, Map<ExtendedStorageChannel, CalculationLogicProvider>> map = storageChannels.get ( compressionLevel );
+            for ( final Entry<CalculationMethod, Map<ExtendedStorageChannel, CalculationLogicProvider>> subEntry : map.entrySet () )
+            {
+                for ( final Entry<ExtendedStorageChannel, CalculationLogicProvider> entry : subEntry.getValue ().entrySet () )
+                {
+                    final ExtendedStorageChannel storageChannel = entry.getKey ();
+                    final StorageChannelMetaData metaData = storageChannel.getMetaData ();
+                    final CalculationLogicProvider calculationLogicProvider = entry.getValue ();
+                    BaseValue[] values = null;
+                    switch ( calculationLogicProvider.getOutputType () )
+                    {
+                    case LONG_VALUE:
+                    {
+                        values = storageChannel.getLongValues ( startTime, endTime );
+                        break;
+                    }
+                    case DOUBLE_VALUE:
+                    {
+                        values = storageChannel.getDoubleValues ( startTime, endTime );
+                        break;
+                    }
+                    }
+                    if ( compressionLevel == 0 )
+                    {
+                        // create a virtual entry for each required calculation method
+                        for ( final CalculationMethod calculationMethod : calculationMethods )
+                        {
+                            final StorageChannelMetaData subMetaData = new StorageChannelMetaData ( metaData );
+                            subMetaData.setCalculationMethod ( calculationMethod );
+                            result.put ( subMetaData, values );
+                        }
+                    }
+                    else
+                    {
+                        result.put ( metaData, values );
+                    }
+                }
+            }
+        }
+        catch ( final Exception e )
+        {
+            final String message = "unable to retrieve values from storage channel";
+            logger.error ( message, e );
+            throw new Exception ( message, e );
+        }
+        return result;
+    }
+
+    /**
+     * This method returns the latest NATIVE value or null, if no value is available at all.
+     * @return latest NATIVE value or null, if no value is available at all
+     */
+    private BaseValue getLatestValue ()
+    {
+        final Map<CalculationMethod, Map<ExtendedStorageChannel, CalculationLogicProvider>> map = storageChannels.get ( 0 );
+        if ( map == null )
+        {
+            return null;
+        }
+        final Map<ExtendedStorageChannel, CalculationLogicProvider> map2 = map.get ( CalculationMethod.NATIVE );
+        if ( map2 == null )
+        {
+            return null;
+        }
+        for ( final ExtendedStorageChannel storageChannel : map2.keySet () )
+        {
+            return StorageHistoricalItemService.getLatestValue ( storageChannel );
+        }
+        return null;
     }
 }

@@ -22,7 +22,7 @@ import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.internal.QueryImpl;
 import org.openscada.hsdb.CalculatingStorageChannel;
-import org.openscada.hsdb.StorageChannelMetaData;
+import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.backend.AbortNotificator;
 import org.openscada.hsdb.backend.BackEndManager;
 import org.openscada.hsdb.calculation.CalculationMethod;
@@ -60,9 +60,6 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
 
     /** Set of all calculation methods except NATIVE. */
     private final CalculationMethod[] calculationMethods;
-
-    /** All available storage channels mapped via calculation method. */
-    private final Map<StorageChannelMetaData, CalculatingStorageChannel> storageChannels;
 
     /** Reference to the main input storage channel that is also available in the storage channels map. */
     private CalculatingStorageChannel rootStorageChannel;
@@ -120,7 +117,6 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         this.backEndManager = backEndManager;
         final org.openscada.hsdb.configuration.Configuration configuration = backEndManager.getConfiguration ();
         calculationMethods = Conversions.getCalculationMethods ( configuration );
-        this.storageChannels = new HashMap<StorageChannelMetaData, CalculatingStorageChannel> ();
         this.rootStorageChannel = null;
         this.lockObject = new Object ();
         this.starting = false;
@@ -155,61 +151,17 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     }
 
     /**
-     * This method returns the maximum available compression level of all storage channels.
-     * @return maximum available compression level of all storage channels or negative value if no storage channel is availavle
+     * This method returns the latest value via the passed storage channel or null, if no value is available at all.
+     * @param storageChannel storage channel that has to be used for retrieving the latest value
+     * @return latest value or null, if no value is available at all
      */
-    public synchronized long getMaximumCompressionLevel ()
+    public static BaseValue getLatestValue ( final ExtendedStorageChannel storageChannel )
     {
-        long maximumAvailableCompressionLevel = Long.MIN_VALUE;
-        for ( final StorageChannelMetaData metaData : storageChannels.keySet () )
-        {
-            maximumAvailableCompressionLevel = Math.max ( maximumAvailableCompressionLevel, metaData.getDetailLevelId () );
-        }
-        return maximumAvailableCompressionLevel;
-    }
-
-    /**
-     * This method returns the lowest compression level that is sufficient for the specified detail level
-     * @param timespan time span in milliseconds the requested compression level must provide at least in order to be considered as recommended compression level
-     * @return recommended compression level
-     */
-    public synchronized long getRecommendedCompressionLevel ( final long timespan )
-    {
-        // optimize in case of minimal time span
-        if ( timespan <= 1 )
-        {
-            return 0;
-        }
-
-        // search for optimal compression level
-        long minimumAvailableCompressionLevel = 0;
-        long providedTimespan = Long.MIN_VALUE;
-        for ( final StorageChannelMetaData metaData : storageChannels.keySet () )
-        {
-            if ( metaData.getDetailLevelId () > 0 )
-            {
-                final long compressionTimespan = metaData.getCalculationMethodParameters ()[0];
-                if ( ( compressionTimespan < timespan ) && ( compressionTimespan > providedTimespan ) )
-                {
-                    providedTimespan = compressionTimespan;
-                    minimumAvailableCompressionLevel = metaData.getDetailLevelId ();
-                }
-            }
-        }
-        return minimumAvailableCompressionLevel;
-    }
-
-    /**
-     * This method returns the latest NATIVE value or null, if no value is available at all.
-     * @return latest NATIVE value or null, if no value is available at all
-     */
-    public synchronized BaseValue getLatestValue ()
-    {
-        if ( rootStorageChannel != null )
+        if ( storageChannel != null )
         {
             try
             {
-                final BaseValue[] result = rootStorageChannel.getMetaData ().getDataType () == DataType.LONG_VALUE ? rootStorageChannel.getLongValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE ) : rootStorageChannel.getDoubleValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
+                final BaseValue[] result = storageChannel.getMetaData ().getDataType () == DataType.LONG_VALUE ? storageChannel.getLongValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE ) : storageChannel.getDoubleValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
                 return ( result != null ) && ( result.length > 0 ) ? result[0] : null;
             }
             catch ( final Exception e )
@@ -221,64 +173,12 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     }
 
     /**
-     * This method returns the currently available values for the given time span.
-     * The returned map contains all available storage channels for the given level.
-     * @param compressionLevel compression level for which data has to be retrieved
-     * @param startTime start time of the requested data
-     * @param endTime end time of the requested data
-     * @return map containing all available storage channels for the given level
-     * @throws Exception in case of problems retrieving the requested data
+     * This method returns the latest NATIVE value or null, if no value is available at all.
+     * @return latest NATIVE value or null, if no value is available at all
      */
-    public synchronized Map<StorageChannelMetaData, BaseValue[]> getValues ( final long compressionLevel, final long startTime, final long endTime ) throws Exception
+    public synchronized BaseValue getLatestValue ()
     {
-        logger.debug ( "requested compression level: " + compressionLevel );
-        final Map<StorageChannelMetaData, BaseValue[]> result = new HashMap<StorageChannelMetaData, BaseValue[]> ();
-        try
-        {
-            for ( final Entry<StorageChannelMetaData, CalculatingStorageChannel> entry : storageChannels.entrySet () )
-            {
-                final StorageChannelMetaData metaData = entry.getKey ();
-                if ( metaData.getDetailLevelId () == compressionLevel )
-                {
-                    final CalculatingStorageChannel storageChannel = entry.getValue ();
-                    BaseValue[] values = null;
-                    switch ( storageChannel.getCalculationLogicProvider ().getOutputType () )
-                    {
-                    case LONG_VALUE:
-                    {
-                        values = storageChannel.getLongValues ( startTime, endTime );
-                        break;
-                    }
-                    case DOUBLE_VALUE:
-                    {
-                        values = storageChannel.getDoubleValues ( startTime, endTime );
-                        break;
-                    }
-                    }
-                    if ( compressionLevel == 0 )
-                    {
-                        // create a virtual entry for each required calculation method
-                        for ( final CalculationMethod calculationMethod : calculationMethods )
-                        {
-                            final StorageChannelMetaData subMetaData = new StorageChannelMetaData ( metaData );
-                            subMetaData.setCalculationMethod ( calculationMethod );
-                            result.put ( subMetaData, values );
-                        }
-                    }
-                    else
-                    {
-                        result.put ( storageChannel.getMetaData (), values );
-                    }
-                }
-            }
-        }
-        catch ( final Exception e )
-        {
-            final String message = "unable to retrieve values from storage channel";
-            logger.error ( message, e );
-            throw new Exception ( message, e );
-        }
-        return result;
+        return getLatestValue ( rootStorageChannel );
     }
 
     /**
@@ -297,15 +197,14 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     {
         try
         {
-            final QueryImpl query = new QueryImpl ( this, listener, parameters, calculationMethods, updateData );
+            final QueryImpl query = new QueryImpl ( this, listener, parameters, calculationMethods );
             final StorageHistoricalItemService service = this;
             createQueryTask.submit ( new Runnable () {
                 public void run ()
                 {
                     synchronized ( this )
                     {
-                        query.setInput ();
-                        query.run ();
+                        query.run ( backEndManager.buildStorageChannelStructure (), updateData );
                         service.addQuery ( query );
                     }
                 }
