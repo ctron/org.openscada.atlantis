@@ -50,10 +50,13 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     private final static Logger logger = LoggerFactory.getLogger ( StorageHistoricalItemService.class );
 
     /** Id prefix of the startup thread. */
-    private final static String STARTUP_THREAD_ID_PREFIX = "StorageHistoricalItemServiceStartup_";
+    private final static String STARTUP_THREAD_ID_PREFIX = "hd.StorageHistoricalItemServiceStartup_";
+
+    /** Id prefix of the query creator thread. */
+    private final static String CREATE_QUERY_THREAD_ID_PREFIX = "hd.CreateQuery_";
 
     /** Id prefix of the data receiver thread. */
-    private final static String DATA_RECEIVER_THREAD_ID_PREFIX = "StorageHistoricalItemServiceDataReceiver_";
+    private final static String DATA_RECEIVER_THREAD_ID_PREFIX = "hd.StorageHistoricalItemServiceDataReceiver_";
 
     /** Manager that will be used to handle and distribute back end objects. */
     private final BackEndManager<?> backEndManager;
@@ -176,7 +179,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      * This method returns the latest NATIVE value or null, if no value is available at all.
      * @return latest NATIVE value or null, if no value is available at all
      */
-    public synchronized BaseValue getLatestValue ()
+    public BaseValue getLatestValue ()
     {
         return getLatestValue ( rootStorageChannel );
     }
@@ -202,11 +205,8 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
             createQueryTask.submit ( new Runnable () {
                 public void run ()
                 {
-                    synchronized ( this )
-                    {
-                        query.run ( backEndManager.buildStorageChannelStructure (), updateData );
-                        service.addQuery ( query );
-                    }
+                    query.run ( backEndManager.buildStorageChannelStructure (), updateData );
+                    service.addQuery ( query );
                 }
             } );
             return query;
@@ -305,7 +305,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      * This method processes the data tha is received via the data receiver task.
      * @param value data that has to be processed
      */
-    public synchronized void processData ( final BaseValue value )
+    public void processData ( final BaseValue value )
     {
         if ( !this.started || ( this.rootStorageChannel == null ) || ( value == null ) )
         {
@@ -420,7 +420,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         final String configurationId = backEndManager.getConfiguration ().getId ();
         dataReceiver = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( DATA_RECEIVER_THREAD_ID_PREFIX + configurationId ) );
         startUpTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( STARTUP_THREAD_ID_PREFIX + configurationId ) );
-        createQueryTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( STARTUP_THREAD_ID_PREFIX + configurationId ) );
+        createQueryTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( CREATE_QUERY_THREAD_ID_PREFIX + configurationId ) );
         startUpTask.submit ( new Runnable () {
             public void run ()
             {
