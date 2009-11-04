@@ -35,7 +35,13 @@ public class Variant implements Serializable
 
     private static final long serialVersionUID = 5391870904474545783L;
 
-    private Object value = null;
+    public static final Variant NULL = new Variant ();
+
+    public static final Variant TRUE = new Variant ( true );
+
+    public static final Variant FALSE = new Variant ( false );
+
+    private Object value;
 
     /**
      * Create a variant of type <code>null</code>
