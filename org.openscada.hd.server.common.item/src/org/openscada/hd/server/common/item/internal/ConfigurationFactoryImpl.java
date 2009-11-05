@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.core.Variant;
+import org.openscada.da.datasource.DataSource;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -115,10 +116,10 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
 
     private ItemWrapper createItem ( final String configurationId, final Map<String, String> properties ) throws InvalidSyntaxException
     {
-        final String masterId = properties.get ( "master.id" );
+        final String masterId = properties.get ( DataSource.DATA_SOURCE_ID );
         if ( masterId == null )
         {
-            throw new IllegalArgumentException ( "'master.id' is not set" );
+            throw new IllegalArgumentException ( String.format ( "'%s' is not set", DataSource.DATA_SOURCE_ID ) );
         }
 
         final Dictionary<String, String> serviceProperties = new Hashtable<String, String> ();
