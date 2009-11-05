@@ -430,7 +430,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                     {
                         synchronized ( lockObject )
                         {
-                            return !starting;
+                            return !starting || !started;
                         }
                     }
                 } );
