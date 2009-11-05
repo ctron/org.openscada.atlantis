@@ -1,7 +1,9 @@
 package org.openscada.hd.server.common.item.internal;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.openscada.core.Variant;
@@ -48,11 +50,17 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     private DataSource dataSource;
 
+    private final Queue<DataItemValue> valueBuffer;
+
+    private int maxBufferSize = 1024;
+
     public HistoricalItemImpl ( final HistoricalItemInformation itemInformation, final String masterId, final BundleContext context ) throws InvalidSyntaxException
     {
         this.itemInformation = itemInformation;
         this.dataSourceId = masterId;
         this.context = context;
+
+        this.valueBuffer = new LinkedList<DataItemValue> ();
 
         this.storageTracker = new SingleServiceTracker ( context, FilterUtil.createAndFilter ( StorageHistoricalItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, itemInformation.getId () ).getMap () ), new SingleServiceListener () {
 
@@ -70,7 +78,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
         } );
     }
 
-    protected void setMasterItem ( final DataSource service )
+    protected synchronized void setMasterItem ( final DataSource service )
     {
         logger.info ( "Set master item: {}", service );
 
@@ -99,6 +107,15 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
         // remember the new service
         this.service = service;
+
+        if ( this.service != null )
+        {
+            logger.info ( String.format ( "Pushing %s entries from value buffer", this.valueBuffer.size () ) );
+            while ( !this.valueBuffer.isEmpty () )
+            {
+                service.updateData ( this.valueBuffer.poll () );
+            }
+        }
     }
 
     public void start ()
@@ -161,12 +178,17 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
         {
             if ( this.service != null )
             {
-                // logger.debug ( "State change: {}", value );
                 this.service.updateData ( value );
             }
             else
             {
                 logger.info ( "State change ignored: {} missing storage", this.itemInformation.getId () );
+                final int size = this.valueBuffer.size ();
+                if ( size < this.maxBufferSize )
+                {
+                    logger.debug ( "State change recorded: buffer size: {}", size );
+                    this.valueBuffer.add ( value );
+                }
             }
         }
     }
@@ -178,6 +200,8 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
         synchronized ( this )
         {
             logger.info ( "Updating..." );
+
+            this.maxBufferSize = Integer.parseInt ( properties.get ( "maxBufferSize" ) );
 
             if ( this.masterTracker != null )
             {
