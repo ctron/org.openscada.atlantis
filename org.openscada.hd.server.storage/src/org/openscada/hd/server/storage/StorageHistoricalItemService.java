@@ -125,12 +125,12 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         this.starting = false;
         this.started = false;
         this.openQueries = new LinkedList<QueryImpl> ();
-        expectedDataType = DataType.UNKNOWN;
         this.latestReliableTime = latestReliableTime;
         this.importMode = importMode;
         final Map<String, String> data = configuration.getData ();
         this.proposedDataAge = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 0 ) );
         this.acceptedTimeDelta = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.ACCEPTED_TIME_DELTA_KEY ) );
+        this.expectedDataType = DataType.convertShortStringToDataType ( data.get ( ConfigurationImpl.DATA_TYPE_KEY ) );
         registration = null;
     }
 
