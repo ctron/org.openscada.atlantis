@@ -34,7 +34,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     private final HistoricalItemInformation itemInformation;
 
-    private String masterId;
+    private String dataSourceId;
 
     private final BundleContext context;
 
@@ -51,7 +51,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
     public HistoricalItemImpl ( final HistoricalItemInformation itemInformation, final String masterId, final BundleContext context ) throws InvalidSyntaxException
     {
         this.itemInformation = itemInformation;
-        this.masterId = masterId;
+        this.dataSourceId = masterId;
         this.context = context;
 
         this.storageTracker = new SingleServiceTracker ( context, FilterUtil.createAndFilter ( StorageHistoricalItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, itemInformation.getId () ).getMap () ), new SingleServiceListener () {
@@ -61,7 +61,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
                 HistoricalItemImpl.this.setStorage ( (StorageHistoricalItem)service );
             }
         } );
-        this.masterTracker = new SingleServiceTracker ( context, FilterUtil.createAndFilter ( DataSource.class.getName (), new MapBuilder<String, String> ().put ( DataSource.DATA_SOURCE_ID, this.masterId ).getMap () ), new SingleServiceListener () {
+        this.masterTracker = new SingleServiceTracker ( context, FilterUtil.createAndFilter ( DataSource.class.getName (), new MapBuilder<String, String> ().put ( DataSource.DATA_SOURCE_ID, this.dataSourceId ).getMap () ), new SingleServiceListener () {
 
             public void serviceChange ( final ServiceReference reference, final Object service )
             {
@@ -173,7 +173,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     public void update ( final Map<String, String> properties ) throws InvalidSyntaxException
     {
-        final String masterId = properties.get ( "master.id" );
+        final String dataSourceId = properties.get ( DataSource.DATA_SOURCE_ID );
 
         synchronized ( this )
         {
@@ -185,9 +185,9 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
                 this.masterTracker = null;
             }
 
-            if ( masterId != null )
+            if ( dataSourceId != null )
             {
-                this.masterTracker = new SingleServiceTracker ( this.context, FilterUtil.createAndFilter ( MasterItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, masterId ).getMap () ), new SingleServiceListener () {
+                this.masterTracker = new SingleServiceTracker ( this.context, FilterUtil.createAndFilter ( MasterItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, dataSourceId ).getMap () ), new SingleServiceListener () {
 
                     public void serviceChange ( final ServiceReference reference, final Object service )
                     {
@@ -197,7 +197,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
                 this.masterTracker.open ();
             }
 
-            this.masterId = masterId;
+            this.dataSourceId = dataSourceId;
 
             logger.info ( "Updating...done" );
         }
