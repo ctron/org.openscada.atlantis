@@ -305,7 +305,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      * This method processes the data tha is received via the data receiver task.
      * @param value data that has to be processed
      */
-    public void processData ( final BaseValue value )
+    public synchronized void processData ( final BaseValue value )
     {
         if ( !this.started || ( this.rootStorageChannel == null ) || ( value == null ) )
         {
@@ -477,7 +477,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      * This method registers the service via OSGi.
      * @param bundleContext OSGi bundle context
      */
-    private synchronized void registerService ( final BundleContext bundleContext )
+    private void registerService ( final BundleContext bundleContext )
     {
         unregisterService ();
         final Dictionary<String, String> serviceProperties = new Hashtable<String, String> ();
@@ -490,7 +490,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     /**
      * This method unregisters a previously registered service.
      */
-    private synchronized void unregisterService ()
+    private void unregisterService ()
     {
         if ( registration != null )
         {
