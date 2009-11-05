@@ -75,8 +75,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /** Set of available calculation methods. */
     private final CalculationMethod[] calculationMethods;
 
-    /*** Flag indicating whether the query is registered at the service or not. */
-    private boolean queryRegistered;
+    /*** Flag indicating whether the query is only executed one but with complete data or if the query has to be executed in small parts. */
+    private boolean executeOnce;
 
     /** Input parameters of the query. */
     private QueryParameters parameters;
@@ -142,7 +142,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         startTimeIndicesToUpdate = new HashSet<Integer> ();
         initialLoadPerformed = false;
         maximumCompressionLevel = 0;
-        queryRegistered = false;
+        executeOnce = false;
         this.calculationLogicProviderFactory = new CalculationLogicProviderFactoryImpl ();
         this.closed = ( service == null ) || ( listener == null ) || ( parameters == null ) || ( parameters.getStartTimestamp () == null ) || ( parameters.getEndTimestamp () == null );
         if ( closed )
@@ -186,12 +186,12 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         queryTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_PROCESSOR_THREAD_ID ) );
         if ( updateData )
         {
-            queryRegistered = true;
+            executeOnce = true;
             queryTask.scheduleWithFixedDelay ( runnable, 0, DELAY_BETWEEN_TWO_QUERY_CALCULATIONS, TimeUnit.MILLISECONDS );
         }
         else
         {
-            queryRegistered = false;
+            executeOnce = false;
             queryTask.schedule ( runnable, 0, TimeUnit.MILLISECONDS );
         }
     }
@@ -698,7 +698,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 sendingTask.shutdown ();
             }
             setQueryState ( QueryState.DISCONNECTED );
-            if ( queryRegistered )
+            if ( executeOnce )
             {
                 closerTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( QUERY_CLOSER_THREAD_ID ) );
                 closerTask.submit ( new Runnable () {
