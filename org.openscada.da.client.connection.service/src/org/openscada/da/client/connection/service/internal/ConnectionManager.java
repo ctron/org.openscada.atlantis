@@ -113,7 +113,11 @@ public class ConnectionManager implements SingleServiceListener
         logger.info ( "Service changed: " + reference + "/" + factory );
         disposeConnection ();
         this.factory = (DriverFactory)factory;
-        createConnection ();
+
+        if ( factory != null )
+        {
+            createConnection ();
+        }
     }
 
     /**
