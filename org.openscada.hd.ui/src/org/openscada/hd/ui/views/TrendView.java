@@ -796,7 +796,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                 }
                 else
                 {
-                    if ( ( e.button == 1 ) && ( ( e.stateMask & SWT.SHIFT ) == SWT.SHIFT ) )
+                    if ( e.button == 1 && ( e.stateMask & SWT.SHIFT ) == SWT.SHIFT )
                     {
                         // zoom in
                         final DateRange zoomResult = zoomIn ( e.x, 0, TrendView.this.chart.getPlotArea ().getSize ().x, TrendView.this.chartParameters.get ().getStartTime (), TrendView.this.chartParameters.get ().getEndTime () );
@@ -804,7 +804,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                         TrendView.this.chartParameters.set ( parameters );
                         TrendView.this.rangeUpdateJob.get ().schedule ( GUI_JOB_DELAY );
                     }
-                    else if ( ( e.button == 1 ) && ( ( e.stateMask & SWT.ALT ) == SWT.ALT ) )
+                    else if ( e.button == 1 && ( e.stateMask & SWT.ALT ) == SWT.ALT )
                     {
                         // zoom out
                         final DateRange zoomResult = zoomOut ( e.x, 0, TrendView.this.chart.getPlotArea ().getSize ().x, TrendView.this.chartParameters.get ().getStartTime (), TrendView.this.chartParameters.get ().getEndTime () );
@@ -1242,7 +1242,10 @@ public class TrendView extends QueryViewPart implements QueryListener
                         }
                     } );
                 }
-                TrendView.this.chart.getTitle ().setText ( TrendView.this.query.getItemId () );
+                if ( TrendView.this.query != null )
+                {
+                    TrendView.this.chart.getTitle ().setText ( TrendView.this.query.getItemId () );
+                }
                 TrendView.this.chart.getAxisSet ().getYAxis ( 0 ).getTick ().setTickMarkStepHint ( 33 );
                 TrendView.this.chart.getAxisSet ().getXAxis ( 0 ).getTick ().setTickMarkStepHint ( 33 );
                 TrendView.this.parent.layout ( true, true );
@@ -1481,11 +1484,11 @@ public class TrendView extends QueryViewPart implements QueryListener
         {
             return null;
         }
-        double[] result = new double[data.length];
+        final double[] result = new double[data.length];
 
         for ( int i = 0; i < data.length; i++ )
         {
-            result[i] = ( Double.isNaN ( data[i] ) || Double.isInfinite ( data[i] ) ) ? 0.0 : data[i];
+            result[i] = Double.isNaN ( data[i] ) || Double.isInfinite ( data[i] ) ? 0.0 : data[i];
         }
         return result;
     }
