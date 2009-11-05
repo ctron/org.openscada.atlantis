@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
+import org.openscada.da.datasource.testing.test1.QualityDataSourceFactory;
 import org.openscada.da.datasource.testing.test1.RandomLongDataSourceFactory;
 import org.openscada.da.datasource.testing.test1.SawtoothDataSourceFactory;
 import org.openscada.da.datasource.testing.test1.SineDataSourceFactory;
@@ -49,6 +50,8 @@ public class Activator implements BundleActivator
 
     private RandomLongDataSourceFactory factory4;
 
+    private QualityDataSourceFactory factory5;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -80,12 +83,19 @@ public class Activator implements BundleActivator
         properties.put ( Constants.SERVICE_DESCRIPTION, "Testing Factory - Sawtooth" );
         context.registerService ( ConfigurationFactory.class.getName (), this.factory3, properties );
 
-        // register sawtooth factory
+        // register random long factory
         this.factory4 = new RandomLongDataSourceFactory ( context, this.executor );
         properties = new Hashtable<String, String> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, "datasource.test.randomlong" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "Testing Factory - Random Long" );
         context.registerService ( ConfigurationFactory.class.getName (), this.factory4, properties );
+
+        // register quality factory
+        this.factory5 = new QualityDataSourceFactory ( context, this.executor );
+        properties = new Hashtable<String, String> ();
+        properties.put ( ConfigurationAdministrator.FACTORY_ID, "datasource.test.quality" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "Testing Factory - Quality" );
+        context.registerService ( ConfigurationFactory.class.getName (), this.factory5, properties );
     }
 
     /*
@@ -98,6 +108,7 @@ public class Activator implements BundleActivator
         this.factory2.dispose ();
         this.factory3.dispose ();
         this.factory4.dispose ();
+        this.factory5.dispose ();
         this.executor.shutdown ();
     }
 

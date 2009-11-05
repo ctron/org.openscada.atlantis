@@ -20,8 +20,6 @@ public class SineDataSource extends ScheduledDataSource implements DefaultDataSo
 
     private double amp2;
 
-    private int timeDiff;
-
     public SineDataSource ( final ScheduledExecutorService scheduler )
     {
         super ( scheduler );
