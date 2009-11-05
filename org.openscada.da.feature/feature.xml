@@ -5,15 +5,15 @@
       version="0.14.0.qualifier"
       provider-name="inavare GmbH">
 
-   <description url="http://www.example.com/description">
+   <description>
       [Enter Feature Description here.]
    </description>
 
-   <copyright url="http://www.example.com/copyright">
+   <copyright>
       [Enter Copyright Description here.]
    </copyright>
 
-   <license url="http://www.example.com/license">
+   <license>
       [Enter License Description here.]
    </license>
 
