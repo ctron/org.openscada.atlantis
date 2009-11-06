@@ -112,7 +112,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     public StorageService ( final BundleContext bundleContext )
     {
         this.bundleContext = bundleContext;
-        this.services = new HashMap<String, StorageHistoricalItemService> ();
+        services = new HashMap<String, StorageHistoricalItemService> ();
         final String rootFolder = System.getProperty ( FILE_FRAGMENTS_ROOT_FOLDER_SYSTEM_PROPERTY );
         final File root = rootFolder != null ? new File ( rootFolder ) : bundleContext.getDataFile ( "" );
         final String rootPath = root.getPath ();
@@ -120,12 +120,12 @@ public class StorageService implements SelfManagedConfigurationFactory
         {
             logger.error ( String.format ( "could not create root folder for data storage (%s)", rootPath ) );
         }
-        this.backEndFactory = new FileBackEndFactory ( rootPath, Conversions.parseLong ( System.getProperty ( MAX_COMPRESSION_LEVEL_TO_KEEP_FILE_OPEN ), -1 ) );
-        this.fileBackEndManagerFactory = new FileBackEndManagerFactory ( backEndFactory );
-        this.configurationListeners = new LinkedList<ConfigurationListener> ();
-        this.heartBeatBackEnd = null;
-        this.latestReliableTime = Long.MIN_VALUE;
-        this.importMode = Boolean.parseBoolean ( System.getProperty ( IMPORT_MODE ) );
+        backEndFactory = new FileBackEndFactory ( rootPath, Conversions.parseLong ( System.getProperty ( MAX_COMPRESSION_LEVEL_TO_KEEP_FILE_OPEN ), -1 ) );
+        fileBackEndManagerFactory = new FileBackEndManagerFactory ( backEndFactory );
+        configurationListeners = new LinkedList<ConfigurationListener> ();
+        heartBeatBackEnd = null;
+        latestReliableTime = Long.MIN_VALUE;
+        importMode = Boolean.parseBoolean ( System.getProperty ( IMPORT_MODE ) );
     }
 
     /**
@@ -137,7 +137,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         StorageChannelMetaData[] existingMetaData = null;
         try
         {
-            existingMetaData = this.backEndFactory.getExistingBackEndsMetaData ( HEARTBEAT_CONFIGURATION_ID, true );
+            existingMetaData = backEndFactory.getExistingBackEndsMetaData ( HEARTBEAT_CONFIGURATION_ID, true );
         }
         catch ( final Exception e )
         {
@@ -163,7 +163,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             manager.initialize ();
             final BackEndMultiplexer backEnd = new BackEndMultiplexer ( manager );
             backEnd.initialize ( metaData );
-            this.heartBeatBackEnd = backEnd;
+            heartBeatBackEnd = backEnd;
         }
         catch ( final Exception e )
         {
@@ -176,14 +176,14 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public synchronized void performPingOfLife ()
     {
-        if ( this.heartBeatBackEnd != null )
+        if ( heartBeatBackEnd != null )
         {
             final long now = System.currentTimeMillis ();
             final LongValue value = new LongValue ( now, 1, 0, 0, now );
             try
             {
-                this.heartBeatBackEnd.updateLong ( value );
-                this.heartBeatBackEnd.cleanupRelicts ();
+                heartBeatBackEnd.updateLong ( value );
+                heartBeatBackEnd.cleanupRelicts ();
             }
             catch ( final Exception e )
             {
@@ -197,22 +197,22 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     private void deinitializeHeartBeat ()
     {
-        if ( this.heartBeatBackEnd != null )
+        if ( heartBeatBackEnd != null )
         {
             synchronized ( this )
             {
-                this.heartBeatTask.shutdown ();
-                this.heartBeatTask = null;
+                heartBeatTask.shutdown ();
+                heartBeatTask = null;
                 performPingOfLife ();
                 try
                 {
-                    this.heartBeatBackEnd.deinitialize ();
+                    heartBeatBackEnd.deinitialize ();
                 }
                 catch ( final Exception e )
                 {
                     logger.warn ( "could not deinitialize heart beat back end", e );
                 }
-                this.heartBeatBackEnd = null;
+                heartBeatBackEnd = null;
             }
         }
     }
@@ -246,7 +246,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         services.put ( configuration.getId (), service );
         service.start ( bundleContext );
         final Configuration[] addedConfigurationIds = new Configuration[] { configuration };
-        for ( final ConfigurationListener listener : this.configurationListeners )
+        for ( final ConfigurationListener listener : configurationListeners )
         {
             listener.configurationUpdate ( addedConfigurationIds, null );
         }
@@ -262,17 +262,17 @@ public class StorageService implements SelfManagedConfigurationFactory
         initializeHeartBeat ();
 
         // get latest reliable time and start heart beat task
-        this.latestReliableTime = Long.MIN_VALUE;
-        if ( this.heartBeatBackEnd != null )
+        latestReliableTime = Long.MIN_VALUE;
+        if ( heartBeatBackEnd != null )
         {
             // get latest reliable time before system startup
             final long now = System.currentTimeMillis ();
             try
             {
-                final LongValue[] longValues = this.heartBeatBackEnd.getLongValues ( now, now + 1 );
+                final LongValue[] longValues = heartBeatBackEnd.getLongValues ( now, now + 1 );
                 if ( ( longValues != null ) && ( longValues.length > 0 ) )
                 {
-                    this.latestReliableTime = longValues[longValues.length - 1].getValue ();
+                    latestReliableTime = longValues[longValues.length - 1].getValue ();
                 }
             }
             catch ( final Exception e )
@@ -281,8 +281,8 @@ public class StorageService implements SelfManagedConfigurationFactory
             }
 
             // start heart beat task
-            this.heartBeatTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( HEARTBEAT_THREAD_ID ) );
-            this.heartBeatTask.scheduleWithFixedDelay ( new Runnable () {
+            heartBeatTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( HEARTBEAT_THREAD_ID ) );
+            heartBeatTask.scheduleWithFixedDelay ( new Runnable () {
                 public void run ()
                 {
                     performPingOfLife ();
@@ -300,8 +300,8 @@ public class StorageService implements SelfManagedConfigurationFactory
         }
 
         // start clean relicts timer
-        this.relictCleanerTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( RELICT_CLEANER_THREAD_ID ) );
-        this.relictCleanerTask.scheduleWithFixedDelay ( new Runnable () {
+        relictCleanerTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( RELICT_CLEANER_THREAD_ID ) );
+        relictCleanerTask.scheduleWithFixedDelay ( new Runnable () {
             public void run ()
             {
                 cleanupRelicts ();
@@ -314,16 +314,16 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public synchronized void stop ()
     {
-        if ( this.relictCleanerTask != null )
+        if ( relictCleanerTask != null )
         {
-            this.relictCleanerTask.shutdown ();
-            this.relictCleanerTask = null;
+            relictCleanerTask.shutdown ();
+            relictCleanerTask = null;
         }
-        for ( final StorageHistoricalItemService service : this.services.values () )
+        for ( final StorageHistoricalItemService service : services.values () )
         {
             service.stop ();
         }
-        this.services.clear ();
+        services.clear ();
         deinitializeHeartBeat ();
     }
 
@@ -332,13 +332,15 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public void addConfigurationListener ( final ConfigurationListener listener )
     {
-        if ( !this.configurationListeners.contains ( listener ) )
+        if ( !configurationListeners.contains ( listener ) )
         {
-            this.configurationListeners.add ( listener );
+            configurationListeners.add ( listener );
             final List<Configuration> configurations = new ArrayList<Configuration> ();
-            for ( final StorageHistoricalItemService service : this.services.values () )
+            for ( final StorageHistoricalItemService service : services.values () )
             {
-                configurations.add ( new ConfigurationImpl ( service.getBackEndManager ().getConfiguration () ) );
+                final ConfigurationImpl configuration = new ConfigurationImpl ( service.getBackEndManager ().getConfiguration () );
+                configuration.setState ( ConfigurationState.APPLIED );
+                configurations.add ( configuration );
             }
             if ( !configurations.isEmpty () )
             {
@@ -352,7 +354,7 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public void removeConfigurationListener ( final ConfigurationListener listener )
     {
-        this.configurationListeners.remove ( listener );
+        configurationListeners.remove ( listener );
     }
 
     /**
@@ -410,7 +412,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         configuration.setState ( ConfigurationState.ERROR );
 
         // disallow update of already existing service
-        final StorageHistoricalItemService service = this.services.get ( configurationId );
+        final StorageHistoricalItemService service = services.get ( configurationId );
         if ( service != null )
         {
             return new InstantErrorFuture<Configuration> ( new IllegalStateException ( "unable to modify exisiting configuration" ).fillInStackTrace () );
@@ -435,7 +437,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     public synchronized NotifyFuture<Configuration> delete ( final String configurationId )
     {
         // stop service
-        final StorageHistoricalItemService service = this.services.remove ( configurationId );
+        final StorageHistoricalItemService service = services.remove ( configurationId );
         if ( service == null )
         {
             return new InstantErrorFuture<Configuration> ( new IllegalStateException ( String.format ( "Unable to delete non existing service with configuration id '%s'", configurationId ) ).fillInStackTrace () );
@@ -450,7 +452,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         // send notification of changed state
         configuration.setState ( ConfigurationState.AVAILABLE );
         final String[] removedConfigurationIds = new String[] { configurationId };
-        for ( final ConfigurationListener listener : this.configurationListeners )
+        for ( final ConfigurationListener listener : configurationListeners )
         {
             listener.configurationUpdate ( null, removedConfigurationIds );
         }
@@ -464,7 +466,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     public synchronized void cleanupRelicts ()
     {
         logger.info ( "triggering cleaning of old data" );
-        for ( final StorageHistoricalItemService service : this.services.values () )
+        for ( final StorageHistoricalItemService service : services.values () )
         {
             try
             {
