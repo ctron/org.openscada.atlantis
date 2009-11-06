@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenSCADA CA Servlet Console Plug-in
+Bundle-SymbolicName: org.openscada.ca.servlet
+Bundle-Version: 0.14.0.qualifier
+Bundle-Activator: org.openscada.ca.servlet.Activator
+Bundle-Vendor: inavare GmbH
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Import-Package: javax.servlet;version="2.4.0",
+ javax.servlet.http;version="2.4.0",
+ org.apache.log4j,
+ org.openscada.ca;version="0.14.0",
+ org.osgi.framework;version="1.3.0",
+ org.osgi.service.http;version="1.2.0",
+ org.osgi.util.tracker;version="1.3.3"
