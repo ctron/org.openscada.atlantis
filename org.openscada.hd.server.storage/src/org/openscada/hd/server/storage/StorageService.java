@@ -367,15 +367,18 @@ public class StorageService implements SelfManagedConfigurationFactory
         {
             properties.put ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 0, "2d" );
             properties.put ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "90d" );
-            properties.put ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 2, "5y" );
+            properties.put ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 2, "1y" );
+            properties.put ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 3, "5y" );
             properties.put ( ConfigurationImpl.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1s" );
-            properties.put ( ConfigurationImpl.COMPRESSION_TIMESPAN_KEY_PREFIX + 2, "1h" );
+            properties.put ( ConfigurationImpl.COMPRESSION_TIMESPAN_KEY_PREFIX + 2, "15m" );
+            properties.put ( ConfigurationImpl.COMPRESSION_TIMESPAN_KEY_PREFIX + 3, "1h" );
             properties.put ( ConfigurationImpl.ACCEPTED_TIME_DELTA_KEY, "10m" );
-            properties.put ( ConfigurationImpl.MAX_COMPRESSION_LEVEL, "2" );
+            properties.put ( ConfigurationImpl.MAX_COMPRESSION_LEVEL, "3" );
             properties.put ( ConfigurationImpl.DATA_TYPE_KEY, DataType.convertDataTypeToShortString ( DataType.DOUBLE_VALUE ) );
             properties.put ( ConfigurationImpl.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 0, "1d" );
             properties.put ( ConfigurationImpl.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 1, "1d" );
-            properties.put ( ConfigurationImpl.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 2, "1y" );
+            properties.put ( ConfigurationImpl.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 2, "180d" );
+            properties.put ( ConfigurationImpl.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 3, "1y" );
         }
     }
 
