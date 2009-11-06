@@ -80,8 +80,6 @@
 		<openscada.import.repository id="org.openscada.aurora.sdk" version="${aurora.version}"/>
 		<openscada.import.repository id="org.openscada.utgard.sdk" version="${utgard.version}"/>
 		<openscada.import.repository id="org.openscada.atlantis.sdk" version="${atlantis.version}"/>
-		
-		<openscada.import.externalRepository file="GEF-Update-3.5.0.zip"/>
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -105,63 +103,8 @@
   <!-- ===================================================================== -->
   <target name="postSetup">
     <antcall target="getBaseComponents" />
-
-	
   	
-  	<openscada.builder.copyFeature id="org.openscada.core.client.test"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ui.databinding"/>
-  	<openscada.builder.copyPlugin id="org.openscada.external.jfreechart"/>
-  	
-  	<!-- OpenSCADA Core UI -->
-  	
-  	<openscada.builder.copyPlugin id="org.openscada.core.ui"/>
-	<openscada.builder.copyPlugin id="org.openscada.core.ui.connection" />
-  	<openscada.builder.copyPlugin id="org.openscada.core.ui.connection.creator" />
-  	<openscada.builder.copyPlugin id="org.openscada.core.ui.connection.discoverer.file" />
-  	<openscada.builder.copyPlugin id="org.openscada.core.ui.connection.discoverer.osgi" />
-
-	<!-- OpenSCADA DA UI -->
-  	
-  	<openscada.builder.copyFeature id="org.openscada.da.client.test" />
-  	<openscada.builder.copyPlugin id="org.openscada.da.ui"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.base"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.chart"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.connector"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.dataitem.details"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.dataitem.details.extra"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.signalGenerator"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.test"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.viewer"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.ice.client"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.net.client"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.ui.connection" />
-  	<openscada.builder.copyPlugin id="org.openscada.da.ui.connection.creator.net" />
-  	
-  	<!-- OpenSCADA DA Test Servers -->
-  	
-  	<openscada.builder.copyFeature id="org.openscada.da.rcp.LocalTestServer" />
-  	<openscada.builder.copyPlugin id="org.openscada.da.rcp.LocalTestServer"/>
-  	
-  	<!-- OpenSCADA AE UI -->
-  	  	
-  	<openscada.builder.copyFeature id="org.openscada.ae.client.test"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.ui"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.ui.testing"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.ui.connection" />
-  	<openscada.builder.copyPlugin id="org.openscada.ae.ui.connection.creator.net" />
-  	
-  	<!-- OpenSCADA HD UI -->
-  	
-  	<openscada.builder.copyFeature id="org.openscada.hd.client.test"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.ui"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.chart"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.ui.connection" />
-  	<openscada.builder.copyPlugin id="org.openscada.hd.ui.connection.creator.net" />
-  	
-  	<!-- OpenSCADA RCP -->
-  	
-  	<openscada.builder.copyFeature id="org.openscada.rcp.client" />
-  	<openscada.builder.copyPlugin id="org.openscada.rcp.client"/>
+  	<openscada.builder.copyPlugin id="org.openscada.atlantis.products"/>
   </target>
 
   <!-- ===================================================================== -->
