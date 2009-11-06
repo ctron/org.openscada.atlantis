@@ -49,6 +49,7 @@
           target: publish              
          ================================= -->
     <target name="publish" depends="" description="Publish artifacts">
+    	<openscada.publish.product project="atlantis" name="hdserver"/>
     </target>
 	
 	<!-- ================================= 
