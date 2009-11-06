@@ -365,7 +365,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      * If necessary, the passed time will be increased to fit this requirement.
      * @param time time of the entry that has to be created
      */
-    private void createInvalidEntry ( final long time )
+    private synchronized void createInvalidEntry ( final long time )
     {
         if ( rootStorageChannel != null )
         {
