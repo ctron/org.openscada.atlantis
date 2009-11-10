@@ -82,10 +82,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A class that implements org.openscada.core.ui.connection.ConnectionDiscoverer
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.openscada.core.ui.connection.creator.ConnectionCreator"/>
+                  <meta.attribute kind="java" basedOn=":org.openscada.core.ui.connection.ConnectionDiscoverer"/>
                </appinfo>
             </annotation>
          </attribute>
