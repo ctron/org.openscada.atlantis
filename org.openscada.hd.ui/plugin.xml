@@ -34,11 +34,11 @@
          </view>
          <view
                closeable="true"
-               id="org.openscada.hd.ui.QueryControlView"
+               id="org.openscada.hd.ui.TrendView"
                minimized="false"
                moveable="true"
                ratio="0.35"
-               relationship="bottom"
+               relationship="right"
                relative="org.openscada.core.ui.connection.ConnectionView"
                showTitle="true"
                standalone="false"
@@ -49,9 +49,20 @@
                id="org.openscada.hd.ui.QueryDataView"
                minimized="false"
                moveable="true"
-               ratio="0.75"
                relationship="stack"
-               relative="org.eclipse.ui.editorss"
+               relative="org.openscada.hd.ui.TrendView"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="org.openscada.hd.ui.QueryControlView"
+               minimized="false"
+               moveable="true"
+               ratio="0.35"
+               relationship="bottom"
+               relative="org.openscada.core.ui.connection.ConnectionView"
                showTitle="true"
                standalone="false"
                visible="true">
