@@ -79,6 +79,11 @@
 			<groupId>org.apache.log4j</groupId>
 			<artifactId>com.springsource.org.apache.log4j</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>jmdns</groupId>
+			<artifactId>jmdns</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>

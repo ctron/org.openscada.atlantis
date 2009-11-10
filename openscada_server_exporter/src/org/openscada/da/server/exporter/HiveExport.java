@@ -35,10 +35,13 @@ public class HiveExport
 
     private final Collection<Export> exports = new CopyOnWriteArrayList<Export> ();
 
-    public HiveExport ( final Hive hive )
+	private final Controller controller;
+
+    public HiveExport ( Controller controller, final Hive hive )
     {
         super ();
         this.hive = hive;
+        this.controller = controller;
     }
 
     public synchronized void start () throws Exception
@@ -113,7 +116,7 @@ public class HiveExport
             if ( ci.getDriver ().equalsIgnoreCase ( "net" ) || ci.getDriver ().equalsIgnoreCase ( "gmpp" ) )
             {
                 log.debug ( "Create new 'net' exporter" );
-                return new NetExport ( this.hive, ci );
+                return new NetExport ( controller, this.hive, ci );
             }
             else if ( ci.getDriver ().equalsIgnoreCase ( "ice" ) )
             {

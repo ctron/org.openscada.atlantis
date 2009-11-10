@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.jmdns.JmDNS;
+
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.openscada.da.core.server.Hive;
@@ -35,10 +37,26 @@ public class Controller
 
     private final List<HiveExport> hives = new LinkedList<HiveExport> ();
 
-    public Controller ( final ConfigurationDocument configurationDocument ) throws ConfigurationException
+    private final JmDNS bonjour;
+
+    public Controller ( final ConfigurationDocument configurationDocument ) throws ConfigurationException, IOException
     {
         super ();
         configure ( configurationDocument );
+
+        if ( Boolean.getBoolean ( "export.bonjour" ) )
+        {
+            this.bonjour = new JmDNS ();
+        }
+        else
+        {
+            this.bonjour = null;
+        }
+    }
+
+    public JmDNS getBonjour ()
+    {
+        return this.bonjour;
     }
 
     public Controller ( final String file ) throws XmlException, IOException, ConfigurationException
@@ -93,7 +111,7 @@ public class Controller
                 final Hive hiveInstance = factory.createHive ( ref, hive.getConfiguration () );
 
                 // create the hive export object
-                final HiveExport hiveExport = new HiveExport ( hiveInstance );
+                final HiveExport hiveExport = new HiveExport ( this, hiveInstance );
 
                 // export the hive
                 for ( final ExportType export : hive.getExportList () )

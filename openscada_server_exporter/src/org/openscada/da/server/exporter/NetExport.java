@@ -19,6 +19,12 @@
 
 package org.openscada.da.server.exporter;
 
+import java.io.IOException;
+import java.util.Hashtable;
+
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceInfo;
+
 import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.core.server.Hive;
@@ -34,12 +40,15 @@ public class NetExport implements Export
 
     private final ConnectionInformation connectionInformation;
 
-    public NetExport ( final Hive hive, final ConnectionInformation connectionInformation ) throws Exception
+    private final Controller controller;
+
+    public NetExport ( final Controller controller, final Hive hive, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ();
         this.hive = hive;
 
         this.connectionInformation = connectionInformation;
+        this.controller = controller;
 
         logger.debug ( "Instatiate exporter class" );
 
@@ -56,11 +65,47 @@ public class NetExport implements Export
         logger.info ( String.format ( "Starting exporter (%s) on port %s", this.hive, this.connectionInformation ) );
 
         this.exporter.start ();
+
+        registerBonjour ();
+    }
+
+    private void registerBonjour () throws IOException
+    {
+        final JmDNS bonjour = this.controller.getBonjour ();
+        if ( bonjour != null )
+        {
+            final String type = String.format ( "_openscada_%s_%s._tcp.local", this.connectionInformation.getInterface (), this.connectionInformation.getDriver () );
+            final Hashtable<Object, Object> props = new Hashtable<Object, Object> ();
+            props.putAll ( this.connectionInformation.getProperties () );
+
+            String name = this.connectionInformation.toString ();
+            name = name.replace ( '.', '_' );
+
+            final ServiceInfo info = new ServiceInfo ( type, name, this.connectionInformation.getSecondaryTarget (), 0, 0, props );
+
+            logger.info ( "Exporting using zeroconf: " + info );
+
+            bonjour.registerService ( info );
+        }
     }
 
     public void stop () throws Exception
     {
         this.exporter.stop ();
+        unregisterBonjour ();
+    }
+
+    private void unregisterBonjour ()
+    {
+        final JmDNS bonjour = this.controller.getBonjour ();
+        if ( bonjour != null )
+        {
+            final String type = String.format ( "_openscada_%s_%s", this.connectionInformation.getInterface (), this.connectionInformation.getDriver () );
+            final Hashtable<Object, Object> props = new Hashtable<Object, Object> ();
+            props.putAll ( this.connectionInformation.getProperties () );
+            final ServiceInfo info = new ServiceInfo ( type, this.connectionInformation.toString (), this.connectionInformation.getSecondaryTarget (), 0, 0, props );
+            bonjour.unregisterService ( info );
+        }
     }
 
 }
