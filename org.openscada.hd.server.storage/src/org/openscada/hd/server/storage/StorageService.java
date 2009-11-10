@@ -66,6 +66,9 @@ public class StorageService implements SelfManagedConfigurationFactory
     /** Maximum data age of heart beat data. */
     private final static long PROPOSED_HEART_BEAT_DATA_AGE = 1;
 
+    /** File time span of heart beat data. */
+    private final static long HEART_BEAT_FILE_TIME_SPAN = 1000;
+
     /** Internal configuration id for heartbeat back end. */
     private final static String HEARTBEAT_CONFIGURATION_ID = "HEARTBEAT";
 
@@ -149,7 +152,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         final boolean createNewBackEnd = ( existingMetaData == null ) || ( existingMetaData.length == 0 );
         if ( createNewBackEnd )
         {
-            metaData = new StorageChannelMetaData ( HEARTBEAT_CONFIGURATION_ID, CalculationMethod.NATIVE, new long[0], 0, now, now + 1, PROPOSED_HEART_BEAT_DATA_AGE, 0, DataType.LONG_VALUE );
+            metaData = new StorageChannelMetaData ( HEARTBEAT_CONFIGURATION_ID, CalculationMethod.NATIVE, new long[0], 0, now, now + PROPOSED_HEART_BEAT_DATA_AGE, PROPOSED_HEART_BEAT_DATA_AGE, 0, DataType.LONG_VALUE );
         }
         else
         {
@@ -158,7 +161,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         try
         {
             final org.openscada.hsdb.configuration.Configuration configuration = Conversions.convertMetaDatasToConfiguration ( new StorageChannelMetaData[] { metaData } );
-            configuration.getData ().put ( ConfigurationImpl.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 0, "" + 1 );
+            configuration.getData ().put ( ConfigurationImpl.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 0, HEART_BEAT_FILE_TIME_SPAN + Conversions.MILLISECOND_SPAN_SUFFIX );
             final FileBackEndManager manager = fileBackEndManagerFactory.getBackEndManager ( configuration, true );
             manager.initialize ();
             final BackEndMultiplexer backEnd = new BackEndMultiplexer ( manager );
