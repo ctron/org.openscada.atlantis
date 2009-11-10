@@ -336,7 +336,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 {
                     startIndex++;
                 }
-                resultValues.add ( calculationLogicProvider.generateValues ( filledValues ) );
+                resultValues.add ( calculationLogicProvider.generateValue ( filledValues ) );
             }
             final Value[] resultValueArray = new Value[resultSize];
             if ( outputDataType == DataType.LONG_VALUE )

@@ -120,17 +120,17 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         this.backEndManager = backEndManager;
         final org.openscada.hsdb.configuration.Configuration configuration = backEndManager.getConfiguration ();
         calculationMethods = Conversions.getCalculationMethods ( configuration );
-        this.rootStorageChannel = null;
-        this.lockObject = new Object ();
-        this.starting = false;
-        this.started = false;
-        this.openQueries = new LinkedList<QueryImpl> ();
+        rootStorageChannel = null;
+        lockObject = new Object ();
+        starting = false;
+        started = false;
+        openQueries = new LinkedList<QueryImpl> ();
         this.latestReliableTime = latestReliableTime;
         this.importMode = importMode;
         final Map<String, String> data = configuration.getData ();
-        this.proposedDataAge = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 0 ) );
-        this.acceptedTimeDelta = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.ACCEPTED_TIME_DELTA_KEY ) );
-        this.expectedDataType = DataType.convertShortStringToDataType ( data.get ( ConfigurationImpl.DATA_TYPE_KEY ) );
+        proposedDataAge = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 0 ) );
+        acceptedTimeDelta = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.ACCEPTED_TIME_DELTA_KEY ) );
+        expectedDataType = DataType.convertShortStringToDataType ( data.get ( ConfigurationImpl.DATA_TYPE_KEY ) );
         registration = null;
     }
 
@@ -294,7 +294,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                     final DataType receivedDataType = variant.isBoolean () || variant.isInteger () || variant.isLong () ? DataType.LONG_VALUE : DataType.DOUBLE_VALUE;
                     if ( !variant.isNull () && ( expectedDataType != receivedDataType ) )
                     {
-                        logger.warn ( String.format ( "received data type (%s) does not match expected data type (%s)!", receivedDataType, expectedDataType ) );
+                        logger.warn ( String.format ( "received data type (%s) does not match expected data type (%s) for configuration with id '%s'!", receivedDataType, expectedDataType, backEndManager.getConfiguration ().getId () ) );
                     }
                 }
             } );
@@ -307,7 +307,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     public synchronized void processData ( final BaseValue value )
     {
-        if ( !this.started || ( this.rootStorageChannel == null ) || ( value == null ) )
+        if ( !started || ( rootStorageChannel == null ) || ( value == null ) )
         {
             return;
         }
@@ -329,8 +329,8 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
             if ( value instanceof LongValue )
             {
                 final LongValue longValue = (LongValue)value;
-                this.rootStorageChannel.updateLong ( longValue );
-                for ( final QueryImpl query : this.openQueries )
+                rootStorageChannel.updateLong ( longValue );
+                for ( final QueryImpl query : openQueries )
                 {
                     query.updateLong ( longValue );
                 }
@@ -338,8 +338,8 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
             else
             {
                 final DoubleValue doubleValue = (DoubleValue)value;
-                this.rootStorageChannel.updateDouble ( doubleValue );
-                for ( final QueryImpl query : this.openQueries )
+                rootStorageChannel.updateDouble ( doubleValue );
+                for ( final QueryImpl query : openQueries )
                 {
                     query.updateDouble ( doubleValue );
                 }
