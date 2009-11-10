@@ -61,7 +61,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     private final static long HEART_BEATS_PERIOD = 1000;
 
     /** Period in milliseconds between two consecutive attempts to delete old data. */
-    private final static long CLEANER_TASK_PERIOD = 1000 * 60;
+    private final static long CLEANER_TASK_PERIOD = 1000 * 60 * 10;
 
     /** Maximum data age of heart beat data. */
     private final static long PROPOSED_HEART_BEAT_DATA_AGE = 1;
