@@ -146,7 +146,7 @@ public class StorageService implements SelfManagedConfigurationFactory
 
         // create new backend if none exist
         StorageChannelMetaData metaData = null;
-        final boolean createNewBackEnd = existingMetaData == null || existingMetaData.length == 0;
+        final boolean createNewBackEnd = ( existingMetaData == null ) || ( existingMetaData.length == 0 );
         if ( createNewBackEnd )
         {
             metaData = new StorageChannelMetaData ( HEARTBEAT_CONFIGURATION_ID, CalculationMethod.NATIVE, new long[0], 0, now, now + 1, PROPOSED_HEART_BEAT_DATA_AGE, 0, DataType.LONG_VALUE );
