@@ -1,6 +1,7 @@
 package org.openscada.hd.server.storage;
 
 import java.io.File;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,9 +16,7 @@ import org.openscada.ca.ConfigurationListener;
 import org.openscada.ca.ConfigurationState;
 import org.openscada.ca.SelfManagedConfigurationFactory;
 import org.openscada.hd.server.storage.internal.ConfigurationImpl;
-import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.backend.BackEndManager;
-import org.openscada.hsdb.backend.BackEndMultiplexer;
 import org.openscada.hsdb.backend.file.FileBackEndFactory;
 import org.openscada.hsdb.backend.file.FileBackEndManager;
 import org.openscada.hsdb.backend.file.FileBackEndManagerFactory;
@@ -25,7 +24,6 @@ import org.openscada.hsdb.calculation.CalculationMethod;
 import org.openscada.hsdb.concurrent.HsdbThreadFactory;
 import org.openscada.hsdb.configuration.Conversions;
 import org.openscada.hsdb.datatypes.DataType;
-import org.openscada.hsdb.datatypes.LongValue;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -63,14 +61,8 @@ public class StorageService implements SelfManagedConfigurationFactory
     /** Period in milliseconds between two consecutive attempts to delete old data. */
     private final static long CLEANER_TASK_PERIOD = 1000 * 60 * 10;
 
-    /** Maximum data age of heart beat data. */
-    private final static long PROPOSED_HEART_BEAT_DATA_AGE = 1;
-
-    /** File time span of heart beat data. */
-    private final static long HEART_BEAT_FILE_TIME_SPAN = 1000;
-
-    /** Internal configuration id for heartbeat back end. */
-    private final static String HEARTBEAT_CONFIGURATION_ID = "HEARTBEAT";
+    /** Name of file that is used to store heartbeat information. */
+    private final static String HEARTBEAT_FILENAME = "heartbeat.hd";
 
     /** Internal id for heart beat thread. */
     private final static String HEARTBEAT_THREAD_ID = "hd.Heartbeat";
@@ -97,7 +89,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     private final boolean importMode;
 
     /** Back end used to store heart beat data. */
-    private BackEndMultiplexer heartBeatBackEnd;
+    private RandomAccessFile heartBeatFile;
 
     /** Task that will create periodical entries in the heart bear back end. */
     private ScheduledExecutorService heartBeatTask;
@@ -126,7 +118,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         backEndFactory = new FileBackEndFactory ( rootPath, Conversions.parseLong ( System.getProperty ( MAX_COMPRESSION_LEVEL_TO_KEEP_FILE_OPEN ), -1 ) );
         fileBackEndManagerFactory = new FileBackEndManagerFactory ( backEndFactory );
         configurationListeners = new LinkedList<ConfigurationListener> ();
-        heartBeatBackEnd = null;
+        heartBeatFile = null;
         latestReliableTime = Long.MIN_VALUE;
         importMode = Boolean.parseBoolean ( System.getProperty ( IMPORT_MODE ) );
     }
@@ -136,41 +128,13 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     private void initializeHeartBeat ()
     {
-        final long now = System.currentTimeMillis ();
-        StorageChannelMetaData[] existingMetaData = null;
         try
         {
-            existingMetaData = backEndFactory.getExistingBackEndsMetaData ( HEARTBEAT_CONFIGURATION_ID, true );
+            heartBeatFile = new RandomAccessFile ( new File ( backEndFactory.getFileRoot (), HEARTBEAT_FILENAME ), "rwd" );
         }
         catch ( final Exception e )
         {
             logger.error ( "unable to retrieve existing heart beat back end meta data", e );
-        }
-
-        // create new backend if none exist
-        StorageChannelMetaData metaData = null;
-        final boolean createNewBackEnd = ( existingMetaData == null ) || ( existingMetaData.length == 0 );
-        if ( createNewBackEnd )
-        {
-            metaData = new StorageChannelMetaData ( HEARTBEAT_CONFIGURATION_ID, CalculationMethod.NATIVE, new long[0], 0, now, now + PROPOSED_HEART_BEAT_DATA_AGE, PROPOSED_HEART_BEAT_DATA_AGE, 0, DataType.LONG_VALUE );
-        }
-        else
-        {
-            metaData = existingMetaData[existingMetaData.length - 1];
-        }
-        try
-        {
-            final org.openscada.hsdb.configuration.Configuration configuration = Conversions.convertMetaDatasToConfiguration ( new StorageChannelMetaData[] { metaData } );
-            configuration.getData ().put ( ConfigurationImpl.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 0, HEART_BEAT_FILE_TIME_SPAN + Conversions.MILLISECOND_SPAN_SUFFIX );
-            final FileBackEndManager manager = fileBackEndManagerFactory.getBackEndManager ( configuration, true );
-            manager.initialize ();
-            final BackEndMultiplexer backEnd = new BackEndMultiplexer ( manager );
-            backEnd.initialize ( metaData );
-            heartBeatBackEnd = backEnd;
-        }
-        catch ( final Exception e )
-        {
-            logger.error ( String.format ( "unable to create heart beat back end (%s)", metaData ), e );
         }
     }
 
@@ -179,18 +143,17 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public synchronized void performPingOfLife ()
     {
-        if ( heartBeatBackEnd != null )
+        if ( heartBeatFile != null )
         {
             final long now = System.currentTimeMillis ();
-            final LongValue value = new LongValue ( now, 1, 0, 0, now );
             try
             {
-                heartBeatBackEnd.updateLong ( value );
-                heartBeatBackEnd.cleanupRelicts ();
+                heartBeatFile.seek ( 0 );
+                heartBeatFile.writeLong ( now );
             }
             catch ( final Exception e )
             {
-                logger.error ( String.format ( "unable to store heart beat value" ), e );
+                logger.error ( String.format ( "unable to write heart beat value to file" ), e );
             }
         }
     }
@@ -200,22 +163,19 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     private void deinitializeHeartBeat ()
     {
-        if ( heartBeatBackEnd != null )
+        if ( heartBeatFile != null )
         {
             synchronized ( this )
             {
-                heartBeatTask.shutdown ();
-                heartBeatTask = null;
-                performPingOfLife ();
                 try
                 {
-                    heartBeatBackEnd.deinitialize ();
+                    heartBeatFile.close ();
                 }
                 catch ( final Exception e )
                 {
-                    logger.warn ( "could not deinitialize heart beat back end", e );
+                    logger.error ( "could not close heart beat file", e );
                 }
-                heartBeatBackEnd = null;
+                heartBeatFile = null;
             }
         }
     }
@@ -266,16 +226,15 @@ public class StorageService implements SelfManagedConfigurationFactory
 
         // get latest reliable time and start heart beat task
         latestReliableTime = Long.MIN_VALUE;
-        if ( heartBeatBackEnd != null )
+        if ( heartBeatFile != null )
         {
             // get latest reliable time before system startup
-            final long now = System.currentTimeMillis ();
             try
             {
-                final LongValue[] longValues = heartBeatBackEnd.getLongValues ( now, now + 1 );
-                if ( ( longValues != null ) && ( longValues.length > 0 ) )
+                if ( heartBeatFile.length () >= 8 )
                 {
-                    latestReliableTime = longValues[longValues.length - 1].getValue ();
+                    heartBeatFile.seek ( 0 );
+                    latestReliableTime = heartBeatFile.readLong ();
                 }
             }
             catch ( final Exception e )
@@ -296,10 +255,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         // get information of existing configurations
         for ( final FileBackEndManager backEndManager : fileBackEndManagerFactory.getBackEndManagers () )
         {
-            if ( !HEARTBEAT_CONFIGURATION_ID.equals ( backEndManager.getConfiguration ().getId () ) )
-            {
-                createAndAddService ( backEndManager );
-            }
+            createAndAddService ( backEndManager );
         }
 
         // start clean relicts timer
@@ -393,14 +349,6 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public NotifyFuture<Configuration> update ( final String configurationId, final Map<String, String> inputProperties )
     {
-        // avoid configurations with the same id as the heart beat configuration
-        if ( HEARTBEAT_CONFIGURATION_ID.equals ( configurationId ) )
-        {
-            final String message = String.format ( "the configuration id '%s' is reserved for internal usage. please use a different id", configurationId );
-            logger.error ( message );
-            throw new RuntimeException ( message );
-        }
-
         // provide default settings
         final Map<String, String> properties = new HashMap<String, String> ();
         if ( inputProperties != null )
