@@ -414,7 +414,6 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     public synchronized void start ( final BundleContext bundleContext )
     {
-        stop ();
         starting = true;
         started = true;
         final String configurationId = backEndManager.getConfiguration ().getId ();
@@ -554,6 +553,16 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         if ( started && !importMode )
         {
             createInvalidEntry ( System.currentTimeMillis () );
+        }
+
+        // deinitialize back end manager
+        try
+        {
+            backEndManager.deinitialize ();
+        }
+        catch ( final Exception e )
+        {
+            logger.error ( String.format ( "unable to deinitialize back end manager for configuration with id '%s'", backEndManager.getConfiguration ().getId () ), e );
         }
 
         // set running flag

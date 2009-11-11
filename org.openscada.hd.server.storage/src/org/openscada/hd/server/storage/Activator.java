@@ -70,32 +70,27 @@ public class Activator implements BundleActivator
         if ( ( lockObject != null ) && ( executor != null ) )
         {
             final Object lock = lockObject;
-            executor.submit ( new Runnable () {
-                public void run ()
+            synchronized ( lock )
+            {
+                final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
+                logger.info ( bundleName + " stopping..." );
+                if ( serviceRegistration != null )
                 {
-                    synchronized ( lock )
-                    {
-                        final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
-                        logger.info ( bundleName + " stopping..." );
-                        if ( serviceRegistration != null )
-                        {
-                            serviceRegistration.unregister ();
-                            serviceRegistration = null;
-                            logger.info ( bundleName + "service unregistered" );
-                        }
-                        if ( service != null )
-                        {
-                            service.stop ();
-                            service = null;
-                            logger.info ( bundleName + " service stopped" );
-                        }
-                        if ( executor != null )
-                        {
-                            executor = null;
-                        }
-                    }
+                    serviceRegistration.unregister ();
+                    serviceRegistration = null;
+                    logger.info ( bundleName + "service unregistered" );
                 }
-            } );
+                if ( service != null )
+                {
+                    service.stop ();
+                    service = null;
+                    logger.info ( bundleName + " service stopped" );
+                }
+                if ( executor != null )
+                {
+                    executor = null;
+                }
+            }
         }
     }
 }
