@@ -47,9 +47,12 @@
       <import plugin="org.eclipse.equinox.registry"/>
       <import plugin="org.eclipse.core.jobs"/>
       <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="org.eclipse.equinox.concurrent"/>
       <import plugin="ch.ethz.iks.slp"/>
       <import plugin="org.eclipse.equinox.common" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ecf.discovery" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ecf" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ecf.identity" version="2.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ecf" version="2.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -250,6 +253,13 @@
 
    <plugin
          id="org.eclipse.ecf.identity"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.concurrent"
          download-size="0"
          install-size="0"
          version="0.0.0"
