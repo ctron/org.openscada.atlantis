@@ -19,8 +19,8 @@ public class QueryBufferBean extends QueryBuffer
     {
         final Calendar start = Calendar.getInstance ();
         final Calendar end = (Calendar)start.clone ();
-        start.add ( Calendar.MINUTE, -30 );
-        end.add ( Calendar.MINUTE, 30 );
+        start.add ( Calendar.MINUTE, -500 );
+        end.add ( Calendar.MINUTE, 10 );
 
         return new QueryParameters ( start, end, 25 );
     }
