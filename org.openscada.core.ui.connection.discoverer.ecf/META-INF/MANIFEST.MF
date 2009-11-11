@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenSCADA ECF Discoverer
+Bundle-SymbolicName: org.openscada.core.ui.connection.discoverer.ecf;singleton:=true
+Bundle-Version: 0.14.0.qualifier
+Bundle-Activator: org.openscada.core.ui.connection.discoverer.ecf.Activator
+Bundle-Vendor: inavare GmbH
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ecf.discovery;bundle-version="3.0.0",
+ org.openscada.core.ui.connection,
+ org.eclipse.ecf;bundle-version="3.0.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Import-Package: org.osgi.service.discovery;version="1.0.0"

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.openscada.core.ui.connection.discoverer">
+      <discoverer
+            class="org.openscada.core.ui.connection.discoverer.ecf.ConnectionDiscovererImpl"
+            id="org.openscada.core.ui.connection.discoverer.ecf.discoverer"
+            name="Dynamic Service Discovery (ECF)">
+      </discoverer>
+   </extension>
+
+</plugin>
