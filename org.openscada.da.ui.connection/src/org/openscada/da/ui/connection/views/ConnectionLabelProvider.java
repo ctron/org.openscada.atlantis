@@ -47,7 +47,13 @@ public class ConnectionLabelProvider extends CommonListeningLabelProvider
 
     private void updateItem ( final StyledViewerLabel label, final DataItemEntry dataItemEntry )
     {
-        label.setText ( dataItemEntry.getName () );
+        String itemName = dataItemEntry.getName ();
+        if ( itemName == null || itemName.length () == 0 )
+        {
+            itemName = " ";
+        }
+        label.setText ( itemName );
+
         if ( dataItemEntry.getIODirections ().containsAll ( Arrays.asList ( IODirection.INPUT, IODirection.OUTPUT ) ) )
         {
             label.setImage ( this.resource.createImage ( ImageDescriptor.createFromFile ( ConnectionLabelProvider.class, "icons/item_io.gif" ) ) );
@@ -69,6 +75,12 @@ public class ConnectionLabelProvider extends CommonListeningLabelProvider
     private void updateFolder ( final StyledViewerLabel label, final FolderEntry folderEntry )
     {
         label.setImage ( this.resource.createImage ( ImageDescriptor.createFromFile ( ConnectionLabelProvider.class, "icons/folder.gif" ) ) );
-        label.setText ( folderEntry.getName () );
+
+        String folderName = folderEntry.getName ();
+        if ( folderName == null || folderName.length () == 0 )
+        {
+            folderName = " ";
+        }
+        label.setText ( folderName );
     }
 }
