@@ -6,17 +6,21 @@
       provider-name="inavare GmbH"
       plugin="org.openscada.core.ui">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      OpenSCADA Core UI Feature
    </description>
 
-   <copyright url="http://www.example.com/copyright">
+   <copyright>
       [Enter Copyright Description here.]
    </copyright>
 
-   <license url="http://www.example.com/license">
+   <license>
       [Enter License Description here.]
    </license>
+
+   <includes
+         id="org.eclipse.ecf.core"
+         version="0.0.0"/>
 
    <requires>
       <import plugin="com.springsource.org.apache.log4j"/>
@@ -37,9 +41,14 @@
       <import plugin="org.openscada.core.connection.provider" version="0.14.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.openscada.ui.databinding" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.ui" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.utils.osgi" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.openscada.core.ui.connection.creator" version="0.14.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.core.ui.connection" version="0.14.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ecf.discovery" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ecf" version="3.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -135,6 +144,13 @@
 
    <plugin
          id="org.openscada.core.ui.connection.creator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.core.ui.connection.discoverer.ecf"
          download-size="0"
          install-size="0"
          version="0.0.0"
