@@ -96,6 +96,19 @@ public class ConnectionDiscovererBean implements IAdaptable, ConnectionDiscovery
 
     public void discoveryUpdate ( final ConnectionInformation[] added, final ConnectionInformation[] removed )
     {
+        this.knownConnections.getRealm ().asyncExec ( new Runnable () {
+
+            public void run ()
+            {
+                ConnectionDiscovererBean.this.handleDiscoveryUpdate ( added, removed );
+            }
+        } );
+
+    }
+
+    protected void handleDiscoveryUpdate ( final ConnectionInformation[] added, final ConnectionInformation[] removed )
+    {
+
         if ( removed != null )
         {
             for ( final ConnectionInformation info : removed )
