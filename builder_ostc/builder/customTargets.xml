@@ -82,6 +82,7 @@
 		<openscada.import.repository id="org.openscada.atlantis.sdk" version="${atlantis.version}"/>
 		
 		<openscada.import.externalRepository file="GEF-Update-3.5.0.zip" />
+		<openscada.import.externalRepository file="org.eclipse.ecf.sdk-3.1.0.v20091012-1618-p2repo.zip" />
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
