@@ -105,8 +105,6 @@
   <!-- ===================================================================== -->
   <target name="postSetup">
     <antcall target="getBaseComponents" />
-
-	
   	
   	<openscada.builder.copyFeature id="org.openscada.core.client.test"/>
   	<openscada.builder.copyPlugin id="org.openscada.ui.databinding"/>
