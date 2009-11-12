@@ -67,6 +67,9 @@ public class StorageService implements SelfManagedConfigurationFactory
     /** Internal id for heart beat thread. */
     private final static String HEARTBEAT_THREAD_ID = "hd.Heartbeat";
 
+    /** Maximum file size of the heart beat file. */
+    private final static int MAX_HEARTBEAT_FILE_SIZE = 8;
+
     /** Internal id for relicts cleaner thread. */
     private final static String RELICT_CLEANER_THREAD_ID = "hd.RelictCleaner";
 
@@ -231,7 +234,11 @@ public class StorageService implements SelfManagedConfigurationFactory
             // get latest reliable time before system startup
             try
             {
-                if ( heartBeatFile.length () >= 8 )
+                if ( heartBeatFile.length () > MAX_HEARTBEAT_FILE_SIZE )
+                {
+                    heartBeatFile.setLength ( MAX_HEARTBEAT_FILE_SIZE );
+                }
+                if ( heartBeatFile.length () == MAX_HEARTBEAT_FILE_SIZE )
                 {
                     heartBeatFile.seek ( 0 );
                     latestReliableTime = heartBeatFile.readLong ();
