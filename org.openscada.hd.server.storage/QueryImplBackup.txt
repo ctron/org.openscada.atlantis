@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @see org.openscada.hd.server.storage.StorageHistoricalItemService
  * @author Ludwig Straub
  */
-public class QueryImplBackup implements Query, ExtendedStorageChannel
+public class QueryImpl implements Query, ExtendedStorageChannel
 {
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( QueryImplBackup.class );
@@ -136,7 +136,7 @@ public class QueryImplBackup implements Query, ExtendedStorageChannel
      * @param parameters input parameters of the query
      * @param calculationMethods set of calculation methods that will be available via the service
      */
-    public QueryImplBackup ( final StorageHistoricalItemService service, final QueryListener listener, final QueryParameters parameters, final CalculationMethod[] calculationMethods )
+    public QueryImpl ( final StorageHistoricalItemService service, final QueryListener listener, final QueryParameters parameters, final CalculationMethod[] calculationMethods )
     {
         this.service = service;
         this.listener = listener;
@@ -795,7 +795,7 @@ public class QueryImplBackup implements Query, ExtendedStorageChannel
                 closerTask.submit ( new Runnable () {
                     public void run ()
                     {
-                        service.removeQuery ( QueryImplBackup.this );
+                        service.removeQuery ( QueryImpl.this );
                     }
                 } );
             }
