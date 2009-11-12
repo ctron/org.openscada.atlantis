@@ -68,7 +68,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     private final static String HEARTBEAT_THREAD_ID = "hd.Heartbeat";
 
     /** Maximum file size of the heart beat file. */
-    private final static int MAX_HEARTBEAT_FILE_SIZE = 8;
+    private final static int MAX_HEARTBEAT_FILE_SIZE = 8 * 2;
 
     /** Internal id for relicts cleaner thread. */
     private final static String RELICT_CLEANER_THREAD_ID = "hd.RelictCleaner";
@@ -133,7 +133,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     {
         try
         {
-            heartBeatFile = new RandomAccessFile ( new File ( backEndFactory.getFileRoot (), HEARTBEAT_FILENAME ), "rwd" );
+            heartBeatFile = new RandomAccessFile ( new File ( backEndFactory.getFileRoot (), HEARTBEAT_FILENAME ), "rw" );
         }
         catch ( final Exception e )
         {
@@ -153,6 +153,8 @@ public class StorageService implements SelfManagedConfigurationFactory
             {
                 heartBeatFile.seek ( 0 );
                 heartBeatFile.writeLong ( now );
+                heartBeatFile.writeDouble ( Double.longBitsToDouble ( now ) );
+                heartBeatFile.getChannel ().force ( false );
             }
             catch ( final Exception e )
             {
@@ -241,7 +243,16 @@ public class StorageService implements SelfManagedConfigurationFactory
                 if ( heartBeatFile.length () == MAX_HEARTBEAT_FILE_SIZE )
                 {
                     heartBeatFile.seek ( 0 );
-                    latestReliableTime = heartBeatFile.readLong ();
+                    final long latestReliableTime = heartBeatFile.readLong ();
+                    final long parity = Double.doubleToLongBits ( heartBeatFile.readDouble () );
+                    if ( latestReliableTime == parity )
+                    {
+                        this.latestReliableTime = latestReliableTime;
+                    }
+                    else
+                    {
+                        logger.warn ( "invalid time stamp retrieved from heartbeat file" );
+                    }
                 }
             }
             catch ( final Exception e )
