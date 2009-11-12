@@ -143,8 +143,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         initialLoadPerformed = false;
         maximumCompressionLevel = 0;
         executeOnce = false;
-        this.calculationLogicProviderFactory = new CalculationLogicProviderFactoryImpl ();
-        this.closed = ( service == null ) || ( listener == null ) || ( parameters == null ) || ( parameters.getStartTimestamp () == null ) || ( parameters.getEndTimestamp () == null );
+        calculationLogicProviderFactory = new CalculationLogicProviderFactoryImpl ();
+        closed = ( service == null ) || ( listener == null ) || ( parameters == null ) || ( parameters.getStartTimestamp () == null ) || ( parameters.getEndTimestamp () == null );
         if ( closed )
         {
             logger.error ( "not all data is available to execute query via 'new query'. no action will be performed" );
@@ -171,7 +171,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         this.storageChannels = storageChannels;
         for ( final Long compressionLevel : storageChannels.keySet () )
         {
-            this.maximumCompressionLevel = Math.max ( maximumCompressionLevel, compressionLevel );
+            maximumCompressionLevel = Math.max ( maximumCompressionLevel, compressionLevel );
         }
         receivingTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_RECEIVER_THREAD_ID ) );
         sendingTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_SENDER_THREAD_ID ) );
@@ -299,7 +299,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         final MutableValueInformation[] resultValueInformations = new MutableValueInformation[resultSize];
         for ( int i = 0; i < resultValueInformations.length; i++ )
         {
-            resultValueInformations[i] = new MutableValueInformation ( null, null, 1.0, Long.MAX_VALUE );
+            resultValueInformations[i] = new MutableValueInformation ( null, null, 1.0, 0.0, Long.MAX_VALUE );
         }
         final Map<String, Value[]> resultMap = new HashMap<String, Value[]> ();
         for ( final CalculationMethod calculationMethod : calculationMethods )
@@ -354,7 +354,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                     valueInformation.setStartTimestamp ( cstartTime );
                     valueInformation.setEndTimestamp ( cendTime );
                     valueInformation.setQuality ( Math.min ( longValue.getQualityIndicator (), valueInformation.getQuality () ) );
-                    valueInformation.setManual ( Math.min ( longValue.getManualIndicator (), valueInformation.getManual () ) );
+                    valueInformation.setManual ( Math.max ( longValue.getManualIndicator (), valueInformation.getManual () ) );
                     valueInformation.setSourceValues ( Math.min ( longValue.getBaseValueCount (), valueInformation.getSourceValues () ) );
                 }
             }
@@ -570,7 +570,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
             if ( ( parameters == null ) || ( start == null ) || ( end == null ) || ( parameters.getEntries () < 1 ) )
             {
                 this.initialLoadPerformed = true;
-                this.dataChanged = false;
+                dataChanged = false;
                 final Set<String> calculationMethodsAsString = new HashSet<String> ();
                 for ( final CalculationMethod calculationMethod : calculationMethods )
                 {

@@ -41,13 +41,15 @@ public class MutableValueInformation
      * @param startTimestamp the initial start time
      * @param endTimestamp the initial end time
      * @param quality the initial quality value
+     * @param manual initial manual value
      * @param sourceValues the initial souce values value
      */
-    public MutableValueInformation ( final Calendar startTimestamp, final Calendar endTimestamp, final double quality, final long sourceValues )
+    public MutableValueInformation ( final Calendar startTimestamp, final Calendar endTimestamp, final double quality, final double manual, final long sourceValues )
     {
         this.startTimestamp = startTimestamp;
         this.endTimestamp = endTimestamp;
         this.quality = quality;
+        this.manual = manual;
         this.sourceValues = sourceValues;
     }
 
@@ -57,7 +59,7 @@ public class MutableValueInformation
      */
     public Calendar getStartTimestamp ()
     {
-        return (Calendar)this.startTimestamp.clone ();
+        return (Calendar)startTimestamp.clone ();
     }
 
     /**
@@ -66,7 +68,7 @@ public class MutableValueInformation
      */
     public Calendar getEndTimestamp ()
     {
-        return (Calendar)this.endTimestamp.clone ();
+        return (Calendar)endTimestamp.clone ();
     }
 
     /**
@@ -75,7 +77,7 @@ public class MutableValueInformation
      */
     public double getQuality ()
     {
-        return this.quality;
+        return quality;
     }
 
     /**
@@ -84,7 +86,7 @@ public class MutableValueInformation
      */
     public double getManual ()
     {
-        return this.manual;
+        return manual;
     }
 
     /**
@@ -93,7 +95,7 @@ public class MutableValueInformation
      */
     public long getSourceValues ()
     {
-        return this.sourceValues;
+        return sourceValues;
     }
 
     /**

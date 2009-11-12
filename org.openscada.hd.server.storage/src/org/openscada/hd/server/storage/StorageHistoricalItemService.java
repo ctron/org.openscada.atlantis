@@ -278,7 +278,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                     }
 
                     // process data
-                    final double qualityIndicator = !value.isConnected () || value.isError () ? 0 : 1;
+                    final double qualityIndicator = !value.isConnected () || value.isError () || variant.isNull () || ( ( expectedDataType == DataType.LONG_VALUE ) && ( variant.asLong ( null ) == null ) ) || ( ( expectedDataType == DataType.DOUBLE_VALUE ) && ( variant.asDouble ( null ) == null ) ) ? 0 : 1;
                     final double isManual = value.isManual () ? 1 : 0;
                     if ( expectedDataType == DataType.LONG_VALUE )
                     {
