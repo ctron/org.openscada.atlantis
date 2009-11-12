@@ -70,6 +70,9 @@ public class StorageService implements SelfManagedConfigurationFactory
     /** Maximum file size of the heart beat file. */
     private final static int MAX_HEARTBEAT_FILE_SIZE = 8 * 2;
 
+    /** Seed for parity calculation. */
+    private final static long HEARTBEAT_PARITY_SEED = 0x5a5a5a5a5a5a5a5aL;
+
     /** Internal id for relicts cleaner thread. */
     private final static String RELICT_CLEANER_THREAD_ID = "hd.RelictCleaner";
 
@@ -153,7 +156,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             {
                 heartBeatFile.seek ( 0 );
                 heartBeatFile.writeLong ( now );
-                heartBeatFile.writeDouble ( Double.longBitsToDouble ( now ) );
+                heartBeatFile.writeLong ( HEARTBEAT_PARITY_SEED ^ now );
                 heartBeatFile.getChannel ().force ( false );
             }
             catch ( final Exception e )
@@ -244,7 +247,7 @@ public class StorageService implements SelfManagedConfigurationFactory
                 {
                     heartBeatFile.seek ( 0 );
                     final long latestReliableTime = heartBeatFile.readLong ();
-                    final long parity = Double.doubleToLongBits ( heartBeatFile.readDouble () );
+                    final long parity = HEARTBEAT_PARITY_SEED ^ heartBeatFile.readLong ();
                     if ( latestReliableTime == parity )
                     {
                         this.latestReliableTime = latestReliableTime;
