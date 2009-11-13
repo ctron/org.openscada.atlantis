@@ -33,16 +33,16 @@ public class Chart extends Composite implements Listener
 {
 
     /** the title */
-    private Title title;
+    private final Title title;
 
     /** the legend */
-    private Legend legend;
+    private final Legend legend;
 
     /** the set of axes */
-    private AxisSet axisSet;
+    private final AxisSet axisSet;
 
     /** the plot area */
-    private PlotArea plotArea;
+    private final PlotArea plotArea;
 
     /** the orientation of chart which can be horizontal or vertical */
     private int orientation;
@@ -58,7 +58,7 @@ public class Chart extends Composite implements Listener
      * @param style
      *            the style of widget to construct
      */
-    public Chart ( Composite parent, int style )
+    public Chart ( final Composite parent, final int style )
     {
         super ( parent, style );
 
@@ -135,7 +135,7 @@ public class Chart extends Composite implements Listener
      * @see Control#setBackground(Color)
      */
     @Override
-    public void setBackground ( Color color )
+    public void setBackground ( final Color color )
     {
         super.setBackground ( color );
 
@@ -168,9 +168,9 @@ public class Chart extends Composite implements Listener
      * @exception IllegalArgumentException
      *                if given color is disposed
      */
-    public void setBackgroundInPlotArea ( Color color )
+    public void setBackgroundInPlotArea ( final Color color )
     {
-        if ( color != null && color.isDisposed () )
+        if ( ( color != null ) && color.isDisposed () )
         {
             SWT.error ( SWT.ERROR_INVALID_ARGUMENT );
         }
@@ -185,9 +185,9 @@ public class Chart extends Composite implements Listener
      * @param orientation
      *            the orientation which can be SWT.HORIZONTAL or SWT.VERTICAL
      */
-    public void setOrientation ( int orientation )
+    public void setOrientation ( final int orientation )
     {
-        if ( orientation == SWT.HORIZONTAL || orientation == SWT.VERTICAL )
+        if ( ( orientation == SWT.HORIZONTAL ) || ( orientation == SWT.VERTICAL ) )
         {
             this.orientation = orientation;
         }
@@ -215,7 +215,7 @@ public class Chart extends Composite implements Listener
      * @param enabled
      *            true if enabling compressing series
      */
-    public void enableCompress ( boolean enabled )
+    public void enableCompress ( final boolean enabled )
     {
         compressEnabled = enabled;
     }
@@ -233,7 +233,7 @@ public class Chart extends Composite implements Listener
     /*
      * @see Listener#handleEvent(Event)
      */
-    public void handleEvent ( Event event )
+    public void handleEvent ( final Event event )
     {
         switch ( event.type )
         {
@@ -321,7 +321,7 @@ public class Chart extends Composite implements Listener
      * @param format
      *            the format (SWT.IMAGE_*). The supported formats depend on OS.
      */
-    public void save ( String filename, int format )
+    public void save ( final String filename, final int format )
     {
         Point size = getSize ();
         GC gc = new GC ( this );
@@ -334,5 +334,15 @@ public class Chart extends Composite implements Listener
         loader.data = new ImageData[] { data };
         loader.save ( filename, format );
         image.dispose ();
+    }
+
+    public void setBackgroundOverlay ( final BackgroundOverlay backgroundOverlay )
+    {
+        this.plotArea.setBackgroundOverlay ( backgroundOverlay );
+    }
+
+    public BackgroundOverlay getBackgroundOverlay ()
+    {
+        return this.plotArea.getBackgroundOverlay ();
     }
 }

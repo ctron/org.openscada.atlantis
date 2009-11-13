@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -805,7 +804,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                 }
                 else
                 {
-                    if ( e.button == 1 && ( e.stateMask & SWT.SHIFT ) == SWT.SHIFT )
+                    if ( ( e.button == 1 ) && ( ( e.stateMask & SWT.SHIFT ) == SWT.SHIFT ) )
                     {
                         // zoom in
                         final DateRange zoomResult = zoomIn ( e.x, 0, TrendView.this.chart.getPlotArea ().getSize ().x, TrendView.this.chartParameters.get ().getStartTime (), TrendView.this.chartParameters.get ().getEndTime () );
@@ -813,7 +812,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                         TrendView.this.chartParameters.set ( parameters );
                         TrendView.this.rangeUpdateJob.get ().schedule ( GUI_JOB_DELAY );
                     }
-                    else if ( e.button == 1 && ( e.stateMask & SWT.ALT ) == SWT.ALT )
+                    else if ( ( e.button == 1 ) && ( ( e.stateMask & SWT.ALT ) == SWT.ALT ) )
                     {
                         // zoom out
                         final DateRange zoomResult = zoomOut ( e.x, 0, TrendView.this.chart.getPlotArea ().getSize ().x, TrendView.this.chartParameters.get ().getStartTime (), TrendView.this.chartParameters.get ().getEndTime () );
@@ -1199,7 +1198,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                     final Group group = new Group ( TrendView.this.panel, SWT.SHADOW_ETCHED_IN );
                     final Button colorButton = new Button ( group, SWT.PUSH );
                     final Spinner widthSpinner = new Spinner ( group, SWT.BORDER );
-                    
+
                     series.setYAxisId ( 0 );
                     series.setXAxisId ( 0 );
                     series.setVisible ( seriesParameters.width > 0 );
@@ -1214,8 +1213,8 @@ public class TrendView extends QueryViewPart implements QueryListener
                     colorButton.setText ( Messages.TrendView_Color );
                     colorButton.setVisible ( true );
                     widthSpinner.setBackground ( TrendView.this.colorRegistry.get ( seriesParameters.name ) );
-                    widthSpinner.setForeground( contrastForeground ( TrendView.this.colorRegistry.get ( seriesParameters.name ) ) );
-                    colorButton.setForeground( TrendView.this.colorRegistry.get ( seriesParameters.name ) );
+                    widthSpinner.setForeground ( contrastForeground ( TrendView.this.colorRegistry.get ( seriesParameters.name ) ) );
+                    colorButton.setForeground ( TrendView.this.colorRegistry.get ( seriesParameters.name ) );
                     colorButton.addSelectionListener ( new SelectionListener () {
                         public void widgetSelected ( final SelectionEvent e )
                         {
@@ -1225,8 +1224,8 @@ public class TrendView extends QueryViewPart implements QueryListener
                             if ( resultColor != null )
                             {
                                 TrendView.this.colorRegistry.put ( seriesParameters.name, resultColor );
-                                widthSpinner.setBackground( TrendView.this.colorRegistry.get ( seriesParameters.name ) );
-                                widthSpinner.setForeground( contrastForeground ( TrendView.this.colorRegistry.get ( seriesParameters.name ) ) );
+                                widthSpinner.setBackground ( TrendView.this.colorRegistry.get ( seriesParameters.name ) );
+                                widthSpinner.setForeground ( contrastForeground ( TrendView.this.colorRegistry.get ( seriesParameters.name ) ) );
                                 series.setLineColor ( TrendView.this.colorRegistry.get ( seriesParameters.name ) );
                                 TrendView.this.chart.redraw ();
                             }
@@ -1315,34 +1314,36 @@ public class TrendView extends QueryViewPart implements QueryListener
                 TrendView.this.chart.getAxisSet ().getXAxis ( 0 ).getTick ().setFormat ( new SimpleDateFormat ( formatByRange () ) );
                 final double quality = TrendView.this.chartParameters.get ().getQuality ();
                 final ISeries qualitySeries = TrendView.this.chart.getSeriesSet ().getSeries ( KEY_QUALITY );
-                if ( qualitySeries != null )
-                {
-                    qualitySeries.setYSeries ( toThreshold ( TrendView.this.dataQuality.get (), quality ) );
-                    qualitySeries.setXDateSeries ( TrendView.this.dataTimestamp.get () );
-                    if ( quality > 0.0 )
-                    {
-                        qualitySeries.setVisible ( true );
-                    }
-                    else
-                    {
-                        qualitySeries.setVisible ( false );
-                    }
-                }
-                final double manual = TrendView.this.chartParameters.get ().getManual ();
+                TrendView.this.chart.setQuality ( TrendView.this.dataQuality.get () );
+                TrendView.this.chart.setQualityThreshold ( quality );
+                //                if ( qualitySeries != null )
+                //                {
+                //                    qualitySeries.setYSeries ( toThreshold ( TrendView.this.dataQuality.get (), quality ) );
+                //                    qualitySeries.setXDateSeries ( TrendView.this.dataTimestamp.get () );
+                //                    if ( quality > 0.0 )
+                //                    {
+                //                        qualitySeries.setVisible ( true );
+                //                    }
+                //                    else
+                //                    {
+                //                        qualitySeries.setVisible ( false );
+                //                    }
+                //                }
+                //                final double manual = TrendView.this.chartParameters.get ().getManual ();
                 final ISeries manualSeries = TrendView.this.chart.getSeriesSet ().getSeries ( KEY_MANUAL );
-                if ( manualSeries != null )
-                {
-                    manualSeries.setYSeries ( toThreshold ( TrendView.this.dataManual.get (), manual ) );
-                    manualSeries.setXDateSeries ( TrendView.this.dataTimestamp.get () );
-                    if ( manual > 0.0 )
-                    {
-                        manualSeries.setVisible ( true );
-                    }
-                    else
-                    {
-                        manualSeries.setVisible ( false );
-                    }
-                }
+                //                if ( manualSeries != null )
+                //                {
+                //                    manualSeries.setYSeries ( toThreshold ( TrendView.this.dataManual.get (), manual ) );
+                //                    manualSeries.setXDateSeries ( TrendView.this.dataTimestamp.get () );
+                //                    if ( manual > 0.0 )
+                //                    {
+                //                        manualSeries.setVisible ( true );
+                //                    }
+                //                    else
+                //                    {
+                //                        manualSeries.setVisible ( false );
+                //                    }
+                //                }
                 if ( scaleYAutomatically )
                 {
                     // all axis should be adjusted automatically, handles chart by itself
@@ -1505,17 +1506,20 @@ public class TrendView extends QueryViewPart implements QueryListener
         }
         return result;
     }
-    
-    private Color contrastForeground ( Color c )
+
+    private Color contrastForeground ( final Color c )
     {
-    	int grey = (int) ((((float) c.getRed()) * 0.299) + (((float) c.getGreen()) * 0.587) + (((float) c.getGreen()) * 0.114));
-    	if (grey > 186) {
-    		return this.colorRegistry.get ( KEY_BLACK );
-    	} else {
-    		return this.colorRegistry.get ( KEY_WHITE );
-    	}
+        int grey = (int) ( ( ( c.getRed () ) * 0.299 ) + ( ( c.getGreen () ) * 0.587 ) + ( ( c.getGreen () ) * 0.114 ) );
+        if ( grey > 186 )
+        {
+            return this.colorRegistry.get ( KEY_BLACK );
+        }
+        else
+        {
+            return this.colorRegistry.get ( KEY_WHITE );
+        }
     }
-    
+
     @Override
     public void dispose ()
     {

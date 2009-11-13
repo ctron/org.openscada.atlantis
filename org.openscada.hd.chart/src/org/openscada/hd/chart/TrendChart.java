@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.swtchart.BackgroundOverlay;
 import org.swtchart.Chart;
 
 public class TrendChart extends Chart implements PaintListener
@@ -37,6 +38,14 @@ public class TrendChart extends Chart implements PaintListener
     private final NumberFormat percentFormat;
 
     private FontData smallFontData;
+
+    private double[] quality;
+
+    private double qualityThreshold;
+
+    private double[] manual;
+
+    private double manualThreshold;
 
     public DataAtPoint getDataAtPoint ()
     {
@@ -121,6 +130,16 @@ public class TrendChart extends Chart implements PaintListener
         }
         //// smallFontData.setHeight ( fontDataDefault[0].getHeight () - 2 );
         smallFontData.setHeight ( 8 );
+        final QualityBackgroundOverlay qualityBackgroundOverlay = new QualityBackgroundOverlay ();
+        final ManualBackgroundOverlay manualBackgroundOverlay = new ManualBackgroundOverlay ();
+        this.setBackgroundOverlay ( new BackgroundOverlay () {
+            public void draw ( final GC gc, final int x, final int y )
+            {
+                qualityBackgroundOverlay.setData ( quality );
+                qualityBackgroundOverlay.setThreshold ( qualityThreshold );
+                qualityBackgroundOverlay.draw ( gc, x, y );
+            }
+        } );
     }
 
     public void paintControl ( final PaintEvent e )
@@ -189,5 +208,25 @@ public class TrendChart extends Chart implements PaintListener
     {
 
         super.dispose ();
+    }
+
+    public void setQuality ( final double[] quality )
+    {
+        this.quality = quality;
+    }
+
+    public void setManual ( final double[] manual )
+    {
+        this.manual = manual;
+    }
+
+    public void setQualityThreshold ( final double qualityThreshold )
+    {
+        this.qualityThreshold = qualityThreshold;
+    }
+
+    public void setManualThreshold ( final double manualThreshold )
+    {
+        this.manualThreshold = manualThreshold;
     }
 }

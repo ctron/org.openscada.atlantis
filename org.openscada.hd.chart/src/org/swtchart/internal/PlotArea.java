@@ -15,6 +15,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.swtchart.BackgroundOverlay;
 import org.swtchart.Chart;
 import org.swtchart.IAxis;
 import org.swtchart.IBarSeries;
@@ -41,6 +42,8 @@ public class PlotArea extends Composite implements PaintListener
 
     /** the state indicating if image cache has to be updated */
     private boolean updateImageCache;
+
+    protected BackgroundOverlay backgroundOverlay;
 
     /** the default background color */
     private static final int DEFAULT_BACKGROUND = SWT.COLOR_WHITE;
@@ -127,6 +130,12 @@ public class PlotArea extends Composite implements PaintListener
                 ( (Grid)axis.getGrid () ).draw ( gc, p.x, p.y );
             }
 
+            // draw additional background overlay
+            if ( chart.getBackgroundOverlay () != null )
+            {
+                chart.getBackgroundOverlay ().draw ( gc, p.x, p.y );
+            }
+
             // draw series. The line series should be drawn on bar series.
             for ( ISeries series : chart.getSeriesSet ().getSeries () )
             {
@@ -180,5 +189,15 @@ public class PlotArea extends Composite implements PaintListener
         {
             imageCache.dispose ();
         }
+    }
+
+    public BackgroundOverlay getBackgroundOverlay ()
+    {
+        return backgroundOverlay;
+    }
+
+    public void setBackgroundOverlay ( final BackgroundOverlay backgroundOverlay )
+    {
+        this.backgroundOverlay = backgroundOverlay;
     }
 }
