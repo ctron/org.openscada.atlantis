@@ -136,6 +136,7 @@ public class TrendChart extends Chart implements PaintListener
         smallFontData.setHeight ( 8 );
         final BackgroundOverlayPainter qualityBackgroundOverlay = new BackgroundOverlayPainter ();
         final BackgroundOverlayPainter manualBackgroundOverlay = new BackgroundOverlayPainter();
+        manualBackgroundOverlay.setInvert ( true );
         this.setBackgroundOverlay ( new BackgroundOverlay () {
             public void draw ( final GC gc, final int x, final int y )
             {
@@ -169,6 +170,7 @@ public class TrendChart extends Chart implements PaintListener
         if ( dataAtPoint != null )
         {
             final double quality = dataAtPoint.getQuality ( currentX );
+            final double manual =  dataAtPoint.getManual ( currentX );
             final Date timestamp = dataAtPoint.getTimestamp ( currentX );
             final Map<String, Double> data = dataAtPoint.getData ( currentX );
             gc.setAntialias ( SWT.ON );
@@ -182,11 +184,12 @@ public class TrendChart extends Chart implements PaintListener
             gc.setFont ( smallFont );
             final String timestampText = String.format ( "%-16s: ", Messages.getString ( "TrendChart.timestamp" ) ) + DateFormat.getDateTimeInstance ( DateFormat.LONG, DateFormat.LONG ).format ( timestamp ); //$NON-NLS-1$
             final String qualityText = String.format ( "%-16s: ", Messages.getString ( "TrendChart.quality" ) ) + percentFormat.format ( quality ); //$NON-NLS-1$
+            final String manualText = String.format ( "%-16s: ", Messages.getString ( "TrendChart.manual" ) ) + percentFormat.format ( manual ); //$NON-NLS-1$
             final String soureValuesText = String.format ( "%-16s: ", Messages.getString ( "TrendChart.numOfValues" ) ) + dataAtPoint.getSourceValues ( currentX ); //$NON-NLS-1$
             final Point textSize = gc.textExtent ( timestampText );
             final int textWidth = textSize.x;
             final int textHeight = textSize.y;
-            final int height = textHeight * 4 + ( textHeight + padding ) * data.keySet ().size () + padding * 5;
+            final int height = textHeight * 5 + ( textHeight + padding ) * data.keySet ().size () + padding * 6;
             if ( currentY + height > getPlotArea ().getSize ().y )
             {
                 yoffset = -10 - height;
@@ -198,11 +201,12 @@ public class TrendChart extends Chart implements PaintListener
             }
             gc.fillRoundRectangle ( currentX + xoffset, currentY + yoffset, width, height, corner, corner );
             gc.drawRoundRectangle ( currentX + xoffset, currentY + yoffset, width, height, corner, corner );
-            gc.drawLine ( currentX + xoffset + padding, currentY + yoffset + ( padding + textHeight ) * 4 - padding, currentX + xoffset + width - padding, currentY + yoffset + ( padding + textHeight ) * 4 - padding );
+            gc.drawLine ( currentX + xoffset + padding, currentY + yoffset + ( padding + textHeight ) * 5 - padding, currentX + xoffset + width - padding, currentY + yoffset + ( padding + textHeight ) * 5 - padding );
             gc.drawText ( timestampText, currentX + xoffset + padding, currentY + yoffset + padding );
             gc.drawText ( qualityText, currentX + xoffset + padding, currentY + yoffset + padding * 2 + textHeight );
-            gc.drawText ( soureValuesText, currentX + xoffset + padding, currentY + yoffset + padding * 3 + textHeight * 2 );
-            int i = 4;
+            gc.drawText ( manualText, currentX + xoffset + padding, currentY + yoffset + padding * 3 + textHeight * 2 );
+            gc.drawText ( soureValuesText, currentX + xoffset + padding, currentY + yoffset + padding * 4 + textHeight * 3 );
+            int i = 5;
             for ( final Entry<String, Double> entry : data.entrySet () )
             {
                 gc.drawText ( String.format ( "%16s: ", entry.getKey () ) + String.format ( "%16s", Double.isNaN ( entry.getValue () ) ? "-" : decimalFormat.format ( entry.getValue () ) ), currentX + xoffset + padding, currentY + yoffset + ( padding + textHeight ) * i + padding ); //$NON-NLS-1$ //$NON-NLS-2$

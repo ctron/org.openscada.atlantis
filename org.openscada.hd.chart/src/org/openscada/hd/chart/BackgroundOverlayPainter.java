@@ -16,9 +16,11 @@ public class BackgroundOverlayPainter implements BackgroundOverlay
 
     final int padding = 10;
 
-    List<Rectangle> areasToDraw = new LinkedList<Rectangle> ();
+    private List<Rectangle> areasToDraw = new LinkedList<Rectangle> ();
 
-    Color color;
+    private Color color;
+    
+    private boolean invert = false;
 
     public void draw ( final GC gc, final int x, final int y )
     {
@@ -30,11 +32,11 @@ public class BackgroundOverlayPainter implements BackgroundOverlay
         int start = -1;
         for ( double d : data )
         {
-            if ( ( d < threshold ) && ( start == -1 ) )
+            if ( ( invert ? d > threshold : d < threshold ) && ( start == -1 ) )
             {
                 start = i;
             }
-            if ( ( d >= threshold ) || ( i == data.length - 1 ) )
+            if ( ( invert ? d <= threshold : d >= threshold ) || ( i == data.length - 1 ) )
             {
                 if ( start > -1 )
                 {
@@ -74,5 +76,10 @@ public class BackgroundOverlayPainter implements BackgroundOverlay
     public void setColor ( final Color color )
     {
         this.color = color;
+    }
+    
+    public void setInvert ( boolean invert )
+    {
+        this.invert = invert;
     }
 }
