@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -39,6 +40,7 @@ import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.ImageData;
@@ -376,6 +378,10 @@ public class TrendView extends QueryViewPart implements QueryListener
 
     private static final String KEY_MANUAL = "manual"; //$NON-NLS-1$
 
+    private static final String KEY_WHITE = "__white"; //$NON-NLS-1$
+
+    private static final String KEY_BLACK = "__black"; //$NON-NLS-1$
+
     private final static long GUI_JOB_DELAY = 150;
 
     private final static long GUI_RESIZE_JOB_DELAY = 1500;
@@ -468,6 +474,8 @@ public class TrendView extends QueryViewPart implements QueryListener
 
         // create predefined colors
         this.colorRegistry = new ColorRegistry ( parent.getDisplay () );
+        this.colorRegistry.put ( KEY_WHITE, new RGB ( 255, 255, 255 ) );
+        this.colorRegistry.put ( KEY_BLACK, new RGB ( 0, 0, 0 ) );
         this.colorRegistry.put ( KEY_QUALITY, new RGB ( 255, 192, 192 ) );
         this.colorRegistry.put ( KEY_MANUAL, new RGB ( 192, 192, 255 ) );
         this.colorRegistry.put ( "MIN", new RGB ( 255, 0, 0 ) ); //$NON-NLS-1$
@@ -573,15 +581,16 @@ public class TrendView extends QueryViewPart implements QueryListener
             }
         } );
 
-        // add label for quality spinner
+        // quality spinner
         this.qualityGroup = new Group ( this.panel, SWT.SHADOW_ETCHED_IN );
+        this.qualityColorButton = new Button ( this.qualityGroup, SWT.PUSH );
+        this.qualitySpinner = new Spinner ( this.qualityGroup, SWT.BORDER );
 
         this.qualityGroup.setLayout ( this.groupLayout );
         this.qualityGroup.setText ( Messages.TrendView_Quality );
 
-        this.qualityColorButton = new Button ( this.qualityGroup, SWT.PUSH );
         this.qualityColorButton.setText ( Messages.TrendView_Color );
-        this.qualityColorButton.setBackground ( this.colorRegistry.get ( KEY_QUALITY ) );
+        this.qualitySpinner.setBackground ( this.colorRegistry.get ( KEY_QUALITY ) );
         this.qualityColorButton.addSelectionListener ( new SelectionListener () {
             public void widgetSelected ( final SelectionEvent e )
             {
@@ -591,7 +600,8 @@ public class TrendView extends QueryViewPart implements QueryListener
                 if ( resultColor != null )
                 {
                     TrendView.this.colorRegistry.put ( KEY_QUALITY, resultColor );
-                    TrendView.this.qualityColorButton.setBackground ( TrendView.this.colorRegistry.get ( KEY_QUALITY ) );
+                    TrendView.this.qualitySpinner.setBackground ( TrendView.this.colorRegistry.get ( KEY_QUALITY ) );
+                    TrendView.this.qualitySpinner.setForeground ( contrastForeground ( TrendView.this.colorRegistry.get ( KEY_QUALITY ) ) );
                     final IBarSeries series = (IBarSeries)TrendView.this.chart.getSeriesSet ().getSeries ( KEY_QUALITY );
                     if ( series != null )
                     {
@@ -605,8 +615,6 @@ public class TrendView extends QueryViewPart implements QueryListener
             }
         } );
 
-        // add label for quality spinner
-        this.qualitySpinner = new Spinner ( this.qualityGroup, SWT.BORDER );
         this.qualitySpinner.setDigits ( 2 );
         this.qualitySpinner.setMaximum ( 100 );
         this.qualitySpinner.setMinimum ( 0 );
@@ -620,15 +628,16 @@ public class TrendView extends QueryViewPart implements QueryListener
             }
         } );
 
-        // add label for manual spinner
+        // manual spinner
         this.manualGroup = new Group ( this.panel, SWT.SHADOW_ETCHED_IN );
+        this.manualColorButton = new Button ( this.manualGroup, SWT.PUSH );
+        this.manualSpinner = new Spinner ( this.manualGroup, SWT.BORDER );
 
         this.manualGroup.setLayout ( this.groupLayout );
         this.manualGroup.setText ( Messages.TrendView_Manual );
 
-        this.manualColorButton = new Button ( this.manualGroup, SWT.PUSH );
         this.manualColorButton.setText ( Messages.TrendView_Color );
-        this.manualColorButton.setBackground ( this.colorRegistry.get ( KEY_MANUAL ) );
+        this.manualSpinner.setBackground ( this.colorRegistry.get ( KEY_MANUAL ) );
         this.manualColorButton.addSelectionListener ( new SelectionListener () {
             public void widgetSelected ( final SelectionEvent e )
             {
@@ -638,7 +647,8 @@ public class TrendView extends QueryViewPart implements QueryListener
                 if ( resultColor != null )
                 {
                     TrendView.this.colorRegistry.put ( KEY_MANUAL, resultColor );
-                    TrendView.this.manualColorButton.setBackground ( TrendView.this.colorRegistry.get ( KEY_MANUAL ) );
+                    TrendView.this.manualSpinner.setBackground ( TrendView.this.colorRegistry.get ( KEY_MANUAL ) );
+                    TrendView.this.manualSpinner.setForeground ( contrastForeground ( TrendView.this.colorRegistry.get ( KEY_MANUAL ) ) );
                     final IBarSeries series = (IBarSeries)TrendView.this.chart.getSeriesSet ().getSeries ( KEY_MANUAL );
                     if ( series != null )
                     {
@@ -652,8 +662,6 @@ public class TrendView extends QueryViewPart implements QueryListener
             }
         } );
 
-        // add label for manual spinner
-        this.manualSpinner = new Spinner ( this.manualGroup, SWT.BORDER );
         this.manualSpinner.setDigits ( 2 );
         this.manualSpinner.setMaximum ( 100 );
         this.manualSpinner.setMinimum ( 0 );
@@ -669,7 +677,8 @@ public class TrendView extends QueryViewPart implements QueryListener
 
         // font for chart labels
         final FontData[] smallFont = JFaceResources.getDefaultFontDescriptor ().getFontData ();
-        smallFont[0].setHeight ( smallFont[0].getHeight () - 2 );
+        //// smallFont[0].setHeight ( smallFont[0].getHeight () - 2 );
+        smallFont[0].setHeight ( 7 );
         this.fontRegistry = new FontRegistry ( parent.getDisplay () );
         this.fontRegistry.put ( SMALL_LABEL_FONT, smallFont );
 
@@ -1187,6 +1196,10 @@ public class TrendView extends QueryViewPart implements QueryListener
                 for ( final SeriesParameters seriesParameters : TrendView.this.chartParameters.get ().getAvailableSeries () )
                 {
                     final ILineSeries series = (ILineSeries)TrendView.this.chart.getSeriesSet ().createSeries ( SeriesType.LINE, seriesParameters.name );
+                    final Group group = new Group ( TrendView.this.panel, SWT.SHADOW_ETCHED_IN );
+                    final Button colorButton = new Button ( group, SWT.PUSH );
+                    final Spinner widthSpinner = new Spinner ( group, SWT.BORDER );
+                    
                     series.setYAxisId ( 0 );
                     series.setXAxisId ( 0 );
                     series.setVisible ( seriesParameters.width > 0 );
@@ -1195,14 +1208,14 @@ public class TrendView extends QueryViewPart implements QueryListener
                     series.setSymbolType ( PlotSymbolType.NONE );
                     series.setLineColor ( TrendView.this.colorRegistry.get ( seriesParameters.name ) );
                     series.setLineWidth ( seriesParameters.width );
-                    final Group group = new Group ( TrendView.this.panel, SWT.SHADOW_ETCHED_IN );
                     TrendView.this.seriesGroups.put ( seriesParameters.name, group );
                     group.setText ( seriesParameters.name );
                     group.setLayout ( TrendView.this.groupLayout );
-                    final Button colorButton = new Button ( group, SWT.PUSH );
                     colorButton.setText ( Messages.TrendView_Color );
                     colorButton.setVisible ( true );
-                    colorButton.setBackground ( TrendView.this.colorRegistry.get ( seriesParameters.name ) );
+                    widthSpinner.setBackground ( TrendView.this.colorRegistry.get ( seriesParameters.name ) );
+                    widthSpinner.setForeground( contrastForeground ( TrendView.this.colorRegistry.get ( seriesParameters.name ) ) );
+                    colorButton.setForeground( TrendView.this.colorRegistry.get ( seriesParameters.name ) );
                     colorButton.addSelectionListener ( new SelectionListener () {
                         public void widgetSelected ( final SelectionEvent e )
                         {
@@ -1212,7 +1225,8 @@ public class TrendView extends QueryViewPart implements QueryListener
                             if ( resultColor != null )
                             {
                                 TrendView.this.colorRegistry.put ( seriesParameters.name, resultColor );
-                                colorButton.setBackground ( TrendView.this.colorRegistry.get ( seriesParameters.name ) );
+                                widthSpinner.setBackground( TrendView.this.colorRegistry.get ( seriesParameters.name ) );
+                                widthSpinner.setForeground( contrastForeground ( TrendView.this.colorRegistry.get ( seriesParameters.name ) ) );
                                 series.setLineColor ( TrendView.this.colorRegistry.get ( seriesParameters.name ) );
                                 TrendView.this.chart.redraw ();
                             }
@@ -1222,7 +1236,6 @@ public class TrendView extends QueryViewPart implements QueryListener
                         {
                         }
                     } );
-                    final Spinner widthSpinner = new Spinner ( group, SWT.BORDER );
                     widthSpinner.setDigits ( 0 );
                     widthSpinner.setMinimum ( 0 );
                     widthSpinner.setMaximum ( 25 );
@@ -1492,7 +1505,17 @@ public class TrendView extends QueryViewPart implements QueryListener
         }
         return result;
     }
-
+    
+    private Color contrastForeground ( Color c )
+    {
+    	int grey = (int) ((((float) c.getRed()) * 0.299) + (((float) c.getGreen()) * 0.587) + (((float) c.getGreen()) * 0.114));
+    	if (grey > 186) {
+    		return this.colorRegistry.get ( KEY_BLACK );
+    	} else {
+    		return this.colorRegistry.get ( KEY_WHITE );
+    	}
+    }
+    
     @Override
     public void dispose ()
     {

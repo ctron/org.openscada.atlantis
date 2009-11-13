@@ -119,7 +119,8 @@ public class TrendChart extends Chart implements PaintListener
         {
             smallFontData = fontDataDefault[0];
         }
-        smallFontData.setHeight ( fontDataDefault[0].getHeight () - 2 );
+        //// smallFontData.setHeight ( fontDataDefault[0].getHeight () - 2 );
+        smallFontData.setHeight ( 8 );
     }
 
     public void paintControl ( final PaintEvent e )
