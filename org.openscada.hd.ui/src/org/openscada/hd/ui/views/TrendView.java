@@ -1141,7 +1141,10 @@ public class TrendView extends QueryViewPart implements QueryListener
                 }
                 // update GUI with new parameters
                 // remove old Series
-                chart.setQualityColor ( colorRegistry.get ( KEY_QUALITY ) );
+                TrendView.this.chart.setQualityColor ( colorRegistry.get ( KEY_QUALITY ) );
+                TrendView.this.chart.setQualityThreshold ( TrendView.this.chartParameters.get ().getQuality () / 100.0 );
+                TrendView.this.chart.setManualColor ( colorRegistry.get ( KEY_MANUAL ) );
+                TrendView.this.chart.setManualThreshold ( TrendView.this.chartParameters.get ().getManual () / 100.0 );
                 final List<String> seriesIds = new ArrayList<String> ();
                 for ( final ISeries series : TrendView.this.chart.getSeriesSet ().getSeries () )
                 {
@@ -1276,9 +1279,8 @@ public class TrendView extends QueryViewPart implements QueryListener
                     series.setYSeries ( convertInvalidData ( TrendView.this.data.get ( seriesParameter.name ) ) );
                 }
                 TrendView.this.chart.getAxisSet ().getXAxis ( 0 ).getTick ().setFormat ( new SimpleDateFormat ( formatByRange () ) );
-                final double quality = TrendView.this.chartParameters.get ().getQuality ();
                 TrendView.this.chart.setQuality ( TrendView.this.dataQuality.get () );
-                TrendView.this.chart.setQualityThreshold ( quality / 100.0 );
+                TrendView.this.chart.setManual ( TrendView.this.dataManual.get () );
                 if ( scaleYAutomatically )
                 {
                     // all axis should be adjusted automatically, handles chart by itself

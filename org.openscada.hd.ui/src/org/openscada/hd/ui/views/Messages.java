@@ -71,10 +71,14 @@ public class Messages extends NLS
     public static String QueryDataView_ColInfo;
 
     public static String QueryDataView_ColQuality;
+    
+    public static String QueryDataView_ColManual;
 
     public static String QueryDataView_Format_Index;
 
     public static String QueryDataView_Format_Quality;
+    
+    public static String QueryDataView_Format_Manual;
 
     public static String QueryDataView_Format_Value;
 
