@@ -373,7 +373,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                     valueInformation.setStartTimestamp ( cstartTime );
                     valueInformation.setEndTimestamp ( cendTime );
                     valueInformation.setQuality ( Math.min ( doubleValue.getQualityIndicator (), valueInformation.getQuality () ) );
-                    valueInformation.setManual ( Math.min ( doubleValue.getManualIndicator (), valueInformation.getManual () ) );
+                    valueInformation.setManual ( Math.max ( doubleValue.getManualIndicator (), valueInformation.getManual () ) );
                     valueInformation.setSourceValues ( Math.min ( doubleValue.getBaseValueCount (), valueInformation.getSourceValues () ) );
                 }
             }
@@ -384,7 +384,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         for ( int i = 0; i < resultValueInformations.length; i++ )
         {
             final MutableValueInformation valueInformation = resultValueInformations[i];
-            calculatedValueInformations[i] = new ValueInformation ( valueInformation.getStartTimestamp (), valueInformation.getEndTimestamp (), valueInformation.getQuality (), 0.0, valueInformation.getSourceValues () );
+            calculatedValueInformations[i] = new ValueInformation ( valueInformation.getStartTimestamp (), valueInformation.getEndTimestamp (), valueInformation.getQuality (), valueInformation.getManual (), valueInformation.getSourceValues () );
         }
         return calculatedData;
     }
