@@ -549,12 +549,6 @@ public class TrendView extends QueryViewPart implements QueryListener
             {
             }
         } );
-        this.scaleMinSpinner.addModifyListener ( new ModifyListener () {
-            public void modifyText ( final ModifyEvent e )
-            {
-                scalingUpdateJob.get ().schedule ( GUI_RESIZE_JOB_DELAY );
-            }
-        } );
 
         this.scaleMaxSpinner = new Spinner ( this.scaleGroup, SWT.BORDER );
         this.scaleMaxSpinner.setEnabled ( !scaleYAutomatically );
@@ -565,17 +559,11 @@ public class TrendView extends QueryViewPart implements QueryListener
         this.scaleMaxSpinner.addSelectionListener ( new SelectionListener () {
             public void widgetSelected ( final SelectionEvent e )
             {
-                scalingUpdateJob.get ().schedule ( GUI_JOB_DELAY );
+                scalingUpdateJob.get ().schedule ( GUI_RESIZE_JOB_DELAY );
             }
 
             public void widgetDefaultSelected ( final SelectionEvent e )
             {
-            }
-        } );
-        this.scaleMaxSpinner.addModifyListener ( new ModifyListener () {
-            public void modifyText ( final ModifyEvent e )
-            {
-                scalingUpdateJob.get ().schedule ( GUI_RESIZE_JOB_DELAY );
             }
         } );
 
@@ -600,6 +588,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                     TrendView.this.colorRegistry.put ( KEY_QUALITY, resultColor );
                     TrendView.this.qualitySpinner.setBackground ( TrendView.this.colorRegistry.get ( KEY_QUALITY ) );
                     TrendView.this.qualitySpinner.setForeground ( contrastForeground ( TrendView.this.colorRegistry.get ( KEY_QUALITY ) ) );
+                    TrendView.this.parameterUpdateJob.get ().schedule ( GUI_JOB_DELAY );
                 }
             }
 
@@ -642,6 +631,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                     TrendView.this.colorRegistry.put ( KEY_MANUAL, resultColor );
                     TrendView.this.manualSpinner.setBackground ( TrendView.this.colorRegistry.get ( KEY_MANUAL ) );
                     TrendView.this.manualSpinner.setForeground ( contrastForeground ( TrendView.this.colorRegistry.get ( KEY_MANUAL ) ) );
+                    TrendView.this.parameterUpdateJob.get ().schedule ( GUI_JOB_DELAY );
                 }
             }
 
@@ -1228,6 +1218,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                 TrendView.this.chart.getAxisSet ().getYAxis ( 0 ).getTick ().setTickMarkStepHint ( 33 );
                 TrendView.this.chart.getAxisSet ().getXAxis ( 0 ).getTick ().setTickMarkStepHint ( 33 );
                 TrendView.this.parent.layout ( true, true );
+                TrendView.this.chart.redraw ();
             }
         } );
     }
@@ -1342,7 +1333,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                 }
                 scaleMaxSpinner.setSelection ( (int) ( scaleYMax * 1000 ) );
                 adjustYRange ();
-                chart.redraw ();
+                TrendView.this.chart.redraw ();
             }
         } );
     }

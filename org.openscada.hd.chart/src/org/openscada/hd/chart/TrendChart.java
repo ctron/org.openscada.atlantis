@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -40,17 +41,17 @@ public class TrendChart extends Chart implements PaintListener
 
     private FontData smallFontData;
 
-    private double[] quality;
+    private AtomicReference<double[]> quality = new AtomicReference<double[]> (null);
 
-    private double qualityThreshold;
+    private AtomicReference<Double> qualityThreshold = new AtomicReference<Double> (0.0);
 
-    private Color qualityColor;
+    private AtomicReference<Color> qualityColor = new AtomicReference<Color> (null);
 
-    private double[] manual;
+    private AtomicReference<double[]> manual = new AtomicReference<double[]> (null);
 
-    private double manualThreshold;
+    private AtomicReference<Double> manualThreshold = new AtomicReference<Double>(0.0);
 
-    private Color manualColor;
+    private AtomicReference<Color> manualColor = new AtomicReference<Color> (null);
 
     public DataAtPoint getDataAtPoint ()
     {
@@ -135,18 +136,18 @@ public class TrendChart extends Chart implements PaintListener
         }
         smallFontData.setHeight ( 8 );
         final BackgroundOverlayPainter qualityBackgroundOverlay = new BackgroundOverlayPainter ();
-        final BackgroundOverlayPainter manualBackgroundOverlay = new BackgroundOverlayPainter();
+        final BackgroundOverlayPainter manualBackgroundOverlay = new BackgroundOverlayPainter ();
         manualBackgroundOverlay.setInvert ( true );
         this.setBackgroundOverlay ( new BackgroundOverlay () {
             public void draw ( final GC gc, final int x, final int y )
             {
-                qualityBackgroundOverlay.setData ( quality );
-                qualityBackgroundOverlay.setThreshold ( qualityThreshold );
-                qualityBackgroundOverlay.setColor ( qualityColor );
+                qualityBackgroundOverlay.setData ( quality.get () );
+                qualityBackgroundOverlay.setThreshold ( qualityThreshold.get () );
+                qualityBackgroundOverlay.setColor ( qualityColor.get () );
                 qualityBackgroundOverlay.draw ( gc, x, y );
-                manualBackgroundOverlay.setData ( manual );
-                manualBackgroundOverlay.setThreshold ( manualThreshold );
-                manualBackgroundOverlay.setColor ( manualColor );
+                manualBackgroundOverlay.setData ( manual.get () );
+                manualBackgroundOverlay.setThreshold ( manualThreshold.get () );
+                manualBackgroundOverlay.setColor ( manualColor.get () );
                 manualBackgroundOverlay.draw ( gc, x, y );
             }
         } );
@@ -170,7 +171,7 @@ public class TrendChart extends Chart implements PaintListener
         if ( dataAtPoint != null )
         {
             final double quality = dataAtPoint.getQuality ( currentX );
-            final double manual =  dataAtPoint.getManual ( currentX );
+            final double manual = dataAtPoint.getManual ( currentX );
             final Date timestamp = dataAtPoint.getTimestamp ( currentX );
             final Map<String, Double> data = dataAtPoint.getData ( currentX );
             gc.setAntialias ( SWT.ON );
@@ -225,31 +226,31 @@ public class TrendChart extends Chart implements PaintListener
 
     public void setQuality ( final double[] quality )
     {
-        this.quality = quality;
+        this.quality.set( quality );
     }
 
     public void setManual ( final double[] manual )
     {
-        this.manual = manual;
+        this.manual.set (  manual);
     }
 
     public void setQualityThreshold ( final double qualityThreshold )
     {
-        this.qualityThreshold = qualityThreshold;
+        this.qualityThreshold.set(qualityThreshold);
     }
 
     public void setManualThreshold ( final double manualThreshold )
     {
-        this.manualThreshold = manualThreshold;
+        this.manualThreshold .set(manualThreshold);
     }
 
     public void setQualityColor ( Color qualityColor )
     {
-        this.qualityColor = qualityColor;
+        this.qualityColor.set ( qualityColor );
     }
 
     public void setManualColor ( Color manualColor )
     {
-        this.manualColor = manualColor;
+        this.manualColor.set ( manualColor );
     }
 }
