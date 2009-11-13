@@ -15,6 +15,7 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
@@ -43,9 +44,13 @@ public class TrendChart extends Chart implements PaintListener
 
     private double qualityThreshold;
 
+    private Color qualityColor;
+
     private double[] manual;
 
     private double manualThreshold;
+
+    private Color manualColor;
 
     public DataAtPoint getDataAtPoint ()
     {
@@ -128,16 +133,20 @@ public class TrendChart extends Chart implements PaintListener
         {
             smallFontData = fontDataDefault[0];
         }
-        //// smallFontData.setHeight ( fontDataDefault[0].getHeight () - 2 );
         smallFontData.setHeight ( 8 );
-        final QualityBackgroundOverlay qualityBackgroundOverlay = new QualityBackgroundOverlay ();
-        final ManualBackgroundOverlay manualBackgroundOverlay = new ManualBackgroundOverlay ();
+        final BackgroundOverlayPainter qualityBackgroundOverlay = new BackgroundOverlayPainter ();
+        final BackgroundOverlayPainter manualBackgroundOverlay = new BackgroundOverlayPainter();
         this.setBackgroundOverlay ( new BackgroundOverlay () {
             public void draw ( final GC gc, final int x, final int y )
             {
                 qualityBackgroundOverlay.setData ( quality );
                 qualityBackgroundOverlay.setThreshold ( qualityThreshold );
+                qualityBackgroundOverlay.setColor ( qualityColor );
                 qualityBackgroundOverlay.draw ( gc, x, y );
+                manualBackgroundOverlay.setData ( manual );
+                manualBackgroundOverlay.setThreshold ( manualThreshold );
+                manualBackgroundOverlay.setColor ( manualColor );
+                manualBackgroundOverlay.draw ( gc, x, y );
             }
         } );
     }
@@ -228,5 +237,15 @@ public class TrendChart extends Chart implements PaintListener
     public void setManualThreshold ( final double manualThreshold )
     {
         this.manualThreshold = manualThreshold;
+    }
+
+    public void setQualityColor ( Color qualityColor )
+    {
+        this.qualityColor = qualityColor;
+    }
+
+    public void setManualColor ( Color manualColor )
+    {
+        this.manualColor = manualColor;
     }
 }

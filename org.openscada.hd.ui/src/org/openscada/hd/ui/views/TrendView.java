@@ -65,7 +65,6 @@ import org.openscada.hd.chart.DataAtPoint;
 import org.openscada.hd.chart.TrendChart;
 import org.openscada.hd.ui.data.QueryBuffer;
 import org.swtchart.IAxis;
-import org.swtchart.IBarSeries;
 import org.swtchart.ILineSeries;
 import org.swtchart.ISeries;
 import org.swtchart.LineStyle;
@@ -601,11 +600,6 @@ public class TrendView extends QueryViewPart implements QueryListener
                     TrendView.this.colorRegistry.put ( KEY_QUALITY, resultColor );
                     TrendView.this.qualitySpinner.setBackground ( TrendView.this.colorRegistry.get ( KEY_QUALITY ) );
                     TrendView.this.qualitySpinner.setForeground ( contrastForeground ( TrendView.this.colorRegistry.get ( KEY_QUALITY ) ) );
-                    final IBarSeries series = (IBarSeries)TrendView.this.chart.getSeriesSet ().getSeries ( KEY_QUALITY );
-                    if ( series != null )
-                    {
-                        series.setBarColor ( TrendView.this.colorRegistry.get ( KEY_QUALITY ) );
-                    }
                 }
             }
 
@@ -648,11 +642,6 @@ public class TrendView extends QueryViewPart implements QueryListener
                     TrendView.this.colorRegistry.put ( KEY_MANUAL, resultColor );
                     TrendView.this.manualSpinner.setBackground ( TrendView.this.colorRegistry.get ( KEY_MANUAL ) );
                     TrendView.this.manualSpinner.setForeground ( contrastForeground ( TrendView.this.colorRegistry.get ( KEY_MANUAL ) ) );
-                    final IBarSeries series = (IBarSeries)TrendView.this.chart.getSeriesSet ().getSeries ( KEY_MANUAL );
-                    if ( series != null )
-                    {
-                        series.setBarColor ( TrendView.this.colorRegistry.get ( KEY_MANUAL ) );
-                    }
                 }
             }
 
@@ -696,28 +685,6 @@ public class TrendView extends QueryViewPart implements QueryListener
         this.chart.getAxisSet ().getYAxis ( 0 ).getTick ().setForeground ( parent.getDisplay ().getSystemColor ( SWT.COLOR_WIDGET_FOREGROUND ) );
         this.chart.getAxisSet ().getYAxis ( 0 ).getTick ().setFont ( this.fontRegistry.get ( SMALL_LABEL_FONT ) );
         this.chart.getAxisSet ().getYAxis ( 0 ).getGrid ().setStyle ( LineStyle.NONE );
-
-        // quality
-        final IAxis qualityYAxis = this.chart.getAxisSet ().getYAxis ( this.chart.getAxisSet ().createYAxis () );
-        final IAxis qualityXAxis = this.chart.getAxisSet ().getXAxis ( this.chart.getAxisSet ().createXAxis () );
-        final IBarSeries qualitySeries = (IBarSeries)this.chart.getSeriesSet ().createSeries ( SeriesType.BAR, KEY_QUALITY );
-        qualitySeries.setBarColor ( this.colorRegistry.get ( KEY_QUALITY ) );
-        qualitySeries.setBarPadding ( 0 );
-        qualitySeries.setYAxisId ( qualityYAxis.getId () );
-        qualitySeries.setXAxisId ( qualityXAxis.getId () );
-        qualityYAxis.getTitle ().setVisible ( false );
-        qualityYAxis.getTick ().setVisible ( false );
-        qualityYAxis.getGrid ().setStyle ( LineStyle.NONE );
-        qualityXAxis.getTitle ().setVisible ( false );
-        qualityXAxis.getTick ().setVisible ( false );
-        qualityXAxis.getGrid ().setStyle ( LineStyle.NONE );
-
-        // manual values
-        final IBarSeries manualSeries = (IBarSeries)this.chart.getSeriesSet ().createSeries ( SeriesType.BAR, KEY_MANUAL );
-        manualSeries.setBarColor ( this.colorRegistry.get ( KEY_MANUAL ) );
-        manualSeries.setBarPadding ( 0 );
-        manualSeries.setYAxisId ( qualityYAxis.getId () );
-        manualSeries.setXAxisId ( qualityXAxis.getId () );
 
         // if size of plot has changed, a new request should be made to account
         // for changed numbers of displayed entries
@@ -1174,13 +1141,10 @@ public class TrendView extends QueryViewPart implements QueryListener
                 }
                 // update GUI with new parameters
                 // remove old Series
+                chart.setQualityColor ( colorRegistry.get ( KEY_QUALITY ) );
                 final List<String> seriesIds = new ArrayList<String> ();
                 for ( final ISeries series : TrendView.this.chart.getSeriesSet ().getSeries () )
                 {
-                    if ( KEY_QUALITY.equals ( series.getId () ) )
-                    {
-                        continue;
-                    }
                     seriesIds.add ( series.getId () );
                 }
                 for ( final String seriesId : seriesIds )
@@ -1313,51 +1277,14 @@ public class TrendView extends QueryViewPart implements QueryListener
                 }
                 TrendView.this.chart.getAxisSet ().getXAxis ( 0 ).getTick ().setFormat ( new SimpleDateFormat ( formatByRange () ) );
                 final double quality = TrendView.this.chartParameters.get ().getQuality ();
-                final ISeries qualitySeries = TrendView.this.chart.getSeriesSet ().getSeries ( KEY_QUALITY );
                 TrendView.this.chart.setQuality ( TrendView.this.dataQuality.get () );
-                TrendView.this.chart.setQualityThreshold ( quality );
-                //                if ( qualitySeries != null )
-                //                {
-                //                    qualitySeries.setYSeries ( toThreshold ( TrendView.this.dataQuality.get (), quality ) );
-                //                    qualitySeries.setXDateSeries ( TrendView.this.dataTimestamp.get () );
-                //                    if ( quality > 0.0 )
-                //                    {
-                //                        qualitySeries.setVisible ( true );
-                //                    }
-                //                    else
-                //                    {
-                //                        qualitySeries.setVisible ( false );
-                //                    }
-                //                }
-                //                final double manual = TrendView.this.chartParameters.get ().getManual ();
-                final ISeries manualSeries = TrendView.this.chart.getSeriesSet ().getSeries ( KEY_MANUAL );
-                //                if ( manualSeries != null )
-                //                {
-                //                    manualSeries.setYSeries ( toThreshold ( TrendView.this.dataManual.get (), manual ) );
-                //                    manualSeries.setXDateSeries ( TrendView.this.dataTimestamp.get () );
-                //                    if ( manual > 0.0 )
-                //                    {
-                //                        manualSeries.setVisible ( true );
-                //                    }
-                //                    else
-                //                    {
-                //                        manualSeries.setVisible ( false );
-                //                    }
-                //                }
+                TrendView.this.chart.setQualityThreshold ( quality / 100.0 );
                 if ( scaleYAutomatically )
                 {
                     // all axis should be adjusted automatically, handles chart by itself
                     TrendView.this.chart.getAxisSet ().adjustRange ();
                     for ( IAxis axis : TrendView.this.chart.getAxisSet ().getYAxes () )
                     {
-                        if ( ( qualitySeries != null ) && ( qualitySeries.getYAxisId () == axis.getId () ) )
-                        {
-                            continue;
-                        }
-                        if ( ( manualSeries != null ) && ( manualSeries.getYAxisId () == axis.getId () ) )
-                        {
-                            continue;
-                        }
                         Range range = axis.getRange ();
                         scaleYMin = range.lower;
                         scaleYMax = range.upper;
@@ -1420,46 +1347,10 @@ public class TrendView extends QueryViewPart implements QueryListener
 
     private void adjustYRange ()
     {
-        final ISeries qualitySeries = chart.getSeriesSet ().getSeries ( KEY_QUALITY );
-        final ISeries manualSeries = chart.getSeriesSet ().getSeries ( KEY_MANUAL );
         for ( IAxis axis : chart.getAxisSet ().getYAxes () )
         {
-            if ( ( qualitySeries != null ) && ( qualitySeries.getYAxisId () == axis.getId () ) )
-            {
-                continue;
-            }
-            if ( ( manualSeries != null ) && ( manualSeries.getYAxisId () == axis.getId () ) )
-            {
-                continue;
-            }
             axis.setRange ( new Range ( scaleYMin, scaleYMax ) );
         }
-    }
-
-    /**
-     * returns array of 1s or 0s. An element is 1 if the quality in the given position is lower then the quality parameter
-     * this is misused to draw the bar chart which displays the quality
-     * @param data
-     * @param quality
-     * @return
-     */
-    private double[] toThreshold ( final double[] data, final double v )
-    {
-        final double[] result = new double[data.length];
-        int i = 0;
-        for ( final double d : data )
-        {
-            if ( d < v / 100.0 )
-            {
-                result[i] = 1;
-            }
-            else
-            {
-                result[i] = 0;
-            }
-            i += 1;
-        }
-        return result;
     }
 
     /**
@@ -1507,9 +1398,14 @@ public class TrendView extends QueryViewPart implements QueryListener
         return result;
     }
 
+    /**
+     * returns white for darke background, black for light background
+     * @param c
+     * @return
+     */
     private Color contrastForeground ( final Color c )
     {
-        int grey = (int) ( ( ( c.getRed () ) * 0.299 ) + ( ( c.getGreen () ) * 0.587 ) + ( ( c.getGreen () ) * 0.114 ) );
+        int grey = (int) ( ( ( c.getRed () ) * 0.299 ) + ( ( c.getGreen () ) * 0.587 ) + ( ( c.getBlue () ) * 0.114 ) );
         if ( grey > 186 )
         {
             return this.colorRegistry.get ( KEY_BLACK );
