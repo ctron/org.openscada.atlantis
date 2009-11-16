@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2008-2009 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.da.server.osgi;
 
 import java.util.HashMap;
@@ -40,7 +59,7 @@ public class HiveImpl extends HiveCommon
         this.items = new HashMap<ServiceReference, ItemDescriptor> ();
 
         this.storage = new InvisibleStorage ();
-        GroupFolder allItemsFolder = new GroupFolder ( new SplitGroupProvider ( new IDNameProvider (), "\\." ), new IDNameProvider () );
+        final GroupFolder allItemsFolder = new GroupFolder ( new SplitGroupProvider ( new IDNameProvider (), "\\." ), new IDNameProvider () );
         this.rootFolder.add ( "all", allItemsFolder, new HashMap<String, Variant> () );
         this.storage.addChild ( allItemsFolder );
     }
@@ -63,12 +82,12 @@ public class HiveImpl extends HiveCommon
         {
             return;
         }
-        DataItem item = (DataItem)this.context.getService ( serviceReference );
+        final DataItem item = (DataItem)this.context.getService ( serviceReference );
         registerItem ( item );
 
-        Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        ItemDescriptor descriptor = new ItemDescriptor ( item, attributes );
+        final ItemDescriptor descriptor = new ItemDescriptor ( item, attributes );
         this.storage.added ( descriptor );
 
         this.items.put ( serviceReference, descriptor );
@@ -79,7 +98,7 @@ public class HiveImpl extends HiveCommon
     {
         logger.info ( String.format ( "Removing %s", serviceReference ) );
 
-        ItemDescriptor descriptor = this.items.remove ( serviceReference );
+        final ItemDescriptor descriptor = this.items.remove ( serviceReference );
         this.storage.removed ( descriptor );
         unregisterItem ( descriptor.getItem () );
     }
