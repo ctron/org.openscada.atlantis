@@ -59,7 +59,7 @@ public class HiveImpl extends HiveCommon
         this.items = new HashMap<ServiceReference, ItemDescriptor> ();
 
         this.storage = new InvisibleStorage ();
-        final GroupFolder allItemsFolder = new GroupFolder ( new SplitGroupProvider ( new IDNameProvider (), "\\." ), new IDNameProvider () );
+        final GroupFolder allItemsFolder = new GroupFolder ( new SplitGroupProvider ( new IDNameProvider (), "\\.", 0, 1 ), new IDNameProvider () );
         this.rootFolder.add ( "all", allItemsFolder, new HashMap<String, Variant> () );
         this.storage.addChild ( allItemsFolder );
     }
