@@ -25,6 +25,8 @@ import java.util.Map;
 import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.ConnectionLayer;
+import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.GridData;
@@ -100,7 +102,13 @@ public class ManualOverride extends AbstractBaseDetailsPart
 
     private IFigure createRoot ()
     {
-        final Figure rootFigure = new Figure ();
+        final Figure baseFigure = new Figure ();
+
+        final ConnectionLayer rootFigure = new ConnectionLayer ();
+        rootFigure.setAntialias ( 1 );
+        rootFigure.setConnectionRouter ( ConnectionRouter.NULL );
+        baseFigure.add ( rootFigure );
+
         rootFigure.setLayoutManager ( new GridLayout ( 3, true ) );
         rootFigure.setBackgroundColor ( ColorConstants.white );
 
@@ -568,7 +576,8 @@ public class ManualOverride extends AbstractBaseDetailsPart
         final PolygonDecoration dec = new PolygonDecoration ();
         dec.setTemplate ( PolygonDecoration.TRIANGLE_TIP );
 
-        connection.setLineStyle ( state ? Graphics.LINE_SOLID : Graphics.LINE_DASH );
+        connection.setLineStyle ( state ? Graphics.LINE_SOLID : Graphics.LINE_DOT );
+        connection.setLineWidth ( state ? 2 : 1 );
         connection.setTargetDecoration ( state ? dec : null );
     }
 
