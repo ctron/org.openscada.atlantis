@@ -35,20 +35,14 @@ import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
+import org.eclipse.draw2d.MouseMotionListener;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
-import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
-import org.openscada.da.client.base.browser.ValueType;
 import org.openscada.da.client.dataitem.details.part.AbstractBaseDetailsPart;
 
 /**
@@ -77,9 +71,19 @@ public class ManualOverride extends AbstractBaseDetailsPart
 
     private PolylineConnection m2rConnection;
 
-    private Text manualValueText;
+    private Variant manualValue;
 
-    private Combo manualValueCombo;
+    private RoundedRectangle rmvRect;
+
+    private Label rmvValue;
+
+    private RoundedRectangle rpvRect;
+
+    private Label rpvValue;
+
+    private PolylineConnection rp2pConnection;
+
+    private PolylineConnection rm2pConnection;
 
     @Override
     public void createPart ( final Composite parent )
@@ -91,89 +95,44 @@ public class ManualOverride extends AbstractBaseDetailsPart
         this.canvas.setLayoutData ( new org.eclipse.swt.layout.GridData ( SWT.FILL, SWT.FILL, true, true ) );
         final LightweightSystem lws = new LightweightSystem ( this.canvas );
 
-        createManualValueComposite ( parent );
-
         lws.setContents ( createRoot () );
-    }
-
-    private void createManualValueComposite ( final Composite parent )
-    {
-        final Composite comp = new Composite ( parent, SWT.NONE );
-        comp.setLayoutData ( new org.eclipse.swt.layout.GridData ( SWT.FILL, SWT.BEGINNING, true, false ) );
-
-        comp.setLayout ( new org.eclipse.swt.layout.RowLayout ( SWT.HORIZONTAL ) );
-
-        final org.eclipse.swt.widgets.Label label = new org.eclipse.swt.widgets.Label ( comp, SWT.NONE );
-        label.setText ( "" );
-        label.setAlignment ( Label.MIDDLE );
-
-        this.manualValueText = new Text ( comp, SWT.BORDER );
-
-        this.manualValueCombo = new Combo ( comp, SWT.READ_ONLY );
-
-        for ( final ValueType vt : ValueType.values () )
-        {
-            this.manualValueCombo.add ( vt.label () );
-        }
-        this.manualValueCombo.select ( ValueType.STRING.ordinal () );
-
-        final Button setButton = new Button ( comp, SWT.BORDER );
-        setButton.setText ( "Set" );
-        setButton.addSelectionListener ( new SelectionAdapter () {
-            @Override
-            public void widgetSelected ( final SelectionEvent e )
-            {
-                switchToManual ();
-            }
-        } );
-
-        final Button clearButton = new Button ( comp, SWT.BORDER );
-        clearButton.setText ( "Clear" );
-        clearButton.addSelectionListener ( new SelectionAdapter () {
-            @Override
-            public void widgetSelected ( final SelectionEvent e )
-            {
-                switchToProcess ();
-            }
-        } );
     }
 
     private IFigure createRoot ()
     {
         final Figure rootFigure = new Figure ();
-        rootFigure.setLayoutManager ( new GridLayout ( 2, true ) );
+        rootFigure.setLayoutManager ( new GridLayout ( 3, true ) );
         rootFigure.setBackgroundColor ( ColorConstants.white );
 
+        final Figure rpvFigure = createRPV ();
         final Figure pvFigure = createPV ();
+        final Figure rmvFigure = createRMV ();
         final Figure mvFigure = createMV ();
         final Figure rvFigure = createRV ();
 
-        rootFigure.add ( pvFigure, new GridData ( GridData.CENTER, GridData.CENTER, true, true, 1, 1 ) );
-        rootFigure.add ( rvFigure, new GridData ( GridData.CENTER, GridData.CENTER, true, true, 1, 2 ) );
-        rootFigure.add ( mvFigure, new GridData ( GridData.CENTER, GridData.CENTER, true, true, 1, 1 ) );
+        rootFigure.add ( rpvFigure, new GridData ( GridData.CENTER, GridData.CENTER, true, true, 1, 1 ) );
+        rootFigure.add ( pvFigure, new GridData ( GridData.CENTER, GridData.CENTER, true, true, 1, 2 ) );
+        rootFigure.add ( rvFigure, new GridData ( GridData.CENTER, GridData.CENTER, true, true, 1, 3 ) );
 
-        rootFigure.add ( this.p2rConnection = createP2R () );
-        rootFigure.add ( this.m2rConnection = createM2R () );
+        rootFigure.add ( rmvFigure, new GridData ( GridData.CENTER, GridData.CENTER, true, true, 1, 1 ) );
+
+        rootFigure.add ( mvFigure, new GridData ( GridData.CENTER, GridData.CENTER, true, true, 1, 1 ) );
+        rootFigure.add ( new Figure (), new GridData ( GridData.CENTER, GridData.CENTER, true, true, 1, 1 ) ); // placeholder
+
+        rootFigure.add ( this.p2rConnection = createConnection ( this.pvRect, this.rvRect ) );
+        rootFigure.add ( this.m2rConnection = createConnection ( this.mvRect, this.rvRect ) );
+
+        rootFigure.add ( this.rp2pConnection = createConnection ( this.rpvRect, this.pvRect ) );
+        rootFigure.add ( this.rm2pConnection = createConnection ( this.rmvRect, this.pvRect ) );
 
         return rootFigure;
     }
 
-    private PolylineConnection createM2R ()
+    private PolylineConnection createConnection ( final IFigure source, final IFigure target )
     {
         final PolylineConnection c = new PolylineConnection ();
-        final ChopboxAnchor sourceAnchor = new ChopboxAnchor ( this.mvRect );
-        final ChopboxAnchor targetAnchor = new ChopboxAnchor ( this.rvRect );
-        c.setSourceAnchor ( sourceAnchor );
-        c.setTargetAnchor ( targetAnchor );
-
-        return c;
-    }
-
-    private PolylineConnection createP2R ()
-    {
-        final PolylineConnection c = new PolylineConnection ();
-        final ChopboxAnchor sourceAnchor = new ChopboxAnchor ( this.pvRect );
-        final ChopboxAnchor targetAnchor = new ChopboxAnchor ( this.rvRect );
+        final ChopboxAnchor sourceAnchor = new ChopboxAnchor ( source );
+        final ChopboxAnchor targetAnchor = new ChopboxAnchor ( target );
         c.setSourceAnchor ( sourceAnchor );
         c.setTargetAnchor ( targetAnchor );
 
@@ -199,6 +158,75 @@ public class ManualOverride extends AbstractBaseDetailsPart
         return rvFigure;
     }
 
+    private Figure createRMV ()
+    {
+        final Figure rmvFigure = new Figure ();
+        rmvFigure.setLayoutManager ( new BorderLayout () );
+        final Label label = new Label ( "Remote Manual Value" );
+        label.setBorder ( new MarginBorder ( 10 ) );
+        rmvFigure.add ( label, BorderLayout.LEFT );
+
+        this.rmvRect = new RoundedRectangle ();
+        this.rmvRect.setLayoutManager ( new BorderLayout () );
+        this.rmvValue = new Label ();
+        this.rmvValue.setBorder ( new MarginBorder ( 10 ) );
+        this.rmvRect.setBackgroundColor ( ColorConstants.lightGray );
+        this.rmvRect.add ( this.rmvValue, BorderLayout.CENTER );
+
+        this.rmvRect.addMouseMotionListener ( new MouseMotionListener.Stub () {
+
+            public void mouseEntered ( final MouseEvent me )
+            {
+                ManualOverride.this.rmvRect.setLineWidth ( 2 );
+            }
+
+            public void mouseExited ( final MouseEvent me )
+            {
+                ManualOverride.this.rmvRect.setLineWidth ( 1 );
+            }
+        } );
+
+        this.rmvRect.addMouseListener ( new MouseListener () {
+
+            public void mouseDoubleClicked ( final MouseEvent me )
+            {
+                handleSetRemoteManualValue ();
+            }
+
+            public void mousePressed ( final MouseEvent me )
+            {
+                setRemoteManualState ( true );
+            }
+
+            public void mouseReleased ( final MouseEvent me )
+            {
+                // TODO Auto-generated method stub
+
+            }
+        } );
+
+        rmvFigure.add ( this.rmvRect, BorderLayout.CENTER );
+        return rmvFigure;
+    }
+
+    protected void setRemoteManualState ( final boolean state )
+    {
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        attributes.put ( "remote.manual.active", new Variant ( state ) );
+        writeAttributes ( attributes );
+    }
+
+    protected void handleSetRemoteManualValue ()
+    {
+        final Variant value = new VariantEntryDialog ( this.shell ).getValue ();
+        if ( value != null )
+        {
+            final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+            attributes.put ( "remote.manual.value", value );
+            writeAttributes ( attributes );
+        }
+    }
+
     private Figure createMV ()
     {
         final Figure mvFigure = new Figure ();
@@ -214,17 +242,30 @@ public class ManualOverride extends AbstractBaseDetailsPart
         this.mvRect.setBackgroundColor ( ColorConstants.lightGray );
         this.mvRect.add ( this.mvValue, BorderLayout.CENTER );
 
+        this.mvRect.addMouseMotionListener ( new MouseMotionListener.Stub () {
+
+            public void mouseEntered ( final MouseEvent me )
+            {
+                ManualOverride.this.mvRect.setLineWidth ( 2 );
+            }
+
+            public void mouseExited ( final MouseEvent me )
+            {
+                ManualOverride.this.mvRect.setLineWidth ( 1 );
+            }
+        } );
+
         this.mvRect.addMouseListener ( new MouseListener () {
 
             public void mouseDoubleClicked ( final MouseEvent me )
             {
+                ManualOverride.this.manualValue = null;
                 ManualOverride.this.switchToManual ();
             }
 
             public void mousePressed ( final MouseEvent me )
             {
-                // TODO Auto-generated method stub
-
+                ManualOverride.this.switchToManual ();
             }
 
             public void mouseReleased ( final MouseEvent me )
@@ -240,20 +281,73 @@ public class ManualOverride extends AbstractBaseDetailsPart
 
     protected void switchToManual ()
     {
+        if ( this.manualValue == null )
+        {
+            // enter manual value if we don't have one
+            enterManualValue ();
+            if ( this.manualValue == null )
+            {
+                // still have none ... abort
+                return;
+            }
+        }
+
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        attributes.put ( "org.openscada.da.manual.value", this.manualValue );
+        writeAttributes ( attributes );
+    }
 
-        Variant value = null;
-        try
-        {
-            value = getManualSetValue ();
-        }
-        catch ( final NotConvertableException e1 )
-        {
-            // FIXME: warn
-        }
-
-        attributes.put ( "org.openscada.da.manual.value", value );
+    protected void writeAttributes ( final Map<String, Variant> attributes )
+    {
         this.item.writeAtrtibutes ( attributes );
+    }
+
+    private Figure createRPV ()
+    {
+        final Figure rpvFigure = new Figure ();
+        rpvFigure.setLayoutManager ( new BorderLayout () );
+        final Label label = new Label ( "Remote Process Value" );
+        label.setBorder ( new MarginBorder ( 10 ) );
+        rpvFigure.add ( label, BorderLayout.LEFT );
+
+        this.rpvRect = new RoundedRectangle ();
+        this.rpvRect.setLayoutManager ( new BorderLayout () );
+        this.rpvValue = new Label ();
+        this.rpvValue.setBorder ( new MarginBorder ( 10 ) );
+        this.rpvRect.setBackgroundColor ( ColorConstants.lightGray );
+        this.rpvRect.add ( this.rpvValue, BorderLayout.CENTER );
+
+        rpvFigure.add ( this.rpvRect, BorderLayout.CENTER );
+
+        this.rpvRect.addMouseMotionListener ( new MouseMotionListener.Stub () {
+
+            public void mouseEntered ( final MouseEvent me )
+            {
+                ManualOverride.this.rpvRect.setLineWidth ( 2 );
+            }
+
+            public void mouseExited ( final MouseEvent me )
+            {
+                ManualOverride.this.rpvRect.setLineWidth ( 1 );
+            }
+        } );
+        this.rpvRect.addMouseListener ( new MouseListener () {
+
+            public void mouseDoubleClicked ( final MouseEvent me )
+            {
+            }
+
+            public void mousePressed ( final MouseEvent me )
+            {
+                setRemoteManualState ( false );
+            }
+
+            public void mouseReleased ( final MouseEvent me )
+            {
+            }
+        } );
+
+        return rpvFigure;
     }
 
     private Figure createPV ()
@@ -273,15 +367,27 @@ public class ManualOverride extends AbstractBaseDetailsPart
 
         pvFigure.add ( this.pvRect, BorderLayout.CENTER );
 
+        this.pvRect.addMouseMotionListener ( new MouseMotionListener.Stub () {
+
+            public void mouseEntered ( final MouseEvent me )
+            {
+                ManualOverride.this.pvRect.setLineWidth ( 2 );
+            }
+
+            public void mouseExited ( final MouseEvent me )
+            {
+                ManualOverride.this.pvRect.setLineWidth ( 1 );
+            }
+        } );
         this.pvRect.addMouseListener ( new MouseListener () {
 
             public void mouseDoubleClicked ( final MouseEvent me )
             {
-                ManualOverride.this.switchToProcess ();
             }
 
             public void mousePressed ( final MouseEvent me )
             {
+                ManualOverride.this.switchToProcess ();
             }
 
             public void mouseReleased ( final MouseEvent me )
@@ -292,28 +398,21 @@ public class ManualOverride extends AbstractBaseDetailsPart
         return pvFigure;
     }
 
+    /**
+     * Enter the manual value
+     */
+    protected void enterManualValue ()
+    {
+        final VariantEntryDialog dlg = new VariantEntryDialog ( this.shell );
+        this.manualValue = dlg.getValue ();
+    }
+
     protected void switchToProcess ()
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         attributes.put ( "org.openscada.da.manual.value", new Variant () );
         this.item.writeAtrtibutes ( attributes );
-    }
-
-    private Variant getManualSetValue () throws NotConvertableException
-    {
-        Variant value = new Variant ();
-
-        final int idx = this.manualValueCombo.getSelectionIndex ();
-        for ( final ValueType vt : ValueType.values () )
-        {
-            if ( vt.ordinal () == idx )
-            {
-                value = vt.convertTo ( this.manualValueText.getText () );
-            }
-        }
-
-        return value;
     }
 
     @Override
@@ -323,9 +422,67 @@ public class ManualOverride extends AbstractBaseDetailsPart
         super.dispose ();
     }
 
+    protected void updateRemote ()
+    {
+        final Boolean remoteManual = this.value.isAttribute ( "remote.manual.active" );
+        final Variant remoteProcessValue = this.value.getAttributes ().get ( "remote.manual.value.original" );
+        final Variant remoteManualValue = this.value.getAttributes ().get ( "remote.manual.value" );
+
+        if ( remoteManual == null )
+        {
+            setConnectionState ( this.rp2pConnection, false );
+            setConnectionState ( this.rm2pConnection, false );
+        }
+        else if ( remoteManual )
+        {
+            setConnectionState ( this.rp2pConnection, false );
+            setConnectionState ( this.rm2pConnection, true );
+        }
+        else
+        {
+            setConnectionState ( this.rp2pConnection, true );
+            setConnectionState ( this.rm2pConnection, false );
+        }
+
+        if ( remoteManualValue != null )
+        {
+            this.rmvValue.setText ( remoteManualValue.toString () );
+        }
+        if ( remoteProcessValue != null )
+        {
+            this.rpvValue.setText ( remoteProcessValue.toString () );
+        }
+    }
+
+    private boolean isLocalManual ()
+    {
+        return this.value.isAttribute ( "org.openscada.da.manual.active", false );
+    }
+
+    private boolean isRemoteManual ()
+    {
+        return this.value.isAttribute ( "remote.manual.active", false );
+    }
+
+    private boolean isGlobalManual ()
+    {
+        return isLocalManual () || isRemoteManual ();
+    }
+
+    private void updateLocalManualValue ()
+    {
+        if ( this.manualValue == null )
+        {
+            this.manualValue = this.value.getAttributes ().get ( "org.openscada.da.manual.value" );
+        }
+    }
+
     @Override
     protected void update ()
     {
+        updateRemote ();
+        updateLocalManualValue ();
+
         // set result value
         this.rvValue.setText ( this.value.getValue ().toString () );
         if ( isUnsafe () )
@@ -336,13 +493,22 @@ public class ManualOverride extends AbstractBaseDetailsPart
         {
             this.rvRect.setBackgroundColor ( ColorConstants.red );
         }
-        else if ( isManual () )
+        else if ( isGlobalManual () )
         {
             this.rvRect.setBackgroundColor ( ColorConstants.cyan );
         }
         else
         {
             this.rvRect.setBackgroundColor ( ColorConstants.lightGray );
+        }
+
+        if ( isRemoteManual () )
+        {
+            this.pvRect.setBackgroundColor ( ColorConstants.cyan );
+        }
+        else
+        {
+            this.pvRect.setBackgroundColor ( ColorConstants.lightGray );
         }
 
         // set manual value
@@ -363,15 +529,10 @@ public class ManualOverride extends AbstractBaseDetailsPart
             this.mvValue.setText ( "<none>" );
         }
 
-        if ( isManual () )
+        if ( isLocalManual () )
         {
-            this.p2rConnection.setLineStyle ( Graphics.LINE_DASH );
-            this.m2rConnection.setLineStyle ( Graphics.LINE_SOLID );
-
-            this.p2rConnection.setTargetDecoration ( null );
-            final PolygonDecoration dec = new PolygonDecoration ();
-            dec.setTemplate ( PolygonDecoration.TRIANGLE_TIP );
-            this.m2rConnection.setTargetDecoration ( dec );
+            setConnectionState ( this.p2rConnection, false );
+            setConnectionState ( this.m2rConnection, true );
 
             // set process value
             if ( processValue != null )
@@ -383,19 +544,32 @@ public class ManualOverride extends AbstractBaseDetailsPart
                 this.pvValue.setText ( "<none>" );
             }
 
-            this.pvRect.setBackgroundColor ( processError.asBoolean () ? ColorConstants.red : ColorConstants.lightGray );
+            if ( processError.asBoolean () )
+            {
+                this.pvRect.setBackgroundColor ( ColorConstants.red );
+            }
         }
         else
         {
-            this.p2rConnection.setLineStyle ( Graphics.LINE_SOLID );
-            this.m2rConnection.setLineStyle ( Graphics.LINE_DASH );
-
-            final PolygonDecoration dec = new PolygonDecoration ();
-            dec.setTemplate ( PolygonDecoration.TRIANGLE_TIP );
-            this.p2rConnection.setTargetDecoration ( dec );
-            this.m2rConnection.setTargetDecoration ( null );
+            setConnectionState ( this.p2rConnection, true );
+            setConnectionState ( this.m2rConnection, false );
 
             this.pvValue.setText ( this.value.getValue ().toString () );
         }
     }
+
+    /**
+     * Set graphics attribute according to the connection state
+     * @param connection the connection to change 
+     * @param state the state
+     */
+    protected void setConnectionState ( final PolylineConnection connection, final boolean state )
+    {
+        final PolygonDecoration dec = new PolygonDecoration ();
+        dec.setTemplate ( PolygonDecoration.TRIANGLE_TIP );
+
+        connection.setLineStyle ( state ? Graphics.LINE_SOLID : Graphics.LINE_DASH );
+        connection.setTargetDecoration ( state ? dec : null );
+    }
+
 }
