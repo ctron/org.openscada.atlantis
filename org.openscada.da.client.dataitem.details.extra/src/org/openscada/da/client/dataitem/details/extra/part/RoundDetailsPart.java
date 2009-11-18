@@ -162,6 +162,11 @@ public class RoundDetailsPart extends AbstractBaseDraw2DDetailsPart
     @Override
     protected void update ()
     {
+        if ( this.value == null )
+        {
+            return;
+        }
+
         this.targetLabel.setText ( String.format ( "%s", this.value.getValue () ) );
         final Variant originalValue = this.value.getAttributes ().get ( "org.openscada.da.round.value.original" );
         final boolean active = getBooleanAttribute ( "org.openscada.da.round.active" );

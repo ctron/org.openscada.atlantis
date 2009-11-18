@@ -87,10 +87,8 @@ public class ManualOverride extends AbstractBaseDetailsPart
 
     private PolylineConnection rm2pConnection;
 
-    @Override
     public void createPart ( final Composite parent )
     {
-        super.createPart ( parent );
         parent.setLayout ( new org.eclipse.swt.layout.GridLayout ( 1, false ) );
 
         this.canvas = new Canvas ( parent, SWT.NONE );
@@ -488,6 +486,11 @@ public class ManualOverride extends AbstractBaseDetailsPart
     @Override
     protected void update ()
     {
+        if ( this.value == null )
+        {
+            return;
+        }
+
         updateRemote ();
         updateLocalManualValue ();
 

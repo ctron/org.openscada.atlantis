@@ -146,6 +146,11 @@ public class InputScaleDetails extends AbstractBaseDraw2DDetailsPart
     @Override
     protected void update ()
     {
+        if ( this.value == null )
+        {
+            return;
+        }
+
         // set the main value
         this.valueLabel.setText ( this.value.getValue ().toString () );
 

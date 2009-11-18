@@ -11,11 +11,8 @@ public abstract class AbstractBaseDraw2DDetailsPart extends AbstractBaseDetailsP
 {
     private Canvas canvas;
 
-    @Override
     public void createPart ( final Composite parent )
     {
-        super.createPart ( parent );
-
         parent.setLayout ( new org.eclipse.swt.layout.GridLayout ( 1, false ) );
 
         this.canvas = new Canvas ( parent, SWT.NONE );
