@@ -117,6 +117,17 @@ public abstract class DataItemBaseChained extends DataItemBase
 
         process ();
 
+        return handleUnhandledAttributes ( writeAttributeResults, attributes );
+    }
+
+    /**
+     * Handle all unhandled set attribute requests
+     * @param writeAttributeResults the result set
+     * @param attributes the attributes to set
+     * @return the final result
+     */
+    protected WriteAttributeResults handleUnhandledAttributes ( final WriteAttributeResults writeAttributeResults, final Map<String, Variant> attributes )
+    {
         return WriteAttributesHelper.errorUnhandled ( writeAttributeResults, attributes );
     }
 
