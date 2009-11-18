@@ -168,7 +168,7 @@ public class DataItemValue
      */
     public boolean isManual ()
     {
-        return isAttribute ( "org.openscada.da.manual.active", false );
+        return isAttribute ( "manual", false ) || isAttribute ( "org.openscada.da.manual.active", false );
     }
 
     public boolean isAlarm ()
