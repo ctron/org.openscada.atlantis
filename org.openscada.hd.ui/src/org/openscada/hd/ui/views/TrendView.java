@@ -1085,15 +1085,22 @@ public class TrendView extends QueryViewPart implements QueryListener
                 {
                     final double d = valueArray[i].toDouble ();
                     chartValues[i + index] = d;
-                    if ( !Double.isInfinite ( d ) && !Double.isNaN ( d ) )
+                    if ( !Double.isInfinite ( d ) && !Double.isNaN ( d ) && d != 0.0 )
                     {
-                        if ( ( currentYMax == null ) || ( d > currentYMax ) )
-                        {
-                            currentYMax = d + d * .02;
+                        if (currentYMin == null) {
+                            currentYMin = d;
                         }
-                        if ( ( currentYMin == null ) || ( d < currentYMin ) )
+                        if (currentYMax == null) {
+                            currentYMax = d;
+                        }
+                        final double diff = currentYMax - currentYMin;
+                        if ( d > currentYMax )
                         {
-                            currentYMin = d - d * .02;
+                            currentYMax = d + diff * 0.2;
+                        }
+                        if ( d < currentYMin ) 
+                        {
+                            currentYMin = d - diff * 0.2;
                         }
                     }
                 }
