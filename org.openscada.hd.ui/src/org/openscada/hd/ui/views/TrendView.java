@@ -458,6 +458,10 @@ public class TrendView extends QueryViewPart implements QueryListener
 
     private volatile double scaleYMax = 1.0;
 
+    private volatile Double currentYMin = null;
+
+    private volatile Double currentYMax = null;
+
     private volatile boolean scaleYAutomatically = true;
 
     @Override
@@ -515,7 +519,6 @@ public class TrendView extends QueryViewPart implements QueryListener
                     scaleYAutomatically = true;
                     scaleMinSpinner.setEnabled ( false );
                     scaleMaxSpinner.setEnabled ( false );
-                    chart.getAxisSet ().adjustRange ();
                 }
                 else
                 {
@@ -525,6 +528,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                 }
                 scaleMinSpinner.setSelection ( (int)Math.round ( scaleYMin * 1000 ) );
                 scaleMaxSpinner.setSelection ( (int)Math.round ( scaleYMax * 1000 ) );
+                adjustRange ();
                 chart.redraw ();
             }
 
@@ -1057,6 +1061,8 @@ public class TrendView extends QueryViewPart implements QueryListener
                 this.chartParameters.set ( newChartParameters );
                 updateRequired = true;
             }
+            this.currentYMin = null;
+            this.currentYMax = null;
         }
         if ( updateRequired )
         {
@@ -1077,7 +1083,19 @@ public class TrendView extends QueryViewPart implements QueryListener
                 // now copy values from data source to our data array
                 for ( int i = 0; i < valueInformation.length; i++ )
                 {
-                    chartValues[i + index] = valueArray[i].toDouble ();
+                    final double d = valueArray[i].toDouble ();
+                    chartValues[i + index] = d;
+                    if ( !Double.isInfinite ( d ) && !Double.isNaN ( d ) )
+                    {
+                        if ( ( currentYMax == null ) || ( d > currentYMax ) )
+                        {
+                            currentYMax = d + d * .02;
+                        }
+                        if ( ( currentYMin == null ) || ( d < currentYMin ) )
+                        {
+                            currentYMin = d - d * .02;
+                        }
+                    }
                 }
             }
             // now copy values for date axis and quality
@@ -1272,26 +1290,7 @@ public class TrendView extends QueryViewPart implements QueryListener
                 TrendView.this.chart.getAxisSet ().getXAxis ( 0 ).getTick ().setFormat ( new SimpleDateFormat ( formatByRange () ) );
                 TrendView.this.chart.setQuality ( TrendView.this.dataQuality.get () );
                 TrendView.this.chart.setManual ( TrendView.this.dataManual.get () );
-                if ( scaleYAutomatically )
-                {
-                    // all axis should be adjusted automatically, handles chart by itself
-                    TrendView.this.chart.getAxisSet ().adjustRange ();
-                    for ( IAxis axis : TrendView.this.chart.getAxisSet ().getYAxes () )
-                    {
-                        Range range = axis.getRange ();
-                        scaleYMin = range.lower;
-                        scaleYMax = range.upper;
-                    }
-                }
-                else
-                {
-                    // chart should only scale x axis automatically
-                    for ( IAxis axis : TrendView.this.chart.getAxisSet ().getXAxes () )
-                    {
-                        axis.adjustRange ();
-                    }
-                    adjustYRange ();
-                }
+                adjustRange ();
                 TrendView.this.chart.redraw ();
             }
         } );
@@ -1332,14 +1331,23 @@ public class TrendView extends QueryViewPart implements QueryListener
                     scaleYMax = v;
                 }
                 scaleMaxSpinner.setSelection ( (int) ( scaleYMax * 1000 ) );
-                adjustYRange ();
+                adjustRange ();
                 TrendView.this.chart.redraw ();
             }
         } );
     }
 
-    private void adjustYRange ()
+    private void adjustRange ()
     {
+        if ( scaleYAutomatically )
+        {
+            scaleYMin = ( currentYMin == null ? 0 : currentYMin );
+            scaleYMax = ( currentYMax == null ? 1 : currentYMax );
+        }
+        for ( IAxis axis : TrendView.this.chart.getAxisSet ().getXAxes () )
+        {
+            axis.adjustRange ();
+        }
         for ( IAxis axis : chart.getAxisSet ().getYAxes () )
         {
             axis.setRange ( new Range ( scaleYMin, scaleYMax ) );
