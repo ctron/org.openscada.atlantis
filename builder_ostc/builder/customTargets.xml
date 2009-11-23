@@ -99,6 +99,7 @@
   	<echo message="Building in: ${buildDirectory}"/>
   	<echo message="SkipMaps: ${skipMaps}"/>
   	<echo message="SkipFetch: ${skipFetch}"/>
+  	<echo message="p2.context.repos: ${p2.context.repos}"/>
   </target>
 
   <!-- ===================================================================== -->
