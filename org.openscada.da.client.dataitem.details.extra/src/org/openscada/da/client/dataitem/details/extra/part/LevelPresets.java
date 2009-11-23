@@ -189,6 +189,11 @@ public class LevelPresets extends AbstractBaseDraw2DDetailsPart
     @Override
     protected void update ()
     {
+        if ( this.value == null )
+        {
+            return;
+        }
+
         setTri ( this.triHH, "highhigh" );
         setTri ( this.triH, "high" );
         setTri ( this.triL, "low" );

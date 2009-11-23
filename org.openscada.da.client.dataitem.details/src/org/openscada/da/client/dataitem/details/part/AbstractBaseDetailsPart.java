@@ -19,7 +19,6 @@
 
 package org.openscada.da.client.dataitem.details.part;
 
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.openscada.core.Variant;
@@ -36,15 +35,6 @@ public abstract class AbstractBaseDetailsPart implements DetailsPart
 
     protected Shell shell;
 
-    private Composite parent;
-
-    public void createPart ( final Composite parent )
-    {
-        this.display = parent.getDisplay ();
-        this.shell = parent.getShell ();
-        this.parent = parent;
-    }
-
     public void setDataItem ( final DataItemHolder item )
     {
         this.item = item;
@@ -57,18 +47,7 @@ public abstract class AbstractBaseDetailsPart implements DetailsPart
     public void updateData ( final DataItemValue value )
     {
         this.value = value;
-
-        // trigger async update in display thread
-        this.display.asyncExec ( new Runnable () {
-
-            public void run ()
-            {
-                if ( !AbstractBaseDetailsPart.this.parent.isDisposed () )
-                {
-                    AbstractBaseDetailsPart.this.update ();
-                }
-            }
-        } );
+        update ();
     }
 
     protected abstract void update ();

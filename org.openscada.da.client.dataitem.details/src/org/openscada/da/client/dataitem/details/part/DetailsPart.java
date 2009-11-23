@@ -40,6 +40,9 @@ public interface DetailsPart extends IDisposable
 
     /**
      * Update data from the data item
+     * <p>
+     * Will be called in the display thread
+     * </p>
      * @param value the current value or <code>null</code> if the data item is not connected
      */
     public void updateData ( DataItemValue value );

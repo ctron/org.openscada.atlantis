@@ -21,7 +21,7 @@ import org.openscada.hd.ValueInformation;
 
 public class QueryDataView extends QueryViewPart implements QueryListener
 {
-    private static final int FIX_COLS = 2;
+    private static final int FIX_COLS = 3;
 
     private final Map<String, TableColumn> columns = new HashMap<String, TableColumn> ();
 
@@ -34,6 +34,8 @@ public class QueryDataView extends QueryViewPart implements QueryListener
     private String[] colNames;
 
     private TableColumn qualityCol;
+    
+    private TableColumn manualCol;
 
     private TableColumn infoCol;
 
@@ -53,6 +55,10 @@ public class QueryDataView extends QueryViewPart implements QueryListener
         this.qualityCol = new TableColumn ( this.table, SWT.NONE );
         this.qualityCol.setText ( Messages.QueryDataView_ColQuality );
         this.qualityCol.setWidth ( 75 );
+
+        this.manualCol = new TableColumn ( this.table, SWT.NONE );
+        this.manualCol.setText ( Messages.QueryDataView_ColManual );
+        this.manualCol.setWidth ( 75 );
 
         this.invalidColor = JFaceColors.getErrorBackground ( getDisplay () );
     }
@@ -90,9 +96,11 @@ public class QueryDataView extends QueryViewPart implements QueryListener
             final TableItem item = this.table.getItem ( i + index );
 
             final double quality = valueInformation[i].getQuality ();
+            final double manual = valueInformation[i].getManualPercentage ();
 
             item.setText ( 0, String.format ( Messages.QueryDataView_Format_Index, index + i ) );
             item.setText ( 1, String.format ( Messages.QueryDataView_Format_Quality, quality ) );
+            item.setText ( 2, String.format ( Messages.QueryDataView_Format_Manual, manual ) );
 
             for ( int j = 0; j < this.colNames.length; j++ )
             {

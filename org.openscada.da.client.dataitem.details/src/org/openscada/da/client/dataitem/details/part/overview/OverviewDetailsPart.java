@@ -48,10 +48,8 @@ public class OverviewDetailsPart extends AbstractBaseDetailsPart implements Deta
 
     private Text timestampText;
 
-    @Override
     public void createPart ( final Composite parent )
     {
-        super.createPart ( parent );
         parent.setLayout ( new GridLayout ( 2, false ) );
 
         Label label;
@@ -121,6 +119,11 @@ public class OverviewDetailsPart extends AbstractBaseDetailsPart implements Deta
     @Override
     protected void update ()
     {
+        if ( this.value == null )
+        {
+            return;
+        }
+
         if ( this.value.getSubscriptionError () == null )
         {
             this.stateText.setText ( this.value.getSubscriptionState ().name () );

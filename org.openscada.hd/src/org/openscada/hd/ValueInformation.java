@@ -99,7 +99,7 @@ public final class ValueInformation
     @Override
     public String toString ()
     {
-        return String.format ( "%tc -> %tc (quality: %s, source values: %s)", this.startTimestamp, this.endTimestamp, this.quality, this.sourceValues );
+        return String.format ( "%tc -> %tc (quality: %s, manual: %s, source values: %s)", this.startTimestamp, this.endTimestamp, this.quality, this.manualPercentage, this.sourceValues );
     }
 
     @Override

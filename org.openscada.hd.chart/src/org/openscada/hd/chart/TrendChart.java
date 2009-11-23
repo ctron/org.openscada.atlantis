@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -15,11 +16,13 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.swtchart.BackgroundOverlay;
 import org.swtchart.Chart;
 
 public class TrendChart extends Chart implements PaintListener
@@ -37,6 +40,18 @@ public class TrendChart extends Chart implements PaintListener
     private final NumberFormat percentFormat;
 
     private FontData smallFontData;
+
+    private AtomicReference<double[]> quality = new AtomicReference<double[]> (null);
+
+    private AtomicReference<Double> qualityThreshold = new AtomicReference<Double> (0.0);
+
+    private AtomicReference<Color> qualityColor = new AtomicReference<Color> (null);
+
+    private AtomicReference<double[]> manual = new AtomicReference<double[]> (null);
+
+    private AtomicReference<Double> manualThreshold = new AtomicReference<Double>(0.0);
+
+    private AtomicReference<Color> manualColor = new AtomicReference<Color> (null);
 
     public DataAtPoint getDataAtPoint ()
     {
@@ -119,7 +134,23 @@ public class TrendChart extends Chart implements PaintListener
         {
             smallFontData = fontDataDefault[0];
         }
-        smallFontData.setHeight ( fontDataDefault[0].getHeight () - 2 );
+        smallFontData.setHeight ( 8 );
+        final BackgroundOverlayPainter qualityBackgroundOverlay = new BackgroundOverlayPainter ();
+        final BackgroundOverlayPainter manualBackgroundOverlay = new BackgroundOverlayPainter ();
+        manualBackgroundOverlay.setInvert ( true );
+        this.setBackgroundOverlay ( new BackgroundOverlay () {
+            public void draw ( final GC gc, final int x, final int y )
+            {
+                qualityBackgroundOverlay.setData ( quality.get () );
+                qualityBackgroundOverlay.setThreshold ( qualityThreshold.get () );
+                qualityBackgroundOverlay.setColor ( qualityColor.get () );
+                qualityBackgroundOverlay.draw ( gc, x, y );
+                manualBackgroundOverlay.setData ( manual.get () );
+                manualBackgroundOverlay.setThreshold ( manualThreshold.get () );
+                manualBackgroundOverlay.setColor ( manualColor.get () );
+                manualBackgroundOverlay.draw ( gc, x, y );
+            }
+        } );
     }
 
     public void paintControl ( final PaintEvent e )
@@ -140,6 +171,7 @@ public class TrendChart extends Chart implements PaintListener
         if ( dataAtPoint != null )
         {
             final double quality = dataAtPoint.getQuality ( currentX );
+            final double manual = dataAtPoint.getManual ( currentX );
             final Date timestamp = dataAtPoint.getTimestamp ( currentX );
             final Map<String, Double> data = dataAtPoint.getData ( currentX );
             gc.setAntialias ( SWT.ON );
@@ -153,11 +185,12 @@ public class TrendChart extends Chart implements PaintListener
             gc.setFont ( smallFont );
             final String timestampText = String.format ( "%-16s: ", Messages.getString ( "TrendChart.timestamp" ) ) + DateFormat.getDateTimeInstance ( DateFormat.LONG, DateFormat.LONG ).format ( timestamp ); //$NON-NLS-1$
             final String qualityText = String.format ( "%-16s: ", Messages.getString ( "TrendChart.quality" ) ) + percentFormat.format ( quality ); //$NON-NLS-1$
+            final String manualText = String.format ( "%-16s: ", Messages.getString ( "TrendChart.manual" ) ) + percentFormat.format ( manual ); //$NON-NLS-1$
             final String soureValuesText = String.format ( "%-16s: ", Messages.getString ( "TrendChart.numOfValues" ) ) + dataAtPoint.getSourceValues ( currentX ); //$NON-NLS-1$
             final Point textSize = gc.textExtent ( timestampText );
             final int textWidth = textSize.x;
             final int textHeight = textSize.y;
-            final int height = textHeight * 4 + ( textHeight + padding ) * data.keySet ().size () + padding * 5;
+            final int height = textHeight * 5 + ( textHeight + padding ) * data.keySet ().size () + padding * 6;
             if ( currentY + height > getPlotArea ().getSize ().y )
             {
                 yoffset = -10 - height;
@@ -169,11 +202,12 @@ public class TrendChart extends Chart implements PaintListener
             }
             gc.fillRoundRectangle ( currentX + xoffset, currentY + yoffset, width, height, corner, corner );
             gc.drawRoundRectangle ( currentX + xoffset, currentY + yoffset, width, height, corner, corner );
-            gc.drawLine ( currentX + xoffset + padding, currentY + yoffset + ( padding + textHeight ) * 4 - padding, currentX + xoffset + width - padding, currentY + yoffset + ( padding + textHeight ) * 4 - padding );
+            gc.drawLine ( currentX + xoffset + padding, currentY + yoffset + ( padding + textHeight ) * 5 - padding, currentX + xoffset + width - padding, currentY + yoffset + ( padding + textHeight ) * 5 - padding );
             gc.drawText ( timestampText, currentX + xoffset + padding, currentY + yoffset + padding );
             gc.drawText ( qualityText, currentX + xoffset + padding, currentY + yoffset + padding * 2 + textHeight );
-            gc.drawText ( soureValuesText, currentX + xoffset + padding, currentY + yoffset + padding * 3 + textHeight * 2 );
-            int i = 4;
+            gc.drawText ( manualText, currentX + xoffset + padding, currentY + yoffset + padding * 3 + textHeight * 2 );
+            gc.drawText ( soureValuesText, currentX + xoffset + padding, currentY + yoffset + padding * 4 + textHeight * 3 );
+            int i = 5;
             for ( final Entry<String, Double> entry : data.entrySet () )
             {
                 gc.drawText ( String.format ( "%16s: ", entry.getKey () ) + String.format ( "%16s", Double.isNaN ( entry.getValue () ) ? "-" : decimalFormat.format ( entry.getValue () ) ), currentX + xoffset + padding, currentY + yoffset + ( padding + textHeight ) * i + padding ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -188,5 +222,35 @@ public class TrendChart extends Chart implements PaintListener
     {
 
         super.dispose ();
+    }
+
+    public void setQuality ( final double[] quality )
+    {
+        this.quality.set( quality );
+    }
+
+    public void setManual ( final double[] manual )
+    {
+        this.manual.set (  manual);
+    }
+
+    public void setQualityThreshold ( final double qualityThreshold )
+    {
+        this.qualityThreshold.set(qualityThreshold);
+    }
+
+    public void setManualThreshold ( final double manualThreshold )
+    {
+        this.manualThreshold .set(manualThreshold);
+    }
+
+    public void setQualityColor ( Color qualityColor )
+    {
+        this.qualityColor.set ( qualityColor );
+    }
+
+    public void setManualColor ( Color manualColor )
+    {
+        this.manualColor.set ( manualColor );
     }
 }

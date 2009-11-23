@@ -182,7 +182,7 @@ public class ItemListLabelProvider extends LabelProvider implements ITableLabelP
 
     private boolean isManual ( final ListEntry entry )
     {
-        return isAttribute ( entry, "org.openscada.da.manual.active", false ); //$NON-NLS-1$
+        return isAttribute ( entry, "org.openscada.da.manual.active", false ) || isAttribute ( entry, "manual", false ); //$NON-NLS-1$ $NON-NLS-2$
     }
 
     private boolean isAlarm ( final ListEntry entry )
