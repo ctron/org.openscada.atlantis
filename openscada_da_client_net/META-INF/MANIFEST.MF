@@ -1,8 +1,7 @@
 Manifest-Version: 1.0
-Bundle-License: http://www.gnu.org/licenses/lgpl-2.1.html
 Bundle-Activator: org.openscada.da.client.net.Activator
 Import-Package: org.apache.log4j;version="1.2",
- org.apache.mina.core.service;version="2.0.0.M6",
+ org.apache.mina.core.service;version="2.0.0",
  org.openscada.core;version="0.14",
  org.openscada.core.client;version="0.14",
  org.openscada.core.client.net;version="0.14",
@@ -21,29 +20,14 @@ Import-Package: org.apache.log4j;version="1.2",
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.da.client.net;version="0.14.0";
   uses:="org.openscada.core.client,
-   org.osgi.framework,
-   org.apache.log4j,
-   org.openscada.core.subscription,
-   org.openscada.da.client,
-   org.openscada.core,
-   org.openscada.da.core.browser,
-   org.openscada.da.core,
-   org.openscada.utils.exec,
    org.openscada.net.base.data,
-   org.openscada.net.base,
-   org.openscada.da.client.net.operations,
-   org.openscada.net.da.handler,
-   org.openscada.core.net,
+   org.openscada.utils.exec,
    org.openscada.core.client.net,
-   org.openscada.utils.lang,
-   org.openscada.net.mina",
- org.openscada.da.client.net.operations;version="0.14.0";
-  uses:="org.openscada.net.da.handler,
-   org.openscada.net.base.data,
-   org.openscada.net.base,
-   org.openscada.net.mina,
-   org.openscada.utils.exec,
-   org.openscada.core"
+   org.openscada.da.client,
+   org.osgi.framework,
+   org.openscada.core,
+   org.openscada.da.core",
+ org.openscada.da.client.net.operations;version="0.14.0";uses:="org.openscada.utils.exec,org.openscada.core,org.openscada.net.mina"
 Bundle-Version: 0.14.0.qualifier
 Bundle-Name: OpenSCADA-DA-Client-Net
 Bundle-ManifestVersion: 2

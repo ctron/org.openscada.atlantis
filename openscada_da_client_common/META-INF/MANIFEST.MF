@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
-Import-Package: javax.crypto;resolution:=optional,javax.crypto.spec;re
- solution:=optional,javax.net.ssl;resolution:=optional,javax.xml.names
- pace;resolution:=optional,javax.xml.stream;resolution:=optional,org.a
- pache.log4j;version="1.2",org.openscada.core;version="0.14",org.opens
- cada.core.client;version="0.14",org.openscada.core.subscription;versi
- on="0.14",org.openscada.core.utils;version="0.14",org.openscada.da.cl
- ient;version="0.14",org.openscada.da.core;version="0.14",org.openscad
- a.da.core.browser;version="0.14",org.w3c.dom;resolution:=optional
+Import-Package: org.apache.log4j;version="1.2",
+ org.openscada.core;version="0.14",
+ org.openscada.core.client;version="0.14",
+ org.openscada.core.subscription;version="0.14",
+ org.openscada.core.utils;version="0.14",
+ org.openscada.da.client;version="0.14",
+ org.openscada.da.core;version="0.14",
+ org.openscada.da.core.browser;version="0.14"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.da.client;version="0.14.0";
   uses:="org.openscada.core,
@@ -16,7 +16,7 @@ Export-Package: org.openscada.da.client;version="0.14.0";
    org.openscada.da.core,
    org.openscada.core.utils,
    org.apache.log4j"
-Bundle-Version: 0.14.0
+Bundle-Version: 0.14.0.qualifier
 Bundle-Name: OpenSCADA-DA-Client-Common
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
