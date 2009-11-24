@@ -1,19 +1,12 @@
 Manifest-Version: 1.0
-Built-By: jens
-Created-By: Apache Maven Bundle Plugin
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: org.openscada.core;version="0.14.0",
  org.openscada.utils.lifecycle;version="0.13.1"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bnd-LastModified: 1252499259010
 Export-Package: org.openscada.core.server;version="0.14.0";uses:="org.openscada.core,org.openscada.utils.lifecycle"
-Bundle-Version: 0.14.0
+Bundle-Version: 0.14.0.qualifier
 Bundle-Name: OpenSCADA-Core-Server-Common
-Build-Jdk: 1.5.0_18
-Private-Package: org.openscada.core.server,
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
 Bundle-SymbolicName: org.openscada.core.server.common
-Tool: Bnd-0.0.311
 
