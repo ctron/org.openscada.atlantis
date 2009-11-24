@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import org.openscada.core.Variant;
 import org.openscada.utils.lang.Immutable;
@@ -203,5 +204,26 @@ public class Event implements Cloneable
     public Event clone ()
     {
         return new Event ( this );
+    }
+    
+    @Override
+    public String toString ()
+    {
+        StringBuilder sb = new StringBuilder ();
+        sb.append ( "Event {" );
+        sb.append ( "id: ");
+        sb.append ( id == null ? null : id.toString () );
+        sb.append ( ", sourceTimestamp: ");
+        sb.append ( sourceTimestamp == null ? null : sourceTimestamp.toString () );
+        sb.append ( ", entryTimestamp: ");
+        sb.append ( entryTimestamp == null ? null : entryTimestamp.toString () );
+        for ( Entry<String, Variant> entry : attributes.entrySet () )
+        {
+            sb.append ( ", " + entry.getKey ());
+            sb.append ( ": ");
+            sb.append ( entry.getValue () == null ? null : entry.getValue () );
+        }
+        sb.append ( " }");
+        return sb.toString ();
     }
 }
