@@ -223,7 +223,7 @@ public class Event implements Cloneable
             sb.append ( ": ");
             sb.append ( entry.getValue () == null ? null : entry.getValue () );
         }
-        sb.append ( " }");
+        sb.append ( "}");
         return sb.toString ();
     }
 }
