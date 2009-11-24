@@ -11,29 +11,22 @@ Import-Package: Ice,
  IceUtil,
  IceUtilInternal,
  OpenSCADA.Core;version="0.14",
- javax.net.ssl;resolution:=optional,
- javax.security.auth.x500;resolution:=optional,
- org.openscada.core,
- org.openscada.core.ice;version="0.14"
+ org.openscada.core;version="0.14.0",
+ org.openscada.core.ice;version="0.14.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bnd-LastModified: 1252499295924
-Export-Package: Ice;uses:="IceInternal,IceUtilInternal",
- IceBox;uses:="IceInternal,Ice,IceUtilInternal",
- IceGrid;uses:="Ice,IceInternal",
- IceInternal;uses:="Ice,IceUtilInternal",
- IceSSL;
-  uses:="IceUtilInternal,
-   Ice,
-   IceInternal,
-   javax.net.ssl,
-   javax.security.auth.x500",
- IceStorm;uses:="IceInternal,Ice",
+Export-Package: Ice;uses:="IceInternal",
+ IceBox;uses:="Ice,IceInternal",
+ IceGrid;uses:="Ice,Glacier2,IceInternal",
+ IceInternal;uses:="Ice,IceUtilInternal,new IceInternal",
+ IceSSL;uses:="Ice,IceInternal,javax.net.ssl",
+ IceStorm;uses:="Ice,IceInternal",
  IceUtil,
  IceUtilInternal;uses:="Ice",
- OpenSCADA.Core;version="0.14.0";uses:="IceInternal,Ice",
- org.openscada.core.ice;version="0.14.0";uses:="OpenSCADA.Core"
-Bundle-Version: 0.14.0
-Bundle-Name: OpenSCADA-Core-Ice-Base
+ OpenSCADA.Core;version="0.14.0";uses:="Ice,IceInternal",
+ org.openscada.core.ice;version="0.14.0";uses:="OpenSCADA.Core,org.openscada.core"
+Bundle-Version: 0.14.0.qualifier
+Bundle-Name: OpenSCADA Core Ice Base
 Bundle-ClassPath: .,
  lib/Ice.jar
 Build-Jdk: 1.5.0_18
