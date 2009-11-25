@@ -119,9 +119,9 @@
   	<!-- OpenSCADA DA -->
   	
   	<openscada.builder.copyFeature id="org.openscada.da"/>
-  	
+
   	<openscada.builder.copyPlugin id="org.openscada.da.core" project="openscada_da_core_common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.core.server" project="openscada_da_core_server"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.core.server"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client" project="openscada_da_client_common"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.net" project="openscada_da_client_net"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.net" project="openscada_da_server_net"/>
