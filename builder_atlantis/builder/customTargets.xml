@@ -140,6 +140,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.jdbc" project="openscada_da_jdbcserver"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.proxy" project="openscada_da_proxyserver"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.snmp" project="openscada_da_snmpserver"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.dave" />
   	<openscada.builder.copyPlugin id="org.openscada.da.server.exec" />
   	<openscada.builder.copyPlugin id="org.openscada.da.server.spring" project="openscada_da_springserver"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.opc" project="openscada_da_opcserver"/>
