@@ -7,6 +7,11 @@ import org.openscada.core.Variant;
 import org.openscada.da.server.dave.DaveDevice;
 import org.openscada.da.server.dave.DaveRequestBlock;
 
+/**
+ * Implement a single bit attribute
+ * @author Jens Reimann
+ *
+ */
 public class BitAttribute implements Attribute
 {
     private final String name;
