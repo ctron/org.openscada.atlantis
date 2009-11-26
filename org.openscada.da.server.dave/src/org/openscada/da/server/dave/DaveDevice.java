@@ -325,7 +325,7 @@ public class DaveDevice implements SingleSessionIoHandler
         data.putFloat ( value );
         data.flip ();
 
-        request.addRequest ( new DaveWriteRequest.ByteRequest ( block.getRequest ().getArea (), block.getRequest ().getBlock (), (short) ( index * 8 ), data ) );
+        request.addRequest ( new DaveWriteRequest.ByteRequest ( block.getRequest ().getArea (), block.getRequest ().getBlock (), (short)index, data ) );
 
         this.jobManager.addWriteRequest ( request );
 
