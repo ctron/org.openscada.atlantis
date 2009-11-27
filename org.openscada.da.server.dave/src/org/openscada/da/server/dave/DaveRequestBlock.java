@@ -73,6 +73,9 @@ public class DaveRequestBlock
             update ();
         }
 
+        /**
+         * internal update
+         */
         private void update ()
         {
             long sum = 0;
@@ -106,16 +109,27 @@ public class DaveRequestBlock
         }
     }
 
+    /**
+     * The the update priority used to find the next block to request 
+     * @return the update priority
+     */
     public long updatePriority ()
     {
         return System.currentTimeMillis () - this.lastUpdate - this.period;
     }
 
+    /**
+     * The the configured request
+     * @return the request
+     */
     public Request getRequest ()
     {
         return this.request;
     }
 
+    /**
+     * Handle a device disconnect
+     */
     public synchronized void handleDisconnect ()
     {
         for ( final Variable reg : this.variables )
@@ -124,6 +138,10 @@ public class DaveRequestBlock
         }
     }
 
+    /**
+     * Handle a response from the device
+     * @param response the response to handle
+     */
     public synchronized void handleResponse ( final Result response )
     {
         this.lastUpdate = System.currentTimeMillis ();
@@ -175,6 +193,10 @@ public class DaveRequestBlock
         }
     }
 
+    /**
+     * Set the new variable configuration
+     * @param variables the new variables to set
+     */
     public synchronized void setVariables ( final Variable[] variables )
     {
         this.settingVariablesItem.updateData ( Variant.TRUE, null, null );
