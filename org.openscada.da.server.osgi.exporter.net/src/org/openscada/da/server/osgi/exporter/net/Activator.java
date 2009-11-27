@@ -1,7 +1,10 @@
 package org.openscada.da.server.osgi.exporter.net;
 
+import java.net.URI;
+
 import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.server.exporter.ExporterInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.net.Exporter;
 import org.osgi.framework.BundleActivator;
@@ -10,6 +13,7 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 
 public class Activator implements BundleActivator
 {
@@ -26,6 +30,8 @@ public class Activator implements BundleActivator
     private Exporter exporter;
 
     private Hive currentService;
+
+    private ServiceRegistration exporterHandle;
 
     /*
      * (non-Javadoc)
@@ -63,9 +69,15 @@ public class Activator implements BundleActivator
 
         try
         {
+            if ( this.exporterHandle != null )
+            {
+                this.exporterHandle.unregister ();
+                this.exporterHandle = null;
+            }
+
             this.exporter.stop ();
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             e.printStackTrace ();
         }
@@ -81,12 +93,12 @@ public class Activator implements BundleActivator
 
     protected void startExporter ( final ServiceReference serviceReference )
     {
-        if ( ( this.currentServiceReference != null ) || ( serviceReference == null ) )
+        if ( this.currentServiceReference != null || serviceReference == null )
         {
             return;
         }
 
-        Object o = this.context.getService ( serviceReference );
+        final Object o = this.context.getService ( serviceReference );
         if ( o instanceof Hive )
         {
             try
@@ -95,8 +107,12 @@ public class Activator implements BundleActivator
                 this.currentService = (Hive)o;
                 this.exporter = new Exporter ( this.currentService, this.connectionInformation );
                 this.exporter.start ();
+
+                final URI uri = new URI ( this.connectionInformation.toString () );
+                final ExporterInformation info = new ExporterInformation ( uri, null );
+                this.exporterHandle = this.context.registerService ( ExporterInformation.class.getName (), info, null );
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
                 e.printStackTrace ();
                 this.exporter = null;
@@ -117,6 +133,12 @@ public class Activator implements BundleActivator
      */
     public void stop ( final BundleContext context ) throws Exception
     {
+        if ( this.exporterHandle != null )
+        {
+            this.exporterHandle.unregister ();
+            this.exporterHandle = null;
+        }
+
         context.removeServiceListener ( this.listener );
         this.context = null;
     }
