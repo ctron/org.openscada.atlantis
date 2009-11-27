@@ -19,11 +19,15 @@ public class BlockConfiguration
 
     private String type;
 
+    private boolean enableStatistics = false;
+
+    private long period;
+
     public BlockConfiguration ()
     {
     }
 
-    public BlockConfiguration ( final String daveDevice, final String name, final String type, final int area, final int block, final int start, final int count )
+    public BlockConfiguration ( final String daveDevice, final String name, final String type, final int area, final int block, final int start, final int count, final boolean enableStatistics, final long period )
     {
         this.daveDevice = daveDevice;
         this.type = type;
@@ -32,6 +36,8 @@ public class BlockConfiguration
         this.block = block;
         this.start = start;
         this.count = count;
+        this.enableStatistics = enableStatistics;
+        this.period = period;
     }
 
     public String getType ()
@@ -108,6 +114,26 @@ public class BlockConfiguration
     public String toString ()
     {
         return String.format ( "{device: %s, name: %s, area: 0x%02x, block: %s, start: %s, count: %s}", this.daveDevice, this.name, this.area, this.block, this.start, this.count );
+    }
+
+    public boolean isEnableStatistics ()
+    {
+        return this.enableStatistics;
+    }
+
+    public void setEnableStatistics ( final boolean enableStatistics )
+    {
+        this.enableStatistics = enableStatistics;
+    }
+
+    public long getPeriod ()
+    {
+        return this.period;
+    }
+
+    public void setPeriod ( final long period )
+    {
+        this.period = period;
     }
 
 }

@@ -33,6 +33,8 @@ public class DaveRequestBlock
 
     private final Statistics statistics;
 
+    private final long period;
+
     private static class Statistics
     {
         private final DataItemInputChained lastUpdateItem;
@@ -83,22 +85,30 @@ public class DaveRequestBlock
         }
     }
 
-    public DaveRequestBlock ( final String id, final DaveDevice device, final BundleContext context, final Request request )
+    public DaveRequestBlock ( final String id, final DaveDevice device, final BundleContext context, final Request request, final boolean enableStatistics, final long period )
     {
         this.request = request;
         this.device = device;
         this.context = context;
         this.id = id;
+        this.period = period;
         this.itemFactory = new DataItemFactory ( context, device.getExecutor (), device.getItemId ( id ) );
 
         this.settingVariablesItem = this.itemFactory.createInput ( "settingVariables", null );
 
-        this.statistics = new Statistics ( this.itemFactory );
+        if ( enableStatistics )
+        {
+            this.statistics = new Statistics ( this.itemFactory );
+        }
+        else
+        {
+            this.statistics = null;
+        }
     }
 
     public long updatePriority ()
     {
-        return System.currentTimeMillis () - this.lastUpdate;
+        return System.currentTimeMillis () - this.lastUpdate - this.period;
     }
 
     public Request getRequest ()
@@ -106,7 +116,7 @@ public class DaveRequestBlock
         return this.request;
     }
 
-    public void handleDisconnect ()
+    public synchronized void handleDisconnect ()
     {
         for ( final Variable reg : this.variables )
         {
@@ -118,7 +128,10 @@ public class DaveRequestBlock
     {
         this.lastUpdate = System.currentTimeMillis ();
 
-        this.statistics.receivedUpdate ( this.lastUpdate );
+        if ( this.statistics != null )
+        {
+            this.statistics.receivedUpdate ( this.lastUpdate );
+        }
 
         if ( response.isError () )
         {
