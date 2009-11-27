@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="OpenSCADA HD Server" uid="org.openscada.atlantis.hd.server" version="0.14.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="OpenSCADA HD Server" uid="org.openscada.atlantis.hd.server" version="0.15.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -38,8 +38,8 @@
    </plugins>
 
    <features>
-      <feature id="org.openscada.atlantis" version="0.14.0.qualifier"/>
-      <feature id="org.openscada.external" version="0.14.0.qualifier"/>
+      <feature id="org.openscada.atlantis" version="0.15.0.qualifier"/>
+      <feature id="org.openscada.external" version="0.15.0.qualifier"/>
       <feature id="org.openscada.utgard" version="0.7.0.qualifier"/>
       <feature id="org.openscada.aurora" version="0.15.0.qualifier"/>
       <feature id="org.eclipse.rcp" version="3.5.0.v20090519-9SA0FwxFv6x089WEf-TWh11"/>
