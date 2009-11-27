@@ -1,5 +1,6 @@
 package org.openscada.da.server.dave;
 
+import org.apache.commons.collections.buffer.CircularFifoBuffer;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.chain.DataItemInputChained;
@@ -30,9 +31,57 @@ public class DaveRequestBlock
 
     private final DataItemInputChained settingVariablesItem;
 
-    private final DataItemInputChained lastUpdateItem;
+    private final Statistics statistics;
 
-    private final DataItemInputChained timeDiffItem;
+    private static class Statistics
+    {
+        private final DataItemInputChained lastUpdateItem;
+
+        private final DataItemInputChained lastTimeDiffItem;
+
+        private long lastUpdate;
+
+        private final CircularFifoBuffer diffBuffer;
+
+        private final DataItemInputChained avgDiffItem;
+
+        public Statistics ( final DataItemFactory itemFactory )
+        {
+            this.lastUpdateItem = itemFactory.createInput ( "lastUpdate", null );
+            this.lastTimeDiffItem = itemFactory.createInput ( "lastDiff", null );
+            this.avgDiffItem = itemFactory.createInput ( "avgDiff", null );
+
+            this.lastUpdate = System.currentTimeMillis ();
+            this.diffBuffer = new CircularFifoBuffer ( 20 );
+        }
+
+        public void dispose ()
+        {
+        }
+
+        public void receivedUpdate ( final long now )
+        {
+            final long diff = now - this.lastUpdate;
+            this.lastUpdate = now;
+            this.lastUpdateItem.updateData ( new Variant ( this.lastUpdate ), null, null );
+            this.lastTimeDiffItem.updateData ( new Variant ( diff ), null, null );
+
+            this.diffBuffer.add ( diff );
+
+            update ();
+        }
+
+        private void update ()
+        {
+            long sum = 0;
+            for ( final Object o : this.diffBuffer )
+            {
+                sum += ( (Number)o ).longValue ();
+            }
+            final double avgDiff = (double)sum / (double)this.diffBuffer.size ();
+            this.avgDiffItem.updateData ( new Variant ( avgDiff ), null, null );
+        }
+    }
 
     public DaveRequestBlock ( final String id, final DaveDevice device, final BundleContext context, final Request request )
     {
@@ -43,8 +92,8 @@ public class DaveRequestBlock
         this.itemFactory = new DataItemFactory ( context, device.getExecutor (), device.getItemId ( id ) );
 
         this.settingVariablesItem = this.itemFactory.createInput ( "settingVariables", null );
-        this.lastUpdateItem = this.itemFactory.createInput ( "lastUpdate", null );
-        this.timeDiffItem = this.itemFactory.createInput ( "timeDiff", null );
+
+        this.statistics = new Statistics ( this.itemFactory );
     }
 
     public long updatePriority ()
@@ -67,12 +116,9 @@ public class DaveRequestBlock
 
     public synchronized void handleResponse ( final Result response )
     {
-        final long now = System.currentTimeMillis ();
+        this.lastUpdate = System.currentTimeMillis ();
 
-        final long diff = now - this.lastUpdate;
-        this.lastUpdate = now;
-        this.lastUpdateItem.updateData ( new Variant ( this.lastUpdate ), null, null );
-        this.timeDiffItem.updateData ( new Variant ( diff ), null, null );
+        this.statistics.receivedUpdate ( this.lastUpdate );
 
         if ( response.isError () )
         {
@@ -103,6 +149,11 @@ public class DaveRequestBlock
 
     public synchronized void dispose ()
     {
+        if ( this.statistics != null )
+        {
+            this.statistics.dispose ();
+        }
+
         this.itemFactory.dispose ();
 
         for ( final Variable reg : this.variables )

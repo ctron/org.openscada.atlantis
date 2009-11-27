@@ -135,7 +135,7 @@ public class DaveJobManager
                 {
                     DaveJobManager.this.tick ();
                 }
-            }, 0, 100, TimeUnit.MILLISECONDS );
+            }, 0, 1000, TimeUnit.MILLISECONDS );
         }
         else
         {
@@ -156,6 +156,7 @@ public class DaveJobManager
             finally
             {
                 this.currentJob = null;
+                startNextJob ();
             }
         }
     }
@@ -167,6 +168,11 @@ public class DaveJobManager
             return;
         }
 
+        startNextJob ();
+    }
+
+    private void startNextJob ()
+    {
         this.currentJob = getNextWriteJob ();
         if ( this.currentJob == null )
         {
