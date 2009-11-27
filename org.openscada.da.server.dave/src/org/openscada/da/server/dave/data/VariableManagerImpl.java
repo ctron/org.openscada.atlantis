@@ -8,8 +8,11 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.openscada.ca.ConfigurationFactory;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,29 +119,36 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
     private final Map<String, Collection<TypeEntry>> types = new HashMap<String, Collection<TypeEntry>> ();
 
-    private final Executor executor;
+    private final ExecutorService executor;
 
     public VariableManagerImpl ( final Executor executor )
     {
-        this.executor = executor;
+        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "VariableManager" ) );
     }
 
     public void dispose ()
     {
+        this.executor.shutdown ();
     }
 
-    public void addVariableListener ( final String type, final VariableListener listener )
+    public synchronized void addVariableListener ( final String type, final VariableListener listener )
     {
         this.listeners.put ( type, listener );
-        listener.variableConfigurationChanged ( createVariables ( type ) );
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                listener.variableConfigurationChanged ( createVariables ( type ) );
+            }
+        } );
     }
 
-    public void removeVariableListener ( final String type, final VariableListener listener )
+    public synchronized void removeVariableListener ( final String type, final VariableListener listener )
     {
         this.listeners.remove ( type, listener );
     }
 
-    public void delete ( final String configurationId ) throws Exception
+    public synchronized void delete ( final String configurationId ) throws Exception
     {
         this.types.remove ( configurationId );
         this.typeDeps.removeAll ( configurationId );
@@ -149,13 +159,19 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
     {
         logger.debug ( "Fire type change: {}", type );
 
-        for ( final VariableListener listener : this.listeners.get ( type ) )
-        {
-            listener.variableConfigurationChanged ( createVariables ( type ) );
-        }
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                for ( final VariableListener listener : VariableManagerImpl.this.listeners.get ( type ) )
+                {
+                    listener.variableConfigurationChanged ( createVariables ( type ) );
+                }
+            }
+        } );
     }
 
-    public void update ( final String configurationId, final Map<String, String> properties ) throws Exception
+    public synchronized void update ( final String configurationId, final Map<String, String> properties ) throws Exception
     {
         logger.debug ( "Adding type: {}", configurationId );
 

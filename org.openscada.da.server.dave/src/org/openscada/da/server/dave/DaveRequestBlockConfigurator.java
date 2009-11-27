@@ -17,7 +17,6 @@ public class DaveRequestBlockConfigurator implements VariableListener
         this.type = type;
 
         Activator.getVariableManager ().addVariableListener ( type, this );
-
     }
 
     public void dispose ()
