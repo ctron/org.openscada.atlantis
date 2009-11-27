@@ -1,7 +1,5 @@
 package org.openscada.da.server.osgi.exporter.net;
 
-import java.net.URI;
-
 import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.server.exporter.ExporterInformation;
@@ -108,8 +106,7 @@ public class Activator implements BundleActivator
                 this.exporter = new Exporter ( this.currentService, this.connectionInformation );
                 this.exporter.start ();
 
-                final URI uri = new URI ( this.connectionInformation.toString () );
-                final ExporterInformation info = new ExporterInformation ( uri, null );
+                final ExporterInformation info = new ExporterInformation ( this.connectionInformation, null );
                 this.exporterHandle = this.context.registerService ( ExporterInformation.class.getName (), info, null );
             }
             catch ( final Throwable e )

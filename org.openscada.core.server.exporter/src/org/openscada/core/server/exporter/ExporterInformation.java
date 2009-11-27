@@ -1,19 +1,18 @@
 package org.openscada.core.server.exporter;
 
-import java.net.URI;
-
+import org.openscada.core.ConnectionInformation;
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
 public class ExporterInformation
 {
-    private final URI uri;
+    private final ConnectionInformation connectionInformation;
 
     private final String description;
 
-    public ExporterInformation ( final URI uri, final String description )
+    public ExporterInformation ( final ConnectionInformation connectionInformation, final String description )
     {
-        this.uri = uri;
+        this.connectionInformation = connectionInformation;
         this.description = description;
     }
 
@@ -22,8 +21,8 @@ public class ExporterInformation
         return this.description;
     }
 
-    public URI getUri ()
+    public ConnectionInformation getConnectionInformation ()
     {
-        return this.uri;
+        return this.connectionInformation;
     }
 }

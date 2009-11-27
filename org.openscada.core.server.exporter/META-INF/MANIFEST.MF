@@ -5,5 +5,6 @@ Bundle-SymbolicName: org.openscada.core.server.exporter
 Bundle-Version: 0.15.0.qualifier
 Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Import-Package: org.openscada.utils.lang
-Export-Package: org.openscada.core.server.exporter;version="0.15.0"
+Import-Package: org.openscada.core;version="0.15.0",
+ org.openscada.utils.lang;version="0.14.0"
+Export-Package: org.openscada.core.server.exporter;version="0.15.0";uses:="org.openscada.core"
