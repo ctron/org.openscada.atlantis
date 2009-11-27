@@ -40,6 +40,14 @@ public class UdtVariable implements Variable
         }
     }
 
+    public void handleDisconnect ()
+    {
+        for ( final Variable var : this.variables )
+        {
+            var.handleDisconnect ();
+        }
+    }
+
     public void handleFailure ( final Throwable e )
     {
         for ( final Variable var : this.variables )

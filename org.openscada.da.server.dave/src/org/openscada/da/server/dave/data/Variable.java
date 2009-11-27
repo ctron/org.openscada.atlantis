@@ -16,4 +16,6 @@ public interface Variable
     public void handleFailure ( Throwable e );
 
     public void handleData ( IoBuffer data );
+
+    public void handleDisconnect ();
 }

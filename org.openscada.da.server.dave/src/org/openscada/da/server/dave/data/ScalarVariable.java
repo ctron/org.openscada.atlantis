@@ -70,6 +70,20 @@ public abstract class ScalarVariable implements Variable
         this.item.updateData ( new Variant (), attributes, AttributeMode.SET );
     }
 
+    public void handleDisconnect ()
+    {
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+
+        for ( final Attribute attr : this.attributes )
+        {
+            attr.handleError ( attributes );
+        }
+
+        attributes.put ( "communcation.error", Variant.TRUE );
+
+        this.item.updateData ( new Variant (), attributes, AttributeMode.SET );
+    }
+
     public void handleFailure ( final Throwable e )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();

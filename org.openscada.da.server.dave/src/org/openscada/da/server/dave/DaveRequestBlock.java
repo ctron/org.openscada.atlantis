@@ -1,6 +1,8 @@
 package org.openscada.da.server.dave;
 
 import org.apache.mina.core.buffer.IoBuffer;
+import org.openscada.core.Variant;
+import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.dave.data.Variable;
 import org.openscada.protocols.dave.DaveReadRequest.Request;
 import org.openscada.protocols.dave.DaveReadResult.Result;
@@ -24,12 +26,25 @@ public class DaveRequestBlock
 
     private long lastUpdate;
 
+    private final DataItemFactory itemFactory;
+
+    private final DataItemInputChained settingVariablesItem;
+
+    private final DataItemInputChained lastUpdateItem;
+
+    private final DataItemInputChained timeDiffItem;
+
     public DaveRequestBlock ( final String id, final DaveDevice device, final BundleContext context, final Request request )
     {
         this.request = request;
         this.device = device;
         this.context = context;
         this.id = id;
+        this.itemFactory = new DataItemFactory ( context, device.getExecutor (), device.getItemId ( id ) );
+
+        this.settingVariablesItem = this.itemFactory.createInput ( "settingVariables", null );
+        this.lastUpdateItem = this.itemFactory.createInput ( "lastUpdate", null );
+        this.timeDiffItem = this.itemFactory.createInput ( "timeDiff", null );
     }
 
     public long updatePriority ()
@@ -42,9 +57,22 @@ public class DaveRequestBlock
         return this.request;
     }
 
+    public void handleDisconnect ()
+    {
+        for ( final Variable reg : this.variables )
+        {
+            reg.handleDisconnect ();
+        }
+    }
+
     public synchronized void handleResponse ( final Result response )
     {
-        this.lastUpdate = System.currentTimeMillis ();
+        final long now = System.currentTimeMillis ();
+
+        final long diff = now - this.lastUpdate;
+        this.lastUpdate = now;
+        this.lastUpdateItem.updateData ( new Variant ( this.lastUpdate ), null, null );
+        this.timeDiffItem.updateData ( new Variant ( diff ), null, null );
 
         if ( response.isError () )
         {
@@ -70,10 +98,13 @@ public class DaveRequestBlock
                 }
             }
         }
+
     }
 
     public synchronized void dispose ()
     {
+        this.itemFactory.dispose ();
+
         for ( final Variable reg : this.variables )
         {
             reg.stop ( this.context );
@@ -82,6 +113,8 @@ public class DaveRequestBlock
 
     public synchronized void setVariables ( final Variable[] variables )
     {
+        this.settingVariablesItem.updateData ( Variant.TRUE, null, null );
+
         // dispose old
         if ( this.variables != null )
         {
@@ -100,5 +133,7 @@ public class DaveRequestBlock
                 var.start ( this.device.getItemId ( this.id ), this.context, this.device, this, this.request.getStart () );
             }
         }
+
+        this.settingVariablesItem.updateData ( Variant.FALSE, null, null );
     }
 }

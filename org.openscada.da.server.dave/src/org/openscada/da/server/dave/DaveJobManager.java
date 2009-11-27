@@ -111,14 +111,18 @@ public class DaveJobManager
             this.currentJob = null;
             // discard write requests
             this.writeQueue.clear ();
+            // handle data disconnect
+            handleDataDisconnected ();
         }
     }
 
     private void setTimerState ( final boolean flag )
     {
-        if ( this.job != null == flag )
+        final boolean currentState = this.job != null;
+
+        if ( currentState == flag )
         {
-            logger.info ( "Timer is in correct state: {} / {}", new Object[] { this.job != null, flag } );
+            logger.info ( "Timer is in correct state: {} / {}", new Object[] { currentState, flag } );
             return;
         }
 
@@ -137,6 +141,7 @@ public class DaveJobManager
         {
             logger.info ( "Stopping timer" );
             this.job.cancel ( false );
+            this.job = null;
         }
     }
 
@@ -216,6 +221,14 @@ public class DaveJobManager
             block.dispose ();
         }
         this.executor.shutdown ();
+    }
+
+    protected void handleDataDisconnected ()
+    {
+        for ( final DaveRequestBlock block : this.blocks.values () )
+        {
+            block.handleDisconnect ();
+        }
     }
 
     public void addBlock ( final String id, final DaveRequestBlock block )

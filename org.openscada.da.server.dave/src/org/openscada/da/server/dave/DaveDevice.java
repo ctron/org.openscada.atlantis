@@ -20,7 +20,6 @@ import org.apache.mina.handler.multiton.SingleSessionIoHandlerFactory;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.protocols.dave.DaveConnectionEstablishedMessage;
 import org.openscada.protocols.dave.DaveFilter;
@@ -30,7 +29,6 @@ import org.openscada.protocols.dave.DaveWriteRequest;
 import org.openscada.protocols.iso8073.COTPFilter;
 import org.openscada.protocols.tkpt.TPKTFilter;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,15 +57,24 @@ public class DaveDevice implements SingleSessionIoHandler
 
     private final DataItemInputChained stateItem;
 
-    private final ServiceRegistration stateItemHandle;
-
     private final DataItemInputChained configItem;
-
-    private final ServiceRegistration configItemHandle;
 
     private final DaveBlockConfigurator configurator;
 
     private final DaveJobManager jobManager;
+
+    private final DataItemInputChained connectionItem;
+
+    private final DataItemFactory itemFactory;
+
+    private int readTimeout;
+
+    private static enum ConnectionState
+    {
+        CONNECTING,
+        CONNECTED,
+        DISCONNECTED;
+    }
 
     public DaveDevice ( final BundleContext context, final String id, final Map<String, String> properties ) throws Exception
     {
@@ -78,11 +85,13 @@ public class DaveDevice implements SingleSessionIoHandler
         this.configurator = new DaveBlockConfigurator ( this, this.context );
         this.jobManager = new DaveJobManager ( this );
 
-        this.stateItem = new DataItemInputChained ( getItemId ( "state" ), this.executor );
-        this.stateItemHandle = context.registerService ( DataItem.class.getName (), this.stateItem, null );
+        this.itemFactory = new DataItemFactory ( context, this.executor, getItemId ( null ) );
 
-        this.configItem = new DataItemInputChained ( getItemId ( "config" ), this.executor );
-        this.configItemHandle = context.registerService ( DataItem.class.getName (), this.configItem, null );
+        final Map<String, Variant> props = new HashMap<String, Variant> ();
+
+        this.stateItem = this.itemFactory.createInput ( "state", props );
+        this.connectionItem = this.itemFactory.createInput ( "connection", props );
+        this.configItem = this.itemFactory.createInput ( "config", props );
 
         update ( properties );
     }
@@ -103,12 +112,17 @@ public class DaveDevice implements SingleSessionIoHandler
     {
         this.configurator.dispose ();
 
-        this.configItemHandle.unregister ();
-        this.stateItemHandle.unregister ();
+        this.itemFactory.dispose ();
 
         this.jobManager.dispose ();
 
         disconnect ();
+
+        if ( this.connector != null )
+        {
+            this.connector.dispose ();
+            this.connector = null;
+        }
     }
 
     public void update ( final Map<String, String> properties ) throws Exception
@@ -117,6 +131,7 @@ public class DaveDevice implements SingleSessionIoHandler
         this.port = Short.valueOf ( properties.get ( "port" ) );
         this.rack = Integer.valueOf ( properties.get ( "rack" ) );
         this.slot = Byte.valueOf ( properties.get ( "slot" ) );
+        this.readTimeout = Integer.valueOf ( properties.get ( "readTimeout" ) );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "host", new Variant ( this.host ) );
@@ -147,9 +162,10 @@ public class DaveDevice implements SingleSessionIoHandler
             this.connector.getFilterChain ().addLast ( "tpkt", new TPKTFilter ( 3 ) );
             this.connector.getFilterChain ().addLast ( "cotp", new COTPFilter ( this.rack, this.slot ) );
             this.connector.getFilterChain ().addLast ( "dave", new DaveFilter () );
+            this.connector.setConnectTimeoutMillis ( 5 * 1000 );
         }
 
-        this.stateItem.updateData ( new Variant ( "CONNECTING" ), null, null );
+        setState ( ConnectionState.CONNECTING );
 
         final ConnectFuture future = this.connector.connect ( new InetSocketAddress ( this.host, this.port ) );
         future.addListener ( new IoFutureListener<IoFuture> () {
@@ -161,47 +177,63 @@ public class DaveDevice implements SingleSessionIoHandler
         } );
     }
 
+    private void setState ( final ConnectionState state )
+    {
+        this.stateItem.updateData ( new Variant ( state.toString () ), null, null );
+        this.connectionItem.updateData ( new Variant ( state == ConnectionState.CONNECTED ), null, null );
+    }
+
     protected void setSession ( final IoSession session )
     {
         if ( session != null )
         {
-            this.stateItem.updateData ( new Variant ( "CONNECTED" ), null, null );
+            session.getConfig ().setReaderIdleTime ( this.readTimeout / 1000 );
+            setState ( ConnectionState.CONNECTED );
         }
         else
         {
-            this.stateItem.updateData ( new Variant ( "DISCONNECTED" ), null, null );
+            setState ( ConnectionState.DISCONNECTED );
+            this.jobManager.setSession ( null );
         }
         this.session = session;
+    }
+
+    private void disconnected ()
+    {
+        setSession ( null );
+        this.executor.schedule ( new Runnable () {
+
+            public void run ()
+            {
+                connect ();
+            }
+        }, 1000, TimeUnit.MILLISECONDS );
     }
 
     private void disconnect ()
     {
         if ( this.session != null )
         {
-            this.session.close ( true );
-            this.session = null;
-        }
-
-        if ( this.connector != null )
-        {
-            this.connector.dispose ();
-            this.connector = null;
+            if ( !this.session.isClosing () )
+            {
+                this.session.close ( false );
+            }
         }
     }
 
     public void exceptionCaught ( final Throwable error ) throws Exception
     {
         logger.warn ( "Exception caught", error );
-        this.session.close ( true );
+        disconnect ();
     }
 
     public void messageReceived ( final Object message ) throws Exception
     {
-        // logger.info ( "Message received: {}", message );
         if ( message instanceof DaveConnectionEstablishedMessage )
         {
+            // we must we till we received this message ... now we can trigger
+            // the job manager
             logger.info ( "DAVE Connection established " );
-            //startTimer ();
             this.jobManager.setSession ( this.session );
         }
         else if ( message instanceof DaveMessage )
@@ -221,80 +253,24 @@ public class DaveDevice implements SingleSessionIoHandler
     public void sessionClosed () throws Exception
     {
         logger.warn ( "Connection lost" );
-
-        this.jobManager.setSession ( null );
-
-        this.session = null;
-        this.executor.schedule ( new Runnable () {
-
-            public void run ()
-            {
-                connect ();
-            }
-        }, 1000, TimeUnit.MILLISECONDS );
-
+        disconnected ();
     }
 
     public void sessionCreated () throws Exception
     {
+        logger.debug ( "Session created" );
     }
 
     public void sessionIdle ( final IdleStatus status ) throws Exception
     {
+        logger.warn ( "Got idle: {}", status );
+        disconnect ();
     }
 
     public void sessionOpened () throws Exception
     {
         logger.debug ( "Session opened" );
     }
-
-    /*
-    protected void checkRequestData ()
-    {
-        if ( this.currentRequest == null )
-        {
-            requestData ();
-        }
-    }
-
-    private void requestData ()
-    {
-        final IoSession session = this.session;
-        if ( session != null )
-        {
-            this.currentRequest = getNextBlock ();
-            if ( this.currentRequest != null )
-            {
-                final DaveReadRequest request = new DaveReadRequest ();
-                request.addRequest ( this.currentRequest.getRequest () );
-                session.write ( request );
-            }
-        }
-    }
-
-    protected DaveRequestBlock getNextBlock ()
-    {
-        final List<DaveRequestBlock> blocks = new ArrayList<DaveRequestBlock> ( this.blocks.values () );
-        Collections.sort ( blocks, new Comparator<DaveRequestBlock> () {
-
-            public int compare ( final DaveRequestBlock o1, final DaveRequestBlock o2 )
-            {
-                final long l1 = o1.updatePriority ();
-                final long l2 = o2.updatePriority ();
-                return (int) ( l2 - l1 );
-            }
-        } );
-
-        if ( !blocks.isEmpty () )
-        {
-            return blocks.get ( 0 );
-        }
-        else
-        {
-            return null;
-        }
-    }
-    */
 
     public Executor getExecutor ()
     {
@@ -328,7 +304,6 @@ public class DaveDevice implements SingleSessionIoHandler
         request.addRequest ( new DaveWriteRequest.ByteRequest ( block.getRequest ().getArea (), block.getRequest ().getBlock (), (short)index, data ) );
 
         this.jobManager.addWriteRequest ( request );
-
     }
 
     public void addBlock ( final String name, final DaveRequestBlock deviceBlock )
