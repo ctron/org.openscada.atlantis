@@ -80,6 +80,7 @@
 		<openscada.import.repository id="org.openscada.aurora.sdk" version="${aurora.version}"/>
 		<openscada.import.repository id="org.openscada.utgard.sdk" version="${utgard.version}"/>
 		<openscada.import.repository id="org.openscada.atlantis.sdk" version="${atlantis.version}"/>
+		<openscada.import.repository id="org.openscada.oxygen.sdk" version="${oxygen.version}"/>
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
