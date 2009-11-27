@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -37,7 +37,7 @@ public class DaveJobManager
 
     private Job currentJob;
 
-    private final Queue<Job> writeQueue = new LinkedList<Job> ();
+    private final Queue<Job> writeQueue = new ConcurrentLinkedQueue<Job> ();
 
     private static interface Job
     {
@@ -100,7 +100,7 @@ public class DaveJobManager
         this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "DaveJobManager/" + device.getId () ) );
     }
 
-    public void setSession ( final IoSession session )
+    public synchronized void setSession ( final IoSession session )
     {
         logger.debug ( "Setting session: {}", session );
 
@@ -145,7 +145,7 @@ public class DaveJobManager
         }
     }
 
-    public void messageReceived ( final DaveMessage message )
+    public synchronized void messageReceived ( final DaveMessage message )
     {
         if ( this.currentJob != null )
         {
@@ -161,7 +161,7 @@ public class DaveJobManager
         }
     }
 
-    protected void tick ()
+    protected synchronized void tick ()
     {
         if ( this.currentJob != null )
         {
@@ -220,7 +220,7 @@ public class DaveJobManager
         return this.writeQueue.poll ();
     }
 
-    public void dispose ()
+    public synchronized void dispose ()
     {
         for ( final DaveRequestBlock block : this.blocks.values () )
         {
@@ -237,7 +237,7 @@ public class DaveJobManager
         }
     }
 
-    public void addBlock ( final String id, final DaveRequestBlock block )
+    public synchronized void addBlock ( final String id, final DaveRequestBlock block )
     {
         logger.debug ( "Adding block: {}", id );
 
@@ -249,7 +249,7 @@ public class DaveJobManager
         this.blocks.put ( id, block );
     }
 
-    public void removeBlock ( final String id )
+    public synchronized void removeBlock ( final String id )
     {
         logger.debug ( "Removing block: {}", id );
 
