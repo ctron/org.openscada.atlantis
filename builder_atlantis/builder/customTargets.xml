@@ -135,7 +135,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.ice" project="openscada_da_server_ice"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.ice" project="openscada_da_client_ice"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.test" project="openscada_da_testserver"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.test"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.sysinfo" project="openscada_da_sysinfoserver"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.stock" project="openscada_da_stockserver"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.jdbc" project="openscada_da_jdbcserver"/>
