@@ -9,7 +9,7 @@ import org.openscada.da.server.dave.DaveDevice;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
 
-public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactory
+public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactory<DaveDevice>
 {
 
     private final Map<String, DaveDevice> devices = new HashMap<String, DaveDevice> ();
@@ -46,24 +46,24 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
     }
 
     @Override
-    protected Entry createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<DaveDevice> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final DaveDevice device = new DaveDevice ( this.context, configurationId, parameters );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( "daveDevice", configurationId );
-        return new Entry ( device, context.registerService ( DaveDevice.class.getName (), device, properties ) );
+        return new Entry<DaveDevice> ( device, context.registerService ( DaveDevice.class.getName (), device, properties ) );
     }
 
     @Override
-    protected void updateService ( final Entry entry, final Map<String, String> parameters ) throws Exception
+    protected void updateService ( final Entry<DaveDevice> entry, final Map<String, String> parameters ) throws Exception
     {
-        ( (DaveDevice)entry.getService () ).update ( parameters );
+        entry.getService ().update ( parameters );
     }
 
     @Override
-    protected void disposeService ( final Object service )
+    protected void disposeService ( final DaveDevice service )
     {
-        ( (DaveDevice)service ).dispose ();
+        service.dispose ();
     }
 }
