@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenSCADA A&E Storage In Memory Plug-in
+Bundle-SymbolicName: org.openscada.ae.server.storage.memory
+Bundle-Version: 0.14.0.qualifier
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: inavare GmbH
+Import-Package: org.openscada.ae,
+ org.openscada.ae.server.storage,
+ org.openscada.core,
+ org.openscada.utils.filter,
+ org.openscada.utils.propertyeditors,
+ org.osgi.framework

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.openscada.ae.server.storage.jdbc.internal">
+	<class name="MutableEvent" table="org_openscada_ae_server_storage_events"
+		mutable="true" dynamic-insert="true" dynamic-update="true">
+
+		<!-- always available fields -->
+		<id name="id">
+			<generator class="assigned" />
+		</id>
+		<property name="sourceTimestamp" />
+		<property name="entryTimestamp" />
+
+		<!-- fields which are saved in main table -->
+		<property name="type" />
+		<property name="source" />
+		<property name="priority" />
+
+		<!-- all other attribs are in a separate table -->
+		<map name="attributes" table="org_openscada_ae_server_storage_event_attribs"
+			access="field" cascade="all" lazy="false">
+			<key column="id" />
+			<map-key type="string" column="key" />
+			<element
+				type="org.openscada.ae.server.storage.jdbc.internal.VariantHibernateType">
+				<column name="value_type" not-null="false" />
+				<column name="value_string" not-null="false" />
+				<column name="value_integer" not-null="false" />
+				<column name="value_double" not-null="false" />
+			</element>
+		</map>
+
+	</class>
+</hibernate-mapping>
