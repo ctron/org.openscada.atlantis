@@ -9,8 +9,8 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.server.dave.data.VariableManager;
 import org.openscada.da.server.dave.data.VariableManagerImpl;
-import org.openscada.da.server.dave.factory.BeanConfigurationFactory;
 import org.openscada.da.server.dave.factory.ConfigurationFactoryImpl;
+import org.openscada.utils.osgi.ca.factory.BeanConfigurationFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

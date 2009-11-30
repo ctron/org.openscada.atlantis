@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.openscada.da.server.dave.DaveDevice;
+import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
 
 public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactory
