@@ -34,21 +34,21 @@ import org.openscada.utils.lang.Immutable;
 @Immutable
 public class DataItemInformationBase implements org.openscada.da.core.DataItemInformation
 {
-    private final String name;
+    private final String id;
 
     private final Set<IODirection> ioDirection;
 
     public DataItemInformationBase ( final String name, final Set<IODirection> ioDirection )
     {
         super ();
-        this.name = new String ( name );
+        this.id = new String ( name );
         this.ioDirection = EnumSet.copyOf ( ioDirection );
     }
 
-    public DataItemInformationBase ( final String name )
+    public DataItemInformationBase ( final String id )
     {
         super ();
-        this.name = new String ( name );
+        this.id = new String ( id );
         this.ioDirection = EnumSet.allOf ( IODirection.class );
     }
 
@@ -56,7 +56,7 @@ public class DataItemInformationBase implements org.openscada.da.core.DataItemIn
     {
         super ();
 
-        this.name = new String ( information.getName () );
+        this.id = new String ( information.getName () );
         this.ioDirection = EnumSet.copyOf ( information.getIODirection () );
     }
 
@@ -67,19 +67,19 @@ public class DataItemInformationBase implements org.openscada.da.core.DataItemIn
 
     public String getName ()
     {
-        return this.name;
+        return this.id;
     }
 
     @Override
     public int hashCode ()
     {
-        if ( this.name == null )
+        if ( this.id == null )
         {
             return "".hashCode ();
         }
         else
         {
-            return this.name.hashCode ();
+            return this.id.hashCode ();
         }
     }
 
@@ -100,14 +100,14 @@ public class DataItemInformationBase implements org.openscada.da.core.DataItemIn
         }
 
         final DataItemInformation other = (DataItemInformation)obj;
-        if ( this.name == null )
+        if ( this.id == null )
         {
             if ( other.getName () != null )
             {
                 return false;
             }
         }
-        else if ( !this.name.equals ( other.getName () ) )
+        else if ( !this.id.equals ( other.getName () ) )
         {
             return false;
         }
