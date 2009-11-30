@@ -271,7 +271,7 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
         for ( final SourceHandler handler : this.sources.values () )
         {
             final DataItemValueEntry entry = handler.getEntry ();
-            if ( entry != null && entry.getValue () != null )
+            if ( entry != null && entry.getValue () != null && entry.getValue ().isConnected() )
             {
                 entries.add ( entry );
             }
