@@ -121,7 +121,7 @@ public class DaveBlockConfigurator
 
     private DaveRequestBlock makeBlock ( final BlockConfiguration block )
     {
-        final Request request = new Request ( (byte)block.getArea (), (byte)block.getBlock (), (short)block.getStart (), (short)block.getCount () );
+        final Request request = new Request ( (byte)block.getArea (), (short)block.getBlock (), (short)block.getStart (), (short)block.getCount () );
 
         final DaveRequestBlock deviceBlock = new DaveRequestBlock ( block.getName (), this.device, this.context, request, block.isEnableStatistics (), block.getPeriod () );
         new DaveRequestBlockConfigurator ( this.device.getExecutor (), deviceBlock, block.getType () );
