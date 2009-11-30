@@ -17,6 +17,10 @@
       [Enter License Description here.]
    </license>
 
+   <includes
+         id="org.openscada.ae"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="com.springsource.org.apache.log4j"/>
       <import plugin="org.apache.mina.core"/>
@@ -385,34 +389,6 @@
 
    <plugin
          id="org.openscada.da.server.osgi.testing"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.ae"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.ae.client.net"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.ae.net"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.ae.connection.provider"
          download-size="0"
          install-size="0"
          version="0.0.0"

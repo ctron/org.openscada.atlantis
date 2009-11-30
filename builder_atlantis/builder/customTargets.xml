@@ -179,6 +179,18 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.client.net"/>
 	<openscada.builder.copyPlugin id="org.openscada.ae.connection.provider"/>
   	
+  	<openscada.builder.copyPlugin id="org.openscada.ae.event"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.monitor"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.common"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.dataitem"/>
+  	
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.common"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.condition"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.exporter"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.exporter.net"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.net"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage"/>
+  	
   	<!-- Additional stuff -->
   	
   	<openscada.builder.copyPlugin id="org.openscada.spring.components" project="openscada_spring_components"/>

@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.atlantis.sdk"
       label="OpenSCADA Atlantis SDK"
-      version="0.14.0.qualifier"
+      version="0.15.0.qualifier"
       provider-name="inavare GmbH">
 
    <description>
