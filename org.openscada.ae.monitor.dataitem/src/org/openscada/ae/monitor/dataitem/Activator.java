@@ -11,6 +11,7 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 
 public class Activator implements BundleActivator
@@ -40,6 +41,7 @@ public class Activator implements BundleActivator
             this.monitorService = new MonitorConfigurationFactory ( context, this.eventProcessor );
             properties = new Hashtable<Object, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, "ae.monitor.da" );
+            properties.put ( Constants.SERVICE_DESCRIPTION, "Data item monitors" );
             this.monitorHandle = context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, this.monitorService, properties );
         }
         catch ( final Throwable e )

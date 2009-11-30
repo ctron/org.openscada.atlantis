@@ -38,12 +38,6 @@ public abstract class AbstractDataSource implements DataSource
 
     protected synchronized void updateData ( final DataItemValue value )
     {
-        if ( this.value == value )
-        {
-            return;
-        }
-        this.value = value;
-
         final Set<DataSourceListener> listeners = new HashSet<DataSourceListener> ( this.listeners );
         getExecutor ().execute ( new Runnable () {
 

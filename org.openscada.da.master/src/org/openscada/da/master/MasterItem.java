@@ -17,6 +17,7 @@ public interface MasterItem extends DataSource
     /**
      * Add a new sub condition
      * @param handler new condition to add
+     * @param the priority this entry has in the master item
      */
-    public abstract void addHandler ( final MasterItemHandler handler );
+    public abstract void addHandler ( final MasterItemHandler handler, int priority );
 }

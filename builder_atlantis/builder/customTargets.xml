@@ -201,6 +201,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.hd.connection.provider"/>
   		
   	<openscada.builder.copyPlugin id="org.openscada.da.master" />
+  	<openscada.builder.copyPlugin id="org.openscada.da.master.common" />
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource.proxy"/>
   	

@@ -148,8 +148,8 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
     {
         // logger.debug ( "Data update: {} -> {} / {} (cache: {})", new Object[] { this.itemId, value, attributes, cache } );
         applyDataChange ( value, attributes, cache );
-        notifyHandler ();
-        updateData ( this.value );
+        // re-process
+        updateData ( processHandler ( this.value ) );
     }
 
     private void applyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
@@ -183,8 +183,8 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
         logger.info ( "Subscription state changed: " + state );
 
         applyStateChange ( state, error );
-        notifyHandler ();
-        updateData ( this.value );
+        // re-process
+        updateData ( processHandler ( this.value ) );
     }
 
     private void applyStateChange ( final SubscriptionState state, final Throwable error )
@@ -195,12 +195,13 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
         this.value = newValue;
     }
 
-    public void addHandler ( final MasterItemHandler handler )
+    public void addHandler ( final MasterItemHandler handler, final int priority )
     {
         synchronized ( this )
         {
             this.subHandler.add ( handler );
-            handler.dataUpdate ( this.value );
+            // re-process
+            updateData ( processHandler ( this.value ) );
         }
     }
 
@@ -212,12 +213,13 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
         synchronized ( this )
         {
             this.subHandler.remove ( handler );
+            // re-process
+            updateData ( processHandler ( this.value ) );
         }
     }
 
-    protected synchronized void notifyHandler ()
+    protected synchronized DataItemValue processHandler ( DataItemValue value )
     {
-        DataItemValue value = this.value;
         for ( final MasterItemHandler subCondition : this.subHandler )
         {
             final DataItemValue newValue = subCondition.dataUpdate ( value );
@@ -226,7 +228,7 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
                 value = newValue;
             }
         }
-        this.value = value;
+        return value;
     }
 
     public NotifyFuture<WriteResult> startWriteValue ( final Variant value )

@@ -93,7 +93,7 @@ public class MasterFactory implements ConfigurationFactory
             properties.put ( CONNECTION_ID, connectionId );
             properties.put ( ITEM_ID, itemId );
             properties.put ( DataSource.DATA_SOURCE_ID, id );
-            properties.put ( "master.id", id );
+            properties.put ( MasterItem.MASTER_ID, id );
 
             logger.debug ( "Registering " + id );
 

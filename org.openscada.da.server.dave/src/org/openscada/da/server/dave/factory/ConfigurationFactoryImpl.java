@@ -56,9 +56,10 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
     }
 
     @Override
-    protected void updateService ( final Entry<DaveDevice> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<DaveDevice> updateService ( final String configurationId, final Entry<DaveDevice> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
+        return null;
     }
 
     @Override

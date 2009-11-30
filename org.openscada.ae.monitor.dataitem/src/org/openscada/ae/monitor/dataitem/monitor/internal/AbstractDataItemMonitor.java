@@ -70,7 +70,7 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
         }
 
         this.service = (MasterItem)o;
-        this.service.addHandler ( this );
+        this.service.addHandler ( this, 0 );
     }
 
     protected synchronized void removeReference ( final ServiceReference ref )
