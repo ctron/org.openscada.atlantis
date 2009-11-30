@@ -98,6 +98,8 @@ public class HiveImpl extends HiveCommon
     {
         logger.info ( String.format ( "Removing %s", serviceReference ) );
 
+        this.context.ungetService ( serviceReference );
+
         final ItemDescriptor descriptor = this.items.remove ( serviceReference );
         this.storage.removed ( descriptor );
         unregisterItem ( descriptor.getItem () );
