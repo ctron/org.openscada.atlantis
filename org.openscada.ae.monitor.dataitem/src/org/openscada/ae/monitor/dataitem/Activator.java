@@ -39,10 +39,10 @@ public class Activator implements BundleActivator
             // monitor service
             this.monitorService = new MonitorConfigurationFactory ( context, this.eventProcessor );
             properties = new Hashtable<Object, Object> ();
-            properties.put ( ConfigurationAdministrator.FACTORY_ID, "monitor.da" );
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, "ae.monitor.da" );
             this.monitorHandle = context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, this.monitorService, properties );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             logger.warn ( "Failed to start up" );
             throw new Exception ( "Failed to start up", e );
