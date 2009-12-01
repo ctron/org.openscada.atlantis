@@ -70,7 +70,7 @@ Export-Package: org.openscada.spring.client;version="0.14.0";
    org.openscada.da.client,
    org.openscada.core.subscription,
    org.openscada.core"
-Bundle-Version: 0.14.0
+Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA-Spring-Components
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
