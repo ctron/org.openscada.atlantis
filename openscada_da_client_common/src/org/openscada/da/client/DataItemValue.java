@@ -25,11 +25,13 @@ import java.util.Map;
 
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.utils.lang.Immutable;
 
 /**
  * A current value snapshot of the {@link DataItem}
  * @author Jens Reimann
  */
+@Immutable
 public class DataItemValue
 {
     private Variant value = new Variant ();
@@ -48,7 +50,7 @@ public class DataItemValue
     public DataItemValue ( final Variant value, final Map<String, Variant> attributes, final SubscriptionState subscriptionState )
     {
         super ();
-        this.attributes = attributes;
+        this.attributes = new HashMap<String, Variant> ( attributes );
         this.subscriptionState = subscriptionState;
         this.value = value;
     }
@@ -56,7 +58,7 @@ public class DataItemValue
     public DataItemValue ( final Variant value, final Map<String, Variant> attributes, final SubscriptionState subscriptionState, final Throwable subscriptionError )
     {
         super ();
-        this.attributes = attributes;
+        this.attributes = new HashMap<String, Variant> ( attributes );
         this.subscriptionState = subscriptionState;
         this.value = value;
         this.subscriptionError = subscriptionError;
@@ -75,29 +77,14 @@ public class DataItemValue
         return this.value;
     }
 
-    public void setValue ( final Variant value )
-    {
-        this.value = value;
-    }
-
     public Map<String, Variant> getAttributes ()
     {
         return this.attributes;
     }
 
-    public void setAttributes ( final Map<String, Variant> attributes )
-    {
-        this.attributes = attributes;
-    }
-
     public SubscriptionState getSubscriptionState ()
     {
         return this.subscriptionState;
-    }
-
-    public void setSubscriptionState ( final SubscriptionState subscriptionState )
-    {
-        this.subscriptionState = subscriptionState;
     }
 
     /**
@@ -117,11 +104,6 @@ public class DataItemValue
     public Throwable getSubscriptionError ()
     {
         return this.subscriptionError;
-    }
-
-    public void setSubscriptionError ( final Throwable subscriptionError )
-    {
-        this.subscriptionError = subscriptionError;
     }
 
     /**
@@ -216,7 +198,7 @@ public class DataItemValue
         {
             return null;
         }
-        return c;
+        return (Calendar)c.clone ();
     }
 
     @Override

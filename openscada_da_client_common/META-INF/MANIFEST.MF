@@ -6,17 +6,15 @@ Import-Package: org.apache.log4j;version="1.2",
  org.openscada.core.utils;version="0.14",
  org.openscada.da.client;version="0.14",
  org.openscada.da.core;version="0.14",
- org.openscada.da.core.browser;version="0.14"
+ org.openscada.da.core.browser;version="0.14",
+ org.openscada.utils.lang
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.da.client;version="0.14.0";
-  uses:="org.openscada.core,
+Export-Package: org.openscada.da.client;version="0.15.0";
+  uses:="org.openscada.core.client,
+   org.openscada.core,
    org.openscada.core.subscription,
-   org.openscada.da.core.browser,
-   org.openscada.core.client,
-   org.openscada.da.core,
-   org.openscada.core.utils,
-   org.apache.log4j"
-Bundle-Version: 0.14.0.qualifier
+   org.openscada.da.core"
+Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA-DA-Client-Common
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2

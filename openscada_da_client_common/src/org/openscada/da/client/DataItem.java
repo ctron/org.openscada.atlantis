@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
+import org.openscada.da.client.DataItemValue.Builder;
 
 public class DataItem extends Observable
 {
@@ -127,7 +128,7 @@ public class DataItem extends Observable
 
     protected void handlePerformNotifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        final DataItemValue newValue = new DataItemValue ( this.value );
+        final DataItemValue.Builder newValue = new Builder ( this.value );
 
         if ( cache )
         {
@@ -151,7 +152,7 @@ public class DataItem extends Observable
         }
 
         final DataItemValue oldValue = this.value;
-        this.value = newValue;
+        this.value = newValue.build ();
 
         try
         {
@@ -171,12 +172,12 @@ public class DataItem extends Observable
 
     protected void handlePerformNotifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
     {
-        final DataItemValue newValue = new DataItemValue ( this.value );
+        final DataItemValue.Builder newValue = new DataItemValue.Builder ( this.value );
         newValue.setSubscriptionState ( subscriptionState );
         newValue.setSubscriptionError ( subscriptionError );
 
         final DataItemValue oldValue = this.value;
-        this.value = newValue;
+        this.value = newValue.build ();
 
         setChanged ();
 
