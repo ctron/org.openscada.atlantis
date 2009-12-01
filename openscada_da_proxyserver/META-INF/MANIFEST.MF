@@ -1,8 +1,5 @@
 Manifest-Version: 1.0
-Built-By: jens
-Created-By: Apache Maven Bundle Plugin
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
-Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
+Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
  org.apache.log4j;version="1.2",
  org.apache.xmlbeans;version="2.4",
  org.apache.xmlbeans.impl.values;version="2.4",
@@ -36,102 +33,40 @@ Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
  org.openscada.utils.concurrent;version="0.13",
  org.openscada.utils.lifecycle;version="0.13"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bnd-LastModified: 1252499268824
-Export-Package: org.openscada.da.server.proxy;version="0.14.0";
-  uses:="org.apache.xmlbeans,
-   org.openscada.da.server.proxy.connection,
-   org.openscada.da.server.common.chain.storage,
-   org.openscada.da.server.proxy.configuration,
-   org.w3c.dom,
-   org.openscada.da.server.common.impl,
-   org.openscada.core,
-   org.apache.log4j,
-   org.openscada.da.server.browser.common,
-   org.openscada.da.server.common.configuration,
-   org.openscada.da.server.proxy.utils",
- org.openscada.da.server.proxy.configuration;version="0.14.0";
+Export-Package: org.openscada.da.server.proxy;version="0.15.0";
   uses:="org.openscada.da.server.proxy.connection,
-   org.openscada.core.client,
-   org.openscada.da.server.proxy,
-   org.openscada.core,
-   org.openscada.da.server.common.configuration,
+   org.openscada.da.server.common.impl,
    org.openscada.da.server.proxy.utils,
-   org.openscada.da.client,
-   org.openscada.da.server.common.configuration.xml",
- org.openscada.da.server.proxy.connection;version="0.14.0";
+   org.w3c.dom,
+   org.openscada.da.server.proxy.configuration",
+ org.openscada.da.server.proxy.configuration;version="0.15.0";uses:="org.openscada.da.server.proxy,org.openscada.da.proxy.configuration",
+ org.openscada.da.server.proxy.connection;version="0.15.0";
   uses:="org.openscada.core.client,
-   org.openscada.core,
-   org.openscada.da.server.proxy.item,
-   org.openscada.da.server.common,
-   org.openscada.da.server.common.chain,
-   org.openscada.utils.lifecycle,
-   org.openscada.da.server.proxy,
-   org.openscada.utils.collection,
    org.openscada.da.server.browser.common,
-   org.apache.log4j,
-   org.openscada.da.server.proxy.utils,
-   org.openscada.da.server.common.factory,
-   org.openscada.da.client,
-   org.openscada.da.core.browser,
-   org.openscada.da.core.server.browser,
-   org.openscada.da.core,
-   org.openscada.da.server.browser.common.query,
-   org.openscada.da.server.common.configuration,
-   org.openscada.da.server.common.item.factory,
-   org.openscada.da.server.common.impl",
- org.openscada.da.server.proxy.item;version="0.14.0";
-  uses:="org.openscada.core.subscription,
-   org.openscada.core,
    org.openscada.da.server.common,
-   org.openscada.da.client,
+   org.openscada.da.server.common.factory,
+   org.openscada.da.server.proxy.item,
+   org.openscada.da.core,
+   org.openscada.utils.lifecycle,
+   org.openscada.da.server.common.chain,
+   org.openscada.da.server.proxy,
+   org.openscada.da.server.proxy.utils,
+   org.openscada.da.client",
+ org.openscada.da.server.proxy.item;version="0.15.0";
+  uses:="org.openscada.da.server.common,
+   org.openscada.da.server.proxy.connection,
    org.openscada.utils.concurrent,
    org.openscada.da.core,
-   org.openscada.core.client,
+   org.openscada.core.subscription,
    org.openscada.da.server.common.chain,
    org.openscada.da.server.proxy.utils,
-   org.openscada.da.server.proxy.connection,
-   org.openscada.core.utils,
-   org.apache.log4j",
- org.openscada.da.server.proxy.utils;version="0.14.0"
-Bundle-Version: 0.14.0.qualifier
+   org.openscada.da.client,
+   org.openscada.core",
+ org.openscada.da.server.proxy.utils;version="0.15.0"
+Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA-DA-Server-Proxy
-Build-Jdk: 1.5.0_18
-Private-Package: org.openscada.da.proxy.configuration,org.openscada.co
- mmon,schemaorg_apache_xmlbeans.element.http_3A_2F_2Fopenscada_2Eorg_2
- FDA_2FProxy_2FConfiguration,schemaorg_apache_xmlbeans.javaname.org.op
- enscada.da.hive.itemChain,org.openscada.da.hive.itemChain.impl,org.op
- enscada.da.hive.impl,schemaorg_apache_xmlbeans.namespace.http_3A_2F_2
- Fopenscada_2Eorg_2FDA_2FHive,org.openscada.da.hive.dataItem,schemaorg
- _apache_xmlbeans.type.http_3A_2F_2Fopenscada_2Eorg_2FDA_2FHive_2FData
- Item,schemaorg_apache_xmlbeans.element.http_3A_2F_2Fopenscada_2Eorg_2
- FDA_2FHive_2FItemChain,org.openscada.da.hive,schemaorg_apache_xmlbean
- s.javaname.org.openscada.da.proxy.configuration,org.openscada.common.
- impl,schemaorg_apache_xmlbeans.javaname.org.openscada.da.hive.dataIte
- m,schemaorg_apache_xmlbeans.element.http_3A_2F_2Fopenscada_2Eorg_2FDA
- _2FHive,schemaorg_apache_xmlbeans.src,schemaorg_apache_xmlbeans.type.
- http_3A_2F_2Fopenscada_2Eorg_2FDA_2FHive_2FItemChain,org.openscada.da
- .hive.dataItem.impl,schemaorg_apache_xmlbeans.type.http_3A_2F_2Fopens
- cada_2Eorg_2FDA_2FProxy_2FConfiguration,schemaorg_apache_xmlbeans.src
- .da_server_common,schemaorg_apache_xmlbeans.system.s3EA09751A64C5F1FC
- 513ABEF3519D70D,schemaorg_apache_xmlbeans.namespace.http_3A_2F_2Fopen
- scada_2Eorg_2FDA_2FProxy_2FConfiguration,schemaorg_apache_xmlbeans.na
- mespace.http_3A_2F_2Fopenscada_2Eorg_2FDA_2FHive_2FDataItem,schemaorg
- _apache_xmlbeans.type.http_3A_2F_2Fopenscada_2Eorg_2FCommon,schemaorg
- _apache_xmlbeans.javaname.org.openscada.da.hive.itemChain.ItemType,sc
- hemaorg_apache_xmlbeans.type.http_3A_2F_2Fopenscada_2Eorg_2FDA_2FHive
- ,schemaorg_apache_xmlbeans.javaname.org.openscada.da.hive,schemaorg_a
- pache_xmlbeans.element.http_3A_2F_2Fopenscada_2Eorg_2FCommon,org.open
- scada.da.proxy.configuration.impl,schemaorg_apache_xmlbeans.javaname.
- org.openscada.common,schemaorg_apache_xmlbeans.namespace.http_3A_2F_2
- Fopenscada_2Eorg_2FCommon,schemaorg_apache_xmlbeans.identityconstrain
- t.http_3A_2F_2Fopenscada_2Eorg_2FDA_2FHive,schemaorg_apache_xmlbeans.
- namespace.http_3A_2F_2Fopenscada_2Eorg_2FDA_2FHive_2FItemChain,schema
- org_apache_xmlbeans.system.sA7D41CEAC810533886C8B12FD0AF2F4F,org.open
- scada.da.hive.itemChain,schemaorg_apache_xmlbeans.element.http_3A_2F_
- 2Fopenscada_2Eorg_2FDA_2FHive_2FDataItem
 Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: inavare GmbH
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.proxy
-Tool: Bnd-0.0.311
 

@@ -40,7 +40,7 @@ public class ProxyValueHolder extends ProxyItemSupport
 {
     private static Logger logger = Logger.getLogger ( ProxyValueHolder.class );
 
-    protected final Map<ProxySubConnectionId, DataItemValue> values = new HashMap<ProxySubConnectionId, DataItemValue> ();
+    protected final Map<ProxySubConnectionId, DataItemValue.Builder> values = new HashMap<ProxySubConnectionId, DataItemValue.Builder> ();
 
     protected ItemUpdateListener listener = null;
 
@@ -57,8 +57,8 @@ public class ProxyValueHolder extends ProxyItemSupport
     {
         synchronized ( this )
         {
-            final DataItemValue oldData = getItemValue ( this.currentConnection );
-            final DataItemValue newData = getItemValue ( newConnection );
+            final DataItemValue.Builder oldData = getItemValue ( this.currentConnection );
+            final DataItemValue.Builder newData = getItemValue ( newConnection );
 
             if ( !oldData.equals ( newData ) )
             {
@@ -102,7 +102,7 @@ public class ProxyValueHolder extends ProxyItemSupport
      */
     private void handleUpdateData ( final ProxySubConnectionId connection, final Variant value, final Map<String, Variant> attributes, AttributeMode mode )
     {
-        final DataItemValue div;
+        final DataItemValue.Builder div;
         final boolean doSend;
 
         synchronized ( this )
@@ -150,9 +150,9 @@ public class ProxyValueHolder extends ProxyItemSupport
      * @param id if the connection
      * @return the data item value for this connection
      */
-    protected DataItemValue getItemValue ( final ProxySubConnectionId id )
+    protected DataItemValue.Builder getItemValue ( final ProxySubConnectionId id )
     {
-        DataItemValue div = this.values.get ( id );
+        DataItemValue.Builder div = this.values.get ( id );
         if ( div == null )
         {
             if ( logger.isDebugEnabled () )
@@ -161,7 +161,7 @@ public class ProxyValueHolder extends ProxyItemSupport
             }
 
             // if the value holder is not set up to know .. create one
-            this.values.put ( id, div = new DataItemValue () );
+            this.values.put ( id, div = new DataItemValue.Builder () );
         }
         return div;
     }
@@ -171,7 +171,7 @@ public class ProxyValueHolder extends ProxyItemSupport
      */
     public Map<String, Variant> getAttributes ()
     {
-        final DataItemValue div = this.values.get ( this.currentConnection );
+        final DataItemValue.Builder div = this.values.get ( this.currentConnection );
         return div.getAttributes ();
     }
 
@@ -180,7 +180,7 @@ public class ProxyValueHolder extends ProxyItemSupport
      */
     public Variant getValue ()
     {
-        final DataItemValue div = this.values.get ( this.currentConnection );
+        final DataItemValue.Builder div = this.values.get ( this.currentConnection );
         return div.getValue ();
     }
 
@@ -221,7 +221,7 @@ public class ProxyValueHolder extends ProxyItemSupport
 
         synchronized ( this )
         {
-            final DataItemValue div = getItemValue ( connection );
+            final DataItemValue.Builder div = getItemValue ( connection );
             div.setSubscriptionState ( subscriptionState );
             div.setSubscriptionError ( subscriptionError );
             doSend = connection.equals ( this.currentConnection );
@@ -235,6 +235,6 @@ public class ProxyValueHolder extends ProxyItemSupport
 
     public DataItemValue getCurrentValue ()
     {
-        return this.values.get ( this.currentConnection );
+        return this.values.get ( this.currentConnection ).build ();
     }
 }
