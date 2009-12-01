@@ -1,5 +1,6 @@
 package org.openscada.da.master.internal;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,11 +18,14 @@ import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.client.connection.service.ConnectionService;
+import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.MasterItemHandler;
+import org.openscada.da.master.WriteRequest;
+import org.openscada.da.master.WriteRequestResult;
 import org.openscada.utils.concurrent.AbstractFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
@@ -31,41 +35,64 @@ import org.slf4j.LoggerFactory;
 
 public class MasterItemImpl extends AbstractDataSource implements ItemUpdateListener, MasterItem
 {
-    private final class WriteOperationCallbackImplementation extends AbstractFuture<WriteResult> implements WriteOperationCallback
+
+    private static class WriteListenerAttributeImpl extends AbstractFuture<WriteAttributeResults> implements WriteListener
     {
-        public void complete ()
+        public void complete ( final WriteResult result )
         {
-            super.setResult ( new WriteResult () );
+            setResult ( new WriteAttributeResults () );
+        }
+
+        public void complete ( final WriteAttributeResults results )
+        {
+            setResult ( results );
+        }
+
+        public void failed ( final String error )
+        {
+            setError ( new OperationException ( error ).fillInStackTrace () );
         }
 
         public void error ( final Throwable error )
         {
-            super.setError ( error );
-        }
-
-        public void failed ( final String reason )
-        {
-            super.setError ( new OperationException ( reason ).fillInStackTrace () );
+            setError ( error );
         }
     }
 
-    private final class WriteAttributesOperationCallbackImplementation extends AbstractFuture<WriteAttributeResults> implements WriteAttributeOperationCallback
+    private static class WriteListenerValueImpl extends AbstractFuture<WriteResult> implements WriteListener
     {
+
+        public void complete ( final WriteResult result )
+        {
+            setResult ( result );
+        }
+
         public void complete ( final WriteAttributeResults results )
         {
-            super.setResult ( results );
+            setResult ( new WriteResult () );
+        }
+
+        public void failed ( final String error )
+        {
+            setError ( new OperationException ( error ).fillInStackTrace () );
         }
 
         public void error ( final Throwable error )
         {
-            super.setError ( error );
+            setError ( error );
         }
 
-        public void failed ( final String reason )
-        {
-            super.setError ( new OperationException ( reason ).fillInStackTrace () );
-        }
+    }
 
+    private static interface WriteListener
+    {
+        public void complete ( WriteResult result );
+
+        public void complete ( WriteAttributeResults results );
+
+        public void failed ( String error );
+
+        public void error ( Throwable error );
     }
 
     private final static Logger logger = LoggerFactory.getLogger ( MasterItemImpl.class );
@@ -76,7 +103,7 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
 
     private volatile DataItemValue value;
 
-    private final Set<MasterItemHandler> subHandler = new HashSet<MasterItemHandler> ();
+    private final Set<MasterItemHandler> itemHandler = new HashSet<MasterItemHandler> ();
 
     private final BundleContext context;
 
@@ -140,21 +167,20 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
 
         synchronized ( this )
         {
-            this.subHandler.clear ();
+            this.itemHandler.clear ();
         }
     }
 
-    public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
+    public synchronized void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        // logger.debug ( "Data update: {} -> {} / {} (cache: {})", new Object[] { this.itemId, value, attributes, cache } );
-        applyDataChange ( value, attributes, cache );
+        logger.debug ( "Data update: {} -> {} / {} (cache: {})", new Object[] { this.itemId, value, attributes, cache } );
         // re-process
-        updateData ( processHandler ( this.value ) );
+        updateData ( this.value = processHandler ( applyDataChange ( value, attributes, cache ) ) );
     }
 
-    private void applyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
+    private DataItemValue applyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        final DataItemValue newValue = new DataItemValue ( this.value );
+        final DataItemValue.Builder newValue = new DataItemValue.Builder ( this.value );
 
         final Map<String, Variant> oldAttributes;
         if ( cache )
@@ -175,52 +201,45 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
             AttributesHelper.mergeAttributes ( oldAttributes, attributes, cache );
             newValue.setAttributes ( oldAttributes );
         }
-        this.value = newValue;
+        return newValue.build ();
     }
 
-    public void notifySubscriptionChange ( final SubscriptionState state, final Throwable error )
+    public synchronized void notifySubscriptionChange ( final SubscriptionState state, final Throwable error )
     {
         logger.info ( "Subscription state changed: " + state );
 
-        applyStateChange ( state, error );
         // re-process
-        updateData ( processHandler ( this.value ) );
+        updateData ( this.value = processHandler ( applyStateChange ( state, error ) ) );
     }
 
-    private void applyStateChange ( final SubscriptionState state, final Throwable error )
+    private DataItemValue applyStateChange ( final SubscriptionState state, final Throwable error )
     {
-        final DataItemValue newValue = new DataItemValue ( this.value );
+        final DataItemValue.Builder newValue = new DataItemValue.Builder ( this.value );
         newValue.setSubscriptionState ( state );
         newValue.setSubscriptionError ( error );
-        this.value = newValue;
+        return newValue.build ();
     }
 
-    public void addHandler ( final MasterItemHandler handler, final int priority )
+    public synchronized void addHandler ( final MasterItemHandler handler, final int priority )
     {
-        synchronized ( this )
-        {
-            this.subHandler.add ( handler );
-            // re-process
-            updateData ( processHandler ( this.value ) );
-        }
+        this.itemHandler.add ( handler );
+        // re-process
+        updateData ( processHandler ( this.value ) );
     }
 
     /* (non-Javadoc)
      * @see org.openscada.da.master.interal.MasterImpl#removeHandler(org.openscada.da.master.MasterItemHandler)
      */
-    public void removeHandler ( final MasterItemHandler handler )
+    public synchronized void removeHandler ( final MasterItemHandler handler )
     {
-        synchronized ( this )
-        {
-            this.subHandler.remove ( handler );
-            // re-process
-            updateData ( processHandler ( this.value ) );
-        }
+        this.itemHandler.remove ( handler );
+        // re-process
+        updateData ( processHandler ( this.value ) );
     }
 
     protected synchronized DataItemValue processHandler ( DataItemValue value )
     {
-        for ( final MasterItemHandler subCondition : this.subHandler )
+        for ( final MasterItemHandler subCondition : this.itemHandler )
         {
             final DataItemValue newValue = subCondition.dataUpdate ( value );
             if ( newValue != null )
@@ -233,15 +252,138 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
 
     public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
     {
-        final WriteOperationCallbackImplementation task = new WriteOperationCallbackImplementation ();
-        this.connection.getConnection ().write ( this.itemId, value, task );
+        final WriteListenerValueImpl task = new WriteListenerValueImpl ();
+        processWrite ( new WriteRequest ( value ), task );
         return task;
     }
 
     public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes )
     {
-        final WriteAttributesOperationCallbackImplementation task = new WriteAttributesOperationCallbackImplementation ();
-        this.connection.getConnection ().writeAttributes ( this.itemId, attributes, task );
+        final WriteListenerAttributeImpl task = new WriteListenerAttributeImpl ();
+        processWrite ( new WriteRequest ( attributes ), task );
         return task;
     }
+
+    private void processWrite ( final WriteRequest writeRequest, final WriteListener listener )
+    {
+        // FIXME: combined value and attribute writes will be a problem
+        try
+        {
+            final WriteRequestResult result = preProcessWrite ( writeRequest );
+            final Throwable error = result.getError ();
+
+            if ( error != null )
+            {
+                listener.error ( error );
+                return;
+            }
+
+            // process value
+            final Variant value = result.getValue ();
+            if ( value != null )
+            {
+                this.connection.getConnection ().write ( this.itemId, value, new WriteOperationCallback () {
+
+                    public void failed ( final String error )
+                    {
+                        listener.failed ( error );
+                    }
+
+                    public void error ( final Throwable e )
+                    {
+                        listener.error ( e );
+                    }
+
+                    public void complete ()
+                    {
+                        listener.complete ( new WriteResult () );
+                    }
+                } );
+            }
+            // process attributes
+            final HashMap<String, Variant> attributes = result.getAttributes ();
+            if ( !attributes.isEmpty () )
+            {
+                this.connection.getConnection ().writeAttributes ( this.itemId, attributes, new WriteAttributeOperationCallback () {
+
+                    public void failed ( final String error )
+                    {
+                        listener.failed ( error );
+                    }
+
+                    public void error ( final Throwable e )
+                    {
+                        listener.error ( e );
+                    }
+
+                    public void complete ( final WriteAttributeResults callbackResult )
+                    {
+                        listener.complete ( mergeResults ( callbackResult, result.getAttributeResults () ) );
+                    }
+                } );
+            }
+            else if ( !result.getAttributeResults ().isEmpty () )
+            {
+                listener.complete ( result.getAttributeResults () );
+            }
+        }
+        catch ( final Throwable e )
+        {
+            // total failure
+            listener.error ( e );
+        }
+    }
+
+    /**
+     * Merge the two result sets
+     * @param firstResult first set
+     * @param secondResult second set
+     * @return the merged result
+     */
+    protected WriteAttributeResults mergeResults ( final WriteAttributeResults firstResult, final WriteAttributeResults secondResult )
+    {
+        final WriteAttributeResults newResults = new WriteAttributeResults ();
+        if ( firstResult != null )
+        {
+            newResults.putAll ( firstResult );
+        }
+        if ( secondResult != null )
+        {
+            newResults.putAll ( secondResult );
+        }
+        return newResults;
+    }
+
+    private WriteRequestResult preProcessWrite ( final WriteRequest writeRequest )
+    {
+        final ArrayList<MasterItemHandler> handlers;
+        synchronized ( this )
+        {
+            handlers = new ArrayList<MasterItemHandler> ( this.itemHandler );
+        }
+
+        WriteRequest request = writeRequest;
+        WriteRequestResult finalResult = new WriteRequestResult ( writeRequest.getValue (), writeRequest.getAttributes (), null );
+        for ( final MasterItemHandler handler : handlers )
+        {
+            final WriteRequestResult nextResult = handler.processWrite ( request );
+
+            if ( nextResult != null )
+            {
+                finalResult = nextResult;
+                final HashMap<String, Variant> nextAttributes = finalResult.getAttributes ();
+
+                // remove all attribute requests for which we have a result
+                for ( final Map.Entry<String, WriteAttributeResult> entry : finalResult.getAttributeResults ().entrySet () )
+                {
+                    nextAttributes.remove ( entry.getKey () );
+                }
+
+                request = new WriteRequest ( finalResult.getValue (), nextAttributes );
+            }
+        }
+
+        return finalResult;
+    }
+
 }

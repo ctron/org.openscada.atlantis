@@ -7,6 +7,8 @@ import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractConditionService;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.MasterItemHandler;
+import org.openscada.da.master.WriteRequest;
+import org.openscada.da.master.WriteRequestResult;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -176,5 +178,10 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
     public void dispose ()
     {
         removeReference ( this.ref );
+    }
+
+    public WriteRequestResult processWrite ( final WriteRequest request )
+    {
+        return null;
     }
 }

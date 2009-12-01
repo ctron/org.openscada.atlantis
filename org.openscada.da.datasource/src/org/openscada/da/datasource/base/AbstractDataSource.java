@@ -7,9 +7,14 @@ import java.util.concurrent.Executor;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractDataSource implements DataSource
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( AbstractDataSource.class );
+
     private DataItemValue value;
 
     protected abstract Executor getExecutor ();
@@ -38,6 +43,8 @@ public abstract class AbstractDataSource implements DataSource
 
     protected synchronized void updateData ( final DataItemValue value )
     {
+        logger.warn ( "Update data: {} -> {}", new Object[] { value, value.getAttributes () } );
+        this.value = value;
         final Set<DataSourceListener> listeners = new HashSet<DataSourceListener> ( this.listeners );
         getExecutor ().execute ( new Runnable () {
 

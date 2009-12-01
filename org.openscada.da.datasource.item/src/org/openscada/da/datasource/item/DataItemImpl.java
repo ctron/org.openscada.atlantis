@@ -7,6 +7,7 @@ import java.util.Map;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteAttributeResults;
@@ -14,7 +15,6 @@ import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.server.common.DataItemBase;
-import org.openscada.da.server.common.ItemListener;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -32,9 +32,7 @@ public class DataItemImpl extends DataItemBase implements DataSourceListener
 {
     private final static Logger logger = LoggerFactory.getLogger ( DataItemImpl.class );
 
-    private final Variant currentValue = Variant.NULL;
-
-    private final Map<String, Variant> currentAttributes = new HashMap<String, Variant> ();
+    private DataItemValue currentValue = new DataItemValue ();
 
     private final SingleServiceTracker tracker;
 
@@ -61,10 +59,33 @@ public class DataItemImpl extends DataItemBase implements DataSourceListener
     }
 
     @Override
-    public synchronized void setListener ( final ItemListener listener )
+    protected synchronized Map<String, Variant> getCacheAttributes ()
     {
-        super.setListener ( listener );
-        notifyData ( this.currentValue, this.currentAttributes, true );
+        final DataItemValue value = this.currentValue;
+
+        if ( value != null )
+        {
+            return value.getAttributes ();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    @Override
+    protected synchronized Variant getCacheValue ()
+    {
+        final DataItemValue value = this.currentValue;
+
+        if ( value != null )
+        {
+            return value.getValue ();
+        }
+        else
+        {
+            return null;
+        }
     }
 
     protected synchronized void setDataSource ( final DataSource dataSource )
@@ -94,12 +115,12 @@ public class DataItemImpl extends DataItemBase implements DataSourceListener
 
     public synchronized Map<String, Variant> getAttributes ()
     {
-        return Collections.unmodifiableMap ( this.currentAttributes );
+        return Collections.unmodifiableMap ( this.currentValue.getAttributes () );
     }
 
     public synchronized NotifyFuture<Variant> readValue () throws InvalidOperationException
     {
-        return new InstantFuture<Variant> ( this.currentValue );
+        return new InstantFuture<Variant> ( this.currentValue.getValue () );
     }
 
     public synchronized NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes )
@@ -134,9 +155,14 @@ public class DataItemImpl extends DataItemBase implements DataSourceListener
         }
     }
 
-    public void stateChanged ( final DataItemValue value )
+    public synchronized void stateChanged ( final DataItemValue value )
     {
-        notifyData ( value.getValue (), value.getAttributes () );
-    }
+        final Map<String, Variant> target = new HashMap<String, Variant> ( this.currentValue.getAttributes () );
+        final Map<String, Variant> diff = new HashMap<String, Variant> ();
 
+        AttributesHelper.set ( target, value.getAttributes (), diff );
+
+        this.currentValue = value;
+        notifyData ( value.getValue (), diff );
+    }
 }

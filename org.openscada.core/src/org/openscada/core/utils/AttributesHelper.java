@@ -85,7 +85,7 @@ public class AttributesHelper
                     diff.put ( entry.getKey (), entry.getValue () );
                 }
 
-                target.put ( new String ( entry.getKey () ), new Variant ( entry.getValue () ) );
+                target.put ( entry.getKey (), entry.getValue () );
             }
         }
     }
