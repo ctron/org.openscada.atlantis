@@ -6,6 +6,7 @@ import java.util.Map;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.da.client.DataItemValue.Builder;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -34,11 +35,11 @@ public class StaticValueSource implements ValueSource, InitializingBean, Disposa
 
     public DataItemValue getValue ()
     {
-        final DataItemValue value = new DataItemValue ();
-        value.setValue ( this.value );
-        value.setAttributes ( this.attributes );
-        value.setSubscriptionState ( this.subscriptionState );
-        return value;
+        final DataItemValue.Builder builder = new Builder ();
+        builder.setValue ( this.value );
+        builder.setAttributes ( this.attributes );
+        builder.setSubscriptionState ( this.subscriptionState );
+        return builder.build ();
     }
 
     public void setValue ( final Variant value )

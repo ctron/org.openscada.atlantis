@@ -28,12 +28,13 @@ import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.da.client.DataItemValue.Builder;
 
 public class ItemEventObserver extends AbstractItemEventObserver
 {
     private static Logger log = Logger.getLogger ( ItemEventObserver.class );
 
-    private final DataItemValue value = new DataItemValue ();
+    private DataItemValue value = new DataItemValue ();
 
     private ItemEventListener listener = null;
 
@@ -72,15 +73,18 @@ public class ItemEventObserver extends AbstractItemEventObserver
     {
         log.log ( this.valueLogLevel, String.format ( "Subscription change for item '%s' to '%s'", this.itemName, subscriptionState ) );
 
-        this.value.setSubscriptionState ( subscriptionState );
+        final Builder builder = new Builder ( this.value );
+
+        builder.setSubscriptionState ( subscriptionState );
         switch ( subscriptionState )
         {
         case DISCONNECTED:
         case GRANTED:
-            this.value.setAttributes ( new HashMap<String, Variant> () );
-            this.value.setValue ( new Variant () );
+            builder.setAttributes ( new HashMap<String, Variant> () );
+            builder.setValue ( new Variant () );
             break;
         }
+        this.value = builder.build ();
         fireChange ();
     }
 
@@ -88,14 +92,20 @@ public class ItemEventObserver extends AbstractItemEventObserver
     {
         log.log ( this.valueLogLevel, String.format ( "Value change for item '%s' to '%s' (cache: %s)", this.itemName, value, cache ) );
 
+        final Builder builder = new Builder ( this.value );
+
         if ( value != null )
         {
-            this.value.setValue ( value );
+            builder.setValue ( value );
         }
         if ( attributes != null )
         {
-            AttributesHelper.mergeAttributes ( this.value.getAttributes (), attributes, cache );
+            final Map<String, Variant> newAttributes = this.value.getAttributes ();
+            AttributesHelper.mergeAttributes ( newAttributes, attributes, cache );
+            builder.setAttributes ( newAttributes );
         }
+
+        this.value = builder.build ();
 
         if ( !this.suppressCacheEvents && cache || !cache )
         {
