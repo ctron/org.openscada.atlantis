@@ -4,5 +4,9 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 	
-	<osgi:service ref="jdbcStorage" interface="org.openscada.ae.server.storage.Storage" />
+	<osgi:service ref="jdbcStorage" interface="org.openscada.ae.server.storage.Storage">
+		<osgi:service-properties>
+			<entry key="type" value="org.openscada.ae.server.storage.jdbc" />
+		</osgi:service-properties>
+	</osgi:service>
 </beans>
