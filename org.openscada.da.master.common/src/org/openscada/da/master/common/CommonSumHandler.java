@@ -33,9 +33,7 @@ public class CommonSumHandler extends AbstractHandlerImpl
         final Builder builder = new DataItemValue.Builder ( value );
 
         // convert source errors
-        builder.setAttribute ( String.format ( "%s.%s", this.prefix, this.tag ), builder.getAttributes ().get ( this.tag ) );
-        builder.setAttribute ( String.format ( "%s.%s.count", this.prefix, this.tag ), builder.getAttributes ().get ( this.tag + ".count" ) );
-        builder.setAttribute ( String.format ( "%s.%s.items", this.prefix, this.tag ), builder.getAttributes ().get ( this.tag + ".items" ) );
+        convertSource ( builder );
 
         // sum up
         final Set<String> matches = new HashSet<String> ();
@@ -53,6 +51,29 @@ public class CommonSumHandler extends AbstractHandlerImpl
         builder.setAttribute ( this.tag + ".items", new Variant ( StringHelper.join ( matches, ", " ) ) );
 
         return builder.build ();
+    }
+
+    private void convertSource ( final Builder builder )
+    {
+        Variant sourceValue;
+
+        sourceValue = builder.getAttributes ().get ( this.tag );
+        if ( sourceValue != null )
+        {
+            builder.setAttribute ( String.format ( "%s.%s", this.prefix, this.tag ), sourceValue );
+        }
+
+        sourceValue = builder.getAttributes ().get ( this.tag + ".count" );
+        if ( sourceValue != null )
+        {
+            builder.setAttribute ( String.format ( "%s.%s.count", this.prefix, this.tag ), sourceValue );
+        }
+
+        sourceValue = builder.getAttributes ().get ( this.tag + ".items" );
+        if ( sourceValue != null )
+        {
+            builder.setAttribute ( String.format ( "%s.%s.items", this.prefix, this.tag ), sourceValue );
+        }
     }
 
 }
