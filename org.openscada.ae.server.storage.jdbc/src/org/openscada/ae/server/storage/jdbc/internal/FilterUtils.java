@@ -3,10 +3,12 @@ package org.openscada.ae.server.storage.jdbc.internal;
 import java.beans.PropertyEditor;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
+import org.openscada.utils.filter.Assertion;
 import org.openscada.utils.filter.Filter;
 import org.openscada.utils.filter.FilterAssertion;
 import org.openscada.utils.filter.FilterExpression;
@@ -46,6 +48,21 @@ public class FilterUtils {
 	public static void toVariant(Filter filter) {
 		if (filter.isAssertion()) {
 			FilterAssertion filterAssertion = (FilterAssertion) filter;
+			// first convert String for case of like query * -> %
+            if ((filterAssertion.getValue() instanceof List) && filterAssertion.getAssertion () == Assertion.SUBSTRING) {
+                List<String> values = (List<String>) filterAssertion.getValue();
+                StringBuilder sb = new StringBuilder ();
+                int i = 0;
+                for ( String string : values )
+                {
+                    if (i > 0 && i < values.size ()) {
+                        sb.append ( "%" );
+                    }
+                    sb.append ( string );    
+                    i += 1;
+                }
+                filterAssertion.setValue ( sb.toString() );
+            }
 			if (filterAssertion.getValue() instanceof String) {
 				if ("id".equals(filterAssertion.getAttribute())) {
 					PropertyEditor pe = propertyEditorRegistry

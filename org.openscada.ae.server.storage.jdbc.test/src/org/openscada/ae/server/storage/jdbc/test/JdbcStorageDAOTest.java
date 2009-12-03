@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openscada.ae.server.storage.jdbc.internal.Activator;
+import org.openscada.ae.server.storage.jdbc.internal.FilterUtils;
 import org.openscada.ae.server.storage.jdbc.internal.HqlConverter;
 import org.openscada.ae.server.storage.jdbc.internal.JdbcStorageDAO;
 import org.openscada.ae.server.storage.jdbc.internal.MutableEvent;
@@ -24,6 +25,7 @@ import org.openscada.utils.filter.Assertion;
 import org.openscada.utils.filter.Filter;
 import org.openscada.utils.filter.FilterAssertion;
 import org.openscada.utils.filter.FilterExpression;
+import org.openscada.utils.filter.FilterParser;
 import org.openscada.utils.filter.Operator;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
@@ -128,15 +130,15 @@ public class JdbcStorageDAOTest
         event = makeEvent ( 1 );
         event.getAttributes ().put ( "foo", new Variant ( "bar" ) );
         jdbcStorageDAO.storeEvent ( event );
-        resultEvents = jdbcStorageDAO.queryEvent ( "FROM MutableEvent e WHERE e.id = ?", makeUUID ( 1 )  );
+        resultEvents = jdbcStorageDAO.queryEvent ( "FROM MutableEvent e WHERE e.id = ?", makeUUID ( 1 ) );
         assertNotNull ( resultEvents );
         assertEquals ( 1, resultEvents.size () );
         assertEquals ( makeUUID ( 1 ), resultEvents.get ( 0 ).getId () );
         assertEquals ( new Variant ( "bar" ), resultEvents.get ( 0 ).getAttributes ().get ( "foo" ) );
 
         Filter filter;
-        filter = new FilterAssertion("foo", Assertion.EQUALITY, new Variant ("bar"));
-        HqlResult hqlFilter; 
+        filter = new FilterAssertion ( "foo", Assertion.EQUALITY, new Variant ( "bar" ) );
+        HqlResult hqlFilter;
         hqlFilter = HqlConverter.toHql ( filter );
         resultEvents = jdbcStorageDAO.queryEvent ( hqlFilter.getHql (), hqlFilter.getParameters () );
         // System.out.println (hqlFilter.getHql ());
@@ -150,7 +152,7 @@ public class JdbcStorageDAOTest
         event = makeEvent ( 2 );
         event.getAttributes ().put ( "spam", new Variant ( true ) );
         jdbcStorageDAO.storeEvent ( event );
-        filter = new FilterAssertion("spam", Assertion.EQUALITY, new Variant (true));
+        filter = new FilterAssertion ( "spam", Assertion.EQUALITY, new Variant ( true ) );
         hqlFilter = HqlConverter.toHql ( filter );
         resultEvents = jdbcStorageDAO.queryEvent ( hqlFilter.getHql (), hqlFilter.getParameters () );
         assertNotNull ( resultEvents );
@@ -161,7 +163,7 @@ public class JdbcStorageDAOTest
         event = makeEvent ( 3 );
         event.getAttributes ().put ( "bacon", new Variant ( 3.141 ) );
         jdbcStorageDAO.storeEvent ( event );
-        filter = new FilterAssertion("bacon", Assertion.EQUALITY, new Variant (3.141));
+        filter = new FilterAssertion ( "bacon", Assertion.EQUALITY, new Variant ( 3.141 ) );
         hqlFilter = HqlConverter.toHql ( filter );
         resultEvents = jdbcStorageDAO.queryEvent ( hqlFilter.getHql (), hqlFilter.getParameters () );
         assertNotNull ( resultEvents );
@@ -172,7 +174,7 @@ public class JdbcStorageDAOTest
         event = makeEvent ( 4 );
         event.getAttributes ().put ( "eggs", new Variant ( 42L ) );
         jdbcStorageDAO.storeEvent ( event );
-        filter = new FilterAssertion("eggs", Assertion.EQUALITY, new Variant (42L));
+        filter = new FilterAssertion ( "eggs", Assertion.EQUALITY, new Variant ( 42L ) );
         hqlFilter = HqlConverter.toHql ( filter );
         resultEvents = jdbcStorageDAO.queryEvent ( hqlFilter.getHql (), hqlFilter.getParameters () );
         assertNotNull ( resultEvents );
@@ -181,9 +183,36 @@ public class JdbcStorageDAOTest
         assertEquals ( new Variant ( 42L ), resultEvents.get ( 0 ).getAttributes ().get ( "eggs" ) );
 
         filter = new FilterExpression ();
-        ((FilterExpression) filter).setOperator ( Operator.OR );
-        ((FilterExpression) filter).getFilterSet ().add ( new FilterAssertion("spam", Assertion.EQUALITY, new Variant (true)) );
-        ((FilterExpression) filter).getFilterSet ().add ( new FilterAssertion("eggs", Assertion.EQUALITY, new Variant (42L)) );
+        ( (FilterExpression)filter ).setOperator ( Operator.OR );
+        ( (FilterExpression)filter ).getFilterSet ().add ( new FilterAssertion ( "spam", Assertion.EQUALITY, new Variant ( true ) ) );
+        ( (FilterExpression)filter ).getFilterSet ().add ( new FilterAssertion ( "eggs", Assertion.EQUALITY, new Variant ( 42L ) ) );
+        hqlFilter = HqlConverter.toHql ( filter );
+        resultEvents = jdbcStorageDAO.queryEvent ( hqlFilter.getHql (), hqlFilter.getParameters () );
+        assertNotNull ( resultEvents );
+        assertEquals ( 2, resultEvents.size () );
+
+        event = makeEvent ( 5 );
+        event.getAttributes ().put ( "like", new Variant ( "this is a string" ) );
+        jdbcStorageDAO.storeEvent ( event );
+        filter = new FilterParser ( "(like=*is*)" ).getFilter ();
+        FilterUtils.toVariant ( filter );
+        hqlFilter = HqlConverter.toHql ( filter );
+        resultEvents = jdbcStorageDAO.queryEvent ( hqlFilter.getHql (), hqlFilter.getParameters () );
+        assertNotNull ( resultEvents );
+        assertEquals ( 1, resultEvents.size () );
+
+        event = makeEvent ( 6 );
+        event.getAttributes ().put ( "like", new Variant ( "john" ) );
+        jdbcStorageDAO.storeEvent ( event );
+        filter = new FilterParser ( "(like~=jon)" ).getFilter ();
+        FilterUtils.toVariant ( filter );
+        hqlFilter = HqlConverter.toHql ( filter );
+        resultEvents = jdbcStorageDAO.queryEvent ( hqlFilter.getHql (), hqlFilter.getParameters () );
+        assertNotNull ( resultEvents );
+        assertEquals ( 1, resultEvents.size () );
+
+        filter = new FilterParser ( "(like=*)" ).getFilter ();
+        FilterUtils.toVariant ( filter );
         hqlFilter = HqlConverter.toHql ( filter );
         resultEvents = jdbcStorageDAO.queryEvent ( hqlFilter.getHql (), hqlFilter.getParameters () );
         assertNotNull ( resultEvents );
