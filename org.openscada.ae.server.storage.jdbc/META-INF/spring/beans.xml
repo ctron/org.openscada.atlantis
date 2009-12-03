@@ -39,7 +39,12 @@
 		</property>
 	</bean>
 
-	<bean name="jdbcStorageDAO"
+	<bean id="txManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean name="jdbcStorageDAOTarget"
 		class="org.openscada.ae.server.storage.jdbc.internal.JdbcStorageDAOImpl">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
@@ -48,4 +53,18 @@
 		init-method="start" destroy-method="stop">
 		<property name="jdbcStorageDAO" ref="jdbcStorageDAO" />
 	</bean>
+
+	<bean id="jdbcStorageDAO"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="txManager" />
+		<property name="target" ref="jdbcStorageDAOTarget" />
+		<property name="transactionAttributes">
+			<props>
+				<prop key="storeEvent">PROPAGATION_REQUIRED</prop>
+				<prop key="loadEvent">PROPAGATION_REQUIRED</prop>
+				<prop key="queryEvent">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	
 </beans>

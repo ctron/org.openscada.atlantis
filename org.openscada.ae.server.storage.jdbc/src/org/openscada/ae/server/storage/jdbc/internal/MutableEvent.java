@@ -26,15 +26,15 @@ public class MutableEvent {
 
 	// often used fields
 
-	private String type;
+	private String type = "";
 
-	private String source;
+	private String source = "";
 
-	private Integer priority;
+	private Integer priority = 5;
 
 	// all other fields
 
-	private Map<String, Variant> attributes = new HashMap<String, Variant>();
+	private Map<String, Variant> attributes = new HashMap<String, Variant>(8);
 
 	public UUID getId() {
 		return id;

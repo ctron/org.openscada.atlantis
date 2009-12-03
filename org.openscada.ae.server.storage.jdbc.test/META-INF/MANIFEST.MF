@@ -20,4 +20,5 @@ Import-Package: org.hsqldb,
  org.hsqldb.util,
  org.hsqldb.util.sqltool,
  org.junit,
- org.osgi.util.tracker
+ org.osgi.util.tracker,
+ org.springframework.jdbc.core

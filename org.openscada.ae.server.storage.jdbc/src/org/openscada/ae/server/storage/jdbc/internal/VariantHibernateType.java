@@ -16,9 +16,11 @@ import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantType;
 
-public class VariantHibernateType implements CompositeUserType {
+public class VariantHibernateType implements CompositeUserType, Serializable {
 
-	private static final int[] TYPES = { Types.VARCHAR, Types.VARCHAR,
+    private static final long serialVersionUID = -1245809821282686169L;
+
+    private static final int[] TYPES = { Types.VARCHAR, Types.VARCHAR,
 			Types.BIGINT, Types.DOUBLE };
 
 	private static final String[] PROPERTY_NAMES = { "type", "string",
@@ -27,6 +29,10 @@ public class VariantHibernateType implements CompositeUserType {
 	private static final Type[] PROPERTY_TYPES = { Hibernate.STRING,
 			Hibernate.STRING, Hibernate.INTEGER, Hibernate.DOUBLE };
 
+	public VariantHibernateType ()
+    {
+    }
+	
 	public Object assemble(Serializable cached, SessionImplementor session,
 			Object owner) throws HibernateException {
 		return cached;
