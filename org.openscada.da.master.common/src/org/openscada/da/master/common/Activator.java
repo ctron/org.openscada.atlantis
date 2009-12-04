@@ -27,10 +27,10 @@ public class Activator implements BundleActivator
      */
     public void start ( final BundleContext context ) throws Exception
     {
-        this.factory1 = makeFactory ( context, "error", 10 );
-        this.factory2 = makeFactory ( context, "alarm", 20 );
-        this.factory3 = makeFactory ( context, "manual", 30 );
-        this.factory4 = makeFactory ( context, "ackRequired", 40 );
+        this.factory1 = makeFactory ( context, "error", 500 );
+        this.factory2 = makeFactory ( context, "alarm", 1500 );
+        this.factory3 = makeFactory ( context, "manual", 1510 );
+        this.factory4 = makeFactory ( context, "ackRequired", 2500 );
     }
 
     private CommonFactoryImpl makeFactory ( final BundleContext context, final String tag, final int priority )

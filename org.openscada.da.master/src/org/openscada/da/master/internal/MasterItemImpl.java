@@ -1,10 +1,10 @@
 package org.openscada.da.master.internal;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.OperationException;
@@ -101,9 +101,76 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
 
     private final String itemId;
 
-    private volatile DataItemValue value;
+    private volatile DataItemValue sourceValue;
 
-    private final Set<MasterItemHandler> itemHandler = new HashSet<MasterItemHandler> ();
+    private static class HandlerEntry implements Comparable<HandlerEntry>
+    {
+        private final MasterItemHandler handler;
+
+        private final int priority;
+
+        public HandlerEntry ( final MasterItemHandler handler, final int priority )
+        {
+            this.handler = handler;
+            this.priority = priority;
+        }
+
+        public MasterItemHandler getHandler ()
+        {
+            return this.handler;
+        }
+
+        public int compareTo ( final HandlerEntry o )
+        {
+            return this.priority - o.priority;
+        }
+
+        @Override
+        public int hashCode ()
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ( this.handler == null ? 0 : this.handler.hashCode () );
+            return result;
+        }
+
+        @Override
+        public boolean equals ( final Object obj )
+        {
+            if ( this == obj )
+            {
+                return true;
+            }
+            if ( obj == null )
+            {
+                return false;
+            }
+            if ( getClass () != obj.getClass () )
+            {
+                return false;
+            }
+            final HandlerEntry other = (HandlerEntry)obj;
+            if ( this.handler == null )
+            {
+                if ( other.handler != null )
+                {
+                    return false;
+                }
+            }
+            else if ( !this.handler.equals ( other.handler ) )
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public int getPriority ()
+        {
+            return this.priority;
+        }
+    }
+
+    private final List<HandlerEntry> itemHandler = new LinkedList<HandlerEntry> ();
 
     private final BundleContext context;
 
@@ -116,7 +183,7 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
         this.executor = executor;
         this.context = context;
         this.itemId = itemId;
-        this.value = new DataItemValue ();
+        this.sourceValue = new DataItemValue ();
 
         this.tracker = new ConnectionIdTracker ( this.context, connectionId, new ConnectionTracker.Listener () {
 
@@ -175,12 +242,13 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
     {
         logger.debug ( "Data update: {} -> {} / {} (cache: {})", new Object[] { this.itemId, value, attributes, cache } );
         // re-process
-        updateData ( this.value = processHandler ( applyDataChange ( value, attributes, cache ) ) );
+        this.sourceValue = applyDataChange ( value, attributes, cache );
+        updateData ( processHandler ( this.sourceValue ) );
     }
 
     private DataItemValue applyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
-        final DataItemValue.Builder newValue = new DataItemValue.Builder ( this.value );
+        final DataItemValue.Builder newValue = new DataItemValue.Builder ( this.sourceValue );
 
         final Map<String, Variant> oldAttributes;
         if ( cache )
@@ -209,12 +277,13 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
         logger.info ( "Subscription state changed: " + state );
 
         // re-process
-        updateData ( this.value = processHandler ( applyStateChange ( state, error ) ) );
+        this.sourceValue = applyStateChange ( state, error );
+        updateData ( processHandler ( this.sourceValue ) );
     }
 
     private DataItemValue applyStateChange ( final SubscriptionState state, final Throwable error )
     {
-        final DataItemValue.Builder newValue = new DataItemValue.Builder ( this.value );
+        final DataItemValue.Builder newValue = new DataItemValue.Builder ( this.sourceValue );
         newValue.setSubscriptionState ( state );
         newValue.setSubscriptionError ( error );
         return newValue.build ();
@@ -224,13 +293,19 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
     {
         logger.debug ( "Adding handler: {}/{}", new Object[] { handler, priority } );
 
-        if ( this.itemHandler.add ( handler ) )
+        final HandlerEntry entry = new HandlerEntry ( handler, priority );
+        if ( this.itemHandler.contains ( entry ) )
         {
-            logger.debug ( "Added handler: {}/{}", new Object[] { handler, priority } );
-
-            // re-process
-            reprocess ();
+            return;
         }
+
+        this.itemHandler.add ( entry );
+        Collections.sort ( this.itemHandler );
+
+        logger.debug ( "Added handler: {}/{}", new Object[] { handler, priority } );
+
+        // re-process
+        reprocess ();
     }
 
     public synchronized void reprocess ()
@@ -247,7 +322,7 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
     protected synchronized void handleReprocess ()
     {
         logger.info ( "Reprocessing" );
-        updateData ( processHandler ( this.value ) );
+        updateData ( processHandler ( this.sourceValue ) );
     }
 
     /* (non-Javadoc)
@@ -255,18 +330,25 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
      */
     public synchronized void removeHandler ( final MasterItemHandler handler )
     {
-        if ( this.itemHandler.remove ( handler ) )
+        logger.debug ( "Before - Handlers: {}", this.itemHandler.size () );
+
+        if ( this.itemHandler.remove ( new HandlerEntry ( handler, 0 ) ) )
         {
             logger.debug ( "Removed handler: {}", handler );
             reprocess ();
         }
+
+        logger.debug ( "After - Handlers: {}", this.itemHandler.size () );
     }
 
     protected synchronized DataItemValue processHandler ( DataItemValue value )
     {
-        for ( final MasterItemHandler subCondition : this.itemHandler )
+        logger.debug ( "Processing handlers" );
+
+        for ( final HandlerEntry entry : this.itemHandler )
         {
-            final DataItemValue newValue = subCondition.dataUpdate ( value );
+            logger.debug ( "Process: {} -> {}", new Object[] { entry.getPriority (), entry.getHandler () } );
+            final DataItemValue newValue = entry.getHandler ().dataUpdate ( value );
             if ( newValue != null )
             {
                 value = newValue;
@@ -381,17 +463,17 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
 
     private WriteRequestResult preProcessWrite ( final WriteRequest writeRequest )
     {
-        final ArrayList<MasterItemHandler> handlers;
+        final HandlerEntry[] handlers;
         synchronized ( this )
         {
-            handlers = new ArrayList<MasterItemHandler> ( this.itemHandler );
+            handlers = this.itemHandler.toArray ( new HandlerEntry[this.itemHandler.size ()] );
         }
 
         WriteRequest request = writeRequest;
         WriteRequestResult finalResult = new WriteRequestResult ( writeRequest.getValue (), writeRequest.getAttributes (), null );
-        for ( final MasterItemHandler handler : handlers )
+        for ( final HandlerEntry handler : handlers )
         {
-            final WriteRequestResult nextResult = handler.processWrite ( request );
+            final WriteRequestResult nextResult = handler.getHandler ().processWrite ( request );
 
             if ( nextResult != null )
             {
