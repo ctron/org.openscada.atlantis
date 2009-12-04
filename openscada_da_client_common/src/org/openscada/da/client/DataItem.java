@@ -156,8 +156,8 @@ public class DataItem extends Observable
 
         try
         {
-            notifyObservers ( newValue );
-            this.propertySupport.firePropertyChange ( PROP_VALUE, oldValue, newValue );
+            notifyObservers ( this.value );
+            this.propertySupport.firePropertyChange ( PROP_VALUE, oldValue, this.value );
         }
         catch ( final Throwable e )
         {
@@ -183,8 +183,8 @@ public class DataItem extends Observable
 
         try
         {
-            notifyObservers ( newValue );
-            this.propertySupport.firePropertyChange ( PROP_VALUE, oldValue, newValue );
+            notifyObservers ( this.value );
+            this.propertySupport.firePropertyChange ( PROP_VALUE, oldValue, this.value );
         }
         catch ( final Throwable e )
         {
