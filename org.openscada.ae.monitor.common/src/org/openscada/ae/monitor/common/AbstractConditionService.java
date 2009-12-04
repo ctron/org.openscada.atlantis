@@ -115,7 +115,7 @@ public class AbstractConditionService implements ConditionService
         }
     }
 
-    private void notifyStateChange ( final ConditionStatusInformation status )
+    protected void notifyStateChange ( final ConditionStatusInformation status )
     {
         for ( final ConditionListener listener : this.conditionListeners )
         {
