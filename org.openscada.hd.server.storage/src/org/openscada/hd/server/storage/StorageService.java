@@ -113,7 +113,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     public StorageService ( final BundleContext bundleContext )
     {
         this.bundleContext = bundleContext;
-        services = new HashMap<String, StorageHistoricalItemService> ();
+        this.services = new HashMap<String, StorageHistoricalItemService> ();
         final String rootFolder = System.getProperty ( FILE_FRAGMENTS_ROOT_FOLDER_SYSTEM_PROPERTY );
         final File root = rootFolder != null ? new File ( rootFolder ) : bundleContext.getDataFile ( "" );
         final String rootPath = root.getPath ();
@@ -121,12 +121,12 @@ public class StorageService implements SelfManagedConfigurationFactory
         {
             logger.error ( String.format ( "could not create root folder for data storage (%s)", rootPath ) );
         }
-        backEndFactory = new FileBackEndFactory ( rootPath, Conversions.parseLong ( System.getProperty ( MAX_COMPRESSION_LEVEL_TO_KEEP_FILE_OPEN ), -1 ) );
-        fileBackEndManagerFactory = new FileBackEndManagerFactory ( backEndFactory );
-        configurationListeners = new LinkedList<ConfigurationListener> ();
-        heartBeatFile = null;
-        latestReliableTime = Long.MIN_VALUE;
-        importMode = Boolean.parseBoolean ( System.getProperty ( IMPORT_MODE ) );
+        this.backEndFactory = new FileBackEndFactory ( rootPath, Conversions.parseLong ( System.getProperty ( MAX_COMPRESSION_LEVEL_TO_KEEP_FILE_OPEN ), -1 ) );
+        this.fileBackEndManagerFactory = new FileBackEndManagerFactory ( this.backEndFactory );
+        this.configurationListeners = new LinkedList<ConfigurationListener> ();
+        this.heartBeatFile = null;
+        this.latestReliableTime = Long.MIN_VALUE;
+        this.importMode = Boolean.parseBoolean ( System.getProperty ( IMPORT_MODE ) );
     }
 
     /**
@@ -136,7 +136,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     {
         try
         {
-            heartBeatFile = new RandomAccessFile ( new File ( backEndFactory.getFileRoot (), HEARTBEAT_FILENAME ), "rw" );
+            this.heartBeatFile = new RandomAccessFile ( new File ( this.backEndFactory.getFileRoot (), HEARTBEAT_FILENAME ), "rw" );
         }
         catch ( final Exception e )
         {
@@ -149,15 +149,15 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public synchronized void performPingOfLife ()
     {
-        if ( heartBeatFile != null )
+        if ( this.heartBeatFile != null )
         {
             final long now = System.currentTimeMillis ();
             try
             {
-                heartBeatFile.seek ( 0 );
-                heartBeatFile.writeLong ( now );
-                heartBeatFile.writeLong ( HEARTBEAT_PARITY_SEED ^ now );
-                heartBeatFile.getChannel ().force ( false );
+                this.heartBeatFile.seek ( 0 );
+                this.heartBeatFile.writeLong ( now );
+                this.heartBeatFile.writeLong ( HEARTBEAT_PARITY_SEED ^ now );
+                this.heartBeatFile.getChannel ().force ( false );
             }
             catch ( final Exception e )
             {
@@ -171,19 +171,19 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     private void deinitializeHeartBeat ()
     {
-        if ( heartBeatFile != null )
+        if ( this.heartBeatFile != null )
         {
             synchronized ( this )
             {
                 try
                 {
-                    heartBeatFile.close ();
+                    this.heartBeatFile.close ();
                 }
                 catch ( final Exception e )
                 {
                     logger.error ( "could not close heart beat file", e );
                 }
-                heartBeatFile = null;
+                this.heartBeatFile = null;
             }
         }
     }
@@ -209,15 +209,15 @@ public class StorageService implements SelfManagedConfigurationFactory
             configuration.setErrorInformation ( e );
             return configuration;
         }
-        final StorageHistoricalItemService service = new StorageHistoricalItemService ( backEndManager, latestReliableTime, importMode );
+        final StorageHistoricalItemService service = new StorageHistoricalItemService ( backEndManager, this.latestReliableTime, this.importMode );
         final ConfigurationImpl configuration = new ConfigurationImpl ( backEndManager.getConfiguration () );
         configuration.setFactoryId ( FACTORY_ID );
         configuration.setState ( ConfigurationState.APPLIED );
         configuration.setErrorInformation ( null );
-        services.put ( configuration.getId (), service );
-        service.start ( bundleContext );
+        this.services.put ( configuration.getId (), service );
+        service.start ( this.bundleContext );
         final Configuration[] addedConfigurationIds = new Configuration[] { configuration };
-        for ( final ConfigurationListener listener : configurationListeners )
+        for ( final ConfigurationListener listener : this.configurationListeners )
         {
             listener.configurationUpdate ( addedConfigurationIds, null );
         }
@@ -233,21 +233,21 @@ public class StorageService implements SelfManagedConfigurationFactory
         initializeHeartBeat ();
 
         // get latest reliable time and start heart beat task
-        latestReliableTime = Long.MIN_VALUE;
-        if ( heartBeatFile != null )
+        this.latestReliableTime = Long.MIN_VALUE;
+        if ( this.heartBeatFile != null )
         {
             // get latest reliable time before system startup
             try
             {
-                if ( heartBeatFile.length () > MAX_HEARTBEAT_FILE_SIZE )
+                if ( this.heartBeatFile.length () > MAX_HEARTBEAT_FILE_SIZE )
                 {
-                    heartBeatFile.setLength ( MAX_HEARTBEAT_FILE_SIZE );
+                    this.heartBeatFile.setLength ( MAX_HEARTBEAT_FILE_SIZE );
                 }
-                if ( heartBeatFile.length () == MAX_HEARTBEAT_FILE_SIZE )
+                if ( this.heartBeatFile.length () == MAX_HEARTBEAT_FILE_SIZE )
                 {
-                    heartBeatFile.seek ( 0 );
-                    final long latestReliableTime = heartBeatFile.readLong ();
-                    final long parity = HEARTBEAT_PARITY_SEED ^ heartBeatFile.readLong ();
+                    this.heartBeatFile.seek ( 0 );
+                    final long latestReliableTime = this.heartBeatFile.readLong ();
+                    final long parity = HEARTBEAT_PARITY_SEED ^ this.heartBeatFile.readLong ();
                     if ( latestReliableTime == parity )
                     {
                         this.latestReliableTime = latestReliableTime;
@@ -264,8 +264,8 @@ public class StorageService implements SelfManagedConfigurationFactory
             }
 
             // start heart beat task
-            heartBeatTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( HEARTBEAT_THREAD_ID ) );
-            heartBeatTask.scheduleWithFixedDelay ( new Runnable () {
+            this.heartBeatTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( HEARTBEAT_THREAD_ID ) );
+            this.heartBeatTask.scheduleWithFixedDelay ( new Runnable () {
                 public void run ()
                 {
                     performPingOfLife ();
@@ -274,14 +274,14 @@ public class StorageService implements SelfManagedConfigurationFactory
         }
 
         // get information of existing configurations
-        for ( final FileBackEndManager backEndManager : fileBackEndManagerFactory.getBackEndManagers () )
+        for ( final FileBackEndManager backEndManager : this.fileBackEndManagerFactory.getBackEndManagers () )
         {
             createAndAddService ( backEndManager );
         }
 
         // start clean relicts timer
-        relictCleanerTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( RELICT_CLEANER_THREAD_ID ) );
-        relictCleanerTask.scheduleWithFixedDelay ( new Runnable () {
+        this.relictCleanerTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( RELICT_CLEANER_THREAD_ID ) );
+        this.relictCleanerTask.scheduleWithFixedDelay ( new Runnable () {
             public void run ()
             {
                 cleanupRelicts ();
@@ -294,16 +294,16 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public synchronized void stop ()
     {
-        if ( relictCleanerTask != null )
+        if ( this.relictCleanerTask != null )
         {
-            relictCleanerTask.shutdown ();
-            relictCleanerTask = null;
+            this.relictCleanerTask.shutdown ();
+            this.relictCleanerTask = null;
         }
-        for ( final StorageHistoricalItemService service : services.values () )
+        for ( final StorageHistoricalItemService service : this.services.values () )
         {
             service.stop ();
         }
-        services.clear ();
+        this.services.clear ();
         deinitializeHeartBeat ();
     }
 
@@ -312,11 +312,11 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public void addConfigurationListener ( final ConfigurationListener listener )
     {
-        if ( !configurationListeners.contains ( listener ) )
+        if ( !this.configurationListeners.contains ( listener ) )
         {
-            configurationListeners.add ( listener );
+            this.configurationListeners.add ( listener );
             final List<Configuration> configurations = new ArrayList<Configuration> ();
-            for ( final StorageHistoricalItemService service : services.values () )
+            for ( final StorageHistoricalItemService service : this.services.values () )
             {
                 final ConfigurationImpl configuration = new ConfigurationImpl ( service.getBackEndManager ().getConfiguration () );
                 configuration.setState ( ConfigurationState.APPLIED );
@@ -334,7 +334,7 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public void removeConfigurationListener ( final ConfigurationListener listener )
     {
-        configurationListeners.remove ( listener );
+        this.configurationListeners.remove ( listener );
     }
 
     /**
@@ -368,7 +368,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     /**
      * @see org.openscada.ca.SelfManagedConfigurationFactory#update
      */
-    public NotifyFuture<Configuration> update ( final String configurationId, final Map<String, String> inputProperties )
+    public NotifyFuture<Configuration> update ( final String configurationId, final Map<String, String> inputProperties, final boolean fullSet )
     {
         // provide default settings
         final Map<String, String> properties = new HashMap<String, String> ();
@@ -390,7 +390,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         configuration.setState ( ConfigurationState.ERROR );
 
         // disallow update of already existing service
-        final StorageHistoricalItemService service = services.get ( configurationId );
+        final StorageHistoricalItemService service = this.services.get ( configurationId );
         if ( service != null )
         {
             return new InstantErrorFuture<Configuration> ( new IllegalStateException ( "unable to modify exisiting configuration" ).fillInStackTrace () );
@@ -399,7 +399,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         // try to create new service
         try
         {
-            return new InstantFuture<Configuration> ( createAndAddService ( fileBackEndManagerFactory.getBackEndManager ( configuration, true ) ) );
+            return new InstantFuture<Configuration> ( createAndAddService ( this.fileBackEndManagerFactory.getBackEndManager ( configuration, true ) ) );
         }
         catch ( final Exception e )
         {
@@ -415,7 +415,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     public synchronized NotifyFuture<Configuration> delete ( final String configurationId )
     {
         // stop service
-        final StorageHistoricalItemService service = services.remove ( configurationId );
+        final StorageHistoricalItemService service = this.services.remove ( configurationId );
         if ( service == null )
         {
             return new InstantErrorFuture<Configuration> ( new IllegalStateException ( String.format ( "Unable to delete non existing service with configuration id '%s'", configurationId ) ).fillInStackTrace () );
@@ -430,7 +430,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         // send notification of changed state
         configuration.setState ( ConfigurationState.AVAILABLE );
         final String[] removedConfigurationIds = new String[] { configurationId };
-        for ( final ConfigurationListener listener : configurationListeners )
+        for ( final ConfigurationListener listener : this.configurationListeners )
         {
             listener.configurationUpdate ( null, removedConfigurationIds );
         }
@@ -444,7 +444,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     public synchronized void cleanupRelicts ()
     {
         logger.info ( "triggering cleaning of old data" );
-        for ( final StorageHistoricalItemService service : services.values () )
+        for ( final StorageHistoricalItemService service : this.services.values () )
         {
             try
             {
