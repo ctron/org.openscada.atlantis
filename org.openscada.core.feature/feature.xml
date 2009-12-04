@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.core"
       label="OpenSCADA Core"
-      version="0.14.0.qualifier"
+      version="0.15.0.qualifier"
       provider-name="inavare GmbH">
 
    <description url="http://www.example.com/description">
@@ -43,7 +43,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.openscada.core.common"
+         id="org.openscada.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
