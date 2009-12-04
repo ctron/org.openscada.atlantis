@@ -171,6 +171,18 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
 
     protected abstract void performDataUpdate ( Builder builder );
 
+    /**
+     * Return the factory id that configured this instance
+     * @return the factory id
+     */
+    protected abstract String getFactoryId ();
+
+    /**
+     * Return the configuration id that is assigned to this instance
+     * @return the configuration id
+     */
+    protected abstract String getConfigurationId ();
+
     @Override
     protected void notifyStateChange ( final ConditionStatusInformation status )
     {
@@ -233,6 +245,24 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
     private void updateConfiguration ( final Map<String, String> configUpdate )
     {
         logger.info ( "Request to update configuration: {}", configUpdate );
+
+        final String factoryId = getFactoryId ();
+        final String configurationId = getConfigurationId ();
+
+        logger.info ( "Directing update to: {}/{}", new Object[] { factoryId, configurationId } );
+
+        if ( factoryId != null && configurationId != null )
+        {
+            try
+            {
+                Activator.getConfigAdmin ().updateConfiguration ( factoryId, configurationId, configUpdate, false );
+            }
+            catch ( final Exception e )
+            {
+                logger.warn ( "Failed to update configuration", e );
+                throw new RuntimeException ( "Unable to update configuration", e );
+            }
+        }
     }
 
     @Override

@@ -14,11 +14,25 @@ import org.osgi.framework.BundleContext;
 public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataItemMonitor
 {
 
+    public static final String FACTORY_ID = "ae.monitor.da.booleanAlarm";
+
     private boolean reference;
 
     public BooleanAlarmMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id )
     {
         super ( context, eventProcessor, id, "ae.monitor.booleanAlarm" );
+    }
+
+    @Override
+    protected String getFactoryId ()
+    {
+        return FACTORY_ID;
+    }
+
+    @Override
+    protected String getConfigurationId ()
+    {
+        return getId ();
     }
 
     @Override
