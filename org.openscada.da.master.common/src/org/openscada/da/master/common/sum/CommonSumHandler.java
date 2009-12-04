@@ -1,4 +1,4 @@
-package org.openscada.da.master.common;
+package org.openscada.da.master.common.sum;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
+import org.openscada.da.master.common.AbstractHandlerImpl;
 import org.openscada.utils.str.StringHelper;
 import org.osgi.framework.BundleContext;
 
