@@ -185,7 +185,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.dataitem"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.condition"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.common.condition"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.exporter"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.exporter.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.net"/>
