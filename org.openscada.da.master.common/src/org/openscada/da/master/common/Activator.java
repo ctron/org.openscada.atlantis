@@ -30,7 +30,7 @@ public class Activator implements BundleActivator
         this.factory1 = makeFactory ( context, "error", 10 );
         this.factory2 = makeFactory ( context, "alarm", 20 );
         this.factory3 = makeFactory ( context, "manual", 30 );
-        this.factory4 = makeFactory ( context, "akn", 40 );
+        this.factory4 = makeFactory ( context, "ackRequired", 40 );
     }
 
     private CommonFactoryImpl makeFactory ( final BundleContext context, final String tag, final int priority )
