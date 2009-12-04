@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.hd"
       label="OpenSCADA HD"
-      version="0.14.0.qualifier"
+      version="0.15.0.qualifier"
       provider-name="inavare GmbH">
 
    <description url="http://www.example.com/description">
@@ -18,7 +18,7 @@
    </license>
 
    <requires>
-      <import plugin="org.openscada.core.common"/>
+      <import plugin="org.openscada.core"/>
       <import plugin="org.openscada.core.client.common"/>
       <import plugin="org.openscada.core.server.common"/>
       <import plugin="org.openscada.utils"/>
