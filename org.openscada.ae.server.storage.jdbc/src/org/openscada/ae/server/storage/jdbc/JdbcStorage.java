@@ -1,12 +1,12 @@
 package org.openscada.ae.server.storage.jdbc;
 
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.openscada.ae.Event;
@@ -61,11 +61,25 @@ public class JdbcStorage implements Storage
 
     public void stop () throws Exception
     {
-        storageQueueProcessor.shutdown ();
-        boolean result = storageQueueProcessor.awaitTermination ( shutDownTimeout, TimeUnit.MILLISECONDS );
-        if ( !result )
+        List<Runnable> openTasks = storageQueueProcessor.shutdownNow ();
+        final int numOfOpenTasks = openTasks.size ();
+        if ( numOfOpenTasks > 0 )
         {
-            logger.error ( "jdbcStorageDAO is shut down, but not all pending operations have been completed!" );
+            int numOfOpenTasksRemaining = numOfOpenTasks;
+            logger.info ( "jdbcStorageDAO is beeing shut down, but there are still {} events to store", numOfOpenTasks );
+            for ( Runnable runnable : openTasks )
+            {
+                try
+                {
+                    runnable.run ();
+                }
+                catch ( Exception e )
+                {
+                    logger.error ( "An error occured during processing remaining tasks after shutdown", e );
+                }
+                numOfOpenTasksRemaining -= 1;
+                logger.debug ( "jdbcStorageDAO is beeing shut down, but there are still {} events to store", numOfOpenTasksRemaining );
+            }
         }
         logger.info ( "jdbcStorageDAO destroyed" );
     }
@@ -78,24 +92,25 @@ public class JdbcStorage implements Storage
 
     public Event store ( final Event event )
     {
-        final Event result = Event.create ().event ( event ).id ( UUID.randomUUID () ).entryTimestamp ( new GregorianCalendar ().getTime () ).build ();
+        final Event eventToStore = Event.create ().event ( event ).id ( UUID.randomUUID () ).entryTimestamp ( new GregorianCalendar ().getTime () ).build ();
         logger.debug ( "Save Event to database: " + event );
-        storageQueueProcessor.submit ( new Callable<Event> () {
-            public Event call ()
+        storageQueueProcessor.submit ( new Callable<Boolean> () {
+            public Boolean call ()
             {
                 try
                 {
-                    jdbcStorageDAO.get ().storeEvent ( MutableEvent.fromEvent ( result ) );
+                    jdbcStorageDAO.get ().storeEvent ( MutableEvent.fromEvent ( eventToStore ) );
                 }
                 catch ( Exception e )
                 {
                     logger.error ( "Exception occured ({}) while saving Event to database: {}", e, event );
-                    return result;
+                    logger.info ( "Exception was", e );
+                    return false;
                 }
                 logger.debug ( "Event saved to database: {}", event );
-                return result;
+                return true;
             }
         } );
-        return result;
+        return eventToStore;
     }
 }
