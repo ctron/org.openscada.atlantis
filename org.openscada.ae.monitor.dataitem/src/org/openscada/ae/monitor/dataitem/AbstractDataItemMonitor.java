@@ -1,5 +1,7 @@
 package org.openscada.ae.monitor.dataitem;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +52,10 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
 
     private ConditionStatus state;
 
+    private int handlerPriority;
+
+    private boolean alarm;
+
     public AbstractDataItemMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix )
     {
         super ( eventProcessor, id );
@@ -72,13 +78,29 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
         return Boolean.parseBoolean ( value );
     }
 
+    protected static int getInteger ( final Map<String, String> properties, final String key, final int defaultValue )
+    {
+        final String value = properties.get ( key );
+        if ( value == null )
+        {
+            return defaultValue;
+        }
+        return Integer.parseInt ( value );
+    }
+
     public synchronized void update ( final Map<String, String> properties ) throws Exception
     {
         disconnect ();
         this.masterId = properties.get ( MasterItem.MASTER_ID );
+        this.handlerPriority = getInteger ( properties, "handler.priority", getDefaultPriority () );
         setActive ( getBoolean ( properties, "active", true ) );
-        setRequireAkn ( getBoolean ( properties, "requireAkn", false ) );
+        setRequireAkn ( getBoolean ( properties, "requireAck", false ) );
         connect ();
+    }
+
+    protected int getDefaultPriority ()
+    {
+        return 0;
     }
 
     private synchronized void connect () throws InvalidSyntaxException
@@ -131,7 +153,7 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
                     logger.debug ( "Handle data update: {}", value );
                     return AbstractDataItemMonitor.this.handleDataUpdate ( value );
                 }
-            }, 0 );
+            }, this.handlerPriority );
         }
     }
 
@@ -189,7 +211,13 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
         super.notifyStateChange ( status );
         this.state = status.getStatus ();
         this.akn = this.state == ConditionStatus.NOT_AKN || this.state == ConditionStatus.NOT_OK_NOT_AKN;
+        this.alarm = this.state == ConditionStatus.NOT_OK || this.state == ConditionStatus.NOT_OK_AKN || this.state == ConditionStatus.NOT_OK_NOT_AKN;
         reprocess ();
+    }
+
+    protected boolean isError ()
+    {
+        return false;
     }
 
     /**
@@ -200,10 +228,19 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
     protected void injectAttributes ( final Builder builder )
     {
         builder.setAttribute ( this.prefix + ".active", new Variant ( this.active ) );
-        builder.setAttribute ( this.prefix + ".requireAkn", new Variant ( this.requireAkn ) );
+        builder.setAttribute ( this.prefix + ".requireAck", new Variant ( this.requireAkn ) );
 
-        builder.setAttribute ( this.prefix + ".akn", this.akn ? Variant.TRUE : Variant.FALSE );
+        builder.setAttribute ( this.prefix + ".ackRequired", this.akn ? Variant.TRUE : Variant.FALSE );
         builder.setAttribute ( this.prefix + ".state", new Variant ( this.state.toString () ) );
+
+        if ( isError () )
+        {
+            builder.setAttribute ( this.prefix + ".error", this.alarm ? Variant.TRUE : Variant.FALSE );
+        }
+        else
+        {
+            builder.setAttribute ( this.prefix + ".alarm", this.alarm ? Variant.TRUE : Variant.FALSE );
+        }
     }
 
     protected WriteRequestResult handleProcessWrite ( final WriteRequest request )
@@ -281,7 +318,7 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
         reprocess ();
     }
 
-    private void reprocess ()
+    protected void reprocess ()
     {
         final MasterItem item = this.masterItem;
         if ( item != null )
@@ -302,8 +339,25 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
         final Variant requireAkn = attributes.get ( this.prefix + ".requireAkn" );
         if ( requireAkn != null )
         {
-            configUpdate.put ( "requireAkn", requireAkn.asBoolean () ? "true" : "false" );
-            result.put ( this.prefix + ".requireAkn", new WriteAttributeResult () );
+            configUpdate.put ( "requireAck", requireAkn.asBoolean () ? "true" : "false" );
+            result.put ( this.prefix + ".requireAck", new WriteAttributeResult () );
+        }
+    }
+
+    protected static Date toTimestamp ( final DataItemValue value )
+    {
+        if ( value == null )
+        {
+            return new Date ();
+        }
+        final Calendar c = value.getTimestamp ();
+        if ( c == null )
+        {
+            return new Date ();
+        }
+        else
+        {
+            return c.getTime ();
         }
     }
 

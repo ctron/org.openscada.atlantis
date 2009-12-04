@@ -7,20 +7,24 @@ import java.util.Map;
 
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.ConditionService;
-import org.openscada.ae.monitor.dataitem.monitor.internal.bit.BooleanAlarmMonitor;
-import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class MonitorFactoryImpl extends AbstractServiceConfigurationFactory<DataItemMonitor> implements AknHandler
+public abstract class AbstractMonitorFactory extends AbstractServiceConfigurationFactory<DataItemMonitor>
 {
 
-    private final BundleContext context;
+    private final static Logger logger = LoggerFactory.getLogger ( AbstractMonitorFactory.class );
 
-    private final EventProcessor eventProcessor;
+    protected final BundleContext context;
 
-    public MonitorFactoryImpl ( final BundleContext context, final EventProcessor eventProcessor )
+    protected abstract DataItemMonitor createInstance ( final String configurationId, final EventProcessor eventProcessor );
+
+    protected final EventProcessor eventProcessor;
+
+    public AbstractMonitorFactory ( final BundleContext context, final EventProcessor eventProcessor )
     {
         super ( context );
         this.context = context;
@@ -39,11 +43,6 @@ public class MonitorFactoryImpl extends AbstractServiceConfigurationFactory<Data
         return new Entry<DataItemMonitor> ( instance, handle );
     }
 
-    private DataItemMonitor createInstance ( final String configurationId, final EventProcessor eventProcessor )
-    {
-        return new BooleanAlarmMonitor ( this.context, eventProcessor, configurationId );
-    }
-
     @Override
     protected void disposeService ( final DataItemMonitor service )
     {
@@ -59,7 +58,7 @@ public class MonitorFactoryImpl extends AbstractServiceConfigurationFactory<Data
 
     public boolean acknowledge ( final String conditionId, final String aknUser, final Date aknTimestamp )
     {
-        // TODO Auto-generated method stub
+        // FIXME: implement ack
         return false;
     }
 

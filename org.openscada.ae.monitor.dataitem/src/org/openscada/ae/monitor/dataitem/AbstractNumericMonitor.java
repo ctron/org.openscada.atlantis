@@ -3,22 +3,23 @@ package org.openscada.ae.monitor.dataitem;
 import java.util.Date;
 
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.osgi.framework.BundleContext;
 
-public abstract class AbstractBooleanMonitor extends AbstractDataItemMonitor
+public abstract class AbstractNumericMonitor extends AbstractDataItemMonitor
 {
-    protected Boolean value;
-
-    protected abstract void update ();
+    protected Number value;
 
     protected Date timestamp;
 
-    public AbstractBooleanMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix )
+    public AbstractNumericMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix )
     {
         super ( context, eventProcessor, id, prefix );
     }
+
+    protected abstract void update ( Builder builder );
 
     @Override
     protected void performDataUpdate ( final Builder builder )
@@ -31,10 +32,17 @@ public abstract class AbstractBooleanMonitor extends AbstractDataItemMonitor
         }
         else
         {
-            this.value = value.getValue ().asBoolean ();
+            final Variant variant = value.getValue ();
+            if ( variant.isLong () )
+            {
+                this.value = variant.asLong ( 0L );
+            }
+            else
+            {
+                this.value = variant.asDouble ( 0.0 );
+            }
         }
 
-        update ();
+        update ( builder );
     }
-
 }
