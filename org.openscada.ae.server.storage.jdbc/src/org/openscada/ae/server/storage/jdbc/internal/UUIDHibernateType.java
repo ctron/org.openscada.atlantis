@@ -32,7 +32,7 @@ public class UUIDHibernateType implements UserType
     public UUIDHibernateType ()
     {
     }
-    
+
     public int[] sqlTypes ()
     {
         return SQL_TYPES;
@@ -146,6 +146,5 @@ public class UUIDHibernateType implements UserType
     {
         return original;
     }
-
 
 }

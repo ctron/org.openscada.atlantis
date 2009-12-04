@@ -5,9 +5,9 @@ import java.util.UUID;
 
 public interface JdbcStorageDAO
 {
-    public void storeEvent(MutableEvent event);
+    public void storeEvent ( MutableEvent event );
 
-    public MutableEvent loadEvent(UUID id);
+    public MutableEvent loadEvent ( UUID id );
 
-    public List<MutableEvent> queryEvent(String hql, Object ...parameters);
+    public List<MutableEvent> queryEvent ( String hql, Object... parameters );
 }

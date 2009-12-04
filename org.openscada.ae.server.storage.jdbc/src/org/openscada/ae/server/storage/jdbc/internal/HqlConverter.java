@@ -211,7 +211,7 @@ public class HqlConverter
             else if ( "presence".equals ( op ) )
             {
                 term.hql += "index(A) = '" + field + "')";
-                term.parameters = new Object[] { };
+                term.parameters = new Object[] {};
             }
             else
             {

@@ -18,6 +18,13 @@ import org.openscada.utils.filter.FilterParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * {@link JdbcStorage} is a thin wrapper around the {@link JdbcStorageDAO} which provides just 
+ * the basic methods to store Events. An event is converted to a {@link MutableEvent}
+ * and then placed on a queue to store.
+ * 
+ * @author jrose
+ */
 public class JdbcStorage implements Storage
 {
     private static final Logger logger = LoggerFactory.getLogger ( JdbcStorage.class );
@@ -48,6 +55,12 @@ public class JdbcStorage implements Storage
         this.shutDownTimeout = shutDownTimeout;
     }
 
+    /**
+     * is called by Spring when {@link JdbcStorage} is initialized. It creates a
+     * new {@link ExecutorService} which is used to schedule the events for storage.
+     *  
+     * @throws Exception
+     */
     public void start () throws Exception
     {
         logger.info ( "jdbcStorageDAO instanciated" );
@@ -59,6 +72,13 @@ public class JdbcStorage implements Storage
         } );
     }
 
+    /**
+     * is called by Spring when {@link JdbcStorage} is destroyed. It halts the
+     * {@link ExecutorService} and tries to process the remaining events (say, store them
+     * to the database).
+     * 
+     * @throws Exception
+     */
     public void stop () throws Exception
     {
         List<Runnable> openTasks = storageQueueProcessor.shutdownNow ();
@@ -69,14 +89,7 @@ public class JdbcStorage implements Storage
             logger.info ( "jdbcStorageDAO is beeing shut down, but there are still {} events to store", numOfOpenTasks );
             for ( Runnable runnable : openTasks )
             {
-                try
-                {
-                    runnable.run ();
-                }
-                catch ( Exception e )
-                {
-                    logger.error ( "An error occured during processing remaining tasks after shutdown", e );
-                }
+                runnable.run ();
                 numOfOpenTasksRemaining -= 1;
                 logger.debug ( "jdbcStorageDAO is beeing shut down, but there are still {} events to store", numOfOpenTasksRemaining );
             }
@@ -84,12 +97,22 @@ public class JdbcStorage implements Storage
         logger.info ( "jdbcStorageDAO destroyed" );
     }
 
+    /* (non-Javadoc)
+     * @see org.openscada.ae.server.storage.Storage#query(java.lang.String)
+     */
     public Query query ( String filter ) throws Exception
     {
         logger.debug ( "Query requested {}", filter );
         return new JdbcQuery ( jdbcStorageDAO.get (), new FilterParser ( filter ).getFilter () );
     }
 
+    /**
+     * the events are not actually stored within this method, rather given an 
+     * {@link ExecutorService} and stored later. This guarantees a immediate return
+     * of this method.
+     * 
+     * @see org.openscada.ae.server.storage.Storage#store(org.openscada.ae.Event)
+     */
     public Event store ( final Event event )
     {
         final Event eventToStore = Event.create ().event ( event ).id ( UUID.randomUUID () ).entryTimestamp ( new GregorianCalendar ().getTime () ).build ();

@@ -6,8 +6,14 @@
 
 	<bean id="propertyPlaceholder"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="properties">
+			<props>
+				<prop key="org.openscada.ae.server.storage.jdbc.schema"></prop>
+			</props>
+		</property>
 		<property name="location"
 			value="classpath:org/openscada/ae/server/storage/jdbc/configuration/ae.properties" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
 	</bean>
 
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
@@ -23,12 +29,17 @@
 
 	<bean id="hibernateProperties"
 		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="properties">
+			<props>
+				<prop key="hibernate.default_schema">${org.openscada.ae.server.storage.jdbc.schema}</prop>
+			</props>
+		</property>
 		<property name="location"
 			value="classpath:org/openscada/ae/server/storage/jdbc/configuration/hibernate.properties" />
 	</bean>
 
 	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		class="org.openscada.ae.server.storage.jdbc.internal.CustomSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="hibernateProperties" ref="hibernateProperties" />
 		<property name="mappingResources">
@@ -66,5 +77,5 @@
 			</props>
 		</property>
 	</bean>
-	
+
 </beans>
