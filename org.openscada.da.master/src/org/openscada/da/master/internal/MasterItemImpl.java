@@ -222,8 +222,31 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
 
     public synchronized void addHandler ( final MasterItemHandler handler, final int priority )
     {
-        this.itemHandler.add ( handler );
-        // re-process
+        logger.debug ( "Adding handler: {}/{}", new Object[] { handler, priority } );
+
+        if ( this.itemHandler.add ( handler ) )
+        {
+            logger.debug ( "Added handler: {}/{}", new Object[] { handler, priority } );
+
+            // re-process
+            reprocess ();
+        }
+    }
+
+    public synchronized void reprocess ()
+    {
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                MasterItemImpl.this.handleReprocess ();
+            }
+        } );
+    }
+
+    protected synchronized void handleReprocess ()
+    {
+        logger.info ( "Reprocessing" );
         updateData ( processHandler ( this.value ) );
     }
 
@@ -232,9 +255,11 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
      */
     public synchronized void removeHandler ( final MasterItemHandler handler )
     {
-        this.itemHandler.remove ( handler );
-        // re-process
-        updateData ( processHandler ( this.value ) );
+        if ( this.itemHandler.remove ( handler ) )
+        {
+            logger.debug ( "Removed handler: {}", handler );
+            reprocess ();
+        }
     }
 
     protected synchronized DataItemValue processHandler ( DataItemValue value )
@@ -384,6 +409,11 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
         }
 
         return finalResult;
+    }
+
+    public void update ( final Map<String, String> properties )
+    {
+        // FIXME: implement
     }
 
 }

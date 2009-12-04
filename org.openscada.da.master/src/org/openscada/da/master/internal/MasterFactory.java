@@ -55,10 +55,10 @@ public class MasterFactory implements ConfigurationFactory
 
         synchronized ( this )
         {
-            final MasterItem masterItemImpl = this.masterItemImpls.get ( id );
+            final MasterItemImpl masterItemImpl = this.masterItemImpls.get ( id );
             if ( masterItemImpl != null )
             {
-                // FIXME: implement update
+                masterItemImpl.update ( properties );
             }
             else
             {

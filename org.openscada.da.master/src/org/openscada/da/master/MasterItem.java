@@ -20,4 +20,6 @@ public interface MasterItem extends DataSource
      * @param the priority this entry has in the master item
      */
     public abstract void addHandler ( final MasterItemHandler handler, int priority );
+
+    public abstract void reprocess ();
 }
