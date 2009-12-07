@@ -127,17 +127,17 @@ public class StateAdapter implements StateHandler
 
     protected void publishFailEvent ( final Variant value )
     {
-        this.service.publishEvent ( EventHelper.newFailEvent ( this.service.getId (), "", value ) );
+        this.service.publishEvent ( EventHelper.newFailEvent ( this.service.getId (), "", value, this.currentContext.getTimestamp () ) );
     }
 
     protected void publishUnsafeEvent ()
     {
-        this.service.publishEvent ( EventHelper.newUnsafeEvent ( this.service.getId (), "" ) );
+        this.service.publishEvent ( EventHelper.newUnsafeEvent ( this.service.getId (), "", this.currentContext.getTimestamp () ) );
     }
 
     protected void publishAknEvent ()
     {
-        this.service.publishEvent ( EventHelper.newAknEvent ( this.service.getId (), "" ) );
+        this.service.publishEvent ( EventHelper.newAknEvent ( this.service.getId (), "", this.currentContext.getTimestamp () ) );
     }
 
     public void ok ( final Variant value, final Date timestamp )
@@ -146,7 +146,7 @@ public class StateAdapter implements StateHandler
 
     protected void publishOkEvent ( final Variant value )
     {
-        this.service.publishEvent ( EventHelper.newOkEvent ( this.service.getId (), "", value ) );
+        this.service.publishEvent ( EventHelper.newOkEvent ( this.service.getId (), "", value, this.currentContext.getTimestamp () ) );
     }
 
     public void unsafe ()
@@ -155,13 +155,13 @@ public class StateAdapter implements StateHandler
 
     public void ignoreAkn ()
     {
-        this.service.publishEvent ( EventHelper.newConfigurationEvent ( this.service.getId (), "Changed require akn", new Variant ( false ) ) );
+        this.service.publishEvent ( EventHelper.newConfigurationEvent ( this.service.getId (), "Changed require akn", new Variant ( false ), new Date () ) );
         this.currentContext.setRequireAkn ( false );
     }
 
     public void requireAkn ()
     {
-        this.service.publishEvent ( EventHelper.newConfigurationEvent ( this.service.getId (), "Changed require akn", new Variant ( true ) ) );
+        this.service.publishEvent ( EventHelper.newConfigurationEvent ( this.service.getId (), "Changed require akn", new Variant ( true ), new Date () ) );
         this.currentContext.setRequireAkn ( true );
     }
 
