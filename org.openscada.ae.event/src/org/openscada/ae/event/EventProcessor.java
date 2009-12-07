@@ -53,7 +53,7 @@ public class EventProcessor implements ServiceTrackerCustomizer
         this.tracker.close ();
     }
 
-    public void publishEvent ( final Event event )
+    public synchronized void publishEvent ( final Event event )
     {
         final Storage service = this.service;
         if ( service != null )
@@ -66,7 +66,7 @@ public class EventProcessor implements ServiceTrackerCustomizer
         }
     }
 
-    public Object addingService ( final ServiceReference reference )
+    public synchronized Object addingService ( final ServiceReference reference )
     {
         final Object o = this.context.getService ( reference );
         if ( o instanceof Storage )
@@ -92,7 +92,7 @@ public class EventProcessor implements ServiceTrackerCustomizer
     {
     }
 
-    public void removedService ( final ServiceReference reference, final Object service )
+    public synchronized void removedService ( final ServiceReference reference, final Object service )
     {
         this.service = null;
     }
