@@ -3,10 +3,9 @@ package org.openscada.ae.monitor.dataitem.monitor.internal.bit;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.dataitem.AbstractMonitorFactory;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
-import org.openscada.ae.server.common.akn.AknHandler;
 import org.osgi.framework.BundleContext;
 
-public class MonitorFactoryImpl extends AbstractMonitorFactory implements AknHandler
+public class MonitorFactoryImpl extends AbstractMonitorFactory
 {
 
     public MonitorFactoryImpl ( final BundleContext context, final EventProcessor eventProcessor )

@@ -594,6 +594,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     public void acknowledge ( final String conditionId, final Date aknTimestamp )
     {
+        logger.debug ( "Sending ACK: {} / {}", new Object[] { conditionId, aknTimestamp } );
+
         final Message message = new Message ( Messages.CC_CONDITION_AKN );
         message.getValues ().put ( "id", new StringValue ( conditionId ) );
         // if we don't have a timestamp provided use current time

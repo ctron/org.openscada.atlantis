@@ -7,15 +7,15 @@ import java.util.Map;
 
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.ConditionService;
+import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractMonitorFactory extends AbstractServiceConfigurationFactory<DataItemMonitor>
+public abstract class AbstractMonitorFactory extends AbstractServiceConfigurationFactory<DataItemMonitor> implements AknHandler
 {
-
     private final static Logger logger = LoggerFactory.getLogger ( AbstractMonitorFactory.class );
 
     protected final BundleContext context;
@@ -56,9 +56,16 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
         return null;
     }
 
-    public boolean acknowledge ( final String conditionId, final String aknUser, final Date aknTimestamp )
+    public synchronized boolean acknowledge ( final String conditionId, final String aknUser, final Date aknTimestamp )
     {
-        // FIXME: implement ack
+        logger.debug ( "Try to process ACK: {}", conditionId );
+
+        final Entry<DataItemMonitor> entry = getService ( conditionId );
+        if ( entry != null )
+        {
+            entry.getService ().akn ( aknUser, aknTimestamp );
+        }
+
         return false;
     }
 

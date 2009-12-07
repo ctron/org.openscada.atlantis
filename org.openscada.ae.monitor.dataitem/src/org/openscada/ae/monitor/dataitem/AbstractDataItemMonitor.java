@@ -336,7 +336,7 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
             result.put ( this.prefix + ".active", new WriteAttributeResult () );
         }
 
-        final Variant requireAkn = attributes.get ( this.prefix + ".requireAkn" );
+        final Variant requireAkn = attributes.get ( this.prefix + ".requireAck" );
         if ( requireAkn != null )
         {
             configUpdate.put ( "requireAck", requireAkn.asBoolean () ? "true" : "false" );

@@ -147,14 +147,14 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     protected void acknowledge ( final Message message )
     {
-        String conditionId = null;
+        String monitorId = null;
         Date aknTimestamp = null;
 
         {
             final Value value = message.getValues ().get ( "id" );
             if ( value instanceof StringValue )
             {
-                conditionId = value.toString ();
+                monitorId = value.toString ();
             }
         }
         {
@@ -165,11 +165,11 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             }
         }
 
-        if ( conditionId != null && aknTimestamp != null )
+        if ( monitorId != null && aknTimestamp != null )
         {
             try
             {
-                this.service.acknowledge ( this.session, conditionId, aknTimestamp );
+                this.service.acknowledge ( this.session, monitorId, aknTimestamp );
             }
             catch ( final Throwable e )
             {

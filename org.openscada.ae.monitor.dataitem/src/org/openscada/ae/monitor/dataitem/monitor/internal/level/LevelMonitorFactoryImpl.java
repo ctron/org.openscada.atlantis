@@ -3,10 +3,9 @@ package org.openscada.ae.monitor.dataitem.monitor.internal.level;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.dataitem.AbstractMonitorFactory;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
-import org.openscada.ae.server.common.akn.AknHandler;
 import org.osgi.framework.BundleContext;
 
-public class LevelMonitorFactoryImpl extends AbstractMonitorFactory implements AknHandler
+public class LevelMonitorFactoryImpl extends AbstractMonitorFactory
 {
 
     public static final String FACTORY_PREFIX = "org.openscada.da.level";
