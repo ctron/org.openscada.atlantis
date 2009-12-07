@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import org.openscada.ae.Event;
+import org.openscada.ae.server.storage.Storage;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
@@ -23,11 +24,11 @@ public class EventProcessor implements ServiceTrackerCustomizer
 
     private final BundleContext context;
 
-    private EventService service;
+    private Storage service;
 
     public EventProcessor ( final BundleContext context ) throws InvalidSyntaxException
     {
-        this ( "(" + Constants.OBJECTCLASS + "=" + EventService.class.getName () + ")", context );
+        this ( "(" + Constants.OBJECTCLASS + "=" + Storage.class.getName () + ")", context );
     }
 
     public EventProcessor ( final Filter filter, final BundleContext context )
@@ -54,10 +55,10 @@ public class EventProcessor implements ServiceTrackerCustomizer
 
     public void publishEvent ( final Event event )
     {
-        EventService service = this.service;
+        final Storage service = this.service;
         if ( service != null )
         {
-            service.publishEvent ( event );
+            service.store ( event );
         }
         else
         {
@@ -67,10 +68,10 @@ public class EventProcessor implements ServiceTrackerCustomizer
 
     public Object addingService ( final ServiceReference reference )
     {
-        Object o = this.context.getService ( reference );
-        if ( o instanceof EventService )
+        final Object o = this.context.getService ( reference );
+        if ( o instanceof Storage )
         {
-            EventService service = (EventService)o;
+            final Storage service = (Storage)o;
             publishStoredEvents ( service );
             this.service = service;
             return this.service;
@@ -78,12 +79,12 @@ public class EventProcessor implements ServiceTrackerCustomizer
         return null;
     }
 
-    private void publishStoredEvents ( final EventService service )
+    private void publishStoredEvents ( final Storage service )
     {
         Event event = null;
         while ( ( event = this.eventQueue.poll () ) != null )
         {
-            service.publishEvent ( event );
+            service.store ( event );
         }
     }
 
