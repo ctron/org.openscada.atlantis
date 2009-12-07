@@ -18,6 +18,8 @@ import org.openscada.ae.server.Session;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.ae.server.common.condition.ConditionQuery;
 import org.openscada.ae.server.common.condition.ConditionQuerySource;
+import org.openscada.ae.server.common.event.EventQuery;
+import org.openscada.ae.server.common.event.EventQuerySource;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
@@ -39,9 +41,13 @@ public class ServiceImpl implements Service, ServiceListener
 
     private final SubscriptionManager conditionSubscriptions;
 
+    private final SubscriptionManager eventSubscriptions;
+
     private final BundleContext context;
 
     private final Map<String, ConditionQuery> conditionQueryRefs = new HashMap<String, ConditionQuery> ();
+
+    private final Map<String, EventQuery> eventQueryRefs = new HashMap<String, EventQuery> ();
 
     private final Map<String, BrowserEntry> browserCache = new HashMap<String, BrowserEntry> ();
 
@@ -51,18 +57,33 @@ public class ServiceImpl implements Service, ServiceListener
     {
         this.context = context;
         this.conditionSubscriptions = new SubscriptionManager ();
+        this.eventSubscriptions = new SubscriptionManager ();
 
         // create akn handler
         this.aknTracker = new ServiceTracker ( context, AknHandler.class.getName (), null );
 
         // create query listener
-        context.addServiceListener ( this, "(" + Constants.OBJECTCLASS + "=" + ConditionQuery.class.getName () + ")" );
-        final ServiceReference[] refs = context.getServiceReferences ( ConditionQuery.class.getName (), null );
-        if ( refs != null )
         {
-            for ( final ServiceReference ref : refs )
+            context.addServiceListener ( this, "(" + Constants.OBJECTCLASS + "=" + ConditionQuery.class.getName () + ")" );
+            final ServiceReference[] refs = context.getServiceReferences ( ConditionQuery.class.getName (), null );
+            if ( refs != null )
             {
-                checkAddConditionQuery ( ref );
+                for ( final ServiceReference ref : refs )
+                {
+                    checkAddConditionQuery ( ref );
+                }
+            }
+        }
+
+        {
+            context.addServiceListener ( this, "(" + Constants.OBJECTCLASS + "=" + EventQuery.class.getName () + ")" );
+            final ServiceReference[] refs = context.getServiceReferences ( EventQuery.class.getName (), null );
+            if ( refs != null )
+            {
+                for ( final ServiceReference ref : refs )
+                {
+                    checkAddEventQuery ( ref );
+                }
             }
         }
     }
@@ -103,7 +124,26 @@ public class ServiceImpl implements Service, ServiceListener
         logger.info ( "Removing query: " + id );
         this.conditionSubscriptions.setSource ( id, null );
 
-        triggerBrowserChange ( null, null, true );
+        triggerBrowserChange ( null, new String[] { id }, true );
+    }
+
+    protected void addEventQuery ( final String id, final EventQuery query )
+    {
+        logger.info ( "Adding new event query: " + id );
+        this.eventSubscriptions.setSource ( id, new EventQuerySource ( id, query ) );
+
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final BrowserEntry entry = new BrowserEntry ( id, EnumSet.of ( BrowserType.EVENTS ), attributes );
+
+        triggerBrowserChange ( new BrowserEntry[] { entry }, null, true );
+    }
+
+    protected void removeEventQuery ( final String id, final EventQuery query )
+    {
+        logger.info ( "Removing query: " + id );
+        this.eventSubscriptions.setSource ( id, null );
+
+        triggerBrowserChange ( null, new String[] { id }, true );
     }
 
     protected void triggerBrowserChange ( final BrowserEntry[] entries, final String[] removed, final boolean full )
@@ -150,15 +190,6 @@ public class ServiceImpl implements Service, ServiceListener
             logger.warn ( "Failed to subscribe", e );
             throw new UnknownQueryException ();
         }
-
-    }
-
-    public void subscribeEventQuery ( final Session session, final String queryId ) throws InvalidSessionException, UnknownQueryException
-    {
-        final SessionImpl sessionImpl = validateSession ( session );
-        logger.info ( "Request event subscription: " + queryId );
-
-        // FIXME: implement
     }
 
     public void unsubscribeConditionQuery ( final Session session, final String queryId ) throws InvalidSessionException
@@ -169,12 +200,28 @@ public class ServiceImpl implements Service, ServiceListener
         this.conditionSubscriptions.unsubscribe ( queryId, sessionImpl.getConditionListener () );
     }
 
+    public void subscribeEventQuery ( final Session session, final String queryId ) throws InvalidSessionException, UnknownQueryException
+    {
+        final SessionImpl sessionImpl = validateSession ( session );
+        logger.info ( "Request event subscription: " + queryId );
+
+        try
+        {
+            this.eventSubscriptions.subscribe ( queryId, sessionImpl.getEventListener () );
+        }
+        catch ( final ValidationException e )
+        {
+            logger.warn ( "Failed to subscribe", e );
+            throw new UnknownQueryException ();
+        }
+    }
+
     public void unsubscribeEventQuery ( final Session session, final String queryId ) throws InvalidSessionException
     {
         final SessionImpl sessionImpl = validateSession ( session );
 
         logger.info ( "Request event unsubscription: " + queryId );
-        // FIXME: implement
+        this.eventSubscriptions.unsubscribe ( queryId, sessionImpl.getEventListener () );
     }
 
     public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
@@ -241,6 +288,7 @@ public class ServiceImpl implements Service, ServiceListener
         {
         case ServiceEvent.REGISTERED:
             checkAddConditionQuery ( ref );
+            checkAddEventQuery ( ref );
             break;
         case ServiceEvent.UNREGISTERING:
             final String id = getQueryId ( ref );
@@ -248,6 +296,12 @@ public class ServiceImpl implements Service, ServiceListener
             if ( query != null )
             {
                 removeConditionQuery ( id, query );
+                this.context.ungetService ( ref );
+            }
+            final EventQuery eventQuery = this.eventQueryRefs.remove ( id );
+            if ( eventQuery != null )
+            {
+                removeEventQuery ( id, eventQuery );
                 this.context.ungetService ( ref );
             }
             break;
@@ -273,7 +327,27 @@ public class ServiceImpl implements Service, ServiceListener
         {
             this.context.ungetService ( ref );
         }
+    }
 
+    private void checkAddEventQuery ( final ServiceReference ref )
+    {
+        logger.info ( "Checking query: " + ref );
+
+        final Object o = this.context.getService ( ref );
+        if ( o instanceof EventQuery )
+        {
+            final EventQuery query = (EventQuery)o;
+            final String id = getQueryId ( ref );
+            if ( id != null )
+            {
+                this.eventQueryRefs.put ( id, query );
+                addEventQuery ( id, query );
+            }
+        }
+        else
+        {
+            this.context.ungetService ( ref );
+        }
     }
 
     private String getQueryId ( final ServiceReference ref )

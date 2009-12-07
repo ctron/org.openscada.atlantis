@@ -123,7 +123,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
             public void messageReceived ( final Message message ) throws Exception
             {
-                subscribeConditions ( message );
+                subscribeMonitors ( message );
             }
         } );
 
@@ -131,7 +131,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
             public void messageReceived ( final Message message ) throws Exception
             {
-                unsubscribeConditions ( message );
+                unsubscribeMonitors ( message );
             }
         } );
 
@@ -226,7 +226,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
     }
 
-    protected void subscribeConditions ( final Message message )
+    protected void subscribeMonitors ( final Message message )
     {
         final Value value = message.getValues ().get ( MESSAGE_QUERY_ID );
 
@@ -252,7 +252,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
     }
 
-    protected void unsubscribeConditions ( final Message message )
+    protected void unsubscribeMonitors ( final Message message )
     {
         final Value value = message.getValues ().get ( MESSAGE_QUERY_ID );
 

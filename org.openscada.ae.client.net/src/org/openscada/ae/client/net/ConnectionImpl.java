@@ -200,6 +200,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private void fireEventDataChange ( final EventListener listener, final Event[] data )
     {
+        logger.debug ( "Received: {} events", data.length );
+
         if ( listener == null )
         {
             return;
