@@ -1,7 +1,7 @@
 package org.openscada.ae.server.common.event.internal;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -11,6 +11,7 @@ import java.util.concurrent.Executor;
 import org.openscada.ae.Event;
 import org.openscada.ae.event.EventListener;
 import org.openscada.ae.event.EventManager;
+import org.openscada.ae.server.common.event.EventMatcher;
 import org.openscada.ae.server.common.event.EventQuery;
 import org.openscada.ae.server.storage.Query;
 import org.openscada.ae.server.storage.Storage;
@@ -32,6 +33,8 @@ public class EventPoolImpl implements EventListener, EventQuery
 
     private final String filter;
 
+    private final EventMatcher matcher;
+
     private final int size;
 
     private final Executor executor;
@@ -41,6 +44,7 @@ public class EventPoolImpl implements EventListener, EventQuery
         this.storage = storage;
         this.eventManager = eventManager;
         this.filter = filter;
+        this.matcher = new EventMatcherImpl(filter);
         this.size = 100;
         this.executor = executor;
     }
@@ -72,13 +76,19 @@ public class EventPoolImpl implements EventListener, EventQuery
 
     public synchronized void handleEvent ( final Event[] events )
     {
-        this.events.addAll ( Arrays.asList ( events ) );
-
+        Set<Event> toNotify = new HashSet<Event> ();
+        for ( Event event : events )
+        {
+            if (matcher.matches ( event )) {
+                toNotify.add ( event );
+            }
+        }
+        this.events.addAll ( toNotify );
         while ( this.events.size () > this.size )
         {
             this.events.remove ();
         }
-        notifyEvent ( events );
+        notifyEvent ( toNotify.toArray (new Event[0]) );
     }
 
     private void notifyEvent ( final Event[] event )

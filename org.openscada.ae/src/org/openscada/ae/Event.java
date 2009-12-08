@@ -1,6 +1,7 @@
 package org.openscada.ae;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,9 +12,23 @@ import org.openscada.core.Variant;
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
-public class Event implements Cloneable
+public class Event implements Cloneable, Comparable<Event>
 {
-
+    public static class EventComparator implements Comparator<Event> {
+        public int compare ( Event o1, Event o2 )
+        {
+            final int s = o1.getSourceTimestamp ().compareTo ( o2.getSourceTimestamp () );
+            if (s == 0) {
+                int e = o1.getEntryTimestamp ().compareTo ( o2.getEntryTimestamp () );
+                if (e == 0) {
+                    return o1.getId ().compareTo ( o2.getId () );
+                }
+                return e;
+            }
+            return s;
+        }
+    }
+    
     public static class EventBuilder
     {
         private final Event event = new Event ();
@@ -116,6 +131,8 @@ public class Event implements Cloneable
             return null;
         }
     }
+    
+    public static final EventComparator comparator = new EventComparator ();
 
     private UUID id;
 
@@ -225,5 +242,10 @@ public class Event implements Cloneable
         }
         sb.append ( "}");
         return sb.toString ();
+    }
+
+    public int compareTo ( Event o )
+    {
+        return comparator.compare ( this, o );
     }
 }
