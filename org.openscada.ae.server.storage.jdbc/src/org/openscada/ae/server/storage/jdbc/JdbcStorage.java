@@ -1,8 +1,6 @@
 package org.openscada.ae.server.storage.jdbc;
 
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,8 +8,9 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.openscada.ae.Event;
+import org.openscada.ae.server.storage.BaseStorage;
 import org.openscada.ae.server.storage.Query;
-import org.openscada.ae.server.storage.Storage;
+import org.openscada.ae.server.storage.StoreListener;
 import org.openscada.ae.server.storage.jdbc.internal.JdbcStorageDAO;
 import org.openscada.ae.server.storage.jdbc.internal.MutableEvent;
 import org.openscada.utils.filter.FilterParser;
@@ -25,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author jrose
  */
-public class JdbcStorage implements Storage
+public class JdbcStorage extends BaseStorage
 {
     private static final Logger logger = LoggerFactory.getLogger ( JdbcStorage.class );
 
@@ -113,9 +112,9 @@ public class JdbcStorage implements Storage
      * 
      * @see org.openscada.ae.server.storage.Storage#store(org.openscada.ae.Event)
      */
-    public Event store ( final Event event )
+    public Event store ( final Event event, final StoreListener listener )
     {
-        final Event eventToStore = Event.create ().event ( event ).id ( UUID.randomUUID () ).entryTimestamp ( new GregorianCalendar ().getTime () ).build ();
+        final Event eventToStore = createEvent ( event );
         logger.debug ( "Save Event to database: " + event );
         storageQueueProcessor.submit ( new Callable<Boolean> () {
             public Boolean call ()
@@ -123,6 +122,10 @@ public class JdbcStorage implements Storage
                 try
                 {
                     jdbcStorageDAO.get ().storeEvent ( MutableEvent.fromEvent ( eventToStore ) );
+                    if ( listener != null )
+                    {
+                        listener.notify ( eventToStore );
+                    }
                 }
                 catch ( Exception e )
                 {

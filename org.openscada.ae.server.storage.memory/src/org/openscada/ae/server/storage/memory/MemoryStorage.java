@@ -1,38 +1,42 @@
 package org.openscada.ae.server.storage.memory;
 
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openscada.ae.Event;
+import org.openscada.ae.server.storage.BaseStorage;
 import org.openscada.ae.server.storage.Query;
-import org.openscada.ae.server.storage.Storage;
+import org.openscada.ae.server.storage.StoreListener;
 import org.openscada.ae.server.storage.memory.internal.EventMatcher.MatchMode;
 
-public class MemoryStorage implements Storage {
+public class MemoryStorage extends BaseStorage
+{
 
-	private List<Event> events = new CopyOnWriteArrayList<Event>();
-	
-	private final MatchMode matchMode;
+    private List<Event> events = new CopyOnWriteArrayList<Event> ();
 
-	public MemoryStorage(MatchMode matchMode) {
-		this.matchMode = matchMode;
-	}
-	
-	public Query query(String filter) throws Exception {
-		return new ListQuery(events, filter, matchMode);
-	}
+    private final MatchMode matchMode;
 
-	public Event store(Event event) {
-		Event storedEvent = Event.create().event(event).id(UUID.randomUUID())
-				.entryTimestamp(new GregorianCalendar().getTime()).build();
-		events.add(storedEvent);
-		return storedEvent;
-	}
+    public MemoryStorage ( MatchMode matchMode )
+    {
+        this.matchMode = matchMode;
+    }
 
-	public List<Event> getEvents() {
-		return Collections.unmodifiableList(events);
-	}
+    public Query query ( String filter ) throws Exception
+    {
+        return new ListQuery ( events, filter, matchMode );
+    }
+
+    public Event store ( Event event, StoreListener listener )
+    {
+        final Event storedEvent = createEvent ( event );
+        events.add ( storedEvent );
+        listener.notify ( storedEvent );
+        return storedEvent;
+    }
+
+    public List<Event> getEvents ()
+    {
+        return Collections.unmodifiableList ( events );
+    }
 }
