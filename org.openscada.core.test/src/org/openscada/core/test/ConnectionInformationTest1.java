@@ -17,13 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.core;
+package org.openscada.core.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.openscada.core.ConnectionInformation;
 
 public class ConnectionInformationTest1
 {
