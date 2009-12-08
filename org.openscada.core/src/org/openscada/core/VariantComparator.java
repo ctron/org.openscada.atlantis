@@ -28,31 +28,37 @@ public class VariantComparator implements Comparator<Variant>, Serializable
         }
         if ( o1.isBoolean () )
         {
-            return Boolean.valueOf ( o1.asBoolean () ).compareTo ( o2.asBoolean () );
+            final Boolean b = o2.asBoolean ( null );
+            if ( b == null )
+            {
+                return -1;
+            }
+            return Boolean.valueOf ( o1.asBoolean () ).compareTo ( b );
+        }
+        else if ( o2.isBoolean () )
+        {
+            final Boolean b = o1.asBoolean ( null );
+            if ( b == null )
+            {
+                return 1;
+            }
+            return Boolean.valueOf ( o2.asBoolean () ).compareTo ( o1.asBoolean ( b ) );
         }
         try
         {
-            if ( o1.isInteger () )
+            if ( o1.isString () && o2.isNumber () )
             {
-                return Integer.valueOf ( o1.asInteger () ).compareTo ( o2.asInteger () );
+                return o2.compareTo ( o1 );
             }
-            if ( o1.isLong () )
+            else if ( o1.isString () && o2.isString () )
             {
-                return Long.valueOf ( o1.asLong () ).compareTo ( o2.asLong () );
+                return o2.asString ().compareTo ( o1.asString () );
             }
-            if ( o1.isDouble () )
-            {
-                return Double.valueOf ( o1.asDouble () ).compareTo ( o2.asDouble () );
-            }
-            if ( o1.isString () )
-            {
-                return o1.asString ().compareTo ( o2.asString () );
-            }
+            return Double.valueOf ( o1.asDouble () ).compareTo ( o2.asDouble () );
         }
         catch ( Exception e )
         {
             throw new IllegalArgumentException ( e );
         }
-        throw new IllegalArgumentException ( "one of the two arguments " + o1 + ", " + o2 + " is not valid" );
     }
 }

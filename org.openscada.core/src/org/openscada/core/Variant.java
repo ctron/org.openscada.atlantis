@@ -30,7 +30,7 @@ import org.openscada.utils.lang.Immutable;
  * 
  */
 @Immutable
-public class Variant implements Serializable
+public class Variant implements Serializable, Comparable<Variant>
 {
 
     private static final long serialVersionUID = 5391870904474545783L;
@@ -40,6 +40,8 @@ public class Variant implements Serializable
     public static final Variant TRUE = new Variant ( true );
 
     public static final Variant FALSE = new Variant ( false );
+    
+    private static final VariantComparator comparator = new VariantComparator ();
 
     private Object value;
 
@@ -477,6 +479,20 @@ public class Variant implements Serializable
         return false;
     }
 
+    /**
+     * @since 0.15.0
+     * @param defaultValue the default value
+     * @return the value as a boolean or the default value if the value is null
+     */
+    public Boolean asBoolean ( final Boolean defaultValue )
+    {
+        if (isNull ()) {
+            return defaultValue;
+        }
+        return asBoolean ( );
+    }
+
+
     public boolean isBoolean ()
     {
         if ( isNull () )
@@ -525,6 +541,16 @@ public class Variant implements Serializable
         }
 
         return this.value instanceof Long;
+    }
+
+    public boolean isNumber ()
+    {
+        if ( isNull () )
+        {
+            return false;
+        }
+
+        return this.value instanceof Number;
     }
 
     @Override
@@ -773,5 +799,10 @@ public class Variant implements Serializable
     public Object getValue ()
     {
         return this.value;
+    }
+
+    public int compareTo ( Variant o )
+    {
+        return comparator.compare ( this, o );
     }
 }
