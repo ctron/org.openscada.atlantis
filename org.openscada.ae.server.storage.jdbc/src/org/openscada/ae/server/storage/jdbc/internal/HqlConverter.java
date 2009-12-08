@@ -70,7 +70,8 @@ public class HqlConverter
         {
             //
         }
-        return result;
+        result.hql += " ORDER BY M.sourceTimestamp DESC;";
+        return result ;
     }
 
     static HqlResult toHql ( FilterExpression expression ) throws NotSupportedException
