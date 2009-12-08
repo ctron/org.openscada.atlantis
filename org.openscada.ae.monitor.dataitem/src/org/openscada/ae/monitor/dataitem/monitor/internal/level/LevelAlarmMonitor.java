@@ -24,6 +24,8 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
     private final boolean cap;
 
+    private boolean failure;
+
     public LevelAlarmMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix, final boolean lowerOk, final int priority, final boolean cap )
     {
         super ( context, eventProcessor, id, prefix );
@@ -71,8 +73,12 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     {
         super.injectAttributes ( builder );
 
-        builder.setAttribute ( this.prefix + ".preset", new Variant ( this.limit ) );
-        if ( this.cap )
+        if ( isActive () )
+        {
+            builder.setAttribute ( this.prefix + ".preset", new Variant ( this.limit ) );
+        }
+
+        if ( this.cap && this.failure )
         {
             builder.setAttribute ( this.prefix + ".original.value", new Variant ( this.value ) );
         }
@@ -85,7 +91,15 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
         final Variant preset = attributes.get ( this.prefix + ".preset" );
         if ( preset != null )
         {
-            configUpdate.put ( "preset", "" + preset.asDouble ( 0.0 ) );
+            if ( preset.isNull () )
+            {
+                configUpdate.put ( "active", "" + false );
+            }
+            else
+            {
+                configUpdate.put ( "active", "" + true );
+                configUpdate.put ( "preset", "" + preset.asDouble ( 0.0 ) );
+            }
             result.put ( this.prefix + ".preset", new WriteAttributeResult () );
         }
     }
@@ -107,10 +121,12 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
         else if ( this.value.doubleValue () < this.limit && this.lowerOk || this.value.doubleValue () > this.limit && !this.lowerOk )
         {
+            this.failure = false;
             setOk ( new Variant ( this.value ), this.timestamp );
         }
         else
         {
+            this.failure = true;
             if ( this.cap )
             {
                 builder.setValue ( new Variant ( this.limit ) );

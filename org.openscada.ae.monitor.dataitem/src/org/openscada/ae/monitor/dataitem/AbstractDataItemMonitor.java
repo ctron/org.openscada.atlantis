@@ -220,6 +220,11 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
         return false;
     }
 
+    protected boolean isActive ()
+    {
+        return this.active;
+    }
+
     /**
      * Inject attributes to the value after the value update has been performed using
      * {@link #performDataUpdate(Builder)}
