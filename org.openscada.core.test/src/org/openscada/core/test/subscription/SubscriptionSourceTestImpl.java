@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,9 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.core.subscription;
+package org.openscada.core.test.subscription;
 
 import java.util.Collection;
+
+import org.openscada.core.subscription.SubscriptionInformation;
+import org.openscada.core.subscription.SubscriptionSource;
 
 public class SubscriptionSourceTestImpl implements SubscriptionSource
 {

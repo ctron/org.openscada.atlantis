@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,26 +17,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.core.subscription;
+package org.openscada.core.test.subscription;
 
+import org.openscada.core.subscription.SubscriptionState;
 
 public class SubscriptionStateEvent
 {
-    private SubscriptionState _state = null;
+    private SubscriptionState state = null;
 
     public SubscriptionStateEvent ( final SubscriptionState subscriptionState )
     {
-        this._state = subscriptionState;
+        this.state = subscriptionState;
     }
 
     public SubscriptionState getState ()
     {
-        return this._state;
+        return this.state;
     }
 
     public void setState ( final SubscriptionState status )
     {
-        this._state = status;
+        this.state = status;
     }
 
     @Override
@@ -44,7 +45,7 @@ public class SubscriptionStateEvent
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ( this._state == null ? 0 : this._state.hashCode () );
+        result = PRIME * result + ( this.state == null ? 0 : this.state.hashCode () );
         return result;
     }
 
@@ -64,14 +65,14 @@ public class SubscriptionStateEvent
             return false;
         }
         final SubscriptionStateEvent other = (SubscriptionStateEvent)obj;
-        if ( this._state == null )
+        if ( this.state == null )
         {
-            if ( other._state != null )
+            if ( other.state != null )
             {
                 return false;
             }
         }
-        else if ( !this._state.equals ( other._state ) )
+        else if ( !this.state.equals ( other.state ) )
         {
             return false;
         }
