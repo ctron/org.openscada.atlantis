@@ -17,8 +17,16 @@ public class InactiveHandler extends StateAdapter
     }
 
     @Override
+    public void disable ()
+    {
+        // do nothing here
+    }
+
+    @Override
     public void enable ()
     {
+        publishConfigEvent ( "Setting active state", Variant.TRUE );
+
         if ( this.currentState == null )
         {
             switchHandler ( new UnsafeHandler ( this ) );

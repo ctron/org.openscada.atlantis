@@ -11,15 +11,13 @@ public class OkHandler extends StateAdapter
     public OkHandler ( final StateAdapter source )
     {
         super ( source, ConditionStatus.OK );
-
     }
 
     @Override
     public void fail ( final Variant value, final Date timestamp )
     {
-        publishFailEvent ( value );
-
         setValue ( value, timestamp );
+        publishFailEvent ();
 
         if ( this.currentContext.isRequireAkn () )
         {
@@ -29,12 +27,6 @@ public class OkHandler extends StateAdapter
         {
             switchHandler ( new NotOkHandler ( this ) );
         }
-    }
-
-    @Override
-    public void disable ()
-    {
-        switchHandler ( new InactiveHandler ( this, true ) );
     }
 
     @Override

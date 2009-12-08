@@ -5,6 +5,7 @@ import java.util.Date;
 import org.openscada.ae.ConditionStatus;
 import org.openscada.ae.ConditionStatusInformation;
 import org.openscada.ae.monitor.common.AbstractConditionService;
+import org.openscada.ae.monitor.common.EventHelper;
 import org.openscada.ae.monitor.common.handler.StateHandler;
 import org.openscada.core.Variant;
 
@@ -115,6 +116,8 @@ public class StateAdapter implements StateHandler
 
     public void disable ()
     {
+        publishConfigEvent ( "Setting active state", Variant.FALSE );
+        switchHandler ( new InactiveHandler ( this, null ) );
     }
 
     public void enable ()
@@ -125,9 +128,9 @@ public class StateAdapter implements StateHandler
     {
     }
 
-    protected void publishFailEvent ( final Variant value )
+    protected void publishFailEvent ()
     {
-        this.service.publishEvent ( EventHelper.newFailEvent ( this.service.getId (), "", value, this.currentContext.getTimestamp () ) );
+        this.service.publishEvent ( EventHelper.newFailEvent ( this.service.getId (), "", this.currentContext.getValue (), this.currentContext.getTimestamp () ) );
     }
 
     protected void publishUnsafeEvent ()
@@ -140,13 +143,18 @@ public class StateAdapter implements StateHandler
         this.service.publishEvent ( EventHelper.newAknEvent ( this.service.getId (), "", this.currentContext.getTimestamp () ) );
     }
 
+    protected void publishConfigEvent ( final String message, final Variant value )
+    {
+        this.service.publishEvent ( EventHelper.newConfigurationEvent ( this.service.getId (), message, value, new Date () ) );
+    }
+
     public void ok ( final Variant value, final Date timestamp )
     {
     }
 
-    protected void publishOkEvent ( final Variant value )
+    protected void publishOkEvent ()
     {
-        this.service.publishEvent ( EventHelper.newOkEvent ( this.service.getId (), "", value, this.currentContext.getTimestamp () ) );
+        this.service.publishEvent ( EventHelper.newOkEvent ( this.service.getId (), "", this.currentContext.getValue (), this.currentContext.getTimestamp () ) );
     }
 
     public void unsafe ()
@@ -155,14 +163,20 @@ public class StateAdapter implements StateHandler
 
     public void ignoreAkn ()
     {
-        this.service.publishEvent ( EventHelper.newConfigurationEvent ( this.service.getId (), "Changed require akn", new Variant ( false ), new Date () ) );
-        this.currentContext.setRequireAkn ( false );
+        if ( this.currentContext.isRequireAkn () )
+        {
+            publishConfigEvent ( "Changed require akn", Variant.FALSE );
+            this.currentContext.setRequireAkn ( false );
+        }
     }
 
     public void requireAkn ()
     {
-        this.service.publishEvent ( EventHelper.newConfigurationEvent ( this.service.getId (), "Changed require akn", new Variant ( true ), new Date () ) );
-        this.currentContext.setRequireAkn ( true );
+        if ( !this.currentContext.isRequireAkn () )
+        {
+            publishConfigEvent ( "Changed require akn", Variant.TRUE );
+            this.currentContext.setRequireAkn ( true );
+        }
     }
 
     protected void setValue ( final Variant value, final Date timestamp )

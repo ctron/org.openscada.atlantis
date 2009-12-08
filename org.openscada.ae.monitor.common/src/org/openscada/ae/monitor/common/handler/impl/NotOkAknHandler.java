@@ -16,13 +16,14 @@ public class NotOkAknHandler extends StateAdapter
     @Override
     public void ignoreAkn ()
     {
+        super.ignoreAkn ();
         switchHandler ( new NotOkHandler ( this ) );
     }
 
     @Override
-    public void disable ()
+    public void requireAkn ()
     {
-        switchHandler ( new InactiveHandler ( this, false ) );
+        // nothing to do here
     }
 
     @Override
@@ -36,8 +37,9 @@ public class NotOkAknHandler extends StateAdapter
     @Override
     public void ok ( final Variant value, final Date timestamp )
     {
-        publishOkEvent ( value );
         setValue ( value, timestamp );
+        publishOkEvent ();
+
         switchHandler ( new OkHandler ( this ) );
     }
 }

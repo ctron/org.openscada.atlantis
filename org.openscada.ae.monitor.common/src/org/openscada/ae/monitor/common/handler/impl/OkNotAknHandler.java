@@ -24,9 +24,9 @@ public class OkNotAknHandler extends StateAdapter
     @Override
     public void fail ( final Variant value, final Date timestamp )
     {
-        publishFailEvent ( value );
-
         setValue ( value, timestamp );
+        publishFailEvent ();
+
         switchHandler ( new NotOkNotAknHandler ( this ) );
     }
 

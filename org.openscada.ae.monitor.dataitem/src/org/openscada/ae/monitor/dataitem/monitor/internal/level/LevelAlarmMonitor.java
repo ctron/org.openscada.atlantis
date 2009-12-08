@@ -1,8 +1,10 @@
 package org.openscada.ae.monitor.dataitem.monitor.internal.level;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.monitor.common.EventHelper;
 import org.openscada.ae.monitor.dataitem.AbstractNumericMonitor;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
 import org.openscada.core.Variant;
@@ -47,7 +49,13 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     {
         super.update ( properties );
 
-        this.limit = Double.parseDouble ( properties.get ( "preset" ) );
+        final double newLimit = Double.parseDouble ( properties.get ( "preset" ) );
+
+        if ( this.limit != newLimit )
+        {
+            this.limit = newLimit;
+            publishEvent ( EventHelper.newConfigurationEvent ( this.getId (), "Change preset", new Variant ( newLimit ), new Date () ) );
+        }
 
         reprocess ();
     }

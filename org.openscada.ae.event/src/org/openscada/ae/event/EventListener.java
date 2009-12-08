@@ -4,5 +4,5 @@ import org.openscada.ae.Event;
 
 public interface EventListener
 {
-    public void handleEvent ( Event event );
+    public void handleEvent ( Event[] event );
 }

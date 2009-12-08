@@ -14,17 +14,11 @@ public class NotOkHandler extends StateAdapter
     }
 
     @Override
-    public void disable ()
-    {
-        switchHandler ( new InactiveHandler ( this, false ) );
-    }
-
-    @Override
     public void ok ( final Variant value, final Date timestamp )
     {
-        publishOkEvent ( value );
-
         setValue ( value, timestamp );
+        publishOkEvent ();
+
         switchHandler ( new OkHandler ( this ) );
     }
 

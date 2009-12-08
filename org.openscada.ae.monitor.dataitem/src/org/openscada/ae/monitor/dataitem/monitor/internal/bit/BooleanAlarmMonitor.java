@@ -1,8 +1,10 @@
 package org.openscada.ae.monitor.dataitem.monitor.internal.bit;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.monitor.common.EventHelper;
 import org.openscada.ae.monitor.dataitem.AbstractBooleanMonitor;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
 import org.openscada.core.Variant;
@@ -40,7 +42,12 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
     {
         super.update ( properties );
 
-        this.reference = Boolean.parseBoolean ( properties.get ( "reference" ) );
+        final boolean newReference = Boolean.parseBoolean ( properties.get ( "reference" ) );
+        if ( newReference != this.reference )
+        {
+            publishEvent ( EventHelper.newConfigurationEvent ( this.getId (), "Change reference", new Variant ( newReference ), new Date () ) );
+            this.reference = newReference;
+        }
 
         update ();
     }

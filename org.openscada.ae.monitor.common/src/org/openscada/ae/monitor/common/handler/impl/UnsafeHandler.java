@@ -22,18 +22,18 @@ public class UnsafeHandler extends StateAdapter
     @Override
     public void ok ( final Variant value, final Date timestamp )
     {
-        publishOkEvent ( value );
-
         setValue ( value, timestamp );
+        publishOkEvent ();
+
         switchHandler ( new OkHandler ( this ) );
     }
 
     @Override
     public void fail ( final Variant value, final Date timestamp )
     {
-        publishFailEvent ( value );
-
         setValue ( value, timestamp );
+        publishFailEvent ();
+
         if ( this.currentContext.isRequireAkn () )
         {
             switchHandler ( new NotOkNotAknHandler ( this ) );
@@ -42,12 +42,6 @@ public class UnsafeHandler extends StateAdapter
         {
             switchHandler ( new NotOkHandler ( this ) );
         }
-    }
-
-    @Override
-    public void disable ()
-    {
-        switchHandler ( new InactiveHandler ( this, null ) );
     }
 
 }

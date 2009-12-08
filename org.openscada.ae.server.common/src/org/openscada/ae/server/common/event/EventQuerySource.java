@@ -1,5 +1,6 @@
 package org.openscada.ae.server.common.event;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -74,15 +75,15 @@ public class EventQuerySource implements SubscriptionSource, org.openscada.ae.ev
         return information.getListener () instanceof EventListener;
     }
 
-    public synchronized void handleEvent ( final Event event )
+    public synchronized void handleEvent ( final Event[] event )
     {
-        this.cachedData.add ( event );
+        this.cachedData.addAll ( Arrays.asList ( event ) );
 
         for ( final EventListener listener : this.listeners )
         {
             try
             {
-                listener.dataChanged ( this.id, new Event[] { event } );
+                listener.dataChanged ( this.id, event );
             }
             catch ( final Throwable e )
             {

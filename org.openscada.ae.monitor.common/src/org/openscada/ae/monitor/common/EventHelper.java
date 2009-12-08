@@ -1,4 +1,4 @@
-package org.openscada.ae.monitor.common.handler.impl;
+package org.openscada.ae.monitor.common;
 
 import java.util.Date;
 
