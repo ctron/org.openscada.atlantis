@@ -7,7 +7,10 @@ Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.openscada.ae;version="0.14.0",
  org.openscada.ae.server.storage;version="0.14.0",
+ org.openscada.core,
+ org.openscada.utils.filter,
  org.openscada.utils.osgi;version="0.15.0",
+ org.openscada.utils.propertyeditors,
  org.osgi.framework;version="1.3.0",
  org.osgi.util.tracker,
  org.slf4j

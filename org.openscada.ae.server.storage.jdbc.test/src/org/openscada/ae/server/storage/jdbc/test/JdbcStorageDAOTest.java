@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Test;
-import org.openscada.ae.server.storage.jdbc.internal.FilterUtils;
+import org.openscada.ae.event.FilterUtils;
 import org.openscada.ae.server.storage.jdbc.internal.HqlConverter;
 import org.openscada.ae.server.storage.jdbc.internal.JdbcStorageDAO;
 import org.openscada.ae.server.storage.jdbc.internal.MutableEvent;

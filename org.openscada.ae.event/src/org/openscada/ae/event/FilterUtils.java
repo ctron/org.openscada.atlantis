@@ -1,4 +1,4 @@
-package org.openscada.ae.server.storage.jdbc.internal;
+package org.openscada.ae.event;
 
 import java.beans.PropertyEditor;
 import java.util.Calendar;

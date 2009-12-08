@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.openscada.ae.Event;
+import org.openscada.ae.event.FilterUtils;
 import org.openscada.ae.server.storage.Query;
-import org.openscada.ae.server.storage.jdbc.internal.FilterUtils;
 import org.openscada.ae.server.storage.jdbc.internal.HqlConverter;
 import org.openscada.ae.server.storage.jdbc.internal.JdbcStorageDAO;
 import org.openscada.ae.server.storage.jdbc.internal.MutableEvent;
