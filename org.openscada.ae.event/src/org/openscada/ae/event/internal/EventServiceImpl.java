@@ -122,9 +122,10 @@ public class EventServiceImpl implements EventService, EventManager
 
     public synchronized void addEventListener ( final EventListener listener )
     {
-        this.listeners.add ( listener );
-
-        listener.handleEvent ( this.writeQueue.toArray ( new Event[this.writeQueue.size ()] ) );
+        if ( this.listeners.add ( listener ) )
+        {
+            listener.handleEvent ( this.writeQueue.toArray ( new Event[this.writeQueue.size ()] ) );
+        }
     }
 
     public synchronized void removeEventListener ( final EventListener listener )
