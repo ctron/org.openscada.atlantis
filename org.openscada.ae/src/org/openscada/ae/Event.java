@@ -14,13 +14,16 @@ import org.openscada.utils.lang.Immutable;
 @Immutable
 public class Event implements Cloneable, Comparable<Event>
 {
-    public static class EventComparator implements Comparator<Event> {
-        public int compare ( Event o1, Event o2 )
+    public static class EventComparator implements Comparator<Event>
+    {
+        public int compare ( final Event o1, final Event o2 )
         {
             final int s = o1.getSourceTimestamp ().compareTo ( o2.getSourceTimestamp () );
-            if (s == 0) {
-                int e = o1.getEntryTimestamp ().compareTo ( o2.getEntryTimestamp () );
-                if (e == 0) {
+            if ( s == 0 )
+            {
+                final int e = o1.getEntryTimestamp ().compareTo ( o2.getEntryTimestamp () );
+                if ( e == 0 )
+                {
                     return o1.getId ().compareTo ( o2.getId () );
                 }
                 return e;
@@ -28,7 +31,7 @@ public class Event implements Cloneable, Comparable<Event>
             return s;
         }
     }
-    
+
     public static class EventBuilder
     {
         private final Event event = new Event ();
@@ -131,7 +134,7 @@ public class Event implements Cloneable, Comparable<Event>
             return null;
         }
     }
-    
+
     public static final EventComparator comparator = new EventComparator ();
 
     private UUID id;
@@ -222,29 +225,29 @@ public class Event implements Cloneable, Comparable<Event>
     {
         return new Event ( this );
     }
-    
+
     @Override
     public String toString ()
     {
-        StringBuilder sb = new StringBuilder ();
+        final StringBuilder sb = new StringBuilder ();
         sb.append ( "Event {" );
-        sb.append ( "id: ");
-        sb.append ( id == null ? null : id.toString () );
-        sb.append ( ", sourceTimestamp: ");
-        sb.append ( sourceTimestamp == null ? null : sourceTimestamp.toString () );
-        sb.append ( ", entryTimestamp: ");
-        sb.append ( entryTimestamp == null ? null : entryTimestamp.toString () );
-        for ( Entry<String, Variant> entry : attributes.entrySet () )
+        sb.append ( "id: " );
+        sb.append ( this.id == null ? null : this.id.toString () );
+        sb.append ( ", sourceTimestamp: " );
+        sb.append ( this.sourceTimestamp == null ? null : this.sourceTimestamp.toString () );
+        sb.append ( ", entryTimestamp: " );
+        sb.append ( this.entryTimestamp == null ? null : this.entryTimestamp.toString () );
+        for ( final Entry<String, Variant> entry : this.attributes.entrySet () )
         {
-            sb.append ( ", " + entry.getKey ());
-            sb.append ( ": ");
+            sb.append ( ", " + entry.getKey () );
+            sb.append ( ": " );
             sb.append ( entry.getValue () == null ? null : entry.getValue () );
         }
-        sb.append ( "}");
+        sb.append ( "}" );
         return sb.toString ();
     }
 
-    public int compareTo ( Event o )
+    public int compareTo ( final Event o )
     {
         return comparator.compare ( this, o );
     }

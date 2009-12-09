@@ -23,6 +23,8 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     private final int priority;
 
+    private String masterId;
+
     public AbstractMasterHandlerImpl ( final BundleContext context, final int priority )
     {
         this.context = context;
@@ -38,6 +40,11 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
         }
     }
 
+    protected String getMasterId ()
+    {
+        return this.masterId;
+    }
+
     public synchronized void update ( final Map<String, String> parameters ) throws Exception
     {
         if ( this.tracker != null )
@@ -46,14 +53,14 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
             this.tracker = null;
         }
 
-        final String masterId = parameters.get ( MasterItem.MASTER_ID );
-        if ( masterId == null )
+        this.masterId = parameters.get ( MasterItem.MASTER_ID );
+        if ( this.masterId == null )
         {
             throw new IllegalArgumentException ( String.format ( "'%s' must be set", MasterItem.MASTER_ID ) );
         }
 
         final Map<String, String> filterParameters = new HashMap<String, String> ();
-        filterParameters.put ( MasterItem.MASTER_ID, masterId );
+        filterParameters.put ( MasterItem.MASTER_ID, this.masterId );
 
         final Filter filter = FilterUtil.createAndFilter ( MasterItem.class.getName (), filterParameters );
 
