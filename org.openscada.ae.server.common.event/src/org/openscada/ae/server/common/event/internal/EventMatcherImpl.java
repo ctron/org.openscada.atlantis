@@ -64,6 +64,10 @@ public class EventMatcherImpl implements EventMatcher
         {
             return matchExpression ( (FilterExpression)filter, event );
         }
+        else if ( filter.isEmpty () )
+        {
+            return true;
+        }
         return false;
     }
 
