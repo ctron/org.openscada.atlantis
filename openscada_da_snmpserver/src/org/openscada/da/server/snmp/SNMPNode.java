@@ -24,6 +24,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import net.percederberg.mibble.Mib;
 import net.percederberg.mibble.MibValueSymbol;
@@ -48,7 +52,7 @@ import org.openscada.da.server.snmp.utils.ListOIDWalker;
 import org.openscada.da.server.snmp.utils.MIBManager;
 import org.openscada.da.server.snmp.utils.SNMPBulkReader;
 import org.openscada.utils.collection.MapBuilder;
-import org.openscada.utils.timing.Scheduler;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.snmp4j.smi.OID;
 
 public class SNMPNode
@@ -78,11 +82,11 @@ public class SNMPNode
 
     private DataItemCommand itemRewalkCommand = null;
 
-    private Scheduler scheduler = null;
+    private ScheduledExecutorService scheduler = null;
 
     private SNMPBulkReader bulkReader = null;
 
-    private Scheduler.Job _bulkReaderJob = null;
+    private ScheduledFuture<?> _bulkReaderJob = null;
 
     private final Map<OID, SNMPItem> _itemMap = new HashMap<OID, SNMPItem> ();
 
@@ -103,7 +107,7 @@ public class SNMPNode
         this.hive = hive;
         this.rootFolder = rootFolder;
 
-        this.scheduler = new Scheduler ( true, "SNMPScheduler/" + connectionInformation.getName () );
+        this.scheduler = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "SNMPScheduler/" + connectionInformation.getName () ) );
         this.connectionInformation = connectionInformation;
 
         this.bulkReader = new SNMPBulkReader ( this );
@@ -164,13 +168,13 @@ public class SNMPNode
             this.connection.start ();
             this.registered = true;
 
-            this._bulkReaderJob = this.scheduler.addJob ( new Runnable () {
+            this._bulkReaderJob = this.scheduler.scheduleAtFixedRate ( new Runnable () {
 
                 public void run ()
                 {
                     SNMPNode.this.bulkReader.read ();
                 }
-            }, 1000 );
+            }, 1000, 1000, TimeUnit.MILLISECONDS );
 
             this.connectionInfoItem.updateData ( new Variant ( "CONFIGURED" ), new MapBuilder<String, Variant> ().put ( "address", new Variant ( this.connectionInformation.getAddress () ) ).getMap (), AttributeMode.UPDATE );
 
@@ -201,7 +205,7 @@ public class SNMPNode
 
         this.dataItemFactory.dispose ();
 
-        this.scheduler.removeJob ( this._bulkReaderJob );
+        this._bulkReaderJob.cancel ( false );
 
         this.storage.removeChild ( this._oidGroupFolder );
 
@@ -222,7 +226,7 @@ public class SNMPNode
         return this.connection;
     }
 
-    public Scheduler getScheduler ()
+    public ScheduledExecutorService getScheduler ()
     {
         return this.scheduler;
     }
