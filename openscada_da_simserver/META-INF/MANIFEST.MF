@@ -1,7 +1,4 @@
 Manifest-Version: 1.0
-Built-By: jens
-Created-By: Apache Maven Bundle Plugin
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: jxl,
  org.apache.log4j;version="1.2.15",
  org.apache.xmlbeans;version="2.4.0",
@@ -23,107 +20,40 @@ Import-Package: jxl,
  org.openscada.utils.concurrent;version="0.13",
  org.openscada.utils.lang,
  org.openscada.utils.lifecycle;version="0.14.0",
- org.openscada.utils.statuscodes;version="0.13",
- org.openscada.utils.timing;version="0.13"
+ org.openscada.utils.statuscodes;version="0.13"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bnd-LastModified: 1252499284463
-Export-Package: org.openscada.da.server.simulation.filesource;version="0.14.0.qualifier";
-  uses:="org.apache.log4j,
-   javax.script,
+Export-Package: org.openscada.da.server.simulation.filesource;version="0.15.0.qualifier";
+  uses:="org.openscada.da.server.browser.common,
+   org.openscada.da.server.common.impl,
    org.openscada.da.simulation.configuration,
-   org.openscada.da.server.browser.common,
    org.openscada.da.server.common.item.factory,
-   org.openscada.da.server.common.impl,
    org.openscada.core,
+   javax.script,
+   org.w3c.dom",
+ org.openscada.da.server.simulation.filesource.scripts;version="0.15.0.qualifier",
+ org.openscada.da.server.simulation.scriptomatic;version="0.15.0.qualifier";
+  uses:="org.openscada.da.server.simulation.scriptomatic.configuration,
    org.openscada.da.server.common.chain,
-   org.openscada.utils.concurrent,
-   org.openscada.da.server.common",
- org.openscada.da.server.simulation.filesource.scripts;version="0.14.0.qualifier",
- org.openscada.da.server.simulation.scriptomatic;version="0.14.0.qualifier";
-  uses:="javax.script,
-   org.openscada.core,
-   org.openscada.da.server.browser.common.query,
-   org.openscada.da.server.common.chain,
-   org.openscada.da.server.common.chain.item,
    org.openscada.da.server.common.impl,
-   org.openscada.utils.collection,
-   org.apache.log4j,
-   org.openscada.da.server.browser.common,
-   org.openscada.da.server.simulation.scriptomatic.configuration,
-   org.openscada.da.server.common,
    org.openscada.utils.concurrent,
-   org.openscada.da.core",
- org.openscada.da.server.simulation.scriptomatic.configuration;version="0.14.0.qualifier";uses:="org.openscada.utils.statuscodes,org.openscada.da.server.simulation.scriptomatic",
- org.openscada.da.simulation.components;version="0.14.0.qualifier";uses:="org.apache.xmlbeans.xml.stream,org.apache.xmlbeans,javax.xml.stream",
- org.openscada.da.simulation.components.impl;version="0.14.0.qualifier";
+   org.openscada.core,
+   javax.script",
+ org.openscada.da.server.simulation.scriptomatic.configuration;version="0.15.0.qualifier";uses:="org.openscada.utils.statuscodes,org.openscada.da.server.simulation.scriptomatic",
+ org.openscada.da.simulation.components;version="0.15.0.qualifier";uses:="org.apache.xmlbeans.xml.stream,org.apache.xmlbeans,javax.xml.stream",
+ org.openscada.da.simulation.components.impl;version="0.15.0.qualifier";
   uses:="org.apache.xmlbeans.impl.values,
    org.apache.xmlbeans,
    javax.xml.namespace,
    org.openscada.da.simulation.components",
- org.openscada.da.simulation.configuration;version="0.14.0.qualifier";uses:="org.apache.xmlbeans.xml.stream,org.apache.xmlbeans,javax.xml.stream",
- org.openscada.da.simulation.configuration.impl;version="0.14.0.qualifier";
+ org.openscada.da.simulation.configuration;version="0.15.0.qualifier";uses:="org.apache.xmlbeans.xml.stream,org.apache.xmlbeans,javax.xml.stream",
+ org.openscada.da.simulation.configuration.impl;version="0.15.0.qualifier";
   uses:="org.apache.xmlbeans.impl.values,
    org.openscada.da.simulation.configuration,
    org.apache.xmlbeans,
    javax.xml.namespace"
-Bundle-Version: 0.14.0.qualifier
-Bundle-Name: OpenSCADA-DA-Server-Simulation
+Bundle-Version: 0.15.0.qualifier
+Bundle-Name: OpenSCADA DA Simulation Server
 Bundle-ClassPath: .,jxl-2.6.jar,jOpenDocument-1.1b3.jar
-Build-Jdk: 1.5.0_18
-Private-Package: org.mozilla.javascript.serialize,org.apache.commons.c
- ollections.buffer,jxl.format,org.apache.commons.collections.iterators
- ,schemaorg_apache_xmlbeans.javaname.org.openscada.da.simulation.compo
- nents,org.jopendocument.dom.template,org.jopendocument.model.office,s
- chemaorg_apache_xmlbeans.element.http_3A_2F_2Fopenscada_2Eorg_2FDA_2F
- Simulation_2FComponents,org.jopendocument.model.chart,org.mozilla.jav
- ascript.tools.resources,org.jaxen.saxpath,jxl.biff,schemaorg_apache_x
- mlbeans.namespace.http_3A_2F_2Fopenscada_2Eorg_2FDA_2FSimulation_2FCo
- nfiguration,org.mozilla.javascript.tools.jsc,org.mozilla.javascript.d
- ebug,org.jopendocument.model,org.mozilla.javascript.tools.idswitch,sc
- hemaorg_apache_xmlbeans.src.schema,common.log,schemaorg_apache_xmlbea
- ns.type.http_3A_2F_2Fopenscada_2Eorg_2FDA_2FSimulation_2FConfiguratio
- n,jxl.write.biff,org.mozilla.javascript.regexp,schemaorg_apache_xmlbe
- ans.system.s7180E157C6431421C05D61A97861BFAA,org.mozilla.javascript.c
- ontinuations,org.jdom.xpath,org.mozilla.javascript,jxl.read.biff,org.
- mozilla.javascript.jdk15,schemaorg_apache_xmlbeans.javaname.org.opens
- cada.da.simulation.configuration,org.apache.commons.collections.bidim
- ap,schemaorg_apache_xmlbeans.element.http_3A_2F_2Fopenscada_2Eorg_2FD
- A_2FSimulation_2FConfiguration,org.jopendocument.dom,org.jopendocumen
- t.dom.template.statements,org.apache.commons.collections.set,org.mozi
- lla.javascript.xml,jxl,org.mozilla.classfile,org.mozilla.javascript.t
- ools,schemaorg_apache_xmlbeans.javaname.org.openscada.da.simulation.c
- onfiguration.ItemType,org.jaxen.function.xslt,jxl.demo,org.apache.com
- mons.collections.keyvalue,org.jopendocument.util.cache,org.mozilla.ja
- vascript.jdk11,org.jopendocument.sample,org.jdom,common,org.mozilla.j
- avascript.jdk13,org.jopendocument.model.presentation,org.apache.commo
- ns.collections.comparators,org.jaxen.javabean,org.jaxen.util,org.jope
- ndocument.print,.,org.jdom.output,org.jaxen.function,org.jopendocumen
- t.util.cc,org.apache.commons.collections,org.jopendocument.dom.spread
- sheet,org.jaxen.dom4j,org.mozilla.javascript.optimizer,org.jopendocum
- ent.panel,org.jopendocument.tools,org.jopendocument.renderer,org.jope
- ndocument.model.text,jxl.biff.formula,org.jaxen.expr,org.apache.commo
- ns.collections.list,jxl.write,org.jaxen.pattern,jxl.biff.drawing,org.
- jaxen.jdom,org.jopendocument.dom.template.engine,org.jaxen.function.e
- xt,org.jopendocument.oofficeDTDs,org.jaxen.saxpath.base,org.jopendocu
- ment.model.number,org.jdom.transform,org.jopendocument.model.draw,org
- .jopendocument.model.script,org.apache.commons.collections.functors,o
- rg.jaxen.dom,org.apache.commons.collections.map,org.jaxen,schemaorg_a
- pache_xmlbeans.namespace.http_3A_2F_2Fopenscada_2Eorg_2FDA_2FSimulati
- on_2FComponents,org.jdom.adapters,org.apache.commons.collections.bag,
- com.sun.script.ognl,org.mozilla.javascript.tools.shell,org.jaxen.expr
- .iter,schemaorg_apache_xmlbeans.type.http_3A_2F_2Fopenscada_2Eorg_2FD
- A_2FSimulation_2FComponents,org.jopendocument.util,org.w3c.dom,org.jo
- pendocument.model.form,org.jaxen.xom,org.jopendocument.model.style,or
- g.mozilla.javascript.xmlimpl,org.mozilla.javascript.xml.impl.xmlbeans
- ,org.jdom.input,org.jopendocument.io,org.jopendocument.model.table,or
- g.jaxen.saxpath.helpers,org.apache.commons.collections.collection,org
- .jdom.filter,org.jopendocument.model.dom,ognl,org.mozilla.javascript.
- resources
-Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: inavare GmbH
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.simulation
-Tool: Bnd-0.0.311
-Embed-Dependency: jOpenDocument;scope=compile|runtime,jxl;scope=compil
- e|runtime
-
