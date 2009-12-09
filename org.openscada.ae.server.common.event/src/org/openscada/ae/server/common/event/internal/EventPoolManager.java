@@ -100,7 +100,7 @@ public class EventPoolManager
 
     private void createPool ( final Storage storage, final EventManager eventManager )
     {
-        this.pool = new EventPoolImpl ( this.executor, storage, eventManager, this.filter );
+        this.pool = new EventPoolImpl ( this.executor, storage, eventManager, this.filter, 10000 );
 
         try
         {

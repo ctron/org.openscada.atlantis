@@ -1,9 +1,8 @@
 package org.openscada.ae.server.common.event.internal;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -15,6 +14,8 @@ import org.openscada.ae.server.common.event.EventMatcher;
 import org.openscada.ae.server.common.event.EventQuery;
 import org.openscada.ae.server.storage.Query;
 import org.openscada.ae.server.storage.Storage;
+import org.openscada.utils.collection.BoundedPriorityQueueSet;
+import org.openscada.utils.collection.BoundedQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,8 +24,8 @@ public class EventPoolImpl implements EventListener, EventQuery
 
     private final static Logger logger = LoggerFactory.getLogger ( EventPoolImpl.class );
 
-    private final Queue<Event> events = new LinkedList<Event> ();
-
+    private final BoundedQueue<Event> events;
+    
     private final Set<EventListener> listeners = new HashSet<EventListener> ();
 
     private final Storage storage;
@@ -35,17 +36,20 @@ public class EventPoolImpl implements EventListener, EventQuery
 
     private final EventMatcher matcher;
 
-    private final int size;
-
     private final Executor executor;
 
-    public EventPoolImpl ( final Executor executor, final Storage storage, final EventManager eventManager, final String filter )
+    public EventPoolImpl ( final Executor executor, final Storage storage, final EventManager eventManager, final String filter, final int poolSize )
     {
         this.storage = storage;
         this.eventManager = eventManager;
         this.filter = filter;
         this.matcher = new EventMatcherImpl(filter);
-        this.size = 100;
+        this.events = new BoundedPriorityQueueSet<Event> ( poolSize, new Comparator<Event>() {
+            public int compare ( Event o1, Event o2 )
+            {
+                return Event.comparator.compare ( o2, o1 );
+            }            
+        });
         this.executor = executor;
     }
 
@@ -58,7 +62,7 @@ public class EventPoolImpl implements EventListener, EventQuery
         final Query query = this.storage.query ( this.filter );
         try
         {
-            final Collection<Event> result = query.getNext ( this.size );
+            final Collection<Event> result = query.getNext ( this.events.getCapacity () );
             logger.debug ( "Loaded {} entries from storage", result.size () );
             this.events.addAll ( result );
             notifyEvent ( result.toArray ( new Event[result.size ()] ) );
@@ -79,14 +83,9 @@ public class EventPoolImpl implements EventListener, EventQuery
         Set<Event> toNotify = new HashSet<Event> ();
         for ( Event event : events )
         {
-            if (matcher.matches ( event )) {
+            if (this.events.add ( event )) {
                 toNotify.add ( event );
             }
-        }
-        this.events.addAll ( toNotify );
-        while ( this.events.size () > this.size )
-        {
-            this.events.remove ();
         }
         notifyEvent ( toNotify.toArray (new Event[0]) );
     }
