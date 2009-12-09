@@ -3,6 +3,7 @@ package org.openscada.ae.server.common.event.internal;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.openscada.ae.server.common.event.pool.internal.EventPoolConfigurationFactory;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.osgi.framework.BundleActivator;
