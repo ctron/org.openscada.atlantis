@@ -21,6 +21,9 @@ package org.openscada.da.server.stock;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.xmlbeans.XmlException;
 import org.openscada.core.Variant;
@@ -34,15 +37,14 @@ import org.openscada.da.server.stock.business.YahooStockQuoteService;
 import org.openscada.da.server.stock.items.StockQuoteItem;
 import org.openscada.da.server.stock.items.UpdateManager;
 import org.openscada.utils.collection.MapBuilder;
-import org.openscada.utils.timing.Scheduler;
 
 public class Hive extends HiveCommon
 {
 
     private static final int UPDATE_PERIOD = 30 * 1000;
 
-    private Scheduler _scheduler = new Scheduler ( true, "StockHiveScheduler" );
-    
+    private final ScheduledExecutorService _scheduler = Executors.newSingleThreadScheduledExecutor ();
+
     private FolderCommon _symbolsFolder = null;
 
     private UpdateManager _updateManager = null;
@@ -52,59 +54,70 @@ public class Hive extends HiveCommon
         this ( null );
     }
 
-    public Hive ( Configurator configurator ) throws ConfigurationError, IOException, XmlException
+    public Hive ( final Configurator configurator ) throws ConfigurationError, IOException, XmlException
     {
         super ();
 
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
-        
+
         // create root folder
-        FolderCommon rootFolder = new FolderCommon ();
+        final FolderCommon rootFolder = new FolderCommon ();
         setRootFolder ( rootFolder );
 
         // create and register test folder
-        _symbolsFolder = new FolderCommon ();
-        rootFolder.add ( "symbols", _symbolsFolder, new MapBuilder<String, Variant> ().put ( "description",
-                new Variant ( "This folder contains the items by stock symbol" ) ).getMap () );
+        this._symbolsFolder = new FolderCommon ();
+        rootFolder.add ( "symbols", this._symbolsFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This folder contains the items by stock symbol" ) ).getMap () );
         if ( configurator == null )
+        {
             xmlConfigure ();
+        }
         else
+        {
             configurator.configure ( this );
+        }
 
-        _updateManager = new UpdateManager ();
-        _updateManager.setStockQuoteService ( new YahooStockQuoteService () );
-        
-        _scheduler.addJob ( new Runnable () {
+        this._updateManager = new UpdateManager ();
+        this._updateManager.setStockQuoteService ( new YahooStockQuoteService () );
+
+        this._scheduler.scheduleAtFixedRate ( new Runnable () {
 
             public void run ()
             {
-               _updateManager.update ();
-            }}, UPDATE_PERIOD );
+                Hive.this._updateManager.update ();
+            }
+        }, UPDATE_PERIOD, UPDATE_PERIOD, TimeUnit.MILLISECONDS );
 
         addSymbol ( "RHT" );
         addSymbol ( "YHOO" );
     }
 
+    @Override
+    public void stop () throws Exception
+    {
+        this._scheduler.shutdown ();
+        super.stop ();
+    }
+
     private void xmlConfigure () throws ConfigurationError, IOException, XmlException
     {
-        String configurationFile = System.getProperty ( "openscada.da.hive.configuration" );
+        final String configurationFile = System.getProperty ( "openscada.da.hive.configuration" );
         if ( configurationFile != null )
         {
-            File file = new File ( configurationFile );
+            final File file = new File ( configurationFile );
             xmlConfigure ( file );
         }
     }
 
-    private void xmlConfigure ( File file ) throws ConfigurationError, XmlException, IOException
+    private void xmlConfigure ( final File file ) throws ConfigurationError, XmlException, IOException
     {
         new XMLConfigurator ( file ).configure ( this );
     }
 
-    public void addSymbol ( String symbol )
+    public void addSymbol ( final String symbol )
     {
-        StockQuoteItem newItem = new StockQuoteItem ( symbol, _updateManager );
+        final StockQuoteItem newItem = new StockQuoteItem ( symbol, this._updateManager );
         registerItem ( newItem );
-        _symbolsFolder.add ( symbol, newItem, new MapBuilder<String, Variant> ().getMap () );
+        this._symbolsFolder.add ( symbol, newItem, new MapBuilder<String, Variant> ().getMap () );
     }
 
 }
