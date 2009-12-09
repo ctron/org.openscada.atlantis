@@ -20,7 +20,6 @@ import org.openscada.utils.propertyeditors.UUIDEditor;
 
 public class FilterUtils
 {
-
     public static PropertyEditorRegistry propertyEditorRegistry = new PropertyEditorRegistry ();
 
     static
