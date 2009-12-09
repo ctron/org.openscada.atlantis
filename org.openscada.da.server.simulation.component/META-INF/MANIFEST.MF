@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Component Simulation Server
 Bundle-SymbolicName: org.openscada.da.server.simulation.component
-Bundle-Version: 0.14.0.qualifier
+Bundle-Version: 0.15.0.qualifier
 Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.openscada.core;version="0.14.0",
@@ -15,7 +15,6 @@ Import-Package: org.openscada.core;version="0.14.0",
  org.openscada.da.server.common.chain;version="0.14.0",
  org.openscada.da.server.common.impl;version="0.14.0",
  org.openscada.utils.collection;version="0.14.0",
- org.openscada.utils.timing;version="0.14.0",
  org.slf4j;version="[1.5.0,1.6.0)"
-Export-Package: org.openscada.da.server.simulation.component;version="0.14.0",
- org.openscada.da.server.simulation.component.modules;version="0.14.0"
+Export-Package: org.openscada.da.server.simulation.component;version="0.15.0";uses:="org.openscada.da.server.common.impl,org.openscada.da.server.browser.common.query,org.openscada.da.server.simulation.component.modules",
+ org.openscada.da.server.simulation.component.modules;version="0.15.0";uses:="org.openscada.da.server.common,org.openscada.da.server.common.chain,org.openscada.da.server.simulation.component"
