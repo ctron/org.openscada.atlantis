@@ -107,7 +107,6 @@ public class SNMPNode
         this.hive = hive;
         this.rootFolder = rootFolder;
 
-        this.scheduler = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "SNMPScheduler/" + connectionInformation.getName () ) );
         this.connectionInformation = connectionInformation;
 
         this.bulkReader = new SNMPBulkReader ( this );
@@ -122,6 +121,8 @@ public class SNMPNode
         {
             return;
         }
+
+        this.scheduler = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "SNMPScheduler/" + this.connectionInformation.getName () ) );
 
         this.hive.addItemFactory ( this.itemFactory );
         this.dataItemFactory = new DefaultFolderItemFactory ( this.hive, this.rootFolder, this.connectionInformation.getName (), this.connectionInformation.getName () );
@@ -214,6 +215,7 @@ public class SNMPNode
         this.mibGroupFolder = null;
         this._mibFolder = null;
 
+        this.scheduler.shutdown ();
     }
 
     public String getItemIDPrefix ()
