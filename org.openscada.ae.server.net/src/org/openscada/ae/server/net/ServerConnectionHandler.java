@@ -73,12 +73,15 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     private Session session = null;
 
+    @SuppressWarnings ( "unused" )
     private final TaskHandler taskHandler = new DefaultTaskHandler ();
 
     private final Set<Long> taskMap = new HashSet<Long> ();
 
+    @SuppressWarnings ( "unused" )
     private EventListener eventListener;
 
+    @SuppressWarnings ( "unused" )
     private ConditionListener conditionListener;
 
     public ServerConnectionHandler ( final Service service, final IoSession ioSession, final ConnectionInformation connectionInformation )
@@ -390,11 +393,13 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         cleanUp ();
     }
 
+    @SuppressWarnings ( "unused" )
     private <T> void scheduleTask ( final NotifyFuture<T> task, final long id, final ResultHandler<T> resultHandler )
     {
         task.addListener ( new ResultFutureHandler<T> ( resultHandler ) );
     }
 
+    @SuppressWarnings ( "unused" )
     private void removeTask ( final long id )
     {
         synchronized ( this.taskMap )

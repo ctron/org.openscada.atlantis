@@ -43,13 +43,16 @@ public class EventPoolManager
 
     private final ExecutorService executor;
 
-    private final String filter;
+    private String filter;
 
-    public EventPoolManager ( final BundleContext context, final String id, final String filter ) throws InvalidSyntaxException
+    private int size;
+
+    public EventPoolManager ( final BundleContext context, final String id, final String filter, final int size ) throws InvalidSyntaxException
     {
         this.context = context;
         this.id = id;
         this.filter = filter;
+        this.size = size;
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "EventPoolManager/" + id ) );
 
@@ -90,6 +93,7 @@ public class EventPoolManager
 
         if ( this.storage != null && this.eventManager != null )
         {
+            disposePool ();
             createPool ( this.storage, this.eventManager );
         }
         else
@@ -100,10 +104,11 @@ public class EventPoolManager
 
     private void createPool ( final Storage storage, final EventManager eventManager )
     {
-        this.pool = new EventPoolImpl ( this.executor, storage, eventManager, this.filter, 10000 );
-
+        logger.info ( "Create pool: {}", this.id );
         try
         {
+            this.pool = new EventPoolImpl ( this.executor, storage, eventManager, this.filter, this.size );
+
             this.pool.start ();
 
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
@@ -124,8 +129,11 @@ public class EventPoolManager
 
     private synchronized void disposePool ()
     {
+        logger.info ( "Dispose pool: {}", this.id );
+
         if ( this.poolHandle != null )
         {
+            logger.debug ( "Unregister pool" );
             this.poolHandle.unregister ();
             this.poolHandle = null;
         }
@@ -134,5 +142,12 @@ public class EventPoolManager
             this.pool.stop ();
             this.pool = null;
         }
+    }
+
+    public void update ( final String filter, final int size )
+    {
+        this.filter = filter;
+        this.size = size;
+        checkInit ();
     }
 }

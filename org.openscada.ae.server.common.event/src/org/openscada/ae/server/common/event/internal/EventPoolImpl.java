@@ -3,7 +3,6 @@ package org.openscada.ae.server.common.event.internal;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
@@ -25,7 +24,7 @@ public class EventPoolImpl implements EventListener, EventQuery
     private final static Logger logger = LoggerFactory.getLogger ( EventPoolImpl.class );
 
     private final BoundedQueue<Event> events;
-    
+
     private final Set<EventListener> listeners = new HashSet<EventListener> ();
 
     private final Storage storage;
@@ -43,13 +42,13 @@ public class EventPoolImpl implements EventListener, EventQuery
         this.storage = storage;
         this.eventManager = eventManager;
         this.filter = filter;
-        this.matcher = new EventMatcherImpl(filter);
-        this.events = new BoundedPriorityQueueSet<Event> ( poolSize, new Comparator<Event>() {
-            public int compare ( Event o1, Event o2 )
+        this.matcher = new EventMatcherImpl ( filter );
+        this.events = new BoundedPriorityQueueSet<Event> ( poolSize, new Comparator<Event> () {
+            public int compare ( final Event o1, final Event o2 )
             {
                 return Event.comparator.compare ( o2, o1 );
-            }            
-        });
+            }
+        } );
         this.executor = executor;
     }
 
@@ -80,14 +79,15 @@ public class EventPoolImpl implements EventListener, EventQuery
 
     public synchronized void handleEvent ( final Event[] events )
     {
-        Set<Event> toNotify = new HashSet<Event> ();
-        for ( Event event : events )
+        final Set<Event> toNotify = new HashSet<Event> ();
+        for ( final Event event : events )
         {
-            if (this.events.add ( event )) {
+            if ( this.events.add ( event ) )
+            {
                 toNotify.add ( event );
             }
         }
-        notifyEvent ( toNotify.toArray (new Event[0]) );
+        notifyEvent ( toNotify.toArray ( new Event[0] ) );
     }
 
     private void notifyEvent ( final Event[] event )

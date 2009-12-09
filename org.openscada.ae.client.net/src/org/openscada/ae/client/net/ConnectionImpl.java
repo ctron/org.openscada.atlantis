@@ -153,12 +153,12 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         final boolean full = message.getValues ().containsKey ( "full" );
 
         // perform update
+        if ( full )
+        {
+            this.browserCache.clear ();
+        }
         if ( removed != null )
         {
-            if ( full )
-            {
-                this.browserCache.clear ();
-            }
             for ( final String id : removed )
             {
                 this.browserCache.remove ( id );
@@ -287,6 +287,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     protected synchronized void handleEventStatus ( final Message message )
     {
+
         String queryId = null;
         {
             final Value value = message.getValues ().get ( MESSAGE_QUERY_ID );
@@ -308,6 +309,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         if ( queryId != null && status != null )
         {
+            logger.debug ( "event status change: {} -> {}", new Object[] { queryId, status } );
             final EventListener listener = this.eventListeners.get ( queryId );
             fireEventStatusChange ( listener, status );
         }

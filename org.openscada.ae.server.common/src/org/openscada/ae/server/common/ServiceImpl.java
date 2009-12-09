@@ -116,7 +116,7 @@ public class ServiceImpl implements Service, ServiceListener
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         final BrowserEntry entry = new BrowserEntry ( id, EnumSet.of ( BrowserType.CONDITIONS ), attributes );
 
-        triggerBrowserChange ( new BrowserEntry[] { entry }, null, true );
+        triggerBrowserChange ( new BrowserEntry[] { entry }, null, false );
     }
 
     protected void removeConditionQuery ( final String id, final ConditionQuery query )
@@ -124,7 +124,7 @@ public class ServiceImpl implements Service, ServiceListener
         logger.info ( "Removing query: " + id );
         this.conditionSubscriptions.setSource ( id, null );
 
-        triggerBrowserChange ( null, new String[] { id }, true );
+        triggerBrowserChange ( null, new String[] { id }, false );
     }
 
     protected void addEventQuery ( final String id, final EventQuery query )
@@ -135,15 +135,17 @@ public class ServiceImpl implements Service, ServiceListener
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         final BrowserEntry entry = new BrowserEntry ( id, EnumSet.of ( BrowserType.EVENTS ), attributes );
 
-        triggerBrowserChange ( new BrowserEntry[] { entry }, null, true );
+        triggerBrowserChange ( new BrowserEntry[] { entry }, null, false );
     }
 
     protected void removeEventQuery ( final String id, final EventQuery query )
     {
-        logger.info ( "Removing query: " + id );
+        logger.info ( "Removing event query: " + id );
         this.eventSubscriptions.setSource ( id, null );
 
-        triggerBrowserChange ( null, new String[] { id }, true );
+        triggerBrowserChange ( null, new String[] { id }, false );
+
+        logger.info ( "Removed event query: " + id );
     }
 
     protected void triggerBrowserChange ( final BrowserEntry[] entries, final String[] removed, final boolean full )
@@ -284,27 +286,34 @@ public class ServiceImpl implements Service, ServiceListener
     {
         final ServiceReference ref = event.getServiceReference ();
 
-        switch ( event.getType () )
+        try
         {
-        case ServiceEvent.REGISTERED:
-            checkAddConditionQuery ( ref );
-            checkAddEventQuery ( ref );
-            break;
-        case ServiceEvent.UNREGISTERING:
-            final String id = getQueryId ( ref );
-            final ConditionQuery query = this.conditionQueryRefs.remove ( id );
-            if ( query != null )
+            switch ( event.getType () )
             {
-                removeConditionQuery ( id, query );
-                this.context.ungetService ( ref );
+            case ServiceEvent.REGISTERED:
+                checkAddConditionQuery ( ref );
+                checkAddEventQuery ( ref );
+                break;
+            case ServiceEvent.UNREGISTERING:
+                final String id = getQueryId ( ref );
+                final ConditionQuery query = this.conditionQueryRefs.remove ( id );
+                if ( query != null )
+                {
+                    removeConditionQuery ( id, query );
+                    this.context.ungetService ( ref );
+                }
+                final EventQuery eventQuery = this.eventQueryRefs.remove ( id );
+                if ( eventQuery != null )
+                {
+                    removeEventQuery ( id, eventQuery );
+                    this.context.ungetService ( ref );
+                }
+                break;
             }
-            final EventQuery eventQuery = this.eventQueryRefs.remove ( id );
-            if ( eventQuery != null )
-            {
-                removeEventQuery ( id, eventQuery );
-                this.context.ungetService ( ref );
-            }
-            break;
+        }
+        catch ( final Exception e )
+        {
+            logger.warn ( "Failed to handle service change", e );
         }
     }
 

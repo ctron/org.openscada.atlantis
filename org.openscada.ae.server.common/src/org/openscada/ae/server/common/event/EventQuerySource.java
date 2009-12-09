@@ -8,7 +8,6 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.openscada.ae.Event;
-import org.openscada.ae.server.ConditionListener;
 import org.openscada.ae.server.EventListener;
 import org.openscada.core.subscription.SubscriptionInformation;
 import org.openscada.core.subscription.SubscriptionSource;
@@ -59,7 +58,7 @@ public class EventQuerySource implements SubscriptionSource, org.openscada.ae.ev
     {
         for ( final SubscriptionInformation information : listeners )
         {
-            final ConditionListener listener = (ConditionListener)information.getListener ();
+            final EventListener listener = (EventListener)information.getListener ();
             this.listeners.remove ( listener );
         }
 
