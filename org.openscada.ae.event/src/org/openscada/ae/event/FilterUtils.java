@@ -97,7 +97,7 @@ public class FilterUtils
                 }
             }
         }
-        else
+        else if ( filter.isExpression () )
         {
             FilterExpression filterExpression = (FilterExpression)filter;
             for ( Filter child : filterExpression.getFilterSet () )
