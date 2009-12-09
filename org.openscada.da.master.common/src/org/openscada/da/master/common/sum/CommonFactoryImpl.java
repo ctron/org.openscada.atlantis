@@ -2,11 +2,11 @@ package org.openscada.da.master.common.sum;
 
 import java.util.Map;
 
-import org.openscada.da.master.AbstractHandlerImpl;
+import org.openscada.da.master.AbstractMasterHandlerImpl;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
 
-public class CommonFactoryImpl extends AbstractServiceConfigurationFactory<AbstractHandlerImpl>
+public class CommonFactoryImpl extends AbstractServiceConfigurationFactory<AbstractMasterHandlerImpl>
 {
     private final BundleContext context;
 
@@ -23,22 +23,22 @@ public class CommonFactoryImpl extends AbstractServiceConfigurationFactory<Abstr
     }
 
     @Override
-    protected Entry<AbstractHandlerImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<AbstractMasterHandlerImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final AbstractHandlerImpl handler = new CommonSumHandler ( this.context, this.tag, this.priority );
+        final AbstractMasterHandlerImpl handler = new CommonSumHandler ( this.context, this.tag, this.priority );
         handler.update ( parameters );
-        return new Entry<AbstractHandlerImpl> ( handler );
+        return new Entry<AbstractMasterHandlerImpl> ( handler );
     }
 
     @Override
-    protected Entry<AbstractHandlerImpl> updateService ( final String configurationId, final Entry<AbstractHandlerImpl> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<AbstractMasterHandlerImpl> updateService ( final String configurationId, final Entry<AbstractMasterHandlerImpl> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;
     }
 
     @Override
-    protected void disposeService ( final AbstractHandlerImpl service )
+    protected void disposeService ( final AbstractMasterHandlerImpl service )
     {
         service.dispose ();
     }

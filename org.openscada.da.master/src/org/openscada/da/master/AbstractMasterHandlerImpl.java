@@ -13,7 +13,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-public abstract class AbstractHandlerImpl implements MasterItemHandler
+public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 {
     private final BundleContext context;
 
@@ -23,7 +23,7 @@ public abstract class AbstractHandlerImpl implements MasterItemHandler
 
     private final int priority;
 
-    public AbstractHandlerImpl ( final BundleContext context, final int priority )
+    public AbstractMasterHandlerImpl ( final BundleContext context, final int priority )
     {
         this.context = context;
         this.priority = priority;
@@ -63,7 +63,7 @@ public abstract class AbstractHandlerImpl implements MasterItemHandler
             {
                 if ( removeItem ( (MasterItem)service ) )
                 {
-                    AbstractHandlerImpl.this.context.ungetService ( reference );
+                    AbstractMasterHandlerImpl.this.context.ungetService ( reference );
                 }
             }
 
@@ -74,7 +74,7 @@ public abstract class AbstractHandlerImpl implements MasterItemHandler
 
             public Object addingService ( final ServiceReference reference )
             {
-                Object o = AbstractHandlerImpl.this.context.getService ( reference );
+                Object o = AbstractMasterHandlerImpl.this.context.getService ( reference );
                 try
                 {
                     final MasterItem item = (MasterItem)o;
@@ -85,7 +85,7 @@ public abstract class AbstractHandlerImpl implements MasterItemHandler
                 {
                     if ( o != null )
                     {
-                        AbstractHandlerImpl.this.context.ungetService ( reference );
+                        AbstractMasterHandlerImpl.this.context.ungetService ( reference );
                     }
                 }
                 return null;

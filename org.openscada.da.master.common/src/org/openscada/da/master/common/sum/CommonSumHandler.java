@@ -8,11 +8,11 @@ import java.util.regex.Pattern;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
-import org.openscada.da.master.AbstractHandlerImpl;
+import org.openscada.da.master.AbstractMasterHandlerImpl;
 import org.openscada.utils.str.StringHelper;
 import org.osgi.framework.BundleContext;
 
-public class CommonSumHandler extends AbstractHandlerImpl
+public class CommonSumHandler extends AbstractMasterHandlerImpl
 {
 
     private final Pattern pattern;
