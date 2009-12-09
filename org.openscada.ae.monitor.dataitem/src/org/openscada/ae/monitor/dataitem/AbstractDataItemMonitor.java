@@ -56,6 +56,8 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
 
     private boolean alarm;
 
+    private boolean unsafe;
+
     public AbstractDataItemMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix )
     {
         super ( eventProcessor, id );
@@ -211,6 +213,7 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
         super.notifyStateChange ( status );
         this.state = status.getStatus ();
         this.akn = this.state == ConditionStatus.NOT_AKN || this.state == ConditionStatus.NOT_OK_NOT_AKN;
+        this.unsafe = this.state == ConditionStatus.UNSAFE;
         this.alarm = this.state == ConditionStatus.NOT_OK || this.state == ConditionStatus.NOT_OK_AKN || this.state == ConditionStatus.NOT_OK_NOT_AKN;
         reprocess ();
     }
@@ -237,6 +240,8 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
 
         builder.setAttribute ( this.prefix + ".ackRequired", this.akn ? Variant.TRUE : Variant.FALSE );
         builder.setAttribute ( this.prefix + ".state", new Variant ( this.state.toString () ) );
+
+        builder.setAttribute ( this.prefix + ".unsafe", this.unsafe ? Variant.TRUE : Variant.FALSE );
 
         if ( isError () )
         {
