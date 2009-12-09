@@ -2,7 +2,7 @@ package org.openscada.da.master.common.sum;
 
 import java.util.Map;
 
-import org.openscada.da.master.common.AbstractHandlerImpl;
+import org.openscada.da.master.AbstractHandlerImpl;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
 

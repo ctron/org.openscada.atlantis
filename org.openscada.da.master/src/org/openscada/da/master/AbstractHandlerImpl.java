@@ -1,4 +1,4 @@
-package org.openscada.da.master.common;
+package org.openscada.da.master;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,10 +6,6 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.openscada.da.client.DataItemValue;
-import org.openscada.da.master.MasterItem;
-import org.openscada.da.master.MasterItemHandler;
-import org.openscada.da.master.WriteRequest;
-import org.openscada.da.master.WriteRequestResult;
 import org.openscada.utils.osgi.FilterUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
