@@ -180,16 +180,20 @@
 	<openscada.builder.copyPlugin id="org.openscada.ae.connection.provider"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.ae.event"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.event.logger"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.monitor"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.common"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.dataitem"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.common"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.common.condition"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.common.event"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.exporter"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.exporter.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.jdbc"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.jdbc.configuration"/>
   	
   	<!-- Additional stuff -->
   	
