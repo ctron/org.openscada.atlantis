@@ -27,6 +27,9 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
@@ -48,7 +51,7 @@ import org.openscada.da.core.Location;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.ice.BrowserEntryHelper;
-import org.openscada.utils.timing.Scheduler;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 
 import Ice.Communicator;
 import Ice.InitializationData;
@@ -73,7 +76,7 @@ public class Connection implements org.openscada.da.client.Connection
         ConnectionFactory.registerDriverFactory ( new DriverFactory () );
     }
 
-    private final Scheduler scheduler = new Scheduler ( true, "IceConnectionScheduler" );
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "IceConnectionScheduler" ) );
 
     protected ConnectionState state = ConnectionState.CLOSED;
 
@@ -156,13 +159,13 @@ public class Connection implements org.openscada.da.client.Connection
         this.eventPusher.start ();
 
         // add the connection checker
-        this.scheduler.addJob ( new Runnable () {
+        this.scheduler.scheduleAtFixedRate ( new Runnable () {
 
             public void run ()
             {
                 checkConnection ();
             }
-        }, 5 * 1000 );
+        }, 5 * 1000, 5 * 1000, TimeUnit.MILLISECONDS );
     }
 
     public ConnectionInformation getConnectionInformation ()
@@ -222,13 +225,13 @@ public class Connection implements org.openscada.da.client.Connection
      */
     protected void scheduleReconnect ()
     {
-        this.scheduler.scheduleJob ( new Runnable () {
+        this.scheduler.schedule ( new Runnable () {
 
             public void run ()
             {
                 performReconnect ();
             }
-        }, 5 * 1000 );
+        }, 5 * 1000, TimeUnit.MILLISECONDS );
     }
 
     protected void performReconnect ()

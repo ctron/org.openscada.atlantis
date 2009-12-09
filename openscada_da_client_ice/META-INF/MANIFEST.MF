@@ -21,18 +21,25 @@ Import-Package: Ice,
  org.openscada.da.core;version="0.14",
  org.openscada.da.core.browser;version="0.14",
  org.openscada.da.ice;version="0.14",
- org.openscada.utils.timing;version="0.13",
+ org.openscada.utils.concurrent;version="0.15.0",
+ org.openscada.utils.exec;version="0.15.0",
+ org.openscada.utils.factory;version="0.15.0",
  org.osgi.framework
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bnd-LastModified: 1252499297410
-Export-Package: org.openscada.da.client.ice;uses:="org.openscada.da.co
- re.browser,OpenSCADA.DA,Ice,org.openscada.da.ice,OpenSCADA.DA.Browser
- ,org.openscada.da.client,org.openscada.da.core,org.apache.log4j,org.o
- penscada.core,org.openscada.core.subscription,org.openscada.core.clie
- nt,org.openscada.utils.timing,OpenSCADA.Core,org.openscada.core.ice";
- version="0.14.0.SNAPSHOT"
-Bundle-Version: 0.14.0
-Bundle-Name: OpenSCADA-DA-Client-Ice
+Export-Package: org.openscada.da.client.ice;version="0.15.0";
+  uses:="org.openscada.core.client,
+   Ice,
+   OpenSCADA.DA,
+   OpenSCADA.DA.Browser,
+   OpenSCADA.Core,
+   org.openscada.da.core,
+   org.openscada.core.subscription,
+   org.openscada.da.client,
+   org.osgi.framework,
+   org.openscada.core"
+Bundle-Version: 0.15.0.qualifier
+Bundle-Name: OpenSCADA DA Client Ice
 Build-Jdk: 1.5.0_18
 Private-Package: org.openscada.da.client.ice,
 Bundle-DocURL: http://www.inavare.net
