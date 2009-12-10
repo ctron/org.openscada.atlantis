@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.openscada.ae.ConditionStatus;
 import org.openscada.ae.ConditionStatusInformation;
-import org.openscada.ae.monitor.common.AbstractConditionService;
+import org.openscada.ae.monitor.common.AbstractMonitorService;
 import org.openscada.ae.monitor.common.EventHelper;
 import org.openscada.ae.monitor.common.handler.StateHandler;
 import org.openscada.core.Variant;
@@ -12,7 +12,7 @@ import org.openscada.core.Variant;
 public class StateAdapter implements StateHandler
 {
 
-    protected final AbstractConditionService service;
+    protected final AbstractMonitorService service;
 
     private final ConditionStatus state;
 
@@ -86,7 +86,7 @@ public class StateAdapter implements StateHandler
         }
     }
 
-    public StateAdapter ( final AbstractConditionService service, final Context context, final ConditionStatus state )
+    public StateAdapter ( final AbstractMonitorService service, final Context context, final ConditionStatus state )
     {
         this.service = service;
         this.state = state;

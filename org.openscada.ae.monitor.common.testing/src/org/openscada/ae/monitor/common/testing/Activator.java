@@ -3,7 +3,7 @@ package org.openscada.ae.monitor.common.testing;
 import java.util.Hashtable;
 
 import org.openscada.ae.event.EventProcessor;
-import org.openscada.ae.monitor.ConditionService;
+import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -24,8 +24,9 @@ public class Activator implements BundleActivator
         this.processor = new EventProcessor ( context );
         this.processor.open ();
         this.service = new TestingCondition ( this.processor, context.getBundle ().getSymbolicName () + ".test" );
+        this.service.init ();
 
-        context.registerService ( new String[] { ConditionService.class.getName (), AknHandler.class.getName () }, this.service, new Hashtable<String, String> () );
+        context.registerService ( new String[] { MonitorService.class.getName (), AknHandler.class.getName () }, this.service, new Hashtable<String, String> () );
     }
 
     /*

@@ -2,7 +2,7 @@ package org.openscada.ae.monitor;
 
 import java.util.Date;
 
-public interface ConditionService
+public interface MonitorService
 {
     public String getId ();
 

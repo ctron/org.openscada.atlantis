@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.openscada.ae.ConditionStatusInformation;
 import org.openscada.ae.monitor.ConditionListener;
-import org.openscada.ae.monitor.ConditionService;
+import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.condition.ConditionQuery;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -21,7 +21,7 @@ public class BundleConditionQuery extends ConditionQuery implements ServiceListe
 
     private final BundleContext context;
 
-    private final Map<ServiceReference, ConditionService> services = new HashMap<ServiceReference, ConditionService> ();
+    private final Map<ServiceReference, MonitorService> services = new HashMap<ServiceReference, MonitorService> ();
 
     public BundleConditionQuery ( final BundleContext context, final String filter ) throws InvalidSyntaxException
     {
@@ -30,11 +30,11 @@ public class BundleConditionQuery extends ConditionQuery implements ServiceListe
         String serviceFilter;
         if ( filter == null )
         {
-            serviceFilter = "(" + Constants.OBJECTCLASS + "=" + ConditionService.class.getName () + ")";
+            serviceFilter = "(" + Constants.OBJECTCLASS + "=" + MonitorService.class.getName () + ")";
         }
         else
         {
-            serviceFilter = "(&(" + Constants.OBJECTCLASS + "=" + ConditionService.class.getName () + ")" + filter + ")";
+            serviceFilter = "(&(" + Constants.OBJECTCLASS + "=" + MonitorService.class.getName () + ")" + filter + ")";
         }
         synchronized ( this )
         {
@@ -50,7 +50,7 @@ public class BundleConditionQuery extends ConditionQuery implements ServiceListe
 
     private void checkAddInitial ( final String filter ) throws InvalidSyntaxException
     {
-        ServiceReference[] refs = this.context.getServiceReferences ( ConditionService.class.getName (), filter );
+        ServiceReference[] refs = this.context.getServiceReferences ( MonitorService.class.getName (), filter );
         if ( refs != null )
         {
             for ( ServiceReference ref : refs )
@@ -65,7 +65,7 @@ public class BundleConditionQuery extends ConditionQuery implements ServiceListe
         synchronized ( this )
         {
             this.context.removeServiceListener ( this );
-            for ( Map.Entry<ServiceReference, ConditionService> entry : this.services.entrySet () )
+            for ( Map.Entry<ServiceReference, MonitorService> entry : this.services.entrySet () )
             {
                 entry.getValue ().removeStatusListener ( this );
                 this.context.ungetService ( entry.getKey () );
@@ -91,7 +91,7 @@ public class BundleConditionQuery extends ConditionQuery implements ServiceListe
     {
         synchronized ( this )
         {
-            ConditionService service = this.services.remove ( serviceReference );
+            MonitorService service = this.services.remove ( serviceReference );
             if ( service != null )
             {
                 service.removeStatusListener ( this );
@@ -104,13 +104,13 @@ public class BundleConditionQuery extends ConditionQuery implements ServiceListe
     private void checkAdd ( final ServiceReference serviceReference )
     {
         logger.debug ( "Checking reference: " + serviceReference );
-        if ( !serviceReference.isAssignableTo ( this.context.getBundle (), ConditionService.class.getName () ) )
+        if ( !serviceReference.isAssignableTo ( this.context.getBundle (), MonitorService.class.getName () ) )
         {
             logger.info ( "Not assignable" );
             return;
         }
 
-        ConditionService service = (ConditionService)this.context.getService ( serviceReference );
+        MonitorService service = (MonitorService)this.context.getService ( serviceReference );
         synchronized ( this )
         {
             logger.debug ( "Adding to list" );

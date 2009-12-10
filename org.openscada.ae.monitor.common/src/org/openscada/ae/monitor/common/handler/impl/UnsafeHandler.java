@@ -3,7 +3,7 @@ package org.openscada.ae.monitor.common.handler.impl;
 import java.util.Date;
 
 import org.openscada.ae.ConditionStatus;
-import org.openscada.ae.monitor.common.AbstractConditionService;
+import org.openscada.ae.monitor.common.AbstractMonitorService;
 import org.openscada.core.Variant;
 
 public class UnsafeHandler extends StateAdapter
@@ -14,7 +14,7 @@ public class UnsafeHandler extends StateAdapter
         super ( source, ConditionStatus.UNSAFE );
     }
 
-    protected UnsafeHandler ( final AbstractConditionService service, final Context context )
+    protected UnsafeHandler ( final AbstractMonitorService service, final Context context )
     {
         super ( service, context, ConditionStatus.UNSAFE );
     }

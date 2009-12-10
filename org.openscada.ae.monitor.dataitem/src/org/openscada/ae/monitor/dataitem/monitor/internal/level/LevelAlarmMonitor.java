@@ -26,9 +26,9 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
     private boolean failure;
 
-    public LevelAlarmMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix, final boolean lowerOk, final int priority, final boolean cap )
+    public LevelAlarmMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultEventType, final boolean lowerOk, final int priority, final boolean cap )
     {
-        super ( context, eventProcessor, id, prefix );
+        super ( context, eventProcessor, id, prefix, defaultEventType );
         this.lowerOk = lowerOk;
         this.priority = priority;
         this.cap = cap;

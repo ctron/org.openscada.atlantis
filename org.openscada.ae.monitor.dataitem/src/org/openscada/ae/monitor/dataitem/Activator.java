@@ -56,22 +56,22 @@ public class Activator implements BundleActivator
             this.factories.add ( factory );
         }
 
-        makeLevelFactory ( context, "ceil", true, 0, true );
-        makeLevelFactory ( context, "highhigh", true, 1000, false );
-        makeLevelFactory ( context, "high", true, 1000, false );
-        makeLevelFactory ( context, "low", false, 1000, false );
-        makeLevelFactory ( context, "lowlow", false, 1000, false );
-        makeLevelFactory ( context, "floor", false, 0, true );
+        makeLevelFactory ( context, "ceil", "MAX", true, 0, true );
+        makeLevelFactory ( context, "highhigh", "HH", true, 1000, false );
+        makeLevelFactory ( context, "high", "H", true, 1000, false );
+        makeLevelFactory ( context, "low", "L", false, 1000, false );
+        makeLevelFactory ( context, "lowlow", "LL", false, 1000, false );
+        makeLevelFactory ( context, "floor", "MIN", false, 0, true );
 
         logger.info ( "Starting up...done" );
 
         Activator.instance = this;
     }
 
-    private void makeLevelFactory ( final BundleContext context, final String type, final boolean lowerOk, final int priority, final boolean cap )
+    private void makeLevelFactory ( final BundleContext context, final String type, final String eventType, final boolean lowerOk, final int priority, final boolean cap )
     {
         Dictionary<Object, Object> properties;
-        final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.eventProcessor, type, lowerOk, priority, cap );
+        final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.eventProcessor, type, eventType, lowerOk, priority, cap );
         properties = new Hashtable<Object, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, LevelMonitorFactoryImpl.FACTORY_PREFIX + "." + type );
         properties.put ( Constants.SERVICE_DESCRIPTION, type + " Alarms" );

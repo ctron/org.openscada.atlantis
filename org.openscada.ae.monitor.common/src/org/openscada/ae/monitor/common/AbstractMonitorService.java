@@ -7,16 +7,17 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.apache.log4j.Logger;
 import org.openscada.ae.ConditionStatusInformation;
 import org.openscada.ae.Event;
+import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.ConditionListener;
-import org.openscada.ae.monitor.ConditionService;
+import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.monitor.common.handler.StateHandler;
 import org.openscada.ae.monitor.common.handler.impl.InitHandler;
 import org.openscada.core.Variant;
 
-public class AbstractConditionService implements ConditionService
+public class AbstractMonitorService implements MonitorService
 {
-    private final static Logger logger = Logger.getLogger ( AbstractConditionService.class );
+    private final static Logger logger = Logger.getLogger ( AbstractMonitorService.class );
 
     protected Set<ConditionListener> conditionListeners = new CopyOnWriteArraySet<ConditionListener> ();
 
@@ -28,11 +29,18 @@ public class AbstractConditionService implements ConditionService
 
     private volatile ConditionStatusInformation currentStatus;
 
-    public AbstractConditionService ( final EventProcessor eventProcessor, final String id )
+    public AbstractMonitorService ( final EventProcessor eventProcessor, final String id )
     {
         this.id = id;
         this.eventProcessor = eventProcessor;
-        setHandler ( new InitHandler ( this ) );
+    }
+
+    public synchronized void init ()
+    {
+        if ( this.handler == null )
+        {
+            setHandler ( new InitHandler ( this ) );
+        }
     }
 
     /**
@@ -137,7 +145,16 @@ public class AbstractConditionService implements ConditionService
 
     public void publishEvent ( final Event event )
     {
+        final EventBuilder builder = Event.create ();
+        builder.event ( event );
+
+        injectEventAttributes ( builder );
+
         this.eventProcessor.publishEvent ( event );
+    }
+
+    protected void injectEventAttributes ( final EventBuilder builder )
+    {
     }
 
 }

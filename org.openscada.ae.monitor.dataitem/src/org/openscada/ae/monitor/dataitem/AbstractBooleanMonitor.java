@@ -11,14 +11,14 @@ public abstract class AbstractBooleanMonitor extends AbstractDataItemMonitor
 {
     protected Boolean value;
 
-    protected abstract void update ();
-
     protected Date timestamp;
 
-    public AbstractBooleanMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix )
+    public AbstractBooleanMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultEventType )
     {
-        super ( context, eventProcessor, id, prefix );
+        super ( context, eventProcessor, id, prefix, defaultEventType );
     }
+
+    protected abstract void update ();
 
     @Override
     protected void performDataUpdate ( final Builder builder )

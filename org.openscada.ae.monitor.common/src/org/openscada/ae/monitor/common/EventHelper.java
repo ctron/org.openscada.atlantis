@@ -18,9 +18,9 @@ public class EventHelper
         {
             builder.sourceTimestamp ( new Date () );
         }
-        builder.attribute ( Event.Fields.SOURCE.getName (), id );
-        builder.attribute ( Event.Fields.EVENT_TYPE.getName (), type );
-        builder.attribute ( "message", message );
+        builder.attribute ( Event.Fields.SOURCE, id );
+        builder.attribute ( Event.Fields.EVENT_TYPE, type );
+        builder.attribute ( Event.Fields.MESSAGE, message );
     }
 
     public static Event newFailEvent ( final String id, final String message, final Variant value, final Date timestamp )

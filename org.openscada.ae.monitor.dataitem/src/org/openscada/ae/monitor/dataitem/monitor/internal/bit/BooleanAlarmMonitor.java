@@ -22,7 +22,7 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
 
     public BooleanAlarmMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id )
     {
-        super ( context, eventProcessor, id, "ae.monitor.booleanAlarm" );
+        super ( context, eventProcessor, id, "ae.monitor.booleanAlarm", "VALUE" );
     }
 
     @Override

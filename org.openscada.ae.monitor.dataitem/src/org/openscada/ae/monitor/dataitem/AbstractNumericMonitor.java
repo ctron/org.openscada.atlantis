@@ -14,9 +14,9 @@ public abstract class AbstractNumericMonitor extends AbstractDataItemMonitor
 
     protected Date timestamp;
 
-    public AbstractNumericMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix )
+    public AbstractNumericMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultEventType )
     {
-        super ( context, eventProcessor, id, prefix );
+        super ( context, eventProcessor, id, prefix, defaultEventType );
     }
 
     protected abstract void update ( Builder builder );

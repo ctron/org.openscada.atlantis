@@ -7,8 +7,9 @@ import java.util.Map;
 
 import org.openscada.ae.ConditionStatus;
 import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.event.EventProcessor;
-import org.openscada.ae.monitor.common.AbstractConditionService;
+import org.openscada.ae.monitor.common.AbstractMonitorService;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
@@ -28,7 +29,7 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractDataItemMonitor extends AbstractConditionService implements DataItemMonitor
+public abstract class AbstractDataItemMonitor extends AbstractMonitorService implements DataItemMonitor
 {
     private final static Logger logger = LoggerFactory.getLogger ( AbstractDataItemMonitor.class );
 
@@ -58,11 +59,22 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
 
     private boolean unsafe;
 
-    public AbstractDataItemMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix )
+    private final String defaultEventType;
+
+    private String eventType;
+
+    private String component;
+
+    private String message;
+
+    private String messageCode;
+
+    public AbstractDataItemMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultEventType )
     {
         super ( eventProcessor, id );
         this.context = context;
         this.prefix = prefix;
+        this.defaultEventType = defaultEventType;
     }
 
     public void dispose ()
@@ -90,11 +102,31 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
         return Integer.parseInt ( value );
     }
 
+    protected static String getString ( final Map<String, String> properties, final String key, final String defaultValue )
+    {
+        final String value = properties.get ( key );
+        if ( value != null )
+        {
+            return value;
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
+
     public synchronized void update ( final Map<String, String> properties ) throws Exception
     {
         disconnect ();
         this.masterId = properties.get ( MasterItem.MASTER_ID );
         this.handlerPriority = getInteger ( properties, "handler.priority", getDefaultPriority () );
+        this.eventType = getString ( properties, "eventType", this.defaultEventType );
+        this.component = getString ( properties, "component", null );
+        this.message = getString ( properties, "message", null );
+        this.messageCode = getString ( properties, "messageCode", null );
+
+        init ();
+
         setActive ( getBoolean ( properties, "active", true ) );
         setRequireAkn ( getBoolean ( properties, "requireAck", false ) );
         connect ();
@@ -368,6 +400,25 @@ public abstract class AbstractDataItemMonitor extends AbstractConditionService i
         else
         {
             return c.getTime ();
+        }
+    }
+
+    @Override
+    protected void injectEventAttributes ( final EventBuilder builder )
+    {
+        super.injectEventAttributes ( builder );
+        builder.attribute ( "eventType", this.eventType );
+        if ( this.component != null )
+        {
+            builder.attribute ( "component", this.component );
+        }
+        if ( this.message != null )
+        {
+            builder.attribute ( "message", this.message );
+        }
+        if ( this.messageCode != null )
+        {
+            builder.attribute ( "messageCode", this.messageCode );
         }
     }
 

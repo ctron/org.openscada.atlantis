@@ -6,7 +6,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.openscada.ae.event.EventProcessor;
-import org.openscada.ae.monitor.ConditionService;
+import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
@@ -35,10 +35,12 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
     protected Entry<DataItemMonitor> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final DataItemMonitor instance = createInstance ( configurationId, this.eventProcessor );
+
         instance.update ( parameters );
+        instance.init ();
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        final ServiceRegistration handle = context.registerService ( ConditionService.class.getName (), instance, properties );
+        final ServiceRegistration handle = context.registerService ( MonitorService.class.getName (), instance, properties );
 
         return new Entry<DataItemMonitor> ( instance, handle );
     }

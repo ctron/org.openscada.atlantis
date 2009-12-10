@@ -4,12 +4,12 @@ import java.util.Date;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
-import org.openscada.ae.monitor.common.AbstractConditionService;
+import org.openscada.ae.monitor.common.AbstractMonitorService;
 
 public class InitHandler extends UnsafeHandler
 {
 
-    public InitHandler ( final AbstractConditionService service )
+    public InitHandler ( final AbstractMonitorService service )
     {
         super ( service, new Context () );
 
