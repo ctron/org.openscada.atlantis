@@ -29,6 +29,10 @@
          id="org.openscada.core"
          version="0.0.0"/>
 
+   <includes
+         id="org.openscada.hd"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="com.springsource.org.apache.log4j"/>
       <import plugin="org.apache.mina.core"/>
