@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.Test;
 import org.openscada.ae.Event;
 import org.openscada.ae.server.storage.Query;
+import org.openscada.ae.server.storage.jdbc.internal.MutableEvent;
 import org.openscada.core.Variant;
 
 public class JdbcStorageTest extends JdbcStorageBaseTest
@@ -20,7 +21,7 @@ public class JdbcStorageTest extends JdbcStorageBaseTest
     public void testStore () throws Exception
     {
         Event event;
-        event = Event.create ().sourceTimestamp ( new GregorianCalendar ().getTime () ).attribute ( Event.Fields.SOURCE.getName (), "TEST" ).attribute ( Event.Fields.PRIORITY.getName (), 5 ).attribute ( Event.Fields.TYPE.getName (), "TEST" ).build ();
+        event = Event.create ().sourceTimestamp ( new GregorianCalendar ().getTime () ).attribute ( MutableEvent.Fields.SOURCE.getName (), "TEST" ).attribute ( MutableEvent.Fields.PRIORITY.getName (), 5 ).attribute ( Event.Fields.EVENT_TYPE.getName (), "TEST" ).build ();
         Event result = getStorage ().store ( event );
         Query query = getStorage ().query ( "(id=" + result.getId () + ")" );
         List<Event> list = new ArrayList<Event> ( query.getNext ( 1 ) );

@@ -12,6 +12,7 @@ import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.server.storage.Storage;
 import org.openscada.ae.server.storage.jdbc.internal.Activator;
+import org.openscada.ae.server.storage.jdbc.internal.MutableEvent;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 import org.springframework.beans.factory.BeanFactory;
@@ -68,9 +69,9 @@ public class JdbcStorageBaseTest
     {
         EventBuilder eb = Event.create ();
         eb.sourceTimestamp ( new GregorianCalendar ().getTime () );
-        eb.attribute ( Event.Fields.SOURCE.getName (), "TEST" );
-        eb.attribute ( Event.Fields.PRIORITY.getName (), 5 );
-        eb.attribute ( Event.Fields.TYPE.getName (), "TEST" );
+        eb.attribute ( MutableEvent.Fields.SOURCE.getName (), "TEST" );
+        eb.attribute ( MutableEvent.Fields.PRIORITY.getName (), 5 );
+        eb.attribute ( MutableEvent.Fields.EVENT_TYPE.getName (), "TEST" );
         eb.attribute ( "nr", nr );
         return eb.build ();
     }

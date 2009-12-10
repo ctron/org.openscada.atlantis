@@ -16,7 +16,7 @@ public class InitHandler extends UnsafeHandler
         final EventBuilder builder = Event.create ();
         builder.sourceTimestamp ( new Date () );
         builder.attribute ( Event.Fields.SOURCE.getName (), service.getId () );
-        builder.attribute ( Event.Fields.TYPE.getName (), "INIT" );
+        builder.attribute ( Event.Fields.EVENT_TYPE.getName (), "INIT" );
         builder.attribute ( "message", "Initializing monitor" );
         service.publishEvent ( builder.build () );
         setValue ( null, null );

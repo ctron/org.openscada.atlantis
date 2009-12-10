@@ -8,7 +8,6 @@ import org.openscada.core.Variant;
 
 public class EventHelper
 {
-
     protected static void fillBasic ( final EventBuilder builder, final String id, final String type, final Date timestamp, final String message )
     {
         if ( timestamp != null )
@@ -20,7 +19,7 @@ public class EventHelper
             builder.sourceTimestamp ( new Date () );
         }
         builder.attribute ( Event.Fields.SOURCE.getName (), id );
-        builder.attribute ( Event.Fields.TYPE.getName (), type );
+        builder.attribute ( Event.Fields.EVENT_TYPE.getName (), type );
         builder.attribute ( "message", message );
     }
 

@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.openscada.ae.Event;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 
 /**
@@ -18,6 +16,57 @@ import org.openscada.core.Variant;
  */
 public class MutableEvent
 {
+    private static final int DEFAULT_PRIORITY = 50;
+
+    public enum Fields
+    {
+        MONITOR_TYPE ( "monitorType", String.class ),
+        EVENT_TYPE ( "eventType", String.class ),
+        VALUE ( "value", Variant.class ),
+        MESSAGE ( "message", String.class ),
+        MESSAGE_CODE ( "messageSource", String.class ),
+        PRIORITY ( "priority", Integer.class ),
+        SOURCE ( "source", String.class ),
+        ACTOR_NAME ( "actorName", String.class ),
+        ACTOR_TYPE ( "actorType", String.class );
+
+        private final Class<? extends Object> clazz;
+
+        private final String name;
+
+        Fields ( final String name, final Class<? extends Object> clazz )
+        {
+            this.name = name;
+            this.clazz = clazz;
+        }
+
+        public Class<? extends Object> getType ()
+        {
+            return this.clazz;
+        }
+
+        public String getName ()
+        {
+            return this.name;
+        }
+
+        public boolean contains ( final String name )
+        {
+            return byField ( name ) == null ? false : true;
+        }
+
+        public Fields byField ( final String name )
+        {
+            for ( final Fields field : values () )
+            {
+                if ( field.getName ().equals ( name ) )
+                {
+                    return field;
+                }
+            }
+            return null;
+        }
+    }
 
     private UUID id;
 
@@ -27,11 +76,98 @@ public class MutableEvent
 
     // often used fields
 
-    private String type = "";
+    private String monitorType = "";
+
+    private String eventType = "";
+
+    private Variant value = new Variant ();
+
+    private String message = "";
+
+    private String messageCode = "";
+
+    private Integer priority = 50;
 
     private String source = "";
 
-    private Integer priority = 5;
+    private String actorName = "";
+
+    private String actorType = "";
+
+    public String getMonitorType ()
+    {
+        return monitorType;
+    }
+
+    public void setMonitorType ( String monitorType )
+    {
+        this.monitorType = monitorType;
+    }
+
+    public String getEventType ()
+    {
+        return eventType;
+    }
+
+    public void setEventType ( String eventType )
+    {
+        this.eventType = eventType;
+    }
+
+    public Variant getValue ()
+    {
+        return value;
+    }
+
+    public void setValue ( Variant value )
+    {
+        this.value = value;
+    }
+
+    public String getMessage ()
+    {
+        return message;
+    }
+
+    public void setMessage ( String message )
+    {
+        this.message = message;
+    }
+
+    public String getMessageCode ()
+    {
+        return messageCode;
+    }
+
+    public void setMessageCode ( String messageCode )
+    {
+        this.messageCode = messageCode;
+    }
+
+    public String getActorName ()
+    {
+        return actorName;
+    }
+
+    public void setActorName ( String actorName )
+    {
+        this.actorName = actorName;
+    }
+
+    public String getActorType ()
+    {
+        return actorType;
+    }
+
+    public void setActorType ( String actorType )
+    {
+        this.actorType = actorType;
+    }
+
+    public void setAttributes ( Map<String, Variant> attributes )
+    {
+        this.attributes = attributes;
+    }
 
     // all other fields
 
@@ -69,12 +205,12 @@ public class MutableEvent
 
     public String getType ()
     {
-        return type;
+        return monitorType;
     }
 
     public void setType ( String type )
     {
-        this.type = type;
+        this.monitorType = type;
     }
 
     public String getSource ()
@@ -106,9 +242,15 @@ public class MutableEvent
     {
         Map<String, Variant> attr = new HashMap<String, Variant> ( m.getAttributes () );
         // often used fields
-        attr.put ( Event.Fields.SOURCE.getName (), new Variant ( m.source ) );
-        attr.put ( Event.Fields.TYPE.getName (), new Variant ( m.type ) );
-        attr.put ( Event.Fields.PRIORITY.getName (), new Variant ( m.priority ) );
+        attr.put ( "monitorType", new Variant ( m.monitorType ) );
+        attr.put ( "eventType", new Variant ( m.eventType ) );
+        attr.put ( "value", m.value );
+        attr.put ( "message", new Variant ( m.message ) );
+        attr.put ( "messageCode", new Variant ( m.messageCode ) );
+        attr.put ( "priority", new Variant ( m.priority ) );
+        attr.put ( "source", new Variant ( m.source ) );
+        attr.put ( "actorName", new Variant ( m.actorName ) );
+        attr.put ( "actorType", new Variant ( m.actorType ) );
         return Event.create ().id ( m.id ).sourceTimestamp ( m.sourceTimestamp ).entryTimestamp ( m.entryTimestamp ).attributes ( attr ).build ();
     }
 
@@ -122,37 +264,23 @@ public class MutableEvent
         // often used fields
         Map<String, Variant> attr = new HashMap<String, Variant> ( e.getAttributes () );
         Variant v;
-        v = attr.remove ( Event.Fields.SOURCE.getName () );
-        try
-        {
-            m.setSource ( v == null ? null : v.asString () );
-        }
-        catch ( NullValueException ex )
-        {
-            m.setSource ( null );
-        }
-        v = attr.remove ( Event.Fields.TYPE.getName () );
-        try
-        {
-            m.setType ( v == null ? null : v.asString () );
-        }
-        catch ( NullValueException ex )
-        {
-            m.setType ( null );
-        }
-        v = attr.remove ( Event.Fields.PRIORITY.getName () );
-        try
-        {
-            m.setPriority ( v == null ? null : v.asInteger () );
-        }
-        catch ( NullValueException ex )
-        {
-            m.setPriority ( null );
-        }
-        catch ( NotConvertableException ex )
-        {
-            m.setPriority ( null );
-        }
+        v = attr.remove ( Fields.MONITOR_TYPE.getName () );
+        m.setMonitorType ( v == null ? "" : v.asString ( "" ) );
+        v = attr.remove ( Fields.EVENT_TYPE.getName () );
+        m.setEventType ( v == null ? "" : v.asString ( "" ) );
+        m.setValue ( attr.remove ( Fields.VALUE.getName () ) );
+        v = attr.remove ( Fields.MESSAGE.getName () );
+        m.setMessage ( v == null ? "" : v.asString ( "" ) );
+        v = attr.remove ( Fields.MESSAGE_CODE.getName () );
+        m.setMessageCode ( v == null ? "" : v.asString ( "" ) );
+        v = attr.remove ( Fields.PRIORITY.getName () );
+        m.setPriority ( v == null ? DEFAULT_PRIORITY : v.asInteger ( DEFAULT_PRIORITY ) );
+        v = attr.remove ( Fields.SOURCE.getName () );
+        m.setSource ( v == null ? "" : v.asString ( "" ) );
+        v = attr.remove ( Fields.ACTOR_NAME.getName () );
+        m.setActorName ( v == null ? "" : v.asString ( "" ) );
+        v = attr.remove ( Fields.ACTOR_TYPE.getName () );
+        m.setActorType ( v == null ? "" : v.asString ( "" ) );
         // all other
         m.getAttributes ().putAll ( attr );
         return m;

@@ -93,9 +93,21 @@ public class Event implements Cloneable, Comparable<Event>
 
     public enum Fields
     {
-        TYPE ( "type", String.class ),
+        MONITOR_TYPE ( "monitorType", String.class ),
+        EVENT_TYPE ( "eventType", String.class ),
+        VALUE ( "value", Variant.class ),
+        MESSAGE ( "message", String.class ),
+        MESSAGE_CODE ( "messageSource", String.class ),
+        PRIORITY ( "priority", Integer.class ),
         SOURCE ( "source", String.class ),
-        PRIORITY ( "priority", Integer.class );
+        ACTOR_NAME ( "actorName", String.class ),
+        ACTOR_TYPE ( "actorType", String.class ),
+        HIVE ( "hive", String.class ),
+        ITEM ( "item", String.class ),
+        COMPONENT ( "component", String.class ),
+        SYSTEM ( "system", String.class ),
+        LOCATION ( "location", String.class ),
+        COMMENT ( "comment", String.class );
 
         private final Class<? extends Object> clazz;
 
