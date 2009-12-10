@@ -172,7 +172,16 @@ public class DaveDevice implements SingleSessionIoHandler
 
             public void operationComplete ( final IoFuture future )
             {
-                setSession ( future.getSession () );
+                try
+                {
+                    // set new session
+                    setSession ( future.getSession () );
+                }
+                catch ( final Exception e )
+                {
+                    // handle case of re-connect failure
+                    disconnected ();
+                }
             }
         } );
     }
