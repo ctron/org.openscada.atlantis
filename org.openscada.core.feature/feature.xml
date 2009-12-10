@@ -19,6 +19,7 @@
 
    <requires>
       <import feature="org.openscada.external" version="0.14.0.qualifier"/>
+      <import plugin="org.eclipse.osgi"/>
    </requires>
 
    <plugin
@@ -72,6 +73,20 @@
 
    <plugin
          id="org.openscada.core.server.net"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.core.connection.provider"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.core.server.exporter"
          download-size="0"
          install-size="0"
          version="0.0.0"
