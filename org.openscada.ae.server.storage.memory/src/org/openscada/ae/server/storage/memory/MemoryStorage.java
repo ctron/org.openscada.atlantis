@@ -1,8 +1,10 @@
 package org.openscada.ae.server.storage.memory;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.UUID;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.server.storage.BaseStorage;
@@ -13,7 +15,7 @@ import org.openscada.ae.server.storage.memory.internal.EventMatcher.MatchMode;
 public class MemoryStorage extends BaseStorage
 {
 
-    private List<Event> events = new CopyOnWriteArrayList<Event> ();
+    private SortedSet<Event> events = new TreeSet<Event> ();
 
     private final MatchMode matchMode;
 
@@ -35,8 +37,27 @@ public class MemoryStorage extends BaseStorage
         return storedEvent;
     }
 
-    public List<Event> getEvents ()
+    public Set<Event> getEvents ()
     {
-        return Collections.unmodifiableList ( events );
+        return Collections.unmodifiableSet ( events );
+    }
+
+    public Event update ( UUID id, String comment, StoreListener listener ) throws Exception
+    {
+        Event event = null;
+        for ( Event found : events )
+        {
+            if (found.getId ().equals ( event )) {
+                event = found;
+                break;
+            }
+        }
+        if (event == null) {
+            return null;
+        }
+        events.remove ( event );
+        final Event updatedEvent = Event.create ().event ( event ).attribute ( Event.Fields.COMMENT, comment ).build ();
+        events.add ( updatedEvent );
+        return updatedEvent;
     }
 }

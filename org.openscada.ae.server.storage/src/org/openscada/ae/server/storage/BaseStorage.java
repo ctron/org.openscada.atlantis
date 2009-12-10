@@ -16,4 +16,9 @@ public abstract class BaseStorage implements Storage
     {
         return Event.create ().event ( event ).id ( UUID.randomUUID () ).entryTimestamp ( new GregorianCalendar ().getTime () ).build ();
     }
+
+    public Event update ( final UUID id, final String comment ) throws Exception
+    {
+        return update ( id, comment, null );
+    }
 }

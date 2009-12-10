@@ -1,6 +1,7 @@
 package org.openscada.ae.server.storage.jdbc;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,11 +9,13 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.openscada.ae.Event;
+import org.openscada.ae.Event.Fields;
 import org.openscada.ae.server.storage.BaseStorage;
 import org.openscada.ae.server.storage.Query;
 import org.openscada.ae.server.storage.StoreListener;
 import org.openscada.ae.server.storage.jdbc.internal.JdbcStorageDAO;
 import org.openscada.ae.server.storage.jdbc.internal.MutableEvent;
+import org.openscada.core.Variant;
 import org.openscada.utils.filter.FilterParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,5 +141,40 @@ public class JdbcStorage extends BaseStorage
             }
         } );
         return eventToStore;
+    }
+
+    private Event updateInternal ( final UUID id, final Variant comment, final StoreListener listener ) throws Exception
+    {
+        final MutableEvent eventToUpdate = getJdbcStorageDAO ().loadEvent ( id );
+        eventToUpdate.getAttributes ().put ( Fields.COMMENT.getName (), comment );
+        final Event event = MutableEvent.toEvent ( eventToUpdate );
+        logger.debug ( "Update Event comment in database: " + event );
+        storageQueueProcessor.submit ( new Callable<Boolean> () {
+            public Boolean call ()
+            {
+                try
+                {
+                    jdbcStorageDAO.get ().storeEvent ( eventToUpdate );
+                    if ( listener != null )
+                    {
+                        listener.notify ( event );
+                    }
+                }
+                catch ( Exception e )
+                {
+                    logger.error ( "Exception occured ({}) while updating comment of Event in database: {}", e, event );
+                    logger.info ( "Exception was", e );
+                    return false;
+                }
+                logger.debug ( "Event updated in database: {}",  event );
+                return true;
+            }
+        } );
+        return event;
+    }
+
+    public Event update ( final UUID id, final String comment, final StoreListener listener ) throws Exception
+    {
+        return updateInternal ( id, new Variant (comment), listener );
     }
 }

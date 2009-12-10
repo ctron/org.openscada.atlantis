@@ -59,7 +59,7 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
     public void storeEvent ( MutableEvent event )
     {
         logger.debug ( "storeEvent: {}", MutableEvent.toEvent ( event ) );
-        this.save ( event );
+        this.saveOrUpdate ( event );
         this.flush ();
     }
 }

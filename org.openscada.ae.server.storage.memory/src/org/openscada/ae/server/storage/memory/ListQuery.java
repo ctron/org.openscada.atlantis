@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.server.storage.Query;
@@ -24,7 +25,7 @@ public class ListQuery implements Query {
 
 	private Event bufferedEvent = null;
 
-	public ListQuery(List<Event> events, String filter, MatchMode matchMode)
+	public ListQuery(SortedSet<Event> events, String filter, MatchMode matchMode)
 			throws FilterParseException {
 		this.filter = new FilterParser(filter).getFilter();
 		FilterUtils.toVariant(this.filter);

@@ -21,7 +21,7 @@ public class FilterTest {
 		Assert.assertEquals(1, m.getEvents().size());
 		m.store(Event.create().build());
 		Assert.assertEquals(2, m.getEvents().size());
-		Event event = m.getEvents().get(1);
+		Event event = new ArrayList<Event> (m.getEvents()).get ( 0 );
 		Assert.assertNotNull(event.getId());
 		Assert.assertNotNull(event.getEntryTimestamp());
 		Query q = m.query("");

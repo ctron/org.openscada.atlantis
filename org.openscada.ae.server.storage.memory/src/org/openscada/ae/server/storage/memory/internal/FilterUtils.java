@@ -27,8 +27,8 @@ public class FilterUtils {
 				new DateEditor());
 		propertyEditorRegistry.registerCustomEditor(UUID.class,
 				new UUIDEditor());
-		propertyEditorRegistry.registerCustomEditor(Variant.class,
-				new VariantEditor());
+        propertyEditorRegistry.registerCustomEditor(Variant.class,
+                new VariantEditor());
 	}
 	/**
 	 * converts string values in filter to actual Variant Values
