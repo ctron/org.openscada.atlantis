@@ -150,7 +150,7 @@ public class AbstractMonitorService implements MonitorService
 
         injectEventAttributes ( builder );
 
-        this.eventProcessor.publishEvent ( event );
+        this.eventProcessor.publishEvent ( builder.build () );
     }
 
     protected void injectEventAttributes ( final EventBuilder builder )

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.openscada.ae.ConditionStatus;
 import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractMonitorService;
@@ -59,9 +60,9 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
 
     private boolean unsafe;
 
-    private final String defaultEventType;
+    private final String defaultMonitorType;
 
-    private String eventType;
+    private String monitorType;
 
     private String component;
 
@@ -69,12 +70,12 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
 
     private String messageCode;
 
-    public AbstractDataItemMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultEventType )
+    public AbstractDataItemMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
     {
         super ( eventProcessor, id );
         this.context = context;
         this.prefix = prefix;
-        this.defaultEventType = defaultEventType;
+        this.defaultMonitorType = defaultMonitorType;
     }
 
     public void dispose ()
@@ -120,7 +121,7 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
         disconnect ();
         this.masterId = properties.get ( MasterItem.MASTER_ID );
         this.handlerPriority = getInteger ( properties, "handler.priority", getDefaultPriority () );
-        this.eventType = getString ( properties, "eventType", this.defaultEventType );
+        this.monitorType = getString ( properties, "monitorType", this.defaultMonitorType );
         this.component = getString ( properties, "component", null );
         this.message = getString ( properties, "message", null );
         this.messageCode = getString ( properties, "messageCode", null );
@@ -407,18 +408,18 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
     protected void injectEventAttributes ( final EventBuilder builder )
     {
         super.injectEventAttributes ( builder );
-        builder.attribute ( "eventType", this.eventType );
+        builder.attribute ( Event.Fields.MONITOR_TYPE, this.monitorType );
         if ( this.component != null )
         {
-            builder.attribute ( "component", this.component );
+            builder.attribute ( Event.Fields.COMPONENT, this.component );
         }
         if ( this.message != null )
         {
-            builder.attribute ( "message", this.message );
+            builder.attribute ( Event.Fields.MESSAGE, this.message );
         }
         if ( this.messageCode != null )
         {
-            builder.attribute ( "messageCode", this.messageCode );
+            builder.attribute ( Event.Fields.MESSAGE_CODE, this.messageCode );
         }
     }
 

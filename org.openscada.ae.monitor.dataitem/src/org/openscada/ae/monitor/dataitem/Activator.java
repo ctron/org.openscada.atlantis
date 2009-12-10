@@ -68,10 +68,10 @@ public class Activator implements BundleActivator
         Activator.instance = this;
     }
 
-    private void makeLevelFactory ( final BundleContext context, final String type, final String eventType, final boolean lowerOk, final int priority, final boolean cap )
+    private void makeLevelFactory ( final BundleContext context, final String type, final String defaultMonitorType, final boolean lowerOk, final int priority, final boolean cap )
     {
         Dictionary<Object, Object> properties;
-        final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.eventProcessor, type, eventType, lowerOk, priority, cap );
+        final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.eventProcessor, type, defaultMonitorType, lowerOk, priority, cap );
         properties = new Hashtable<Object, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, LevelMonitorFactoryImpl.FACTORY_PREFIX + "." + type );
         properties.put ( Constants.SERVICE_DESCRIPTION, type + " Alarms" );

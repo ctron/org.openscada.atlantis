@@ -18,21 +18,21 @@ public class LevelMonitorFactoryImpl extends AbstractMonitorFactory
 
     private final boolean cap;
 
-    private final String eventType;
+    private final String defaultMonitorType;
 
-    public LevelMonitorFactoryImpl ( final BundleContext context, final EventProcessor eventProcessor, final String type, final String eventType, final boolean lowerOk, final int priority, final boolean cap )
+    public LevelMonitorFactoryImpl ( final BundleContext context, final EventProcessor eventProcessor, final String type, final String defaultMonitorType, final boolean lowerOk, final int priority, final boolean cap )
     {
         super ( context, eventProcessor );
         this.type = type;
         this.lowerOk = lowerOk;
         this.priority = priority;
         this.cap = cap;
-        this.eventType = eventType;
+        this.defaultMonitorType = defaultMonitorType;
     }
 
     @Override
     protected DataItemMonitor createInstance ( final String configurationId, final EventProcessor eventProcessor )
     {
-        return new LevelAlarmMonitor ( this.context, eventProcessor, configurationId, FACTORY_PREFIX + "." + this.type, this.eventType, this.lowerOk, this.priority, this.cap );
+        return new LevelAlarmMonitor ( this.context, eventProcessor, configurationId, FACTORY_PREFIX + "." + this.type, this.defaultMonitorType, this.lowerOk, this.priority, this.cap );
     }
 }
