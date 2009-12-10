@@ -79,9 +79,21 @@ public class Event implements Cloneable, Comparable<Event>
             return this;
         }
 
+        public EventBuilder attribute ( final Fields key, final Variant value )
+        {
+            this.event.attributes.put ( key.getName (), value );
+            return this;
+        }
+
         public EventBuilder attribute ( final String key, final Object value )
         {
             this.event.attributes.put ( key, new Variant ( value ) );
+            return this;
+        }
+
+        public EventBuilder attribute ( final Fields key, final Object value )
+        {
+            this.event.attributes.put ( key.getName (), new Variant ( value ) );
             return this;
         }
 
