@@ -275,4 +275,18 @@ public class Event implements Cloneable, Comparable<Event>
     {
         return comparator.compare ( this, o );
     }
+    
+    public Variant getField(Fields field) {
+        if (field == null) {
+            return null;
+        }
+        return attributes.get ( field.getName () );
+    }
+    
+    public void setField(Fields field, Variant value) {
+        if (field == null) {
+            return;
+        }
+        attributes.put ( field.getName (), value );
+    }
 }
