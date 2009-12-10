@@ -44,10 +44,10 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
         {
             final EventBuilder builder = Event.create ();
             builder.sourceTimestamp ( new Date () );
-            builder.attribute ( Event.Fields.SOURCE.getName (), getMasterId () );
-            builder.attribute ( Event.Fields.EVENT_TYPE.getName (), "WRITE" );
-            builder.attribute ( "value", request.getValue () );
-            builder.attribute ( "message", "Write main value" );
+            builder.attribute ( Event.Fields.SOURCE, getMasterId () );
+            builder.attribute ( Event.Fields.EVENT_TYPE, "WRITE" );
+            builder.attribute ( Event.Fields.VALUE, request.getValue () );
+            builder.attribute ( Event.Fields.MESSAGE, "Write main value" );
             this.eventProcessor.publishEvent ( builder.build () );
         }
         return null;
