@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.openscada.ae.Event;
@@ -36,6 +37,8 @@ public class JdbcStorage extends BaseStorage
     private ExecutorService storageQueueProcessor;
 
     private long shutDownTimeout = 30000;
+    
+    private AtomicInteger queueSize = new AtomicInteger (0);
 
     public JdbcStorageDAO getJdbcStorageDAO ()
     {
@@ -117,6 +120,7 @@ public class JdbcStorage extends BaseStorage
      */
     public Event store ( final Event event, final StoreListener listener )
     {
+        queueSize.incrementAndGet ();
         final Event eventToStore = createEvent ( event );
         logger.debug ( "Save Event to database: " + event );
         storageQueueProcessor.submit ( new Callable<Boolean> () {
@@ -125,6 +129,7 @@ public class JdbcStorage extends BaseStorage
                 try
                 {
                     jdbcStorageDAO.get ().storeEvent ( MutableEvent.fromEvent ( eventToStore ) );
+                    queueSize.decrementAndGet ();
                     if ( listener != null )
                     {
                         listener.notify ( eventToStore );
@@ -136,7 +141,7 @@ public class JdbcStorage extends BaseStorage
                     logger.info ( "Exception was", e );
                     return false;
                 }
-                logger.debug ( "Event saved to database: {}", event );
+                logger.debug ( "Event saved to database - remaining queue: {}, event: {}", queueSize.get (), event );
                 return true;
             }
         } );
