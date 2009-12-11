@@ -209,6 +209,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource.proxy"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource.item"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.datasource.script"/>
   	
   	<openscada.builder.copyFeature id="org.openscada.atlantis" />
   	<openscada.builder.copyFeature id="org.openscada.atlantis.sdk" />
