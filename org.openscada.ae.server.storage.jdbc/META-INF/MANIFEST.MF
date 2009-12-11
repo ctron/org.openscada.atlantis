@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Spring
 Bundle-SymbolicName: org.openscada.ae.server.storage.jdbc
-Bundle-Version: 0.15.0
+Bundle-Version: 0.15.0.qualifier
 Import-Package: antlr,
  antlr.ASdebug,
  antlr.actions.cpp,
