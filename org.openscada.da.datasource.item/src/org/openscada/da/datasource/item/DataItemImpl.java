@@ -157,12 +157,19 @@ public class DataItemImpl extends DataItemBase implements DataSourceListener
 
     public synchronized void stateChanged ( final DataItemValue value )
     {
-        final Map<String, Variant> target = new HashMap<String, Variant> ( this.currentValue.getAttributes () );
-        final Map<String, Variant> diff = new HashMap<String, Variant> ();
+        if ( value == null )
+        {
+            notifyData ( Variant.NULL, new HashMap<String, Variant> (), true );
+        }
+        else
+        {
+            final Map<String, Variant> target = new HashMap<String, Variant> ( this.currentValue.getAttributes () );
+            final Map<String, Variant> diff = new HashMap<String, Variant> ();
 
-        AttributesHelper.set ( target, value.getAttributes (), diff );
+            AttributesHelper.set ( target, value.getAttributes (), diff );
 
-        this.currentValue = value;
-        notifyData ( value.getValue (), diff );
+            this.currentValue = value;
+            notifyData ( value.getValue (), diff );
+        }
     }
 }
