@@ -55,18 +55,25 @@ public class DataSourceHandler implements DataSourceListener
 
     protected void setDataSource ( final DataSource service )
     {
+        // disconnect
+        disconnectService ();
+
+        // connect
+        if ( service != null )
+        {
+            this.service = service;
+            this.service.addListener ( this );
+        }
+    }
+
+    private void disconnectService ()
+    {
         if ( this.service != null )
         {
             this.service.removeListener ( this );
+            this.service = null;
             this.value = null;
             fireValueChange ();
-        }
-
-        this.service = service;
-
-        if ( this.service != null )
-        {
-            this.service.addListener ( this );
         }
     }
 
@@ -88,6 +95,7 @@ public class DataSourceHandler implements DataSourceListener
         {
             this.tracker.close ();
         }
+        disconnectService ();
     }
 
     public DataItemValue getValue ()
