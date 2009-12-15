@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,15 +19,19 @@
 
 package org.openscada.core;
 
-public class InvalidSessionException extends Exception {
+import org.openscada.utils.statuscodes.CodedException;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6189065814886204302L;
+/**
+ * An exception indicating an invalid (e.g. closed) session
+ * @author Jens Reimann
+ *
+ */
+public class InvalidSessionException extends CodedException
+{
+    private static final long serialVersionUID = 6189065814886204302L;
 
     public InvalidSessionException ()
     {
-        super("Invalid session");
+        super ( StatusCodes.INVALID_SESSION, "Invalid session" );
     }
 }
