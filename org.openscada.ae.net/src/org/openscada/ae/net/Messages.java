@@ -27,4 +27,14 @@ public class Messages
 
     public static final int CC_BROWSER_UPDATE = CC_AE_BASE + 0x0021;
 
+    public static final int CC_QUERY_CREATE = CC_AE_BASE + 0x0031;
+
+    public static final int CC_QUERY_CLOSE = CC_AE_BASE + 0x0032;
+
+    public static final int CC_QUERY_STATUS_CHANGED = CC_AE_BASE + 0x0033;
+
+    public static final int CC_QUERY_DATA = CC_AE_BASE + 0x0034;
+
+    public static final int CC_QUERY_LOAD_MORE = CC_AE_BASE + 0x0035;
+
 }
