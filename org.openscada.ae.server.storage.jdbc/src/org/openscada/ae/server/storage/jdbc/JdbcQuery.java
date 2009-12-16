@@ -2,7 +2,6 @@ package org.openscada.ae.server.storage.jdbc;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.openscada.ae.Event;
@@ -25,21 +24,26 @@ import org.openscada.utils.filter.Filter;
  */
 public class JdbcQuery implements Query
 {
-    final JdbcStorageDAO jdbcStorageDAO;
+    private final JdbcStorageDAO jdbcStorageDAO;
 
-    final Filter filter;
+    private final Filter filter;
 
-    Iterator<MutableEvent> iterator = null;
+    private int first = 0;
 
+    private boolean hasMore = true;
+
+    private HqlConverter.HqlResult hqlResult;
+    
     /**
      * @param jdbcStorageDAO
      * @param filter
      */
-    public JdbcQuery ( JdbcStorageDAO jdbcStorageDAO, Filter filter )
+    public JdbcQuery ( JdbcStorageDAO jdbcStorageDAO, Filter filter ) throws Exception
     {
         this.jdbcStorageDAO = jdbcStorageDAO;
         this.filter = filter;
         FilterUtils.toVariant ( this.filter );
+        hqlResult = HqlConverter.toHql ( filter );
     }
 
     /* (non-Javadoc)
@@ -47,27 +51,13 @@ public class JdbcQuery implements Query
      */
     public Collection<Event> getNext ( long count ) throws Exception
     {
-        if ( iterator == null )
-        {
-            HqlConverter.HqlResult hqlResult = HqlConverter.toHql ( filter );
-            iterator = jdbcStorageDAO.queryEvent ( hqlResult.getHql (), hqlResult.getParameters () ).iterator ();
-        }
         List<Event> result = new ArrayList<Event> ();
-        int i = 0;
-        for ( ;; )
+        for ( MutableEvent m : jdbcStorageDAO.queryEvent ( hqlResult.getHql (), first, count, hqlResult.getParameters () ) )
         {
-            if ( i == count )
-            {
-                break;
-            }
-            if ( !iterator.hasNext () )
-            {
-                break;
-            }
-            MutableEvent m = iterator.next ();
             result.add ( MutableEvent.toEvent ( m ) );
-            i++;
         }
+        first += result.size ();
+        hasMore = count >= result.size ();
         return result;
     }
 
@@ -76,7 +66,7 @@ public class JdbcQuery implements Query
      */
     public boolean hasMore ()
     {
-        return iterator.hasNext ();
+        return hasMore;
     }
 
     /* (non-Javadoc)
@@ -84,6 +74,5 @@ public class JdbcQuery implements Query
      */
     public void dispose ()
     {
-        iterator = null;
     }
 }

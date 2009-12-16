@@ -20,7 +20,7 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
 {
     private static final Logger logger = LoggerFactory.getLogger ( JdbcStorageDAOImpl.class );
 
-    public MutableEvent loadEvent ( UUID id )
+    public MutableEvent loadEvent ( final UUID id )
     {
         logger.debug ( "loadEvent: {}", id );
         return (MutableEvent)this.get ( MutableEvent.class, id );
@@ -56,7 +56,39 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
         } );
     }
 
-    public void storeEvent ( MutableEvent event )
+
+    public List<MutableEvent> queryEvent ( final String hql, final int first, final int max, final Object... parameters )
+    {
+        logger.debug ( "queryEvent: {} from {} with {} elements ({})", new Object[]{hql, first, max, parameters} );
+        return (List<MutableEvent>)executeWithNativeSession ( new HibernateCallback () {
+            public Object doInHibernate ( Session paramSession ) throws HibernateException, SQLException
+            {
+                Query q = getSession ().createQuery ( hql );
+                q.setFirstResult ( first );
+                q.setMaxResults ( max );
+                int i = 0;
+                for ( Object object : parameters )
+                {
+                    if ( object instanceof UUID )
+                    {
+                        q.setParameter ( i, object, new CustomType ( UUIDHibernateType.class, new Properties () ) );
+                    }
+                    else if ( object instanceof Variant )
+                    {
+                        q.setParameter ( i, object, new CompositeCustomType ( VariantHibernateType.class, new Properties () ) );
+                    }
+                    else
+                    {
+                        q.setParameter ( i, object );
+                    }
+                    i += 1;
+                }
+                return q.list ();
+            }
+        } );
+    }
+    
+    public void storeEvent ( final MutableEvent event )
     {
         logger.debug ( "storeEvent: {}", MutableEvent.toEvent ( event ) );
         this.saveOrUpdate ( event );
