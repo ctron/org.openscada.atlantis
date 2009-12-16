@@ -76,18 +76,6 @@ public class FilterUtils
                     pe.setAsText ( (String)filterAssertion.getValue () );
                     filterAssertion.setValue ( pe.getValue () );
                 }
-                else if ( "type".equals ( filterAssertion.getAttribute () ) || "source".equals ( filterAssertion.getAttribute () ) )
-                {
-                    PropertyEditor pe = propertyEditorRegistry.findCustomEditor ( String.class );
-                    pe.setAsText ( (String)filterAssertion.getValue () );
-                    filterAssertion.setValue ( pe.getValue () );
-                }
-                else if ( "priority".equals ( filterAssertion.getAttribute () ) )
-                {
-                    PropertyEditor pe = propertyEditorRegistry.findCustomEditor ( Integer.class );
-                    pe.setAsText ( (String)filterAssertion.getValue () );
-                    filterAssertion.setValue ( pe.getValue () );
-                }
                 else
                 {
                     VariantEditor ve = new VariantEditor ();

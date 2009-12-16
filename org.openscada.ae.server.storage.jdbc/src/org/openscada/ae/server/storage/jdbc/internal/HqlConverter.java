@@ -1,11 +1,13 @@
 package org.openscada.ae.server.storage.jdbc.internal;
 
 import java.beans.PropertyDescriptor;
+import java.beans.PropertyEditor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.openscada.ae.event.FilterUtils;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
@@ -158,7 +160,13 @@ public class HqlConverter
             {
                 if ( pd.getName ().equals ( field ) && !"presence".equals ( op ) )
                 {
-                    term.parameters = new Object[] { value };
+                    if ((value instanceof Variant) && !(pd.getPropertyType () == Variant.class)) {
+                        PropertyEditor pe = FilterUtils.propertyEditorRegistry.findCustomEditor ( pd.getPropertyType() );
+                        pe.setAsText ( new Variant(value).asString ("") );
+                        term.parameters = new Object[] { pe.getValue () };
+                    } else {
+                        term.parameters = new Object[] { value };
+                    }
                 }
             }
             if ( "like".equals ( op ) )
