@@ -51,8 +51,9 @@ public class JdbcQuery implements Query
      */
     public Collection<Event> getNext ( long count ) throws Exception
     {
-        List<Event> result = new ArrayList<Event> ();
-        for ( MutableEvent m : jdbcStorageDAO.queryEvent ( hqlResult.getHql (), first, count, hqlResult.getParameters () ) )
+        final List<MutableEvent> queryResult = jdbcStorageDAO.queryEvent ( hqlResult.getHql (), (int) first, (int) count, hqlResult.getParameters () );
+        final List<Event> result = new ArrayList<Event> ();
+        for ( MutableEvent m : queryResult )
         {
             result.add ( MutableEvent.toEvent ( m ) );
         }
