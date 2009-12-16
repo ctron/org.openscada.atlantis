@@ -57,7 +57,7 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
     }
 
 
-    public List<MutableEvent> queryEvent ( final String hql, final int first, final int max, final Object... parameters )
+    public List<MutableEvent> queryEventSlice ( final String hql, final int first, final int max, final Object... parameters )
     {
         logger.debug ( "queryEvent: {} from {} with {} elements ({})", new Object[]{hql, first, max, parameters} );
         return (List<MutableEvent>)executeWithNativeSession ( new HibernateCallback () {
