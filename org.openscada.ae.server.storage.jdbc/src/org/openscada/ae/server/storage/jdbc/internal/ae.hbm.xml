@@ -14,10 +14,10 @@
 			<generator class="assigned" />
 		</id>
 		<property name="sourceTimestamp">
-			<column name="SOURCE_TIMESTAMP" not-null="true" />
+			<column name="SOURCE_TIMESTAMP" not-null="true" index="idx_org_openscada_ae_server_storage_1" />
 		</property>
 		<property name="entryTimestamp">
-			<column name="ENTRY_TIMESTAMP" not-null="true" />
+			<column name="ENTRY_TIMESTAMP" not-null="true" index="idx_org_openscada_ae_server_storage_2" />
 		</property>
 
 		<!-- fields which are saved in main table -->
