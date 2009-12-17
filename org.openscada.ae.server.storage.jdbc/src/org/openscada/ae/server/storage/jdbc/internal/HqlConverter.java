@@ -237,7 +237,7 @@ public class HqlConverter
                     }
                     else
                     {
-                        term.parameters = new Object[] { new Variant ( value ).asString ( "" ), new Variant ( value ).asLong ( 0l ), new Variant ( value ).asDouble ( 0.0d ) };
+                        term.parameters = new Object[] { new Variant ( value ).asString ( null ), new Variant ( value ).asLong ( null ), new Variant ( value ).asDouble ( null ) };
                     }
                     term.hql += "(M." + field + ".string " + op + " ?) OR (M." + field + ".integer " + op + " ?) OR (M." + field + ".double " + op + " ?))";
                 }
