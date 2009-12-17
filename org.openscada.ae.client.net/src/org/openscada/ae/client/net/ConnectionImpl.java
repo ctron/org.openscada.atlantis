@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
@@ -34,7 +35,9 @@ import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.ConditionStatusInformation;
 import org.openscada.ae.Event;
+import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
+import org.openscada.ae.QueryState;
 import org.openscada.ae.client.ConditionListener;
 import org.openscada.ae.client.EventListener;
 import org.openscada.ae.net.BrowserMessageHelper;
@@ -45,6 +48,7 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.net.SessionConnectionBase;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.net.base.MessageListener;
+import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
@@ -75,6 +79,10 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     private final Set<BrowserListener> browserListeners = new CopyOnWriteArraySet<BrowserListener> ();
 
     private final Map<String, BrowserEntry> browserCache = new HashMap<String, BrowserEntry> ();
+
+    private final Map<Long, QueryImpl> queries = new HashMap<Long, QueryImpl> ();
+
+    private final Random random = new Random ();
 
     @Override
     public String getRequiredVersion ()
@@ -144,6 +152,130 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 ConnectionImpl.this.handleBrowserUpdate ( message );
             }
         } );
+
+        this.messenger.setHandler ( Messages.CC_QUERY_STATUS_CHANGED, new MessageListener () {
+
+            public void messageReceived ( final Message message ) throws Exception
+            {
+                ConnectionImpl.this.handleQueryStateChange ( message );
+            }
+        } );
+
+        this.messenger.setHandler ( Messages.CC_QUERY_DATA, new MessageListener () {
+
+            public void messageReceived ( final Message message ) throws Exception
+            {
+                ConnectionImpl.this.handleQueryData ( message );
+            }
+        } );
+    }
+
+    protected void handleQueryData ( final Message message )
+    {
+        final Long queryId = queryIdFromMessage ( message );
+        if ( queryId == null )
+        {
+            logger.warn ( "Query update without query id" );
+            return;
+        }
+
+        synchronized ( this )
+        {
+            final QueryImpl query = this.queries.get ( queryId );
+            if ( query == null )
+            {
+                logger.warn ( "Unknown query {}", queryId );
+                return;
+            }
+            this.executor.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    query.handleData ( EventMessageHelper.fromValue ( message.getValues ().get ( "data" ) ) );
+                }
+            } );
+        }
+    }
+
+    protected void handleQueryStateChange ( final Message message )
+    {
+        final Long queryId = queryIdFromMessage ( message );
+        if ( queryId == null )
+        {
+            logger.warn ( "Query update without query id" );
+            return;
+        }
+
+        final QueryState state = queryStateFromMessage ( message );
+        if ( state == null )
+        {
+            logger.warn ( "Query update without query state" );
+            return;
+        }
+
+        synchronized ( this )
+        {
+            final QueryImpl query = this.queries.get ( queryId );
+            if ( query == null )
+            {
+                logger.warn ( "Unknown query {}", queryId );
+                return;
+            }
+            switch ( state )
+            {
+            case DISCONNECTED:
+                // dispose if we are disconnected
+                this.queries.remove ( queryId );
+                this.executor.execute ( new Runnable () {
+
+                    public void run ()
+                    {
+                        query.dispose ();
+                    }
+                } );
+                break;
+            default:
+                fireQueryStateChange ( query, state );
+                break;
+            }
+
+        }
+    }
+
+    /**
+     * Extract the query state from the message
+     * @param message the message
+     * @return the extracted query state or <code>null</code> if there was none
+     */
+    private QueryState queryStateFromMessage ( final Message message )
+    {
+        QueryState state = null;
+        {
+            final Value value = message.getValues ().get ( "state" );
+            if ( value instanceof StringValue )
+            {
+                state = QueryState.valueOf ( ( (StringValue)value ).getValue () );
+            }
+        }
+        return state;
+    }
+
+    /**
+     * Extract the query id from the message
+     * @param message the message
+     * @return the extracted query id or <code>null</code> if there was none
+     */
+    private Long queryIdFromMessage ( final Message message )
+    {
+        Long queryId = null;
+        {
+            final Value value = message.getValues ().get ( MESSAGE_QUERY_ID );
+            if ( value instanceof LongValue )
+            {
+                queryId = ( (LongValue)value ).getValue ();
+            }
+        }
+        return queryId;
     }
 
     protected synchronized void handleBrowserUpdate ( final Message message )
@@ -348,9 +480,45 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         return this.executor;
     }
 
-    public void createQuery ( final String queryType, final String queryData, final QueryListener listener )
+    public synchronized Query createQuery ( final String queryType, final String queryData, final QueryListener listener )
     {
-        throw new RuntimeException ( "Not implemented" );
+        if ( !isConnected () )
+        {
+            // FIXME: return disconnected query
+            return null;
+        }
+
+        // search for a new query id
+        Long l;
+        do
+        {
+            l = this.random.nextLong ();
+        } while ( this.queries.containsValue ( l ) );
+
+        logger.debug ( "Using new query id: {}" );
+
+        // create new query
+        final QueryImpl query = new QueryImpl ( this, l, listener );
+        this.queries.put ( l, query );
+
+        // fire state change
+        fireQueryStateChange ( query, QueryState.CONNECTING );
+
+        // send create request
+        sendCreateQuery ( l, queryType, queryData );
+
+        return query;
+    }
+
+    private void sendCreateQuery ( final long queryId, final String queryType, final String queryData )
+    {
+        final Message message = new Message ( Messages.CC_QUERY_CREATE );
+
+        message.getValues ().put ( MESSAGE_QUERY_ID, new LongValue ( queryId ) );
+        message.getValues ().put ( "queryType", new StringValue ( queryType ) );
+        message.getValues ().put ( "queryData", new StringValue ( queryData ) );
+
+        this.messenger.sendMessage ( message );
     }
 
     public synchronized void setConditionListener ( final String conditionQueryId, final ConditionListener listener )
@@ -528,11 +696,33 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         {
             fireEventStatusChange ( listener, SubscriptionState.DISCONNECTED );
         }
+        for ( final QueryImpl query : this.queries.values () )
+        {
+            this.executor.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    query.dispose ();
+                }
+            } );
+        }
+        this.queries.clear ();
 
         this.browserCache.clear ();
         fireBrowserListener ( null, null, true );
 
         super.sessionClosed ( session );
+    }
+
+    private void fireQueryStateChange ( final QueryImpl query, final QueryState state )
+    {
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                query.handleStateChange ( state );
+            }
+        } );
     }
 
     public synchronized void addBrowserListener ( final BrowserListener listener )
@@ -611,6 +801,47 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         {
             message.getValues ().put ( "aknTimestamp", new LongValue ( System.currentTimeMillis () ) );
         }
+        this.messenger.sendMessage ( message );
+    }
+
+    public synchronized void closeQuery ( final long queryId )
+    {
+        final QueryImpl query = this.queries.get ( queryId );
+        if ( query == null )
+        {
+            logger.warn ( "Query {} closed", queryId );
+            return;
+        }
+        sendCloseQuery ( queryId );
+    }
+
+    private void sendCloseQuery ( final long queryId )
+    {
+        final Message message = new Message ( Messages.CC_QUERY_CLOSE );
+
+        message.getValues ().put ( MESSAGE_QUERY_ID, new LongValue ( queryId ) );
+
+        this.messenger.sendMessage ( message );
+    }
+
+    public synchronized void loadMore ( final long queryId, final int count )
+    {
+        final QueryImpl query = this.queries.get ( queryId );
+        if ( query == null )
+        {
+            logger.warn ( "Query {} closed", queryId );
+            return;
+        }
+        sendLoadMoreQuery ( queryId, count );
+    }
+
+    private void sendLoadMoreQuery ( final long queryId, final int count )
+    {
+        final Message message = new Message ( Messages.CC_QUERY_LOAD_MORE );
+
+        message.getValues ().put ( MESSAGE_QUERY_ID, new LongValue ( queryId ) );
+        message.getValues ().put ( "count", new IntegerValue ( count ) );
+
         this.messenger.sendMessage ( message );
     }
 }

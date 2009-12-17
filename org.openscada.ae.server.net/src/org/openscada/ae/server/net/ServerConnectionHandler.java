@@ -20,17 +20,19 @@
 package org.openscada.ae.server.net;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.apache.mina.core.session.IoSession;
 import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.ConditionStatusInformation;
 import org.openscada.ae.Event;
+import org.openscada.ae.Query;
+import org.openscada.ae.QueryState;
 import org.openscada.ae.UnknownQueryException;
 import org.openscada.ae.net.BrowserMessageHelper;
 import org.openscada.ae.net.ConditionMessageHelper;
@@ -47,6 +49,7 @@ import org.openscada.core.net.MessageHelper;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.net.base.MessageListener;
+import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
@@ -59,6 +62,8 @@ import org.openscada.utils.concurrent.ResultHandler;
 import org.openscada.utils.concurrent.task.DefaultTaskHandler;
 import org.openscada.utils.concurrent.task.ResultFutureHandler;
 import org.openscada.utils.concurrent.task.TaskHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServerConnectionHandler extends AbstractServerConnectionHandler implements BrowserListener
 {
@@ -67,7 +72,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     public final static String VERSION = "0.1.0";
 
-    private static Logger logger = Logger.getLogger ( ServerConnectionHandler.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ServerConnectionHandler.class );
 
     private Service service = null;
 
@@ -83,6 +88,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     @SuppressWarnings ( "unused" )
     private ConditionListener conditionListener;
+
+    private final Map<Long, QueryImpl> queries = new HashMap<Long, QueryImpl> ();
 
     public ServerConnectionHandler ( final Service service, final IoSession ioSession, final ConnectionInformation connectionInformation )
     {
@@ -146,6 +153,164 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             }
         } );
 
+        this.messenger.setHandler ( Messages.CC_QUERY_CREATE, new MessageListener () {
+
+            public void messageReceived ( final Message message ) throws Exception
+            {
+                ServerConnectionHandler.this.queryCreate ( message );
+            }
+        } );
+
+        this.messenger.setHandler ( Messages.CC_QUERY_CLOSE, new MessageListener () {
+
+            public void messageReceived ( final Message message ) throws Exception
+            {
+                ServerConnectionHandler.this.queryClose ( message );
+            }
+        } );
+
+        this.messenger.setHandler ( Messages.CC_QUERY_LOAD_MORE, new MessageListener () {
+
+            public void messageReceived ( final Message message ) throws Exception
+            {
+                ServerConnectionHandler.this.queryLoadMore ( message );
+            }
+        } );
+    }
+
+    /**
+     * Extract the query id from the message
+     * @param message the message
+     * @return the extracted query id or <code>null</code> if there was none
+     */
+    private Long queryIdFromMessage ( final Message message )
+    {
+        Long queryId = null;
+        {
+            final Value value = message.getValues ().get ( MESSAGE_QUERY_ID );
+            if ( value instanceof LongValue )
+            {
+                queryId = ( (LongValue)value ).getValue ();
+            }
+        }
+        return queryId;
+    }
+
+    protected void queryCreate ( final Message message )
+    {
+        final Long queryId = queryIdFromMessage ( message );
+        if ( queryId == null )
+        {
+            logger.warn ( "Unable to create query without query id" );
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, "Unable to create query without query id" ) );
+            return;
+        }
+
+        String queryType = null;
+        {
+            final Value value = message.getValues ().get ( "queryType" );
+            if ( value instanceof StringValue )
+            {
+                queryType = ( (StringValue)value ).getValue ();
+            }
+        }
+
+        String queryData = null;
+        {
+            final Value value = message.getValues ().get ( "queryData" );
+            if ( value instanceof StringValue )
+            {
+                queryData = ( (StringValue)value ).getValue ();
+            }
+        }
+
+        if ( queryType == null || queryData == null )
+        {
+            final String msg = "Query without queryType and queryData is not allowed";
+            logger.warn ( msg );
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, msg ) );
+            return;
+        }
+
+        synchronized ( this )
+        {
+            if ( this.queries.containsKey ( queryId ) )
+            {
+                final String msg = String.format ( "A query with id {} already exisits", queryId );
+                logger.warn ( msg );
+                this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, msg ) );
+                return;
+            }
+
+            // create new
+            final QueryImpl query = new QueryImpl ( queryId, this );
+            try
+            {
+                final Query queryHandle = this.service.createQuery ( this.session, queryType, queryData, query );
+                query.setQuery ( queryHandle );
+                this.queries.put ( queryId, query );
+            }
+            catch ( final InvalidSessionException e )
+            {
+                final String msg = "Query without queryType and queryData is not allowed";
+                logger.warn ( msg );
+                this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, msg ) );
+            }
+        }
+    }
+
+    protected synchronized void queryClose ( final Message message )
+    {
+        final Long queryId = queryIdFromMessage ( message );
+        if ( queryId == null )
+        {
+            logger.warn ( "Unable to create query without query id" );
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, "Unable to create query without query id" ) );
+            return;
+        }
+
+        final QueryImpl query = this.queries.get ( queryId );
+        if ( query == null )
+        {
+            final String msg = String.format ( "No query with id {} exisits", queryId );
+            logger.warn ( msg );
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, msg ) );
+            return;
+
+        }
+
+        query.close ();
+    }
+
+    protected synchronized void queryLoadMore ( final Message message )
+    {
+        final Long queryId = queryIdFromMessage ( message );
+        if ( queryId == null )
+        {
+            logger.warn ( "Unable to create query without query id" );
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, "Unable to create query without query id" ) );
+            return;
+        }
+
+        final QueryImpl query = this.queries.get ( queryId );
+        if ( query == null )
+        {
+            final String msg = String.format ( "No query with id {} exisits", queryId );
+            logger.warn ( msg );
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, msg ) );
+            return;
+        }
+
+        Integer count = 100;
+        {
+            final Value value = message.getValues ().get ( "count" );
+            if ( value instanceof IntegerValue )
+            {
+                count = ( (IntegerValue)value ).getValue ();
+            }
+        }
+
+        query.loadMore ( count );
     }
 
     protected void acknowledge ( final Message message )
@@ -176,7 +341,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             }
             catch ( final Throwable e )
             {
-                MessageCreator.createFailedMessage ( message, e );
+                this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, e ) );
             }
         }
     }
@@ -460,6 +625,32 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             message.getValues ().put ( "full", VoidValue.INSTANCE );
         }
 
+        this.messenger.sendMessage ( message );
+    }
+
+    public void sendQueryData ( final QueryImpl queryImpl, final Event[] events )
+    {
+        // TODO: check if query is still active
+        final Message message = new Message ( Messages.CC_QUERY_DATA );
+        message.getValues ().put ( "data", EventMessageHelper.toValue ( events ) );
+        message.getValues ().put ( MESSAGE_QUERY_ID, new LongValue ( queryImpl.getQueryId () ) );
+        this.messenger.sendMessage ( message );
+    }
+
+    public void sendQueryState ( final QueryImpl queryImpl, final QueryState state )
+    {
+        synchronized ( this )
+        {
+            // remove query if necessary
+            if ( state == QueryState.DISCONNECTED )
+            {
+                this.queries.remove ( queryImpl.getQueryId () );
+            }
+        }
+
+        final Message message = new Message ( Messages.CC_QUERY_STATUS_CHANGED );
+        message.getValues ().put ( "state", new StringValue ( state.name () ) );
+        message.getValues ().put ( MESSAGE_QUERY_ID, new LongValue ( queryImpl.getQueryId () ) );
         this.messenger.sendMessage ( message );
     }
 

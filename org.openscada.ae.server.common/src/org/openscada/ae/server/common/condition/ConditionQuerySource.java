@@ -6,15 +6,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.openscada.ae.ConditionStatusInformation;
 import org.openscada.ae.server.ConditionListener;
 import org.openscada.core.subscription.SubscriptionInformation;
 import org.openscada.core.subscription.SubscriptionSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConditionQuerySource implements SubscriptionSource, ConditionQueryListener
 {
-    private final static Logger logger = Logger.getLogger ( ConditionQuerySource.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ConditionQuerySource.class );
 
     private final ConditionQuery conditionQuery;
 
@@ -32,11 +33,11 @@ public class ConditionQuerySource implements SubscriptionSource, ConditionQueryL
 
     public synchronized void addListener ( final Collection<SubscriptionInformation> listeners )
     {
-        boolean wasEmpty = this.listeners.isEmpty ();
+        final boolean wasEmpty = this.listeners.isEmpty ();
 
-        for ( SubscriptionInformation information : listeners )
+        for ( final SubscriptionInformation information : listeners )
         {
-            ConditionListener listener = (ConditionListener)information.getListener ();
+            final ConditionListener listener = (ConditionListener)information.getListener ();
             this.listeners.add ( listener );
 
             if ( !this.cachedData.isEmpty () )
@@ -53,9 +54,9 @@ public class ConditionQuerySource implements SubscriptionSource, ConditionQueryL
 
     public synchronized void removeListener ( final Collection<SubscriptionInformation> listeners )
     {
-        for ( SubscriptionInformation information : listeners )
+        for ( final SubscriptionInformation information : listeners )
         {
-            ConditionListener listener = (ConditionListener)information.getListener ();
+            final ConditionListener listener = (ConditionListener)information.getListener ();
             this.listeners.remove ( listener );
         }
 
@@ -75,25 +76,25 @@ public class ConditionQuerySource implements SubscriptionSource, ConditionQueryL
     {
         if ( removed != null )
         {
-            for ( String id : removed )
+            for ( final String id : removed )
             {
                 this.cachedData.remove ( id );
             }
         }
         if ( addedOrUpdated != null )
         {
-            for ( ConditionStatusInformation info : addedOrUpdated )
+            for ( final ConditionStatusInformation info : addedOrUpdated )
             {
                 this.cachedData.put ( info.getId (), info );
             }
         }
-        for ( ConditionListener listener : this.listeners )
+        for ( final ConditionListener listener : this.listeners )
         {
             try
             {
                 listener.dataChanged ( this.queryId, addedOrUpdated, removed );
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
                 logger.warn ( "Failed to notify", e );
             }

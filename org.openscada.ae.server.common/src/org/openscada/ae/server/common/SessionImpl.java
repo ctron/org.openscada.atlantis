@@ -1,9 +1,11 @@
 package org.openscada.ae.server.common;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.ConditionStatusInformation;
@@ -12,24 +14,31 @@ import org.openscada.ae.server.ConditionListener;
 import org.openscada.ae.server.EventListener;
 import org.openscada.ae.server.Session;
 import org.openscada.core.subscription.SubscriptionState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SessionImpl implements Session, BrowserListener
 {
-    private final static Logger logger = Logger.getLogger ( SessionImpl.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( SessionImpl.class );
 
     private final EventListener eventListener;
 
     private final ConditionListener conditionListener;
 
-    private ConditionListener clientConditionListener;
+    private volatile ConditionListener clientConditionListener;
 
-    private EventListener clientEventListener;
+    private volatile EventListener clientEventListener;
 
     private volatile BrowserListener clientBrowserListener;
 
     private final Map<String, BrowserEntry> browserCache = new HashMap<String, BrowserEntry> ();
 
     private final String user;
+
+    private boolean disposed = false;
+
+    private final Set<QueryImpl> queries = new HashSet<QueryImpl> ();
 
     public SessionImpl ( final String user )
     {
@@ -110,9 +119,21 @@ public class SessionImpl implements Session, BrowserListener
         this.clientEventListener = listener;
     }
 
-    public void dispose ()
+    public synchronized void dispose ()
     {
         logger.info ( "Disposing session" );
+
+        // mark disposed
+        this.disposed = true;
+
+        // dispose queries : operate on copy to prevent concurrent modification
+        for ( final QueryImpl query : new ArrayList<QueryImpl> ( this.queries ) )
+        {
+            query.dispose ();
+        }
+        this.queries.clear ();
+
+        // clear listeners
         this.clientConditionListener = null;
         this.clientEventListener = null;
         this.clientBrowserListener = null;
@@ -174,5 +195,22 @@ public class SessionImpl implements Session, BrowserListener
     public String getCurrentUser ()
     {
         return this.user;
+    }
+
+    public synchronized void addQuery ( final QueryImpl query )
+    {
+        if ( this.disposed )
+        {
+            query.dispose ();
+        }
+        else
+        {
+            this.queries.add ( query );
+        }
+    }
+
+    public synchronized void removeQuery ( final QueryImpl query )
+    {
+        this.queries.remove ( query );
     }
 }

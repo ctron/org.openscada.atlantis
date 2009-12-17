@@ -2,6 +2,7 @@ package org.openscada.ae.server;
 
 import java.util.Date;
 
+import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
 import org.openscada.ae.UnknownQueryException;
 import org.openscada.core.InvalidSessionException;
@@ -16,7 +17,7 @@ public interface Service extends org.openscada.core.server.Service
 
     // Event methods - offline
 
-    public void startQuery ( Session session, String queryType, String queryData, QueryListener listener ) throws InvalidSessionException;
+    public Query createQuery ( Session session, String queryType, String queryData, QueryListener listener ) throws InvalidSessionException;
 
     // Condition methods
 

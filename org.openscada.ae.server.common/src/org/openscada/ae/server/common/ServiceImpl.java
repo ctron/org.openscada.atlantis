@@ -7,10 +7,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
 import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserType;
+import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
 import org.openscada.ae.UnknownQueryException;
 import org.openscada.ae.server.Service;
@@ -25,6 +27,7 @@ import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionManager;
 import org.openscada.core.subscription.ValidationException;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -32,10 +35,12 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServiceImpl implements Service, ServiceListener
 {
-    private final static Logger logger = Logger.getLogger ( ServiceImpl.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ServiceImpl.class );
 
     private final Set<SessionImpl> sessions = new CopyOnWriteArraySet<SessionImpl> ();
 
@@ -53,6 +58,10 @@ public class ServiceImpl implements Service, ServiceListener
 
     private final ServiceTracker aknTracker;
 
+    private ExecutorService queryLoadExecutor;
+
+    private ExecutorService eventExecutor;
+
     public ServiceImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         this.context = context;
@@ -62,7 +71,7 @@ public class ServiceImpl implements Service, ServiceListener
         // create akn handler
         this.aknTracker = new ServiceTracker ( context, AknHandler.class.getName (), null );
 
-        // create query listener
+        // create monitor query listener
         {
             context.addServiceListener ( this, "(" + Constants.OBJECTCLASS + "=" + ConditionQuery.class.getName () + ")" );
             final ServiceReference[] refs = context.getServiceReferences ( ConditionQuery.class.getName (), null );
@@ -75,6 +84,7 @@ public class ServiceImpl implements Service, ServiceListener
             }
         }
 
+        // create event query listener
         {
             context.addServiceListener ( this, "(" + Constants.OBJECTCLASS + "=" + EventQuery.class.getName () + ")" );
             final ServiceReference[] refs = context.getServiceReferences ( EventQuery.class.getName (), null );
@@ -148,34 +158,48 @@ public class ServiceImpl implements Service, ServiceListener
         logger.info ( "Removed event query: " + id );
     }
 
-    protected void triggerBrowserChange ( final BrowserEntry[] entries, final String[] removed, final boolean full )
+    protected synchronized void triggerBrowserChange ( final BrowserEntry[] entries, final String[] removed, final boolean full )
     {
-        synchronized ( this.sessions )
+        if ( removed != null )
         {
-            if ( removed != null )
+            for ( final String id : removed )
             {
-                for ( final String id : removed )
-                {
-                    this.browserCache.remove ( id );
-                }
+                this.browserCache.remove ( id );
             }
-            if ( entries != null )
+        }
+        if ( entries != null )
+        {
+            for ( final BrowserEntry entry : entries )
             {
-                for ( final BrowserEntry entry : entries )
-                {
-                    this.browserCache.put ( entry.getId (), entry );
-                }
+                this.browserCache.put ( entry.getId (), entry );
             }
-            for ( final SessionImpl session : this.sessions )
-            {
-                session.dataChanged ( entries, removed, full );
-            }
+        }
+        for ( final SessionImpl session : this.sessions )
+        {
+            session.dataChanged ( entries, removed, full );
         }
     }
 
-    public void startQuery ( final Session session, final String queryType, final String queryData, final QueryListener listener ) throws InvalidSessionException
+    public Query createQuery ( final Session session, final String queryType, final String queryData, final QueryListener listener ) throws InvalidSessionException
     {
-        // FIXME: implement
+        // validate the session
+        final SessionImpl sessionImpl = validateSession ( session );
+
+        final QueryImpl query = new QueryImpl ( this.context, sessionImpl, this.eventExecutor, this.queryLoadExecutor, queryType, queryData, listener );
+
+        // might dispose us if the session was disposed
+        sessionImpl.addQuery ( query );
+
+        if ( !query.isDisposed () )
+        {
+            query.start ();
+            return query;
+        }
+        else
+        {
+            // we got disposed since we added ourself to a disposed session
+            throw new InvalidSessionException ();
+        }
     }
 
     public void subscribeConditionQuery ( final Session session, final String queryId ) throws InvalidSessionException, UnknownQueryException
@@ -229,12 +253,13 @@ public class ServiceImpl implements Service, ServiceListener
     public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
     {
         SessionImpl sessionImpl = null;
-        synchronized ( this.sessions )
+        synchronized ( this )
         {
             if ( this.sessions.remove ( session ) )
             {
                 sessionImpl = (SessionImpl)session;
 
+                // now dispose
                 sessionImpl.dispose ();
             }
         }
@@ -242,40 +267,75 @@ public class ServiceImpl implements Service, ServiceListener
         if ( sessionImpl != null )
         {
             this.conditionSubscriptions.unsubscribeAll ( sessionImpl.getConditionListener () );
-            // FIXME: unsubscribe event manager
+            this.eventSubscriptions.unsubscribeAll ( sessionImpl.getEventListener () );
         }
     }
 
-    public org.openscada.core.server.Session createSession ( final Properties properties ) throws UnableToCreateSessionException
+    public synchronized org.openscada.core.server.Session createSession ( final Properties properties ) throws UnableToCreateSessionException
     {
-        final SessionImpl session = new SessionImpl ( properties.getProperty ( "user", null ) );
-        synchronized ( this.sessions )
+        if ( this.eventExecutor == null )
         {
-            this.sessions.add ( session );
-            session.dataChanged ( this.browserCache.values ().toArray ( new BrowserEntry[0] ), null, true );
+            throw new UnableToCreateSessionException ( "Service disposed" );
         }
+
+        final SessionImpl session = new SessionImpl ( properties.getProperty ( "user", null ) );
+        this.sessions.add ( session );
+
+        // copy data
+        final BrowserEntry[] browserCache = this.browserCache.values ().toArray ( new BrowserEntry[0] );
+
+        if ( browserCache.length > 0 )
+        {
+            // notify current data if we have some
+            this.eventExecutor.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    session.dataChanged ( browserCache, null, true );
+                }
+            } );
+        }
+
         return session;
     }
 
-    public void start () throws Exception
+    public synchronized void start () throws Exception
     {
         logger.info ( "Staring new service" );
+
+        this.queryLoadExecutor = Executors.newCachedThreadPool ( new NamedThreadFactory ( "ServiceImpl/QueryLoad" ) );
+        this.eventExecutor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ServiceImpl/Event" ) );
+
         this.aknTracker.open ( true );
     }
 
-    public void stop () throws Exception
+    public synchronized void stop () throws Exception
     {
         logger.info ( "Stopping service" );
+
+        // close sessions
+        for ( final SessionImpl session : this.sessions )
+        {
+            session.dispose ();
+        }
+
+        // shut down
         this.aknTracker.close ();
+
+        this.queryLoadExecutor.shutdown ();
+        this.queryLoadExecutor = null;
+
+        this.eventExecutor.shutdown ();
+        this.eventExecutor = null;
     }
 
     protected SessionImpl validateSession ( final Session session ) throws InvalidSessionException
     {
-        if ( !this.sessions.contains ( session ) )
+        if ( ! ( session instanceof Session ) )
         {
             throw new InvalidSessionException ();
         }
-        if ( ! ( session instanceof Session ) )
+        if ( !this.sessions.contains ( session ) )
         {
             throw new InvalidSessionException ();
         }

@@ -3,6 +3,7 @@ package org.openscada.ae.client;
 import java.util.Date;
 
 import org.openscada.ae.BrowserListener;
+import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
 
 /**
@@ -26,7 +27,7 @@ public interface Connection extends org.openscada.core.client.Connection
     public void setEventListener ( String eventQueryId, EventListener listener );
 
     // Event - offline
-    public void createQuery ( String queryType, String queryData, QueryListener listener );
+    public Query createQuery ( String queryType, String queryData, QueryListener listener );
 
     /**
      * Add browser listener

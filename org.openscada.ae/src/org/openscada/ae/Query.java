@@ -5,11 +5,16 @@ package org.openscada.ae;
  * does not store the instance itself 
  * @author Jens Reimann
  * @author Jürgen Rose
- *
+ * @since 0.15.0
  */
 public interface Query
 {
-    public void loadMore ( long count );
+    /**
+     * Load more data
+     * @param count the number of entries to load, must be greater than zero
+     * @throws IllegalArgumentException if the count is negative or zero
+     */
+    public void loadMore ( int count );
 
-    public void dispose ();
+    public void close ();
 }
