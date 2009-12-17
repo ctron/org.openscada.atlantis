@@ -4,7 +4,9 @@ import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openscada.ae.event.FilterUtils;
@@ -19,6 +21,15 @@ import org.openscada.utils.filter.Operator;
 
 public class HqlConverter
 {
+    private static final Map<String, Class<?>> properties = new HashMap<String, Class<?>> ();
+
+    static
+    {
+        for ( PropertyDescriptor pd : PropertyUtils.getPropertyDescriptors ( MutableEvent.class ) )
+        {
+            properties.put ( pd.getName (), pd.getPropertyType () );
+        }
+    }
 
     public static class HqlResult
     {
@@ -73,7 +84,7 @@ public class HqlConverter
             //
         }
         result.hql += " ORDER BY M.sourceTimestamp, M.entryTimestamp, M.id DESC;";
-        return result ;
+        return result;
     }
 
     static HqlResult toHql ( FilterExpression expression ) throws NotSupportedException
@@ -154,36 +165,82 @@ public class HqlConverter
     {
         HqlResult term = new HqlResult ();
         term.hql = "(";
-        if ( isField ( field ) )
+        if ( isField ( field ) && properties.get ( field ) != Variant.class )
         {
-            for ( PropertyDescriptor pd : PropertyUtils.getPropertyDescriptors ( MutableEvent.class ) )
-            {
-                if ( pd.getName ().equals ( field ) && !"presence".equals ( op ) )
-                {
-                    if ((value instanceof Variant) && !(pd.getPropertyType () == Variant.class)) {
-                        PropertyEditor pe = FilterUtils.propertyEditorRegistry.findCustomEditor ( pd.getPropertyType() );
-                        pe.setAsText ( new Variant(value).asString ("") );
-                        term.parameters = new Object[] { pe.getValue () };
-                    } else {
-                        term.parameters = new Object[] { value };
-                    }
-                }
-            }
-            if ( "like".equals ( op ) )
-            {
-                term.hql += "lower(M." + field + ") like lower(?))";
-            }
-            else if ( "approximate".equals ( op ) )
-            {
-                term.hql += "soundex(M." + field + ") = soundex(?))";
-            }
-            else if ( "presence".equals ( op ) )
+            if ( "presence".equals ( op ) )
             {
                 term.hql += "M." + field + " IS NOT NULL)";
             }
             else
             {
-                term.hql += "M." + field + " " + op + " ?)";
+                if ( ( value != null ) && ( value instanceof Variant ) )
+                {
+                    PropertyEditor pe = FilterUtils.propertyEditorRegistry.findCustomEditor ( properties.get ( field ) );
+                    pe.setAsText ( new Variant ( value ).asString ( "" ) );
+                    term.parameters = new Object[] { pe.getValue () };
+                }
+                else
+                {
+                    term.parameters = new Object[] { value };
+                }
+                if ( "like".equals ( op ) )
+                {
+                    term.hql += "lower(M." + field + ") like lower(?))";
+                }
+                else if ( "approximate".equals ( op ) )
+                {
+                    term.hql += "soundex(M." + field + ") = soundex(?))";
+                }
+                else
+                {
+                    term.hql += "M." + field + " " + op + " ?)";
+                }
+            }
+        }
+        else if ( isField ( field ) && properties.get ( field ) == Variant.class )
+        {
+            if ( "presence".equals ( op ) )
+            {
+                term.hql += "M." + field + ".string IS NOT NULL OR M." + field + ".integer IS NOT NULL OR M." + field + ".double IS NOT NULL)";
+            }
+            else
+            {
+                if ( "like".equals ( op ) )
+                {
+                    term.hql += "lower(M." + field + ".string) like lower(?))";
+                    if ( value == null )
+                    {
+                        term.parameters = new Object[] { null };
+                    }
+                    else
+                    {
+                        term.parameters = new Object[] { new Variant ( value ).asString ( "" ) };
+                    }
+                }
+                else if ( "approximate".equals ( op ) )
+                {
+                    term.hql += "soundex(M." + field + ".string) = soundex(?))";
+                    if ( value == null )
+                    {
+                        term.parameters = new Object[] { null };
+                    }
+                    else
+                    {
+                        term.parameters = new Object[] { new Variant ( value ).asString ( "" ) };
+                    }
+                }
+                else
+                {
+                    if ( value == null )
+                    {
+                        term.parameters = new Object[] { null, null, null };
+                    }
+                    else
+                    {
+                        term.parameters = new Object[] { new Variant ( value ).asString ( "" ), new Variant ( value ).asLong ( 0l ), new Variant ( value ).asDouble ( 0.0d ) };
+                    }
+                    term.hql += "(M." + field + ".string " + op + " ?) OR (M." + field + ".integer " + op + " ?) OR (M." + field + ".double " + op + " ?))";
+                }
             }
         }
         else
@@ -233,14 +290,7 @@ public class HqlConverter
 
     static boolean isField ( String field )
     {
-        for ( PropertyDescriptor pd : PropertyUtils.getPropertyDescriptors ( MutableEvent.class ) )
-        {
-            if ( pd.getName ().equals ( field ) )
-            {
-                return true;
-            }
-        }
-        return false;
+        return properties.keySet ().contains ( field );
     }
 
     static Object[] combine ( Object[] a, Object[] b )
