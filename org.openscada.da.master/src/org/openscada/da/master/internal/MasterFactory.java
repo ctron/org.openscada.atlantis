@@ -11,6 +11,7 @@ import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.MasterItem;
 import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -37,12 +38,22 @@ public class MasterFactory implements ConfigurationFactory
 
     private final ObjectPoolImpl dataSourcePool;
 
+    private final ObjectPoolImpl masterItemPool;
+
+    private final ServiceRegistration dataSourcePoolHandler;
+
+    private final ServiceRegistration masterItemPoolHandler;
+
     public MasterFactory ( final BundleContext context )
     {
         this.context = context;
         this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "MasterItemFactory" ) );
 
         this.dataSourcePool = new ObjectPoolImpl ();
+        this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.dataSourcePool, DataSource.class.getName () );
+
+        this.masterItemPool = new ObjectPoolImpl ();
+        this.masterItemPoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.masterItemPool, MasterItem.class.getName () );
     }
 
     public void delete ( final String configurationId )
@@ -103,8 +114,9 @@ public class MasterFactory implements ConfigurationFactory
             logger.debug ( "Registering " + id );
 
             this.dataSourcePool.addService ( id, masterItemImpl, properties );
+            this.masterItemPool.addService ( id, masterItemImpl, properties );
 
-            this.masterRegs.put ( id, this.context.registerService ( new String[] { MasterItem.class.getName () }, masterItemImpl, properties ) );
+            // this.masterRegs.put ( id, this.context.registerService ( new String[] { MasterItem.class.getName () }, masterItemImpl, properties ) );
         }
     }
 
@@ -121,6 +133,7 @@ public class MasterFactory implements ConfigurationFactory
         if ( master != null )
         {
             this.dataSourcePool.removeService ( id, master );
+            this.masterItemPool.removeService ( id, master );
             master.dispose ();
         }
 
@@ -132,7 +145,12 @@ public class MasterFactory implements ConfigurationFactory
 
     public void dispose ()
     {
+        this.dataSourcePoolHandler.unregister ();
+        this.masterItemPoolHandler.unregister ();
+
         this.dataSourcePool.dispose ();
+        this.masterItemPool.dispose ();
+
         removeAllItems ();
         this.executor.shutdown ();
     }

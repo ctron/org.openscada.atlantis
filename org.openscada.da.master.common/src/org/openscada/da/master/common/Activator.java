@@ -9,6 +9,7 @@ import org.openscada.da.master.common.sum.CommonFactoryImpl;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.framework.InvalidSyntaxException;
 
 public class Activator implements BundleActivator
 {
@@ -33,7 +34,7 @@ public class Activator implements BundleActivator
         this.factory4 = makeFactory ( context, "ackRequired", 2500 );
     }
 
-    private CommonFactoryImpl makeFactory ( final BundleContext context, final String tag, final int priority )
+    private CommonFactoryImpl makeFactory ( final BundleContext context, final String tag, final int priority ) throws InvalidSyntaxException
     {
         final CommonFactoryImpl factory = new CommonFactoryImpl ( context, tag, priority );
         final Dictionary<String, String> properties = new Hashtable<String, String> ();

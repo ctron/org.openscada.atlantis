@@ -9,6 +9,7 @@ import org.openscada.da.client.DataItemValue;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
 import org.openscada.da.master.WriteRequest;
 import org.openscada.da.master.WriteRequestResult;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 
@@ -17,9 +18,9 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
 
     private final EventProcessor eventProcessor;
 
-    public MasterItemLogger ( final BundleContext context, final int priority ) throws InvalidSyntaxException
+    public MasterItemLogger ( final BundleContext context, final ObjectPoolTracker poolTracker, final int priority ) throws InvalidSyntaxException
     {
-        super ( context, priority );
+        super ( poolTracker, priority );
         this.eventProcessor = new EventProcessor ( context );
         this.eventProcessor.open ();
     }

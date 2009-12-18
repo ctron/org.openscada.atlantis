@@ -29,6 +29,7 @@ Import-Package: org.apache.log4j,
  org.openscada.da.server.common.impl;version="0.14.0",
  org.openscada.utils.osgi;version="0.15.0",
  org.openscada.utils.osgi.ca.factory;version="0.15.0",
+ org.openscada.utils.osgi.pool;version="0.15.0",
  org.osgi.framework;version="1.3.0",
  org.osgi.util.tracker,
  org.slf4j

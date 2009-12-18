@@ -13,6 +13,8 @@ import org.openscada.ae.monitor.dataitem.monitor.internal.level.LevelMonitorFact
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
+import org.openscada.da.master.MasterItem;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -30,6 +32,8 @@ public class Activator implements BundleActivator
 
     private final Collection<AbstractMonitorFactory> factories = new LinkedList<AbstractMonitorFactory> ();
 
+    private ObjectPoolTracker poolTracker;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -46,9 +50,12 @@ public class Activator implements BundleActivator
 
         Dictionary<Object, Object> properties;
 
+        this.poolTracker = new ObjectPoolTracker ( context, MasterItem.class.getName () );
+        this.poolTracker.open ();
+
         // monitor service
         {
-            final MonitorFactoryImpl factory = new MonitorFactoryImpl ( context, this.eventProcessor );
+            final MonitorFactoryImpl factory = new MonitorFactoryImpl ( context, this.poolTracker, this.eventProcessor );
             properties = new Hashtable<Object, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, BooleanAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Boolean alarms" );
@@ -71,7 +78,7 @@ public class Activator implements BundleActivator
     private void makeLevelFactory ( final BundleContext context, final String type, final String defaultMonitorType, final boolean lowerOk, final int priority, final boolean cap )
     {
         Dictionary<Object, Object> properties;
-        final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.eventProcessor, type, defaultMonitorType, lowerOk, priority, cap );
+        final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.poolTracker, this.eventProcessor, type, defaultMonitorType, lowerOk, priority, cap );
         properties = new Hashtable<Object, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, LevelMonitorFactoryImpl.FACTORY_PREFIX + "." + type );
         properties.put ( Constants.SERVICE_DESCRIPTION, type + " Alarms" );

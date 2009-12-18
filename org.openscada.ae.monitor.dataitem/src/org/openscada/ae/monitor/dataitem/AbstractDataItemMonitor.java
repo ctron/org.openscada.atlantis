@@ -2,6 +2,7 @@ package org.openscada.ae.monitor.dataitem;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,13 +21,10 @@ import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.MasterItemHandler;
 import org.openscada.da.master.WriteRequest;
 import org.openscada.da.master.WriteRequestResult;
-import org.openscada.utils.osgi.FilterUtil;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Filter;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
+import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
+import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker.ServiceListener;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,9 +34,7 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
 
     private String masterId;
 
-    private final BundleContext context;
-
-    private SingleServiceTracker tracker;
+    private SingleObjectPoolServiceTracker tracker;
 
     private MasterItem masterItem;
 
@@ -70,10 +66,12 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
 
     private String messageCode;
 
-    public AbstractDataItemMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
+    private final ObjectPoolTracker poolTracker;
+
+    public AbstractDataItemMonitor ( final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
     {
         super ( eventProcessor, id );
-        this.context = context;
+        this.poolTracker = poolTracker;
         this.prefix = prefix;
         this.defaultMonitorType = defaultMonitorType;
     }
@@ -150,14 +148,15 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
 
         final Map<String, String> parameters = new HashMap<String, String> ();
         parameters.put ( MasterItem.MASTER_ID, this.masterId );
-        final Filter filter = FilterUtil.createAndFilter ( MasterItem.class.getName (), parameters );
-        this.tracker = new SingleServiceTracker ( this.context, filter, new SingleServiceListener () {
 
-            public void serviceChange ( final ServiceReference reference, final Object service )
+        this.tracker = new SingleObjectPoolServiceTracker ( this.poolTracker, this.masterId, new ServiceListener () {
+
+            public void serviceChange ( final Object service, final Dictionary<?, ?> properties )
             {
                 AbstractDataItemMonitor.this.setMasterItem ( (MasterItem)service );
             }
         } );
+
         this.tracker.open ();
     }
 

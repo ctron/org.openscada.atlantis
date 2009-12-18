@@ -5,7 +5,7 @@ import java.util.Date;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
-import org.osgi.framework.BundleContext;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 
 public abstract class AbstractBooleanMonitor extends AbstractDataItemMonitor
 {
@@ -13,9 +13,9 @@ public abstract class AbstractBooleanMonitor extends AbstractDataItemMonitor
 
     protected Date timestamp;
 
-    public AbstractBooleanMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
+    public AbstractBooleanMonitor ( final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
     {
-        super ( context, eventProcessor, id, prefix, defaultMonitorType );
+        super ( poolTracker, eventProcessor, id, prefix, defaultMonitorType );
     }
 
     protected abstract void update ();

@@ -11,7 +11,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
-import org.osgi.framework.BundleContext;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 
 public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataItemMonitor
 {
@@ -26,9 +26,9 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
     private boolean failure;
 
-    public LevelAlarmMonitor ( final BundleContext context, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType, final boolean lowerOk, final int priority, final boolean cap )
+    public LevelAlarmMonitor ( final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType, final boolean lowerOk, final int priority, final boolean cap )
     {
-        super ( context, eventProcessor, id, prefix, defaultMonitorType );
+        super ( poolTracker, eventProcessor, id, prefix, defaultMonitorType );
         this.lowerOk = lowerOk;
         this.priority = priority;
         this.cap = cap;

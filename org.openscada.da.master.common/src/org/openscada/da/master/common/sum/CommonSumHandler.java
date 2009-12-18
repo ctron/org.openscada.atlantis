@@ -9,8 +9,8 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.utils.str.StringHelper;
-import org.osgi.framework.BundleContext;
 
 public class CommonSumHandler extends AbstractMasterHandlerImpl
 {
@@ -21,9 +21,9 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
 
     private final String prefix = "osgi.source";
 
-    public CommonSumHandler ( final BundleContext context, final String tag, final int priority )
+    public CommonSumHandler ( final ObjectPoolTracker poolTracker, final String tag, final int priority )
     {
-        super ( context, priority );
+        super ( poolTracker, priority );
         this.tag = tag;
         this.pattern = Pattern.compile ( ".*\\." + this.tag + "$" );
     }

@@ -1,5 +1,6 @@
 package org.openscada.da.master;
 
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -7,17 +8,14 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.openscada.da.client.DataItemValue;
 import org.openscada.utils.osgi.FilterUtil;
-import org.osgi.framework.BundleContext;
+import org.openscada.utils.osgi.pool.ObjectPoolListener;
+import org.openscada.utils.osgi.pool.ObjectPoolServiceTracker;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.Filter;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 {
-    private final BundleContext context;
-
-    private ServiceTracker tracker;
+    private ObjectPoolServiceTracker tracker;
 
     private final Set<MasterItem> items = new CopyOnWriteArraySet<MasterItem> ();
 
@@ -25,9 +23,11 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     private String masterId;
 
-    public AbstractMasterHandlerImpl ( final BundleContext context, final int priority )
+    private final ObjectPoolTracker poolTracker;
+
+    public AbstractMasterHandlerImpl ( final ObjectPoolTracker poolTracker, final int priority )
     {
-        this.context = context;
+        this.poolTracker = poolTracker;
         this.priority = priority;
     }
 
@@ -64,38 +64,22 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
         final Filter filter = FilterUtil.createAndFilter ( MasterItem.class.getName (), filterParameters );
 
-        this.tracker = new ServiceTracker ( this.context, filter, new ServiceTrackerCustomizer () {
+        this.tracker = new ObjectPoolServiceTracker ( this.poolTracker, this.masterId, new ObjectPoolListener () {
 
-            public void removedService ( final ServiceReference reference, final Object service )
+            public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
             {
-                if ( removeItem ( (MasterItem)service ) )
-                {
-                    AbstractMasterHandlerImpl.this.context.ungetService ( reference );
-                }
+                addItem ( (MasterItem)service );
             }
 
-            public void modifiedService ( final ServiceReference reference, final Object service )
+            public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
             {
+                // TODO Auto-generated method stub
 
             }
 
-            public Object addingService ( final ServiceReference reference )
+            public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
             {
-                Object o = AbstractMasterHandlerImpl.this.context.getService ( reference );
-                try
-                {
-                    final MasterItem item = (MasterItem)o;
-                    addItem ( item );
-                    o = null;
-                }
-                finally
-                {
-                    if ( o != null )
-                    {
-                        AbstractMasterHandlerImpl.this.context.ungetService ( reference );
-                    }
-                }
-                return null;
+                removeItem ( (MasterItem)service );
             }
         } );
         this.tracker.open ();
