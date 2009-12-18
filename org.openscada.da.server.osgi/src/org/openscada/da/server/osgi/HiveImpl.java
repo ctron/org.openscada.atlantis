@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.osgi;
 
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,6 +75,22 @@ public class HiveImpl extends HiveCommon
     public void stop () throws Exception
     {
         super.stop ();
+    }
+
+    public synchronized void addItem ( final DataItem item, final Dictionary<?, ?> properties )
+    {
+        registerItem ( item );
+
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+
+        final ItemDescriptor descriptor = new ItemDescriptor ( item, attributes );
+        this.storage.added ( descriptor );
+    }
+
+    public synchronized void removeItem ( final DataItem item )
+    {
+        unregisterItem ( item );
+        this.storage.removed ( new ItemDescriptor ( item, new HashMap<String, Variant> () ) );
     }
 
     public synchronized void addItem ( final ServiceReference serviceReference )

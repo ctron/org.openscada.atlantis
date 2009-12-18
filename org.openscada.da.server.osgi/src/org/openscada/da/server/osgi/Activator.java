@@ -24,6 +24,9 @@ import java.util.Hashtable;
 
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.DataItem;
+import org.openscada.utils.osgi.pool.AllObjectPoolServiceTracker;
+import org.openscada.utils.osgi.pool.ObjectPoolListener;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -40,6 +43,10 @@ public class Activator implements BundleActivator
     private ServiceRegistration handle;
 
     private ServiceListener listener;
+
+    private ObjectPoolTracker poolTracker;
+
+    private AllObjectPoolServiceTracker itemTracker;
 
     /*
      * (non-Javadoc)
@@ -81,6 +88,27 @@ public class Activator implements BundleActivator
                 addItem ( ref );
             }
         }
+
+        this.poolTracker = new ObjectPoolTracker ( context, DataItem.class.getName () );
+        this.poolTracker.open ();
+
+        this.itemTracker = new AllObjectPoolServiceTracker ( this.poolTracker, new ObjectPoolListener () {
+
+            public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
+            {
+                Activator.this.service.addItem ( (DataItem)service, properties );
+            }
+
+            public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
+            {
+            }
+
+            public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
+            {
+                Activator.this.service.removeItem ( (DataItem)service );
+            }
+        } );
+        this.itemTracker.open ();
     }
 
     protected void removeItem ( final ServiceReference serviceReference )
@@ -100,6 +128,9 @@ public class Activator implements BundleActivator
     public void stop ( final BundleContext context ) throws Exception
     {
         context.removeServiceListener ( this.listener );
+
+        this.itemTracker.close ();
+        this.poolTracker.close ();
 
         this.handle.unregister ();
         this.handle = null;
