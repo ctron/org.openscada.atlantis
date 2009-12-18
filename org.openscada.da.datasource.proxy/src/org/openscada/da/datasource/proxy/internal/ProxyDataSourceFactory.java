@@ -9,6 +9,7 @@ import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 
 public class ProxyDataSourceFactory extends AbstractServiceConfigurationFactory<ProxyDataSource>
 {
@@ -18,7 +19,7 @@ public class ProxyDataSourceFactory extends AbstractServiceConfigurationFactory<
 
     private final ObjectPoolImpl objectPool;
 
-    public ProxyDataSourceFactory ( final BundleContext context )
+    public ProxyDataSourceFactory ( final BundleContext context ) throws InvalidSyntaxException
     {
         super ( context );
         this.executor = Executors.newSingleThreadExecutor ();

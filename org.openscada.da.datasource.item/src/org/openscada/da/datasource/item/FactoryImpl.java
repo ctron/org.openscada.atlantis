@@ -8,6 +8,8 @@ import org.openscada.da.datasource.DataSource;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPoolHelper;
+import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -21,12 +23,31 @@ public class FactoryImpl extends AbstractServiceConfigurationFactory<DataItemImp
 
     private final ObjectPoolTracker poolTracker;
 
-    public FactoryImpl ( final BundleContext context )
+    private final ObjectPoolImpl itemPool;
+
+    private final ServiceRegistration itemPoolHandle;
+
+    public FactoryImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         super ( context );
+        this.itemPool = new ObjectPoolImpl ();
+
+        this.itemPoolHandle = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class.getName () );
+
         this.context = context;
         this.poolTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
         this.poolTracker.open ();
+    }
+
+    @Override
+    public synchronized void dispose ()
+    {
+        this.itemPoolHandle.unregister ();
+        this.itemPool.dispose ();
+
+        this.poolTracker.close ();
+
+        super.dispose ();
     }
 
     @Override
@@ -38,13 +59,16 @@ public class FactoryImpl extends AbstractServiceConfigurationFactory<DataItemImp
     @Override
     protected void disposeService ( final String id, final DataItemImpl service )
     {
+        this.itemPool.removeService ( id, service );
         service.dispose ();
-        this.poolTracker.close ();
     }
 
     @Override
     protected Entry<DataItemImpl> updateService ( final String configurationId, final Entry<DataItemImpl> entry, final Map<String, String> parameters ) throws Exception
     {
+        this.itemPool.removeService ( configurationId, entry.getService () );
+        entry.getService ().dispose ();
+
         return createDataItem ( configurationId, this.context, parameters );
     }
 
@@ -56,8 +80,10 @@ public class FactoryImpl extends AbstractServiceConfigurationFactory<DataItemImp
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_DESCRIPTION, "inavare GmbH" );
-        final ServiceRegistration handle = context.registerService ( DataItem.class.getName (), item, properties );
 
-        return new Entry<DataItemImpl> ( configurationId, item, handle );
+        // register
+        this.itemPool.addService ( configurationId, item, properties );
+
+        return new Entry<DataItemImpl> ( configurationId, item );
     }
 }

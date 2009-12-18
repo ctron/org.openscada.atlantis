@@ -11,6 +11,7 @@ import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
 
 public class ScriptSourceFactory extends AbstractServiceConfigurationFactory<ScriptDataSource>
@@ -24,7 +25,7 @@ public class ScriptSourceFactory extends AbstractServiceConfigurationFactory<Scr
 
     private final ServiceRegistration poolRegistration;
 
-    public ScriptSourceFactory ( final BundleContext context, final Executor executor )
+    public ScriptSourceFactory ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
     {
         super ( context );
         this.executor = executor;

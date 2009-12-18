@@ -96,7 +96,7 @@ public class Activator implements BundleActivator
 
             public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
             {
-                Activator.this.service.addItem ( (DataItem)service, properties );
+                Activator.this.service.removeItem ( (DataItem)service );
             }
 
             public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
@@ -105,7 +105,7 @@ public class Activator implements BundleActivator
 
             public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
             {
-                Activator.this.service.removeItem ( (DataItem)service );
+                Activator.this.service.addItem ( (DataItem)service, properties );
             }
         } );
         this.itemTracker.open ();
