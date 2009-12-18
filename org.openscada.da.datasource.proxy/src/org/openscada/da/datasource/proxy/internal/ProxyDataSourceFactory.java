@@ -15,7 +15,6 @@ import org.osgi.framework.ServiceRegistration;
 
 public class ProxyDataSourceFactory extends AbstractServiceFactory
 {
-
     private final ExecutorService executor;
 
     private final BundleContext context;

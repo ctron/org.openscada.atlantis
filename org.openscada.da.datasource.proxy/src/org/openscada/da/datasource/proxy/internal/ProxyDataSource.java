@@ -17,21 +17,19 @@ import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
+import org.openscada.da.datasource.MultiDataSourceTracker;
+import org.openscada.da.datasource.MultiDataSourceTracker.ServiceListener;
 import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.osgi.FilterUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
-import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ProxyDataSource extends AbstractDataSource implements Service, ServiceTrackerCustomizer
+public class ProxyDataSource extends AbstractDataSource implements Service, ServiceListener
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ProxyDataSource.class );
@@ -40,7 +38,7 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
 
     private final BundleContext context;
 
-    private ServiceTracker tracker;
+    private MultiDataSourceTracker tracker;
 
     private final Map<DataSource, SourceHandler> sources = new HashMap<DataSource, SourceHandler> ();
 
@@ -67,6 +65,7 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
         if ( this.tracker != null )
         {
             this.tracker.close ();
+            this.tracker = null;
         }
     }
 
@@ -91,13 +90,8 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
             return;
         }
 
-        this.tracker = new ServiceTracker ( this.context, createFilter ( this.sourceIds ), this );
+        this.tracker = new MultiDataSourceTracker ( this.context, this.sourceIds, this );
         this.tracker.open ();
-    }
-
-    private Filter createFilter ( final Set<String> sources ) throws InvalidSyntaxException
-    {
-        return FilterUtil.createAndFilter ( FilterUtil.createClassFilter ( DataSource.class.getName () ), FilterUtil.createSimpleOr ( DataSource.DATA_SOURCE_ID, sources ) );
     }
 
     private Set<String> convertSources ( final String sources )
@@ -108,28 +102,6 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
         }
 
         return new LinkedHashSet<String> ( Arrays.asList ( sources.split ( "[, ]+" ) ) );
-    }
-
-    public Object addingService ( final ServiceReference reference )
-    {
-        final int priority = getPriority ( reference );
-
-        Object o = this.context.getService ( reference );
-        try
-        {
-            final DataSource dataSource = (DataSource)o;
-            addSource ( dataSource, priority );
-        }
-        finally
-        {
-            if ( o != null )
-            {
-                this.context.ungetService ( reference );
-                o = null;
-            }
-        }
-
-        return null;
     }
 
     private int getPriority ( final ServiceReference reference )
@@ -178,17 +150,6 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
 
         logger.warn ( "Getting priority for unknown service: {}", reference );
         return Integer.MIN_VALUE;
-    }
-
-    public void modifiedService ( final ServiceReference reference, final Object service )
-    {
-        updateSource ( service, getPriority ( reference ) );
-    }
-
-    public synchronized void removedService ( final ServiceReference reference, final Object service )
-    {
-        this.context.ungetService ( reference );
-        removeSource ( (DataSource)service );
     }
 
     private class DataItemValueEntry implements Comparable<DataItemValueEntry>
@@ -338,6 +299,21 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
     public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
     {
         return new InstantErrorFuture<WriteResult> ( new OperationException ( "'writeAttributes' not supported" ) );
+    }
+
+    public void dataSourceAdded ( final ServiceReference reference, final DataSource dataSource )
+    {
+        addSource ( dataSource, getPriority ( reference ) );
+    }
+
+    public void dataSourceModified ( final ServiceReference reference, final DataSource dataSource )
+    {
+        updateSource ( dataSource, getPriority ( reference ) );
+    }
+
+    public void dataSourceRemoved ( final ServiceReference reference, final DataSource dataSource )
+    {
+        removeSource ( dataSource );
     }
 
 }

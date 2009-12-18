@@ -74,8 +74,6 @@ public class ScriptDataSource extends AbstractDataSource
 
     private void setScript ( final Map<String, String> parameters ) throws ScriptException
     {
-        // TODO Auto-generated method stub
-
         String engine = parameters.get ( "engine" );
         if ( engine == null )
         {

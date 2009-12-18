@@ -14,17 +14,14 @@ import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
+import org.openscada.da.datasource.SingleDataSourceTracker;
+import org.openscada.da.datasource.SingleDataSourceTracker.ServiceListener;
 import org.openscada.da.server.common.DataItemBase;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.osgi.FilterUtil;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,25 +31,19 @@ public class DataItemImpl extends DataItemBase implements DataSourceListener
 
     private DataItemValue currentValue = new DataItemValue ();
 
-    private final SingleServiceTracker tracker;
-
-    private final BundleContext context;
+    private final SingleDataSourceTracker tracker;
 
     private DataSource dataSource;
 
-    public DataItemImpl ( final BundleContext context, final DataItemInformation information, final String datasourceId ) throws InvalidSyntaxException
+    public DataItemImpl ( final BundleContext context, final DataItemInformation information, final String dataSourceId ) throws InvalidSyntaxException
     {
         super ( information );
-        this.context = context;
 
-        final Map<String, String> parameters = new HashMap<String, String> ();
-        parameters.put ( DataSource.DATA_SOURCE_ID, datasourceId );
-        final Filter filter = FilterUtil.createAndFilter ( DataSource.class.getName (), parameters );
-        this.tracker = new SingleServiceTracker ( this.context, filter, new SingleServiceListener () {
+        this.tracker = new SingleDataSourceTracker ( context, dataSourceId, new ServiceListener () {
 
-            public void serviceChange ( final ServiceReference reference, final Object service )
+            public void dataSourceChanged ( final DataSource dataSource )
             {
-                DataItemImpl.this.setDataSource ( (DataSource)service );
+                DataItemImpl.this.setDataSource ( dataSource );
             }
         } );
         this.tracker.open ();
