@@ -1,54 +1,67 @@
 package org.openscada.da.datasource.proxy.internal;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.openscada.ca.common.factory.AbstractServiceFactory;
-import org.openscada.ca.common.factory.Service;
 import org.openscada.da.datasource.DataSource;
+import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPoolImpl;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceRegistration;
 
-public class ProxyDataSourceFactory extends AbstractServiceFactory
+public class ProxyDataSourceFactory extends AbstractServiceConfigurationFactory<ProxyDataSource>
 {
     private final ExecutorService executor;
 
-    private final BundleContext context;
+    private final ObjectPoolTracker poolTracker;
+
+    private final ObjectPoolImpl objectPool;
 
     public ProxyDataSourceFactory ( final BundleContext context )
     {
         super ( context );
-        this.context = context;
         this.executor = Executors.newSingleThreadExecutor ();
+
+        this.objectPool = new ObjectPoolImpl ();
+
+        this.poolTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
+        this.poolTracker.close ();
     }
 
     @Override
     public synchronized void dispose ()
     {
+        this.objectPool.dispose ();
+
+        this.poolTracker.close ();
         super.dispose ();
         this.executor.shutdown ();
+
     }
 
     @Override
-    protected ProxyDataSource createService ( final String id, final Map<String, String> properties ) throws Exception
+    protected Entry<ProxyDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final ProxyDataSource dataSource = new ProxyDataSource ( this.context, this.executor );
-        dataSource.update ( properties );
-        return dataSource;
+        final ProxyDataSource dataSource = new ProxyDataSource ( this.poolTracker, this.executor );
+        dataSource.update ( parameters );
+
+        this.objectPool.addService ( configurationId, dataSource, null );
+
+        return new Entry<ProxyDataSource> ( configurationId, dataSource );
     }
 
     @Override
-    protected ServiceRegistration registerService ( final BundleContext context, final String id, final Service service )
+    protected void disposeService ( final String configurationId, final ProxyDataSource service )
     {
-        final Dictionary<String, String> properties = new Hashtable<String, String> ();
+        this.objectPool.removeService ( configurationId, service );
+        service.dispose ();
+    }
 
-        properties.put ( DataSource.DATA_SOURCE_ID, id );
-        properties.put ( Constants.SERVICE_PID, id );
-
-        return context.registerService ( DataSource.class.getName (), service, properties );
+    @Override
+    protected Entry<ProxyDataSource> updateService ( final String configurationId, final Entry<ProxyDataSource> entry, final Map<String, String> parameters ) throws Exception
+    {
+        entry.getService ().update ( parameters );
+        return null;
     }
 }

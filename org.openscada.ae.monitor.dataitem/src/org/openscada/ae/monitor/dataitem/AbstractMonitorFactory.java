@@ -42,11 +42,11 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         final ServiceRegistration handle = context.registerService ( MonitorService.class.getName (), instance, properties );
 
-        return new Entry<DataItemMonitor> ( instance, handle );
+        return new Entry<DataItemMonitor> ( configurationId, instance, handle );
     }
 
     @Override
-    protected void disposeService ( final DataItemMonitor service )
+    protected void disposeService ( final String id, final DataItemMonitor service )
     {
         service.dispose ();
     }

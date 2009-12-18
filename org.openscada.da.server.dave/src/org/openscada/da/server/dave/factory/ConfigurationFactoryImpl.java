@@ -52,7 +52,7 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( "daveDevice", configurationId );
-        return new Entry<DaveDevice> ( device, context.registerService ( DaveDevice.class.getName (), device, properties ) );
+        return new Entry<DaveDevice> ( configurationId, device, context.registerService ( DaveDevice.class.getName (), device, properties ) );
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
     }
 
     @Override
-    protected void disposeService ( final DaveDevice service )
+    protected void disposeService ( final String id, final DaveDevice service )
     {
         service.dispose ();
     }

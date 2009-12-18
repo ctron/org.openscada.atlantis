@@ -1,100 +1,88 @@
 package org.openscada.da.datasource;
 
+import java.util.Collection;
+import java.util.Dictionary;
+import java.util.LinkedList;
 import java.util.Set;
 
-import org.openscada.utils.osgi.FilterUtil;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Filter;
+import org.openscada.utils.osgi.pool.ObjectPoolListener;
+import org.openscada.utils.osgi.pool.ObjectPoolServiceTracker;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 public class MultiDataSourceTracker
 {
-    private final ServiceTracker tracker;
+    private final Collection<ObjectPoolServiceTracker> trackers;
 
     private final ServiceListener listener;
 
     public interface ServiceListener
     {
-        public void dataSourceAdded ( ServiceReference reference, DataSource dataSource );
+        public void dataSourceAdded ( String id, Dictionary<?, ?> properties, DataSource dataSource );
 
-        public void dataSourceRemoved ( ServiceReference reference, DataSource dataSource );
+        public void dataSourceRemoved ( String id, Dictionary<?, ?> properties, DataSource dataSource );
 
-        public void dataSourceModified ( ServiceReference reference, DataSource dataSource );
+        public void dataSourceModified ( String id, Dictionary<?, ?> properties, DataSource dataSource );
     }
 
-    public MultiDataSourceTracker ( final BundleContext context, final Set<String> dataSourceIds, final ServiceListener listener ) throws InvalidSyntaxException
+    public MultiDataSourceTracker ( final ObjectPoolTracker poolTracker, final Set<String> dataSourceIds, final ServiceListener listener ) throws InvalidSyntaxException
     {
-        this.tracker = new ServiceTracker ( context, createFilter ( dataSourceIds ), new ServiceTrackerCustomizer () {
-
-            public void removedService ( final ServiceReference reference, final Object service )
-            {
-                MultiDataSourceTracker.this.handleRemoved ( reference, (DataSource)service );
-            }
-
-            public void modifiedService ( final ServiceReference reference, final Object service )
-            {
-                MultiDataSourceTracker.this.handleModified ( reference, (DataSource)service );
-            }
-
-            public Object addingService ( final ServiceReference reference )
-            {
-                final Object o = context.getService ( reference );
-                if ( o instanceof DataSource )
-                {
-                    final DataSource service = (DataSource)o;
-                    try
-                    {
-                        MultiDataSourceTracker.this.handleAdded ( reference, service );
-                        return service;
-                    }
-                    catch ( final Throwable e )
-                    {
-                        context.ungetService ( reference );
-                        return null;
-                    }
-                }
-                else
-                {
-                    context.ungetService ( reference );
-                    return null;
-                }
-
-            }
-        } );
+        this.trackers = new LinkedList<ObjectPoolServiceTracker> ();
 
         this.listener = listener;
+
+        ObjectPoolServiceTracker tracker;
+        for ( final String id : dataSourceIds )
+        {
+            tracker = new ObjectPoolServiceTracker ( poolTracker, id, new ObjectPoolListener () {
+
+                public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
+                {
+                    handleRemoved ( id, properties, (DataSource)service );
+                }
+
+                public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
+                {
+                    handleModified ( id, properties, (DataSource)service );
+                }
+
+                public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
+                {
+                    handleAdded ( id, properties, (DataSource)service );
+                }
+            } );
+            this.trackers.add ( tracker );
+        }
     }
 
-    protected void handleAdded ( final ServiceReference reference, final DataSource service )
+    protected void handleAdded ( final String id, final Dictionary<?, ?> properties, final DataSource service )
     {
-        this.listener.dataSourceAdded ( reference, service );
+        this.listener.dataSourceAdded ( id, properties, service );
     }
 
-    protected void handleModified ( final ServiceReference reference, final DataSource service )
+    protected void handleModified ( final String id, final Dictionary<?, ?> properties, final DataSource service )
     {
-        this.listener.dataSourceModified ( reference, service );
+        this.listener.dataSourceModified ( id, properties, service );
     }
 
-    protected void handleRemoved ( final ServiceReference reference, final DataSource service )
+    protected void handleRemoved ( final String id, final Dictionary<?, ?> properties, final DataSource service )
     {
-        this.listener.dataSourceRemoved ( reference, service );
+        this.listener.dataSourceRemoved ( id, properties, service );
     }
 
-    private static Filter createFilter ( final Set<String> sources ) throws InvalidSyntaxException
+    public synchronized void open ()
     {
-        return FilterUtil.createAndFilter ( FilterUtil.createClassFilter ( DataSource.class.getName () ), FilterUtil.createSimpleOr ( DataSource.DATA_SOURCE_ID, sources ) );
+        for ( final ObjectPoolServiceTracker tracker : this.trackers )
+        {
+            tracker.open ();
+        }
     }
 
-    public void open ()
+    public synchronized void close ()
     {
-        this.tracker.open ();
-    }
-
-    public void close ()
-    {
-        this.tracker.close ();
+        for ( final ObjectPoolServiceTracker tracker : this.trackers )
+        {
+            tracker.close ();
+        }
     }
 }

@@ -1,15 +1,10 @@
 package org.openscada.da.datasource;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Dictionary;
 
-import org.openscada.utils.osgi.FilterUtil;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Filter;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
+import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 
 public class SingleDataSourceTracker
 {
@@ -18,19 +13,16 @@ public class SingleDataSourceTracker
         public void dataSourceChanged ( DataSource dataSource );
     }
 
-    private final SingleServiceTracker tracker;
+    private final SingleObjectPoolServiceTracker tracker;
 
     private final ServiceListener listener;
 
-    public SingleDataSourceTracker ( final BundleContext context, final String dataSourceId, final ServiceListener listener ) throws InvalidSyntaxException
+    public SingleDataSourceTracker ( final ObjectPoolTracker poolTracker, final String dataSourceId, final ServiceListener listener ) throws InvalidSyntaxException
     {
         this.listener = listener;
-        final Map<String, String> parameters = new HashMap<String, String> ();
-        parameters.put ( DataSource.DATA_SOURCE_ID, dataSourceId );
-        final Filter filter = FilterUtil.createAndFilter ( DataSource.class.getName (), parameters );
-        this.tracker = new SingleServiceTracker ( context, filter, new SingleServiceListener () {
 
-            public void serviceChange ( final ServiceReference reference, final Object service )
+        this.tracker = new SingleObjectPoolServiceTracker ( poolTracker, dataSourceId, new SingleObjectPoolServiceTracker.ServiceListener () {
+            public void serviceChange ( final Object service, final Dictionary<?, ?> properties )
             {
                 SingleDataSourceTracker.this.setDataSource ( (DataSource)service );
             }

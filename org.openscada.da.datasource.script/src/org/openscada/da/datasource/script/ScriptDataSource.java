@@ -20,15 +20,13 @@ import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
-import org.osgi.framework.BundleContext;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
 
 public class ScriptDataSource extends AbstractDataSource
 {
 
     private final Executor executor;
-
-    private final BundleContext context;
 
     private final Map<String, DataSourceHandler> sources = new HashMap<String, DataSourceHandler> ();
 
@@ -40,9 +38,11 @@ public class ScriptDataSource extends AbstractDataSource
 
     private ScriptEngine scriptEngine;
 
-    public ScriptDataSource ( final BundleContext context, final Executor executor )
+    private final ObjectPoolTracker poolTracker;
+
+    public ScriptDataSource ( final ObjectPoolTracker poolTracker, final Executor executor )
     {
-        this.context = context;
+        this.poolTracker = poolTracker;
         this.executor = executor;
 
         this.manager = new ScriptEngineManager ();
@@ -115,7 +115,7 @@ public class ScriptDataSource extends AbstractDataSource
 
     private void addDataSource ( final String datasourceKey, final String datasourceId ) throws InvalidSyntaxException
     {
-        final DataSourceHandler dsHandler = new DataSourceHandler ( this.context, datasourceId, new DataSourceHandlerListener () {
+        final DataSourceHandler dsHandler = new DataSourceHandler ( this.poolTracker, datasourceId, new DataSourceHandlerListener () {
 
             @Override
             public void handleChange ()

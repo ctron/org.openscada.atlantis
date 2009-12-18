@@ -20,7 +20,7 @@ import org.openscada.da.server.common.DataItemBase;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
-import org.osgi.framework.BundleContext;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +35,11 @@ public class DataItemImpl extends DataItemBase implements DataSourceListener
 
     private DataSource dataSource;
 
-    public DataItemImpl ( final BundleContext context, final DataItemInformation information, final String dataSourceId ) throws InvalidSyntaxException
+    public DataItemImpl ( final ObjectPoolTracker poolTracker, final DataItemInformation information, final String dataSourceId ) throws InvalidSyntaxException
     {
         super ( information );
 
-        this.tracker = new SingleDataSourceTracker ( context, dataSourceId, new ServiceListener () {
+        this.tracker = new SingleDataSourceTracker ( poolTracker, dataSourceId, new ServiceListener () {
 
             public void dataSourceChanged ( final DataSource dataSource )
             {

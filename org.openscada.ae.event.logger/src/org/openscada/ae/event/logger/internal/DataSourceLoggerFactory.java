@@ -18,11 +18,11 @@ public class DataSourceLoggerFactory extends AbstractServiceConfigurationFactory
     {
         final MasterItemLogger logger = new MasterItemLogger ( context, 0 );
         logger.update ( parameters );
-        return new Entry<MasterItemLogger> ( logger );
+        return new Entry<MasterItemLogger> ( configurationId, logger );
     }
 
     @Override
-    protected void disposeService ( final MasterItemLogger service )
+    protected void disposeService ( final String id, final MasterItemLogger service )
     {
         service.dispose ();
     }

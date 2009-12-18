@@ -3,13 +3,13 @@ package org.openscada.da.datasource.proxy.internal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.ca.common.factory.Service;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -22,21 +22,18 @@ import org.openscada.da.datasource.MultiDataSourceTracker.ServiceListener;
 import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
-import org.osgi.framework.BundleContext;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ProxyDataSource extends AbstractDataSource implements Service, ServiceListener
+public class ProxyDataSource extends AbstractDataSource implements ServiceListener
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ProxyDataSource.class );
 
     private final Executor executor;
-
-    private final BundleContext context;
 
     private MultiDataSourceTracker tracker;
 
@@ -44,9 +41,11 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
 
     private Set<String> sourceIds;
 
-    public ProxyDataSource ( final BundleContext context, final Executor executor )
+    private final ObjectPoolTracker poolTracker;
+
+    public ProxyDataSource ( final ObjectPoolTracker poolTracker, final Executor executor )
     {
-        this.context = context;
+        this.poolTracker = poolTracker;
         this.executor = executor;
     }
 
@@ -90,7 +89,7 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
             return;
         }
 
-        this.tracker = new MultiDataSourceTracker ( this.context, this.sourceIds, this );
+        this.tracker = new MultiDataSourceTracker ( this.poolTracker, this.sourceIds, this );
         this.tracker.open ();
     }
 
@@ -104,13 +103,13 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
         return new LinkedHashSet<String> ( Arrays.asList ( sources.split ( "[, ]+" ) ) );
     }
 
-    private int getPriority ( final ServiceReference reference )
+    private int getPriority ( final String id, final Dictionary<?, ?> properties )
     {
-        final Object o = reference.getProperty ( Constants.SERVICE_RANKING );
+        final Object o = properties.get ( Constants.SERVICE_RANKING );
 
         if ( o == null )
         {
-            return getDefaultPriority ( reference );
+            return getDefaultPriority ( id );
         }
 
         if ( o instanceof Number )
@@ -124,20 +123,12 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
         }
         catch ( final NumberFormatException e )
         {
-            return getDefaultPriority ( reference );
+            return getDefaultPriority ( id );
         }
     }
 
-    private int getDefaultPriority ( final ServiceReference reference )
+    private int getDefaultPriority ( final String dataSourceId )
     {
-        final Object o = reference.getProperty ( DataSource.DATA_SOURCE_ID );
-        if ( o == null )
-        {
-            return 100;
-        }
-
-        final String dataSourceId = o.toString ();
-
         int start = 100;
         for ( final String id : this.sourceIds )
         {
@@ -148,7 +139,6 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
             start--;
         }
 
-        logger.warn ( "Getting priority for unknown service: {}", reference );
         return Integer.MIN_VALUE;
     }
 
@@ -232,7 +222,7 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
         for ( final SourceHandler handler : this.sources.values () )
         {
             final DataItemValueEntry entry = handler.getEntry ();
-            if ( entry != null && entry.getValue () != null && entry.getValue ().isConnected() )
+            if ( entry != null && entry.getValue () != null && entry.getValue ().isConnected () )
             {
                 entries.add ( entry );
             }
@@ -301,17 +291,17 @@ public class ProxyDataSource extends AbstractDataSource implements Service, Serv
         return new InstantErrorFuture<WriteResult> ( new OperationException ( "'writeAttributes' not supported" ) );
     }
 
-    public void dataSourceAdded ( final ServiceReference reference, final DataSource dataSource )
+    public void dataSourceAdded ( final String id, final Dictionary<?, ?> properties, final DataSource dataSource )
     {
-        addSource ( dataSource, getPriority ( reference ) );
+        addSource ( dataSource, getPriority ( id, properties ) );
     }
 
-    public void dataSourceModified ( final ServiceReference reference, final DataSource dataSource )
+    public void dataSourceModified ( final String id, final Dictionary<?, ?> properties, final DataSource dataSource )
     {
-        updateSource ( dataSource, getPriority ( reference ) );
+        updateSource ( dataSource, getPriority ( id, properties ) );
     }
 
-    public void dataSourceRemoved ( final ServiceReference reference, final DataSource dataSource )
+    public void dataSourceRemoved ( final String id, final Dictionary<?, ?> properties, final DataSource dataSource )
     {
         removeSource ( dataSource );
     }

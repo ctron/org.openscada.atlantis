@@ -20,11 +20,11 @@ public class EventPoolConfigurationFactory extends AbstractServiceConfigurationF
         final Integer size = Integer.parseInt ( parameters.get ( "size" ) );
 
         final EventPoolManager manager = new EventPoolManager ( context, configurationId, filter, size );
-        return new Entry<EventPoolManager> ( manager );
+        return new Entry<EventPoolManager> ( configurationId, manager );
     }
 
     @Override
-    protected void disposeService ( final EventPoolManager service )
+    protected void disposeService ( final String id, final EventPoolManager service )
     {
         service.dispose ();
     }

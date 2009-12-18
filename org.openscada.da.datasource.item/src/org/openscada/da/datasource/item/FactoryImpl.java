@@ -4,9 +4,11 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.openscada.da.datasource.DataSource;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -17,10 +19,14 @@ public class FactoryImpl extends AbstractServiceConfigurationFactory<DataItemImp
 
     private final BundleContext context;
 
+    private final ObjectPoolTracker poolTracker;
+
     public FactoryImpl ( final BundleContext context )
     {
         super ( context );
         this.context = context;
+        this.poolTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
+        this.poolTracker.open ();
     }
 
     @Override
@@ -30,9 +36,10 @@ public class FactoryImpl extends AbstractServiceConfigurationFactory<DataItemImp
     }
 
     @Override
-    protected void disposeService ( final DataItemImpl service )
+    protected void disposeService ( final String id, final DataItemImpl service )
     {
         service.dispose ();
+        this.poolTracker.close ();
     }
 
     @Override
@@ -45,12 +52,12 @@ public class FactoryImpl extends AbstractServiceConfigurationFactory<DataItemImp
     {
         final String itemId = parameters.get ( "item.id" );
         final String datasourceId = parameters.get ( "datasource.id" );
-        final DataItemImpl item = new DataItemImpl ( context, new DataItemInformationBase ( itemId ), datasourceId );
+        final DataItemImpl item = new DataItemImpl ( this.poolTracker, new DataItemInformationBase ( itemId ), datasourceId );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_DESCRIPTION, "inavare GmbH" );
         final ServiceRegistration handle = context.registerService ( DataItem.class.getName (), item, properties );
 
-        return new Entry<DataItemImpl> ( item, handle );
+        return new Entry<DataItemImpl> ( configurationId, item, handle );
     }
 }

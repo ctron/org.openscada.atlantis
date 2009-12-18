@@ -5,7 +5,7 @@ import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.datasource.SingleDataSourceTracker;
 import org.openscada.da.datasource.SingleDataSourceTracker.ServiceListener;
-import org.osgi.framework.BundleContext;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +23,11 @@ public class DataSourceHandler implements DataSourceListener
 
     private DataItemValue value;
 
-    public DataSourceHandler ( final BundleContext context, final String datasourceId, final DataSourceHandlerListener listener ) throws InvalidSyntaxException
+    public DataSourceHandler ( final ObjectPoolTracker poolTracker, final String datasourceId, final DataSourceHandlerListener listener ) throws InvalidSyntaxException
     {
         this.listener = listener;
 
-        this.tracker = new SingleDataSourceTracker ( context, datasourceId, new ServiceListener () {
+        this.tracker = new SingleDataSourceTracker ( poolTracker, datasourceId, new ServiceListener () {
 
             @Override
             public void dataSourceChanged ( final DataSource dataSource )

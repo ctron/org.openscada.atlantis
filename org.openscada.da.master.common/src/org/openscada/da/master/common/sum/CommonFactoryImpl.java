@@ -27,7 +27,7 @@ public class CommonFactoryImpl extends AbstractServiceConfigurationFactory<Abstr
     {
         final AbstractMasterHandlerImpl handler = new CommonSumHandler ( this.context, this.tag, this.priority );
         handler.update ( parameters );
-        return new Entry<AbstractMasterHandlerImpl> ( handler );
+        return new Entry<AbstractMasterHandlerImpl> ( configurationId, handler );
     }
 
     @Override
@@ -38,7 +38,7 @@ public class CommonFactoryImpl extends AbstractServiceConfigurationFactory<Abstr
     }
 
     @Override
-    protected void disposeService ( final AbstractMasterHandlerImpl service )
+    protected void disposeService ( final String id, final AbstractMasterHandlerImpl service )
     {
         service.dispose ();
     }

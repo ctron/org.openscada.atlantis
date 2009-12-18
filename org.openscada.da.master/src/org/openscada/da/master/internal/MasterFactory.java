@@ -11,6 +11,7 @@ import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.MasterItem;
 import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -34,10 +35,14 @@ public class MasterFactory implements ConfigurationFactory
 
     private final ExecutorService executor;
 
+    private final ObjectPoolImpl dataSourcePool;
+
     public MasterFactory ( final BundleContext context )
     {
         this.context = context;
         this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "MasterItemFactory" ) );
+
+        this.dataSourcePool = new ObjectPoolImpl ();
     }
 
     public void delete ( final String configurationId )
@@ -97,7 +102,9 @@ public class MasterFactory implements ConfigurationFactory
 
             logger.debug ( "Registering " + id );
 
-            this.masterRegs.put ( id, this.context.registerService ( new String[] { MasterItem.class.getName (), DataSource.class.getName () }, masterItemImpl, properties ) );
+            this.dataSourcePool.addService ( id, masterItemImpl, properties );
+
+            this.masterRegs.put ( id, this.context.registerService ( new String[] { MasterItem.class.getName () }, masterItemImpl, properties ) );
         }
     }
 
@@ -113,6 +120,7 @@ public class MasterFactory implements ConfigurationFactory
 
         if ( master != null )
         {
+            this.dataSourcePool.removeService ( id, master );
             master.dispose ();
         }
 
@@ -124,10 +132,14 @@ public class MasterFactory implements ConfigurationFactory
 
     public void dispose ()
     {
+        this.dataSourcePool.dispose ();
         removeAllItems ();
         this.executor.shutdown ();
     }
 
+    /*
+     * Must only be called from #dispose()
+     */
     private synchronized void removeAllItems ()
     {
         for ( final ServiceRegistration reg : this.masterRegs.values () )
@@ -138,6 +150,7 @@ public class MasterFactory implements ConfigurationFactory
 
         for ( final MasterItemImpl item : this.masterItemImpls.values () )
         {
+            // no need to remove services from pool since it is dispsed
             item.dispose ();
         }
         this.masterItemImpls.clear ();
