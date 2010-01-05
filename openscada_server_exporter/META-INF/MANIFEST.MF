@@ -1,7 +1,4 @@
 Manifest-Version: 1.0
-Built-By: jens
-Created-By: Apache Maven Bundle Plugin
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: Ice,
  javax.xml.stream;version="1.0.1",
  org.apache.log4j;version="1.2",
@@ -17,35 +14,15 @@ Import-Package: Ice,
  org.openscada.da.server.net;version="0.14",
  org.openscada.utils.lifecycle;version="0.13.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bnd-LastModified: 1252499301207
-Export-Package: org.openscada.da.server.exporter;version="0.14.0";
-  uses:="org.apache.xmlbeans.xml.stream,
-   org.apache.xmlbeans,
-   org.w3c.dom,
-   javax.xml.stream,
-   org.apache.log4j,
-   org.openscada.core,
-   org.openscada.utils.lifecycle,
-   org.openscada.da.server.common.configuration,
+Export-Package: org.openscada.da.server.exporter;version="0.15.0";
+  uses:="Ice,
    org.openscada.da.core.server,
-   org.openscada.da.server.ice,
-   Ice,
-   org.openscada.da.server.net"
-Bundle-Version: 0.14.0
-Bundle-Name: OpenSCADA-DA-Server-Exporter
-Build-Jdk: 1.5.0_18
-Private-Package: schemaorg_apache_xmlbeans.src.schema,schemaorg_apache
- _xmlbeans.system.s8F83C40D50FD0B0348A4B356DEECE749,schemaorg_apache_x
- mlbeans.javaname.org.openscada.da.server.exporter,schemaorg_apache_xm
- lbeans.system.sF25730B812887B67FDD7C221575F9575,schemaorg_apache_xmlb
- eans.namespace.http_3A_2F_2Fopenscada_2Eorg_2FDA_2FServer_2FExporter,
- schemaorg_apache_xmlbeans.element.http_3A_2F_2Fopenscada_2Eorg_2FDA_2
- FServer_2FExporter,schemaorg_apache_xmlbeans.type.http_3A_2F_2Fopensc
- ada_2Eorg_2FDA_2FServer_2FExporter,org.openscada.da.server.exporter.i
- mpl
+   org.openscada.core,
+   org.w3c.dom,
+   org.openscada.utils.lifecycle"
+Bundle-Version: 0.15.0.qualifier
+Bundle-Name: OpenSCADA DA Server Exporter
 Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: inavare GmbH
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.exporter
-Tool: Bnd-0.0.311
-
