@@ -1,7 +1,4 @@
 Manifest-Version: 1.0
-Built-By: jens
-Created-By: Apache Maven Bundle Plugin
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
  org.apache.log4j;version="1.2.0",
  org.apache.xmlbeans;version="2.4.0",
@@ -38,116 +35,58 @@ Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
  org.openscada.utils.concurrent;version="0.13",
  org.openscada.utils.str;version="0.13"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bnd-LastModified: 1252499290649
-Export-Package: org.openscada.da.server.opc;version="0.14.0";
-  uses:="org.openscada.opc.lib.da.browser,
-   org.openscada.core,
-   org.apache.log4j,
-   org.openscada.opc.dcom.common,
-   org.jinterop.dcom.common,
+Export-Package: org.openscada.da.server.opc;version="0.15.0";
+  uses:="org.jinterop.dcom.core,
+   org.openscada.da.server.opc.connection,
    org.openscada.opc.dcom.da,
-   org.openscada.da.core,
-   org.jinterop.dcom.core,
-   org.apache.xmlbeans,
-   org.openscada.da.server.common.chain.storage,
-   org.w3c.dom,
+   org.openscada.da.server.common.impl,
    org.openscada.da.server.opc.configuration,
-   org.openscada.da.server.common.impl,
-   org.openscada.da.server.browser.common,
-   org.openscada.da.server.common.configuration,
-   org.openscada.da.server.opc.connection,
-   org.openscada.da.server.common",
- org.openscada.da.server.opc.browser;version="0.14.0";
-  uses:="org.openscada.da.server.opc.job.impl,
-   org.openscada.da.server.opc.connection,
-   org.openscada.da.server.opc,
-   org.openscada.da.server.common.exporter,
-   org.openscada.da.server.opc.job,
-   org.openscada.da.server.browser.common,
-   org.apache.log4j,
-   org.openscada.da.core.browser,
-   org.openscada.utils.str,
-   org.openscada.da.core.server.browser,
-   org.openscada.da.server.common",
- org.openscada.da.server.opc.configuration;version="0.14.0";
-  uses:="org.apache.xmlbeans,
-   org.w3c.dom,
-   org.openscada.da.server.opc,
-   org.openscada.da.server.opc.preload,
-   org.openscada.da.server.common.configuration,
-   org.openscada.da.server.opc.connection,
-   org.openscada.da.hive,
-   org.openscada.opc.lib.common,
-   org.openscada.da.server.common.configuration.xml",
- org.openscada.da.server.opc.connection;version="0.14.0";
-  uses:="org.openscada.opc.lib.common,
-   org.openscada.opc.dcom.da,
-   org.openscada.da.server.common.exporter,
-   org.openscada.opc.dcom.common,
-   org.apache.log4j,
-   org.openscada.da.server.opc.job.impl,
-   org.openscada.utils.concurrent,
-   org.jinterop.dcom.core,
-   org.openscada.da.server.opc.job,
    org.openscada.core,
-   org.openscada.da.server.common,
-   org.openscada.da.server.common.chain,
+   org.openscada.opc.dcom.common,
+   org.w3c.dom",
+ org.openscada.da.server.opc.browser;version="0.15.0";
+  uses:="org.openscada.da.server.browser.common,
+   org.openscada.da.server.opc.connection,
+   org.openscada.da.server.common.exporter,
    org.openscada.da.server.opc,
-   org.openscada.da.server.opc.preload,
-   org.openscada.da.core,
-   org.openscada.da.server.common.impl,
-   org.openscada.utils.collection,
+   org.openscada.da.server.opc.job",
+ org.openscada.da.server.opc.configuration;version="0.15.0";uses:="org.openscada.da.opc.configuration,org.openscada.da.server.opc,org.w3c.dom",
+ org.openscada.da.server.opc.connection;version="0.15.0";
+  uses:="org.openscada.da.server.common,
    org.openscada.da.server.browser.common,
-   org.jinterop.dcom.common,
+   org.jinterop.dcom.core,
+   org.openscada.opc.lib.common,
+   org.openscada.opc.dcom.da,
    org.openscada.da.server.common.item.factory,
    org.openscada.da.server.common.factory,
-   org.openscada.da.server.opc.browser,
-   org.openscada.opc.dcom.da.impl,
+   org.openscada.utils.concurrent,
    org.openscada.opc.dcom.common.impl,
-   org.openscada.da.server.browser.common.query,
-   org.openscada.da.server.common.configuration",
- org.openscada.da.server.opc.job;version="0.14.0";uses:="org.apache.log4j",
- org.openscada.da.server.opc.job.impl;version="0.14.0";
-  uses:="org.apache.log4j,
    org.openscada.opc.dcom.da.impl,
-   org.openscada.opc.dcom.common,
-   org.openscada.opc.dcom.da,
-   org.openscada.da.server.opc.connection,
-   org.openscada.da.server.opc.job,
-   org.openscada.utils.str,
-   org.openscada.da.core,
-   org.openscada.opc.lib.da.browser,
-   org.jinterop.dcom.common,
-   org.openscada.opc.dcom.common.impl,
    org.openscada.da.server.opc.browser,
-   org.openscada.opc.lib.da,
-   org.openscada.opc.lib.common,
-   org.jinterop.dcom.core",
- org.openscada.da.server.opc.preload;version="0.14.0";
-  uses:="org.apache.log4j,
-   org.openscada.da.server.browser.common,
-   org.openscada.da.server.opc.connection,
-   org.openscada.da.server.common.item.factory,
-   org.openscada.da.server.opc.configuration,
-   org.openscada.da.server.common,
    org.openscada.da.core,
-   org.openscada.core,
    org.openscada.da.server.common.chain,
-   org.apache.xmlbeans"
-Bundle-Version: 0.14.0
-Bundle-Name: OpenSCADA-DA-Server-OPC
-Build-Jdk: 1.5.0_18
-Private-Package: org.openscada.da.opc.configuration.impl,schemaorg_apa
- che_xmlbeans.src.schema,schemaorg_apache_xmlbeans.system.sADD257C6E38
- 0EC311E7E7A995D19CA08,schemaorg_apache_xmlbeans.javaname.org.openscad
- a.da.opc.configuration,schemaorg_apache_xmlbeans.type.http_3A_2F_2Fop
- enscada_2Eorg_2FDA_2FOPC_2FConfiguration,schemaorg_apache_xmlbeans.na
- mespace.http_3A_2F_2Fopenscada_2Eorg_2FDA_2FOPC_2FConfiguration,org.o
- penscada.da.opc.configuration,schemaorg_apache_xmlbeans.element.http_
- 3A_2F_2Fopenscada_2Eorg_2FDA_2FOPC_2FConfiguration
+   org.openscada.da.server.common.exporter,
+   org.openscada.da.server.opc.job,
+   org.openscada.da.server.opc,
+   org.openscada.core,
+   org.openscada.opc.dcom.common",
+ org.openscada.da.server.opc.job;version="0.15.0",
+ org.openscada.da.server.opc.job.impl;version="0.15.0";
+  uses:="org.jinterop.dcom.core,
+   org.openscada.da.server.opc.connection,
+   org.openscada.opc.lib.common,
+   org.openscada.opc.dcom.da,
+   org.openscada.opc.dcom.common.impl,
+   org.openscada.da.server.opc.job,
+   org.openscada.opc.dcom.da.impl,
+   org.openscada.opc.lib.da,
+   org.openscada.da.server.opc.browser,
+   org.openscada.opc.dcom.common",
+ org.openscada.da.server.opc.preload;version="0.15.0";uses:="org.openscada.da.opc.configuration,org.openscada.da.server.opc.connection,org.openscada.da.server.common.item.factory"
+Bundle-Version: 0.15.0.qualifier
+Bundle-Name: OpenSCADA DA OPC Server
 Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: inavare GmbH
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.opc
-Tool: Bnd-0.0.311
 
