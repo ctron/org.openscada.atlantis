@@ -1,7 +1,4 @@
 Manifest-Version: 1.0
-Built-By: jens
-Created-By: Apache Maven Bundle Plugin
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: javax.xml.stream;version="1.0.1",
  org.apache.log4j;version="1.2",
  org.apache.xmlbeans;version="2.4",
@@ -19,28 +16,21 @@ Import-Package: javax.xml.stream;version="1.0.1",
  org.openscada.da.server.common.item.factory;version="0.14",
  org.openscada.utils.lifecycle;version="0.13.1"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bnd-LastModified: 1252499280009
-Export-Package: org.openscada.da.server.jdbc;uses:="org.openscada.da.s
- erver.browser.common,org.apache.log4j,org.openscada.da.server.common.
- impl,org.openscada.da.server.common.item.factory,org.openscada.da.ser
- ver.common.chain,org.openscada.da.server.common.chain.item,org.opensc
- ada.da.server.common,org.openscada.da.core,org.apache.xmlbeans,org.w3
- c.dom,org.openscada.core";version="0.14.0.SNAPSHOT"
-Bundle-Version: 0.14.0
-Bundle-Name: OpenSCADA-DA-Server-JDBC
-Build-Jdk: 1.5.0_18
-Private-Package: schemaorg_apache_xmlbeans.system.s272FDA804BC4F8E0B2D
- 78C81FAC1D6C6,schemaorg_apache_xmlbeans.javaname.org.openscada.da.jdb
- c.configuration,schemaorg_apache_xmlbeans.src,schemaorg_apache_xmlbea
- ns.element.http_3A_2F_2Fopenscada_2Eorg_2FDA_2FJDBC_2FConfiguration,s
- chemaorg_apache_xmlbeans.src.schema,org.openscada.da.jdbc.configurati
- on,schemaorg_apache_xmlbeans.type.http_3A_2F_2Fopenscada_2Eorg_2FDA_2
- FJDBC_2FConfiguration,org.openscada.da.jdbc.configuration.impl,schema
- org_apache_xmlbeans.namespace.http_3A_2F_2Fopenscada_2Eorg_2FDA_2FJDB
- C_2FConfiguration
+Export-Package: org.openscada.da.server.jdbc;version="0.15.0";
+  uses:="org.openscada.da.server.browser.common,
+   org.apache.log4j,
+   org.openscada.da.server.common.impl,
+   org.openscada.da.server.common.item.factory,
+   org.openscada.da.server.common.chain,
+   org.openscada.da.server.common.chain.item,
+   org.openscada.da.server.common,
+   org.openscada.da.core,
+   org.apache.xmlbeans,
+   org.w3c.dom,
+   org.openscada.core"
+Bundle-Version: 0.15.0.qualifier
+Bundle-Name: OpenSCADA DA JDBC Server
 Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: inavare GmbH
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.jdbc
-Tool: Bnd-0.0.311
-
