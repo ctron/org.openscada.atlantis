@@ -1,7 +1,4 @@
 Manifest-Version: 1.0
-Built-By: jens
-Created-By: Apache Maven Bundle Plugin
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: org.apache.log4j;version="1.2",
  org.apache.mina.core.session;version="2.0",
  org.apache.mina.handler.multiton;version="2.0",
@@ -25,7 +22,6 @@ Import-Package: org.apache.log4j;version="1.2",
  org.openscada.utils.lang;version="0.13",
  org.openscada.utils.lifecycle;version="0.13.1"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bnd-LastModified: 1252499294198
 Export-Package: org.openscada.da.server.net;version="0.15.0";
   uses:="org.apache.mina.core.session,
    org.openscada.da.core.server,
@@ -36,12 +32,9 @@ Export-Package: org.openscada.da.server.net;version="0.15.0";
    org.openscada.da.core,
    org.openscada.core.subscription"
 Bundle-Version: 0.15.0.qualifier
-Bundle-Name: OpenSCADA-DA-Server-Exporter-Net
-Build-Jdk: 1.5.0_18
-Private-Package: org.openscada.da.server.net,
+Bundle-Name: OpenSCADA DA Server Exporter Net
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
 Bundle-SymbolicName: org.openscada.da.server.net
-Tool: Bnd-0.0.311
 
