@@ -121,6 +121,7 @@
   	<!-- OpenSCADA DA -->
   	
   	<openscada.builder.copyFeature id="org.openscada.da"/>
+  	<openscada.builder.copyFeature id="org.openscada.da.sdk"/>
 
   	<openscada.builder.copyPlugin id="org.openscada.da.core" project="openscada_da_core_common"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.core.server"/>

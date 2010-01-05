@@ -25,4 +25,8 @@
          id="org.openscada.atlantis.source"
          version="0.0.0"/>
 
+   <includes
+         id="org.openscada.da.sdk"
+         version="0.0.0"/>
+
 </feature>
