@@ -1,7 +1,4 @@
 Manifest-Version: 1.0
-Built-By: jens
-Created-By: Apache Maven Bundle Plugin
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: org.apache.log4j;version="1.2",
  org.openscada.core;version="0.14",
  org.openscada.core.net;version="0.14",
@@ -11,23 +8,17 @@ Import-Package: org.apache.log4j;version="1.2",
  org.openscada.net.base.data;version="0.14",
  org.openscada.utils.lang;version="0.13"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bnd-LastModified: 1252499269218
-Export-Package: org.openscada.net.da.handler;version="0.14.0";
-  uses:="org.openscada.da.core.browser,
-   org.openscada.da.core,
-   org.apache.log4j,
-   org.openscada.utils.lang,
-   org.openscada.net.base.data,
+Export-Package: org.openscada.net.da.handler;version="0.15.0";
+  uses:="org.openscada.net.base.data,
    org.openscada.core.net,
+   org.openscada.utils.lang,
+   org.openscada.da.core.browser,
+   org.openscada.core,
    org.openscada.core.subscription,
-   org.openscada.core"
-Bundle-Version: 0.14.0
+   org.openscada.da.core"
+Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA-DA-Net-Base
-Build-Jdk: 1.5.0_18
-Private-Package: org.openscada.net.da.handler,
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
 Bundle-SymbolicName: org.openscada.da.net.base
-Tool: Bnd-0.0.311
-
