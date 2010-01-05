@@ -20,6 +20,7 @@
 package org.openscada.da.client;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,9 +78,13 @@ public class DataItemValue
         return this.value;
     }
 
+    /**
+     * Get an unmodifiable map of the attributes
+     * @return an unmodifiable map of the attributes
+     */
     public Map<String, Variant> getAttributes ()
     {
-        return this.attributes;
+        return Collections.unmodifiableMap ( this.attributes );
     }
 
     public SubscriptionState getSubscriptionState ()
