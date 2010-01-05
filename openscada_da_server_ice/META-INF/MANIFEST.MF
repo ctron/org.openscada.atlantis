@@ -22,13 +22,12 @@ Import-Package: Ice,
  org.openscada.utils.lifecycle;version="0.13.1"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bnd-LastModified: 1252499298043
-Export-Package: org.openscada.da.server.ice;version="0.14.0";
-  uses:="org.openscada.core,
-   org.apache.log4j,
+Export-Package: org.openscada.da.server.ice;version="0.15.0";
+  uses:="org.openscada.da.core.server,
    Ice,
-   org.openscada.da.core.server,
-   org.openscada.da.server.common.impl"
-Bundle-Version: 0.14.0
+   org.openscada.da.server.common.impl,
+   org.openscada.core"
+Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA-DA-Server-Ice
 Build-Jdk: 1.5.0_18
 Private-Package: org.openscada.da.server.ice.impl

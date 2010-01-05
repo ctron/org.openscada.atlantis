@@ -26,28 +26,16 @@ Import-Package: org.apache.log4j;version="1.2",
  org.openscada.utils.lifecycle;version="0.13.1"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bnd-LastModified: 1252499294198
-Export-Package: org.openscada.da.server.net;version="0.14.0";
-  uses:="org.openscada.core,
-   org.apache.log4j,
+Export-Package: org.openscada.da.server.net;version="0.15.0";
+  uses:="org.apache.mina.core.session,
    org.openscada.da.core.server,
-   org.apache.mina.core.session,
-   org.apache.mina.handler.multiton,
-   org.openscada.core.server.net,
    org.openscada.da.server.common.impl,
-   org.openscada.net.base.data,
-   org.openscada.net.base,
-   org.openscada.utils.concurrent.task,
-   org.openscada.utils.concurrent,
-   org.openscada.da.core,
-   org.openscada.net.mina,
-   org.openscada.net.da.handler,
-   org.openscada.da.core.browser,
-   org.openscada.core.subscription,
-   org.openscada.utils.lang,
-   org.openscada.core.server,
+   org.openscada.core.server.net,
    org.openscada.da.core.server.browser,
-   org.openscada.net.utils"
-Bundle-Version: 0.14.0
+   org.openscada.core,
+   org.openscada.da.core,
+   org.openscada.core.subscription"
+Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA-DA-Server-Exporter-Net
 Build-Jdk: 1.5.0_18
 Private-Package: org.openscada.da.server.net,
