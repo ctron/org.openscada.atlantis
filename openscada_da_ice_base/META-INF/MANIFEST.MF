@@ -1,7 +1,4 @@
 Manifest-Version: 1.0
-Built-By: jens
-Created-By: Apache Maven Bundle Plugin
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: Ice,
  IceInternal,
  OpenSCADA.Core;version="0.14",
@@ -19,31 +16,16 @@ Import-Package: Ice,
  org.openscada.da.core.browser;version="0.14",
  org.openscada.da.ice;version="0.14"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bnd-LastModified: 1252499297170
-Export-Package: OpenSCADA.DA;version="0.14.0";
-  uses:="OpenSCADA.Core,
-   Ice,
+Export-Package: OpenSCADA.DA;version="0.15.0";
+  uses:="Ice,
+   OpenSCADA.DA.Browser,
    IceInternal,
-   OpenSCADA.DA.Browser",
- OpenSCADA.DA.Browser;version="0.14.0";
-  uses:="IceInternal,
-   Ice,
-   OpenSCADA.Core,
-   OpenSCADA.DA",
- org.openscada.da.ice;version="0.14.0";
-  uses:="org.apache.log4j,
-   OpenSCADA.DA,
-   org.openscada.core.ice,
-   org.openscada.da.core.browser,
-   org.openscada.da.core,
-   OpenSCADA.DA.Browser"
-Bundle-Version: 0.14.0
-Bundle-Name: OpenSCADA-DA-Ice-Base
-Build-Jdk: 1.5.0_18
-Private-Package: org.openscada.da.ice,
+   OpenSCADA.Core",
+ OpenSCADA.DA.Browser;version="0.15.0";uses:="OpenSCADA.DA,Ice,IceInternal",
+ org.openscada.da.ice;version="0.15.0";uses:="OpenSCADA.DA.Browser,org.openscada.da.core.browser"
+Bundle-Version: 0.14.0.qualifier
+Bundle-Name: OpenSCADA DA Ice Base
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
 Bundle-SymbolicName: org.openscada.da.ice.base
-Tool: Bnd-0.0.311
-
