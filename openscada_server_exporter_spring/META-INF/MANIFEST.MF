@@ -1,5 +1,4 @@
 Manifest-Version: 1.0
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: org.openscada.da.core.server;version="0.13.0",
  org.openscada.da.server.exporter;version="0.13.0",
  org.springframework.beans.factory;version="2.5.0",
@@ -7,10 +6,10 @@ Import-Package: org.openscada.da.core.server;version="0.13.0",
  org.springframework.context.support;version="2.5.0",
  org.springframework.core.io;version="2.5.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Version: 0.14.0
-Bundle-Name: OpenSCADA-DA-Server-Exporter-Spring
+Bundle-Version: 0.15.0.qualifier
+Bundle-Name: OpenSCADA DA Server Exporter Spring
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
 Bundle-SymbolicName: org.openscada.da.server.exporter.spring
-Export-Package: org.openscada.da.server.exporter.spring;version="0.14.0";uses:="org.openscada.da.core.server,org.springframework.context,org.openscada.da.server.exporter"
+Export-Package: org.openscada.da.server.exporter.spring;version="0.15.0";uses:="org.openscada.da.core.server,org.springframework.context,org.openscada.da.server.exporter"
