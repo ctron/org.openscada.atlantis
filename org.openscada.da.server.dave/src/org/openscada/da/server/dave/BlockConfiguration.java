@@ -5,6 +5,8 @@ import org.openscada.utils.lang.Immutable;
 @Immutable
 public class BlockConfiguration
 {
+    private String id;
+
     private String name;
 
     private int area;
@@ -27,10 +29,11 @@ public class BlockConfiguration
     {
     }
 
-    public BlockConfiguration ( final String daveDevice, final String name, final String type, final int area, final int block, final int start, final int count, final boolean enableStatistics, final long period )
+    public BlockConfiguration ( final String daveDevice, final String id, final String name, final String type, final int area, final int block, final int start, final int count, final boolean enableStatistics, final long period )
     {
         this.daveDevice = daveDevice;
         this.type = type;
+        this.id = id;
         this.name = name;
         this.area = area;
         this.block = block;
@@ -38,6 +41,16 @@ public class BlockConfiguration
         this.count = count;
         this.enableStatistics = enableStatistics;
         this.period = period;
+    }
+
+    public String getId ()
+    {
+        return this.id;
+    }
+
+    public void setId ( final String id )
+    {
+        this.id = id;
     }
 
     public String getType ()
@@ -113,7 +126,7 @@ public class BlockConfiguration
     @Override
     public String toString ()
     {
-        return String.format ( "{device: %s, name: %s, area: 0x%02x, block: %s, start: %s, count: %s}", this.daveDevice, this.name, this.area, this.block, this.start, this.count );
+        return String.format ( "{device: %s, id: %s, name: %s, area: 0x%02x, block: %s, start: %s, count: %s}", this.daveDevice, this.id, this.name, this.area, this.block, this.start, this.count );
     }
 
     public boolean isEnableStatistics ()

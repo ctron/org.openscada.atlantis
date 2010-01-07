@@ -191,13 +191,16 @@ public class DaveJobManager
     private Job getNextReadJob ()
     {
         final List<DaveRequestBlock> blocks = new ArrayList<DaveRequestBlock> ( this.blocks.values () );
+
+        final long now = System.currentTimeMillis ();
+
         Collections.sort ( blocks, new Comparator<DaveRequestBlock> () {
 
             public int compare ( final DaveRequestBlock o1, final DaveRequestBlock o2 )
             {
-                final long l1 = o1.updatePriority ();
-                final long l2 = o2.updatePriority ();
-                return (int) ( l2 - l1 );
+                final long l1 = o1.updatePriority ( now );
+                final long l2 = o2.updatePriority ( now );
+                return Long.valueOf ( l2 ).compareTo ( Long.valueOf ( l1 ) );
             }
         } );
 

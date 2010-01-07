@@ -35,6 +35,8 @@ public class DaveRequestBlock
 
     private final long period;
 
+    private final String name;
+
     private static class Statistics
     {
         private final DataItemInputChained lastUpdateItem;
@@ -88,14 +90,15 @@ public class DaveRequestBlock
         }
     }
 
-    public DaveRequestBlock ( final String id, final DaveDevice device, final BundleContext context, final Request request, final boolean enableStatistics, final long period )
+    public DaveRequestBlock ( final String id, final String name, final DaveDevice device, final BundleContext context, final Request request, final boolean enableStatistics, final long period )
     {
         this.request = request;
         this.device = device;
         this.context = context;
         this.id = id;
+        this.name = name;
         this.period = period;
-        this.itemFactory = new DataItemFactory ( context, device.getExecutor (), device.getItemId ( id ) );
+        this.itemFactory = new DataItemFactory ( context, device.getExecutor (), device.getItemId ( name ) );
 
         this.settingVariablesItem = this.itemFactory.createInput ( "settingVariables", null );
 
@@ -111,11 +114,12 @@ public class DaveRequestBlock
 
     /**
      * The the update priority used to find the next block to request 
+     * @param now 
      * @return the update priority
      */
-    public long updatePriority ()
+    public long updatePriority ( final long now )
     {
-        return System.currentTimeMillis () - this.lastUpdate - this.period;
+        return now - this.lastUpdate - this.period;
     }
 
     /**
@@ -185,11 +189,17 @@ public class DaveRequestBlock
             this.statistics.dispose ();
         }
 
-        this.itemFactory.dispose ();
-
-        for ( final Variable reg : this.variables )
+        if ( this.itemFactory != null )
         {
-            reg.stop ( this.context );
+            this.itemFactory.dispose ();
+        }
+
+        if ( this.variables != null )
+        {
+            for ( final Variable reg : this.variables )
+            {
+                reg.stop ( this.context );
+            }
         }
     }
 
