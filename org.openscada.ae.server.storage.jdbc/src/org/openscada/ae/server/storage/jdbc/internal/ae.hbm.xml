@@ -10,7 +10,7 @@
 		<!-- always available fields -->
 		<id name="id"
 			type="org.openscada.ae.server.storage.jdbc.internal.UUIDHibernateType">
-			<column name="ID" length="36" not-null="true" />
+			<column name="ID" length="36" sql-type="CHAR(36)" not-null="true" />
 			<generator class="assigned" />
 		</id>
 		<property name="sourceTimestamp">
@@ -55,7 +55,9 @@
 		<!-- all other attribs are in a separate table -->
 		<map name="attributes" table="org_openscada_ae_server_storage_event_attribs"
 			access="field" cascade="all" lazy="false" fetch="join">
-			<key column="ID" foreign-key="fk_org_openscada_ae_server_storage_1" on-delete="cascade" />
+			<key foreign-key="fk_org_openscada_ae_server_storage_1">
+				<column name="ID" length="36" sql-type="CHAR(36)" />
+			</key>
 			<map-key type="string" column="KEY" />
 			<element
 				type="org.openscada.ae.server.storage.jdbc.internal.VariantHibernateType">
