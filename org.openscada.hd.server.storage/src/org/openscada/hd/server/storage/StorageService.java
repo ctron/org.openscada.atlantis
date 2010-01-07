@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -366,10 +368,29 @@ public class StorageService implements SelfManagedConfigurationFactory
     }
 
     /**
+     * @return the future for completion of the purge operation
+     */
+    @Override
+    public synchronized NotifyFuture<Void> purge ()
+    {
+        // FIXME: must be implemented asynchronously. But all others are not, so wait for the rest first
+
+        final Set<String> keys = new HashSet<String> ( this.services.keySet () );
+
+        for ( final String id : keys )
+        {
+            delete ( id );
+        }
+        return new InstantFuture<Void> ( null );
+    }
+
+    /**
      * @see org.openscada.ca.SelfManagedConfigurationFactory#update
      */
     public NotifyFuture<Configuration> update ( final String configurationId, final Map<String, String> inputProperties, final boolean fullSet )
     {
+        // FIXME: must be implemented asynchronously
+
         // provide default settings
         final Map<String, String> properties = new HashMap<String, String> ();
         if ( inputProperties != null )
@@ -414,6 +435,8 @@ public class StorageService implements SelfManagedConfigurationFactory
      */
     public synchronized NotifyFuture<Configuration> delete ( final String configurationId )
     {
+        // FIXME: must be implemented asynchronously
+
         // stop service
         final StorageHistoricalItemService service = this.services.remove ( configurationId );
         if ( service == null )
