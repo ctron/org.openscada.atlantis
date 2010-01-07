@@ -22,7 +22,7 @@ public class Activator implements BundleActivator
     {
         this.factory = new DataSourceLoggerFactory ( context );
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        properties.put ( ConfigurationAdministrator.FACTORY_ID, context.getBundle ().getSymbolicName () + ".logger" );
+        properties.put ( ConfigurationAdministrator.FACTORY_ID, context.getBundle ().getSymbolicName () );
         context.registerService ( ConfigurationFactory.class.getName (), this.factory, properties );
     }
 
