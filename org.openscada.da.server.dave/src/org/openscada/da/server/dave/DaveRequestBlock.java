@@ -27,7 +27,7 @@ public class DaveRequestBlock
 
     private long lastUpdate;
 
-    private final DataItemFactory itemFactory;
+    private final DataItemFactory blockItemFactory;
 
     private final DataItemInputChained settingVariablesItem;
 
@@ -98,13 +98,13 @@ public class DaveRequestBlock
         this.id = id;
         this.name = name;
         this.period = period;
-        this.itemFactory = new DataItemFactory ( context, device.getExecutor (), device.getItemId ( name ) );
+        this.blockItemFactory = new DataItemFactory ( context, device.getExecutor (), device.getItemId ( id ) );
 
-        this.settingVariablesItem = this.itemFactory.createInput ( "settingVariables", null );
+        this.settingVariablesItem = this.blockItemFactory.createInput ( "settingVariables", null );
 
         if ( enableStatistics )
         {
-            this.statistics = new Statistics ( this.itemFactory );
+            this.statistics = new Statistics ( this.blockItemFactory );
         }
         else
         {
@@ -189,9 +189,9 @@ public class DaveRequestBlock
             this.statistics.dispose ();
         }
 
-        if ( this.itemFactory != null )
+        if ( this.blockItemFactory != null )
         {
-            this.itemFactory.dispose ();
+            this.blockItemFactory.dispose ();
         }
 
         if ( this.variables != null )
@@ -226,7 +226,7 @@ public class DaveRequestBlock
         {
             for ( final Variable var : this.variables )
             {
-                var.start ( this.device.getItemId ( this.id ), this.context, this.device, this, this.request.getStart () );
+                var.start ( this.device.getItemId ( this.name ), this.context, this.device, this, this.request.getStart () );
             }
         }
 
