@@ -100,7 +100,7 @@ public class DaveBlockConfigurator
     {
         logger.info ( String.format ( "Adding block - ref: %s, block: %s", new Object[] { reference, block } ) );
 
-        final String oldBlock = this.blocks.put ( reference, block.getName () );
+        final String oldBlock = this.blocks.put ( reference, block.getId () );
 
         if ( oldBlock != null )
         {
@@ -111,7 +111,7 @@ public class DaveBlockConfigurator
         final DaveRequestBlock deviceBlock = makeBlock ( block );
         try
         {
-            this.device.addBlock ( block.getName (), deviceBlock );
+            this.device.addBlock ( block.getId (), deviceBlock );
         }
         catch ( final Exception e )
         {
