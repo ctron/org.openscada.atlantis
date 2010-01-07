@@ -1,5 +1,4 @@
 Manifest-Version: 1.0
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: org.openscada.core;version="0.14",
  org.openscada.core.server;version="0.14",
  org.openscada.core.subscription;version="0.14",
@@ -9,7 +8,7 @@ Import-Package: org.openscada.core;version="0.14",
  org.openscada.utils.statuscodes;version="0.13",
  org.openscada.utils.str;version="0.13"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.da.core.server;version="0.14.0";
+Export-Package: org.openscada.da.core.server;version="0.15.0";
   uses:="org.openscada.da.core.browser,
    org.openscada.core,
    org.openscada.utils.concurrent,
@@ -17,15 +16,15 @@ Export-Package: org.openscada.da.core.server;version="0.14.0";
    org.openscada.da.core.server.browser,
    org.openscada.core.subscription,
    org.openscada.da.core",
- org.openscada.da.core.server.browser;version="0.14.0";
+ org.openscada.da.core.server.browser;version="0.15.0";
   uses:="org.openscada.da.core,
    org.openscada.core,
    org.openscada.utils.concurrent,
    org.openscada.da.core.server,
    org.openscada.utils.str,
    org.openscada.utils.statuscodes"
-Bundle-Version: 0.14.0
-Bundle-Name: OpenSCADA-DA-Core-Server
+Bundle-Version: 0.15.0.qualifier
+Bundle-Name: OpenSCADA DA Core Server
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH

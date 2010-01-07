@@ -27,7 +27,6 @@ import org.openscada.core.subscription.SubscriptionState;
 /**
  * Interface for listening to data items
  * @author Jens Reimann
- *
  */
 public interface ItemChangeListener
 {

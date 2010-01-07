@@ -24,10 +24,6 @@ import org.openscada.utils.str.StringHelper;
 
 public class NoSuchFolderException extends CodedException
 {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = -2354532100658455884L;
 
     public NoSuchFolderException ( final String[] path )

@@ -21,9 +21,9 @@ package org.openscada.da.core.server;
 
 import org.openscada.core.Variant;
 
-
 public interface ReadOperationListener
 {
-    void success ( Variant value );
-    void failure ( String errorMessage );
+    public void success ( Variant value );
+
+    public void failure ( String errorMessage );
 }

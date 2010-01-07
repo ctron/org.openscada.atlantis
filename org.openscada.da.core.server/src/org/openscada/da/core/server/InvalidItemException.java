@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,26 +19,26 @@
 
 package org.openscada.da.core.server;
 
-public class InvalidItemException extends Exception {
+public class InvalidItemException extends Exception
+{
+    private String itemName = "";
 
-	private String _itemName = "";
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 898848351108459646L;
-	
-	public InvalidItemException ( String itemName )
-	{
-        super("Invalid item");
-        
-		_itemName = itemName;
-	}
+    private static final long serialVersionUID = 898848351108459646L;
 
-	public String getItemName() {
-		return _itemName;
-	}
+    public InvalidItemException ( final String itemName )
+    {
+        super ( "Invalid item" );
 
-	public void setItemName(String itemName) {
-		_itemName = itemName;
-	}
+        this.itemName = itemName;
+    }
+
+    public String getItemName ()
+    {
+        return this.itemName;
+    }
+
+    public void setItemName ( final String itemName )
+    {
+        this.itemName = itemName;
+    }
 }
