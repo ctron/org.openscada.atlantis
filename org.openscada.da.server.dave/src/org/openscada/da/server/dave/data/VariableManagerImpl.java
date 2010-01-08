@@ -27,6 +27,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
     private static enum TYPE
     {
         BIT,
+        TRIBIT,
         BYTE,
         FLOAT,
         WORD,
@@ -41,9 +42,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
         private String typeName;
 
-        private final int index;
-
-        private int subIndex;
+        private final int[] index;
 
         private final TypeEntry[] attributes;
 
@@ -53,14 +52,21 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             this.type = TYPE.UDT;
             this.typeName = typeName;
             this.attributes = null;
-            this.index = index;
+            this.index = new int[] { index };
+        }
+
+        public TypeEntry ( final String name, final int[] index, final TypeEntry... attributes )
+        {
+            this.name = name;
+            this.index = index.clone ();
+            this.type = TYPE.TRIBIT;
+            this.attributes = attributes;
         }
 
         public TypeEntry ( final String name, final int index, final int subIndex, final TypeEntry... attributes )
         {
             this.name = name;
-            this.index = index;
-            this.subIndex = subIndex;
+            this.index = new int[] { index, subIndex };
             this.type = TYPE.BIT;
             this.attributes = attributes;
         }
@@ -68,9 +74,14 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
         public TypeEntry ( final String name, final TYPE type, final int index, final TypeEntry... attributes )
         {
             this.name = name;
-            this.index = index;
+            this.index = new int[] { index };
             this.type = type;
             this.attributes = attributes;
+        }
+
+        public int[] getIndexes ()
+        {
+            return this.index;
         }
 
         public TypeEntry[] getAttributes ()
@@ -80,7 +91,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
         public int getIndex ()
         {
-            return this.index;
+            return this.index[0];
         }
 
         public String getName ()
@@ -90,7 +101,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
         public int getSubIndex ()
         {
-            return this.subIndex;
+            return this.index[1];
         }
 
         public TYPE getType ()
@@ -271,6 +282,13 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             case BIT:
                 result.add ( new BitAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getSubIndex () ) );
                 break;
+            case FLOAT:
+                result.add ( new FloatAttribute ( attrEntry.getName (), attrEntry.getIndex () ) );
+                break;
+            case TRIBIT:
+                final int[] index = attrEntry.getIndexes ();
+                result.add ( new TriBitAttribute ( attrEntry.getName (), index[0], index[1], index[2], index[3], index[4], index[5] ) );
+                break;
             default:
                 break;
             }
@@ -389,6 +407,13 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             {
             case BIT:
                 result.add ( new TypeEntry ( toks[0], Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
+                break;
+            case TRIBIT:
+                result.add ( new TypeEntry ( toks[0], new int[] {//
+                Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ),// read bit
+                Integer.parseInt ( toks[4] ), Integer.parseInt ( toks[5] ),// write true bit
+                Integer.parseInt ( toks[6] ), Integer.parseInt ( toks[7] ),// write false bit
+                } ) );
                 break;
             case BYTE:
                 result.add ( new TypeEntry ( toks[0], TYPE.BYTE, Integer.parseInt ( toks[2] ) ) );
