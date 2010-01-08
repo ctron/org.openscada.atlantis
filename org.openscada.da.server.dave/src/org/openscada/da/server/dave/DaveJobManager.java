@@ -57,6 +57,8 @@ public class DaveJobManager
 
         public void handleMessage ( final DaveMessage message )
         {
+            logger.debug ( "Result: {}", message );
+
             if ( message instanceof DaveReadResult )
             {
                 for ( final Result result : ( (DaveReadResult)message ).getResult () )
@@ -64,10 +66,16 @@ public class DaveJobManager
                     this.block.handleResponse ( result );
                 }
             }
+            else
+            {
+                this.block.handleFailure ();
+            }
         }
 
         public void start ( final IoSession session )
         {
+            logger.debug ( "Start request: " + this.block.getRequest () );
+
             final DaveReadRequest request = new DaveReadRequest ();
             request.addRequest ( this.block.getRequest () );
             session.write ( request );
@@ -159,6 +167,10 @@ public class DaveJobManager
                 startNextJob ();
             }
         }
+        else
+        {
+            logger.warn ( "Message without a job: {}", message );
+        }
     }
 
     protected synchronized void tick ()
@@ -168,7 +180,9 @@ public class DaveJobManager
             return;
         }
 
+        logger.info ( "No job active when ticking... adding job!" );
         startNextJob ();
+        logger.info ( "New job: {}", this.currentJob );
     }
 
     private void startNextJob ()
@@ -178,6 +192,9 @@ public class DaveJobManager
         {
             this.currentJob = getNextReadJob ();
         }
+
+        logger.debug ( "Next job: {}", this.currentJob );
+
         if ( this.currentJob != null )
         {
             this.currentJob.start ( this.session );

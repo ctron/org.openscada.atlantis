@@ -49,11 +49,19 @@ public class DaveRequestBlock
 
         private final DataItemInputChained avgDiffItem;
 
-        public Statistics ( final DataItemFactory itemFactory )
+        private final DataItemInputChained stateItem;
+
+        private final DataItemInputChained sizeItem;
+
+        public Statistics ( final DataItemFactory itemFactory, final Request request )
         {
+            this.stateItem = itemFactory.createInput ( "state", null );
             this.lastUpdateItem = itemFactory.createInput ( "lastUpdate", null );
             this.lastTimeDiffItem = itemFactory.createInput ( "lastDiff", null );
             this.avgDiffItem = itemFactory.createInput ( "avgDiff", null );
+
+            this.sizeItem = itemFactory.createInput ( "size", null );
+            this.sizeItem.updateData ( new Variant ( request.getCount () ), null, null );
 
             this.lastUpdate = System.currentTimeMillis ();
             this.diffBuffer = new CircularFifoBuffer ( 20 );
@@ -63,7 +71,19 @@ public class DaveRequestBlock
         {
         }
 
+        public void receivedError ( final long now )
+        {
+            tickNow ( now );
+            this.stateItem.updateData ( new Variant ( false ), null, null );
+        }
+
         public void receivedUpdate ( final long now )
+        {
+            tickNow ( now );
+            this.stateItem.updateData ( new Variant ( true ), null, null );
+        }
+
+        private void tickNow ( final long now )
         {
             final long diff = now - this.lastUpdate;
             this.lastUpdate = now;
@@ -104,7 +124,7 @@ public class DaveRequestBlock
 
         if ( enableStatistics )
         {
-            this.statistics = new Statistics ( this.blockItemFactory );
+            this.statistics = new Statistics ( this.blockItemFactory, request );
         }
         else
         {
@@ -142,6 +162,24 @@ public class DaveRequestBlock
         }
     }
 
+    public synchronized void handleFailure ()
+    {
+        this.lastUpdate = System.currentTimeMillis ();
+
+        if ( this.statistics != null )
+        {
+            this.statistics.receivedError ( this.lastUpdate );
+        }
+
+        if ( this.variables != null )
+        {
+            for ( final Variable reg : this.variables )
+            {
+                reg.handleFailure ( new RuntimeException ( "Wrong reply" ).fillInStackTrace () );
+            }
+        }
+    }
+
     /**
      * Handle a response from the device
      * @param response the response to handle
@@ -157,9 +195,12 @@ public class DaveRequestBlock
 
         if ( response.isError () )
         {
-            for ( final Variable reg : this.variables )
+            if ( this.variables != null )
             {
-                reg.handleError ( response.getError () );
+                for ( final Variable reg : this.variables )
+                {
+                    reg.handleError ( response.getError () );
+                }
             }
         }
         else
@@ -236,4 +277,11 @@ public class DaveRequestBlock
 
         this.settingVariablesItem.updateData ( Variant.FALSE, null, null );
     }
+
+    @Override
+    public String toString ()
+    {
+        return String.format ( "[Request - %s]", this.request );
+    }
+
 }

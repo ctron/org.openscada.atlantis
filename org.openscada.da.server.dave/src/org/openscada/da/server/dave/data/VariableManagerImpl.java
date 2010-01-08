@@ -153,7 +153,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
     {
         this.types.remove ( configurationId );
         this.typeDeps.removeAll ( configurationId );
-        fireTypeChange ( configurationId );
+        handleTypeChange ( configurationId );
     }
 
     private void fireTypeChange ( final String type )
@@ -166,6 +166,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             {
                 for ( final VariableListener listener : VariableManagerImpl.this.listeners.get ( type ) )
                 {
+                    logger.info ( "Apply type change: {}", type );
                     listener.variableConfigurationChanged ( createVariables ( type ) );
                 }
             }
@@ -202,19 +203,20 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
      */
     private void handleTypeChange ( final String configurationId )
     {
-        // FIXME: for now re-compile all types
-        for ( final String type : this.listeners.keySet () )
-        {
-            fireTypeChange ( type );
-        }
-        /*
+        logger.info ( "Handle type change: {}", configurationId );
+
         fireTypeChange ( configurationId );
-        for ( final String type : this.typeDeps.values () )
+
+        for ( final Map.Entry<String, Collection<String>> entry : this.typeDeps.asMap ().entrySet () )
         {
-            logger.debug ( "Trigger dependency: {} (referenced by: {})", new Object[] { type, configurationId } );
-            fireTypeChange ( type );
+            logger.info ( String.format ( "'%s' depends on '%s'", entry.getKey (), entry.getValue () ) );
+
+            if ( entry.getValue ().contains ( configurationId ) )
+            {
+                logger.info ( String.format ( "Trigger dependency - '%s' depends on '%s'", entry.getKey (), configurationId ) );
+                handleTypeChange ( entry.getKey () );
+            }
         }
-        */
     }
 
     private Variable[] createVariables ( final String type )
@@ -250,7 +252,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
                     break;
                 }
             }
-            return result.toArray ( new Variable[0] );
+            return result.toArray ( new Variable[result.size ()] );
         }
     }
 
