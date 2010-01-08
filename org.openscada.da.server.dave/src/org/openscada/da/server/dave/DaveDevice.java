@@ -301,6 +301,20 @@ public class DaveDevice implements SingleSessionIoHandler
         this.jobManager.addWriteRequest ( request );
     }
 
+    public void writeWord ( final DaveRequestBlock block, final int index, final short value )
+    {
+        logger.info ( "Word write request - index: {} -> {}", new Object[] { index, value } );
+        final DaveWriteRequest request = new DaveWriteRequest ();
+
+        final IoBuffer data = IoBuffer.allocate ( 2 );
+        data.putShort ( value );
+        data.flip ();
+
+        request.addRequest ( new DaveWriteRequest.ByteRequest ( block.getRequest ().getArea (), block.getRequest ().getBlock (), (short)index, data ) );
+
+        this.jobManager.addWriteRequest ( request );
+    }
+
     public void writeFloat ( final DaveRequestBlock block, final int index, final float value )
     {
         logger.info ( "Float write request - index: {} -> {}", new Object[] { index, value } );
@@ -324,4 +338,5 @@ public class DaveDevice implements SingleSessionIoHandler
     {
         this.jobManager.removeBlock ( block );
     }
+
 }

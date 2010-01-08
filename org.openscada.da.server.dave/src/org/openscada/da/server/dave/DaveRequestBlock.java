@@ -166,16 +166,19 @@ public class DaveRequestBlock
         {
             final IoBuffer data = response.getData ();
 
-            for ( final Variable reg : this.variables )
+            if ( this.variables != null )
             {
-                try
+                for ( final Variable reg : this.variables )
                 {
-                    reg.handleData ( data );
-                }
-                catch ( final Exception e )
-                {
-                    logger.warn ( "Failed to handle register", e );
-                    reg.handleFailure ( e );
+                    try
+                    {
+                        reg.handleData ( data );
+                    }
+                    catch ( final Exception e )
+                    {
+                        logger.warn ( "Failed to handle register", e );
+                        reg.handleFailure ( e );
+                    }
                 }
             }
         }

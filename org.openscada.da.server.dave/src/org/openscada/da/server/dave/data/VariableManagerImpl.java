@@ -29,6 +29,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
         BIT,
         BYTE,
         FLOAT,
+        WORD,
         UDT
     }
 
@@ -241,10 +242,11 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
                 case FLOAT:
                     result.add ( new FloatVariable ( entry.getName (), entry.getIndex (), this.executor, createAttributes ( entry ) ) );
                     break;
+                case WORD:
+                    result.add ( new WordVariable ( entry.getName (), entry.getIndex (), this.executor, createAttributes ( entry ) ) );
+                    break;
                 case UDT:
                     result.add ( new UdtVariable ( entry.getName (), entry.getIndex (), createVariables ( entry.getTypeName () ) ) );
-                    break;
-                default:
                     break;
                 }
             }
@@ -300,10 +302,11 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             case FLOAT:
                 result.add ( new TypeEntry ( varName, TYPE.FLOAT, Integer.parseInt ( toks[1] ), parseAttributes ( properties, varName ) ) );
                 break;
+            case WORD:
+                result.add ( new TypeEntry ( varName, TYPE.WORD, Integer.parseInt ( toks[1] ), parseAttributes ( properties, varName ) ) );
+                break;
             case UDT:
                 result.add ( new TypeEntry ( varName, toks[1], Integer.parseInt ( toks[2] ) ) );
-                break;
-            default:
                 break;
             }
         }
@@ -345,10 +348,11 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             case FLOAT:
                 result.add ( new TypeEntry ( toks[0], TYPE.FLOAT, Integer.parseInt ( toks[2] ), parseAttributes ( properties, toks[0] ) ) );
                 break;
+            case WORD:
+                result.add ( new TypeEntry ( toks[0], TYPE.WORD, Integer.parseInt ( toks[2] ), parseAttributes ( properties, toks[0] ) ) );
+                break;
             case UDT:
                 result.add ( new TypeEntry ( toks[0], toks[2], Integer.parseInt ( toks[3] ) ) );
-                break;
-            default:
                 break;
             }
         }
