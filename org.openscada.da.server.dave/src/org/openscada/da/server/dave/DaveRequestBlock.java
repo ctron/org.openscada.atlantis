@@ -176,6 +176,7 @@ public class DaveRequestBlock
                     }
                     catch ( final Exception e )
                     {
+                        logger.warn ( "Failed in block {}", this.id );
                         logger.warn ( "Failed to handle register", e );
                         reg.handleFailure ( e );
                     }
