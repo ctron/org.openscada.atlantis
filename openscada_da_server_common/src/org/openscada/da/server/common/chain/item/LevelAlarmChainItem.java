@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,11 +25,20 @@ import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.chain.BaseChainItemCommon;
+import org.openscada.da.server.common.chain.BooleanBinder;
 import org.openscada.da.server.common.chain.VariantBinder;
 
 public class LevelAlarmChainItem extends BaseChainItemCommon
 {
     private static Logger logger = Logger.getLogger ( LevelAlarmChainItem.class );
+
+    public static final String HIGH_ACTIVE = "org.openscada.da.level.high.active";
+
+    public static final String HIGHHIGH_ACTIVE = "org.openscada.da.level.highhigh.active";
+
+    public static final String LOW_ACTIVE = "org.openscada.da.level.low.active";
+
+    public static final String LOWLOW_ACTIVE = "org.openscada.da.level.lowlow.active";
 
     public static final String HIGH_PRESET = "org.openscada.da.level.high.preset";
 
@@ -55,22 +64,35 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
 
     public static final String LOWLOW_ERROR = "org.openscada.da.level.lowlow.error";
 
-    private final VariantBinder _highLevel = new VariantBinder ( new Variant () );
+    private final VariantBinder highLevel = new VariantBinder ( new Variant () );
 
-    private final VariantBinder _lowLevel = new VariantBinder ( new Variant () );
+    private final VariantBinder lowLevel = new VariantBinder ( new Variant () );
 
-    private final VariantBinder _highHighLevel = new VariantBinder ( new Variant () );
+    private final VariantBinder highHighLevel = new VariantBinder ( new Variant () );
 
-    private final VariantBinder _lowLowLevel = new VariantBinder ( new Variant () );
+    private final VariantBinder lowLowLevel = new VariantBinder ( new Variant () );
+
+    private final BooleanBinder highActive = new BooleanBinder ();
+
+    private final BooleanBinder highHighActive = new BooleanBinder ();
+
+    private final BooleanBinder lowActive = new BooleanBinder ();
+
+    private final BooleanBinder lowLowActive = new BooleanBinder ();
 
     public LevelAlarmChainItem ( final HiveServiceRegistry serviceRegistry )
     {
         super ( serviceRegistry );
 
-        addBinder ( HIGH_PRESET, this._highLevel );
-        addBinder ( LOW_PRESET, this._lowLevel );
-        addBinder ( HIGHHIGH_PRESET, this._highHighLevel );
-        addBinder ( LOWLOW_PRESET, this._lowLowLevel );
+        addBinder ( HIGH_PRESET, this.highLevel );
+        addBinder ( LOW_PRESET, this.lowLevel );
+        addBinder ( HIGHHIGH_PRESET, this.highHighLevel );
+        addBinder ( LOWLOW_PRESET, this.lowLowLevel );
+
+        addBinder ( HIGH_ACTIVE, this.highActive );
+        addBinder ( LOW_ACTIVE, this.lowActive );
+        addBinder ( HIGHHIGH_ACTIVE, this.highHighActive );
+        addBinder ( LOWLOW_ACTIVE, this.lowLowActive );
 
         setReservedAttributes ( HIGH_ALARM, LOW_ALARM, HIGHHIGH_ALARM, LOWLOW_ALARM );
     }
@@ -90,9 +112,9 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         // high alarm
         try
         {
-            if ( !this._highLevel.getValue ().isNull () && !value.isNull () )
+            if ( !this.highLevel.getValue ().isNull () && !value.isNull () && this.highActive.getSafeValue ( false ) )
             {
-                attributes.put ( HIGH_ALARM, new Variant ( value.asDouble () >= this._highLevel.getValue ().asDouble () ) );
+                attributes.put ( HIGH_ALARM, new Variant ( value.asDouble () >= this.highLevel.getValue ().asDouble () ) );
             }
 
         }
@@ -105,9 +127,9 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         // low alarm
         try
         {
-            if ( !this._lowLevel.getValue ().isNull () && !value.isNull () )
+            if ( !this.lowLevel.getValue ().isNull () && !value.isNull () && this.lowActive.getSafeValue ( false ) )
             {
-                attributes.put ( LOW_ALARM, new Variant ( value.asDouble () <= this._lowLevel.getValue ().asDouble () ) );
+                attributes.put ( LOW_ALARM, new Variant ( value.asDouble () <= this.lowLevel.getValue ().asDouble () ) );
             }
         }
         catch ( final Throwable e )
@@ -119,9 +141,9 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         // high high alarm
         try
         {
-            if ( !this._highHighLevel.getValue ().isNull () && !value.isNull () )
+            if ( !this.highHighLevel.getValue ().isNull () && !value.isNull () && this.highHighActive.getSafeValue ( false ) )
             {
-                attributes.put ( HIGHHIGH_ALARM, new Variant ( value.asDouble () >= this._highHighLevel.getValue ().asDouble () ) );
+                attributes.put ( HIGHHIGH_ALARM, new Variant ( value.asDouble () >= this.highHighLevel.getValue ().asDouble () ) );
             }
 
         }
@@ -134,9 +156,9 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         // low low alarm
         try
         {
-            if ( !this._lowLowLevel.getValue ().isNull () && !value.isNull () )
+            if ( !this.lowLowLevel.getValue ().isNull () && !value.isNull () && this.lowLowActive.getSafeValue ( false ) )
             {
-                attributes.put ( LOWLOW_ALARM, new Variant ( value.asDouble () <= this._lowLowLevel.getValue ().asDouble () ) );
+                attributes.put ( LOWLOW_ALARM, new Variant ( value.asDouble () <= this.lowLowLevel.getValue ().asDouble () ) );
             }
         }
         catch ( final Throwable e )
