@@ -73,10 +73,13 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     {
         super.injectAttributes ( builder );
 
-        if ( isActive () )
+        final boolean active = isActive ();
+
+        if ( active )
         {
             builder.setAttribute ( this.prefix + ".preset", new Variant ( this.limit ) );
         }
+        builder.setAttribute ( this.prefix + ".active", active ? Variant.TRUE : Variant.FALSE );
 
         if ( this.cap && this.failure )
         {
@@ -88,6 +91,13 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     protected void handleConfigUpdate ( final Map<String, String> configUpdate, final Map<String, Variant> attributes, final WriteAttributeResults result )
     {
         super.handleConfigUpdate ( configUpdate, attributes, result );
+
+        final Variant active = attributes.get ( this.prefix + ".active" );
+        if ( active != null )
+        {
+            configUpdate.put ( "active", "" + active.asBoolean () );
+        }
+
         final Variant preset = attributes.get ( this.prefix + ".preset" );
         if ( preset != null )
         {
@@ -97,11 +107,11 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
             }
             else
             {
-                configUpdate.put ( "active", "" + true );
                 configUpdate.put ( "preset", "" + preset.asDouble ( 0.0 ) );
             }
             result.put ( this.prefix + ".preset", new WriteAttributeResult () );
         }
+
     }
 
     @Override
