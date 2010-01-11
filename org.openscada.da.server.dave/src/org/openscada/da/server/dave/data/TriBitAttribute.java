@@ -34,7 +34,9 @@ public class TriBitAttribute implements Attribute
 
     private final int writeFalseSubIndex;
 
-    public TriBitAttribute ( final String name, final int readIndex, final int readSubIndex, final int writeTrueIndex, final int writeTrueSubIndex, final int writeFalseIndex, final int writeFalseSubIndex )
+    private final boolean invertRead;
+
+    public TriBitAttribute ( final String name, final int readIndex, final int readSubIndex, final int writeTrueIndex, final int writeTrueSubIndex, final int writeFalseIndex, final int writeFalseSubIndex, final boolean invertRead )
     {
         this.name = name;
         this.readIndex = readIndex;
@@ -43,6 +45,7 @@ public class TriBitAttribute implements Attribute
         this.writeTrueSubIndex = writeTrueSubIndex;
         this.writeFalseIndex = writeFalseIndex;
         this.writeFalseSubIndex = writeFalseSubIndex;
+        this.invertRead = invertRead;
     }
 
     public void start ( final DaveDevice device, final DaveRequestBlock block, final int offset )
@@ -67,7 +70,14 @@ public class TriBitAttribute implements Attribute
     {
         final byte b = data.get ( toAddress ( this.readIndex ) );
         final boolean flag = ( b & 1 << this.readSubIndex ) != 0;
-        attributes.put ( this.name, new Variant ( flag ) );
+        if ( this.invertRead )
+        {
+            attributes.put ( this.name, flag ? Variant.FALSE : Variant.TRUE );
+        }
+        else
+        {
+            attributes.put ( this.name, flag ? Variant.TRUE : Variant.FALSE );
+        }
     }
 
     public void handleError ( final Map<String, Variant> attributes )

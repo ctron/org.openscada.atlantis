@@ -24,7 +24,7 @@ public class BitVariable extends ScalarVariable
     {
         final byte b = data.get ( toAddress ( this.index ) );
         final boolean flag = ( b & 1 << this.subIndex ) != 0;
-        return new Variant ( flag );
+        return flag ? Variant.TRUE : Variant.FALSE;
     }
 
     @Override

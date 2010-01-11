@@ -171,11 +171,14 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
     {
         logger.debug ( "Fire type change: {}", type );
 
+        // make a clone
+        final Collection<VariableListener> listeners = new ArrayList<VariableListener> ( this.listeners.get ( type ) );
+
         this.executor.execute ( new Runnable () {
 
             public void run ()
             {
-                for ( final VariableListener listener : VariableManagerImpl.this.listeners.get ( type ) )
+                for ( final VariableListener listener : listeners )
                 {
                     logger.info ( "Apply type change: {}", type );
                     listener.variableConfigurationChanged ( createVariables ( type ) );
@@ -287,7 +290,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
                 break;
             case TRIBIT:
                 final int[] index = attrEntry.getIndexes ();
-                result.add ( new TriBitAttribute ( attrEntry.getName (), index[0], index[1], index[2], index[3], index[4], index[5] ) );
+                result.add ( new TriBitAttribute ( attrEntry.getName (), index[0], index[1], index[2], index[3], index[4], index[5], index[6] != 0 ) );
                 break;
             default:
                 break;
@@ -408,11 +411,15 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             case BIT:
                 result.add ( new TypeEntry ( toks[0], Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
                 break;
+            case FLOAT:
+                result.add ( new TypeEntry ( toks[0], TYPE.FLOAT, Integer.parseInt ( toks[2] ) ) );
+                break;
             case TRIBIT:
                 result.add ( new TypeEntry ( toks[0], new int[] {//
                 Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ),// read bit
                 Integer.parseInt ( toks[4] ), Integer.parseInt ( toks[5] ),// write true bit
                 Integer.parseInt ( toks[6] ), Integer.parseInt ( toks[7] ),// write false bit
+                Integer.parseInt ( toks[8] ), //
                 } ) );
                 break;
             case BYTE:
