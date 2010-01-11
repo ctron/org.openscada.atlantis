@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2008 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,6 +40,19 @@ public class BooleanBinder implements AttributeBinder
     public Boolean getValue ()
     {
         return this.value;
+    }
+
+    public boolean getSafeValue ( final boolean defaultValue )
+    {
+        final Boolean result = this.value;
+        if ( result == null )
+        {
+            return defaultValue;
+        }
+        else
+        {
+            return result;
+        }
     }
 
     public Variant getAttributeValue ()
