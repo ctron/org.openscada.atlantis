@@ -131,7 +131,7 @@ public class ItemSyncController implements ItemUpdateListener
             final SubscriptionState state = this.subscriptionState;
             final Throwable error = this.subscriptionError;
             final Variant value = this.cachedValue;
-            final Map<String, Variant> attributes = this.cachedAttributes;
+            final Map<String, Variant> attributes = new HashMap<String, Variant> ( this.cachedAttributes );
 
             // send the initial update
             this.itemManager.getExecutor ().execute ( new Runnable () {
