@@ -139,7 +139,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.test"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.sysinfo"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.stock"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.jdbc" project="openscada_da_jdbcserver"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.jdbc"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.proxy"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.snmp"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.dave" />
