@@ -8,21 +8,9 @@ Import-Package: org.openscada.core;version="0.14",
  org.openscada.da.server.common.impl,
  org.openscada.utils.collection;version="0.13"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.da.server.sysinfo;version="0.14.0";
-  uses:="org.openscada.core,
-   org.openscada.da.server.browser.common,
-   org.openscada.da.server.sysinfo.items,
-   org.openscada.da.server.common,
-   org.openscada.da.server.common.impl,
-   org.openscada.utils.collection",
- org.openscada.da.server.sysinfo.items;version="0.14.0";
-  uses:="org.openscada.core,
-   org.openscada.da.server.browser.common,
-   org.openscada.da.server.sysinfo.utils,
-   org.openscada.da.server.sysinfo,
-   org.openscada.da.server.common,
-   org.openscada.utils.collection",
- org.openscada.da.server.sysinfo.utils;version="0.14.0"
+Export-Package: org.openscada.da.server.sysinfo;version="0.15.0";uses:="org.openscada.da.server.common.impl",
+ org.openscada.da.server.sysinfo.items;version="0.15.0";uses:="org.openscada.da.server.common,org.openscada.da.server.browser.common,org.openscada.da.server.sysinfo",
+ org.openscada.da.server.sysinfo.utils;version="0.15.0"
 Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA DA Server Sysinfo
 Bundle-DocURL: http://www.inavare.net
