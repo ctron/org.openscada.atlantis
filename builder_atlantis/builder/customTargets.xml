@@ -137,14 +137,14 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.client.ice" project="openscada_da_client_ice"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.server.test"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.sysinfo" project="openscada_da_sysinfoserver"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.stock" project="openscada_da_stockserver"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.sysinfo"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.stock"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.jdbc" project="openscada_da_jdbcserver"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.proxy" project="openscada_da_proxyserver"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.snmp" project="openscada_da_snmpserver"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.proxy"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.snmp"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.dave" />
   	<openscada.builder.copyPlugin id="org.openscada.da.server.exec" />
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.spring" project="openscada_da_springserver"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.spring"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.opc" project="openscada_da_opcserver"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.simulation" project="openscada_da_simserver"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.simulation.component" />
