@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>openscada_da_springserver</name>
+	<name>org.openscada.da.server.spring</name>
 	<comment></comment>
 	<projects>
 		<project>openscada_server_exporter</project>
