@@ -22,40 +22,27 @@ Import-Package: org.apache.commons.beanutils;version="1.8",
  org.springframework.core.task.support;version="2.5",
  org.springframework.util;version="2.5"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.da.server.spring;version="0.14.0";
+Export-Package: org.openscada.da.server.spring;version="0.15.0";
   uses:="org.openscada.da.server.common,
-   org.openscada.core,
-   org.openscada.utils.concurrent,
-   org.openscada.da.core,
-   org.apache.commons.beanutils,
-   org.openscada.da.server.common.chain,
-   org.apache.log4j,
-   org.springframework.util,
-   org.springframework.beans.factory,
    org.openscada.da.server.browser.common,
-   org.openscada.da.server.common.chain.storage,
-   org.springframework.beans,
-   org.openscada.da.server.common.factory,
-   org.springframework.context,
    org.openscada.da.server.common.impl,
-   org.openscada.da.server.browser.common.query",
- org.openscada.da.server.spring.tools.csv;version="0.14.0";
-  uses:="org.openscada.core,
    org.openscada.utils.concurrent,
+   org.springframework.context,
    org.openscada.da.core,
    org.openscada.da.server.common.chain,
-   org.openscada.da.server.common,
-   org.openscada.da.server.spring,
-   org.openscada.da.server.common.chain.item,
-   au.com.bytecode.opencsv.bean,
-   org.springframework.core.task.support,
-   org.apache.log4j,
+   org.openscada.core,
+   org.openscada.da.server.common.chain.storage,
+   org.springframework.beans.factory",
+ org.openscada.da.server.spring.tools.csv;version="0.15.0";
+  uses:="org.openscada.da.server.spring,
    org.springframework.core.io,
+   org.openscada.utils.concurrent,
+   au.com.bytecode.opencsv.bean,
+   org.openscada.da.server.common.chain,
+   org.openscada.core,
    org.springframework.core.task,
-   org.springframework.util,
-   org.springframework.beans.factory,
-   au.com.bytecode.opencsv"
-Bundle-Version: 0.14.0.qualifier
+   org.springframework.beans.factory"
+Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA-DA-Server-Spring
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
