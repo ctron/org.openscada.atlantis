@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>openscada_da_stockserver</name>
+	<name>org.openscada.da.server.stock</name>
 	<comment></comment>
 	<projects>
 	</projects>
