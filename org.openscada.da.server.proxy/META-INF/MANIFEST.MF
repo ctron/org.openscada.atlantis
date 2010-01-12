@@ -64,7 +64,7 @@ Export-Package: org.openscada.da.server.proxy;version="0.15.0";
    org.openscada.core",
  org.openscada.da.server.proxy.utils;version="0.15.0"
 Bundle-Version: 0.15.0.qualifier
-Bundle-Name: OpenSCADA-DA-Server-Proxy
+Bundle-Name: OpenSCADA DA Proxy Server
 Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: inavare GmbH
 Bundle-ManifestVersion: 2
