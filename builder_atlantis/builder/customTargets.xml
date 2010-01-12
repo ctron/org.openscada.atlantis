@@ -145,7 +145,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.dave" />
   	<openscada.builder.copyPlugin id="org.openscada.da.server.exec" />
   	<openscada.builder.copyPlugin id="org.openscada.da.server.spring"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.opc" project="openscada_da_opcserver"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.opc"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.simulation" project="openscada_da_simserver"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.simulation.component" />
   	
