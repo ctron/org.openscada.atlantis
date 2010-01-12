@@ -128,13 +128,18 @@ public class ItemSyncController implements ItemUpdateListener
         {
             this.listeners.put ( listener, new ListenerInfo ( listener ) );
 
+            final SubscriptionState state = this.subscriptionState;
+            final Throwable error = this.subscriptionError;
+            final Variant value = this.cachedValue;
+            final Map<String, Variant> attributes = this.cachedAttributes;
+
             // send the initial update
             this.itemManager.getExecutor ().execute ( new Runnable () {
 
                 public void run ()
                 {
-                    listener.notifySubscriptionChange ( ItemSyncController.this.subscriptionState, ItemSyncController.this.subscriptionError );
-                    listener.notifyDataChange ( ItemSyncController.this.cachedValue, ItemSyncController.this.cachedAttributes, true );
+                    listener.notifySubscriptionChange ( state, error );
+                    listener.notifyDataChange ( value, attributes, true );
                 }
             } );
 
