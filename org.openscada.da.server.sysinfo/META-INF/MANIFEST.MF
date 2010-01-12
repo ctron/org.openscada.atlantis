@@ -1,7 +1,4 @@
 Manifest-Version: 1.0
-Built-By: jens
-Created-By: Apache Maven Bundle Plugin
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: org.openscada.core;version="0.14",
  org.openscada.core.server;version="0.14.0",
  org.openscada.da.core;version="0.14.0",
@@ -11,7 +8,6 @@ Import-Package: org.openscada.core;version="0.14",
  org.openscada.da.server.common.impl,
  org.openscada.utils.collection;version="0.13"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bnd-LastModified: 1252499286861
 Export-Package: org.openscada.da.server.sysinfo;version="0.14.0";
   uses:="org.openscada.core,
    org.openscada.da.server.browser.common,
@@ -27,14 +23,9 @@ Export-Package: org.openscada.da.server.sysinfo;version="0.14.0";
    org.openscada.da.server.common,
    org.openscada.utils.collection",
  org.openscada.da.server.sysinfo.utils;version="0.14.0"
-Bundle-Version: 0.14.0.qualifier
-Bundle-Name: OpenSCADA-DA-Server-Sysinfo
-Build-Jdk: 1.5.0_18
-Private-Package: org.openscada.da.server.sysinfo.items,org.openscada.d
- a.server.sysinfo.utils,org.openscada.da.server.sysinfo,
+Bundle-Version: 0.15.0.qualifier
+Bundle-Name: OpenSCADA DA Server Sysinfo
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
 Bundle-SymbolicName: org.openscada.da.server.sysinfo
-Tool: Bnd-0.0.311
-
