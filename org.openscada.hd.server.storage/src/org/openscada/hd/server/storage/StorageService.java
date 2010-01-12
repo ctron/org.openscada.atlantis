@@ -370,7 +370,6 @@ public class StorageService implements SelfManagedConfigurationFactory
     /**
      * @return the future for completion of the purge operation
      */
-    @Override
     public synchronized NotifyFuture<Void> purge ()
     {
         // FIXME: must be implemented asynchronously. But all others are not, so wait for the rest first
