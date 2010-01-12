@@ -295,10 +295,4 @@ public class ItemSyncController implements ItemUpdateListener
         notifyDataChange ( new Variant (), new HashMap<String, Variant> (), true );
     }
 
-    @Override
-    protected void finalize () throws Throwable
-    {
-        log.debug ( "Finalizing..." );
-        super.finalize ();
-    }
 }
