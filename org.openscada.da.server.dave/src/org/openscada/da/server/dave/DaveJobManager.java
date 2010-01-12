@@ -68,6 +68,7 @@ public class DaveJobManager
             }
             else
             {
+                logger.warn ( "Got wrong message as reply: {}", message );
                 this.block.handleFailure ();
             }
         }
