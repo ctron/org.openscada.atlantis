@@ -11,9 +11,9 @@ import org.apache.log4j.Logger;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.dataitem.monitor.internal.bit.BooleanAlarmMonitor;
 import org.openscada.ae.monitor.dataitem.monitor.internal.bit.MonitorFactoryImpl;
-import org.openscada.ae.monitor.dataitem.monitor.internal.bit.RemoteBooleanAlarmMonitor;
-import org.openscada.ae.monitor.dataitem.monitor.internal.bit.RemoteMonitorFactoryImpl;
 import org.openscada.ae.monitor.dataitem.monitor.internal.level.LevelMonitorFactoryImpl;
+import org.openscada.ae.monitor.dataitem.monitor.internal.remote.RemoteBooleanAttributeAlarmMonitor;
+import org.openscada.ae.monitor.dataitem.monitor.internal.remote.RemoteAttributeMonitorFactoryImpl;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
@@ -74,9 +74,9 @@ public class Activator implements BundleActivator
 
         // remote monitor service
         {
-            final RemoteMonitorFactoryImpl factory = new RemoteMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.eventProcessor );
+            final RemoteAttributeMonitorFactoryImpl factory = new RemoteAttributeMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.eventProcessor );
             properties = new Hashtable<Object, Object> ();
-            properties.put ( ConfigurationAdministrator.FACTORY_ID, RemoteBooleanAlarmMonitor.FACTORY_ID );
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, RemoteBooleanAttributeAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Remote Boolean alarms" );
             context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, factory, properties );
             this.factories.add ( factory );

@@ -1,4 +1,4 @@
-package org.openscada.ae.monitor.dataitem.monitor.internal.bit;
+package org.openscada.ae.monitor.dataitem.monitor.internal.remote;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,12 +24,12 @@ import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemoteBooleanAlarmMonitor extends AbstractMasterHandlerImpl implements DataItemMonitor, MonitorService
+public class RemoteBooleanAttributeAlarmMonitor extends AbstractMasterHandlerImpl implements DataItemMonitor, MonitorService
 {
 
-    private final static Logger logger = LoggerFactory.getLogger ( RemoteBooleanAlarmMonitor.class );
+    private final static Logger logger = LoggerFactory.getLogger ( RemoteBooleanAttributeAlarmMonitor.class );
 
-    public static final String FACTORY_ID = "ae.monitor.da.remote.booleanAlarm";
+    public static final String FACTORY_ID = "ae.monitor.da.remote.booleanAttributeAlarm";
 
     private String attributeValue;
 
@@ -45,7 +45,9 @@ public class RemoteBooleanAlarmMonitor extends AbstractMasterHandlerImpl impleme
 
     private final Executor executor;
 
-    public RemoteBooleanAlarmMonitor ( final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int priority )
+    private String attributeActive;
+
+    public RemoteBooleanAttributeAlarmMonitor ( final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int priority )
     {
         super ( poolTracker, priority );
         this.executor = executor;
@@ -104,42 +106,65 @@ public class RemoteBooleanAlarmMonitor extends AbstractMasterHandlerImpl impleme
 
         final Variant value = builder.getAttributes ().get ( this.attributeValue );
         final Variant ack = builder.getAttributes ().get ( this.attributeAck );
+        final Variant active = builder.getAttributes ().get ( this.attributeActive );
         Calendar timestamp = itemValue.getTimestamp ();
         if ( timestamp == null )
         {
             timestamp = Calendar.getInstance ();
         }
 
-        if ( value == null || ack == null )
+        if ( value == null )
         {
             setState ( ConditionStatus.UNSAFE );
             return injectState ( builder ).build ();
         }
 
         final boolean alarmFlag = value.asBoolean ();
-        final boolean ackRequiredFlag = ack.asBoolean ();
 
-        final ConditionStatus state;
-        if ( alarmFlag )
+        final boolean activeFlag;
+        if ( active == null )
         {
-            if ( ackRequiredFlag )
-            {
-                state = ConditionStatus.NOT_OK_NOT_AKN;
-            }
-            else
-            {
-                state = ConditionStatus.NOT_OK_AKN;
-            }
+            activeFlag = true;
         }
         else
         {
-            if ( ackRequiredFlag )
+            activeFlag = active.asBoolean ();
+        }
+
+        final ConditionStatus state;
+
+        if ( !activeFlag )
+        {
+            state = ConditionStatus.INACTIVE;
+        }
+        else if ( ack == null )
+        {
+            state = alarmFlag ? ConditionStatus.NOT_OK : ConditionStatus.OK;
+        }
+        else
+        {
+            final boolean ackRequiredFlag = ack.asBoolean ();
+            if ( alarmFlag )
             {
-                state = ConditionStatus.NOT_AKN;
+                if ( ackRequiredFlag )
+                {
+                    state = ConditionStatus.NOT_OK_NOT_AKN;
+                }
+                else
+                {
+                    state = ConditionStatus.NOT_OK_AKN;
+                }
             }
             else
             {
-                state = ConditionStatus.OK;
+                if ( ackRequiredFlag )
+                {
+                    state = ConditionStatus.NOT_AKN;
+                }
+                else
+                {
+                    state = ConditionStatus.OK;
+                }
             }
         }
 
@@ -150,7 +175,7 @@ public class RemoteBooleanAlarmMonitor extends AbstractMasterHandlerImpl impleme
 
     private Builder injectState ( final Builder builder )
     {
-        builder.setAttribute ( FACTORY_ID + ".state", new Variant ( this.state.toString () ) );
+        builder.setAttribute ( this.id + ".state", new Variant ( this.state.toString () ) );
         return builder;
     }
 
@@ -197,6 +222,13 @@ public class RemoteBooleanAlarmMonitor extends AbstractMasterHandlerImpl impleme
 
     public void setActive ( final boolean state )
     {
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        attributes.put ( this.attributeActive, state ? Variant.TRUE : Variant.FALSE );
+
+        for ( final MasterItem item : getMasterItems () )
+        {
+            item.startWriteAttributes ( attributes );
+        }
     }
 
     @Override
@@ -207,6 +239,7 @@ public class RemoteBooleanAlarmMonitor extends AbstractMasterHandlerImpl impleme
         super.update ( parameters );
         this.attributeValue = parameters.get ( "attribute.value.name" );
         this.attributeAck = parameters.get ( "attribute.ack.name" );
+        this.attributeActive = parameters.get ( "attribute.active.name" );
 
         reprocess ();
 
