@@ -4,16 +4,21 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.dataitem.monitor.internal.bit.BooleanAlarmMonitor;
 import org.openscada.ae.monitor.dataitem.monitor.internal.bit.MonitorFactoryImpl;
+import org.openscada.ae.monitor.dataitem.monitor.internal.bit.RemoteBooleanAlarmMonitor;
+import org.openscada.ae.monitor.dataitem.monitor.internal.bit.RemoteMonitorFactoryImpl;
 import org.openscada.ae.monitor.dataitem.monitor.internal.level.LevelMonitorFactoryImpl;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.master.MasterItem;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -34,6 +39,8 @@ public class Activator implements BundleActivator
 
     private ObjectPoolTracker poolTracker;
 
+    private ExecutorService executor;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -41,6 +48,8 @@ public class Activator implements BundleActivator
     public void start ( final BundleContext context ) throws Exception
     {
         logger.info ( "Starting up..." );
+
+        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
         this.eventProcessor = new EventProcessor ( context );
         this.eventProcessor.open ();
@@ -59,6 +68,16 @@ public class Activator implements BundleActivator
             properties = new Hashtable<Object, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, BooleanAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Boolean alarms" );
+            context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, factory, properties );
+            this.factories.add ( factory );
+        }
+
+        // remote monitor service
+        {
+            final RemoteMonitorFactoryImpl factory = new RemoteMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.eventProcessor );
+            properties = new Hashtable<Object, Object> ();
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, RemoteBooleanAlarmMonitor.FACTORY_ID );
+            properties.put ( Constants.SERVICE_DESCRIPTION, "Remote Boolean alarms" );
             context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, factory, properties );
             this.factories.add ( factory );
         }
@@ -92,6 +111,8 @@ public class Activator implements BundleActivator
      */
     public void stop ( final BundleContext context ) throws Exception
     {
+        this.executor.shutdown ();
+
         Activator.instance = null;
 
         for ( final AbstractMonitorFactory factory : this.factories )

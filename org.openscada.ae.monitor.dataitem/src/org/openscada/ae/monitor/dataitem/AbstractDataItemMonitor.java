@@ -36,7 +36,7 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
 
     private SingleObjectPoolServiceTracker tracker;
 
-    private MasterItem masterItem;
+    protected MasterItem masterItem;
 
     private MasterItemHandler handler;
 
