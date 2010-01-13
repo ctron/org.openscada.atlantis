@@ -7,11 +7,9 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.openscada.da.client.DataItemValue;
-import org.openscada.utils.osgi.FilterUtil;
 import org.openscada.utils.osgi.pool.ObjectPoolListener;
 import org.openscada.utils.osgi.pool.ObjectPoolServiceTracker;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
-import org.osgi.framework.Filter;
 
 public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 {
@@ -61,8 +59,6 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
         final Map<String, String> filterParameters = new HashMap<String, String> ();
         filterParameters.put ( MasterItem.MASTER_ID, this.masterId );
-
-        final Filter filter = FilterUtil.createAndFilter ( MasterItem.class.getName (), filterParameters );
 
         this.tracker = new ObjectPoolServiceTracker ( this.poolTracker, this.masterId, new ObjectPoolListener () {
 
