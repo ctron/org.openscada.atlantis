@@ -75,6 +75,11 @@ public class FactoryImpl extends AbstractServiceConfigurationFactory<DataItemImp
     protected Entry<DataItemImpl> createDataItem ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws InvalidSyntaxException
     {
         final String itemId = parameters.get ( "item.id" );
+        if ( itemId == null )
+        {
+            throw new IllegalArgumentException ( "'item.id' must be set" );
+        }
+
         final String datasourceId = parameters.get ( "datasource.id" );
         final DataItemImpl item = new DataItemImpl ( this.poolTracker, new DataItemInformationBase ( itemId ), datasourceId );
 
