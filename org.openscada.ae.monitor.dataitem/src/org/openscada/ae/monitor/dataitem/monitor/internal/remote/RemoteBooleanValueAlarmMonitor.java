@@ -18,20 +18,18 @@ import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor implements DataItemMonitor, MonitorService
+public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor implements DataItemMonitor, MonitorService
 {
 
-    private final static Logger logger = LoggerFactory.getLogger ( RemoteBooleanAttributeAlarmMonitor.class );
+    final static Logger logger = LoggerFactory.getLogger ( RemoteBooleanValueAlarmMonitor.class );
 
-    public static final String FACTORY_ID = "ae.monitor.da.remote.booleanAttributeAlarm";
-
-    private String attributeValue;
+    public static final String FACTORY_ID = "ae.monitor.da.remote.booleanValueAlarm";
 
     private String attributeAck;
 
     private String attributeActive;
 
-    public RemoteBooleanAttributeAlarmMonitor ( final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int priority )
+    public RemoteBooleanValueAlarmMonitor ( final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int priority )
     {
         super ( executor, poolTracker, priority, id, eventProcessor );
     }
@@ -40,7 +38,7 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
     {
         final Builder builder = new Builder ( itemValue );
 
-        final Variant value = builder.getAttributes ().get ( this.attributeValue );
+        final Variant value = itemValue.getValue ();
         final Variant ack = builder.getAttributes ().get ( this.attributeAck );
         final Variant active = builder.getAttributes ().get ( this.attributeActive );
         Calendar timestamp = itemValue.getTimestamp ();
@@ -134,11 +132,9 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
     @Override
     public synchronized void update ( final Map<String, String> parameters ) throws Exception
     {
-        super.update ( parameters );
-
         logger.debug ( "Apply update: {}", parameters );
 
-        this.attributeValue = parameters.get ( "attribute.value.name" );
+        super.update ( parameters );
         this.attributeAck = parameters.get ( "attribute.ack.name" );
         this.attributeActive = parameters.get ( "attribute.active.name" );
 
