@@ -160,7 +160,7 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
         this.tracker.open ();
     }
 
-    protected synchronized void setMasterItem ( final MasterItem masterItem )
+    protected void setMasterItem ( final MasterItem masterItem )
     {
         logger.info ( "Setting master item:{}", masterItem );
 
