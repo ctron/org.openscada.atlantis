@@ -69,6 +69,8 @@ public class DaveDevice implements SingleSessionIoHandler
 
     private int readTimeout;
 
+    private String name;
+
     private static enum ConnectionState
     {
         CONNECTING,
@@ -108,6 +110,24 @@ public class DaveDevice implements SingleSessionIoHandler
         }
     }
 
+    public String getVarItemId ( final String localId )
+    {
+        final String name = this.name;
+        if ( name == null )
+        {
+            this.name = this.id;
+        }
+
+        if ( localId != null )
+        {
+            return "dave." + name + "." + localId;
+        }
+        else
+        {
+            return "dave." + name;
+        }
+    }
+
     public void dispose ()
     {
         this.configurator.dispose ();
@@ -123,6 +143,8 @@ public class DaveDevice implements SingleSessionIoHandler
             this.connector.dispose ();
             this.connector = null;
         }
+
+        this.executor.shutdown ();
     }
 
     public void update ( final Map<String, String> properties ) throws Exception
@@ -132,12 +154,14 @@ public class DaveDevice implements SingleSessionIoHandler
         this.rack = Integer.valueOf ( properties.get ( "rack" ) );
         this.slot = Byte.valueOf ( properties.get ( "slot" ) );
         this.readTimeout = Integer.valueOf ( properties.get ( "readTimeout" ) );
+        this.name = properties.get ( "name" );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "host", new Variant ( this.host ) );
         attributes.put ( "port", new Variant ( this.port ) );
         attributes.put ( "rack", new Variant ( this.rack ) );
         attributes.put ( "slot", new Variant ( this.slot ) );
+        attributes.put ( "name", new Variant ( this.name ) );
         this.configItem.updateData ( new Variant ( true ), attributes, AttributeMode.SET );
 
         disconnect ();
@@ -227,6 +251,7 @@ public class DaveDevice implements SingleSessionIoHandler
             {
                 this.session.close ( false );
             }
+            // session will be set to null using #sessionClosed()
         }
     }
 

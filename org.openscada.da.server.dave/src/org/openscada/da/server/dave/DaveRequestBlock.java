@@ -271,7 +271,7 @@ public class DaveRequestBlock
         {
             for ( final Variable var : this.variables )
             {
-                var.start ( this.device.getItemId ( this.name ), this.context, this.device, this, this.request.getStart () );
+                var.start ( this.device.getVarItemId ( this.name ), this.context, this.device, this, this.request.getStart () );
             }
         }
 
