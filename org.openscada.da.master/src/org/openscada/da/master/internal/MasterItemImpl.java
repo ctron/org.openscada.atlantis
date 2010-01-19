@@ -1,5 +1,6 @@
 package org.openscada.da.master.internal;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -232,7 +233,7 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
     {
         this.tracker.close ();
 
-        synchronized ( this )
+        synchronized ( this.itemHandler )
         {
             this.itemHandler.clear ();
         }
@@ -277,38 +278,40 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
         logger.info ( "Subscription state changed: " + state );
 
         // re-process
-        this.sourceValue = applyStateChange ( state, error );
+        this.sourceValue = applyStateChange ( this.sourceValue, state, error );
         updateData ( processHandler ( this.sourceValue ) );
     }
 
-    private DataItemValue applyStateChange ( final SubscriptionState state, final Throwable error )
+    private static DataItemValue applyStateChange ( final DataItemValue sourceValue, final SubscriptionState state, final Throwable error )
     {
-        final DataItemValue.Builder newValue = new DataItemValue.Builder ( this.sourceValue );
+        final DataItemValue.Builder newValue = new DataItemValue.Builder ( sourceValue );
         newValue.setSubscriptionState ( state );
         newValue.setSubscriptionError ( error );
         return newValue.build ();
     }
 
-    public synchronized void addHandler ( final MasterItemHandler handler, final int priority )
+    public void addHandler ( final MasterItemHandler handler, final int priority )
     {
-        logger.debug ( "Adding handler: {}/{}", new Object[] { handler, priority } );
-
-        final HandlerEntry entry = new HandlerEntry ( handler, priority );
-        if ( this.itemHandler.contains ( entry ) )
+        synchronized ( this.itemHandler )
         {
-            return;
+            logger.debug ( "Adding handler: {}/{}", new Object[] { handler, priority } );
+
+            final HandlerEntry entry = new HandlerEntry ( handler, priority );
+            if ( this.itemHandler.contains ( entry ) )
+            {
+                return;
+            }
+
+            this.itemHandler.add ( entry );
+            Collections.sort ( this.itemHandler );
+
+            logger.debug ( "Added handler: {}/{}", new Object[] { handler, priority } );
         }
-
-        this.itemHandler.add ( entry );
-        Collections.sort ( this.itemHandler );
-
-        logger.debug ( "Added handler: {}/{}", new Object[] { handler, priority } );
-
         // re-process
         reprocess ();
     }
 
-    public synchronized void reprocess ()
+    public void reprocess ()
     {
         this.executor.execute ( new Runnable () {
 
@@ -328,24 +331,33 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
     /* (non-Javadoc)
      * @see org.openscada.da.master.interal.MasterImpl#removeHandler(org.openscada.da.master.MasterItemHandler)
      */
-    public synchronized void removeHandler ( final MasterItemHandler handler )
+    public void removeHandler ( final MasterItemHandler handler )
     {
-        logger.debug ( "Before - Handlers: {}", this.itemHandler.size () );
-
-        if ( this.itemHandler.remove ( new HandlerEntry ( handler, 0 ) ) )
+        synchronized ( this.itemHandler )
         {
-            logger.debug ( "Removed handler: {}", handler );
-            reprocess ();
-        }
+            logger.debug ( "Before - Handlers: {}", this.itemHandler.size () );
 
-        logger.debug ( "After - Handlers: {}", this.itemHandler.size () );
+            if ( this.itemHandler.remove ( new HandlerEntry ( handler, 0 ) ) )
+            {
+                logger.debug ( "Removed handler: {}", handler );
+                reprocess ();
+            }
+
+            logger.debug ( "After - Handlers: {}", this.itemHandler.size () );
+        }
     }
 
-    protected synchronized DataItemValue processHandler ( DataItemValue value )
+    protected DataItemValue processHandler ( DataItemValue value )
     {
         logger.debug ( "Processing handlers" );
 
-        for ( final HandlerEntry entry : this.itemHandler )
+        ArrayList<HandlerEntry> handler;
+        synchronized ( this.itemHandler )
+        {
+            handler = new ArrayList<HandlerEntry> ( this.itemHandler );
+        }
+
+        for ( final HandlerEntry entry : handler )
         {
             logger.debug ( "Process: {} -> {}", new Object[] { entry.getPriority (), entry.getHandler () } );
             final DataItemValue newValue = entry.getHandler ().dataUpdate ( value );
