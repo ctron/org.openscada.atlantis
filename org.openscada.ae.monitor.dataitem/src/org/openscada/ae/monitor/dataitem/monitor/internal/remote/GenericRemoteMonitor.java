@@ -113,6 +113,8 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl
     @Override
     public synchronized DataItemValue dataUpdate ( final DataItemValue value )
     {
+        logger.debug ( "Data update" );
+
         if ( value == null )
         {
             setState ( ConditionStatus.UNSAFE );
@@ -125,6 +127,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl
     @Override
     public synchronized void update ( final Map<String, String> parameters ) throws Exception
     {
+        super.update ( parameters );
         this.attributes = convertAttributes ( parameters );
     }
 
@@ -175,6 +178,8 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl
 
             public void run ()
             {
+                logger.debug ( "Reprocessing {} master items", getMasterItems ().size () );
+
                 for ( final MasterItem item : getMasterItems () )
                 {
                     item.reprocess ();

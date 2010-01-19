@@ -36,11 +36,14 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
 
     protected DataItemValue handleUpdate ( final DataItemValue itemValue )
     {
+        logger.debug ( "Perform update" );
+
         final Builder builder = new Builder ( itemValue );
 
         final Variant value = itemValue.getValue ();
         final Variant ack = builder.getAttributes ().get ( this.attributeAck );
         final Variant active = builder.getAttributes ().get ( this.attributeActive );
+
         Calendar timestamp = itemValue.getTimestamp ();
         if ( timestamp == null )
         {
