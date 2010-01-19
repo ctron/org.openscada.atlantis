@@ -84,8 +84,8 @@ public class DaveDevice implements SingleSessionIoHandler
         this.context = context;
         this.executor = Executors.newSingleThreadScheduledExecutor ();
 
-        this.configurator = new DaveBlockConfigurator ( this, this.context );
         this.jobManager = new DaveJobManager ( this );
+        this.configurator = new DaveBlockConfigurator ( this, this.context );
 
         this.itemFactory = new DataItemFactory ( context, this.executor, getItemId ( null ) );
 
