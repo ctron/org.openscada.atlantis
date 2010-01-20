@@ -35,6 +35,7 @@ import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 
 public class HiveImpl extends HiveCommon
@@ -82,9 +83,20 @@ public class HiveImpl extends HiveCommon
         registerItem ( item );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        fillAttributes ( attributes, properties );
 
         final ItemDescriptor descriptor = new ItemDescriptor ( item, attributes );
+
         this.storage.added ( descriptor );
+    }
+
+    private static void fillAttributes ( final Map<String, Variant> attributes, final Dictionary<?, ?> properties )
+    {
+        final Object description = properties.get ( Constants.SERVICE_DESCRIPTION );
+        if ( description != null )
+        {
+            attributes.put ( "description", new Variant ( description ) );
+        }
     }
 
     public synchronized void removeItem ( final DataItem item )
