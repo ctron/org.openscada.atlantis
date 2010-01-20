@@ -10,6 +10,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 
 public class DataItemFactory
@@ -79,6 +80,15 @@ public class DataItemFactory
 
     protected void fillProperties ( final Map<String, Variant> properties, final Dictionary<String, String> props )
     {
+        final Variant description = properties.get ( "description" );
+        if ( description != null )
+        {
+            final String str = description.asString ( null );
+            if ( str != null )
+            {
+                props.put ( Constants.SERVICE_DESCRIPTION, str );
+            }
+        }
     }
 
     protected String getId ( final String localId )
