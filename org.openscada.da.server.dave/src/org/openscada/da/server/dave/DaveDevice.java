@@ -21,6 +21,7 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.openscada.da.server.common.osgi.factory.DataItemFactory;
 import org.openscada.protocols.dave.DaveConnectionEstablishedMessage;
 import org.openscada.protocols.dave.DaveFilter;
 import org.openscada.protocols.dave.DaveGenericMessage;
