@@ -60,7 +60,7 @@ public class TestItem1 extends DataItemOutput
             }
             else
             {
-                results.put ( entry.getKey (), new WriteAttributeResult () );
+                results.put ( entry.getKey (), WriteAttributeResult.OK );
             }
         }
 

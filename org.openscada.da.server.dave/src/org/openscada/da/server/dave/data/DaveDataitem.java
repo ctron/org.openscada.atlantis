@@ -50,7 +50,7 @@ public class DaveDataitem extends DataItemInputOutputChained
         // OK for all accepted
         for ( final String attr : accepted )
         {
-            writeAttributeResults.put ( attr, new WriteAttributeResult () );
+            writeAttributeResults.put ( attr, WriteAttributeResult.OK );
         }
 
         // default for the rest
