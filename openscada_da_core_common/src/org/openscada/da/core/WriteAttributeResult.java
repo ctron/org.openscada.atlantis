@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,8 @@ import org.openscada.utils.lang.Immutable;
 public class WriteAttributeResult
 {
     private Throwable error = null;
+
+    public static final WriteAttributeResult OK = new WriteAttributeResult ();
 
     /**
      * Create an "OK" result
