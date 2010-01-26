@@ -375,14 +375,14 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
         if ( active != null )
         {
             configUpdate.put ( "active", active.asBoolean () ? "true" : "false" );
-            result.put ( this.prefix + ".active", new WriteAttributeResult () );
+            result.put ( this.prefix + ".active", WriteAttributeResult.OK );
         }
 
         final Variant requireAkn = attributes.get ( this.prefix + ".requireAck" );
         if ( requireAkn != null )
         {
             configUpdate.put ( "requireAck", requireAkn.asBoolean () ? "true" : "false" );
-            result.put ( this.prefix + ".requireAck", new WriteAttributeResult () );
+            result.put ( this.prefix + ".requireAck", WriteAttributeResult.OK );
         }
     }
 

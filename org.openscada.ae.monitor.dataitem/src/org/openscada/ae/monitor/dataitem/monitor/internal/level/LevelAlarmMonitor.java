@@ -109,7 +109,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
             {
                 configUpdate.put ( "preset", "" + preset.asDouble ( 0.0 ) );
             }
-            result.put ( this.prefix + ".preset", new WriteAttributeResult () );
+            result.put ( this.prefix + ".preset", WriteAttributeResult.OK );
         }
 
     }

@@ -67,7 +67,7 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
         if ( reference != null )
         {
             configUpdate.put ( "reference", reference.asBoolean () ? "true" : "false" );
-            result.put ( this.prefix + ".reference", new WriteAttributeResult () );
+            result.put ( this.prefix + ".reference", WriteAttributeResult.OK );
         }
     }
 
