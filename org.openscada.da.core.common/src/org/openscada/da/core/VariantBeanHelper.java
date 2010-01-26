@@ -100,6 +100,38 @@ public class VariantBeanHelper
         return result;
     }
 
+    public static Map<String, Variant> extractSafe ( final Object source )
+    {
+        final Map<String, Variant> result = new HashMap<String, Variant> ();
+
+        BeanInfo bi;
+        try
+        {
+            bi = Introspector.getBeanInfo ( source.getClass () );
+        }
+        catch ( final IntrospectionException e )
+        {
+            return result;
+        }
+
+        for ( final PropertyDescriptor pd : bi.getPropertyDescriptors () )
+        {
+            final Method m = pd.getReadMethod ();
+            if ( m != null )
+            {
+                try
+                {
+                    result.put ( pd.getName (), new Variant ( m.invoke ( source ) ) );
+                }
+                catch ( final Exception e )
+                {
+                    // ignore
+                }
+            }
+        }
+        return result;
+    }
+
     public static void apply ( final Map<String, Variant> data, final Object target, final WriteAttributeResults results ) throws IntrospectionException
     {
         final BeanInfo bi = Introspector.getBeanInfo ( target.getClass () );
@@ -164,8 +196,6 @@ public class VariantBeanHelper
         {
             throw new OperationException ( String.format ( "Unable to convert '%s' to '%s'", value.getClass (), pd.getPropertyType () ) );
         }
-
-        System.out.println ( "Converting " + value.getClass () + " to " + targetType.getClass () + " for " + pd.getPropertyType () );
 
         pd.getWriteMethod ().invoke ( target, targetType );
         return true;
