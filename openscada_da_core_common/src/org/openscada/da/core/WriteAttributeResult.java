@@ -26,11 +26,16 @@ public class WriteAttributeResult
 {
     private Throwable error = null;
 
+    /**
+     * A constant that represents the <q>OK</q> state
+     */
     public static final WriteAttributeResult OK = new WriteAttributeResult ();
 
     /**
-     * Create an "OK" result
+     * Create an <q>OK</q> result
+     * @deprecated use the {@link #OK} constant instead
      */
+    @Deprecated
     public WriteAttributeResult ()
     {
     }

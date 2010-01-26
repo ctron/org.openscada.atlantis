@@ -90,7 +90,7 @@ public class MemoryDataItem extends DataItemBase
 
         for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
-            writeAttributeResults.put ( entry.getKey (), new WriteAttributeResult () );
+            writeAttributeResults.put ( entry.getKey (), WriteAttributeResult.OK );
         }
 
         return new InstantFuture<WriteAttributeResults> ( writeAttributeResults );

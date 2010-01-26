@@ -119,7 +119,7 @@ public class WriteAttributesOperation
                     final String name = entry.getKey ();
                     if ( entry.getValue () instanceof VoidValue )
                     {
-                        writeAttributeResults.put ( name, new WriteAttributeResult () );
+                        writeAttributeResults.put ( name, WriteAttributeResult.OK );
                     }
                     else
                     {

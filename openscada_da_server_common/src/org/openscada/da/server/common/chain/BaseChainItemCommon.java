@@ -105,7 +105,7 @@ public abstract class BaseChainItemCommon implements ChainItem
                 try
                 {
                     this.binders.get ( entry.getKey () ).bind ( entry.getValue () );
-                    writeAttributeResults.put ( entry.getKey (), new WriteAttributeResult () );
+                    writeAttributeResults.put ( entry.getKey (), WriteAttributeResult.OK );
                 }
                 catch ( final Throwable e )
                 {
