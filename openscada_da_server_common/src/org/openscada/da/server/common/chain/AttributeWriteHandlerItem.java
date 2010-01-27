@@ -20,12 +20,16 @@
 package org.openscada.da.server.common.chain;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
+import org.openscada.utils.concurrent.FutureTask;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public class AttributeWriteHandlerItem extends DataItemInputChained
 {
@@ -81,6 +85,42 @@ public class AttributeWriteHandlerItem extends DataItemInputChained
             }
             return result;
         }
+    }
+
+    @Override
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    {
+        final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
+
+            public WriteResult call () throws Exception
+            {
+                return processWriteValue ( value );
+            }
+        } );
+
+        this.executor.execute ( task );
+
+        return task;
+    }
+
+    protected WriteResult processWriteValue ( final Variant value )
+    {
+        final AttributeWriteHandler handler = this.writeHandler;
+        if ( handler == null )
+        {
+            return new WriteResult ( new IllegalStateException ( "No write handler set" ).fillInStackTrace () );
+        }
+
+        try
+        {
+            handler.handleWrite ( value );
+        }
+        catch ( final Exception e )
+        {
+            return new WriteResult ( e );
+        }
+
+        return new WriteResult ();
     }
 
 }

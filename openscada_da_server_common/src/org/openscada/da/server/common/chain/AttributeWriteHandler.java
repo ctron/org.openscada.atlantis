@@ -35,4 +35,6 @@ public interface AttributeWriteHandler
      * @return a list of handled attributes including their result
      */
     public abstract WriteAttributeResults handleWrite ( Map<String, Variant> attributes ) throws Exception;
+
+    public abstract void handleWrite ( Variant value ) throws Exception;
 }
