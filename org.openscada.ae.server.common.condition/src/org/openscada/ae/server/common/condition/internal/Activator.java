@@ -1,10 +1,10 @@
-package org.openscada.ae.server.common.condition;
+package org.openscada.ae.server.common.condition.internal;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.openscada.ae.monitor.MonitorService;
-import org.openscada.ae.server.common.condition.internal.BundleConditionQuery;
+import org.openscada.ae.server.common.condition.ConditionQuery;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
