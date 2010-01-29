@@ -62,6 +62,10 @@ public class ServiceImpl implements Service, ServiceListener
 
     private ExecutorService eventExecutor;
 
+    private ServiceListener conditionServiceListener;
+
+    private ServiceListener eventServiceListener;
+
     public ServiceImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         this.context = context;
@@ -71,31 +75,6 @@ public class ServiceImpl implements Service, ServiceListener
         // create akn handler
         this.aknTracker = new ServiceTracker ( context, AknHandler.class.getName (), null );
 
-        // create monitor query listener
-        {
-            context.addServiceListener ( this, "(" + Constants.OBJECTCLASS + "=" + ConditionQuery.class.getName () + ")" );
-            final ServiceReference[] refs = context.getServiceReferences ( ConditionQuery.class.getName (), null );
-            if ( refs != null )
-            {
-                for ( final ServiceReference ref : refs )
-                {
-                    checkAddConditionQuery ( ref );
-                }
-            }
-        }
-
-        // create event query listener
-        {
-            context.addServiceListener ( this, "(" + Constants.OBJECTCLASS + "=" + EventQuery.class.getName () + ")" );
-            final ServiceReference[] refs = context.getServiceReferences ( EventQuery.class.getName (), null );
-            if ( refs != null )
-            {
-                for ( final ServiceReference ref : refs )
-                {
-                    checkAddEventQuery ( ref );
-                }
-            }
-        }
     }
 
     public void acknowledge ( final Session session, final String conditionId, final Date aknTimestamp ) throws InvalidSessionException
@@ -306,6 +285,46 @@ public class ServiceImpl implements Service, ServiceListener
         this.queryLoadExecutor = Executors.newCachedThreadPool ( new NamedThreadFactory ( "ServiceImpl/QueryLoad" ) );
         this.eventExecutor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ServiceImpl/Event" ) );
 
+        // create monitor query listener
+        synchronized ( this )
+        {
+            this.context.addServiceListener ( this.conditionServiceListener = new ServiceListener () {
+
+                public void serviceChanged ( final ServiceEvent event )
+                {
+                    ServiceImpl.this.serviceChanged ( event );
+                }
+            }, "(" + Constants.OBJECTCLASS + "=" + ConditionQuery.class.getName () + ")" );
+            final ServiceReference[] refs = this.context.getServiceReferences ( ConditionQuery.class.getName (), null );
+            if ( refs != null )
+            {
+                for ( final ServiceReference ref : refs )
+                {
+                    checkAddConditionQuery ( ref );
+                }
+            }
+        }
+
+        // create event query listener
+        synchronized ( this )
+        {
+            this.context.addServiceListener ( this.eventServiceListener = new ServiceListener () {
+
+                public void serviceChanged ( final ServiceEvent event )
+                {
+                    ServiceImpl.this.serviceChanged ( event );
+                }
+            }, "(" + Constants.OBJECTCLASS + "=" + EventQuery.class.getName () + ")" );
+            final ServiceReference[] refs = this.context.getServiceReferences ( EventQuery.class.getName (), null );
+            if ( refs != null )
+            {
+                for ( final ServiceReference ref : refs )
+                {
+                    checkAddEventQuery ( ref );
+                }
+            }
+        }
+
         this.aknTracker.open ( true );
     }
 
@@ -318,6 +337,12 @@ public class ServiceImpl implements Service, ServiceListener
         {
             session.dispose ();
         }
+
+        // remove service listener
+        this.context.removeServiceListener ( this.conditionServiceListener );
+        this.context.removeServiceListener ( this.eventServiceListener );
+        this.conditionServiceListener = null;
+        this.eventServiceListener = null;
 
         // shut down
         this.aknTracker.close ();
@@ -342,8 +367,9 @@ public class ServiceImpl implements Service, ServiceListener
         return (SessionImpl)session;
     }
 
-    public void serviceChanged ( final ServiceEvent event )
+    public synchronized void serviceChanged ( final ServiceEvent event )
     {
+        logger.debug ( "Service changed: {}", event );
         final ServiceReference ref = event.getServiceReference ();
 
         try

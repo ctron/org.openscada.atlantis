@@ -15,4 +15,5 @@ Import-Package: org.apache.log4j;version="1.2.6",
  org.openscada.ca.common.factory;version="0.14.0",
  org.openscada.utils.osgi.ca.factory;version="0.15.0",
  org.openscada.utils.osgi.pool;version="0.15.0",
- org.osgi.framework;version="1.3.0"
+ org.osgi.framework;version="1.3.0",
+ org.slf4j;version="1.5.8"

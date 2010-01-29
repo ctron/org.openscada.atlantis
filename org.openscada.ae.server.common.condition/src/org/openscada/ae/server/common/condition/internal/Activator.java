@@ -10,9 +10,13 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Activator implements BundleActivator
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( Activator.class );
 
     private BundleContext context;
 
@@ -28,6 +32,8 @@ public class Activator implements BundleActivator
      */
     public void start ( final BundleContext context ) throws Exception
     {
+        logger.info ( "Starting bundle" );
+
         this.context = context;
 
         this.poolTracker = new ObjectPoolTracker ( context, MonitorService.class.getName () );
@@ -41,6 +47,8 @@ public class Activator implements BundleActivator
         properties.put ( Constants.SERVICE_DESCRIPTION, "A condition query containing all condition services" );
 
         this.handle = this.context.registerService ( ConditionQuery.class.getName (), this.allQuery, properties );
+
+        logger.info ( "Initialized" );
     }
 
     /*
