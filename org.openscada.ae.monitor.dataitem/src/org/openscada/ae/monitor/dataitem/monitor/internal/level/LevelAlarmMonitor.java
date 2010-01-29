@@ -16,7 +16,7 @@ import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataItemMonitor
 {
 
-    private double limit;
+    private Double limit;
 
     private final boolean lowerOk;
 
@@ -51,7 +51,16 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     {
         super.update ( properties );
 
-        final double newLimit = Double.parseDouble ( properties.get ( "preset" ) );
+        final Double newLimit;
+
+        if ( properties.containsKey ( "preset" ) )
+        {
+            newLimit = Double.parseDouble ( properties.get ( "preset" ) );
+        }
+        else
+        {
+            newLimit = null;
+        }
 
         if ( this.limit != newLimit )
         {
@@ -123,12 +132,11 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     @Override
     protected void update ( final Builder builder )
     {
-        if ( this.value == null || this.timestamp == null )
+        if ( this.value == null || this.timestamp == null || this.limit == null )
         {
             setUnsafe ();
             return;
         }
-
         else if ( this.value.doubleValue () < this.limit && this.lowerOk || this.value.doubleValue () > this.limit && !this.lowerOk )
         {
             this.failure = false;
