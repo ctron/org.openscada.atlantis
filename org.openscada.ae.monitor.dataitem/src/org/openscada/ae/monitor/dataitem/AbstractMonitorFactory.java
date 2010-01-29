@@ -6,11 +6,10 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.openscada.ae.event.EventProcessor;
-import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +23,13 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
 
     protected final EventProcessor eventProcessor;
 
-    public AbstractMonitorFactory ( final BundleContext context, final EventProcessor eventProcessor )
+    private final ObjectPoolImpl servicePool;
+
+    public AbstractMonitorFactory ( final BundleContext context, final ObjectPoolImpl servicePool, final EventProcessor eventProcessor )
     {
         super ( context );
         this.context = context;
+        this.servicePool = servicePool;
         this.eventProcessor = eventProcessor;
     }
 
@@ -40,9 +42,9 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
         instance.init ();
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        final ServiceRegistration handle = context.registerService ( MonitorService.class.getName (), instance, properties );
+        this.servicePool.addService ( configurationId, instance, properties );
 
-        return new Entry<DataItemMonitor> ( configurationId, instance, handle );
+        return new Entry<DataItemMonitor> ( configurationId, instance );
     }
 
     @Override

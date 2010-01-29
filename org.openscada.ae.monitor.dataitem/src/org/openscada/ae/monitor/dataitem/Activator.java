@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.monitor.dataitem.monitor.internal.bit.BooleanAlarmMonitor;
 import org.openscada.ae.monitor.dataitem.monitor.internal.bit.MonitorFactoryImpl;
 import org.openscada.ae.monitor.dataitem.monitor.internal.level.LevelMonitorFactoryImpl;
@@ -21,6 +22,8 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.master.MasterItem;
 import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.osgi.pool.ObjectPoolHelper;
+import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -43,6 +46,10 @@ public class Activator implements BundleActivator
 
     private ExecutorService executor;
 
+    private ObjectPoolImpl monitorServicePool;
+
+    private Object monitorServicePoolHandler;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -64,9 +71,12 @@ public class Activator implements BundleActivator
         this.poolTracker = new ObjectPoolTracker ( context, MasterItem.class.getName () );
         this.poolTracker.open ();
 
+        this.monitorServicePool = new ObjectPoolImpl ();
+        this.monitorServicePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.monitorServicePool, MonitorService.class.getName () );
+
         // monitor service
         {
-            final MonitorFactoryImpl factory = new MonitorFactoryImpl ( context, this.poolTracker, this.eventProcessor );
+            final MonitorFactoryImpl factory = new MonitorFactoryImpl ( context, this.poolTracker, this.monitorServicePool, this.eventProcessor );
             properties = new Hashtable<Object, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, BooleanAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Boolean alarms" );
@@ -76,7 +86,7 @@ public class Activator implements BundleActivator
 
         // remote monitor service
         {
-            final RemoteAttributeMonitorFactoryImpl factory = new RemoteAttributeMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.eventProcessor );
+            final RemoteAttributeMonitorFactoryImpl factory = new RemoteAttributeMonitorFactoryImpl ( context, this.monitorServicePool, this.executor, this.poolTracker, this.eventProcessor );
             properties = new Hashtable<Object, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, RemoteBooleanAttributeAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Remote Boolean attribute alarms" );
@@ -86,7 +96,7 @@ public class Activator implements BundleActivator
 
         // remote monitor service
         {
-            final RemoteValueMonitorFactoryImpl factory = new RemoteValueMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.eventProcessor );
+            final RemoteValueMonitorFactoryImpl factory = new RemoteValueMonitorFactoryImpl ( context, this.monitorServicePool, this.executor, this.poolTracker, this.eventProcessor );
             properties = new Hashtable<Object, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, RemoteBooleanValueAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Remote Boolean value alarms" );
@@ -109,7 +119,7 @@ public class Activator implements BundleActivator
     private void makeLevelFactory ( final BundleContext context, final String type, final String defaultMonitorType, final boolean lowerOk, final int priority, final boolean cap )
     {
         Dictionary<Object, Object> properties;
-        final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.poolTracker, this.eventProcessor, type, defaultMonitorType, lowerOk, priority, cap );
+        final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.poolTracker, this.monitorServicePool, this.eventProcessor, type, defaultMonitorType, lowerOk, priority, cap );
         properties = new Hashtable<Object, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, LevelMonitorFactoryImpl.FACTORY_PREFIX + "." + type );
         properties.put ( Constants.SERVICE_DESCRIPTION, type + " Alarms" );

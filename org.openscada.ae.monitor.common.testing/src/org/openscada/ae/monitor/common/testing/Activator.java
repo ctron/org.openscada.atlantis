@@ -4,9 +4,11 @@ import java.util.Hashtable;
 
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.MonitorService;
-import org.openscada.ae.server.common.akn.AknHandler;
+import org.openscada.utils.osgi.pool.ObjectPoolHelper;
+import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 public class Activator implements BundleActivator
 {
@@ -14,6 +16,10 @@ public class Activator implements BundleActivator
     private EventProcessor processor;
 
     private TestingCondition service;
+
+    private ObjectPoolImpl monitorServicePool;
+
+    private ServiceRegistration monitorServicePoolHandler;
 
     /*
      * (non-Javadoc)
@@ -26,7 +32,10 @@ public class Activator implements BundleActivator
         this.service = new TestingCondition ( this.processor, context.getBundle ().getSymbolicName () + ".test" );
         this.service.init ();
 
-        context.registerService ( new String[] { MonitorService.class.getName (), AknHandler.class.getName () }, this.service, new Hashtable<String, String> () );
+        this.monitorServicePool = new ObjectPoolImpl ();
+        this.monitorServicePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.monitorServicePool, MonitorService.class.getName () );
+
+        this.monitorServicePool.addService ( this.service.getId (), context, new Hashtable<String, String> () );
     }
 
     /*
@@ -35,6 +44,7 @@ public class Activator implements BundleActivator
      */
     public void stop ( final BundleContext context ) throws Exception
     {
+        this.monitorServicePool.dispose ();
         this.processor.close ();
         this.service.stop ();
     }

@@ -38,18 +38,28 @@ public class ConditionQuery
             }
             if ( data != null )
             {
-                for ( ConditionStatusInformation info : data )
+                for ( final ConditionStatusInformation info : data )
                 {
                     this.cachedData.put ( info.getId (), info );
                 }
             }
             if ( removed != null )
             {
-                for ( String entry : removed )
+                for ( final String entry : removed )
                 {
                     this.cachedData.remove ( entry );
                 }
             }
         }
+    }
+
+    public synchronized void dispose ()
+    {
+        if ( this.listener != null )
+        {
+            this.listener.dataChanged ( null, this.cachedData.keySet ().toArray ( new String[0] ) );
+        }
+        this.cachedData.clear ();
+        this.listener = null;
     }
 }

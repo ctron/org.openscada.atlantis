@@ -3,6 +3,7 @@ package org.openscada.ae.monitor.dataitem.monitor.internal.level;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.dataitem.AbstractMonitorFactory;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
+import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 
@@ -23,9 +24,9 @@ public class LevelMonitorFactoryImpl extends AbstractMonitorFactory
 
     private final ObjectPoolTracker poolTracker;
 
-    public LevelMonitorFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String type, final String defaultMonitorType, final boolean lowerOk, final int priority, final boolean cap )
+    public LevelMonitorFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker, final ObjectPoolImpl servicePool, final EventProcessor eventProcessor, final String type, final String defaultMonitorType, final boolean lowerOk, final int priority, final boolean cap )
     {
-        super ( context, eventProcessor );
+        super ( context, servicePool, eventProcessor );
         this.poolTracker = poolTracker;
         this.type = type;
         this.lowerOk = lowerOk;

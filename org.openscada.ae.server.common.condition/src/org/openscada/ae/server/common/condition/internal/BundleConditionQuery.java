@@ -1,122 +1,83 @@
 package org.openscada.ae.server.common.condition.internal;
 
-import java.util.HashMap;
+import java.util.Dictionary;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openscada.ae.ConditionStatusInformation;
 import org.openscada.ae.monitor.ConditionListener;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.condition.ConditionQuery;
+import org.openscada.utils.osgi.pool.AllObjectPoolServiceTracker;
+import org.openscada.utils.osgi.pool.ObjectPoolListener;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.ServiceListener;
-import org.osgi.framework.ServiceReference;
 
-public class BundleConditionQuery extends ConditionQuery implements ServiceListener, ConditionListener
+public class BundleConditionQuery extends ConditionQuery implements ConditionListener
 {
     private final static Logger logger = Logger.getLogger ( BundleConditionQuery.class );
 
-    private final BundleContext context;
+    // private final Map<ServiceReference, MonitorService> services = new HashMap<ServiceReference, MonitorService> ();
+    private final Set<MonitorService> services = new HashSet<MonitorService> ();
 
-    private final Map<ServiceReference, MonitorService> services = new HashMap<ServiceReference, MonitorService> ();
+    private final AllObjectPoolServiceTracker tracker;
 
-    public BundleConditionQuery ( final BundleContext context, final String filter ) throws InvalidSyntaxException
+    public BundleConditionQuery ( final BundleContext context, final ObjectPoolTracker poolTracker ) throws InvalidSyntaxException
     {
-        this.context = context;
+        this.tracker = new AllObjectPoolServiceTracker ( poolTracker, new ObjectPoolListener () {
 
-        String serviceFilter;
-        if ( filter == null )
-        {
-            serviceFilter = "(" + Constants.OBJECTCLASS + "=" + MonitorService.class.getName () + ")";
-        }
-        else
-        {
-            serviceFilter = "(&(" + Constants.OBJECTCLASS + "=" + MonitorService.class.getName () + ")" + filter + ")";
-        }
-        synchronized ( this )
-        {
-            this.context.addServiceListener ( this, serviceFilter );
-            checkAddInitial ( filter );
-        }
-    }
-
-    public BundleConditionQuery ( final BundleContext context ) throws InvalidSyntaxException
-    {
-        this ( context, null );
-    }
-
-    private void checkAddInitial ( final String filter ) throws InvalidSyntaxException
-    {
-        ServiceReference[] refs = this.context.getServiceReferences ( MonitorService.class.getName (), filter );
-        if ( refs != null )
-        {
-            for ( ServiceReference ref : refs )
+            public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
             {
-                checkAdd ( ref );
+                BundleConditionQuery.this.handleRemoved ( (MonitorService)service );
             }
-        }
-    }
 
-    public void dispose ()
-    {
-        synchronized ( this )
-        {
-            this.context.removeServiceListener ( this );
-            for ( Map.Entry<ServiceReference, MonitorService> entry : this.services.entrySet () )
+            public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
             {
-                entry.getValue ().removeStatusListener ( this );
-                this.context.ungetService ( entry.getKey () );
             }
-            this.services.clear ();
-        }
-    }
 
-    public void serviceChanged ( final ServiceEvent event )
-    {
-        switch ( event.getType () )
-        {
-        case ServiceEvent.REGISTERED:
-            checkAdd ( event.getServiceReference () );
-            break;
-        case ServiceEvent.UNREGISTERING:
-            checkRemove ( event.getServiceReference () );
-            break;
-        }
-    }
-
-    private void checkRemove ( final ServiceReference serviceReference )
-    {
-        synchronized ( this )
-        {
-            MonitorService service = this.services.remove ( serviceReference );
-            if ( service != null )
+            public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
             {
-                service.removeStatusListener ( this );
-                this.context.ungetService ( serviceReference );
-                updateData ( null, new String[] { service.getId () } );
+                BundleConditionQuery.this.handleAdded ( (MonitorService)service );
             }
-        }
+        } );
+        this.tracker.open ();
     }
 
-    private void checkAdd ( final ServiceReference serviceReference )
+    protected synchronized void handleAdded ( final MonitorService service )
     {
-        logger.debug ( "Checking reference: " + serviceReference );
-        if ( !serviceReference.isAssignableTo ( this.context.getBundle (), MonitorService.class.getName () ) )
+        if ( this.services.add ( service ) )
         {
-            logger.info ( "Not assignable" );
-            return;
-        }
-
-        MonitorService service = (MonitorService)this.context.getService ( serviceReference );
-        synchronized ( this )
-        {
-            logger.debug ( "Adding to list" );
-            this.services.put ( serviceReference, service );
             service.addStatusListener ( this );
         }
+    }
+
+    protected synchronized void handleRemoved ( final MonitorService service )
+    {
+        if ( this.services.remove ( service ) )
+        {
+            service.removeStatusListener ( this );
+            updateData ( null, new String[] { service.getId () } );
+        }
+    }
+
+    public void update ( final Map<String, String> parameters )
+    {
+    }
+
+    public synchronized void dispose ()
+    {
+        super.dispose ();
+        for ( final MonitorService service : this.services )
+        {
+            service.removeStatusListener ( this );
+        }
+
+        this.services.clear ();
+        this.tracker.close ();
+
     }
 
     public void statusChanged ( final ConditionStatusInformation status )
