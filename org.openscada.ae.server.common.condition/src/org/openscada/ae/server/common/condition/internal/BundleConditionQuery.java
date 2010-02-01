@@ -1,11 +1,13 @@
 package org.openscada.ae.server.common.condition.internal;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.openscada.ae.ConditionStatusInformation;
 import org.openscada.ae.monitor.ConditionListener;
 import org.openscada.ae.monitor.MonitorService;
@@ -15,15 +17,19 @@ import org.openscada.utils.osgi.pool.ObjectPoolListener;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BundleConditionQuery extends ConditionQuery implements ConditionListener
 {
-    private final static Logger logger = Logger.getLogger ( BundleConditionQuery.class );
 
-    // private final Map<ServiceReference, MonitorService> services = new HashMap<ServiceReference, MonitorService> ();
+    private final static Logger logger = LoggerFactory.getLogger ( BundleConditionQuery.class );
+
     private final Set<MonitorService> services = new HashSet<MonitorService> ();
 
     private final AllObjectPoolServiceTracker tracker;
+
+    private final Map<String, ConditionStatusInformation> cachedData = new HashMap<String, ConditionStatusInformation> ();
 
     public BundleConditionQuery ( final BundleContext context, final ObjectPoolTracker poolTracker ) throws InvalidSyntaxException
     {
@@ -59,12 +65,45 @@ public class BundleConditionQuery extends ConditionQuery implements ConditionLis
         if ( this.services.remove ( service ) )
         {
             service.removeStatusListener ( this );
+
+            this.cachedData.remove ( service.getId () );
             updateData ( null, new String[] { service.getId () } );
         }
     }
 
     public void update ( final Map<String, String> parameters )
     {
+        setFilter ();
+    }
+
+    /**
+     * Sets the new filter and actualizes the data set
+     */
+    protected synchronized void setFilter ()
+    {
+        setData ( getFiltered () );
+    }
+
+    protected synchronized ConditionStatusInformation[] getFiltered ()
+    {
+        final List<ConditionStatusInformation> result = new ArrayList<ConditionStatusInformation> ();
+
+        for ( final ConditionStatusInformation ci : this.cachedData.values () )
+        {
+            if ( matchesFilter ( ci ) )
+            {
+                result.add ( ci );
+            }
+        }
+
+        return result.toArray ( new ConditionStatusInformation[result.size ()] );
+    }
+
+    private boolean matchesFilter ( final ConditionStatusInformation status )
+    {
+
+        // TODO Auto-generated method stub
+        return true;
     }
 
     public synchronized void dispose ()
@@ -80,12 +119,18 @@ public class BundleConditionQuery extends ConditionQuery implements ConditionLis
 
     }
 
-    public void statusChanged ( final ConditionStatusInformation status )
+    public synchronized void statusChanged ( final ConditionStatusInformation status )
     {
         if ( logger.isDebugEnabled () )
         {
             logger.debug ( "Status changed: " + status );
         }
-        updateData ( new ConditionStatusInformation[] { status }, null );
+
+        this.cachedData.put ( status.getId (), status );
+
+        if ( matchesFilter ( status ) )
+        {
+            updateData ( new ConditionStatusInformation[] { status }, null );
+        }
     }
 }
