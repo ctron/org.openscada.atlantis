@@ -1,5 +1,6 @@
 package org.openscada.ae.server.common.condition;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,10 +22,15 @@ public class ConditionQuery
         synchronized ( this )
         {
             this.listener = listener;
-            if ( this.listener != null )
-            {
-                this.listener.dataChanged ( this.cachedData.values ().toArray ( new ConditionStatusInformation[0] ), null );
-            }
+            fireListener ( this.cachedData.values ().toArray ( new ConditionStatusInformation[0] ), null );
+        }
+    }
+
+    private synchronized void fireListener ( final ConditionStatusInformation[] addedOrUpdated, final String[] removed )
+    {
+        if ( this.listener != null )
+        {
+            this.listener.dataChanged ( addedOrUpdated, removed );
         }
     }
 
@@ -32,10 +38,7 @@ public class ConditionQuery
     {
         synchronized ( this )
         {
-            if ( this.listener != null )
-            {
-                this.listener.dataChanged ( data, removed );
-            }
+            fireListener ( data, removed );
             if ( data != null )
             {
                 for ( final ConditionStatusInformation info : data )
@@ -55,11 +58,34 @@ public class ConditionQuery
 
     public synchronized void dispose ()
     {
-        if ( this.listener != null )
-        {
-            this.listener.dataChanged ( null, this.cachedData.keySet ().toArray ( new String[0] ) );
-        }
-        this.cachedData.clear ();
+        clear ();
         this.listener = null;
+    }
+
+    /**
+     * Set current data set. Will handle notifications accordingly.
+     * @param data the new data set
+     */
+    protected synchronized void setData ( final ConditionStatusInformation[] data )
+    {
+        clear ();
+
+        final ArrayList<ConditionStatusInformation> newData = new ArrayList<ConditionStatusInformation> ( data.length );
+        for ( final ConditionStatusInformation ci : data )
+        {
+            newData.add ( ci );
+            final ConditionStatusInformation oldCi = this.cachedData.put ( ci.getId (), ci );
+            if ( oldCi != null )
+            {
+                newData.remove ( oldCi );
+            }
+        }
+        fireListener ( newData.toArray ( new ConditionStatusInformation[newData.size ()] ), null );
+    }
+
+    protected synchronized void clear ()
+    {
+        fireListener ( null, this.cachedData.keySet ().toArray ( new String[0] ) );
+        this.cachedData.clear ();
     }
 }
