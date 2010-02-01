@@ -16,5 +16,6 @@ Import-Package: org.openscada.ae;version="0.15.0",
  org.openscada.utils.filter.bean;version="0.15.0",
  org.openscada.utils.osgi.ca.factory;version="0.15.0",
  org.openscada.utils.osgi.pool;version="0.15.0",
+ org.openscada.utils.propertyeditors;version="0.15.0",
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.8"

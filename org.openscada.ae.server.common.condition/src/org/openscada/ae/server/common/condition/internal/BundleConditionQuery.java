@@ -13,6 +13,8 @@ import org.openscada.ae.monitor.ConditionListener;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.condition.ConditionQuery;
 import org.openscada.utils.filter.Filter;
+import org.openscada.utils.filter.FilterParser;
+import org.openscada.utils.filter.bean.BeanMatcher;
 import org.openscada.utils.osgi.pool.AllObjectPoolServiceTracker;
 import org.openscada.utils.osgi.pool.ObjectPoolListener;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -32,7 +34,7 @@ public class BundleConditionQuery extends ConditionQuery implements ConditionLis
 
     private final Map<String, ConditionStatusInformation> cachedData = new HashMap<String, ConditionStatusInformation> ();
 
-    private Filter filter;
+    private Filter filter = Filter.EMPTY;
 
     public BundleConditionQuery ( final BundleContext context, final ObjectPoolTracker poolTracker ) throws InvalidSyntaxException
     {
@@ -76,7 +78,12 @@ public class BundleConditionQuery extends ConditionQuery implements ConditionLis
 
     public void update ( final Map<String, String> parameters )
     {
-        setFilter ( Filter.EMPTY );
+        final String filterStr = parameters.get ( "filter" );
+
+        logger.debug ( "Setting new filter: {}", filterStr );
+
+        final FilterParser parser = new FilterParser ( filterStr );
+        setFilter ( parser.getFilter () );
     }
 
     /**
@@ -84,7 +91,17 @@ public class BundleConditionQuery extends ConditionQuery implements ConditionLis
      */
     protected synchronized void setFilter ( final Filter filter )
     {
-        this.filter = filter;
+        logger.debug ( "SetFilter: {}", filter );
+
+        if ( filter == null )
+        {
+            this.filter = Filter.EMPTY;
+        }
+        else
+        {
+            this.filter = filter;
+        }
+
         setData ( getFiltered () );
     }
 
@@ -105,9 +122,9 @@ public class BundleConditionQuery extends ConditionQuery implements ConditionLis
 
     private boolean matchesFilter ( final ConditionStatusInformation status )
     {
-
-        // TODO Auto-generated method stub
-        return true;
+        final boolean result = BeanMatcher.matches ( this.filter, status, true, null );
+        logger.debug ( "{} matches {} : {}", new Object[] { status, this.filter, result } );
+        return result;
     }
 
     public synchronized void dispose ()

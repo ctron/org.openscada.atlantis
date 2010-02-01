@@ -5,9 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.ae.ConditionStatusInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConditionQuery
 {
+    private final static Logger logger = LoggerFactory.getLogger ( ConditionQuery.class );
+
     private ConditionQueryListener listener;
 
     private final Map<String, ConditionStatusInformation> cachedData;
@@ -68,6 +72,8 @@ public class ConditionQuery
      */
     protected synchronized void setData ( final ConditionStatusInformation[] data )
     {
+        logger.debug ( "Set new data: {}", data.length );
+
         clear ();
 
         final ArrayList<ConditionStatusInformation> newData = new ArrayList<ConditionStatusInformation> ( data.length );

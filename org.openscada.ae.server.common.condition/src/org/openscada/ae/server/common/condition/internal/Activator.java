@@ -5,6 +5,8 @@ import java.util.Hashtable;
 
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.condition.ConditionQuery;
+import org.openscada.ca.ConfigurationAdministrator;
+import org.openscada.ca.ConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -25,6 +27,10 @@ public class Activator implements BundleActivator
     private ServiceRegistration handle;
 
     private ObjectPoolTracker poolTracker;
+
+    private QueryServiceFactory factory;
+
+    private ServiceRegistration factoryHandle;
 
     /*
      * (non-Javadoc)
@@ -48,6 +54,14 @@ public class Activator implements BundleActivator
 
         this.handle = this.context.registerService ( ConditionQuery.class.getName (), this.allQuery, properties );
 
+        // register factory
+        this.factory = new QueryServiceFactory ( context, this.poolTracker );
+        properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "A monitor query" );
+        properties.put ( ConfigurationAdministrator.FACTORY_ID, QueryServiceFactory.FACTORY_ID );
+
+        this.factoryHandle = context.registerService ( ConfigurationFactory.class.getName (), this.factory, properties );
+
         logger.info ( "Initialized" );
     }
 
@@ -57,6 +71,10 @@ public class Activator implements BundleActivator
      */
     public void stop ( final BundleContext context ) throws Exception
     {
+        this.factoryHandle.unregister ();
+        this.factory.dispose ();
+        this.factory = null;
+
         this.poolTracker.close ();
 
         this.allQuery.dispose ();
