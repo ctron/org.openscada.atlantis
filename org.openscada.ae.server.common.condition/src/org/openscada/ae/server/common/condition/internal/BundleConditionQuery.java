@@ -12,6 +12,7 @@ import org.openscada.ae.ConditionStatusInformation;
 import org.openscada.ae.monitor.ConditionListener;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.condition.ConditionQuery;
+import org.openscada.utils.filter.Filter;
 import org.openscada.utils.osgi.pool.AllObjectPoolServiceTracker;
 import org.openscada.utils.osgi.pool.ObjectPoolListener;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -30,6 +31,8 @@ public class BundleConditionQuery extends ConditionQuery implements ConditionLis
     private final AllObjectPoolServiceTracker tracker;
 
     private final Map<String, ConditionStatusInformation> cachedData = new HashMap<String, ConditionStatusInformation> ();
+
+    private Filter filter;
 
     public BundleConditionQuery ( final BundleContext context, final ObjectPoolTracker poolTracker ) throws InvalidSyntaxException
     {
@@ -73,14 +76,15 @@ public class BundleConditionQuery extends ConditionQuery implements ConditionLis
 
     public void update ( final Map<String, String> parameters )
     {
-        setFilter ();
+        setFilter ( Filter.EMPTY );
     }
 
     /**
      * Sets the new filter and actualizes the data set
      */
-    protected synchronized void setFilter ()
+    protected synchronized void setFilter ( final Filter filter )
     {
+        this.filter = filter;
         setData ( getFiltered () );
     }
 
