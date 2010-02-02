@@ -147,6 +147,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.exec" />
   	<openscada.builder.copyPlugin id="org.openscada.da.server.spring"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.opc"/>
+  	
   	<openscada.builder.copyPlugin id="org.openscada.da.server.simulation" project="openscada_da_simserver"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.simulation.component" />
   	
@@ -207,6 +208,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.hd.connection.provider"/>
   		
   	<openscada.builder.copyPlugin id="org.openscada.da.master" />
+  	<openscada.builder.copyPlugin id="org.openscada.da.master.analyzer"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.master.common" />
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource.proxy"/>
