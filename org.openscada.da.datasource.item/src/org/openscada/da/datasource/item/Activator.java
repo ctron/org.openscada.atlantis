@@ -12,7 +12,7 @@ import org.osgi.framework.Constants;
 public class Activator implements BundleActivator
 {
 
-    private FactoryImpl factory;
+    private DataItemFactoryImpl factory;
 
     /*
      * (non-Javadoc)
@@ -20,9 +20,9 @@ public class Activator implements BundleActivator
      */
     public void start ( final BundleContext context ) throws Exception
     {
-        this.factory = new FactoryImpl ( context );
+        this.factory = new DataItemFactoryImpl ( context );
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        properties.put ( ConfigurationAdministrator.FACTORY_ID, FactoryImpl.FACTORY_ID );
+        properties.put ( ConfigurationAdministrator.FACTORY_ID, DataItemFactoryImpl.FACTORY_ID );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A dataitem based on a datasource" );
         context.registerService ( ConfigurationFactory.class.getName (), this.factory, properties );
     }

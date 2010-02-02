@@ -16,7 +16,7 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
 
-public class FactoryImpl extends AbstractServiceConfigurationFactory<DataItemImpl>
+public class DataItemFactoryImpl extends AbstractServiceConfigurationFactory<DataItemImpl>
 {
     public static final String FACTORY_ID = "da.dataitem.datasource";
 
@@ -28,7 +28,7 @@ public class FactoryImpl extends AbstractServiceConfigurationFactory<DataItemImp
 
     private final ServiceRegistration itemPoolHandle;
 
-    public FactoryImpl ( final BundleContext context ) throws InvalidSyntaxException
+    public DataItemFactoryImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         super ( context );
         this.itemPool = new ObjectPoolImpl ();
