@@ -25,9 +25,9 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DataItemImpl extends DataItemBase implements DataSourceListener
+public class DataItemTargetImpl extends DataItemBase implements DataSourceListener
 {
-    private final static Logger logger = LoggerFactory.getLogger ( DataItemImpl.class );
+    private final static Logger logger = LoggerFactory.getLogger ( DataItemTargetImpl.class );
 
     private DataItemValue currentValue = new DataItemValue ();
 
@@ -35,7 +35,7 @@ public class DataItemImpl extends DataItemBase implements DataSourceListener
 
     private DataSource dataSource;
 
-    public DataItemImpl ( final ObjectPoolTracker poolTracker, final DataItemInformation information, final String dataSourceId ) throws InvalidSyntaxException
+    public DataItemTargetImpl ( final ObjectPoolTracker poolTracker, final DataItemInformation information, final String dataSourceId ) throws InvalidSyntaxException
     {
         super ( information );
 
@@ -43,7 +43,7 @@ public class DataItemImpl extends DataItemBase implements DataSourceListener
 
             public void dataSourceChanged ( final DataSource dataSource )
             {
-                DataItemImpl.this.setDataSource ( dataSource );
+                DataItemTargetImpl.this.setDataSource ( dataSource );
             }
         } );
         this.tracker.open ();

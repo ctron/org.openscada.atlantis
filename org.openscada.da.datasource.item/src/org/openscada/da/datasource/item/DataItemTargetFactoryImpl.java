@@ -16,7 +16,7 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
 
-public class DataItemFactoryImpl extends AbstractServiceConfigurationFactory<DataItemImpl>
+public class DataItemTargetFactoryImpl extends AbstractServiceConfigurationFactory<DataItemTargetImpl>
 {
     public static final String FACTORY_ID = "da.dataitem.datasource";
 
@@ -28,7 +28,7 @@ public class DataItemFactoryImpl extends AbstractServiceConfigurationFactory<Dat
 
     private final ServiceRegistration itemPoolHandle;
 
-    public DataItemFactoryImpl ( final BundleContext context ) throws InvalidSyntaxException
+    public DataItemTargetFactoryImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         super ( context );
         this.itemPool = new ObjectPoolImpl ();
@@ -52,20 +52,20 @@ public class DataItemFactoryImpl extends AbstractServiceConfigurationFactory<Dat
     }
 
     @Override
-    protected Entry<DataItemImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataItemTargetImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         return createDataItem ( configurationId, context, parameters );
     }
 
     @Override
-    protected void disposeService ( final String id, final DataItemImpl service )
+    protected void disposeService ( final String id, final DataItemTargetImpl service )
     {
         this.itemPool.removeService ( id, service );
         service.dispose ();
     }
 
     @Override
-    protected Entry<DataItemImpl> updateService ( final String configurationId, final Entry<DataItemImpl> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataItemTargetImpl> updateService ( final String configurationId, final Entry<DataItemTargetImpl> entry, final Map<String, String> parameters ) throws Exception
     {
         this.itemPool.removeService ( configurationId, entry.getService () );
         entry.getService ().dispose ();
@@ -73,7 +73,7 @@ public class DataItemFactoryImpl extends AbstractServiceConfigurationFactory<Dat
         return createDataItem ( configurationId, this.context, parameters );
     }
 
-    protected Entry<DataItemImpl> createDataItem ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws InvalidSyntaxException
+    protected Entry<DataItemTargetImpl> createDataItem ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws InvalidSyntaxException
     {
         final String itemId = parameters.get ( "item.id" );
         if ( itemId == null )
@@ -82,7 +82,7 @@ public class DataItemFactoryImpl extends AbstractServiceConfigurationFactory<Dat
         }
 
         final String datasourceId = parameters.get ( "datasource.id" );
-        final DataItemImpl item = new DataItemImpl ( this.poolTracker, new DataItemInformationBase ( itemId ), datasourceId );
+        final DataItemTargetImpl item = new DataItemTargetImpl ( this.poolTracker, new DataItemInformationBase ( itemId ), datasourceId );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_DESCRIPTION, "inavare GmbH" );
@@ -90,6 +90,6 @@ public class DataItemFactoryImpl extends AbstractServiceConfigurationFactory<Dat
         // register
         this.itemPool.addService ( configurationId, item, properties );
 
-        return new Entry<DataItemImpl> ( configurationId, item );
+        return new Entry<DataItemTargetImpl> ( configurationId, item );
     }
 }
