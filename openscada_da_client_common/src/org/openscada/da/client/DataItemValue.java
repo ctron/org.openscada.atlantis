@@ -325,6 +325,7 @@ public class DataItemValue
         {
             this.value = new Variant ();
             this.attributes = new HashMap<String, Variant> ();
+            this.subscriptionState = SubscriptionState.DISCONNECTED;
         }
 
         public Builder ( final DataItemValue sourceValue )
@@ -333,6 +334,7 @@ public class DataItemValue
             {
                 this.value = new Variant ();
                 this.attributes = new HashMap<String, Variant> ();
+                this.subscriptionState = SubscriptionState.DISCONNECTED;
             }
             else
             {
@@ -401,6 +403,12 @@ public class DataItemValue
         public DataItemValue build ()
         {
             return new DataItemValue ( this.value, this.attributes, this.subscriptionState, this.subscriptionError );
+        }
+
+        @Override
+        public String toString ()
+        {
+            return build ().toString ();
         }
     }
 }
