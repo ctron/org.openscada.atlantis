@@ -18,6 +18,7 @@ import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
+import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.client.connection.service.ConnectionService;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
@@ -179,12 +180,15 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
 
     private final Executor executor;
 
+    private final String connectionId;
+
     public MasterItemImpl ( final Executor executor, final BundleContext context, final String id, final String connectionId, final String itemId ) throws InvalidSyntaxException
     {
         this.executor = executor;
         this.context = context;
         this.itemId = itemId;
-        this.sourceValue = new DataItemValue ();
+        this.connectionId = connectionId;
+        this.sourceValue = initValue ();
 
         this.tracker = new ConnectionIdTracker ( this.context, connectionId, new ConnectionTracker.Listener () {
 
@@ -195,6 +199,16 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
         }, ConnectionService.class );
 
         this.tracker.open ();
+
+    }
+
+    private DataItemValue initValue ()
+    {
+        final DataItemValue.Builder builder = new Builder ();
+        builder.setAttribute ( "master.uninitialized", Variant.TRUE );
+        builder.setAttribute ( "master.item.id", new Variant ( this.itemId ) );
+        builder.setAttribute ( "master.connection.id", new Variant ( this.connectionId ) );
+        return builder.build ();
     }
 
     @Override
@@ -225,6 +239,11 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
         if ( this.connection != null )
         {
             // and connect to it
+            final Builder builder = new Builder ();
+            builder.setAttribute ( "master.attached.connection", Variant.TRUE );
+            this.sourceValue = builder.build ();
+            reprocess ();
+
             this.connection.getItemManager ().addItemUpdateListener ( this.itemId, this );
         }
     }
@@ -270,23 +289,37 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
             AttributesHelper.mergeAttributes ( oldAttributes, attributes, cache );
             newValue.setAttributes ( oldAttributes );
         }
+
+        injectAttributes ( newValue );
+
         return newValue.build ();
+    }
+
+    private void injectAttributes ( final DataItemValue.Builder newValue )
+    {
+        newValue.setAttribute ( "master.item.subscriptionState", new Variant ( newValue.getSubscriptionState ().toString () ) );
+        newValue.setAttribute ( "master.item.id", new Variant ( this.itemId ) );
+        newValue.setAttribute ( "master.connection.id", new Variant ( this.connectionId ) );
+        newValue.setAttribute ( "master.has.connection", this.connection != null ? Variant.TRUE : Variant.FALSE );
     }
 
     public synchronized void notifySubscriptionChange ( final SubscriptionState state, final Throwable error )
     {
-        logger.info ( "Subscription state changed: " + state );
+        logger.info ( "Subscription state changed: {}", state );
 
         // re-process
         this.sourceValue = applyStateChange ( this.sourceValue, state, error );
         updateData ( processHandler ( this.sourceValue ) );
     }
 
-    private static DataItemValue applyStateChange ( final DataItemValue sourceValue, final SubscriptionState state, final Throwable error )
+    private DataItemValue applyStateChange ( final DataItemValue sourceValue, final SubscriptionState state, final Throwable error )
     {
         final DataItemValue.Builder newValue = new DataItemValue.Builder ( sourceValue );
         newValue.setSubscriptionState ( state );
         newValue.setSubscriptionError ( error );
+
+        injectAttributes ( newValue );
+
         return newValue.build ();
     }
 
