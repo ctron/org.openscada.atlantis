@@ -12,6 +12,7 @@ import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractMonitorService;
+import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
@@ -68,6 +69,8 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
 
     private final ObjectPoolTracker poolTracker;
 
+    protected Map<String, Variant> attributes = new HashMap<String, Variant> ();
+
     public AbstractDataItemMonitor ( final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
     {
         super ( eventProcessor, id );
@@ -81,53 +84,38 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
         disconnect ();
     }
 
-    protected static boolean getBoolean ( final Map<String, String> properties, final String key, final boolean defaultValue )
+    protected static Map<String, Variant> convertAttributes ( final Map<String, String> parameters )
     {
-        final String value = properties.get ( key );
-        if ( value == null )
-        {
-            return defaultValue;
-        }
-        return Boolean.parseBoolean ( value );
-    }
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-    protected static int getInteger ( final Map<String, String> properties, final String key, final int defaultValue )
-    {
-        final String value = properties.get ( key );
-        if ( value == null )
+        for ( final Map.Entry<String, String> entry : parameters.entrySet () )
         {
-            return defaultValue;
+            final String key = entry.getKey ();
+            if ( key.startsWith ( "info." ) )
+            {
+                attributes.put ( key.substring ( "info.".length () ), new Variant ( entry.getValue () ) );
+            }
         }
-        return Integer.parseInt ( value );
-    }
 
-    protected static String getString ( final Map<String, String> properties, final String key, final String defaultValue )
-    {
-        final String value = properties.get ( key );
-        if ( value != null )
-        {
-            return value;
-        }
-        else
-        {
-            return defaultValue;
-        }
+        return attributes;
     }
 
     public synchronized void update ( final Map<String, String> properties ) throws Exception
     {
         disconnect ();
-        this.masterId = properties.get ( MasterItem.MASTER_ID );
-        this.handlerPriority = getInteger ( properties, "handler.priority", getDefaultPriority () );
-        this.monitorType = getString ( properties, "monitorType", this.defaultMonitorType );
-        this.component = getString ( properties, "component", null );
-        this.message = getString ( properties, "message", null );
-        this.messageCode = getString ( properties, "messageCode", null );
+
+        final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
+
+        this.masterId = cfg.getStringChecked ( MasterItem.MASTER_ID, "'" + MasterItem.MASTER_ID + "' must be set" );
+        this.handlerPriority = cfg.getInteger ( "handler.priority", getDefaultPriority () );
+        this.monitorType = cfg.getString ( "monitorType", this.defaultMonitorType );
+
+        this.attributes = convertAttributes ( properties );
 
         init ();
 
-        setActive ( getBoolean ( properties, "active", true ) );
-        setRequireAkn ( getBoolean ( properties, "requireAck", false ) );
+        setActive ( cfg.getBoolean ( "active", true ) );
+        setRequireAkn ( cfg.getBoolean ( "requireAck", false ) );
         connect ();
     }
 

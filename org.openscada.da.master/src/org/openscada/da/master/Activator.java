@@ -5,7 +5,9 @@ import java.util.Hashtable;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
+import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.internal.MasterFactory;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -13,9 +15,11 @@ import org.osgi.framework.ServiceRegistration;
 
 public class Activator implements BundleActivator
 {
-    private MasterFactory masterService;
+    private MasterFactory masterFactory;
 
     private ServiceRegistration masterHandle;
+
+    private ObjectPoolTracker dataSourceTracker;
 
     /*
      * (non-Javadoc)
@@ -25,13 +29,16 @@ public class Activator implements BundleActivator
     {
         Dictionary<Object, Object> properties;
 
+        this.dataSourceTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
+        this.dataSourceTracker.open ();
+
         // master service
-        this.masterService = new MasterFactory ( context );
+        this.masterFactory = new MasterFactory ( context, this.dataSourceTracker );
         properties = new Hashtable<Object, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, "master.item" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A configuration factory for master items" );
         properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
-        this.masterHandle = context.registerService ( new String[] { ConfigurationFactory.class.getName () }, this.masterService, properties );
+        this.masterHandle = context.registerService ( new String[] { ConfigurationFactory.class.getName () }, this.masterFactory, properties );
     }
 
     /*
@@ -40,9 +47,11 @@ public class Activator implements BundleActivator
      */
     public void stop ( final BundleContext context ) throws Exception
     {
+        this.dataSourceTracker.close ();
+
         this.masterHandle.unregister ();
-        this.masterService.dispose ();
-        this.masterService = null;
+        this.masterFactory.dispose ();
+        this.masterFactory = null;
     }
 
 }

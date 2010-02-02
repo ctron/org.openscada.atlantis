@@ -7,35 +7,31 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
 
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.connection.provider.ConnectionIdTracker;
-import org.openscada.core.connection.provider.ConnectionTracker;
-import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
-import org.openscada.da.client.ItemUpdateListener;
-import org.openscada.da.client.WriteAttributeOperationCallback;
-import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.client.DataItemValue.Builder;
-import org.openscada.da.client.connection.service.ConnectionService;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
-import org.openscada.da.datasource.base.AbstractDataSource;
+import org.openscada.da.datasource.DataSource;
+import org.openscada.da.datasource.base.AbstractDataSourceHandler;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.MasterItemHandler;
 import org.openscada.da.master.WriteRequest;
 import org.openscada.da.master.WriteRequestResult;
 import org.openscada.utils.concurrent.AbstractFuture;
+import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MasterItemImpl extends AbstractDataSource implements ItemUpdateListener, MasterItem
+public class MasterItemImpl extends AbstractDataSourceHandler implements MasterItem
 {
 
     private static class WriteListenerAttributeImpl extends AbstractFuture<WriteAttributeResults> implements WriteListener
@@ -83,7 +79,6 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
         {
             setError ( error );
         }
-
     }
 
     private static interface WriteListener
@@ -98,10 +93,6 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
     }
 
     private final static Logger logger = LoggerFactory.getLogger ( MasterItemImpl.class );
-
-    private ConnectionService connection;
-
-    private final String itemId;
 
     private volatile DataItemValue sourceValue;
 
@@ -174,40 +165,19 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
 
     private final List<HandlerEntry> itemHandler = new LinkedList<HandlerEntry> ();
 
-    private final BundleContext context;
-
-    private final ConnectionIdTracker tracker;
-
     private final Executor executor;
 
-    private final String connectionId;
-
-    public MasterItemImpl ( final Executor executor, final BundleContext context, final String id, final String connectionId, final String itemId ) throws InvalidSyntaxException
+    public MasterItemImpl ( final Executor executor, final BundleContext context, final String id, final ObjectPoolTracker dataSourcePoolTracker ) throws InvalidSyntaxException
     {
+        super ( dataSourcePoolTracker );
         this.executor = executor;
-        this.context = context;
-        this.itemId = itemId;
-        this.connectionId = connectionId;
         this.sourceValue = initValue ();
-
-        this.tracker = new ConnectionIdTracker ( this.context, connectionId, new ConnectionTracker.Listener () {
-
-            public void setConnection ( final org.openscada.core.connection.provider.ConnectionService connectionService )
-            {
-                MasterItemImpl.this.setConnection ( (ConnectionService)connectionService );
-            }
-        }, ConnectionService.class );
-
-        this.tracker.open ();
-
     }
 
-    private DataItemValue initValue ()
+    private static DataItemValue initValue ()
     {
         final DataItemValue.Builder builder = new Builder ();
         builder.setAttribute ( "master.uninitialized", Variant.TRUE );
-        builder.setAttribute ( "master.item.id", new Variant ( this.itemId ) );
-        builder.setAttribute ( "master.connection.id", new Variant ( this.connectionId ) );
         return builder.build ();
     }
 
@@ -217,110 +187,12 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
         return this.executor;
     }
 
-    protected synchronized void setConnection ( final ConnectionService connectionService )
-    {
-        logger.info ( "Set connection: {}", connectionService );
-
-        if ( this.connection == connectionService )
-        {
-            // no change at all
-            return;
-        }
-
-        // clear the old connection
-        if ( this.connection != null )
-        {
-            this.connection.getItemManager ().removeItemUpdateListener ( this.itemId, this );
-        }
-
-        // assign the new one
-        this.connection = connectionService;
-
-        if ( this.connection != null )
-        {
-            // and connect to it
-            final Builder builder = new Builder ();
-            builder.setAttribute ( "master.attached.connection", Variant.TRUE );
-            this.sourceValue = builder.build ();
-            reprocess ();
-
-            this.connection.getItemManager ().addItemUpdateListener ( this.itemId, this );
-        }
-    }
-
     public void dispose ()
     {
-        this.tracker.close ();
-
         synchronized ( this.itemHandler )
         {
             this.itemHandler.clear ();
         }
-    }
-
-    public synchronized void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
-    {
-        logger.debug ( "Data update: {} -> {} / {} (cache: {})", new Object[] { this.itemId, value, attributes, cache } );
-        // re-process
-        this.sourceValue = applyDataChange ( value, attributes, cache );
-        updateData ( processHandler ( this.sourceValue ) );
-    }
-
-    private DataItemValue applyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
-    {
-        final DataItemValue.Builder newValue = new DataItemValue.Builder ( this.sourceValue );
-
-        final Map<String, Variant> oldAttributes;
-        if ( cache )
-        {
-            oldAttributes = new HashMap<String, Variant> ();
-        }
-        else
-        {
-            oldAttributes = new HashMap<String, Variant> ( newValue.getAttributes () );
-        }
-
-        if ( value != null )
-        {
-            newValue.setValue ( value );
-        }
-        if ( attributes != null )
-        {
-            AttributesHelper.mergeAttributes ( oldAttributes, attributes, cache );
-            newValue.setAttributes ( oldAttributes );
-        }
-
-        injectAttributes ( newValue );
-
-        return newValue.build ();
-    }
-
-    private void injectAttributes ( final DataItemValue.Builder newValue )
-    {
-        newValue.setAttribute ( "master.item.subscriptionState", new Variant ( newValue.getSubscriptionState ().toString () ) );
-        newValue.setAttribute ( "master.item.id", new Variant ( this.itemId ) );
-        newValue.setAttribute ( "master.connection.id", new Variant ( this.connectionId ) );
-        newValue.setAttribute ( "master.has.connection", this.connection != null ? Variant.TRUE : Variant.FALSE );
-    }
-
-    public synchronized void notifySubscriptionChange ( final SubscriptionState state, final Throwable error )
-    {
-        logger.info ( "Subscription state changed: {}", state );
-
-        // re-process
-        this.sourceValue = applyStateChange ( this.sourceValue, state, error );
-        updateData ( processHandler ( this.sourceValue ) );
-    }
-
-    private DataItemValue applyStateChange ( final DataItemValue sourceValue, final SubscriptionState state, final Throwable error )
-    {
-        final DataItemValue.Builder newValue = new DataItemValue.Builder ( sourceValue );
-        newValue.setSubscriptionState ( state );
-        newValue.setSubscriptionError ( error );
-
-        injectAttributes ( newValue );
-
-        return newValue.build ();
     }
 
     public void addHandler ( final MasterItemHandler handler, final int priority )
@@ -359,6 +231,13 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
     {
         logger.info ( "Reprocessing" );
         updateData ( processHandler ( this.sourceValue ) );
+    }
+
+    @Override
+    protected synchronized void stateChanged ( final DataItemValue value )
+    {
+        this.sourceValue = value;
+        reprocess ();
     }
 
     /* (non-Javadoc)
@@ -402,14 +281,14 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
         return value;
     }
 
-    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    public synchronized NotifyFuture<WriteResult> startWriteValue ( final Variant value )
     {
         final WriteListenerValueImpl task = new WriteListenerValueImpl ();
         processWrite ( new WriteRequest ( value ), task );
         return task;
     }
 
-    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes )
+    public synchronized NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes )
     {
         final WriteListenerAttributeImpl task = new WriteListenerAttributeImpl ();
         processWrite ( new WriteRequest ( attributes ), task );
@@ -418,6 +297,14 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
 
     private void processWrite ( final WriteRequest writeRequest, final WriteListener listener )
     {
+
+        final DataSource dataSource = getDataSource ();
+        if ( dataSource == null )
+        {
+            listener.error ( new OperationException ( "No connection" ).fillInStackTrace () );
+            return;
+        }
+
         // FIXME: combined value and attribute writes will be a problem
         try
         {
@@ -434,43 +321,44 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
             final Variant value = result.getValue ();
             if ( value != null )
             {
-                this.connection.getConnection ().write ( this.itemId, value, new WriteOperationCallback () {
+                final NotifyFuture<WriteResult> task = dataSource.startWriteValue ( value );
+                task.addListener ( new FutureListener<WriteResult> () {
 
-                    public void failed ( final String error )
+                    public void complete ( final Future<WriteResult> future )
                     {
-                        listener.failed ( error );
-                    }
-
-                    public void error ( final Throwable e )
-                    {
-                        listener.error ( e );
-                    }
-
-                    public void complete ()
-                    {
-                        listener.complete ( new WriteResult () );
+                        try
+                        {
+                            listener.complete ( future.get () );
+                        }
+                        catch ( final Throwable e )
+                        {
+                            listener.error ( e );
+                        }
                     }
                 } );
             }
+            else
+            {
+                listener.complete ( new WriteResult () );
+            }
+
             // process attributes
             final HashMap<String, Variant> attributes = result.getAttributes ();
             if ( !attributes.isEmpty () )
             {
-                this.connection.getConnection ().writeAttributes ( this.itemId, attributes, new WriteAttributeOperationCallback () {
+                final NotifyFuture<WriteAttributeResults> task = dataSource.startWriteAttributes ( attributes );
+                task.addListener ( new FutureListener<WriteAttributeResults> () {
 
-                    public void failed ( final String error )
+                    public void complete ( final Future<WriteAttributeResults> future )
                     {
-                        listener.failed ( error );
-                    }
-
-                    public void error ( final Throwable e )
-                    {
-                        listener.error ( e );
-                    }
-
-                    public void complete ( final WriteAttributeResults callbackResult )
-                    {
-                        listener.complete ( mergeResults ( callbackResult, result.getAttributeResults () ) );
+                        try
+                        {
+                            listener.complete ( future.get () );
+                        }
+                        catch ( final Throwable e )
+                        {
+                            listener.error ( e );
+                        }
                     }
                 } );
             }
@@ -538,9 +426,14 @@ public class MasterItemImpl extends AbstractDataSource implements ItemUpdateList
         return finalResult;
     }
 
-    public void update ( final Map<String, String> properties )
+    public synchronized void update ( final Map<String, String> properties ) throws InvalidSyntaxException
     {
-        // FIXME: implement
+        setDataSource ( properties.get ( "datasource.id" ) );
+
+        final DataItemValue.Builder builder = new Builder ();
+        builder.setAttribute ( "master.waitingFor.datasource", new Variant ( properties.get ( "datasource.id" ) ) );
+        this.sourceValue = builder.build ();
+        reprocess ();
     }
 
 }

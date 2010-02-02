@@ -2,7 +2,9 @@ package org.openscada.ae.server.common.condition;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.openscada.ae.ConditionStatusInformation;
 import org.slf4j.Logger;
@@ -42,7 +44,6 @@ public class ConditionQuery
     {
         synchronized ( this )
         {
-            fireListener ( data, removed );
             if ( data != null )
             {
                 for ( final ConditionStatusInformation info : data )
@@ -50,13 +51,18 @@ public class ConditionQuery
                     this.cachedData.put ( info.getId (), info );
                 }
             }
+            final Set<String> removedItems = new HashSet<String> ();
             if ( removed != null )
             {
                 for ( final String entry : removed )
                 {
-                    this.cachedData.remove ( entry );
+                    if ( this.cachedData.remove ( entry ) != null )
+                    {
+                        removedItems.add ( entry );
+                    }
                 }
             }
+            fireListener ( data, removedItems.toArray ( new String[removedItems.size ()] ) );
         }
     }
 

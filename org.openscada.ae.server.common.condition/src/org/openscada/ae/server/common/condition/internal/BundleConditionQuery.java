@@ -122,9 +122,7 @@ public class BundleConditionQuery extends ConditionQuery implements ConditionLis
 
     private boolean matchesFilter ( final ConditionStatusInformation status )
     {
-        final boolean result = BeanMatcher.matches ( this.filter, status, true, null );
-        logger.debug ( "{} matches {} : {}", new Object[] { status, this.filter, result } );
-        return result;
+        return BeanMatcher.matches ( this.filter, status, true, null );
     }
 
     public synchronized void dispose ()
@@ -152,6 +150,10 @@ public class BundleConditionQuery extends ConditionQuery implements ConditionLis
         if ( matchesFilter ( status ) )
         {
             updateData ( new ConditionStatusInformation[] { status }, null );
+        }
+        else
+        {
+            updateData ( null, new String[] { status.getId () } );
         }
     }
 }

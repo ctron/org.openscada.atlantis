@@ -10,6 +10,12 @@ import org.openscada.da.datasource.DataSourceListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Basic implementation of a data source.
+ * @author Jens Reimann
+ * @since 0.15.0
+ *
+ */
 public abstract class AbstractDataSource implements DataSource
 {
     private final static Logger logger = LoggerFactory.getLogger ( AbstractDataSource.class );

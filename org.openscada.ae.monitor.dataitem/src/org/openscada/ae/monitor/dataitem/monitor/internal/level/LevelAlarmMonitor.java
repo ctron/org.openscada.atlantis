@@ -7,14 +7,19 @@ import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.EventHelper;
 import org.openscada.ae.monitor.dataitem.AbstractNumericMonitor;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
+import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataItemMonitor
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( LevelAlarmMonitor.class );
 
     private Double limit;
 
@@ -47,19 +52,19 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     }
 
     @Override
-    public void update ( final Map<String, String> properties ) throws Exception
+    public synchronized void update ( final Map<String, String> properties ) throws Exception
     {
         super.update ( properties );
 
-        final Double newLimit;
+        final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
-        if ( properties.containsKey ( "preset" ) )
+        final Double newLimit = cfg.getDouble ( "preset" );
+
+        logger.debug ( "New limit: {}", newLimit );
+
+        if ( newLimit == null )
         {
-            newLimit = Double.parseDouble ( properties.get ( "preset" ) );
-        }
-        else
-        {
-            newLimit = null;
+            setActive ( false );
         }
 
         if ( this.limit != newLimit )
@@ -130,8 +135,10 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     }
 
     @Override
-    protected void update ( final Builder builder )
+    protected synchronized void update ( final Builder builder )
     {
+        logger.debug ( "Handle data update: {}", builder );
+
         if ( this.value == null || this.timestamp == null || this.limit == null )
         {
             setUnsafe ();
