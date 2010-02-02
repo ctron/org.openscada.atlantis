@@ -22,7 +22,7 @@ public class Activator implements BundleActivator
     {
         this.factory = new FactoryImpl ( context );
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        properties.put ( ConfigurationAdministrator.FACTORY_ID, "da.dataitem.datasource" );
+        properties.put ( ConfigurationAdministrator.FACTORY_ID, FactoryImpl.FACTORY_ID );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A dataitem based on a datasource" );
         context.registerService ( ConfigurationFactory.class.getName (), this.factory, properties );
     }

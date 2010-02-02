@@ -18,6 +18,7 @@ import org.osgi.framework.ServiceRegistration;
 
 public class FactoryImpl extends AbstractServiceConfigurationFactory<DataItemImpl>
 {
+    public static final String FACTORY_ID = "da.dataitem.datasource";
 
     private final BundleContext context;
 
