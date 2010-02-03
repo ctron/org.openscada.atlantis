@@ -4,9 +4,9 @@ Import-Package: org.openscada.core;version="0.14.0",
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.core.server;version="0.14.0";uses:="org.openscada.core,org.openscada.utils.lifecycle"
 Bundle-Version: 0.15.0.qualifier
-Bundle-Name: OpenSCADA Core Server Common
+Bundle-Name: OpenSCADA Core Server
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
-Bundle-SymbolicName: org.openscada.core.server.common
+Bundle-SymbolicName: org.openscada.core.server
 
