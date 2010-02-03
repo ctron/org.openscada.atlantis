@@ -140,7 +140,7 @@ public class StateAdapter implements StateHandler
 
     protected void publishAknEvent ()
     {
-        this.service.publishEvent ( EventHelper.newAknEvent ( this.service.getId (), "", this.currentContext.getTimestamp () ) );
+        this.service.publishEvent ( EventHelper.newAknEvent ( this.service.getId (), "", new Date () ) );
     }
 
     protected void publishConfigEvent ( final String message, final Variant value )
