@@ -44,6 +44,8 @@ public abstract class SessionConnectionBase extends ConnectionBase
                 disconnected ( new OperationTimedOutException ().fillInStackTrace () );
             }
         }, getMessageTimeout () );
+
+        props.putAll ( getConnectionInformation ().getProperties () );
     }
 
     protected void processSessionReply ( final Message message )
