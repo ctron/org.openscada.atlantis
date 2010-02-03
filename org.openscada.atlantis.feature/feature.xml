@@ -58,7 +58,7 @@
    </requires>
 
    <plugin
-         id="org.openscada.net.base"
+         id="org.openscada.net"
          download-size="0"
          install-size="0"
          version="0.0.0"
