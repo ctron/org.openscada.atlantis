@@ -157,9 +157,12 @@ public class DaveRequestBlock
      */
     public synchronized void handleDisconnect ()
     {
-        for ( final Variable reg : this.variables )
+        if ( this.variables != null )
         {
-            reg.handleDisconnect ();
+            for ( final Variable reg : this.variables )
+            {
+                reg.handleDisconnect ();
+            }
         }
     }
 
