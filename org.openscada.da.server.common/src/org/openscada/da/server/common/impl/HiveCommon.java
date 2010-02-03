@@ -260,7 +260,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 
     public Session createSession ( final Properties props )
     {
-        final SessionCommon session = new SessionCommon ( this );
+        final SessionCommon session = new SessionCommon ( this, null );
         synchronized ( this.sessions )
         {
             this.sessions.add ( session );
