@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenSCADA Core Server Common
+Bundle-SymbolicName: org.openscada.core.server.common
+Bundle-Version: 0.15.0.qualifier
+Bundle-Vendor: inavare GmbH
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
