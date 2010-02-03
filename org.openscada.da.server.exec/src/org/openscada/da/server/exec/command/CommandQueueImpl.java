@@ -34,9 +34,9 @@ public class CommandQueueImpl implements CommandQueue
 
     private static class Entry
     {
-        private SingleCommand command;
+        private final SingleCommand command;
 
-        private int period;
+        private final int period;
 
         private long lastTimestamp;
 
@@ -49,31 +49,6 @@ public class CommandQueueImpl implements CommandQueue
         public SingleCommand getCommand ()
         {
             return this.command;
-        }
-
-        public void setCommand ( final SingleCommand command )
-        {
-            this.command = command;
-        }
-
-        public int getPeriod ()
-        {
-            return this.period;
-        }
-
-        public void setPeriod ( final int period )
-        {
-            this.period = period;
-        }
-
-        public long getLastTimestamp ()
-        {
-            return this.lastTimestamp;
-        }
-
-        public void setLastTimestamp ( final long lastTimestamp )
-        {
-            this.lastTimestamp = lastTimestamp;
         }
 
         public boolean canExecute ()
