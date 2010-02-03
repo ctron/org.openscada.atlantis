@@ -44,6 +44,9 @@ public class Activator implements BundleActivator
      */
     public void stop ( final BundleContext context ) throws Exception
     {
+
+        this.monitorServicePoolHandler.unregister ();
+
         this.monitorServicePool.dispose ();
         this.processor.close ();
         this.service.stop ();
