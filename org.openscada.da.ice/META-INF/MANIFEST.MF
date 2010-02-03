@@ -23,9 +23,9 @@ Export-Package: OpenSCADA.DA;version="0.15.0";
    OpenSCADA.Core",
  OpenSCADA.DA.Browser;version="0.15.0";uses:="OpenSCADA.DA,Ice,IceInternal",
  org.openscada.da.ice;version="0.15.0";uses:="OpenSCADA.DA.Browser,org.openscada.da.core.browser"
-Bundle-Version: 0.14.0.qualifier
+Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA DA Ice Base
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
-Bundle-SymbolicName: org.openscada.da.ice.base
+Bundle-SymbolicName: org.openscada.da.ice
