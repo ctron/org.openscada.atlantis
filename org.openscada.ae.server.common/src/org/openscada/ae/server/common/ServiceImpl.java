@@ -22,6 +22,7 @@ import org.openscada.ae.server.common.condition.ConditionQuery;
 import org.openscada.ae.server.common.condition.ConditionQuerySource;
 import org.openscada.ae.server.common.event.EventQuery;
 import org.openscada.ae.server.common.event.EventQuerySource;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
@@ -257,7 +258,7 @@ public class ServiceImpl implements Service, ServiceListener
             throw new UnableToCreateSessionException ( "Service disposed" );
         }
 
-        final SessionImpl session = new SessionImpl ( properties.getProperty ( "user", null ) );
+        final SessionImpl session = new SessionImpl ( properties.getProperty ( ConnectionInformation.PROP_USER, null ) );
         this.sessions.add ( session );
 
         // copy data
