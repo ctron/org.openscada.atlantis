@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>openscada_da_server_common</name>
+	<name>org.openscada.da.server.common</name>
 	<comment></comment>
 	<projects>
 	</projects>
