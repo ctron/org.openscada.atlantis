@@ -58,7 +58,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.openscada.da.ice.base"
+         id="org.openscada.da.ice"
          download-size="0"
          install-size="0"
          version="0.0.0"
