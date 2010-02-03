@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
+import org.openscada.ae.Event.Fields;
 import org.openscada.core.Variant;
 
 public class EventHelper
@@ -38,10 +39,11 @@ public class EventHelper
         return builder.build ();
     }
 
-    public static Event newAknEvent ( final String id, final String message, final Date timestamp )
+    public static Event newAknEvent ( final String id, final String message, final Date timestamp, final String user )
     {
         final EventBuilder builder = Event.create ();
         fillBasic ( builder, id, "ACK", timestamp, message );
+        builder.attribute ( Fields.ACTOR_NAME, user );
         return builder.build ();
     }
 
