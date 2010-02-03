@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: HD - JSON over HTTP Exporter
+Bundle-SymbolicName: org.openscada.hd.exporter.http.server
+Bundle-Version: 0.15.0.qualifier
+Bundle-Activator: org.openscada.hd.exporter.http.server.Activator
+Import-Package: com.google.gson;version="1.4.0",
+ javax.servlet;version="2.5.0",
+ javax.servlet.http;version="2.5.0",
+ org.openscada.hd.exporter.http,
+ org.openscada.hd.server;version="0.14.0",
+ org.openscada.utils.osgi;version="0.15.0",
+ org.osgi.framework;version="1.3.0",
+ org.osgi.service.http,
+ org.osgi.util.tracker
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
