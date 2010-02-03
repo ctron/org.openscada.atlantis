@@ -45,15 +45,15 @@ import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.FolderListener;
 import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
+import org.openscada.da.net.handler.ListBrowser;
+import org.openscada.da.net.handler.Messages;
+import org.openscada.da.net.handler.WriteAttributesOperation;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
-import org.openscada.net.da.handler.ListBrowser;
-import org.openscada.net.da.handler.Messages;
-import org.openscada.net.da.handler.WriteAttributesOperation;
 import org.openscada.net.utils.MessageCreator;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.concurrent.ResultHandler;
@@ -311,7 +311,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         final Holder<String> itemId = new Holder<String> ();
         final Holder<Variant> value = new Holder<Variant> ();
 
-        org.openscada.net.da.handler.WriteOperation.parse ( request, itemId, value );
+        org.openscada.da.net.handler.WriteOperation.parse ( request, itemId, value );
 
         try
         {
