@@ -133,7 +133,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.common.osgi"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.net" project="openscada_da_server_net"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.da.ice.base" project="openscada_da_ice_base"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.ice"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.ice"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.ice" project="openscada_da_client_ice"/>
   	
