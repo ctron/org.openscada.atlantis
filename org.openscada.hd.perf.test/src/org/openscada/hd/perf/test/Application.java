@@ -11,13 +11,9 @@ import java.util.concurrent.Future;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Application implements IApplication
 {
-
-    private final static Logger logger = LoggerFactory.getLogger ( Application.class );
 
     private final ExecutorService executor = Executors.newFixedThreadPool ( Runtime.getRuntime ().availableProcessors () );
 
