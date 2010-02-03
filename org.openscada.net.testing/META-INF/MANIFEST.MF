@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA Net Base Testing
 Bundle-SymbolicName: org.openscada.net.testing
-Bundle-Version: 0.14.0.qualifier
+Bundle-Version: 0.15.0.qualifier
 Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: org.openscada.net.base;bundle-version="0.14.0",
+Require-Bundle: org.openscada.net;bundle-version="0.14.0",
  org.junit4,
  org.apache.mina.core
 Import-Package: org.apache.mina.core.buffer;version="2.0.0.M6",
