@@ -8,7 +8,7 @@ Import-Package: org.apache.log4j;version="1.2",
  org.openscada.net.base.data;version="0.14",
  org.openscada.utils.lang;version="0.13"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.net.da.handler;version="0.15.0";
+Export-Package: org.openscada.da.net.handler;version="0.15.0";
   uses:="org.openscada.net.base.data,
    org.openscada.core.net,
    org.openscada.utils.lang,
@@ -21,4 +21,4 @@ Bundle-Name: OpenSCADA-DA-Net-Base
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
-Bundle-SymbolicName: org.openscada.da.net.base
+Bundle-SymbolicName: org.openscada.da.net

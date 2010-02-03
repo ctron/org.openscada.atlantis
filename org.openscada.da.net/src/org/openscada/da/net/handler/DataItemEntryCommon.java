@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,18 +17,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.net.da.handler;
+package org.openscada.da.net.handler;
 
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.browser.FolderEntry;
+import org.openscada.da.core.IODirection;
+import org.openscada.da.core.browser.DataItemEntry;
 
-public class FolderEntryCommon extends EntryCommon implements FolderEntry
+public class DataItemEntryCommon extends EntryCommon implements DataItemEntry
 {
-    public FolderEntryCommon ( final String name, final Map<String, Variant> attributes )
+    private String id = "";
+
+    private Set<IODirection> directions = EnumSet.noneOf ( IODirection.class );
+
+    public DataItemEntryCommon ( final String name, final Set<IODirection> directions, final Map<String, Variant> attributes, final String id )
     {
         super ( name, attributes );
+        this.directions = directions;
+        this.id = id;
     }
 
+    public String getId ()
+    {
+        return this.id;
+    }
+
+    public Set<IODirection> getIODirections ()
+    {
+        return this.directions;
+    }
 }

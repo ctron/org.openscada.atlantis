@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.net.da.handler;
+package org.openscada.da.net.handler;
 
 import java.util.EnumSet;
 import java.util.Map;
