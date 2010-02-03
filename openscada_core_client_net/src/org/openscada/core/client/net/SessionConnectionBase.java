@@ -32,19 +32,6 @@ public abstract class SessionConnectionBase extends ConnectionBase
         final Properties props = new Properties ();
         props.setProperty ( SESSION_CLIENT_VERSION, getRequiredVersion () );
 
-        this.messenger.sendMessage ( MessageHelper.createSession ( props ), new MessageStateListener () {
-
-            public void messageReply ( final Message message )
-            {
-                processSessionReply ( message );
-            }
-
-            public void messageTimedOut ()
-            {
-                disconnected ( new OperationTimedOutException ().fillInStackTrace () );
-            }
-        }, getMessageTimeout () );
-
         final String username = getConnectionInformation ().getProperties ().get ( ConnectionInformation.PROP_USER );
         final String password = getConnectionInformation ().getProperties ().get ( ConnectionInformation.PROP_PASSWORD );
 
@@ -57,6 +44,19 @@ public abstract class SessionConnectionBase extends ConnectionBase
         {
             props.put ( ConnectionInformation.PROP_USER, username );
         }
+
+        this.messenger.sendMessage ( MessageHelper.createSession ( props ), new MessageStateListener () {
+
+            public void messageReply ( final Message message )
+            {
+                processSessionReply ( message );
+            }
+
+            public void messageTimedOut ()
+            {
+                disconnected ( new OperationTimedOutException ().fillInStackTrace () );
+            }
+        }, getMessageTimeout () );
 
     }
 
