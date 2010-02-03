@@ -50,6 +50,7 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
     @Override
     protected void disposeService ( final String id, final DataItemMonitor service )
     {
+        this.servicePool.removeService ( id, service );
         service.dispose ();
     }
 
