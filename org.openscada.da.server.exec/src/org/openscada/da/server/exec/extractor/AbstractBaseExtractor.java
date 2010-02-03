@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputChained;
@@ -32,6 +31,8 @@ import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.exec.Hive;
 import org.openscada.da.server.exec.command.ExecutionResult;
 import org.openscada.da.server.exec.util.DefaultItemFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link AbstractBaseExtractor} class implements most of the stuff you need in order
@@ -42,7 +43,8 @@ import org.openscada.da.server.exec.util.DefaultItemFactory;
  */
 public abstract class AbstractBaseExtractor implements Extractor
 {
-    private static Logger logger = Logger.getLogger ( AbstractBaseExtractor.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( AbstractBaseExtractor.class );
 
     private final List<DataItemInputChained> inputs = new LinkedList<DataItemInputChained> ();
 

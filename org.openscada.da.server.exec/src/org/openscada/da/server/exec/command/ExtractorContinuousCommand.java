@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,17 +21,18 @@ package org.openscada.da.server.exec.command;
 
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.exec.Hive;
 import org.openscada.da.server.exec.extractor.Extractor;
 import org.openscada.da.server.exec.splitter.Splitter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExtractorContinuousCommand extends AbstractContinuousCommand
 {
-    private static final Logger logger = Logger.getLogger ( ExtractorContinuousCommand.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ExtractorContinuousCommand.class );
 
     private int currentLineCount;
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@ package org.openscada.da.server.exec.command;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItemCommand;
@@ -32,12 +31,14 @@ import org.openscada.da.server.exec.splitter.SplitResult;
 import org.openscada.da.server.exec.splitter.Splitter;
 import org.openscada.da.server.exec.util.DefaultItemFactory;
 import org.openscada.da.server.exec.util.StreamProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractContinuousCommand implements ContinuousCommand, Runnable
 {
     private static final int DEFAULT_MAX_INPUT_BUFFER = 4000;
 
-    private static Logger logger = Logger.getLogger ( AbstractContinuousCommand.class );
+    private final static Logger logger = LoggerFactory.getLogger ( AbstractContinuousCommand.class );
 
     public enum State
     {

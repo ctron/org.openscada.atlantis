@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.CharBuffer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A stream processor which will read from the stream and notify with string messages
@@ -34,7 +35,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class StreamProcessor implements Runnable
 {
-    private static Logger logger = Logger.getLogger ( StreamProcessor.class );
+    private final static Logger logger = LoggerFactory.getLogger ( StreamProcessor.class );
 
     private final InputStream stream;
 

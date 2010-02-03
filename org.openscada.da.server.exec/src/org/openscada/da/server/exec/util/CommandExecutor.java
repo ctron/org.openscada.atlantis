@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +28,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.exec.command.ExecutionResult;
 import org.openscada.da.server.exec.command.ProcessListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CommandExecutor
 {
-    private static Logger logger = Logger.getLogger ( CommandExecutor.class );
+    private final static Logger logger = LoggerFactory.getLogger ( CommandExecutor.class );
 
     /**
      * This method executes the specified command on the shell using the passed objects as information provider.

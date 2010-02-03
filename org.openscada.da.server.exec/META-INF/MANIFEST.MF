@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
 Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
- org.apache.log4j;version="1.2",
  org.apache.xmlbeans;version="2.4",
  org.apache.xmlbeans.impl.values;version="2.4",
  org.apache.xmlbeans.xml.stream;version="2.4",
@@ -16,7 +15,8 @@ Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
  org.openscada.da.server.common.impl;version="0.14",
  org.openscada.da.server.common.item.factory;version="0.14",
  org.openscada.utils.collection;version="0.13",
- org.openscada.utils.statuscodes;version="0.13"
+ org.openscada.utils.statuscodes;version="0.13",
+ org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.da.server.exec;version="0.15.0";
   uses:="org.openscada.da.server.common.impl,
@@ -49,7 +49,7 @@ Export-Package: org.openscada.da.server.exec;version="0.15.0";
    org.openscada.da.server.common.item.factory,
    org.openscada.da.server.exec.command"
 Bundle-Version: 0.15.0.qualifier
-Bundle-Name: OpenSCADA-DA-Server-Exec
+Bundle-Name: OpenSCADA DA Server Exec
 Bundle-Vendor: inavare GmbH
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.exec

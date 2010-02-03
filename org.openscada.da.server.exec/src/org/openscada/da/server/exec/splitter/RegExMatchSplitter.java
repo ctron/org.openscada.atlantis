@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,12 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RegExMatchSplitter implements Splitter
 {
-    private static Logger logger = Logger.getLogger ( RegExMatchSplitter.class );
+    private final static Logger logger = LoggerFactory.getLogger ( RegExMatchSplitter.class );
 
     private final Pattern pattern;
 
@@ -38,12 +39,12 @@ public class RegExMatchSplitter implements Splitter
 
     public SplitResult split ( final String inputBuffer )
     {
-        SplitResult result = new SplitResult ();
+        final SplitResult result = new SplitResult ();
 
-        ArrayList<String> list = new ArrayList<String> ();
+        final ArrayList<String> list = new ArrayList<String> ();
 
         boolean hadMatch = false;
-        Matcher m = this.pattern.matcher ( inputBuffer );
+        final Matcher m = this.pattern.matcher ( inputBuffer );
         logger.debug ( "Matcher: " + m );
 
         while ( m.find () )
