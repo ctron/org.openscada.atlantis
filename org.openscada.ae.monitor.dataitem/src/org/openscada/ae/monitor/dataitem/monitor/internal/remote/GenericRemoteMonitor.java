@@ -147,13 +147,17 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl
         return builder.build ();
     }
 
-    protected void publishAckRequestEvent ()
+    protected void publishAckRequestEvent ( final String user )
     {
         final EventBuilder builder = Event.create ();
         builder.sourceTimestamp ( new Date () );
         builder.entryTimestamp ( new Date () );
         builder.attribute ( Fields.SOURCE, this.id );
         builder.attribute ( Fields.EVENT_TYPE, "ACK-REQ" );
+        if ( user != null )
+        {
+            builder.attribute ( Fields.ACTOR_NAME, user );
+        }
         builder.attributes ( this.attributes );
 
         this.eventProcessor.publishEvent ( builder.build () );
