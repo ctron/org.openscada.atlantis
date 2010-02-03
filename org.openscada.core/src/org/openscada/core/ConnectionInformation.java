@@ -148,9 +148,11 @@ public class ConnectionInformation
     {
         try
         {
+            final HashMap<String, String> properties = new HashMap<String, String> ( this.properties );
+
             String userInfo = null;
-            final String user = this.properties.get ( "user" );
-            final String password = this.properties.get ( "password" );
+            final String user = properties.remove ( "user" );
+            final String password = properties.remove ( "password" );
             String subtargets = null;
             String query = null;
 
@@ -166,9 +168,8 @@ public class ConnectionInformation
             }
 
             // perpare properties
-            this.properties.remove ( "user" );
-            this.properties.remove ( "password" );
-            for ( final Map.Entry<String, String> entry : this.properties.entrySet () )
+
+            for ( final Map.Entry<String, String> entry : properties.entrySet () )
             {
                 if ( query == null )
                 {
