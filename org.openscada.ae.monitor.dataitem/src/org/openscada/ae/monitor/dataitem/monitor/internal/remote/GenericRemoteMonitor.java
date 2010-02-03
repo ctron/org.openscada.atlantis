@@ -92,7 +92,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl
 
             final ConditionStatusInformation info = createStatus ();
 
-            this.eventProcessor.publishEvent ( createEvent ( info ) );
+            this.eventProcessor.publishEvent ( createEvent ( info, state.toString () ) );
 
             final ArrayList<ConditionListener> listnersClone = new ArrayList<ConditionListener> ( this.listeners );
             this.executor.execute ( new Runnable () {
@@ -136,14 +136,27 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl
         return new ConditionStatusInformation ( this.id, this.state, this.timestamp, null, null, null );
     }
 
-    private Event createEvent ( final ConditionStatusInformation info )
+    private Event createEvent ( final ConditionStatusInformation info, final String eventType )
     {
         final EventBuilder builder = Event.create ();
         builder.sourceTimestamp ( info.getStatusTimestamp () );
         builder.entryTimestamp ( new Date () );
         builder.attribute ( Fields.SOURCE, this.id );
+        builder.attribute ( Fields.EVENT_TYPE, eventType );
         builder.attributes ( this.attributes );
         return builder.build ();
+    }
+
+    protected void publishAckRequestEvent ()
+    {
+        final EventBuilder builder = Event.create ();
+        builder.sourceTimestamp ( new Date () );
+        builder.entryTimestamp ( new Date () );
+        builder.attribute ( Fields.SOURCE, this.id );
+        builder.attribute ( Fields.EVENT_TYPE, "ACK-REQ" );
+        builder.attributes ( this.attributes );
+
+        this.eventProcessor.publishEvent ( builder.build () );
     }
 
     protected Builder injectState ( final Builder builder )

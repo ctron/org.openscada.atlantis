@@ -111,6 +111,8 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
 
     public void akn ( final String aknUser, final Date aknTimestamp )
     {
+        publishAckRequestEvent ();
+
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( this.attributeAck, Variant.TRUE );
 
