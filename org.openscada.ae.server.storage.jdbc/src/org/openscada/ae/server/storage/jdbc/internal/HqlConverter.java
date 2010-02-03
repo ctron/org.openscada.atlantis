@@ -40,26 +40,26 @@ public class HqlConverter
 
         public String getHql ()
         {
-            return hql;
+            return this.hql;
         }
 
-        public void setHql ( String hql )
+        public void setHql ( final String hql )
         {
             this.hql = hql;
         }
 
         public Object[] getParameters ()
         {
-            return parameters;
+            return this.parameters;
         }
 
-        public void setParameters ( Object[] parameters )
+        public void setParameters ( final Object[] parameters )
         {
             this.parameters = parameters;
         }
     }
 
-    public static HqlResult toHql ( Filter filter ) throws NotSupportedException
+    public static HqlResult toHql ( final Filter filter ) throws NotSupportedException
     {
         HqlResult result = new HqlResult ();
         result.hql = "SELECT M from MutableEvent M left join fetch M.attributes as A";
@@ -83,11 +83,11 @@ public class HqlConverter
         {
             //
         }
-        result.hql += " ORDER BY M.sourceTimestamp, M.entryTimestamp, M.id DESC;";
+        result.hql += " ORDER BY M.sourceTimestamp, M.entryTimestamp, M.id DESC";
         return result;
     }
 
-    static HqlResult toHql ( FilterExpression expression ) throws NotSupportedException
+    static HqlResult toHql ( final FilterExpression expression ) throws NotSupportedException
     {
         HqlResult result = new HqlResult ();
         result.hql = "(";
@@ -127,7 +127,7 @@ public class HqlConverter
         return result;
     }
 
-    static HqlResult toHql ( FilterAssertion assertion ) throws NotSupportedException
+    static HqlResult toHql ( final FilterAssertion assertion ) throws NotSupportedException
     {
         HqlResult result = null;
         if ( assertion.getAssertion () == Assertion.EQUALITY )
@@ -161,11 +161,11 @@ public class HqlConverter
         return result;
     }
 
-    static HqlResult toHql ( String field, String op, Object value )
+    static HqlResult toHql ( final String field, final String op, final Object value )
     {
         HqlResult term = new HqlResult ();
         term.hql = "(";
-        if ( isField ( field ) && properties.get ( field ) != Variant.class )
+        if ( isField ( field ) && ( properties.get ( field ) != Variant.class ) )
         {
             if ( "presence".equals ( op ) )
             {
@@ -197,7 +197,7 @@ public class HqlConverter
                 }
             }
         }
-        else if ( isField ( field ) && properties.get ( field ) == Variant.class )
+        else if ( isField ( field ) && ( properties.get ( field ) == Variant.class ) )
         {
             if ( "presence".equals ( op ) )
             {
@@ -288,12 +288,12 @@ public class HqlConverter
         return term;
     }
 
-    static boolean isField ( String field )
+    static boolean isField ( final String field )
     {
         return properties.keySet ().contains ( field );
     }
 
-    static Object[] combine ( Object[] a, Object[] b )
+    static Object[] combine ( final Object[] a, final Object[] b )
     {
         List<Object> l = new ArrayList<Object> ();
         if ( a != null )
