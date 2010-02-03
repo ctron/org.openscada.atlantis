@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/openscada_da_server_net/src/org/openscada/da/server/net/Application.java"/>
+<listEntry value="/org.openscada.da.server.net/src/org/openscada/da/server/net/Application.java"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
@@ -25,6 +25,6 @@
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.openscada.da.server.net.Application"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="org.openscada.da.server.snmp.Hive"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="openscada_da_server_net"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.openscada.da.server.net"/>
 <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:openscada_da_snmpserver}"/>
 </launchConfiguration>
