@@ -39,6 +39,10 @@ public class ConnectionInformation
      *  da:net://target:secondarytarget/subtarget/subsubtarget?property1=value1&property2=value2
      */
 
+    public static final String PROP_PASSWORD = "password";
+
+    public static final String PROP_USER = "user";
+
     private static final String URI_ENCODING = "utf-8";
 
     private String interfaceName = null;
@@ -95,11 +99,11 @@ public class ConnectionInformation
                 final String[] userInfo = subUri.getRawUserInfo ().split ( "\\:" );
                 if ( userInfo.length > 0 )
                 {
-                    ci.properties.put ( "user", URLDecoder.decode ( userInfo[0], URI_ENCODING ) );
+                    ci.properties.put ( PROP_USER, URLDecoder.decode ( userInfo[0], URI_ENCODING ) );
                 }
                 if ( userInfo.length > 1 )
                 {
-                    ci.properties.put ( "password", URLDecoder.decode ( userInfo[1], URI_ENCODING ) );
+                    ci.properties.put ( PROP_PASSWORD, URLDecoder.decode ( userInfo[1], URI_ENCODING ) );
                 }
             }
 
@@ -151,8 +155,8 @@ public class ConnectionInformation
             final HashMap<String, String> properties = new HashMap<String, String> ( this.properties );
 
             String userInfo = null;
-            final String user = properties.remove ( "user" );
-            final String password = properties.remove ( "password" );
+            final String user = properties.remove ( PROP_USER );
+            final String password = properties.remove ( PROP_PASSWORD );
             String subtargets = null;
             String query = null;
 
