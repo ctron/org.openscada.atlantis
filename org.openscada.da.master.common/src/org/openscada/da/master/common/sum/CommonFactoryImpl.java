@@ -11,8 +11,6 @@ import org.osgi.framework.InvalidSyntaxException;
 
 public class CommonFactoryImpl extends AbstractServiceConfigurationFactory<AbstractMasterHandlerImpl>
 {
-    private final BundleContext context;
-
     private final String tag;
 
     private final int priority;
@@ -22,7 +20,6 @@ public class CommonFactoryImpl extends AbstractServiceConfigurationFactory<Abstr
     public CommonFactoryImpl ( final BundleContext context, final String tag, final int priority ) throws InvalidSyntaxException
     {
         super ( context );
-        this.context = context;
         this.tag = tag;
         this.priority = priority;
         this.poolTracker = new ObjectPoolTracker ( context, MasterItem.class.getName () );
