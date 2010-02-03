@@ -20,9 +20,9 @@
 package org.openscada.da.client.net.operations;
 
 import org.openscada.core.Variant;
+import org.openscada.da.net.handler.Messages;
 import org.openscada.net.base.LongRunningController;
 import org.openscada.net.base.data.Message;
-import org.openscada.net.da.handler.Messages;
 import org.openscada.net.mina.Messenger;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
@@ -48,7 +48,7 @@ public class WriteOperationController
 
     public LongRunningOperation start ( final String itemName, final Variant value, final LongRunningListener listener )
     {
-        final Message message = org.openscada.net.da.handler.WriteOperation.create ( itemName, value );
+        final Message message = org.openscada.da.net.handler.WriteOperation.create ( itemName, value );
 
         return this._controller.start ( message, listener );
     }
