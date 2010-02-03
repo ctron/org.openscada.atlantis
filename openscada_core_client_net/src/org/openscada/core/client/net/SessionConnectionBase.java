@@ -45,7 +45,19 @@ public abstract class SessionConnectionBase extends ConnectionBase
             }
         }, getMessageTimeout () );
 
-        props.putAll ( getConnectionInformation ().getProperties () );
+        final String username = getConnectionInformation ().getProperties ().get ( ConnectionInformation.PROP_USER );
+        final String password = getConnectionInformation ().getProperties ().get ( ConnectionInformation.PROP_PASSWORD );
+
+        if ( username != null && password != null )
+        {
+            props.put ( ConnectionInformation.PROP_USER, username );
+            props.put ( ConnectionInformation.PROP_PASSWORD, password );
+        }
+        else if ( username != null )
+        {
+            props.put ( ConnectionInformation.PROP_USER, username );
+        }
+
     }
 
     protected void processSessionReply ( final Message message )
