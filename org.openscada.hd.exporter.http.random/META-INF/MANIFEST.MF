@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Random HD Exporter for testing purposes
+Bundle-SymbolicName: org.openscada.hd.exporter.http.random
+Bundle-Version: 0.15.0.qualifier
+Bundle-Activator: org.openscada.hd.exporter.http.random.Activator
+Import-Package: org.openscada.hd.exporter.http,
+ org.osgi.framework;version="1.3.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
