@@ -1,7 +1,4 @@
 Manifest-Version: 1.0
-Built-By: jens
-Created-By: Apache Maven Bundle Plugin
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: Ice,
  OpenSCADA.Core;version="0.14",
  OpenSCADA.DA;version="0.14",
@@ -21,7 +18,6 @@ Import-Package: Ice,
  org.openscada.utils.concurrent;version="0.13",
  org.openscada.utils.lifecycle;version="0.13.1"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bnd-LastModified: 1252499298043
 Export-Package: org.openscada.da.server.ice;version="0.15.0";
   uses:="org.openscada.da.core.server,
    Ice,
@@ -29,11 +25,7 @@ Export-Package: org.openscada.da.server.ice;version="0.15.0";
    org.openscada.core"
 Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA-DA-Server-Ice
-Build-Jdk: 1.5.0_18
-Private-Package: org.openscada.da.server.ice.impl
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
 Bundle-SymbolicName: org.openscada.da.server.ice
-Tool: Bnd-0.0.311
-
