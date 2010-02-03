@@ -28,6 +28,7 @@ import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator
@@ -48,7 +49,7 @@ public class Activator implements BundleActivator
 
     private ObjectPoolImpl monitorServicePool;
 
-    private Object monitorServicePoolHandler;
+    private ServiceRegistration monitorServicePoolHandler;
 
     /*
      * (non-Javadoc)
@@ -133,15 +134,22 @@ public class Activator implements BundleActivator
      */
     public void stop ( final BundleContext context ) throws Exception
     {
-        this.executor.shutdown ();
-
         Activator.instance = null;
 
+        // shut down factories
         for ( final AbstractMonitorFactory factory : this.factories )
         {
             factory.dispose ();
         }
 
+        // shut down object pool
+        this.monitorServicePoolHandler.unregister ();
+        this.monitorServicePool.dispose ();
+
+        // shut down executor
+        this.executor.shutdown ();
+
+        // shut down event processor
         this.eventProcessor.close ();
     }
 
