@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,24 +19,25 @@
 
 package org.openscada.core;
 
+
 public class UnableToCreateSessionException extends Exception
 {
 
-    private String _reason = "";
-    
+    private String reason = "";
+
     /**
      * 
      */
     private static final long serialVersionUID = -3211208282862897815L;
 
-    public UnableToCreateSessionException ( String reason )
+    public UnableToCreateSessionException ( final String reason )
     {
         super ( "Unable to create session: " + reason );
-        _reason = reason;
+        this.reason = reason;
     }
 
     public String getReason ()
     {
-        return _reason;
+        return this.reason;
     }
 }
