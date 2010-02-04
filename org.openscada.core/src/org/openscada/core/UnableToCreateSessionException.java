@@ -19,25 +19,24 @@
 
 package org.openscada.core;
 
+import org.openscada.utils.statuscodes.CodedException;
 
-public class UnableToCreateSessionException extends Exception
+public class UnableToCreateSessionException extends CodedException
 {
-
-    private String reason = "";
 
     /**
      * 
      */
     private static final long serialVersionUID = -3211208282862897815L;
 
-    public UnableToCreateSessionException ( final String reason )
+    public UnableToCreateSessionException ( final String message )
     {
-        super ( "Unable to create session: " + reason );
-        this.reason = reason;
+        super ( StatusCodes.UNABLE_TO_CREATE_SESSION, message );
     }
 
-    public String getReason ()
+    public UnableToCreateSessionException ( final CodedException e )
     {
-        return this.reason;
+        super ( e.getStatus (), e );
     }
+
 }
