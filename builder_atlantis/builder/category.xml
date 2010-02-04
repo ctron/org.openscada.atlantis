@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.openscada.atlantis_0.15.0.qualifier.jar" id="org.openscada.atlantis" version="0.15.0.qualifier">
+      <category name="org.openscada.atlantis"/>
+   </feature>
+   <feature url="features/org.openscada.atlantis.sdk_0.15.0.qualifier.jar" id="org.openscada.atlantis.sdk" version="0.15.0.qualifier">
+      <category name="org.openscada.atlantis"/>
+   </feature>
+   <category-def name="org.openscada.atlantis" label="OpenSCADA Atlantis"/>
+</site>
