@@ -1,8 +1,6 @@
 Manifest-Version: 1.0
 Import-Package: org.apache.log4j;version="1.2.6",
  org.apache.xmlbeans;version="2.4.0",
- org.apache.xmlbeans.impl.values;version="2.4.0",
- org.apache.xmlbeans.xml.stream;version="2.4.0",
  org.openscada.common;version="0.14.0",
  org.openscada.common.impl;version="0.14.0",
  org.openscada.core;version="0.14.0",
@@ -25,6 +23,7 @@ Import-Package: org.apache.log4j;version="1.2.6",
  org.openscada.utils.concurrent;version="0.13.0",
  org.openscada.utils.lang;version="0.13",
  org.openscada.utils.lifecycle;version="0.13",
+ org.openscada.utils.statuscodes;version="0.15.0",
  org.openscada.utils.str;version="0.13"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.common;version="0.15.0";
@@ -91,14 +90,14 @@ Export-Package: org.openscada.common;version="0.15.0";
    org.openscada.core,
    org.openscada.da.core",
  org.openscada.da.server.common.chain.item;version="0.15.0";
-  uses:="org.openscada.da.server.common.chain,
-   org.openscada.da.server.common,
+  uses:="org.openscada.da.server.common,
+   org.openscada.da.server.common.chain,
    org.openscada.core,
    org.openscada.da.core",
  org.openscada.da.server.common.chain.storage;version="0.15.0";uses:="org.openscada.da.server.common,org.openscada.da.server.common.impl",
  org.openscada.da.server.common.configuration;version="0.15.0";
-  uses:="org.openscada.da.server.browser.common,
-   org.openscada.da.server.common,
+  uses:="org.openscada.da.server.common,
+   org.openscada.da.server.browser.common,
    org.openscada.da.server.common.factory,
    org.openscada.da.core,
    org.w3c.dom",
@@ -118,7 +117,8 @@ Export-Package: org.openscada.common;version="0.15.0";
    org.openscada.core",
  org.openscada.da.server.common.factory;version="0.15.0";uses:="org.openscada.da.server.common.chain,org.openscada.da.server.common",
  org.openscada.da.server.common.impl;version="0.15.0";
-  uses:="org.openscada.da.server.browser.common,
+  uses:="org.openscada.core.server.common.session,
+   org.openscada.da.server.browser.common,
    org.openscada.da.server.common,
    org.openscada.da.server.common.factory,
    org.openscada.utils.concurrent,
@@ -128,6 +128,7 @@ Export-Package: org.openscada.common;version="0.15.0";
    org.openscada.utils.lifecycle,
    org.openscada.da.core.server,
    org.openscada.da.server.common.configuration,
+   org.openscada.sec,
    org.openscada.da.server.common.impl.stats,
    org.openscada.core.server,
    org.openscada.core",
@@ -138,8 +139,8 @@ Export-Package: org.openscada.common;version="0.15.0";
    org.openscada.da.server.common.impl,
    org.openscada.core",
  org.openscada.da.server.common.item.factory;version="0.15.0";
-  uses:="org.openscada.da.server.common,
-   org.openscada.da.server.common.chain,
+  uses:="org.openscada.da.server.common.chain,
+   org.openscada.da.server.common,
    org.openscada.da.server.browser.common,
    org.openscada.da.server.common.impl"
 Bundle-Version: 0.15.0.qualifier
@@ -148,3 +149,5 @@ Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: inavare GmbH
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.common
+Bundle-ClassPath: schemabin/,
+ .

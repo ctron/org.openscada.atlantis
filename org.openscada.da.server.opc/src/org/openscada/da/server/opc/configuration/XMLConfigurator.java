@@ -97,12 +97,12 @@ public class XMLConfigurator
             {
                 setup.setReconnectDelay ( DEFAULT_RECONNECT_DELAY );
             }
-            
-            if ( configuration.isSetQualityErrorIfLessThen() )
+
+            if ( configuration.isSetQualityErrorIfLessThen () )
             {
-            	setup.setQualityErrorIfLessThen( Integer.valueOf( configuration.getQualityErrorIfLessThen() ).shortValue() );
+                setup.setQualityErrorIfLessThen ( Integer.valueOf ( configuration.getQualityErrorIfLessThen () ).shortValue () );
             }
-            
+
             final String access = configuration.getAccess ();
             if ( access.equalsIgnoreCase ( "sync" ) )
             {

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2008-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2008-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ package org.openscada.da.server.osgi;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
@@ -34,6 +35,8 @@ import org.openscada.da.server.browser.common.query.SplitGroupProvider;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.sec.AuthenticationException;
+import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -67,15 +70,10 @@ public class HiveImpl extends HiveCommon
     }
 
     @Override
-    public void start () throws Exception
+    protected UserInformation authenticate ( final Properties properties ) throws AuthenticationException
     {
-        super.start ();
-    }
-
-    @Override
-    public void stop () throws Exception
-    {
-        super.stop ();
+        // TODO Auto-generated method stub
+        return super.authenticate ( properties );
     }
 
     public synchronized void addItem ( final DataItem item, final Dictionary<?, ?> properties )

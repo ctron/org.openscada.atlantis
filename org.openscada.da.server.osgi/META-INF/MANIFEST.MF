@@ -8,14 +8,14 @@ Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.apache.log4j;version="1.2.6",
  org.openscada.core;version="0.14.0",
- org.openscada.core.server;version="0.13.0",
- org.openscada.da.client;version="0.14.0",
- org.openscada.da.core;version="0.14.0",
+ org.openscada.core.server;version="0.14.0",
+ org.openscada.da.core;version="0.15.0",
  org.openscada.da.core.server;version="0.14.0",
  org.openscada.da.server.browser.common;version="0.14.0",
  org.openscada.da.server.browser.common.query,
  org.openscada.da.server.common;version="0.14.0",
  org.openscada.da.server.common.impl;version="0.14.0",
- org.openscada.utils.lifecycle;version="0.13.0",
+ org.openscada.sec;version="0.1.0",
  org.openscada.utils.osgi.pool;version="0.15.0",
+ org.openscada.utils.statuscodes;version="0.15.0",
  org.osgi.framework;version="1.3.0"

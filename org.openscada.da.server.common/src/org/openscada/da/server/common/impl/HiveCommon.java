@@ -35,7 +35,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
+import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionListener;
 import org.openscada.core.subscription.SubscriptionManager;
@@ -65,6 +67,8 @@ import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.common.impl.stats.HiveCommonStatisticsGenerator;
 import org.openscada.da.server.common.impl.stats.HiveEventListener;
+import org.openscada.sec.AuthenticationException;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NotifyFuture;
 
 public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
@@ -258,15 +262,37 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 
     // implementation of hive interface
 
-    public Session createSession ( final Properties props )
+    public Session createSession ( final Properties props ) throws UnableToCreateSessionException
     {
-        final SessionCommon session = new SessionCommon ( this, null );
+        SessionCommon session;
+        try
+        {
+            session = new SessionCommon ( this, authenticate ( props ) );
+        }
+        catch ( final AuthenticationException e )
+        {
+            throw new UnableToCreateSessionException ( e );
+        }
+
         synchronized ( this.sessions )
         {
             this.sessions.add ( session );
             fireSessionCreate ( session );
         }
         return session;
+    }
+
+    protected UserInformation authenticate ( final Properties properties ) throws AuthenticationException
+    {
+        final String username = properties.getProperty ( ConnectionInformation.PROP_USER );
+        if ( username != null )
+        {
+            return new UserInformation ( username, new String[0] );
+        }
+        else
+        {
+            return null;
+        }
     }
 
     /**
