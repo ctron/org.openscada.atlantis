@@ -28,6 +28,7 @@ import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionManager;
 import org.openscada.core.subscription.ValidationException;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -83,14 +84,14 @@ public class ServiceImpl implements Service, ServiceListener
         final SessionImpl sessionImpl = validateSession ( session );
         logger.debug ( String.format ( "Request akn: %s (%s)", conditionId, aknTimestamp ) );
 
-        final String aknUser = sessionImpl.getCurrentUser ();
+        final UserInformation userInformation = sessionImpl.getUserInformation ();
 
         // FIXME: implemention of akn
         for ( final Object o : this.aknTracker.getServices () )
         {
             if ( o instanceof AknHandler )
             {
-                if ( ( (AknHandler)o ).acknowledge ( conditionId, aknUser, aknTimestamp ) )
+                if ( ( (AknHandler)o ).acknowledge ( conditionId, userInformation, aknTimestamp ) )
                 {
                     break;
                 }
@@ -258,7 +259,9 @@ public class ServiceImpl implements Service, ServiceListener
             throw new UnableToCreateSessionException ( "Service disposed" );
         }
 
-        final SessionImpl session = new SessionImpl ( properties.getProperty ( ConnectionInformation.PROP_USER, null ) );
+        final UserInformation userInformation = new UserInformation ( properties.getProperty ( ConnectionInformation.PROP_USER, null ), new String[0] );
+
+        final SessionImpl session = new SessionImpl ( userInformation );
         this.sessions.add ( session );
 
         // copy data

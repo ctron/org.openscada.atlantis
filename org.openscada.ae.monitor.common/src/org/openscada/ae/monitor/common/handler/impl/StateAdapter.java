@@ -8,6 +8,7 @@ import org.openscada.ae.monitor.common.AbstractMonitorService;
 import org.openscada.ae.monitor.common.EventHelper;
 import org.openscada.ae.monitor.common.handler.StateHandler;
 import org.openscada.core.Variant;
+import org.openscada.sec.UserInformation;
 
 public class StateAdapter implements StateHandler
 {
@@ -26,7 +27,7 @@ public class StateAdapter implements StateHandler
 
         private Date timestamp;
 
-        private String lastAknUser;
+        private UserInformation lastAknUser;
 
         private Date lastAknTimestamp;
 
@@ -74,12 +75,12 @@ public class StateAdapter implements StateHandler
             return this.lastAknTimestamp;
         }
 
-        public String getLastAknUser ()
+        public UserInformation getLastAknUser ()
         {
             return this.lastAknUser;
         }
 
-        public void setAknInformation ( final String user, final Date timestamp )
+        public void setAknInformation ( final UserInformation user, final Date timestamp )
         {
             this.lastAknUser = user;
             this.lastAknTimestamp = timestamp;
@@ -102,7 +103,13 @@ public class StateAdapter implements StateHandler
 
     public ConditionStatusInformation getState ()
     {
-        return new ConditionStatusInformation ( this.service.getId (), this.state, new Date (), this.currentContext.getValue (), this.currentContext.getLastAknTimestamp (), this.currentContext.getLastAknUser () );
+        String aknUser = null;
+        final UserInformation user = this.currentContext.getLastAknUser ();
+        if ( user != null )
+        {
+            aknUser = user.getName ();
+        }
+        return new ConditionStatusInformation ( this.service.getId (), this.state, new Date (), this.currentContext.getValue (), this.currentContext.getLastAknTimestamp (), aknUser );
     }
 
     protected void switchHandler ( final StateHandler handler )
@@ -110,7 +117,7 @@ public class StateAdapter implements StateHandler
         this.service.setHandler ( handler );
     }
 
-    public void akn ( final String aknUser, final Date aknTimestamp )
+    public void akn ( final UserInformation aknUser, final Date aknTimestamp )
     {
     }
 
@@ -140,7 +147,7 @@ public class StateAdapter implements StateHandler
 
     protected void publishAknEvent ()
     {
-        this.service.publishEvent ( EventHelper.newAknEvent ( this.service.getId (), "", this.currentContext.getLastAknTimestamp (), this.currentContext.getLastAknUser () ) );
+        this.service.publishEvent ( EventHelper.newAknEvent ( this.service.getId (), "", this.currentContext.getLastAknTimestamp (), this.currentContext.getLastAknUser ().getName () ) );
     }
 
     protected void publishConfigEvent ( final String message, final Variant value )
@@ -192,7 +199,7 @@ public class StateAdapter implements StateHandler
     {
     }
 
-    protected void setAknInformation ( final String aknUser, final Date aknTimestamp )
+    protected void setAknInformation ( final UserInformation aknUser, final Date aknTimestamp )
     {
         this.currentContext.setAknInformation ( aknUser, aknTimestamp );
     }

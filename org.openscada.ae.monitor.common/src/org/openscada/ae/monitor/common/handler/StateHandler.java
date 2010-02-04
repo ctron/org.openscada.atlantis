@@ -4,10 +4,11 @@ import java.util.Date;
 
 import org.openscada.ae.ConditionStatusInformation;
 import org.openscada.core.Variant;
+import org.openscada.sec.UserInformation;
 
 public interface StateHandler
 {
-    public void akn ( String aknUser, Date aknTimestamp );
+    public void akn ( UserInformation userInformation, Date aknTimestamp );
 
     public void enable ();
 

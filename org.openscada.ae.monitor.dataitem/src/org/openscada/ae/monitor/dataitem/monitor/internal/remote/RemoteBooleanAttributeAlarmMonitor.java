@@ -14,6 +14,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.master.MasterItem;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +110,7 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
         return injectState ( builder ).build ();
     }
 
-    public void akn ( final String aknUser, final Date aknTimestamp )
+    public void akn ( final UserInformation aknUser, final Date aknTimestamp )
     {
         publishAckRequestEvent ( aknUser );
 

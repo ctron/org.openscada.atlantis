@@ -1,6 +1,6 @@
 package org.openscada.core.server.common.session;
 
-import org.openscada.core.server.common.UserInformation;
+import org.openscada.sec.UserInformation;
 
 public abstract class AbstractSessionImpl implements UserSession
 {

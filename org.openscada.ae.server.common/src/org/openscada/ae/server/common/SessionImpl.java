@@ -13,11 +13,13 @@ import org.openscada.ae.Event;
 import org.openscada.ae.server.ConditionListener;
 import org.openscada.ae.server.EventListener;
 import org.openscada.ae.server.Session;
+import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.sec.UserInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SessionImpl implements Session, BrowserListener
+public class SessionImpl extends AbstractSessionImpl implements Session, BrowserListener
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( SessionImpl.class );
@@ -34,17 +36,14 @@ public class SessionImpl implements Session, BrowserListener
 
     private final Map<String, BrowserEntry> browserCache = new HashMap<String, BrowserEntry> ();
 
-    private final String user;
-
     private boolean disposed = false;
 
     private final Set<QueryImpl> queries = new HashSet<QueryImpl> ();
 
-    public SessionImpl ( final String user )
+    public SessionImpl ( final UserInformation userInformation )
     {
+        super ( userInformation );
         logger.info ( "Created new session" );
-
-        this.user = user;
 
         this.eventListener = new EventListener () {
 
@@ -190,11 +189,6 @@ public class SessionImpl implements Session, BrowserListener
                 listener.dataChanged ( addedOrUpdated, removed, full );
             }
         }
-    }
-
-    public String getCurrentUser ()
-    {
-        return this.user;
     }
 
     public synchronized void addQuery ( final QueryImpl query )

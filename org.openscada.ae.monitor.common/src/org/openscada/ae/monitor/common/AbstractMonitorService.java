@@ -14,6 +14,7 @@ import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.monitor.common.handler.StateHandler;
 import org.openscada.ae.monitor.common.handler.impl.InitHandler;
 import org.openscada.core.Variant;
+import org.openscada.sec.UserInformation;
 
 public class AbstractMonitorService implements MonitorService
 {
@@ -106,9 +107,9 @@ public class AbstractMonitorService implements MonitorService
         }
     }
 
-    public synchronized void akn ( final String aknUser, final Date aknTimestamp )
+    public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp )
     {
-        this.handler.akn ( aknUser, aknTimestamp );
+        this.handler.akn ( userInformation, aknTimestamp );
     }
 
     public synchronized void setRequireAkn ( final boolean state )

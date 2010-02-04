@@ -21,6 +21,7 @@ import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
 import org.openscada.da.master.MasterItem;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,7 +148,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl
         return builder.build ();
     }
 
-    protected void publishAckRequestEvent ( final String user )
+    protected void publishAckRequestEvent ( final UserInformation user )
     {
         final EventBuilder builder = Event.create ();
         builder.sourceTimestamp ( new Date () );
@@ -156,7 +157,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl
         builder.attribute ( Fields.EVENT_TYPE, "ACK-REQ" );
         if ( user != null )
         {
-            builder.attribute ( Fields.ACTOR_NAME, user );
+            builder.attribute ( Fields.ACTOR_NAME, user.getName () );
         }
         builder.attributes ( this.attributes );
 

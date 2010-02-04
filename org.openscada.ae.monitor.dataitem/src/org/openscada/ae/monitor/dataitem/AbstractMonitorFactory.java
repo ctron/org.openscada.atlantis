@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.server.common.akn.AknHandler;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
@@ -61,7 +62,7 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
         return null;
     }
 
-    public synchronized boolean acknowledge ( final String conditionId, final String aknUser, final Date aknTimestamp )
+    public synchronized boolean acknowledge ( final String conditionId, final UserInformation aknUser, final Date aknTimestamp )
     {
         logger.debug ( "Try to process ACK: {}", conditionId );
 

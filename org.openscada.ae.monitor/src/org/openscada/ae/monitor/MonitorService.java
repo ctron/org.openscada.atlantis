@@ -2,6 +2,8 @@ package org.openscada.ae.monitor;
 
 import java.util.Date;
 
+import org.openscada.sec.UserInformation;
+
 public interface MonitorService
 {
     public String getId ();
@@ -10,7 +12,7 @@ public interface MonitorService
 
     public void removeStatusListener ( ConditionListener listener );
 
-    public void akn ( String aknUser, Date aknTimestamp );
+    public void akn ( UserInformation userInformation, Date aknTimestamp );
 
     public void setActive ( boolean state );
 }

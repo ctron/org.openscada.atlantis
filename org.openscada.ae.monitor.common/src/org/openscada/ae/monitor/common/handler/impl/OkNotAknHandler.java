@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.openscada.ae.ConditionStatus;
 import org.openscada.core.Variant;
+import org.openscada.sec.UserInformation;
 
 public class OkNotAknHandler extends StateAdapter
 {
@@ -14,7 +15,7 @@ public class OkNotAknHandler extends StateAdapter
     }
 
     @Override
-    public void akn ( final String aknUser, final Date aknTimestamp )
+    public void akn ( final UserInformation aknUser, final Date aknTimestamp )
     {
         setAknInformation ( aknUser, aknTimestamp );
         publishAknEvent ();

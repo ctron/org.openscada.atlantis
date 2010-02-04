@@ -10,6 +10,7 @@ import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractMonitorService;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.core.Variant;
+import org.openscada.sec.UserInformation;
 
 public class TestingCondition extends AbstractMonitorService implements AknHandler
 {
@@ -47,7 +48,7 @@ public class TestingCondition extends AbstractMonitorService implements AknHandl
         this.scheduler.shutdown ();
     }
 
-    public boolean acknowledge ( final String conditionId, final String aknUser, final Date aknTimestamp )
+    public boolean acknowledge ( final String conditionId, final UserInformation aknUser, final Date aknTimestamp )
     {
         if ( getId ().equals ( conditionId ) )
         {
