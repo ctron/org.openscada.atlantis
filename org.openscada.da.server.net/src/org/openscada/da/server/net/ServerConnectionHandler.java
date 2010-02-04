@@ -197,7 +197,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
         catch ( final UnableToCreateSessionException e )
         {
-            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, e.getReason () ) );
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, e ) );
             return;
         }
 
