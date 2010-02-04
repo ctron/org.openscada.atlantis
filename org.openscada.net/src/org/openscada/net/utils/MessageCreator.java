@@ -21,6 +21,8 @@ package org.openscada.net.utils;
 
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
+import org.openscada.utils.statuscodes.CodedExceptionBase;
+import org.openscada.utils.statuscodes.StatusCode;
 
 public class MessageCreator
 {
@@ -36,7 +38,21 @@ public class MessageCreator
 
     public static Message createFailedMessage ( final Message inputMessage, final Throwable error )
     {
-        String msg = error.getMessage ();
+        String msg = null;
+        if ( error instanceof CodedExceptionBase )
+        {
+            final StatusCode status = ( (CodedExceptionBase)error ).getStatus ();
+            if ( status != null )
+            {
+                msg = status.toString ();
+            }
+        }
+        else
+        {
+            msg = error.getMessage ();
+        }
+
+        // if we still don't have a message ... use toString()
         if ( msg == null )
         {
             msg = error.toString ();
