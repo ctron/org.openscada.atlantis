@@ -5,7 +5,15 @@ Bundle-SymbolicName: org.openscada.ae.server.net
 Bundle-Version: 0.15.0.qualifier
 Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.ae.server.net
+Export-Package: org.openscada.ae.server.net;version="0.15.0";
+  uses:="org.apache.mina.core.session,
+   org.openscada.net.base.data,
+   org.openscada.core.server.net,
+   org.openscada.ae.server,
+   org.openscada.ae.server.exporter,
+   org.openscada.core,
+   org.openscada.core.subscription,
+   org.openscada.ae"
 Import-Package: org.apache.mina.core.session;version="2.0.0",
  org.apache.mina.handler.multiton;version="2.0.0",
  org.openscada.ae;version="0.15.0",
