@@ -13,6 +13,7 @@ import org.openscada.ae.monitor.dataitem.DataItemMonitor;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
+import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -120,7 +121,7 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
 
         for ( final MasterItem item : getMasterItems () )
         {
-            item.startWriteAttributes ( attributes );
+            item.startWriteAttributes ( new WriteInformation ( aknUser ), attributes );
         }
     }
 
@@ -131,7 +132,7 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
 
         for ( final MasterItem item : getMasterItems () )
         {
-            item.startWriteAttributes ( attributes );
+            item.startWriteAttributes ( new WriteInformation ( null ), attributes );
         }
     }
 
