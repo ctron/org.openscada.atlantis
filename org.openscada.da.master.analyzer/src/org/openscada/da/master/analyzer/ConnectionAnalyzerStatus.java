@@ -6,6 +6,8 @@ public class ConnectionAnalyzerStatus
 {
     private ConnectionState state;
 
+    private boolean connected;
+
     public ConnectionState getState ()
     {
         return this.state;
@@ -14,6 +16,16 @@ public class ConnectionAnalyzerStatus
     public void setState ( final ConnectionState state )
     {
         this.state = state;
+    }
+
+    public void setConnected ( final boolean connected )
+    {
+        this.connected = connected;
+    }
+
+    public boolean isConnected ()
+    {
+        return this.connected;
     }
 
 }

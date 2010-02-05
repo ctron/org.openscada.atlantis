@@ -55,6 +55,7 @@ public class ConnectionAnalyzer implements ConnectionStateListener
     public void stateChange ( final Connection connection, final ConnectionState state, final Throwable error )
     {
         this.value.setState ( state );
+        this.value.setConnected ( state == ConnectionState.BOUND );
         this.exporter.setValue ( this.value );
     }
 
