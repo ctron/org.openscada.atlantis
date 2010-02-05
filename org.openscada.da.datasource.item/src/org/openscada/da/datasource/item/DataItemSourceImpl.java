@@ -19,6 +19,7 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.client.connection.service.ConnectionService;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
+import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.utils.concurrent.AbstractFuture;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -234,7 +235,7 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
         return newValue;
     }
 
-    public synchronized NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    public synchronized NotifyFuture<WriteResult> startWriteValue ( final WriteInformation writeInformation, final Variant value )
     {
         final WriteListenerValueImpl task = new WriteListenerValueImpl ();
 
@@ -250,7 +251,7 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
         return task;
     }
 
-    public synchronized NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes )
+    public synchronized NotifyFuture<WriteAttributeResults> startWriteAttributes ( final WriteInformation writeInformation, final Map<String, Variant> attributes )
     {
         final WriteListenerAttributeImpl task = new WriteListenerAttributeImpl ();
 

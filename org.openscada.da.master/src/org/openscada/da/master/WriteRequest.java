@@ -5,26 +5,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.Variant;
+import org.openscada.da.datasource.WriteInformation;
 
 public class WriteRequest
 {
+    private final WriteInformation writeInformation;
+
     private final Variant value;
 
-    private Map<String, Variant> attributes;
+    private final Map<String, Variant> attributes;
 
-    public WriteRequest ( final Variant value )
+    public WriteRequest ( final WriteInformation writeInformation, final Variant value )
     {
-        this ( value, null );
+        this ( writeInformation, value, null );
     }
 
-    public WriteRequest ( final Map<String, Variant> attributes )
+    public WriteRequest ( final WriteInformation writeInformation, final Map<String, Variant> attributes )
     {
-        this ( null, attributes );
+        this ( writeInformation, null, attributes );
     }
 
-    public WriteRequest ( final Variant value, final Map<String, Variant> attributes )
+    public WriteRequest ( final WriteInformation writeInformation, final Variant value, final Map<String, Variant> attributes )
     {
         this.value = value;
+        this.writeInformation = writeInformation;
 
         if ( attributes != null )
         {
@@ -39,6 +43,11 @@ public class WriteRequest
     public Map<String, Variant> getAttributes ()
     {
         return Collections.unmodifiableMap ( this.attributes );
+    }
+
+    public WriteInformation getWriteInformation ()
+    {
+        return this.writeInformation;
     }
 
     public Variant getValue ()

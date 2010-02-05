@@ -17,6 +17,7 @@ import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
+import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -55,13 +56,13 @@ public class ScriptDataSource extends AbstractDataSource
     }
 
     @Override
-    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final WriteInformation writeInformation, final Map<String, Variant> attributes )
     {
         return new InstantErrorFuture<WriteAttributeResults> ( new OperationException ( "Not supported" ) );
     }
 
     @Override
-    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( final WriteInformation writeInformation, final Variant value )
     {
         return new InstantErrorFuture<WriteResult> ( new OperationException ( "Not supported" ) );
     }

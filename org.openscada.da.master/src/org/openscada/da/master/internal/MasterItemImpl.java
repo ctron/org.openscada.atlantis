@@ -17,6 +17,7 @@ import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.DataSource;
+import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.datasource.base.AbstractDataSourceHandler;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.MasterItemHandler;
@@ -281,17 +282,17 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
         return value;
     }
 
-    public synchronized NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    public synchronized NotifyFuture<WriteResult> startWriteValue ( final WriteInformation writeInformation, final Variant value )
     {
         final WriteListenerValueImpl task = new WriteListenerValueImpl ();
-        processWrite ( new WriteRequest ( value ), task );
+        processWrite ( new WriteRequest ( writeInformation, value ), task );
         return task;
     }
 
-    public synchronized NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes )
+    public synchronized NotifyFuture<WriteAttributeResults> startWriteAttributes ( final WriteInformation writeInformation, final Map<String, Variant> attributes )
     {
         final WriteListenerAttributeImpl task = new WriteListenerAttributeImpl ();
-        processWrite ( new WriteRequest ( attributes ), task );
+        processWrite ( new WriteRequest ( writeInformation, attributes ), task );
         return task;
     }
 
@@ -321,7 +322,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
             final Variant value = result.getValue ();
             if ( value != null )
             {
-                final NotifyFuture<WriteResult> task = dataSource.startWriteValue ( value );
+                final NotifyFuture<WriteResult> task = dataSource.startWriteValue ( writeRequest.getWriteInformation (), value );
                 task.addListener ( new FutureListener<WriteResult> () {
 
                     public void complete ( final Future<WriteResult> future )
@@ -346,7 +347,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
             final HashMap<String, Variant> attributes = result.getAttributes ();
             if ( !attributes.isEmpty () )
             {
-                final NotifyFuture<WriteAttributeResults> task = dataSource.startWriteAttributes ( attributes );
+                final NotifyFuture<WriteAttributeResults> task = dataSource.startWriteAttributes ( writeRequest.getWriteInformation (), attributes );
                 task.addListener ( new FutureListener<WriteAttributeResults> () {
 
                     public void complete ( final Future<WriteAttributeResults> future )
@@ -419,7 +420,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
                     nextAttributes.remove ( entry.getKey () );
                 }
 
-                request = new WriteRequest ( finalResult.getValue (), nextAttributes );
+                request = new WriteRequest ( writeRequest.getWriteInformation (), finalResult.getValue (), nextAttributes );
             }
         }
 

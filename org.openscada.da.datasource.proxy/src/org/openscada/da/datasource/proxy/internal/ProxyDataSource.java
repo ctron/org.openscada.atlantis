@@ -18,6 +18,7 @@ import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.datasource.MultiDataSourceTracker;
+import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.datasource.MultiDataSourceTracker.ServiceListener;
 import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -281,13 +282,15 @@ public class ProxyDataSource extends AbstractDataSource implements ServiceListen
         }
     }
 
-    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final WriteInformation writeInformation, final Map<String, Variant> attributes )
     {
+        // FIXME: implement write call
         return new InstantErrorFuture<WriteAttributeResults> ( new OperationException ( "'writeAttributes' not supported" ) );
     }
 
-    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( final WriteInformation writeInformation, final Variant value )
     {
+        // FIXME: implement write call
         return new InstantErrorFuture<WriteResult> ( new OperationException ( "'writeAttributes' not supported" ) );
     }
 

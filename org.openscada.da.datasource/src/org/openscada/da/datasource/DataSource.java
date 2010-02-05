@@ -15,7 +15,7 @@ public interface DataSource
 
     public abstract void removeListener ( final DataSourceListener listener );
 
-    public abstract NotifyFuture<WriteResult> startWriteValue ( final Variant value );
+    public abstract NotifyFuture<WriteResult> startWriteValue ( final WriteInformation writeInformation, final Variant value );
 
-    public abstract NotifyFuture<WriteAttributeResults> startWriteAttributes ( Map<String, Variant> attributes );
+    public abstract NotifyFuture<WriteAttributeResults> startWriteAttributes ( final WriteInformation writeInformation, final Map<String, Variant> attributes );
 }

@@ -16,6 +16,7 @@ import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.datasource.SingleDataSourceTracker;
+import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.datasource.SingleDataSourceTracker.ServiceListener;
 import org.openscada.da.server.common.DataItemBase;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -119,7 +120,7 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
     {
         if ( this.dataSource != null )
         {
-            return this.dataSource.startWriteAttributes ( attributes );
+            return this.dataSource.startWriteAttributes ( new WriteInformation ( session.getUserInformation () ), attributes );
         }
         else
         {
@@ -131,7 +132,7 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
     {
         if ( this.dataSource != null )
         {
-            return this.dataSource.startWriteValue ( value );
+            return this.dataSource.startWriteValue ( new WriteInformation ( session.getUserInformation () ), value );
         }
         else
         {
