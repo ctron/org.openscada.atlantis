@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.query.GroupFolder;
@@ -37,6 +38,7 @@ import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.sec.AuthenticationException;
 import org.openscada.sec.UserInformation;
+import org.openscada.sec.osgi.AuthenticationHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -53,9 +55,13 @@ public class HiveImpl extends HiveCommon
 
     private final Map<ServiceReference, ItemDescriptor> items;
 
+    private final AuthenticationHelper authenticationManager;
+
     public HiveImpl ( final BundleContext context )
     {
         this.context = context;
+
+        this.authenticationManager = new AuthenticationHelper ( context );
 
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
 
@@ -70,10 +76,23 @@ public class HiveImpl extends HiveCommon
     }
 
     @Override
+    public void start () throws Exception
+    {
+        this.authenticationManager.open ();
+        super.start ();
+    }
+
+    @Override
+    public void stop () throws Exception
+    {
+        super.stop ();
+        this.authenticationManager.close ();
+    }
+
+    @Override
     protected UserInformation authenticate ( final Properties properties ) throws AuthenticationException
     {
-        // TODO Auto-generated method stub
-        return super.authenticate ( properties );
+        return this.authenticationManager.authenticate ( properties.getProperty ( ConnectionInformation.PROP_USER ), properties.getProperty ( ConnectionInformation.PROP_PASSWORD ) );
     }
 
     public synchronized void addItem ( final DataItem item, final Dictionary<?, ?> properties )
