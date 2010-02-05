@@ -22,10 +22,10 @@ import org.openscada.ae.server.common.condition.ConditionQuery;
 import org.openscada.ae.server.common.condition.ConditionQuerySource;
 import org.openscada.ae.server.common.event.EventQuery;
 import org.openscada.ae.server.common.event.EventQuerySource;
-import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.ServiceCommon;
 import org.openscada.core.subscription.SubscriptionManager;
 import org.openscada.core.subscription.ValidationException;
 import org.openscada.sec.UserInformation;
@@ -40,7 +40,7 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceImpl implements Service, ServiceListener
+public class ServiceImpl extends ServiceCommon implements Service, ServiceListener
 {
     private final static Logger logger = LoggerFactory.getLogger ( ServiceImpl.class );
 
@@ -259,9 +259,7 @@ public class ServiceImpl implements Service, ServiceListener
             throw new UnableToCreateSessionException ( "Service disposed" );
         }
 
-        final UserInformation userInformation = new UserInformation ( properties.getProperty ( ConnectionInformation.PROP_USER, null ), new String[0] );
-
-        final SessionImpl session = new SessionImpl ( userInformation );
+        final SessionImpl session = new SessionImpl ( createUserInformation ( properties ) );
         this.sessions.add ( session );
 
         // copy data
