@@ -48,7 +48,6 @@
       <import plugin="org.openscada.ae.net" version="0.14.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.core.server.net"/>
       <import plugin="org.openscada.utils.osgi"/>
-      <import plugin="org.springframework.osgi.log4j.osgi"/>
       <import plugin="org.openscada.ca.common"/>
       <import plugin="org.openscada.da.core.server"/>
       <import plugin="org.openscada.da.server.common"/>
@@ -72,6 +71,7 @@
       <import plugin="com.springsource.org.hsqldb"/>
       <import plugin="org.junit4"/>
       <import plugin="org.openscada.ae.server.storage.jdbc" version="0.15.0" match="greaterOrEqual"/>
+      <import plugin="com.springsource.org.apache.log4j"/>
    </requires>
 
    <plugin
