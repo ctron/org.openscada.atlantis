@@ -9,6 +9,7 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.apache.log4j;version="1.2.6",
  org.openscada.core;version="0.14.0",
  org.openscada.core.server;version="0.14.0",
+ org.openscada.core.server.common;version="0.15.0",
  org.openscada.da.core;version="0.15.0",
  org.openscada.da.core.server;version="0.14.0",
  org.openscada.da.server.browser.common;version="0.14.0",
