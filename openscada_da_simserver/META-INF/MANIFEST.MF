@@ -7,6 +7,7 @@ Import-Package: jxl,
  org.jopendocument.dom.spreadsheet;version="1.1.0",
  org.openscada.core;version="0.14",
  org.openscada.core.server;version="0.14.0",
+ org.openscada.core.server.common;version="0.15.0",
  org.openscada.da.core;version="0.14",
  org.openscada.da.core.server;version="0.14.0",
  org.openscada.da.server.browser.common;version="0.14",
@@ -53,7 +54,6 @@ Export-Package: org.openscada.da.server.simulation.filesource;version="0.15.0.qu
    javax.xml.namespace"
 Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA DA Simulation Server
-Bundle-ClassPath: .,jxl-2.6.jar,jOpenDocument-1.1b3.jar
 Bundle-Vendor: inavare GmbH
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.simulation
