@@ -124,6 +124,7 @@ Export-Package: org.openscada.common;version="0.15.0";
    org.openscada.da.server.common.factory,
    org.openscada.utils.concurrent,
    org.openscada.da.core.server.browser,
+   org.openscada.core.server.common,
    org.openscada.da.core,
    org.openscada.core.subscription,
    org.openscada.utils.lifecycle,
