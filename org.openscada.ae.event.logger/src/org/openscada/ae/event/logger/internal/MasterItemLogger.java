@@ -53,6 +53,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
             builder.sourceTimestamp ( new Date () );
             builder.attribute ( Event.Fields.SOURCE, getMasterId () );
             builder.attribute ( Event.Fields.EVENT_TYPE, "WRITE" );
+            builder.attribute ( Event.Fields.MONITOR_TYPE, "LOG" );
             builder.attribute ( Event.Fields.VALUE, request.getValue () );
             builder.attribute ( Event.Fields.MESSAGE, "Write main value" );
 
