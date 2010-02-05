@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006 -2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@ package org.openscada.core.client.net;
 public class DisconnectReason extends Exception
 {
 
-    private String _reason = "";
+    private String reason = "";
 
     /**
      * 
@@ -37,11 +37,11 @@ public class DisconnectReason extends Exception
     public DisconnectReason ( final String reason )
     {
         super ( "Disconnected: " + reason );
-        this._reason = reason;
+        this.reason = reason;
     }
 
     public String getReason ()
     {
-        return this._reason;
+        return this.reason;
     }
 }
