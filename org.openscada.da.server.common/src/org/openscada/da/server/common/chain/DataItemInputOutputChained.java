@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteResult;
@@ -45,7 +46,7 @@ public abstract class DataItemInputOutputChained extends DataItemInputChained
     }
 
     @Override
-    public NotifyFuture<WriteResult> startWriteValue ( Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( final UserSession session, Variant value )
     {
         synchronized ( this )
         {
@@ -68,8 +69,8 @@ public abstract class DataItemInputOutputChained extends DataItemInputChained
         // FIXME: for the moment output chain item don't show up in the attribute list
         // secondaryAttributes.set ( primaryAttributes );
 
-        return startWriteCalculatedValue ( value );
+        return startWriteCalculatedValue ( session, value );
     }
 
-    protected abstract NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value );
+    protected abstract NotifyFuture<WriteResult> startWriteCalculatedValue ( UserSession session, final Variant value );
 }

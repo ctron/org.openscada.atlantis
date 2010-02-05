@@ -29,6 +29,7 @@ import java.util.concurrent.Executor;
 import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.utils.concurrent.FutureTask;
@@ -60,7 +61,7 @@ public class DataItemCommand extends DataItemOutput
         this.executor = executor;
     }
 
-    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
     {
         final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 
@@ -115,7 +116,7 @@ public class DataItemCommand extends DataItemOutput
         return new HashMap<String, Variant> ();
     }
 
-    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final UserSession session, final Map<String, Variant> attributes )
     {
         return new InstantFuture<WriteAttributeResults> ( WriteAttributesHelper.errorUnhandled ( null, attributes ) );
     }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,7 +206,7 @@ public class HiveBuilder
             else if ( Direction.OUT.equals ( itemDefinition.getDirection () ) )
             {
                 final DataItemCommand item = factory.createCommand ( itemDefinition.getName () );
-                item.startSetAttributes ( item.getAttributes () );
+                item.startSetAttributes ( null, item.getAttributes () );
                 hive.getScriptEngine ().put ( "item", item );
                 hive.getScriptEngine ().eval ( "registerItem(server, item, " + itemDefinition.getCallback () + ");" );
             }

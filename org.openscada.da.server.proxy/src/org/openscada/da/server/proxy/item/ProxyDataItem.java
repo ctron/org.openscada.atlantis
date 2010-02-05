@@ -30,6 +30,7 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.core.IODirection;
@@ -85,7 +86,7 @@ public class ProxyDataItem extends DataItemInputOutputChained
     }
 
     @Override
-    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final UserSession session, final Map<String, Variant> attributes )
     {
         final FutureTask<WriteAttributeResults> task = new FutureTask<WriteAttributeResults> ( new Callable<WriteAttributeResults> () {
 
@@ -122,7 +123,7 @@ public class ProxyDataItem extends DataItemInputOutputChained
     }
 
     @Override
-    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final UserSession session, final Variant value )
     {
         final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 

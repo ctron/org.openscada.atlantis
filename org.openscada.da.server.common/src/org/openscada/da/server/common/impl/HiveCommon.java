@@ -551,7 +551,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         }
 
         // go
-        final NotifyFuture<WriteAttributeResults> future = item.startSetAttributes ( attributes );
+        final NotifyFuture<WriteAttributeResults> future = item.startSetAttributes ( sessionCommon, attributes );
         sessionCommon.addFuture ( future );
 
         return future;
@@ -575,7 +575,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         }
 
         // go
-        final NotifyFuture<WriteResult> future = item.startWriteValue ( value );
+        final NotifyFuture<WriteResult> future = item.startWriteValue ( sessionCommon, value );
         sessionCommon.addFuture ( future );
         return future;
     }

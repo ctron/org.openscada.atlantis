@@ -24,6 +24,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
@@ -88,7 +89,7 @@ public class AttributeWriteHandlerItem extends DataItemInputChained
     }
 
     @Override
-    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
     {
         final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 

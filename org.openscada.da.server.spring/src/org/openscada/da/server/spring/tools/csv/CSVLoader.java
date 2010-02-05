@@ -161,7 +161,7 @@ public class CSVLoader extends Loader implements InitializingBean
         // set the initial value
         try
         {
-            controllerItem.startWriteValue ( entry.getInitialValue () ).get ();
+            controllerItem.startWriteValue ( null, entry.getInitialValue () ).get ();
         }
         catch ( final Throwable e )
         {

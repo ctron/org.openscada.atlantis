@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
@@ -47,7 +48,7 @@ public class TestItem1 extends DataItemOutput
         return new HashMap<String, Variant> ();
     }
 
-    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final UserSession session, final Map<String, Variant> attributes )
     {
         final WriteAttributeResults results = new WriteAttributeResults ();
 
@@ -67,7 +68,7 @@ public class TestItem1 extends DataItemOutput
         return new InstantFuture<WriteAttributeResults> ( results );
     }
 
-    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
     {
         _log.debug ( "set value: " + value.toString () );
 

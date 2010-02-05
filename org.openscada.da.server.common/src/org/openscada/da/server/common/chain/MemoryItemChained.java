@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ package org.openscada.da.server.common.chain;
 import java.util.EnumSet;
 
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteResult;
@@ -43,7 +44,7 @@ public class MemoryItemChained extends DataItemInputOutputChained
     }
 
     @Override
-    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final UserSession session, final Variant value )
     {
         updateData ( value, null, null );
         return new InstantFuture<WriteResult> ( new WriteResult () );

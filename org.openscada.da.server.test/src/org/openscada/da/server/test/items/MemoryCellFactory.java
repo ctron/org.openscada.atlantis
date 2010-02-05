@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ public class MemoryCellFactory implements DataItemFactory
 
         try
         {
-            item.startSetAttributes ( request.getItemAttributes () ).get ();
+            item.startSetAttributes ( null, request.getItemAttributes () ).get ();
         }
         catch ( final Throwable e )
         {

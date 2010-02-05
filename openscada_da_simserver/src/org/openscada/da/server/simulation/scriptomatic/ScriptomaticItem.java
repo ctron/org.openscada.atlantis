@@ -15,6 +15,7 @@ import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 import org.openscada.utils.concurrent.FutureTask;
@@ -42,7 +43,7 @@ public class ScriptomaticItem extends DataItemInputOutputChained
     }
 
     @Override
-    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final UserSession session, final Variant value )
     {
         final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 

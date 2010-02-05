@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
@@ -53,7 +54,7 @@ public class MemoryDataItem extends DataItemBase
         return new InstantFuture<Variant> ( this.value );
     }
 
-    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
     {
         if ( !this.value.equals ( value ) )
         {
@@ -82,7 +83,7 @@ public class MemoryDataItem extends DataItemBase
         return this.value;
     }
 
-    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final UserSession session, final Map<String, Variant> attributes )
     {
         final WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
 

@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
@@ -58,7 +59,7 @@ public class DaveDataitem extends DataItemInputOutputChained
     }
 
     @Override
-    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final UserSession session, final Variant value )
     {
         return this.variable.handleWrite ( value );
     }

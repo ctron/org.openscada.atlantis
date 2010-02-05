@@ -23,6 +23,7 @@ import java.util.EnumSet;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteResult;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -36,7 +37,7 @@ public abstract class DataItemInput extends DataItemBase
         super ( new DataItemInformationBase ( name, EnumSet.of ( IODirection.INPUT ) ) );
     }
 
-    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
     {
         return new InstantErrorFuture<WriteResult> ( new InvalidOperationException () );
     }

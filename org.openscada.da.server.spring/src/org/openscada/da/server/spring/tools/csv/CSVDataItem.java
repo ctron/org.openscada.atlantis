@@ -23,6 +23,7 @@ import java.util.EnumSet;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.DataItemInformationBase;
@@ -56,24 +57,24 @@ public class CSVDataItem extends MemoryItemChained
     }
 
     @Override
-    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final UserSession session, final Variant value )
     {
         fireWrite ( value );
         if ( isReadable () )
         {
-            return super.startWriteCalculatedValue ( value );
+            return super.startWriteCalculatedValue ( session, value );
         }
         return new InstantErrorFuture<WriteResult> ( new InvalidOperationException ().fillInStackTrace () );
     }
 
     @Override
-    public NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
     {
         if ( !isWriteable () )
         {
             return new InstantErrorFuture<WriteResult> ( new InvalidOperationException ().fillInStackTrace () );
         }
-        return super.startWriteValue ( value );
+        return super.startWriteValue ( session, value );
     }
 
     private void fireWrite ( final Variant value )

@@ -30,6 +30,7 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantType;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
@@ -82,7 +83,7 @@ public class DataItemInputOutputProperty extends DataItemInputOutputChained impl
     }
 
     @Override
-    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final UserSession session, final Variant value )
     {
         final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 

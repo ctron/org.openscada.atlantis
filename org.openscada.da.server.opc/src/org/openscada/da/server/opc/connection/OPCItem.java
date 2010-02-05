@@ -28,6 +28,7 @@ import org.jinterop.dcom.core.JIVariant;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributeResults;
@@ -61,7 +62,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
     private final String opcItemId;
 
     private boolean ignoreTimestampOnlyChange = false;
-    
+
     private short qualityErrorIfLessThen = 192;
 
     public OPCItem ( final Hive hive, final OPCController controller, final DataItemInformation di, final String opcItemId )
@@ -77,7 +78,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
     }
 
     @Override
-    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final UserSession session, final Variant value )
     {
         if ( !this.getInformation ().getIODirection ().contains ( IODirection.OUTPUT ) )
         {
@@ -160,7 +161,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             final short quality = state.getQuality ();
             attributes.put ( "opc.quality", new Variant ( quality ) );
 
-            attributes.put ( "opc.quality.error", new Variant ( quality < qualityErrorIfLessThen ) );
+            attributes.put ( "opc.quality.error", new Variant ( quality < this.qualityErrorIfLessThen ) );
             attributes.put ( "opc.quality.manual", new Variant ( quality == 216 ) );
             attributes.put ( "org.openscada.da.manual.active", new Variant ( quality == 216 ) );
 

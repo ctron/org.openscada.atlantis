@@ -7,6 +7,7 @@ import java.util.Map;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.UserSession;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.core.DataItemInformation;
@@ -114,7 +115,7 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
         return new InstantFuture<Variant> ( this.currentValue.getValue () );
     }
 
-    public synchronized NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes )
+    public synchronized NotifyFuture<WriteAttributeResults> startSetAttributes ( final UserSession session, final Map<String, Variant> attributes )
     {
         if ( this.dataSource != null )
         {
@@ -126,7 +127,7 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
         }
     }
 
-    public synchronized NotifyFuture<WriteResult> startWriteValue ( final Variant value )
+    public synchronized NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
     {
         if ( this.dataSource != null )
         {
