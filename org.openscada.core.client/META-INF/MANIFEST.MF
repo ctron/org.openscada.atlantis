@@ -1,19 +1,11 @@
 Manifest-Version: 1.0
-Built-By: jens
-Created-By: Apache Maven Bundle Plugin
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: org.apache.log4j;version="1.2.0",
  org.openscada.core;version="0.14.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bnd-LastModified: 1252499258558
-Export-Package: org.openscada.core.client;version="0.14.0";uses:="org.openscada.core,org.apache.log4j"
-Bundle-Version: 0.14.0.qualifier
-Bundle-Name: OpenSCADA-Core-Client-Common
-Build-Jdk: 1.5.0_18
-Private-Package: org.openscada.core.client,
+Export-Package: org.openscada.core.client;version="0.15.0";uses:="org.openscada.core,org.apache.log4j"
+Bundle-Version: 0.15.0.qualifier
+Bundle-Name: OpenSCADA Core Client
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
-Bundle-SymbolicName: org.openscada.core.client.common
-Tool: Bnd-0.0.311
-
+Bundle-SymbolicName: org.openscada.core.client
