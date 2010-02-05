@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -69,6 +69,7 @@ import org.openscada.da.server.common.impl.stats.HiveCommonStatisticsGenerator;
 import org.openscada.da.server.common.impl.stats.HiveEventListener;
 import org.openscada.sec.AuthenticationException;
 import org.openscada.sec.UserInformation;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.concurrent.NotifyFuture;
 
 public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
@@ -128,7 +129,7 @@ public class HiveCommon implements Hive, ConfigurableHive, HiveServiceRegistry
     {
         logger.info ( "Starting Hive" );
 
-        this.operationService = Executors.newFixedThreadPool ( 1 );
+        this.operationService = Executors.newFixedThreadPool ( 1, new NamedThreadFactory ( "HiveCommon" ) );
     }
 
     public void stop () throws Exception
