@@ -114,8 +114,23 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
         return new ArrayList<MasterItem> ( this.items );
     }
 
+    protected void reprocess ()
+    {
+        for ( final MasterItem item : this.items )
+        {
+            item.reprocess ();
+        }
+    }
+
     public abstract DataItemValue dataUpdate ( final DataItemValue value );
 
+    /**
+     * Process the write request
+     * <p>
+     * This implementation does <em>nothing</em> and can be overridden by
+     * derived implementations.
+     * </p>  
+     */
     public WriteRequestResult processWrite ( final WriteRequest request )
     {
         return null;

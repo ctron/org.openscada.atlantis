@@ -1,29 +1,30 @@
-package org.openscada.da.master.common.sum;
+package org.openscada.da.master.common.scale;
 
 import java.util.Map;
 
 import org.openscada.da.master.AbstractMasterHandlerImpl;
-import org.openscada.da.master.MasterItem;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.util.tracker.ServiceTracker;
 
-public class CommonFactoryImpl extends AbstractServiceConfigurationFactory<AbstractMasterHandlerImpl>
+public class ScaleHandlerFactoryImpl extends AbstractServiceConfigurationFactory<AbstractMasterHandlerImpl>
 {
-    private final String tag;
+    public static final String FACTORY_ID = "org.openscada.da.master.scaleHandler";
 
     private final int priority;
 
     private final ObjectPoolTracker poolTracker;
 
-    public CommonFactoryImpl ( final BundleContext context, final String tag, final int priority ) throws InvalidSyntaxException
+    private final ServiceTracker caTracker;
+
+    public ScaleHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker, final ServiceTracker caTracker, final int priority ) throws InvalidSyntaxException
     {
         super ( context );
-        this.tag = tag;
         this.priority = priority;
-        this.poolTracker = new ObjectPoolTracker ( context, MasterItem.class.getName () );
-        this.poolTracker.open ();
+        this.poolTracker = poolTracker;
+        this.caTracker = caTracker;
     }
 
     @Override
@@ -36,7 +37,7 @@ public class CommonFactoryImpl extends AbstractServiceConfigurationFactory<Abstr
     @Override
     protected Entry<AbstractMasterHandlerImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final AbstractMasterHandlerImpl handler = new CommonSumHandler ( this.poolTracker, this.tag, this.priority );
+        final AbstractMasterHandlerImpl handler = new ScaleHandlerImpl ( configurationId, this.poolTracker, this.priority, this.caTracker );
         handler.update ( parameters );
         return new Entry<AbstractMasterHandlerImpl> ( configurationId, handler );
     }

@@ -5,22 +5,32 @@ import java.util.Hashtable;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
-import org.openscada.da.master.common.sum.CommonFactoryImpl;
+import org.openscada.da.master.MasterItem;
+import org.openscada.da.master.common.scale.ScaleHandlerFactoryImpl;
+import org.openscada.da.master.common.sum.CommonSumHandlerFactoryImpl;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator
 {
 
-    private CommonFactoryImpl factory1;
+    private CommonSumHandlerFactoryImpl factory1;
 
-    private CommonFactoryImpl factory2;
+    private CommonSumHandlerFactoryImpl factory2;
 
-    private CommonFactoryImpl factory3;
+    private CommonSumHandlerFactoryImpl factory3;
 
-    private CommonFactoryImpl factory4;
+    private CommonSumHandlerFactoryImpl factory4;
+
+    private ObjectPoolTracker poolTracker;
+
+    private ServiceTracker caTracker;
+
+    private ScaleHandlerFactoryImpl factory5;
 
     /*
      * (non-Javadoc)
@@ -28,15 +38,29 @@ public class Activator implements BundleActivator
      */
     public void start ( final BundleContext context ) throws Exception
     {
-        this.factory1 = makeFactory ( context, "error", 500 );
-        this.factory2 = makeFactory ( context, "alarm", 1500 );
-        this.factory3 = makeFactory ( context, "manual", 1510 );
-        this.factory4 = makeFactory ( context, "ackRequired", 2500 );
+        this.poolTracker = new ObjectPoolTracker ( context, MasterItem.class.getName () );
+        this.poolTracker.open ();
+
+        this.caTracker = new ServiceTracker ( context, ConfigurationAdministrator.class.getName (), null );
+        this.caTracker.open ();
+
+        this.factory1 = makeFactory ( context, this.poolTracker, "error", 500 );
+        this.factory2 = makeFactory ( context, this.poolTracker, "alarm", 1500 );
+        this.factory3 = makeFactory ( context, this.poolTracker, "manual", 1510 );
+        this.factory4 = makeFactory ( context, this.poolTracker, "ackRequired", 2500 );
+
+        {
+            this.factory5 = new ScaleHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 1000 );
+            final Dictionary<String, String> properties = new Hashtable<String, String> ();
+            properties.put ( Constants.SERVICE_DESCRIPTION, "A local scaling master handler" );
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, ScaleHandlerFactoryImpl.FACTORY_ID );
+            context.registerService ( ConfigurationFactory.class.getName (), this.factory5, properties );
+        }
     }
 
-    private CommonFactoryImpl makeFactory ( final BundleContext context, final String tag, final int priority ) throws InvalidSyntaxException
+    private static CommonSumHandlerFactoryImpl makeFactory ( final BundleContext context, final ObjectPoolTracker poolTracker, final String tag, final int priority ) throws InvalidSyntaxException
     {
-        final CommonFactoryImpl factory = new CommonFactoryImpl ( context, tag, priority );
+        final CommonSumHandlerFactoryImpl factory = new CommonSumHandlerFactoryImpl ( context, poolTracker, tag, priority );
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_DESCRIPTION, String.format ( "A sum %s handler", tag ) );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, "da.master.handler.sum." + tag );
@@ -50,10 +74,18 @@ public class Activator implements BundleActivator
      */
     public void stop ( final BundleContext context ) throws Exception
     {
+
         this.factory1.dispose ();
         this.factory2.dispose ();
         this.factory3.dispose ();
         this.factory4.dispose ();
+        this.factory5.dispose ();
+
+        this.poolTracker.close ();
+        this.poolTracker = null;
+
+        this.caTracker.close ();
+        this.caTracker = null;
     }
 
 }
