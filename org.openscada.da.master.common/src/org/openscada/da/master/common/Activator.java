@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.master.MasterItem;
+import org.openscada.da.master.common.negate.NegateHandlerFactoryImpl;
 import org.openscada.da.master.common.scale.ScaleHandlerFactoryImpl;
 import org.openscada.da.master.common.sum.CommonSumHandlerFactoryImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -32,6 +33,8 @@ public class Activator implements BundleActivator
 
     private ScaleHandlerFactoryImpl factory5;
 
+    private NegateHandlerFactoryImpl factory6;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -55,6 +58,14 @@ public class Activator implements BundleActivator
             properties.put ( Constants.SERVICE_DESCRIPTION, "A local scaling master handler" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, ScaleHandlerFactoryImpl.FACTORY_ID );
             context.registerService ( ConfigurationFactory.class.getName (), this.factory5, properties );
+        }
+
+        {
+            this.factory6 = new NegateHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 1000 );
+            final Dictionary<String, String> properties = new Hashtable<String, String> ();
+            properties.put ( Constants.SERVICE_DESCRIPTION, "A local negate master handler" );
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, NegateHandlerFactoryImpl.FACTORY_ID );
+            context.registerService ( ConfigurationFactory.class.getName (), this.factory6, properties );
         }
     }
 
@@ -80,6 +91,7 @@ public class Activator implements BundleActivator
         this.factory3.dispose ();
         this.factory4.dispose ();
         this.factory5.dispose ();
+        this.factory6.dispose ();
 
         this.poolTracker.close ();
         this.poolTracker = null;
