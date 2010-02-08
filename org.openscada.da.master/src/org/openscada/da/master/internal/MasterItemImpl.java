@@ -411,6 +411,9 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
             if ( nextResult != null )
             {
+                // add previous attribute results first
+                nextResult.getAttributeResults ().putAll ( finalResult.getAttributeResults () );
+
                 finalResult = nextResult;
                 final HashMap<String, Variant> nextAttributes = finalResult.getAttributes ();
 
