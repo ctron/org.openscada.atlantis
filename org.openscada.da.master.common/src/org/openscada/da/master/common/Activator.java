@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.master.MasterItem;
+import org.openscada.da.master.common.manual.ManualHandlerFactoryImpl;
 import org.openscada.da.master.common.negate.NegateHandlerFactoryImpl;
 import org.openscada.da.master.common.scale.ScaleHandlerFactoryImpl;
 import org.openscada.da.master.common.sum.CommonSumHandlerFactoryImpl;
@@ -34,6 +35,8 @@ public class Activator implements BundleActivator
     private ScaleHandlerFactoryImpl factory5;
 
     private NegateHandlerFactoryImpl factory6;
+
+    private ManualHandlerFactoryImpl factory7;
 
     /*
      * (non-Javadoc)
@@ -67,6 +70,14 @@ public class Activator implements BundleActivator
             properties.put ( ConfigurationAdministrator.FACTORY_ID, NegateHandlerFactoryImpl.FACTORY_ID );
             context.registerService ( ConfigurationFactory.class.getName (), this.factory6, properties );
         }
+
+        {
+            this.factory7 = new ManualHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 1000 );
+            final Dictionary<String, String> properties = new Hashtable<String, String> ();
+            properties.put ( Constants.SERVICE_DESCRIPTION, "A local manual override master handler" );
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, ManualHandlerFactoryImpl.FACTORY_ID );
+            context.registerService ( ConfigurationFactory.class.getName (), this.factory7, properties );
+        }
     }
 
     private static CommonSumHandlerFactoryImpl makeFactory ( final BundleContext context, final ObjectPoolTracker poolTracker, final String tag, final int priority ) throws InvalidSyntaxException
@@ -92,6 +103,7 @@ public class Activator implements BundleActivator
         this.factory4.dispose ();
         this.factory5.dispose ();
         this.factory6.dispose ();
+        this.factory7.dispose ();
 
         this.poolTracker.close ();
         this.poolTracker = null;
