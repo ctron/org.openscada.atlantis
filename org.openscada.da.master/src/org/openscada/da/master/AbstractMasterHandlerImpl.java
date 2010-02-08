@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.utils.osgi.pool.ObjectPoolListener;
 import org.openscada.utils.osgi.pool.ObjectPoolServiceTracker;
@@ -23,16 +24,19 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     private final Set<MasterItem> items = new CopyOnWriteArraySet<MasterItem> ();
 
-    private final int priority;
+    private final int defaultPriority;
 
     private String masterId;
 
     private final ObjectPoolTracker poolTracker;
 
-    public AbstractMasterHandlerImpl ( final ObjectPoolTracker poolTracker, final int priority )
+    private int priority;
+
+    public AbstractMasterHandlerImpl ( final ObjectPoolTracker poolTracker, final int defaultPriority )
     {
         this.poolTracker = poolTracker;
-        this.priority = priority;
+        this.defaultPriority = defaultPriority;
+        this.priority = defaultPriority;
     }
 
     public synchronized void dispose ()
@@ -57,11 +61,10 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
             this.tracker = null;
         }
 
-        this.masterId = parameters.get ( MasterItem.MASTER_ID );
-        if ( this.masterId == null )
-        {
-            throw new IllegalArgumentException ( String.format ( "'%s' must be set", MasterItem.MASTER_ID ) );
-        }
+        final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
+
+        this.priority = cfg.getInteger ( "handlerPriority", this.defaultPriority );
+        this.masterId = cfg.getStringChecked ( MasterItem.MASTER_ID, String.format ( "'%s' must be set", MasterItem.MASTER_ID ) );
 
         this.tracker = new ObjectPoolServiceTracker ( this.poolTracker, this.masterId, new ObjectPoolListener () {
 
