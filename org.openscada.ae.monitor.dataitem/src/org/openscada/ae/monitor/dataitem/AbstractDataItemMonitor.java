@@ -286,6 +286,7 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ( request.getAttributes () );
         final WriteAttributeResults result = new WriteAttributeResults ();
+
         simpleHandleAttributes ( attributes, result );
 
         // remove result keys from request
