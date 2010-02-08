@@ -107,7 +107,7 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
         this.masterId = cfg.getStringChecked ( MasterItem.MASTER_ID, "'" + MasterItem.MASTER_ID + "' must be set" );
-        this.handlerPriority = cfg.getInteger ( "handler.priority", getDefaultPriority () );
+        this.handlerPriority = cfg.getInteger ( "handlerPriority", getDefaultPriority () );
         this.monitorType = cfg.getString ( "monitorType", this.defaultMonitorType );
 
         this.attributes = convertAttributes ( properties );
