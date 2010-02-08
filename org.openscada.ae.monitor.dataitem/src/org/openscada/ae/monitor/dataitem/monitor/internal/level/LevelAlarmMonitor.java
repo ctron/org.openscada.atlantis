@@ -152,7 +152,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
         else
         {
             this.failure = true;
-            if ( this.cap )
+            if ( this.cap && isActive () )
             {
                 builder.setValue ( new Variant ( this.limit ) );
             }
