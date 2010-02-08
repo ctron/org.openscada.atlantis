@@ -11,7 +11,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class ScaleHandlerFactoryImpl extends AbstractServiceConfigurationFactory<AbstractMasterHandlerImpl>
 {
-    public static final String FACTORY_ID = "org.openscada.da.master.scaleHandler";
+    public static final String FACTORY_ID = "org.openscada.da.scale.input";
 
     private final int priority;
 

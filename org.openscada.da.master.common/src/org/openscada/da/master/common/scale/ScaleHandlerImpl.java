@@ -17,7 +17,7 @@ public class ScaleHandlerImpl extends AbstractConfigurableMasterHandlerImpl
 {
     private boolean active = false;
 
-    private double scale = 1.0;
+    private double factor = 1.0;
 
     private double offset = 0.0;
 
@@ -42,7 +42,7 @@ public class ScaleHandlerImpl extends AbstractConfigurableMasterHandlerImpl
         final Builder builder = new Builder ( value );
 
         injectAttributes ( builder );
-        builder.setAttribute ( ScaleHandlerFactoryImpl.FACTORY_ID + ".original.value", value.getValue () );
+        builder.setAttribute ( ScaleHandlerFactoryImpl.FACTORY_ID + ".raw", value.getValue () );
 
         final Variant val = value.getValue ();
         if ( val == null || val.isNull () )
@@ -62,7 +62,7 @@ public class ScaleHandlerImpl extends AbstractConfigurableMasterHandlerImpl
         }
         else
         {
-            return new Variant ( value.asDouble ( null ) * this.scale + this.offset );
+            return new Variant ( value.asDouble ( null ) * this.factor + this.offset );
         }
     }
 
@@ -72,7 +72,7 @@ public class ScaleHandlerImpl extends AbstractConfigurableMasterHandlerImpl
         super.update ( parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        this.scale = cfg.getDouble ( "scale", 1 );
+        this.factor = cfg.getDouble ( "factor", 1 );
         this.offset = cfg.getDouble ( "offset", 0 );
         this.active = cfg.getBoolean ( "active", false );
 
@@ -82,7 +82,7 @@ public class ScaleHandlerImpl extends AbstractConfigurableMasterHandlerImpl
     protected void injectAttributes ( final Builder builder )
     {
         builder.setAttribute ( ScaleHandlerFactoryImpl.FACTORY_ID + ".active", this.active ? Variant.TRUE : Variant.FALSE );
-        builder.setAttribute ( ScaleHandlerFactoryImpl.FACTORY_ID + ".scale", new Variant ( this.scale ) );
+        builder.setAttribute ( ScaleHandlerFactoryImpl.FACTORY_ID + ".factor", new Variant ( this.factor ) );
         builder.setAttribute ( ScaleHandlerFactoryImpl.FACTORY_ID + ".offset", new Variant ( this.offset ) );
     }
 
@@ -92,16 +92,16 @@ public class ScaleHandlerImpl extends AbstractConfigurableMasterHandlerImpl
         final Map<String, String> data = new HashMap<String, String> ();
 
         final Variant active = attributes.get ( "active" );
-        final Variant scale = attributes.get ( "scale" );
+        final Variant factor = attributes.get ( "factor" );
         final Variant offset = attributes.get ( "offset" );
 
         if ( active != null && !active.isNull () )
         {
             data.put ( "active", active.asString () );
         }
-        if ( scale != null && !scale.isNull () )
+        if ( factor != null && !factor.isNull () )
         {
-            data.put ( "scale", scale.asString () );
+            data.put ( "factor", factor.asString () );
         }
         if ( offset != null && !offset.isNull () )
         {
