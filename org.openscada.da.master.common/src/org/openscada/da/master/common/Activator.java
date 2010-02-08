@@ -44,10 +44,10 @@ public class Activator implements BundleActivator
         this.caTracker = new ServiceTracker ( context, ConfigurationAdministrator.class.getName (), null );
         this.caTracker.open ();
 
-        this.factory1 = makeFactory ( context, this.poolTracker, "error", 500 );
-        this.factory2 = makeFactory ( context, this.poolTracker, "alarm", 1500 );
-        this.factory3 = makeFactory ( context, this.poolTracker, "manual", 1510 );
-        this.factory4 = makeFactory ( context, this.poolTracker, "ackRequired", 2500 );
+        this.factory2 = makeFactory ( context, this.poolTracker, "alarm", 3000 );
+        this.factory3 = makeFactory ( context, this.poolTracker, "manual", 3100 );
+        this.factory1 = makeFactory ( context, this.poolTracker, "error", 5000 );
+        this.factory4 = makeFactory ( context, this.poolTracker, "ackRequired", 5500 );
 
         {
             this.factory5 = new ScaleHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 1000 );
