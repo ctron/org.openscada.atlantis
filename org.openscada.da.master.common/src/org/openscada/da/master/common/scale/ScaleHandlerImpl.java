@@ -34,15 +34,25 @@ public class ScaleHandlerImpl extends AbstractConfigurableMasterHandlerImpl
             return null;
         }
 
-        return processDataUpdate ( value );
+        try
+        {
+            return processDataUpdate ( value );
+        }
+        catch ( final Throwable e )
+        {
+            final Builder builder = new Builder ( value );
+            builder.setAttribute ( getPrefixed ( "error" ), Variant.TRUE );
+            builder.setAttribute ( getPrefixed ( "error.message" ), new Variant ( e.getMessage () ) );
+            return builder.build ();
+        }
     }
 
-    protected DataItemValue processDataUpdate ( final DataItemValue value )
+    protected DataItemValue processDataUpdate ( final DataItemValue value ) throws Exception
     {
         final Builder builder = new Builder ( value );
 
         injectAttributes ( builder );
-        builder.setAttribute ( ScaleHandlerFactoryImpl.FACTORY_ID + ".raw", value.getValue () );
+        builder.setAttribute ( getPrefixed ( "raw" ), value.getValue () );
 
         final Variant val = value.getValue ();
         if ( val == null || val.isNull () )
@@ -81,9 +91,9 @@ public class ScaleHandlerImpl extends AbstractConfigurableMasterHandlerImpl
 
     protected void injectAttributes ( final Builder builder )
     {
-        builder.setAttribute ( ScaleHandlerFactoryImpl.FACTORY_ID + ".active", this.active ? Variant.TRUE : Variant.FALSE );
-        builder.setAttribute ( ScaleHandlerFactoryImpl.FACTORY_ID + ".factor", new Variant ( this.factor ) );
-        builder.setAttribute ( ScaleHandlerFactoryImpl.FACTORY_ID + ".offset", new Variant ( this.offset ) );
+        builder.setAttribute ( getPrefixed ( "active" ), this.active ? Variant.TRUE : Variant.FALSE );
+        builder.setAttribute ( getPrefixed ( "factor" ), new Variant ( this.factor ) );
+        builder.setAttribute ( getPrefixed ( "offset" ), new Variant ( this.offset ) );
     }
 
     @Override

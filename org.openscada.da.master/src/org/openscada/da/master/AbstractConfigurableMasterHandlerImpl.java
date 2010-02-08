@@ -33,6 +33,11 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
         this.factoryId = factoryId;
     }
 
+    protected String getPrefixed ( final String id )
+    {
+        return this.prefix + id;
+    }
+
     @Override
     public WriteRequestResult processWrite ( final WriteRequest request )
     {
@@ -113,7 +118,7 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
         {
             for ( final String attr : data.keySet () )
             {
-                result.put ( attr, WriteAttributeResult.OK );
+                result.put ( this.prefix + attr, WriteAttributeResult.OK );
             }
 
             final ConfigurationAdministrator admin = (ConfigurationAdministrator)service;
