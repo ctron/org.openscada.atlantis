@@ -1,6 +1,7 @@
 package org.openscada.ae.event.logger.internal;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
@@ -39,7 +40,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
     }
 
     @Override
-    public DataItemValue dataUpdate ( final DataItemValue value )
+    public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
     {
         return null;
     }
