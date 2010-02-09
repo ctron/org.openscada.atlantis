@@ -11,6 +11,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
+import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -75,11 +76,8 @@ public class ScriptDataSource extends AbstractDataSource
 
     private void setScript ( final Map<String, String> parameters ) throws ScriptException
     {
-        String engine = parameters.get ( "engine" );
-        if ( engine == null )
-        {
-            engine = "JavaScript";
-        }
+        final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
+        final String engine = cfg.getString ( "engine", "JavaScript" );
 
         this.scriptContext = new SimpleScriptContext ();
 
