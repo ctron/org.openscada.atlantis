@@ -170,7 +170,7 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
                     return AbstractDataItemMonitor.this.handleProcessWrite ( request );
                 }
 
-                public DataItemValue dataUpdate ( final DataItemValue value )
+                public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
                 {
                     logger.debug ( "Handle data update: {}", value );
                     return AbstractDataItemMonitor.this.handleDataUpdate ( value );

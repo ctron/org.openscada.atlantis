@@ -29,7 +29,7 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
     }
 
     @Override
-    public DataItemValue dataUpdate ( final DataItemValue value )
+    public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
     {
         final Builder builder = new DataItemValue.Builder ( value );
 

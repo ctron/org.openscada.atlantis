@@ -125,7 +125,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
         }
     }
 
-    public abstract DataItemValue dataUpdate ( final DataItemValue value );
+    public abstract DataItemValue dataUpdate ( Map<String, Object> context, final DataItemValue value );
 
     /**
      * Process the write request

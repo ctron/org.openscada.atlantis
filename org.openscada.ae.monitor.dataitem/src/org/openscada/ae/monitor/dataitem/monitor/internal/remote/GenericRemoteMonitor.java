@@ -112,7 +112,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl
     protected abstract DataItemValue handleUpdate ( final DataItemValue itemValue );
 
     @Override
-    public synchronized DataItemValue dataUpdate ( final DataItemValue value )
+    public synchronized DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
     {
         logger.debug ( "Data update" );
 

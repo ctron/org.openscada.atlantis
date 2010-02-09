@@ -1,5 +1,7 @@
 package org.openscada.da.master.common;
 
+import java.util.Map;
+
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
@@ -10,7 +12,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public abstract class AbstractCommonHandlerImpl extends AbstractConfigurableMasterHandlerImpl
 {
 
-    public AbstractCommonHandlerImpl ( String configurationId, ObjectPoolTracker poolTracker, int priority, ServiceTracker caTracker, String prefix, String factoryId )
+    public AbstractCommonHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker caTracker, final String prefix, final String factoryId )
     {
         super ( configurationId, poolTracker, priority, caTracker, prefix, factoryId );
     }
@@ -18,13 +20,13 @@ public abstract class AbstractCommonHandlerImpl extends AbstractConfigurableMast
     protected abstract DataItemValue processDataUpdate ( final DataItemValue value ) throws Exception;
 
     @Override
-    public DataItemValue dataUpdate ( final DataItemValue value )
+    public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
     {
         if ( value == null )
         {
             return null;
         }
-    
+
         try
         {
             return processDataUpdate ( value );
