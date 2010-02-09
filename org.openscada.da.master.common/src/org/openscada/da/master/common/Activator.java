@@ -50,13 +50,13 @@ public class Activator implements BundleActivator
         this.caTracker = new ServiceTracker ( context, ConfigurationAdministrator.class.getName (), null );
         this.caTracker.open ();
 
-        this.factory2 = makeFactory ( context, this.poolTracker, "alarm", 3000 );
-        this.factory3 = makeFactory ( context, this.poolTracker, "manual", 3100 );
+        this.factory2 = makeFactory ( context, this.poolTracker, "alarm", 5020 );
+        this.factory3 = makeFactory ( context, this.poolTracker, "manual", 5010 );
         this.factory1 = makeFactory ( context, this.poolTracker, "error", 5000 );
-        this.factory4 = makeFactory ( context, this.poolTracker, "ackRequired", 5500 );
+        this.factory4 = makeFactory ( context, this.poolTracker, "ackRequired", 5030 );
 
         {
-            this.factory5 = new ScaleHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 1000 );
+            this.factory5 = new ScaleHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 500 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A local scaling master handler" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, ScaleHandlerFactoryImpl.FACTORY_ID );
@@ -64,7 +64,7 @@ public class Activator implements BundleActivator
         }
 
         {
-            this.factory6 = new NegateHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 1000 );
+            this.factory6 = new NegateHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 501 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A local negate master handler" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, NegateHandlerFactoryImpl.FACTORY_ID );
@@ -72,7 +72,7 @@ public class Activator implements BundleActivator
         }
 
         {
-            this.factory7 = new ManualHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 1500 );
+            this.factory7 = new ManualHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 1000 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A local manual override master handler" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, ManualHandlerFactoryImpl.FACTORY_ID );
