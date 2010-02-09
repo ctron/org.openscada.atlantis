@@ -31,10 +31,13 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
     private boolean failure;
 
-    public LevelAlarmMonitor ( final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType, final boolean lowerOk, final int priority, final boolean cap )
+    private final boolean includedOk;
+
+    public LevelAlarmMonitor ( final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
     {
         super ( poolTracker, eventProcessor, id, prefix, defaultMonitorType );
         this.lowerOk = lowerOk;
+        this.includedOk = includedOk;
         this.priority = priority;
         this.cap = cap;
     }
@@ -144,7 +147,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
             setUnsafe ();
             return;
         }
-        else if ( this.value.doubleValue () < this.limit && this.lowerOk || this.value.doubleValue () > this.limit && !this.lowerOk )
+        else if ( LevelHelper.isFailure ( this.value.doubleValue (), this.limit, this.lowerOk, this.includedOk ) )
         {
             this.failure = false;
             setOk ( new Variant ( this.value ), this.timestamp );
@@ -159,4 +162,5 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
             setFailure ( new Variant ( this.value ), this.timestamp );
         }
     }
+
 }

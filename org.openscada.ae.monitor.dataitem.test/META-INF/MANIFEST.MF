@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenSCADA AE DataItem Monitor Testing
+Bundle-SymbolicName: org.openscada.ae.monitor.dataitem.monitor.internal.level
+Bundle-Version: 0.15.0.qualifier
+Bundle-Vendor: inavare GmbH
+Fragment-Host: org.openscada.ae.monitor.dataitem;bundle-version="0.15.0.qualifier"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: org.junit4;bundle-version="4.5.0"

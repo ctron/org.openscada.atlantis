@@ -24,12 +24,15 @@ public class LevelMonitorFactoryImpl extends AbstractMonitorFactory
 
     private final ObjectPoolTracker poolTracker;
 
-    public LevelMonitorFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker, final ObjectPoolImpl servicePool, final EventProcessor eventProcessor, final String type, final String defaultMonitorType, final boolean lowerOk, final int priority, final boolean cap )
+    private final boolean includedOk;
+
+    public LevelMonitorFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker, final ObjectPoolImpl servicePool, final EventProcessor eventProcessor, final String type, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
     {
         super ( context, servicePool, eventProcessor );
         this.poolTracker = poolTracker;
         this.type = type;
         this.lowerOk = lowerOk;
+        this.includedOk = includedOk;
         this.priority = priority;
         this.cap = cap;
         this.defaultMonitorType = defaultMonitorType;
@@ -38,6 +41,6 @@ public class LevelMonitorFactoryImpl extends AbstractMonitorFactory
     @Override
     protected DataItemMonitor createInstance ( final String configurationId, final EventProcessor eventProcessor )
     {
-        return new LevelAlarmMonitor ( this.poolTracker, eventProcessor, configurationId, FACTORY_PREFIX + "." + this.type, this.defaultMonitorType, this.lowerOk, this.priority, this.cap );
+        return new LevelAlarmMonitor ( this.poolTracker, eventProcessor, configurationId, FACTORY_PREFIX + "." + this.type, this.defaultMonitorType, this.lowerOk, this.includedOk, this.priority, this.cap );
     }
 }
