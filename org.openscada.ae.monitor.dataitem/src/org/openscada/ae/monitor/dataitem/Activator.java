@@ -105,12 +105,12 @@ public class Activator implements BundleActivator
             this.factories.add ( factory );
         }
 
-        makeLevelFactory ( context, "ceil", "MAX", true, true, 2000, true );
-        makeLevelFactory ( context, "highhigh", "HH", true, false, 2000, false );
-        makeLevelFactory ( context, "high", "H", true, false, 2000, false );
-        makeLevelFactory ( context, "low", "L", false, false, 2000, false );
-        makeLevelFactory ( context, "lowlow", "LL", false, false, 2000, false );
-        makeLevelFactory ( context, "floor", "MIN", false, true, 2000, true );
+        makeLevelFactory ( context, "ceil", "MAX", true, true, 1400, true );
+        makeLevelFactory ( context, "highhigh", "HH", true, false, 1300, false );
+        makeLevelFactory ( context, "high", "H", true, false, 1300, false );
+        makeLevelFactory ( context, "low", "L", false, false, 1300, false );
+        makeLevelFactory ( context, "lowlow", "LL", false, false, 1300, false );
+        makeLevelFactory ( context, "floor", "MIN", false, true, 1400, true );
 
         logger.info ( "Starting up...done" );
 
