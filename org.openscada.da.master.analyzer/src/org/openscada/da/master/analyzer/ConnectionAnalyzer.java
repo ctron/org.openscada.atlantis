@@ -2,10 +2,12 @@ package org.openscada.da.master.analyzer;
 
 import java.util.concurrent.Executor;
 
+import org.openscada.core.Variant;
 import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.connection.provider.ConnectionService;
+import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.osgi.factory.DataItemFactory;
 import org.openscada.da.server.common.osgi.factory.SimpleObjectExporter;
 import org.osgi.framework.BundleContext;
@@ -31,8 +33,42 @@ public class ConnectionAnalyzer implements ConnectionStateListener
         this.value = new ConnectionAnalyzerStatus ();
         this.exporter.setValue ( this.value );
 
+        this.factory.createOutput ( "connect", null, new WriteHandler () {
+
+            public void handleWrite ( final Variant value ) throws Exception
+            {
+                ConnectionAnalyzer.this.handleConnect ();
+            }
+        } );
+
+        this.factory.createOutput ( "disconnect", null, new WriteHandler () {
+
+            public void handleWrite ( final Variant value ) throws Exception
+            {
+                ConnectionAnalyzer.this.handleDisconnect ();
+            }
+        } );
+
         this.service = service;
         service.getConnection ().addConnectionStateListener ( this );
+    }
+
+    protected void handleDisconnect ()
+    {
+        final ConnectionService service = this.service;
+        if ( service != null )
+        {
+            service.disconnect ();
+        }
+    }
+
+    protected void handleConnect ()
+    {
+        final ConnectionService service = this.service;
+        if ( service != null )
+        {
+            service.connect ();
+        }
     }
 
     public void dispose ()
