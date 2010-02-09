@@ -147,7 +147,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
             setUnsafe ();
             return;
         }
-        else if ( LevelHelper.isFailure ( this.value.doubleValue (), this.limit, this.lowerOk, this.includedOk ) )
+        else if ( !LevelHelper.isFailure ( this.value.doubleValue (), this.limit, this.lowerOk, this.includedOk ) )
         {
             this.failure = false;
             setOk ( new Variant ( this.value ), this.timestamp );
