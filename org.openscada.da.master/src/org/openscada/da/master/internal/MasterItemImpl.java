@@ -270,10 +270,12 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
             handler = new ArrayList<HandlerEntry> ( this.itemHandler );
         }
 
+        final Map<String, Object> context = new HashMap<String, Object> ();
+
         for ( final HandlerEntry entry : handler )
         {
             logger.debug ( "Process: {} -> {}", new Object[] { entry.getPriority (), entry.getHandler () } );
-            final DataItemValue newValue = entry.getHandler ().dataUpdate ( value );
+            final DataItemValue newValue = entry.getHandler ().dataUpdate ( context, value );
             if ( newValue != null )
             {
                 value = newValue;

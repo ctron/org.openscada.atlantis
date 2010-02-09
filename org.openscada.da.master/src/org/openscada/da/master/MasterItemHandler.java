@@ -1,10 +1,25 @@
 package org.openscada.da.master;
 
+import java.util.Map;
+
 import org.openscada.da.client.DataItemValue;
 
 public interface MasterItemHandler
 {
-    public abstract DataItemValue dataUpdate ( DataItemValue value );
+    /**
+     * Called when data changed or the handler chain changed.
+     * <p>
+     * The call gets a context object provided which each handler can use
+     * to store context information of one calculation run. Each calculation
+     * run gets a fresh new context. The context is intended to pass data
+     * from one handler to the next.
+     * </p>
+     * @param context the context object
+     * @param value the changed value
+     * @return the processes value or <code>null</code> if the value was not changed
+     * by the handler
+     */
+    public abstract DataItemValue dataUpdate ( Map<String, Object> context, DataItemValue value );
 
     /**
      * Handle a write request
