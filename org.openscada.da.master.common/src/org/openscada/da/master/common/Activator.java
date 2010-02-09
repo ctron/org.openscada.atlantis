@@ -72,7 +72,7 @@ public class Activator implements BundleActivator
         }
 
         {
-            this.factory7 = new ManualHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 1000 );
+            this.factory7 = new ManualHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 1500 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A local manual override master handler" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, ManualHandlerFactoryImpl.FACTORY_ID );

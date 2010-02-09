@@ -85,6 +85,8 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
 
     private final Executor executor;
 
+    private boolean debug;
+
     public DataItemSourceImpl ( final BundleContext context, final Executor executor )
     {
         this.context = context;
@@ -121,6 +123,7 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
 
         this.itemId = cfg.getStringChecked ( "item.id", "'item.id' must be set" );
         this.connectionId = cfg.getStringChecked ( "connection.id", "'connection.id' must be checked" );
+        this.debug = cfg.getBoolean ( "debug", false );
 
         connect ();
     }
@@ -210,10 +213,16 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
 
     private void injectAttributes ( final Builder newValue )
     {
-        newValue.setAttribute ( "source.item.subscriptionState", new Variant ( newValue.getSubscriptionState ().toString () ) );
+        if ( this.debug )
+        {
+            newValue.setAttribute ( "source.hasConnection", this.connection != null ? Variant.TRUE : Variant.FALSE );
+            newValue.setAttribute ( "source.item.subscriptionState", new Variant ( newValue.getSubscriptionState ().toString () ) );
+        }
+
         newValue.setAttribute ( "source.itemId", new Variant ( this.itemId ) );
         newValue.setAttribute ( "source.connectionId", new Variant ( this.connectionId ) );
-        newValue.setAttribute ( "source.hasConnection", this.connection != null ? Variant.TRUE : Variant.FALSE );
+
+        newValue.setAttribute ( "source.error", newValue.getSubscriptionState () != SubscriptionState.CONNECTED ? Variant.TRUE : Variant.FALSE );
     }
 
     public synchronized void notifySubscriptionChange ( final SubscriptionState state, final Throwable error )

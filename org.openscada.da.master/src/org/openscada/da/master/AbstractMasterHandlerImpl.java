@@ -30,7 +30,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     private final ObjectPoolTracker poolTracker;
 
-    private int priority;
+    private volatile int priority;
 
     public AbstractMasterHandlerImpl ( final ObjectPoolTracker poolTracker, final int defaultPriority )
     {
@@ -107,7 +107,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
         logger.debug ( "Addeding master: {}", item );
         if ( this.items.add ( item ) )
         {
-            logger.debug ( "Added master: {}", item );
+            logger.debug ( "Added master: {} / {}", new Object[] { item, this.priority } );
             item.addHandler ( this, this.priority );
         }
     }

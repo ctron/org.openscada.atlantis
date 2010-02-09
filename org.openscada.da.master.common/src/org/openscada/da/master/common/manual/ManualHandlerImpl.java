@@ -7,6 +7,7 @@ import java.util.Map;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResults;
@@ -48,8 +49,29 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         final String reason = this.reason;
         final Date timestamp = this.timestamp;
 
+        final Variant originalError = builder.getAttributes ().remove ( "error" );
+        builder.setAttribute ( getPrefixed ( "error.original" ), originalError );
+        builder.setAttribute ( "error", Variant.FALSE );
+        builder.setSubscriptionState ( SubscriptionState.CONNECTED );
+        builder.setSubscriptionError ( null );
+
+        final Variant originalErrorCount = builder.getAttributes ().remove ( "error.count" );
+        if ( originalErrorCount != null )
+        {
+            builder.setAttribute ( "error.count", new Variant ( 0 ) );
+            builder.setAttribute ( getPrefixed ( "error.count.original" ), originalErrorCount );
+        }
+
+        final Variant originalErrorItems = builder.getAttributes ().remove ( "error.items" );
+        if ( originalErrorItems != null )
+        {
+            builder.setAttribute ( "error.items", new Variant ( "" ) );
+            builder.setAttribute ( getPrefixed ( "error.items.original" ), originalErrorItems );
+        }
+
         builder.setAttribute ( getPrefixed ( "value.original" ), value.getValue () );
         builder.setAttribute ( getPrefixed ( "active" ), Variant.TRUE );
+
         builder.setValue ( this.value );
 
         if ( user != null )
