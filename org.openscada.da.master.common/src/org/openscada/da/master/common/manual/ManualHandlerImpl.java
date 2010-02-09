@@ -37,8 +37,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
         injectAttributes ( builder );
 
-        final Variant val = value.getValue ();
-        if ( val == null || val.isNull () || this.value.isNull () )
+        if ( this.value.isNull () )
         {
             return builder.build ();
         }
