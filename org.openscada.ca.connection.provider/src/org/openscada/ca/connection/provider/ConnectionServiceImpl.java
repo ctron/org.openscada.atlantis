@@ -1,6 +1,6 @@
-package org.openscada.ae.connection.provider;
+package org.openscada.ca.connection.provider;
 
-import org.openscada.ae.client.Connection;
+import org.openscada.ca.client.Connection;
 import org.openscada.core.connection.provider.AbstractConnectionService;
 
 public class ConnectionServiceImpl extends AbstractConnectionService implements ConnectionService
@@ -14,7 +14,7 @@ public class ConnectionServiceImpl extends AbstractConnectionService implements 
     }
 
     @Override
-    public org.openscada.ae.client.Connection getConnection ()
+    public org.openscada.ca.client.Connection getConnection ()
     {
         return this.connection;
     }

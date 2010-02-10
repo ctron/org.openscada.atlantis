@@ -1,6 +1,6 @@
-package org.openscada.ae.connection.provider;
+package org.openscada.ca.connection.provider;
 
-import org.openscada.ae.client.Connection;
+import org.openscada.ca.client.Connection;
 
 public interface ConnectionService extends org.openscada.core.connection.provider.ConnectionService
 {

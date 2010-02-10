@@ -1,4 +1,4 @@
-package org.openscada.ae.connection.provider;
+package org.openscada.ca.connection.provider;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
