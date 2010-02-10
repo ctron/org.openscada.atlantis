@@ -66,7 +66,6 @@ public class ScriptSourceFactory extends AbstractServiceConfigurationFactory<Scr
         this.objectPool.removeService ( id, service );
 
         service.dispose ();
-        this.poolTracker.close ();
     }
 
     @Override
