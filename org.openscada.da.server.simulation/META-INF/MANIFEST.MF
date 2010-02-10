@@ -36,6 +36,7 @@ Export-Package: org.openscada.da.server.simulation.filesource;version="0.15.0.qu
  org.openscada.da.server.simulation.scriptomatic;version="0.15.0.qualifier";
   uses:="org.openscada.da.server.simulation.scriptomatic.configuration,
    org.openscada.da.server.common.chain,
+   org.openscada.core.server.common.session,
    org.openscada.da.server.common.impl,
    org.openscada.utils.concurrent,
    org.openscada.core,
