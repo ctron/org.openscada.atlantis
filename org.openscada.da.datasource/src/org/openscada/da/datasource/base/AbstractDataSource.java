@@ -1,9 +1,11 @@
 package org.openscada.da.datasource.base;
 
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
@@ -26,6 +28,8 @@ public abstract class AbstractDataSource implements DataSource
 
     private final Set<DataSourceListener> listeners = new HashSet<DataSourceListener> ();
 
+    private Variant lastValue = Variant.NULL;
+
     public synchronized void addListener ( final DataSourceListener listener )
     {
         if ( this.listeners.add ( listener ) )
@@ -46,10 +50,41 @@ public abstract class AbstractDataSource implements DataSource
         this.listeners.remove ( listener );
     }
 
-    protected synchronized void updateData ( final DataItemValue value )
+    protected synchronized void updateData ( DataItemValue value )
     {
         logger.debug ( "Update data: {} -> {}", new Object[] { value, value.getAttributes () } );
+
+        if ( this.value != null )
+        {
+            if ( this.value.equals ( value ) )
+            {
+                logger.debug ( "No data change. Discarding" );
+                return;
+            }
+        }
+
+        if ( value.getTimestamp () == null )
+        {
+            try
+            {
+                if ( !this.lastValue.equals ( value.getValue () ) )
+                {
+                    final DataItemValue.Builder builder = new DataItemValue.Builder ( value );
+                    builder.setTimestamp ( Calendar.getInstance () );
+                    value = builder.build ();
+                }
+            }
+            catch ( final Exception e )
+            {
+                // nothing
+            }
+        }
+
+        this.lastValue = value.getValue ();
         this.value = value;
+
+        final DataItemValue finalValue = value;
+
         final Set<DataSourceListener> listeners = new HashSet<DataSourceListener> ( this.listeners );
         getExecutor ().execute ( new Runnable () {
 
@@ -57,7 +92,7 @@ public abstract class AbstractDataSource implements DataSource
             {
                 for ( final DataSourceListener listener : listeners )
                 {
-                    listener.stateChanged ( value );
+                    listener.stateChanged ( finalValue );
                 }
             }
         } );
