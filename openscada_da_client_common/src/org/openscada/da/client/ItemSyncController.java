@@ -114,7 +114,10 @@ public class ItemSyncController implements ItemUpdateListener
         this.itemManager = itemManager;
         this.itemId = itemId;
 
-        this.connection.setItemUpdateListener ( this.itemId, this );
+        synchronized ( this )
+        {
+            this.connection.setItemUpdateListener ( this.itemId, this );
+        }
     }
 
     public String getItemName ()
@@ -157,7 +160,7 @@ public class ItemSyncController implements ItemUpdateListener
         }
     }
 
-    public void triggerSync ()
+    public synchronized void triggerSync ()
     {
         this.itemManager.getExecutor ().execute ( new Runnable () {
 
@@ -188,7 +191,7 @@ public class ItemSyncController implements ItemUpdateListener
         }
     }
 
-    protected void subscribe ()
+    protected synchronized void subscribe ()
     {
         try
         {
@@ -202,7 +205,7 @@ public class ItemSyncController implements ItemUpdateListener
         }
     }
 
-    protected void unsubscribe ()
+    protected synchronized void unsubscribe ()
     {
         try
         {
@@ -217,34 +220,31 @@ public class ItemSyncController implements ItemUpdateListener
         }
     }
 
-    private void handleError ( final Throwable e )
+    private synchronized void handleError ( final Throwable e )
     {
         log.warn ( "Failed to subscribe", e );
         this.subscribed = false;
         notifySubscriptionChange ( SubscriptionState.DISCONNECTED, e );
     }
 
-    public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
+    public synchronized void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         boolean change = false;
 
-        synchronized ( this )
+        // update value
+        if ( this.cachedValue == null || !this.cachedValue.equals ( value ) )
         {
-            // update value
-            if ( this.cachedValue == null || !this.cachedValue.equals ( value ) )
-            {
-                change = true;
-                this.cachedValue = value;
-            }
+            change = true;
+            this.cachedValue = value;
+        }
 
-            // update attributes
-            if ( attributes != null )
+        // update attributes
+        if ( attributes != null )
+        {
+            if ( !attributes.isEmpty () || cache )
             {
-                if ( !attributes.isEmpty () || cache )
-                {
-                    AttributesHelper.mergeAttributes ( this.cachedAttributes, attributes, cache );
-                    change = true;
-                }
+                AttributesHelper.mergeAttributes ( this.cachedAttributes, attributes, cache );
+                change = true;
             }
         }
 
@@ -263,18 +263,15 @@ public class ItemSyncController implements ItemUpdateListener
         }
     }
 
-    public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable e )
+    public synchronized void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable e )
     {
-        synchronized ( this )
+        if ( this.subscriptionState.equals ( subscriptionState ) && this.subscriptionError == e )
         {
-            if ( this.subscriptionState.equals ( subscriptionState ) && this.subscriptionError == e )
-            {
-                return;
-            }
-
-            this.subscriptionState = subscriptionState;
-            this.subscriptionError = e;
+            return;
         }
+
+        this.subscriptionState = subscriptionState;
+        this.subscriptionError = e;
 
         this.itemManager.getExecutor ().execute ( new Runnable () {
 
