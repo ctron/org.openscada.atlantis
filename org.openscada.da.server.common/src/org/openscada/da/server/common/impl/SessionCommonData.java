@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,97 +29,97 @@ import org.openscada.da.server.common.DataItem;
 
 public class SessionCommonData
 {
-    private final Set<DataItem> _items = new HashSet<DataItem> ();
+    private final Set<DataItem> items = new HashSet<DataItem> ();
 
-    private final Map<Object, Location> _paths = new HashMap<Object, Location> ();
+    private final Map<Object, Location> paths = new HashMap<Object, Location> ();
 
-    private final Map<Location, Object> _pathRev = new HashMap<Location, Object> ();
+    private final Map<Location, Object> pathRev = new HashMap<Location, Object> ();
 
     public void addItem ( final DataItem item )
     {
-        synchronized ( this._items )
+        synchronized ( this.items )
         {
-            this._items.add ( item );
+            this.items.add ( item );
         }
     }
 
     public void removeItem ( final DataItem item )
     {
-        synchronized ( this._items )
+        synchronized ( this.items )
         {
-            this._items.remove ( item );
+            this.items.remove ( item );
         }
     }
 
     public boolean containsItem ( final DataItem item )
     {
-        synchronized ( this._items )
+        synchronized ( this.items )
         {
-            return this._items.contains ( item );
+            return this.items.contains ( item );
         }
     }
 
     public Set<DataItem> getItems ()
     {
-        synchronized ( this._items )
+        synchronized ( this.items )
         {
-            return this._items;
+            return this.items;
         }
     }
 
     // paths
     public void addPath ( final Object tag, final Location path )
     {
-        synchronized ( this._paths )
+        synchronized ( this.paths )
         {
-            this._paths.put ( tag, path );
-            this._pathRev.put ( path, tag );
+            this.paths.put ( tag, path );
+            this.pathRev.put ( path, tag );
         }
     }
 
     public void removePath ( final Location path )
     {
-        synchronized ( this._paths )
+        synchronized ( this.paths )
         {
-            final Object tag = this._pathRev.get ( path );
+            final Object tag = this.pathRev.get ( path );
             if ( tag != null )
             {
-                this._pathRev.remove ( path );
-                this._paths.remove ( tag );
+                this.pathRev.remove ( path );
+                this.paths.remove ( tag );
             }
         }
     }
 
     public Object getTag ( final Location path )
     {
-        synchronized ( this._paths )
+        synchronized ( this.paths )
         {
-            return this._pathRev.get ( path );
+            return this.pathRev.get ( path );
         }
     }
 
     public boolean containsPath ( final Object tag )
     {
-        synchronized ( this._paths )
+        synchronized ( this.paths )
         {
-            return this._paths.containsKey ( tag );
+            return this.paths.containsKey ( tag );
         }
     }
 
     public Map<Object, Location> getPaths ()
     {
-        synchronized ( this._paths )
+        synchronized ( this.paths )
         {
-            return this._paths;
+            return this.paths;
         }
     }
 
     public void clearPaths ()
     {
-        synchronized ( this._paths )
+        synchronized ( this.paths )
         {
-            this._paths.clear ();
-            this._pathRev.clear ();
+            this.paths.clear ();
+            this.pathRev.clear ();
         }
     }
 }
