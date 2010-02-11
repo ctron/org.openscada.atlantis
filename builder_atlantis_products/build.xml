@@ -35,8 +35,9 @@
 	<!-- ================================= 
           target: build              
          ================================= -->
-    <target name="build" depends="populate" description="OpenSCADA Aurora">
+    <target name="build" depends="populate" description="OpenSCADA Atlantis Products">
     	<openscada.productBuild builder="builder"/>
+    	<openscada.productBuild builder="builder.master"/>
     </target>
 
 	<!-- ================================= 
@@ -49,7 +50,8 @@
           target: publish              
          ================================= -->
     <target name="publish" depends="" description="Publish artifacts">
-    	<openscada.publish.product project="atlantis" name="hdserver"/>
+    	<openscada.publish.product project="atlantis" name="hdserver" builder="builder"/>
+    	<openscada.publish.product project="atlantis" name="master" builder="builder.master"/>
     </target>
 	
 	<!-- ================================= 
