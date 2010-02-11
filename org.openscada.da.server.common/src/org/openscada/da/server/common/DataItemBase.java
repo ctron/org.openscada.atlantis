@@ -107,7 +107,7 @@ public abstract class DataItemBase implements DataItem
     /**
      * Notify a data change without checking for a real change.
      * <p>
-     * See {@link #notifyData(Variant, Map, boolean)} when to use the method!
+     * See {@link #notifyData(Variant, Map, boolean)} when and how to use the method!
      * @param value the value to send
      * @param attributes the attributes to send
      */
