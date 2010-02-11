@@ -86,20 +86,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
     private WriteAttributesOperationController writeAttributesController = null;
 
-    private Executor executor = new Executor () {
-
-        public void execute ( final Runnable command )
-        {
-            try
-            {
-                command.run ();
-            }
-            catch ( final Throwable e )
-            {
-                logger.info ( "Uncaught exception in default executor", e );
-            }
-        }
-    };
+    private final Executor executor;
 
     @Override
     public String getRequiredVersion ()
@@ -442,6 +429,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         }
         catch ( final Exception e )
         {
+            logger.warn ( "Failed to perform write", e );
             callback.error ( e );
         }
     }
@@ -611,13 +599,6 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         }
     }
 
-    @Override
-    protected void finalize () throws Throwable
-    {
-        logger.debug ( "Finalizing connection" );
-        super.finalize ();
-    }
-
     public Entry[] browse ( final Location location ) throws NoConnectionException, OperationException
     {
         return browse ( location, 0 );
@@ -678,11 +659,6 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         {
             callback.error ( e );
         }
-    }
-
-    public void setExecutor ( final Executor executor )
-    {
-        this.executor = executor;
     }
 
     public Executor getExecutor ()
