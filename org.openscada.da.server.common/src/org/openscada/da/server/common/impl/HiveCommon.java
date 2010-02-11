@@ -348,7 +348,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
             }
 
             // add new topic to the new item subscription manager
-            this.itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( item, this.hiveEventListener ) );
+            this.itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( this.getOperationService (), item, this.hiveEventListener ) );
         }
     }
 

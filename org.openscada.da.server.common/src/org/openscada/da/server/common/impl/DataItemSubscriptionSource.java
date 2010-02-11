@@ -21,9 +21,10 @@ package org.openscada.da.server.common.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionInformation;
@@ -44,7 +45,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
 {
     private DataItem dataItem = null;
 
-    private final Set<DataItemSubscriptionListener> listeners = new CopyOnWriteArraySet<DataItemSubscriptionListener> ();
+    private final Set<DataItemSubscriptionListener> listeners = new HashSet<DataItemSubscriptionListener> ();
 
     private boolean bound = false;
 
@@ -54,11 +55,14 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
 
     private final HiveEventListener hiveEventListener;
 
-    public DataItemSubscriptionSource ( final DataItem dataItem, final HiveEventListener hiveEventListener )
+    private final Executor executor;
+
+    public DataItemSubscriptionSource ( final Executor executor, final DataItem dataItem, final HiveEventListener hiveEventListener )
     {
         super ();
         this.dataItem = dataItem;
         this.hiveEventListener = hiveEventListener;
+        this.executor = executor;
     }
 
     /**
@@ -77,7 +81,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
     }
 
     /**
-     * Unbind is from the data item
+     * Unbind us from the data item
      *
      */
     private synchronized void unbind ()
@@ -87,10 +91,11 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
             return;
         }
 
+        this.dataItem.setListener ( null );
+
         this.cacheValue = null;
         this.cacheAttributes.clear ();
         this.bound = false;
-        this.dataItem.setListener ( null );
     }
 
     public synchronized void addListener ( final Collection<SubscriptionInformation> listeners )
@@ -99,7 +104,18 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         {
             this.listeners.add ( (DataItemSubscriptionListener)listener.getListener () );
             // send current state
-            ( (DataItemSubscriptionListener)listener.getListener () ).dataChanged ( this.dataItem, this.cacheValue, this.cacheAttributes, true );
+
+            final DataItem dataItem = this.dataItem;
+            final Variant cacheValue = this.cacheValue;
+            final Map<String, Variant> attributes = new HashMap<String, Variant> ( this.cacheAttributes );
+
+            this.executor.execute ( new Runnable () {
+
+                public void run ()
+                {
+                    ( (DataItemSubscriptionListener)listener.getListener () ).dataChanged ( dataItem, cacheValue, attributes, true );
+                }
+            } );
         }
 
         if ( !this.listeners.isEmpty () )
@@ -126,15 +142,12 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         return subscriptionInformation.getListener () instanceof DataItemSubscriptionListener;
     }
 
-    public void dataChanged ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache )
+    public synchronized void dataChanged ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache )
     {
         // update cache
         if ( attributes != null )
         {
-            synchronized ( this.cacheAttributes )
-            {
-                AttributesHelper.mergeAttributes ( this.cacheAttributes, attributes );
-            }
+            AttributesHelper.mergeAttributes ( this.cacheAttributes, attributes );
         }
         if ( variant != null )
         {
@@ -142,11 +155,34 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         }
 
         // send out the events
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                fireDataChange ( item, variant, attributes, cache );
+            }
+        } );
+
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                updateStats ( item, variant, attributes, cache );
+            }
+        } );
+
+    }
+
+    private synchronized void fireDataChange ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache )
+    {
         for ( final DataItemSubscriptionListener listener : this.listeners )
         {
             listener.dataChanged ( item, variant, attributes, cache );
         }
+    }
 
+    private void updateStats ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache )
+    {
         // send out the hive events
         if ( this.hiveEventListener != null )
         {
