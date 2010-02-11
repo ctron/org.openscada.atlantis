@@ -22,7 +22,7 @@ public abstract class AbstractDataSource implements DataSource
 {
     private final static Logger logger = LoggerFactory.getLogger ( AbstractDataSource.class );
 
-    private DataItemValue value;
+    private DataItemValue value = new DataItemValue ();
 
     protected abstract Executor getExecutor ();
 
@@ -77,6 +77,7 @@ public abstract class AbstractDataSource implements DataSource
             catch ( final Exception e )
             {
                 // nothing
+                logger.warn ( "Failed to update timestamp", e );
             }
         }
 
@@ -85,17 +86,18 @@ public abstract class AbstractDataSource implements DataSource
 
         final DataItemValue finalValue = value;
 
-        final Set<DataSourceListener> listeners = new HashSet<DataSourceListener> ( this.listeners );
-        getExecutor ().execute ( new Runnable () {
+        // fire listeners
+        for ( final DataSourceListener listener : this.listeners )
+        {
+            getExecutor ().execute ( new Runnable () {
 
-            public void run ()
-            {
-                for ( final DataSourceListener listener : listeners )
+                public void run ()
                 {
                     listener.stateChanged ( finalValue );
                 }
-            }
-        } );
+
+            } );
+        }
 
     }
 
