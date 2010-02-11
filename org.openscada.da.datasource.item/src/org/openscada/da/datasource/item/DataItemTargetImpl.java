@@ -103,6 +103,8 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
         {
             this.dataSource.removeListener ( this );
             this.dataSource = null;
+
+            stateChanged ( null );
         }
     }
 
@@ -150,6 +152,8 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
 
     public synchronized void stateChanged ( final DataItemValue value )
     {
+        this.currentValue = value;
+
         if ( value == null )
         {
             notifyData ( Variant.NULL, new HashMap<String, Variant> (), true );
@@ -161,7 +165,6 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
 
             AttributesHelper.set ( target, value.getAttributes (), diff );
 
-            this.currentValue = value;
             notifyData ( value.getValue (), diff );
         }
     }
