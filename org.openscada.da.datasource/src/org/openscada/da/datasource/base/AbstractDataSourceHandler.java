@@ -62,6 +62,8 @@ public abstract class AbstractDataSourceHandler extends AbstractDataSource
         {
             this.dataSource.removeListener ( this.dataSourceListener );
             this.dataSource = null;
+
+            stateChanged ( null );
         }
 
         this.dataSource = dataSource;
