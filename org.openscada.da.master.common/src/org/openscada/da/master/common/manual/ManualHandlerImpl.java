@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openscada.ae.Event;
+import org.openscada.ae.Event.Fields;
+import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
@@ -26,9 +29,17 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
     private Date timestamp;
 
-    public ManualHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker caTracker )
+    private final EventProcessor eventProcessor;
+
+    private final String id;
+
+    private final Map<String, Variant> eventAttributes = new HashMap<String, Variant> ();
+
+    public ManualHandlerImpl ( final String configurationId, final EventProcessor eventProcessor, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, ManualHandlerFactoryImpl.FACTORY_ID, ManualHandlerFactoryImpl.FACTORY_ID );
+        this.id = configurationId;
+        this.eventProcessor = eventProcessor;
     }
 
     @Override
@@ -138,16 +149,41 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
     {
         final Map<String, String> data = new HashMap<String, String> ();
 
-        final Variant value = attributes.get ( "value" );
+        final Event.EventBuilder builder = Event.create ();
 
+        builder.attributes ( this.eventAttributes );
+
+        builder.entryTimestamp ( new Date () );
+        builder.sourceTimestamp ( new Date () );
+        builder.attribute ( Fields.MONITOR_TYPE, "MAN" );
+        builder.attribute ( Fields.SOURCE, this.id );
+
+        final Variant value = attributes.get ( "value" );
         if ( value != null )
         {
+            if ( value == null || value.isNull () )
+            {
+                builder.attribute ( Fields.MESSAGE, "Resetting manual value" );
+                builder.attribute ( Fields.MESSAGE_CODE, "MAN-RESET" );
+                builder.attribute ( Fields.EVENT_TYPE, "-" );
+            }
+            else
+            {
+                builder.attribute ( Fields.MESSAGE, "Setting manual value" );
+                builder.attribute ( Fields.MESSAGE_CODE, "MAN-SET" );
+                builder.attribute ( Fields.EVENT_TYPE, "+" );
+            }
+
             data.put ( "value", value.toString () );
+            builder.attribute ( Fields.VALUE, value );
         }
 
-        if ( writeInformation.getUserInformation () != null )
+        if ( writeInformation.getUserInformation () != null && writeInformation.getUserInformation ().getName () != null )
         {
-            data.put ( "user", writeInformation.getUserInformation ().getName () );
+            final String name = writeInformation.getUserInformation ().getName ();
+            data.put ( "user", name );
+            builder.attribute ( Fields.ACTOR_NAME, name );
+            builder.attribute ( Fields.ACTOR_TYPE, "USER" );
         }
         else
         {
@@ -166,6 +202,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         if ( reason != null && !reason.isNull () )
         {
             data.put ( "reason", reason.toString () );
+            builder.attribute ( Fields.COMMENT, reason );
         }
 
         final Variant timestamp = attributes.get ( "timestamp" );
@@ -174,7 +211,8 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
             data.put ( "timestamp", "" + timestamp.asLong ( System.currentTimeMillis () ) );
         }
 
+        this.eventProcessor.publishEvent ( builder.build () );
+
         return updateConfiguration ( data, false );
     }
-
 }

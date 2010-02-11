@@ -3,6 +3,7 @@ package org.openscada.da.master.common;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.master.MasterItem;
@@ -19,6 +20,8 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator
 {
+
+    private EventProcessor eventProcessor;
 
     private CommonSumHandlerFactoryImpl factory1;
 
@@ -44,6 +47,9 @@ public class Activator implements BundleActivator
      */
     public void start ( final BundleContext context ) throws Exception
     {
+        this.eventProcessor = new EventProcessor ( context );
+        this.eventProcessor.open ();
+
         this.poolTracker = new ObjectPoolTracker ( context, MasterItem.class.getName () );
         this.poolTracker.open ();
 
@@ -72,7 +78,7 @@ public class Activator implements BundleActivator
         }
 
         {
-            this.factory7 = new ManualHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 1000 );
+            this.factory7 = new ManualHandlerFactoryImpl ( context, this.eventProcessor, this.poolTracker, this.caTracker, 1000 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A local manual override master handler" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, ManualHandlerFactoryImpl.FACTORY_ID );
@@ -110,6 +116,9 @@ public class Activator implements BundleActivator
 
         this.caTracker.close ();
         this.caTracker = null;
+
+        this.eventProcessor.close ();
+        this.eventProcessor = null;
     }
 
 }

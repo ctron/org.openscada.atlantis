@@ -2,6 +2,7 @@ package org.openscada.da.master.common.manual;
 
 import java.util.Map;
 
+import org.openscada.ae.event.EventProcessor;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -19,9 +20,12 @@ public class ManualHandlerFactoryImpl extends AbstractServiceConfigurationFactor
 
     private final ServiceTracker caTracker;
 
-    public ManualHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker, final ServiceTracker caTracker, final int priority ) throws InvalidSyntaxException
+    private final EventProcessor eventProcessor;
+
+    public ManualHandlerFactoryImpl ( final BundleContext context, final EventProcessor eventProcessor, final ObjectPoolTracker poolTracker, final ServiceTracker caTracker, final int priority ) throws InvalidSyntaxException
     {
         super ( context );
+        this.eventProcessor = eventProcessor;
         this.priority = priority;
         this.poolTracker = poolTracker;
         this.caTracker = caTracker;
@@ -37,7 +41,7 @@ public class ManualHandlerFactoryImpl extends AbstractServiceConfigurationFactor
     @Override
     protected Entry<AbstractMasterHandlerImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final AbstractMasterHandlerImpl handler = new ManualHandlerImpl ( configurationId, this.poolTracker, this.priority, this.caTracker );
+        final AbstractMasterHandlerImpl handler = new ManualHandlerImpl ( configurationId, this.eventProcessor, this.poolTracker, this.priority, this.caTracker );
         handler.update ( parameters );
         return new Entry<AbstractMasterHandlerImpl> ( configurationId, handler );
     }
