@@ -152,11 +152,10 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
 
     public synchronized void stateChanged ( final DataItemValue value )
     {
-        this.currentValue = value;
-
         if ( value == null )
         {
             notifyData ( Variant.NULL, new HashMap<String, Variant> (), true );
+            this.currentValue = value;
         }
         else
         {
@@ -165,7 +164,11 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
 
             AttributesHelper.set ( target, value.getAttributes (), diff );
 
-            notifyData ( value.getValue (), diff );
+            if ( !diff.isEmpty () )
+            {
+                notifyData ( value.getValue (), diff );
+            }
+            this.currentValue = value;
         }
     }
 }
