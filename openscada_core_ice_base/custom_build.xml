@@ -8,6 +8,8 @@
 	<property file="${build.root}/config/build.properties"/>
 	<property file="${build.root}/common/config/local.properties"/>
 	<property file="${build.root}/common/config/build.properties"/>
+
+	<property name="ice.version" value="3.3"/>
 	
 	<!-- ===================================================================== -->
 	<!-- Default target                                                        -->
