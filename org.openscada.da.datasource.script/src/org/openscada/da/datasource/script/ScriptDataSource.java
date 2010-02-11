@@ -24,9 +24,13 @@ import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ScriptDataSource extends AbstractDataSource
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ScriptDataSource.class );
 
     private final Executor executor;
 
@@ -41,6 +45,8 @@ public class ScriptDataSource extends AbstractDataSource
     private ScriptEngine scriptEngine;
 
     private final ObjectPoolTracker poolTracker;
+
+    private boolean disposed;
 
     public ScriptDataSource ( final ObjectPoolTracker poolTracker, final Executor executor )
     {
@@ -68,10 +74,12 @@ public class ScriptDataSource extends AbstractDataSource
         return new InstantErrorFuture<WriteResult> ( new OperationException ( "Not supported" ) );
     }
 
-    public void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final Map<String, String> parameters ) throws Exception
     {
-        setDataSources ( parameters );
         setScript ( parameters );
+        setDataSources ( parameters );
+
+        handleChange ();
     }
 
     private void setScript ( final Map<String, String> parameters ) throws ScriptException
@@ -114,6 +122,8 @@ public class ScriptDataSource extends AbstractDataSource
 
     private void addDataSource ( final String datasourceKey, final String datasourceId ) throws InvalidSyntaxException
     {
+        logger.info ( "Adding data source: {} -> {}", new Object[] { datasourceKey, datasourceId } );
+
         final DataSourceHandler dsHandler = new DataSourceHandler ( this.poolTracker, datasourceId, new DataSourceHandlerListener () {
 
             @Override
@@ -128,31 +138,38 @@ public class ScriptDataSource extends AbstractDataSource
     /**
      * Handle data change
      */
-    protected void handleChange ()
+    protected synchronized void handleChange ()
     {
-        // gather all data
-        final Map<String, DataItemValue> values = new HashMap<String, DataItemValue> ();
-        for ( final Map.Entry<String, DataSourceHandler> entry : this.sources.entrySet () )
+        if ( this.disposed )
         {
-            values.put ( entry.getKey (), entry.getValue ().getValue () );
+            return;
         }
 
         // calcuate
         if ( this.updateCommand != null )
         {
+            // gather all data
+            final Map<String, DataItemValue> values = new HashMap<String, DataItemValue> ();
+            for ( final Map.Entry<String, DataSourceHandler> entry : this.sources.entrySet () )
+            {
+                values.put ( entry.getKey (), entry.getValue ().getValue () );
+            }
+
             try
             {
                 this.scriptContext.setAttribute ( "data", values, ScriptContext.ENGINE_SCOPE );
                 setResult ( this.scriptEngine.eval ( this.updateCommand, this.scriptContext ) );
             }
-            catch ( final Exception e )
+            catch ( final Throwable e )
             {
+                logger.warn ( "Failed to evaluate", e );
+                logger.debug ( "Failed script: {}", this.updateCommand );
                 setError ( e );
             }
         }
     }
 
-    private void setError ( final Exception e )
+    private synchronized void setError ( final Throwable e )
     {
         final Builder builder = new DataItemValue.Builder ();
         builder.setValue ( Variant.NULL );
@@ -162,16 +179,33 @@ public class ScriptDataSource extends AbstractDataSource
         this.updateData ( builder.build () );
     }
 
-    private void setResult ( final Object result )
+    private synchronized void setResult ( final Object result )
     {
-        final Builder builder = new DataItemValue.Builder ();
-        builder.setValue ( new Variant ( result ) );
-        builder.setTimestamp ( Calendar.getInstance () );
-        this.updateData ( builder.build () );
+        logger.debug ( "Setting result: {}", result );
+
+        if ( result instanceof Builder )
+        {
+            logger.debug ( "Using builder" );
+            this.updateData ( ( (Builder)result ).build () );
+        }
+        else if ( result instanceof DataItemValue )
+        {
+            logger.debug ( "Using data item value" );
+            this.updateData ( ( (DataItemValue)result ) );
+        }
+        else
+        {
+            logger.debug ( "Falling back to plain value" );
+            final Builder builder = new DataItemValue.Builder ();
+            builder.setValue ( new Variant ( result ) );
+            builder.setTimestamp ( Calendar.getInstance () );
+            this.updateData ( builder.build () );
+        }
     }
 
-    public void dispose ()
+    public synchronized void dispose ()
     {
+        this.disposed = true;
         clearSources ();
     }
 

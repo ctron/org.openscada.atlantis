@@ -13,9 +13,13 @@ import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ScriptSourceFactory extends AbstractServiceConfigurationFactory<ScriptDataSource>
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ScriptSourceFactory.class );
 
     private final Executor executor;
 
@@ -63,6 +67,8 @@ public class ScriptSourceFactory extends AbstractServiceConfigurationFactory<Scr
     @Override
     protected void disposeService ( final String id, final ScriptDataSource service )
     {
+        logger.info ( "Disposing: {}", id );
+
         this.objectPool.removeService ( id, service );
 
         service.dispose ();
