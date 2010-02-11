@@ -18,14 +18,9 @@ import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.da.server.common.WriteAttributesHelper;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.NotifyFuture;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MemoryDataSource extends AbstractDataSource
 {
-
-    private final static Logger logger = LoggerFactory.getLogger ( MemoryDataSource.class );
-
     private final Executor executor;
 
     private final DataItemValue.Builder builder = new Builder ();
