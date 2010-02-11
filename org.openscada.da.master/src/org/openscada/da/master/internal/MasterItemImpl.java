@@ -168,11 +168,15 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
     private final Executor executor;
 
+    private String dataSourceId;
+
+    private final boolean debug = true;
+
     public MasterItemImpl ( final Executor executor, final BundleContext context, final String id, final ObjectPoolTracker dataSourcePoolTracker ) throws InvalidSyntaxException
     {
         super ( dataSourcePoolTracker );
         this.executor = executor;
-        this.sourceValue = initValue ();
+        stateChanged ( initValue () );
     }
 
     private static DataItemValue initValue ()
@@ -237,7 +241,19 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
     @Override
     protected synchronized void stateChanged ( final DataItemValue value )
     {
-        this.sourceValue = value;
+        logger.debug ( "state change: {}", value );
+        if ( value != null )
+        {
+            this.sourceValue = value;
+        }
+        else
+        {
+            final Builder builder = new Builder ();
+            builder.setAttribute ( "master.source.error", Variant.TRUE );
+            builder.setAttribute ( "master.datasource.id", new Variant ( this.dataSourceId ) );
+            this.sourceValue = builder.build ();
+        }
+
         reprocess ();
     }
 
@@ -281,6 +297,16 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
                 value = newValue;
             }
         }
+
+        if ( this.debug )
+        {
+            final Builder builder = new Builder ( value );
+
+            builder.setAttribute ( "master.debug.handlerCount", new Variant ( handler.size () ) );
+
+            value = builder.build ();
+        }
+
         return value;
     }
 
@@ -340,10 +366,6 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
                     }
                 } );
             }
-            else
-            {
-                listener.complete ( new WriteResult () );
-            }
 
             // process attributes
             final HashMap<String, Variant> attributes = result.getAttributes ();
@@ -356,7 +378,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
                     {
                         try
                         {
-                            listener.complete ( future.get () );
+                            listener.complete ( mergeResults ( result.getAttributeResults (), future.get () ) );
                         }
                         catch ( final Throwable e )
                         {
@@ -434,12 +456,10 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
     public synchronized void update ( final Map<String, String> properties ) throws InvalidSyntaxException
     {
-        setDataSource ( properties.get ( "datasource.id" ) );
+        this.dataSourceId = properties.get ( "datasource.id" );
+        stateChanged ( null );
 
-        final DataItemValue.Builder builder = new Builder ();
-        builder.setAttribute ( "master.waitingFor.datasource", new Variant ( properties.get ( "datasource.id" ) ) );
-        this.sourceValue = builder.build ();
-        reprocess ();
+        setDataSource ( this.dataSourceId );
     }
 
 }
