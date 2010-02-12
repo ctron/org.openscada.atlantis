@@ -20,8 +20,8 @@
 package org.openscada.core.client.net;
 
 import java.net.SocketAddress;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -48,7 +48,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 {
     private static Logger logger = Logger.getLogger ( ConnectionBase.class );
 
-    private final List<ConnectionStateListener> connectionStateListeners = new CopyOnWriteArrayList<ConnectionStateListener> ();
+    private final Set<ConnectionStateListener> connectionStateListeners = new CopyOnWriteArraySet<ConnectionStateListener> ();
 
     private ConnectionState connectionState = ConnectionState.CLOSED;
 
