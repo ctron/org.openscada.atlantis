@@ -214,6 +214,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.master.common" />
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource.memory"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.datasource.sum"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource.proxy"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource.item"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource.script"/>
