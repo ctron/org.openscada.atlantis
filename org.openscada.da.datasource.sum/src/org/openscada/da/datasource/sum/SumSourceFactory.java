@@ -55,7 +55,7 @@ public class SumSourceFactory extends AbstractServiceConfigurationFactory<SumDat
     {
         logger.debug ( "Creating new memory source: {}", configurationId );
 
-        final SumDataSource source = new SumDataSource ( this.executor );
+        final SumDataSource source = new SumDataSource ( this.poolTracker, this.executor );
         source.update ( parameters );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();

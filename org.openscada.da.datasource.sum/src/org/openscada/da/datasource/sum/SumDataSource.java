@@ -1,8 +1,8 @@
 package org.openscada.da.datasource.sum;
 
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.OperationException;
@@ -10,28 +10,23 @@ import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
-import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.WriteInformation;
-import org.openscada.da.datasource.base.AbstractDataSource;
-import org.openscada.da.server.common.WriteAttributesHelper;
-import org.openscada.utils.concurrent.FutureTask;
+import org.openscada.da.datasource.base.AbstractMultiSourceDataSource;
+import org.openscada.da.datasource.base.DataSourceHandler;
+import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 
-public class SumDataSource extends AbstractDataSource
+public class SumDataSource extends AbstractMultiSourceDataSource
 {
     private final Executor executor;
 
-    private final DataItemValue.Builder builder = new Builder ();
-
-    private boolean disposed;
-
-    public SumDataSource ( final Executor executor )
+    public SumDataSource ( final ObjectPoolTracker poolTracker, final Executor executor )
     {
+        super ( poolTracker );
         this.executor = executor;
-
-        this.builder.setSubscriptionState ( SubscriptionState.CONNECTED );
     }
 
     @Override
@@ -42,87 +37,37 @@ public class SumDataSource extends AbstractDataSource
 
     public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final WriteInformation writeInformation, final Map<String, Variant> attributes )
     {
-        final FutureTask<WriteAttributeResults> task = new FutureTask<WriteAttributeResults> ( new Callable<WriteAttributeResults> () {
-
-            public WriteAttributeResults call () throws Exception
-            {
-                return SumDataSource.this.setAttributes ( attributes );
-            }
-        } );
-
-        this.executor.execute ( task );
-        return task;
+        return new InstantErrorFuture<WriteAttributeResults> ( new OperationException ( "Not supported" ) );
     }
 
     public NotifyFuture<WriteResult> startWriteValue ( final WriteInformation writeInformation, final Variant value )
     {
-        final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
-
-            public WriteResult call () throws Exception
-            {
-                return SumDataSource.this.setValue ( value );
-            }
-        } );
-
-        this.executor.execute ( task );
-        return task;
+        return new InstantErrorFuture<WriteResult> ( new OperationException ( "Not supported" ) );
     }
 
-    protected synchronized WriteResult setValue ( final Variant value )
+    public void update ( final Map<String, String> parameters ) throws Exception
     {
-        if ( this.disposed )
+    }
+
+    @Override
+    protected synchronized void handleChange ()
+    {
+        final Collection<DataItemValue> values = new ArrayList<DataItemValue> ( this.sources.size () );
+        for ( final DataSourceHandler handler : this.sources.values () )
         {
-            return new WriteResult ( new OperationException ( "Disposed" ).fillInStackTrace () );
+            values.add ( handler.getValue () );
         }
 
-        this.builder.setValue ( value );
-
-        this.builder.setTimestamp ( Calendar.getInstance () );
-        update ();
-
-        return new WriteResult ();
+        updateData ( aggregate ( values ) );
     }
 
-    protected synchronized WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
+    private DataItemValue aggregate ( final Collection<DataItemValue> values )
     {
-        if ( this.disposed )
-        {
-            return WriteAttributesHelper.errorUnhandled ( null, attributes );
-        }
+        final Builder builder = new Builder ();
+        builder.setSubscriptionState ( SubscriptionState.CONNECTED );
+        builder.setValue ( new Variant ( values.size () ) );
 
-        final WriteAttributeResults results = new WriteAttributeResults ();
-
-        for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
-        {
-            results.put ( entry.getKey (), WriteAttributeResult.OK );
-
-            if ( entry.getValue () == null )
-            {
-                this.builder.getAttributes ().remove ( entry.getKey () );
-            }
-            else
-            {
-                this.builder.getAttributes ().put ( entry.getKey (), entry.getValue () );
-            }
-        }
-
-        this.builder.setTimestamp ( Calendar.getInstance () );
-        update ();
-
-        return results;
+        return builder.build ();
     }
 
-    protected void update ()
-    {
-        updateData ( this.builder.build () );
-    }
-
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
-    {
-    }
-
-    public synchronized void dispose ()
-    {
-        this.disposed = true;
-    }
 }
