@@ -42,8 +42,6 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     private ScriptEngine scriptEngine;
 
-    private boolean disposed;
-
     public ScriptDataSource ( final ObjectPoolTracker poolTracker, final Executor executor )
     {
         super ( poolTracker );
@@ -107,11 +105,6 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
     @Override
     protected synchronized void handleChange ()
     {
-        if ( this.disposed )
-        {
-            return;
-        }
-
         // calcuate
         if ( this.updateCommand != null )
         {
@@ -172,7 +165,6 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     public synchronized void dispose ()
     {
-        this.disposed = true;
         super.dispose ();
     }
 

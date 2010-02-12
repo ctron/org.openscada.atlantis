@@ -15,9 +15,9 @@ public abstract class AbstractMultiSourceDataSource extends AbstractDataSource
 
     protected final Map<String, DataSourceHandler> sources = new HashMap<String, DataSourceHandler> ();
 
-    protected abstract void handleChange ();
-
     protected final ObjectPoolTracker poolTracker;
+
+    private boolean disposed;
 
     public AbstractMultiSourceDataSource ( final ObjectPoolTracker poolTracker )
     {
@@ -40,6 +40,8 @@ public abstract class AbstractMultiSourceDataSource extends AbstractDataSource
         }
     }
 
+    protected abstract void handleChange ();
+
     private synchronized void addDataSource ( final String datasourceKey, final String datasourceId ) throws InvalidSyntaxException
     {
         logger.info ( "Adding data source: {} -> {}", new Object[] { datasourceKey, datasourceId } );
@@ -48,10 +50,19 @@ public abstract class AbstractMultiSourceDataSource extends AbstractDataSource
 
             public void handleChange ()
             {
-                AbstractMultiSourceDataSource.this.handleChange ();
+                AbstractMultiSourceDataSource.this.triggerHandleChange ();
             }
         } );
         this.sources.put ( datasourceKey, dsHandler );
+    }
+
+    protected synchronized void triggerHandleChange ()
+    {
+        if ( this.disposed )
+        {
+            return;
+        }
+        handleChange ();
     }
 
     /**
@@ -66,8 +77,9 @@ public abstract class AbstractMultiSourceDataSource extends AbstractDataSource
         this.sources.clear ();
     }
 
-    public void dispose ()
+    public synchronized void dispose ()
     {
+        this.disposed = true;
         clearSources ();
     }
 }
