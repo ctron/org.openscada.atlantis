@@ -117,7 +117,7 @@ public class MemoryDataSource extends AbstractDataSource
         updateData ( this.builder.build () );
     }
 
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public void update ( final Map<String, String> parameters ) throws Exception
     {
     }
 
