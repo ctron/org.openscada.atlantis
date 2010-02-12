@@ -43,7 +43,7 @@
       <feature id="org.openscada.utgard" version="0.7.0.qualifier"/>
       <feature id="org.openscada.aurora" version="0.15.0.qualifier"/>
       <feature id="org.eclipse.rcp" version="3.5.0.v20090519-9SA0FwxFv6x089WEf-TWh11"/>
-      <feature id="org.openscada.ca.install.feature" version="0.14.0.qualifier"/>
+      <feature id="org.openscada.ca.install.feature" version="0.15.0.qualifier"/>
    </features>
 
    <configurations>
