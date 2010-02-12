@@ -163,10 +163,4 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         }
     }
 
-    @Override
-    public void dispose ()
-    {
-        super.dispose ();
-    }
-
 }
