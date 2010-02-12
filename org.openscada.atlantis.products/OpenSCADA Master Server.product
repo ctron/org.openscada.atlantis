@@ -3,7 +3,6 @@
 
 <product name="OpenSCADA Master Server" uid="org.openscada.master.server" version="0.15.0.qualifier" useFeatures="true" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -19,7 +18,6 @@
 
    <windowImages/>
 
-
    <launcher>
       <solaris/>
       <win useIco="false">
@@ -27,11 +25,9 @@
       </win>
    </launcher>
 
-
    <vm>
       <linux>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</linux>
    </vm>
-
 
    <plugins>
    </plugins>
@@ -45,6 +41,7 @@
       <feature id="org.openscada.ca.install.feature" version="0.14.0.qualifier"/>
       <feature id="org.openscada.ae" version="0.15.0.qualifier"/>
       <feature id="org.eclipse.rcp" version="3.5.0.v20090519-9SA0FwxFv6x089WEf-TWh11"/>
+      <feature id="org.openscada.oxygen" version="0.1.0.qualifier"/>
    </features>
 
    <configurations>

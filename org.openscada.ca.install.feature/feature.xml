@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.ca.install.feature"
       label="Feature"
-      version="0.14.0.qualifier"
+      version="0.15.0.qualifier"
       provider-name="inavare GmbH">
 
    <description url="http://www.example.com/description">
@@ -102,20 +102,6 @@
 
    <plugin
          id="javax.servlet.jsp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.jsp.jasper"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.jsp.jasper.registry"
          download-size="0"
          install-size="0"
          version="0.0.0"
