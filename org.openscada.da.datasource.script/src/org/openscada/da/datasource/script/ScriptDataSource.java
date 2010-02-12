@@ -19,22 +19,20 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.WriteInformation;
-import org.openscada.da.datasource.base.AbstractDataSource;
+import org.openscada.da.datasource.base.AbstractMultiSourceDataSource;
+import org.openscada.da.datasource.base.DataSourceHandler;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
-import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ScriptDataSource extends AbstractDataSource
+public class ScriptDataSource extends AbstractMultiSourceDataSource
 {
 
-    private final static Logger logger = LoggerFactory.getLogger ( ScriptDataSource.class );
+    final static Logger logger = LoggerFactory.getLogger ( ScriptDataSource.class );
 
     private final Executor executor;
-
-    private final Map<String, DataSourceHandler> sources = new HashMap<String, DataSourceHandler> ();
 
     private final ScriptEngineManager manager;
 
@@ -44,13 +42,11 @@ public class ScriptDataSource extends AbstractDataSource
 
     private ScriptEngine scriptEngine;
 
-    private final ObjectPoolTracker poolTracker;
-
     private boolean disposed;
 
     public ScriptDataSource ( final ObjectPoolTracker poolTracker, final Executor executor )
     {
-        this.poolTracker = poolTracker;
+        super ( poolTracker );
         this.executor = executor;
 
         this.manager = new ScriptEngineManager ();
@@ -105,39 +101,10 @@ public class ScriptDataSource extends AbstractDataSource
         this.updateCommand = parameters.get ( "updateCommand" );
     }
 
-    private void setDataSources ( final Map<String, String> parameters ) throws InvalidSyntaxException
-    {
-        clearSources ();
-
-        for ( final Map.Entry<String, String> entry : parameters.entrySet () )
-        {
-            final String key = entry.getKey ();
-            final String value = entry.getValue ();
-            if ( key.startsWith ( "datasource." ) )
-            {
-                addDataSource ( key.substring ( "datasource.".length () ), value );
-            }
-        }
-    }
-
-    private void addDataSource ( final String datasourceKey, final String datasourceId ) throws InvalidSyntaxException
-    {
-        logger.info ( "Adding data source: {} -> {}", new Object[] { datasourceKey, datasourceId } );
-
-        final DataSourceHandler dsHandler = new DataSourceHandler ( this.poolTracker, datasourceId, new DataSourceHandlerListener () {
-
-            @Override
-            public void handleChange ()
-            {
-                ScriptDataSource.this.handleChange ();
-            }
-        } );
-        this.sources.put ( datasourceKey, dsHandler );
-    }
-
     /**
      * Handle data change
      */
+    @Override
     protected synchronized void handleChange ()
     {
         if ( this.disposed )
@@ -206,19 +173,7 @@ public class ScriptDataSource extends AbstractDataSource
     public synchronized void dispose ()
     {
         this.disposed = true;
-        clearSources ();
-    }
-
-    /**
-     * Clear all datasources
-     */
-    protected void clearSources ()
-    {
-        for ( final DataSourceHandler source : this.sources.values () )
-        {
-            source.dispose ();
-        }
-        this.sources.clear ();
+        super.dispose ();
     }
 
 }

@@ -1,4 +1,4 @@
-package org.openscada.da.datasource.script;
+package org.openscada.da.datasource.base;
 
 public interface DataSourceHandlerListener
 {

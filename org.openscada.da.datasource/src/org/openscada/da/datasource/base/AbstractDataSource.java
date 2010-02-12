@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractDataSource implements DataSource
 {
-    private final static Logger logger = LoggerFactory.getLogger ( AbstractDataSource.class );
+    public final static Logger logger = LoggerFactory.getLogger ( AbstractDataSource.class );
 
     private DataItemValue value = new DataItemValue ();
 
