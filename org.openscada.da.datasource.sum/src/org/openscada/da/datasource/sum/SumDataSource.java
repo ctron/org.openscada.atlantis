@@ -1,4 +1,4 @@
-package org.openscada.da.datasource.memory;
+package org.openscada.da.datasource.sum;
 
 import java.util.Calendar;
 import java.util.Map;
@@ -19,7 +19,7 @@ import org.openscada.da.server.common.WriteAttributesHelper;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.NotifyFuture;
 
-public class MemoryDataSource extends AbstractDataSource
+public class SumDataSource extends AbstractDataSource
 {
     private final Executor executor;
 
@@ -27,7 +27,7 @@ public class MemoryDataSource extends AbstractDataSource
 
     private boolean disposed;
 
-    public MemoryDataSource ( final Executor executor )
+    public SumDataSource ( final Executor executor )
     {
         this.executor = executor;
 
@@ -46,7 +46,7 @@ public class MemoryDataSource extends AbstractDataSource
 
             public WriteAttributeResults call () throws Exception
             {
-                return MemoryDataSource.this.setAttributes ( attributes );
+                return SumDataSource.this.setAttributes ( attributes );
             }
         } );
 
@@ -60,7 +60,7 @@ public class MemoryDataSource extends AbstractDataSource
 
             public WriteResult call () throws Exception
             {
-                return MemoryDataSource.this.setValue ( value );
+                return SumDataSource.this.setValue ( value );
             }
         } );
 

@@ -1,4 +1,4 @@
-package org.openscada.da.datasource.memory;
+package org.openscada.da.datasource.sum;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -16,10 +16,10 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MemorySourceFactory extends AbstractServiceConfigurationFactory<MemoryDataSource>
+public class SumSourceFactory extends AbstractServiceConfigurationFactory<SumDataSource>
 {
 
-    private final static Logger logger = LoggerFactory.getLogger ( MemorySourceFactory.class );
+    private final static Logger logger = LoggerFactory.getLogger ( SumSourceFactory.class );
 
     private final Executor executor;
 
@@ -29,7 +29,7 @@ public class MemorySourceFactory extends AbstractServiceConfigurationFactory<Mem
 
     private final ServiceRegistration poolRegistration;
 
-    public MemorySourceFactory ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
+    public SumSourceFactory ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
     {
         super ( context );
         this.executor = executor;
@@ -51,11 +51,11 @@ public class MemorySourceFactory extends AbstractServiceConfigurationFactory<Mem
     }
 
     @Override
-    protected Entry<MemoryDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<SumDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         logger.debug ( "Creating new memory source: {}", configurationId );
 
-        final MemoryDataSource source = new MemoryDataSource ( this.executor );
+        final SumDataSource source = new SumDataSource ( this.executor );
         source.update ( parameters );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
@@ -63,11 +63,11 @@ public class MemorySourceFactory extends AbstractServiceConfigurationFactory<Mem
 
         this.objectPool.addService ( configurationId, source, properties );
 
-        return new Entry<MemoryDataSource> ( configurationId, source );
+        return new Entry<SumDataSource> ( configurationId, source );
     }
 
     @Override
-    protected void disposeService ( final String id, final MemoryDataSource service )
+    protected void disposeService ( final String id, final SumDataSource service )
     {
         logger.info ( "Disposing: {}", id );
 
@@ -77,7 +77,7 @@ public class MemorySourceFactory extends AbstractServiceConfigurationFactory<Mem
     }
 
     @Override
-    protected Entry<MemoryDataSource> updateService ( final String configurationId, final Entry<MemoryDataSource> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<SumDataSource> updateService ( final String configurationId, final Entry<SumDataSource> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

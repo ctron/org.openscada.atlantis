@@ -1,4 +1,4 @@
-package org.openscada.da.datasource.memory;
+package org.openscada.da.datasource.sum;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -16,7 +16,7 @@ public class Activator implements BundleActivator
 
     private ExecutorService executor;
 
-    private MemorySourceFactory factory;
+    private SumSourceFactory factory;
 
     /*
      * (non-Javadoc)
@@ -25,7 +25,7 @@ public class Activator implements BundleActivator
     public void start ( final BundleContext context ) throws Exception
     {
         this.executor = Executors.newSingleThreadExecutor ();
-        this.factory = new MemorySourceFactory ( context, this.executor );
+        this.factory = new SumSourceFactory ( context, this.executor );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_DESCRIPTION, "A memory data source" );
