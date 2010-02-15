@@ -35,7 +35,14 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
 
     protected String getPrefixed ( final String id )
     {
-        return this.prefix + id;
+        if ( id == null )
+        {
+            return this.prefix;
+        }
+        else
+        {
+            return this.prefix + id;
+        }
     }
 
     @Override
