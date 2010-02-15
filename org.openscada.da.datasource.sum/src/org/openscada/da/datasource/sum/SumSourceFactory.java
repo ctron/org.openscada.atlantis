@@ -53,7 +53,7 @@ public class SumSourceFactory extends AbstractServiceConfigurationFactory<SumDat
     @Override
     protected Entry<SumDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        logger.debug ( "Creating new memory source: {}", configurationId );
+        logger.debug ( "Creating new summary source: {}", configurationId );
 
         final SumDataSource source = new SumDataSource ( this.poolTracker, this.executor );
         source.update ( parameters );
