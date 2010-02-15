@@ -77,7 +77,7 @@ public class SumDataSource extends AbstractMultiSourceDataSource
 
             if ( key.startsWith ( "datasource." ) )
             {
-                final String toks[] = value.substring ( "datasource.".length () ).split ( "#", 2 );
+                final String toks[] = value.split ( "#", 2 );
                 final String id = toks[0];
 
                 if ( toks.length > 1 )
