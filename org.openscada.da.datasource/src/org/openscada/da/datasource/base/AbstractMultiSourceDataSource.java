@@ -19,10 +19,20 @@ public abstract class AbstractMultiSourceDataSource extends AbstractDataSource
 
     private boolean disposed;
 
+    private final DataSourceHandlerListener listener;
+
     public AbstractMultiSourceDataSource ( final ObjectPoolTracker poolTracker )
     {
         super ();
         this.poolTracker = poolTracker;
+
+        this.listener = new DataSourceHandlerListener () {
+
+            public void handleChange ()
+            {
+                AbstractMultiSourceDataSource.this.triggerHandleChange ();
+            }
+        };
     }
 
     protected synchronized void setDataSources ( final Map<String, String> parameters ) throws InvalidSyntaxException
@@ -42,17 +52,11 @@ public abstract class AbstractMultiSourceDataSource extends AbstractDataSource
 
     protected abstract void handleChange ();
 
-    private synchronized void addDataSource ( final String datasourceKey, final String datasourceId ) throws InvalidSyntaxException
+    protected synchronized void addDataSource ( final String datasourceKey, final String datasourceId ) throws InvalidSyntaxException
     {
         logger.info ( "Adding data source: {} -> {}", new Object[] { datasourceKey, datasourceId } );
 
-        final DataSourceHandler dsHandler = new DataSourceHandler ( this.poolTracker, datasourceId, new DataSourceHandlerListener () {
-
-            public void handleChange ()
-            {
-                AbstractMultiSourceDataSource.this.triggerHandleChange ();
-            }
-        } );
+        final DataSourceHandler dsHandler = new DataSourceHandler ( this.poolTracker, datasourceId, this.listener );
         this.sources.put ( datasourceKey, dsHandler );
     }
 
