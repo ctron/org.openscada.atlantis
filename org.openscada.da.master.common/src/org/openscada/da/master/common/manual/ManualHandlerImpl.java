@@ -82,6 +82,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
         builder.setAttribute ( getPrefixed ( "value.original" ), value.getValue () );
         builder.setAttribute ( getPrefixed ( "active" ), Variant.TRUE );
+        builder.setAttribute ( getPrefixed ( null ), Variant.TRUE );
 
         builder.setValue ( this.value );
 
@@ -138,6 +139,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
     protected void injectAttributes ( final Builder builder )
     {
+        builder.setAttribute ( getPrefixed ( null ), this.value.isNull () ? Variant.FALSE : Variant.TRUE );
         builder.setAttribute ( getPrefixed ( "active" ), this.value.isNull () ? Variant.FALSE : Variant.TRUE );
         builder.setAttribute ( getPrefixed ( "value" ), this.value );
         builder.setAttribute ( getPrefixed ( "reason" ), new Variant ( this.reason ) );
