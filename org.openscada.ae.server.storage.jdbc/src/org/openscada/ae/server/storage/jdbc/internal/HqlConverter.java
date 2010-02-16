@@ -83,7 +83,7 @@ public class HqlConverter
         {
             //
         }
-        result.hql += " ORDER BY M.sourceTimestamp, M.entryTimestamp, M.id DESC";
+        result.hql += " ORDER BY M.sourceTimestamp DESC, M.entryTimestamp DESC, M.id DESC";
         return result;
     }
 
