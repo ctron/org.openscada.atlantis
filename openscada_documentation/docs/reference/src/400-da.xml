@@ -31,6 +31,26 @@
 			<acronym>DA</acronym> servers can also be seen as <emphasis>drivers</emphasis>
 			to different data sources.  
 		</para>
+		
+		<sect2 id="da_basic_definitions"><title>Basic definitions</title>
+			
+			<sect3 id="da_alarm_state"><title>Alarm State</title>
+				<para>To be written</para>
+			</sect3>
+			
+			<sect3 id="da_error_state"><title>Error State</title>
+				<para>To be written</para>
+			</sect3>
+			
+			<sect3 id="da_manual_state"><title>Manual Override State</title>
+				<para>To be written</para>
+			</sect3>
+			
+			<sect3 id="da_ackRequired_state"><title>Acknowledge Required State</title>
+				<para>To be written</para>
+			</sect3>
+		</sect2>
+		
 	</sect1>
 	
 	<sect1><title>The Data Item</title>
@@ -45,6 +65,73 @@
 		
 	<sect2><title>Common Data Item Attributes</title>
 		<para>
+		<table><title>GMPP connection URI parts</title>
+			<tgroup cols="3">
+			<thead>
+				<row>
+					<entry>Name</entry>
+					<entry>Type</entry>
+					<entry>Description</entry>
+				</row>
+			</thead>
+			<tbody>
+				
+				<row>
+					<entry>alarm</entry>
+					<entry>Boolean</entry>
+					<entry>
+					A summary alarm attribute which combines all alarm states,
+					as defined in <link linkend="da_basic_definitions"></link>,
+					using a logical <quote>or</quote>.
+					This attribute is read only.  
+					</entry>
+				</row>
+				<row>
+					<entry>error</entry>
+					<entry>Boolean</entry>
+					<entry>
+					A summary error attribute which combines all error states,
+					as defined in <link linkend="da_basic_definitions"></link>,
+					using a logical <quote>or</quote>.
+					This attribute is read only.
+					</entry>
+				</row>
+				<row>
+					<entry>manual</entry>
+					<entry>Boolean</entry>
+					<entry>
+					A summary manual attribute which combines all manual states,
+					as defined in <link linkend="da_basic_definitions"></link>,
+					using a logical <quote>or</quote>.
+					This attribute is read only.
+					</entry>
+				</row>
+				<row>
+					<entry>ackRequired</entry>
+					<entry>Boolean</entry>
+					<entry>
+					A summary acknowledge required attribute which combines all required
+					acknowledge states, as defined in <link linkend="da_basic_definitions"></link>,
+					using a logical <quote>or</quote>.
+					This attribute is read only.
+					</entry>
+				</row>
+				<row>
+					<entry>debug</entry>
+					<entry>Boolean</entry>
+					<entry>
+					A debug state item that can be written by some client in order to
+					activate debug functionality on this item only. This might <abbrev>e.g.</abbrev>
+					activate some more attributes or system logging information. This attribute must
+					be read- and writable by clients.
+					</entry>
+				</row>
+
+
+				
+			</tbody>
+			</tgroup>
+		</table>
 		</para>
 	</sect2>
 		
