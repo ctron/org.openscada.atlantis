@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>openscada_core_client_net</name>
+	<name>org.openscada.core.client.net</name>
 	<comment></comment>
 	<projects>
 		<project>openscada_core_net_base</project>

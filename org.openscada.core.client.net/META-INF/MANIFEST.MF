@@ -1,32 +1,28 @@
 Manifest-Version: 1.0
 Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
 Import-Package: org.apache.log4j;version="1.2",
- org.apache.mina.core.filterchain;version="2.0",
- org.apache.mina.core.future;version="2.0",
- org.apache.mina.core.service;version="2.0",
- org.apache.mina.core.session;version="2.0",
- org.openscada.core;version="0.14",
- org.openscada.core.client;version="0.14",
- org.openscada.core.client.net;version="0.14",
- org.openscada.core.net;version="0.14",
- org.openscada.net.base;version="0.14",
- org.openscada.net.base.data;version="0.14",
- org.openscada.net.mina;version="0.14",
+ org.apache.mina.core.filterchain;version="2.0.0",
+ org.apache.mina.core.future;version="2.0.0",
+ org.apache.mina.core.service;version="2.0.0",
+ org.apache.mina.core.session;version="2.0.0",
+ org.openscada.core;version="0.14.0",
+ org.openscada.core.client;version="0.14.0",
+ org.openscada.core.client.net;version="0.14.0",
+ org.openscada.core.net;version="0.14.0",
+ org.openscada.net.base;version="0.14.0",
+ org.openscada.net.base.data;version="0.14.0",
+ org.openscada.net.mina;version="0.14.0",
  org.openscada.utils.concurrent;version="0.14.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.core.client.net;version="0.14.0";
-  uses:="org.apache.mina.core.future,
+Export-Package: org.openscada.core.client.net;version="0.15.0";
+  uses:="org.openscada.core.client,
    org.apache.mina.core.session,
-   org.apache.log4j,
+   org.apache.mina.core.future,
+   org.openscada.net.base.data,
    org.apache.mina.core.service,
    org.openscada.core,
-   org.openscada.core.client,
-   org.openscada.net.base.data,
-   org.openscada.core.net,
-   org.openscada.net.base,
-   org.apache.mina.core.filterchain,
    org.openscada.net.mina"
-Bundle-Version: 0.14.0.qualifier
+Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA Core Client NET
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
