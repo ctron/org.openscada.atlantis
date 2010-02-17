@@ -12,6 +12,13 @@
 </glossentry>
 
 <glossentry>
+	<glossterm>CA</glossterm>
+	<glossdef>
+		<para>Configuration Administrator</para>
+	</glossdef>
+</glossentry>
+
+<glossentry>
 	<glossterm>DA</glossterm>
 	<glossdef>
 		<para>Data Access</para>

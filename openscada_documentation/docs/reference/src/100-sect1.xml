@@ -21,6 +21,15 @@
   						</para>
   					</listitem>  					
   				</varlistentry>
+
+  				<varlistentry>
+					<term>CA</term>
+  					<listitem>
+  						<para>
+  						Configuration Administrator &dash; A system to access configuration information
+  						</para>
+  					</listitem>
+  				</varlistentry>
   				
   				<varlistentry>
 					<term>DA</term>
