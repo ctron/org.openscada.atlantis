@@ -138,9 +138,17 @@ public class HqlConverter
         {
             result = toHql ( assertion.getAttribute (), ">=", assertion.getValue () );
         }
+        else if ( assertion.getAssertion () == Assertion.GREATERTHAN )
+        {
+            result = toHql ( assertion.getAttribute (), ">", assertion.getValue () );
+        }
         else if ( assertion.getAssertion () == Assertion.LESSEQ )
         {
             result = toHql ( assertion.getAttribute (), "<=", assertion.getValue () );
+        }
+        else if ( assertion.getAssertion () == Assertion.LESSTHAN )
+        {
+            result = toHql ( assertion.getAttribute (), "<", assertion.getValue () );
         }
         else if ( assertion.getAssertion () == Assertion.APPROXIMATE )
         {
