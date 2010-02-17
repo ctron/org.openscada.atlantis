@@ -114,10 +114,10 @@
   	<openscada.builder.copyPlugin id="org.openscada.core.server.common"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.net.base"/>
+  	<openscada.builder.copyPlugin id="org.openscada.core.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.core.server.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.core.client.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.ice.base"/>
+  	<openscada.builder.copyPlugin id="org.openscada.core.ice"/>
   	<openscada.builder.copyPlugin id="org.openscada.core.server.exporter"/>
   		
   	<!-- OpenSCADA DA -->
@@ -202,7 +202,7 @@
   	
   	<!-- Additional stuff -->
   	
-  	<openscada.builder.copyPlugin id="org.openscada.spring.components" project="openscada_spring_components"/>
+  	<openscada.builder.copyPlugin id="org.openscada.spring.client"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.connection.service"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.core.connection.provider"/>
