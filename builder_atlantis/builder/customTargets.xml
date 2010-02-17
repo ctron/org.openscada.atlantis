@@ -153,8 +153,8 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.simulation"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.simulation.component" />
   	
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter" project="openscada_server_exporter"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter.spring" project="openscada_server_exporter_spring"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter.spring"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi.testing"/>
