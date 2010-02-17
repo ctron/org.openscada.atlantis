@@ -128,7 +128,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.core.common"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.core.server"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.net" project="openscada_da_client_net"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.client.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.common"/>
