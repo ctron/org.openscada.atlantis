@@ -146,7 +146,7 @@ public class Event implements Cloneable, Comparable<Event>
             return byField ( name ) == null ? false : true;
         }
 
-        public Fields byField ( final String name )
+        public static Fields byField ( final String name )
         {
             for ( final Fields field : values () )
             {
@@ -245,6 +245,7 @@ public class Event implements Cloneable, Comparable<Event>
         return new EventBuilder ();
     }
 
+    @Override
     public Event clone ()
     {
         return new Event ( this );
@@ -275,18 +276,22 @@ public class Event implements Cloneable, Comparable<Event>
     {
         return comparator.compare ( this, o );
     }
-    
-    public Variant getField(Fields field) {
-        if (field == null) {
+
+    public Variant getField ( final Fields field )
+    {
+        if ( field == null )
+        {
             return null;
         }
-        return attributes.get ( field.getName () );
+        return this.attributes.get ( field.getName () );
     }
-    
-    public void setField(Fields field, Variant value) {
-        if (field == null) {
+
+    public void setField ( final Fields field, final Variant value )
+    {
+        if ( field == null )
+        {
             return;
         }
-        attributes.put ( field.getName (), value );
+        this.attributes.put ( field.getName (), value );
     }
 }
