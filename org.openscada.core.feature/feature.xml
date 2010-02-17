@@ -52,14 +52,14 @@
          unpack="false"/>
 
    <plugin
-         id="org.openscada.core.ice.base"
+         id="org.openscada.core.ice"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.openscada.core.net.base"
+         id="org.openscada.core.net"
          download-size="0"
          install-size="0"
          version="0.0.0"
