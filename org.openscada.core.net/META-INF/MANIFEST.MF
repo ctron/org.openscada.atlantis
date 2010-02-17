@@ -28,5 +28,5 @@ Bundle-Name: OpenSCADA Core Net
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
-Bundle-SymbolicName: org.openscada.core.net.base
+Bundle-SymbolicName: org.openscada.core.net
 
