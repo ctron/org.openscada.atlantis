@@ -1,20 +1,6 @@
 Manifest-Version: 1.0
-Built-By: jens
-Created-By: Apache Maven Bundle Plugin
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
-Import-Package: Ice,
- IceBox,
- IceGrid,
- IceInternal,
- IceSSL,
- IceStorm,
- IceUtil,
- IceUtilInternal,
- OpenSCADA.Core;version="0.14",
- org.openscada.core;version="0.14.0",
- org.openscada.core.ice;version="0.14.0"
+Import-Package: org.openscada.core;version="0.14.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bnd-LastModified: 1252499295924
 Export-Package: Ice;uses:="IceInternal",
  IceBox;uses:="Ice,IceInternal",
  IceGrid;uses:="Ice,Glacier2,IceInternal",
@@ -25,17 +11,11 @@ Export-Package: Ice;uses:="IceInternal",
  IceUtilInternal;uses:="Ice",
  OpenSCADA.Core;version="0.14.0";uses:="Ice,IceInternal",
  org.openscada.core.ice;version="0.14.0";uses:="OpenSCADA.Core,org.openscada.core"
-Bundle-Version: 0.14.0.qualifier
-Bundle-Name: OpenSCADA Core Ice Base
+Bundle-Version: 0.15.0.qualifier
+Bundle-Name: OpenSCADA Core Ice
 Bundle-ClassPath: .,
  lib/Ice.jar
-Build-Jdk: 1.5.0_18
-Private-Package: Freeze,Glacier2,org.openscada.core.utils,org.openscad
- a.core.subscription,org.openscada.core,.
 Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: inavare GmbH
 Bundle-ManifestVersion: 2
-Bundle-SymbolicName: org.openscada.core.ice.base
-Tool: Bnd-0.0.311
-Embed-Dependency: *;scope=compile|runtime
-
+Bundle-SymbolicName: org.openscada.core.ice
