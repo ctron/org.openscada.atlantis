@@ -23,7 +23,76 @@
 			order to set up your development environment.
 		</para>
 		
+		<sect3><title>The Eclipse Way</title>
+			<para>
+				The Eclipse way is a straight forward P2 repository setup. You will need to
+				perform the following steps:
+				<orderedlist>
+					<listitem>
+						<para>Download and Install Eclipse 3.4 or 3.5</para>
+					</listitem>
+					<listitem>
+						<para>
+							Add the required P2 repositories
+							<uri>http://repo.openscada.org/p2/PROJECT/RELEASE_TYPE/VERSION</uri>.
+							So for example if you want aurora integration version 0.15.0 you will use
+							<uri>http://repo.openscada.org/p2/aurora/I/0.15.0</uri>. If you need
+							atlantis release 0.14.0 you use
+							<uri>http://repo.openscada.org/p2/atlantis/R/0.14.0</uri>. Normally
+							you need all projects in the current release or integration version.
+							
+							In order to do this open the preferences and navigate to 
+							<guimenu>Plug-In Development</guimenu><guisubmenu>Target Platform</guisubmenu>
+							and create a new Target Platform by clicking <guibutton>Add...</guibutton>.
+							Start with a default target platform and add a new <quote>Software Site</quote>.
+							<note>
+								<para>
+								When adding the software site be sure to disable the option
+								<guilabel>Include required software</guilabel> as seen in screen
+								<mediaobject>
+									<imageobject>
+   									<imagedata fileref="images/sect2/p2_settings.png" format="PNG" scalefit="1"/>
+ 									</imageobject>
+ 									<caption>P2 Import Settings</caption>
+								</mediaobject>
+								</para>
+							</note>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Set up a new target platform and add all components from the P2
+							repositories added in the previous step.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+						Optionally you can add the following plugins to your target platform as well:
+						</para> 
+						<itemizedlist>
+							<listitem><para>Draw2D of GEF for vector based views</para></listitem>
+							<listitem><para>ECF SDK for service discovery</para></listitem>
+						</itemizedlist>
+					</listitem>
+					<listitem>
+						<para>Your are ready to work!</para>
+					</listitem>
+				</orderedlist>
+			</para>
+		</sect3>
+		
 		<sect3><title>The Maven Way</title>
+			<note>
+				<para>
+				Using maven was just to painful, buggy and results where not
+				always reproducable. So maven is no longer a fully
+				supported way of distributing <trademark>OpenSCADA</trademark>.
+				We try to support maven by converting our P2 repositories to
+				maven 2 compliant repositories. But this might not
+				always work as expected.
+				</para>
+			</note>
+			
 			<para>
 				One word in advance: Although this section features a setup using Maven 2, it
 				is of course also possible (with some drawbacks) to use this setup using
@@ -50,49 +119,7 @@
 			</para>
 		</sect3>
 		
-		<sect3><title>The Eclipse Way</title>
-			<para>
-				The Eclipse way is a straight forward P2 repository setup. You will need to
-				perform the following steps:
-				<orderedlist>
-					<listitem>
-						<para>Download and Install Eclipse 3.4 or 3.5</para>
-					</listitem>
-					<listitem>
-						<para>
-							Add the P2 Repository <uri>http://repo.openscada.org/p2/integration/base</uri>
-							for the intgeration repository and
-							<uri>http://repo.openscada.org/p2/release/base</uri> for the release
-							repository. In order to do this open the Preferences and navigate to 
-							<guimenu>Plug-In Development</guimenu><guisubmenu>Target Platform</guisubmenu>
-							and create a new Target Platform by clicking <guibutton>Add...</guibutton>.
-							Start with a default target platform and add a new <quote>Software Site</quote>.
-							<note>
-								<para>
-								When adding the software site be sure to disable the option
-								<guilabel>Include required software</guilabel> as seen in screen
-								<mediaobject>
-									<imageobject>
-   									<imagedata fileref="images/sect2/p2_settings.png" format="PNG" scalefit="1"/>
- 									</imageobject>
- 									<caption>P2 Import Settings</caption>
-								</mediaobject>
-								</para>
-							</note>
-						</para>
-					</listitem>
-					<listitem>
-						<para>
-							Set up a new target platform and add all components from the P2
-							repository added in the previous step.
-						</para>
-					</listitem>
-					<listitem>
-						<para>Your are ready to work!</para>
-					</listitem>
-				</orderedlist>
-			</para>
-		</sect3>
+		
 	
 	</sect2>
 	
