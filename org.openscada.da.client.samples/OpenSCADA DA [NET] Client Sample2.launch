@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/openscada_da_client_samples/src/org/openscada/da/client/samples/Sample2.java"/>
+<listEntry value="/org.openscada.da.client.samples/src/org/openscada/da/client/samples/Sample2.java"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
@@ -16,5 +16,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.openscada.da.client.samples.Sample2"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="da:net://localhost:1202&#10;org.openscada.da.client.net.Connection"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="openscada_da_client_samples"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.openscada.da.client.samples"/>
 </launchConfiguration>
