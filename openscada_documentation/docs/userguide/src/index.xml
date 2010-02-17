@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" [
-  <!ENTITY sect1 SYSTEM "sect1.xml">
-  <!ENTITY sect2 SYSTEM "sect2.xml">
+  <!ENTITY sect1 SYSTEM "100-sect1.xml">
+  <!ENTITY sect2 SYSTEM "200-sect2.xml">
+  <!ENTITY sect-master SYSTEM "500-master.xml">
 ]>
 <article lang="en">
 	<articleinfo>
@@ -16,7 +17,7 @@
 		
 		<copyright>
 			<year>2006</year>
-			<year>2009</year>
+			<year>2010</year>
 			<holder>inavare GmbH</holder>
 		</copyright>
 		
@@ -37,4 +38,5 @@
 	
 	&sect1;
 	&sect2;
+	&sect-master;
  </article>

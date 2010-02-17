@@ -17,19 +17,19 @@
 		<para>
 			In order to download the compressed archive version of the
 			<application>OpenSCADA Test Client</application> direct your
-			webbrowser to http://download.openscada.org/atlantis/release/latest/ostc/
+			webbrowser to http://download.openscada.org/orilla/R/0.15.0/ostc
 			for the latest release build or to  
-			http://download.openscada.org/atlantis/integration/latest/ostc/
+			http://download.openscada.org/orilla/I/0.15.0/
 			for the latest integration build.
 		</para>
 		<para>
 			In this directory select the archive file which is appropriate for your
 			platform. For example if you have 64bit <trademark>Linux</trademark> you will
-			need <filename>Integration-linux.gtk.x86_64.zip</filename>.
+			need <filename>ostc-linux.gtk.x86_64.zip</filename>.
 			<note>
 				<para>
 					For <trademark>Mac OS X</trademark> there is only one file named
-					<filename>Integration-macosx.carbon.ppc.zip</filename> which contains
+					<filename>ostc-macosx.carbon.ppc.zip</filename> which contains
 					a <quote>Universal Binary</quote> and is, despite the name,
 					working with PPC and Intel platforms. 
 				</para>
@@ -41,7 +41,7 @@
 		</para>
 		<para>
 			You can start the application by launching the executable <filename>ostc</filename>
-			(or <filename>ostc.exe</filename>, <filename>ostc.app</filename>) using your favourite
+			(or <filename>ostc.exe</filename>, <filename>ostc.app</filename>) using your favorite
 			application launcher.
 			<note>
 				<para>
