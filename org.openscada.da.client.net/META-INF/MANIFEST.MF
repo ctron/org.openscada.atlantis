@@ -28,7 +28,7 @@ Export-Package: org.openscada.da.client.net;version="0.14.0";
    org.openscada.core,
    org.openscada.da.core",
  org.openscada.da.client.net.operations;version="0.14.0";uses:="org.openscada.utils.exec,org.openscada.core,org.openscada.net.mina"
-Bundle-Version: 0.14.0.qualifier
+Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA DA Client Net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
