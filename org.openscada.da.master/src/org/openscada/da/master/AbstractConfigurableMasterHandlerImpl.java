@@ -29,7 +29,7 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
         super ( poolTracker, priority );
         this.configurationId = configurationId;
         this.tracker = caTracker;
-        this.prefix = prefix + ".";
+        this.prefix = prefix;
         this.factoryId = factoryId;
     }
 
@@ -41,7 +41,7 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
         }
         else
         {
-            return this.prefix + id;
+            return this.prefix + "." + id;
         }
     }
 
@@ -58,9 +58,9 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
         for ( final Map.Entry<String, Variant> entry : request.getAttributes ().entrySet () )
         {
             final String key = entry.getKey ();
-            if ( key.startsWith ( this.prefix ) )
+            if ( key.startsWith ( this.prefix + "." ) )
             {
-                attributes.put ( key.substring ( this.prefix.length () ), entry.getValue () );
+                attributes.put ( key.substring ( ( this.prefix + "." ).length () ), entry.getValue () );
             }
         }
 
@@ -125,7 +125,7 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
         {
             for ( final String attr : data.keySet () )
             {
-                result.put ( this.prefix + attr, WriteAttributeResult.OK );
+                result.put ( this.prefix + "." + attr, WriteAttributeResult.OK );
             }
 
             final ConfigurationAdministrator admin = (ConfigurationAdministrator)service;
