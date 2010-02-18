@@ -99,7 +99,7 @@ public class HiveImpl extends HiveCommon
     {
         registerItem ( item );
 
-        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ( 0 );
         fillAttributes ( attributes, properties );
 
         final ItemDescriptor descriptor = new ItemDescriptor ( item, attributes );
@@ -124,7 +124,7 @@ public class HiveImpl extends HiveCommon
     public synchronized void removeItem ( final DataItem item )
     {
         unregisterItem ( item );
-        this.storage.removed ( new ItemDescriptor ( item, new HashMap<String, Variant> () ) );
+        this.storage.removed ( new ItemDescriptor ( item, new HashMap<String, Variant> ( 0 ) ) );
     }
 
     public synchronized void addItem ( final ServiceReference serviceReference )
@@ -136,7 +136,7 @@ public class HiveImpl extends HiveCommon
         final DataItem item = (DataItem)this.context.getService ( serviceReference );
         registerItem ( item );
 
-        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ( 0 );
 
         final ItemDescriptor descriptor = new ItemDescriptor ( item, attributes );
         this.storage.added ( descriptor );
