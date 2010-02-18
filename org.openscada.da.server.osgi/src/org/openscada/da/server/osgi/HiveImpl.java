@@ -109,6 +109,11 @@ public class HiveImpl extends HiveCommon
 
     private static void fillAttributes ( final Map<String, Variant> attributes, final Dictionary<?, ?> properties )
     {
+        if ( properties == null )
+        {
+            return;
+        }
+
         final Object description = properties.get ( Constants.SERVICE_DESCRIPTION );
         if ( description != null )
         {
