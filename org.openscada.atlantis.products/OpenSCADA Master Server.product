@@ -18,7 +18,7 @@
 
    <windowImages/>
 
-   <launcher>
+   <launcher name="master">
       <solaris/>
       <win useIco="false">
          <bmp/>
@@ -34,13 +34,11 @@
 
    <features>
       <feature id="org.openscada.atlantis" version="0.15.0.qualifier"/>
-      <feature id="org.openscada.aurora" version="0.15.0.qualifier"/>
       <feature id="org.openscada.external" version="0.15.0.qualifier"/>
       <feature id="org.openscada.utgard" version="0.7.0.qualifier"/>
-      <feature id="org.openscada.da" version="0.15.0.qualifier"/>
-      <feature id="org.openscada.ca.install.feature" version="0.15.0.qualifier"/>
-      <feature id="org.openscada.ae" version="0.15.0.qualifier"/>
+      <feature id="org.openscada.aurora" version="0.15.0.qualifier"/>
       <feature id="org.eclipse.rcp" version="3.5.0.v20090519-9SA0FwxFv6x089WEf-TWh11"/>
+      <feature id="org.openscada.ca.install.feature" version="0.15.0.qualifier"/>
       <feature id="org.openscada.oxygen" version="0.1.0.qualifier"/>
    </features>
 
@@ -50,7 +48,7 @@
       <plugin id="org.eclipse.equinox.http.jetty" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.http.registry" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.http.servlet" autoStart="true" startLevel="0" />
-      <plugin id="org.eclipse.osgi" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
       <plugin id="org.mortbay.jetty.server" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ae" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ae.event.logger" autoStart="true" startLevel="0" />
