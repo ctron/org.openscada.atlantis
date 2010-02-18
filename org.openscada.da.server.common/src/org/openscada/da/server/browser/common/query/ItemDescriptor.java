@@ -19,7 +19,6 @@
 
 package org.openscada.da.server.browser.common.query;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.Variant;
@@ -27,9 +26,9 @@ import org.openscada.da.server.common.DataItem;
 
 public class ItemDescriptor
 {
-    private Map<String, Variant> attributes = new HashMap<String, Variant> ( 0 );
+    private final Map<String, Variant> attributes;
 
-    private DataItem item = null;
+    private final DataItem item;
 
     private final String itemId;
 
