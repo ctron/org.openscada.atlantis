@@ -26,7 +26,7 @@ public abstract class AbstractDataSource implements DataSource
 
     protected abstract Executor getExecutor ();
 
-    private final Set<DataSourceListener> listeners = new HashSet<DataSourceListener> ();
+    private final Set<DataSourceListener> listeners = new HashSet<DataSourceListener> ( 1 );
 
     private Variant lastValue = Variant.NULL;
 
