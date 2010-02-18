@@ -22,7 +22,7 @@
   	 	 <figure id="master_overview_illustration"><title>Master Server Overview</title>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="images/500-master/master_overview.eps" format="EPS" scalefit="1"/>
+				<imagedata fileref="images/500-master/master_overview.pdf" format="PDF" scalefit="1"/>
 			</imageobject>
 			<imageobject>
 				<imagedata fileref="images/500-master/master_overview.png" format="PNG" scalefit="1"/>

@@ -53,6 +53,7 @@
 	    			<include name="**/*.png"/>
 	    			<include name="**/*.svg"/>
 	    			<include name="**/*.pdf"/>
+	    			<include name="**/*.eps"/>
 	    		</fileset>
 	    	</copy>
         	<copy todir="@{output}/@{outputName}/docbook/images">
@@ -62,6 +63,7 @@
 	    			<include name="**/*.png"/>
 	    			<include name="**/*.svg"/>
 	    			<include name="**/*.pdf"/>
+	    			<include name="**/*.eps"/>
 	    		</fileset>
 	    	</copy>
         	<copy todir="@{output}/@{outputName}/images">
@@ -71,6 +73,7 @@
 	    			<include name="**/*.png"/>
 	    			<include name="**/*.svg"/>
 	    			<include name="**/*.pdf"/>
+	    			<include name="**/*.eps"/>
 	    		</fileset>
 	    	</copy>
         </sequential>
