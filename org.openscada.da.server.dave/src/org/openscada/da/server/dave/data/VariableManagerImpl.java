@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,9 +134,12 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
     private final ExecutorService executor;
 
-    public VariableManagerImpl ( final Executor executor )
+    private final ObjectPoolImpl itemPool;
+
+    public VariableManagerImpl ( final Executor executor, final ObjectPoolImpl itemPool )
     {
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "VariableManager" ) );
+        this.itemPool = itemPool;
     }
 
     public void dispose ()
@@ -250,16 +254,16 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
                 switch ( entry.getType () )
                 {
                 case BIT:
-                    result.add ( new BitVariable ( entry.getName (), entry.getIndex (), entry.getSubIndex (), this.executor, createAttributes ( entry ) ) );
+                    result.add ( new BitVariable ( entry.getName (), entry.getIndex (), entry.getSubIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
                     break;
                 case BYTE:
-                    result.add ( new ByteVariable ( entry.getName (), entry.getIndex (), this.executor, createAttributes ( entry ) ) );
+                    result.add ( new ByteVariable ( entry.getName (), entry.getIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
                     break;
                 case FLOAT:
-                    result.add ( new FloatVariable ( entry.getName (), entry.getIndex (), this.executor, createAttributes ( entry ) ) );
+                    result.add ( new FloatVariable ( entry.getName (), entry.getIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
                     break;
                 case WORD:
-                    result.add ( new WordVariable ( entry.getName (), entry.getIndex (), this.executor, createAttributes ( entry ) ) );
+                    result.add ( new WordVariable ( entry.getName (), entry.getIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
                     break;
                 case UDT:
                     result.add ( new UdtVariable ( entry.getName (), entry.getIndex (), createVariables ( entry.getTypeName () ) ) );

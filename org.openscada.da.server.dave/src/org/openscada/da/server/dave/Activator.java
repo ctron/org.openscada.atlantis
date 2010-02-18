@@ -7,12 +7,16 @@ import java.util.concurrent.Executors;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
+import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.dave.data.VariableManager;
 import org.openscada.da.server.dave.data.VariableManagerImpl;
 import org.openscada.da.server.dave.factory.ConfigurationFactoryImpl;
 import org.openscada.utils.osgi.ca.factory.BeanConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPoolHelper;
+import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 public class Activator implements BundleActivator
 {
@@ -25,6 +29,10 @@ public class Activator implements BundleActivator
 
     private ExecutorService executor;
 
+    private ObjectPoolImpl itemPool;
+
+    private ServiceRegistration itemPoolHandle;
+
     public static VariableManager getVariableManager ()
     {
         return variableManager;
@@ -36,6 +44,10 @@ public class Activator implements BundleActivator
      */
     public void start ( final BundleContext context ) throws Exception
     {
+
+        this.itemPool = new ObjectPoolImpl ();
+
+        this.itemPoolHandle = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class.getName () );
 
         this.executor = Executors.newSingleThreadExecutor ();
 
@@ -55,7 +67,7 @@ public class Activator implements BundleActivator
         }
 
         {
-            Activator.variableManager = new VariableManagerImpl ( this.executor );
+            Activator.variableManager = new VariableManagerImpl ( this.executor, this.itemPool );
             final Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, "org.openscada.da.server.dave.types" );
             context.registerService ( ConfigurationFactory.class.getName (), Activator.variableManager, properties );
@@ -68,6 +80,9 @@ public class Activator implements BundleActivator
      */
     public void stop ( final BundleContext context ) throws Exception
     {
+        this.itemPoolHandle.unregister ();
+        this.itemPool.dispose ();
+
         this.blockFactory.dispose ();
         this.service.dispose ();
 

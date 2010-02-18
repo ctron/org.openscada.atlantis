@@ -11,7 +11,6 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.chain.item.LevelAlarmChainItem;
 import org.openscada.da.server.common.chain.item.ManualErrorOverrideChainItem;
 import org.openscada.da.server.common.chain.item.ManualOverrideChainItem;
@@ -24,6 +23,7 @@ import org.openscada.da.server.dave.DaveDevice;
 import org.openscada.da.server.dave.DaveRequestBlock;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
@@ -47,12 +47,15 @@ public abstract class ScalarVariable implements Variable
 
     protected DaveRequestBlock block;
 
-    public ScalarVariable ( final String name, final int index, final Executor executor, final Attribute... attributes )
+    private final ObjectPoolImpl itemPool;
+
+    public ScalarVariable ( final String name, final int index, final Executor executor, final ObjectPoolImpl itemPool, final Attribute... attributes )
     {
         this.name = name;
         this.index = index;
         this.executor = executor;
         this.attributes = attributes;
+        this.itemPool = itemPool;
     }
 
     public void handleError ( final int errorCode )
@@ -130,7 +133,8 @@ public abstract class ScalarVariable implements Variable
         this.item.addChainElement ( IODirection.INPUT, new SumPatternAttributesChainItem ( null, "manual", ".*\\.manual\\.active$" ) );
         this.item.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
 
-        this.handle = context.registerService ( DataItem.class.getName (), this.item, null );
+        this.itemPool.addService ( itemId, this.item, null );
+        // this.handle = context.registerService ( DataItem.class.getName (), this.item, null );
 
     }
 
@@ -145,6 +149,8 @@ public abstract class ScalarVariable implements Variable
         {
             attr.stop ();
         }
+
+        this.itemPool.removeService ( this.item.getInformation ().getName (), this.item );
 
         if ( this.handle != null )
         {

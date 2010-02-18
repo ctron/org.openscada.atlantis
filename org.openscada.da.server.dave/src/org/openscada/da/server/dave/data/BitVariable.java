@@ -8,14 +8,15 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.WriteResult;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 
 public class BitVariable extends ScalarVariable
 {
     private final int subIndex;
 
-    public BitVariable ( final String name, final int index, final int subIndex, final Executor executor, final Attribute... attributes )
+    public BitVariable ( final String name, final int index, final int subIndex, final Executor executor, final ObjectPoolImpl itemPool, final Attribute... attributes )
     {
-        super ( name, index, executor, attributes );
+        super ( name, index, executor, itemPool, attributes );
         this.subIndex = subIndex;
     }
 

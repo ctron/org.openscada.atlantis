@@ -9,12 +9,13 @@ import org.openscada.da.core.WriteResult;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 
 public class FloatVariable extends ScalarVariable
 {
-    public FloatVariable ( final String name, final int index, final Executor executor, final Attribute... attributes )
+    public FloatVariable ( final String name, final int index, final Executor executor, final ObjectPoolImpl itemPool, final Attribute... attributes )
     {
-        super ( name, index, executor, attributes );
+        super ( name, index, executor, itemPool, attributes );
     }
 
     @Override
