@@ -1,5 +1,6 @@
 package org.openscada.da.datasource.base;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,9 +82,20 @@ public abstract class AbstractMultiSourceDataSource extends AbstractDataSource
         this.sources.clear ();
     }
 
-    public synchronized void dispose ()
+    public void dispose ()
     {
-        this.disposed = true;
-        clearSources ();
+        final Collection<DataSourceHandler> disposeSources;
+
+        synchronized ( this )
+        {
+            disposeSources = this.sources.values ();
+            this.disposed = true;
+            this.sources.clear ();
+        }
+
+        for ( final DataSourceHandler handler : disposeSources )
+        {
+            handler.dispose ();
+        }
     }
 }
