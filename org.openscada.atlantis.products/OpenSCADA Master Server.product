@@ -71,6 +71,7 @@
       <plugin id="org.openscada.ae.server.storage.jdbc" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ca.file" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ca.servlet" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.da.client.connection.service" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.connection.provider" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.datasource.item" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.datasource.proxy" autoStart="true" startLevel="0" />
