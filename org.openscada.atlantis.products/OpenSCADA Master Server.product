@@ -44,6 +44,7 @@
       <feature id="org.openscada.oxygen" version="0.1.0.qualifier"/>
       <feature id="org.openscada.ae" version="0.15.0.qualifier"/>
       <feature id="org.openscada.da" version="0.15.0.qualifier"/>
+      <feature id="org.openscada.master.server.product" version="0.15.0.qualifier"/>
    </features>
 
    <configurations>
