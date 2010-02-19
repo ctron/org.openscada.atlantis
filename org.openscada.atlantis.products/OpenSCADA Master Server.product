@@ -3,7 +3,6 @@
 
 <product name="OpenSCADA Master Server" uid="org.openscada.master.server" version="0.15.0.qualifier" useFeatures="true" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -27,7 +26,6 @@
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
       <linux>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</linux>
@@ -77,6 +75,7 @@
       <plugin id="org.openscada.da.server.common.osgi" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.server.osgi.exporter.net" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.osgi.equinox.console" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.utils.osgi.jaxws" autoStart="true" startLevel="8" />
    </configurations>
 
 </product>
