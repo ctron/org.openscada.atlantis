@@ -44,6 +44,8 @@
       <feature id="org.eclipse.rcp" version="3.5.0.v20090519-9SA0FwxFv6x089WEf-TWh11"/>
       <feature id="org.openscada.ca.install.feature" version="0.15.0.qualifier"/>
       <feature id="org.openscada.oxygen" version="0.1.0.qualifier"/>
+      <feature id="org.openscada.ae" version="0.15.0.qualifier"/>
+      <feature id="org.openscada.da" version="0.15.0.qualifier"/>
    </features>
 
    <configurations>
@@ -68,6 +70,7 @@
       <plugin id="org.openscada.da.datasource.item" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.datasource.proxy" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.datasource.script" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.da.datasource.sum" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.master" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.master.analyzer" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.master.common" autoStart="true" startLevel="0" />
