@@ -75,7 +75,7 @@
       <plugin id="org.openscada.da.server.common.osgi" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.server.osgi.exporter.net" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.osgi.equinox.console" autoStart="true" startLevel="0" />
-      <plugin id="org.openscada.utils.osgi.jaxws" autoStart="true" startLevel="8" />
+      <plugin id="org.openscada.utils.osgi.jaxws" autoStart="true" startLevel="6" />
    </configurations>
 
 </product>
