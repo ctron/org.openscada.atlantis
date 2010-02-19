@@ -3,16 +3,19 @@
 
 <product name="OpenSCADA Master Server" uid="org.openscada.master.server" version="0.15.0.qualifier" useFeatures="true" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
       <programArgs>-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console</programArgs>
-      <vmArgs>-Declipse.ignoreApp=true -Dosgi.noShutdown=true
+      <vmArgs>-Dosgi.requiredJavaVersion=1.6
+-Declipse.ignoreApp=true
+-Dosgi.noShutdown=true
 -Dorg.eclipse.equinox.http.jetty.http.port=8082
 -Dopenscada.da.net.exportUri=da:net://0.0.0.0:1203
 -Dorg.openscada.utils.osgi.jaxws.baseAddress=http://0.0.0.0:9998
--Dorg.openscada.ca.file.root=/home/jens/cas/master_full</vmArgs>
+-Dorg.openscada.ca.file.root=/home/user/cas/master_full</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
@@ -24,6 +27,7 @@
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
       <linux>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</linux>

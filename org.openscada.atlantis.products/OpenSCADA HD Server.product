@@ -8,7 +8,7 @@
 
    <launcherArgs>
       <programArgs>-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console</programArgs>
-      <vmArgs>-Dosgi.requiredJavaVersion=1.5
+      <vmArgs>-Dosgi.requiredJavaVersion=1.6
 -XX:MaxPermSize=256m
 -Xms40m -Xmx512m
 -Declipse.ignoreApp=true
