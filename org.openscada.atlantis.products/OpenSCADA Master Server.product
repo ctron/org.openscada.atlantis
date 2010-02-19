@@ -45,6 +45,7 @@
       <feature id="org.openscada.ae" version="0.15.0.qualifier"/>
       <feature id="org.openscada.da" version="0.15.0.qualifier"/>
       <feature id="org.openscada.master.server.product" version="0.15.0.qualifier"/>
+      <feature id="org.openscada.hd" version="0.15.0.qualifier"/>
    </features>
 
    <configurations>
@@ -56,16 +57,21 @@
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
       <plugin id="org.mortbay.jetty.server" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ae" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.ae.connection.provider" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ae.event.logger" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.ae.monitor.common" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ae.monitor.dataitem" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ae.server.common" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ae.server.common.condition" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ae.server.common.event" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.ae.server.exporter" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ae.server.exporter.net" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.ae.server.net" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ae.server.storage" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ae.server.storage.jdbc" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ca.file" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.ca.servlet" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.da.connection.provider" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.datasource.item" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.datasource.proxy" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.datasource.script" autoStart="true" startLevel="0" />
@@ -73,8 +79,19 @@
       <plugin id="org.openscada.da.master" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.master.analyzer" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.master.common" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.da.net" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.server.common.osgi" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.da.server.net" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.da.server.osgi" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.da.server.osgi.exporter.net" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.hd.connection.provider" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.hd.net" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.hd.server.common" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.hd.server.common.item" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.hd.server.exporter" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.hd.server.exporter.net" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.hd.server.net" autoStart="true" startLevel="0" />
+      <plugin id="org.openscada.hd.server.storage" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.osgi.equinox.console" autoStart="true" startLevel="0" />
       <plugin id="org.openscada.utils.osgi.jaxws" autoStart="true" startLevel="6" />
    </configurations>
