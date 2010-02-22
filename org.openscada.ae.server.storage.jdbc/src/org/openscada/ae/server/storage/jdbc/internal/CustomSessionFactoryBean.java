@@ -5,7 +5,7 @@ import org.hibernate.cfg.Configuration;
 import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 
 /**
- * This derievd {@link LocalSessionFactoryBean} is needed because hibernate treats
+ * This derived {@link LocalSessionFactoryBean} is needed because hibernate treats
  * a schema which contains only of an empty space just like any other name. So this
  * implementation removes the property <code>hibernate.default_schema</code> if
  * it is empty
@@ -21,7 +21,7 @@ public class CustomSessionFactoryBean extends LocalSessionFactoryBean
     }
 
     @Override
-    protected void postProcessConfiguration ( Configuration config ) throws HibernateException
+    protected void postProcessConfiguration ( final Configuration config ) throws HibernateException
     {
         super.postProcessConfiguration ( config );
         if ( config.getProperty ( "hibernate.default_schema" ) != null && "".equals ( config.getProperty ( "hibernate.default_schema" ).trim () ) )
