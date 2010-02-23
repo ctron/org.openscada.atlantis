@@ -69,7 +69,6 @@
       <import plugin="org.springframework.osgi.extender"/>
       <import plugin="org.springframework.osgi.io"/>
       <import plugin="com.springsource.org.hsqldb"/>
-      <import plugin="org.junit4"/>
       <import plugin="org.openscada.ae.server.storage.jdbc" version="0.15.0" match="greaterOrEqual"/>
       <import plugin="com.springsource.org.apache.log4j"/>
    </requires>
