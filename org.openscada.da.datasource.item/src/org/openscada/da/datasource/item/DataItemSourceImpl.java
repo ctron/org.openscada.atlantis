@@ -190,8 +190,8 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
 
     private void fireValueChange ( final DataItemValue.Builder builder )
     {
-        this.sourceValue = builder.build ();
         injectAttributes ( builder );
+        this.sourceValue = builder.build ();
         updateData ( this.sourceValue );
     }
 
