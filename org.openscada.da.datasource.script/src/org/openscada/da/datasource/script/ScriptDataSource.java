@@ -43,12 +43,12 @@ import org.openscada.da.datasource.base.DataSourceHandler;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ScriptDataSource extends AbstractMultiSourceDataSource
 {
-
     final static Logger logger = LoggerFactory.getLogger ( ScriptDataSource.class );
 
     private final Executor executor;
@@ -61,12 +61,25 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     private ScriptEngine scriptEngine;
 
-    public ScriptDataSource ( final ObjectPoolTracker poolTracker, final Executor executor )
+    private final ClassLoader classLoader;
+
+    public ScriptDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final Executor executor )
     {
         super ( poolTracker );
         this.executor = executor;
+        this.classLoader = getClass ().getClassLoader ();
 
-        this.manager = new ScriptEngineManager ();
+        final ClassLoader currentClassLoader = Thread.currentThread ().getContextClassLoader ();
+
+        try
+        {
+            Thread.currentThread ().setContextClassLoader ( this.classLoader );
+            this.manager = new ScriptEngineManager ( this.classLoader );
+        }
+        finally
+        {
+            Thread.currentThread ().setContextClassLoader ( currentClassLoader );
+        }
     }
 
     @Override
@@ -89,10 +102,21 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     public synchronized void update ( final Map<String, String> parameters ) throws Exception
     {
-        setScript ( parameters );
-        setDataSources ( parameters );
+        final ClassLoader currentClassLoader = Thread.currentThread ().getContextClassLoader ();
+        try
+        {
+            final ClassLoader classLoader = getClass ().getClassLoader ();
+            Thread.currentThread ().setContextClassLoader ( classLoader );
 
-        handleChange ();
+            setScript ( parameters );
+            setDataSources ( parameters );
+
+            handleChange ();
+        }
+        finally
+        {
+            Thread.currentThread ().setContextClassLoader ( currentClassLoader );
+        }
     }
 
     private void setScript ( final Map<String, String> parameters ) throws ScriptException
@@ -134,9 +158,14 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
                 values.put ( entry.getKey (), entry.getValue ().getValue () );
             }
 
+            final ClassLoader currentClassLoader = Thread.currentThread ().getContextClassLoader ();
+
             try
             {
                 this.scriptContext.setAttribute ( "data", values, ScriptContext.ENGINE_SCOPE );
+
+                Thread.currentThread ().setContextClassLoader ( this.classLoader );
+
                 setResult ( this.scriptEngine.eval ( this.updateCommand, this.scriptContext ) );
             }
             catch ( final Throwable e )
@@ -144,6 +173,10 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
                 logger.warn ( "Failed to evaluate", e );
                 logger.debug ( "Failed script: {}", this.updateCommand );
                 setError ( e );
+            }
+            finally
+            {
+                Thread.currentThread ().setContextClassLoader ( currentClassLoader );
             }
         }
     }

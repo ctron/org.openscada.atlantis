@@ -72,7 +72,7 @@ public class ScriptSourceFactory extends AbstractServiceConfigurationFactory<Scr
     @Override
     protected Entry<ScriptDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final ScriptDataSource source = new ScriptDataSource ( this.poolTracker, this.executor );
+        final ScriptDataSource source = new ScriptDataSource ( context, this.poolTracker, this.executor );
         source.update ( parameters );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
