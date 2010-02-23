@@ -21,6 +21,12 @@ package org.openscada.da.datasource.script;
 
 import org.openscada.da.client.DataItemValue;
 
+/**
+ * A class that renames the original {@link DataItemValue.Builder} since some
+ * script languages might have problems accessing a nested class.
+ * @author Jens Reimann
+ *
+ */
 public class DataItemValueBuilder extends DataItemValue.Builder
 {
 
