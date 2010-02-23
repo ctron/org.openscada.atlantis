@@ -173,8 +173,8 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
     {
         if ( value == null )
         {
-            notifyData ( Variant.NULL, new HashMap<String, Variant> (), true );
             this.currentValue = value;
+            notifyData ( Variant.NULL, new HashMap<String, Variant> (), true );
         }
         else
         {
@@ -188,11 +188,12 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
 
             AttributesHelper.set ( target, value.getAttributes (), diff );
 
+            this.currentValue = value;
             if ( !diff.isEmpty () )
             {
                 notifyData ( value.getValue (), diff );
             }
-            this.currentValue = value;
+            
         }
     }
 }
