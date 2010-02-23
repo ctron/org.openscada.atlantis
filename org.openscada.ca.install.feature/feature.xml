@@ -23,7 +23,6 @@
       <import plugin="slf4j.api"/>
       <import plugin="com.springsource.org.apache.log4j"/>
       <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="org.apache.jasper"/>
       <import plugin="org.eclipse.equinox.common"/>
       <import plugin="org.eclipse.equinox.registry"/>
       <import plugin="org.eclipse.equinox.common" version="3.5.0" match="greaterOrEqual"/>
@@ -95,13 +94,6 @@
 
    <plugin
          id="javax.servlet"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="javax.servlet.jsp"
          download-size="0"
          install-size="0"
          version="0.0.0"

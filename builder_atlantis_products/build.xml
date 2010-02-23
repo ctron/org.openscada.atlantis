@@ -36,8 +36,8 @@
           target: build              
          ================================= -->
     <target name="build" depends="populate" description="OpenSCADA Atlantis Products">
-    	<openscada.productBuild builder="builder"/>
     	<openscada.productBuild builder="builder.master"/>
+    	<openscada.productBuild builder="builder"/>
     </target>
 
 	<!-- ================================= 
