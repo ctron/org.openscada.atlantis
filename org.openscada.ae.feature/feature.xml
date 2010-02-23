@@ -31,7 +31,7 @@
       <import plugin="org.openscada.da.core.common"/>
       <import plugin="org.openscada.net"/>
       <import plugin="slf4j.api"/>
-      <import plugin="org.openscada.core.net.base"/>
+      <import plugin="org.openscada.core.net"/>
       <import plugin="org.openscada.core.connection.provider"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.openscada.utils.filter"/>
