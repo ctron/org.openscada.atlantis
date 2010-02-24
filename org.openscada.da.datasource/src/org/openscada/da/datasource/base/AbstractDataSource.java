@@ -49,6 +49,8 @@ public abstract class AbstractDataSource implements DataSource
 
     private Variant lastValue = Variant.NULL;
 
+    private Calendar lastTimestamp = null;
+
     public synchronized void addListener ( final DataSourceListener listener )
     {
         if ( this.listeners.add ( listener ) )
@@ -82,23 +84,7 @@ public abstract class AbstractDataSource implements DataSource
             }
         }
 
-        if ( value.getTimestamp () == null )
-        {
-            try
-            {
-                if ( !this.lastValue.equals ( value.getValue () ) )
-                {
-                    final DataItemValue.Builder builder = new DataItemValue.Builder ( value );
-                    builder.setTimestamp ( Calendar.getInstance () );
-                    value = builder.build ();
-                }
-            }
-            catch ( final Exception e )
-            {
-                // nothing
-                logger.warn ( "Failed to update timestamp", e );
-            }
-        }
+        value = applyAutoTimestamp ( value );
 
         this.lastValue = value.getValue ();
         this.value = value;
@@ -117,7 +103,30 @@ public abstract class AbstractDataSource implements DataSource
 
             } );
         }
+    }
 
+    private DataItemValue applyAutoTimestamp ( DataItemValue value )
+    {
+        if ( value.getTimestamp () == null )
+        {
+            try
+            {
+                if ( !this.lastValue.equals ( value.getValue () ) )
+                {
+                    this.lastTimestamp = Calendar.getInstance ();
+                }
+            }
+            catch ( final Exception e )
+            {
+                // nothing
+                logger.warn ( "Failed to update timestamp", e );
+            }
+
+            final DataItemValue.Builder builder = new DataItemValue.Builder ( value );
+            builder.setTimestamp ( this.lastTimestamp );
+            value = builder.build ();
+        }
+        return value;
     }
 
 }
