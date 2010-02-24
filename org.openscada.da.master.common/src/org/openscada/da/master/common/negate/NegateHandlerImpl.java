@@ -28,7 +28,11 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
         final Builder builder = new Builder ( value );
 
         injectAttributes ( builder );
-        builder.setAttribute ( getPrefixed ( "raw" ), value.getValue () );
+
+        if ( this.active )
+        {
+            builder.setAttribute ( getPrefixed ( "raw" ), value.getValue () );
+        }
 
         final Variant val = value.getValue ();
         if ( val == null || val.isNull () )
