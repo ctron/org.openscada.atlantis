@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,40 +35,78 @@ import org.openscada.utils.lang.Immutable;
 @Immutable
 public class DataItemValue
 {
-    private Variant value = new Variant ();
+    private final Variant value;
 
-    private Map<String, Variant> attributes = new HashMap<String, Variant> ();
+    private final Map<String, Variant> attributes;
 
-    private SubscriptionState subscriptionState = SubscriptionState.DISCONNECTED;
+    private final SubscriptionState subscriptionState;
 
-    private Throwable subscriptionError = null;
+    private final Throwable subscriptionError;
 
     public DataItemValue ()
     {
         super ();
+        this.attributes = Collections.emptyMap ();
+        this.value = Variant.NULL;
+        this.subscriptionState = SubscriptionState.DISCONNECTED;
+        this.subscriptionError = null;
     }
 
     public DataItemValue ( final Variant value, final Map<String, Variant> attributes, final SubscriptionState subscriptionState )
     {
         super ();
-        this.attributes = new HashMap<String, Variant> ( attributes );
+        this.attributes = makeAttributes ( attributes );
         this.subscriptionState = subscriptionState;
+        this.subscriptionError = null;
         this.value = value;
     }
 
     public DataItemValue ( final Variant value, final Map<String, Variant> attributes, final SubscriptionState subscriptionState, final Throwable subscriptionError )
     {
         super ();
-        this.attributes = new HashMap<String, Variant> ( attributes );
+        this.attributes = makeAttributes ( attributes );
         this.subscriptionState = subscriptionState;
         this.value = value;
         this.subscriptionError = subscriptionError;
     }
 
+    /**
+     * Make the attribute map
+     * @param attributes initial attributes
+     * @return a new attribute map with cleared out attributes
+     */
+    private static Map<String, Variant> makeAttributes ( final Map<String, Variant> attributes )
+    {
+        if ( attributes == null || attributes.isEmpty () )
+        {
+            return Collections.emptyMap ();
+        }
+        final HashMap<String, Variant> result = new HashMap<String, Variant> ( attributes.size () );
+
+        for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
+        {
+            final String key = entry.getKey ();
+            final Variant value = entry.getValue ();
+
+            if ( key == null || value == null )
+            {
+                continue;
+            }
+            if ( value.isNull () )
+            {
+                continue;
+            }
+
+            result.put ( key, value );
+        }
+
+        return result;
+    }
+
     public DataItemValue ( final DataItemValue arg0 )
     {
-        this.attributes = new HashMap<String, Variant> ( arg0.attributes );
-        this.value = new Variant ( arg0.value );
+        this.attributes = arg0.attributes;
+        this.value = arg0.value;
         this.subscriptionError = arg0.subscriptionError;
         this.subscriptionState = arg0.subscriptionState;
     }
@@ -310,6 +348,11 @@ public class DataItemValue
         return true;
     }
 
+    /**
+     * A mutable version of {@link DataItemValue}
+     * @author Jens Reimann
+     *
+     */
     public static class Builder
     {
 
