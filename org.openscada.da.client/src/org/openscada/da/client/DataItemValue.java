@@ -397,7 +397,14 @@ public class DataItemValue
 
         public void setTimestamp ( final Calendar timestamp )
         {
-            setAttribute ( "timestamp", new Variant ( timestamp.getTimeInMillis () ) );
+            if ( timestamp == null )
+            {
+                setAttribute ( "timestamp", null );
+            }
+            else
+            {
+                setAttribute ( "timestamp", new Variant ( timestamp.getTimeInMillis () ) );
+            }
         }
 
         public DataItemValue build ()
