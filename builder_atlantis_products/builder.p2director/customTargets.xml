@@ -99,6 +99,8 @@
   <!-- ===================================================================== -->
   <target name="postSetup">
     <antcall target="getBaseComponents" />
+  	
+  	<openscada.builder.copyPlugin id="org.openscada.atlantis.products"/>
   </target>
 
   <!-- ===================================================================== -->
