@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
+
+<sect1 id="osgibundles"><title><trademark>OSGi</trademark> Bundles</title>
+	<para>
+	This section describes the different <trademark>OSGi</trademark> bundles available in OpenSCADA.
+	</para>
+	
+<sect2><title>org.openscada.osgi.equinox.console</title>
+<para>
+	The bundle <filename>org.openscada.osgi.equinox.console</filename> provides an implementation of
+	an Equinox console that is accessible using a normal TCP (or Telnet) connection.	
+</para>
+
+	<sect3><title>System properties</title>
+		<para>
+		The following system properties are available:
+		</para>
+		
+		<table><title>System properties of org.openscada.osgi.equinox.console</title>
+				<tgroup cols="3">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Type</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>org.openscada.osgi.equinox.console.port</entry>
+						<entry>Integer</entry>
+						<entry>
+						The port number the console will bind to. It is important
+						that only one console at a time can bind to a port. Different
+						instances with different consoles must have different ports
+						otherwise the port cannot be opened and the console will
+						not be accessible.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>org.openscada.osgi.equinox.console.timeout.login</entry>
+						<entry>Integer</entry>
+						<entry>
+						The timeout in milliseconds during the login phase
+						(before the user is authenticated). If no input is received
+						for the specified amount of time the connection is closed by
+						the server.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>org.openscada.osgi.equinox.console.secret</entry>
+						<entry>String</entry>
+						<entry>
+						The <quote>secret</quote> (<abbrev>aka</abbrev> <quote>password</quote>)
+						the user has to enter in order to gain access.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>org.openscada.osgi.equinox.console.timeout</entry>
+						<entry>Integer</entry>
+						<entry>
+						The timeout in milliseconds after the login phase
+						(after the user is authenticated). If no input is received
+						for the specified amount of time the connection is closed by
+						the server.
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect3>
+
+</sect2>
+	
+</sect1>

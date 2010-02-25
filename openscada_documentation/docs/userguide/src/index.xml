@@ -3,6 +3,7 @@
   <!ENTITY sect1 SYSTEM "100-sect1.xml">
   <!ENTITY sect2 SYSTEM "200-sect2.xml">
   <!ENTITY sect-master SYSTEM "500-master.xml">
+  <!ENTITY sect-osgibundles SYSTEM "800-osgibundles.xml">
 ]>
 <article lang="en">
 	<articleinfo>
@@ -39,4 +40,5 @@
 	&sect1;
 	&sect2;
 	&sect-master;
+	&sect-osgibundles;
  </article>
