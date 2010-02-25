@@ -15,18 +15,15 @@
    <windowImages/>
 
 
-   <launcher>
+   <launcher name="p2director">
       <solaris/>
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
 
-
    <vm>
-      <linux>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</linux>
    </vm>
-
 
    <plugins>
       <plugin id="com.ibm.icu"/>
