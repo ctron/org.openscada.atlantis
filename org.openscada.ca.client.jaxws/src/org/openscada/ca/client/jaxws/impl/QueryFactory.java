@@ -22,7 +22,6 @@ public class QueryFactory implements Callable<FactoryInformation>
         this.client = client;
     }
 
-    @Override
     public FactoryInformation call () throws Exception
     {
         logger.debug ( "Query data : {}", this.factoryId );

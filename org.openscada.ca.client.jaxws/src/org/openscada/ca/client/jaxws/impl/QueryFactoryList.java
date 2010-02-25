@@ -15,7 +15,6 @@ public class QueryFactoryList implements Callable<FactoryInformation[]>
         this.port = port;
     }
 
-    @Override
     public FactoryInformation[] call () throws Exception
     {
         return this.port.getPort ().getFactories ();

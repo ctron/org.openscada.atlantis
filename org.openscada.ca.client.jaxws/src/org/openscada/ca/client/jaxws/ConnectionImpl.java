@@ -46,7 +46,6 @@ public class ConnectionImpl implements Connection
         this.connectionInformation = connectionInformation;
     }
 
-    @Override
     public synchronized void addConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
         if ( this.stateListener.add ( connectionStateListener ) )
@@ -55,7 +54,6 @@ public class ConnectionImpl implements Connection
         }
     }
 
-    @Override
     public synchronized void removeConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
         this.stateListener.remove ( connectionStateListener );
@@ -70,7 +68,6 @@ public class ConnectionImpl implements Connection
         }
     }
 
-    @Override
     public synchronized void connect ()
     {
         if ( this.executor != null )
@@ -83,7 +80,6 @@ public class ConnectionImpl implements Connection
 
         this.executor.execute ( new Runnable () {
 
-            @Override
             public void run ()
             {
                 try
@@ -129,7 +125,6 @@ public class ConnectionImpl implements Connection
 
         task.addListener ( new FutureListener<FactoryInformation[]> () {
 
-            @Override
             public void complete ( final Future<FactoryInformation[]> future )
             {
                 try
@@ -171,7 +166,6 @@ public class ConnectionImpl implements Connection
         return new RemoteConfigurationClient ( this.connectionInformation.getTarget (), this.connectionInformation.getSecondaryTarget () );
     }
 
-    @Override
     public synchronized void disconnect ()
     {
         if ( this.executor == null )
@@ -196,19 +190,16 @@ public class ConnectionImpl implements Connection
         this.port = null;
     }
 
-    @Override
     public ConnectionInformation getConnectionInformation ()
     {
         return this.connectionInformation;
     }
 
-    @Override
     public ConnectionState getState ()
     {
         return this.state;
     }
 
-    @Override
     public synchronized void addFactoriesListener ( final FactoriesListener listener )
     {
         if ( this.factoriesListener.add ( listener ) )
@@ -217,7 +208,6 @@ public class ConnectionImpl implements Connection
         }
     }
 
-    @Override
     public synchronized NotifyFuture<FactoryInformation[]> getFactories ()
     {
         if ( this.executor == null )
@@ -232,7 +222,6 @@ public class ConnectionImpl implements Connection
         return task;
     }
 
-    @Override
     public synchronized NotifyFuture<FactoryInformation> getFactoryWithData ( final String factoryId )
     {
         if ( this.executor == null )
@@ -249,7 +238,6 @@ public class ConnectionImpl implements Connection
         return task;
     }
 
-    @Override
     public synchronized NotifyFuture<ConfigurationInformation> getConfiguration ( final String factoryId, final String configurationId )
     {
         if ( this.executor == null )
@@ -266,7 +254,6 @@ public class ConnectionImpl implements Connection
         return task;
     }
 
-    @Override
     public synchronized void removeFactoriesListener ( final FactoriesListener listener )
     {
         this.factoriesListener.remove ( listener );

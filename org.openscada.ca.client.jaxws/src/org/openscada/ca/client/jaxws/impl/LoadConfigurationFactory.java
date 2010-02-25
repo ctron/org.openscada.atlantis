@@ -21,7 +21,6 @@ public class LoadConfigurationFactory implements Callable<ConfigurationInformati
         this.port = port;
     }
 
-    @Override
     public ConfigurationInformation call () throws Exception
     {
         this.port.getPort ().getConfiguration ( this.factoryId, this.configurationId );
