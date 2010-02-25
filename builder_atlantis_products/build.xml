@@ -54,7 +54,7 @@
     <target name="publish" depends="" description="Publish artifacts">
     	<openscada.publish.product project="atlantis" name="p2director" builder="builder.p2director"/>
     	<openscada.publish.product project="atlantis" name="hdserver" builder="builder.hdserver"/>
-    	<openscada.publish.product project="atlantis" name="daserver" builder="builder.damaster"/>
+    	<openscada.publish.product project="atlantis" name="daserver" builder="builder.daserver"/>
     	<openscada.publish.product project="atlantis" name="master" builder="builder.master"/>
     </target>
 	
