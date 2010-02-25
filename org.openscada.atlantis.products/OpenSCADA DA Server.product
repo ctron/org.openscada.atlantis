@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="OpenSCADA DA Server" uid="org.openscada.atlantis.da.server" version="0.15.0.qualifier" useFeatures="true" includeLaunchers="true">
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgs>-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console</programArgs>
+      <vmArgs>-Dosgi.requiredJavaVersion=1.6
+-XX:MaxPermSize=256m
+-Xms40m -Xmx512m
+-Declipse.ignoreApp=true
+-Dosgi.noShutdown=true
+-Dorg.eclipse.equinox.http.jetty.http.port=8082
+-Dorg.osgi.service.http.port=8082
+-Dorg.openscada.ca.file.root=/tmp/da.ca</vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+   </launcherArgs>
+
+   <windowImages/>
+
+   <launcher name="daserver">
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
+
+   <plugins>
+   </plugins>
+
+   <features>
+      <feature id="org.openscada.atlantis" version="0.15.0.qualifier"/>
+      <feature id="org.openscada.external" version="0.15.0.qualifier"/>
+      <feature id="org.openscada.utgard" version="0.7.0.qualifier"/>
+      <feature id="org.openscada.aurora" version="0.15.0.qualifier"/>
+      <feature id="org.eclipse.rcp" version="3.5.0.v20090519-9SA0FwxFv6x089WEf-TWh11"/>
+      <feature id="org.openscada.ca.install.feature" version="0.15.0.qualifier"/>
+   </features>
+
+   <configurations>
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
+   </configurations>
+
+</product>
