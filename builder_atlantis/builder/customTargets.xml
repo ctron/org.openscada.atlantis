@@ -200,6 +200,12 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.jdbc"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.jdbc.configuration"/>
   	
+  	<!-- OpenSCADA CA -->
+  	
+  	<openscada.builder.copyPlugin id="org.openscada.ca.client"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ca.client.jaxws"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ca.connection.provider"/>
+  	
   	<!-- Additional stuff -->
   	
   	<openscada.builder.copyPlugin id="org.openscada.spring.client"/>
