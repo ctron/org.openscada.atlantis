@@ -37,7 +37,6 @@
          ================================= -->
     <target name="build" depends="populate" description="OpenSCADA Atlantis Products">
     	<openscada.productBuild builder="builder.master"/>
-    	<openscada.productBuild builder="builder.daserver"/>
     	<openscada.productBuild builder="builder.hdserver"/>
     </target>
 
@@ -52,7 +51,6 @@
          ================================= -->
     <target name="publish" depends="" description="Publish artifacts">
     	<openscada.publish.product project="atlantis" name="hdserver" builder="builder.hdserver"/>
-    	<openscada.publish.product project="atlantis" name="daserver" builder="builder.daserver"/>
     	<openscada.publish.product project="atlantis" name="master" builder="builder.master"/>
     </target>
 	
