@@ -4,6 +4,8 @@
   <!ENTITY sect2 SYSTEM "200-sect2.xml">
   <!ENTITY sect-master SYSTEM "500-master.xml">
   <!ENTITY sect-osgibundles SYSTEM "800-osgibundles.xml">
+  <!ENTITY sect-admin SYSTEM "900-osgibundles.xml">
+  <!ENTITY glossary SYSTEM "a01-glossary.xml">
 ]>
 <article lang="en">
 	<articleinfo>
@@ -41,4 +43,7 @@
 	&sect2;
 	&sect-master;
 	&sect-osgibundles;
+	&sect-admin;
+	
+	&glossary;
  </article>

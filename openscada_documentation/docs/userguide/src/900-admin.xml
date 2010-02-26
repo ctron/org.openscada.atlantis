@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
+
+<sect1 id="osgibundles"><title>Administration</title>
+	<para>
+	This section describes some administrative tasks of the <trademark>OpenSCADA</trademark> system.
+	</para>
+	
+<sect2><title><trademark>OSGi</trademark> based servers</title>
+	<para>
+	This section focuses on the administration of <trademark>OSGi</trademark> based server installations.
+	</para>
+	
+<sect3><title>Requirements &amp; preconditions</title>
+<para>
+	The following requirements must be satisfied:
+	<itemizedlist>
+		<listitem><para>Installed operating system</para></listitem>
+		<listitem>
+			<para>Installed Java Version 5+</para>
+			<itemizedlist>
+				<listitem><para>SUN or IBM JVM are recommended</para></listitem>
+				<listitem><para>A <acronym>JRE</acronym> is sufficient</para></listitem>
+				<listitem><para>The <envar>JAVA_HOME</envar> environment variable has the be set</para></listitem>
+			</itemizedlist>
+		</listitem>
+		
+	</itemizedlist>
+</para>
+</sect3>
+
+<sect3><title>Installation of administrative Tools</title>
+	<note><para>
+	The installation of the administrative tools is currently only supported on RPM based systems
+	like <trademark>RedHat Enterprise Linux</trademark>. Of course we want to expand this to other
+	operating systems and distributions, but at the moment our focus is in <acronym>RHEL</acronym>.
+	</para>
+	<para>
+	It still is possible to install <trademark>OpenSCADA</trademark> on other system. It only is
+	more work to do. 
+	</para></note>
+	
+	<para>
+	First copy the RPMs to the target system and install them using:
+	</para>
+	
+	<para>
+	<screen>
+	<prompt>#</prompt> rpm -Uvh *.rpm
+	</screen>
+	</para>
+</sect3>
+
+<sect3><title>Create a P2 base installation</title>
+	<para>
+	It is now required to create a base server installation. This will install the
+	<trademark>OSGi</trademark> container but will not install much functionality
+	inside the container.
+	</para>
+	<para>
+	The location of the installation might be of interest to you or your system
+	administrator. So it should be chosen carefully as is not recommended to be
+	moved.
+	</para>
+	<para>
+	Create the P2 base installation by issuing the following command:
+	</para>
+	
+	<screen>
+	<prompt>$</prompt> p2.create "targetDirectory"
+	</screen>
+	
+	<para>
+	This will create a new directory named <filename>targetDirectory</filename>
+	and install the basic <trademark>OSGi</trademark> container. The command will
+	fail if the directory already exists or the base path does not exist.
+	</para>
+	
+	<para>
+	Next the basic <trademark>Equinox</trademark> infrastructure is installed:
+	</para>
+	
+	<screen>
+	<prompt>$ p2.init "targetDirectory"</prompt>
+	</screen>
+	
+	<note><para>
+	At this point it might be a good idea to edit the <filename>launcher.ini</filename>
+	file and add necessary arguments before continuing with the installation.
+	</para></note>
+</sect3>
+
+<sect3><title>Deploying the <trademark>OpenSCADA</trademark> artifacts</title>
+	<para>
+	The next step is to deploy the <trademark>OpenSCADA</trademark> bundles and features
+	to the previously created P2 installation. Depending on the functionality you want to
+	have in your server the selection of bundles or features might differ. If you just
+	want <quote>it all in</quote> you can install the <acronym>IU</acronym>
+	<filename>org.openscada.deploy.feature.group</filename> 
+	</para>
+</sect3>
+
+</sect2>
+	
+</sect1>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE glossary PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
+
+<glossary>
+
+<glossentry>
+	<glossterm>AE</glossterm>
+	<glossdef>
+		<para>Alarms and Events</para>
+	</glossdef>
+</glossentry>
+
+<glossentry>
+	<glossterm>CA</glossterm>
+	<glossdef>
+		<para>Configuration Administrator</para>
+	</glossdef>
+</glossentry>
+
+<glossentry>
+	<glossterm>DA</glossterm>
+	<glossdef>
+		<para>Data Access</para>
+	</glossdef>
+</glossentry>
+
+<glossentry>
+	<glossterm>Hive</glossterm>
+	<glossdef>
+		<para>A hive is a DA server instance.</para>
+	</glossdef>
+</glossentry>
+
+<glossentry>
+	<glossterm>HD</glossterm>
+	<glossdef>
+		<para>Historical Data</para>
+	</glossdef>
+</glossentry>
+
+<glossentry>
+	<glossterm><acronym>IU</acronym></glossterm>
+	
+	<glossdef>
+		<para>An Installable Unit is a unit that can be installed in
+		the <acronym>P2</acronym> provisioning system. An installable
+		unit will often have dependencies and metadata. It can be a
+		simple <trademark>OSGi</trademark> bundle or a group of bundles,
+		a feature or component.
+		</para>
+	</glossdef>
+</glossentry>
+
+</glossary>
