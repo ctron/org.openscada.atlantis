@@ -29,6 +29,10 @@ public class JsonServlet extends HttpServlet
     @Override
     protected void doGet ( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException, IOException
     {
+    	if (request.getPathInfo () == null) {
+            send404Error ( request, response );
+            return;
+    	}
         if ( request.getPathInfo ().startsWith ( "/items" ) )
         {
             final String[] parts = request.getPathInfo ().split ( "/" );
