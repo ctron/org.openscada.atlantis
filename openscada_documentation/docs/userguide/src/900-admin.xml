@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
 
-<sect1 id="osgibundles"><title>Administration</title>
+<sect1 id="admin"><title>Administration</title>
 	<para>
 	This section describes some administrative tasks of the <trademark>OpenSCADA</trademark> system.
 	</para>
