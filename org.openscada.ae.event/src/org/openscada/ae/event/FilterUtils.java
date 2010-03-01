@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2008-2010 inavare GmbH (http://inavare.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.ae.event;
 
 import java.beans.PropertyEditor;
@@ -40,18 +59,18 @@ public class FilterUtils
      * @return
      */
     @SuppressWarnings ( "unchecked" )
-    public static void toVariant ( Filter filter )
+    public static void toVariant ( final Filter filter )
     {
         if ( filter.isAssertion () )
         {
-            FilterAssertion filterAssertion = (FilterAssertion)filter;
+            final FilterAssertion filterAssertion = (FilterAssertion)filter;
             // first convert String for case of like query * -> %
-            if ( ( filterAssertion.getValue () instanceof List ) && filterAssertion.getAssertion () == Assertion.SUBSTRING )
+            if ( filterAssertion.getValue () instanceof List && filterAssertion.getAssertion () == Assertion.SUBSTRING )
             {
-                List<String> values = (List<String>)filterAssertion.getValue ();
-                StringBuilder sb = new StringBuilder ();
+                final List<String> values = (List<String>)filterAssertion.getValue ();
+                final StringBuilder sb = new StringBuilder ();
                 int i = 0;
-                for ( String string : values )
+                for ( final String string : values )
                 {
                     if ( i > 0 && i < values.size () )
                     {
@@ -66,19 +85,19 @@ public class FilterUtils
             {
                 if ( "id".equals ( filterAssertion.getAttribute () ) )
                 {
-                    PropertyEditor pe = propertyEditorRegistry.findCustomEditor ( UUID.class );
+                    final PropertyEditor pe = propertyEditorRegistry.findCustomEditor ( UUID.class );
                     pe.setAsText ( (String)filterAssertion.getValue () );
                     filterAssertion.setValue ( pe.getValue () );
                 }
                 else if ( "sourceTimestamp".equals ( filterAssertion.getAttribute () ) || "entryTimestamp".equals ( filterAssertion.getAttribute () ) )
                 {
-                    PropertyEditor pe = propertyEditorRegistry.findCustomEditor ( Date.class );
+                    final PropertyEditor pe = propertyEditorRegistry.findCustomEditor ( Date.class );
                     pe.setAsText ( (String)filterAssertion.getValue () );
                     filterAssertion.setValue ( pe.getValue () );
                 }
                 else
                 {
-                    VariantEditor ve = new VariantEditor ();
+                    final VariantEditor ve = new VariantEditor ();
                     ve.setAsText ( (String)filterAssertion.getValue () );
                     filterAssertion.setValue ( ve.getValue () );
                 }
@@ -86,8 +105,8 @@ public class FilterUtils
         }
         else if ( filter.isExpression () )
         {
-            FilterExpression filterExpression = (FilterExpression)filter;
-            for ( Filter child : filterExpression.getFilterSet () )
+            final FilterExpression filterExpression = (FilterExpression)filter;
+            for ( final Filter child : filterExpression.getFilterSet () )
             {
                 toVariant ( child );
             }
