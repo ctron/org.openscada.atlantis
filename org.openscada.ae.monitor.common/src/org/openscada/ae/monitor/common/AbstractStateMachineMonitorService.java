@@ -17,7 +17,20 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 {
     private final static Logger logger = LoggerFactory.getLogger ( AbstractMonitorService.class );
 
+    private final static StateInformation defaultState;
+
+    static
+    {
+        defaultState = new StateInformation ();
+        defaultState.setActive ( false );
+        defaultState.setOk ( false );
+        defaultState.setRequireAck ( true );
+        defaultState.setTimestamp ( new Date () );
+    }
+
     private final EventProcessor eventProcessor;
+
+    private StateInformation initialInformation;
 
     private StateInformation information = new StateInformation ();
 
@@ -34,6 +47,22 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     protected synchronized void setPersistentState ( final StateInformation state )
     {
         logger.debug ( "Setting persistens state: {}", state );
+
+        if ( state == null )
+        {
+            this.initialInformation = new StateInformation ();
+        }
+        else
+        {
+            this.initialInformation = state;
+        }
+
+        final StateInformation newInformation = defaultState.apply ( this.initialInformation.apply ( this.information ) );
+
+        this.information = newInformation;
+
+        // re-apply the current state
+        applyState ( this.information );
     }
 
     public void init ()
@@ -108,8 +137,19 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     private synchronized void applyState ( final StateInformation information )
     {
+        final ConditionStatusInformation csi;
+
         this.information = information;
-        final ConditionStatusInformation csi = new ConditionStatusInformation ( getId (), generateStatus ( information ), information.getTimestamp (), information.getValue (), information.getLastAckTimestamp (), information.getLastAckUser () );
+        if ( this.initialInformation != null )
+        {
+            // if we are initialized we send out our current status
+            csi = new ConditionStatusInformation ( getId (), generateStatus ( information ), information.getTimestamp (), information.getValue (), information.getLastAckTimestamp (), information.getLastAckUser () );
+        }
+        else
+        {
+            // otherwise send out our dummy status until we got initialized
+            csi = new ConditionStatusInformation ( getId (), ConditionStatus.INIT, new Date (), Variant.NULL, null, null );
+        }
         notifyStateChange ( csi );
     }
 
