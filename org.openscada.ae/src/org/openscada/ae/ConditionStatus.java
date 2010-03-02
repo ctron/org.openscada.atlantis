@@ -28,4 +28,5 @@ public enum ConditionStatus
     NOT_AKN,
     NOT_OK_NOT_AKN,
     UNSAFE,
+    INIT,
 }
