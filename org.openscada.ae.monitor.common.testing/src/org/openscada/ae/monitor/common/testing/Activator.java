@@ -1,6 +1,8 @@
 package org.openscada.ae.monitor.common.testing;
 
 import java.util.Hashtable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.MonitorService;
@@ -21,15 +23,19 @@ public class Activator implements BundleActivator
 
     private ServiceRegistration monitorServicePoolHandler;
 
+    private ExecutorService executor;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
     public void start ( final BundleContext context ) throws Exception
     {
+        this.executor = Executors.newSingleThreadExecutor ();
+
         this.processor = new EventProcessor ( context );
         this.processor.open ();
-        this.service = new TestingCondition ( this.processor, context.getBundle ().getSymbolicName () + ".test" );
+        this.service = new TestingCondition ( context, this.executor, this.processor, context.getBundle ().getSymbolicName () + ".test" );
         this.service.init ();
 
         this.monitorServicePool = new ObjectPoolImpl ();
@@ -44,12 +50,13 @@ public class Activator implements BundleActivator
      */
     public void stop ( final BundleContext context ) throws Exception
     {
-
         this.monitorServicePoolHandler.unregister ();
 
         this.monitorServicePool.dispose ();
         this.processor.close ();
         this.service.stop ();
+
+        this.executor.shutdown ();
     }
 
 }

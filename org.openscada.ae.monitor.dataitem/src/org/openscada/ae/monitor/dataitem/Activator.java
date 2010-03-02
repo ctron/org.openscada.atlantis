@@ -77,7 +77,7 @@ public class Activator implements BundleActivator
 
         // monitor service
         {
-            final MonitorFactoryImpl factory = new MonitorFactoryImpl ( context, this.poolTracker, this.monitorServicePool, this.eventProcessor );
+            final MonitorFactoryImpl factory = new MonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor );
             properties = new Hashtable<Object, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, BooleanAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Boolean alarms" );
@@ -120,7 +120,7 @@ public class Activator implements BundleActivator
     private void makeLevelFactory ( final BundleContext context, final String type, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
     {
         Dictionary<Object, Object> properties;
-        final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.poolTracker, this.monitorServicePool, this.eventProcessor, type, defaultMonitorType, lowerOk, includedOk, priority, cap );
+        final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor, type, defaultMonitorType, lowerOk, includedOk, priority, cap );
         properties = new Hashtable<Object, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, LevelMonitorFactoryImpl.FACTORY_PREFIX + "." + type );
         properties.put ( Constants.SERVICE_DESCRIPTION, type + " Alarms" );

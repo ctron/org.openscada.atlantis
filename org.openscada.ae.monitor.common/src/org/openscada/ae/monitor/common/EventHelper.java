@@ -55,12 +55,12 @@ public class EventHelper
         return builder.build ();
     }
 
-    public static Event newConfigurationEvent ( final String id, final String message, final Variant value, final Date timestamp )
+    public static EventBuilder newConfigurationEvent ( final String id, final String message, final Variant value, final Date timestamp )
     {
         final EventBuilder builder = Event.create ();
         fillBasic ( builder, id, "CFG", timestamp, message );
         builder.attribute ( "value", value );
-        return builder.build ();
+        return builder;
     }
 
 }

@@ -1,5 +1,7 @@
 package org.openscada.ae.monitor.dataitem.monitor.internal.level;
 
+import java.util.concurrent.Executor;
+
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.dataitem.AbstractMonitorFactory;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
@@ -26,9 +28,12 @@ public class LevelMonitorFactoryImpl extends AbstractMonitorFactory
 
     private final boolean includedOk;
 
-    public LevelMonitorFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker, final ObjectPoolImpl servicePool, final EventProcessor eventProcessor, final String type, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
+    private final Executor executor;
+
+    public LevelMonitorFactoryImpl ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final ObjectPoolImpl servicePool, final EventProcessor eventProcessor, final String type, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
     {
         super ( context, servicePool, eventProcessor );
+        this.executor = executor;
         this.poolTracker = poolTracker;
         this.type = type;
         this.lowerOk = lowerOk;
@@ -41,6 +46,6 @@ public class LevelMonitorFactoryImpl extends AbstractMonitorFactory
     @Override
     protected DataItemMonitor createInstance ( final String configurationId, final EventProcessor eventProcessor )
     {
-        return new LevelAlarmMonitor ( this.poolTracker, eventProcessor, configurationId, FACTORY_PREFIX + "." + this.type, this.defaultMonitorType, this.lowerOk, this.includedOk, this.priority, this.cap );
+        return new LevelAlarmMonitor ( this.context, this.executor, this.poolTracker, eventProcessor, configurationId, FACTORY_PREFIX + "." + this.type, this.defaultMonitorType, this.lowerOk, this.includedOk, this.priority, this.cap );
     }
 }

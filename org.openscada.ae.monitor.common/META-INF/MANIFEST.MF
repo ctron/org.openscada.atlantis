@@ -6,19 +6,21 @@ Bundle-Version: 0.15.0.qualifier
 Bundle-Activator: org.openscada.ae.monitor.common.Activator
 Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Import-Package: org.apache.log4j;version="1.2.15",
- org.openscada.ae;version="0.14.0",
+Import-Package: org.openscada.ae;version="0.14.0",
  org.openscada.ae.event;version="0.14.0",
  org.openscada.ae.monitor;version="0.14.0",
  org.openscada.core;version="0.14.0",
  org.openscada.core.server.common.session;version="0.15.0",
+ org.openscada.ds;version="0.15.0",
  org.openscada.sec;version="0.1.0",
- org.osgi.framework;version="1.3.0"
+ org.openscada.utils.lang;version="0.15.0",
+ org.osgi.framework;version="1.3.0",
+ org.osgi.util.tracker;version="1.4.2",
+ org.slf4j;version="[1.5.8,1.6.0)"
 Export-Package: org.openscada.ae.monitor.common;version="0.15.0";
   uses:="org.osgi.framework,
    org.openscada.ae.monitor.common.handler,
    org.openscada.core,
    org.openscada.ae.event,
    org.openscada.ae.monitor,
-   org.openscada.ae",
- org.openscada.ae.monitor.common.handler;version="0.15.0";uses:="org.openscada.core,org.openscada.ae"
+   org.openscada.ae"

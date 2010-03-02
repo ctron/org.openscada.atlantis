@@ -4,12 +4,12 @@ public class LevelHelper
 {
     public static boolean isFailure ( final double value, final double limit, final boolean lowerOk, final boolean includedOk )
     {
-        final boolean f = value <= limit && lowerOk || value >= limit && !lowerOk;
-        if ( !f )
+        final boolean f = value > limit && lowerOk || value < limit && !lowerOk;
+        if ( f )
         {
             return true;
         }
 
-        return value == limit && !includedOk;
+        return ! ( value != limit || includedOk );
     }
 }

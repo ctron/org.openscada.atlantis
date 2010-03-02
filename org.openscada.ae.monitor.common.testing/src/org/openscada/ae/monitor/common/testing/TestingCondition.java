@@ -2,26 +2,28 @@ package org.openscada.ae.monitor.common.testing;
 
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.openscada.ae.event.EventProcessor;
-import org.openscada.ae.monitor.common.AbstractMonitorService;
+import org.openscada.ae.monitor.common.AbstractStateMachineMonitorService;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.core.Variant;
 import org.openscada.sec.UserInformation;
+import org.osgi.framework.BundleContext;
 
-public class TestingCondition extends AbstractMonitorService implements AknHandler
+public class TestingCondition extends AbstractStateMachineMonitorService implements AknHandler
 {
 
     private final ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor ( 1 );
 
     private final Random r = new Random ();
 
-    public TestingCondition ( final EventProcessor eventProcessor, final String sourceName )
+    public TestingCondition ( final BundleContext context, final Executor executor, final EventProcessor eventProcessor, final String sourceName )
     {
-        super ( eventProcessor, sourceName );
+        super ( context, executor, eventProcessor, sourceName );
         this.scheduler.scheduleAtFixedRate ( new Runnable () {
 
             public void run ()

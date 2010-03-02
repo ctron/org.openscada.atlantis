@@ -1,142 +1,35 @@
 package org.openscada.ae.monitor.common;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executor;
 
-import org.apache.log4j.Logger;
+import org.openscada.ae.ConditionStatus;
 import org.openscada.ae.ConditionStatusInformation;
-import org.openscada.ae.Event;
-import org.openscada.ae.Event.EventBuilder;
-import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.ConditionListener;
 import org.openscada.ae.monitor.MonitorService;
-import org.openscada.ae.monitor.common.handler.StateHandler;
-import org.openscada.ae.monitor.common.handler.impl.InitHandler;
-import org.openscada.core.Variant;
-import org.openscada.sec.UserInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class AbstractMonitorService implements MonitorService
+public abstract class AbstractMonitorService implements MonitorService
 {
-    private final static Logger logger = Logger.getLogger ( AbstractMonitorService.class );
+    private final static Logger logger = LoggerFactory.getLogger ( AbstractStateMachineMonitorService.class );
 
-    protected Set<ConditionListener> conditionListeners = new CopyOnWriteArraySet<ConditionListener> ();
+    protected Set<ConditionListener> conditionListeners = new HashSet<ConditionListener> ();
 
     private final String id;
 
-    private StateHandler handler;
+    private final Executor executor;
 
-    private final EventProcessor eventProcessor;
+    private ConditionStatusInformation currentState;
 
-    private volatile ConditionStatusInformation currentStatus;
-
-    public AbstractMonitorService ( final EventProcessor eventProcessor, final String id )
+    public AbstractMonitorService ( final String id, final Executor executor )
     {
+        this.executor = executor;
         this.id = id;
-        this.eventProcessor = eventProcessor;
-    }
 
-    public synchronized void init ()
-    {
-        if ( this.handler == null )
-        {
-            setHandler ( new InitHandler ( this ) );
-        }
-    }
-
-    /**
-     * Set a new state handler
-     * @param handler the new handler
-     */
-    public void setHandler ( final StateHandler handler )
-    {
-        synchronized ( this )
-        {
-            if ( this.handler != null )
-            {
-                this.handler.deactivate ();
-            }
-            this.handler = handler;
-            if ( this.handler != null )
-            {
-                this.handler.activate ();
-            }
-        }
-        this.currentStatus = handler.getState ();
-        notifyStateChange ( this.currentStatus );
-    }
-
-    public void addStatusListener ( final ConditionListener listener )
-    {
-        if ( listener != null )
-        {
-            this.conditionListeners.add ( listener );
-            listener.statusChanged ( this.currentStatus );
-        }
-    }
-
-    public void removeStatusListener ( final ConditionListener listener )
-    {
-        this.conditionListeners.remove ( listener );
-    }
-
-    protected synchronized void setFailure ( final Variant value, final Date timestamp )
-    {
-        this.handler.fail ( value, timestamp );
-    }
-
-    protected synchronized void setOk ( final Variant value, final Date timestamp )
-    {
-        this.handler.ok ( value, timestamp );
-    }
-
-    protected synchronized void setUnsafe ()
-    {
-        this.handler.unsafe ();
-    }
-
-    public synchronized void setActive ( final boolean state )
-    {
-        if ( state )
-        {
-            this.handler.enable ();
-        }
-        else
-        {
-            this.handler.disable ();
-        }
-    }
-
-    public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp )
-    {
-        this.handler.akn ( userInformation, aknTimestamp );
-    }
-
-    public synchronized void setRequireAkn ( final boolean state )
-    {
-        if ( state )
-        {
-            this.handler.requireAkn ();
-        }
-        else
-        {
-            this.handler.ignoreAkn ();
-        }
-    }
-
-    protected void notifyStateChange ( final ConditionStatusInformation status )
-    {
-        for ( final ConditionListener listener : this.conditionListeners )
-        {
-            try
-            {
-                listener.statusChanged ( status );
-            }
-            catch ( final Throwable e )
-            {
-                logger.warn ( "Failed to notify", e );
-            }
-        }
+        this.currentState = new ConditionStatusInformation ( id, ConditionStatus.INIT, new Date (), null, null, null );
     }
 
     public String getId ()
@@ -144,18 +37,54 @@ public class AbstractMonitorService implements MonitorService
         return this.id;
     }
 
-    public void publishEvent ( final Event event )
+    public synchronized void addStatusListener ( final ConditionListener listener )
     {
-        final EventBuilder builder = Event.create ();
-        builder.event ( event );
+        if ( listener == null )
+        {
+            return;
+        }
 
-        injectEventAttributes ( builder );
+        if ( this.conditionListeners.add ( listener ) )
+        {
+            final ConditionStatusInformation state = this.currentState;
+            this.executor.execute ( new Runnable () {
 
-        this.eventProcessor.publishEvent ( builder.build () );
+                public void run ()
+                {
+                    listener.statusChanged ( state );
+                }
+            } );
+        }
     }
 
-    protected void injectEventAttributes ( final EventBuilder builder )
+    protected synchronized void notifyStateChange ( final ConditionStatusInformation state )
     {
+        final ConditionListener[] listeners = this.conditionListeners.toArray ( new ConditionListener[this.conditionListeners.size ()] );
+
+        this.currentState = state;
+
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                for ( final ConditionListener listener : listeners )
+                {
+                    try
+                    {
+                        listener.statusChanged ( state );
+                    }
+                    catch ( final Throwable e )
+                    {
+                        logger.warn ( "Failed to notify", e );
+                    }
+                }
+            }
+        } );
+    }
+
+    public synchronized void removeStatusListener ( final ConditionListener listener )
+    {
+        this.conditionListeners.remove ( listener );
     }
 
 }

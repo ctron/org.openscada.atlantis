@@ -2,6 +2,7 @@ package org.openscada.ae.monitor.dataitem.monitor.internal.bit;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.EventHelper;
@@ -12,6 +13,7 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
+import org.osgi.framework.BundleContext;
 
 public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataItemMonitor
 {
@@ -20,9 +22,9 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
 
     private boolean reference;
 
-    public BooleanAlarmMonitor ( final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id )
+    public BooleanAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id )
     {
-        super ( poolTracker, eventProcessor, id, "ae.monitor.booleanAlarm", "VALUE" );
+        super ( context, executor, poolTracker, eventProcessor, id, "ae.monitor.booleanAlarm", "VALUE" );
     }
 
     @Override

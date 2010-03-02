@@ -31,5 +31,8 @@ public class LevelHelperTest
     {
         test ( false, 10, 10, false, true );
         test ( true, 10, 10, false, false );
+
+        test ( false, 10, 10, true, true );
+        test ( true, 10, 10, true, false );
     }
 }

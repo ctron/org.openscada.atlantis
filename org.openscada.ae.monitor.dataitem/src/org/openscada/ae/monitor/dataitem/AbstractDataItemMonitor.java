@@ -5,13 +5,14 @@ import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.openscada.ae.ConditionStatus;
 import org.openscada.ae.ConditionStatusInformation;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.event.EventProcessor;
-import org.openscada.ae.monitor.common.AbstractMonitorService;
+import org.openscada.ae.monitor.common.AbstractStateMachineMonitorService;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -25,11 +26,12 @@ import org.openscada.da.master.WriteRequestResult;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker.ServiceListener;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractDataItemMonitor extends AbstractMonitorService implements DataItemMonitor
+public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonitorService implements DataItemMonitor
 {
     private final static Logger logger = LoggerFactory.getLogger ( AbstractDataItemMonitor.class );
 
@@ -71,9 +73,9 @@ public abstract class AbstractDataItemMonitor extends AbstractMonitorService imp
 
     protected Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-    public AbstractDataItemMonitor ( final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
+    public AbstractDataItemMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
     {
-        super ( eventProcessor, id );
+        super ( context, executor, eventProcessor, id );
         this.poolTracker = poolTracker;
         this.prefix = prefix;
         this.defaultMonitorType = defaultMonitorType;

@@ -2,6 +2,7 @@ package org.openscada.ae.monitor.dataitem.monitor.internal.level;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.EventHelper;
@@ -13,6 +14,7 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +35,9 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
     private final boolean includedOk;
 
-    public LevelAlarmMonitor ( final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
+    public LevelAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
     {
-        super ( poolTracker, eventProcessor, id, prefix, defaultMonitorType );
+        super ( context, executor, poolTracker, eventProcessor, id, prefix, defaultMonitorType );
         this.lowerOk = lowerOk;
         this.includedOk = includedOk;
         this.priority = priority;
