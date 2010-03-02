@@ -429,7 +429,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         {
             connection += " " + this.connectionInformation.toString ();
         }
-        logger.warn ( "Connection attempt failed" + connection, e );
+        logger.info ( "Connection attempt failed" + connection, e );
 
         if ( future == this.connectingFuture )
         {
