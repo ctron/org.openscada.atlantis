@@ -163,7 +163,7 @@ public class DaveDevice implements SingleSessionIoHandler
         attributes.put ( "rack", new Variant ( this.rack ) );
         attributes.put ( "slot", new Variant ( this.slot ) );
         attributes.put ( "name", new Variant ( this.name ) );
-        this.configItem.updateData ( new Variant ( true ), attributes, AttributeMode.SET );
+        this.configItem.updateData ( Variant.TRUE, attributes, AttributeMode.SET );
 
         disconnect ();
         connect ();
@@ -214,7 +214,7 @@ public class DaveDevice implements SingleSessionIoHandler
     private void setState ( final ConnectionState state )
     {
         this.stateItem.updateData ( new Variant ( state.toString () ), null, null );
-        this.connectionItem.updateData ( new Variant ( state == ConnectionState.CONNECTED ), null, null );
+        this.connectionItem.updateData ( Variant.valueOf ( state == ConnectionState.CONNECTED ), null, null );
     }
 
     protected void setSession ( final IoSession session )
