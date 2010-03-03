@@ -197,7 +197,7 @@ public class Query
         logger.debug ( "Setting error: " + key + " = " + e.getMessage () );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "jdbc.error", new Variant ( true ) );
+        attributes.put ( "jdbc.error", Variant.TRUE );
         attributes.put ( "jdbc.error.message", new Variant ( e.getMessage () ) );
 
         getItem ( key ).updateData ( null, attributes, AttributeMode.UPDATE );
