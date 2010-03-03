@@ -223,19 +223,24 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
     public void reprocess ()
     {
+        process ( this.sourceValue );
+    }
+
+    protected void process ( final DataItemValue value )
+    {
         this.executor.execute ( new Runnable () {
 
             public void run ()
             {
-                MasterItemImpl.this.handleReprocess ();
+                MasterItemImpl.this.handleReprocess ( value );
             }
         } );
     }
 
-    protected synchronized void handleReprocess ()
+    protected synchronized void handleReprocess ( final DataItemValue value )
     {
         logger.info ( "Reprocessing" );
-        updateData ( processHandler ( this.sourceValue ) );
+        updateData ( processHandler ( value ) );
     }
 
     @Override
@@ -254,7 +259,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
             this.sourceValue = builder.build ();
         }
 
-        reprocess ();
+        process ( this.sourceValue );
     }
 
     /* (non-Javadoc)
